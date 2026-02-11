@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import GraphBarChart_L from 'illustration:./S2_lin_graphBarChart_160.svg';
 import GraphBarChart_M from 'illustration:./S2_lin_graphBarChart_96.svg';
 import GraphBarChart_S from 'illustration:./S2_lin_graphBarChart_48.svg';

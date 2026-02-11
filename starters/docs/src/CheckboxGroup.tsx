@@ -4,9 +4,7 @@ import {
   CheckboxGroupProps as AriaCheckboxGroupProps,
   ValidationResult
 } from 'react-aria-components';
-import {Text} from './Content';
-import {Label, FieldError} from './Form';
-
+import {Label, FieldError, Description} from './Form';
 import './CheckboxGroup.css';
 
 export interface CheckboxGroupProps
@@ -15,6 +13,7 @@ export interface CheckboxGroupProps
   label?: string;
   description?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);
+  orientation?: 'horizontal' | 'vertical'
 }
 
 export function CheckboxGroup(
@@ -23,17 +22,18 @@ export function CheckboxGroup(
     description,
     errorMessage,
     children,
+    orientation = 'vertical',
     ...props
   }: CheckboxGroupProps
 ) {
   return (
-    (
-      <AriaCheckboxGroup {...props}>
-        {label && <Label>{label}</Label>}
+    <AriaCheckboxGroup {...props} data-orientation={orientation}>
+      {label && <Label>{label}</Label>}
+      <div className="checkbox-items">
         {children}
-        {description && <Text slot="description">{description}</Text>}
-        <FieldError>{errorMessage}</FieldError>
-      </AriaCheckboxGroup>
-    )
+      </div>
+      {description && <Description>{description}</Description>}
+      <FieldError>{errorMessage}</FieldError>
+    </AriaCheckboxGroup>
   );
 }

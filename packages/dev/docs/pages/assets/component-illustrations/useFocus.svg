@@ -4,6 +4,6 @@
     <rect width="200" height="30" rx="5" stroke="none"/>
     <rect x="1" y="1" width="198" height="28" rx="4" fill="none"/>
   </g>
-  <text id="Text" transform="translate(11 20)" fill="var(--anatomy-gray-900)" font-size="10" font-family="Adobe-Clean"><tspan x="0" y="0"> </tspan></text>
+  <text id="Text" transform="translate(11 20)" fill="var(--anatomy-gray-900)" font-size="10" font-family="var(--anatomy-font)"><tspan x="0" y="0"> </tspan></text>
   <rect id="Caret" width="1" height="19" transform="translate(11 5)" fill="var(--anatomy-gray-900)"/>
 </svg>

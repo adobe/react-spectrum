@@ -11,6 +11,7 @@ import {
   Breadcrumbs,
   Button,
   ButtonGroup,
+  Calendar,
   Checkbox,
   CheckboxGroup,
   CloseButton,
@@ -25,6 +26,9 @@ import {
   Content,
   ContextualHelp,
   CustomDialog,
+  DateField,
+  DatePicker,
+  DateRangePicker,
   Dialog,
   DialogContainer,
   DialogTrigger,
@@ -35,6 +39,7 @@ import {
   DropZone,
   Footer,
   Form,
+  FullscreenDialog,
   Header,
   Heading,
   IllustratedMessage,
@@ -51,10 +56,13 @@ import {
   ProgressCircle,
   Radio,
   RadioGroup,
+  RangeCalendar,
   RangeSlider,
   SearchField,
   SegmentedControl,
   SegmentedControlItem,
+  SelectBox,
+  SelectBoxGroup,
   Slider,
   StatusLight,
   Switch,
@@ -67,12 +75,17 @@ import {
   Text,
   TextArea,
   TextField,
+  TimeField,
   Tooltip,
   TooltipTrigger,
 } from "@react-spectrum/s2";
 import Checkmark from '@react-spectrum/s2/illustrations/gradient/generic1/Checkmark';
 import Cloud from "@react-spectrum/s2/illustrations/linear/Cloud";
 import DropToUpload from "@react-spectrum/s2/illustrations/linear/DropToUpload";
+import Server from "@react-spectrum/s2/illustrations/linear/Server";
+import AlertNotice from "@react-spectrum/s2/illustrations/linear/AlertNotice";
+import PaperAirplane from "@react-spectrum/s2/illustrations/linear/Paperairplane";
+import StarFilled1 from "@react-spectrum/s2/illustrations/linear/Star";
 import Edit from "@react-spectrum/s2/icons/Edit";
 import Section from "./components/Section";
 import { style } from "@react-spectrum/s2/style" with { type: "macro" };
@@ -82,7 +95,7 @@ export default function Lazy() {
   return (
     <>
       <Section title="Color">
-        <ColorField label="Primary Color" />
+        <ColorField placeholder="-" label="Primary Color" />
         <ColorSwatchPicker>
           <ColorSwatch color="#A00" />
           <ColorSwatch color="#f80" />
@@ -94,6 +107,15 @@ export default function Lazy() {
         <ColorSlider defaultValue="#7f0000" channel="red" />
         <ColorArea defaultValue="#7f0000" />
         <ColorWheel defaultValue="hsl(30, 100%, 50%)" />
+      </Section>
+
+      <Section title="Date and time">
+        <Calendar aria-label="Calendar" />
+        <DateField label="Date Field" />
+        <DatePicker label="Date Picker" />
+        <DateRangePicker label="Date Range Picker" />
+        <RangeCalendar aria-label="Range Calendar" />
+        <TimeField label="Time Field" />
       </Section>
 
       <Section title="Drag and Drop">
@@ -117,16 +139,36 @@ export default function Lazy() {
             <Checkbox value="baseball">Baseball</Checkbox>
             <Checkbox value="basketball">Basketball</Checkbox>
           </CheckboxGroup>
-          <NumberField label="Width" defaultValue={1024} minValue={0} />
+          <NumberField placeholder="Enter a width" label="Width" defaultValue={1024} minValue={0} />
           <RadioGroup label="Favorite pet">
             <Radio value="dogs">Dogs</Radio>
             <Radio value="cats">Cats</Radio>
           </RadioGroup>
           <SearchField label="Search" />
           <Switch>Low power mode</Switch>
-          <TextArea label="Description" />
-          <TextField label="Email" />
-          <TextField label="Password" />
+          <TextArea placeholder="Enter a description" label="Description" />
+          <TextField placeholder="Enter a email" label="Email" />
+          <TextField placeholder="Enter a password" label="Password" />
+          <SelectBoxGroup aria-label="Choose a cloud">
+            <SelectBox id="aws" textValue="Amazon Web Services">
+              <Server />
+              <Text slot="label">Amazon Web Services</Text>
+              <Text slot="description">Reliable cloud infrastructure</Text>
+            </SelectBox>
+            <SelectBox id="azure" textValue="Microsoft Azure">
+              <AlertNotice />
+              <Text slot="label">Microsoft Azure</Text>
+            </SelectBox>
+            <SelectBox id="gcp" textValue="Google Cloud Platform">
+              <PaperAirplane />
+              <Text slot="label">Google Cloud Platform</Text>
+            </SelectBox>
+            <SelectBox id="ibm" textValue="IBM Cloud">
+              <StarFilled1 />
+              <Text slot="label">IBM Cloud</Text>
+              <Text slot="description">Hybrid cloud solutions</Text>
+            </SelectBox>
+          </SelectBoxGroup>
         </Form>
       </Section>
 
@@ -274,6 +316,26 @@ export default function Lazy() {
           </Popover>
         </DialogTrigger>
 
+        <DialogTrigger>
+          <Button variant="primary">Fullscreen</Button>
+          <FullscreenDialog>
+            {({close}) => <>
+                <Heading slot="title">Dialog title</Heading>
+                <Header>Header</Header>
+                <Content>
+                  {[...Array(5)].map((_, i) => <p key={i} style={{
+                    marginTop: i === 0 ? 0 : undefined,
+                    marginBottom: i === 4 ? 0 : undefined
+                  }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>)}
+                </Content>
+                <ButtonGroup>
+                  <Button onPress={close} variant="secondary">Cancel</Button>
+                  <Button onPress={close} variant="accent">Save</Button>
+                </ButtonGroup>
+              </>}
+          </FullscreenDialog>
+        </DialogTrigger>
+
         <TooltipTrigger>
           <ActionButton aria-label="Edit Name">
             <Edit />
@@ -283,7 +345,7 @@ export default function Lazy() {
       </Section>
 
       <Section title="Pickers">
-        <ComboBox label="Favorite Animal">
+        <ComboBox placeholder="Select a value" label="Favorite Animal">
           <ComboBoxItem id="red panda">Red Panda</ComboBoxItem>
           <ComboBoxItem id="cat">Cat</ComboBoxItem>
           <ComboBoxItem id="dog">Dog</ComboBoxItem>

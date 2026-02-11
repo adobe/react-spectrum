@@ -53,9 +53,13 @@ describe('style-macro', () => {
   }
 }
 
+.-macro-static-mC40X {
+        --macro-data-mC40X: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
+      }
+
 "
 `);
-    expect(js).toMatchInlineSnapshot('" Jbs11 Jbpv11"');
+    expect(js).toMatchInlineSnapshot('" Jbs11 Jbpv11 -macro-static-mC40X"');
   });
 
   it('should support self references', () => {
@@ -114,10 +118,14 @@ describe('style-macro', () => {
   }
 }
 
+.-macro-static-tsMRCc {
+        --macro-data-tsMRCc: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
+      }
+
 "
 `);
 
-    expect(js).toMatchInlineSnapshot('" _kc11 hc11 mCPFGYc11 lc11 SMBFGYc11 Rv11 ZjUQgKd11 -m_-mc11 -S_-Sv11"');
+    expect(js).toMatchInlineSnapshot('" _kc11 hc11 mCPFGYc11 lc11 SMBFGYc11 Rv11 ZjUQgKd11 -m_-mc11 -S_-Sv11 -macro-static-tsMRCc"');
   });
 
   it('should support allowed overrides', () => {
@@ -134,9 +142,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gw11 pg11"');
-    expect(overrides).toMatchInlineSnapshot('" g8tmWqb11 pHJ3AUd11"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb11 pg11"');
+    expect(js()).toMatchInlineSnapshot('"  gw11 pg11 -macro-dynamic-fzoz9k"');
+    expect(overrides).toMatchInlineSnapshot('" g8tmWqb11 pHJ3AUd11 -macro-static-6fPtDe"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb11 pg11 -macro-dynamic-14zu1zo"');
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -151,9 +159,9 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B11 __Ya11"');
-    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D11 __Ya11"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D11 __Ya11"');
+    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B11 __Ya11 -macro-dynamic-1rpsnrt"');
+    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D11 __Ya11 -macro-static-jFmwje"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D11 __Ya11 -macro-dynamic-tac44b"');
   });
 
   it('should support allowed overrides for shorthands', () => {
@@ -168,9 +176,26 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  Tk11 Qk11 Sk11 Rk11"');
-    expect(overrides).toMatchInlineSnapshot('" Tm11 Qm11 Sm11 Rm11"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm11 Qm11 Sm11 Rm11"');
+    expect(js()).toMatchInlineSnapshot('"  Tk11 Qk11 Sk11 Rk11 -macro-dynamic-1uagxnx"');
+    expect(overrides).toMatchInlineSnapshot('" Tm11 Qm11 Sm11 Rm11 -macro-static-HAiDHe"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm11 Qm11 Sm11 Rm11 -macro-dynamic-z6gj5h"');
+  });
+
+  it('should support allowed overrides for fontSize', () => {
+    let {js} = testStyle(
+      {
+        fontSize: 'heading-3xl'
+      },
+      ['fontSize']
+    );
+
+    let {js: overrides} = testStyle({
+      fontSize: 'ui-xs'
+    });
+
+    expect(js()).toMatchInlineSnapshot('"  -_6BNtrc-woabcc11 vx11 -macro-dynamic-19c4w6w"');
+    expect(overrides).toMatchInlineSnapshot('" -_6BNtrc-a11 vx11 -macro-static-8Dmrwd"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_6BNtrc-a11 vx11 -macro-dynamic-wxgp0q"');
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -185,9 +210,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gE11"');
-    expect(overrides).toMatchInlineSnapshot('" Nk11"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk11 gE11"');
+    expect(js()).toMatchInlineSnapshot('"  gE11 -macro-dynamic-920d5p"');
+    expect(overrides).toMatchInlineSnapshot('" Nk11 -macro-static-Sd1YMd"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk11 gE11 -macro-dynamic-edgons"');
   });
 
   it('should support runtime conditions', () => {
@@ -241,9 +266,9 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  gH11 pt11"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF11 po11"');
-    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE11 pm11"');
+    expect(js({})).toMatchInlineSnapshot('"  gH11 pt11 -macro-dynamic-a7a79i"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF11 po11 -macro-dynamic-1k9yzmn"');
+    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE11 pm11 -macro-dynamic-mche3g"');
   });
 
   it('should support nested runtime conditions', () => {
@@ -284,10 +309,10 @@ describe('style-macro', () => {
 
 "
 `);
-    expect(js({})).toMatchInlineSnapshot('"  gH11"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF11"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h11"');
-    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot('"  g311"');
+    expect(js({})).toMatchInlineSnapshot('"  gH11 -macro-dynamic-mekoqo"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF11 -macro-dynamic-116khoe"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h11 -macro-dynamic-1jnopj3"');
+    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot('"  g311 -macro-dynamic-1z0ujm3"');
   });
 
   it('should support variant runtime conditions', () => {
@@ -301,9 +326,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY11"');
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe11"');
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw11"');
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY11 -macro-dynamic-3cafqp"');
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe11 -macro-dynamic-2y1aaz"');
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw11 -macro-dynamic-1tstllb"');
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -337,8 +362,8 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  plb11"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple11"');
+    expect(js({})).toMatchInlineSnapshot('"  plb11 -macro-dynamic-iaa0q7"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple11 -macro-dynamic-vmucb6"');
   });
 
   it('should expand shorthand properties to longhands', () => {
@@ -346,7 +371,7 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot('" Th11 Qh11 Sh11 Rh11"');
+    expect(js).toMatchInlineSnapshot('" Th11 Qh11 Sh11 Rh11 -macro-static-NBCUNc"');
     expect(css).toMatchInlineSnapshot(`
 "@layer _.a;
 
@@ -371,6 +396,10 @@ describe('style-macro', () => {
   }
 }
 
+.-macro-static-NBCUNc {
+        --macro-data-NBCUNc: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
+      }
+
 "
 `);
   });
@@ -388,6 +417,10 @@ describe('style-macro', () => {
     background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
   }
 }
+
+.-macro-static-dlPwdd {
+        --macro-data-dlPwdd: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
+      }
 
 "
 `);
@@ -409,6 +442,10 @@ describe('style-macro', () => {
     --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 }
+
+.-macro-static-FLGhGc {
+        --macro-data-FLGhGc: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
+      }
 
 "
 `);

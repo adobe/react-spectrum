@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import EmptyStateExport_L from 'illustration:./S2_lin_emptyStateExport_160.svg';
 import EmptyStateExport_M from 'illustration:./S2_lin_emptyStateExport_96.svg';
 import EmptyStateExport_S from 'illustration:./S2_lin_emptyStateExport_48.svg';

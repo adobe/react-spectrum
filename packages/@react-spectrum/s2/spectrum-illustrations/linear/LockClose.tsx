@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import LockClose_L from 'illustration:./S2_lin_lockClose_160.svg';
 import LockClose_M from 'illustration:./S2_lin_lockClose_96.svg';
 import LockClose_S from 'illustration:./S2_lin_lockClose_48.svg';

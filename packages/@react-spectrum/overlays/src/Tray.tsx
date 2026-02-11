@@ -72,7 +72,11 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: ForwardedRe
   // is up, so use the VisualViewport API to ensure the tray is displayed above the keyboard.
   let viewport = useViewportSize();
   let wrapperStyle: any = {
-    '--spectrum-visual-viewport-height': viewport.height + 'px'
+    '--spectrum-visual-viewport-height': viewport.height + 'px',
+    // position: fixed elements are clipped by Safari on iOS 26, so we use
+    // position: absolute and manually set the top to the scrollY.
+    // The page can't scroll while the tray is open so this doesn't need to update.
+    top: typeof window !== 'undefined' ? window.scrollY : 0
   };
 
   let wrapperClassName = classNames(

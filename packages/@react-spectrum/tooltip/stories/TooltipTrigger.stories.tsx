@@ -72,6 +72,9 @@ const argTypes = {
   },
   children: {
     control: {disable: true}
+  },
+  shouldCloseOnPress: {
+    control: 'boolean'
   }
 };
 
@@ -113,7 +116,8 @@ export default {
       <ActionButton aria-label="Edit Name"><Edit /></ActionButton>,
       <Tooltip>Change Name</Tooltip>
     ],
-    onOpenChange: action('openChange')
+    onOpenChange: action('openChange'),
+    shouldCloseOnPress: true
   },
   argTypes: argTypes
 } as Meta<typeof TooltipTrigger>;

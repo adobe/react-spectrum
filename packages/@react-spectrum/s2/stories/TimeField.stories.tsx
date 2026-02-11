@@ -11,9 +11,11 @@
  */
 
 import {Button, Content, ContextualHelp, Footer, Form, Heading, Link, Text, TimeField} from '../src';
-import {CalendarSwitcher, categorizeArgTypes} from './utils';
+import {CalendarSwitcher, categorizeArgTypes, getActionArgs} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
+
+const events = ['onChange'];
 
 const meta: Meta<typeof TimeField> = {
   component: TimeField,
@@ -22,12 +24,13 @@ const meta: Meta<typeof TimeField> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onChange']),
+    ...categorizeArgTypes('Events', events),
     label: {control: {type: 'text'}},
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
     contextualHelp: {table: {disable: true}}
   },
+  args: {...getActionArgs(events)},
   title: 'TimeField',
   decorators: [
     (Story) => (

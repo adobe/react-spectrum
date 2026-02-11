@@ -50,7 +50,7 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
             throw new Error('Could not determine key for item');
           }
            
-          if (idScope) {
+          if (idScope != null) {
             key = idScope + ':' + key;
           }
           // Note: only works if wrapped Item passes through id...

@@ -9,6 +9,26 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import agapanthus from 'url:./plants/agapanthus.jpg?as=webp';
+import aloe from 'url:./plants/aloe.jpg?as=webp';
+import dracaena from 'url:./plants/dracaena.jpg?as=webp';
+import fern from 'url:./plants/fern.jpg?as=webp';
+import fig from 'url:./plants/fig.jpg?as=webp';
+import gardenia from 'url:./plants/gardenia.jpg?as=webp';
+import ivy from 'url:./plants/ivy.jpg?as=webp';
+import jacaranda from 'url:./plants/jacaranda.jpg?as=webp';
+import maidenhair from 'url:./plants/maidenhair.jpg?as=webp';
+import money from 'url:./plants/money.jpg?as=webp';
+import monstera from 'url:./plants/monstera.jpg?as=webp';
+import morning from 'url:./plants/morning.jpg?as=webp';
+import nasturtium from 'url:./plants/nasturtium.jpg?as=webp';
+import oleander from 'url:./plants/oleander.jpg?as=webp';
+import poplar from 'url:./plants/poplar.jpg?as=webp';
+import spider from 'url:./plants/spider.jpg?as=webp';
+import star from 'url:./plants/star.jpg?as=webp';
+import tree_fern from 'url:./plants/tree_fern.jpg?as=webp';
+import xmas from 'url:./plants/xmas.jpg?as=webp';
+import zz from 'url:./plants/zz.jpg?as=webp';
 
 export interface Plant {
   id: number,
@@ -32,7 +52,7 @@ export default [
     sunlight: ['full sun'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/aloe.jpg?as=webp', import.meta.url).toString()
+      thumbnail: aloe
     }
   },
   {
@@ -43,7 +63,7 @@ export default [
     sunlight: ['full sun'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/jacaranda.jpg?as=webp', import.meta.url).toString()
+      thumbnail: jacaranda
     }
   },
   {
@@ -54,7 +74,7 @@ export default [
     sunlight: ['full sun'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/oleander.jpg?as=webp', import.meta.url).toString()
+      thumbnail: oleander
     }
   },
   {
@@ -65,7 +85,7 @@ export default [
     sunlight: ['full sun'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/poplar.jpg?as=webp', import.meta.url).toString()
+      thumbnail: poplar
     }
   },
   {
@@ -76,7 +96,7 @@ export default [
     sunlight: ['part sun'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/zz.jpg?as=webp', import.meta.url).toString()
+      thumbnail: zz
     }
   },
   {
@@ -87,7 +107,7 @@ export default [
     sunlight: ['full sun'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/morning.jpg?as=webp', import.meta.url).toString()
+      thumbnail: morning
     }
   },
   {
@@ -98,7 +118,7 @@ export default [
     sunlight: ['full sun'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/xmas.jpg?as=webp', import.meta.url).toString()
+      thumbnail: xmas
     }
   },
   {
@@ -109,7 +129,7 @@ export default [
     sunlight: ['part sun'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/gardenia.jpg?as=webp', import.meta.url).toString()
+      thumbnail: gardenia
     }
   },
   {
@@ -120,7 +140,7 @@ export default [
     sunlight: ['part sun'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/spider.jpg?as=webp', import.meta.url).toString()
+      thumbnail: spider
     }
   },
   {
@@ -131,7 +151,7 @@ export default [
     sunlight: ['part sun'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/money.jpg?as=webp', import.meta.url).toString()
+      thumbnail: money
     }
   },
   {
@@ -142,7 +162,7 @@ export default [
     sunlight: ['full sun'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/fig.jpg?as=webp', import.meta.url).toString()
+      thumbnail: fig
     }
   },
   {
@@ -153,7 +173,7 @@ export default [
     sunlight: ['part shade'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/fern.jpg?as=webp', import.meta.url).toString()
+      thumbnail: fern
     }
   },
   {
@@ -164,7 +184,7 @@ export default [
     sunlight: ['full sun'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/star.jpg?as=webp', import.meta.url).toString()
+      thumbnail: star
     }
   },
   {
@@ -175,7 +195,7 @@ export default [
     sunlight: ['part shade'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/monstera.jpg?as=webp', import.meta.url).toString()
+      thumbnail: monstera
     }
   },
   {
@@ -186,7 +206,7 @@ export default [
     sunlight: ['full sun'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/agapanthus.jpg?as=webp', import.meta.url).toString()
+      thumbnail: agapanthus
     }
   },
   {
@@ -197,7 +217,7 @@ export default [
     sunlight: ['part sun'],
     cycle: 'Annual',
     default_image: {
-      thumbnail: new URL('plants/tree_fern.jpg?as=webp', import.meta.url).toString()
+      thumbnail: tree_fern
     }
   },
   {
@@ -208,7 +228,7 @@ export default [
     sunlight: ['part sun'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/dracaena.jpg?as=webp', import.meta.url).toString()
+      thumbnail: dracaena
     }
   },
   {
@@ -219,7 +239,7 @@ export default [
     sunlight: ['part shade'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/maidenhair.jpg?as=webp', import.meta.url).toString()
+      thumbnail: maidenhair
     }
   },
   {
@@ -230,7 +250,7 @@ export default [
     sunlight: ['part sun'],
     cycle: 'Perennial',
     default_image: {
-      thumbnail: new URL('plants/ivy.jpg?as=webp', import.meta.url).toString()
+      thumbnail: ivy
     }
   },
   {
@@ -241,7 +261,7 @@ export default [
     sunlight: ['full sun'],
     cycle: 'Annual',
     default_image: {
-      thumbnail: new URL('plants/nasturtium.jpg?as=webp', import.meta.url).toString()
+      thumbnail: nasturtium
     }
   }
 ] as Plant[];

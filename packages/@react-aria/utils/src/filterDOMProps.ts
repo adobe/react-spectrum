@@ -114,7 +114,7 @@ export function filterDOMProps(props: DOMProps & AriaLabelingProps & LinkDOMProp
         (labelable && labelablePropNames.has(prop)) ||
         (isLink && linkPropNames.has(prop)) ||
         (global && globalAttrs.has(prop)) ||
-        (events && globalEvents.has(prop) || (prop.endsWith('Capture') && globalEvents.has(prop.slice(0, -7)))) ||
+        (events && (globalEvents.has(prop) || (prop.endsWith('Capture') && globalEvents.has(prop.slice(0, -7))))) ||
         propNames?.has(prop) ||
         propRe.test(prop)
       )

@@ -12,7 +12,7 @@
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, FieldError, Form, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, Popover, Select, SelectContext, SelectStateContext, SelectValue, Text} from '../';
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -26,9 +26,9 @@ let TestSelect = (props) => (
     <Text slot="errorMessage">Error</Text>
     <Popover>
       <ListBox>
-        <ListBoxItem>Cat</ListBoxItem>
-        <ListBoxItem>Dog</ListBoxItem>
-        <ListBoxItem>Kangaroo</ListBoxItem>
+        <ListBoxItem id="cat">Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
       </ListBox>
     </Popover>
   </Select>
@@ -91,6 +91,12 @@ describe('Select', () => {
     let trigger = selectTester.trigger;
     expect(trigger.closest('.react-aria-Select')).toHaveAttribute('slot', 'test');
     expect(trigger).toHaveAttribute('aria-label', 'test');
+  });
+
+  it('should support custom render function', () => {
+    let {getByTestId} =  render(<TestSelect render={props => <div {...props} data-custom="true" />} />);
+    let field = getByTestId('select');
+    expect(field).toHaveAttribute('data-custom', 'true');
   });
 
   it('supports items with render props', () => {
@@ -160,6 +166,30 @@ describe('Select', () => {
     let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
     let trigger = selectTester.trigger;
     expect(trigger).toHaveTextContent('Select an animal');
+  });
+
+  it('should support empty state', async () => {
+    let {getByTestId, getByRole} = render(
+      <Select data-testid="select" allowsEmptyCollection>
+        <Label>Favorite Animal</Label>
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover>
+          <ListBox aria-label="Test" renderEmptyState={() => 'No results'}>
+            {[]}
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+    await selectTester.open();
+
+    let listbox = getByRole('listbox');
+    expect(listbox).toHaveAttribute('data-empty', 'true');
+
+    let option = getByRole('option');
+    expect(option).toHaveTextContent('No results');
   });
 
   it('should support render props', async () => {
@@ -553,5 +583,177 @@ describe('Select', () => {
     await user.click(submit);
     expect(onSubmit).toHaveBeenCalledTimes(1);
     expect(document.querySelector('[name=select]').value).toBe('');
+  });
+
+  it('should support multiple selection', async () => {
+    let onChange = jest.fn();
+    let {getByTestId} = render(
+      <Form data-testid="form">
+        <TestSelect name="select" selectionMode="multiple" onChange={onChange} />
+      </Form>
+    );
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
+
+    let trigger = selectTester.trigger;
+    expect(trigger).toHaveTextContent('Select an item');
+
+    await selectTester.open();
+
+    let listbox = selectTester.listbox;
+    expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
+
+    let options = selectTester.options();
+    expect(options).toHaveLength(3);
+
+    await user.click(options[0]);
+    await user.click(options[1]);
+    expect(trigger).toHaveTextContent('Cat and Dog');
+    await selectTester.close();
+
+    expect(onChange).toHaveBeenCalledTimes(2);
+    expect(onChange).toHaveBeenLastCalledWith(['cat', 'dog']);
+
+    let formData = new FormData(getByTestId('form'));
+    expect(formData.getAll('select')).toEqual(['cat', 'dog']);
+  });
+
+  it('should support multiple selection form integration with many items', async () => {
+    let items = [];
+    for (let i = 0; i < 320; i++) {
+      items.push({id: i, name: 'item' + i});
+    }
+
+    let {getByTestId} = render(
+      <Form data-testid="form" onSubmit={e => e.preventDefault()}>
+        <Select data-testid="select" name="select" selectionMode="multiple" isRequired>
+          <Label>Select</Label>
+          <Button>
+            <SelectValue />
+          </Button>
+          <FieldError />
+          <Popover>
+            <ListBox items={items}>
+              {item => <ListBoxItem>{item.name}</ListBoxItem>}
+            </ListBox>
+          </Popover>
+        </Select>
+        <Button data-testid="submit" type="submit">Submit</Button>
+      </Form>
+    );
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
+
+    let trigger = selectTester.trigger;
+    expect(trigger).toHaveTextContent('Select an item');
+
+    let submit = getByTestId('submit');
+    await user.click(submit);
+
+    let fieldError = document.querySelector('.react-aria-FieldError');
+    expect(fieldError).toHaveTextContent('Constraints not satisfied');
+
+    await selectTester.open();
+
+    let options = selectTester.options();
+    await user.click(options[0]);
+    await user.click(options[1]);
+    await selectTester.close();
+    expect(trigger).toHaveTextContent('item0 and item1');
+
+    let formData = new FormData(getByTestId('form'));
+    expect(formData.getAll('select')).toEqual(['0', '1']);
+
+    await user.click(submit);
+    fieldError = document.querySelector('.react-aria-FieldError');
+    expect(fieldError).toBe(null);
+  });
+
+  it('should support controlled multi-selection', async () => {
+    let {getByTestId} = render(<TestSelect selectionMode="multiple" value={['dog', 'kangaroo']} />);
+
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
+
+    let trigger = selectTester.trigger;
+    expect(trigger).toHaveTextContent('Dog and Kangaroo');
+
+    await selectTester.open();
+
+    let options = selectTester.options();
+    expect(options[0]).toHaveAttribute('aria-selected', 'false');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+    expect(options[2]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('supports custom select value with multi-selection', async () => {
+    let items = [
+      {id: 1, name: 'Cat'},
+      {id: 2, name: 'Dog'}
+    ];
+
+    let {getByTestId} = render(
+      <Select data-testid="select" selectionMode="multiple" defaultValue={[1]}>
+        <Label>Favorite Animal</Label>
+        <Button>
+          <SelectValue>
+            {({selectedItems}) => (
+              selectedItems.length === 1 ? selectedItems[0]?.name : `${selectedItems.length} selected items`
+            )}
+          </SelectValue>
+        </Button>
+        <Popover>
+          <ListBox items={items}>
+            {item => <ListBoxItem>{item.name}</ListBoxItem>}
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+    let trigger = selectTester.trigger;
+    expect(trigger).toHaveTextContent('Cat');
+
+    await selectTester.selectOption({option: 'Dog'});
+    expect(trigger).toHaveTextContent('2 selected items');
+  });
+
+  it('has a value immediately after rendering', async () => {
+    function Example() {
+      const ref = useRef(null);
+      const [formData, setFormData] = useState(() => new FormData());
+
+      useEffect(() => {
+        if (ref.current) {
+          setFormData(new FormData(ref.current));
+        }
+      }, []);
+
+      const selectValue = formData.get('select');
+
+      if (selectValue instanceof File) {
+        throw new Error('');
+      }
+
+      return (
+        <form ref={ref}>
+          <Select name="select" defaultValue="1" aria-label="Select">
+            <Button>
+              <SelectValue />
+              <span aria-hidden="true">▼</span>
+            </Button>
+            <Popover>
+              <ListBox>
+                <ListBoxItem id="1">value</ListBoxItem>
+              </ListBox>
+            </Popover>
+          </Select>
+          <div data-testid="select-value">select value: {selectValue}</div>
+        </form>
+      );
+    }
+    let {getByTestId} = render(<Example />);
+    let selectValue = getByTestId('select-value');
+    expect(selectValue).toHaveTextContent('select value: 1');
   });
 });

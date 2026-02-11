@@ -49,7 +49,7 @@ There are many nuances to this, however. For example, when clicking a text input
 
 Another challenge is that focus events may occur without any preceding user event. For example, when navigating through a form with the next and previous buttons on the software keyboard in iOS, only a focus event is fired, with no keyboard or pointer events before it. This can also occur when navigating with an assistive technology like a screen reader. In these cases, we don’t know how the navigation occurred, so we default to showing the focus ring to ensure the user knows where focus went.
 
-However, we do not want programmatic `focus()` calls to affect the current input modality. The user may click on an element with the mouse, and in response focus is moved somewhere else programatically. For example, when clicking on a button to open a menu, focus is typically moved to the first menu item. However, because `focus` events are still fired when focusing an element programmatically, we need to ignore these events to ensure the focus ring does not appear or disappear based on programatic focus movement.
+However, we do not want programmatic `focus()` calls to affect the current input modality. The user may click on an element with the mouse, and in response focus is moved somewhere else programmatically. For example, when clicking on a button to open a menu, focus is typically moved to the first menu item. However, because `focus` events are still fired when focusing an element programmatically, we need to ignore these events to ensure the focus ring does not appear or disappear based on programmatic focus movement.
 
 There are also various inconsistencies in the number and order of focus events across browsers. For example, Firefox fires two extra focus events when the user first clicks on any element in an iframe: first on the window, then on the document. Finally, it fires a focus event on the element itself. We need to ignore these extra focus events so they don’t unintentionally cause the focus ring to appear when using a mouse.
 
@@ -67,7 +67,7 @@ Unfortunately, Safari both on macOS and iOS reaaaally doesn’t want to do this.
 
 Even with this setting turned on, however, Safari still does not focus buttons and other native form elements on mouse down or touch start. A [bug](https://bugs.webkit.org/show_bug.cgi?id=22261) for this has been open against WebKit since 2008, and it seems unlikely to be fixed any time soon. In this case, we do need to normalize this to ensure browsers are consistent. We can handle focusing the element programmatically on mouse down ourselves.
 
-However, it gets even more tricky on iOS. While on macOS, Safari will respect our programatic focus, on iOS the browser attempts to forcibly blur the element *asynchronously* sometime after the `onClick` event is fired. This means that even programmatically, focusing the button will not work. 🤯
+However, it gets even more tricky on iOS. While on macOS, Safari will respect our programmatic focus, on iOS the browser attempts to forcibly blur the element *asynchronously* sometime after the `onClick` event is fired. This means that even programmatically, focusing the button will not work. 🤯
 
 The only solution is to call `event.preventDefault()` on all mouse and touch events on the element, and handle focusing ourselves. This ensures that the browser does not perform any of its default behavior, including this forced blur, but it means that we’ll have to handle all of the default browser behavior ourselves.
 

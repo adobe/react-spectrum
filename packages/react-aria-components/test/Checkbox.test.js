@@ -40,6 +40,13 @@ describe('Checkbox', () => {
     expect(getByRole('checkbox')).not.toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support custom render function', () => {
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control
+    let {getByRole} = render(<Checkbox render={props => <label {...props} data-custom="bar" />}>Test</Checkbox>);
+    let checkbox = getByRole('checkbox').closest('label');
+    expect(checkbox).toHaveAttribute('data-custom', 'bar');
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <CheckboxContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
@@ -125,7 +132,8 @@ describe('Checkbox', () => {
   it('should support press state', async () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
-    let {getByRole} = render(<Checkbox className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick}>Test</Checkbox>);
+    let onClickCapture = jest.fn();
+    let {getByRole} = render(<Checkbox className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
 
     expect(checkbox).not.toHaveAttribute('data-pressed');
@@ -141,6 +149,7 @@ describe('Checkbox', () => {
 
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
   });
 
   it('should support press state with keyboard', async () => {
@@ -276,5 +285,28 @@ describe('Checkbox', () => {
     let {getByRole} = render(<Checkbox form="test">Test</Checkbox>);
     let checkbox = getByRole('checkbox');
     expect(checkbox).toHaveAttribute('form', 'test');
+  });
+
+
+  it('should not trigger onBlur/onFocus on sequential presses', async () => {
+    let onBlur = jest.fn();
+    let onFocus = jest.fn();
+    let {getByRole} = render(
+      <Checkbox onFocus={onFocus} onBlur={onBlur}>Test</Checkbox>
+    );
+
+    let checkbox = getByRole('checkbox');
+    let label = checkbox.closest('label');
+
+    await user.click(label);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onBlur).not.toHaveBeenCalled();
+
+    onFocus.mockClear();
+
+    await user.click(label);
+
+    expect(onBlur).not.toHaveBeenCalled();
+    expect(onFocus).not.toHaveBeenCalled();
   });
 });

@@ -693,6 +693,43 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
           expect(nestedSubmenu).not.toBeInTheDocument();
           expect(document.activeElement).toBe(nestedSubmenuTrigger);
         });
+
+        it('should close the submenu if another item in the same menu is focused', async () => {
+          let tree = (renderers.submenus!)();
+          let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+          await menuTester.open();
+          let menu = menuTester.menu;
+          let submenuTrigger = menuTester.submenuTriggers[0];
+          let submenuUtil = (await menuTester.openSubmenu({submenuTrigger}))!;
+          act(() => {jest.runAllTimers();});
+          let submenu = submenuUtil.menu;
+          expect(submenu).toBeInTheDocument();
+          let nestedSubmenuTrigger = submenuUtil.submenuTriggers[0];
+          let nestedSubmenuUtil = (await submenuUtil.openSubmenu({submenuTrigger: nestedSubmenuTrigger}))!;
+          act(() => {jest.runAllTimers();});
+          let nestedSubmenu = nestedSubmenuUtil.menu;
+          expect(submenu).toBeInTheDocument();
+          await user.hover(menuTester.options()[0]);
+          act(() => {jest.runAllTimers();});
+          expect(nestedSubmenu).not.toBeInTheDocument();
+          expect(submenu).not.toBeInTheDocument();
+          expect(menu).toBeInTheDocument();
+        });
+
+        it('should retain focus on the submenu trigger when hovering it', async () => {
+          let tree = (renderers.submenus!)();
+          let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+          await menuTester.open();
+          await user.hover(menuTester.submenuTriggers[0]);
+          act(() => {jest.runAllTimers();});
+          expect(menuTester.submenuTriggers[0]).toHaveAttribute('aria-expanded', 'true');
+          expect(document.activeElement).toBe(menuTester.submenuTriggers[0]);
+
+          // It should also allow the user to move focus into the submenu via ArrowRight
+          await user.keyboard('{ArrowRight}');
+          let submenu = tree.getAllByRole('menu')[1];
+          expect(document.activeElement).toBe(within(submenu).getAllByRole('menuitem')[0]);
+        });
       });
     }
 

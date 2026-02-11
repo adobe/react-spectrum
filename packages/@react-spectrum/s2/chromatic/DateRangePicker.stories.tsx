@@ -120,3 +120,12 @@ export const OpenPickerWithTime: Story = {
     }
   }
 };
+
+export const FirstDayOfWeek: Story = {
+  args: {
+    label: 'Date of birth',
+    firstDayOfWeek: 'wed',
+    value: {start: startDate, end: endDate}
+  },
+  play: OpenPicker.play
+};

@@ -127,6 +127,14 @@ exports[`variants 1`] = `
     background-color: var(--color-red);
   }
 }
+.active\\:bg-red {
+  &:where([data-rac])[data-active] {
+    background-color: var(--color-red);
+  }
+  &:where(:not([data-rac])):active {
+    background-color: var(--color-red);
+  }
+}
 .disabled\\:bg-red {
   &:where([data-rac])[data-disabled] {
     background-color: var(--color-red);
@@ -579,6 +587,11 @@ exports[`variants with prefix 1`] = `
 }
 .rac-pressed\\:bg-red {
   &[data-pressed] {
+    background-color: var(--color-red);
+  }
+}
+.rac-active\\:bg-red {
+  &[data-active] {
     background-color: var(--color-red);
   }
 }

@@ -10,11 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
-import {chain, filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
-import {DOMAttributes, GroupDOMAttributes, TextInputDOMProps, ValidationResult} from '@react-types/shared';
+import {chain, filterDOMProps, getActiveElement, getEventTarget, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {
+  type ClipboardEvent,
+  type ClipboardEventHandler,
   InputHTMLAttributes,
   LabelHTMLAttributes,
   RefObject,
@@ -22,6 +24,8 @@ import {
   useMemo,
   useState
 } from 'react';
+import {DOMAttributes, GroupDOMAttributes, TextInputDOMProps, ValidationResult} from '@react-types/shared';
+import {flushSync} from 'react-dom';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {NumberFieldState} from '@react-stately/numberfield';
@@ -41,9 +45,9 @@ export interface NumberFieldAria extends ValidationResult {
   groupProps: GroupDOMAttributes,
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  /** Props for the increment button, to be passed to [useButton](useButton.html). */
+  /** Props for the increment button, to be passed to `useButton`. */
   incrementButtonProps: AriaButtonProps,
-  /** Props for the decrement button, to be passed to [useButton](useButton.html). */
+  /** Props for the decrement button, to be passed to `useButton`. */
   decrementButtonProps: AriaButtonProps,
   /** Props for the number field's description element, if any. */
   descriptionProps: DOMAttributes,
@@ -91,12 +95,22 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   } = state;
 
   const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/numberfield');
+  let commitAndAnnounce = useCallback(() => {
+    let oldValue = inputRef.current?.value ?? '';
+    // Set input value to normalized valid value
+    flushSync(() => {
+      commit();
+    });
+
+    if (inputRef.current?.value !== oldValue) {
+      announce(inputRef.current?.value ?? '', 'assertive');
+    }
+  }, [commit, inputRef]);
 
   let inputId = useId(id);
   let {focusProps} = useFocus({
     onBlur() {
-      // Set input value to normalized valid value
-      commit();
+      commitAndAnnounce();
     }
   });
 
@@ -181,6 +195,23 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     }
   };
 
+  let onPaste: ClipboardEventHandler<HTMLInputElement> = (e: ClipboardEvent<HTMLInputElement>) => {
+    props.onPaste?.(e);
+    let inputElement = getEventTarget(e) as HTMLInputElement;
+    // we can only handle the case where the paste takes over the entire input, otherwise things get very complicated
+    // trying to calculate the new string based on what the paste is replacing and where in the source string it is
+    if (inputElement &&
+      ((inputElement.selectionEnd ?? -1) - (inputElement.selectionStart ?? 0)) === inputElement.value.length
+    ) {
+      e.preventDefault();
+      // commit so that the user gets to see what it formats to immediately
+      // paste happens before inputRef's value is updated, so have to prevent the default and do it ourselves
+      // spin button will then handle announcing the new value, this should work with controlled state as well
+      // because the announcement is done as a result of the new rendered input value if there is one
+      commit(e.clipboardData?.getData?.('text/plain')?.trim() ?? '');
+    }
+  };
+
   let domProps = filterDOMProps(props);
   let onKeyDownEnter = useCallback((e) => {
     if (e.nativeEvent.isComposing) {
@@ -223,6 +254,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     onFocusChange,
     onKeyDown: useMemo(() => chain(onKeyDownEnter, onKeyDown), [onKeyDownEnter, onKeyDown]),
     onKeyUp,
+    onPaste,
     description,
     errorMessage
   }, state, inputRef);
@@ -254,7 +286,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   let onButtonPressStart = (e) => {
     // If focus is already on the input, keep it there so we don't hide the
     // software keyboard when tapping the increment/decrement buttons.
-    if (document.activeElement === inputRef.current) {
+    if (getActiveElement() === inputRef.current) {
       return;
     }
 

@@ -11,7 +11,7 @@
  */
 
 import {action} from 'storybook/actions';
-import {Button, ButtonGroup, UNSTABLE_ToastContainer as ToastContainer, UNSTABLE_ToastQueue as ToastQueue} from '../src';
+import {Button, ButtonGroup, ToastContainer, ToastQueue} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import {SpectrumToast, SpectrumToastValue, ToastOptions, ToastPlacement} from '../src/Toast';
 import {UNSTABLE_ToastStateContext} from 'react-aria-components';
@@ -78,6 +78,11 @@ export const Example: Story = {
           onPress={() => ToastQueue.info('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', {...args, onClose: action('onClose')})}
           variant="accent">
           Show Long Toast
+        </Button>
+        <Button
+          onPress={() => ToastQueue.info('LoremipsumdolorsitametconsecteturadipiscingelitseddoeiusmodtemporincididuntutlaboreetdoloremagnaaliquaUtenimaminimveniamquisnostrudexercitationullamcolaborisnisiutaliquipeacommodoconsequat.', {...args, onClose: action('onClose')})}
+          variant="accent">
+          Show Long Word Toast
         </Button>
       </ButtonGroup>
     </>

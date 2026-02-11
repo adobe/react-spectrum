@@ -1,0 +1,14 @@
+<svg style="background:var(--anatomy-gray-100); padding: 60px 10px" height="32" viewBox="0 0 180 32">
+  <rect id="Placement_Area" data-name="Placement Area" width="180" height="32" fill="red" opacity="0"/>
+  <g id="Container" fill="var(--anatomy-gray-200)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+    <rect width="180" height="32" rx="8" stroke="none"/>
+    <rect x="0.5" y="0.5" width="179" height="31" rx="7.5" fill="none"/>
+  </g>
+  <g id="Selected_Segment" transform="translate(2 2)" fill="var(--anatomy-gray-700)" stroke="rgba(0,0,0,0)" stroke-width="1">
+    <rect width="58" height="28" rx="6" stroke="none"/>
+    <rect x="0.5" y="0.5" width="57" height="27" rx="5.5" fill="none"/>
+  </g>
+  <text id="Text_1" transform="translate(31 20)" fill="white" font-size="12" font-family="var(--anatomy-font)" font-weight="600" text-anchor="middle"><tspan x="0" y="0">Day</tspan></text>
+  <text id="Text_2" transform="translate(90 20)" fill="var(--anatomy-gray-700)" font-size="12" font-family="var(--anatomy-font)" font-weight="600" text-anchor="middle"><tspan x="0" y="0">Week</tspan></text>
+  <text id="Text_3" transform="translate(149 20)" fill="var(--anatomy-gray-700)" font-size="12" font-family="var(--anatomy-font)" font-weight="600" text-anchor="middle"><tspan x="0" y="0">Month</tspan></text>
+</svg>

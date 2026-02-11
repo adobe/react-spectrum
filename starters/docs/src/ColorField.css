@@ -1,42 +1,7 @@
 @import "./theme.css";
+@import "./TextField.css";
 
 .react-aria-ColorField {
   display: flex;
   flex-direction: column;
-  color: var(--text-color);
-
-  .react-aria-Input {
-    padding: 0.25025rem;
-    margin: 0;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    background: var(--field-background);
-    font-size: 1.000125rem;
-    color: var(--field-text-color);
-    width: 100%;
-    max-width: 12ch;
-    box-sizing: border-box;
-
-    &[data-focused] {
-      outline: 2px solid var(--focus-ring-color);
-      outline-offset: -1px;
-    }
-  }
-
-  &[data-invalid] {
-    .react-aria-Input {
-      border-color: var(--invalid-color);
-    }
-  }
-
-  [slot=description] {
-    font-size: 12px;
-  }
-
-  .react-aria-Input {
-    &[data-disabled] {
-      border-color: var(--border-color-disabled);
-      color: var(--text-color-disabled);
-    }
-  }
 }

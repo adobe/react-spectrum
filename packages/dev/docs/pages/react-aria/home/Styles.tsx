@@ -9,10 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+'use client';
 import {AddressBar, FileTab, Scrollable, Window} from './components';
 import {animate, AnimationPlaybackControls, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform} from 'motion/react';
+import {Button} from 'vanilla-starter/Button';
 import {
-  Button,
   Collection,
   Key,
   Tab,
@@ -21,11 +22,12 @@ import {
   Tabs
 } from 'react-aria-components';
 import {ComboBox, ComboBoxItem} from 'tailwind-starter/ComboBox';
-import {DatePicker} from 'tailwind-starter/DatePicker';
+import {DatePicker} from 'vanilla-starter/DatePicker';
 import React, {ReactNode, useCallback, useEffect, useRef, useState} from 'react';
-import {Slider} from 'tailwind-starter/Slider';
+import {Slider} from 'vanilla-starter/Slider';
 
-export function Styles(): ReactNode {
+export function Styles({children}): ReactNode {
+  let [styling, css, tailwind, styledComponents, panda] = children;
   return (
     <AnimatedTabs
       tabs={[
@@ -44,20 +46,20 @@ export function Styles(): ReactNode {
               }>
               <div className="grid grid-cols-1 lg:grid-cols-2 bg-gray-50 dark:bg-zinc-800/80 dark:backdrop-saturate-200">
                 <Scrollable className="rounded-bl-lg">
-                  <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styling')!.innerHTML}} />
+                  {styling}
                 </Scrollable>
                 <div className="flex flex-row px-3 lg:hidden bg-gray-200/80 backdrop-blur-md dark:bg-zinc-700/80 border-y border-gray-300 dark:border-zinc-700">
                   <FileTab>DatePicker.css</FileTab>
                 </div>
                 <Scrollable className="rounded-br-lg lg:border-l lg:border-l-gray-200 dark:border-l-zinc-600">
-                  <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('css')!.innerHTML}} />
+                  {css}
                 </Scrollable>
               </div>
             </Window>
             <Window
               className="lg:absolute bottom-10 left-[16.5%] max-w-[350px] sm:w-[350px]"
               toolbar={<AddressBar>https://your-app.com</AddressBar>}>
-              <div className="flex items-center justify-center bg-gray-50 dark:bg-zinc-900 col-span-2 pt-12 pb-14 text-sm">
+              <div className="flex items-center justify-center bg-gray-50 dark:bg-zinc-900 col-span-2 box-border pt-12 pb-14 text-sm">
                 <DatePicker label="Date Planted" />
               </div>
             </Window>
@@ -69,11 +71,11 @@ export function Styles(): ReactNode {
           content: <div className="flex flex-col lg:flex-row gap-4">
             <Window className="flex-1 bg-gray-50 dark:bg-zinc-800/80 dark:backdrop-saturate-200" isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>}>
               <Scrollable className="rounded-b-lg">
-                <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('tailwind')!.innerHTML}} />
+                {tailwind}
               </Scrollable>
             </Window>
             <Window className=" max-w-[350px] sm:w-[350px]" toolbar={<AddressBar>https://your-app.com</AddressBar>}>
-              <div className="flex-1 flex flex-col w-full px-16 py-24 bg-gray-50 dark:bg-zinc-900">
+              <div className="flex-1 flex flex-col w-full box-border px-16 py-24 bg-gray-50 dark:bg-zinc-900">
                 <ComboBox label="Assignee" items={people} defaultSelectedKey={1}>
                   {item => (
                     <ComboBoxItem textValue={item.name}>
@@ -92,11 +94,11 @@ export function Styles(): ReactNode {
           content: <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Window isBackground toolbar={<FileTab>Slider.tsx</FileTab>} className="bg-gray-50 dark:bg-zinc-800/80 backdrop-saturate-200">
               <Scrollable className="rounded-b-lg">
-                <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styled-components')!.innerHTML}} />
+                {styledComponents}
               </Scrollable>
             </Window>
             <Window toolbar={<AddressBar>https://your-app.com</AddressBar>}>
-              <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-zinc-800 py-20">
+              <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-zinc-800 py-20 box-border">
                 <Slider label="Opacity" defaultValue={30} />
               </div>
             </Window>
@@ -108,12 +110,12 @@ export function Styles(): ReactNode {
           content: <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Window isBackground toolbar={<FileTab>Button.tsx</FileTab>} className="bg-gray-50 dark:bg-zinc-800/80 dark:backdrop-saturate-200">
               <Scrollable className="rounded-b-lg">
-                <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('panda')!.innerHTML}} />
+                {panda}
               </Scrollable>
             </Window>
             <Window toolbar={<AddressBar>https://your-app.com</AddressBar>}>
-              <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-zinc-800 py-20">
-                <Button className="bg-blue-600 text-white pressed:bg-blue-700 border border-white/10 rounded-lg px-4 py-2 cursor-default outline outline-0 focus-visible:outline-2 outline-blue-600 dark:outline-blue-500 outline-offset-2">
+              <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-zinc-800 py-20 box-border">
+                <Button className="bg-blue-600 text-white pressed:bg-blue-700 border border-white/10 rounded-lg box-border px-4 py-2 cursor-default outline outline-0 focus-visible:outline-2 outline-blue-600 dark:outline-blue-500 outline-offset-2">
                   Initiate launch sequence…
                 </Button>
               </div>

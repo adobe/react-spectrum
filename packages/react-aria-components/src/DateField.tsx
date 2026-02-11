@@ -10,7 +10,21 @@
  * governing permissions and limitations under the License.
  */
 import {AriaDateFieldProps, AriaTimeFieldProps, DateValue, HoverEvents, mergeProps, TimeValue, useDateField, useDateSegment, useFocusRing, useHover, useLocale, useTimeField} from 'react-aria';
-import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  Provider,
+  RACValidation,
+  removeDataAttributes,
+  RenderProps,
+  SlotProps,
+  StyleRenderProps,
+  useContextProps,
+  useRenderProps,
+  useSlot,
+  useSlottedContext
+} from './utils';
 import {createCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, TimeFieldState, useDateFieldState, useTimeFieldState} from 'react-stately';
 import {FieldErrorContext} from './FieldError';
@@ -38,10 +52,27 @@ export interface DateFieldRenderProps {
    * Whether the date field is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean
+  isDisabled: boolean,
+  /**
+   * Whether the date field is read only.
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean
 }
-export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
-export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
+export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-DateField'
+   */
+  className?: ClassNameOrFunction<DateFieldRenderProps>
+}
+export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-TimeField'
+   */
+  className?: ClassNameOrFunction<DateFieldRenderProps>
+}
 
 export const DateFieldContext = createContext<ContextValue<DateFieldProps<any>, HTMLDivElement>>(null);
 export const TimeFieldContext = createContext<ContextValue<TimeFieldProps<any>, HTMLDivElement>>(null);
@@ -81,7 +112,8 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
     values: {
       state,
       isInvalid: state.isInvalid,
-      isDisabled: state.isDisabled
+      isDisabled: state.isDisabled,
+      isReadOnly: state.isReadOnly
     },
     defaultClassName: 'react-aria-DateField'
   });
@@ -104,18 +136,19 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
         }],
         [FieldErrorContext, validation]
       ]}>
-      <div
+      <dom.div
         {...DOMProps}
         {...renderProps}
         ref={ref}
         slot={props.slot || undefined}
         data-invalid={state.isInvalid || undefined}
-        data-disabled={state.isDisabled || undefined} />
-      <HiddenDateInput 
+        data-disabled={state.isDisabled || undefined}
+        data-readonly={state.isReadOnly || undefined} />
+      <HiddenDateInput
         autoComplete={props.autoComplete}
         name={props.name}
         isDisabled={props.isDisabled}
-        state={state} />    
+        state={state} />
     </Provider>
   );
 });
@@ -152,7 +185,8 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
     values: {
       state,
       isInvalid: state.isInvalid,
-      isDisabled: state.isDisabled
+      isDisabled: state.isDisabled,
+      isReadOnly: state.isReadOnly
     },
     defaultClassName: 'react-aria-TimeField'
   });
@@ -175,13 +209,14 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
         }],
         [FieldErrorContext, validation]
       ]}>
-      <div
+      <dom.div
         {...DOMProps}
         {...renderProps}
         ref={ref}
         slot={props.slot || undefined}
-        data-invalid={state.isInvalid || undefined} 
-        data-disabled={state.isDisabled || undefined} />
+        data-invalid={state.isInvalid || undefined}
+        data-disabled={state.isDisabled || undefined}
+        data-readonly={state.isReadOnly || undefined} />
     </Provider>
   );
 });
@@ -216,6 +251,11 @@ export interface DateInputRenderProps {
 }
 
 export interface DateInputProps extends SlotProps, StyleRenderProps<DateInputRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-DateInput'
+   */
+  className?: ClassNameOrFunction<DateInputRenderProps>,
   children: (segment: IDateSegment) => ReactElement
 }
 
@@ -269,11 +309,12 @@ const DateInputInner = forwardRef((props: DateInputProps, ref: ForwardedRef<HTML
         ref={ref}
         slot={props.slot || undefined}
         className={className ?? 'react-aria-DateInput'}
+        isReadOnly={state.isReadOnly}
         isInvalid={state.isInvalid}
         isDisabled={state.isDisabled}>
         {state.segments.map((segment, i) => cloneElement(children(segment), {key: i}))}
       </Group>
-      <Input />
+      <Input className="" />
     </>
   );
 });
@@ -321,7 +362,12 @@ export interface DateSegmentRenderProps extends Omit<IDateSegment, 'isEditable'>
   type: DateSegmentType
 }
 
-export interface DateSegmentProps extends RenderProps<DateSegmentRenderProps>, HoverEvents, GlobalDOMAttributes<HTMLSpanElement> {
+export interface DateSegmentProps extends RenderProps<DateSegmentRenderProps, 'span'>, HoverEvents, GlobalDOMAttributes<HTMLSpanElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-DateSegment'
+   */
+  className?: ClassNameOrFunction<DateSegmentRenderProps>,
   segment: IDateSegment
 }
 
@@ -337,12 +383,11 @@ export const DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   let {segmentProps} = useDateSegment(segment, state, domRef);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({...otherProps, isDisabled: state.isDisabled || segment.type === 'literal'});
-  let {isEditable, ...segmentRest} = segment;
   let renderProps = useRenderProps({
     ...otherProps,
     values: {
-      ...segmentRest,
-      isReadOnly: !isEditable,
+      ...segment,
+      isReadOnly: state.isReadOnly,
       isInvalid: state.isInvalid,
       isDisabled: state.isDisabled,
       isHovered,
@@ -354,14 +399,14 @@ export const DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   });
 
   return (
-    <span
+    <dom.span
       {...mergeProps(filterDOMProps(otherProps, {global: true}), segmentProps, focusProps, hoverProps)}
       {...renderProps}
       style={segmentProps.style}
       ref={domRef}
       data-placeholder={segment.isPlaceholder || undefined}
       data-invalid={state.isInvalid || undefined}
-      data-readonly={!isEditable || undefined}
+      data-readonly={state.isReadOnly || undefined}
       data-disabled={state.isDisabled || undefined}
       data-type={segment.type}
       data-hovered={isHovered || undefined}

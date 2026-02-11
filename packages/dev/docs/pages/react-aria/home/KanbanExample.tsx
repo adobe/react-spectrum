@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+'use client';
 import {Button, DropIndicator, GridList, GridListItem, isTextDropItem, Text, useDragAndDrop} from 'react-aria-components';
 import {ListData, useListData} from 'react-stately';
 import React, {ReactNode} from 'react';
@@ -112,7 +113,7 @@ export function KanbanBoard(): ReactNode {
   });
 
   return (
-    <div className="grid grid-cols-[repeat(3,minmax(280px,1fr))] md:justify-center gap-4 -mx-8 px-8 py-8 overflow-auto relative snap-x snap-mandatory no-scrollbar">
+    <div className="grid grid-cols-[repeat(3,minmax(280px,1fr))] md:justify-center gap-4 -mx-8 box-border px-8 py-8 overflow-auto relative snap-x snap-mandatory no-scrollbar">
       <Column status="Open" list={list} itemClassName="selected:bg-green-100 selected:border-green-500 dark:selected:bg-green-900 dark:selected:border-green-700" />
       <Column status="In Progress" list={list} itemClassName="selected:bg-blue-100 selected:border-blue-500 dark:selected:bg-blue-900 dark:selected:border-blue-700" />
       <Column status="Closed" list={list} itemClassName="selected:bg-red-100 selected:border-red-500 dark:selected:bg-red-900 dark:selected:border-red-700" />
@@ -141,7 +142,7 @@ function Column({list, status, itemClassName}: ColumnProps) {
     renderDropIndicator(target) {
       return (
         <DropIndicator target={target} className="h-0 -my-1.5 -translate-y-[5px] -mx-2 invisible drop-target:visible">
-          <svg height={10} className="w-full stroke-blue-500 fill-none forced-colors:stroke-[Highlight]">
+          <svg height={10} className="block w-full stroke-blue-500 fill-none forced-colors:stroke-[Highlight]">
             <circle cx={5} cy={5} r={5 - 1} strokeWidth={2} />
             <line x1={20} x2="100%" transform="translate(-10 0)" y1={5} y2={5} strokeWidth={2} />
             <circle cx="100%" cy={5} r={5 - 1} transform="translate(-5 0)" strokeWidth={2} />
@@ -194,7 +195,7 @@ function Column({list, status, itemClassName}: ColumnProps) {
   return (
     <section className="flex flex-col gap-2 snap-center">
       <header>
-        <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 my-0">{status}</h3>
+        <h3 className="font-semibold text-base text-zinc-800 dark:text-zinc-200 m-0">{status}</h3>
         <span className="text-sm text-zinc-700 dark:text-zinc-400">{items.length} {items.length === 1 ? 'task' : 'tasks'}</span>
       </header>
       <GridList
@@ -203,7 +204,7 @@ function Column({list, status, itemClassName}: ColumnProps) {
         selectionMode="multiple"
         dragAndDropHooks={dragAndDropHooks}
         renderEmptyState={() => 'No tasks.'}
-        className="h-[320px] p-2 md:p-4 overflow-y-auto overflow-x-hidden relative outline outline-0 bg-white/70 dark:bg-zinc-900/60 backdrop-blur-sm border border-black/10 dark:border-white/10 bg-clip-padding text-gray-700 dark:text-zinc-400 flex flex-col gap-3 rounded-xl shadow-xl drop-target:bg-blue-200 dark:drop-target:bg-blue-800/60 drop-target:outline-2 outline-blue-500 forced-colors:outline-[Highlight] -outline-offset-2 empty:items-center empty:justify-center">
+        className="h-[320px] box-border p-2 md:p-4 overflow-y-auto overflow-x-hidden relative outline outline-0 bg-white/70 dark:bg-zinc-900/60 backdrop-blur-sm border border-black/10 dark:border-white/10 bg-clip-padding text-gray-700 dark:text-zinc-400 flex flex-col gap-3 rounded-xl shadow-xl drop-target:bg-blue-200 dark:drop-target:bg-blue-800/60 drop-target:outline-2 outline-blue-500 forced-colors:outline-[Highlight] -outline-offset-2 empty:items-center empty:justify-center">
         {item => <Card item={item} className={itemClassName} />}
       </GridList>
     </section>
@@ -218,7 +219,7 @@ interface CardProps {
 
 function Card({id, item, className}: CardProps) {
   return (
-    <GridListItem id={id} textValue={item.title} className={`group grid grid-cols-[1fr_auto] gap-1 p-2 rounded-lg border border-solid border-black/10 hover:border-black/20 dark:border-white/10 dark:hover:border-white/20 forced-colors:border-[ButtonBorder]! bg-white/80 dark:bg-zinc-900/70 bg-clip-padding hover:shadow-md selected:shadow-md dragging:opacity-50 transition text-slate-700 dark:text-slate-200 cursor-default select-none outline outline-0 outline-offset-2 focus-visible:outline-2 outline-blue-500 forced-colors:outline-[Highlight] forced-colors:text-[ButtonText]! forced-colors:selected:bg-[Highlight]! forced-colors:selected:text-[HighlightText]! forced-color-adjust-none ${className}`}>
+    <GridListItem id={id} textValue={item.title} className={`group grid grid-cols-[1fr_auto] gap-1 box-border p-2 rounded-lg border border-solid border-black/10 hover:border-black/20 dark:border-white/10 dark:hover:border-white/20 forced-colors:border-[ButtonBorder]! bg-white/80 dark:bg-zinc-900/70 bg-clip-padding hover:shadow-md selected:shadow-md dragging:opacity-50 transition text-slate-700 dark:text-slate-200 cursor-default select-none outline outline-0 outline-offset-2 focus-visible:outline-2 outline-blue-500 forced-colors:outline-[Highlight] forced-colors:text-[ButtonText]! forced-colors:selected:bg-[Highlight]! forced-colors:selected:text-[HighlightText]! forced-color-adjust-none ${className}`}>
       <span className="font-bold truncate">{item.title}</span>
       <span className="text-sm justify-self-end">{item.id}</span>
       <Text slot="description" className="text-sm line-clamp-2 col-span-2 text-slate-500 dark:text-zinc-300 forced-colors:text-inherit!">{item.description}</Text>

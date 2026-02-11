@@ -80,6 +80,12 @@ Zoned.story = {
   name: 'zoned'
 };
 
+export const ZonedPlaceholder: TimeFieldStory = () => render({placeholderValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]')});
+
+ZonedPlaceholder.story = {
+  name: 'zoned placeholder'
+};
+
 export const HideTimeZone: TimeFieldStory = () => render({defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]'), hideTimeZone: true});
 
 HideTimeZone.story = {

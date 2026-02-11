@@ -12,7 +12,7 @@
     "unplugin-parcel-macros": "^0.0.3"
   },
   "dependencies": {
-    "@react-spectrum/s2": "^0.0.0",
+    "@react-spectrum/s2": "latest",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-replace": "^5.0.5",
     "date-fns": "^2.16.1",

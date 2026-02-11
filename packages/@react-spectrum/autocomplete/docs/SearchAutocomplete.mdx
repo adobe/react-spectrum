@@ -52,7 +52,7 @@ after_version: 3.0.0
 ```
 
 ## Content
-SearchAutocomplete follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections.
+SearchAutocomplete follows the [Collection Components](collections.html) API, accepting both static and dynamic collections.
 Similar to [ComboBox](ComboBox.html), SearchAutocomplete accepts `<Item>` elements as children, each with a `key` prop. Basic usage of SearchAutocomplete, seen in the example above, shows multiple options populated with a string.
 Static collections, as in this example, can be used when the full list of options is known ahead of time.
 
@@ -234,7 +234,7 @@ See Icon's [labeling](workflow-icons.html#labeling) section and Avatar's [access
     <Item textValue="Mail">
       <Email size="S" />
       <Text>Mail</Text>
-      <Text slot="description">Send and recieve emails</Text>
+      <Text slot="description">Send and receive emails</Text>
     </Item>
     <Item textValue="File Explorer">
       <Folder size="S" />
@@ -295,7 +295,7 @@ See Icon's [labeling](workflow-icons.html#labeling) section and Avatar's [access
 SearchAutocomplete supports loading data asynchronously, and will display a progress circle reflecting the current load state,
 set by the `loadingState` prop. It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
 
-This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data. See the docs for more information.
+This example uses the [useAsyncList](react-aria:useAsyncList.html) hook to handle loading the data. See the docs for more information.
 
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
@@ -342,7 +342,7 @@ function AsyncLoadingExample() {
 
 ## Validation
 
-SearchAutocomplete supports the `isRequired` prop to ensure the user enters a value, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+SearchAutocomplete supports the `isRequired` prop to ensure the user enters a value, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](../forms) guide to learn more.
 
 When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically. Errors are displayed when the user blurs the search field or submits the form.
 

@@ -2425,7 +2425,6 @@ describe('ListView', function () {
 
           tree.rerender(<DragBetweenListsComplex secondListDnDOptions={{...mockUtilityOptions, onRootDrop: null, onInsert: null}} />);
           await user.tab({shift: true});
-          await user.tab({shift: true});
           await beginDrag(tree);
           await user.tab();
           // Should automatically jump to the folder target since we didn't provide onRootDrop and onInsert

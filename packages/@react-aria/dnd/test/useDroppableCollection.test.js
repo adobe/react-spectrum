@@ -56,7 +56,7 @@ describe('useDroppableCollection', () => {
       return this.getBoundingClientRect().top;
     });
 
-    jest.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function () {
+    jest.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(function () {
       return this.getBoundingClientRect().height;
     });
 

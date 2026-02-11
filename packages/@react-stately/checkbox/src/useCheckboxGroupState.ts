@@ -98,10 +98,12 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
       if (props.isReadOnly || props.isDisabled) {
         return;
       }
-      if (!selectedValues.includes(value)) {
-        selectedValues = selectedValues.concat(value);
-        setValue(selectedValues);
-      }
+      setValue(selectedValues => {
+        if (!selectedValues.includes(value)) {
+          return selectedValues.concat(value);
+        }
+        return selectedValues;
+      });
     },
     removeValue(value) {
       if (props.isReadOnly || props.isDisabled) {

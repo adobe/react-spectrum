@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import Paperairplane_L from 'illustration:./S2_fill_paperairplane_generic2_160.svg';
 import Paperairplane_M from 'illustration:./S2_fill_paperairplane_generic2_96.svg';
 import Paperairplane_S from 'illustration:./S2_fill_paperairplane_generic2_48.svg';

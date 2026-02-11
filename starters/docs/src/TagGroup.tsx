@@ -8,7 +8,7 @@ import {
   TagListProps,
   TagProps,
 } from 'react-aria-components';
-import {Label} from './Form';
+import {Description, Label} from './Form';
 import {Text} from './Content';
 import {X} from 'lucide-react';
 import './TagGroup.css';
@@ -36,11 +36,11 @@ export function TagGroup<T extends object>(
   return (
     (
       <AriaTagGroup {...props}>
-        <Label>{label}</Label>
+        {label && <Label>{label}</Label>}
         <TagList items={items} renderEmptyState={renderEmptyState}>
           {children}
         </TagList>
-        {description && <Text slot="description">{description}</Text>}
+        {description && <Description>{description}</Description>}
         {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
       </AriaTagGroup>
     )
@@ -55,11 +55,11 @@ export function Tag(
   let textValue = typeof children === 'string' ? children : undefined;
   return (
     (
-      <AriaTag textValue={textValue} {...props}>
+      <AriaTag textValue={textValue} {...props} className="react-aria-Tag button-base">
         {({ allowsRemoving }) => (
           <>
             {children}
-            {allowsRemoving && <Button slot="remove"><X size={12} /></Button>}
+            {allowsRemoving && <Button slot="remove" className="remove-button"><X /></Button>}
           </>
         )}
       </AriaTag>

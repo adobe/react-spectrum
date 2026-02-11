@@ -15,19 +15,6 @@ let props = {isQuiet: true};
 </div>"
 `;
 
-exports[`Removes placeholder 1`] = `
-"import { TextField } from "@react-spectrum/s2";
-let placeholder = 'is this actually removed?';
-let props = {placeholder: 'is this actually removed?'};
-<div>
-  <TextField />
-  <TextField />
-  <TextField />
-  <TextField // TODO(S2-upgrade): check this spread for style props
-  {...props} />
-</div>"
-`;
-
 exports[`changes validationState to isInvalid or nothing 1`] = `
 "import { TextField } from "@react-spectrum/s2";
 let validationState = 'invalid';

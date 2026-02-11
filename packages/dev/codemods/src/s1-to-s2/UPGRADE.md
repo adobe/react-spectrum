@@ -49,7 +49,6 @@ Note that `[PENDING]` indicates that future changes will occur before the final 
 
 ## ColorField
 - Remove `isQuiet` (it is no longer supported)
-- Remove `placeholder` (it has been removed for accessibility reasons)
 - Change `validationState=“invalid”` to `isInvalid`
 - Remove `validationState=“valid”` (it is no longer supported)
 
@@ -59,7 +58,6 @@ Note that `[PENDING]` indicates that future changes will occur before the final 
 - Change `menuWidth` value from a `DimensionValue` to a pixel value
 - Remove `isQuiet` (it is no longer supported)
 - [PENDING] Comment out `loadingState` (it has not been implemented yet)
-- Remove `placeholder` (it is no longer supported)
 - Change `validationState=“invalid”` to `isInvalid`
 - Remove `validationState=“valid”` (it is no longer supported)
 - [PENDING] Comment out `onLoadMore` (it has not been implemented yet)
@@ -134,7 +132,6 @@ Note that `[PENDING]` indicates that future changes will occur before the final 
 - Remove `showErrorIcon` (it has been removed for accessibility reasons)
 
 ## SearchField
-- Remove `placeholder` (it has been removed for accessibility reasons)
 - [PENDING] Comment out icon (it has not been implemented yet)
 - Remove `isQuiet` (it is no longer supported)
 - Change `validationState=“invalid”` to `isInvalid`
@@ -169,14 +166,12 @@ Note that `[PENDING]` indicates that future changes will occur before the final 
 ## TextArea
 - [PENDING] Comment out `icon` (it has not been implemented yet)
 - Remove `isQuiet` (it is no longer supported)
-- Remove `placeholder`  (it has been removed for accessibility reasons)
 - Change `validationState=“invalid”` to `isInvalid`
 - Remove `validationState=“valid”` (it is no longer supported)
 
 ## TextField
 - [PENDING] Comment out `icon` (it has not been implemented yet)
 - Remove `isQuiet` (it is no longer supported)
-- Remove `placeholder`  (it has been removed for accessibility reasons)
 - Change `validationState=“invalid”` to `isInvalid`
 - Remove `validationState=“valid”` (it is no longer supported)
 

@@ -6,12 +6,6 @@ exports[`Removes isQuiet 1`] = `
 <ColorField label="Primary Color" />"
 `;
 
-exports[`Removes placeholder 1`] = `
-"import { ColorField } from "@react-spectrum/s2";
-
-<ColorField label="Primary Color" />"
-`;
-
 exports[`changes validationState to isInvalid or nothing 1`] = `
 "import { ColorField } from "@react-spectrum/s2";
 let validationState = 'invalid';

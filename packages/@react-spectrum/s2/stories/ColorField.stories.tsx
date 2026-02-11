@@ -32,7 +32,11 @@ const meta: Meta<typeof ColorField> = {
     label: {control: {type: 'text'}},
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
-    contextualHelp: {table: {disable: true}}
+    contextualHelp: {table: {disable: true}},
+    placeholder: {control: {type: 'text'}}
+  },
+  args: {
+    placeholder: '######'
   },
   title: 'ColorField'
 };

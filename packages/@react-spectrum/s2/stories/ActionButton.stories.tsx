@@ -12,13 +12,15 @@
 
 import {ActionButton, Avatar, NotificationBadge, Provider, Text} from '../src';
 import BellIcon from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
-import {categorizeArgTypes, StaticColorDecorator} from './utils';
+import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
 import CommentIcon from '../s2wf-icons/S2_Icon_Comment_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style' with { type: 'macro' };
 import './unsafe.css';
 import {useNumberFormatter} from 'react-aria';
+
+const events = ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'];
 
 const meta: Meta<typeof ActionButton> = {
   component: ActionButton,
@@ -28,9 +30,10 @@ const meta: Meta<typeof ActionButton> = {
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp']),
+    ...categorizeArgTypes('Events', events),
     children: {table: {disable: true}}
   },
+  args: {...getActionArgs(events)},
   title: 'ActionButton'
 };
 
@@ -124,14 +127,14 @@ export const Fonts: Story = {
           <ActionButton {...args}><NewIcon /><Text>{messages['en-US'].cut}</Text></ActionButton>
           <ActionButton {...args}><NewIcon /><Text>{messages['en-US'].paste}</Text></ActionButton>
         </Provider>
-        Arabic (myriad-arabic)
+        Arabic (adobe-clean-arabic)
         <Provider locale="ar-AR" styles={style({display: 'contents'})}>
           <ActionButton {...args}><NewIcon /><Text>{messages['ar-AR'].button}</Text></ActionButton>
           <ActionButton {...args}><NewIcon /><Text>{messages['ar-AR'].copy}</Text></ActionButton>
           <ActionButton {...args}><NewIcon /><Text>{messages['ar-AR'].cut}</Text></ActionButton>
           <ActionButton {...args}><NewIcon /><Text>{messages['ar-AR'].paste}</Text></ActionButton>
         </Provider>
-        Hebrew (myriad-hebrew)
+        Hebrew (adobe-clean-hebrew)
         <Provider locale="he-IL" styles={style({display: 'contents'})}>
           <ActionButton {...args}><NewIcon /><Text>{messages['he-IL'].button}</Text></ActionButton>
           <ActionButton {...args}><NewIcon /><Text>{messages['he-IL'].copy}</Text></ActionButton>

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes, StaticColorDecorator, StaticColorProvider} from '../stories/utils';
+import {categorizeArgTypes, getActionArgs, StaticColorDecorator, StaticColorProvider} from '../stories/utils';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
@@ -19,6 +19,8 @@ import {shortName} from './utils';
 import {style} from '../style' with { type: 'macro' };
 import {Text, ToggleButton, ToggleButtonProps} from '../src';
 
+const events = ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange'];
+
 const meta: Meta<typeof ToggleButton> = {
   component: ToggleButton,
   parameters: {
@@ -26,8 +28,9 @@ const meta: Meta<typeof ToggleButton> = {
   },
   decorators: [StaticColorDecorator],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange'])
+    ...categorizeArgTypes('Events', events)
   },
+  args: {...getActionArgs(events)},
   title: 'S2 Chromatic/ToggleButton'
 };
 

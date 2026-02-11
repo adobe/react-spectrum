@@ -17,11 +17,11 @@ date: 2022-11-15
 
 # November 15, 2022 Release
 
-We are excited to announce the release of drag and drop support in [React Aria](https://react-spectrum.adobe.com/react-aria/dnd.html) and [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/dnd.html)! This includes a suite of hooks for implementing drag and drop interactions, with support for both mouse and touch, as well as full parity for keyboard and screen reader input. Check out our [blog post](https://react-spectrum.adobe.com/blog/drag-and-drop.html) for all the details!
+We are excited to announce the release of drag and drop support in [React Aria](react-aria:dnd) and [React Spectrum](../dnd.html)! This includes a suite of hooks for implementing drag and drop interactions, with support for both mouse and touch, as well as full parity for keyboard and screen reader input. Check out our [blog post](react-aria:blog/drag-and-drop) for all the details!
 
 This release also includes an update to all Spectrum colors, aligning React Spectrum with the latest Spectrum designs. Buttons also have a refreshed design, with improved accessibility, and additional variants.
 
-React Aria also includes a new API for overlays such as [popovers](https://react-spectrum.adobe.com/react-aria/usePopover.html) and [modals](https://react-spectrum.adobe.com/react-aria/useModalOverlay.html). It is designed to make building these components much easier than before, including builtin focus management, accessibility, scroll locking, and positioning.
+React Aria also includes a new API for overlays such as [popovers](react-aria:Popover/usePopover.html) and [modals](react-aria:Modal/useModalOverlay.html). It is designed to make building these components much easier than before, including builtin focus management, accessibility, scroll locking, and positioning.
 
 Finally, we have plenty of bug fixes and documentation updates. Thanks to all of our contributors who helped with this release 🤩
 
@@ -30,20 +30,20 @@ Finally, we have plenty of bug fixes and documentation updates. Thanks to all of
 **Drag and Drop**
 
 - React Spectrum
-    - [Introduction](https://react-spectrum.adobe.com/react-spectrum/dnd.html)
-    - [ListView](https://react-spectrum.adobe.com/react-spectrum/ListView.html#drag-and-drop)
+    - [Introduction](../dnd.html)
+    - [ListView](../ListView.html#drag-and-drop)
 - React Aria
-    - [Introduction](https://react-spectrum.adobe.com/react-aria/dnd.html)
-    - [useDrag](https://react-spectrum.adobe.com/react-aria/useDrag.html)
-    - [useDraggableCollection](https://react-spectrum.adobe.com/react-aria/useDraggableCollection.html)
-    - [useDrop](https://react-spectrum.adobe.com/react-aria/useDrop.html)
-    - [useDroppableCollection](https://react-spectrum.adobe.com/react-aria/useDroppableCollection.html)
-    - [useClipboard](https://react-spectrum.adobe.com/react-aria/useClipboard.html)
+    - [Introduction](react-aria:dnd)
+    - [useDrag](react-aria:useDrag)
+    - [useDraggableCollection](react-aria:useDraggableCollection.html)
+    - [useDrop](react-aria:useDrop)
+    - [useDroppableCollection](react-aria:useDroppableCollection.html)
+    - [useClipboard](react-aria:useClipboard)
 
 **Overlay hooks**
 
-- [usePopover](https://react-spectrum.adobe.com/react-aria/usePopover.html)
-- [useModalOverlay](https://react-spectrum.adobe.com/react-aria/useModalOverlay.html)
+- [usePopover](react-aria:Popover/usePopover.html)
+- [useModalOverlay](react-aria:Modal/useModalOverlay.html)
 
 ## Enhancements
 - Add SSR support for drag and drop - [@casperiv0](https://github.com/casperiv0) - [PR](https://github.com/adobe/react-spectrum/pull/3616)
@@ -53,7 +53,7 @@ Finally, we have plenty of bug fixes and documentation updates. Thanks to all of
 - Migrate React Spectrum to new overlay hooks - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3677)
 - Add `UNSAFE_className` prop to `TableView` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3722)
 ### Spectrum color update
-Spectrum design has updated their [color system](https://spectrum.adobe.com/page/color-fundamentals/) with an expanded palette, improved contrast, and increased vibrance. This update applies across all React Spectrum components automatically. You can also use the new Spectrum colors in your custom components using the [View](https://react-spectrum.adobe.com/react-spectrum/View.html) component, which now has a `colorVersion` prop enabling you to opt-in. See the [styling documentation](https://react-spectrum.adobe.com/react-spectrum/styling.html#color-values) for more details, and to view the full color palette.
+Spectrum design has updated their [color system](https://spectrum.adobe.com/page/color-fundamentals/) with an expanded palette, improved contrast, and increased vibrance. This update applies across all React Spectrum components automatically. You can also use the new Spectrum colors in your custom components using the [View](../View.html) component, which now has a `colorVersion` prop enabling you to opt-in. See the [styling documentation](../styling.html#color-values) for more details, and to view the full color palette.
 
 ### Design updates
 Spectrum has also updated the designs for Button, ActionButton, ActionGroup, and ToggleButton  with improved contrast and accessibility. Button includes new outline and fill options, as well as new static color options. ActionButton, ActionGroup, ToggleButton, Picker, TextField, and other field components now have darker borders and selected states for improved contrast.
@@ -65,7 +65,7 @@ The Button API has been updated to add new options, and deprecate some old ones.
 - Added `staticColor` prop, which replaces the deprecated `overBackground` variant.
 - Deprecated `isQuiet`.
 
-View the updates on our [Button docs](https://react-spectrum.adobe.com/react-spectrum/Button.html#visual-options) and [Spectrum Design docs](https://spectrum.adobe.com/page/button/#Accent-variant).
+View the updates on our [Button docs](../Button.html#visual-options) and [Spectrum Design docs](https://spectrum.adobe.com/page/button/#Accent-variant).
 
 ## Fixes
 - Avoid widening "type" prop of `TextInputDOMProps` - [@jossmac](https://github.com/jossmac) - [PR](https://github.com/adobe/react-spectrum/pull/3623)

@@ -18,11 +18,11 @@ date: 2023-10-02
 
 # October 02, 2023 Release
 
-In this release, we've added support for native links across all collection components in React Spectrum and React Aria! Now you can add links to components such as `Menu`, `Breadcrumbs`, `Tabs` and more. To streamline integration with client-side routers, we've introduced the `RouterProvider` component, allowing you to seamlessly incorporate client-side routers. See the [client-side routing guide](../react-aria/routing.html) to learn how it set it up in your app.
+In this release, we've added support for native links across all collection components in React Spectrum and React Aria! Now you can add links to components such as `Menu`, `Breadcrumbs`, `Tabs` and more. To streamline integration with client-side routers, we've introduced the `RouterProvider` component, allowing you to seamlessly incorporate client-side routers. See the [client-side routing guide](../routing.html) to learn how it set it up in your app.
 
-Since its beta release, we have made a number of improvements and bug fixes to [React Aria Components](../react-aria/react-aria-components.html). We have also added a new [advanced customization guide](../react-aria/advanced.html) that describes how to use contexts and hooks to build your own custom patterns using React Aria Components.
+Since its beta release, we have made a number of improvements and bug fixes to [React Aria Components](react-aria:). We have also added a new [advanced customization guide](react-aria:customization) that describes how to use contexts and hooks to build your own custom patterns using React Aria Components.
 
-For React Spectrum we have some new additions, including [DropZone](../react-spectrum/DropZone.html), static color support for [ProgressCircle](../react-spectrum/ProgressCircle.html#static-color) and [ProgressBar](../react-spectrum/ProgressBar.html#static-color), and support for [isPending](../react-spectrum/Button.html#pending) in `Button`.
+For React Spectrum we have some new additions, including [DropZone](../DropZone.html), static color support for [ProgressCircle](../ProgressCircle.html#static-color) and [ProgressBar](../ProgressBar.html#static-color), and support for [isPending](../Button.html#pending) in `Button`.
 
 As always, huge thanks to everyone in our community for their feedback and contributions to make this release possible!
 
@@ -33,7 +33,7 @@ This beta release of FileTrigger includes an API change. If you were using a pre
 
 ### Spectrum class name changes
 
-This release includes an important update to our build infrastructure that results in changes to the format of the CSS class names used by React Spectrum. If your app or tests are relying on CSS selectors such as `[class^="spectrum-Button"]`, you'll need to make updates. The simplest short-term solution is to change from `^=` (starts with) to `*=` (contains), but as a reminder, Spectrum class names are considered implementation details that may change at any time so you should not rely on them. Instead, we recommend using attributes like `role` or `data-testid` to query for elements in tests, and `ref` to access elements in components. See the [Testing](../react-spectrum/testing.html) guide to learn more.
+This release includes an important update to our build infrastructure that results in changes to the format of the CSS class names used by React Spectrum. If your app or tests are relying on CSS selectors such as `[class^="spectrum-Button"]`, you'll need to make updates. The simplest short-term solution is to change from `^=` (starts with) to `*=` (contains), but as a reminder, Spectrum class names are considered implementation details that may change at any time so you should not rely on them. Instead, we recommend using attributes like `role` or `data-testid` to query for elements in tests, and `ref` to access elements in components. See the [Testing](../testing.html) guide to learn more.
 
 ## Enhancements
 

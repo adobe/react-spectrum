@@ -137,6 +137,8 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     isDisabled,
     onAction: onAction || item?.props?.onAction ? chain(item?.props?.onAction, onAction) : undefined,
     linkBehavior: data?.linkBehavior,
+    // @ts-ignore
+    UNSTABLE_itemBehavior: data?.['UNSTABLE_itemBehavior'],
     id
   });
 

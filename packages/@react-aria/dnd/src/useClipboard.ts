@@ -143,7 +143,7 @@ export function useClipboard(options: ClipboardProps): ClipboardResult {
       addGlobalEventListener('beforepaste', onBeforePaste),
       addGlobalEventListener('paste', onPaste)
     );
-  }, [isDisabled, onBeforeCopy, onCopy, onBeforeCut, onCut, onBeforePaste, onPaste]);
+  }, [isDisabled]);
 
   return {
     clipboardProps: focusProps

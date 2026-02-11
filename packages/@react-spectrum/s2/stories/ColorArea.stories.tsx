@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes} from './utils';
+import {categorizeArgTypes, getActionArgs} from './utils';
 import {ColorArea} from '../src/ColorArea';
 import type {Meta, StoryObj} from '@storybook/react';
+
+const events = ['onChange', 'onChangeEnd'] as const;
 
 const meta: Meta<typeof ColorArea> = {
   component: ColorArea,
@@ -21,9 +23,10 @@ const meta: Meta<typeof ColorArea> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd']),
+    ...categorizeArgTypes('Events', [...events]),
     value: {control: {type: 'text'}}
   },
+  args: {...getActionArgs([...events])},
   title: 'ColorArea'
 };
 

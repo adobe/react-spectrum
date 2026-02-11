@@ -59,14 +59,14 @@ export interface SpectrumListViewProps<T> extends Omit<AriaGridListProps<T>, 'ke
   /**
    * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListView.
    */
-  dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks']
+  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>['dragAndDropHooks']
 }
 
 interface ListViewContextValue<T> {
   state: ListState<T>,
   dragState: DraggableCollectionState | null,
   dropState: DroppableCollectionState | null,
-  dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks'],
+  dragAndDropHooks?: DragAndDropHooks<T>['dragAndDropHooks'],
   onAction?: (key: Key) => void,
   isListDraggable: boolean,
   isListDroppable: boolean,

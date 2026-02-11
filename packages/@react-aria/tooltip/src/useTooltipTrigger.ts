@@ -36,7 +36,8 @@ export interface TooltipTriggerAria {
 export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTriggerState, ref: RefObject<FocusableElement | null>) : TooltipTriggerAria {
   let {
     isDisabled,
-    trigger
+    trigger,
+    shouldCloseOnPress = true
   } = props;
 
   let tooltipId = useId();
@@ -102,6 +103,10 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
   };
 
   let onPressStart = () => {
+    // if shouldCloseOnPress is false, we should not close the tooltip
+    if (!shouldCloseOnPress) {
+      return;
+    }
     // no matter how the trigger is pressed, we should close the tooltip
     isFocused.current = false;
     isHovered.current = false;
@@ -139,9 +144,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
       'aria-describedby': state.isOpen ? tooltipId : undefined,
       ...mergeProps(focusableProps, hoverProps, {
         onPointerDown: onPressStart,
-        onKeyDown: onPressStart,
-        tabIndex: undefined
-      })
+        onKeyDown: onPressStart
+      }),
+      tabIndex: undefined
     },
     tooltipProps: {
       id: tooltipId

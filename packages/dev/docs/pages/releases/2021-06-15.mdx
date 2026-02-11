@@ -17,28 +17,28 @@ date: 2021-06-15
 
 # June 15, 2021 Release
 
-Today we're excited to announce the stable release of Tabs! 🎉 [React Aria](https://react-spectrum.adobe.com/react-aria/useTabList.html) includes hooks for you to build your own tabs that are fully accessible and keyboard friendly, and [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/Tabs.html) includes some advanced behaviors like automatic collapsing when screen space is limited.
+Today we're excited to announce the stable release of Tabs! 🎉 [React Aria](react-aria:Tabs/useTabList.html) includes hooks for you to build your own tabs that are fully accessible and keyboard friendly, and [React Spectrum](../Tabs.html) includes some advanced behaviors like automatic collapsing when screen space is limited.
 
-Also in this release, React Spectrum's ActionGroup component has gained support for collapsing items that do not fit in the available space. In addition, the text labels of the buttons within an ActionGroup can now be hidden, and automatically displayed in a tooltip. See our [documentation](https://react-spectrum.adobe.com/react-spectrum/ActionGroup.html#collapsing-behavior) for more details about this behavior.
+Also in this release, React Spectrum's ActionGroup component has gained support for collapsing items that do not fit in the available space. In addition, the text labels of the buttons within an ActionGroup can now be hidden, and automatically displayed in a tooltip. See our [documentation](../ActionGroup.html#collapsing-behavior) for more details about this behavior.
 
-[ActionGroup](https://react-spectrum.adobe.com/react-spectrum/ActionGroup.html#static-color), [ActionButton](https://react-spectrum.adobe.com/react-spectrum/ActionButton.html#static-color), and [ToggleButton](https://react-spectrum.adobe.com/react-spectrum/ToggleButton.html#static-color) now also support a `staticColor` prop, which allows these components to be placed over a color background.
+[ActionGroup](../ActionGroup.html#static-color), [ActionButton](../ActionButton.html#static-color), and [ToggleButton](../ToggleButton.html#static-color) now also support a `staticColor` prop, which allows these components to be placed over a color background.
 
-Finally, thanks to [@so99ynoodles](https://github.com/so99ynoodles) and [@tomsontom](https://github.com/tomsontom), React Spectrum's style props have been upgraded, including support for [responsive breakpoints](https://react-spectrum.adobe.com/react-spectrum/layout.html#responsive-layout) and [CSS functions](https://react-spectrum.adobe.com/react-spectrum/styling.html#css-functions) like `calc()`.
+Finally, thanks to [@so99ynoodles](https://github.com/so99ynoodles) and [@tomsontom](https://github.com/tomsontom), React Spectrum's style props have been upgraded, including support for [responsive breakpoints](../layout.html#responsive-layout) and [CSS functions](../styling.html#css-functions) like `calc()`.
 
 Thank you to all our contributors for their support! 🤩
 
 ## New component
 - **Tabs**
-  - `@react-spectrum/tabs` - [Docs](https://react-spectrum.adobe.com/react-spectrum/Tabs.html)
-  - `@react-aria/tabs` - [Docs](https://react-spectrum.adobe.com/react-aria/useTabList.html)
-  - `@react-stately/tabs` - [Docs](https://react-spectrum.adobe.com/react-stately/useTabListState.html)
+  - `@react-spectrum/tabs` - [Docs](../Tabs.html)
+  - `@react-aria/tabs` - [Docs](react-aria:Tabs/useTabList.html)
+  - `@react-stately/tabs` - [Docs](react-aria:Tabs/useTabListState.html)
 
 ## New features
-- Add support for responsive style props - [@so99ynoodles](https://github.com/so99ynoodles) - [PR](https://github.com/adobe/react-spectrum/pull/1684) - [Docs](https://react-spectrum.adobe.com/react-spectrum/layout.html#responsive-layout)
-- Add support for CSS functions (e.g. `calc()`) in style props - [@tomsontom](https://github.com/tomsontom) - [PR](https://github.com/adobe/react-spectrum/pull/1774) - [Docs](https://react-spectrum.adobe.com/react-spectrum/styling.html#css-functions)
-- Add collapse behavior to ActionGroup - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1919) - [Docs](https://react-spectrum.adobe.com/react-spectrum/ActionGroup.html#collapsing-behavior)
-- Add `staticColor` option for ActionButton and ToggleButton - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1881) - [Docs](https://react-spectrum.adobe.com/react-spectrum/ActionButton.html#static-color)
-- Support for `left`/`right`/`start`/`end` directions in MenuTrigger - [@razvanip](https://github.com/razvanip) - [PR](https://github.com/adobe/react-spectrum/pull/1868) - [Docs](https://react-spectrum.adobe.com/react-spectrum/MenuTrigger.html#align-and-direction)
+- Add support for responsive style props - [@so99ynoodles](https://github.com/so99ynoodles) - [PR](https://github.com/adobe/react-spectrum/pull/1684) - [Docs](../layout.html#responsive-layout)
+- Add support for CSS functions (e.g. `calc()`) in style props - [@tomsontom](https://github.com/tomsontom) - [PR](https://github.com/adobe/react-spectrum/pull/1774) - [Docs](../styling.html#css-functions)
+- Add collapse behavior to ActionGroup - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1919) - [Docs](../ActionGroup.html#collapsing-behavior)
+- Add `staticColor` option for ActionButton and ToggleButton - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1881) - [Docs](../ActionButton.html#static-color)
+- Support for `left`/`right`/`start`/`end` directions in MenuTrigger - [@razvanip](https://github.com/razvanip) - [PR](https://github.com/adobe/react-spectrum/pull/1868) - [Docs](../MenuTrigger.html#align-and-direction)
 - Add `useFocusVisibleListener` hook for focus visible events - [@jluyau](https://github.com/jluyau) - [PR](https://github.com/adobe/react-spectrum/pull/1875)
 - Add screen reader announcements for selection changes in TableView - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1929)
 
@@ -80,9 +80,9 @@ Thank you to all our contributors for their support! 🤩
 Pre-release versions of the following components have been released. Please feel free to try them out, and report any issues you encounter.
 
 - ComboBox rc
-  - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ComboBox.html)
-  - [React Aria](https://react-spectrum.adobe.com/react-aria/useComboBox.html)
-  - [React Stately](https://react-spectrum.adobe.com/react-stately/useComboBoxState.html)
+  - [React Spectrum](../ComboBox.html)
+  - [React Aria](react-aria:ComboBox/useComboBox.html)
+  - [React Stately](react-aria:ComboBox/useComboBoxState.html)
 - TableView beta
   - Documentation coming soon
   - Please note, the name of the component in React Spectrum changed from `Table` to `TableView` in this release. Also, the `isLoading` prop is now `loadingState = "loading" | "loadingMore" | "sorting" | "filtering" | "error" | "idle"`.

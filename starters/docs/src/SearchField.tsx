@@ -6,9 +6,8 @@ import {
   SearchFieldProps as AriaSearchFieldProps,
   ValidationResult
 } from 'react-aria-components';
-import {Label, FieldError} from './Form';
-import {Text} from './Content';
-import {X} from 'lucide-react';
+import {Label, FieldError, Description} from './Form';
+import {Search, X} from 'lucide-react';
 import './SearchField.css';
 
 export interface SearchFieldProps extends AriaSearchFieldProps {
@@ -25,9 +24,10 @@ export function SearchField(
     (
       <AriaSearchField {...props}>
         {label && <Label>{label}</Label>}
-        <Input placeholder={placeholder} />
-        <Button><X size={14} /></Button>
-        {description && <Text slot="description">{description}</Text>}
+        <Search size={18} />
+        <Input placeholder={placeholder} className="react-aria-Input inset" />
+        <Button className="clear-button"><X size={14} /></Button>
+        {description && <Description>{description}</Description>}
         <FieldError>{errorMessage}</FieldError>
       </AriaSearchField>
     )

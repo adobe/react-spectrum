@@ -542,8 +542,7 @@ export default {};
         'globals-docs': false,
         lowlight: false,
         scheduler: false,
-        'markdown-to-jsx': false,
-        'prop-types': false
+        'markdown-to-jsx': false
       },
       shouldScopeHoist: false,
       shouldOptimize: false

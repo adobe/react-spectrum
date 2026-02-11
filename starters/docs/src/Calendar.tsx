@@ -27,9 +27,9 @@ export function Calendar<T extends DateValue>(
     (
       <AriaCalendar {...props}>
         <header>
-          <Button slot="previous"><ChevronLeft size={16} /></Button>
+          <Button slot="previous" variant="quiet"><ChevronLeft /></Button>
           <Heading />
-          <Button slot="next"><ChevronRight size={16} /></Button>
+          <Button slot="next" variant="quiet"><ChevronRight /></Button>
         </header>
         <CalendarGrid>
           {(date) => <CalendarCell date={date} />}
@@ -41,7 +41,9 @@ export function Calendar<T extends DateValue>(
 }
 
 export function CalendarCell(props: CalendarCellProps) {
-  return <AriaCalendarCell {...props} />;
+  return (
+    <AriaCalendarCell {...props} className="react-aria-CalendarCell button-base" data-variant="quiet" />
+  );
 }
 
 export function CalendarGrid(props: CalendarGridProps) {

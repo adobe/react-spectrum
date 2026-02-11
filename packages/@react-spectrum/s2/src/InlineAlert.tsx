@@ -121,7 +121,7 @@ const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
 }, getAllowedOverrides());
 
 const icon = style<InlineStylesProps>({
-  gridArea: 'icon',
+  float: 'inline-end',
   '--iconPrimary': {
     type: 'fill',
     value: {
@@ -155,18 +155,6 @@ const icon = style<InlineStylesProps>({
   }
 });
 
-const grid = style({
-  display: 'grid',
-  columnGap: 24,
-  gridTemplateColumns: '1fr auto',
-  gridTemplateRows: 'auto auto auto',
-  width: 'full',
-  gridTemplateAreas: [
-    'heading icon',
-    'content content'
-  ]
-});
-
 let ICONS = {
   informative: InfoCircle,
   positive: CheckmarkCircle,
@@ -177,7 +165,6 @@ let ICONS = {
 
 const heading = style({
   marginTop: 0,
-  gridArea: 'heading',
   font: 'title-sm',
   color: {
     default: 'title',
@@ -193,7 +180,6 @@ const heading = style({
 });
 
 const content = style({
-  gridArea: 'content',
   font: 'body-sm',
   color: {
     default: 'body',
@@ -256,18 +242,15 @@ export const InlineAlert = /*#__PURE__*/ forwardRef(function InlineAlert(props: 
         fillStyle,
         isFocusVisible
       }, props.styles)}>
-      <div
-        className={grid}>
-        <Provider
-          values={[
-            [HeadingContext, {styles: heading({fillStyle})}],
-            [ContentContext, {styles: content({fillStyle})}],
-            [IconContext, {styles: icon({variant, fillStyle})}]
-          ]}>
-          {Icon && <Icon aria-label={iconAlt} />}
-          {children}
-        </Provider>
-      </div>
+      <Provider
+        values={[
+          [HeadingContext, {styles: heading({fillStyle})}],
+          [ContentContext, {styles: content({fillStyle})}],
+          [IconContext, {styles: icon({variant, fillStyle})}]
+        ]}>
+        {Icon && <Icon aria-label={iconAlt} />}
+        {children}
+      </Provider>
     </div>
   );
 });

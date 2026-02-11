@@ -1,7 +1,7 @@
 
+import {nodeContains, useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {RefObject} from '@react-types/shared';
 import {useEffect, useRef, useState} from 'react';
-import {useEffectEvent, useResizeObserver} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
 
 interface SafelyMouseToSubmenuOptions {
@@ -67,7 +67,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): v
     }
   }, [menuRef, preventPointerEvents]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let submenu = submenuRef.current;
     let menu = menuRef.current;
 
@@ -148,7 +148,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): v
             // Fire a pointerover event to trigger the menu to close.
             // Wait until pointer-events:none is no longer applied
             let target = document.elementFromPoint(mouseX, mouseY);
-            if (target && menu.contains(target)) {
+            if (target && nodeContains(menu, target)) {
               target.dispatchEvent(new PointerEvent('pointerover', {bubbles: true, cancelable: true}));
             }
           }, 100);
@@ -174,5 +174,5 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): v
       movementsTowardsSubmenuCount.current = ALLOWED_INVALID_MOVEMENTS;
     };
 
-  }, [isDisabled, isOpen, menuRef, modality, setPreventPointerEvents, onPointerDown, submenuRef]);
+  }, [isDisabled, isOpen, menuRef, modality, setPreventPointerEvents, submenuRef]);
 }

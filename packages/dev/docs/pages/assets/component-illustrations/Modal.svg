@@ -1,0 +1,44 @@
+<svg style="background:var(--anatomy-gray-100); padding: 30px 10px" height="180" viewBox="0 0 220 180">
+  <defs>
+    <filter id="Modal_Shadow" x="14" y="14" width="192" height="152" filterUnits="userSpaceOnUse">
+      <feOffset dy="2" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-opacity="0.2"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <rect id="Placement_Area" data-name="Placement Area" width="220" height="180" fill="red" opacity="0"/>
+  <g id="Modal_Container">
+    <g transform="matrix(1, 0, 0, 1, 0, 0)" filter="url(#Modal_Shadow)">
+      <g id="Modal_Background" transform="translate(20 20)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+        <rect width="180" height="140" rx="8" stroke="none"/>
+        <rect x="0.5" y="0.5" width="179" height="139" rx="7.5" fill="none"/>
+      </g>
+    </g>
+    <g id="Modal_Content">
+      <g id="Header">
+        <text transform="translate(32 42)" fill="var(--anatomy-gray-800)" font-size="16" font-family="var(--anatomy-font)" font-weight="600"><tspan x="0" y="0">Modal Title</tspan></text>
+        <g id="Close_Button" transform="translate(182 32)">
+          <path d="M-4,-4 L4,4 M4,-4 L-4,4" stroke="var(--anatomy-gray-700)" stroke-width="1.5" stroke-linecap="round"/>
+        </g>
+      </g>
+      <rect id="Divider" x="32" y="52" width="156" height="1" fill="var(--anatomy-gray-300)"/>
+      <g id="Content">
+        <rect x="32" y="64" width="120" height="8" rx="2" fill="var(--anatomy-gray-300)"/>
+        <rect x="32" y="76" width="140" height="8" rx="2" fill="var(--anatomy-gray-300)"/>
+        <rect x="32" y="88" width="100" height="8" rx="2" fill="var(--anatomy-gray-300)"/>
+      </g>
+      <g id="Footer" transform="translate(0 122)">
+        <rect id="Footer_Divider" x="32" y="0" width="156" height="1" fill="var(--anatomy-gray-300)"/>
+        <g id="Cancel_Button">
+          <rect x="102" y="12" width="40" height="20" rx="4" fill="var(--anatomy-gray-200)" stroke="none"/>
+          <rect x="102.5" y="12.5" width="39" height="19" rx="3.5" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1"/>
+        </g>
+        <text transform="translate(122 26)" fill="var(--anatomy-gray-700)" font-size="11" font-family="var(--anatomy-font)" font-weight="600" text-anchor="middle"><tspan x="0" y="0">Cancel</tspan></text>
+        <rect id="Confirm_Button" x="148" y="12" width="40" height="20" rx="4" fill="var(--anatomy-gray-700)"/>
+        <text transform="translate(168 26)" fill="white" font-size="11" font-family="var(--anatomy-font)" font-weight="600" text-anchor="middle"><tspan x="0" y="0">Confirm</tspan></text>
+      </g>
+    </g>
+  </g>
+</svg>

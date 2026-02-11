@@ -4,11 +4,12 @@ import {
   RadioGroupProps as AriaRadioGroupProps,
   ValidationResult,
   RadioProps,
-  Radio as AriaRadio
+  Radio as AriaRadio,
+  composeRenderProps
 } from 'react-aria-components';
-import {Label, FieldError} from './Form';
-import {Text} from './Content';
+import {Label, FieldError, Description} from './Form';
 import './RadioGroup.css';
+import './utilities.css';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children'> {
   children?: React.ReactNode;
@@ -27,17 +28,26 @@ export function RadioGroup(
   }: RadioGroupProps
 ) {
   return (
-    (
-      <AriaRadioGroup {...props}>
-        <Label>{label}</Label>
+    <AriaRadioGroup {...props}>
+      <Label>{label}</Label>
+      <div className="radio-items">
         {children}
-        {description && <Text slot="description">{description}</Text>}
-        <FieldError>{errorMessage}</FieldError>
-      </AriaRadioGroup>
-    )
+      </div>
+      {description && <Description>{description}</Description>}
+      <FieldError>{errorMessage}</FieldError>
+    </AriaRadioGroup>
   );
 }
 
 export function Radio(props: RadioProps) {
-  return <AriaRadio {...props} />;
+  return (
+    <AriaRadio {...props}>
+      {composeRenderProps(props.children, (children) => (
+        <>
+          <div className="indicator" />
+          {children}
+        </>
+      ))}
+    </AriaRadio>
+  )
 }

@@ -36,7 +36,7 @@ export interface ActionButtonGroupProps extends AriaLabelingProps, UnsafeStyles,
   isQuiet?: boolean,
   /** Whether the buttons should divide the container width equally. */
   isJustified?: boolean,
-  /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
+  /** The static color style to apply. Useful when the ActionButtonGroup appears over a color background. */
   staticColor?: 'white' | 'black' | 'auto',
   /**
    * The axis the group should align with.

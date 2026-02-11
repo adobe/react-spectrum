@@ -17,7 +17,7 @@ export default meta;
 
 export const Example = (args: any) => (
   <Form {...args}>
-    <TextField label="Email" name="email" type="email" isRequired />
+    <TextField label="Email" placeholder="Enter your email" name="email" type="email" isRequired />
     <DateField label="Birth date" isRequired />
     <div className="flex gap-2">
       <Button type="submit">Submit</Button>

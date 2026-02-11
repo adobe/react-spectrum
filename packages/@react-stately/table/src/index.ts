@@ -16,7 +16,7 @@ export type {TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps}
 export type {TreeGridState, TreeGridStateProps} from './useTreeGridState';
 
 export {useTableColumnResizeState} from './useTableColumnResizeState';
-export {useTableState} from './useTableState';
+export {useTableState, UNSTABLE_useFilteredTableState} from './useTableState';
 export {TableHeader} from './TableHeader';
 export {TableBody} from './TableBody';
 export {Column} from './Column';

@@ -15,6 +15,11 @@ declare module 'bundle-text:*' {
   export default content;
 }
 
+declare module 'url:*' {
+  const content: string;
+  export default content;
+}
+
 declare module '*.svg' {
   import {FunctionComponent, SVGProps} from 'react';
   const content: FunctionComponent<SVGProps<SVGSVGElement>> ;

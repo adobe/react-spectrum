@@ -1,0 +1,116 @@
+.photo-grid {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+
+  .photo-item {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+
+    .photo-container {
+      width: 100%;
+      border-radius: 8px;
+      overflow: clip;
+    }
+
+    &:is([data-focus-visible], [data-selected]) .photo-container {
+      outline: 2px solid light-dark(black, white);
+      outline-offset: 2px;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      -webkit-touch-callout: none;
+
+      &.photo-transition {
+        view-transition-name: photo;
+      }
+    }
+
+    [slot=drag] {
+      all: unset;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: white;
+      color: black;
+      opacity: 0;
+      border: 2px solid transparent;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        display: block;
+      }
+
+      &[data-focus-visible],
+      [data-focus-visible] & {
+        opacity: 1;
+      }
+
+      &[data-focus-visible] {
+        border-color: black;
+        outline: 2px solid white;
+      }
+    }
+  }
+}
+
+.drag-preview {
+  position: relative;
+  margin: 40px;
+
+  /* photo stack */
+  img {
+    z-index: 4;
+    position: relative;
+    border: 1px solid white;
+    box-shadow: 0px 0px 8px rgb(0 0 0 / 0.5);
+
+    &:nth-child(2) {
+      rotate: 15deg;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      translate: -50% -50%;
+      z-index: 3;
+    }
+
+    &:nth-child(3) {
+      rotate: -15deg;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      translate: -50% -50%;
+      z-index: 2;
+    }
+  }
+
+  /* item count badge */
+  span {
+    background: red;
+    color: white;
+    border-radius: 9999px;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 4px;
+    box-sizing: border-box;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+  }
+}

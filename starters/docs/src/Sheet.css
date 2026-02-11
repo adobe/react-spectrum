@@ -1,0 +1,65 @@
+.sheet-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--page-height);
+  background: rgba(0 0 0 / .3);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+
+  &[data-entering] {
+    animation: sheet-blur 300ms;
+  }
+
+  &[data-exiting] {
+    animation: sheet-blur 300ms reverse ease-in;
+  }
+}
+
+.sheet {
+  position: sticky;
+  left: 0;
+  width: 300px;
+  /* Extra padding to account for iOS floating browser UI. */
+  top: -100px;
+  height: calc(100dvh + 200px);
+  padding: 100px 0;
+  margin-left: auto;
+  background: var(--overlay-background);
+  outline: none;
+  border-left: 1px solid var(--overlay-border);
+  box-shadow: -8px 0 20px rgba(0 0 0 / 0.1);
+  font-family: system-ui;
+  font-size: 0.875rem;
+
+  &[data-entering] {
+    animation: sheet-slide 300ms;
+  }
+
+  &[data-exiting] {
+    animation: sheet-slide 300ms reverse ease-in;
+  }
+}
+
+@keyframes sheet-blur {
+  from {
+    background: rgba(0 0 0 / 0);
+    backdrop-filter: blur(0);
+  }
+
+  to {
+    background: rgba(0 0 0 / .3);
+    backdrop-filter: blur(10px);
+  }
+}
+
+@keyframes sheet-slide {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}

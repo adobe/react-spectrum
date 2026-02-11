@@ -1,0 +1,72 @@
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+import testUtilDocs from 'docs:@react-spectrum/test-utils';
+import {InstallCommand} from '../../../src/InstallCommand';
+import {PatternTestingFAQ} from '../../../src/PatternTestingFAQ';
+
+export const isSubpage = true;
+export const hideFromSearch = true;
+export const tags = ['testing', 'dialog', 'test-utils'];
+export const description = 'Testing Dialog with React Spectrum test utils';
+
+# Testing Dialog
+
+## Test utils
+
+`@react-spectrum/test-utils` offers common dialog interaction testing utilities. Install it with your preferred package manager.
+
+<InstallCommand pkg="@react-spectrum/test-utils" flags="--dev" />
+
+<InlineAlert variant="notice">
+  <Heading>Requirements</Heading>
+  <Content>Please note that this library uses [@testing-library/react@16](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
+</InlineAlert>
+
+Initialize a `User` object at the top of your test file, and use it to create a `Dialog` pattern tester in your test cases. The tester has methods that you can call within your test to query for specific subcomponents or simulate common interactions.
+
+```ts
+// Dialog.test.ts
+import {render} from '@testing-library/react';
+import {User} from '@react-spectrum/test-utils';
+
+let testUtilUser = new User({
+  interactionType: 'mouse',
+  advanceTimer: jest.advanceTimersByTime
+});
+// ...
+
+it('Dialog can be opened and closed', async function () {
+  // Render your test component/app and initialize the dialog tester
+  let {getByTestId, getByRole} = render(
+    <DialogTrigger>
+      <ActionButton>Trigger</ActionButton>
+      <Dialog>
+        ...
+      </Dialog>
+    </DialogTrigger>
+  );
+  let button = getByRole('button');
+  let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'modal'});
+  await dialogTester.open();
+  let dialog = dialogTester.dialog;
+  expect(dialog).toBeVisible();
+  await dialogTester.close();
+  expect(dialog).not.toBeInTheDocument();
+});
+```
+
+## API
+
+### User
+
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
+
+### DialogTester
+
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.DialogTester} />
+
+## Testing FAQ
+
+<PatternTestingFAQ patternName="dialog" />

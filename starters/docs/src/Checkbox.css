@@ -1,24 +1,24 @@
 @import "./theme.css";
+@import "./utilities.css";
 
 .react-aria-Checkbox {
-  --selected-color: var(--highlight-background);
-  --selected-color-pressed: var(--highlight-background-pressed);
   --checkmark-color: var(--highlight-foreground);
 
   display: flex;
   /* This is needed so the HiddenInput is positioned correctly */
   position: relative;
   align-items: center;
-  gap: 0.499625rem;
-  font-size: 1.000125rem;
+  gap: var(--spacing-2);
+  font: var(--font-size) system-ui;
   color: var(--text-color);
   forced-color-adjust: none;
+  -webkit-tap-highlight-color: transparent;
 
-  .checkbox {
-    width: 1.000125rem;
-    height: 1.000125rem;
-    border: 2px solid var(--border-color);
-    border-radius: 4px;
+  .indicator {
+    width: calc(var(--spacing) * 4.5);
+    height: calc(var(--spacing) * 4.5);
+    box-sizing: border-box;
+    border-radius: var(--radius-sm);
     transition: all 200ms;
     display: flex;
     align-items: center;
@@ -27,76 +27,34 @@
   }
 
   svg {
-    width: 0.875rem;
-    height: 0.875rem;
+    width: calc(100% - var(--spacing-2));
+    height: calc(100% - var(--spacing-2));
     fill: none;
     stroke: var(--checkmark-color);
     stroke-width: 3px;
     stroke-dasharray: 22px;
     stroke-dashoffset: 66;
+    stroke-linecap: round;
+    stroke-linejoin: round;
     transition: all 200ms;
-  }
-
-  &[data-pressed] .checkbox {
-    border-color: var(--border-color-pressed);
-  }
-
-  &[data-focus-visible] .checkbox {
-    outline: 2px solid var(--focus-ring-color);
-    outline-offset: 2px;
   }
 
   &[data-selected],
   &[data-indeterminate] {
-    .checkbox {
-      border-color: var(--selected-color);
-      background: var(--selected-color);
-    }
-
-    &[data-pressed] .checkbox {
-      border-color: var(--selected-color-pressed);
-      background: var(--selected-color-pressed);
-    }
-
     svg {
       stroke-dashoffset: 44;
     }
   }
 
   &[data-indeterminate] {
-    & svg {
+    svg {
       stroke: none;
       fill: var(--checkmark-color);
     }
   }
 
-  &[data-invalid] {
-    .checkbox {
-      --checkmark-color: var(--gray-50);
-      border-color: var(--invalid-color);
-    }
-
-    &[data-pressed] .checkbox {
-      border-color: var(--invalid-color-pressed);
-    }
-
-    &[data-selected],
-    &[data-indeterminate] {
-      .checkbox {
-        background: var(--invalid-color);
-      }
-
-      &[data-pressed] .checkbox {
-        background: var(--invalid-color-pressed);
-      }
-    }
-  }
-
   &[data-disabled] {
     color: var(--text-color-disabled);
-
-    .checkbox {
-      border-color: var(--border-color-disabled);
-    }
+    --checkmark-color: var(--text-color-disabled);
   }
 }

@@ -25,7 +25,7 @@ import {isAndroid} from './platform';
 
 export function isVirtualClick(event: MouseEvent | PointerEvent): boolean {
   // JAWS/NVDA with Firefox.
-  if ((event as any).mozInputSource === 0 && event.isTrusted) {
+  if ((event as PointerEvent).pointerType === '' && event.isTrusted) {
     return true;
   }
 

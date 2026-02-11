@@ -59,7 +59,7 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
    * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the TableView.
    * @version beta
    */
-  dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks'],
+  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>['dragAndDropHooks'],
   /**
    * Whether the TableView should support expandable rows. Requires the feature flag to be enabled first, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
    * @version alpha

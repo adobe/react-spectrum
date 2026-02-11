@@ -6,18 +6,6 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Removes placeholder', `
-import {SearchField} from '@adobe/react-spectrum';
-let placeholder = 'is this actually removed?';
-let props = {placeholder: 'is this actually removed?'};
-<div>
-  <SearchField placeholder="is this actually removed?" />
-  <SearchField placeholder={"is this actually removed?"} />
-  <SearchField placeholder={placeholder} />
-  <SearchField {...props} />
-</div>
-`);
-
 test('Removes isQuiet', `
 import {SearchField} from '@adobe/react-spectrum';
 let isQuiet = true;

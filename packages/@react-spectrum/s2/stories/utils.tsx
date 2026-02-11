@@ -12,6 +12,7 @@
 
 
 import {Collection, Header, Heading, Picker, PickerItem, PickerSection, Provider} from '../src';
+import {fn} from '@storybook/test';
 import {Key, useLocale} from 'react-aria';
 import {PropsWithChildren, ReactElement, ReactNode, useMemo, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
@@ -69,6 +70,13 @@ export const StaticColorDecorator = (Story: any, {args}: any): ReactElement => (
 export function categorizeArgTypes(category: string, args: string[]): any {
   return args.reduce((acc: {[key: string]: any}, key) => {
     acc[key] = {table: {category}};
+    return acc;
+  }, {});
+}
+
+export function getActionArgs(args: string[]): any {
+  return args.reduce((acc: {[key: string]: any}, key) => {
+    acc[key] = fn();
     return acc;
   }, {});
 }

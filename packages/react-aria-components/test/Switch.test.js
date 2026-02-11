@@ -40,6 +40,13 @@ describe('Switch', () => {
     expect(s).not.toHaveAttribute('data-foo');
   });
 
+  it('should support custom render function', () => {
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control
+    let {getByRole} = render(<Switch render={props => <label {...props} data-custom="bar" />}>Test</Switch>);
+    let checkbox = getByRole('switch').closest('label');
+    expect(checkbox).toHaveAttribute('data-custom', 'bar');
+  });
+
   it('should support render props', async () => {
     let {getByRole} = render(
       <Switch>{({isSelected}) => isSelected ? 'On' : 'Off'}</Switch>
@@ -141,7 +148,8 @@ describe('Switch', () => {
   it('should support press state', async () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
-    let {getByRole} = render(<Switch className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick}>Test</Switch>);
+    let onClickCapture = jest.fn();
+    let {getByRole} = render(<Switch className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</Switch>);
     let s = getByRole('switch').closest('label');
 
     expect(s).not.toHaveAttribute('data-pressed');
@@ -157,6 +165,7 @@ describe('Switch', () => {
 
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
   });
 
   it('should support press state with keyboard', async () => {

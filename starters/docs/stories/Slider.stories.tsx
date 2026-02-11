@@ -14,7 +14,7 @@ export default meta;
 
 type Story = StoryFn<typeof Slider>;
 
-export const Example: Story = (args) => <Slider {...args} />;
+export const Example: Story = (args) => <Slider {...args} style={{width: 200}} />;
 
 Example.args = {
   label: 'Range',

@@ -113,6 +113,14 @@ export class GregorianCalendar implements Calendar {
     return isLeapYear(date.year) ? 366 : 365;
   }
 
+  getMaximumMonthsInYear(): number {
+    return 12;
+  }
+
+  getMaximumDaysInMonth(): number {
+    return 31;
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getYearsInEra(date: AnyCalendarDate): number {
     return 9999;

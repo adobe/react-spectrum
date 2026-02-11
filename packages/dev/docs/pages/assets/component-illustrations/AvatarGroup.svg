@@ -1,0 +1,26 @@
+<svg style="background:var(--anatomy-gray-100); padding: 60px 10px" height="32" viewBox="0 0 84 32">
+  <rect id="Placement_Area" data-name="Placement Area" width="84" height="32" fill="red" opacity="0"/>
+  <g id="Avatar_3" clip-path="url(#clip2_avatargroup)">
+    <rect x="52" width="32" height="32" rx="16" fill="var(--anatomy-gray-500)"/>
+  </g>
+  <text transform="translate(68 21)" fill="white" font-size="14" font-family="var(--anatomy-font)" font-weight="600" text-anchor="middle"><tspan x="0" y="0">IN</tspan></text>
+  <g id="Avatar_2" clip-path="url(#clip1_avatargroup)">
+    <rect x="26" width="32" height="32" rx="16" fill="var(--anatomy-gray-600)"/>
+  </g>
+  <text transform="translate(42 21)" fill="white" font-size="14" font-family="var(--anatomy-font)" font-weight="600" text-anchor="middle"><tspan x="0" y="0">RA</tspan></text>
+  <g id="Avatar_1" clip-path="url(#clip0_avatargroup)">
+    <rect width="32" height="32" rx="16" fill="var(--anatomy-gray-700)"/>
+  </g>
+  <text transform="translate(16 21)" fill="white" font-size="14" font-family="var(--anatomy-font)" font-weight="600" text-anchor="middle"><tspan x="0" y="0">RS</tspan></text>
+  <defs>
+    <clipPath id="clip0_avatargroup">
+      <rect width="32" height="32" fill="white"/>
+    </clipPath>
+    <clipPath id="clip1_avatargroup">
+      <rect width="32" height="32" fill="white" transform="translate(26)"/>
+    </clipPath>
+    <clipPath id="clip2_avatargroup">
+      <rect width="32" height="32" fill="white" transform="translate(52)"/>
+    </clipPath>
+  </defs>
+</svg>

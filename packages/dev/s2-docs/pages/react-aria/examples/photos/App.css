@@ -1,0 +1,132 @@
+.app {
+  position: relative;
+  display: flex;
+  height: min(100dvh - 88px, 800px);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  color-scheme: light dark;
+  font: 1rem system-ui;
+  color: light-dark(black, white);
+  background: light-dark(white, #111);
+  border: 1px solid light-dark(#eee, #222);
+  border-radius: 10px;
+  overflow: clip;
+  --scale: 1;
+
+  @media not ((hover: hover) and (pointer: fine)) {
+    --scale: 1.25;
+  }
+}
+
+.layout {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.toolbar {
+  height: 40px;
+  padding: 4px 16px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 16px;
+  border-bottom: 1px solid light-dark(#eee, #222);
+  background: light-dark(#fdfdfd, #1d1d1d);
+  zoom: var(--scale);
+
+  @media (width >= 500px) {
+    #toggle-sidebar {
+      display: none;
+    }
+  }
+
+  @media (width < 500px) {
+    .toolbar-Slider {
+      display: none;
+    }
+  }
+}
+
+.toolbar-Button {
+  background: light-dark(#ddd, #333);
+  color: light-dark(black, white);
+  border: none;
+  height: 32px;
+  padding: 0 16px;
+  border-radius: 8px;
+  transition: background 200ms;
+  font-family: system-ui;
+  font-size: 14px;
+  -webkit-tap-highlight-color: transparent;
+
+  &:has(svg:only-child) {
+    padding: 0;
+    aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &[data-hovered] {
+    background: light-dark(#cdcdcd, #3a3a3a);
+  }
+
+  &[data-pressed] {
+    background: light-dark(#bbb, #444);
+  }
+}
+
+.toolbar-Slider {
+  .react-aria-SliderTrack {
+    width: 100px;
+    height: 16px;
+    &::before {
+      content: '';
+      display: block;
+      height: 2px;
+      position: absolute;
+      top: 50%;
+      translate: 0 -1px;
+      width: 100%;
+      background: light-dark(#ccc, #666);
+      border-radius: 99px;
+    }
+  }
+
+  .react-aria-SliderThumb {
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    border-radius: 9999px;
+    border: 2px solid light-dark(#666, #aaa);
+    background: light-dark(white, black);
+    &[data-dragging] {
+      border-color: light-dark(#444, #ccc);
+    }
+
+    &[data-focus-visible] {
+      outline: 2px solid light-dark(black, white);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.toolbar-SearchField {
+  margin-inline-start: auto;
+
+  .react-aria-Input {
+    padding: 4px 4px 4px 12px;
+    border-radius: 32px;
+    border: 2px solid light-dark(#ddd, #333);
+    background: light-dark(white, black);
+    font-family: system-ui;
+    font-size: 14px;
+    outline: none;
+
+    &:focus {
+      border-color: light-dark(black, white);
+    }
+  }
+}

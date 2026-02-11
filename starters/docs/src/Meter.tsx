@@ -18,8 +18,13 @@ export function Meter({ label, ...props }: MeterProps) {
           <>
             <Label>{label}</Label>
             <span className="value">{valueText}</span>
-            <div className="bar">
-              <div className="fill" style={{ width: percentage + '%' }} />
+            <div className="track inset">
+              <div
+                className="fill"
+                style={{
+                  width: percentage + '%',
+                  '--fill-color': percentage < 70 ? 'var(--green)' : percentage < 90 ? 'var(--orange)' : 'var(--red)'
+                } as any} />
             </div>
           </>
         )}

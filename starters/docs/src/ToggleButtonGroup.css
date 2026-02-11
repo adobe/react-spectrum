@@ -3,9 +3,20 @@
 .react-aria-ToggleButtonGroup {
   display: flex;
 
-  > button {
-    border-radius: 0;
+  > .react-aria-ToggleButton {
     z-index: 1;
+
+    > span {
+      transition: scale 200ms;
+    }
+
+    &[data-pressed] {
+      scale: 1;
+
+      > span {
+        scale: 0.9;
+      }
+    }
 
     &[data-disabled] {
       z-index: 0;
@@ -21,16 +32,17 @@
 .react-aria-ToggleButtonGroup[data-orientation=horizontal] {
   flex-direction: row;
 
-  > button {
+  > .react-aria-ToggleButton {
     margin-inline-start: -1px;
+    border-radius: 0;
 
     &:first-child {
-      border-radius: 4px 0 0 4px;
+      border-radius: var(--radius) 0 0 var(--radius);
       margin-inline-start: 0;
     }
 
     &:last-child {
-      border-radius: 0 4px 4px 0;
+      border-radius: 0 var(--radius) var(--radius) 0;
     }
   }
 }
@@ -39,16 +51,17 @@
   flex-direction: column;
   width: fit-content;
 
-  > button {
+  > .react-aria-ToggleButton {
     margin-block-start: -1px;
+    border-radius: 0;
 
     &:first-child {
-      border-radius: 4px 4px 0 0;
+      border-radius: var(--radius) var(--radius) 0 0;
       margin-block-start: 0;
     }
 
     &:last-child {
-      border-radius: 0 0 4px 4px;
+      border-radius: 0 0 var(--radius) var(--radius);
     }
   }
 }

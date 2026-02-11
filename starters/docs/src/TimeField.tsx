@@ -5,10 +5,8 @@ import {
   TimeValue,
   ValidationResult
 } from 'react-aria-components';
-import {Label, FieldError} from './Form';
-import {Text} from './Content';
+import {Label, FieldError, Description} from './Form';
 import {DateInput, DateSegment} from './DateField';
-
 import './TimeField.css';
 
 export interface TimeFieldProps<T extends TimeValue>
@@ -22,15 +20,13 @@ export function TimeField<T extends TimeValue>(
   { label, description, errorMessage, ...props }: TimeFieldProps<T>
 ) {
   return (
-    (
-      <AriaTimeField {...props}>
-        <Label>{label}</Label>
-        <DateInput>
-          {(segment) => <DateSegment segment={segment} />}
-        </DateInput>
-        {description && <Text slot="description">{description}</Text>}
-        <FieldError>{errorMessage}</FieldError>
-      </AriaTimeField>
-    )
+    <AriaTimeField {...props}>
+      <Label>{label}</Label>
+      <DateInput>
+        {(segment) => <DateSegment segment={segment} />}
+      </DateInput>
+      {description && <Description>{description}</Description>}
+      <FieldError>{errorMessage}</FieldError>
+    </AriaTimeField>
   );
 }

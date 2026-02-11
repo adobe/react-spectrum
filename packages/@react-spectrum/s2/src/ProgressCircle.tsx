@@ -104,7 +104,7 @@ const hcmStroke = style({
   }
 });
 
-export interface ProgressCircleProps extends Omit<RACProgressBarProps, 'children' | 'style' | 'valueLabel' | 'formatOptions' | 'label' | 'className' | keyof GlobalDOMAttributes>, ProgressCircleStyleProps, UnsafeStyles {
+export interface ProgressCircleProps extends Omit<RACProgressBarProps, 'children' | 'style' | 'valueLabel' | 'formatOptions' | 'label' | 'className' | 'render' | keyof GlobalDOMAttributes>, ProgressCircleStyleProps, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }

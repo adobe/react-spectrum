@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Calendar, CalendarCell, CalendarContext, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, CalendarStateContext, Heading} from 'react-aria-components';
+import {Button, ButtonContext, Calendar, CalendarCell, CalendarContext, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, CalendarStateContext, Heading} from 'react-aria-components';
 import {CalendarDate, getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
 import React, {useContext} from 'react';
 import userEvent from '@testing-library/user-event';
@@ -83,8 +83,25 @@ describe('Calendar', () => {
     }
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} = renderCalendar(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <table {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let group = getByRole('application');
+    expect(group).toHaveAttribute('data-custom', 'true');
+
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('data-custom', 'true');
+
+    for (let cell of within(grid).getAllByRole('button')) {
+      expect(cell).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
   it('should support aria props on the Calendar', () => {
-    let {getByRole} = renderCalendar({      
+    let {getByRole} = renderCalendar({
       'aria-label': 'label',
       'aria-labelledby': 'labelledby',
       'aria-describedby': 'describedby',
@@ -95,7 +112,7 @@ describe('Calendar', () => {
     expect(group).toHaveAttribute('aria-label', expect.stringContaining('label'));
     expect(group).toHaveAttribute('aria-labelledby', expect.stringContaining('labelledby'));
     expect(group).toHaveAttribute('aria-describedby', 'describedby');
-    expect(group).toHaveAttribute('aria-details', 'details');    
+    expect(group).toHaveAttribute('aria-details', 'details');
   });
 
   it('should support custom CalendarGridHeader', () => {
@@ -170,6 +187,41 @@ describe('Calendar', () => {
     let formatter = new Intl.DateTimeFormat('en-US', {month: 'long', year: 'numeric'});
     expect(grids[0]).toHaveAttribute('aria-label', 'Appointment date, ' + formatter.format(new Date()));
     expect(grids[1]).toHaveAttribute('aria-label', 'Appointment date, ' + formatter.format(today(getLocalTimeZone()).add({months: 1}).toDate(getLocalTimeZone())));
+  });
+
+
+  it.each([
+    {name: 'at the start', alignment: 'start', expected: ['February 2020', 'March 2020', 'April 2020']},
+    {name: 'in the center', alignment: 'center', expected: ['January 2020', 'February 2020', 'March 2020']},
+    {name: 'at the end', alignment: 'end', expected: ['December 2019', 'January 2020', 'February 2020']}
+  ])('should align the initial value $name', async ({alignment, expected}) => {
+    const {getAllByRole} = render(
+      <Calendar visibleDuration={{months: 3}} defaultValue={new CalendarDate(2020, 2, 3)} selectionAlignment={alignment}>
+        <header>
+          <Button slot="previous">◀</Button>
+          <Heading />
+          <Button slot="next">▶</Button>
+        </header>
+        <div style={{display: 'flex', gap: 30}}>
+          <CalendarGrid>
+            {date => <CalendarCell date={date} />}
+          </CalendarGrid>
+          <CalendarGrid offset={{months: 1}}>
+            {date => <CalendarCell date={date} />}
+          </CalendarGrid>
+          <CalendarGrid offset={{months: 2}}>
+            {date => <CalendarCell date={date} />}
+          </CalendarGrid>
+        </div>
+      </Calendar>
+    );
+
+    let grids = getAllByRole('grid');
+    expect(grids).toHaveLength(3);
+
+    expect(grids[0]).toHaveAttribute('aria-label', expected[0]);
+    expect(grids[1]).toHaveAttribute('aria-label', expected[1]);
+    expect(grids[2]).toHaveAttribute('aria-label', expected[2]);
   });
 
   it('should support hover', async () => {
@@ -364,5 +416,45 @@ describe('Calendar', () => {
     fireEvent.click(day16);
     await user.keyboard('[ArrowLeft][Enter]');
     expect(calendar.getByLabelText(/selected/)).toBe(day16);
+  });
+
+  it('should not become focused just by setting the focused date', async () => {
+    let DatePicker = () => {
+      let state = useContext(CalendarStateContext);
+      return <Button onPress={() => state.setFocusedDate(new CalendarDate(2020, 3, 3))}>Set focused date</Button>;
+    };
+
+    let MyCalendar = () => {
+      return (
+        <Calendar aria-label="Appointment date">
+          <header>
+            <Button slot="previous">◀</Button>
+            <Heading />
+            <ButtonContext.Provider value={null}>
+              <DatePicker />
+            </ButtonContext.Provider>
+            <Button slot="next">▶</Button>
+          </header>
+          <CalendarGrid>
+            <CalendarGridHeader className="grid-header">
+              {(day) => (
+                <CalendarHeaderCell className="header-cell">
+                  {day}
+                </CalendarHeaderCell>
+              )}
+            </CalendarGridHeader>
+            <CalendarGridBody className="grid-body">
+              {(date) => <CalendarCell date={date} className={({isSelected}) => isSelected ? 'selected' : ''} />}
+            </CalendarGridBody>
+          </CalendarGrid>
+        </Calendar>
+      );
+    };
+    let {getByRole} = render(
+      <MyCalendar />
+    );
+    let setFocusedDateButton = getByRole('button', {name: 'Set focused date'});
+    await user.click(setFocusedDateButton);
+    expect(setFocusedDateButton).toHaveFocus();
   });
 });

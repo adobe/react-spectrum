@@ -114,7 +114,7 @@ export function useTagGroup<T>(props: AriaTagGroupOptions<T>, state: ListState<T
 
   return {
     gridProps: mergeProps(gridProps, domProps, {
-      role: state.collection.size ? 'grid' : null,
+      role: state.collection.size ? 'grid' : 'group',
       'aria-atomic': false,
       'aria-relevant': 'additions',
       'aria-live': isFocusWithin ? 'polite' : 'off',

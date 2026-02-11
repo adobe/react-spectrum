@@ -33,20 +33,27 @@ const date = new CalendarDate(2022, 2, 3);
 
 export const Default: Story = {
   args: {
-    defaultFocusedValue: date
+    defaultValue: date
   }
 };
 
 export const MultiMonth: Story = {
   args: {
-    defaultFocusedValue: date,
+    defaultValue: date,
     visibleMonths: 3
+  }
+};
+
+export const Disabled: Story = {
+  args: {
+    defaultValue: date,
+    isDisabled: true
   }
 };
 
 export const UnavailableDays: Story = {
   args: {
-    defaultFocusedValue: date,
+    defaultValue: date,
     minValue: new CalendarDate(2022, 2, 2),
     maxValue: new CalendarDate(2022, 2, 20),
     isDateUnavailable: (date: DateValue) => {
@@ -57,9 +64,36 @@ export const UnavailableDays: Story = {
   }
 };
 
+export const UnavailableDaysSelected: Story = {
+  args: {
+    defaultValue: date,
+    minValue: new CalendarDate(2022, 2, 2),
+    maxValue: new CalendarDate(2022, 2, 20),
+    isDateUnavailable: (date: DateValue) => {
+      return date.day >= 1 && date.day <= 4;
+    },
+    isInvalid: true,
+    errorMessage: 'Invalid date'
+  }
+};
+
+export const UnavailableDaysDisabled: Story = {
+  args: {
+    defaultValue: date,
+    minValue: new CalendarDate(2022, 2, 2),
+    maxValue: new CalendarDate(2022, 2, 20),
+    isDateUnavailable: (date: DateValue) => {
+      return date.day >= 1 && date.day <= 4;
+    },
+    isInvalid: true,
+    errorMessage: 'Invalid date',
+    isDisabled: true
+  }
+};
+
 export const CustomCalendar: Story = {
   args: {
-    defaultFocusedValue: date,
+    defaultValue: date,
     createCalendar: () => new Custom454Calendar()
   },
   parameters: {

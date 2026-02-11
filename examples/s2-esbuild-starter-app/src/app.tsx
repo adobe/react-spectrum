@@ -13,11 +13,11 @@
 
 import "@react-spectrum/s2/page.css";
 import { style } from "@react-spectrum/s2/style" with { type: "macro" };
-import { Button } from "@react-spectrum/s2";
+import { Button, Provider } from "@react-spectrum/s2";
 
 function App() {
   return (
-    <main>
+    <Provider elementType="main">
       <Button
         styles={style({
           marginStart: 16,
@@ -25,7 +25,7 @@ function App() {
       >
         Hello Spectrum 2!
       </Button>
-    </main>
+    </Provider>
   );
 }
 

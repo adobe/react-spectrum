@@ -1,49 +1,151 @@
 'use client';
 
-import {ActionButton} from '@react-spectrum/s2';
-import {AdobeLogo} from './icons/AdobeLogo';
-import {flushSync} from 'react-dom';
+import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {Button, Link} from 'react-aria-components';
+import Contrast from '@react-spectrum/s2/icons/Contrast';
+import {Divider, pressScale} from '@react-spectrum/s2';
+import {getBaseUrl} from './pageUtils';
+import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
-import {InternationalizedLogo} from './icons/InternationalizedLogo';
-import {MarkdownMenu} from './MarkdownMenu';
-import {PageProps} from '@parcel/rsc';
-import React, {CSSProperties, useState} from 'react';
-import {ReactAriaLogo} from './icons/ReactAriaLogo';
-import SearchMenu from './SearchMenu';
-import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {HeaderLink} from './Link';
+import Lighten from '@react-spectrum/s2/icons/Lighten';
+import {NpmLogo} from './icons/NpmLogo';
+import React, {useId, useRef, useState} from 'react';
+import SearchMenuTrigger, {preloadSearchMenu} from './SearchMenuTrigger';
+import {useLayoutEffect} from '@react-aria/utils';
+import {useRouter} from './Router';
+import {useSettings} from './SettingsContext';
 
 function getButtonText(currentPage) {
-  if (currentPage.url.includes('react-aria')) {
-    return 'React Aria';
-  } else if (currentPage.url.includes('react-internationalized')) {
-    return 'React Internationalized';
-  }
-  return 'React Spectrum';
+  return getLibraryLabel(getLibraryFromPage(currentPage));
 }
 
 function getButtonIcon(currentPage) {
-  if (currentPage.url.includes('react-aria')) {
-    return <ReactAriaLogo  />;
-  } else if (currentPage.url.includes('react-internationalized')) {
-    return <InternationalizedLogo />;
-  }
-  return <AdobeLogo />;
+  return getLibraryIcon(getLibraryFromPage(currentPage));
 }
 
-export default function Header(props: PageProps) {
-  const {pages, currentPage} = props;
-  const [searchOpen, setSearchOpen] = useState(false);
+const libraryStyles = style({
+  ...focusRing(),
+  paddingX: 12, 
+  display: 'flex',
+  alignItems: 'center',
+  columnGap: {
+    default: 12,
+    lg: space(10)
+  },
+  textDecoration: 'none',
+  minHeight: 48,
+  borderRadius: 'lg',
+  transition: 'default',
+  backgroundColor: {
+    default: {
+      ...baseColor('gray-100'),
+      default: 'transparent'
+    }
+  },
+  marginStart: space(26)
+});
 
-  let toggleShowSearchMenu = () => {
+const colorSchemeToggleStyles = style({
+  ...focusRing(),
+  font: 'ui',
+  color: 'neutral',
+  textDecoration: 'none',
+  transition: 'default',
+  backgroundColor: {
+    default: {
+      ...baseColor('gray-100'),
+      default: 'transparent'
+    }
+  },
+  size: 32,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: 'lg',
+  borderWidth: 0
+});
+
+const iconContainerStyles = style({
+  position: 'relative',
+  size: 20
+});
+
+function ColorSchemeToggle() {
+  let {colorScheme, toggleColorScheme, systemColorScheme} = useSettings();
+  let isOverriding = colorScheme !== systemColorScheme;
+  let label = isOverriding
+    ? `Using ${colorScheme} mode (press to use system)`
+    : `Using system ${systemColorScheme} mode (press to switch)`;
+  let ref = useRef(null);
+  let isDark = colorScheme === 'dark';
+
+  return (
+    <Button
+      ref={ref}
+      aria-label={label}
+      onPress={toggleColorScheme}
+      className={renderProps => colorSchemeToggleStyles(renderProps)}
+      style={pressScale(ref)}>
+      <span className={iconContainerStyles}>
+        <Contrast
+          UNSAFE_style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: isDark ? 0 : 1,
+            transform: isDark ? 'rotate(-90deg) scale(0.5)' : 'rotate(0deg) scale(1)',
+            transition: 'opacity 200ms ease-out, transform 200ms ease-out'
+          }} />
+        <Lighten
+          UNSAFE_style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: isDark ? 1 : 0,
+            transform: isDark ? 'rotate(0deg) scale(1)' : 'rotate(90deg) scale(0.5)',
+            transition: 'opacity 200ms ease-out, transform 200ms ease-out'
+          }} />
+      </span>
+    </Button>
+  );
+}
+
+export default function Header() {
+  const {currentPage} = useRouter();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchMenuId = useId();
+  let ref = useRef(null);
+  let iconRef = useRef<HTMLDivElement | null>(null);
+  let labelRef = useRef<HTMLDivElement | null>(null);
+  let searchRef = useRef<HTMLDivElement | null>(null);
+  let renderCallback = useRef<(() => void) | null>(null);
+
+  let openSearchMenu = async () => {
     if (!document.startViewTransition) {
       setSearchOpen((prev) => !prev);
       return;
     }
 
-    document.startViewTransition(() => {
-      flushSync(() => {
+    // Preload SearchMenu so it is ready to render immediately.
+    await preloadSearchMenu();
+
+    // Don't transition the entire page.
+    document.documentElement.style.viewTransitionName = 'none';
+    iconRef.current!.style.viewTransitionName = 'search-menu-icon';
+    labelRef.current!.style.viewTransitionName = 'search-menu-label';
+    searchRef.current!.style.viewTransitionName = 'search-menu-search-field';
+    let viewTransition = document.startViewTransition(() => {
+      // Wait until next render. Using flushSync causes flickering.
+      return new Promise<void>(resolve => {
+        iconRef.current!.style.viewTransitionName = '';
+        labelRef.current!.style.viewTransitionName = '';
+        searchRef.current!.style.viewTransitionName = '';
+        renderCallback.current = resolve;
         setSearchOpen((prev) => !prev);
       });
+    });
+
+    viewTransition.finished.then(() => {
+      document.documentElement.style.viewTransitionName = '';
     });
   };
 
@@ -53,27 +155,43 @@ export default function Header(props: PageProps) {
       return;
     }
 
-    document.startViewTransition(() => {
-      flushSync(() => {
+    document.documentElement.style.viewTransitionName = 'none';
+    let viewTransition = document.startViewTransition(() => {
+      return new Promise<void>(resolve => {
+        renderCallback.current = resolve;
         setSearchOpen(false);
+        iconRef.current!.style.viewTransitionName = 'search-menu-icon';
+        labelRef.current!.style.viewTransitionName = 'search-menu-label';
+        searchRef.current!.style.viewTransitionName = 'search-menu-search-field';
       });
+    });
+
+    viewTransition.finished.then(() => {
+      document.documentElement.style.viewTransitionName = '';
+      iconRef.current!.style.viewTransitionName = '';
+      labelRef.current!.style.viewTransitionName = '';
+      searchRef.current!.style.viewTransitionName = '';
     });
   };
 
-  let handleActionButtonKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-    if (e.key === 'ArrowDown' && !searchOpen) {
-      e.preventDefault();
-      toggleShowSearchMenu();
-    }
-  };
+  useLayoutEffect(() => {
+    renderCallback.current?.();
+    renderCallback.current = null;
+  });
 
-  const ChevronDownIcon = (props) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} {...props}>
-      <path
-        fill="var(--iconPrimary, #222)"
-        d="M3.755 7.243a.748.748 0 0 1 1.06-.02l5.183 4.986 5.197-4.999a.749.749 0 1 1 1.04 1.08l-5.717 5.5a.747.747 0 0 1-1.04 0L3.776 8.303a.746.746 0 0 1-.02-1.06Z" />
-    </svg>
-  );
+  let library = getLibraryFromPage(currentPage);
+  let subdirectory: 's2' | 'react-aria' = 's2';
+  if (library === 'react-aria') {
+    // the internationalized library has no homepage so i've chosen to route it to the react aria homepage
+    subdirectory = 'react-aria';
+  }
+
+  let baseUrl = getBaseUrl(subdirectory);
+  let homepage = `${baseUrl}/`;
+  let docs = `${baseUrl}/getting-started`;
+  let release = `${baseUrl}/releases/`;
+  let blog = `${getBaseUrl('react-aria')}/blog/`;
+  let npm = subdirectory === 's2' ? '@react-spectrum/s2' : 'react-aria-components';
 
   return (
     <>
@@ -82,28 +200,43 @@ export default function Header(props: PageProps) {
           className={style({
             width: 'full', 
             display: 'grid',
+            // @eslint-disable-next-line
             gridTemplateColumns: '1fr auto 1fr',
             alignItems: 'center'
           })}>
           <div className={style({justifySelf: 'start'})}>
-            <ActionButton aria-label="Open menu and search" size="XL" isQuiet onPress={toggleShowSearchMenu} onKeyDown={handleActionButtonKeyDown} UNSAFE_style={{paddingInlineStart: 10}}>
-              <div className={style({display: 'flex', alignItems: 'center'})}>
-                <div className={style({marginTop: 4})} style={{viewTransitionName: !searchOpen ? 'search-menu-icon' : 'none'} as CSSProperties}>
-                  {getButtonIcon(currentPage)}
-                </div>
-                <span className={style({fontSize: 'heading-xs', marginStart: 8})} style={{viewTransitionName: !searchOpen ? 'search-menu-label' : 'none'} as CSSProperties}>
-                  {getButtonText(currentPage)}
-                </span>
+            <Link
+              href={homepage}
+              ref={ref}
+              style={pressScale(ref, {visibility: searchOpen ? 'hidden' : 'visible'})}
+              className={renderProps => libraryStyles({...renderProps})}>
+              <div ref={iconRef}>
+                {getButtonIcon(currentPage)}
               </div>
-              <ChevronDownIcon className={style({width: 18})} />
-            </ActionButton>
+              <span className={style({font: 'heading-sm', fontWeight: 'extra-bold'})} ref={labelRef}>
+                {getButtonText(currentPage)}
+              </span>
+            </Link>
           </div>
-          <SearchMenu pages={pages} currentPage={currentPage} toggleShowSearchMenu={toggleShowSearchMenu} closeSearchMenu={closeSearchMenu} isSearchOpen={searchOpen} />
+          <div ref={searchRef}>
+            <SearchMenuTrigger
+              onOpen={openSearchMenu}
+              onClose={closeSearchMenu}
+              isSearchOpen={searchOpen}
+              overlayId={searchMenuId} />
+          </div>
           <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
-            <MarkdownMenu url={currentPage.url} />
-            <ActionButton aria-label="React Spectrum GitHub repo" size="L" isQuiet>
-              <GithubLogo />
-            </ActionButton>
+            <HeaderLink href={docs}>Docs</HeaderLink>
+            <HeaderLink href={release}>Releases</HeaderLink>
+            <HeaderLink href={blog} target={subdirectory === 's2' ? '_blank' : ''} rel="noopener noreferrer">Blog</HeaderLink>
+            <HeaderLink aria-label="GitHub" href="https://github.com/adobe/react-spectrum" target="_blank" rel="noopener noreferrer" ><GithubLogo /></HeaderLink>
+            <HeaderLink aria-label="npm" href={`https://npmjs.com/${npm}`} target="_blank" rel="noopener noreferrer"><NpmLogo /></HeaderLink>
+            {library !== 'react-aria' && (
+              <>
+                <Divider orientation="vertical" UNSAFE_style={{marginBlock: 4}} />
+                <ColorSchemeToggle />
+              </>
+            )}
           </div>
         </div>
       </header>

@@ -11,7 +11,7 @@
  */
 
 import {mergeRefs} from '../';
-import React, {useCallback, useRef} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 
 describe('mergeRefs', () => {
@@ -20,16 +20,21 @@ describe('mergeRefs', () => {
     let ref2;
 
     const TextField = (props) => {
-      ref1 = useRef(null);
-      ref2 = useRef(null);
+      let internalRef1 = useRef(null);
+      let internalRef2 = useRef(null);
+      useEffect(() => {
+        ref1 = internalRef1;
+        ref2 = internalRef2;
+      }, [internalRef1, internalRef2]);
 
-      const ref = mergeRefs(ref1, ref2);
+      const ref = mergeRefs(internalRef1, internalRef2);
       return <input {...props} ref={ref} />;
     };
 
     render(<TextField foo="foo" />);
 
     expect(ref1.current).toBe(ref2.current);
+    expect(ref1.current).not.toBeNull();
   });
 
   if (parseInt(React.version.split('.')[0], 10) >= 19) {
@@ -40,14 +45,18 @@ describe('mergeRefs', () => {
       let target = null;
 
       const TextField = (props) => {
-        ref1 = useRef(null);
-        ref2 = useRef(null);
+        let internalRef1 = useRef(null);
+        let internalRef2 = useRef(null);
+        useEffect(() => {
+          ref1 = internalRef1;
+          ref2 = internalRef2;
+        }, [internalRef1, internalRef2]);
         let ref3 = useCallback((node) => {
           target = node;
           return cleanUp;
         }, []);
 
-        const ref = mergeRefs(ref1, ref2, ref3);
+        const ref = mergeRefs(internalRef1, internalRef2, ref3);
         return <input {...props} ref={ref} />;
       };
 

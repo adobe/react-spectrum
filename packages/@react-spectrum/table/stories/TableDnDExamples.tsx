@@ -112,6 +112,7 @@ export function DragWithoutRowHeaderExample(props: {tableViewProps?: Omit<Spectr
   );
 }
 
+let randomDragTypeReorderExample = `keys-${Math.random().toString(36).slice(2)}`;
 export function ReorderExample(props: {onDrop?: (e: DropEvent) => void, onDragStart?: (e: DragStartEvent) => void, onDragEnd?: (e: DragEndEvent) => void, tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>, items?: any[]}): JSX.Element {
   let {onDrop, onDragStart, onDragEnd, tableViewProps} = props;
   let list = useListData({
@@ -120,7 +121,7 @@ export function ReorderExample(props: {onDrop?: (e: DropEvent) => void, onDragSt
   });
 
   // Use a random drag type so the items can only be reordered within this table and not dragged elsewhere.
-  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+  let dragType = React.useMemo(() => randomDragTypeReorderExample, []);
 
   let onMove = (keys: Key[], target: ItemDropTarget) => {
     if (target.dropPosition === 'before') {
@@ -192,6 +193,7 @@ export function ReorderExample(props: {onDrop?: (e: DropEvent) => void, onDragSt
   );
 }
 
+let randomDragTypeDragOntoRowExample = `keys-${Math.random().toString(36).slice(2)}`;
 export function DragOntoRowExample(props: {tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>, dragHookOptions?: any, dropHookOptions?: {onDrop?: (e: DropEvent) => void}}): JSX.Element {
   let {
     tableViewProps = {},
@@ -226,7 +228,7 @@ export function DragOntoRowExample(props: {tableViewProps?: Omit<SpectrumTablePr
   let disabledKeys: Key[] = ['2', '7'];
 
   // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
-  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+  let dragType = React.useMemo(() => randomDragTypeDragOntoRowExample, []);
 
   let onMove = (keys: Key[], target: ItemDropTarget) => {
     let folderItem = list.getItem(target.key)!;
@@ -328,6 +330,8 @@ let itemColumns = [
   {name: 'Name', key: 'name'}
 ];
 
+let randomDragTypeDragBetweenTablesExample = `keys-${Math.random().toString(36).slice(2)}`;
+
 export function DragBetweenTablesExample(props: {onDragStart?: (e: DragStartEvent) => void, onDragEnd?: (e: DragEndEvent) => void, onDrop?: (e: DropEvent) => void, tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>, items1?: any[], items2?: any[]}): JSX.Element {
   let {onDragStart, onDragEnd, onDrop} = props;
   let onDropAction = chain(action('onDrop'), onDrop);
@@ -365,7 +369,7 @@ export function DragBetweenTablesExample(props: {onDragStart?: (e: DragStartEven
   };
 
   // Use a random drag type so the items can only be reordered within the two lists and not dragged elsewhere.
-  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+  let dragType = React.useMemo(() => randomDragTypeDragBetweenTablesExample, []);
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems(keys) {

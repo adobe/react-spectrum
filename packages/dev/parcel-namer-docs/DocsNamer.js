@@ -13,6 +13,13 @@
 const {Namer} = require('@parcel/plugin');
 const path = require('path');
 
+const mappings = {
+  TooltipTrigger: 'Tooltip',
+  ModalOverlay: 'Modal',
+  TabList: 'Tabs',
+  Dialog: 'Modal'
+};
+
 module.exports = new Namer({
   name({bundle, bundleGraph, options}) {
     if (!process.env.DOCS_ENV) {
@@ -30,10 +37,26 @@ module.exports = new Namer({
 
       // For dev files, simply /PageName.html or /dir/PageName.html
       if (parts[1] === 'dev') {
-        return path.join(...parts.slice(4, -1), basename);
+        let devPath = parts.slice(4, -1);
+        // move /releases to v3/releases
+        if (devPath[0] === 'releases') {
+          return path.join('v3', ...devPath, basename);
+        }
+
+        // move /react-spectrum to v3 (aka getting started, etc)
+        if (devPath[0] === 'react-spectrum') {
+          return path.join('v3', ...devPath.slice(1), basename);
+        }
+
+        // move /react-aria and /react-stately to top-level
+        if (devPath[0] === 'react-aria' || devPath[0] === 'react-stately') {
+          return path.join(...devPath.slice(1), basename);
+        }
+
+        return path.join(...devPath, basename);
       }
 
-      // For @internationalized, group by package name.
+      // // For @internationalized, group by package name.
       if (parts[1] === '@internationalized') {
         return path.join(
           parts[1].replace(/^@/, ''),
@@ -44,12 +67,48 @@ module.exports = new Namer({
       }
 
       if (parts[1] === 'react-aria-components') {
-        return path.join('react-aria', ...parts.slice(3, -1), basename);
+        // check if a redirect exists for this react-aria-components page
+        // handle both top-level files and subdirectories like examples/
+        let subPath = parts.slice(3, -1);
+        return path.join('react-aria', ...subPath, basename);
       }
 
-      // For @namespace package files, urls will be /${namespace}/PageName.html
+      // move @react-spectrum pages under /v3 aka components and stuff
+      let namespace = parts[1].replace(/^@/, '');
+      if (namespace === 'react-spectrum') {
+        namespace = 'v3';
+      }
+
+      if (namespace === 'react-aria') {
+        if (/use(Clipboard|Collator|.*Formatter|Drag.*|Drop.*|Field|Filter|Focus.*|Hover|Id|IsSSR|Keyboard|Label|Landmark|Locale|.*Press|Move|ObjectRef)\.html$/.test(basename)) {
+          return path.join(...parts.slice(4, -1), basename);
+        }
+
+        if (/use(.+?)\.html$/.test(basename)) {
+          return path.join(...parts.slice(4, -1), basename.replace(/use(.*?)\.html$/, (_, name) => `${mappings[name] || name}/use${name}.html`));
+        }
+
+        return path.join(...parts.slice(4, -1), basename);
+      }
+
+      if (namespace === 'react-stately') {
+        if (/use(MultipleSelection|List|SingleSelectList|Drag.*|Drop.*|Overlay.*|Toggle)State\.html$/.test(basename)) {
+          return path.join(...parts.slice(4, -1), basename);
+        }
+
+        if (basename.endsWith('useTabListState.html')) {
+          return path.join(...parts.slice(4, -1), 'Tabs/useTabListState.html');
+        }
+
+        if (/use(.+?)(Trigger)?State\.html$/.test(basename)) {
+          return path.join(...parts.slice(4, -1), basename.replace(/use(.*?)(Trigger)?State\.html$/, '$1/use$1$2State.html'));
+        }
+
+        return path.join(...parts.slice(4, -1), basename);
+      }
+
       return path.join(
-        parts[1].replace(/^@/, ''),
+        namespace,
         ...parts.slice(4, -1),
         basename
       );

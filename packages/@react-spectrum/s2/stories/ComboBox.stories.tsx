@@ -10,15 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ComboBox, ComboBoxItem, ComboBoxSection, Content, ContextualHelp, Footer, Form, Header, Heading, Link, Text} from '../src';
-import {categorizeArgTypes} from './utils';
+import {Avatar, Button, ComboBox, ComboBoxItem, ComboBoxSection, Content, ContextualHelp, Footer, Form, Header, Heading, Link, Text} from '../src';
+import {categorizeArgTypes, getActionArgs} from './utils';
 import {ComboBoxProps} from 'react-aria-components';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
-import {ReactElement} from 'react';
+import {ReactElement, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {useAsyncList} from 'react-stately';
+
+const events = ['onInputChange', 'onOpenChange', 'onSelectionChange', 'onLoadMore'];
 
 const meta: Meta<typeof ComboBox<any>> = {
   component: ComboBox,
@@ -27,12 +29,17 @@ const meta: Meta<typeof ComboBox<any>> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onInputChange', 'onOpenChange', 'onSelectionChange']),
+    ...categorizeArgTypes('Events', events),
     label: {control: {type: 'text'}},
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
     children: {table: {disable: true}},
-    contextualHelp: {table: {disable: true}}
+    contextualHelp: {table: {disable: true}},
+    placeholder: {control: {type: 'text'}}
+  },
+  args: {
+    ...getActionArgs(events),
+    placeholder: 'Select a value'
   },
   title: 'ComboBox'
 };
@@ -144,6 +151,33 @@ export const WithIcons: Story = {
   ),
   args: {
     label: 'Where to share'
+  }
+};
+
+const SRC_URL_1 = 'https://i.imgur.com/xIe7Wlb.png';
+const SRC_URL_2 = 'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
+
+export const WithAvatars: Story = {
+  render: (args) => (
+    <ComboBox {...args}>
+      <ComboBoxItem textValue="User One">
+        <Avatar slot="avatar" src={SRC_URL_1} />
+        <Text slot="label">User One</Text>
+        <Text slot="description">user.one@example.com</Text>
+      </ComboBoxItem>
+      <ComboBoxItem textValue="User Two">
+        <Avatar slot="avatar" src={SRC_URL_2} />
+        <Text slot="label">User Two</Text>
+        <Text slot="description">user.two@example.com<br />123-456-7890</Text>
+      </ComboBoxItem>
+      <ComboBoxItem textValue="User Three">
+        <Avatar slot="avatar" src={SRC_URL_2} />
+        <Text slot="label">User Three</Text>
+      </ComboBoxItem>
+    </ComboBox>
+  ),
+  args: {
+    label: 'Share'
   }
 };
 
@@ -304,3 +338,27 @@ export const EmptyCombobox: Story = {
     }
   }
 };
+
+export function WithCreateOption() {
+  let [inputValue, setInputValue] = useState('');
+
+  return (
+    <ComboBox
+      label="Favorite Animal"
+      placeholder="Select an animal"
+      inputValue={inputValue}
+      onInputChange={setInputValue}>
+      {inputValue.length > 0 && (
+        <ComboBoxItem onAction={() => alert('hi')}>
+          {`Create "${inputValue}"`}
+        </ComboBoxItem>
+      )}
+      <ComboBoxItem>Aardvark</ComboBoxItem>
+      <ComboBoxItem>Cat</ComboBoxItem>
+      <ComboBoxItem>Dog</ComboBoxItem>
+      <ComboBoxItem>Kangaroo</ComboBoxItem>
+      <ComboBoxItem>Panda</ComboBoxItem>
+      <ComboBoxItem>Snake</ComboBoxItem>
+    </ComboBox>
+  );
+}

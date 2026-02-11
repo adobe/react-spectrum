@@ -6,13 +6,21 @@ import {ComboBox as VanillaComboBox, ComboBoxItem} from 'vanilla-starter/ComboBo
 import vanillaDocs from 'docs:vanilla-starter/ComboBox';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/ComboBoxAnatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+
+export const tags = ['autocomplete', 'search', 'typeahead', 'input'];
+export const relatedPages = [
+  {title: 'useComboBox', url: 'ComboBox/useComboBox.html'},
+  {title: 'Testing ComboBox', url: './ComboBox/testing'}
+];
+export const description = 'Combines a text input with a listbox, allowing users to filter a list of options to items matching a query.';
 
 # ComboBox
 
 <PageDescription>{docs.exports.ComboBox.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['label', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} type="vanilla" files={["starters/docs/src/ComboBox.tsx", "starters/docs/src/ComboBox.css", "starters/docs/src/theme.css"]}
+  ```tsx render docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['label', 'selectionMode', 'isDisabled']} initialProps={{label: 'Favorite Animal', placeholder: 'Select an animal'}} type="vanilla" files={["starters/docs/src/ComboBox.tsx", "starters/docs/src/ComboBox.css"]}
   "use client";
   import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 
@@ -26,7 +34,7 @@ import Anatomy from 'react-aria-components/docs/ComboBoxAnatomy.svg';
   </ComboBox>
   ```
 
-  ```tsx render docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['label', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} type="tailwind" files={["starters/tailwind/src/ComboBox.tsx"]}
+  ```tsx render docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['label', 'selectionMode', 'isDisabled']} initialProps={{label: 'Favorite Animal', placeholder: 'Select an animal'}} type="tailwind" files={["starters/tailwind/src/ComboBox.tsx"]}
   "use client";
   import {ComboBox, ComboBoxItem} from 'tailwind-starter/ComboBox';
 
@@ -42,52 +50,16 @@ import Anatomy from 'react-aria-components/docs/ComboBoxAnatomy.svg';
 
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A ComboBox consists of a label, an input which displays the current value, a [ListBox](ListBox.html) displayed in a [Popover](Popover.html), and an optional [Button](Button.html)
-to open the popover. Users can type within the input to filter the available options
-within the ListBox.
-
-`ComboBox` also supports optional description and `<FieldError>` slots. If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
-
-For more flexibility when building patterns such as command palettes, searchable menus, or filterable selects, see the [Autocomplete](Autocomplete.html) component.
-
-```tsx
-import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem, ListBoxSection, Header, Text, FieldError} from 'react-aria-components';
-
-<ComboBox>
-  <Label />
-  <Input />
-  <Button />
-  <Text slot="description" />
-  <FieldError />
-  <Popover>
-    <ListBox>
-      <ListBoxItem>
-        <Text slot="label" />
-        <Text slot="description" />
-      </ListBoxItem>
-      <ListBoxSection>
-        <Header />
-        <ListBoxItem />
-      </ListBoxSection>
-    </ListBox>
-  </Popover>
-</ComboBox>
-```
-
 ## Content
 
-`ComboBox` reuses the `ListBox` component, following the Collection Components API. It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox.html) for more details.
+`ComboBox` reuses the `ListBox` component, following the [Collection Components API](collections?component=ComboBox). It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox) for more details.
 
 The following example shows a dynamic collection of items, grouped into sections.
 
 ```tsx render
 "use client";
-import {ComboBox} from 'vanilla-starter/ComboBox';
-import {ListBoxSection, ListBoxItem, Collection, Header} from 'react-aria-components';
+import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
+import {ListBoxSection, Collection, Header} from 'react-aria-components';
 
 function Example() {
   /*- begin collapse -*/
@@ -116,42 +88,149 @@ function Example() {
   /*- end collapse -*/
 
   return (
-    <ComboBox label="Preferred fruit or vegetable" items={options}>
+    /*- begin highlight -*/
+    <ComboBox
+      label="Preferred fruit or vegetable"
+      placeholder="Select an option"
+      defaultItems={options}>
       {section => (
         <ListBoxSection id={section.name}>
           <Header>{section.name}</Header>
           <Collection items={section.children}>
-            {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+            {item => <ComboBoxItem id={item.name}>{item.name}</ComboBoxItem>}
           </Collection>
         </ListBoxSection>
       )}
     </ComboBox>
+    /*- end highlight -*/
   );
 }
 ```
 
-## Selection
+### TagGroup
 
-Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of an item. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html) for more details.
+Use the `ComboBoxValue` render prop function to display the selected items as a [TagGroup](TagGroup).
 
 ```tsx render
 "use client";
-import type {Key} from 'react-aria-components';
+import {ComboBox, ComboBoxValue, Input} from 'react-aria-components';
+import {ComboBoxListBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
+import {Label, FieldButton} from 'vanilla-starter/Form';
+import {Popover} from 'vanilla-starter/Popover';
+import {Tag, TagGroup} from 'vanilla-starter/TagGroup';
+import {ChevronDown} from 'lucide-react';
+
+/*- begin collapse -*/
+const states = [
+  {id: 'AL', name: 'Alabama'},
+  {id: 'AK', name: 'Alaska'},
+  {id: 'AZ', name: 'Arizona'},
+  {id: 'AR', name: 'Arkansas'},
+  {id: 'CA', name: 'California'},
+  {id: 'CO', name: 'Colorado'},
+  {id: 'CT', name: 'Connecticut'},
+  {id: 'DE', name: 'Delaware'},
+  {id: 'DC', name: 'District of Columbia'},
+  {id: 'FL', name: 'Florida'},
+  {id: 'GA', name: 'Georgia'},
+  {id: 'HI', name: 'Hawaii'},
+  {id: 'ID', name: 'Idaho'},
+  {id: 'IL', name: 'Illinois'},
+  {id: 'IN', name: 'Indiana'},
+  {id: 'IA', name: 'Iowa'},
+  {id: 'KS', name: 'Kansas'},
+  {id: 'KY', name: 'Kentucky'},
+  {id: 'LA', name: 'Louisiana'},
+  {id: 'ME', name: 'Maine'},
+  {id: 'MD', name: 'Maryland'},
+  {id: 'MA', name: 'Massachusetts'},
+  {id: 'MI', name: 'Michigan'},
+  {id: 'MN', name: 'Minnesota'},
+  {id: 'MS', name: 'Mississippi'},
+  {id: 'MO', name: 'Missouri'},
+  {id: 'MT', name: 'Montana'},
+  {id: 'NE', name: 'Nebraska'},
+  {id: 'NV', name: 'Nevada'},
+  {id: 'NH', name: 'New Hampshire'},
+  {id: 'NJ', name: 'New Jersey'},
+  {id: 'NM', name: 'New Mexico'},
+  {id: 'NY', name: 'New York'},
+  {id: 'NC', name: 'North Carolina'},
+  {id: 'ND', name: 'North Dakota'},
+  {id: 'OH', name: 'Ohio'},
+  {id: 'OK', name: 'Oklahoma'},
+  {id: 'OR', name: 'Oregon'},
+  {id: 'PA', name: 'Pennsylvania'},
+  {id: 'RI', name: 'Rhode Island'},
+  {id: 'SC', name: 'South Carolina'},
+  {id: 'SD', name: 'South Dakota'},
+  {id: 'TN', name: 'Tennessee'},
+  {id: 'TX', name: 'Texas'},
+  {id: 'UT', name: 'Utah'},
+  {id: 'VT', name: 'Vermont'},
+  {id: 'VA', name: 'Virginia'},
+  {id: 'WA', name: 'Washington'},
+  {id: 'WV', name: 'West Virginia'},
+  {id: 'WI', name: 'Wisconsin'},
+  {id: 'WY', name: 'Wyoming'}
+];
+/*- end collapse -*/
+
+<ComboBox selectionMode="multiple">
+  <Label>States</Label>
+  <div className="combobox-field">
+    <Input className="react-aria-Input inset" placeholder="Select a state" />
+    <FieldButton><ChevronDown /></FieldButton>
+  </div>
+  {/*- begin highlight -*/}
+  <ComboBoxValue<typeof states[0]>>
+    {({selectedItems, state}) => (
+      <TagGroup
+        aria-label="Selected states"
+        style={{marginTop: 8}}
+        items={selectedItems.filter(item => item != null)}
+        renderEmptyState={() => 'No selected items'}
+        onRemove={(keys) => {
+          // Remove keys from ComboBox state.
+          if (Array.isArray(state.value)) {
+            state.setValue(state.value.filter(k => !keys.has(k)));
+          }
+        }}>
+        {item => <Tag>{item.name}</Tag>}
+      </TagGroup>
+    )}
+  </ComboBoxValue>
+  {/*- end highlight -*/}
+  <Popover hideArrow className="combobox-popover">
+    <ComboBoxListBox items={states}>
+      {state => <ComboBoxItem>{state.name}</ComboBoxItem>}
+    </ComboBoxListBox>
+  </Popover>
+</ComboBox>
+```
+
+## Value
+
+Use the `defaultValue` or `value` prop to set the selected item. The value corresponds to the `id` prop of an item. Items can be disabled with the `isDisabled` prop.
+
+```tsx render
+"use client";
 import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 import {useState} from 'react';
+import type {Key} from 'react-aria-components';
 
 function Example() {
-  let [animal, setAnimal] = useState<Key>("bison");
+  let [animal, setAnimal] = useState<Key | null>("bison");
 
   return (
     <div>
       <ComboBox
-        label="Pick an animal"
-        ///- begin highlight -///
-        selectedKey={animal}
-        onSelectionChange={setAnimal}
-        ///- end highlight -///
-      >
+        label="Favorite Animal"
+        placeholder="Select an animal"
+        /*- begin highlight -*/
+        value={animal}
+        onChange={setAnimal}>
+        {/*- end highlight -*/}
         <ComboBoxItem id="koala">Koala</ComboBoxItem>
         <ComboBoxItem id="kangaroo">Kangaroo</ComboBoxItem>
         <ComboBoxItem id="platypus" isDisabled>Platypus</ComboBoxItem>
@@ -171,25 +250,23 @@ Use the `inputValue` or `defaultInputValue` prop to set the value of the input f
 
 ```tsx render wide docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['allowsCustomValue']} initialProps={{defaultSelectedKey: 'kangaroo'}}
 "use client";
-import type {Key} from 'react-aria-components';
 import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 import {useState} from 'react';
 
 function Example(props) {
-  let [value, setValue] = useState("Kangaroo");
+  let [value, setValue] = useState('Kangaroo');
 
   return (
     <div>
-      <p>Current input value: {value}</p>
       <ComboBox
         {...props}
         label="Favorite Animal"
+        placeholder="Select an animal"
+        /*- begin highlight -*/
         /* PROPS */
-        ///- begin highlight -///
         inputValue={value}
-        onInputChange={setValue}
-        ///- end highlight -///
-      >
+        onInputChange={setValue}>
+        {/*- end highlight -*/}
         <ComboBoxItem id="koala">Koala</ComboBoxItem>
         <ComboBoxItem id="kangaroo">Kangaroo</ComboBoxItem>
         <ComboBoxItem id="platypus">Platypus</ComboBoxItem>
@@ -197,6 +274,7 @@ function Example(props) {
         <ComboBoxItem id="bison">Bison</ComboBoxItem>
         <ComboBoxItem id="skunk">Skunk</ComboBoxItem>
       </ComboBox>
+      <p>Current input value: {value}</p>
     </div>
   );
 }
@@ -204,7 +282,7 @@ function Example(props) {
 
 ### Fully controlled
 
-Both `inputValue` and `selectedKey` can be controlled simultaneously. However, each interaction will only trigger either `onInputChange` or `onSelectionChange`, not both. When controlling both props, you must update both values accordingly.
+Both `inputValue` and `value` can be controlled simultaneously. However, each interaction will only trigger either `onInputChange` or `onChange`, not both. When controlling both props, you must update both values accordingly.
 
 ```tsx render
 "use client";
@@ -227,59 +305,106 @@ function ControlledComboBox() {
   ];
   /*- end collapse -*/
 
-  let [fieldState, setFieldState] = useState({
-    selectedKey: null,
+  let [fieldState, setFieldState] = useState<{value: Key | null, inputValue: string}>({
+    value: null,
     inputValue: ''
   });
 
-  let onSelectionChange = (id: Key) => {
-    // Update inputValue when selectedKey changes.
+  let onChange = (id: Key | null) => {
+    // Update inputValue when value changes.
     setFieldState({
-      inputValue: options.find(o => o.id === id)?.name ?? '',
-      selectedKey: id
+      inputValue: id == null ? '' : options.find(o => o.id === id)?.name ?? '',
+      value: id
     });
   };
 
   let onInputChange = (value: string) => {
-    // Reset selectedKey to null if the input is cleared.
+    // Reset value to null if the input is cleared.
     setFieldState(prevState => ({
       inputValue: value,
-      selectedKey: value === '' ? null : prevState.selectedKey
+      value: value === '' ? null : prevState.value
     }));
   };
 
   return (
     <div>
-      <p>Current selected major id: {fieldState.selectedKey}</p>
-      <p>Current input text: {fieldState.inputValue}</p>
-       <ComboBox
-        label="Pick a engineering major"
+      <ComboBox
+        label="Engineering major"
+        placeholder="Select a major"
         /*- begin highlight -*/
         defaultItems={options}
-        selectedKey={fieldState.selectedKey}
+        value={fieldState.value}
         inputValue={fieldState.inputValue}
-        onSelectionChange={onSelectionChange}
+        onChange={onChange}
         onInputChange={onInputChange}>
         {/*- end highlight -*/}
         {item => <ComboBoxItem>{item.name}</ComboBoxItem>}
       </ComboBox>
+      <pre style={{fontSize: 12}}>
+        Current selected major id: {fieldState.value}{'\n'}
+        Current input text: {fieldState.inputValue}
+      </pre>
     </div>
+  );
+}
+```
+
+## Item actions
+
+Use the `onAction` prop on a `<ListBoxItem>` to perform a custom action when the item is pressed. This example adds a "Create" action for the current input value.
+
+```tsx render
+"use client";
+import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
+import {useState} from 'react';
+
+function Example() {
+  let [inputValue, setInputValue] = useState('');
+
+  return (
+    <ComboBox
+      label="Favorite Animal"
+      placeholder="Select an animal"
+      allowsEmptyCollection
+      inputValue={inputValue}
+      onInputChange={setInputValue}>
+      {/*- begin highlight -*/}
+      {inputValue.length > 0 && (
+        <ComboBoxItem onAction={() => alert('Creating ' + inputValue)}>
+          {`Create "${inputValue}"`}
+        </ComboBoxItem>
+      )}
+      {/*- end highlight -*/}
+      <ComboBoxItem>Aardvark</ComboBoxItem>
+      <ComboBoxItem>Cat</ComboBoxItem>
+      <ComboBoxItem>Dog</ComboBoxItem>
+      <ComboBoxItem>Kangaroo</ComboBoxItem>
+      <ComboBoxItem>Panda</ComboBoxItem>
+      <ComboBoxItem>Snake</ComboBoxItem>
+    </ComboBox>
   );
 }
 ```
 
 ## Forms
 
-Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects enters a value, or implement custom client or server-side validation. See the Forms guide to learn more.
+Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects a value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
 ```tsx render
 "use client";
 import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 import {Button} from 'vanilla-starter/Button';
-import {Form} from 'react-aria-components';
+import {Form} from 'vanilla-starter/Form';;
 
 <Form>
-  <ComboBox name="animal" isRequired description="Please select an animal.">
+  <ComboBox
+    label="Animal"
+    placeholder="e.g. Cat"
+    /*- begin highlight -*/
+    name="animal"
+    isRequired
+    /*- end highlight -*/
+    description="Please select an animal.">
     <ComboBoxItem id="aardvark">Aardvark</ComboBoxItem>
     <ComboBoxItem id="cat">Cat</ComboBoxItem>
     <ComboBoxItem id="dog">Dog</ComboBoxItem>
@@ -301,7 +426,7 @@ Use the `menuTrigger` prop to control when the popover opens:
 
 Use `allowsEmptyCollection` to keep the popover open when there are no items available in the list.
 
-```tsx render wide docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['menuTrigger', 'allowsEmptyCollection']} initialProps={{label: 'Favorite Animal'}}
+```tsx render wide docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['menuTrigger', 'allowsEmptyCollection']} initialProps={{label: 'Favorite Animal', placeholder: 'Select an animal'}}
 "use client";
 import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 
@@ -317,6 +442,26 @@ import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 
 ## API
 
+<Anatomy />
+
+```tsx links={{ComboBox: '#combobox', ComboBoxValue: '#comboboxvalue', Button: 'Button', Popover: 'Popover', ListBox: 'ListBox'}}
+<ComboBox>
+  <Label />
+  <Input />
+  <Button />
+  <ComboBoxValue />
+  <Text slot="description" />
+  <FieldError />
+  <Popover>
+    <ListBox />
+  </Popover>
+</ComboBox>
+```
+
+### ComboBox
+
 <PropTable component={docs.exports.ComboBox} links={docs.links} />
 
-<StateTable defaultClassName="react-aria-ComboBox" properties={docs.exports.ComboBoxRenderProps.properties} />
+### ComboBoxValue
+
+<PropTable component={docs.exports.ComboBoxValue} links={docs.links} showDescription />
