@@ -481,29 +481,44 @@ function Example(props) {
 
 ## Single selection
 
-In some components like [ComboBox](ComboBox), only single selection is supported. In this case, the singular `selectedKey` and `defaultSelectedKey` props are available instead of their plural variants. These accept a single id instead of a `Set` as their value.
+In some components like [Tabs](Tabs), only single selection is supported. In this case, the singular `selectedKey` and `defaultSelectedKey` props are available instead of their plural variants. These accept a single id instead of a `Set` as their value.
 
 ```tsx render
 "use client";
 import type {Key} from 'react-aria-components';
-import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
+import {Tabs, TabList, Tab, TabPanels, TabPanel} from 'vanilla-starter/Tabs';
+import Home from '@react-spectrum/s2/illustrations/gradient/generic2/Home';
+import Folder from '@react-spectrum/s2/illustrations/gradient/generic2/FolderOpen';
+import Search from '@react-spectrum/s2/illustrations/gradient/generic2/Search';
 import {useState} from 'react';
 
 function Example() {
-  let [selectedKey, setSelectedKey] = useState<Key | null>(null);
+  let [selectedKey, setSelectedKey] = useState<Key>('home');
 
   return (
     <div>
-      <ComboBox
-        label="ComboBox"
+      <Tabs
         ///- begin highlight -///
         selectedKey={selectedKey}
         ///- end highlight -///
         onSelectionChange={setSelectedKey}>
-        <ComboBoxItem id="one">One</ComboBoxItem>
-        <ComboBoxItem id="two">Two</ComboBoxItem>
-        <ComboBoxItem id="three">Three</ComboBoxItem>
-      </ComboBox>
+        <TabList aria-label="Tabs">
+          <Tab id="home">Home</Tab>
+          <Tab id="files">Files</Tab>
+          <Tab id="search">Search</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel id="home" style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <Home />
+          </TabPanel>
+          <TabPanel id="files" style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <Folder />
+          </TabPanel>
+          <TabPanel id="search" style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <Search />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
       <p>selectedKey: {String(selectedKey)}</p>
     </div>
   );
@@ -868,6 +883,7 @@ import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
 ```
 
 ```tsx render wide docs={docs.exports.Table} links={docs.links} props={['disabledBehavior']}
+"use client";
 import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
 
 <Table
