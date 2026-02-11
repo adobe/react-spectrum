@@ -1,5 +1,5 @@
 
-import {nodeContains, useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {nodeContains, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {RefObject} from '@react-types/shared';
 import {useEffect, useRef, useState} from 'react';
 import {useInteractionModality} from '@react-aria/interactions';
@@ -35,13 +35,12 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): v
   let movementsTowardsSubmenuCount = useRef<number>(2);
   let [preventPointerEvents, setPreventPointerEvents] = useState(false);
 
-  let updateSubmenuRect = () => {
+  let updateSubmenuRect = useEffectEvent(() => {
     if (submenuRef.current) {
       submenuRect.current = submenuRef.current.getBoundingClientRect();
       submenuSide.current = undefined;
     }
-  };
-  useResizeObserver({ref: submenuRef, onResize: updateSubmenuRect});
+  });
 
   let reset = () => {
     setPreventPointerEvents(false);
@@ -68,14 +67,32 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): v
   }, [menuRef, preventPointerEvents]);
 
   useLayoutEffect(() => {
-    let submenu = submenuRef.current;
     let menu = menuRef.current;
 
-    if (isDisabled || !submenu || !isOpen || modality !== 'pointer' || !menu) {
+    if (isDisabled || !isOpen || modality !== 'pointer' || !menu) {
       reset();
       return;
     }
-    submenuRect.current = submenu.getBoundingClientRect();
+
+    // The submenu may not be in the DOM yet (e.g. due to CollectionBuilder rendering).
+    // Capture the bounding box if available now; otherwise it will be captured lazily in onPointerMove.
+    if (submenuRef.current) {
+      submenuRect.current = submenuRef.current.getBoundingClientRect();
+    }
+
+    // Set up a ResizeObserver to track submenu size changes. Since submenuRef.current may be null
+    // initially (due to deferred rendering), we also lazily attach in onPointerMove below.
+    let resizeObserver: ResizeObserver | undefined;
+    let observedElement: Element | undefined;
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(() => {
+        updateSubmenuRect();
+      });
+      if (submenuRef.current) {
+        observedElement = submenuRef.current;
+        resizeObserver.observe(observedElement);
+      }
+    }
 
     let onPointerMove = (e: PointerEvent) => {
       if (e.pointerType === 'touch' || e.pointerType === 'pen') {
@@ -96,6 +113,16 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): v
       if (!prevPointerPos.current) {
         prevPointerPos.current = {x: mouseX, y: mouseY};
         return;
+      }
+
+      // If submenuRect hasn't been captured yet (e.g. the submenu mounted after the layout effect ran),
+      // try to capture it now, and lazily attach the ResizeObserver.
+      if (!submenuRect.current && submenuRef.current) {
+        submenuRect.current = submenuRef.current.getBoundingClientRect();
+        if (resizeObserver && !observedElement) {
+          observedElement = submenuRef.current;
+          resizeObserver.observe(observedElement);
+        }
       }
 
       if (!submenuRect.current) {
@@ -169,6 +196,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): v
       if (process.env.NODE_ENV !== 'test') {
         window.removeEventListener('pointerdown', onPointerDown, true);
       }
+      resizeObserver?.disconnect();
       clearTimeout(timeout.current);
       clearTimeout(autoCloseTimeout.current);
       movementsTowardsSubmenuCount.current = ALLOWED_INVALID_MOVEMENTS;
