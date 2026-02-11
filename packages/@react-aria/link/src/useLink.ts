@@ -57,7 +57,9 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement 
     };
   }
   let {focusableProps} = useFocusable(props, ref);
-  delete focusableProps.tabIndex;
+  if (elementType === 'a') {
+    delete focusableProps.tabIndex;
+  }
   let {pressProps, isPressed} = usePress({onPress, onPressStart, onPressEnd, onClick, isDisabled, ref});
   let domProps = filterDOMProps(otherProps, {labelable: true});
   let interactionHandlers = mergeProps(focusableProps, pressProps);
