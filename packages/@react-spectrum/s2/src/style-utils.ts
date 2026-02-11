@@ -122,11 +122,11 @@ export const fieldInput = () => ({
 } as const);
 
 /**
- * Returns style properties that configure the CSS `color-scheme` for a component.
+ * Returns style properties that set the CSS `color-scheme` for a component.
  * Defaults to the page's color scheme and supports `'light'`, `'dark'`, and `'light dark'` values
  * via the `colorScheme` render prop condition.
  */
-export const colorScheme = () => ({
+export const setColorScheme = () => ({
   colorScheme: {
     // Default to page color scheme if none is defined.
     default: '[var(--lightningcss-light, light) var(--lightningcss-dark, dark)]',

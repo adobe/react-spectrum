@@ -27,7 +27,7 @@ import {
 import {ButtonContext} from './Button';
 import {Card} from './Card';
 import {CheckboxContext} from './Checkbox';
-import {colorScheme, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {setColorScheme, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
 import {ContentContext, FooterContext, KeyboardContext, TextContext} from './Content';
 import {
@@ -106,7 +106,7 @@ const slideLeftKeyframes = keyframes(`
 `);
 
 let popover = style({
-  ...colorScheme(),
+  ...setColorScheme(),
   '--s2-container-bg': {
     type: 'backgroundColor',
     value: 'layer-2'

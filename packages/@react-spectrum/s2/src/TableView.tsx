@@ -53,7 +53,7 @@ import {
   Virtualizer
 } from 'react-aria-components';
 import {ButtonGroup} from './ButtonGroup';
-import {centerPadding, colorScheme, controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {centerPadding, setColorScheme, controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
 import Chevron from '../ui-icons/Chevron';
@@ -1103,7 +1103,7 @@ const editableCell = style<CellRenderProps & S2TableProps & {isDivider: boolean,
 });
 
 let editPopover = style({
-  ...colorScheme(),
+  ...setColorScheme(),
   '--s2-container-bg': {
     type: 'backgroundColor',
     value: 'layer-2'

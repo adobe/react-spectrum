@@ -94,7 +94,7 @@ export {pressScale} from './pressScale';
 export {
   getAllowedOverrides,
   centerPadding,
-  colorScheme
+  setColorScheme
 } from './style-utils';
 
 export {raw, keyframes} from '../style';

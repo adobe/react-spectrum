@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {colorScheme} from './style-utils' with {type: 'macro'};
+import {setColorScheme} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
 import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
@@ -28,7 +28,7 @@ interface ModalProps extends Omit<ModalOverlayProps, 'className' | 'style' | 're
 }
 
 const modalOverlayStyles = style({
-  ...colorScheme(),
+  ...setColorScheme(),
   position: 'absolute',
   top: 0,
   left: 0,

@@ -11,7 +11,7 @@
  */
 
 import type {ColorScheme, Router} from '@react-types/provider';
-import {colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {setColorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, JSX, ReactNode, useContext} from 'react';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
@@ -77,7 +77,7 @@ export function Provider(props: ProviderProps): JSX.Element {
 generateDefaultColorSchemeStyles();
 
 let providerStyles = style({
-  ...colorScheme(),
+  ...setColorScheme(),
   '--s2-container-bg': {
     type: 'backgroundColor',
     value: {
