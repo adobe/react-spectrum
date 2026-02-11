@@ -45,12 +45,17 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   private keyMap: Map<Key, CollectionNode<T>> = new Map();
   private itemCount: number = 0;
   private expandedKeys;
+  private firstKey;
+  private lastKey;
 
   constructor(opts) {
     let {collection, lastExpandedKeys, expandedKeys} = opts;
-    let {keyMap, itemCount} = generateKeyMap<T>(collection, {expandedKeys});
+    let {keyMap, itemCount, firstKey, lastKey} = generateKeyMap<T>(collection, {expandedKeys});
     // Use generated keyMap because it contains the modified collection nodes (aka it adjusts the indexes so that they ignore the existence of the Content items)
+    // Also adjusts the levels of node inside of a section
     this.keyMap = keyMap;
+    this.firstKey = firstKey;
+    this.lastKey = lastKey;
     this.itemCount = itemCount;
     this.expandedKeys = expandedKeys;
 
@@ -123,11 +128,11 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   }
 
   getFirstKey() {
-    return [...this.keyMap.keys()][0];
+    return this.firstKey;
   }
 
   getLastKey() {
-    return [...this.keyMap.keys()][this.keyMap.size - 1];
+    return this.lastKey;
   }
 
   getKeyAfter(key: Key) {
@@ -942,7 +947,9 @@ interface TreeGridCollectionOptions {
 
 interface FlattenedTree<T> {
   keyMap: Map<Key, CollectionNode<T>>,
-  itemCount: number
+  itemCount: number,
+  firstKey: Key,
+  lastKey: Key
 }
 
 function generateKeyMap<T>(collection: TreeCollection<T>, opts: TreeGridCollectionOptions): FlattenedTree<T> {
@@ -1007,7 +1014,9 @@ function generateKeyMap<T>(collection: TreeCollection<T>, opts: TreeGridCollecti
 
   return {
     keyMap,
-    itemCount
+    itemCount,
+    firstKey: collection.getFirstKey(),
+    lastKey: collection.getLastKey()
   };
 }
 
