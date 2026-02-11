@@ -21,6 +21,13 @@ import {StyleString} from '../style/types';
  *
  * @param minHeight - A CSS expression for the minimum height to center within. Defaults to `'self(minHeight)'`.
  * @returns A CSS `calc()` expression wrapped as an arbitrary style value.
+ *
+ * @example
+ * ```tsx
+ * const styles = style({
+ *   paddingY: centerPadding()
+ * });
+ * ```
  */
 export function centerPadding(minHeight: string = 'self(minHeight)'): `[${string}]` {
   return `[calc((${minHeight} - self(borderTopWidth, 0px) - self(borderBottomWidth, 0px) - 1lh) / 2)]`;
@@ -125,6 +132,14 @@ export const fieldInput = () => ({
  * Returns style properties that set the CSS `color-scheme` for a component.
  * Defaults to the page's color scheme and supports `'light'`, `'dark'`, and `'light dark'` values
  * via the `colorScheme` render prop condition.
+ *
+ * @example
+ * ```tsx
+ * const styles = style({
+ *   ...setColorScheme(),
+ *   backgroundColor: 'layer-1'
+ * });
+ * ```
  */
 export const setColorScheme = () => ({
   colorScheme: {
@@ -363,6 +378,18 @@ export interface StyleProps extends UnsafeStyles {
  * @param options.width - Whether to include width properties (`width`, `minWidth`, `maxWidth`). Defaults to `true`.
  * @param options.height - Whether to include height properties (`height`, `minHeight`, `maxHeight`, `size`). Defaults to `false`.
  * @returns An array of allowed CSS property names.
+ *
+ * @example
+ * ```tsx
+ * const styles = style({
+ *   // ... component styles
+ * }, getAllowedOverrides());
+ *
+ * // With height overrides enabled:
+ * const styles = style({
+ *   // ... component styles
+ * }, getAllowedOverrides({height: true}));
+ * ```
  */
 export function getAllowedOverrides({width = true, height = false} = {}): string[] {
   return (allowedOverrides as unknown as string[]).concat(width ? widthProperties : []).concat(height ? heightProperties : []);

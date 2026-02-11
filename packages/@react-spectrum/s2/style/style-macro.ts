@@ -876,7 +876,7 @@ class ConditionalRule extends GroupRule {
  * ```tsx
  * import {raw} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
- * const className = raw(`
+ * const styles = raw(`
  *   backdrop-filter: blur(8px);
  * `);
  * ```
@@ -927,7 +927,7 @@ export function raw(this: MacroContext | void, css: string, layer = '_.a'): stri
  *   to { opacity: 1; }
  * `);
  * 
- * const className = style({
+ * const styles = style({
  *   animation: fadeIn,
  * });
  * ```
