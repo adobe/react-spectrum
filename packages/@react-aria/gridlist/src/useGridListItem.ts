@@ -151,7 +151,6 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           e.stopPropagation();
           return;
         } else if (
-          state.shouldNavigateToCollapsibleParent &&
           !state.expandedKeys.has(node.key) &&
           node.parentKey
         ) {

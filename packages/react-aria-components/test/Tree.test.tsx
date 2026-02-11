@@ -841,7 +841,7 @@ describe('Tree', () => {
       });
 
       it('should support collapse key to navigate to parent', async () => {
-        let {getAllByRole} = render(<DynamicTree treeProps={{shouldNavigateToCollapsibleParent: true}} />);
+        let {getAllByRole} = render(<DynamicTree />);
         await user.tab();
         let rows = getAllByRole('row');
         expect(rows).toHaveLength(20);

@@ -33,10 +33,7 @@ export interface TreeProps<T>
     Expandable,
     MultipleSelection {
   /** Whether `disabledKeys` applies to all interactions, or only selection. */
-  disabledBehavior?: DisabledBehavior,
-
-  /** Whether collapsing a non-collapsing item should navigate to its collapsible parent. */
-  shouldNavigateToCollapsibleParent?: boolean
+  disabledBehavior?: DisabledBehavior
 }
 export interface TreeState<T> {
   /** A collection of items in the tree. */
@@ -55,13 +52,7 @@ export interface TreeState<T> {
   setExpandedKeys(keys: Set<Key>): void,
 
   /** A selection manager to read and update multiple selection state. */
-  readonly selectionManager: SelectionManager,
-
-  /**
-   * Whether collapsing a non-collapsing item should navigate to its collapsible parent.
-   * @default false
-   */
-  shouldNavigateToCollapsibleParent?: boolean
+  readonly selectionManager: SelectionManager
 }
 
 /**
@@ -70,8 +61,7 @@ export interface TreeState<T> {
  */
 export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T> {
   let {
-    onExpandedChange,
-    shouldNavigateToCollapsibleParent = false
+    onExpandedChange
   } = props;
 
   let [expandedKeys, setExpandedKeys] = useControlledState(
@@ -105,8 +95,7 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
     disabledKeys,
     toggleKey: onToggle,
     setExpandedKeys,
-    selectionManager: new SelectionManager(tree, selectionState),
-    shouldNavigateToCollapsibleParent
+    selectionManager: new SelectionManager(tree, selectionState)
   };
 }
 
