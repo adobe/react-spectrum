@@ -24,7 +24,6 @@ function ProviderUpdater(props) {
   useEffect(() => {
     let channel = addons.getChannel();
     let providerUpdate = (event) => {
-      console.log('providerUpdate', event);
       setLocale(event.locale);
       setTheme(event.theme === 'Auto' ? undefined : event.theme);
       setScale(event.scale === 'Auto' ? undefined : event.scale);
@@ -40,7 +39,6 @@ function ProviderUpdater(props) {
   }, []);
 
   if (props.options.mainElement == null) {
-    console.log('mainElement is null', storyReady);
     return (
       <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue}>
         <main>
@@ -49,7 +47,6 @@ function ProviderUpdater(props) {
       </Provider>
     );
   } else {
-    console.log('mainElement is not null');
     return (
       <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue}>
         {storyReady && props.children}

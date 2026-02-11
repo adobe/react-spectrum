@@ -27,7 +27,6 @@ const preview = {
           return () => channel.removeListener(DARK_MODE_EVENT_NAME, setDark);
         }, []);
         var style = getComputedStyle(document.body)
-        console.log('got here');
         return <DocsContainer {...props} theme={{...(dark ? themes.dark : themes.light), appContentBg: style.getPropertyValue('--s2-container-bg').trim()}} />;
       },
       codePanel: true,
@@ -45,7 +44,6 @@ const preview = {
         }
       },
       page: () => {
-        console.log('got here 2');
         return (
         <>
           <Title />
