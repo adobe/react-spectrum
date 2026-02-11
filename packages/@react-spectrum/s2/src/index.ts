@@ -97,7 +97,6 @@ export {
   setColorScheme
 } from './style-utils';
 
-export {raw, keyframes} from '../style';
 export {mergeStyles} from '../style/runtime';
 
 export {Autocomplete, Collection, FileTrigger, parseColor, useLocale} from 'react-aria-components';
