@@ -325,12 +325,18 @@ export const widthProperties = [
   'maxWidth'
 ] as const;
 
+/** The set of width-related CSS property names (`width`, `minWidth`, `maxWidth`). */
+export type WidthProperties = (typeof widthProperties)[number];
+
 export const heightProperties = [
   'size',
   'height',
   'minHeight',
   'maxHeight'
 ] as const;
+
+/** The set of height-related CSS property names (`size`, `height`, `minHeight`, `maxHeight`). */
+export type HeightProperties = (typeof heightProperties)[number];
 
 export type StylesProp = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number]>;
 export type StylesPropWithHeight = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number] | (typeof heightProperties)[number]>;
