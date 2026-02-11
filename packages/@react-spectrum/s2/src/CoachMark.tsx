@@ -27,7 +27,6 @@ import {
 import {ButtonContext} from './Button';
 import {Card} from './Card';
 import {CheckboxContext} from './Checkbox';
-import {setColorScheme, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
 import {ContentContext, FooterContext, KeyboardContext, TextContext} from './Content';
 import {
@@ -40,6 +39,7 @@ import {
 } from 'react';
 import {DividerContext} from './Divider';
 import {forwardRefType} from './types';
+import {getAllowedOverrides, setColorScheme, StyleProps} from './style-utils' with {type: 'macro'};
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
