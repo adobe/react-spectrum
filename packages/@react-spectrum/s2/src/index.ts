@@ -93,21 +93,11 @@ export {pressScale} from './pressScale';
 
 export {
   getAllowedOverrides,
-  field,
-  fieldLabel,
-  fieldInput,
-  control,
-  controlFont,
-  controlSize,
-  controlBorderRadius,
   centerPadding,
-  colorScheme,
-  staticColor,
-  widthProperties,
-  heightProperties
+  colorScheme
 } from './style-utils';
 
-export {focusRing, iconStyle, linearGradient, edgeToText, raw, keyframes} from '../style';
+export {raw, keyframes} from '../style';
 export {mergeStyles} from '../style/runtime';
 
 export {Autocomplete, Collection, FileTrigger, parseColor, useLocale} from 'react-aria-components';
