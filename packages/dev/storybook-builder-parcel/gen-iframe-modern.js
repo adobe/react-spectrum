@@ -22,6 +22,20 @@ const TEMPLATE = `<!DOCTYPE html>
     <!-- [BODY HTML SNIPPET HERE] -->
     <div id="storybook-root"></div>
     <div id="storybook-docs"></div>
+    <script>
+      (function(){
+        var noop = function(){};
+        var placeholderChannel = { on: noop, emit: noop, removeListener: noop, off: noop };
+        window.__STORYBOOK_ADDONS_CHANNEL__ = placeholderChannel;
+        window.__STORYBOOK_ADDONS_PREVIEW = {
+          _channel: null,
+          setChannel: function(c){ this._channel = c; window.__STORYBOOK_ADDONS_CHANNEL__ = c; },
+          getChannel: function(){ return this._channel || placeholderChannel; },
+          ready: function(){ return Promise.resolve(this.getChannel()); },
+          hasChannel: function(){ return !!this._channel; }
+        };
+      })();
+    </script>
     <script type="module" src="preview.js"></script>
   </body>
 </html>

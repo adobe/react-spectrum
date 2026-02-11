@@ -4,7 +4,12 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const fs = require("fs");
 
 const { generateIframeModern } = require("./gen-iframe-modern.js");
-const { generatePreviewModern } = require("./gen-preview-modern.js");
+const {
+  generatePreviewModern,
+  generatePreviewBootstrap,
+  generateSetupAddons,
+  generateInitAddonsGlobal,
+} = require("./gen-preview-modern.js");
 
 const generatedEntries = path.join(__dirname, "generated-entries");
 
@@ -78,7 +83,19 @@ async function createParcel(options, isDev = false) {
     await generateIframeModern(options, generatedEntries)
   );
   fs.writeFileSync(
+    path.join(generatedEntries, "init-addons-global.js"),
+    generateInitAddonsGlobal()
+  );
+  fs.writeFileSync(
+    path.join(generatedEntries, "setup-addons.js"),
+    generateSetupAddons()
+  );
+  fs.writeFileSync(
     path.join(generatedEntries, "preview.js"),
+    generatePreviewBootstrap()
+  );
+  fs.writeFileSync(
+    path.join(generatedEntries, "preview-main.js"),
     await generatePreviewModern(options, generatedEntries)
   );
 

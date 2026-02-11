@@ -20,7 +20,7 @@ const config: StorybookConfig = {
     "../packages/@react-spectrum/s2/stories/*.stories.@(js|jsx|mjs|ts|tsx)",
   ],
   addons: [
-    './custom-addons/provider/register',
+    './custom-addons/provider/preset.ts',
     // "@storybook/addon-styling-webpack",
     "@storybook/addon-docs",
     "@vueless/storybook-dark-mode",
