@@ -10,14 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from '@react-types/shared';
-import {useState} from 'react';
+import {difference, diffSets, isSelectionEqual} from './utils';
+import {Key, Selection} from '@react-types/shared';
+import React, {useRef, useState} from 'react';
 
 export interface TreeOptions<T extends object> {
   /** Initial root items in the tree. */
   initialItems?: T[],
   /** The keys for the initially selected items. */
-  initialSelectedKeys?: Iterable<Key>,
+  initialSelectedKeys?: Iterable<Key> | 'all',
+  /** This feature only works with multiple selection and `"toggle"` selection behavior. */
+  selectionPropagation?: SelectionPropagation<T>,
   /** A function that returns a unique key for an item object. */
   getKey?: (item: T) => Key,
   /** A function that returns the children for an item object. */
@@ -39,11 +42,14 @@ export interface TreeData<T extends object> {
   /** The root nodes in the tree. */
   items: TreeNode<T>[],
 
+  /** The keys of the currently indeterminate items in the tree. */
+  indeterminateKeys: Set<Key> | undefined,
+
   /** The keys of the currently selected items in the tree. */
-  selectedKeys: Set<Key>,
+  selectedKeys: Selection,
 
   /** Sets the selected keys. */
-  setSelectedKeys(keys: Set<Key>): void,
+  setSelectedKeys(keys: Selection): void,
 
   /**
    * Gets a node from the tree by key.
@@ -126,13 +132,23 @@ export interface TreeData<T extends object> {
    * @param key - The key of the item to update.
    * @param newValue - The new value for the item.
    */
-  update(key: Key, newValue: T): void
+  update(key: Key, newValue: T): void,
+  
+  /** Propagates selection state. */
+  propagateSelection(selection: Selection): void
 }
 
 interface TreeDataState<T extends object> {
     items: TreeNode<T>[],
     nodeMap: Map<Key, TreeNode<T>>
 }
+
+// During SSR, React emits a warning when calling useLayoutEffect.
+// Since neither useLayoutEffect nor useEffect run on the server,
+// we can suppress this by replace it with a noop on the server.
+export const useLayoutEffect = typeof document !== 'undefined'
+  ? React.useLayoutEffect
+  : () => {};
 
 /**
  * Manages state for an immutable tree data structure, and provides convenience methods to
@@ -150,7 +166,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
   let [tree, setItems] = useState<TreeDataState<T>>(() => buildTree(initialItems, new Map()));
   let {items, nodeMap} = tree;
 
-  let [selectedKeys, setSelectedKeys] = useState(new Set<Key>(initialSelectedKeys || []));
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(() => (initialSelectedKeys === 'all' ? 'all' : new Set<Key>(initialSelectedKeys || [])));
 
   function buildTree(initialItems: T[] | null = [], map: Map<Key, TreeNode<T>>, parentKey?: Key | null) {
     if (initialItems == null) {
@@ -252,10 +268,81 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       }
     }
   }
+
+  const additionalKeysToPropagate = useRef(new Set<Key>()).current;
+  const indeterminateKeys = useRef<Set<Key>>(undefined);
+
+  const {
+    canSelectItem = () => true,
+    hasMoreChildren = () => false,
+    shouldPropagate = false
+  } = options.selectionPropagation || {};
+  
+  const manager = new SelectionManager(
+    {
+      canSelectItem,
+      hasMoreChildren,
+      shouldPropagate,
+      getChildren(key) {
+        const node = nodeMap.get(key);
+        return node?.children ?? [];
+      },
+      getParent(key) {
+        const parentKey = nodeMap.get(key)?.parentKey;
+        return parentKey != null ? nodeMap.get(parentKey) : undefined;
+      },
+      getSelectAllKeys() {
+        const keys = [...nodeMap.values()].filter(canSelectItem).map(node => node.key);
+        return new Set(keys);
+      }
+    },
+    action => {
+      setSelectedKeys(selectedKeys => {
+        const returnValue = typeof action === 'function'
+          ? action({
+            get indeterminateKeys() {
+              return indeterminateKeys.current;
+            },
+            selectedKeys
+          })
+          : action;
+        indeterminateKeys.current = returnValue.indeterminateKeys;
+        return returnValue.selectedKeys;
+      });
+    }
+  );
+  
+  const markForPropagation = (key: Key) => {
+    if (selectedKeys !== 'all' && selectedKeys.has(key)) {
+      additionalKeysToPropagate.add(key);
+    }
+  };
+  
+  useLayoutEffect(() => {
+    if (selectedKeys !== 'all' && additionalKeysToPropagate.size > 0) {
+      const existingKeys: Key[] = [];
+      additionalKeysToPropagate.forEach(key => {
+        if (selectedKeys.has(key)) {
+          existingKeys.push(key);
+        }
+      });
+  
+      if (existingKeys.length > 0) {
+        manager.propagateSelectionDown(selectedKeys, existingKeys);
+      }
+    }
+  
+    additionalKeysToPropagate.clear();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items]);
+
   return {
     items,
     selectedKeys,
     setSelectedKeys,
+    get indeterminateKeys() {
+      return indeterminateKeys.current;
+    },
     getItem(key: Key) {
       return nodeMap.get(key);
     },
@@ -274,6 +361,8 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
             nodeMap: newMap
           };
         }
+
+        markForPropagation(parentKey);
 
         // Otherwise, update the parent node and its ancestors.
         return updateTree(items, parentKey, parentNode => ({
@@ -378,6 +467,8 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
           ], nodeMap: newMap};
         }
 
+        markForPropagation(toParentKey);
+
         // Otherwise, update the parent node and its ancestors.
         return updateTree(newItems, toParentKey, parentNode => ({
           key: parentNode.key,
@@ -437,6 +528,9 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
         node.children = tree.items;
         return node;
       }, originalMap));
+    },
+    propagateSelection(selection: Selection) {
+      manager.propagateSelection(selection);
     }
   };
 }
@@ -537,4 +631,231 @@ function moveItems<T extends object>(
       ...parentNode.children!.slice(toIndex)
     ]
   }), newMap);
+}
+
+export interface SelectionPropagation<T extends object> {
+  /**
+   * Determines if a node can be selected.
+   * @default () => true
+   */
+  canSelectItem?: (node: TreeNode<T>) => boolean,
+  /**
+   * Indicates if node has unloaded children (async loading).
+   * If true, the parent node shows an indeterminate state even when all loaded children are selected.
+   * @default () => false
+   */
+  hasMoreChildren?: (node: TreeNode<T>) => boolean,
+  /**
+   * Enables or disables selection propagation.
+   * @default false
+   */
+  shouldPropagate?: boolean
+}
+
+interface AsyncDataTree<T extends object> extends Required<SelectionPropagation<T>> {
+  getChildren: (key: Key) => TreeNode<T>[],
+  getParent: (key: Key) => TreeNode<T> | undefined,
+  getSelectAllKeys: () => Set<Key>
+}
+
+interface SelectionState {
+  indeterminateKeys?: Set<Key>,
+  selectedKeys: Selection
+}
+
+const PropagationFlags = {
+  Down: 1,
+  Up: 2
+};
+
+const TriState = {
+  False: 0,
+  True: 1,
+  Indeterminate: 2
+};
+
+export class SelectionManager<T extends object> {
+  private dispatch: React.Dispatch<React.SetStateAction<SelectionState>>;
+  private tree: AsyncDataTree<T>;
+
+  constructor(tree: AsyncDataTree<T>, dispatch: React.Dispatch<React.SetStateAction<SelectionState>>) {
+    this.tree = tree;
+    this.dispatch = dispatch;
+  }
+
+  propagateSelection(selection: Selection, additional?: Iterable<Key>) {
+    this.propagateSelectionInternal(selection, additional, PropagationFlags.Down | PropagationFlags.Up);
+  }
+
+  propagateSelectionDown(selection: Selection, additional?: Iterable<Key>) {
+    this.propagateSelectionInternal(selection, additional, PropagationFlags.Down);
+  }
+
+  propagateSelectionUp(selection: Selection, additional?: Iterable<Key>) {
+    this.propagateSelectionInternal(selection, additional, PropagationFlags.Up);
+  }
+
+  private propagateSelectionInternal(selection: Selection, additional: Iterable<Key> | undefined, flag: number) {
+    if (!this.tree.shouldPropagate) {
+      return;
+    }
+
+    const additionalKeys = new Set(additional);
+
+    this.dispatch((prevState) => {
+      if (selection === 'all') {
+        return {
+          indeterminateKeys: undefined,
+          selectedKeys: 'all'
+        };
+      }
+
+      let prevSelection = prevState.selectedKeys;
+
+      if (prevSelection === 'all') {
+        prevSelection = this.tree.getSelectAllKeys();
+      }
+
+      const {added, removed} = diffSets(prevSelection, selection, additionalKeys);
+
+      if (added.size < 1 && removed.size < 1) {
+        return prevState;
+      }
+
+      const changes: [Key, number][] = [];
+
+      if (flag & PropagationFlags.Down) {
+        const map = this.propagateToDescendants(added, removed);
+        changes.push(...map);
+      }
+
+      if (flag & PropagationFlags.Up) {
+        const map = this.propagateToAncestors(added, removed, (key) => selection.has(key));
+        changes.push(...map);
+      }
+
+      return this.applyChanges(prevState, selection, changes);
+    });
+  }
+
+  private propagateToAncestors(added: ReadonlySet<Key>, removed: ReadonlySet<Key>, _isSelected: (key: Key) => boolean) {
+    const map = new Map();
+    const isSelected = (node) => (map.has(node.key) ? map.get(node.key) === TriState.True : _isSelected(node.key));
+
+    const propagate = (key, triState) => {
+      let hasIndeterminate = false;
+
+      for (let parent = this.tree.getParent(key); parent != null; parent = this.tree.getParent(parent.key)) {
+        // If any ancestor is indeterminate, all ancestors above it are indeterminate too.
+        if (hasIndeterminate) {
+          map.set(parent.key, TriState.Indeterminate);
+          continue;
+        }
+
+        if (triState === TriState.False) {
+          if (map.has(parent.key)) {
+            break;
+          }
+        }
+
+        if (triState === TriState.True) {
+          if (isSelected(parent)) {
+            continue;
+          }
+
+          if (this.tree.hasMoreChildren(parent)) {
+            hasIndeterminate = true;
+            map.set(parent.key, TriState.Indeterminate);
+            continue;
+          }
+        }
+
+        let hasSelected = false;
+        let hasUnSelected = false;
+
+        for (const child of this.tree.getChildren(parent.key)) {
+          if (isSelected(child)) {
+            hasSelected = true;
+          } else {
+            hasUnSelected = true;
+          }
+
+          if (hasSelected && hasUnSelected) {
+            break;
+          }
+        }
+
+        // If some, but not all, child items are selected, the parent item is in an indeterminate state.
+        if (hasSelected && hasUnSelected) {
+          hasIndeterminate = true;
+          map.set(parent.key, TriState.Indeterminate);
+        } else if (hasSelected) {
+          if (this.tree.canSelectItem(parent)) {
+            map.set(parent.key, TriState.True);
+          }
+        } else {
+          map.set(parent.key, TriState.False);
+        }
+      }
+    };
+
+    added.forEach((key) => propagate(key, TriState.True));
+    removed.forEach((key) => propagate(key, TriState.False));
+    return map;
+  }
+
+  private propagateToDescendants(added: ReadonlySet<Key>, removed: ReadonlySet<Key>) {
+    const map = new Map();
+
+    const propagate = (key, triState) => {
+      for (const child of this.getDescendants(key)) {
+        if (map.has(child.key)) {
+          break;
+        }
+
+        if (this.tree.canSelectItem(child)) {
+          map.set(child.key, triState);
+        }
+      }
+    };
+
+    added.forEach((key) => propagate(key, TriState.True));
+    removed.forEach((key) => propagate(key, TriState.False));
+    return map;
+  }
+
+  private applyChanges(prevState: SelectionState, selectedKeys: ReadonlySet<Key>, changes: [Key, number][]) {
+    const newState = {
+      indeterminateKeys: difference(new Set(prevState.indeterminateKeys), selectedKeys),
+      selectedKeys: new Set(selectedKeys)
+    };
+
+    changes.forEach(([key, triState]) => {
+      switch (triState) {
+        case TriState.False:
+          newState.indeterminateKeys.delete(key);
+          newState.selectedKeys.delete(key);
+          break;
+        case TriState.True:
+          newState.indeterminateKeys.delete(key);
+          newState.selectedKeys.add(key);
+          break;
+        case TriState.Indeterminate:
+          newState.indeterminateKeys.add(key);
+          newState.selectedKeys.delete(key);
+          break;
+        default:
+          break;
+      }
+    });
+
+    return isSelectionEqual(prevState.selectedKeys, newState.selectedKeys) ? prevState : newState;
+  }
+
+  private *getDescendants(key: Key) {
+    for (const child of this.tree.getChildren(key)) {
+      yield child;
+      yield* this.getDescendants(child.key);
+    }
+  }
 }

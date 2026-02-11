@@ -14,7 +14,7 @@ import {announce} from '@react-aria/live-announcer';
 import {Collection, Key, Node, Selection} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {SelectionManager} from '@react-stately/selection';
+import {MultipleSelectionManager} from '@react-stately/selection';
 import {useCallback, useRef} from 'react';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useUpdateEffect} from '@react-aria/utils';
@@ -33,7 +33,7 @@ interface GridSelectionState<T> {
   /** A set of items that are disabled. */
   disabledKeys: Set<Key>,
   /** A selection manager to read and update multiple selection state. */
-  selectionManager: SelectionManager
+  selectionManager: MultipleSelectionManager
 }
 
 export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncementProps, state: GridSelectionState<T>): void {

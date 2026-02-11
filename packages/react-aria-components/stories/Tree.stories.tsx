@@ -1272,3 +1272,215 @@ export const HugeVirtualizedTree: StoryObj<typeof VirtualizedTreeRender> = {
   },
   render: (args) => <HugeVirtualizedTreeRender {...args} />
 };
+
+const SelectionPropagationRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
+  const treeData = useTreeData<any>({
+    initialItems: (args.items as any) ?? rows,
+    getKey: (item) => item.id,
+    getChildren: (item) => item.childItems,
+    selectionPropagation: {
+      shouldPropagate: true
+    }
+  });
+
+  const onSelectionChange = (keys) => {
+    action('onSelectionChange')(keys);
+    treeData.propagateSelection(keys);
+  };
+
+  const selectAll = () => {
+    treeData.propagateSelection('all');
+  };
+
+  return (
+    <>
+      <button onClick={selectAll}>Select All</button>
+      <Tree
+        {...args}
+        aria-label="test dynamic tree"
+        className={styles.tree}
+        defaultExpandedKeys={defaultExpandedKeys}
+        items={treeData.items}
+        indeterminateKeys={treeData.indeterminateKeys}
+        selectedKeys={treeData.selectedKeys}
+        selectionMode="multiple"
+        onExpandedChange={action('onExpandedChange')}
+        onSelectionChange={onSelectionChange}>
+        {(item) => (
+          <DynamicTreeItem childItems={item.children ?? []} id={item.key} textValue={item.value.name}>
+            {item.value.name}
+          </DynamicTreeItem>
+        )}
+      </Tree>
+    </>
+  );
+};
+
+export const SelectionPropagation: StoryObj<typeof TreeExampleDynamicRender> = {
+  render: SelectionPropagationRender
+};
+
+function MultiLoaderTreeWithSelectionPropagationRender(args) {
+  let rootData = useTreeData({
+    initialItems: root,
+    selectionPropagation: {
+      shouldPropagate: true,
+      hasMoreChildren: (node) => (['projects', 'projects-1', 'documents'].includes(node.key as string) ? (node.children?.length ?? 0) < 30 : false)
+    }
+  });
+
+  let [isRootLoading, setRootLoading] = useState(false);
+  let [isProjectsLoading, setProjectsLoading] = useState(false);
+  let [isProjectsLevel3Loading, setProjects3Loading] = useState(false);
+  let [isDocumentsLoading, setDocumentsLoading] = useState(false);
+
+  let onRootLoadMore = useCallback(() => {
+    if (!isRootLoading && rootData.items.length < 30) {
+      action('root loading')();
+      setRootLoading(true);
+      setTimeout(() => {
+        let dataToAppend: {id: string, value: string}[] = [];
+        let rootLength = rootData.items.length - 1;
+        for (let i = 0; i < 5; i++) {
+          dataToAppend.push({id: `photos-${i + rootLength}`, value: `Photos-${i + rootLength}`});
+        }
+        rootData.append(null, ...dataToAppend);
+        setRootLoading(false);
+      }, args.delay);
+    }
+  }, [isRootLoading, rootData, args.delay]);
+
+  let onProjectsLoadMore = useCallback(() => {
+    let projectsData = rootData.getItem('projects');
+    let projectsLength = projectsData?.children?.length ?? 0;
+    if (!isProjectsLoading && projectsLength < 30) {
+      action('projects loading')();
+      setProjectsLoading(true);
+      setTimeout(() => {
+        let dataToAppend: {id: string, value: string}[] = [];
+        projectsData = rootData.getItem('projects');
+        projectsLength = projectsData?.children?.length ?? 0;
+        for (let i = 0; i < 5; i++) {
+          dataToAppend.push({id: `projects-${i + projectsLength}`, value: `Projects-${i + projectsLength}`});
+        }
+        rootData.append('projects', ...dataToAppend);
+        setProjectsLoading(false);
+      }, args.delay);
+    }
+  }, [isProjectsLoading, rootData, args.delay]);
+
+  let onProjectsLevel3LoadMore = useCallback(() => {
+    let projects3Data = rootData.getItem('projects-1');
+    let projects3Length = projects3Data?.children?.length ?? 0;
+    if (!isProjectsLevel3Loading && projects3Length < 30) {
+      action('projects level 3 loading')();
+      setProjects3Loading(true);
+      setTimeout(() => {
+        let dataToAppend: {id: string, value: string}[] = [];
+        projects3Data = rootData.getItem('projects-1');
+        projects3Length = projects3Data?.children?.length ?? 0;
+        for (let i = 0; i < 5; i++) {
+          dataToAppend.push({id: `project-1-${i + projects3Length}`, value: `Project-1-${i + projects3Length}`});
+        }
+        rootData.append('projects-1', ...dataToAppend);
+        setProjects3Loading(false);
+      }, args.delay);
+    }
+  }, [isProjectsLevel3Loading, rootData, args.delay]);
+
+  let onDocumentsLoadMore = useCallback(() => {
+    let documentsData = rootData.getItem('documents');
+    let documentsLength = documentsData?.children?.length ?? 0;
+    if (!isDocumentsLoading && documentsLength < 30) {
+      action('documents loading')();
+      setDocumentsLoading(true);
+      setTimeout(() => {
+        let dataToAppend: {id: string, value: string}[] = [];
+        documentsData = rootData.getItem('documents');
+        documentsLength = documentsData?.children?.length ?? 0;
+        for (let i = 0; i < 5; i++) {
+          dataToAppend.push({id: `document-${i + documentsLength}`, value: `Document-${i + documentsLength}`});
+        }
+        rootData.append('documents', ...dataToAppend);
+        setDocumentsLoading(false);
+      }, args.delay);
+    }
+  }, [isDocumentsLoading, rootData, args.delay]);
+
+  let onSelectionChange = (keys) => {
+    rootData.propagateSelection(keys);
+  };
+
+  return (
+    <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30}}>
+      <Tree
+        aria-label="multi loader tree"
+        className={styles.tree}
+        indeterminateKeys={rootData.indeterminateKeys}
+        selectedKeys={rootData.selectedKeys}
+        selectionMode="multiple"
+        onSelectionChange={onSelectionChange}>
+        {/* TODO: wonder if there is something we can do to ensure that these depenedcies are provided, need to dig to make sure if there is an alternative */}
+        {/* NOTE: important to provide dependencies here, otherwise the nested level doesn't perform loading updates properly */}
+        <Collection items={rootData.items} dependencies={[rootData.selectedKeys, isProjectsLoading, isDocumentsLoading, isProjectsLevel3Loading]}>
+          {(item: any) => {
+            if (item.value.id === 'projects') {
+              return (
+                <StaticTreeItem id="projects" textValue="Projects" title="Projects">
+                  <Collection items={item.children}>
+                    {(item: any) => {
+                      return item.value.id !== 'projects-1' ?
+                        (
+                          <StaticTreeItem id={item.value.id} textValue={item.value.value}>
+                            {item.value.value}
+                          </StaticTreeItem>
+                        ) : (
+                          <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
+                            <Collection items={item.children}>
+                              {(item: any) => (
+                                <StaticTreeItem id={item.value.id} textValue={item.value.value}>
+                                  {item.value.value}
+                                </StaticTreeItem>
+                              )}
+                            </Collection>
+                            <MyTreeLoader isLoading={isProjectsLevel3Loading} onLoadMore={onProjectsLevel3LoadMore} />
+                          </StaticTreeItem>
+                        );
+                    }
+                  }
+                  </Collection>
+                  <MyTreeLoader isLoading={isProjectsLoading} onLoadMore={onProjectsLoadMore} />
+                </StaticTreeItem>
+              );
+            } else if (item.value.id === 'documents') {
+              return (
+                <StaticTreeItem id="documents" textValue="Documents" title="Documents">
+                  <Collection items={item.children}>
+                    {(item: any) => (
+                      <StaticTreeItem id={item.value.id} textValue={item.value.value}>
+                        {item.value.value}
+                      </StaticTreeItem>
+                    )}
+                  </Collection>
+                  <MyTreeLoader isLoading={isDocumentsLoading} onLoadMore={onDocumentsLoadMore} />
+                </StaticTreeItem>
+              );
+            } else {
+              return (
+                <StaticTreeItem id={item.value.id} textValue={item.value.value}>{item.value.value}</StaticTreeItem>
+              );
+            }
+          }}
+        </Collection>
+        <MyTreeLoader isLoading={isRootLoading} onLoadMore={onRootLoadMore} />
+      </Tree>
+    </Virtualizer>
+  );
+}
+
+export const VirtualizedTreeMultiLoaderWithSelectionPropagation = {
+  render: MultiLoaderTreeWithSelectionPropagationRender,
+  args: {
+    delay: 2000
+  }
+};
