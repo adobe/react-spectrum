@@ -60,8 +60,9 @@ function nextDropTarget(
     }
     let nextCollectionKey = collection.getKeyAfter(target.key);
     let nextCollectionNode = nextCollectionKey && collection.getItem(nextCollectionKey);
-    if (nextCollectionNode && nextCollectionNode.type === 'content') {
+    while (nextCollectionNode && nextCollectionNode.type === 'content') {
       nextCollectionKey = nextCollectionKey ? collection.getKeyAfter(nextCollectionKey) : null;
+      nextCollectionNode = nextCollectionKey && collection.getItem(nextCollectionKey);
     }
 
     // If the keyboard delegate did not move to the next key in the collection,
