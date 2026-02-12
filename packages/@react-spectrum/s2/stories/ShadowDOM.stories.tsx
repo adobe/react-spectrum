@@ -13,12 +13,13 @@
 import '@react-spectrum/s2/page.css';
 
 import {action} from '@storybook/addon-actions';
-import {Button, Menu, MenuItem, MenuTrigger, Provider} from '../src';
+import {Button, ComboBoxItem, ComboBox, Menu, MenuItem, MenuTrigger, Provider} from '../src';
 import {createRoot} from 'react-dom/client';
 import {enableShadowDOM} from '@react-stately/flags';
 import type {Meta, StoryObj} from '@storybook/react';
 import {UNSAFE_PortalProvider} from 'react-aria';
 import {useEffect, useRef} from 'react';
+import {style} from '../style' with {type: 'macro'};
 
 enableShadowDOM();
 
@@ -88,6 +89,13 @@ function ShadowDOMMenuContent() {
               <MenuItem id="delete">Delete</MenuItem>
             </Menu>
           </MenuTrigger>
+          <ComboBox styles={style({width: 300})}>
+            <ComboBoxItem>Chocolate</ComboBoxItem>
+            <ComboBoxItem>Mint</ComboBoxItem>
+            <ComboBoxItem>Strawberry</ComboBoxItem>
+            <ComboBoxItem>Vanilla</ComboBoxItem>
+            <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
+          </ComboBox>
         </UNSAFE_PortalProvider>
       </Provider>
     );
