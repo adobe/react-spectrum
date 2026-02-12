@@ -181,8 +181,9 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
   };
 
   let onBlur = (e: FocusEvent<HTMLInputElement>) => {
-    let blurFromButton = buttonRef?.current && buttonRef.current === e.relatedTarget;
+    let blurFromButton = nodeContains(buttonRef.current, e.relatedTarget as Element);
     let blurIntoPopover = nodeContains(popoverRef.current, e.relatedTarget);
+
     // Ignore blur if focused moved to the button(if exists) or into the popover.
     if (blurFromButton || blurIntoPopover) {
       return;

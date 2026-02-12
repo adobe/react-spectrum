@@ -13,7 +13,7 @@
 import '@react-spectrum/s2/page.css';
 
 import {action} from '@storybook/addon-actions';
-import {Button, ComboBox, ComboBoxItem, Menu, MenuItem, MenuTrigger, Provider} from '../src';
+import {ActionMenu, Button, ComboBox, ComboBoxItem, Menu, MenuItem, MenuTrigger, Picker, PickerItem, Provider, SubmenuTrigger} from '../src';
 import {createRoot} from 'react-dom/client';
 import {enableShadowDOM} from '@react-stately/flags';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -81,21 +81,41 @@ function ShadowDOMMenuContent() {
     root.render(
       <Provider colorScheme="dark">
         <UNSAFE_PortalProvider getContainer={() => portalContainerRef.current}>
-          <MenuTrigger>
-            <Button aria-label="Open menu">Actions</Button>
-            <Menu onAction={action('action')}>
+          <div className={style({display: 'flex', gap: 8, alignItems: 'start'})}>
+            <ActionMenu onAction={action('action menu action')}>
               <MenuItem id="edit">Edit</MenuItem>
               <MenuItem id="duplicate">Duplicate</MenuItem>
               <MenuItem id="delete">Delete</MenuItem>
-            </Menu>
-          </MenuTrigger>
-          <ComboBox styles={style({width: 300})}>
-            <ComboBoxItem>Chocolate</ComboBoxItem>
-            <ComboBoxItem>Mint</ComboBoxItem>
-            <ComboBoxItem>Strawberry</ComboBoxItem>
-            <ComboBoxItem>Vanilla</ComboBoxItem>
-            <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
-          </ComboBox>
+            </ActionMenu>
+            <MenuTrigger>
+              <Button aria-label="Open menu">Actions</Button>
+              <Menu onAction={action('menu action')}>
+                <MenuItem id="edit">Edit</MenuItem>
+                <SubmenuTrigger>
+                  <MenuItem id="duplicate">Duplicate</MenuItem>
+                  <Menu onAction={action('submenu action')}>
+                    <MenuItem id="in-place">In place</MenuItem>
+                    <MenuItem id="elsewhere">Elsewhere</MenuItem>
+                  </Menu>
+                </SubmenuTrigger>
+                <MenuItem id="delete">Delete</MenuItem>
+              </Menu>
+            </MenuTrigger>
+            <ComboBox label="Flavors" onSelectionChange={action('combobox selection')}>
+              <ComboBoxItem>Chocolate</ComboBoxItem>
+              <ComboBoxItem>Mint</ComboBoxItem>
+              <ComboBoxItem>Strawberry</ComboBoxItem>
+              <ComboBoxItem>Vanilla</ComboBoxItem>
+              <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
+            </ComboBox>
+            <Picker label="Flavors" onChange={action('picker selection')}>
+              <PickerItem>Chocolate</PickerItem>
+              <PickerItem>Mint</PickerItem>
+              <PickerItem>Strawberry</PickerItem>
+              <PickerItem>Vanilla</PickerItem>
+              <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
+            </Picker>
+          </div>
         </UNSAFE_PortalProvider>
       </Provider>
     );
