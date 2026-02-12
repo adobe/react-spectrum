@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Avatar, Button, ComboBox, ComboBoxItem, ComboBoxSection, Content, ContextualHelp, Footer, Form, Header, Heading, Link, Text} from '../src';
+import {Avatar, Button, ComboBox, ComboBoxItem, ComboBoxSection, Content, ContextualHelp, Dialog, DialogTrigger, Footer, Form, Header, Heading, Link, Text} from '../src';
 import {categorizeArgTypes, getActionArgs} from './utils';
 import {ComboBoxProps} from 'react-aria-components';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
@@ -362,3 +362,25 @@ export function WithCreateOption() {
     </ComboBox>
   );
 }
+
+export const ComboboxInsideDialog: Story = {
+  render: (args) => (
+    <DialogTrigger>
+      <Button>Open</Button>
+      <Dialog isDismissible>
+        <Heading>Combo Box in a Dialog</Heading>
+        <Content>
+          <ComboBox {...args}>
+            <ComboBoxItem>Aardvark</ComboBoxItem>
+            <ComboBoxItem>Cat</ComboBoxItem>
+            <ComboBoxItem>Dog</ComboBoxItem>
+            <ComboBoxItem>Kangaroo</ComboBoxItem>
+            <ComboBoxItem>Panda</ComboBoxItem>
+            <ComboBoxItem>Snake</ComboBoxItem>
+          </ComboBox>
+        </Content>
+      </Dialog>
+    </DialogTrigger>
+  ),
+  args: Example.args
+};
