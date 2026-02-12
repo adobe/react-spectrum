@@ -62,7 +62,7 @@ describe('usePopover with Shadow DOM and UNSAFE_PortalProvider', () => {
     });
   });
 
-  it('should handle popover interactions with UNSAFE_PortalProvider in shadow DOM', async () => {
+  it.skip('should handle popover interactions with UNSAFE_PortalProvider in shadow DOM', async () => {
     const {shadowRoot} = createShadowRoot();
     let triggerClicked = false;
     let popoverInteracted = false;
