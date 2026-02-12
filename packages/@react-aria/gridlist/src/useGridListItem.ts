@@ -331,7 +331,8 @@ function getDirectChildren<T>(parent: RSNode<T>, collection: Collection<RSNode<T
   // We can't assume that we can use firstChildKey because if a person builds a tree using hooks, they would not have access to that property (using type Node vs CollectionNode)
   // Instead, get all children and start at the first node (rather than just using firstChildKey) and only look at its siblings
   let children = collection.getChildren?.(parent.key);
-  let node = children && Array.from(children).length > 0 ?  Array.from(children)[0] : null;
+  let childArray = children ? Array.from(children) : [];
+  let node = childArray.length > 0 ?  childArray[0] : null;
   let siblings: RSNode<T>[] = [];
   while (node) {
     siblings.push(node);
