@@ -168,6 +168,10 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       }
     };
 
+    if ((e.metaKey || e.altKey) && e.key.startsWith('Arrow')) {
+      return;
+    }
+
     switch (e.key) {
       case 'ArrowDown': {
         if (delegate.getKeyBelow) {
