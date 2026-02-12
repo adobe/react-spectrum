@@ -40,7 +40,6 @@ import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useControlledState} from '@react-stately/utils';
-
 class TreeCollection<T> implements ICollection<Node<T>> {
   private keyMap: Map<Key, CollectionNode<T>> = new Map();
   private itemCount: number = 0;
@@ -56,38 +55,29 @@ class TreeCollection<T> implements ICollection<Node<T>> {
     this.collection = collection;
     this.itemCount = itemCount;
     this.expandedKeys = expandedKeys;
+    // We do this so React knows to re-render since the same item won't cause a new render but a clone creating a new object with the same value will
+    // Without this change, the items won't expand and collapse when virtualized inside a section
+    TreeCollection.cloneAncestorSections(expandedKeys, lastExpandedKeys, this.keyMap, (k) => this.getItem(k));
+    TreeCollection.cloneAncestorSections(lastExpandedKeys, expandedKeys, this.keyMap, (k) => this.getItem(k));    
+  }
 
-     // diff lastExpandedKeys and expandedKeys so we only clone what has changed
-     // We do this so React knows to re-render since the same item won't cause a new render but a clone creating a new object with the same value will
-     // Without this change, the items won't expand and collapse when virtualized inside a section
-    for (let key of expandedKeys) {
-      if (!lastExpandedKeys.has(key)) {
-        // traverse upward until you hit a section, and clone it
-        let currentKey = key;
+  // diff lastExpandedKeys and expandedKeys so we only clone what has changed
+  private static cloneAncestorSections<T>(
+    keys: Iterable<Key>,
+    excludeSet: Set<Key>,
+    keyMap: Map<Key, CollectionNode<T>>,
+    getItem: (key: Key) => Node<T> | null
+  ) {
+    for (let key of keys) {
+      if (!excludeSet.has(key)) {
+        let currentKey: Key | null = key;
         while (currentKey != null) {
-          let item = this.getItem(currentKey) as CollectionNode<T>;
+          let item = getItem(currentKey) as CollectionNode<T>;
           if (item?.type === 'section') {
-            // replace the item with a clone
-            this.keyMap.set(currentKey, item.clone());
+            keyMap.set(currentKey, item.clone());
             break;
           } else {
-            currentKey = item?.parentKey;
-          }
-        }
-      }
-    }
-
-    for (let key of lastExpandedKeys) {
-      if (!expandedKeys.has(key)) {
-        let currentKey = key;
-        while (currentKey != null) {
-          let item = this.getItem(currentKey) as CollectionNode<T>;
-          if (item?.type === 'section') {
-            // replace the item with a clone
-            this.keyMap.set(currentKey, item.clone());
-            break;
-          } else {
-            currentKey = item?.parentKey;
+            currentKey = item?.parentKey ?? null;
           }
         }
       }
