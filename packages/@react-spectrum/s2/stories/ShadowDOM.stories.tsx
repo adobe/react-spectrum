@@ -13,13 +13,13 @@
 import '@react-spectrum/s2/page.css';
 
 import {action} from '@storybook/addon-actions';
-import {Button, ComboBoxItem, ComboBox, Menu, MenuItem, MenuTrigger, Provider} from '../src';
+import {Button, ComboBox, ComboBoxItem, Menu, MenuItem, MenuTrigger, Provider} from '../src';
 import {createRoot} from 'react-dom/client';
 import {enableShadowDOM} from '@react-stately/flags';
 import type {Meta, StoryObj} from '@storybook/react';
+import {style} from '../style' with {type: 'macro'};
 import {UNSAFE_PortalProvider} from 'react-aria';
 import {useEffect, useRef} from 'react';
-import {style} from '../style' with {type: 'macro'};
 
 enableShadowDOM();
 
