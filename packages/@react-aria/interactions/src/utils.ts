@@ -11,7 +11,7 @@
  */
 
 import {FocusableElement} from '@react-types/shared';
-import {focusWithoutScrolling, getActiveElement, getEventTarget, getOwnerWindow, isFocusable, nodeContains, useLayoutEffect} from '@react-aria/utils';
+import {focusWithoutScrolling, getActiveElement, getEventTarget, getOwnerWindow, isFocusable, isShadowRoot, nodeContains, useLayoutEffect} from '@react-aria/utils';
 import {FocusEvent as ReactFocusEvent, SyntheticEvent, useCallback, useRef} from 'react';
 
 // Turn a native event into a React synthetic event.
@@ -117,24 +117,32 @@ export function preventFocus(target: FocusableElement | null): (() => void) | un
 
   // Listen on the target's root (document or shadow root) so we catch focus events inside
   // shadow DOM; they do not reach the main window.
-  let root = (target?.getRootNode() as Document | ShadowRoot) ?? window;
+  let targetRoot = target?.getRootNode();
+  let root =
+    (targetRoot != null && isShadowRoot(targetRoot))
+      ? targetRoot
+      : getOwnerWindow(target);
 
   // Focus is "moving to target" when it moves to the button or to a descendant of the button
-  // (e.g. SVG icon). Do NOT use nodeContains(focusTarget, target): in shadow DOM the first
-  // focusin (when the input gets focus) can be retargeted to the host, and host contains the
-  // button, which would make us refocus+cleanup too early and miss the SVG focusin.
+  // (e.g. SVG icon)
   let isFocusMovingToTarget = (focusTarget: Element | null) =>
     focusTarget === target || (focusTarget != null && nodeContains(target, focusTarget));
+  // Blur/focusout events have their target as the element losing focus. Stop propagation when
+  // that is the previously focused element (activeElement) or a descendant (e.g. in shadow DOM).
+  let isBlurFromActiveElement = (eventTarget: Element | null) =>
+    eventTarget === activeElement ||
+    (activeElement != null && eventTarget != null && nodeContains(activeElement, eventTarget));
+
   ignoreFocusEvent = true;
   let isRefocusing = false;
   let onBlur: EventListener = (e) => {
-    if (isFocusMovingToTarget(getEventTarget(e) as Element) || isRefocusing) {
+    if (isBlurFromActiveElement(getEventTarget(e) as Element) || isRefocusing) {
       e.stopImmediatePropagation();
     }
   };
 
   let onFocusOut: EventListener = (e) => {
-    if (isFocusMovingToTarget(getEventTarget(e) as Element) || isRefocusing) {
+    if (isBlurFromActiveElement(getEventTarget(e) as Element) || isRefocusing) {
       e.stopImmediatePropagation();
 
       // If there was no focusable ancestor, we don't expect a focus event.
