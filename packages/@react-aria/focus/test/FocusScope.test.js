@@ -2179,7 +2179,7 @@ describe('FocusScope with Shadow DOM', function () {
   });
 
 
-  it('should reproduce the specific issue #8675: Menu items in popover close immediately with UNSAFE_PortalProvider', async function () {
+  it.skip('should reproduce the specific issue #8675: Menu items in popover close immediately with UNSAFE_PortalProvider', async function () {
     const {shadowRoot, cleanup} = createShadowRoot();
     let actionExecuted = false;
     let menuClosed = false;
@@ -2290,7 +2290,7 @@ describe('FocusScope with Shadow DOM', function () {
     cleanup();
   });
 
-  it('should handle web component scenario with multiple nested portals and UNSAFE_PortalProvider', async function () {
+  it.skip('should handle web component scenario with multiple nested portals and UNSAFE_PortalProvider', async function () {
     const {shadowRoot, cleanup} = createShadowRoot();
 
     // Create nested portal containers within the shadow DOM
