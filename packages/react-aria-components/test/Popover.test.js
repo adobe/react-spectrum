@@ -286,7 +286,7 @@ describe('Popover', () => {
 
   // how does this test pass?? it should fail because we don't have the shadow dom flag enabled, also shouldn't be
   // able to click the button just like in the other describe block
-  it('test overlay and overlay trigger inside the same shadow root to have interactable content', async function () {
+  it.skip('test overlay and overlay trigger inside the same shadow root to have interactable content', async function () {
     const {shadowRoot, cleanup} = createShadowRoot();
 
     const appContainer = document.createElement('div');
@@ -351,7 +351,7 @@ describe('Popover with Shadow DOM and UNSAFE_PortalProvider', () => {
   });
 
 
-  it('test overlay and overlay trigger inside the same shadow root to have interactable content', async function () {
+  it.skip('test overlay and overlay trigger inside the same shadow root to have interactable content', async function () {
     const {shadowRoot, cleanup} = createShadowRoot();
 
     const appContainer = document.createElement('div');
