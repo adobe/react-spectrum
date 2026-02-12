@@ -25,6 +25,7 @@ import {getChildNodes, getItemCount} from '@react-stately/collections';
 import intlMessages from '../intl/*.json';
 import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
 import {privateValidationStateProp} from '@react-stately/form';
+import {useInteractOutside} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useTextField} from '@react-aria/textfield';
@@ -225,7 +226,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
   }, inputRef);
 
   useFormReset(inputRef, state.defaultValue, state.setValue);
-  
+
   // Press handlers for the ComboBox button
   let onPress = (e: PressEvent) => {
     if (e.pointerType === 'touch') {
@@ -364,6 +365,19 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
   useEvent(listBoxRef, 'react-aria-item-action', state.isOpen ? () => {
     state.close();
   } : undefined);
+
+  // usePopover -> useOverlay calls useInteractOutside, but ComboBox is non-modal, so `isDismissable` is false
+  // Because of this, onInteractOutside is not passed to useInteractOutside, so we need to call it here.
+  useInteractOutside({
+    ref: popoverRef,
+    onInteractOutside: (e) => {
+      if (nodeContains(buttonRef?.current, getEventTarget(e) as Element)) {
+        return;
+      }
+      state.close();
+    },
+    isDisabled: !state.isOpen
+  });
 
   return {
     labelProps,
