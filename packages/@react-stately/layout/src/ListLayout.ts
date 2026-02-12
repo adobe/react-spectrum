@@ -255,7 +255,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let collection = this.virtualizer!.collection;
     // filter out content nodes since we don't want them to affect the height
     // Tree specific for now, if we add content nodes to other collection items, we might need to reconsider this
-    let collectionNodes = [...collection].filter((node) => node.type !== 'content');
+    let collectionNodes = toArray(collection, (node) => node.type !== 'content');
     let loaderNodes = collectionNodes.filter(node => node.type === 'loader');
     let nodes: LayoutNode[] = [];
     let isEmptyOrLoading = collection?.size === 0;
@@ -623,4 +623,14 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
 
     return new LayoutInfo('dropIndicator', target.key + ':' + target.dropPosition, rect);
   }
+}
+
+function toArray<T>(collection: Collection<Node<T>>, predicate: (node: Node<T>) => boolean): Node<T>[] {
+  const result: Node<T>[] = [];
+  for (const node of collection) {
+    if (predicate(node)) {
+      result.push(node);
+    }
+  }
+  return result;
 }
