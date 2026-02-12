@@ -45,21 +45,21 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   private keyMap: Map<Key, CollectionNode<T>> = new Map();
   private itemCount: number = 0;
   private expandedKeys;
-  private firstKey;
-  private lastKey;
+  private collection;
 
   constructor(opts) {
     let {collection, lastExpandedKeys, expandedKeys} = opts;
-    let {keyMap, itemCount, firstKey, lastKey} = generateKeyMap<T>(collection, {expandedKeys});
+    let {keyMap, itemCount} = generateKeyMap<T>(collection, {expandedKeys});
     // Use generated keyMap because it contains the modified collection nodes (aka it adjusts the indexes so that they ignore the existence of the Content items)
     // Also adjusts the levels of node inside of a section
     this.keyMap = keyMap;
-    this.firstKey = firstKey;
-    this.lastKey = lastKey;
+    this.collection = collection;
     this.itemCount = itemCount;
     this.expandedKeys = expandedKeys;
 
-     // diff lastExpandedKeys and expandedKeys so we only clone what has changed (this is for when Tree is virtualized)
+     // diff lastExpandedKeys and expandedKeys so we only clone what has changed
+     // We do this so React knows to re-render since the same item won't cause a new render but a clone creating a new object with the same value will
+     // Without this change, the items won't expand and collapse when virtualized inside a section
     for (let key of expandedKeys) {
       if (!lastExpandedKeys.has(key)) {
         // traverse upward until you hit a section, and clone it
@@ -128,11 +128,11 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   }
 
   getFirstKey() {
-    return this.firstKey;
+    return this.collection.getFirstKey();
   }
 
   getLastKey() {
-    return this.lastKey;
+    return this.collection.getLastKey();
   }
 
   getKeyAfter(key: Key) {
@@ -363,7 +363,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     disabledBehavior
   });
 
-  // need to be able to pass expandedKeys to keyboard delegate and did not want to add expandedKeys prop to useSelectableList
+  // useSelectableList is not aware of expandedKeys, so create a new ListKeyboardDelegate which will handle that
   let keyboardDelegate = useMemo(() =>
     new ListKeyboardDelegate({
       collection: state.collection,
@@ -741,7 +741,6 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
   // eslint-disable-next-line
   }, []);
 
-  // here is where we render the stuff in the content node
   let children = useCachedChildren({
     items: state.collection.getChildren!(item.key),
     children: item => {
@@ -947,9 +946,7 @@ interface TreeGridCollectionOptions {
 
 interface FlattenedTree<T> {
   keyMap: Map<Key, CollectionNode<T>>,
-  itemCount: number,
-  firstKey: Key,
-  lastKey: Key
+  itemCount: number
 }
 
 function generateKeyMap<T>(collection: TreeCollection<T>, opts: TreeGridCollectionOptions): FlattenedTree<T> {
@@ -1014,9 +1011,7 @@ function generateKeyMap<T>(collection: TreeCollection<T>, opts: TreeGridCollecti
 
   return {
     keyMap,
-    itemCount,
-    firstKey: collection.getFirstKey(),
-    lastKey: collection.getLastKey()
+    itemCount
   };
 }
 
