@@ -168,7 +168,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       }
     };
 
-    if ((e.metaKey || e.altKey) && e.key.startsWith('Arrow')) {
+    if (manager.selectionMode === 'single' && (e.metaKey || e.altKey)) {
       return;
     }
 
