@@ -16,17 +16,60 @@ import type {MacroContext} from '@parcel/macros';
 import {StyleString} from './types';
 
 export {baseColor, color, lightDark, colorMix, size, style} from './spectrum-theme';
+export {raw, keyframes} from './style-macro';
 export type {StyleString} from './types';
 
-// Wrap these functions in arbitrary value syntax when called from the outside.
+/**
+ * Converts a pixel value to a Spectrum spacing token in `rem` units.
+ *
+ * @param px - The spacing in pixels.
+ * @returns A `rem` value wrapped as an arbitrary style value.
+ *
+ * @example
+ * ```tsx
+ * import {space} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
+ * const styles = style({
+ *   gap: space(12)
+ * });
+ * ```
+ */
 export function space(px: number): `[${string}]` {
   return `[${internalSpace(px)}]`;
 }
 
+/**
+ * Converts a pixel value to a font-relative `em` length. Useful for sizing elements
+ * relative to the current font size.
+ *
+ * @param base - The pixel value to convert.
+ * @param baseFontSize - The base font size in pixels to divide by. Defaults to `14`.
+ * @returns A CSS `em` value wrapped as an arbitrary style value.
+ *
+ * @example
+ * ```tsx
+ * import {fontRelative} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
+ * const styles = style({
+ *   gap: fontRelative(2)  // 2/14 = ~0.143em
+ * });
+ * ```
+ */
 export function fontRelative(base: number, baseFontSize?: number): `[${string}]` {
   return `[${internalFontRelative(base, baseFontSize)}]`;
 }
 
+/**
+ * Returns consistent Spectrum focus ring outline styles for interactive components.
+ *
+ * @example
+ * ```tsx
+ * const styles = style({
+ *   ...focusRing(),
+ *   borderRadius: 'lg'
+ * });
+ * ```
+ */
 export const focusRing = () => ({
   outlineStyle: {
     default: 'none',
@@ -78,6 +121,21 @@ const iconSizes = {
   XL: 26
 } as const;
 
+/**
+ * Generates styles for an icon element with the given size, color, and layout options.
+ * Must be imported with `{type: 'macro'}`.
+ *
+ * @param options - Icon styling options including `size` (XS–XL), `color`, and layout properties.
+ * @returns A `StyleString` that can be applied to an icon element.
+ *
+ * @example
+ * ```tsx
+ * import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
+ * import Edit from '@react-spectrum/s2/icons/Edit';
+ * 
+ * <Edit styles={iconStyle({size: 'XL', color: 'positive'})} />
+ * ```
+ */
 export function iconStyle(this: MacroContext | void, options: IconStyle): StyleString<Exclude<keyof IconStyle, 'color' | 'size'>> {
   let {size = 'M', color, ...styles} = options;
 

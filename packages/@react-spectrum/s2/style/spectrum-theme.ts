@@ -194,6 +194,20 @@ class SpectrumColorProperty<C extends string> extends ArbitraryProperty<C> {
 
 type BaseColor = keyof typeof baseColors;
 
+/**
+ * Returns a set of stateful color token references for the default, hovered, focus-visible,
+ * and pressed states of a component.
+ *
+ * @param base - A Spectrum base color token name (e.g. `'gray-100'`, `'accent-900'`).
+ * @returns An object with `default`, `isHovered`, `isFocusVisible`, and `isPressed` color token references.
+ *
+ * @example
+ * ```tsx
+ * const styles = style({
+ *   backgroundColor: baseColor('gray-100')
+ * });
+ * ```
+ */
 export function baseColor<C extends string = BaseColor>(base: BaseColor | C): {default: C, isHovered: C, isFocusVisible: C, isPressed: C} {
   return {
     default: base as C,
@@ -204,6 +218,22 @@ export function baseColor<C extends string = BaseColor>(base: BaseColor | C): {d
 }
 
 type SpectrumColor = Color<BaseColor> | ArbitraryValue;
+
+/**
+ * Resolves a Spectrum color token name to a CSS color value string.
+ * Supports opacity modifiers via the `color/opacity` syntax.
+ *
+ * @param value - A Spectrum color token (e.g. `'gray-800'`, `'accent-900/50'`) or an arbitrary CSS color value.
+ * @returns A CSS color string.
+ *
+ * @example
+ * ```tsx
+ * const styles = style({
+ *   color: color('gray-800'),
+ *   borderColor: color('accent-900/50')
+ * });
+ * ```
+ */
 export function color(value: SpectrumColor): string {
   let arbitrary = parseArbitraryValue(value);
   if (arbitrary) {
@@ -213,10 +243,40 @@ export function color(value: SpectrumColor): string {
   return colorTokenToString(resolveColorToken(baseColors[colorValue]), opacity);
 }
 
+/**
+ * Produces a `light-dark()` CSS color value that resolves to different colors
+ * depending on the current color scheme.
+ *
+ * @param light - The color to use in light mode.
+ * @param dark - The color to use in dark mode.
+ * @returns A CSS `light-dark()` expression wrapped as an arbitrary style value.
+ *
+ * @example
+ * ```tsx
+ * const styles = style({
+ *   backgroundColor: lightDark('gray-25', 'gray-900')
+ * });
+ * ```
+ */
 export function lightDark(light: SpectrumColor, dark: SpectrumColor): `[${string}]` {
   return `[light-dark(${color(light)}, ${color(dark)})]`;
 }
 
+/**
+ * Mixes two Spectrum colors by a given percentage using CSS `color-mix()` in sRGB color space.
+ *
+ * @param a - The first color.
+ * @param b - The second color.
+ * @param percent - The percentage of the second color in the mix (0–100).
+ * @returns A CSS `color-mix()` expression wrapped as an arbitrary style value.
+ *
+ * @example
+ * ```tsx
+ * const styles = style({
+ *   backgroundColor: colorMix('accent-900', 'gray-25', 50)
+ * });
+ * ```
+ */
 export function colorMix(a: SpectrumColor, b: SpectrumColor, percent: number): `[${string}]` {
   return `[color-mix(in srgb, ${color(a)}, ${color(b)} ${percent}%)]`;
 }
@@ -312,6 +372,19 @@ export type PositiveSpacing = keyof typeof baseSpacing;
 export type NegativeSpacing = keyof typeof negativeSpacing;
 export type Spacing = PositiveSpacing | NegativeSpacing;
 
+/**
+ * Converts a pixel value to a font-relative `em` length.
+ *
+ * @param base - The pixel value to convert.
+ * @param baseFontSize - The base font size in pixels to divide by. Defaults to `14`.
+ * @returns A CSS `em` value string.
+ *
+ * @example
+ * ```tsx
+ * fontRelative(7) // => '0.5em' (7 / 14)
+ * fontRelative(8, 16) // => '0.5em' (8 / 16)
+ * ```
+ */
 export function fontRelative(this: MacroContext | void, base: number, baseFontSize = 14): string {
   return (base / baseFontSize) + 'em';
 }
@@ -320,6 +393,18 @@ export function edgeToText(this: MacroContext | void, height: keyof typeof baseS
   return `calc(${baseSpacing[height]} * 3 / 8)`;
 }
 
+/**
+ * Converts a pixel value to `rem` units using a 16px base.
+ *
+ * @param px - The spacing in pixels.
+ * @returns A `rem` value string.
+ *
+ * @example
+ * ```tsx
+ * space(16) // => '1rem'
+ * space(8)  // => '0.5rem'
+ * ```
+ */
 export function space(this: MacroContext | void, px: number): string {
   return pxToRem(px);
 }
@@ -346,6 +431,21 @@ const padding = {
   ...relativeSpacing
 };
 
+/**
+ * Converts a pixel value to a scalable CSS size expression using the Spectrum 2 scale factor.
+ * The result is a `calc()` expression that multiplies the rem-converted value by the current scale factor.
+ *
+ * @param px - The size in pixels.
+ * @returns A CSS `calc()` expression.
+ *
+ * @example
+ * ```tsx
+ * const styles = style({
+ *   width: size(200),
+ *   height: size(48)
+ * });
+ * ```
+ */
 export function size(this: MacroContext | void, px: number): `calc(${string})` {
   return `calc(${pxToRem(px)} * var(--s2-scale))`;
 }
