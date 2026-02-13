@@ -84,9 +84,10 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
           triggerRef: buttonRef,
           'aria-labelledby': overlayProps['aria-labelledby'],
           style: {'--trigger-width': buttonWidth} as React.CSSProperties
-        }]
+        }],
+        [ButtonContext, {isExpanded: state.isOpen}]
       ]}>
-      <PressResponder {...triggerProps} ref={buttonRef} isPressed={state.isOpen}>
+      <PressResponder {...triggerProps} ref={buttonRef}>
         {props.children}
       </PressResponder>
     </Provider>

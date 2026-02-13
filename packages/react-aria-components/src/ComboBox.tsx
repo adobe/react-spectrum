@@ -223,7 +223,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
       values={[
         [ComboBoxStateContext, state],
         [LabelContext, {...labelProps, ref: labelRef}],
-        [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
+        [ButtonContext, {...buttonProps, ref: buttonRef, isExpanded: state.isOpen}],
         [InputContext, {...inputProps, ref: inputRef}],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {

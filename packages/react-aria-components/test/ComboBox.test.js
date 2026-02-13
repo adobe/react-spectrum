@@ -107,13 +107,24 @@ describe('ComboBox', () => {
     expect(field).toHaveAttribute('data-custom', 'true');
   });
 
-  it('should apply isPressed state to button when expanded', async () => {
+  it('should apply isExpanded state to button when expanded', async () => {
     let {getByRole} = render(<TestComboBox />);
     let button = getByRole('button');
 
+    expect(button).not.toHaveAttribute('data-expanded');
     expect(button).not.toHaveAttribute('data-pressed');
     await user.click(button);
-    expect(button).toHaveAttribute('data-pressed');
+    expect(button).toHaveAttribute('data-expanded');
+    expect(button).not.toHaveAttribute('data-pressed');
+  });
+
+  it('should set data-expanded on button when popover is open', async () => {
+    let {getByRole} = render(<TestComboBox />);
+    let button = getByRole('button');
+
+    expect(button).not.toHaveAttribute('data-expanded');
+    await user.click(button);
+    expect(button).toHaveAttribute('data-expanded', 'true');
   });
 
   it('should support filtering sections', async () => {

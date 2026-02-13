@@ -194,9 +194,6 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
             <Button
               ref={domRef}
               style={renderProps => pressScale(domRef)(renderProps)}
-              // Prevent press scale from sticking while Picker is open.
-              // @ts-ignore
-              isPressed={false}
               className={renderProps => inputButton({
                 ...renderProps,
                 size: 'M',
