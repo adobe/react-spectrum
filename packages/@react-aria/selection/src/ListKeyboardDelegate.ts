@@ -92,6 +92,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return null;
   }
 
+  // Returns the first key that's visible starting from and inclusive of the provided key
   private findNextVisible(key: Key | null): Key | null {
     let node = key ? this.collection.getItem(key) : null;
     if (!node) {
@@ -114,6 +115,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return node?.key ?? null;
   }
 
+  // Returns the first key that's visible and non-disabled starting from and inclusive of the provided key
   private findNextNonDisabledVisible(key: Key | null, getNext: (key: Key) => Key | null) {
     let nextKey = key;
     while (nextKey !== null) {
