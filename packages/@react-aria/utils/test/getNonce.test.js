@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+/* global globalThis */
+
 import {getNonce} from '../';
 
 describe('getNonce', () => {
