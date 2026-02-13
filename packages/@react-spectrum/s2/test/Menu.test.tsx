@@ -92,7 +92,7 @@ describe('Menu unavailable', () => {
 
   it('should not open popover when isUnavailable is false and item acts as normal', async () => {
     let onAction = jest.fn();
-    let {getByRole, getAllByRole, queryByText} = render(
+    let {getByRole, getAllByRole, queryByText, queryAllByRole} = render(
       <MenuTrigger>
         <Button variant="primary">Menu Button</Button>
         <Menu onAction={onAction}>
@@ -111,8 +111,8 @@ describe('Menu unavailable', () => {
     expect(items[0]).not.toHaveAttribute('data-unavailable');
     await user.click(items[0]);
     expect(onAction).toHaveBeenCalled();
-    let menus = getAllByRole('dialog');
-    expect(menus).toHaveLength(1);
+    let menus = queryAllByRole('dialog');
+    expect(menus).toHaveLength(0);
     expect(queryByText('Contact your administrator for permissions to delete.')).toBeNull();
   });
 });

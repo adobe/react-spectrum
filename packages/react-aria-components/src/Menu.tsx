@@ -233,10 +233,15 @@ export const UnavailableMenuItemTrigger = /*#__PURE__*/ createBranchComponent(Un
     shouldUseVirtualFocus
   }, submenuTriggerState, itemRef);
 
+  // avoid passing non relevant aria attributes like aria-expanded
+  let menuItemContextValue = isUnavailable
+    ? {...submenuTriggerProps, isUnavailable, ref: itemRef}
+    : {isUnavailable, ref: itemRef};
+
   return (
     <Provider
       values={[
-        [MenuItemContext, {...submenuTriggerProps, isUnavailable, ref: itemRef}],
+        [MenuItemContext, menuItemContextValue],
         [OverlayTriggerStateContext, submenuTriggerState],
         [PopoverContext, {
           trigger: 'UnavailableMenuItemTrigger',

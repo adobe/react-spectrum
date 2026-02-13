@@ -1744,14 +1744,16 @@ describe('Menu', () => {
       let {getByRole, getAllByRole, findByText} = render(
         <MenuTrigger>
           <Button>Menu Button</Button>
-          <Menu onAction={onAction}>
-            <UnavailableMenuItemTrigger isUnavailable>
-              <MenuItem id="delete">Delete</MenuItem>
-              <Popover>
-                <div>Contact your administrator for permissions to delete.</div>
-              </Popover>
-            </UnavailableMenuItemTrigger>
-          </Menu>
+          <Popover>
+            <Menu onAction={onAction}>
+              <UnavailableMenuItemTrigger isUnavailable>
+                <MenuItem id="delete">Delete</MenuItem>
+                <Popover>
+                  <div>Contact your administrator for permissions to delete.</div>
+                </Popover>
+              </UnavailableMenuItemTrigger>
+            </Menu>
+          </Popover>
         </MenuTrigger>
       );
 
@@ -1776,27 +1778,32 @@ describe('Menu', () => {
 
     it('should not open popover when isUnavailable is false and item acts as normal', async () => {
       let onAction = jest.fn();
-      let {getByRole, getAllByRole, queryByText} = render(
+      let {getByRole, getAllByRole, queryByText, queryAllByRole} = render(
         <MenuTrigger>
           <Button>Menu Button</Button>
-          <Menu onAction={onAction}>
-            <UnavailableMenuItemTrigger>
-              <MenuItem id="delete">Delete</MenuItem>
-              <Popover>
-                <div>Contact your administrator for permissions to delete.</div>
-              </Popover>
-            </UnavailableMenuItemTrigger>
-          </Menu>
+          <Popover>
+            <Menu onAction={onAction}>
+              <UnavailableMenuItemTrigger>
+                <MenuItem id="delete">Delete</MenuItem>
+                <Popover>
+                  <div>Contact your administrator for permissions to delete.</div>
+                </Popover>
+              </UnavailableMenuItemTrigger>
+            </Menu>
+          </Popover>
         </MenuTrigger>
       );
 
       await user.click(getByRole('button'));
       let items = getAllByRole('menuitem');
       expect(items[0]).not.toHaveAttribute('data-unavailable');
+      expect(items[0]).not.toHaveAttribute('data-has-submenu');
+      expect(items[0]).not.toHaveAttribute('aria-haspopup');
       await user.click(items[0]);
       expect(onAction).toHaveBeenCalled();
-      let menus = getAllByRole('menu');
-      expect(menus).toHaveLength(1);
+      act(() => {jest.runAllTimers();});
+      let menus = queryAllByRole('menu');
+      expect(menus).toHaveLength(0);
       expect(queryByText('Contact your administrator for permissions to delete.')).toBeNull();
     });
   });
