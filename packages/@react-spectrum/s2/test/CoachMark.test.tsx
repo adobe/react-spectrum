@@ -10,29 +10,69 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox, Content, Text} from '../src';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {
+  ActionMenu,
+  Button,
+  CardPreview,
+  Checkbox,
+  Content,
+  Footer,
+  Image,
+  Keyboard,
+  MenuItem,
+  Text
+} from '../src';
 import {CoachMark, CoachMarkTrigger} from '../src/CoachMark';
-import {describe, expect, it, vi} from 'vitest';
 import React from 'react';
-import {render} from './utils/render';
+import userEvent, {UserEvent} from '@testing-library/user-event';
+
+const mockAnimations = () => {
+  Element.prototype.animate = jest.fn().mockImplementation(() => ({finished: Promise.resolve()}));
+};
 
 describe('CoachMark', () => {
-  it('renders', async () => {
-    vi.useFakeTimers();
-    Element.prototype.animate = vi.fn().mockImplementation(() => ({finished: Promise.resolve()}));
-    const screen = await render(
+  let user: UserEvent | null = null;
+  beforeAll(() => {
+    jest.useFakeTimers();
+    mockAnimations();
+  });
+  beforeEach(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+  afterAll(() => {
+    act(() => {jest.runAllTimers();});
+  });
+
+  it('renders a coachmark', async () => {
+    let onPress = jest.fn();
+    let {getAllByRole} = render(
       <CoachMarkTrigger isOpen>
         <Checkbox>Sync with CC</Checkbox>
         <CoachMark placement="right top">
+          <CardPreview>
+            <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
+          </CardPreview>
           <Content>
             <Text slot="title">Hello</Text>
+            <ActionMenu>
+              <MenuItem>Skip tour</MenuItem>
+              <MenuItem>Restart tour</MenuItem>
+            </ActionMenu>
+            <Keyboard>Command + B</Keyboard>
             <Text slot="description">This is the description</Text>
           </Content>
+          <Footer>
+            <Text slot="steps">1 of 10</Text>
+            <Button fillStyle="outline" variant="secondary">Previous</Button>
+            <Button variant="primary" onPress={onPress}>Next</Button>
+          </Footer>
         </CoachMark>
       </CoachMarkTrigger>
     );
-    vi.runAllTimers();
-    expect(screen.container.firstChild).toBeInTheDocument();
-    vi.useRealTimers();
+    act(() => {jest.runAllTimers();});
+    expect(getAllByRole('button').length).toBe(4); // 2 Dismiss + 2 actions
+    await user?.click(getAllByRole('button')[2]);
+    expect(onPress).toHaveBeenCalled();
   });
 });

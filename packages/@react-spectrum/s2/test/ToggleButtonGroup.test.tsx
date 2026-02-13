@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Adobe. All rights reserved.
+ * Copyright 2025 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,26 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {describe, expect, it} from 'vitest';
-import {render} from './utils/render';
-import {Text, ToggleButton, ToggleButtonGroup} from '../src';
+import {fireEvent, render} from '@react-spectrum/test-utils-internal';
+import {TextArea} from '../src';
 
-describe('ToggleButtonGroup', () => {
-  it('renders', async () => {
-    const screen = await render(
-      <ToggleButtonGroup>
-        <ToggleButton id="bold">
-          <Text>Bold</Text>
-        </ToggleButton>
-        <ToggleButton id="italic">
-          <Text>Italic</Text>
-        </ToggleButton>
-        <ToggleButton id="underline">
-          <Text>Underline</Text>
-        </ToggleButton>
-      </ToggleButtonGroup>
+describe('TextField', () => {
+  it('should focus textarea when tapping invalid icon', async () => {
+    let {getByRole} = render(
+      <TextArea label="Description" isInvalid  />
     );
-    const radios = screen.container.querySelectorAll('[role="radio"]');
-    expect(radios.length).toBe(3);
+
+    let textarea = getByRole('textbox');
+    // svg doesn't have a role so grab it via queryselector
+    let icon = getByRole('presentation').querySelector('svg')!;
+    expect(icon).toBeInTheDocument();
+    // user event with touch doesn't cause touchEnd to trigger so using fireEvent
+    fireEvent.touchStart(icon);
+    fireEvent.touchEnd(icon);
+
+    expect(document.activeElement).toBe(textarea);
   });
 });
