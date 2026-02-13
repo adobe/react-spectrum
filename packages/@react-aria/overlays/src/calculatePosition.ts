@@ -58,7 +58,8 @@ interface PositionOpts {
   offset: number,
   crossOffset: number,
   maxHeight?: number,
-  arrowBoundaryOffset?: number
+  arrowBoundaryOffset?: number,
+  containerBounds?: DOMRect | null
 }
 
 type HeightGrowthDirection = 'top' | 'bottom';
@@ -105,7 +106,7 @@ const PARSED_PLACEMENT_CACHE = {};
 
 let getVisualViewport = () => typeof document !== 'undefined' ? window.visualViewport : null;
 
-function getContainerDimensions(containerNode: Element, visualViewport: VisualViewport | null): Dimensions {
+function getContainerDimensions(containerNode: Element, visualViewport: VisualViewport | null, containerBounds?: DOMRect | null): Dimensions {
   let width = 0, height = 0, totalWidth = 0, totalHeight = 0, top = 0, left = 0;
   let scroll: Position = {};
   let isPinchZoomedIn = (visualViewport?.scale ?? 1) > 1;
@@ -118,17 +119,32 @@ function getContainerDimensions(containerNode: Element, visualViewport: VisualVi
     let documentElement = document.documentElement;
     totalWidth = documentElement.clientWidth;
     totalHeight = documentElement.clientHeight;
-    width = visualViewport?.width ?? totalWidth;
-    height = visualViewport?.height ?? totalHeight;
-    scroll.top = documentElement.scrollTop || containerNode.scrollTop;
-    scroll.left = documentElement.scrollLeft || containerNode.scrollLeft;
+    
+    // If container bounds are provided (e.g., from PortalProvider for shadow DOM/iframe scenarios),
+    // use those instead of calculating from window/document
+    if (containerBounds) {
+      width = containerBounds.width;
+      height = containerBounds.height;
+      top = containerBounds.top;
+      left = containerBounds.left;
+      // When using containerBounds, scroll should be relative to the container's position
+      scroll.top = 0;
+      scroll.left = 0;
+    } else {
+      // Default/legacy method: use visualViewport if available, otherwise use document dimensions
+      width = visualViewport?.width ?? totalWidth;
+      height = visualViewport?.height ?? totalHeight;
+      
+      scroll.top = documentElement.scrollTop || containerNode.scrollTop;
+      scroll.left = documentElement.scrollLeft || containerNode.scrollLeft;
 
-    // The goal of the below is to get a top/left value that represents the top/left of the visual viewport with
-    // respect to the layout viewport origin. This combined with the scrollTop/scrollLeft will allow us to calculate
-    // coordinates/values with respect to the visual viewport or with respect to the layout viewport.
-    if (visualViewport) {
-      top = visualViewport.offsetTop;
-      left = visualViewport.offsetLeft;
+      // The goal of the below is to get a top/left value that represents the top/left of the visual viewport with
+      // respect to the layout viewport origin. This combined with the scrollTop/scrollLeft will allow us to calculate
+      // coordinates/values with respect to the visual viewport or with respect to the layout viewport.
+      if (visualViewport) {
+        top = visualViewport.offsetTop;
+        left = visualViewport.offsetLeft;
+      }
     }
   } else {
     ({width, height, top, left} = getOffset(containerNode, false));
@@ -528,7 +544,8 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     crossOffset,
     maxHeight,
     arrowSize = 0,
-    arrowBoundaryOffset = 0
+    arrowBoundaryOffset = 0,
+    containerBounds
   } = opts;
 
   let visualViewport = getVisualViewport();
@@ -555,8 +572,9 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
   // a height/width that matches the visual viewport size rather than the body's height/width (aka for zoom it will be zoom adjusted size)
   // and a top/left that is adjusted as well (will return the top/left of the zoomed in viewport, or 0,0 for a non-zoomed body)
   // Otherwise this returns the height/width of a arbitrary boundary element, and its top/left with respect to the viewport (NOTE THIS MEANS IT DOESNT INCLUDE SCROLL)
-  let boundaryDimensions = getContainerDimensions(boundaryElement, visualViewport);
-  let containerDimensions = getContainerDimensions(container, visualViewport);
+  // If containerBounds are provided, use them to constrain the boundary dimensions (e.g., for shadow DOM containers)
+  let boundaryDimensions = getContainerDimensions(boundaryElement, visualViewport, containerBounds);
+  let containerDimensions = getContainerDimensions(container, visualViewport, containerBounds);
 
   // There are several difference cases of how to calculate the containerOffsetWithBoundary:
   // - boundaryElement is body or HTML and the container is an arbitrary element in the boundary (aka submenu with parent menu as container in v3)
