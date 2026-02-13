@@ -23,6 +23,7 @@
   "label.(optional)": "(neobligāti)",
   "label.(required)": "(obligāti)",
   "menu.moreActions": "Citas darbības",
+  "menu.unavailable": "Nav pieejams, izvērsiet, lai skatītu sīkāku informāciju",
   "notificationbadge.indicatorOnly": "Jauna aktivitāte",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Izvēlēties…",

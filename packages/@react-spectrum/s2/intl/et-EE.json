@@ -23,6 +23,7 @@
   "label.(optional)": "(valikuline)",
   "label.(required)": "(nõutav)",
   "menu.moreActions": "Veel toiminguid",
+  "menu.unavailable": "Pole kättesaadav, üksikasjade vaatamiseks laiendage",
   "notificationbadge.indicatorOnly": "Uus tegevus",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Valige…",

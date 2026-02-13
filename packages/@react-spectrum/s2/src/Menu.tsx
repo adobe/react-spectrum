@@ -46,12 +46,15 @@ import {IconContext} from './Icon';
 import {ImageContext} from './Image'; // chevron right removed??
 import InfoCircleIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 import {InPopoverContext, Popover, PopoverContext} from './Popover';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
 import {Placement, useLocale} from 'react-aria';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {useGlobalListeners} from '@react-aria/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
 // need to strip id's from icons
@@ -484,6 +487,8 @@ export function MenuItem(props: MenuItemProps): ReactNode {
   let {size, hideLinkOutIcon} = useContext(InternalMenuContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+
   return (
     <AriaMenuItem
       {...props}
@@ -540,8 +545,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                   {/* Need to avoid the icon context set above since that gets a marginEnd that will then propagate to InfoCircleIcon */}
                   <Provider values={[[IconContext, {slots: {icon: {styles: descriptorIcon({size})}}}]]}>
                     <InfoCircleIcon
-                      // TODO needs translations, grab from v3
-                      aria-label="Unavailable, expand for details"
+                      aria-label={stringFormatter.format('menu.unavailable')}
                       className={style({
                         scaleX: {
                           direction: {

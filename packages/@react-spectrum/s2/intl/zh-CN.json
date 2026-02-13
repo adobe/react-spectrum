@@ -23,6 +23,7 @@
   "label.(optional)": "（可选）",
   "label.(required)": "（必填）",
   "menu.moreActions": "更多操作",
+  "menu.unavailable": "不可用，展开以查看详细信息",
   "notificationbadge.indicatorOnly": "新活动",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "选择...",

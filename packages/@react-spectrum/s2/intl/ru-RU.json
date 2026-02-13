@@ -23,6 +23,7 @@
   "label.(optional)": "(дополнительно)",
   "label.(required)": "(обязательно)",
   "menu.moreActions": "Дополнительные действия",
+  "menu.unavailable": "Недоступно, разверните для подробностей",
   "notificationbadge.indicatorOnly": "Новая активность",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Выбрать…",

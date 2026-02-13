@@ -23,6 +23,7 @@
   "label.(optional)": "(opţional)",
   "label.(required)": "(obligatoriu)",
   "menu.moreActions": "Mai multe acțiuni",
+  "menu.unavailable": "Indisponibil, extindeți pentru detalii",
   "notificationbadge.indicatorOnly": "Activitate nouă",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Selectați…",
