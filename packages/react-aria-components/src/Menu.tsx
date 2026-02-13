@@ -558,7 +558,7 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
       data-pressed={states.isPressed || undefined}
       data-selected={states.isSelected || undefined}
       data-selection-mode={selectionManager.selectionMode === 'none' ? undefined : selectionManager.selectionMode}
-      data-has-submenu={!!mergedProps['aria-haspopup'] || undefined}
+      data-has-submenu={mergedProps['aria-haspopup'] === 'menu' || undefined}
       data-open={mergedProps['aria-expanded'] === 'true' || undefined}
       data-unavailable={mergedProps.isUnavailable || undefined}>
       <Provider

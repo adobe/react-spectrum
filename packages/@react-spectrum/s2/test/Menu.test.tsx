@@ -11,10 +11,12 @@
  */
 
 import {AriaMenuTests} from '../../../react-aria-components/test/AriaMenu.test-util';
-import {Button, Collection, Header, Heading, Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger} from '../src';
+import {Button, Collection, Header, Heading, Menu, MenuItem, MenuSection, MenuTrigger, Popover, SubmenuTrigger, UnavailableMenuItemTrigger} from '../src';
+import {pointerMap} from '@react-aria/test-utils';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 import {Selection} from '@react-types/shared';
+import userEvent from '@testing-library/user-event';
 
 // better to accept items from the test? or just have the test have a requirement that you render a certain-ish structure?
 // what about the button label?
@@ -55,6 +57,65 @@ function SelectionStatic(props)  {
     </MenuTrigger>
   );
 }
+
+describe('Menu unavailable', () => {
+  let user;
+
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
+  it('should open popover if isUnavailable is true', async () => {
+    let onAction = jest.fn();
+    let {getByRole, getAllByRole, findByText} = render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu onAction={onAction}>
+          <UnavailableMenuItemTrigger isUnavailable>
+            <MenuItem id="delete">Delete</MenuItem>
+            <Popover>
+              <div>Contact your administrator for permissions to delete.</div>
+            </Popover>
+          </UnavailableMenuItemTrigger>
+        </Menu>
+      </MenuTrigger>
+    );
+
+    await user.click(getByRole('button'));
+    let items = getAllByRole('menuitem');
+    expect(items[0]).toHaveAttribute('data-unavailable');
+    await user.click(items[0]);
+    expect(await findByText('Contact your administrator for permissions to delete.')).toBeInTheDocument();
+    expect(onAction).not.toHaveBeenCalled();
+
+  });
+
+  it('should not open popover when isUnavailable is false and item acts as normal', async () => {
+    let onAction = jest.fn();
+    let {getByRole, getAllByRole, queryByText} = render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu onAction={onAction}>
+          <UnavailableMenuItemTrigger>
+            <MenuItem id="delete">Delete</MenuItem>
+            <Popover>
+              <div>Contact your administrator for permissions to delete.</div>
+            </Popover>
+          </UnavailableMenuItemTrigger>
+        </Menu>
+      </MenuTrigger>
+    );
+
+    await user.click(getByRole('button'));
+    let items = getAllByRole('menuitem');
+    expect(items[0]).not.toHaveAttribute('data-unavailable');
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalled();
+    let menus = getAllByRole('dialog');
+    expect(menus).toHaveLength(1);
+    expect(queryByText('Contact your administrator for permissions to delete.')).toBeNull();
+  });
+});
 
 AriaMenuTests({
   prefix: 'spectrum2-static',
