@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getActiveElement, getEventTarget, getScrollParent, isIOS, isScrollable, useLayoutEffect, willOpenKeyboard} from '@react-aria/utils';
+import {chain, getActiveElement, getEventTarget, getNonce, getScrollParent, isIOS, isScrollable, useLayoutEffect, willOpenKeyboard} from '@react-aria/utils';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -130,6 +130,10 @@ function preventScrollMobileSafari() {
   // the window instead.
   // This must be applied before the touchstart event as of iOS 26, so inject it as a <style> element.
   let style = document.createElement('style');
+  let nonce = getNonce();
+  if (nonce) {
+    style.nonce = nonce;
+  }
   style.textContent = `
 @layer {
   * {
