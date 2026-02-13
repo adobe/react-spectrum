@@ -11,7 +11,7 @@
  */
 
 import {action} from 'storybook/actions';
-import {Button, Checkbox, CheckboxProps, Collection, DroppableCollectionReorderEvent, isTextDropItem, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, useDragAndDrop, Virtualizer} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, Collection, DroppableCollectionReorderEvent, isTextDropItem, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeHeader, TreeItem, TreeItemContent, TreeItemProps, TreeProps, TreeSection, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {MyMenuItem} from './utils';
@@ -268,6 +268,85 @@ export const TreeExampleStatic: StoryObj<typeof TreeExampleStaticRender> = {
   }
 };
 
+const TreeExampleSectionRender = (args) => (
+  <Tree className={styles.tree} {...args} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <TreeItem
+      id="reports"
+      textValue="Reports"
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+        focused: isFocused,
+        'focus-visible': isFocusVisible,
+        selected: isSelected,
+        hovered: isHovered
+      })}>
+      <TreeItemContent>
+        Reports
+      </TreeItemContent>
+    </TreeItem>
+    <TreeSection>
+      <TreeHeader>Photo Header</TreeHeader>
+      <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
+      <StaticTreeItem id="edited photos" textValue="Edited photos">Edited Photos</StaticTreeItem>
+    </TreeSection>
+    <TreeSection>
+      <TreeHeader>Project Header</TreeHeader>
+      <StaticTreeItem id="projects" textValue="Projects" title="Projects">
+        <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
+          <StaticTreeItem id="projects-1A" textValue="Projects-1A">
+            Projects-1A
+          </StaticTreeItem>
+        </StaticTreeItem>
+        <StaticTreeItem id="projects-2" textValue="Projects-2">
+          Projects-2
+        </StaticTreeItem>
+        <StaticTreeItem id="projects-3" textValue="Projects-3">
+          Projects-3
+        </StaticTreeItem>
+      </StaticTreeItem>
+      <StaticTreeItem id="projects-4" textValue="Projects-4">Project-4</StaticTreeItem>
+    </TreeSection>
+    <TreeItem
+      id="Tests"
+      textValue="Tests"
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+        focused: isFocused,
+        'focus-visible': isFocusVisible,
+        selected: isSelected,
+        hovered: isHovered
+      })}>
+      <TreeItemContent>
+        {({isFocused}) => (
+          <Text>{`${isFocused} Tests`}</Text>
+        )}
+      </TreeItemContent>
+    </TreeItem>
+  </Tree>
+);
+
+export const TreeExampleSection = {
+  render: TreeExampleSectionRender,
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle',
+    disabledBehavior: 'selection',
+    disallowClearAll: false
+  },
+  argTypes: {
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    disabledBehavior: {
+      control: 'radio',
+      options: ['selection', 'all']
+    }
+  }
+};
+
 export const TreeExampleStaticNoActions: StoryObj<typeof TreeExampleStaticNoActionsRender> = {
   render: (args) => <TreeExampleStaticNoActionsRender {...args} />,
   args: {
@@ -323,6 +402,40 @@ let rows = [
       {id: 'reports-1C', name: 'Reports 1C'}
     ]},
     {id: 'reports-2', name: 'Reports 2'}
+  ]}
+];
+
+let rowsWithSections = [
+  {id: 'section_1', name: 'Section 1', childItems: [
+    {id: 'projects', name: 'Projects', childItems: [
+      {id: 'project-1', name: 'Project 1'},
+      {id: 'project-2', name: 'Project 2', childItems: [
+        {id: 'project-2A', name: 'Project 2A'},
+        {id: 'project-2B', name: 'Project 2B'},
+        {id: 'project-2C', name: 'Project 2C'}
+      ]},
+      {id: 'project-3', name: 'Project 3'},
+      {id: 'project-4', name: 'Project 4'},
+      {id: 'project-5', name: 'Project 5', childItems: [
+        {id: 'project-5A', name: 'Project 5A'},
+        {id: 'project-5B', name: 'Project 5B'},
+        {id: 'project-5C', name: 'Project 5C'}
+      ]}
+    ]}
+  ]},
+  {id: 'section_2', name: 'Section 2', childItems: [
+    {id: 'reports', name: 'Reports', childItems: [
+      {id: 'reports-1', name: 'Reports 1', childItems: [
+        {id: 'reports-1A', name: 'Reports 1A', childItems: [
+          {id: 'reports-1AB', name: 'Reports 1AB', childItems: [
+            {id: 'reports-1ABC', name: 'Reports 1ABC'}
+          ]}
+        ]},
+        {id: 'reports-1B', name: 'Reports 1B'},
+        {id: 'reports-1C', name: 'Reports 1C'}
+      ]},
+      {id: 'reports-2', name: 'Reports 2'}
+    ]}
   ]}
 ];
 
@@ -442,9 +555,43 @@ const TreeExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Ele
   );
 };
 
+const TreeSectionExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
+  let treeData = useTreeData<any>({
+    initialItems: args.items as any ?? rowsWithSections,
+    getKey: item => item.id,
+    getChildren: item => item.childItems
+  });
+
+  return (
+    <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} className={styles.tree} aria-label="test dynamic tree" items={treeData.items} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+      <Collection items={treeData.items}>
+        {section => (
+          <TreeSection>
+            <TreeHeader>{section.value.name}</TreeHeader>
+            <Collection items={section.children ?? []}>
+              {item =>
+                (<DynamicTreeItem id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
+                  {item.value.name}
+                </DynamicTreeItem>)
+              }
+            </Collection>
+          </TreeSection>
+        )}
+      </Collection>
+    </Tree>
+  );
+};
+
+
 export const TreeExampleDynamic: StoryObj<typeof TreeExampleDynamicRender> = {
   ...TreeExampleStatic,
   render: (args) => <TreeExampleDynamicRender {...args} />,
+  parameters: undefined
+};
+
+export const TreeSectionDynamic: StoryObj<typeof TreeExampleDynamicRender> = {
+  ...TreeExampleStatic,
+  render: (args) => <TreeSectionExampleDynamicRender {...args} />,
   parameters: undefined
 };
 
@@ -1198,6 +1345,86 @@ export const TreeWithDragAndDropVirtualized = {
 };
 
 
+const VirtualizedTreeExampleSectionRender = (args) => (
+  <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30, headingHeight: 30}}>
+    <Tree className={styles.tree} {...args} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+      <TreeSection>
+        <TreeHeader>Photo Header</TreeHeader>
+        <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
+        <StaticTreeItem id="edited photos" textValue="Edited photos">Edited Photos</StaticTreeItem>
+      </TreeSection>
+      <TreeSection>
+        <TreeHeader>Project Header</TreeHeader>
+        <StaticTreeItem id="projects" textValue="Projects" title="Projects">
+          <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
+            <StaticTreeItem id="projects-1A" textValue="Projects-1A">
+              Projects-1A
+            </StaticTreeItem>
+          </StaticTreeItem>
+          <StaticTreeItem id="projects-2" textValue="Projects-2">
+            Projects-2
+          </StaticTreeItem>
+          <StaticTreeItem id="projects-3" textValue="Projects-3">
+            Projects-3
+          </StaticTreeItem>
+          <StaticTreeItem id="projects-4" textValue="Projects-4">Project-4</StaticTreeItem>
+        </StaticTreeItem>
+      </TreeSection>
+      <TreeItem
+        id="reports"
+        textValue="Reports"
+        className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+          focused: isFocused,
+          'focus-visible': isFocusVisible,
+          selected: isSelected,
+          hovered: isHovered
+        })}>
+        <TreeItemContent>
+          Reports
+        </TreeItemContent>
+      </TreeItem>
+      <TreeItem
+        id="Tests"
+        textValue="Tests"
+        className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+          focused: isFocused,
+          'focus-visible': isFocusVisible,
+          selected: isSelected,
+          hovered: isHovered
+        })}>
+        <TreeItemContent>
+          {({isFocused}) => (
+            <Text>{`${isFocused} Tests`}</Text>
+          )}
+        </TreeItemContent>
+      </TreeItem>
+    </Tree>
+  </Virtualizer>
+);
+
+export const VirtualizedTreeSectionRender = {
+  render: VirtualizedTreeExampleSectionRender,
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle',
+    disabledBehavior: 'selection',
+    disallowClearAll: false
+  },
+  argTypes: {
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    disabledBehavior: {
+      control: 'radio',
+      options: ['selection', 'all']
+    }
+  }
+};
 interface ITreeItem {
   id: string,
   name: string,

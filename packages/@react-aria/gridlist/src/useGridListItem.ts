@@ -11,7 +11,7 @@
  */
 
 import {chain, getActiveElement, getEventTarget, getScrollParent, isFocusWithin, mergeProps, nodeContains, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
-import {DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
+import {Collection, DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
@@ -100,11 +100,11 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
     let isExpanded = hasChildRows ? state.expandedKeys.has(node.key) : undefined;
     let setSize = 1;
-    if (node.level > 0 && node?.parentKey != null) {
+    if (node.level >= 0 && node?.parentKey != null) {
       let parent = state.collection.getItem(node.parentKey);
       if (parent) {
         // siblings must exist because our original node exists
-        let siblings = state.collection.getChildren?.(parent.key)!;
+        let siblings = getDirectChildren(parent, state.collection);
         setSize = [...siblings].filter(row => row.type === 'item').length;
       }
     } else {
@@ -325,4 +325,18 @@ function last(walker: TreeWalker) {
     }
   } while (last);
   return next;
+}
+
+function getDirectChildren<T>(parent: RSNode<T>, collection: Collection<RSNode<T>>) {
+  // We can't assume that we can use firstChildKey because if a person builds a tree using hooks, they would not have access to that property (using type Node vs CollectionNode)
+  // Instead, get all children and start at the first node (rather than just using firstChildKey) and only look at its siblings
+  let children = collection.getChildren?.(parent.key);
+  let childArray = children ? Array.from(children) : [];
+  let node = childArray.length > 0 ?  childArray[0] : null;
+  let siblings: RSNode<T>[] = [];
+  while (node) {
+    siblings.push(node);
+    node = node.nextKey != null ? collection.getItem(node.nextKey) : null;
+  }
+  return siblings;
 }

@@ -41,7 +41,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): v
       submenuSide.current = undefined;
     }
   };
-  useResizeObserver({ref: submenuRef, onResize: updateSubmenuRect});
+  useResizeObserver({ref: isOpen ? submenuRef : undefined, onResize: updateSubmenuRect});
 
   let reset = () => {
     setPreventPointerEvents(false);
