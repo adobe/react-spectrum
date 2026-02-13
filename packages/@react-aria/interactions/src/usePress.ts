@@ -19,6 +19,7 @@ import {
   chain,
   focusWithoutScrolling,
   getEventTarget,
+  getNonce,
   getOwnerDocument,
   getOwnerWindow,
   isMac,
@@ -887,6 +888,10 @@ export function usePress(props: PressHookProps): PressResult {
 
     const style = ownerDocument.createElement('style');
     style.id = STYLE_ID;
+    let nonce = getNonce(ownerDocument);
+    if (nonce) {
+      style.nonce = nonce;
+    }
     // touchAction: 'manipulation' is supposed to be equivalent, but in
     // Safari it causes onPointerCancel not to fire on scroll.
     // https://bugs.webkit.org/show_bug.cgi?id=240917
