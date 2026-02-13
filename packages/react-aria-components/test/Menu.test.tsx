@@ -1767,10 +1767,10 @@ describe('Menu', () => {
       expect(onAction).not.toHaveBeenCalled();
 
       // Make sure the dialog behavior instead of submenu behavior is being applied here
-      let dialog = getByRole('dialog');
-      expect(document.activeElement).toBe(dialog);
+      let dialogs = getAllByRole('dialog');
+      expect(document.activeElement).toBe(dialogs[1]);
       await user.keyboard('{ArrowLeft}');
-      expect(document.activeElement).toBe(dialog);
+      expect(document.activeElement).toBe(dialogs[1]);
       await user.keyboard('{Escape}');
       act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(items[0]);
