@@ -21,6 +21,8 @@ import {
   MenuTriggerProps as AriaMenuTriggerProps,
   SubmenuTrigger as AriaSubmenuTrigger,
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
+  UnavailableMenuItemTrigger as AriaUnavailableMenuItemTrigger,
+  UnavailableMenuItemTriggerProps as AriaUnavailableMenuItemTriggerProps,
   ContextValue,
   DEFAULT_SLOT,
   MenuItemRenderProps,
@@ -40,8 +42,9 @@ import {DOMRef, DOMRefValue, GlobalDOMAttributes, PressEvent} from '@react-types
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
-import {IconContext} from './Icon'; // chevron right removed??
-import {ImageContext} from './Image';
+import {IconContext} from './Icon';
+import {ImageContext} from './Image'; // chevron right removed??
+import InfoCircleIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 import {InPopoverContext, Popover, PopoverContext} from './Popover';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
@@ -317,10 +320,25 @@ let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean}>({
 
 let descriptor = style({
   gridArea: 'descriptor',
+  // TODO: currently the unavailable icon is misaligned with the submenu arrow, check with spectrum
+  placeSelf: 'end',
   marginStart: 8,
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
+  }
+});
+
+let descriptorIcon = style<{size: 'S' | 'M' | 'L' | 'XL'}>({
+  marginEnd: 0,
+  display: 'block',
+  size: {
+    size: {
+      S: 16,
+      M: 20,
+      L: 24,
+      XL: 26
+    }
   }
 });
 
@@ -517,7 +535,24 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                     })({direction})} />
                 </div>
               )}
-              {renderProps.hasSubmenu && (
+              {renderProps.hasSubmenu && renderProps.isUnavailable && (
+                <div slot="descriptor" className={descriptor}>
+                  {/* Need to avoid the icon context set above since that gets a marginEnd that will then propagate to InfoCircleIcon */}
+                  <Provider values={[[IconContext, {slots: {icon: {styles: descriptorIcon({size})}}}]]}>
+                    <InfoCircleIcon
+                      // TODO needs translations, grab from v3
+                      aria-label="Unavailable, expand for details"
+                      className={style({
+                        scaleX: {
+                          direction: {
+                            rtl: -1
+                          }
+                        }
+                      })({direction})} />
+                  </Provider>
+                </div>
+              )}
+              {renderProps.hasSubmenu && !renderProps.isUnavailable && (
                 <div slot="descriptor" className={descriptor}>
                   <ChevronRightIcon
                     size={size}
@@ -611,7 +646,23 @@ function SubmenuTrigger(props: SubmenuTriggerProps): JSX.Element {
   );
 }
 
-export {MenuTrigger, SubmenuTrigger};
+export interface UnavailableMenuItemTriggerProps extends AriaUnavailableMenuItemTriggerProps {}
+
+// TODO: consider if we should instead pull the RAC defined trigger here into S2. Feels useful for RAC users though, but
+// maybe shouldn't be specific to unavailable. It is very similar to SubmenuTrigger but it renders a dialog type behavior (see useSubmenuTrigger)
+// and has the concept of isUnavailable which will make the item render normally when false
+function UnavailableMenuItemTrigger(props: UnavailableMenuItemTriggerProps): JSX.Element {
+  return (
+    <AriaUnavailableMenuItemTrigger {...props}>
+      {props.children[0]}
+      <PopoverContext.Provider value={{hideArrow: true, offset: -2, crossOffset: -8, placement: 'end top'}}>
+        {props.children[1]}
+      </PopoverContext.Provider>
+    </AriaUnavailableMenuItemTrigger>
+  );
+}
+
+export {MenuTrigger, SubmenuTrigger, UnavailableMenuItemTrigger};
 
 // This is purely so that storybook generates the types for both Menu and MenuTrigger
 interface ICombined<T extends object> extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {}
