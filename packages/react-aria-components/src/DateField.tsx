@@ -57,7 +57,12 @@ export interface DateFieldRenderProps {
    * Whether the date field is read only.
    * @selector [data-readonly]
    */
-  isReadOnly: boolean
+  isReadOnly: boolean,
+  /**
+   * Whether the date field is required.
+   * @selector [data-required]
+   */
+  isRequired: boolean
 }
 export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
@@ -113,7 +118,8 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
       state,
       isInvalid: state.isInvalid,
       isDisabled: state.isDisabled,
-      isReadOnly: state.isReadOnly
+      isReadOnly: state.isReadOnly,
+      isRequired: props.isRequired || false
     },
     defaultClassName: 'react-aria-DateField'
   });
@@ -143,7 +149,8 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
         slot={props.slot || undefined}
         data-invalid={state.isInvalid || undefined}
         data-disabled={state.isDisabled || undefined}
-        data-readonly={state.isReadOnly || undefined} />
+        data-readonly={state.isReadOnly || undefined}
+        data-required={props.isRequired || undefined} />
       <HiddenDateInput
         autoComplete={props.autoComplete}
         name={props.name}
@@ -186,7 +193,8 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
       state,
       isInvalid: state.isInvalid,
       isDisabled: state.isDisabled,
-      isReadOnly: state.isReadOnly
+      isReadOnly: state.isReadOnly,
+      isRequired: props.isRequired || false
     },
     defaultClassName: 'react-aria-TimeField'
   });
@@ -216,7 +224,8 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
         slot={props.slot || undefined}
         data-invalid={state.isInvalid || undefined}
         data-disabled={state.isDisabled || undefined}
-        data-readonly={state.isReadOnly || undefined} />
+        data-readonly={state.isReadOnly || undefined}
+        data-required={props.isRequired || undefined} />
     </Provider>
   );
 });
