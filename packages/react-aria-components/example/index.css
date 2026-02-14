@@ -159,6 +159,12 @@ html {
   justify-self: end;
 }
 
+.item[data-unavailable]::after {
+  content: 'ⓘ';
+  content: 'ⓘ' / '';
+  justify-self: end;
+}
+
 .popover[data-trigger=SubmenuTrigger][data-placement="right"] {
   margin-left: -8px;
 }

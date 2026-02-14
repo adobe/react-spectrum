@@ -162,7 +162,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
   let arrowRef = useRef<HTMLDivElement>(null);
   let containerRef = useRef<HTMLDivElement | null>(null);
   let groupCtx = useContext(PopoverGroupContext);
-  let isSubPopover = groupCtx && props.trigger === 'SubmenuTrigger';
+  let isSubPopover = groupCtx && (props.trigger === 'SubmenuTrigger' || props.trigger === 'UnavailableMenuItemTrigger');
 
   let {popoverProps, underlayProps, arrowProps, placement, triggerAnchorPoint} = usePopover({
     ...props,
@@ -188,7 +188,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
 
   // Automatically render Popover with role=dialog except when isNonModal is true,
   // or a dialog is already nested inside the popover.
-  let shouldBeDialog = !props.isNonModal || props.trigger === 'SubmenuTrigger';
+  let shouldBeDialog = !props.isNonModal || props.trigger === 'SubmenuTrigger' || props.trigger === 'UnavailableMenuItemTrigger';
   let [isDialog, setDialog] = useState(false);
   useLayoutEffect(() => {
     if (ref.current) {

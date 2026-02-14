@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {BlendModes, DynamicExample, Example, KeyboardShortcuts, PublishAndExport} from '../stories/Menu.stories';
+import {BlendModes, DynamicExample, Example, KeyboardShortcuts, PublishAndExport, UnavailableMenuItem} from '../stories/Menu.stories';
+import {expect} from '@storybook/jest';
 import {Menu} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import {userEvent, within} from '@storybook/test';
@@ -55,4 +56,19 @@ export const WithImages: Story = {
 export const Dynamic: Story = {
   ...DynamicExample,
   play: async (context) => await Default.play!(context)
+};
+
+export const WithUnavailableItem: Story = {
+  ...UnavailableMenuItem,
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('menu');
+    await userEvent.keyboard('{ArrowDown}');
+    await userEvent.keyboard('{ArrowDown}');
+    await userEvent.keyboard('{ArrowRight}');
+    let menus = await within(body).findAllByRole('dialog');
+    expect(menus).toHaveLength(2);
+  }
 };
