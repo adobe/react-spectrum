@@ -19,7 +19,8 @@
       "source": "./src/server.tsx",
       "import": "./server/index.mjs",
       "require": "./server/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "server-module": "server/index.mjs",
   "server-main": "server/index.js",

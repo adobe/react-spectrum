@@ -12,7 +12,8 @@
       "types": "./*.d.ts",
       "import": "./*.module.mjs",
       "require": "./*.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build-cjs": "cross-env BUILD_ENV=production babel --root-mode upward src -d . --extensions '.ts,.tsx'",
