@@ -36,7 +36,6 @@ import {
   useSlottedContext
 } from 'react-aria-components';
 import {AriaCalendarGridProps} from '@react-aria/calendar';
-import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {
   CalendarDate,
   getDayOfWeek,
@@ -44,6 +43,7 @@ import {
 } from '@internationalized/date';
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
+import {focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {helpTextStyles} from './Field';
@@ -156,7 +156,6 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
   },
   outlineOffset: {
     default: -2,
-    isToday: 2,
     isSelected: {
       selectionMode: {
         single: 2,
@@ -184,10 +183,6 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
     },
     isPressed: 'gray-100',
     isDisabled: 'transparent',
-    isToday: {
-      default: baseColor('gray-300'),
-      isDisabled: 'disabled'
-    },
     isSelected: {
       selectionMode: {
         single: {
@@ -254,7 +249,6 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
     },
     forcedColors: {
       default: 'transparent',
-      isToday: 'ButtonFace',
       isHovered: 'Highlight',
       isSelected: {
         selectionMode: {
@@ -282,12 +276,26 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
     isDisabled: 'disabled',
     forcedColors: {
       default: 'ButtonText',
-      isToday: 'ButtonFace',
       isSelected: 'HighlightText',
       isSelectionStart: 'HighlightText',
       isSelectionEnd: 'HighlightText',
       isDisabled: 'GrayText'
     }
+  }
+});
+
+const todayStyles = style({
+  position: 'absolute',
+  bottom: 4,
+  left: '50%',
+  transform: 'translateX(-50%)',
+  width: 4,
+  height: 4,
+  borderRadius: 'full',
+  backgroundColor: '[currentColor]',
+  display: {
+    default: 'none',
+    isToday: 'block'
   }
 });
 
@@ -309,8 +317,8 @@ const selectionSpanStyles = style<{isInvalid?: boolean}>({
   insetStart: 'calc(-1 * var(--selection-span) * (var(--cell-width) + var(--cell-gap) + var(--cell-gap)))',
   insetEnd: 0,
   bottom: 0,
-  borderWidth: 2,
-  borderStyle: 'dashed',
+  borderWidth: 1,
+  borderStyle: 'solid',
   borderColor: {
     default: 'blue-800', // focus-indicator-color
     isInvalid: 'negative-900',
@@ -592,6 +600,7 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRange
         ref={ref}
         style={pressScale(ref, {})(renderProps!)}
         className={cellInnerStyles({...renderProps!, isSelectionStart, isSelectionEnd, selectionMode: isRangeSelection ? 'range' : 'single'})}>
+        <div className={todayStyles(renderProps!)} role="presentation" />
         <div>
           {formattedDate}
         </div>
