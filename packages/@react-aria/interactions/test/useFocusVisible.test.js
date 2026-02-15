@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {act, fireEvent, pointerMap, render, renderHook, screen, waitFor} from '@react-spectrum/test-utils-internal';
-import {addWindowFocusTracking, useFocusVisible, useFocusVisibleListener} from '../';
+import {addWindowFocusTracking, useFocusVisible, useFocusVisibleListener, useFocusVisibleTrigger} from '../';
 import {changeHandlers, hasSetupGlobalListeners} from '../src/useFocusVisible';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
@@ -452,5 +452,34 @@ describe('useFocusVisibleListener', function () {
       changeHandlers.add = originalAdd;
       changeHandlers.delete = originalDelete;
     });
+  });
+});
+
+describe('useFocusVisibleTrigger', function () {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
+  function Example() {
+    let {isFocusVisible} = useFocusVisible();
+    let showFocusVisible = useFocusVisibleTrigger();
+
+    return (
+      <>
+        <button onClick={showFocusVisible}>Show focus visible</button>
+        <div>{isFocusVisible ? 'focus-visible' : 'not-focus-visible'}</div>
+      </>
+    );
+  }
+
+  it('sets keyboard modality when triggered', async function () {
+    render(<Example />);
+
+    expect(screen.getByText('not-focus-visible')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', {name: 'Show focus visible'}));
+
+    expect(screen.getByText('focus-visible')).toBeInTheDocument();
   });
 });

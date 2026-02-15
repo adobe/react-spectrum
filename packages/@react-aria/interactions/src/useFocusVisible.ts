@@ -18,7 +18,7 @@
 import {getActiveElement, getEventTarget, getOwnerDocument, getOwnerWindow, isMac, isVirtualClick, openLink} from '@react-aria/utils';
 import {ignoreFocusEvent} from './utils';
 import {PointerType} from '@react-types/shared';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 
 export type Modality = 'keyboard' | 'pointer' | 'virtual';
@@ -259,6 +259,12 @@ export function setInteractionModality(modality: Modality): void {
   triggerChangeHandlers(modality, null);
 }
 
+export function useFocusVisibleTrigger(): () => void {
+  return useCallback(() => {
+    setInteractionModality('keyboard');
+  }, []);
+}
+
 /** @private */
 export function getPointerType(): PointerType {
   return currentPointerType;
@@ -356,4 +362,3 @@ export function useFocusVisibleListener(fn: FocusVisibleHandler, deps: ReadonlyA
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }
-

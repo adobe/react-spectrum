@@ -19,6 +19,7 @@ export {
   setInteractionModality,
   getPointerType,
   addWindowFocusTracking,
+  useFocusVisibleTrigger,
   useInteractionModality,
   useFocusVisible,
   useFocusVisibleListener
