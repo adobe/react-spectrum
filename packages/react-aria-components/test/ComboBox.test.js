@@ -761,4 +761,56 @@ describe('ComboBox', () => {
     expect(onChange).toHaveBeenCalledTimes(2);
     expect(onChange).toHaveBeenLastCalledWith(['1']);
   });
+
+  it('should not close the combobox when clicking on the input', async () => {
+    let onOpenChange = jest.fn();
+    let {container, getByRole} = render(<TestComboBox onOpenChange={onOpenChange} />);
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    await comboboxTester.open();
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(comboboxTester.listbox).toBeVisible();
+    expect(comboboxTester.combobox).toHaveFocus();
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    onOpenChange.mockClear();
+
+    await user.click(getByRole('combobox'));
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(comboboxTester.listbox).toBeVisible();
+    expect(comboboxTester.combobox).toHaveFocus();
+    expect(onOpenChange).toHaveBeenCalledTimes(0);
+  });
+
+  it('should close the combobox when clicking on the button, and it should reopen if clicked again', async () => {
+    let onOpenChange = jest.fn();
+    let {container, getByRole, getAllByRole} = render(<TestComboBox onOpenChange={onOpenChange} />);
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    await comboboxTester.open();
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(comboboxTester.listbox).toBeVisible();
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    onOpenChange.mockClear();
+
+    await user.click(getAllByRole('button', {hidden: true})[0]);
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(comboboxTester.listbox).toBeNull();
+    expect(comboboxTester.combobox).toHaveFocus();
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    onOpenChange.mockClear();
+
+    await user.click(getByRole('button'));
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(comboboxTester.listbox).toBeVisible();
+    expect(comboboxTester.combobox).toHaveFocus();
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+  });
 });

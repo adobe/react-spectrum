@@ -371,7 +371,8 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
   useInteractOutside({
     ref: popoverRef,
     onInteractOutside: (e) => {
-      if (nodeContains(buttonRef?.current, getEventTarget(e) as Element)) {
+      let target = getEventTarget(e) as Element;
+      if (nodeContains(buttonRef?.current, target) || nodeContains(inputRef.current, target)) {
         return;
       }
       state.close();
