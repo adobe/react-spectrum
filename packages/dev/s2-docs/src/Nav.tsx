@@ -188,7 +188,7 @@ export function Nav() {
           );
         }
         return (
-          <Disclosure id={name} key={name} isQuiet density="spacious" defaultExpanded={name === 'Components' || name === currentPage.exports?.section} styles={style({minWidth: 185})}>
+          <Disclosure id={name} key={name} isQuiet density="spacious" defaultExpanded={name === 'Components' || name === currentPage.exports?.section || name === currentPage.exports?.group} styles={style({minWidth: 185})}>
             <DisclosureTitle>{name}</DisclosureTitle>
             <DisclosurePanel>
               <div className={style({paddingStart: space(18)})}>{nav}</div>
@@ -255,10 +255,18 @@ export function SideNavItem(props) {
 }
 
 export function SideNavLink(props) {
-  let linkRef = useRef(null);
+  let linkRef = useRef<HTMLAnchorElement | null>(null);
   let selected = useContext(SideNavContext);
   let {isExternal, ...linkProps} = props;
-  
+
+  useEffect(() => {
+    if (!linkRef.current || props.isSelected !== true) {
+      return;
+    }
+
+    linkRef.current.scrollIntoView({block: 'start', behavior: 'smooth'});
+  }, [props.isSelected]);
+
   return (
     <BaseLink
       {...linkProps}
@@ -283,7 +291,8 @@ export function SideNavLink(props) {
         },
         textDecoration: 'none',
         borderRadius: 'default',
-        transition: 'default'
+        transition: 'default',
+        scrollMarginTop: 64
       })}>
       {(renderProps) => (<>
         <span
