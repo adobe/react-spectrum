@@ -77,7 +77,7 @@ export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {ToggleButtonGroup, ToggleButtonGroupContext, ToggleGroupStateContext} from './ToggleButtonGroup';
 export {Toolbar, ToolbarContext} from './Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from './Tooltip';
-export {TreeLoadMoreItem, Tree, TreeItem, TreeContext, TreeItemContent, TreeStateContext} from './Tree';
+export {TreeLoadMoreItem, Tree, TreeItem, TreeContext, TreeItemContent, TreeHeader, TreeSection, TreeStateContext} from './Tree';
 export {useDrag, useDrop} from '@react-aria/dnd';
 export {useDragAndDrop} from './useDragAndDrop';
 export {DropIndicator, DropIndicatorContext, DragAndDropContext} from './DragAndDrop';
