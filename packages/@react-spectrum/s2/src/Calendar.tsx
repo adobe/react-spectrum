@@ -49,7 +49,7 @@ import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro
 import {helpTextStyles} from './Field';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, CSSProperties, ForwardedRef, forwardRef, Fragment, PropsWithChildren, ReactElement, ReactNode, useContext, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, Fragment, PropsWithChildren, ReactElement, ReactNode, useContext, useMemo, useRef} from 'react';
 import {useDateFormatter, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -310,24 +310,31 @@ const unavailableStyles = style({
   backgroundColor: '[currentColor]'
 });
 
-const selectionSpanStyles = style<{isInvalid?: boolean}>({
+const selectionBackgroundStyles = style<{isInvalid?: boolean, isFirstDayInWeek?: boolean, isLastDayInWeek?: boolean, isSelectionStart?: boolean, isSelectionEnd?: boolean}>({
   position: 'absolute',
   zIndex: -1,
   top: 0,
-  insetStart: 'calc(-1 * var(--selection-span) * (var(--cell-width) + var(--cell-gap) + var(--cell-gap)))',
-  insetEnd: 0,
-  bottom: 0,
-  borderWidth: 1,
-  borderStyle: 'solid',
-  borderColor: {
-    default: 'blue-800', // focus-indicator-color
-    isInvalid: 'negative-900',
-    forcedColors: {
-      default: 'ButtonText'
-    }
+  insetStart: {
+    default: -4,
+    isFirstDayInWeek: 0,
+    isSelectionStart: 0
   },
-  borderStartRadius: 'full',
-  borderEndRadius: 'full',
+  insetEnd: {
+    default: -4,
+    isLastDayInWeek: 0,
+    isSelectionEnd: 0
+  },
+  bottom: 0,
+  borderStartRadius: {
+    default: 'none',
+    isFirstDayInWeek: 'full',
+    isSelectionStart: 'full'
+  },
+  borderEndRadius: {
+    default: 'none',
+    isLastDayInWeek: 'full',
+    isSelectionEnd: 'full'
+  },
   backgroundColor: {
     default: 'blue-subtle',
     isInvalid: 'negative-100',
@@ -338,6 +345,52 @@ const selectionSpanStyles = style<{isInvalid?: boolean}>({
   forcedColorAdjust: 'none'
 });
 
+const selectionBorderStyles = style<{isInvalid?: boolean, isFirstDayInWeek?: boolean, isLastDayInWeek?: boolean, isSelectionStart?: boolean, isSelectionEnd?: boolean}>({
+  position: 'absolute',
+  zIndex: 1,
+  top: 0,
+  insetStart: {
+    default: -4,
+    isFirstDayInWeek: 0,
+    isSelectionStart: 0
+  },
+  insetEnd: {
+    default: -4,
+    isLastDayInWeek: 0,
+    isSelectionEnd: 0
+  },
+  bottom: 0,
+  borderStartWidth: {
+    default: 0,
+    isFirstDayInWeek: 1,
+    isSelectionStart: 1
+  },
+  borderTopWidth: 1,
+  borderEndWidth: {
+    default: 0,
+    isLastDayInWeek: 1,
+    isSelectionEnd: 1
+  },
+  borderBottomWidth: 1,
+  borderStyle: 'solid',
+  borderColor: {
+    default: 'blue-800', // focus-indicator-color
+    isInvalid: 'negative-900',
+    forcedColors: {
+      default: 'ButtonText'
+    }
+  },
+  borderStartRadius: {
+    default: 'none',
+    isFirstDayInWeek: 'full',
+    isSelectionStart: 'full'
+  },
+  borderEndRadius: {
+    default: 'none',
+    isLastDayInWeek: 'full',
+    isSelectionEnd: 'full'
+  }
+});
 /**
  * Calendars display a grid of days in one or more months and allow users to select a single date.
  */
@@ -536,17 +589,13 @@ const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {firstDayOfWe
 };
 
 const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRangeSelection: boolean, state: CalendarState | RangeCalendarState, weekIndex: number, dayIndex: number, renderProps?: CalendarCellRenderProps, date: DateValue}): ReactElement => {
-  let {weekIndex, dayIndex, date, renderProps, state, isRangeSelection} = props;
-  let {getDatesInWeek} = state;
+  let {dayIndex, date, renderProps, state, isRangeSelection} = props;
   let ref = useRef<HTMLDivElement>(null);
   let {isUnavailable, formattedDate, isSelected, isSelectionStart, isSelectionEnd, isInvalid} = renderProps!;
   // only apply the selection start/end styles if the start/end date is actually selectable (aka not unavailable)
   // or if the range is invalid and thus we still want to show the styles even if the start/end date is an unavailable one
   isSelectionStart = isSelectionStart && (!isUnavailable || isInvalid);
   isSelectionEnd = isSelectionEnd && (!isUnavailable || isInvalid);
-
-  let startDate = startOfMonth(date);
-  let datesInWeek = getDatesInWeek(weekIndex, startDate);
 
   let isDateInRange = (checkDate: CalendarDate) => {
     if (!('highlightedRange' in state) || !state.highlightedRange) {
@@ -561,20 +610,10 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRange
     return state.isSelected(checkDate);
   };
 
-  // Starting from the current day, find the first day before it in the current week that is not selected.
-  // Then, the span of selected days is the current day minus the first unselected day.
-  let firstUnselectedInRangeInWeek = datesInWeek.slice(0, dayIndex + 1).reverse().findIndex((date, i) => {
-    return date && i > 0 && (!isDateInRange(date) || date.month !== props.date.month);
-  });
-
-  let selectionSpan = -1;
-  if (firstUnselectedInRangeInWeek > -1 && isSelected) {
-    selectionSpan = firstUnselectedInRangeInWeek - 1;
-  } else if (isSelected) {
-    selectionSpan = dayIndex;
-  }
   let prevDay = date.subtract({days: 1});
   let nextDay = date.add({days: 1});
+  let isFirstDayInWeek = dayIndex === 0;
+  let isLastDayInWeek = dayIndex === 6;
 
   // when invalid, show background for all selected dates (including unavailable) to make continuous range appearance
   // when valid, only show background for available selected dates
@@ -606,7 +645,8 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRange
         </div>
         {isUnavailable && <div className={unavailableStyles} role="presentation" />}
       </div>
-      {isBackgroundStyleApplied && <div style={{'--selection-span': selectionSpan} as CSSProperties} className={selectionSpanStyles({isInvalid})} role="presentation" />}
+      {isBackgroundStyleApplied && <div className={selectionBackgroundStyles({isInvalid, isFirstDayInWeek, isLastDayInWeek, isSelectionStart, isSelectionEnd})} role="presentation" />}
+      {isBackgroundStyleApplied && <div className={selectionBorderStyles({isInvalid, isFirstDayInWeek, isLastDayInWeek, isSelectionStart, isSelectionEnd})} role="presentation" />}
     </div>
   );
 };
