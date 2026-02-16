@@ -528,6 +528,12 @@ export default [{
         "react/react-in-jsx-scope": OFF,
     },
 }, {
+    files: ["packages/dev/s2-docs/**"],
+
+    rules: {
+        "rsp-rules/safe-root-focus-listener": OFF,
+    },
+}, {
     files: ["packages/dev/style-macro-chrome-plugin/**"],
     languageOptions: {
         globals: {
