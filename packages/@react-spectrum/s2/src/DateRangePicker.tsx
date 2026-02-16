@@ -33,7 +33,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface DateRangePickerProps<T extends DateValue> extends
-  Omit<AriaDateRangePickerProps<T>, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
+  Omit<AriaDateRangePickerProps<T>, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
   Pick<RangeCalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'firstDayOfWeek' | 'isDateUnavailable'>,
   Pick<PopoverProps, 'shouldFlip'>,
   StyleProps,

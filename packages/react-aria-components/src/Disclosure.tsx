@@ -16,6 +16,7 @@ import {
   ClassNameOrFunction,
   ContextValue,
   DEFAULT_SLOT,
+  dom,
   Provider,
   RenderProps,
   SlotProps,
@@ -68,7 +69,7 @@ export const DisclosureGroup = forwardRef(function DisclosureGroup(props: Disclo
   let domProps = filterDOMProps(props, {global: true});
 
   return (
-    <div
+    <dom.div
       {...domProps}
       {...renderProps}
       ref={ref}
@@ -76,7 +77,7 @@ export const DisclosureGroup = forwardRef(function DisclosureGroup(props: Disclo
       <DisclosureGroupStateContext.Provider value={state}>
         {renderProps.children}
       </DisclosureGroupStateContext.Provider>
-    </div>
+    </dom.div>
   );
 });
 
@@ -186,14 +187,14 @@ export const Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         [InternalDisclosureContext, {panelProps, panelRef}],
         [DisclosureStateContext, state]
       ]}>
-      <div
+      <dom.div
         {...mergeProps(domProps, renderProps, focusWithinProps)}
         ref={ref}
         data-expanded={state.isExpanded || undefined}
         data-disabled={isDisabled || undefined}
         data-focus-visible-within={isFocusVisibleWithin || undefined}>
         {renderProps.children}
-      </div>
+      </dom.div>
     </Provider>
   );
 });
@@ -242,7 +243,7 @@ export const DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(func
   });
   let DOMProps = filterDOMProps(props, {global: true, labelable: true});
   return (
-    <div
+    <dom.div
       {...mergeProps(DOMProps, renderProps, panelProps, focusWithinProps)}
       ref={mergeRefs(ref, panelRef)}
       role={role}
@@ -253,6 +254,6 @@ export const DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(func
         ]}>
         {props.children}
       </Provider>
-    </div>
+    </dom.div>
   );
 });

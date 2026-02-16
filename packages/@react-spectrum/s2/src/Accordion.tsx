@@ -122,7 +122,7 @@ export interface AccordionItemRenderProps {
   state: AccordionItemState
 }
 
-export interface AccordionItemProps extends Omit<RenderProps<AccordionItemRenderProps>, 'className' | 'style'>, SlotProps, StyleProps {
+export interface AccordionItemProps extends Omit<RenderProps<AccordionItemRenderProps>, 'className' | 'style' | 'render'>, SlotProps, StyleProps {
   /**
    * The size of the accordion item.
    * @default 'M'

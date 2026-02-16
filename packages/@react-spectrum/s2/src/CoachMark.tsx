@@ -320,7 +320,7 @@ const actionButtonSize = {
   XL: 'L'
 } as const;
 
-export const CoachMarkContext = createContext<ContextValue<CoachMarkProps, HTMLElement>>({});
+export const CoachMarkContext = createContext<ContextValue<Partial<CoachMarkProps>, HTMLElement>>({});
 
 export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HTMLElement>) => {
   let colorScheme = useContext(ColorSchemeContext);

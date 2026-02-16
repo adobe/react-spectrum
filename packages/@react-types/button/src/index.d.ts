@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, FocusableDOMProps, FocusableProps, Key, PressEvents, StyleProps} from '@react-types/shared';
-import {ElementType, JSXElementConstructor, ReactNode} from 'react';
+import {ButtonHTMLAttributes, ElementType, JSXElementConstructor, ReactNode} from 'react';
 
 interface ButtonProps extends PressEvents, FocusableProps {
   /** Whether the button is disabled. */
@@ -81,7 +81,7 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
    * The URL that processes the information submitted by the button.
    * Overrides the action attribute of the button's form owner.
    */
-  formAction?: string,
+  formAction?: ButtonHTMLAttributes<HTMLButtonElement>['formAction'],
   /** Indicates how to encode the form data that is submitted. */
   formEncType?: string,
   /** Indicates the HTTP method used to submit the form. */

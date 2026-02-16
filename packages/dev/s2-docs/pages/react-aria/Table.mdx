@@ -261,7 +261,7 @@ function AsyncSortTable() {
 
 ### Links
 
-Use the `href` prop on a `<Row>` to create a link. See the [framework setup guide](frameworks) to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection) for more details.
+Use the `href` prop on a `<Row>` to create a link. Link interactions vary depending on the selection behavior. See the [selection guide](selection) for more details.
 
 ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple'}} wide
 "use client";
@@ -295,6 +295,11 @@ import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/
 </Table>
 ```
 
+<InlineAlert variant="notice" UNSAFE_style={{marginTop: '2rem'}}>
+  <Heading>Client-side routing</Heading>
+  <Content>Due to [HTML spec limitations](https://github.com/w3c/html-aria/issues/473), table rows cannot be rendered as `<a>` elements. React Aria handles link clicks with JavaScript and triggers native navigation. When using a client-side router, use the `onAction` event to programmatically trigger navigation instead of the `href` prop.</Content>
+</InlineAlert>
+
 ### Empty state
 
 ```tsx render hideImports
@@ -317,7 +322,7 @@ import {Table, TableHeader, Column, TableBody} from 'vanilla-starter/Table';
 
 ## Selection and actions
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected rows can be controlled via the `selectedKeys` prop, matching the `id` prop of the rows. The `onAction` event handles item actions. Rows can be disabled with the `isDisabled` prop. See the [selection guide](selection) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected rows can be controlled via the `selectedKeys` prop, matching the `id` prop of the rows. The `onRowAction` event handles item actions. Rows can be disabled with the `isDisabled` prop. See the [selection guide](selection) for more details.
 
 ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
@@ -337,7 +342,7 @@ function Example(props) {
         /* PROPS */
         selectedKeys={selected}
         onSelectionChange={setSelected}
-        onAction={key => alert(`Clicked ${key}`)}
+        onRowAction={key => alert(`Clicked ${key}`)}
         ///- end highlight -///
       >
         <TableHeader>

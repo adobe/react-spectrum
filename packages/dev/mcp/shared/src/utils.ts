@@ -12,8 +12,16 @@ export function errorToString(err: unknown): string {
   }
 }
 
-// CDN base for docs. Can be overridden via env variable.
-export const DEFAULT_CDN_BASE = process.env.DOCS_CDN_BASE ?? 'https://react-spectrum.adobe.com/beta';
+// Default base URLs for each library
+const DEFAULT_S2_BASE = 'https://react-spectrum.adobe.com';
+const DEFAULT_REACT_ARIA_BASE = 'https://react-aria.adobe.com';
+
+export function getLibraryBaseUrl(library: 's2' | 'react-aria'): string {
+  if (process.env.DOCS_CDN_BASE) {
+    return process.env.DOCS_CDN_BASE;
+  }
+  return library === 's2' ? DEFAULT_S2_BASE : DEFAULT_REACT_ARIA_BASE;
+}
 
 export async function fetchText(url: string, timeoutMs = 15000): Promise<string> {
   const ctrl = new AbortController();

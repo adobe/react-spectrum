@@ -331,3 +331,39 @@ return (
     }
   }
 };
+
+
+type ExampleIconItem = IExampleItem & { icon: string };
+const exampleIconItems: ExampleIconItem[] = Array.from({length: 5}, (_, i) => ({
+  id: `user${i + 1}`,
+  label: `User ${i + 1}`,
+  icon: 'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png'
+}));
+
+const CustomRenderValuePicker = (args: PickerProps<ExampleIconItem, 'multiple'>): ReactElement => (
+  <Picker {...args}>
+    {(item: ExampleIconItem) => (
+      <PickerItem id={item.id} textValue={item.label}>
+        <Avatar slot="avatar" src={item.icon} />
+        <Text slot="label">{item.label}</Text>
+      </PickerItem>
+    )}
+  </Picker>
+);
+
+export type CustomRenderValuePickerStoryType = typeof CustomRenderValuePicker;
+export const CustomRenderValue: StoryObj<CustomRenderValuePickerStoryType> = {
+  render: CustomRenderValuePicker,
+  args: {
+    label: 'Pick users',
+    selectionMode: 'multiple',
+    items: exampleIconItems,
+    renderValue: (selectedItems) => (
+      <div style={{display: 'flex', gap: 4, height: '80%'}}>
+        {selectedItems.map(item => (
+          <img key={item.id} src={item.icon} alt={item.label} />
+        ))}
+      </div>
+    )
+  }
+};

@@ -12,6 +12,7 @@ export const description = 'A grouping of buttons whose actions are related to e
 <PageDescription>{docs.exports.ButtonGroup.description}</PageDescription>
 
 ```tsx render docs={docs.exports.ButtonGroup} links={docs.links} props={['orientation', 'align', 'size', 'isDisabled']} type="s2"
+"use client";
 import {ButtonGroup, Button} from '@react-spectrum/s2';
 
 <ButtonGroup/* PROPS */>
@@ -37,7 +38,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
     padding: 16,
     boxSizing: 'border-box',
     borderWidth: 1,
-    borderStyle: 'solid', 
+    borderStyle: 'solid',
     borderColor: 'gray-300',
     borderRadius: 'default',
     resize: 'horizontal',

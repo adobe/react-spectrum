@@ -156,7 +156,7 @@
   --highlight-background-invalid: oklch(from var(--red) var(--lightness-900) c h);
   --highlight-foreground: white;
   --highlight-overlay: oklch(from var(--tint-1000) l c h / 15%);
-  --invalid-color: oklch(from var(--red) var(--lightness-900) c h);
+  --invalid-color: oklch(from var(--red) var(--lightness-1000) c h);
   --field-background: var(--gray-50);
 }
 

@@ -13,6 +13,7 @@
 import {AriaColorFieldProps, useColorChannelField, useColorField, useLocale} from 'react-aria';
 import {
   ClassNameOrFunction,
+  dom,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -44,6 +45,16 @@ export interface ColorFieldRenderProps {
    * @selector [data-invalid]
    */
   isInvalid: boolean,
+  /**
+   * Whether the color field is read only.
+   * @selector [data-readonly]
+   */
+   isReadOnly: boolean,
+   /**
+    * Whether the color field is required.
+    * @selector [data-required]
+    */
+   isRequired: boolean,
   /**
    * The color channel that this field edits, or "hex" if no `channel` prop is set.
    * @selector [data-channel="hex | hue | saturation | ..."]
@@ -192,7 +203,9 @@ function useChildren(
       state,
       channel: props.channel || 'hex',
       isDisabled: props.isDisabled || false,
-      isInvalid: validation.isInvalid || false
+      isInvalid: validation.isInvalid || false,
+      isReadOnly: props.isReadOnly || false,
+      isRequired: props.isRequired || false
     },
     defaultClassName: 'react-aria-ColorField'
   });
@@ -215,14 +228,16 @@ function useChildren(
         }],
         [FieldErrorContext, validation]
       ]}>
-      <div
+      <dom.div
         {...DOMProps}
         {...renderProps}
         ref={ref}
         slot={props.slot || undefined}
         data-channel={props.channel || 'hex'}
         data-disabled={props.isDisabled || undefined}
-        data-invalid={validation.isInvalid || undefined} />
+        data-invalid={validation.isInvalid || undefined}
+        data-readonly={props.isReadOnly || undefined}
+        data-required={props.isRequired || undefined} />
     </Provider>
   );
 }

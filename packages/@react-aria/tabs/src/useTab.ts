@@ -62,6 +62,7 @@ export function useTab<T>(
   delete domProps.id;
   let linkProps = useLinkProps(item?.props);
   let {focusableProps} = useFocusable({
+    ...item?.props,
     isDisabled
   }, ref);
 

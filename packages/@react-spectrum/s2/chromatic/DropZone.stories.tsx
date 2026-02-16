@@ -43,7 +43,7 @@ const ExampleRender = (args: DropZoneProps): ReactElement => {
         <IllustratedMessage>
           <DropToUpload />
           <Heading>
-            Drag and drop your file
+            Drag or paste your file
           </Heading>
           <Content>
             Or, select a file from your computer
@@ -72,7 +72,7 @@ const ExampleWithFileTriggerRender = (args: DropZoneProps): ReactElement => {
         <IllustratedMessage>
           <Cloud />
           <Heading>
-            Drag and drop your file
+            Drag or paste your file
           </Heading>
           <Content>
             Or, select a file from your computer
@@ -108,7 +108,7 @@ const LongBannerRender = (args: DropZoneProps): ReactElement => {
         <IllustratedMessage>
           <DropToUpload />
           <Heading>
-            Drag and drop your file
+            Drag or paste your file
           </Heading>
           <Content>
             Or, select a file from your computer
@@ -172,7 +172,7 @@ const GradientExample = (args: DropZoneProps): ReactElement => {
         <IllustratedMessage>
           <CloudUpload />
           <Heading>
-            Drag and drop your file
+            Drag or paste your file
           </Heading>
           <Content>
             Or, select a file from your computer

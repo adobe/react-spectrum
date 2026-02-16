@@ -42,7 +42,7 @@ interface SwitchStyleProps {
 
 interface RenderProps extends SwitchRenderProps, SwitchStyleProps {}
 
-export interface SwitchProps extends Omit<AriaSwitchProps, 'className' | 'style' | 'children'  | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | keyof GlobalDOMAttributes>, StyleProps, SwitchStyleProps {
+export interface SwitchProps extends Omit<AriaSwitchProps, 'className' | 'style' | 'render' | 'children'  | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | keyof GlobalDOMAttributes>, StyleProps, SwitchStyleProps {
   children?: ReactNode
 }
 

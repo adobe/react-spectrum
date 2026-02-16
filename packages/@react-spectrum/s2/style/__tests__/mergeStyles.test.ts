@@ -1,0 +1,68 @@
+/*
+ * Copyright 2024 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {mergeStyles} from '../runtime';
+import {style} from '../spectrum-theme';
+
+function stripMacro(css) {
+  return css.replaceAll(/ -macro-static-[0-9a-zA-Z]+/gi, '').replaceAll(/ -macro-dynamic-[0-9a-zA-Z]+/gi, '');
+}
+
+describe('mergeStyles', () => {
+  it('should merge styles', () => {
+    let a = style({backgroundColor: 'red-1000', color: 'pink-100'});
+    let b = style({fontSize: 'body-xs', backgroundColor: 'gray-50'});
+    let expected = style({backgroundColor: 'gray-50', color: 'pink-100', fontSize: 'body-xs'});
+    let merged = mergeStyles(a, b);
+    expect(stripMacro(merged)).toBe(stripMacro(expected.toString()));
+  });
+
+  it('should merge with arbitrary values', () => {
+    let a = style({backgroundColor: 'red-1000', color: '[hotpink]'});
+    let b = style({fontSize: '[15px]', backgroundColor: 'gray-50'});
+    let expected = style({backgroundColor: 'gray-50', color: '[hotpink]', fontSize: '[15px]'});
+    let merged = mergeStyles(a, b);
+    expect(stripMacro(merged)).toBe(stripMacro(expected.toString()));
+  });
+
+  describe('when merging styles with macros', () => {
+    it('should not merge multiple static macro classes', () => {
+      let a = style({backgroundColor: 'red-1000', color: 'pink-100'});
+      let b = style({fontSize: 'body-xs', backgroundColor: 'gray-50'});
+      let merged = mergeStyles(a, b);
+      // expect the merged styles to include two static different macro classes within the string
+      let macroClasses = merged.match(/-macro-static-[0-9a-zA-Z]+/g);
+      expect(macroClasses).toHaveLength(2);
+      expect(macroClasses![0] !== macroClasses![1]);
+    });
+
+    it('should not merge multiple dynamic macro classes', () => {
+      let a = style({backgroundColor: 'red-1000', color: {default: '[hotpink]', isDisabled: 'gray-400'}});
+      let b = style({fontSize: '[15px]', backgroundColor: {default: 'gray-50', isDisabled: 'gray-400'}});
+      let merged = mergeStyles(a({isDisabled: true}), b({isDisabled: false}));
+      let macroClasses = merged.match(/-macro-dynamic-[0-9a-zA-Z]+/g);
+      expect(macroClasses).toHaveLength(2);
+      expect(macroClasses![0] !== macroClasses![1]);
+    });
+
+    it('should retain both static and dynamic macro classes', () => {
+      let a = style({backgroundColor: 'red-1000', color: {default: '[hotpink]', isDisabled: 'gray-400'}});
+      let b = style({fontSize: 'body-xs', backgroundColor: 'gray-50'});
+      let merged = mergeStyles(a({isDisabled: true}), b);
+      let staticMacroClasses = merged.match(/-macro-static-[0-9a-zA-Z]+/g);
+      expect(staticMacroClasses).toHaveLength(1);
+      let dynamicMacroClasses = merged.match(/-macro-dynamic-[0-9a-zA-Z]+/g);
+      expect(dynamicMacroClasses).toHaveLength(1);
+      expect(staticMacroClasses![0] !== dynamicMacroClasses![0]);
+    });
+  });
+});
