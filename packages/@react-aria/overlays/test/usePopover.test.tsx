@@ -43,127 +43,128 @@ describe('usePopover', () => {
   });
 });
 
+if (parseInt(React.version, 10) >= 17) {
+  describe('usePopover with Shadow DOM and UNSAFE_PortalProvider', () => {
+    let user;
 
-describe('usePopover with Shadow DOM and UNSAFE_PortalProvider', () => {
-  let user;
-
-  beforeAll(() => {
-    enableShadowDOM();
-    user = userEvent.setup({delay: null, pointerMap});
-  });
-
-  beforeEach(() => {
-    jest.useFakeTimers();
-  });
-
-  afterEach(() => {
-    act(() => {
-      jest.runAllTimers();
+    beforeAll(() => {
+      enableShadowDOM();
+      user = userEvent.setup({delay: null, pointerMap});
     });
-  });
 
-  it.skip('should handle popover interactions with UNSAFE_PortalProvider in shadow DOM', async () => {
-    const {shadowRoot} = createShadowRoot();
-    let triggerClicked = false;
-    let popoverInteracted = false;
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
 
-    const popoverPortal = document.createElement('div');
-    popoverPortal.setAttribute('data-testid', 'popover-portal');
-    shadowRoot.appendChild(popoverPortal);
+    afterEach(() => {
+      act(() => {
+        jest.runAllTimers();
+      });
+    });
 
-    function ShadowPopoverExample() {
-      const triggerRef = useRef(null);
-      const popoverRef = useRef(null);
-      const state = useOverlayTriggerState({
-        defaultOpen: false
+    it('should handle popover interactions with UNSAFE_PortalProvider in shadow DOM', async () => {
+      const {shadowRoot} = createShadowRoot();
+      let triggerClicked = false;
+      let popoverInteracted = false;
+
+      const popoverPortal = document.createElement('div');
+      popoverPortal.setAttribute('data-testid', 'popover-portal');
+      shadowRoot.appendChild(popoverPortal);
+
+      function ShadowPopoverExample() {
+        const triggerRef = useRef(null);
+        const popoverRef = useRef(null);
+        const state = useOverlayTriggerState({
+          defaultOpen: false
+        });
+
+        useOverlayTrigger({type: 'listbox'}, state, triggerRef);
+        const {popoverProps} = usePopover(
+          {
+            triggerRef,
+            popoverRef,
+            placement: 'bottom start'
+          },
+          state
+        );
+
+        return (
+          <UNSAFE_PortalProvider getContainer={() => shadowRoot as unknown as HTMLElement}>
+            <div data-testid="popover-container">
+              <button
+                ref={triggerRef}
+                data-testid="popover-trigger"
+                onClick={() => {
+                  triggerClicked = true;
+                  state.toggle();
+                }}>
+                Open Popover
+              </button>
+              {ReactDOM.createPortal(
+                <>
+                  {state.isOpen && (
+                    <div
+                      {...popoverProps}
+                      ref={popoverRef}
+                      data-testid="popover-content"
+                      style={{
+                        background: 'white',
+                        border: '1px solid gray',
+                        padding: '10px'
+                      }}>
+                      <button
+                        data-testid="popover-action"
+                        onClick={() => {
+                          popoverInteracted = true;
+                        }}>
+                        Popover Action
+                      </button>
+                      <button data-testid="close-popover" onClick={() => state.close()}>
+                        Close
+                      </button>
+                    </div>
+                  )}
+                </>,
+                popoverPortal
+              )}
+
+            </div>
+          </UNSAFE_PortalProvider>
+        );
+      }
+
+      const {unmount} = render(<ShadowPopoverExample />);
+
+      const trigger = document.body.querySelector('[data-testid="popover-trigger"]');
+
+      // Click trigger to open popover
+      await user.click(trigger);
+      expect(triggerClicked).toBe(true);
+
+      // Verify popover opened in shadow DOM
+      const popoverContent = shadowRoot.querySelector('[data-testid="popover-content"]');
+      expect(popoverContent).toBeInTheDocument();
+
+      // Interact with popover content
+      const popoverAction = shadowRoot.querySelector('[data-testid="popover-action"]');
+      await user.click(popoverAction);
+      expect(popoverInteracted).toBe(true);
+
+      // Popover should still be open after interaction
+      expect(shadowRoot.querySelector('[data-testid="popover-content"]')).toBeInTheDocument();
+
+      // Close popover
+      const closeButton = shadowRoot.querySelector('[data-testid="close-popover"]');
+      await user.click(closeButton);
+
+      // Wait for any cleanup
+      act(() => {
+        jest.runAllTimers();
       });
 
-      useOverlayTrigger({type: 'listbox'}, state, triggerRef);
-      const {popoverProps} = usePopover(
-        {
-          triggerRef,
-          popoverRef,
-          placement: 'bottom start'
-        },
-        state
-      );
-
-      return (
-        <UNSAFE_PortalProvider getContainer={() => shadowRoot as unknown as HTMLElement}>
-          <div data-testid="popover-container">
-            <button
-              ref={triggerRef}
-              data-testid="popover-trigger"
-              onClick={() => {
-                triggerClicked = true;
-                state.toggle();
-              }}>
-              Open Popover
-            </button>
-            {ReactDOM.createPortal(
-              <>
-                {state.isOpen && (
-                  <div
-                    {...popoverProps}
-                    ref={popoverRef}
-                    data-testid="popover-content"
-                    style={{
-                      background: 'white',
-                      border: '1px solid gray',
-                      padding: '10px'
-                    }}>
-                    <button
-                      data-testid="popover-action"
-                      onClick={() => {
-                        popoverInteracted = true;
-                      }}>
-                      Popover Action
-                    </button>
-                    <button data-testid="close-popover" onClick={() => state.close()}>
-                      Close
-                    </button>
-                  </div>
-                )}
-              </>,
-              popoverPortal
-            )}
-
-          </div>
-        </UNSAFE_PortalProvider>
-      );
-    }
-
-    const {unmount} = render(<ShadowPopoverExample />);
-
-    const trigger = document.body.querySelector('[data-testid="popover-trigger"]');
-
-    // Click trigger to open popover
-    await user.click(trigger);
-    expect(triggerClicked).toBe(true);
-
-    // Verify popover opened in shadow DOM
-    const popoverContent = shadowRoot.querySelector('[data-testid="popover-content"]');
-    expect(popoverContent).toBeInTheDocument();
-
-    // Interact with popover content
-    const popoverAction = shadowRoot.querySelector('[data-testid="popover-action"]');
-    await user.click(popoverAction);
-    expect(popoverInteracted).toBe(true);
-
-    // Popover should still be open after interaction
-    expect(shadowRoot.querySelector('[data-testid="popover-content"]')).toBeInTheDocument();
-
-    // Close popover
-    const closeButton = shadowRoot.querySelector('[data-testid="close-popover"]');
-    await user.click(closeButton);
-
-    // Wait for any cleanup
-    act(() => {
-      jest.runAllTimers();
+      // Cleanup
+      unmount();
+      document.body.removeChild(shadowRoot.host);
     });
-
-    // Cleanup
-    unmount();
-    document.body.removeChild(shadowRoot.host);
   });
-});
+}

@@ -338,66 +338,68 @@ describe('Popover', () => {
   });
 });
 
-describe('Popover with Shadow DOM and UNSAFE_PortalProvider', () => {
-  let user;
-  beforeAll(() => {
-    enableShadowDOM();
-    user = userEvent.setup({delay: null, pointerMap});
-    jest.useFakeTimers();
-  });
+if (parseInt(React.version, 10) >= 17) {
+  describe('Popover with Shadow DOM and UNSAFE_PortalProvider', () => {
+    let user;
+    beforeAll(() => {
+      enableShadowDOM();
+      user = userEvent.setup({delay: null, pointerMap});
+      jest.useFakeTimers();
+    });
 
-  afterEach(() => {
-    act(() => jest.runAllTimers());
-  });
+    afterEach(() => {
+      act(() => jest.runAllTimers());
+    });
 
 
-  it.skip('test overlay and overlay trigger inside the same shadow root to have interactable content', async function () {
-    const {shadowRoot, cleanup} = createShadowRoot();
+    it('test overlay and overlay trigger inside the same shadow root to have interactable content', async function () {
+      const {shadowRoot, cleanup} = createShadowRoot();
 
-    const appContainer = document.createElement('div');
-    appContainer.setAttribute('id', 'appRoot');
-    shadowRoot.appendChild(appContainer);
+      const appContainer = document.createElement('div');
+      appContainer.setAttribute('id', 'appRoot');
+      shadowRoot.appendChild(appContainer);
 
-    const portal = document.createElement('div');
-    portal.id = 'shadow-dom-portal';
-    shadowRoot.appendChild(portal);
+      const portal = document.createElement('div');
+      portal.id = 'shadow-dom-portal';
+      shadowRoot.appendChild(portal);
 
-    const onAction = jest.fn();
-    function ShadowApp() {
-      return (
-        <MenuTrigger>
-          <Button>
-            Open
-          </Button>
-          <Popover>
-            <Menu onAction={onAction}>
-              <MenuItem key="new">New…</MenuItem>
-              <MenuItem key="open">Open…</MenuItem>
-              <MenuItem key="save">Save</MenuItem>
-              <MenuItem key="save-as">Save as…</MenuItem>
-              <MenuItem key="print">Print…</MenuItem>
-            </Menu>
-          </Popover>
-        </MenuTrigger>
+      const onAction = jest.fn();
+      function ShadowApp() {
+        return (
+          <MenuTrigger>
+            <Button>
+              Open
+            </Button>
+            <Popover>
+              <Menu onAction={onAction}>
+                <MenuItem key="new">New…</MenuItem>
+                <MenuItem key="open">Open…</MenuItem>
+                <MenuItem key="save">Save</MenuItem>
+                <MenuItem key="save-as">Save as…</MenuItem>
+                <MenuItem key="print">Print…</MenuItem>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+        );
+      }
+      render(
+        <UNSAFE_PortalProvider getContainer={() => portal}> 1
+          <ShadowApp />
+        </UNSAFE_PortalProvider>,
+        {container: appContainer}
       );
-    }
-    render(
-      <UNSAFE_PortalProvider getContainer={() => portal}> 1
-        <ShadowApp />
-      </UNSAFE_PortalProvider>,
-      {container: appContainer}
-    );
 
-    let button = await screen.findByShadowRole('button');
-    fireEvent.click(button); // not sure why user.click doesn't work here
-    let menu = await screen.findByShadowRole('menu');
-    expect(menu).toBeVisible();
-    let items = await screen.findAllByShadowRole('menuitem');
-    let openItem = items.find(item => item.textContent?.trim() === 'Open…');
-    expect(openItem).toBeVisible();
+      let button = await screen.findByShadowRole('button');
+      fireEvent.click(button); // not sure why user.click doesn't work here
+      let menu = await screen.findByShadowRole('menu');
+      expect(menu).toBeVisible();
+      let items = await screen.findAllByShadowRole('menuitem');
+      let openItem = items.find(item => item.textContent?.trim() === 'Open…');
+      expect(openItem).toBeVisible();
 
-    await user.click(openItem);
-    expect(onAction).toHaveBeenCalledTimes(1);
-    cleanup();
+      await user.click(openItem);
+      expect(onAction).toHaveBeenCalledTimes(1);
+      cleanup();
+    });
   });
-});
+}
