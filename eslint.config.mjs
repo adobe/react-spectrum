@@ -253,6 +253,7 @@ export default [{
         "rsp-rules/safe-event-target": [ERROR],
         "rsp-rules/shadow-safe-active-element": [ERROR],
         "rsp-rules/faster-node-contains": [ERROR],
+        "rsp-rules/safe-root-focus-listener": [ERROR],
         "rulesdir/imports": [ERROR],
         "rulesdir/useLayoutEffectRule": [ERROR],
         "rulesdir/pure-render": [ERROR],
@@ -436,6 +437,7 @@ export default [{
         "rsp-rules/safe-event-target": OFF,
         "rsp-rules/shadow-safe-active-element": OFF,
         "rsp-rules/faster-node-contains": OFF,
+        "rsp-rules/safe-root-focus-listener": OFF,
         "rulesdir/imports": OFF,
         "monorepo/no-internal-import": OFF,
         "jsdoc/require-jsdoc": OFF
