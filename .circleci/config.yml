@@ -965,9 +965,6 @@ workflows:
             branches:
               only: main
       - verdaccio:
-          filters:
-            branches:
-              only: main
           requires:
             - install
       - v-rsp-cra-18:
