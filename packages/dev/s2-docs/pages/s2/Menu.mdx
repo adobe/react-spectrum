@@ -248,6 +248,35 @@ import {Menu, MenuTrigger, MenuItem, SubmenuTrigger, ActionButton} from '@react-
 </MenuTrigger>
 ```
 
+### Unavailable menu items
+
+Wrap a `<MenuItem>` and a `<Popover>` with a `<UnavailableMenuItemTrigger>` and apply `isUnavailable` to disable the item's default action and show an informational popover instead.
+
+```tsx render docs={docs.exports.UnavailableMenuItemTrigger} links={docs.links} props={['isUnavailable']} initialProps={{isUnavailable: true}} type="s2" wide
+"use client";
+import {Menu, MenuTrigger, MenuItem, UnavailableMenuItemTrigger, Popover, ActionButton} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function Example(props) {
+  return (
+    <MenuTrigger>
+      <ActionButton>Actions</ActionButton>
+      <Menu onAction={(action) => alert(`Triggering ${action}`)}>
+        <MenuItem id="favorite">Favorite</MenuItem>
+        <UnavailableMenuItemTrigger {...props}/* PROPS */>
+          <MenuItem id="delete">Delete</MenuItem>
+          <Popover>
+            <div className={style({font: 'ui', padding: 8, maxWidth: 200})}>
+              Contact your administrator for permissions to delete.
+            </div>
+          </Popover>
+        </UnavailableMenuItemTrigger>
+      </Menu>
+    </MenuTrigger>
+  );
+}
+```
+
 ### Links
 
 Use the `href` prop on a `<MenuItem>` to create a link. See the [getting started guide](getting-started) to learn how to integrate with your framework.
@@ -476,7 +505,7 @@ import {MenuTrigger, Menu, MenuItem, ActionButton} from '@react-spectrum/s2';
 
 ## API
 
-```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button', Menu: '#menu', MenuItem: '#menuitem', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger', Icon: 'icons', Image: 'Image', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span', Keyboard: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/kbd', Header: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/header', Heading: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements'}}
+```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button', Menu: '#menu', MenuItem: '#menuitem', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger', UnavailableMenuItemTrigger: '#unavailablemenuitemtrigger', Popover: 'Popover', Icon: 'icons', Image: 'Image', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span', Keyboard: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/kbd', Header: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/header', Heading: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements'}}
 <MenuTrigger>
   <Button />
   <Menu>
@@ -497,6 +526,10 @@ import {MenuTrigger, Menu, MenuItem, ActionButton} from '@react-spectrum/s2';
       <MenuItem />
       <Menu />
     </SubmenuTrigger>
+    <UnavailableMenuItemTrigger>
+      <MenuItem />
+      <Popover />
+    </UnavailableMenuItemTrigger>
   </Menu>
 </MenuTrigger>
 ```
@@ -520,3 +553,7 @@ import {MenuTrigger, Menu, MenuItem, ActionButton} from '@react-spectrum/s2';
 ### SubmenuTrigger
 
 <PropTable component={docs.exports.SubmenuTrigger} links={docs.links} showDescription />
+
+### UnavailableMenuItemTrigger
+
+<PropTable component={docs.exports.UnavailableMenuItemTrigger} links={docs.links} showDescription />

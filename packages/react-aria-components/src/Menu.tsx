@@ -541,7 +541,7 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
       isFocusVisible: states.isFocusVisible,
       selectionMode: selectionManager.selectionMode,
       selectionBehavior: selectionManager.selectionBehavior,
-      hasSubmenu: !!mergedProps['aria-haspopup'],
+      hasSubmenu: mergedProps['aria-haspopup'] === 'menu',
       isOpen: mergedProps['aria-expanded'] === 'true',
       isUnavailable: mergedProps.isUnavailable
     }

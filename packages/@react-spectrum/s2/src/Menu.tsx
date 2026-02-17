@@ -540,7 +540,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                     })({direction})} />
                 </div>
               )}
-              {renderProps.hasSubmenu && renderProps.isUnavailable && (
+              {renderProps.isUnavailable && (
                 <div slot="descriptor" className={descriptor}>
                   {/* Need to avoid the icon context set above since that gets a marginEnd that will then propagate to InfoCircleIcon */}
                   <Provider values={[[IconContext, {slots: {icon: {styles: descriptorIcon({size})}}}]]}>
@@ -556,7 +556,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                   </Provider>
                 </div>
               )}
-              {renderProps.hasSubmenu && !renderProps.isUnavailable && (
+              {renderProps.hasSubmenu && (
                 <div slot="descriptor" className={descriptor}>
                   <ChevronRightIcon
                     size={size}

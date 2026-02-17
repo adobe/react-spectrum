@@ -1,5 +1,5 @@
 'use client';
-import { Check, ChevronRight } from 'lucide-react';
+import { Check, ChevronRight, Info } from 'lucide-react';
 import React from 'react';
 import {
   Menu as AriaMenu,
@@ -10,6 +10,8 @@ import {
   MenuSectionProps as AriaMenuSectionProps,
   MenuTrigger as AriaMenuTrigger,
   SubmenuTrigger as AriaSubmenuTrigger,
+  UnavailableMenuItemTrigger as AriaUnavailableMenuItemTrigger,
+  UnavailableMenuItemTriggerProps,
   Separator,
   SeparatorProps,
   composeRenderProps,
@@ -31,7 +33,7 @@ export function MenuItem(props: MenuItemProps) {
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
     <AriaMenuItem textValue={textValue} {...props} className={dropdownItemStyles}>
-      {composeRenderProps(props.children, (children, {selectionMode, isSelected, hasSubmenu}) => <>
+      {composeRenderProps(props.children, (children, {selectionMode, isSelected, hasSubmenu, isUnavailable}) => <>
         {selectionMode !== 'none' && (
           <span className="flex items-center w-4">
             {isSelected && <Check aria-hidden className="w-4 h-4" />}
@@ -42,6 +44,9 @@ export function MenuItem(props: MenuItemProps) {
         </span>
         {hasSubmenu && (
           <ChevronRight aria-hidden className="absolute w-4 h-4 right-2" />
+        )}
+        {isUnavailable && (
+          <Info aria-hidden className="absolute w-4 h-4 right-2" />
         )}
       </>)}
     </AriaMenuItem>
