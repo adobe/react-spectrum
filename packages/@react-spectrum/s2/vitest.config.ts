@@ -159,7 +159,7 @@ export default defineConfig({
   test: {
     globals: true,
     setupFiles: ['./test/setup.ts'],
-    include: ['test/**/*.test.{ts,tsx}'],
+    include: ['test/**/*.browser.test.{ts,tsx}'],
     browser: {
       provider: playwright(),
       enabled: true,
