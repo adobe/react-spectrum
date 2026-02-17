@@ -602,9 +602,6 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRange
   let {dayIndex, date, renderProps, state, isRangeSelection} = props;
   let ref = useRef<HTMLDivElement>(null);
   let {isUnavailable, formattedDate, isSelected, isSelectionStart, isSelectionEnd, isInvalid} = renderProps!;
-  let calendarStateContext = useContext(CalendarStateContext);
-  let rangeCalendarStateContext = useContext(RangeCalendarStateContext);
-  let {isCellUnavailable} = calendarStateContext ?? rangeCalendarStateContext ?? {isCellUnavailable: () => false};
   // only apply the selection start/end styles if the start/end date is actually selectable (aka not unavailable)
   // or if the range is invalid and thus we still want to show the styles even if the start/end date is an unavailable one
   isSelectionStart = isSelectionStart && (!isUnavailable || isInvalid);
@@ -627,8 +624,8 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRange
   let nextDay = date.add({days: 1});
   let isFirstDayInWeek = dayIndex === 0;
   let isLastDayInWeek = dayIndex === 6;
-  let isPreviousDayNotSelected = !prevDay || isCellUnavailable(prevDay) || (!isDateInRange(prevDay) || prevDay.month !== props.date.month);
-  let isNextDayNotSelected = !nextDay || isCellUnavailable(nextDay) || (!isDateInRange(nextDay) || nextDay.month !== props.date.month);
+  let isPreviousDayNotSelected = !prevDay || (!isDateInRange(prevDay) || prevDay.month !== props.date.month);
+  let isNextDayNotSelected = !nextDay || (!isDateInRange(nextDay) || nextDay.month !== props.date.month);
 
   // when invalid, show background for all selected dates (including unavailable) to make continuous range appearance
   // when valid, only show background for available selected dates
