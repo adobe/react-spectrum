@@ -47,11 +47,16 @@ describe('DropZone browser interactions', () => {
           onDrop={onDrop}>
           <IllustratedMessage>
             <CloudUpload />
-            <Heading>Drag and drop your file</Heading>
-            <Content>or</Content>
+            <Heading>
+              Drag and drop your file
+            </Heading>
+            <Content>
+              Or, select a file from your computer
+            </Content>
             <ButtonGroup>
-              <FileTrigger>
-                <Button variant="primary">Select a file</Button>
+              <FileTrigger
+                acceptedFileTypes={['text/plain']}>
+                <Button variant="accent">Browse files</Button>
               </FileTrigger>
             </ButtonGroup>
           </IllustratedMessage>
@@ -84,11 +89,16 @@ describe('DropZone browser interactions', () => {
           onDrop={onDrop}>
           <IllustratedMessage>
             <CloudUpload />
-            <Heading>Drag and drop your file</Heading>
-            <Content>or</Content>
+            <Heading>
+              Drag and drop your file
+            </Heading>
+            <Content>
+              Or, select a file from your computer
+            </Content>
             <ButtonGroup>
-              <FileTrigger>
-                <Button variant="primary">Select a file</Button>
+              <FileTrigger
+                acceptedFileTypes={['text/plain']}>
+                <Button variant="accent">Browse files</Button>
               </FileTrigger>
             </ButtonGroup>
           </IllustratedMessage>

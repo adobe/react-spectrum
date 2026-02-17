@@ -77,8 +77,13 @@ function illustrationResolverPlugin(): Plugin {
   };
 }
 
-// Handle illustration: protocol
+/**
+ * Handle S2 illustrations
+ * 
+ * Resolves the SVG and wraps it with createIllustration from Icon.tsx.
+ */
 function illustrationPlugin(): Plugin {
+  const VIRTUAL_PREFIX = '\0s2-illustration:';
   return {
     name: 'illustration-loader',
     enforce: 'pre',
@@ -88,7 +93,67 @@ function illustrationPlugin(): Plugin {
         if (importer) {
           const dir = path.dirname(importer);
           const resolvedPath = path.resolve(dir, svgPath);
-          return resolvedPath;
+          return VIRTUAL_PREFIX + resolvedPath;
+        }
+      }
+      return null;
+    },
+    load(id) {
+      if (id.startsWith(VIRTUAL_PREFIX)) {
+        const svgPath = id.slice(VIRTUAL_PREFIX.length).replaceAll('\\', '/');
+        return [
+          `import {createIllustration} from '${path.resolve(s2Dir, 'src/Icon.tsx').replaceAll('\\', '/')}';`,
+          `import SvgComponent from '${svgPath}';`,
+          `export default /*#__PURE__*/ createIllustration(SvgComponent);`
+        ].join('\n');
+      }
+      return null;
+    }
+  };
+}
+
+/**
+ * Handle S2 workflow icons
+ * 
+ * Resolves the SVG and wraps it with createIcon from Icon.tsx.
+ */
+function iconWrapperPlugin(): Plugin {
+  const VIRTUAL_PREFIX = '\0s2-icon:';
+  const iconsDir = path.resolve(s2Dir, 's2wf-icons');
+
+  // Build a map from icon name -> absolute SVG path
+  const iconMap = new Map<string, string>();
+  if (fs.existsSync(iconsDir)) {
+    for (const file of fs.readdirSync(iconsDir)) {
+      const match = file.match(/^S2_Icon_(.+)_20_N\.svg$/);
+      if (match) {
+        iconMap.set(match[1], path.resolve(iconsDir, file));
+      }
+    }
+  }
+
+  return {
+    name: 'icon-wrapper',
+    enforce: 'pre',
+    resolveId(source) {
+      if (source.startsWith('@react-spectrum/s2/icons/')) {
+        const iconName = source.replace('@react-spectrum/s2/icons/', '');
+        if (iconMap.has(iconName)) {
+          return VIRTUAL_PREFIX + iconName;
+        }
+      }
+      return null;
+    },
+    load(id) {
+      if (id.startsWith(VIRTUAL_PREFIX)) {
+        const iconName = id.slice(VIRTUAL_PREFIX.length);
+        const svgPath = iconMap.get(iconName);
+        if (svgPath) {
+          return [
+            `import {createIcon} from '${path.resolve(s2Dir, 'src/Icon.tsx').replaceAll('\\', '/')}';`,
+            `import SvgComponent from '${svgPath.replaceAll('\\', '/')}';`,
+            `export default /*#__PURE__*/ createIcon(SvgComponent);`
+          ].join('\n');
         }
       }
       return null;
@@ -96,31 +161,12 @@ function illustrationPlugin(): Plugin {
   };
 }
 
-// Build icon aliases to resolve @react-spectrum/s2/icons/* imports
-function buildIconAliases(): Record<string, string> {
-  const aliases: Record<string, string> = {};
-  const iconsDir = path.resolve(s2Dir, 's2wf-icons');
-  
-  if (fs.existsSync(iconsDir)) {
-    const iconFiles = fs.readdirSync(iconsDir).filter(f => f.startsWith('S2_Icon_') && f.endsWith('_20_N.svg'));
-    
-    for (const iconFile of iconFiles) {
-      const match = iconFile.match(/^S2_Icon_(.+)_20_N\.svg$/);
-      if (match) {
-        const iconName = match[1];
-        const iconPath = path.resolve(iconsDir, iconFile);
-        aliases[`@react-spectrum/s2/icons/${iconName}`] = iconPath;
-      }
-    }
-  }
-  
-  return aliases;
-}
-
 export default defineConfig({
   plugins: [
     // @ts-expect-error
     macros.vite(), // Must be first!
+    // @ts-expect-error
+    iconWrapperPlugin(), // Wrap @react-spectrum/s2/icons/* SVGs with createIcon
     // @ts-expect-error
     illustrationResolverPlugin(), // Resolve @react-spectrum/s2/illustrations/* imports
     // @ts-expect-error
@@ -181,7 +227,6 @@ export default defineConfig({
     conditions: ['source', 'import', 'module', 'default'],
     extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.svg'],
     alias: {
-      ...buildIconAliases(),
       '@react-spectrum/s2/illustrations': path.resolve(s2Dir, 'spectrum-illustrations'),
       '@react-spectrum/s2': path.resolve(s2Dir, 'src')
     }
