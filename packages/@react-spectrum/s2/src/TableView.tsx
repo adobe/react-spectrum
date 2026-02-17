@@ -17,10 +17,12 @@ import {
   ButtonContext,
   CellRenderProps,
   Collection,
+  CollectionRendererContext,
   ColumnRenderProps,
   ColumnResizer,
   ContextValue,
   DEFAULT_SLOT,
+  DefaultCollectionRenderer,
   Form,
   Key,
   OverlayTriggerStateContext,
@@ -59,7 +61,7 @@ import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {ColumnSize} from '@react-types/table';
 import {CustomDialog, DialogContainer} from '..';
 import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
-import {getActiveElement, getOwnerDocument, nodeContains, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import {getActiveElement, getOwnerDocument, isFocusWithin, nodeContains, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -439,7 +441,9 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   if (renderEmptyState != null && !isLoading) {
     emptyRender = (props: TableBodyRenderProps) => (
       <div className={centeredWrapper}>
-        {renderEmptyState(props)}
+        <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+          {renderEmptyState(props)}
+        </CollectionRendererContext.Provider>
       </div>
     );
   } else if (loadingState === 'loading') {
@@ -1302,7 +1306,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
             onOpenChange={setIsOpen}
             ref={popoverRef}
             shouldCloseOnInteractOutside={() => {
-              if (!nodeContains(popoverRef.current, document.activeElement)) {
+              if (!isFocusWithin(popoverRef.current)) {
                 return false;
               }
               formRef.current?.requestSubmit();

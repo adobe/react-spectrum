@@ -243,6 +243,52 @@ function Example(props) {
 }
 ```
 
+### Custom Render Value
+
+Use the `renderValue` prop to provide a custom element to display selected items. The callback is given an array of the selected user-defined objects.
+
+```tsx render
+"use client";
+import {Avatar, Picker, PickerItem, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+let users = [
+  {id: 'abraham-baker', avatar: 'https://www.untitledui.com/images/avatars/abraham-baker', name: 'Abraham Baker', email: 'abraham@example.com'},
+  {id: 'adriana-sullivan', avatar: 'https://www.untitledui.com/images/avatars/adriana-sullivan', name: 'Adriana Sullivan', email: 'adriana@example.com'},
+  {id: 'jonathan-kelly', avatar: 'https://www.untitledui.com/images/avatars/jonathan-kelly', name: 'Jonathan Kelly', email: 'jonathan@example.com'},
+  {id: 'zara-bush', avatar: 'https://www.untitledui.com/images/avatars/zara-bush', name: 'Zara Bush', email: 'zara@example.com'}
+];
+
+function Example() {
+  return (
+    <div>
+      <Picker
+        label="Pick users"
+        items={users}
+        selectionMode={"multiple"}
+        ///- begin highlight -///
+        renderValue={(selectedItems) => (
+          <div className={style({ display: 'flex', gap: 4, height: '80%' })}>
+            {selectedItems.map(item => (
+              <Avatar slot={null} key={item.id} src={item.avatar} alt={item.name} />
+            ))}
+          </div>
+        )}
+        ///- end highlight -///
+      >
+        {(item) =>
+          <PickerItem textValue={item.name}>
+            <Avatar slot="avatar" src={item.avatar} />
+            <Text slot="label">{item.name}</Text>
+            <Text slot="description">{item.email}</Text>
+          </PickerItem>
+        }
+      </Picker>
+    </div>
+  );
+}
+```
+
 ## Forms
 
 Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.

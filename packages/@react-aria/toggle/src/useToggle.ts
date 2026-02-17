@@ -11,8 +11,8 @@
  */
 
 import {AriaToggleProps} from '@react-types/checkbox';
-import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
-import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
+import {ChangeEventHandler, InputHTMLAttributes, LabelHTMLAttributes} from 'react';
+import {filterDOMProps, getEventTarget, mergeProps, useFormReset} from '@react-aria/utils';
 import {RefObject} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
 import {useFocusable, usePress} from '@react-aria/interactions';
@@ -57,11 +57,11 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
     onClick
   } = props;
 
-  let onChange = (e) => {
+  let onChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     // since we spread props on label, onChange will end up there as well as in here.
     // so we have to stop propagation at the lowest level that we care about
     e.stopPropagation();
-    state.setSelected(e.target.checked);
+    state.setSelected(getEventTarget(e).checked);
   };
 
   let hasChildren = children != null;

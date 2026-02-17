@@ -5911,6 +5911,7 @@ __metadata:
     "@react-aria/ssr": "npm:^3.9.10"
     "@react-aria/utils": "npm:^3.33.0"
     "@react-aria/visually-hidden": "npm:^3.8.30"
+    "@react-stately/flags": "npm:^3.1.2"
     "@react-stately/overlays": "npm:^3.6.22"
     "@react-types/button": "npm:^3.15.0"
     "@react-types/overlays": "npm:^3.9.3"
@@ -6647,7 +6648,7 @@ __metadata:
     "@react-spectrum/s2": "npm:^1.1.0"
     "@react-types/shared": "npm:^3.33.0"
     "@types/jscodeshift": "npm:^0.11.11"
-    "@types/node": "npm:^22"
+    "@types/node": "npm:^24"
     boxen: "npm:^5.1.2"
     chalk: "npm:^4.0.0"
     execa: "npm:^5.1.1"
@@ -8990,17 +8991,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:^0.24.1":
-  version: 0.24.51
-  resolution: "@sinclair/typebox@npm:0.24.51"
-  checksum: 10c0/458131e83ca59ad3721f0abeef2aa5220aff2083767e1143d75c67c85d55ef7a212f48f394471ee6bdd2e860ba30f09a489cdd2a28a2824d5b0d1014bdfb2552
-  languageName: node
-  linkType: hard
-
-"@sinclair/typebox@npm:^0.27.8":
-  version: 0.27.8
-  resolution: "@sinclair/typebox@npm:0.27.8"
-  checksum: 10c0/ef6351ae073c45c2ac89494dbb3e1f87cc60a93ce4cde797b782812b6f97da0d620ae81973f104b43c9b7eaa789ad20ba4f6a1359f1cc62f63729a55a7d22d4e
+"@sinclair/typebox@npm:0.27.10":
+  version: 0.27.10
+  resolution: "@sinclair/typebox@npm:0.27.10"
+  checksum: 10c0/ca42a02817656dbdae464ed4bb8aca6ad4718d7618e270760fea84a834ad0ecc1a22eba51421f09e5047174571131356ff3b5d80d609ced775d631df7b404b0d
   languageName: node
   linkType: hard
 
@@ -10595,12 +10589,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22":
-  version: 22.15.18
-  resolution: "@types/node@npm:22.15.18"
+"@types/node@npm:^24":
+  version: 24.10.9
+  resolution: "@types/node@npm:24.10.9"
   dependencies:
-    undici-types: "npm:~6.21.0"
-  checksum: 10c0/e23178c568e2dc6b93b6aa3b8dfb45f9556e527918c947fe7406a4c92d2184c7396558912400c3b1b8d0fa952ec63819aca2b8e4d3545455fc6f1e9623e09ca6
+    undici-types: "npm:~7.16.0"
+  checksum: 10c0/e9e436fcd2136bddb1bbe3271a89f4653910bcf6ee8047c4117f544c7905a106c039e2720ee48f28505ef2560e22fb9ead719f28bf5e075fdde0c1120e38e3b2
   languageName: node
   linkType: hard
 
@@ -13203,9 +13197,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromatic@npm:^13.1.3":
-  version: 13.1.3
-  resolution: "chromatic@npm:13.1.3"
+"chromatic@npm:^15.0.0":
+  version: 15.1.0
+  resolution: "chromatic@npm:15.1.0"
   peerDependencies:
     "@chromatic-com/cypress": ^0.*.* || ^1.0.0
     "@chromatic-com/playwright": ^0.*.* || ^1.0.0
@@ -13218,7 +13212,7 @@ __metadata:
     chroma: dist/bin.js
     chromatic: dist/bin.js
     chromatic-cli: dist/bin.js
-  checksum: 10c0/5fa2d381e06d1b089ecb790247844cfb510b063c4d8f8c0d2a3d0620ff94864003158e34338246bb1d07504d554e73dc8d5b639dc3e176ce3c88816fdc853285
+  checksum: 10c0/aea449b3c07e599e9b4c1cd866ffa57a5fc6b158b7c1ae4c462f74133869927d0932a077191011bdb841ab81a2dde54b0a35370736ef1986b6854453f01086de
   languageName: node
   linkType: hard
 
@@ -24908,7 +24902,7 @@ __metadata:
     babel-plugin-react-remove-properties: "npm:^0.3.0"
     babel-plugin-transform-glob-import: "npm:^1.0.1"
     chalk: "npm:^4.1.2"
-    chromatic: "npm:^13.1.3"
+    chromatic: "npm:^15.0.0"
     clsx: "npm:^2.0.0"
     color-space: "npm:^1.16.0"
     concurrently: "npm:^6.0.2"
@@ -24939,6 +24933,7 @@ __metadata:
     lerna: "npm:^3.13.2"
     lucide-react: "npm:^0.517.0"
     md5: "npm:^2.2.1"
+    mdast-util-to-string: "npm:^4.0.0"
     motion: "npm:^12.23.6"
     npm-cli-login: "npm:^1.0.0"
     parcel: "npm:^2.16.3"
@@ -24957,6 +24952,7 @@ __metadata:
     regenerator-runtime: "npm:0.13.3"
     rehype-stringify: "npm:^9.0.4"
     rimraf: "npm:^6.0.1"
+    shadow-dom-testing-library: "npm:^1.13.1"
     sharp: "npm:^0.33.5"
     storybook: "npm:^8.6.14"
     storybook-dark-mode: "npm:^4.0.2"
@@ -26218,6 +26214,15 @@ __metadata:
   version: 1.2.0
   resolution: "setprototypeof@npm:1.2.0"
   checksum: 10c0/68733173026766fa0d9ecaeb07f0483f4c2dc70ca376b3b7c40b7cda909f94b0918f6c5ad5ce27a9160bdfb475efaa9d5e705a11d8eaae18f9835d20976028bc
+  languageName: node
+  linkType: hard
+
+"shadow-dom-testing-library@npm:^1.13.1":
+  version: 1.13.1
+  resolution: "shadow-dom-testing-library@npm:1.13.1"
+  peerDependencies:
+    "@testing-library/dom": ">= 8"
+  checksum: 10c0/cd0a5e7799f868af665235d0812bdbcfbfe4461681ef35ce0fba4d460d395f3fa0e95df5c8fec4686ba30286a62c4e7ba48013e67646977726aa13363479d70f
   languageName: node
   linkType: hard
 
@@ -28383,10 +28388,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~6.21.0":
-  version: 6.21.0
-  resolution: "undici-types@npm:6.21.0"
-  checksum: 10c0/c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
+"undici-types@npm:~7.16.0":
+  version: 7.16.0
+  resolution: "undici-types@npm:7.16.0"
+  checksum: 10c0/3033e2f2b5c9f1504bdc5934646cb54e37ecaca0f9249c983f7b1fc2e87c6d18399ebb05dc7fd5419e02b2e915f734d872a65da2e3eeed1813951c427d33cc9a
   languageName: node
   linkType: hard
 
