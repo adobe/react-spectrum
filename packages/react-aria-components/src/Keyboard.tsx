@@ -15,9 +15,9 @@ import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 're
 
 export interface KeyboardProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<'kbd', undefined> {}
 
-export const KeyboardContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLElement>>({});
+export const KeyboardContext = createContext<ContextValue<KeyboardProps, HTMLElement>>({});
 
-export const Keyboard = forwardRef(function Keyboard(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {
+export const Keyboard = forwardRef(function Keyboard(props: KeyboardProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, KeyboardContext);
   return <dom.kbd dir="ltr" {...props} ref={ref} />;
 });
