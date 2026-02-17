@@ -188,4 +188,50 @@ describe('Form', () => {
     let form = getByTestId('form');
     expect(form).toHaveAttribute('data-custom', 'true');
   });
+
+  it('should not throw when form contains elements without validity property', async () => {
+    function Test() {
+      return (
+        <Form data-testid="form">
+          <TextField name="name" isRequired>
+            <Label>Name</Label>
+            <Input />
+            <FieldError />
+          </TextField>
+          <Button type="submit">Submit</Button>
+        </Form>
+      );
+    }
+
+    let {getByTestId, getByRole} = render(<Test />);
+    let form = getByTestId('form');
+    let input = getByRole('textbox');
+
+    // Mock form.elements to include an element without validity property (simulates Web Component)
+    let originalElements = form.elements;
+    let mockElement = {name: 'custom-element'};  // No validity property
+    Object.defineProperty(form, 'elements', {
+      get: () => ({
+        length: originalElements.length + 1,
+        [Symbol.iterator]: function* () {
+          yield mockElement;
+          yield* originalElements;
+        },
+        0: mockElement,
+        ...Array.from(originalElements).reduce((acc, el, i) => ({...acc, [i + 1]: el}), {})
+      }),
+      configurable: true
+    });
+
+    // Should not throw when iterating form.elements with element lacking validity
+    await user.click(getByRole('button'));
+
+    expect(document.activeElement).toBe(input);
+
+    // Restore original elements
+    Object.defineProperty(form, 'elements', {
+      get: () => originalElements,
+      configurable: true
+    });
+  });
 });

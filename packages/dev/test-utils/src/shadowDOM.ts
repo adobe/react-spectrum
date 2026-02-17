@@ -18,6 +18,7 @@ interface ShadowRootReturnValue {
 
 export function createShadowRoot(attachTo: HTMLElement = document.body): ShadowRootReturnValue {
   const div = document.createElement('div');
+  div.setAttribute('data-testid', 'shadow-root');
   attachTo.appendChild(div);
   const shadowRoot = div.attachShadow({mode: 'open'});
   return {shadowHost: div, shadowRoot, cleanup: () => attachTo.removeChild(div)};

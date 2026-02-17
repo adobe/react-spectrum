@@ -13,7 +13,7 @@
 import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMAttributes, RefObject} from '@react-types/shared';
-import {focusWithoutScrolling, getScrollParent, mergeProps, scrollIntoViewport, useDeepMemo, useDescription} from '@react-aria/utils';
+import {focusWithoutScrolling, getActiveElement, getEventTarget, getScrollParent, mergeProps, scrollIntoViewport, useDeepMemo, useDescription} from '@react-aria/utils';
 import {getEraFormat, hookData} from './utils';
 import {getInteractionModality, usePress} from '@react-aria/interactions';
 // @ts-ignore
@@ -174,6 +174,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     onPressStart(e) {
       if (state.isReadOnly) {
         state.setFocusedDate(date);
+        state.setFocused(true);
         return;
       }
 
@@ -186,12 +187,14 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
           if (isSameDay(date, state.highlightedRange.start)) {
             state.setAnchorDate(state.highlightedRange.end);
             state.setFocusedDate(date);
+            state.setFocused(true);
             state.setDragging(true);
             isRangeBoundaryPressed.current = true;
             return;
           } else if (isSameDay(date, state.highlightedRange.end)) {
             state.setAnchorDate(state.highlightedRange.start);
             state.setFocusedDate(date);
+            state.setFocused(true);
             state.setDragging(true);
             isRangeBoundaryPressed.current = true;
             return;
@@ -204,6 +207,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
 
           state.selectDate(date);
           state.setFocusedDate(date);
+          state.setFocused(true);
           isAnchorPressed.current = true;
         };
 
@@ -227,6 +231,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       if (!('anchorDate' in state) && !state.isReadOnly) {
         state.selectDate(date);
         state.setFocusedDate(date);
+        state.setFocused(true);
       }
     },
     onPressUp(e) {
@@ -240,6 +245,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       if ('anchorDate' in state && touchDragTimerRef.current) {
         state.selectDate(date);
         state.setFocusedDate(date);
+        state.setFocused(true);
       }
 
       if ('anchorDate' in state) {
@@ -252,6 +258,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
           // When releasing a drag or pressing the end date of a range, select it.
           state.selectDate(date);
           state.setFocusedDate(date);
+          state.setFocused(true);
         } else if (e.pointerType === 'keyboard' && !state.anchorDate) {
           // For range selection, auto-advance the focused date by one if using keyboard.
           // This gives an indication that you're selecting a range rather than a single date.
@@ -264,11 +271,13 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
           }
           if (!state.isInvalid(nextDay)) {
             state.setFocusedDate(nextDay);
+            state.setFocused(true);
           }
         } else if (e.pointerType === 'virtual') {
           // For screen readers, just select the date on click.
           state.selectDate(date);
           state.setFocusedDate(date);
+          state.setFocused(true);
         }
       }
     }
@@ -291,7 +300,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       // Also only scroll into view if the cell actually got focused.
       // There are some cases where the cell might be disabled or inside,
       // an inert container and we don't want to scroll then.
-      if (getInteractionModality() !== 'pointer' && document.activeElement === ref.current) {
+      if (getInteractionModality() !== 'pointer' && getActiveElement() === ref.current) {
         scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
       }
     }
@@ -316,6 +325,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       onFocus() {
         if (!isDisabled) {
           state.setFocusedDate(date);
+          state.setFocused(true);
         }
       },
       tabIndex,
@@ -333,17 +343,18 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
           state.highlightDate(date);
         }
       },
-      onPointerDown(e) {
+      onPointerDown(e: PointerEvent) {
         // This is necessary on touch devices to allow dragging
         // outside the original pressed element.
         // (JSDOM does not support this)
-        if ('releasePointerCapture' in e.target) {
-          if ('hasPointerCapture' in e.target) {
-            if (e.target.hasPointerCapture(e.pointerId)) {
-              e.target.releasePointerCapture(e.pointerId);
+        let target = getEventTarget(e);
+        if (target instanceof HTMLElement && 'releasePointerCapture' in target) {
+          if ('hasPointerCapture' in target) {
+            if (target.hasPointerCapture(e.pointerId)) {
+              target.releasePointerCapture(e.pointerId);
             }
           } else {
-            e.target.releasePointerCapture(e.pointerId);
+            (target as HTMLElement).releasePointerCapture(e.pointerId);
           }
         }
       },

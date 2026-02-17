@@ -19,9 +19,12 @@ import {
   MenuItem,
   MenuSection,
   Row,
+  Tab,
   TableBody,
   TableHeader,
   TableView,
+  TabList,
+  Tabs,
   Text
 } from '../src';
 import {DisabledBehavior} from '@react-types/shared';
@@ -41,6 +44,21 @@ describe('TableView', () => {
     user = userEvent.setup({delay: null, pointerMap});
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 400);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 200);
+    window.CSSTransition = jest.fn(({children}) => children);
+
+    // Mock the getAnimations method
+    Element.prototype.getAnimations = jest.fn().mockImplementation(() => {
+      // Return an array of mock Animation objects
+      return [
+        {
+          // Mock the properties and methods you need
+          finished: Promise.resolve(), // Useful for waiting for animations to "finish"
+          play: jest.fn(),
+          pause: jest.fn(),
+          cancel: jest.fn()
+        }
+      ];
+    });
     jest.useFakeTimers();
   });
 
@@ -147,5 +165,45 @@ describe('TableView', () => {
     await user.tab({shift: true});
     await user.tab();
     expect(document.activeElement).toBe(cells[3]);
+  });
+
+  it('should render empty state + nested collection without crashing', async () => {
+    const tabItems = [
+      {id: 'general', label: 'General'},
+      {id: 'advanced', label: 'Advanced'}
+    ];
+    const renderEmptyState = () => (
+      <Tabs aria-label="Settings">
+        <TabList items={tabItems}>
+          {(item) => (
+            <Tab>
+              {item.label}
+            </Tab>
+          )}
+        </TabList>
+      </Tabs>
+    );
+
+    let {getAllByRole} = render(
+      <TableView aria-label="Debug table" selectionMode="none">
+        <TableHeader columns={columns}>
+          {(column) => (
+            <Column>
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+        <TableBody items={[]} renderEmptyState={renderEmptyState} />
+      </TableView>
+    );
+    await act(() => Promise.resolve());
+
+    let tabs = getAllByRole('tab');
+    expect(tabs).toHaveLength(tabs.length);
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'false');
+    await user.click(tabs[1]);
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'false');
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
   });
 });

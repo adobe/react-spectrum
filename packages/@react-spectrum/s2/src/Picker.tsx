@@ -123,7 +123,13 @@ export interface PickerProps<T extends object, M extends SelectionMode = 'single
     /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
     menuWidth?: number,
     /** The current loading state of the Picker. */
-    loadingState?: LoadingState
+    loadingState?: LoadingState,
+    /**
+     * Custom renderer for the picker value. Allows one to provide a custom element to render selected items.
+     *
+     * @note The returned ReactNode should not have interactable elements as it will break accessibility.
+     */
+    renderValue?: (selectedItems: T[]) => ReactNode
 }
 
 interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {}
@@ -227,7 +233,8 @@ const valueStyles = style({
   },
   truncate: true,
   display: 'flex',
-  alignItems: 'center'
+  alignItems: 'center',
+  height: '100%'
 });
 
 const iconStyles = style({
@@ -298,6 +305,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     placeholder = stringFormatter.format('picker.placeholder'),
     isQuiet,
     loadingState,
+    renderValue,
     onLoadMore,
     ...pickerProps
   } = props;
@@ -376,6 +384,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
             </FieldLabel>
             <PickerButton
               loadingState={loadingState}
+              renderValue={renderValue}
               isOpen={isOpen}
               isQuiet={isQuiet}
               isFocusVisible={isFocusVisible}
@@ -482,7 +491,7 @@ const avatarSize = {
   XL: 26
 } as const;
 
-interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>, Pick<PickerProps<T>, 'loadingState'> {
+interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>, Pick<PickerProps<T>, 'loadingState' | 'renderValue'> {
   loadingCircle: ReactNode,
   buttonRef: RefObject<HTMLButtonElement | null>
 }
@@ -498,7 +507,8 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
     isDisabled,
     loadingState,
     loadingCircle,
-    buttonRef
+    buttonRef,
+    renderValue
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
@@ -533,8 +543,20 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
         })}>
         {(renderProps) => (
           <>
-            <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> :not([slot=icon], [slot=avatar], [slot=label], [data-slot=label]) {display: none;}')}>
+            <SelectValue
+              className={
+                valueStyles({isQuiet}) +
+                (renderValue ? '' : ' ' + raw('&> :not([slot=icon], [slot=avatar], [slot=label], [data-slot=label]) {display: none;}'))
+              }>
               {({selectedItems, defaultChildren}) => {
+                const selectedValues = selectedItems.filter((item): item is T => item != null);
+                const defaultRenderedValue = selectedItems.length <= 1
+                  ? defaultChildren
+                  : <Text slot="label">{stringFormatter.format('picker.selectedCount', {count: selectedItems.length})}</Text>;
+                const renderedValue = selectedItems.length > 0 && renderValue
+                  ? renderValue(selectedValues)
+                  : defaultRenderedValue;
+
                 return (
                   <Provider
                     values={[
@@ -579,10 +601,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                       }],
                       [InsideSelectValueContext, true]
                     ]}>
-                    {selectedItems.length <= 1
-                      ? defaultChildren
-                      : <Text slot="label">{stringFormatter.format('picker.selectedCount', {count: selectedItems.length})}</Text>
-                    }
+                    {renderedValue}
                   </Provider>
                 );
               }}
