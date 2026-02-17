@@ -23,17 +23,17 @@ beforeEach(() => {
   consoleWarnings = [];
 });
 
-// TODO: Fail test if there were any console errors
-// afterEach(() => {
-//   if (consoleErrors.length > 0) {
-//     const errorMessages = consoleErrors.map(e => 
-//       typeof e.message === 'string' ? e.message : String(e.message)
-//     ).join('\n');
-//     throw new Error(
-//       `Test failed due to console errors:\n${errorMessages}\n\n`
-//     );
-//   }
-// });
+// Fail test if there were any console errors
+afterEach(() => {
+  if (consoleErrors.length > 0) {
+    const errorMessages = consoleErrors.map(e => 
+      typeof e.message === 'string' ? e.message : String(e.message)
+    ).join('\n');
+    throw new Error(
+      `Test failed due to console errors:\n${errorMessages}\n\n`
+    );
+  }
+});
 
 // Track console errors
 const originalError = console.error;
