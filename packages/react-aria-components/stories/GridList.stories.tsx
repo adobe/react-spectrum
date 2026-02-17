@@ -37,8 +37,10 @@ import {
   Tag,
   TagGroup,
   TagList,
+  Text,
   useDragAndDrop,
-  Virtualizer
+  Virtualizer,
+  WaterfallLayout
 } from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {Key, useAsyncList, useListData} from 'react-stately';
@@ -47,6 +49,7 @@ import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, useState} from 'react';
 import styles from '../example/index.css';
 import './styles.css';
+import {LoadingState} from '@react-types/shared';
 
 export default {
   title: 'React Aria Components/GridList',
@@ -625,60 +628,6 @@ function GridListInModalPickerRender(props: ModalOverlayProps): JSX.Element {
   );
 }
 
-export function GridListScrollIntoView() {
-  let items: {id: number, name: string}[] = [];
-  for (let i = 0; i < 100; i++) {
-    items.push({id: i, name: `Item ${i}`});
-  }
-
-  let list = useListData({
-    initialItems: items
-  });
-
-  const getElement = (id: number) => document.querySelector(`[data-key="${id}"]`) as HTMLElement;
-
-  const rowHeight = 25;
-
-  return (
-    <>
-      <div style={{height: 500, overflow: 'auto'}}>
-        <GridList
-          className={styles.menu}
-          selectionMode="multiple"
-          aria-label="virtualized listbox"
-          items={list.items}
-          style={{
-            position: 'relative',
-            overflow: 'hidden',
-            width: 100,
-            height: list.items.length * rowHeight
-          }}>
-          {item => (
-            <GridListItem
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                overflow: 'visible',
-                transform: `translateY(${item.id * rowHeight}px)`
-              }}>
-              {item.name}
-            </GridListItem>)}
-        </GridList>
-      </div>
-      <button onClick={() => getElement(40)?.scrollIntoView({block: 'start'})}>Scroll to item 40</button>
-      <button
-        tabIndex={0}
-        onKeyDown={() => {
-          getElement(70)?.focus();
-        }}>
-        Click, press ESC key focus item 70
-      </button>
-    </>
-  );
-}
-
 export let GridListInModalPicker: StoryObj<typeof GridListInModalPickerRender> = {
   render: (args) => <GridListInModalPickerRender {...args} />,
   parameters: {
@@ -686,6 +635,109 @@ export let GridListInModalPicker: StoryObj<typeof GridListInModalPickerRender> =
       description: {
         component: 'Selecting an option from the grid list over the backdrop should not result in the modal closing.'
       }
+    }
+  }
+};
+
+type Item = {
+  id: number,
+  user: {
+    name: string,
+    profile_image: { small: string }
+  },
+  urls: { regular: string },
+  description: string,
+  alt_description: string,
+  width: number,
+  height: number
+};
+
+interface AsyncGridListGridVirtualizedRenderProps {
+  delay: number,
+  layout: 'grid' | 'waterfall',
+  loaderHeight: number,
+  loadingState: LoadingState
+}
+
+function AsyncGridListGridVirtualizedRender(props: AsyncGridListGridVirtualizedRenderProps) {
+  const list = useAsyncList<Item, number | null>({
+    async load({cursor, items, signal}) {
+      const page = cursor || 1;
+      await new Promise((resolve) => setTimeout(resolve, props.delay));
+      const res = await fetch(
+        `https://api.unsplash.com/topics/nature/photos?page=${page}&per_page=30&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
+        {signal}
+      );
+      let nextItems = await res.json();
+      // Filter duplicates which might be returned by the API.
+      const existingKeys = new Set(items.map((i) => i.id));
+      nextItems = nextItems.filter((i) => !existingKeys.has(i.id) && (i.description || i.alt_description));
+      return {cursor: nextItems.length ? page + 1 : null, items: nextItems};
+    }
+  });
+  const layout = props.layout === 'waterfall' ? WaterfallLayout : GridLayout;
+  const loadingState = props.loadingState === 'idle' ? list.loadingState : props.loadingState;
+
+  return (
+    <Virtualizer
+      layout={layout}
+      layoutOptions={{
+        loaderHeight: props.loaderHeight,
+        maxItemSize: new Size(140, 140),
+        minItemSize: new Size(100, 100),
+        minSpace: new Size(6, 6)
+      }}>
+      <GridList
+        aria-label="async virtualized gridlist"
+        className={styles.menu}
+        layout="grid"
+        renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}
+        style={{height: 400, width: 400}}>
+        <Collection items={list.items}>
+          {(item) => (
+            <GridListItem
+              style={{display: 'flex', flexDirection: 'column'}}
+              textValue={item.description || item.alt_description}>
+              <img
+                alt=""
+                width={item.width}
+                height={item.height}
+                src={item.urls.regular}
+                style={{height: 200, objectFit: 'cover', width: '100%'}} />
+              <Text slot="description">By {item.user.name}</Text>
+            </GridListItem>
+          )}
+        </Collection>
+        <MyGridListLoaderIndicator
+          isLoading={loadingState === 'loadingMore'}
+          onLoadMore={loadingState === 'idle' ? list.loadMore : undefined} />
+      </GridList>
+    </Virtualizer>
+  );
+}
+
+export const AsyncGridListGridVirtualized: StoryObj<typeof AsyncGridListGridVirtualizedRender> = {
+  render: AsyncGridListGridVirtualizedRender,
+  args: {
+    delay: 50,
+    layout: 'grid',
+    loaderHeight: 30,
+    loadingState: 'idle'
+  },
+  argTypes: {
+    delay: {
+      control: 'number'
+    },
+    layout: {
+      control: 'select',
+      options: ['grid', 'waterfall']
+    },
+    loaderHeight: {
+      control: 'number'
+    },
+    loadingState: {
+      control: 'select',
+      options: ['idle', 'loadingMore']
     }
   }
 };

@@ -87,6 +87,22 @@ describe('TagGroup', () => {
     }
   });
 
+  it('should support custom render function', () => {
+    let {getByTestId, getByRole, getAllByRole} = renderTagGroup(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let group = getByTestId('group');
+    let grid = getByRole('grid');
+    expect(group).toHaveAttribute('data-custom', 'true');
+    expect(grid).toHaveAttribute('data-custom', 'true');
+
+    for (let row of getAllByRole('row')) {
+      expect(row).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
   it('should support refs', () => {
     let tagGroupRef = React.createRef();
     let tagListRef = React.createRef();

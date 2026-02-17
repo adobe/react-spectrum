@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, isCtrlKeyPressed, isTabbable, mergeProps, scrollIntoView, scrollIntoViewport, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, getEventTarget, isCtrlKeyPressed, isFocusWithin, isTabbable, mergeProps, nodeContains, scrollIntoView, scrollIntoViewport, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
 import {dispatchVirtualFocus, getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
@@ -133,7 +133,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     // Keyboard events bubble through portals. Don't handle keyboard events
     // for elements outside the collection (e.g. menus).
-    if (!ref.current?.contains(e.target as Element)) {
+    if (!ref.current || !nodeContains(ref.current, getEventTarget(e) as Element)) {
       return;
     }
 
@@ -314,7 +314,8 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
             // If the active element is NOT tabbable but is contained by an element that IS tabbable (aka the cell), the browser will actually move focus to
             // the containing element. We need to special case this so that tab will move focus out of the grid instead of looping between
             // focusing the containing cell and back to the non-tabbable child element
-            if (next && (!next.contains(document.activeElement) || (document.activeElement && !isTabbable(document.activeElement)))) {
+            let activeElement = getActiveElement();
+            if (next && (!isFocusWithin(next) || (activeElement && !isTabbable(activeElement)))) {
               focusWithoutScrolling(next);
             }
           }
@@ -337,7 +338,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   let onFocus = (e: FocusEvent) => {
     if (manager.isFocused) {
       // If a focus event bubbled through a portal, reset focus state.
-      if (!e.currentTarget.contains(e.target)) {
+      if (!nodeContains(e.currentTarget, getEventTarget(e))) {
         manager.setFocused(false);
       }
 
@@ -345,7 +346,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
 
     // Focus events can bubble through portals. Ignore these events.
-    if (!e.currentTarget.contains(e.target)) {
+    if (!nodeContains(e.currentTarget, getEventTarget(e))) {
       return;
     }
 
@@ -379,7 +380,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       let element = getItemElement(ref, manager.focusedKey);
       if (element instanceof HTMLElement) {
         // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
-        if (!element.contains(document.activeElement) && !shouldUseVirtualFocus) {
+        if (!isFocusWithin(element) && !shouldUseVirtualFocus) {
           focusWithoutScrolling(element);
         }
 
@@ -393,7 +394,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
   let onBlur = (e) => {
     // Don't set blurred and then focused again if moving focus within the collection.
-    if (!e.currentTarget.contains(e.relatedTarget as HTMLElement)) {
+    if (!nodeContains(e.currentTarget, e.relatedTarget as HTMLElement)) {
       manager.setFocused(false);
     }
   };
@@ -560,7 +561,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     onBlur,
     onMouseDown(e) {
       // Ignore events that bubbled through portals.
-      if (scrollRef.current === e.target) {
+      if (scrollRef.current === getEventTarget(e)) {
         // Prevent focus going to the collection when clicking on the scrollbar.
         e.preventDefault();
       }
@@ -580,7 +581,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // This will be marshalled to either the first or last item depending on where focus came from.
   let tabIndex: number | undefined = undefined;
   if (!shouldUseVirtualFocus) {
-    tabIndex = manager.isFocused ? -1 : 0;
+    tabIndex = manager.focusedKey == null ? 0 : -1;
   }
 
   let collectionId = useCollectionId(manager.collection);

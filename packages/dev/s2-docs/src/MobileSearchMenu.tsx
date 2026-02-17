@@ -328,7 +328,6 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                         selectedTagId={selectedSection}
                         onSectionSelectionChange={handleTagSelectionChange}
                         onResourceSelectionChange={handleTagSelectionChange}
-                        isMobile
                         wrapperClassName={style({paddingTop: 0})}
                         contentClassName={style({display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginX: 0})} />
                     </div>
@@ -356,19 +355,12 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                       </Suspense>
                     )}
                     {!showIcons && isColorsSelected && library.id === 'react-spectrum' && (
-                      <div
-                        className={style({
-                          flexGrow: 1,
-                          overflow: 'auto',
-                          paddingBottom: 16
-                        })}>
-                        <Suspense fallback={<ColorSearchSkeleton />}>
-                          <LazyColorSearchView
-                            filteredItems={filteredColors.sections}
-                            exactMatches={filteredColors.exactMatches}
-                            closestMatches={filteredColors.closestMatches} />
-                        </Suspense>
-                      </div>
+                      <Suspense fallback={<ColorSearchSkeleton />}>
+                        <LazyColorSearchView
+                          filteredItems={filteredColors.sections}
+                          exactMatches={filteredColors.exactMatches}
+                          closestMatches={filteredColors.closestMatches} />
+                      </Suspense>
                     )}
                     {!showIcons && (!isColorsSelected || library.id !== 'react-spectrum') && (
                       <ComponentCardView

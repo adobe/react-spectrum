@@ -6,6 +6,7 @@ import {TagGroup as VanillaTagGroup, Tag} from 'vanilla-starter/TagGroup';
 import vanillaDocs from 'docs:vanilla-starter/TagGroup';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/tag/docs/anatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 
 export const tags = ['chips', 'pills'];
 export const relatedPages = [{'title': 'useTagGroup', 'url': 'TagGroup/useTagGroup.html'}];
@@ -77,7 +78,7 @@ function Example() {
 
 ### Links
 
-Use the `href` prop on a `<Tag>` to create a link. See the [framework setup guide](frameworks) to learn how to integrate with your framework.
+Use the `href` prop on a `<Tag>` to create a link.
 
 ```tsx render
 "use client";
@@ -94,6 +95,11 @@ import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
   <Tag href="https://en.wikipedia.org/wiki/Golden_hour_(photography)" target="_blank">Golden Hour</Tag>
 </TagGroup>
 ```
+
+<InlineAlert variant="notice">
+  <Heading>Client-side routing</Heading>
+  <Content>Due to [HTML spec limitations](https://github.com/w3c/html-aria/issues/473), tags cannot be rendered as `<a>` elements. React Aria handles link clicks with JavaScript and triggers native navigation. When using a client-side router, use the `onAction` event to programmatically trigger navigation instead of the `href` prop.</Content>
+</InlineAlert>
 
 ## Selection
 
