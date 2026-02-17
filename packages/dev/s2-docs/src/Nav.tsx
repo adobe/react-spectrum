@@ -256,12 +256,12 @@ export function SideNavItem(props) {
 }
 
 export function SideNavLink(props) {
-  let linkRef = useRef<HTMLAnchorElement | null>(null);
+  let linkRef = useRef(null);
   let selected = useContext(SideNavContext);
   let {isExternal, ...linkProps} = props;
 
   useEffect(() => {
-    if (!linkRef.current || props.isSelected !== true) {
+    if (!linkRef.current || !props.isSelected) {
       return;
     }
 
