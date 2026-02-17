@@ -310,30 +310,34 @@ const unavailableStyles = style({
   backgroundColor: '[currentColor]'
 });
 
-const selectionBackgroundStyles = style<{isInvalid?: boolean, isFirstDayInWeek?: boolean, isLastDayInWeek?: boolean, isSelectionStart?: boolean, isSelectionEnd?: boolean}>({
+const selectionBackgroundStyles = style<{isInvalid?: boolean, isFirstDayInWeek?: boolean, isLastDayInWeek?: boolean, isSelectionStart?: boolean, isSelectionEnd?: boolean, isPreviousDayNotSelected?: boolean, isNextDayNotSelected?: boolean}>({
   position: 'absolute',
   zIndex: -1,
   top: 0,
   insetStart: {
     default: -4,
     isFirstDayInWeek: 0,
-    isSelectionStart: 0
+    isSelectionStart: 0,
+    isPreviousDayNotSelected: 0
   },
   insetEnd: {
     default: -4,
     isLastDayInWeek: 0,
-    isSelectionEnd: 0
+    isSelectionEnd: 0,
+    isNextDayNotSelected: 0
   },
   bottom: 0,
   borderStartRadius: {
     default: 'none',
     isFirstDayInWeek: 'full',
-    isSelectionStart: 'full'
+    isSelectionStart: 'full',
+    isPreviousDayNotSelected: 'full'
   },
   borderEndRadius: {
     default: 'none',
     isLastDayInWeek: 'full',
-    isSelectionEnd: 'full'
+    isSelectionEnd: 'full',
+    isNextDayNotSelected: 'full'
   },
   backgroundColor: {
     default: 'blue-subtle',
@@ -345,31 +349,35 @@ const selectionBackgroundStyles = style<{isInvalid?: boolean, isFirstDayInWeek?:
   forcedColorAdjust: 'none'
 });
 
-const selectionBorderStyles = style<{isInvalid?: boolean, isFirstDayInWeek?: boolean, isLastDayInWeek?: boolean, isSelectionStart?: boolean, isSelectionEnd?: boolean}>({
+const selectionBorderStyles = style<{isInvalid?: boolean, isFirstDayInWeek?: boolean, isLastDayInWeek?: boolean, isSelectionStart?: boolean, isSelectionEnd?: boolean, isPreviousDayNotSelected?: boolean, isNextDayNotSelected?: boolean}>({
   position: 'absolute',
   zIndex: 1,
   top: 0,
   insetStart: {
     default: -4,
     isFirstDayInWeek: 0,
-    isSelectionStart: 0
+    isSelectionStart: 0,
+    isPreviousDayNotSelected: 0
   },
   insetEnd: {
     default: -4,
     isLastDayInWeek: 0,
-    isSelectionEnd: 0
+    isSelectionEnd: 0,
+    isNextDayNotSelected: 0
   },
   bottom: 0,
   borderStartWidth: {
     default: 0,
     isFirstDayInWeek: 1,
-    isSelectionStart: 1
+    isSelectionStart: 1,
+    isPreviousDayNotSelected: 1
   },
   borderTopWidth: 1,
   borderEndWidth: {
     default: 0,
     isLastDayInWeek: 1,
-    isSelectionEnd: 1
+    isSelectionEnd: 1,
+    isNextDayNotSelected: 1
   },
   borderBottomWidth: 1,
   borderStyle: 'solid',
@@ -383,12 +391,14 @@ const selectionBorderStyles = style<{isInvalid?: boolean, isFirstDayInWeek?: boo
   borderStartRadius: {
     default: 'none',
     isFirstDayInWeek: 'full',
-    isSelectionStart: 'full'
+    isSelectionStart: 'full',
+    isPreviousDayNotSelected: 'full'
   },
   borderEndRadius: {
     default: 'none',
     isLastDayInWeek: 'full',
-    isSelectionEnd: 'full'
+    isSelectionEnd: 'full',
+    isNextDayNotSelected: 'full'
   }
 });
 /**
@@ -592,6 +602,9 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRange
   let {dayIndex, date, renderProps, state, isRangeSelection} = props;
   let ref = useRef<HTMLDivElement>(null);
   let {isUnavailable, formattedDate, isSelected, isSelectionStart, isSelectionEnd, isInvalid} = renderProps!;
+  let calendarStateContext = useContext(CalendarStateContext);
+  let rangeCalendarStateContext = useContext(RangeCalendarStateContext);
+  let {isCellUnavailable} = calendarStateContext ?? rangeCalendarStateContext ?? {isCellUnavailable: () => false};
   // only apply the selection start/end styles if the start/end date is actually selectable (aka not unavailable)
   // or if the range is invalid and thus we still want to show the styles even if the start/end date is an unavailable one
   isSelectionStart = isSelectionStart && (!isUnavailable || isInvalid);
@@ -614,6 +627,8 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRange
   let nextDay = date.add({days: 1});
   let isFirstDayInWeek = dayIndex === 0;
   let isLastDayInWeek = dayIndex === 6;
+  let isPreviousDayNotSelected = !prevDay || isCellUnavailable(prevDay) || (!isDateInRange(prevDay) || prevDay.month !== props.date.month);
+  let isNextDayNotSelected = !nextDay || isCellUnavailable(nextDay) || (!isDateInRange(nextDay) || nextDay.month !== props.date.month);
 
   // when invalid, show background for all selected dates (including unavailable) to make continuous range appearance
   // when valid, only show background for available selected dates
@@ -645,8 +660,8 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRange
         </div>
         {isUnavailable && <div className={unavailableStyles} role="presentation" />}
       </div>
-      {isBackgroundStyleApplied && <div className={selectionBackgroundStyles({isInvalid, isFirstDayInWeek, isLastDayInWeek, isSelectionStart, isSelectionEnd})} role="presentation" />}
-      {isBackgroundStyleApplied && <div className={selectionBorderStyles({isInvalid, isFirstDayInWeek, isLastDayInWeek, isSelectionStart, isSelectionEnd})} role="presentation" />}
+      {isBackgroundStyleApplied && <div className={selectionBackgroundStyles({isInvalid, isFirstDayInWeek, isLastDayInWeek, isSelectionStart, isSelectionEnd, isPreviousDayNotSelected, isNextDayNotSelected})} role="presentation" />}
+      {isBackgroundStyleApplied && <div className={selectionBorderStyles({isInvalid, isFirstDayInWeek, isLastDayInWeek, isSelectionStart, isSelectionEnd, isPreviousDayNotSelected, isNextDayNotSelected})} role="presentation" />}
     </div>
   );
 };
