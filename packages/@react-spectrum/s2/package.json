@@ -137,11 +137,7 @@
   "scripts": {
     "prepublishOnly": "rm -rf dist/page.cjs* && mv dist/page*.css page.css && mv dist/page.css.map page.css.map || true",
     "prepack": "npm pkg delete scripts devDependencies resolutions alias targets",
-    "postpack": "git checkout -- package.json",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage"
+    "postpack": "git checkout -- package.json"
   },
   "devDependencies": {
     "@adobe/spectrum-tokens": "^14.0.0",

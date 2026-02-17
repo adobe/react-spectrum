@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Adobe. All rights reserved.
+ * Copyright 2026 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -18,6 +18,8 @@ import {playwright} from '@vitest/browser-playwright';
 import type {Plugin} from 'vite';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
+
+const s2Dir = path.resolve(__dirname, 'packages/@react-spectrum/s2');
 
 // Handles ../intl/*.json imports
 function intlJsonPlugin(): Plugin {
@@ -62,7 +64,7 @@ function illustrationResolverPlugin(): Plugin {
     resolveId(source) {
       if (source.startsWith('@react-spectrum/s2/illustrations/')) {
         const illustrationPath = source.replace('@react-spectrum/s2/illustrations/', '');
-        const tsxPath = path.resolve(__dirname, 'spectrum-illustrations', illustrationPath + '.tsx');
+        const tsxPath = path.resolve(s2Dir, 'spectrum-illustrations', illustrationPath + '.tsx');
         
         if (fs.existsSync(tsxPath)) {
           return tsxPath;
@@ -82,7 +84,6 @@ function illustrationPlugin(): Plugin {
     enforce: 'pre',
     resolveId(source, importer) {
       if (source.startsWith('illustration:')) {
-        // Convert illustration:./path.svg to actual SVG path
         const svgPath = source.replace('illustration:', '');
         if (importer) {
           const dir = path.dirname(importer);
@@ -98,13 +99,12 @@ function illustrationPlugin(): Plugin {
 // Build icon aliases to resolve @react-spectrum/s2/icons/* imports
 function buildIconAliases(): Record<string, string> {
   const aliases: Record<string, string> = {};
-  const iconsDir = path.resolve(__dirname, 's2wf-icons');
+  const iconsDir = path.resolve(s2Dir, 's2wf-icons');
   
   if (fs.existsSync(iconsDir)) {
     const iconFiles = fs.readdirSync(iconsDir).filter(f => f.startsWith('S2_Icon_') && f.endsWith('_20_N.svg'));
     
     for (const iconFile of iconFiles) {
-      // Extract icon name: S2_Icon_Feedback_20_N.svg -> Feedback
       const match = iconFile.match(/^S2_Icon_(.+)_20_N\.svg$/);
       if (match) {
         const iconName = match[1];
@@ -158,8 +158,8 @@ export default defineConfig({
   ],
   test: {
     globals: true,
-    setupFiles: ['./test/setup.ts'],
-    include: ['test/**/*.browser.test.{ts,tsx}'],
+    setupFiles: ['./test/browser/setup.ts'],
+    include: ['packages/**/test/**/*.browser.test.{ts,tsx}'],
     browser: {
       provider: playwright(),
       enabled: true,
@@ -172,8 +172,8 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.d.ts', 'src/index.ts']
+      include: ['packages/**/src/**/*.{ts,tsx}'],
+      exclude: ['packages/**/src/**/*.d.ts', 'packages/**/src/index.ts']
     },
     testTimeout: 20000
   },
@@ -182,8 +182,8 @@ export default defineConfig({
     extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.svg'],
     alias: {
       ...buildIconAliases(),
-      '@react-spectrum/s2/illustrations': path.resolve(__dirname, 'spectrum-illustrations'),
-      '@react-spectrum/s2': path.resolve(__dirname, 'src')
+      '@react-spectrum/s2/illustrations': path.resolve(s2Dir, 'spectrum-illustrations'),
+      '@react-spectrum/s2': path.resolve(s2Dir, 'src')
     }
   },
   optimizeDeps: {
@@ -191,9 +191,6 @@ export default defineConfig({
   },
   css: {
     postcss: {
-      // Disable PostCSS processing for macro-generated CSS
-      // The macros plugin handles CSS generation, and PostCSS was causing parsing errors
-      // with nested selectors like &:before
       // @ts-expect-error
       config: false
     }

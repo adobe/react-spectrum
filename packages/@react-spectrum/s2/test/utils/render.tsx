@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import '../../src/page';
 import {Provider, type ProviderProps} from '../../src';
 import React, {ReactElement} from 'react';
 import {render as vitestBrowserRender} from 'vitest-browser-react';

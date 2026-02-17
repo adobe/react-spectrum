@@ -11,7 +11,6 @@
  */
 
 import 'vitest-browser-react';
-import '../src/page';
 import {beforeEach} from 'vitest';
 
 // Track console errors and warnings per test

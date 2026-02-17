@@ -36,7 +36,7 @@
     "start:mcp": "yarn workspace @react-spectrum/s2-docs generate:md && yarn build:mcp && node packages/dev/mcp/s2/dist/index.js && node packages/dev/mcp/react-aria/dist/index.js",
     "test:mcp": "yarn build:s2-docs && yarn build:mcp && node packages/dev/mcp/scripts/smoke-list-pages.mjs",
     "test": "cross-env STRICT_MODE=1 VIRT_ON=1 yarn jest",
-    "test:s2": "yarn workspace @react-spectrum/s2 test",
+    "test:browser": "vitest run",
     "test:lint": "node packages/**/*.test-lint.js",
     "test-loose": "cross-env VIRT_ON=1 yarn jest",
     "test-storybook": "test-storybook --url http://localhost:9003  --browsers chromium --no-cache",
