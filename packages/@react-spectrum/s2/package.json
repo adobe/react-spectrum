@@ -144,21 +144,8 @@
     "@react-aria/test-utils": "^1.0.0-alpha.8",
     "@storybook/jest": "^0.2.3",
     "@testing-library/dom": "^10.1.0",
-    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.0",
-    "@testing-library/user-event": "^14.0.0",
-    "@vitejs/plugin-react": "^4.3.4",
-    "@vitest/browser": "^4.0.0",
-    "@vitest/browser-playwright": "^4.0.0",
-    "@vitest/ui": "^4.0.0",
-    "glob": "^10.3.0",
-    "jsdom": "^25.0.0",
-    "playwright": "^1.45.3",
-    "unplugin-parcel-macros": "^0.1.2-alpha.1",
-    "vite": "^6.0.0",
-    "vite-plugin-svgr": "^4.3.0",
-    "vitest": "^4.0.0",
-    "vitest-browser-react": "^2.0.2"
+    "@testing-library/user-event": "^14.0.0"
   },
   "dependencies": {
     "@internationalized/date": "^3.11.0",
