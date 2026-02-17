@@ -10,8 +10,6 @@ import {
   MenuSectionProps as AriaMenuSectionProps,
   MenuTrigger as AriaMenuTrigger,
   SubmenuTrigger as AriaSubmenuTrigger,
-  UnavailableMenuItemTrigger as AriaUnavailableMenuItemTrigger,
-  UnavailableMenuItemTriggerProps,
   Separator,
   SeparatorProps,
   composeRenderProps,

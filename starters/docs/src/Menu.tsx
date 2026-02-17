@@ -6,8 +6,6 @@ import {
   MenuSection as AriaMenuSection,
   MenuTrigger as AriaMenuTrigger,
   SubmenuTrigger as AriaSubmenuTrigger,
-  UnavailableMenuItemTrigger as AriaUnavailableMenuItemTrigger,
-  UnavailableMenuItemTriggerProps,
   MenuItemProps,
   MenuProps,
   MenuSectionProps,
