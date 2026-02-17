@@ -1,0 +1,22 @@
+diff --git a/node_modules/@vitest/expect/dist/chai.d.cts b/node_modules/@vitest/expect/dist/chai.d.cts
+index 1234567..abcdefg 100644
+--- a/node_modules/@vitest/expect/dist/chai.d.cts
++++ b/node_modules/@vitest/expect/dist/chai.d.cts
+@@ -13,7 +13,7 @@
+ // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+ // TypeScript Version: 3.0
+ 
+-declare namespace Chai {
++declare namespace _Chai_vitest_expect_v2 {
+     type Message = string | (() => string);
+     type ObjectProperty = string | symbol | number;
+ 
+@@ -1957,7 +1957,7 @@
+     }
+ }
+ 
+-declare const chai: Chai.ChaiStatic;
++declare const chai: _Chai_vitest_expect_v2.ChaiStatic;
+ 
+ declare module "chai" {
+     export = chai;
