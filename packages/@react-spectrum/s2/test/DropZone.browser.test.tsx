@@ -8,70 +8,98 @@
 import {Button, ButtonGroup, Content, DropZone, FileTrigger, Heading, IllustratedMessage} from '../src';
 import CloudUpload from '@react-spectrum/s2/illustrations/gradient/generic1/CloudUpload';
 import {describe, expect, it, vi} from 'vitest';
+import {dragAndDrop} from './utils/dragAndDrop';
 import {page} from 'vitest/browser';
 import React from 'react';
 import {render} from './utils/render';
 import {style} from '../style' with {type: 'macro'};
+import {useDrag} from '@react-aria/dnd';
+
+function Draggable({type}: {type: string}) {
+  let {dragProps} = useDrag({
+    getItems() {
+      return [{
+        [type]: 'hello world'
+      }];
+    }
+  });
+
+  return (
+    <div {...dragProps} role="button" tabIndex={0} data-testid="drag-source">
+      Drag me
+    </div>
+  );
+}
 
 describe('DropZone browser interactions', () => {
-  it('handles drag/drop and passes dropped items', async () => {
+  it('should handle drag and drop of valid drop types', async () => {
     let onDrop = vi.fn();
 
     await render(
-      <DropZone
-        data-testid="dropzone"
-        isFilled
-        replaceMessage="Replace file"
-        styles={style({width: 320, maxWidth: '90%'})}
-        getDropOperation={types => (types.has('text/plain') ? 'copy' : 'cancel')}
-        onDrop={onDrop}>
-        <IllustratedMessage>
-          <CloudUpload />
-          <Heading>Drag and drop your file</Heading>
-          <Content>or</Content>
-          <ButtonGroup>
-            <FileTrigger>
-              <Button variant="primary">Select a file</Button>
-            </FileTrigger>
-          </ButtonGroup>
-        </IllustratedMessage>
-      </DropZone>
+      <>
+        <Draggable type="text/plain" />
+        <DropZone
+          data-testid="dropzone"
+          isFilled
+          replaceMessage="Replace file"
+          styles={style({width: 320, maxWidth: '90%'})}
+          getDropOperation={types => (types.has('text/plain') ? 'copy' : 'cancel')}
+          onDrop={onDrop}>
+          <IllustratedMessage>
+            <CloudUpload />
+            <Heading>Drag and drop your file</Heading>
+            <Content>or</Content>
+            <ButtonGroup>
+              <FileTrigger>
+                <Button variant="primary">Select a file</Button>
+              </FileTrigger>
+            </ButtonGroup>
+          </IllustratedMessage>
+        </DropZone>
+      </>
     );
 
-    let dropzone = page.getByTestId('dropzone').element();
-    let dt = new DataTransfer();
-    dt.items.add('hello world', 'text/plain');
-
-    dropzone.dispatchEvent(new DragEvent('dragenter', {dataTransfer: dt, bubbles: true}));
-    dropzone.dispatchEvent(new DragEvent('dragover', {dataTransfer: dt, bubbles: true}));
-    dropzone.dispatchEvent(new DragEvent('drop', {dataTransfer: dt, bubbles: true}));
+    let sourceEl = page.getByTestId('drag-source').element();
+    let targetEl = page.getByTestId('dropzone').element();
+    await dragAndDrop(sourceEl, targetEl);
 
     await expect.poll(() => onDrop).toHaveBeenCalledTimes(1);
     let event = onDrop.mock.calls[0][0];
-    expect(['copy', 'cancel']).toContain(event.dropOperation);
-    expect(event.items.length).toBeGreaterThanOrEqual(0);
+    expect(event.dropOperation).toBe('copy');
+    expect(event.items.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('rejects unsupported drop types', async () => {
+  it('should reject unsupported drop types', async () => {
     let onDrop = vi.fn();
 
     await render(
-      <DropZone
-        data-testid="dropzone"
-        getDropOperation={types => (types.has('text/plain') ? 'copy' : 'cancel')}
-        onDrop={onDrop}>
-        <div>Drop</div>
-      </DropZone>
+      <>
+        <Draggable type="application/json" />
+        <DropZone
+          data-testid="dropzone"
+          isFilled
+          replaceMessage="Replace file"
+          styles={style({width: 320, maxWidth: '90%'})}
+          getDropOperation={types => (types.has('text/plain') ? 'copy' : 'cancel')}
+          onDrop={onDrop}>
+          <IllustratedMessage>
+            <CloudUpload />
+            <Heading>Drag and drop your file</Heading>
+            <Content>or</Content>
+            <ButtonGroup>
+              <FileTrigger>
+                <Button variant="primary">Select a file</Button>
+              </FileTrigger>
+            </ButtonGroup>
+          </IllustratedMessage>
+        </DropZone>
+      </>
     );
 
-    let dropzone = page.getByTestId('dropzone').element();
-    let dt = new DataTransfer();
-    dt.items.add('x', 'application/json');
+    let sourceEl = page.getByTestId('drag-source').element();
+    let targetEl = page.getByTestId('dropzone').element();
+    await dragAndDrop(sourceEl, targetEl);
 
-    dropzone.dispatchEvent(new DragEvent('dragenter', {dataTransfer: dt, bubbles: true}));
-    dropzone.dispatchEvent(new DragEvent('drop', {dataTransfer: dt, bubbles: true}));
-
-    await expect.poll(() => onDrop).toHaveBeenCalledTimes(1);
-    expect(onDrop.mock.calls[0][0].dropOperation).toBe('cancel');
+    expect(onDrop).not.toHaveBeenCalled();
   });
 });
