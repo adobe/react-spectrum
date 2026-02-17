@@ -10072,6 +10072,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@storybook/blocks@npm:^8.6.14":
+  version: 8.6.16
+  resolution: "@storybook/blocks@npm:8.6.16"
+  dependencies:
+    "@storybook/icons": "npm:^1.2.12"
+    ts-dedent: "npm:^2.0.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    storybook: ^8.6.16
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 10c0/4e4a3e86368c534c974b578c1d21c9c22f16cdfedd6f11959121c94f94ce50f8df3a16ca5564ae1a1ba5817445f6b1b141716ec24547fd4b7011d6b2cd97f215
+  languageName: node
+  linkType: hard
+
 "@storybook/channels@npm:^8.6.14":
   version: 8.6.14
   resolution: "@storybook/channels@npm:8.6.14"
@@ -26347,6 +26366,7 @@ __metadata:
     "@storybook/addon-links": "npm:^8.6.14"
     "@storybook/addon-onboarding": "npm:^8.6.14"
     "@storybook/addon-themes": "npm:^8.6.14"
+    "@storybook/blocks": "npm:^8.6.14"
     "@storybook/components": "npm:^8.6.14"
     "@storybook/manager-api": "npm:^8.6.14"
     "@storybook/preview": "npm:^8.6.14"

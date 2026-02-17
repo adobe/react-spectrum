@@ -6,7 +6,6 @@ import { addons } from '@storybook/preview-api';
 import { DocsContainer } from '@storybook/addon-docs';
 import React, { useEffect, useState } from 'react';
 import {withProviderSwitcher} from './custom-addons/provider';
-// @ts-expect-error - nested in @storybook/addon-docs/node_modules
 import {Controls, Description, Primary, Stories, Subtitle, Title} from '@storybook/blocks';
 import './global.css';
 
