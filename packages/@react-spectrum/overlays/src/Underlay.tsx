@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+import {applyContainerBounds, useUNSAFE_PortalContext} from '@react-aria/overlays';
 import {classNames} from '@react-spectrum/utils';
 import {isScrollable} from '@react-aria/utils';
 import React, {JSX} from 'react';
@@ -21,20 +21,34 @@ interface UnderlayProps {
 }
 
 export function Underlay({isOpen, isTransparent, ...otherProps}: UnderlayProps): JSX.Element {
+  let {getContainerBounds} = useUNSAFE_PortalContext();
+  let containerBounds = getContainerBounds?.();
+  
   let pageHeight: number | undefined = undefined;
   if (typeof document !== 'undefined') {
     let scrollingElement = isScrollable(document.body) ? document.body : document.scrollingElement || document.documentElement;
     // Prevent Firefox from adding scrollbars when the page has a fractional height.
     let fractionalHeightDifference = scrollingElement.getBoundingClientRect().height % 1;
     pageHeight = scrollingElement.scrollHeight - fractionalHeightDifference;
+    
+    // If container bounds are provided, use those height instead
+    if (containerBounds) {
+      pageHeight = containerBounds.height;
+    }
   }
+
+  let style: React.CSSProperties = {height: pageHeight};
+  
+  // If container bounds are provided, position the underlay relative to the container
+  applyContainerBounds(style, containerBounds);
 
   return (
     <div
       data-testid="underlay"
       {...otherProps}
       // Cover the entire document so iOS 26 Safari doesn't clip the underlay to the inner viewport.
-      style={{height: pageHeight}}
+      // If container bounds are provided, constrain to those bounds instead.
+      style={style}
       className={classNames(underlayStyles, 'spectrum-Underlay', {
         'is-open': isOpen,
         'spectrum-Underlay--transparent': isTransparent
