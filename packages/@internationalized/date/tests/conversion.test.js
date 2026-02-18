@@ -556,13 +556,17 @@ describe('CalendarDate conversion', function () {
 
     it('should produce correct results after resetLocalTimeZone', function () {
       let ms = new Date('2020-06-15T12:00:00Z').getTime();
+      let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      // Get the offset before any override
+      let offsetBefore = getTimeZoneOffset(ms, tz);
 
       setLocalTimeZone('Etc/GMT-10');
       resetLocalTimeZone();
 
-      // After reset, the fast path should work again for the browser's local timezone
-      let offset = getTimeZoneOffset(ms, Intl.DateTimeFormat().resolvedOptions().timeZone);
-      expect(offset).toBe(new Date(ms).getTimezoneOffset() * -60 * 1000);
+      // After reset, the fast path should be restored and produce the same result
+      let offsetAfter = getTimeZoneOffset(ms, tz);
+      expect(offsetAfter).toBe(offsetBefore);
     });
   });
 });
