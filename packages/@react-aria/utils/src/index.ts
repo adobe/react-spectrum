@@ -51,6 +51,6 @@ export {CLEAR_FOCUS_EVENT, FOCUS_EVENT} from './constants';
 export {isCtrlKeyPressed, willOpenKeyboard} from './keyboard';
 export {useEnterAnimation, useExitAnimation} from './animation';
 export {isFocusable, isTabbable} from './isFocusable';
-export {getNonce} from './getNonce';
+export {getNonce, resetNonceCache} from './getNonce';
 
 export type {LoadMoreSentinelProps} from './useLoadMoreSentinel';

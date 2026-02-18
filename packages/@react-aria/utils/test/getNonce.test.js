@@ -12,12 +12,13 @@
 
 /* global globalThis */
 
-import {getNonce} from '../';
+import {getNonce, resetNonceCache} from '../';
 
 describe('getNonce', () => {
   afterEach(() => {
     document.querySelectorAll('meta[property="csp-nonce"]').forEach(el => el.remove());
     delete globalThis['__webpack_nonce__'];
+    resetNonceCache();
   });
 
   it('returns undefined when no nonce is configured', () => {
