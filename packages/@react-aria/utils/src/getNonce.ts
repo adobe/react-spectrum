@@ -10,14 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
+import {getOwnerWindow} from './domHelpers';
+
+let cachedNonce: string | undefined;
+let cachePopulated = false;
+
 /**
  * Returns the CSP nonce, if configured via a `<meta property="csp-nonce">` tag or `__webpack_nonce__`.
  * This allows dynamically injected `<style>` elements to work with Content Security Policy.
  */
 export function getNonce(doc?: Document): string | undefined {
+  if (!doc && cachePopulated) {
+    return cachedNonce;
+  }
+
   let d = doc ?? (typeof document !== 'undefined' ? document : undefined);
   let meta = d
-    ? d.querySelector('meta[property="csp-nonce"]') as HTMLMetaElement | null
+    ? d.querySelector('meta[property="csp-nonce"]')
     : null;
-  return meta?.nonce || meta?.content || (globalThis as Record<string, any>)['__webpack_nonce__'] || undefined;
+  let nonce = (meta && meta instanceof getOwnerWindow(meta).HTMLMetaElement && (meta?.nonce || meta?.content)) || globalThis['__webpack_nonce__'] || undefined;
+
+  if (!doc) {
+    cachedNonce = nonce;
+    cachePopulated = true;
+  }
+
+  return nonce;
 }
