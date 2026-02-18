@@ -383,4 +383,29 @@ describe('DatePicker', () => {
     let input = group.querySelector('.react-aria-DateInput');
     expect(input).toHaveTextContent('5/30/2000');
   });
+
+  it('should support focusableRef on DateInput', () => {
+    let focusableRef = React.createRef();
+    let {getByRole} = render(
+      <DatePicker>
+        <Label>Birth date</Label>
+        <Group>
+          <DateInput focusableRef={focusableRef}>
+            {(segment) => <DateSegment segment={segment} />}
+          </DateInput>
+          <Button>▼</Button>
+        </Group>
+      </DatePicker>
+    );
+
+    let group = getByRole('group');
+    let segments = within(group).getAllByRole('spinbutton');
+    expect(focusableRef.current).toBe(segments[0]);
+
+    act(() => {
+      focusableRef.current.focus();
+    });
+
+    expect(document.activeElement).toBe(segments[0]);
+  });
 });
