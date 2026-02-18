@@ -13,7 +13,7 @@
 import {add, addTime, addZoned, constrain, constrainTime, cycleDate, cycleTime, cycleZoned, set, setTime, setZoned, subtract, subtractTime, subtractZoned} from './manipulation';
 import {AnyCalendarDate, AnyTime, Calendar, CycleOptions, CycleTimeOptions, DateDuration, DateField, DateFields, DateTimeDuration, Disambiguation, TimeDuration, TimeField, TimeFields} from './types';
 import {compareDate, compareTime} from './queries';
-import {dateTimeToString, dateToString, timeToString, zonedDateTimeToString} from './string';
+import {dateTimeToString, dateToString, durationToString, timeToString, zonedDateTimeToString} from './string';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
 import {toCalendarDateTime, toDate, toZoned, zonedToDate} from './conversion';
 
@@ -402,5 +402,272 @@ export class ZonedDateTime {
   compare(b: CalendarDate | CalendarDateTime | ZonedDateTime): number {
     // TODO: Is this a bad idea??
     return this.toDate().getTime() - toZoned(b, this.timeZone).toDate().getTime();
+  }
+}
+
+// TODO: tidy this up...
+type MaybePlural<T extends string> = T | `${T}s`
+type Opts = {
+  fractionalSecondDigits?: 'auto' | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | undefined,
+  smallestUnit: MaybePlural<'second' | 'millisecond' | 'microsecond' | 'nanosecond'>
+}
+
+/** A Duration represents a difference between two time points, which can be used in date/time arithmetic. */
+export class Duration {
+  // This prevents TypeScript from allowing other types with the same fields to match.
+  // @ts-ignore
+  #type;
+
+  /** The number of years. */
+  public readonly years: number;
+  /** The number of months. */
+  public readonly months: number;
+  /** The number of weeks. */
+  public readonly weeks: number;
+  /** The number of days. */
+  public readonly days: number;
+  /** The number of hours. */
+  public readonly hours: number;
+  /** The number of minutes. */
+  public readonly minutes: number;
+  /** The number of seconds. */
+  public readonly seconds: number;
+  /** The number of milliseconds. */
+  public readonly milliseconds: number;
+  /** The number of microseconds. */
+  public readonly microseconds: number;
+  /** The number of nanoseconds. */
+  public readonly nanoseconds: number;
+
+  /** An integer between -1 and 1 representing the sign of the duration. Zero if the duration is zero. */
+  public readonly sign: number;
+  /** Whether this duration represents a zero duration or not. */
+  public get blank() {
+    return this.sign === 0;
+  }
+
+  public constructor(years?: number, months?: number, weeks?: number, days?: number, hours?: number, minutes?: number, seconds?: number, milliseconds?: number, microseconds?: number, nanoseconds?: number) {
+    this.years = years ?? 0;
+    this.months = months ?? 0;
+    this.weeks = weeks ?? 0;
+    this.days = days ?? 0;
+    this.hours = hours ?? 0;
+    this.minutes = minutes ?? 0;
+    this.seconds = seconds ?? 0;
+    this.milliseconds = milliseconds ?? 0;
+    this.microseconds = microseconds ?? 0;
+    this.nanoseconds = nanoseconds ?? 0;
+
+    const anyValue = years || months || weeks || days || hours || minutes || seconds || milliseconds || microseconds || nanoseconds || 0;
+    this.sign ||= anyValue < 0 ? -1 : 0;
+    this.sign ||= anyValue > 0 ? 1 : 0;
+    this.#checkValidDuration();
+  }
+
+  // with
+
+  negated() {
+    // https://tc39.es/proposal-temporal/#sec-temporal.duration.prototype.negated
+    return new Duration(-this.years, -this.months, -this.weeks, -this.days, -this.hours, -this.minutes, -this.seconds, -this.milliseconds, -this.microseconds, -this.nanoseconds);
+  }
+
+  abs() {
+    // https://tc39.es/proposal-temporal/#sec-temporal.duration.prototype.abs
+    return this.sign < 0 ? this.negated() : this.copy();
+  }
+
+  // add
+  add(other: unknown): Duration {
+    // https://tc39.es/proposal-temporal/#sec-temporal-adddurations
+    const otherDuration = other as Duration; // TODO: https://tc39.es/proposal-temporal/#sec-temporal-totemporalduration
+    if (this.years || this.months || this.weeks || otherDuration.years || otherDuration.months || otherDuration.weeks) {
+      throw new RangeError('Cannot add or subtract durations involving calendar units (weeks, months, and years).');
+    }
+
+    // Fast paths
+    if (this.blank) { return otherDuration.copy(); }
+    if (otherDuration.blank) { return this.copy(); }
+
+    const hasMicroseconds = !!(this.microseconds || otherDuration.microseconds);
+    const hasMilliseconds = hasMicroseconds || !!(this.milliseconds || otherDuration.milliseconds);
+    const hasSeconds = hasMilliseconds || !!(this.seconds || otherDuration.seconds);
+    const hasMinutes = hasSeconds || !!(this.minutes || otherDuration.minutes);
+    const hasHours = hasMinutes || !!(this.hours || otherDuration.hours);
+    const hasDays = hasHours || !!(this.days || otherDuration.days);
+
+    const [thisSec, thisSubSec] = this.#timeSeconds();
+    const [otherSec, otherSubSec] = otherDuration.#timeSeconds();
+
+    const sumSec = thisSec + otherSec;
+    const sumSubSec = thisSubSec + otherSubSec;
+
+    let days = 0, hours = 0, minutes = 0;
+    let seconds = sumSec + Math.floor(sumSubSec / 1e9);
+    let milliseconds = 0, microseconds  = 0;
+    let nanoseconds = sumSubSec % 1e9;
+
+    if (Math.abs(seconds) >= 2 ** 53) {
+      // Should not happen unless something is seriously wrong.
+      throw new RangeError('The resulting duration is too large.');
+    }
+
+    if (hasMicroseconds) {
+      microseconds = Math.floor(nanoseconds / 1e3);
+      nanoseconds %= 1e3;
+
+      if (hasMilliseconds) {
+        milliseconds = Math.floor(microseconds / 1e3);
+        microseconds %= 1e3;
+      }
+    }
+
+    if (!hasDays && !hasHours && !hasMinutes && !hasSeconds) {
+      // Sub-second is kind of a pain to deal with.
+      if (!hasMilliseconds && !hasMicroseconds) {
+        // log2(2**53 / 1e9) === 23.102647146013737
+        if (seconds >= 2 ** 23) { throw new RangeError('Cannot represent the resulting duration.'); }
+        nanoseconds += seconds * 1e9;
+      } else if (!hasMilliseconds) {
+        // log2(2**53 / 1e6) === 33.06843143067582
+        if (seconds >= 2 ** 33) { throw new RangeError('Cannot represent the resulting duration.'); }
+        microseconds += seconds * 1e6;
+      } else {
+        // log2(2**53 / 1e3) === 43.034215715337915
+        if (seconds >= 2 ** 43) { throw new RangeError('Cannot represent the resulting duration.'); }
+        milliseconds += seconds * 1e3;
+      }
+    }
+
+    if (hasMinutes) {
+      minutes = Math.floor(seconds / 60);
+      seconds %= 60;
+
+      if (hasHours) {
+        hours = Math.floor(minutes / 60);
+        minutes %= 60;
+
+        if (hasDays) {
+          days = Math.floor(hours / 24);
+          hours %= 24;
+        }
+      }
+    }
+
+    return new Duration(0, 0, 0, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds);
+  }
+
+  sub(other: unknown) {
+    const otherDuration = other as Duration; // TODO: https://tc39.es/proposal-temporal/#sec-temporal-totemporalduration
+    return this.add(otherDuration.negated());
+  }
+
+  round(roundTo: unknown) {
+    // https://tc39.es/proposal-temporal/#sec-temporal.duration.prototype.round
+    roundTo;
+    throw new Error('Not implemented');
+  }
+
+  total(totalOf: unknown) {
+    // https://tc39.es/proposal-temporal/#sec-temporal.duration.prototype.total
+    totalOf;
+    throw new Error('Not implemented');
+  }
+
+  toString(opts?: Opts) {
+    // https://tc39.es/proposal-temporal/#sec-temporal.duration.prototype.tostring
+
+    // Fast path
+    // Picking day is arbitrary; it's the smallest unit that doesn't involve the time designator.
+    // It seems Temporal would do `DT0S` instead, including sub-second logic shenanigans...
+    if (this.blank) { return '0D'; }
+
+    let fractionalSecondDigits = opts?.fractionalSecondDigits ?? 'auto';
+    if ((typeof fractionalSecondDigits === 'number' && (isNaN(fractionalSecondDigits) || fractionalSecondDigits < 0 || fractionalSecondDigits > 9)) || fractionalSecondDigits !== 'auto') {
+      throw new RangeError('Invalid fractionalSecondDigits value.');
+    }
+
+    const smallestUnit = opts?.smallestUnit;
+    if (smallestUnit) {
+      switch (smallestUnit) {
+        case 'second':
+        case 'seconds':
+          fractionalSecondDigits = 0;
+          break;
+        case 'millisecond':
+        case 'milliseconds':
+          fractionalSecondDigits = 3;
+          break;
+        case 'microsecond':
+        case 'microseconds':
+          fractionalSecondDigits = 6;
+          break;
+        case 'nanosecond':
+        case 'nanoseconds':
+          fractionalSecondDigits = 9;
+          break;
+        default:
+          throw new RangeError('Invalid smallestUnit value.');
+      }
+    }
+
+    // TODO: implement balancing (https://tc39.es/proposal-temporal/#sec-temporal-temporaldurationfrominternal)
+
+    return durationToString(this, fractionalSecondDigits);
+  }
+
+  toJSON() {
+    // https://tc39.es/proposal-temporal/#sec-temporal.duration.prototype.tojson
+    return this.toString();
+  }
+
+  valueOf() {
+    // https://tc39.es/proposal-temporal/#sec-temporal.duration.prototype.valueof
+    throw new TypeError('Cannot call valueOf on a Duration object.');
+  }
+
+  copy() {
+    return new Duration(this.years, this.months, this.weeks, this.days, this.hours, this.minutes, this.seconds, this.milliseconds, this.microseconds, this.nanoseconds);
+  }
+
+  #timeSeconds(): [number, number] {
+    // https://tc39.es/proposal-temporal/#sec-temporal-timedurationfromcomponents
+    // https://tc39.es/proposal-temporal/#sec-temporal-add24hourdaystonormalizedtimeduration
+    // https://tc39.es/proposal-temporal/#eqn-nsPerDay
+    const seconds = this.days * 864e11 * this.hours * 3600 + this.minutes * 60 + this.seconds;
+    const subSeconds = this.milliseconds * 1e6 + this.microseconds * 1e3 + this.nanoseconds;
+
+    const allSeconds = seconds + Math.floor(subSeconds / 1e9);
+    const allSubSeconds = subSeconds % 1e9;
+    return [allSeconds, allSubSeconds];
+  }
+
+  #checkValidDuration() {
+    // https://tc39.es/proposal-temporal/#sec-isvalidduration
+    for (const unit of ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds', 'microseconds', 'nanoseconds']) {
+      if (!Number.isInteger(this[unit]) || !Number.isFinite(this[unit])) {
+        throw new RangeError(`Duration unit ${unit} is not a finite integer.`);
+      }
+
+      if ((this[unit] > 0 && this.sign < 0) || (this[unit] < 0 && this.sign > 0)) {
+        throw new RangeError('All duration unit values must have the same sign.');
+      }
+    }
+
+    if (Math.abs(this.years) >= 2 ** 32 || Math.abs(this.months) >= 2 ** 32 || Math.abs(this.weeks) >= 2 ** 32) {
+      throw new RangeError('Duration years, months, and weeks cannot exceed 2 ** 32 each.');
+    }
+
+    const normalizedSeconds = this.days * 86_400 +
+      this.hours * 3600 +
+      this.minutes * 60 +
+      this.seconds +
+      // This is not compliant with the spec 7. -- shouldn't be a big deal, unless for extreme values
+      this.milliseconds * 10 ** -3 +
+      this.microseconds * 10 ** -6 +
+      this.nanoseconds * 10 ** -9;
+
+    if (Math.abs(normalizedSeconds) >= 2 ** 53) {
+      throw new RangeError('Duration days, hours, minutes, seconds, milliseconds, microseconds, and nanoseconds cannot add up to more than 2 ** 53 seconds.');
+    }
   }
 }
