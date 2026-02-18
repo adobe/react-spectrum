@@ -158,6 +158,49 @@ describe('DatePicker', () => {
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
   });
 
+  it('should support required render prop', () => {
+    let {getByRole} = render(
+      <DatePicker isRequired>
+        {({isRequired}) => (
+          <>
+            <Label>Birth date</Label>
+            <Group data-required-state={isRequired ? 'required' : null}>
+              <DateInput>
+                {(segment) => <DateSegment segment={segment} />}
+              </DateInput>
+              <Button>▼</Button>
+            </Group>
+            <Popover>
+              <Dialog>
+                <Calendar>
+                  <header>
+                    <Button slot="previous">◀</Button>
+                    <Heading />
+                    <Button slot="next">▶</Button>
+                  </header>
+                  <CalendarGrid>
+                    {(date) => <CalendarCell date={date} />}
+                  </CalendarGrid>
+                </Calendar>
+              </Dialog>
+            </Popover>
+          </>
+        )}
+      </DatePicker>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-required-state', 'required');
+  });
+
+  it('should support required state', () => {
+    let {getByRole, rerender} = render(<TestDatePicker />);
+    let group = getByRole('group');
+    expect(group.closest('.react-aria-DatePicker')).not.toHaveAttribute('data-required');
+    rerender(<TestDatePicker isRequired />);
+    expect(group.closest('.react-aria-DatePicker')).toHaveAttribute('data-required');
+  });
+
   it('should support form value', () => {
     render(<TestDatePicker name="birthday" form="test" value={new CalendarDate(2020, 2, 3)} />);
     let input = document.querySelector('input[name=birthday]');
