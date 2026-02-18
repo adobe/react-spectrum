@@ -15,6 +15,12 @@ import {getOwnerWindow} from './domHelpers';
 let cachedNonce: string | undefined;
 let cachePopulated = false;
 
+/** Reset the cached nonce value. Exported for testing only. */
+export function resetNonceCache(): void {
+  cachedNonce = undefined;
+  cachePopulated = false;
+}
+
 /**
  * Returns the CSP nonce, if configured via a `<meta property="csp-nonce">` tag or `__webpack_nonce__`.
  * This allows dynamically injected `<style>` elements to work with Content Security Policy.
