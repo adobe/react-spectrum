@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {BuddhistCalendar, CalendarDate, CalendarDateTime, EthiopicAmeteAlemCalendar, EthiopicCalendar, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar, Time, toCalendar, toCalendarDate, toCalendarDateTime, toTime, ZonedDateTime} from '..';
+import {BuddhistCalendar, CalendarDate, CalendarDateTime, EthiopicAmeteAlemCalendar, EthiopicCalendar, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar, Time, toCalendar, toCalendarDate, toCalendarDateTime, toTime, ZonedDateTime, setLocalTimeZone, resetLocalTimeZone} from '..';
 import {Custom454Calendar} from './customCalendarImpl';
 import {fromAbsolute, possibleAbsolutes, toAbsolute, toDate} from '../src/conversion';
 
@@ -520,6 +520,30 @@ describe('CalendarDate conversion', function () {
     it('should convert a CalendarDateTime to a Time', function () {
       let dateTime = new CalendarDateTime(2020, 2, 3, 8, 23, 10, 80);
       expect(toTime(dateTime)).toEqual(new Time(8, 23, 10, 80));
+    });
+  });
+
+  describe('setLocalTimeZone interaction with fast paths', function () {
+    afterEach(() => {
+      resetLocalTimeZone();
+    });
+
+    it('fromAbsolute should return the correct offset when local timezone is overridden', function () {
+      // Etc/GMT-10 means UTC+10
+      setLocalTimeZone('Etc/GMT-10');
+      let ms = Date.UTC(2020, 5, 15, 12, 0, 0); // 2020-06-15T12:00:00Z
+      let zdt = fromAbsolute(ms, 'Etc/GMT-10');
+      expect(zdt.hour).toBe(22); // 12:00 UTC + 10 = 22:00
+      expect(zdt.offset).toBe(10 * 60 * 60 * 1000);
+    });
+
+    it('toAbsolute should return the correct epoch when local timezone is overridden', function () {
+      // Etc/GMT-10 means UTC+10
+      setLocalTimeZone('Etc/GMT-10');
+      let date = new CalendarDateTime(2020, 6, 15, 22, 0, 0);
+      let ms = toAbsolute(date, 'Etc/GMT-10');
+      // 22:00 in UTC+10 = 12:00 UTC
+      expect(ms).toBe(Date.UTC(2020, 5, 15, 12, 0, 0));
     });
   });
 });

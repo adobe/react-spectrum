@@ -17,7 +17,7 @@ import {AnyCalendarDate, AnyDateTime, AnyTime, Calendar, DateFields, Disambiguat
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {constrain} from './manipulation';
 import {getExtendedYear, GregorianCalendar} from './calendars/GregorianCalendar';
-import {getLocalTimeZone, isEqualCalendar} from './queries';
+import {getLocalTimeZone, isEqualCalendar, isLocalTimeZoneOverridden} from './queries';
 import {Mutable} from './utils';
 
 export function epochFromDate(date: AnyDateTime): number {
@@ -42,7 +42,7 @@ export function getTimeZoneOffset(ms: number, timeZone: string): number {
   }
 
   // Fast path: for local timezone after 1970, use native Date.
-  if (ms > 0 && timeZone === getLocalTimeZone()) {
+  if (ms > 0 && timeZone === getLocalTimeZone() && !isLocalTimeZoneOverridden()) {
     return new Date(ms).getTimezoneOffset() * -60 * 1000;
   }
 
@@ -124,7 +124,7 @@ export function toAbsolute(date: CalendarDate | CalendarDateTime, timeZone: stri
   }
 
   // Fast path: if the time zone is the local timezone and disambiguation is compatible, use native Date.
-  if (timeZone === getLocalTimeZone() && disambiguation === 'compatible') {
+  if (timeZone === getLocalTimeZone() && disambiguation === 'compatible' && !isLocalTimeZoneOverridden()) {
     dateTime = toCalendar(dateTime, new GregorianCalendar());
 
     // Don't use Date constructor here because two-digit years are interpreted in the 20th century.
