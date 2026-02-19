@@ -12,7 +12,7 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {baseColor, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
+import {baseColor, colorMix, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import {
@@ -234,7 +234,8 @@ const listitem = style<GridListItemRenderProps & {
   isNextSelected?: boolean,
   isPrevSelected?: boolean,
   isPrevNotSelected?: boolean,
-  isNextNotSelected?: boolean
+  isNextNotSelected?: boolean,
+  selectionStyle?: 'highlight' | 'checkbox'
 }>({
   ...focusRing(),
   boxSizing: 'border-box',
@@ -276,14 +277,24 @@ const listitem = style<GridListItemRenderProps & {
     type: 'borderTopColor',
     value: {
       default: 'gray-300',
-      isSelected: 'blue-900',
+      isSelected: {
+        selectionStyle: {
+          highlight: 'blue-900',
+          checkbox: 'gray-300'
+        }
+      },
       forcedColors: 'ButtonBorder'
     }
   },
   borderTopWidth: 0,
   borderBottomWidth: {
     default: 1,
-    isSelected: 0
+    isSelected: {
+      selectionStyle: {
+        highlight: 0,
+        checkbox: 1
+      }
+    }
   },
   borderStartWidth: 0,
   borderEndWidth: 0,
@@ -291,8 +302,13 @@ const listitem = style<GridListItemRenderProps & {
   borderBottomColor: {
     default: '--borderColor',
     isSelected: {
-      default: '--borderColor',
-      isNextSelected: 'transparent'
+      selectionStyle: {
+        highlight: {
+          default: '--borderColor',
+          isNextSelected: 'transparent'
+        },
+        checkbox: '--borderColor'
+      }
     }
   },
   borderTopStartRadius: {
@@ -309,18 +325,49 @@ const listitem = style<GridListItemRenderProps & {
   }
 }, getAllowedOverrides());
 
-const listRowBackground = style({
+const selectedBackground = colorMix('gray-25', 'gray-900', 7);
+const selectedActiveBackground = colorMix('gray-25', 'gray-900', 10);
+
+const listRowBackground = style<GridListItemRenderProps & {
+  isFirstItem?: boolean,
+  isLastItem?: boolean,
+  isPrevSelected?: boolean,
+  isNextSelected?: boolean,
+  isPrevNotSelected?: boolean,
+  isNextNotSelected?: boolean,
+  selectionStyle?: 'highlight' | 'checkbox'
+}>({
   position: 'absolute',
   zIndex: -1,
   inset: 0,
   backgroundColor: {
     default: '--rowBackgroundColor',
-    isHovered: 'gray-900/5',
-    isPressed: 'gray-900/10',
+    isHovered: {
+      default: 'gray-900/5',
+      selectionStyle: {
+        checkbox: selectedBackground
+      }
+    },
+    isPressed: {
+      default: 'gray-900/10',
+      selectionStyle: {
+        checkbox: selectedActiveBackground
+      }
+    },
     isSelected: {
-      default: 'blue-900/10',
-      isHovered: 'blue-900/15',
-      isPressed: 'blue-900/15'
+      selectionStyle: {
+        checkbox: {
+          default: selectedBackground,
+          isHovered: selectedActiveBackground,
+          isPressed: selectedActiveBackground,
+          isFocusVisible: selectedActiveBackground
+        },
+        highlight: {
+          default: 'blue-900/10',
+          isHovered: 'blue-900/15',
+          isPressed: 'blue-900/15'
+        }
+      }
     },
     forcedColors: {
       default: 'Background'
@@ -340,18 +387,31 @@ const listRowBackground = style({
   },
   borderTopWidth: {
     default: 1,
-    isPrevSelected: 0
+    isPrevSelected: {
+      selectionStyle: {
+        highlight: 0
+      }
+    }
   },
   borderBottomWidth: {
     default: 1,
-    isNextSelected: 0
+    isNextSelected: {
+      selectionStyle: {
+        highlight: 0
+      }
+    }
   },
   borderStartWidth: 1,
   borderEndWidth: 1,
   borderStyle: 'solid',
   borderColor: {
     default: 'transparent',
-    isSelected: '--borderColor'
+    isSelected: {
+      selectionStyle: {
+        highlight: '--borderColor',
+        checkbox: 'transparent'
+      }
+    }
   }
 });
 
@@ -448,7 +508,7 @@ const emptyStateWrapper = style({
 export function ListViewItem(props: ListViewItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
-  let {isQuiet} = useContext(InternalListViewContext);
+  let {isQuiet, selectionStyle} = useContext(InternalListViewContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
 
   return (
@@ -461,8 +521,9 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
         ...renderProps,
         isLink,
         isQuiet,
+        selectionStyle,
         isPrevNotSelected: !renderProps.isPrevSelected,
-        isNextNotSelected: !renderProps.isNextSelected,
+        isNextNotSelected: !renderProps.isNextSelected
       }, props.styles)}>
       {(renderProps) => {
         let {children} = props;
@@ -495,7 +556,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                 isDisabled
               }]
             ]}>
-            <div className={listRowBackground({...renderProps, isPrevNotSelected: !renderProps.isPrevSelected, isNextNotSelected: !renderProps.isNextSelected})} />
+            <div className={listRowBackground({...renderProps, selectionStyle, isPrevNotSelected: !renderProps.isPrevSelected, isNextNotSelected: !renderProps.isNextSelected})} />
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               <div className={listCheckbox({isDisabled})}>
                 <Checkbox slot="selection" />
