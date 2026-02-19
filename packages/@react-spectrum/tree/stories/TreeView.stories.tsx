@@ -383,10 +383,22 @@ export function renderEmptyState(): JSX.Element {
   );
 }
 
-export const EmptyTree: StoryObj<typeof TreeExampleDynamic> = {
-  ...TreeExampleDynamic,
+export const EmptyTree: StoryObj<typeof TreeView> = {
+  render: (args: SpectrumTreeViewProps<unknown>) => (
+    <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
+      <TreeView aria-label="test empty tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')} {...args}>
+        {(item: any) => (
+          <DynamicTreeItem
+            id={item.id}
+            icon={item.icon}
+            childItems={item.childItems}
+            textValue={item.name}
+            name={item.name} />
+        )}
+      </TreeView>
+    </div>
+  ),
   args: {
-    ...TreeExampleDynamic.args,
     items: [],
     renderEmptyState
   },
