@@ -11,15 +11,22 @@
  */
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
+import {ActionMenuContext} from './ActionMenu';
 import {baseColor, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
+import {Checkbox} from './Checkbox';
 import {
+  Collection,
+  CollectionRendererContext,
   ContextValue,
   DEFAULT_SLOT,
+  DefaultCollectionRenderer,
   GridList,
   GridListItem,
   GridListItemProps,
   GridListItemRenderProps,
+  GridListLoadMoreItem,
+  GridListLoadMoreItemProps,
   GridListProps,
   GridListRenderProps,
   ListLayout,
@@ -29,28 +36,42 @@ import {
 } from 'react-aria-components';
 import {controlFont, getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
-import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState} from '@react-types/shared';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
+import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
+import {useLocalizedStringFormatter} from 'react-aria';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, ListViewStylesProps, SlotProps {
+export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | 'selectionBehavior' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, ListViewStylesProps, SlotProps {
+  /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /**
-   * Whether to automatically focus the Inline Alert when it first renders.
+   * Whether to automatically focus the ListView when it first renders.
    */
   autoFocus?: boolean,
+  /** The current loading state of the ListView. */
+  loadingState?: LoadingState,
+  /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
+  onLoadMore?: () => void,
+  /** The children of the ListView. */
   children: ReactNode | ((item: T) => ReactNode)
 }
 
 interface ListViewStylesProps {
+  /** Whether the ListView should be displayed with a quiet style. */
   isQuiet?: boolean,
-  isEmphasized?: boolean,
+  /**
+   * How selection should be displayed.
+   * @default 'checkbox'
+   */
   selectionStyle?: 'highlight' | 'checkbox',
   highlightMode?: 'normal' | 'inverse'
 }
@@ -62,6 +83,11 @@ export interface ListViewItemProps extends Omit<GridListItemProps, 'children' | 
   children: ReactNode
 }
 
+export interface ListViewLoadMoreItemProps extends Pick<GridListLoadMoreItemProps, 'onLoadMore'> {
+  /** The current loading state of the ListView. */
+  loadingState?: LoadingState
+}
+
 interface ListViewRendererContextValue {
   renderer?: (item) => ReactElement<any, string | JSXElementConstructor<any>>
 }
@@ -69,11 +95,14 @@ const ListViewRendererContext = createContext<ListViewRendererContextValue>({});
 
 export const ListViewContext = createContext<ContextValue<Partial<ListViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
-let InternalListViewContext = createContext<{isQuiet?: boolean, isEmphasized?: boolean}>({});
+let InternalListViewContext = createContext<{isQuiet?: boolean, selectionStyle?: 'highlight' | 'checkbox'}>({});
 
 const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
   ...focusRing(),
-  outlineOffset: -2, // make certain we are visible inside overflow hidden containers
+  outlineOffset: {
+    default: -2,
+    isQuiet: -1
+  },
   userSelect: 'none',
   minHeight: 0,
   minWidth: 0,
@@ -82,9 +111,20 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
   boxSizing: 'border-box',
   overflow: 'auto',
   fontSize: controlFont(),
-  borderRadius: 'default',
+  backgroundColor: {
+    default: 'gray-25',
+    isQuiet: 'transparent',
+    forcedColors: 'Background'
+  },
+  borderRadius: {
+    default: 'default',
+    isQuiet: 'none'
+  },
   borderColor: 'gray-300',
-  borderWidth: 1,
+  borderWidth: {
+    default: 1,
+    isQuiet: 0
+  },
   borderStyle: 'solid'
 }, getAllowedOverrides({height: true}));
 
@@ -93,8 +133,9 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   ref: DOMRef<HTMLDivElement>
 ) {
   [props, ref] = useSpectrumContextProps(props, ref, ListViewContext);
-  let {children, isQuiet, isEmphasized} = props;
+  let {children, isQuiet, selectionStyle = 'checkbox', loadingState, onLoadMore, renderEmptyState: userRenderEmptyState, ...otherProps} = props;
   let scale = useScale();
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   let renderer;
   if (typeof children === 'function') {
@@ -103,23 +144,78 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
 
   let domRef = useDOMRef(ref);
 
+  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
+  let renderEmptyState: ListViewProps<T>['renderEmptyState'] | undefined;
+  if (userRenderEmptyState != null && !isLoading) {
+    renderEmptyState = (renderProps) => (
+      <div className={emptyStateWrapper}>
+        <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+          {userRenderEmptyState!(renderProps)}
+        </CollectionRendererContext.Provider>
+      </div>
+    );
+  } else if (loadingState === 'loading') {
+    renderEmptyState = () => (
+      <div className={centeredWrapper}>
+        <ProgressCircle
+          isIndeterminate
+          aria-label={stringFormatter.format('table.loading')} />
+      </div>
+    );
+  }
+
+  let loadMoreSpinner = onLoadMore ? (
+    <GridListLoadMoreItem isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full', paddingY: 8})}>
+      <div className={centeredWrapper}>
+        <ProgressCircle
+          isIndeterminate
+          aria-label={stringFormatter.format('table.loadingMore')} />
+      </div>
+    </GridListLoadMoreItem>
+  ) : null;
+
+  let wrappedChildren: ReactNode;
+  let gridListProps = otherProps;
+  if (typeof children === 'function' && otherProps.items) {
+    let {items, dependencies = [], ...rest} = otherProps;
+    gridListProps = rest;
+    wrappedChildren = (
+      <>
+        <Collection items={items} dependencies={dependencies}>
+          {children}
+        </Collection>
+        {loadMoreSpinner}
+      </>
+    );
+  } else {
+    wrappedChildren = (
+      <>
+        {children}
+        {loadMoreSpinner}
+      </>
+    );
+  }
+
   return (
     <Virtualizer
       layout={ListLayout}
       layoutOptions={{
-        rowHeight: scale === 'large' ? 50 : 40
+        estimatedRowHeight: scale === 'large' ? 50 : 40,
+        loaderHeight: 60
       }}>
       <ListViewRendererContext.Provider value={{renderer}}>
-        <InternalListViewContext.Provider value={{isQuiet, isEmphasized}}>
+        <InternalListViewContext.Provider value={{isQuiet, selectionStyle}}>
           <GridList
             ref={domRef}
-            {...props}
+            {...gridListProps}
+            selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
+            renderEmptyState={renderEmptyState}
             style={props.UNSAFE_style}
             className={(renderProps) => (props.UNSAFE_className || '') + listView({
               ...renderProps,
               isQuiet
             }, props.styles)}>
-            {children}
+            {wrappedChildren}
           </GridList>
         </InternalListViewContext.Provider>
       </ListViewRendererContext.Provider>
@@ -133,7 +229,6 @@ const listitem = style<GridListItemRenderProps & {
   isQuiet?: boolean,
   isFirstItem?: boolean,
   isLastItem?: boolean,
-  isEmphasized?: boolean,
   isSelected?: boolean,
   isDisabled?: boolean,
   isNextSelected?: boolean,
@@ -146,19 +241,11 @@ const listitem = style<GridListItemRenderProps & {
   outlineOffset: -2,
   columnGap: 0,
   paddingX: 0,
-  paddingBottom: '--labelPadding',
-  backgroundColor: {
-    default: 'transparent',
-    isHovered: 'gray-100',
-    isSelected: {
-      default: 'blue-900/10',
-      isHovered: 'blue-900/15'
-    }
-  },
+  paddingY: 8,
+  backgroundColor: 'transparent',
   color: {
     default: baseColor('neutral-subdued'),
-    isHovered: 'gray-800',
-    isSelected: 'gray-900',
+    isSelected: baseColor('neutral'),
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -169,16 +256,16 @@ const listitem = style<GridListItemRenderProps & {
   gridColumnEnd: -1,
   display: 'grid',
   gridTemplateAreas: [
-    '. checkmark icon label       actions chevron .',
-    '. .         .    description actions chevron .'
+    '. checkmark icon label       actions actionmenu chevron .',
+    '. .         .    description actions actionmenu chevron .'
   ],
-  gridTemplateColumns: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', edgeToText(40)],
+  gridTemplateColumns: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(40)],
   gridTemplateRows: '1fr auto',
   rowGap: {
     ':has([slot=description])': space(1)
   },
   alignItems: 'baseline',
-  height: 'full',
+  minHeight: 40,
   textDecoration: 'none',
   cursor: {
     default: 'default',
@@ -273,8 +360,6 @@ export let label = style({
   alignSelf: 'center',
   font: controlFont(),
   color: 'inherit',
-  // TODO: token values for padding not defined yet, revisit
-  marginTop: '--labelPadding',
   truncate: true
 });
 
@@ -284,9 +369,6 @@ export let description = style({
   font: 'ui-sm',
   color: {
     default: baseColor('neutral-subdued'),
-    // Ideally this would use the same token as hover, but we don't have access to that here.
-    // TODO: should we always consider isHovered and isFocused to be the same thing?
-    isFocused: 'gray-800',
     isDisabled: 'disabled'
   },
   transition: 'default'
@@ -316,7 +398,7 @@ let image = style({
   marginEnd: 'text-to-visual',
   alignSelf: 'center',
   borderRadius: 'sm',
-  height: 'calc(100% - 12px)',
+  width: 32,
   aspectRatio: 'square',
   objectFit: 'contain'
 });
@@ -329,10 +411,43 @@ let actionButtonGroup = style({
   marginStart: 'text-to-visual'
 });
 
+let listActionMenu = style({
+  gridArea: 'actionmenu',
+  gridRowEnd: 'span 2',
+  alignSelf: 'center'
+});
+
+const listCheckbox = style({
+  gridArea: 'checkmark',
+  gridRowEnd: 'span 2',
+  alignSelf: 'center',
+  marginEnd: 'text-to-visual',
+  visibility: {
+    default: 'visible',
+    isDisabled: 'hidden'
+  }
+});
+
+const centeredWrapper = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 'full',
+  height: 'full'
+});
+
+const emptyStateWrapper = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 'full',
+  height: 'full',
+  padding: 16
+});
+
 export function ListViewItem(props: ListViewItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
-  // let isLinkOut = isLink && props.target === '_blank';
   let {isQuiet} = useContext(InternalListViewContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
 
@@ -348,10 +463,10 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
         isQuiet,
         isPrevNotSelected: !renderProps.isPrevSelected,
         isNextNotSelected: !renderProps.isNextSelected,
-        isEmphasized: true
       }, props.styles)}>
       {(renderProps) => {
         let {children} = props;
+        let {selectionMode, selectionBehavior, isDisabled} = renderProps;
         return (
           <Provider
             values={[
@@ -372,9 +487,20 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                 styles: actionButtonGroup,
                 size: 'S',
                 isQuiet: true
+              }],
+              [ActionMenuContext, {
+                styles: listActionMenu,
+                isQuiet: true,
+                size: 'S',
+                isDisabled
               }]
             ]}>
             <div className={listRowBackground({...renderProps, isPrevNotSelected: !renderProps.isPrevSelected, isNextNotSelected: !renderProps.isNextSelected})} />
+            {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+              <div className={listCheckbox({isDisabled})}>
+                <Checkbox slot="selection" />
+              </div>
+            )}
             {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
           </Provider>
         );
@@ -382,3 +508,18 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
     </GridListItem>
   );
 }
+
+export const ListViewLoadMoreItem = (props: ListViewLoadMoreItemProps): ReactNode => {
+  let {loadingState, onLoadMore} = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
+  return (
+    <GridListLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full', paddingY: 8})}>
+      <div className={centeredWrapper}>
+        <ProgressCircle
+          isIndeterminate
+          aria-label={stringFormatter.format('table.loadingMore')} />
+      </div>
+    </GridListLoadMoreItem>
+  );
+};
