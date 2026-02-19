@@ -1,6 +1,7 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
+import {ListView, ListViewItem, ListViewLoadMoreItem, Text, ActionMenu, MenuItem, ActionButton, ActionButtonGroup, Image, IllustratedMessage, Heading, Content, Link} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['list', 'data', 'collection', 'table', 'grid'];
@@ -9,23 +10,32 @@ export const tags = ['list', 'data', 'collection', 'table', 'grid'];
 
 <PageDescription>{docs.exports.ListView.description}</PageDescription>
 
-```tsx render docs={docs.exports.ListView} links={docs.links} props={['selectionMode', 'selectionStyle']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="s2"
-import {ListView, ListViewItem} from '@react-spectrum/s2';
+```tsx render docs={docs.exports.ListView} links={docs.links} props={['selectionMode', 'selectionStyle', 'isQuiet']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="s2"
+import {ListView, ListViewItem, Text} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <ListView
   aria-label="Files"
   /* PROPS */
-  styles={style({width: 'full', height: 320})}>
-  <ListViewItem id="a">Adobe Photoshop</ListViewItem>
-  <ListViewItem id="b">Adobe XD</ListViewItem>
-  <ListViewItem id="c">Adobe InDesign</ListViewItem>
+  styles={style({width: 'full', maxWidth: 400, height: 320})}>
+  <ListViewItem id="adobe-photoshop" textValue="Adobe Photoshop">
+    <Text>Adobe Photoshop</Text>
+    <Text slot="description">Image editing software</Text>
+  </ListViewItem>
+  <ListViewItem id="adobe-xd" textValue="Adobe XD">
+    <Text>Adobe XD</Text>
+    <Text slot="description">UI/UX design tool</Text>
+  </ListViewItem>
+  <ListViewItem id="adobe-indesign" textValue="Adobe InDesign">
+    <Text>Adobe InDesign</Text>
+    <Text slot="description">Desktop publishing</Text>
+  </ListViewItem>
 </ListView>
 ```
 
 ## Content
 
-`ListView` follows the [Collection Components API](collections.html?component=TreeView), accepting both static and dynamic collections.
+`ListView` follows the [Collection Components API](collections.html?component=ListView), accepting both static and dynamic collections.
 
 ```tsx render type="s2"
 "use client";
@@ -34,13 +44,13 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
 let files = [
-  {id: 'a', name: 'Adobe Photoshop'},
-  {id: 'b', name: 'Adobe XD'},
-  {id: 'c', name: 'Adobe InDesign'}
+  {id: 'adobe-photoshop', name: 'Adobe Photoshop'},
+  {id: 'adobe-xd', name: 'Adobe XD'},
+  {id: 'adobe-indesign', name: 'Adobe InDesign'}
 ];
 ///- end collapse -///
 
-<ListView aria-label="Dynamic files" items={files} styles={style({width: 'full', height: 320})}>
+<ListView aria-label="Dynamic files" items={files} styles={style({width: 'full', maxWidth: 400, height: 320})}>
   {item => (
     <ListViewItem id={item.id}>{item.name}</ListViewItem>
   )}
@@ -49,11 +59,13 @@ let files = [
 
 ### Slots
 
-`ListViewItem` supports icons, `Text`, image content, and action content.
+`ListViewItem` supports icons, `Text`, [Image](Image) content, [ActionMenu](ActionMenu), and [ActionButtonGroup](ActionButtonGroup) as children.
+
+Use `textValue` when item content includes non-text children so typeahead and accessibility can still use a clear text label.
 
 ```tsx render type="s2"
 "use client";
-import {ActionButton, ActionButtonGroup, ListView, ListViewItem, Text} from '@react-spectrum/s2';
+import {ActionButton, ActionButtonGroup, ActionMenu, Image, ListView, ListViewItem, MenuItem, Text} from '@react-spectrum/s2';
 import Delete from '@react-spectrum/s2/icons/Delete';
 import Edit from '@react-spectrum/s2/icons/Edit';
 import File from '@react-spectrum/s2/icons/File';
@@ -61,18 +73,22 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
 let files = [
-  {id: 'a', name: 'Project brief.pdf'},
-  {id: 'b', name: 'Design directions.fig'},
-  {id: 'c', name: 'Final assets.zip'}
+  {id: 'project-brief', name: 'Project brief.pdf'},
+  {id: 'quarterly-report', name: 'Quarterly report.docx'},
+  {id: 'budget', name: 'Budget.xlsx'},
+  {id: 'dessert-sunset', name: 'Dessert sunset.jpg', image_url: 'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
+  {id: 'hiking-trail', name: 'Hiking trail.png', image_url: 'https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'}
 ];
 ///- end collapse -///
 
-<ListView aria-label="Rich content files" items={files} styles={style({width: 'full', height: 320})}>
+<ListView aria-label="Rich content files" items={files} styles={style({width: 'full', maxWidth: 400, height: 320})}>
   {item => (
-    <ListViewItem id={item.id}>
-      <File />
+    <ListViewItem id={item.id} textValue={item.name}>
+      {/*- begin highlight -*/}
+      {item.image_url ? <Image src={item.image_url} alt={item.name} /> : <File />}
       <Text>{item.name}</Text>
-      <ActionButtonGroup>
+      <Text slot="description">{item.image_url ? 'Image' : 'Document'}</Text>
+      <ActionButtonGroup aria-label="File actions">
         <ActionButton aria-label="Edit">
           <Edit />
         </ActionButton>
@@ -80,49 +96,19 @@ let files = [
           <Delete />
         </ActionButton>
       </ActionButtonGroup>
+      <ActionMenu>
+      {/*- end highlight -*/}
+        <MenuItem>
+          <Edit />
+          <Text>Edit</Text>
+        </MenuItem>
+        <MenuItem>
+          <Delete />
+          <Text>Delete</Text>
+        </MenuItem>
+      </ActionMenu>
     </ListViewItem>
   )}
-</ListView>
-```
-
-### Selection and Actions
-
-Use `selectionStyle="checkbox"` (default) for toggle selection with checkboxes, or `selectionStyle="highlight"` for row highlight selection behavior. Use `onAction` to handle row actions.
-
-```tsx render docs={docs.exports.ListView} links={docs.links} props={['selectionMode', 'selectionStyle']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple', selectionStyle: 'highlight'}} type="s2"
-"use client";
-import {ListView, ListViewItem} from '@react-spectrum/s2';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-<ListView
-  aria-label="Selectable files"
-  styles={style({width: 'full', height: 320})}
-  onAction={(key) => alert(`Action on ${key}`)}
-  /* PROPS */>
-  <ListViewItem id="a">Brand guidelines.pdf</ListViewItem>
-  <ListViewItem id="b">Icon set.svg</ListViewItem>
-  <ListViewItem id="c">Homepage comp.fig</ListViewItem>
-</ListView>
-```
-
-### Links
-
-Use the `href` prop on a `ListViewItem` to create links.
-
-```tsx render docs={docs.exports.ListView} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple'}} type="s2"
-import {ListView, ListViewItem} from '@react-spectrum/s2';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-<ListView aria-label="Bookmarks" styles={style({width: 'full', height: 320})}>
-  <ListViewItem id="adobe" href="https://adobe.com" target="_blank">
-    adobe.com
-  </ListViewItem>
-  <ListViewItem id="spectrum" href="https://spectrum.adobe.com" target="_blank">
-    spectrum.adobe.com
-  </ListViewItem>
-  <ListViewItem id="react-spectrum" href="https://react-spectrum.adobe.com" target="_blank">
-    react-spectrum.adobe.com
-  </ListViewItem>
 </ListView>
 ```
 
@@ -164,7 +150,7 @@ function AsyncListView() {
       onLoadMore={list.loadMore}
       ///- end highlight -///
       items={list.items}
-      styles={style({width: 'full', height: 320})}>
+      styles={style({width: 'full', maxWidth: 400, height: 320})}>
       {item => (
         <ListViewItem id={item.name}>{item.name}</ListViewItem>
       )}
@@ -173,8 +159,113 @@ function AsyncListView() {
 }
 ```
 
-### Empty State
+### Links
+
+Use the `href` prop on a `ListViewItem` to create links. See the [getting started guide](getting-started) to learn how to integrate with your framework.
+
+```tsx render docs={docs.exports.ListView} links={docs.links} props={['selectionMode', 'isQuiet']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'none'}} type="s2"
+import {ListView, ListViewItem} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<ListView aria-label="Bookmarks" styles={style({width: 'full', maxWidth: 400, height: 320})}>
+  <ListViewItem id="adobe" href="https://adobe.com" target="_blank">
+    adobe.com
+  </ListViewItem>
+  <ListViewItem id="spectrum" href="https://spectrum.adobe.com" target="_blank">
+    spectrum.adobe.com
+  </ListViewItem>
+  <ListViewItem id="react-spectrum" href="https://react-spectrum.adobe.com" target="_blank">
+    react-spectrum.adobe.com
+  </ListViewItem>
+</ListView>
+```
+
+### Empty state
 
 Use `renderEmptyState` to render placeholder content when there are no items.
 
+```tsx render type="s2"
+"use client";
+import {ListView, IllustratedMessage, Heading, Content, Link} from '@react-spectrum/s2';
+import FolderOpen from '@react-spectrum/s2/illustrations/linear/FolderOpen';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
+<ListView
+  aria-label="Search results"
+  styles={style({width: 'full', maxWidth: 400})}
+  /*- begin highlight -*/
+  renderEmptyState={() => (
+    <IllustratedMessage>
+      <FolderOpen />
+      <Heading>No results</Heading>
+      <Content>Press <Link href="https://adobe.com">here</Link> for more info.</Content>
+    </IllustratedMessage>
+  )}>
+  {/*- end highlight -*/}
+  {[]}
+</ListView>
+```
+
+## Selection and actions
+
+Use the `selectionMode` prop to enable single or multiple selection. Use `selectionStyle="checkbox"` (default) for toggle selection with checkboxes, or `selectionStyle="highlight"` for row highlight selection behavior. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=ListView) for more details.
+
+```tsx render docs={docs.exports.ListView} links={docs.links} props={['selectionMode', 'selectionStyle', 'isQuiet', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="s2"
+"use client";
+import {ListView, ListViewItem, type Selection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example(props) {
+  let [selected, setSelected] = useState<Selection>(new Set());
+
+  return (
+    <div className={style({width: 'full'})}>
+      <ListView
+        {...props}
+        aria-label="Files"
+        styles={style({width: 'full', maxWidth: 400, height: 320})}
+        ///- begin highlight -///
+        /* PROPS */
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+        onAction={key => alert(`Action on ${key}`)}
+        ///- end highlight -///
+      >
+        <ListViewItem id="a">Brand guidelines.pdf</ListViewItem>
+        <ListViewItem id="b">Icon set.svg</ListViewItem>
+        <ListViewItem id="c">Homepage comp.fig</ListViewItem>
+        <ListViewItem id="d" isDisabled>Archived.zip</ListViewItem>
+      </ListView>
+      <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+## API
+
+```tsx links={{ListView: '#listview', ListViewItem: '#listviewitem', ListViewLoadMoreItem: '#listviewloadmoreitem', ActionMenu: 'ActionMenu', ActionButtonGroup: 'ActionButtonGroup', Icon: 'icons', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span', Image: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img'}}
+<ListView>
+  <ListViewItem>
+    <Icon />
+    <Image />
+    <Text />
+    <Text slot="description" />
+    <ActionMenu /> or <ActionButtonGroup />
+  </ListViewItem>
+  <ListViewLoadMoreItem />
+</ListView>
+```
+
+### ListView
+
+<PropTable component={docs.exports.ListView} links={docs.links} />
+
+### ListViewItem
+
+<PropTable component={docs.exports.ListViewItem} links={docs.links} showDescription />
+
+### ListViewLoadMoreItem
+
+<PropTable component={docs.exports.ListViewLoadMoreItem} links={docs.links} showDescription />
