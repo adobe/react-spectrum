@@ -704,23 +704,11 @@ The `<TreeItem>` component works with frameworks and client side routers like [N
 
 ## Keyboard navigation
 
-By default, pressing the collapse key (<Keyboard>←</Keyboard> in LTR, <Keyboard>→</Keyboard> in RTL) on an expanded item will collapse it. The key will do nothing on non-collapsible items. The same key is used to navigate between the actions within tree items.
+Navigation within the tree and within individual item actions share two keyboard keys.
 
-The `shouldNavigateToCollapsibleParent` prop enables a faster navigation behavior: when the collapse key is pressed on a leaf item or an already collapsed parent, focus moves to that item's parent. This helps users quickly navigate up the tree without needing to manually navigate to each parent item. But it has a trade-off: users can no longer use that key to cycle through actions on the current item.
+The "expand" key (<Keyboard>→</Keyboard> in LTR, <Keyboard>←</Keyboard> in RTL) expands a collapsed item, and the "collapse" key (<Keyboard>←</Keyboard> in LTR, <Keyboard>→</Keyboard> in RTL) collapses an item, or navigates to its parent if the item is already collapsed.
 
-```tsx example
-<FileTree
-  shouldNavigateToCollapsibleParent
-  selectionMode="single"
-  defaultExpandedKeys={['1', '2']}
-  defaultSelectedKeys={['5']}
-/>
-```
-
-With this prop enabled:
-- Pressing collapse on a leaf item moves focus to its parent
-- Pressing collapse on an expanded item collapses it
-- Pressing collapse again on a collapsed item moves focus to its parent
+The same keys are used to navigate between the actions within tree items. When an item has actions and is not expandable, pressing the expand key navigates to the next action, and pressing the collapse key navigates to the previous action. When focus returns to the tree item itself, pressing the collapse key again collapses the item.
 
 ## Disabled items
 
