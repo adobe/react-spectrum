@@ -173,6 +173,10 @@ html {
   margin-right: -8px;
 }
 
+.popover[data-trigger="UnavailableMenuItemTrigger"] {
+  background: lightgray;
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;
