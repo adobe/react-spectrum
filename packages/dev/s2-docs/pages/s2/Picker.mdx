@@ -249,15 +249,16 @@ Use the `renderValue` prop to provide a custom element to display selected items
 
 ```tsx render
 "use client";
-import {Avatar, Picker, PickerItem, Text} from '@react-spectrum/s2';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Avatar, AvatarGroup, Picker, PickerItem, Text} from '@react-spectrum/s2';
 
+///- begin collapse -///
 let users = [
   {id: 'abraham-baker', avatar: 'https://www.untitledui.com/images/avatars/abraham-baker', name: 'Abraham Baker', email: 'abraham@example.com'},
   {id: 'adriana-sullivan', avatar: 'https://www.untitledui.com/images/avatars/adriana-sullivan', name: 'Adriana Sullivan', email: 'adriana@example.com'},
   {id: 'jonathan-kelly', avatar: 'https://www.untitledui.com/images/avatars/jonathan-kelly', name: 'Jonathan Kelly', email: 'jonathan@example.com'},
   {id: 'zara-bush', avatar: 'https://www.untitledui.com/images/avatars/zara-bush', name: 'Zara Bush', email: 'zara@example.com'}
 ];
+///- end collapse -///
 
 function Example() {
   return (
@@ -268,11 +269,11 @@ function Example() {
         selectionMode={"multiple"}
         ///- begin highlight -///
         renderValue={(selectedItems) => (
-          <div className={style({ display: 'flex', gap: 4, height: '80%' })}>
+          <AvatarGroup aria-label="Selected users">
             {selectedItems.map(item => (
-              <Avatar slot={null} key={item.id} src={item.avatar} alt={item.name} />
+              <Avatar key={item.id} src={item.avatar} alt={item.name} />
             ))}
-          </div>
+          </AvatarGroup>
         )}
         ///- end highlight -///
       >
