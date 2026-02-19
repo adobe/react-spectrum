@@ -51,7 +51,7 @@ There is no standalone calendar element in HTML. `<input type="date">` is close,
 * **Accessible** – Calendar cells can be navigated and selected using the keyboard, and localized screen reader messages are included to announce when the selection and visible date range change.
 * **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
 
-Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `useCalendar`.
+Read our [blog post](../blog/date-and-time-pickers-for-all) for more details about the internationalization, accessibility, and user experience features implemented by `useCalendar`.
 
 ## Anatomy
 
@@ -87,7 +87,7 @@ A calendar consists of a grouping element containing one or more date grids (e.g
 
 State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useCalendarState} /> hook from `@react-stately/calendar`. The state object should be passed as an option to `useCalendar`, `useCalendarGrid`, and `useCalendarCell`.
 
-Note that much of this anatomy is shared with [range calendars](useRangeCalendar.html). The only difference is that `useCalendarState` is used instead of `useRangeCalendarState`, and `useCalendar` is used instead of `useRangeCalendar`.
+Note that much of this anatomy is shared with [range calendars](../RangeCalendar/useRangeCalendar.html). The only difference is that `useCalendarState` is used instead of `useRangeCalendarState`, and `useCalendar` is used instead of `useRangeCalendar`.
 
 ## Date and time values
 
@@ -141,7 +141,7 @@ The `CalendarGrid` component will be responsible for rendering an individual mon
 
 The `state.getDatesInWeek` function returns the dates in each week of the month. Note that this always includes 7 values, but some of them may be null, which indicates that the date doesn't exist within the calendar system. You should render a placeholder `<td>` element in this case so that the cells line up correctly.
 
-**Note**: this component is the same as the `CalendarGrid` component shown in the [useRangeCalendar](useRangeCalendar.html) docs, and you can reuse it between both `Calendar` and `RangeCalendar`.
+**Note**: this component is the same as the `CalendarGrid` component shown in the [useRangeCalendar](../RangeCalendar/useRangeCalendar.html) docs, and you can reuse it between both `Calendar` and `RangeCalendar`.
 
 ```tsx example render=false export=true
 import {useCalendarGrid} from '@react-aria/calendar';
@@ -181,7 +181,7 @@ function CalendarGrid({state, ...props}) {
 
 Finally, the `CalendarCell` component renders an individual cell in a calendar. It consists of two elements: a `<td>` to represent the grid cell, and a `<div>` to represent a button that can be clicked to select the date. The `useCalendarCell` hook also returns the formatted date string in the current locale, as well as some information about the cell's state that can be useful for styling. See [above](#usecalendarcell) for details.
 
-**Note**: this component is the same as the `CalendarCell` component shown in the [useRangeCalendar](useRangeCalendar.html) docs, and you can reuse it between both `Calendar` and `RangeCalendar`.
+**Note**: this component is the same as the `CalendarCell` component shown in the [useRangeCalendar](../RangeCalendar/useRangeCalendar.html) docs, and you can reuse it between both `Calendar` and `RangeCalendar`.
 
 ```tsx example render=false export=true
 import {useCalendarCell} from '@react-aria/calendar';
@@ -265,7 +265,7 @@ That's it! Now we can render an example of our `Calendar` component in action.
 
 ### Button
 
-The `Button` component is used in the above example to navigate between months. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+The `Button` component is used in the above example to navigate between months. It is built using the [useButton](../Button/useButton.html) hook, and can be shared with many other components.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -357,7 +357,7 @@ function Example() {
 
 ### International calendars
 
-`useCalendar` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the [I18nProvider](I18nProvider.html) component.
+`useCalendar` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the [I18nProvider](../I18nProvider) component.
 
 Selected dates passed to `onChange` always use the same calendar system as the `value` or `defaultValue` prop. If no `value` or `defaultValue` is provided, then dates passed to `onChange` are always in the Gregorian calendar since this is the most commonly used. This means that even though the user selects dates in their local calendar system, applications are able to deal with dates from all users consistently.
 

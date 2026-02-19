@@ -4,12 +4,12 @@
 import {Autocomplete, GridLayout, ListBox, ListBoxItem, Size, useFilter, Virtualizer} from 'react-aria-components';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import Close from '@react-spectrum/s2/icons/Close';
-import {Content, Heading, IllustratedMessage, pressScale, SearchField, Skeleton, Text, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
+import {Content, Heading, IllustratedMessage, Link, pressScale, SearchField, Skeleton, Text, ToastQueue} from '@react-spectrum/s2';
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {iconAliases} from './iconAliases.js';
 // @ts-ignore
 import icons from '/packages/@react-spectrum/s2/s2wf-icons/*.svg';
-import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
+import {InfoMessage} from './colorSearchData';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
@@ -19,14 +19,19 @@ export const iconList = Object.keys(icons).map(name => ({id: name.replace(/^S2_I
 export function useIconFilter() {
   let {contains} = useFilter({sensitivity: 'base'});
   return useCallback((textValue: string, inputValue: string) => {
+    const trimmedInput = inputValue.trim();
+    // If input is empty after trimming, show all items
+    if (!trimmedInput) {
+      return true;
+    }
     // Check for alias matches
     for (const alias of Object.keys(iconAliases)) {
-      if (contains(alias, inputValue) && iconAliases[alias].includes(textValue)) {
+      if (contains(alias, trimmedInput) && iconAliases[alias].includes(textValue)) {
         return true;
       }
     }
     // Also compare for substrings in the icon's actual name
-    return textValue != null && contains(textValue, inputValue);
+    return textValue != null && contains(textValue, trimmedInput);
   }, [contains]);
 }
 
@@ -55,15 +60,6 @@ export function useCopyImport() {
   }, []);
 
   return {copiedId, handleCopyImport};
-}
-
-function CopyInfoMessage() {
-  return (
-    <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4})}>
-      <InfoCircle styles={iconStyle({size: 'XS'})} />
-      <span className={style({font: 'ui'})}>Press an item to copy its import statement</span>
-    </div>
-  );
 }
 
 interface IconListBoxProps {
@@ -133,7 +129,7 @@ export function IconSearchView({filteredItems, listBoxClassName}: IconSearchView
 
   return (
     <>
-      <CopyInfoMessage />
+      <InfoMessage>Press an item to copy its import statement. See <Link href="icons">Icons</Link> for more information.</InfoMessage>
       <IconListBox items={filteredItems} copiedId={copiedId} onAction={handleCopyImport} listBoxClassName={listBoxClassName} />
     </>
   );
@@ -236,7 +232,7 @@ export function IconsPageSearch() {
       <Autocomplete filter={filter}>
         <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
           <SearchField size="L" aria-label="Search icons" placeholder="Search icons" />
-          <CopyInfoMessage />
+          <InfoMessage>Press an item to copy its import statement. See <Link href="icons">Icons</Link> for more information.</InfoMessage>
           <IconListBox
             items={iconList}
             copiedId={copiedId}

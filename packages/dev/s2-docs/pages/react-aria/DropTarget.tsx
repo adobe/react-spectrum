@@ -1,6 +1,6 @@
 "use client";
 
-import React, {JSX, ReactNode} from 'react';
+import React, {ReactNode} from 'react';
 import type {TextDropItem} from '@react-aria/dnd';
 import {useDrop} from '@react-aria/dnd';
 

@@ -17,5 +17,6 @@ type Story = StoryFn<typeof SearchField>;
 export const Example: Story = (args) => <SearchField {...args} />;
 
 Example.args = {
-  label: 'Search'
+  label: 'Search',
+  placeholder: 'Search documents'
 };

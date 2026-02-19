@@ -7,6 +7,8 @@ import Anatomy from '@react-aria/breadcrumbs/docs/anatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 
 export const tags = ['navigation'];
+export const relatedPages = [{'title': 'useBreadcrumbs', 'url': 'Breadcrumbs/useBreadcrumbs.html'}];
+export const description = 'Displays a hierarchy of links to the current page or resource in an application.';
 
 # Breadcrumbs
 
@@ -18,8 +20,8 @@ export const tags = ['navigation'];
   import {Breadcrumbs, Breadcrumb} from 'vanilla-starter/Breadcrumbs';
 
   <Breadcrumbs/* PROPS */>
-    <Breadcrumb href="/">Home</Breadcrumb>
-    <Breadcrumb href="/react-aria/">React Aria</Breadcrumb>
+    <Breadcrumb href="#">Home</Breadcrumb>
+    <Breadcrumb href="#">React Aria</Breadcrumb>
     <Breadcrumb>Breadcrumbs</Breadcrumb>
   </Breadcrumbs>
   ```
@@ -29,8 +31,8 @@ export const tags = ['navigation'];
   import {Breadcrumbs, Breadcrumb} from 'tailwind-starter/Breadcrumbs';
 
   <Breadcrumbs/* PROPS */>
-    <Breadcrumb href="/">Home</Breadcrumb>
-    <Breadcrumb href="/react-aria/">React Aria</Breadcrumb>
+    <Breadcrumb href="#">Home</Breadcrumb>
+    <Breadcrumb href="#">React Aria</Breadcrumb>
     <Breadcrumb>Breadcrumbs</Breadcrumb>
   </Breadcrumbs>
   ```
@@ -39,7 +41,7 @@ export const tags = ['navigation'];
 
 ## Content
 
-`Breadcrumbs` follows the [Collection Components API](collections.html?component=Breadcrumbs), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children. The `onAction` event is called when a user presses a breadcrumb.
+`Breadcrumbs` follows the [Collection Components API](collections?component=Breadcrumbs), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children. The `onAction` event is called when a user presses a breadcrumb.
 
 ```tsx render
 "use client";
@@ -78,7 +80,7 @@ function Example() {
 
 <Anatomy />
 
-```tsx links={{Breadcrumbs: '#breadcrumbs', Breadcrumb: '#breadcrumb', Link: 'Link.html'}}
+```tsx links={{Breadcrumbs: '#breadcrumbs', Breadcrumb: '#breadcrumb', Link: 'Link'}}
 <Breadcrumbs>
   <Breadcrumb>
     <Link />

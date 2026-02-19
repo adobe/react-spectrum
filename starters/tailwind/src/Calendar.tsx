@@ -20,14 +20,14 @@ import { composeTailwindRenderProps, focusRing } from './utils';
 
 const cellStyles = tv({
   extend: focusRing,
-  base: 'w-9 h-9 text-sm cursor-default rounded-full flex items-center justify-center forced-color-adjust-none',
+  base: 'w-[calc(100cqw/7)] aspect-square text-sm cursor-default rounded-full flex items-center justify-center forced-color-adjust-none [-webkit-tap-highlight-color:transparent]',
   variants: {
     isSelected: {
-      false: 'text-zinc-900 dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-700 pressed:bg-gray-200 dark:pressed:bg-zinc-600',
+      false: 'text-neutral-900 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 pressed:bg-neutral-300 dark:pressed:bg-neutral-600',
       true: 'bg-blue-600 invalid:bg-red-600 text-white forced-colors:bg-[Highlight] forced-colors:invalid:bg-[Mark] forced-colors:text-[HighlightText]'
     },
     isDisabled: {
-      true: 'text-gray-300 dark:text-zinc-600 forced-colors:text-[GrayText]'
+      true: 'text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText]'
     }
   }
 });
@@ -40,7 +40,7 @@ export function Calendar<T extends DateValue>(
   { errorMessage, ...props }: CalendarProps<T>
 ) {
   return (
-    <AriaCalendar {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col font-sans')}>
+    <AriaCalendar {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col font-sans w-[calc(9*var(--spacing)*7)] max-w-full @container')}>
       <CalendarHeader />
       <CalendarGrid className="border-spacing-0">
         <CalendarGridHeader />
@@ -58,11 +58,11 @@ export function CalendarHeader() {
 
   return (
     <header className="flex items-center gap-1 pb-4 px-1 border-box">
-      <Button variant="secondary" slot="previous">
+      <Button variant="quiet" slot="previous">
         {direction === 'rtl' ? <ChevronRight aria-hidden size={18} /> : <ChevronLeft aria-hidden size={18} />}
       </Button>
-      <Heading className="flex-1 font-sans font-semibold [font-variation-settings:normal] text-lg text-center mx-2 text-zinc-900 dark:text-zinc-200" />
-      <Button variant="secondary" slot="next">
+      <Heading className="flex-1 font-sans font-semibold [font-variation-settings:normal] text-base text-center mx-2 my-0 text-neutral-900 dark:text-neutral-200" />
+      <Button variant="quiet" slot="next">
         {direction === 'rtl' ? <ChevronLeft aria-hidden size={18} /> : <ChevronRight aria-hidden size={18} />}
       </Button>
     </header>
@@ -73,7 +73,7 @@ export function CalendarGridHeader() {
   return (
     <AriaCalendarGridHeader>
       {(day) => (
-        <CalendarHeaderCell className="text-xs text-gray-500 font-semibold">
+        <CalendarHeaderCell className="text-xs text-neutral-500 font-semibold">
           {day}
         </CalendarHeaderCell>
       )}

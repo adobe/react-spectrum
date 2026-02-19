@@ -19,9 +19,9 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
 import React from 'react';
-import {Byline} from '../../../src/BlogList';
 import {NumberField} from '@react-spectrum/s2';
 
+export const hideNav = true;
 export const tags = ['react aria', 'react spectrum', 'react', 'spectrum', 'interactions', 'numberfield', 'touch', 'spinbutton'];
 export const description = 'Number fields are commonly used form components, but are frequently not a great user experience. They often lack support for advanced formatting, such as currency and unit values, and do not provide a localized experience for users around the world. In this post, we\'ll discuss how we approached building our number field component with support for formatting and internationalization in mind.';
 export const date = '2021-05-05';
@@ -31,7 +31,6 @@ export const section = 'Blog';
 export const isSubpage = true;
 
 # How we internationalized our number field
-<Byline author={author} authorLink={authorLink} date={date} />
 
 Number fields are commonly used form components, but are frequently not a great user experience. They often lack support for advanced formatting, such as currency and unit values, and do not provide a localized experience for users around the world. In this post, we'll discuss how we approached building our number field component with support for formatting and internationalization in mind.
 
@@ -52,6 +51,7 @@ Number fields can be used to represent many different types of numeric values, e
 We use the [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) API built into browsers to handle all of these formatting requirements across all locales. Our number field component supports most of the formatting options that the Intl API supports, which ensures that it is international friendly and supports many common formatting options out of the box. The browser currently only provides formatting support, however, not parsing support, so we built a custom number parser using information from the formatter. We'll discuss how this works in detail later in the post.
 
 ```tsx render
+"use client";
 import {NumberField} from '@react-spectrum/s2';
 
 <NumberField
@@ -71,6 +71,7 @@ Many number fields also support incrementing and decrementing their value using 
 One area of complexity here is dealing with floating point rounding errors. All JavaScript numbers are double precision floating point, which means when you add or subtract two numbers, you can get rounding errors. For example, `0.1 + 0.2 === 0.30000000000000004`. This isn't really what users expect, however, so to fix this, we determine how many decimal places there are, multiply to convert the two numbers to integers, perform the addition or subtraction, and then divide again to get a decimal. A similar fix is necessary to perform step snapping on blur.
 
 ```tsx render
+"use client";
 import {NumberField} from '@react-spectrum/s2';
 
 <NumberField
@@ -91,7 +92,7 @@ A number field should help the user enter a valid number and avoid accidental in
 In addition, we also support several different numbering systems, including the Latin, Arabic, and Han positional decimal systems. There are many different ways of entering numbers, including different hardware keyboard layouts, and various input method editors such as Pinyin, which uses combinations of Latin characters to represent Chinese logograms. These are supported via composition events, which the browser fires as the user enters each Latin character. While these characters by themselves are not valid numbers, we cannot validate them until the sequence is complete and the Latin characters are replaced by the Chinese logogram.
 
 <figure style={{display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '20px 0'}}>
-  <video src={pinyinEntering} loop autoPlay muted style={{margin: 0, marginBottom: 5, width: '300px'}} />
+  <video src={pinyinEntering} loop autoPlay muted playsInline style={{margin: 0, marginBottom: 5, width: '300px'}} />
   <Caption>Entering the number 21 in the Han positional decimal system using the iOS Pinyin keyboard</Caption>
 </figure>
 
@@ -157,5 +158,5 @@ This approach of using a number formatter to generate a parser avoids needing to
 
 ## Conclusion
 
-In this post, we covered how a number field can be internationalized and support advanced formatting, and how we improved the experience on mobile. If you need to implement localized number parsing in your own apps or components, check out the [@internationalized/number](http://npmjs.com/@internationalized/number) package on npm. And if you use the [useNumberField](https://react-spectrum.adobe.com/react-aria/useNumberField.html) hook in React Aria, or the [NumberField](../../s2/NumberField.html) component in React Spectrum, all of this is built in.
+In this post, we covered how a number field can be internationalized and support advanced formatting, and how we improved the experience on mobile. If you need to implement localized number parsing in your own apps or components, check out the [@internationalized/number](http://npmjs.com/@internationalized/number) package on npm. And if you use the [useNumberField](../NumberField/useNumberField.html) hook in React Aria, or the [NumberField](s2:NumberField) component in React Spectrum, all of this is built in.
 

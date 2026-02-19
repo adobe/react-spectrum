@@ -13,10 +13,12 @@ import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/i18n';
 
 export const section = 'Utilities';
-export const description = 'Implementing collections in React Aria';
+export const description = 'Wraps Intl.Collator and compares and sorts strings according to the current locale.';
 
 
 # useCollator
+
+<PageDescription>{docs.exports.useCollator.description}</PageDescription>
 
 ## Introduction
 
@@ -33,7 +35,7 @@ This example includes two textfields and compares the values of the two fields u
 ```tsx render
 'use client';
 import React from 'react';
-import {useCollator} from '@react-aria/i18n';
+import {useCollator} from 'react-aria';
 
 function Example() {
   let [first, setFirst] = React.useState('');

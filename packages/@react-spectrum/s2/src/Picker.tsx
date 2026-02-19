@@ -57,6 +57,7 @@ import {
   listboxItem,
   LOADER_ROW_HEIGHTS
 } from './ComboBox';
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   FieldErrorIcon,
   FieldLabel,
@@ -91,14 +92,13 @@ export interface PickerStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL',
   /**
    * Whether the picker should be displayed with a quiet style.
-   * @private
    */
   isQuiet?: boolean
 }
 
 type SelectionMode = 'single' | 'multiple';
 export interface PickerProps<T extends object, M extends SelectionMode = 'single'> extends
-  Omit<AriaSelectProps<T, M>, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>,
+  Omit<AriaSelectProps<T, M>, 'children' | 'style' | 'className' | 'render' | 'allowsEmptyCollection' | keyof GlobalDOMAttributes>,
   PickerStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -123,7 +123,13 @@ export interface PickerProps<T extends object, M extends SelectionMode = 'single
     /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
     menuWidth?: number,
     /** The current loading state of the Picker. */
-    loadingState?: LoadingState
+    loadingState?: LoadingState,
+    /**
+     * Custom renderer for the picker value. Allows one to provide a custom element to render selected items.
+     *
+     * @note The returned ReactNode should not have interactable elements as it will break accessibility.
+     */
+    renderValue?: (selectedItems: T[]) => ReactNode
 }
 
 interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {}
@@ -206,7 +212,8 @@ const valueStyles = style({
   },
   truncate: true,
   display: 'flex',
-  alignItems: 'center'
+  alignItems: 'center',
+  height: '100%'
 });
 
 const iconStyles = style({
@@ -277,6 +284,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     placeholder = stringFormatter.format('picker.placeholder'),
     isQuiet,
     loadingState,
+    renderValue,
     onLoadMore,
     ...pickerProps
   } = props;
@@ -342,6 +350,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
         <>
           <InternalPickerContext.Provider value={{size}}>
             <FieldLabel
+              includeNecessityIndicatorInAccessibilityName
               isDisabled={isDisabled}
               isRequired={isRequired}
               size={size}
@@ -354,6 +363,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
             </FieldLabel>
             <PickerButton
               loadingState={loadingState}
+              renderValue={renderValue}
               isOpen={isOpen}
               isQuiet={isQuiet}
               isFocusVisible={isFocusVisible}
@@ -460,7 +470,7 @@ const avatarSize = {
   XL: 26
 } as const;
 
-interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>, Pick<PickerProps<T>, 'loadingState'> {
+interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>, Pick<PickerProps<T>, 'loadingState' | 'renderValue'> {
   loadingCircle: ReactNode,
   buttonRef: RefObject<HTMLButtonElement | null>
 }
@@ -476,7 +486,8 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
     isDisabled,
     loadingState,
     loadingCircle,
-    buttonRef
+    buttonRef,
+    renderValue
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
@@ -511,8 +522,20 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
         })}>
         {(renderProps) => (
           <>
-            <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> :not([slot=icon], [slot=avatar], [slot=label], [data-slot=label]) {display: none;}')}>
+            <SelectValue
+              className={
+                valueStyles({isQuiet}) +
+                (renderValue ? '' : ' ' + raw('&> :not([slot=icon], [slot=avatar], [slot=label], [data-slot=label]) {display: none;}'))
+              }>
               {({selectedItems, defaultChildren}) => {
+                const selectedValues = selectedItems.filter((item): item is T => item != null);
+                const defaultRenderedValue = selectedItems.length <= 1
+                  ? defaultChildren
+                  : <Text slot="label">{stringFormatter.format('picker.selectedCount', {count: selectedItems.length})}</Text>;
+                const renderedValue = selectedItems.length > 0 && renderValue
+                  ? renderValue(selectedValues)
+                  : defaultRenderedValue;
+
                 return (
                   <Provider
                     values={[
@@ -557,10 +580,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                       }],
                       [InsideSelectValueContext, true]
                     ]}>
-                    {selectedItems.length <= 1
-                      ? defaultChildren
-                      : <Text slot="label">{stringFormatter.format('picker.selectedCount', {count: selectedItems.length})}</Text>
-                    }
+                    {renderedValue}
                   </Provider>
                 );
               }}
@@ -582,7 +602,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
   );
 });
 
-export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
+export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'render' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   children: ReactNode
 }
 
@@ -653,7 +673,7 @@ function DefaultProvider({context, value, children}: {context: React.Context<any
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 
-export interface PickerSectionProps<T extends object> extends Omit<SectionProps<T>, keyof GlobalDOMAttributes> {}
+export interface PickerSectionProps<T extends object> extends Omit<SectionProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, StyleProps {}
 export function PickerSection<T extends object>(props: PickerSectionProps<T>): ReactNode {
   let {size} = useContext(InternalPickerContext);
   return (

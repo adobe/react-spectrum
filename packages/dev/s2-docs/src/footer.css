@@ -4,5 +4,5 @@ footer li:after {
 }
 
 footer li:last-child:after {
-  content: '';
+  content: unset;
 }

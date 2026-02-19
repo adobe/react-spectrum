@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
+import {Collection, DragAndDropHooks, DropIndicator, GridLayout, Header, isTextDropItem, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
 import {ListBoxLoadMoreItem} from '../';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
@@ -743,6 +743,46 @@ export const AsyncListBoxVirtualized: StoryFn<typeof AsyncListBoxRender> = (args
   );
 };
 
+export const ListBoxScrollMargin: ListBoxStory = (args) => {
+  let items: {id: number, name: string, description: string}[] = [];
+  for (let i = 0; i < 100; i++) {
+    items.push({id: i, name: `Item ${i}`, description: `Description ${i}`});
+  }
+  return (
+    <ListBox 
+      className={styles.menu} 
+      {...args}
+      aria-label="test listbox" 
+      style={{height: 200, width: 100, overflow: 'scroll'}} 
+      items={items}>
+      {item => (
+        <MyListBoxItem style={{scrollMargin: 10, width: 150, display: 'flex', padding: '2px 20px', justifyContent: 'space-between'}}>
+          <span>{item.name}</span>
+          <span>{item.description}</span>
+        </MyListBoxItem>
+      )}
+    </ListBox>
+  );
+};
+
+export const ListBoxSmoothScroll: ListBoxStory = (args) => {
+  let items: {id: number, name: string}[] = [];
+  for (let i = 0; i < 100; i++) {
+    items.push({id: i, name: `Item ${i}`});
+  }
+  return (
+    <ListBox 
+      className={styles.menu} 
+      {...args} 
+      aria-label="test listbox" 
+      style={{height: 200, width: 200, overflow: 'scroll', display: 'grid', gridTemplateColumns: 'repeat(4, 80px)', scrollBehavior: 'smooth'}} 
+      items={items} 
+      layout="grid">
+      {item => <MyListBoxItem style={{minHeight: 32}}>{item.name}</MyListBoxItem>}
+    </ListBox>
+  );
+};
+
 AsyncListBoxVirtualized.story = {
   args: {
     delay: 50
@@ -808,3 +848,87 @@ export let VirtualizedListBoxDndOnAction: ListBoxStory = () => {
   );
 };
 
+interface AlbumListBoxProps {
+  items?: Album[],
+  dragAndDropHooks?: DragAndDropHooks<Album>
+}
+
+function AlbumListBox(props: AlbumListBoxProps) {
+  const {dragAndDropHooks, items} = props;
+
+  return (
+    <ListBox
+      aria-label="Albums"
+      dragAndDropHooks={dragAndDropHooks}
+      items={items}
+      renderEmptyState={() => 'Drop items here'}
+      selectionMode="multiple">
+      <Collection items={items}>
+        {(item) => (
+          <ListBoxItem textValue={item.title}>
+            <img alt="" src={item.image} />
+            <Text slot="label">{item.title}</Text>
+            <Text slot="description">{item.artist}</Text>
+          </ListBoxItem>
+        )}
+      </Collection>
+      <ListBoxLoadMoreItem />
+    </ListBox>
+  );
+}
+
+function DraggableListBox() {
+  const list = useListData({
+    initialItems: albums
+  });
+
+  const {dragAndDropHooks} = useDragAndDrop<Album>({
+    getItems(keys, items) {
+      return items.map((item) => {
+        return {
+          album: JSON.stringify(item)
+        };
+      });
+    },
+    onDragEnd(e) {
+      const {dropOperation, isInternal, keys} = e;
+      if (dropOperation === 'move' && !isInternal) {
+        list.remove(...keys);
+      }
+    }
+  });
+
+  return <AlbumListBox dragAndDropHooks={dragAndDropHooks} items={list.items} />;
+}
+
+function DroppableListBox() {
+  const list = useListData<Album>({});
+
+  const {dragAndDropHooks} = useDragAndDrop({
+    acceptedDragTypes: ['album'],
+    async onRootDrop(e) {
+      const items = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async (item) => JSON.parse(await item.getText('album')))
+      );
+      list.append(...items);
+    }
+  });
+
+  return <AlbumListBox dragAndDropHooks={dragAndDropHooks} items={list.items} />;
+}
+
+export const DropOntoRoot = () => (
+  <div
+    style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: 12,
+      justifyContent: 'center',
+      width: '100%'
+    }}>
+    <DraggableListBox />
+    <DroppableListBox />
+  </div>
+);

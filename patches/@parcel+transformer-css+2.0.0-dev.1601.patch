@@ -6,7 +6,7 @@ index b8dd9f2..0bad8ab 100644
      } else if (Array.isArray(contents === null || contents === void 0 || (_contents$cssModules4 = contents.cssModules) === null || _contents$cssModules4 === void 0 ? void 0 : _contents$cssModules4.exclude)) {
        contents.cssModules.exclude = contents.cssModules.exclude.map(exclude => typeof exclude === 'string' ? (0, _utils().globToRegex)(exclude) : exclude);
      }
-+    if (config.searchPath.endsWith('home.global.css') || /packages.@react-spectrum.s2/.test(config.searchPath)) {
++    if (config.searchPath.endsWith('home.global.css') || /s2-docs/.test(config.searchPath) || /packages.@react-spectrum.s2/.test(config.searchPath)) {
 +      contents = {...contents, pseudoClasses: null};
 +    }
      return contents;

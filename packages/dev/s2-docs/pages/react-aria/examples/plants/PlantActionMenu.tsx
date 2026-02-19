@@ -14,7 +14,7 @@ export function PlantActionMenu(props: PlantActionMenuProps) {
   let {item, onFavoriteChange, onEdit, onDelete} = props;
   return (
     <MenuTrigger>
-      <Button aria-label="Actions" variant="secondary" className="row-span-2 place-self-center bg-transparent dark:bg-transparent border-transparent dark:border-transparent !p-1">
+      <Button aria-label="Actions" variant="secondary" className="row-span-2 place-self-center bg-transparent dark:bg-transparent border-transparent dark:border-transparent">
         <MoreHorizontal aria-hidden className="w-5 h-5" />
       </Button>
       <Menu>

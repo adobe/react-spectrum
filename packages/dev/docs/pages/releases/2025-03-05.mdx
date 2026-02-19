@@ -19,9 +19,9 @@ date: 2025-03-05
 
 # March 5, 2025 Release
 
-Buckle in because this is a big one! In this React Aria release, we’re excited to announce three new components: [Toast](../react-aria/Toast.html), [Tree](../react-aria/Tree.html), and [Virtualizer](../react-aria/Virtualizer.html). In addition, we have improved [Autocomplete](../react-aria/Autocomplete.html) to enable UI patterns like [Searchable Menus](../react-aria/Menu.html#complex-content), [Searchable Selects](../react-aria/examples/searchable-select.html), and [Command Palettes](../react-aria/examples/command-palette.html), added support for custom [Menu](../react-aria/Menu.html#custom-trigger), [Popover](../react-aria/Popover.html#custom-trigger), and [Tooltip](../react-aria/Tooltip.html#custom-trigger) triggers, introduced `colSpan` support in Table, and upgraded to Tailwind CSS v4. Last but not least, we have a major refactor of [usePress](../react-aria/usePress.html), which fixes many longstanding issues and improves compatibility with third party libraries.
+Buckle in because this is a big one! In this React Aria release, we’re excited to announce three new components: [Toast](react-aria:Toast), [Tree](react-aria:Tree), and [Virtualizer](react-aria:Virtualizer). In addition, we have improved [Autocomplete](react-aria:Autocomplete) to enable UI patterns like [Searchable Menus](react-aria:Menu#autocomplete), [Searchable Selects](react-aria:Select#autocomplete), and [Command Palettes](react-aria:Autocomplete), added support for custom [Menu](react-aria:Menu#custom-trigger), [Popover](react-aria:Popover#custom-trigger), and [Tooltip](react-aria:Tooltip#custom-trigger) triggers, introduced `colSpan` support in Table, and upgraded to Tailwind CSS v4. Last but not least, we have a major refactor of [usePress](react-aria:usePress), which fixes many longstanding issues and improves compatibility with third party libraries.
 
-For React Spectrum, we have GA versions of [Toast](../react-spectrum/Toast.html) and [TreeView](../react-spectrum/TreeView.html), support for tooltips in TagGroup and Tabs, and improved localization support in our DatePicker components.
+For React Spectrum, we have GA versions of [Toast](../Toast.html) and [TreeView](../TreeView.html), support for tooltips in TagGroup and Tabs, and improved localization support in our DatePicker components.
 
 This release would not be possible without the fantastic contributions we received from the community. A special shoutout to [@oyvinmar](https://github.com/oyvinmar) and [@nwidynski](https://github.com/nwidynski) for contributing features like `colSpan` and nested collection support. Huge thanks to everyone else who contributed as well. ❤️
 
@@ -33,7 +33,7 @@ In this release, we’ve improved support for right-to-left languages in our dat
 
 ### usePress update
 
-[usePress](../react-aria/usePress.html) was heavily refactored to improve focus management and compatibility with third party libraries. Prior to this refactor, we used `preventDefault` and manually managed focus due to [differences in focus behavior](https://react-spectrum.adobe.com/blog/building-a-button-part-3.html#ensuring-consistent-focus-behavior) between Safari and other browsers. Unfortunately, this resulted in many unintended side effects, such as canceling compatibility mouse events, breaking the `:active` and `:focus-visible` pseudo classes, causing issues with the mobile virtual keyboard, etc.
+[usePress](react-aria:usePress) was heavily refactored to improve focus management and compatibility with third party libraries. Prior to this refactor, we used `preventDefault` and manually managed focus due to [differences in focus behavior](react-aria:blog/building-a-button-part-3#ensuring-consistent-focus-behavior) between Safari and other browsers. Unfortunately, this resulted in many unintended side effects, such as canceling compatibility mouse events, breaking the `:active` and `:focus-visible` pseudo classes, causing issues with the mobile virtual keyboard, etc.
 
 Thanks to an update in Safari 17, all elements with an explicit `tabIndex` can now receive focus like in other browsers. This allows us to remove our reliance on `preventDefault`, and change the timing of when `onPress` is fired. As a result, browser events that used to be prevented when interacting with our components now fire as expected, greatly improving compatibility with third party libraries that rely on these events, and resolving [over 15 open issues](https://github.com/adobe/react-spectrum/pull/7542).
 
@@ -41,7 +41,7 @@ Note that this refactor changes the order that focus occurs. Previously, focus a
 
 ### TreeView changes
 
-With the GA release of TreeView, be sure to update any usages of [TreeViewItem](../react-spectrum/TreeView.html#treeviewitem-props) so that its contents are wrapped in the new [TreeViewItemContent](../react-spectrum/TreeView.html#treeviewitemcontent-props).
+With the GA release of TreeView, be sure to update any usages of [TreeViewItem](../TreeView.html#treeviewitem-props) so that its contents are wrapped in the new [TreeViewItemContent](../TreeView.html#treeviewitemcontent-props).
 
 ## Enhancements
 

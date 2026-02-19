@@ -35,7 +35,7 @@ export function S2FAQ() {
       <Disclosure isQuiet>
         <DisclosureTitle>Where can I find a list of what values are supported by the style macro?</DisclosureTitle>
         <DisclosurePanel>
-          See the <Link href="style-macro.html">following page</Link> for a full list of what values are supported by the <code>style</code> macro.
+          See the <Link href="style-macro">following page</Link> for a full list of what values are supported by the <code>style</code> macro.
         </DisclosurePanel>
       </Disclosure>
     </div>

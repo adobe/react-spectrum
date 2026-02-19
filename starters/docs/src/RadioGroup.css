@@ -30,6 +30,10 @@
   color: var(--text-color);
   forced-color-adjust: none;
   -webkit-tap-highlight-color: transparent;
+  --dot-color: white;
+  @media (forced-colors: active) {
+    --dot-color: HighlightText;
+  }
 
   .indicator {
     position: relative;
@@ -52,16 +56,13 @@
 
   &[data-selected] {
     .indicator::after {
-      background: white;
+      background: var(--dot-color);
       scale: 0.37;
-
-      @media (forced-colors: active) {
-        background: HighlightText;
-      }
     }
   }
 
   &[data-disabled] {
     color: var(--text-color-disabled);
+    --dot-color: var(--text-color-disabled);
   }
 }

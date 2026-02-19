@@ -1,5 +1,6 @@
 import {divider} from './SearchMenu';
 import {Key, Separator as RACSeparator} from 'react-aria-components';
+import LinkOutIcon from '../../../@react-spectrum/s2/ui-icons/LinkOut';
 import React from 'react';
 import {SelectableCollectionContext} from '../../../react-aria-components/src/RSPContexts';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
@@ -7,7 +8,8 @@ import {Tag, TagGroup} from '@react-spectrum/s2';
 
 interface TagItem {
   id: string,
-  name: string
+  name: string,
+  href?: string
 }
 
 interface SearchTagGroupsProps {
@@ -16,9 +18,9 @@ interface SearchTagGroupsProps {
   selectedTagId: string | undefined,
   onSectionSelectionChange: (keys: Iterable<Key>) => void,
   onResourceSelectionChange?: (keys: Iterable<Key>) => void,
-  isMobile?: boolean,
   wrapperClassName?: string,
-  contentClassName?: string
+  contentClassName?: string,
+  onHover?: (id: Key) => void
 }
 
 export function SearchTagGroups({
@@ -27,9 +29,9 @@ export function SearchTagGroups({
   selectedTagId,
   onSectionSelectionChange,
   onResourceSelectionChange,
-  isMobile = false,
   wrapperClassName,
-  contentClassName
+  contentClassName,
+  onHover
 }: SearchTagGroupsProps) {
   if (sectionTags.length === 0 && resourceTags.length === 0) {
     return null;
@@ -54,9 +56,9 @@ export function SearchTagGroups({
                 onSelectionChange={onSectionSelectionChange}
                 aria-label="Sections"
                 items={sectionTags}
-                UNSAFE_style={isMobile ? {whiteSpace: 'nowrap'} : undefined}>
+                UNSAFE_style={{whiteSpace: 'nowrap'}}>
                 {(tag) => (
-                  <Tag key={tag.id} id={tag.id}>
+                  <Tag key={tag.id} id={tag.id} onHoverStart={() => onHover?.(tag.id)} onPressStart={() => onHover?.(tag.id)}>
                     {tag.name}
                   </Tag>
                 )}
@@ -75,10 +77,15 @@ export function SearchTagGroups({
                 onSelectionChange={onResourceSelectionChange}
                 aria-label="Resources"
                 items={resourceTags}
-                UNSAFE_style={isMobile ? {whiteSpace: 'nowrap'} : undefined}>
+                UNSAFE_style={{whiteSpace: 'nowrap'}}>
                 {(tag) => (
-                  <Tag key={tag.id} id={tag.id}>
+                  <Tag key={tag.id} id={tag.id} href={tag.href} target="_blank">
                     {tag.name}
+                    {tag.href &&
+                      <LinkOutIcon
+                        aria-label="(opens in a new tab)"
+                        className={style({'--iconPrimary': {type: 'fill', value: 'currentColor'}, marginStart: 8, flexShrink: 0})} />
+                    }
                   </Tag>
                 )}
               </TagGroup>

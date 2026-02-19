@@ -28,6 +28,7 @@
   }
 
   &:has(.react-aria-TableBody[data-empty]) {
+    height: 100%;
     min-height: 100px;
   }
 
@@ -54,6 +55,10 @@
   transition-property: background, color;
   transition-duration: 200ms;
   -webkit-tap-highlight-color: transparent;
+
+  &tr:last-child {
+    border-radius: 0 0 var(--radius) var(--radius);
+  }
 
   &[data-focus-visible] {
     outline: 2px solid var(--focus-ring-color);
@@ -142,6 +147,14 @@
     display: flex;
     align-items: center;
     height: 100%;
+  }
+
+  &:is(.react-aria-Row:last-child > :first-child) {
+    border-end-start-radius: var(--radius);
+  }
+
+  &:is(.react-aria-Row:last-child > :last-child) {
+    border-end-end-radius: var(--radius);
   }
 
   &[data-focus-visible] {
@@ -318,10 +331,4 @@
 .react-aria-TableLoadingIndicator {
   height: 32px;
   position: relative;
-
-  > div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
 }

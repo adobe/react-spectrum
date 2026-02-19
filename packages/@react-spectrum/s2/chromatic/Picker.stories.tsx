@@ -13,7 +13,7 @@
 import {AsyncPickerStory, AsyncPickerStoryType, ContextualHelpExample, CustomWidth, Dynamic, Example, Sections, WithAvatars, WithIcons} from '../stories/Picker.stories';
 import {expect} from '@storybook/jest';
 import type {Meta, StoryObj} from '@storybook/react';
-import {Picker} from '../src';
+import {Picker, PickerItem} from '../src';
 import {userEvent, waitFor, within} from '@storybook/test';
 
 const meta: Meta<typeof Picker<any>> = {
@@ -37,6 +37,19 @@ export const Default: Story = {
     let body = canvasElement.ownerDocument.body;
     await within(body).findByRole('listbox');
   }
+};
+
+export const isQuiet: Story = {
+  render: () => (
+    <Picker isQuiet label="Favorite Ice Cream">
+      <PickerItem>Chocolate</PickerItem>
+      <PickerItem>Mint</PickerItem>
+      <PickerItem>Strawberry</PickerItem>
+      <PickerItem>Vanilla</PickerItem>
+      <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
+    </Picker>
+  ),
+  play: Default.play
 };
 
 export const WithSections: Story = {

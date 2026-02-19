@@ -4,6 +4,7 @@ export default Layout;
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['file', 'drag', 'upload'];
+export const description = 'An area into which one or multiple objects can be dragged and dropped.';
 
 # DropZone
 
@@ -12,12 +13,12 @@ export const tags = ['file', 'drag', 'upload'];
 ```tsx render type="s2" docs={docs.exports.DropZone} links={docs.links} props={['size', 'replaceMessage']} wide
 "use client";
 import {DropZone, IllustratedMessage, Heading, Content, ButtonGroup, Button, FileTrigger} from '@react-spectrum/s2';
-import {useState} from 'react';
+import React, {useState} from 'react';
 import CloudUpload from '@react-spectrum/s2/illustrations/gradient/generic1/CloudUpload';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function Example(props) {
-  let [content, setContent] = useState(null);
+  let [content, setContent] = useState<React.ReactNode>(null);
   return (
     <DropZone
       {...props}
@@ -59,6 +60,7 @@ function Example(props) {
             <FileTrigger
               acceptedFileTypes={['image/jpeg', 'image/png', 'image/gif']}
               onSelect={files => {
+                if (!files) return;
                 let url = URL.createObjectURL(files[0]);
                 setContent(<img src={url} alt={files[0].name} className={style({maxHeight: 'full', maxWidth: 'full'})} />);
               }}>
@@ -74,7 +76,7 @@ function Example(props) {
 
 ## API
 
-```tsx links={{DropZone: '#dropzone', IllustratedMessage: 'IllustratedMessage.html'}}
+```tsx links={{DropZone: '#dropzone', IllustratedMessage: 'IllustratedMessage'}}
 <DropZone>
   <IllustratedMessage />
 </DropZone>

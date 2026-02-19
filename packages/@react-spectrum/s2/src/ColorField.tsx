@@ -26,7 +26,7 @@ import {style} from '../style' with {type: 'macro'};
 import {TextFieldRef} from '@react-types/textfield';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
+export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
   /**
    * The size of the color field.
    *

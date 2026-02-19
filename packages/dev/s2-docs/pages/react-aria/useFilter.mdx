@@ -13,9 +13,11 @@ import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/i18n';
 
 export const section = 'Utilities';
-export const description = 'Implementing collections in React Aria';
+export const description = 'Provides locale-sensitive string matching for filtering and searching.';
 
 # useFilter
+
+<PageDescription>{docs.exports.useFilter.description}</PageDescription>
 
 ## Introduction
 
@@ -23,7 +25,7 @@ export const description = 'Implementing collections in React Aria';
 string methods `startsWith`, `endsWith`, and `includes` could be used for this, but do not implement locale
 sensitive matching. `useFilter` provides options to allow ignoring case, diacritics, and Unicode normalization forms,
 which are implemented according to locale-specific rules. It automatically uses the current locale set by the application,
-either via the default browser language or via the [I18nProvider](I18nProvider.html).
+either via the default browser language or via the [I18nProvider](I18nProvider).
 
 ## Example
 
@@ -33,7 +35,7 @@ and diacritics.
 ```tsx render
 'use client';
 import React from 'react';
-import {useFilter} from '@react-aria/i18n';
+import {useFilter} from 'react-aria';
 
 function Example() {
   const composers = [

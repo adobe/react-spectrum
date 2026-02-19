@@ -5,6 +5,8 @@ import docs from 'docs:react-aria-components';
 import '../../tailwind/tailwind.css';
 
 export const tags = ['file', 'drag', 'dnd', 'upload'];
+export const relatedPages = [{'title': 'useDrop', 'url': 'useDrop'}];
+export const description = 'An area into which one or multiple objects can be dragged and dropped.';
 
 # DropZone
 
@@ -16,15 +18,16 @@ export const tags = ['file', 'drag', 'dnd', 'upload'];
   import {DropZone} from 'vanilla-starter/DropZone';
   import {Text} from 'react-aria-components';
   import {useState} from 'react';
+  import React from 'react';
 
   function Example() {
-    let [content, setContent] = useState(null);
+    let [content, setContent] = useState<string | React.ReactElement | null>(null);
     return (
       <DropZone
         // Determine whether dragged content should be accepted.
         getDropOperation={types => (
           ['text/plain', 'image/jpeg', 'image/png', 'image.gif'].some(t => types.has(t))
-            ? 'copy' 
+            ? 'copy'
             : 'cancel'
         )}
         onDrop={async (event) => {
@@ -56,9 +59,10 @@ export const tags = ['file', 'drag', 'dnd', 'upload'];
   import {DropZone} from 'tailwind-starter/DropZone';
   import {Text} from 'react-aria-components';
   import {useState} from 'react';
+  import React from 'react';
 
   function Example() {
-    let [content, setContent] = useState(null);
+    let [content, setContent] = useState<string | React.ReactElement | null>(null);
     return (
       <DropZone
         // Determine whether dragged content should be accepted.

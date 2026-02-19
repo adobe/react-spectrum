@@ -15,7 +15,7 @@ export default meta;
 type Story = StoryFn<typeof DisclosureGroup>;
 
 export const Example: Story = (args) => (
-  <DisclosureGroup {...args} style={{width: '400px'}}>
+  <DisclosureGroup {...args}>
     <Disclosure id="personal">
       <DisclosureHeader>Personal Information</DisclosureHeader>
       <DisclosurePanel>

@@ -5,13 +5,14 @@ import '../../../tailwind/tailwind.css';
 import {ComponentList} from '../../../src/ComponentCard';
 
 export const hideNav = true;
+export const isSubpage = true;
 export const section = 'Examples';
 export const keywords = ['react-aria', 'example', 'tabs', 'tailwind'];
 export const description = 'With CSS scroll snapping, scroll-driven animations, and anchor positioning.';
 
 # Swipeable Tabs
 
-<PageDescription>A swipeable [Tabs](../Tabs.html) component with [CSS scroll snapping](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap), [scroll-driven animations](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll-driven_animations), and [anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning).</PageDescription>
+<PageDescription>A swipeable [Tabs](../Tabs) component with [CSS scroll snapping](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap), [scroll-driven animations](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll-driven_animations), and [anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning).</PageDescription>
 
 ```tsx render dir="react-aria/examples" files={['packages/dev/s2-docs/pages/react-aria/examples/TabSelectionIndicator.tsx', 'packages/dev/s2-docs/pages/react-aria/examples/TabPanelCarousel.tsx', 'packages/dev/s2-docs/pages/react-aria/examples/Tabs.tsx', 'packages/dev/s2-docs/pages/react-aria/examples/TabList.tsx', 'packages/dev/s2-docs/pages/react-aria/examples/Tab.tsx', 'packages/dev/s2-docs/pages/react-aria/examples/TabPanel.tsx']} type="tailwind" expanded
 "use client";
@@ -56,5 +57,5 @@ import {TabPanelCarousel} from './TabPanelCarousel';
 <ComponentList
   pages={props.pages}
   components={[
-    'react-aria/Tabs.html'
+    'react-aria/Tabs'
   ]} />

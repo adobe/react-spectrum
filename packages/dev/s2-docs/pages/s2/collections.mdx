@@ -8,7 +8,7 @@ export const description = 'How to load and render collections.';
 
 # Collections
 
-<PageDescription>Many components display a collection of items, and provide functionality such as keyboard navigation, and selection. Learn how to load and render collections using React Spectrums's compositional API.</PageDescription>
+<PageDescription>Many components display a collection of items, and provide functionality such as keyboard navigation, and selection. Learn how to load and render collections using React Spectrum's compositional API.</PageDescription>
 
 ## Static collections
 
@@ -117,7 +117,7 @@ function Example() {
   };
 
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 32, width: 320})}>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 32, width: 320, maxWidth: 'full'})}>
       {/*- begin highlight -*/}
       <TagGroup label="Animals" items={animals}>
         {item => <Tag>{item.name}</Tag>}
@@ -134,12 +134,12 @@ function Example() {
 
 <InlineAlert variant="informative">
   <Heading>useListData</Heading>
-  <Content>For convenience, React Spectrum provides a built-in [useListData](https://react-spectrum.adobe.com/react-stately/useListData.html) hook to manage state for an immutable list of items. It includes methods to add, remove, update, and re-order items, and manage corresponding selection state. See the docs for more details.</Content>
+  <Content>For convenience, React Spectrum provides a built-in [useListData](react-aria:useListData.html) hook to manage state for an immutable list of items. It includes methods to add, remove, update, and re-order items, and manage corresponding selection state. See the docs for more details.</Content>
 </InlineAlert>
 
 ### Unique ids
 
-All items in a collection must have a unique id, which is used for [selection](selection.html) and to track item updates. By default, React Spectrum looks for an `id` property on each object in the `items` array. You can also specify an `id` prop when rendering each item. This example uses `item.name` as the `id`.
+All items in a collection must have a unique id, which is used for [selection](selection) and to track item updates. By default, React Spectrum looks for an `id` property on each object in the `items` array. You can also specify an `id` prop when rendering each item. This example uses `item.name` as the `id`.
 
 ```tsx
 let animals = [
@@ -186,7 +186,7 @@ export default function Example() {
   let [showType, setShowType] = useState(false);
 
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 16, width: 320, alignItems: 'center'})}>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 16, width: 320, maxWidth: 'full', alignItems: 'center'})}>
       <ToggleButtonGroup
         aria-label="Display options"
         selectionMode="multiple"
@@ -274,15 +274,14 @@ let people = [
 
 ## Asynchronous loading
 
-Data can be loaded asynchronously using any data fetching library. [useAsyncList](https://react-spectrum.adobe.com/react-stately/useAsyncList.html) is a built-in option.
+Data can be loaded asynchronously using any data fetching library. [useAsyncList](react-aria:useAsyncList.html) is a built-in option.
 
 Many components support infinite scrolling via the `loadingState` and `onLoadMore` props. These trigger loading of additional pages of items automatically as the user scrolls.
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, useAsyncList} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useAsyncList} from 'react-stately';
 
 interface Character {
   name: string

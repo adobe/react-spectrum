@@ -30,7 +30,7 @@ function ColorEditor({hideAlphaChannel = false}: ColorEditorProps) {
   let formatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/color');
 
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 4, minWidth: 380})}>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 4})}>
       <div className={style({display: 'flex', gap: 12})}>
         <ColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness" />
         <ColorSlider colorSpace="hsb" channel="hue" orientation="vertical" />
@@ -75,7 +75,9 @@ export function ColorEditorExample() {
         padding: {
           default: 12,
           lg: 24
-        }
+        },
+        maxWidth: '--text-width',
+        marginX: 'auto'
       })}>
       <ColorPicker defaultValue="#5100FF">
         {({color}) => (

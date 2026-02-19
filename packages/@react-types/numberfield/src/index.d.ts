@@ -46,6 +46,9 @@ export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLa
 export interface SpectrumNumberFieldProps extends Omit<AriaNumberFieldProps, 'placeholder' | 'isInvalid' | 'validationState'>, SpectrumFieldValidation<number>, InputDOMProps, StyleProps, SpectrumLabelableProps {
   /** Whether the numberfield should be displayed with a quiet style. */
   isQuiet?: boolean,
-  /** Whether to hide the increment and decrement buttons. */
+  /**
+   * Whether to hide the increment and decrement buttons.
+   * @default false
+   */
   hideStepper?: boolean
 }

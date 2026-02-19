@@ -48,7 +48,7 @@ very difficult to style cross browser. `useSlider` and `useSliderThumb` help ach
 sliders that can be styled as needed.
 
 * Support for one or multiple thumbs
-* Support for mouse, touch, and keyboard via the [useMove](../react-aria/useMove.html) hook
+* Support for mouse, touch, and keyboard via the [useMove](../useMove) hook
 * Multi-touch support for dragging multiple thumbs or multiple sliders at once
 * Pressing on the track moves the nearest thumb to that position
 * Supports using the arrow keys, as well as page up/down, home, and end keys
@@ -103,10 +103,10 @@ Slider state is managed by the <TypeLink links={statelyDocs.links} type={stately
 
 This example shows how to build a simple horizontal slider with a single thumb. In addition, it includes a label
 which can be clicked to focus the slider thumb, and an `<output>` element to display the current slider value as
-text. This is formatted using a locale aware number formatter provided by the [useNumberFormatter](useNumberFormatter.html) hook.
+text. This is formatted using a locale aware number formatter provided by the [useNumberFormatter](../useNumberFormatter) hook.
 
 The `<input>` element inside the thumb is used to represent the slider to assistive technology, and is hidden from view
-using the [VisuallyHidden](VisuallyHidden.html) component. The thumb also uses the [useFocusRing](useFocusRing.html) hook to
+using the [VisuallyHidden](../VisuallyHidden) component. The thumb also uses the [useFocusRing](../useFocusRing) hook to
 display using a different color when it is keyboard focused (try tabbing to it).
 
 ```tsx example export=true

@@ -170,12 +170,14 @@
   }
 }
 
-.react-aria-Separator {
+.react-aria-Menu .react-aria-Separator {
   grid-column-start: 1;
   grid-column-end: -1;
   margin: 0 var(--spacing-2);
   border: 0;
   border-top: 0.5px solid var(--border-color);
+  height: auto;
+  width: auto;
 
   .react-aria-MenuItem + & {
     margin-block-start: var(--spacing-1);

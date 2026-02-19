@@ -33,10 +33,10 @@ import {
   SectionProps,
   Virtualizer
 } from 'react-aria-components';
-import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
+import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SingleSelection, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
-import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
@@ -51,6 +51,7 @@ import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
@@ -78,7 +79,8 @@ export interface ComboboxStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 export interface ComboBoxProps<T extends object> extends
-  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'defaultFilter' | 'allowsEmptyCollection' | keyof GlobalDOMAttributes>,
+  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'render' | 'defaultFilter' | 'allowsEmptyCollection' | 'selectionMode' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange' | 'value' | 'defaultValue' | 'onChange' | keyof GlobalDOMAttributes>,
+  Omit<SingleSelection, 'disallowEmptySelection'>,
   ComboboxStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -367,7 +369,7 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
   );
 });
 
-export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
+export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'render' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   children: ReactNode
 }
 

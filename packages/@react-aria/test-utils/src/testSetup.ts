@@ -35,35 +35,37 @@ export function installMouseEvent(): void {
   });
 }
 
+export function definePointerEvent(): void {
+  // @ts-ignore
+  global.PointerEvent = class FakePointerEvent extends MouseEvent {
+    _init: {pageX: number, pageY: number, pointerType: string, pointerId: number, width: number, height: number};
+    constructor(name, init) {
+      super(name, init);
+      this._init = init;
+    }
+    get pointerType() {
+      return this._init.pointerType ?? 'mouse';
+    }
+    get pointerId() {
+      return this._init.pointerId;
+    }
+    get pageX() {
+      return this._init.pageX;
+    }
+    get pageY() {
+      return this._init.pageY;
+    }
+    get width() {
+      return this._init.width;
+    }
+    get height() {
+      return this._init.height;
+    }
+  };
+}
+
 export function installPointerEvent(): void {
-  beforeAll(() => {
-    // @ts-ignore
-    global.PointerEvent = class FakePointerEvent extends MouseEvent {
-      _init: {pageX: number, pageY: number, pointerType: string, pointerId: number, width: number, height: number};
-      constructor(name, init) {
-        super(name, init);
-        this._init = init;
-      }
-      get pointerType() {
-        return this._init.pointerType ?? 'mouse';
-      }
-      get pointerId() {
-        return this._init.pointerId;
-      }
-      get pageX() {
-        return this._init.pageX;
-      }
-      get pageY() {
-        return this._init.pageY;
-      }
-      get width() {
-        return this._init.width;
-      }
-      get height() {
-        return this._init.height;
-      }
-    };
-  });
+  beforeAll(definePointerEvent);
   afterAll(() => {
     // @ts-ignore
     delete global.PointerEvent;

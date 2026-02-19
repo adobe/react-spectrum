@@ -17,20 +17,20 @@ date: 2023-05-24
 
 # May 24, 2023 Release
 
-This month TagGroup and TableView column resizing and ActionBar are all being released to 3.0.0! We have also been making many improvements and bug fixes to the new [React Aria Components](../react-aria/react-aria-components.html) we announced last release. Lastly, our documentation website now has search functionality! We hope this will aid in discoverability for our components and hooks.
+This month TagGroup and TableView column resizing and ActionBar are all being released to 3.0.0! We have also been making many improvements and bug fixes to the new [React Aria Components](react-aria:) we announced last release. Lastly, our documentation website now has search functionality! We hope this will aid in discoverability for our components and hooks.
 
 As always, thanks to all of our contributors for helping to make this release possible! Special shoutout to [@auskast](https://github.com/auskast) for an extensive PR to help us improve our React Aria Components.
 
 ## New Components/Features
 
 - TagGroup
-  - `@react-spectrum/taggroup` - [Docs](https://react-spectrum.adobe.com/react-spectrum/TagGroup.html)
-  - `@react-aria/tag` - [Docs](https://react-spectrum.adobe.com/react-aria/useTagGroup.html)
+  - `@react-spectrum/taggroup` - [Docs](../TagGroup.html)
+  - `@react-aria/tag` - [Docs](react-aria:TagGroup/useTagGroup.html)
 - Column Resizing
-  - [TableView docs](https://react-spectrum.adobe.com/react-spectrum/TableView.html#column-resizing)
-  - [useTable docs](https://react-spectrum.adobe.com/react-aria/useTable.html#resizable-columns)
+  - [TableView docs](../TableView.html#column-resizing)
+  - [useTable docs](react-aria:Table/useTable.html#resizable-columns)
 - ActionBar
-  - `@react-spectrum/actionbar` - [Docs](https://react-spectrum.adobe.com/react-spectrum/ActionBar.html)
+  - `@react-spectrum/actionbar` - [Docs](../ActionBar.html)
 
 
 ### TagGroup API update
@@ -38,11 +38,11 @@ As always, thanks to all of our contributors for helping to make this release po
 This release of TagGroup includes a few API changes. If you were using a pre-release version please note you will need to update your code. See below for details.
 
 **React Spectrum**
-* The `onRemove` callback prop now accepts a `Set<Key>` instead of a single Key. [See docs](https://react-spectrum.adobe.com/react-spectrum/TagGroup.html#onremove)
+* The `onRemove` callback prop now accepts a `Set<Key>` instead of a single Key. [See docs](../TagGroup.html#onremove)
 * Removed `allowsRemoval` prop and instead infer this from `onRemove` being present or not.
 
 **React Aria/Stately**
-* The `onRemove` callback prop now accepts a `Set<Key>` instead of a single Key. [See docs](https://react-spectrum.adobe.com/react-aria/useTagGroup.html#remove-tags)
+* The `onRemove` callback prop now accepts a `Set<Key>` instead of a single Key. [See docs](react-aria:TagGroup/useTagGroup.html#remove-tags)
 * Removed `allowsRemoval` prop and instead infer this from `onRemove` being present or not.
 * Removed `labelProps` from  `useTag`.
 * Users no longer need to pass `onRemove` from `useTagGroup` to `useTag`.

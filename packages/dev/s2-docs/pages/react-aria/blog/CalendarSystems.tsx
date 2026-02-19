@@ -1,12 +1,12 @@
 'use client';
 
-import {Calendar, Picker, PickerItem, Provider} from '@react-spectrum/s2';
+import {Calendar, Picker, PickerItem, Provider, type Key} from '@react-spectrum/s2';
 import React from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 export default function CalendarSystems() {
-  let [calendar, setCalendar] = React.useState('gregory');
+  let [calendar, setCalendar] = React.useState<Key | null>('gregory');
   let {locale} = useLocale();
   const calendars = [
     {key: 'gregory', name: 'Gregorian'},

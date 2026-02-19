@@ -1,11 +1,11 @@
 import {CodeOutput, Control, Output, VisualExampleClient} from './VisualExampleClient';
+import {DownloadFiles, Files, getFiles} from './CodeBlock';
 import {FileProvider, ShadcnProvider} from './CodePlatter';
-import {Files, getFiles} from './CodeBlock';
 import json5 from 'json5';
 import path from 'path';
 import React, {ReactNode} from 'react';
 import {renderHTMLfromMarkdown, TComponent, TInterface, TProperty, Type} from './types';
-import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {size, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
 const exampleStyle = style({
   backgroundColor: 'layer-1',
@@ -57,7 +57,7 @@ const exampleStyle = style({
 const controlsStyle = style({
   display: 'grid',
   gridTemplateColumns: {
-    default: 'repeat(auto-fit, minmax(200px, 1fr))',
+    default: `repeat(auto-fit, minmax(${size(130)}, 1fr))`,
     lg: ['1fr']
   },
   gridAutoFlow: 'dense',
@@ -68,7 +68,18 @@ const controlsStyle = style({
     default: 12,
     lg: 16
   },
-  gridArea: 'controls'
+  gridArea: 'controls',
+  borderStyle: 'solid',
+  borderWidth: 0,
+  borderColor: 'gray-200',
+  borderTopWidth: {
+    default: 1,
+    lg: 0
+  },
+  paddingTop: {
+    default: 16,
+    lg: 0
+  }
 });
 
 export interface VisualExampleProps {
@@ -87,14 +98,15 @@ export interface VisualExampleProps {
   importSource?: string,
   /** When provided, the source code for the listed filenames will be included as tabs. */
   files?: string[],
-  downloadFiles?: {files?: {[name: string]: string}, deps?: {[name: string]: string}},
+  downloadFiles?: DownloadFiles,
   type?: 'vanilla' | 'tailwind' | 's2',
   code?: ReactNode,
   wide?: boolean,
   align?: 'center' | 'start' | 'end',
   acceptOrientation?: boolean,
   propsObject?: string,
-  showCoachMark?: boolean
+  showCoachMark?: boolean,
+  hideShadcn?: boolean
 }
 
 export interface PropControl extends Omit<TProperty, 'description'> {
@@ -108,7 +120,7 @@ export interface PropControl extends Omit<TProperty, 'description'> {
 /**
  * Displays a component example with controls for changing the props.
  */
-export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, downloadFiles, code, wide, slots, align, acceptOrientation, type, propsObject, showCoachMark}: VisualExampleProps) {
+export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, downloadFiles, code, wide, slots, align, acceptOrientation, type, propsObject, showCoachMark, hideShadcn}: VisualExampleProps) {
   let componentProps = docs.type === 'interface' ? docs : docs.props;
   if (componentProps?.type !== 'interface') {
     return null;
@@ -162,11 +174,10 @@ export function VisualExample({component, docs, links, importSource, props, init
     if (files) {
       downloadFiles = getFiles(files, type);
     } else {
-      downloadFiles = {};
+      downloadFiles = {files: {}, deps: {}};
     }
   }
 
-  let registryUrl = type === 's2' || docs.type !== 'component' ? null : `${type}/${docs.name}.json`;
   let output = (
     <CodeOutput
       code={code}
@@ -178,14 +189,14 @@ export function VisualExample({component, docs, links, importSource, props, init
   return (
     <VisualExampleClient component={component} name={docs.name} importSource={importSource} controls={controls} initialProps={initialProps} propsObject={propsObject}>
       <FileProvider value={downloadFiles}>
-        <ShadcnProvider value={registryUrl}>
+        <ShadcnProvider value={!type || type === 's2' || docs.type !== 'component' || hideShadcn ? null : {type, component: docs.name}}>
           <div role="group" aria-label="Example" className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
             <Output align={align} acceptOrientation={acceptOrientation} />
-            <div role="group" aria-label="Controls" className={controlsStyle}>
+            {props.length > 0 && <div role="group" aria-label="Controls" className={controlsStyle}>
               {Object.keys(controls).map(control => <Control key={control} name={control} />)}
-            </div>
+            </div>}
             <div style={{gridArea: 'files', overflow: 'hidden'}}>
-              {files ? <Files files={files} type={type}>{output}</Files> : output}
+              {files ? <Files files={files} downloadFiles={downloadFiles.files} type={type}>{output}</Files> : output}
             </div>
           </div>
         </ShadcnProvider>

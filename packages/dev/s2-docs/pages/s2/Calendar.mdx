@@ -5,6 +5,7 @@ import {Calendar} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['date'];
+export const description = 'Allows a user to select a single date from a date grid.';
 
 # Calendar
 
@@ -28,7 +29,7 @@ export const tags = ['date'];
 
 ## Value
 
-Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](../internationalized/date/index.html) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](react-aria:internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
 
 ```tsx render
 "use client";
@@ -69,12 +70,12 @@ import {parseDate} from '@internationalized/date';
 
 ### Custom calendar systems
 
-`Calendar` also supports custom calendar systems that implement custom business rules, for example a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar. See the [@internationalized/date docs](../internationalized/date/Calendar.html#custom-calendars) for an example implementation.
+`Calendar` also supports custom calendar systems that implement custom business rules, for example a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar. See the [@internationalized/date docs](react-aria:internationalized/date/Calendar#custom-calendars) for an example implementation.
 
 ```tsx render
 "use client";
-import type {AnyCalendarDate} from '@internationalized/date';
-import {CalendarDate, startOfWeek, toCalendar, GregorianCalendar} from '@internationalized/date';
+import type {AnyCalendarDate, Calendar as ICalendar} from '@internationalized/date';
+import {CalendarDate, startOfWeek, GregorianCalendar} from '@internationalized/date';
 import {Calendar} from '@react-spectrum/s2';
 
 export default function Example() {
@@ -90,45 +91,66 @@ export default function Example() {
 // See @internationalized/date docs linked above.
 ///- begin collapse -///
 class Custom454 extends GregorianCalendar {
-  weekPattern = [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, 4];
-  getDaysInMonth(date) {
-    return this.weekPattern[date.month - 1] * 7;
+  // The anchor date, in Gregorian calendar.
+  // The anchor date is a date that occurs in the first week of the first month of every fiscal year.
+  anchorDate = new CalendarDate(2001, 2, 4);
+
+  private getYear(year: number): [CalendarDate, number[]] {
+    let anchor = this.anchorDate.set({year});
+    let startOfYear = startOfWeek(anchor, 'en', 'sun');
+    let isBigYear = !startOfYear.add({weeks: 53}).compare(anchor.add({years: 1}));
+    let weekPattern = [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, isBigYear ? 5 : 4];
+    return [startOfYear, weekPattern];
+  }
+
+  getDaysInMonth(date: AnyCalendarDate): number {
+    let [, weekPattern] = this.getYear(date.year);
+    return weekPattern[date.month - 1] * 7;
   }
 
   fromJulianDay(jd: number): CalendarDate {
     let gregorian = super.fromJulianDay(jd);
+    let year = gregorian.year;
 
-    let monthStart = startOfWeek(new CalendarDate(gregorian.year, 1, 1), 'en');
-    for (let months = 0; months < this.weekPattern.length; months++) {
-      let weeksInMonth = this.weekPattern[months];
-      let monthEnd = monthStart.add({weeks: weeksInMonth});
-      if (monthEnd.compare(gregorian) > 0) {
-        let days = gregorian.compare(monthStart);
-        return new CalendarDate(this, monthStart.year, months + 1, days + 1);
-      }
-      monthStart = monthEnd;
+    let [monthStart, weekPattern] = this.getYear(year);
+    if (gregorian.compare(monthStart) < 0) {
+      year--;
+      [monthStart, weekPattern] = this.getYear(year);
     }
 
-    throw Error('Date is not in any month somehow!');
+    for (let month = 1; month <= 12; month++) {
+      let weeks = weekPattern[month - 1];
+      let nextMonth = monthStart.add({weeks});
+      if (nextMonth.compare(gregorian) > 0) {
+        let days = gregorian.compare(monthStart);
+        return new CalendarDate(this, year, month, days + 1);
+      }
+      monthStart = nextMonth;
+    }
+
+    throw new Error('date not found');
   }
 
   toJulianDay(date: AnyCalendarDate): number {
-    let monthStart = startOfWeek(new CalendarDate(date.year, 1, 1), 'en');
+    let [monthStart, weekPattern] = this.getYear(date.year);
     for (let month = 1; month < date.month; month++) {
-      monthStart = monthStart.add({weeks: this.weekPattern[month - 1]});
+      monthStart = monthStart.add({weeks: weekPattern[month - 1]});
     }
 
     let gregorian = monthStart.add({days: date.day - 1});
     return super.toJulianDay(gregorian);
   }
 
-  getFormattableMonth(date) {
-    let gregorian = toCalendar(date, new GregorianCalendar());
-    return gregorian.set({month: date.month, day: 1});
+  getFormattableMonth(date: AnyCalendarDate): CalendarDate {
+    let anchorMonth = this.anchorDate.month - 1;
+    let dateMonth = date.month - 1;
+    let month = ((anchorMonth + dateMonth) % 12) + 1;
+    let year = anchorMonth + dateMonth >= 12 ? date.year + 1 : date.year;
+    return new CalendarDate(year, month, 1);
   }
 
-  isEqual(other) {
-    return other instanceof Custom454;
+  isEqual(other: ICalendar): boolean {
+    return other instanceof Custom454 && other.anchorDate.compare(this.anchorDate) === 0;
   }
 }
 ///- end collapse -///
@@ -141,8 +163,7 @@ Use the `minValue` and `maxValue` props to set the valid date range. The `isDate
 ```tsx render docs={docs.exports.Calendar} links={docs.links} props={['isInvalid', 'errorMessage']} wide type="s2"
 "use client";
 import {isWeekend, today, getLocalTimeZone} from '@internationalized/date';
-import {useLocale} from 'react-aria';
-import {Calendar} from '@react-spectrum/s2';
+import {Calendar, useLocale} from '@react-spectrum/s2';
 
 function Example(props) {
   let {locale} = useLocale();

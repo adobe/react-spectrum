@@ -11,7 +11,8 @@ const meta: Meta<typeof NumberField> = {
   },
   tags: ['autodocs'],
   args: {
-    label: 'Cookies'
+    label: 'Cookies',
+    placeholder: '–'
   }
 };
 

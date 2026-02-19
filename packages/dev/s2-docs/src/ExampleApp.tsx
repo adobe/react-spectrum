@@ -13,7 +13,8 @@ export async function ExampleApp({dir, defaultSelected, type}: {dir: string, def
       <FileProvider value={{files: downloadFiles, deps, entry: defaultSelected}}>
         <Files
           files={files}
-          defaultSelected={defaultSelected ? path.join(dir, defaultSelected) : undefined}
+          downloadFiles={downloadFiles}
+          defaultSelected={defaultSelected}
           maxLines={Infinity}
           type={type} />
       </FileProvider>

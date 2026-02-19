@@ -1,7 +1,6 @@
 @import "./theme.css";
 
 .react-aria-GridList {
-  display: grid;
   justify-content: center;
   gap: var(--spacing-4);
   padding: var(--spacing-2);
@@ -17,16 +16,46 @@
   box-sizing: border-box;
   --grid-item-size: 200px;
 
-  &[data-layout=grid] {
+  &:has(.react-aria-GridListSection) {
+    scroll-padding: 50px;
+  }
+
+  &[data-layout=grid]:not(:has(.react-aria-GridListSection)) {
+    display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, var(--grid-item-size)));
     grid-auto-rows: min-content;
+  }
+
+  &[data-layout=grid] > .react-aria-GridListSection {
+    grid-template-columns: repeat(auto-fit, minmax(100px, var(--grid-item-size)));
+    grid-auto-rows: min-content;
+  }
+
+  .react-aria-GridListSection:not(:first-child) {
+    margin-top: var(--spacing-4);
+  }
+
+  &[data-layout=stack] > .react-aria-GridListSection {
+    grid-template-columns: auto;
+    align-items: center;
   }
 
   &[data-size=small] {
     --grid-item-size: 150px;
   }
 
+  @media (width < 500px) {
+    &[data-layout=grid] {
+      --grid-item-size: 150px;
+    }
+
+    &[data-layout=grid]:not(:has(.react-aria-GridListSection)) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
   &[data-layout=stack] {
+    display: grid;
     grid-template-columns: auto;
     align-items: center;
   }
@@ -73,6 +102,7 @@
   padding-bottom: var(--spacing-4);
   background: var(--overlay-background);
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
+  min-width: 0;
   max-width: 250px;
   overflow: clip;
   position: relative;
@@ -158,6 +188,7 @@
     object-fit: cover;
     padding-bottom: var(--spacing-2);
     -webkit-user-drag: none;
+    -webkit-touch-callout: none;
     flex-shrink: 0;
   }
 
@@ -218,4 +249,35 @@
   justify-content: center;
   height: 24px;
   width: 100%;
+}
+
+.react-aria-GridListSection {
+  display: grid;
+  justify-content: center;
+  gap: var(--spacing-4);
+  color: var(--text-color);
+  width: 100%;
+
+  > .react-aria-GridListHeader {
+      grid-column: 1 / -1;
+  }
+}
+
+.react-aria-GridListHeader {
+  position: sticky;
+  z-index: 2;
+  top: calc(var(--spacing-2) * -1);
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  background: var(--gray-100);
+  border: 0.5px solid var(--gray-400);
+  cursor: default;
+  user-select: none;
+  box-shadow: inset 0px 1px 0px white, inset 0px -4px 8px var(--gray-200);
+  border-radius: var(--radius);
+  padding: var(--spacing-1) var(--spacing-4);
+
+  @media (prefers-color-scheme: dark) {
+    box-shadow: inset 0px 4px 8px var(--gray-200);
+  }
 }

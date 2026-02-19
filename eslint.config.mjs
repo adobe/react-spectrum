@@ -59,7 +59,8 @@ export default [{
         "packages/dev/parcel-transformer-storybook/*",
         "packages/dev/storybook-builder-parcel/*",
         "packages/dev/storybook-react-parcel/*",
-        "packages/dev/s2-docs/pages/**"
+        "packages/dev/s2-docs/pages/**",
+        "packages/dev/mcp/*/dist"
     ],
 }, ...compat.extends("eslint:recommended"), {
     plugins: {
@@ -248,6 +249,10 @@ export default [{
 
         "rsp-rules/no-react-key": [ERROR],
         "rsp-rules/sort-imports": [ERROR],
+        "rsp-rules/no-non-shadow-contains": [ERROR],
+        "rsp-rules/safe-event-target": [ERROR],
+        "rsp-rules/shadow-safe-active-element": [ERROR],
+        "rsp-rules/faster-node-contains": [ERROR],
         "rulesdir/imports": [ERROR],
         "rulesdir/useLayoutEffectRule": [ERROR],
         "rulesdir/pure-render": [ERROR],
@@ -360,6 +365,10 @@ export default [{
     },
 
     languageOptions: {
+        globals: {
+          globalThis: "readonly",
+        },
+
         parser: tseslint.parser,
         ecmaVersion: 6,
         sourceType: "module",
@@ -423,6 +432,10 @@ export default [{
         "rsp-rules/no-react-key": [ERROR],
         "rsp-rules/act-events-test": ERROR,
         "rsp-rules/no-getByRole-toThrow": ERROR,
+        "rsp-rules/no-non-shadow-contains": OFF,
+        "rsp-rules/safe-event-target": OFF,
+        "rsp-rules/shadow-safe-active-element": OFF,
+        "rsp-rules/faster-node-contains": OFF,
         "rulesdir/imports": OFF,
         "monorepo/no-internal-import": OFF,
         "jsdoc/require-jsdoc": OFF
@@ -463,6 +476,7 @@ export default [{
     rules: {
         "jsdoc/require-jsdoc": OFF,
         "jsdoc/require-description": OFF,
+        "rsp-rules/safe-event-target": OFF,
     },
 }, {
     files: [
@@ -495,9 +509,28 @@ export default [{
         }],
     },
 }, {
+    files: [
+        "packages/@react-aria/test-utils/src/**/*.ts",
+        "packages/@react-aria/test-utils/src/**/*.tsx",
+    ],
+
+    rules: {
+        "rsp-rules/faster-node-contains": OFF,
+        "rsp-rules/no-non-shadow-contains": OFF,
+        "rsp-rules/shadow-safe-active-element": OFF,
+    },
+}, {
     files: ["packages/@react-spectrum/s2/**", "packages/dev/s2-docs/**"],
 
     rules: {
         "react/react-in-jsx-scope": OFF,
     },
+}, {
+    files: ["packages/dev/style-macro-chrome-plugin/**"],
+    languageOptions: {
+        globals: {
+            ...globals.webextensions,
+            ...globals.browser
+        }
+    }
 }];

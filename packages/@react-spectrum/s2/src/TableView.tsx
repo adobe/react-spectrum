@@ -18,10 +18,12 @@ import {
   CellRenderProps,
   CheckboxContext,
   Collection,
+  CollectionRendererContext,
   ColumnRenderProps,
   ColumnResizer,
   ContextValue,
   DEFAULT_SLOT,
+  DefaultCollectionRenderer,
   Form,
   Key,
   OverlayTriggerStateContext,
@@ -59,8 +61,8 @@ import Chevron from '../ui-icons/Chevron';
 import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {ColumnSize} from '@react-types/table';
 import {CustomDialog, DialogContainer} from '..';
-import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState, Node} from '@react-types/shared';
-import {getActiveElement, getOwnerDocument, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
+import {getActiveElement, getOwnerDocument, isFocusWithin, nodeContains, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -123,7 +125,7 @@ interface S2TableProps {
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
-export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, UnsafeStyles, S2TableProps {
+export interface TableViewProps extends Omit<RACTableProps, 'style' | 'className' | 'render' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, S2TableProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
@@ -395,7 +397,7 @@ const centeredWrapper = style({
   height: 'full'
 });
 
-export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | keyof GlobalDOMAttributes> {}
+export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes> {}
 
 /**
  * The body of a `<Table>`, containing the table rows.
@@ -446,7 +448,9 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   if (renderEmptyState != null && !isLoading) {
     emptyRender = (props: TableBodyRenderProps) => (
       <div className={centeredWrapper}>
-        {renderEmptyState(props)}
+        <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+          {renderEmptyState(props)}
+        </CollectionRendererContext.Provider>
       </div>
     );
   } else if (loadingState === 'loading') {
@@ -529,7 +533,7 @@ const columnStyles = style({
   forcedColorAdjust: 'none'
 });
 
-export interface ColumnProps extends Omit<RACColumnProps, 'style' | 'className' | keyof GlobalDOMAttributes> {
+export interface ColumnProps extends Omit<RACColumnProps, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes> {
   /** Whether the column should render a divider between it and the next column. */
   showDivider?: boolean,
   /** Whether the column allows resizing. */
@@ -569,7 +573,7 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
                 {children}
               </ColumnWithMenu>
             ) : (
-              <ColumnContents allowsSorting={allowsSorting} sortDirection={sortDirection}>
+              <ColumnContents align={align} allowsSorting={allowsSorting} sortDirection={sortDirection}>
                 {children}
               </ColumnContents>
             )
@@ -584,7 +588,14 @@ const columnContentWrapper = style({
   minWidth: 0,
   display: 'flex',
   alignItems: 'center',
-  width: 'full'
+  width: 'full',
+  justifyContent: {
+    align: {
+      default: 'start',
+      center: 'center',
+      end: 'end'
+    }
+  }
 });
 
 const sortIcon = style({
@@ -601,13 +612,13 @@ const sortIcon = style({
   }
 });
 
-interface ColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sortDirection'>, Pick<ColumnProps, 'children'> {}
+interface ColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sortDirection'>, Pick<ColumnProps, 'align' | 'children'> {}
 
 function ColumnContents(props: ColumnContentProps) {
-  let {allowsSorting, sortDirection, children} = props;
+  let {align, allowsSorting, sortDirection, children} = props;
 
   return (
-    <div className={columnContentWrapper}>
+    <div className={columnContentWrapper({align})}>
       {allowsSorting && (
         <Provider
           values={[
@@ -620,7 +631,7 @@ function ColumnContents(props: ColumnContentProps) {
           )}
         </Provider>
       )}
-      <span className={style({truncate: true, width: 'full'})}>
+      <span className={columnHeaderText}>
         {children}
       </span>
     </div>
@@ -885,7 +896,7 @@ const selectAllCheckboxColumn = style({
   backgroundColor: 'gray-75'
 });
 
-export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | keyof GlobalDOMAttributes> {}
+export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'render' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | keyof GlobalDOMAttributes> {}
 
 /**
  * A header within a `<Table>`, containing the table columns.
@@ -915,7 +926,7 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
                 </>
               }
               {selectionMode === 'multiple' &&
-                <Checkbox isEmphasized styles={selectAllCheckbox} slot="selection" />
+                <Checkbox styles={selectAllCheckbox} slot="selection" />
               }
             </>
           )}
@@ -953,7 +964,11 @@ const commonCellStyles = {
 
 const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
   ...commonCellStyles,
-  color: baseColor('neutral'),
+  color: {
+    default: baseColor('neutral-subdued'),
+    isSelected: baseColor('neutral'),
+    forcedColors: 'ButtonText'
+  },
   paddingY: centerPadding(),
   minHeight: {
     default: 40,
@@ -1031,7 +1046,7 @@ const cellContent = style({
   }
 });
 
-export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | keyof GlobalDOMAttributes>, Pick<ColumnProps, 'align' | 'showDivider'> {
+export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, Pick<ColumnProps, 'align' | 'showDivider'> {
   /** @private */
   isSticky?: boolean,
   /** The content to render as the cell children. */
@@ -1239,7 +1254,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
     if (isOpen) {
       let activeElement = getActiveElement(getOwnerDocument(formRef.current));
       if (activeElement
-        && formRef.current?.contains(activeElement)
+        && nodeContains(formRef.current, activeElement)
         // not going to handle contenteditable https://stackoverflow.com/questions/6139107/programmatically-select-text-in-a-contenteditable-html-element
         // seems like an edge case anyways
         && (
@@ -1320,7 +1335,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
             onOpenChange={setIsOpen}
             ref={popoverRef}
             shouldCloseOnInteractOutside={() => {
-              if (!popoverRef.current?.contains(document.activeElement)) {
+              if (!isFocusWithin(popoverRef.current)) {
                 return false;
               }
               formRef.current?.requestSubmit();
@@ -1391,8 +1406,8 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
 };
 
 // Use color-mix instead of transparency so sticky cells work correctly.
-const selectedBackground = lightDark(colorMix('gray-25', 'informative-900', 10), colorMix('gray-25', 'informative-700', 10));
-const selectedActiveBackground = lightDark(colorMix('gray-25', 'informative-900', 15), colorMix('gray-25', 'informative-700', 15));
+const selectedBackground = colorMix('gray-25', 'gray-900', 7);
+const selectedActiveBackground = colorMix('gray-25', 'gray-900', 10);
 const rowBackgroundColor = {
   default: {
     default: 'gray-25',
@@ -1553,7 +1568,7 @@ let rowSelectionIndicator = raw(`
   }`);
 let rowFocusIndicator = raw('&:after { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)');
 
-export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue' | 'dependencies' | keyof GlobalDOMAttributes>  {}
+export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'isDisabled' | 'onAction' | 'children' | 'textValue' | 'dependencies' | keyof GlobalDOMAttributes>, LinkDOMProps {}
 
 /**
  * A row within a `<Table>`.
@@ -1581,7 +1596,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         // The `spread` otherProps must be after className in Cell.
         // @ts-ignore
         <Cell isSticky className={checkboxCellStyle}>
-          <Checkbox isEmphasized slot="selection" />
+          <Checkbox slot="selection" />
         </Cell>
       )}
       <Collection items={columns} dependencies={[...dependencies, columns]}>

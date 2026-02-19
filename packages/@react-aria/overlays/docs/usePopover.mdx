@@ -52,14 +52,14 @@ helps achieve accessible popovers that can be styled as needed.
 * **Positioning** – The popover is positioned relative to the trigger element, and automatically flips and adjusts to avoid overlapping with the edge of the browser window. Scrolling is prevented outside the popover to avoid unintentionally repositioning or closing it.
 
 **Note**: `usePopover` only handles the overlay itself. It should be combined
-with [useDialog](useDialog.html) to create fully accessible popovers. Other overlays
+with [useDialog](../Modal/useDialog.html) to create fully accessible popovers. Other overlays
 such as menus may also be placed in a popover.
 
 ## Anatomy
 
 <Anatomy />
 
-A popover consists of a trigger element (e.g. button) and an overlay, which is positioned relative to the trigger. The overlay may contain a [dialog](useDialog.html), or another element such as a [menu](useMenu.html) or [listbox](useListBox.html) when used within a component such as a [select](useSelect.html) or [combobox](useComboBox.html).
+A popover consists of a trigger element (e.g. button) and an overlay, which is positioned relative to the trigger. The overlay may contain a [dialog](../Modal/useDialog.html), or another element such as a [menu](../Menu/useMenu.html) or [listbox](../ListBox/useListBox.html) when used within a component such as a [select](../Select/useSelect.html) or [combobox](../ComboBox/useComboBox.html).
 
 `usePopover` returns props that you should spread onto the appropriate elements, as well as the computed placement of the popover relative to the trigger:
 
@@ -74,11 +74,11 @@ hook in `@react-stately/overlays`. The state object should be passed as an argum
 
 This example shows how to build a typical popover overlay that is positioned relative to
 a trigger button. The content of the popover is a dialog, built
-with <TypeLink links={dialogDocs.links} type={dialogDocs.exports.useDialog} />. The `Dialog` component used in this example can also be reused within a [modal](useModalOverlay.html) or other types of overlays. The implementation is available below.
+with <TypeLink links={dialogDocs.links} type={dialogDocs.exports.useDialog} />. The `Dialog` component used in this example can also be reused within a [modal](../Modal/useModalOverlay.html) or other types of overlays. The implementation is available below.
 
 The `Popover` component uses an &lt;<TypeLink links={docs.links} type={docs.exports.Overlay} />&gt; to render its contents in a React [Portal](https://reactjs.org/docs/portals.html) at the end of the document body, which ensures it is not clipped by other elements. It also acts as a focus scope, containing focus within the popover and restoring it to the trigger when it unmounts. <TypeLink links={docs.links} type={docs.exports.usePopover} /> handles positioning the popover relative to the trigger element, and closing it when the user interacts outside or presses the <Keyboard>Escape</Keyboard> key.
 
-<TypeLink links={docs.links} type={docs.exports.usePopover} /> also hides content outside the popover from screen readers, which is important since the surrounding content won't be in context of the original trigger due to the portal. To allow screen reader users to dismiss the popover without a keyboard (e.g. on mobile), visually hidden &lt;<TypeLink links={docs.links} type={docs.exports.DismissButton} />&gt; elements are added at the start and end of the popover. An underlay is also used to prevent scrolling and interacting with elements outside the popover with a pointer, to avoid unintentially repositioning or closing it.
+<TypeLink links={docs.links} type={docs.exports.usePopover} /> also hides content outside the popover from screen readers, which is important since the surrounding content won't be in context of the original trigger due to the portal. To allow screen reader users to dismiss the popover without a keyboard (e.g. on mobile), visually hidden &lt;<TypeLink links={docs.links} type={docs.exports.DismissButton} />&gt; elements are added at the start and end of the popover. An underlay is also used to prevent scrolling and interacting with elements outside the popover with a pointer, to avoid unintentionally repositioning or closing it.
 
 ```tsx example export=true render=false
 import type {AriaPopoverProps} from 'react-aria';
@@ -117,7 +117,7 @@ function Popover({children, state, offset = 8, ...props}: PopoverProps) {
 }
 ```
 
-The above `Popover` component can be used as part of many different patterns, such as [ComboBox](useComboBox.html), [Select](useSelect.html), and [DatePicker](useDatePicker.html). To use it standalone, we need a trigger element. The below `PopoverTrigger` component uses the <TypeLink links={docs.links} type={docs.exports.useOverlayTrigger} /> hook to trigger the popover when a button is pressed. This hook also ensures that the button and popover are semantically connected via ARIA.
+The above `Popover` component can be used as part of many different patterns, such as [ComboBox](../ComboBox/useComboBox.html), [Select](../Select/useSelect.html), and [DatePicker](../DatePicker/useDatePicker.html). To use it standalone, we need a trigger element. The below `PopoverTrigger` component uses the <TypeLink links={docs.links} type={docs.exports.useOverlayTrigger} /> hook to trigger the popover when a button is pressed. This hook also ensures that the button and popover are semantically connected via ARIA.
 
 ```tsx example export=true render=false
 import {useOverlayTriggerState} from '@react-stately/overlays';
@@ -205,7 +205,7 @@ import {Dialog} from 'your-component-library';
 
 ### Dialog
 
-The `Dialog` component is rendered within the `Popover` component. It is built using the [useDialog](useDialog.html) hook, and can also be used in other overlay containers such as [modals](useModalOverlay.html).
+The `Dialog` component is rendered within the `Popover` component. It is built using the [useDialog](../Modal/useDialog.html) hook, and can also be used in other overlay containers such as [modals](../Modal/useModalOverlay.html).
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -240,7 +240,7 @@ function Dialog({title, children, ...props}: DialogProps) {
 
 ### Button
 
-The `Button` component is used in the above example to toggle the popover. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+The `Button` component is used in the above example to toggle the popover. It is built using the [useButton](../Button/useButton.html) hook, and can be shared with many other components.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>

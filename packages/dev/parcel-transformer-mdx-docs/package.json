@@ -9,8 +9,8 @@
   "dependencies": {
     "@mdx-js/mdx": "next",
     "@mdx-js/react": "next",
-    "@parcel/core": "^2.16.1",
-    "@parcel/plugin": "^2.16.1",
+    "@parcel/core": "^2.16.3",
+    "@parcel/plugin": "^2.16.3",
     "dprint-node": "^1.0.7",
     "js-yaml": "^3.13.1",
     "mdast-util-toc": "^6.1.0",

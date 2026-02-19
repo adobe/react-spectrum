@@ -1,16 +1,105 @@
 'use client';
 
+import {colorHexMaps, colorSections} from './colorSearchData';
 import {Content, Heading, IllustratedMessage} from '@react-spectrum/s2';
-import {getLibraryFromPage} from './library';
+import {getBaseUrl} from './pageUtils';
 // @ts-ignore
+import {getLibraryFromPage} from './library';
 import {iconList, useIconFilter} from './IconSearchView';
+import {Key} from 'react-aria-components';
+
 import {type Library, TAB_DEFS} from './constants';
+// @ts-ignore
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
-// @ts-ignore
-import {Page} from '@parcel/rsc';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {Page, TocNode} from '@parcel/rsc';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useSettings} from './SettingsContext';
+
+/**
+ * Parses a hex color string to RGB values.
+ * Supports #RGB, #RRGGBB formats (with or without #).
+ */
+function parseHexColor(hex: string): [number, number, number] | null {
+  // Remove # if present and trim whitespace
+  const cleanHex = hex.replace(/^#/, '').trim();
+  
+  if (!/^[0-9A-Fa-f]+$/.test(cleanHex)) {
+    return null;
+  }
+  
+  let r: number, g: number, b: number;
+  
+  if (cleanHex.length === 3) {
+    // #RGB format
+    r = parseInt(cleanHex[0] + cleanHex[0], 16);
+    g = parseInt(cleanHex[1] + cleanHex[1], 16);
+    b = parseInt(cleanHex[2] + cleanHex[2], 16);
+  } else if (cleanHex.length === 6) {
+    // #RRGGBB format
+    r = parseInt(cleanHex.slice(0, 2), 16);
+    g = parseInt(cleanHex.slice(2, 4), 16);
+    b = parseInt(cleanHex.slice(4, 6), 16);
+  } else {
+    return null;
+  }
+  
+  return [r, g, b];
+}
+
+/**
+ * Checks if a search string looks like a hex color code.
+ */
+function isHexColorSearch(searchValue: string): boolean {
+  const trimmed = searchValue.trim();
+  // Must start with # or be a valid 3 or 6 character hex string
+  if (trimmed.startsWith('#')) {
+    const hex = trimmed.slice(1);
+    return /^[0-9A-Fa-f]{3}$/.test(hex) || /^[0-9A-Fa-f]{6}$/.test(hex);
+  }
+  // Also match without # if it's exactly 3 or 6 hex characters
+  return /^[0-9A-Fa-f]{6}$/.test(trimmed);
+}
+
+/**
+ * Calculates the color distance between two RGB colors using weighted Euclidean distance.
+ * Uses weights that better approximate human color perception.
+ * Reference: https://en.wikipedia.org/wiki/Color_difference.
+ */
+function colorDistance(rgb1: [number, number, number], rgb2: [number, number, number]): number {
+  const [r1, g1, b1] = rgb1;
+  const [r2, g2, b2] = rgb2;
+  const rMean = (r1 + r2) / 2;
+  const dr = r1 - r2;
+  const dg = g1 - g2;
+  const db = b1 - b2;
+  const weightR = 2 + rMean / 256;
+  const weightG = 4;
+  const weightB = 2 + (255 - rMean) / 256;
+  
+  return Math.sqrt(weightR * dr * dr + weightG * dg * dg + weightB * db * db);
+}
+
+/**
+ * Finds the closest colors to a given hex code from the color map.
+ * Returns an array of color names sorted by distance (closest first).
+ */
+function findClosestColors(
+  targetRgb: [number, number, number], 
+  colorHexMap: Record<string, [number, number, number]>,
+  maxResults = 10
+): Array<{name: string, distance: number}> {
+  const results: Array<{name: string, distance: number}> = [];
+  
+  for (const [name, rgb] of Object.entries(colorHexMap)) {
+    const distance = colorDistance(targetRgb, rgb as [number, number, number]);
+    results.push({name, distance});
+  }
+  
+  // Sort by distance and return top results
+  return results.sort((a, b) => a.distance - b.distance).slice(0, maxResults);
+}
 
 export interface SearchableItem {
   name: string,
@@ -36,7 +125,198 @@ export interface Section {
 
 export interface Tag {
   id: string,
-  name: string
+  name: string,
+  href?: string
+}
+
+/**
+ * Strips markdown link syntax from a string, keeping only the link text.
+ */
+export function stripMarkdown(description: string | undefined): string {
+  return (description || '').replace(/\[(.*?)\]\(.*?\)/g, '$1');
+}
+
+/**
+ * Gets all of the subheadings underneath a heading within the Table of Contents.
+ */
+function getToCSubheadings(TocNode: TocNode, headings: string[]): string[] {
+  headings.push(TocNode.title);
+
+  for (let node of TocNode.children) {
+    getToCSubheadings(node, headings);
+  }
+
+  return headings;
+}
+
+/**
+ * Transforms a page into a ComponentItem for search/display.
+ */
+export function transformPageToComponentItem(page: Page): ComponentItem {
+  // get all headings on a page and add them a tags for the search feature
+  let filterTags = new Set(['Content', 'Example', 'Examples', 'API', 'Accessibility', 'Events', 'Features', 'Introduction', 'Interface']);
+  let Toc = page.tableOfContents;
+  let headings: string[] = [];
+  if (Toc) {
+    for (let node of Toc) {
+      let subHeadings: string[] = getToCSubheadings(node, []);
+      headings.push(...subHeadings);
+    }
+  }
+  let allTags = (page.exports?.tags || page.exports?.keywords as string[]) || [];
+  let relatedPages = (page.exports?.relatedPages?.map(page => page.title)) || [];
+  allTags.push(...headings, ...relatedPages);
+  allTags = allTags.filter(tags => (!filterTags.has(tags) && !tags.startsWith('Testing')));
+
+  const title = getPageTitle(page);
+  const section: string = getSearchSection(page);
+  const tags: string[] = allTags;
+  const description: string = stripMarkdown(page.exports?.description);
+  const date: string | undefined = page.exports?.date;
+  return {
+    id: page.url,
+    name: title,
+    href: page.url,
+    section,
+    tags,
+    description,
+    date
+  };
+}
+
+const END_SECTIONS = ['blog', 'releases'];
+
+/**
+ * Builds sections from pages for a given library.
+ * Sorts sections with 'Components' first.
+ */
+export function buildSectionsFromPages(pages: Page[], library: Library): Section[] {
+  const filteredPages = pages.filter(page =>
+    getLibraryFromPage(page) === library &&
+    !page.exports?.hideFromSearch
+  );
+
+  const components = filteredPages.map(transformPageToComponentItem);
+
+  const sectionNames = Array.from(new Set(components.map(c => c.section || 'Components')));
+
+  return sectionNames
+    .map(sectionName => ({
+      id: sectionName.toLowerCase(),
+      name: sectionName,
+      children: components.filter(c => (c.section || 'Components') === sectionName)
+    }))
+    .sort((a, b) => {
+      if (a.id === 'components') {
+        return -1;
+      }
+      if (b.id === 'components') {
+        return 1;
+      }
+      let ai = END_SECTIONS.indexOf(a.id);
+      let bi = END_SECTIONS.indexOf(b.id);
+      if (ai >= 0) {
+        return bi < 0 ? 1 : (ai - bi);
+      }
+      if (bi >= 0) {
+        return ai < 0 ? -1 : (bi - ai);
+      }
+      return a.name.localeCompare(b.name);
+    });
+}
+
+/**
+ * Gets items for a given section selection (handles 'all' and specific sections).
+ */
+export function getItemsForSection(
+  sections: Section[],
+  sectionId: string,
+  searchValue: string,
+  resourceTagIds: string[] = []
+): ComponentItem[] {
+  // Check if this is a resource tag (e.g., icons) - return empty, handled separately
+  if (resourceTagIds.includes(sectionId)) {
+    return [];
+  }
+
+  let items: ComponentItem[];
+  if (sectionId === 'all') {
+    items = sections.flatMap(s => s.children);
+    if (searchValue.trim().length > 0) {
+      items = sortSearchItems(items, searchValue, createSearchOptions<ComponentItem>());
+    } else {
+      items = sortItemsForDisplay(items, searchValue);
+    }
+  } else {
+    items = sections.find(s => s.id === sectionId)?.children || [];
+    items = sortItemsForDisplay(items, searchValue);
+  }
+
+  return items;
+}
+
+/**
+ * Filters sections based on search value.
+ */
+export function filterSections(sections: Section[], searchValue: string): Section[] {
+  if (!searchValue) {
+    return sections;
+  }
+
+  const allItems = sections.flatMap(section => section.children);
+  const sortedItems = filterAndSortSearchItems(allItems, searchValue, createSearchOptions<ComponentItem>());
+
+  const resultsBySection = new Map<string, ComponentItem[]>();
+  sortedItems.forEach(item => {
+    const section = item.section || 'Components';
+    if (!resultsBySection.has(section)) {
+      resultsBySection.set(section, []);
+    }
+    resultsBySection.get(section)!.push(item);
+  });
+
+  return sections
+    .map(section => ({
+      ...section,
+      children: resultsBySection.get(section.name) || []
+    }))
+    .filter(section => section.children.length > 0);
+}
+
+/**
+ * Hook to build and manage sections for a library with search filtering.
+ */
+export function useLibrarySections(pages: Page[], library: Library, searchValue: string) {
+  const sections = useMemo(
+    () => buildSectionsFromPages(pages, library),
+    [pages, library]
+  );
+
+  const filteredSections = useMemo(
+    () => filterSections(sections, searchValue),
+    [sections, searchValue]
+  );
+
+  const getSectionNames = useCallback(() => {
+    return sections.map(s => s.name);
+  }, [sections]);
+
+  return {sections, filteredSections, getSectionNames};
+}
+
+/**
+ * Creates search options for filtering/sorting Page objects directly.
+ */
+export function createSearchOptionsForPages(): SearchOptions<Page> {
+  return {
+    getName: (page: Page) => getPageTitle(page),
+    getTags: (page: Page) => page.exports?.tags || [],
+    getDate: (page: Page) => page.exports?.date,
+    shouldUseDateSort: (page: Page) => {
+      const section = getSearchSection(page);
+      return section === 'Blog' || section === 'Releases';
+    }
+  };
 }
 
 export interface SearchOptions<T> {
@@ -174,6 +454,14 @@ export function getPageTitle(page: Page): string {
   return page.exports?.title ?? page.tableOfContents?.[0]?.title ?? page.name;
 }
 
+/**
+ * Gets the search section for a page, preferring `searchSection` over `section`.
+ * This allows pages to appear in a different section in search results than in navigation.
+ */
+export function getSearchSection(page: Page): string {
+  return (page.exports?.searchSection as string) ?? (page.exports?.group as string) ?? (page.exports?.section as string) ?? 'Components';
+}
+
 export function getOrderedLibraries(currentPage: Page) {
   const allLibraries = (Object.keys(TAB_DEFS) as Library[]).map(id => ({id, ...TAB_DEFS[id]}));
   const currentLibId = getLibraryFromPage(currentPage);
@@ -188,7 +476,11 @@ export function getOrderedLibraries(currentPage: Page) {
 
 export function getResourceTags(library: Library): Tag[] {
   if (library === 'react-spectrum') {
-    return [{id: 'icons', name: 'Icons'}];
+    return [
+      {id: 'icons', name: 'Icons'},
+      {id: 'colors', name: 'Colors'},
+      {id: 'v3', name: 'React Spectrum v3', href: getBaseUrl('s2') + '/v3/getting-started.html'}
+    ];
   }
   return [];
 }
@@ -203,13 +495,113 @@ export function useFilteredIcons(searchValue: string) {
   }, [searchValue, iconFilter]);
 }
 
+export interface ColorSearchResult {
+  sections: typeof colorSections,
+  /** Names of colors that exactly match the searched hex (distance = 0). */
+  exactMatches: Set<string>,
+  /** Names of the closest matching colors when no exact matches exist. */
+  closestMatches: Set<string>
+}
+
+export function useFilteredColors(searchValue: string): ColorSearchResult {
+  const {colorScheme} = useSettings();
+  const colorHexMap = colorHexMaps[colorScheme];
+  
+  return useMemo(() => {
+    if (!searchValue.trim()) {
+      return {sections: colorSections, exactMatches: new Set(), closestMatches: new Set()};
+    }
+    
+    // Check if user is searching for a hex color
+    if (isHexColorSearch(searchValue)) {
+      const targetRgb = parseHexColor(searchValue);
+      if (targetRgb) {
+        const closestColors = findClosestColors(targetRgb, colorHexMap, 20);
+        const closestColorNames = new Set(closestColors.map(c => c.name));
+        
+        // Find all exact matches (distance === 0)
+        const exactMatches = new Set(
+          closestColors.filter(c => c.distance === 0).map(c => c.name)
+        );
+        
+        // If no exact matches, find all colors with the minimum distance
+        let closestMatches = new Set<string>();
+        if (exactMatches.size === 0 && closestColors.length > 0) {
+          const minDistance = closestColors[0].distance;
+          closestMatches = new Set(
+            closestColors.filter(c => c.distance === minDistance).map(c => c.name)
+          );
+        }
+        
+        // Filter sections to only include colors that are in the closest matches
+        const filteredSections = colorSections.map(section => ({
+          ...section,
+          items: section.items.filter(item => closestColorNames.has(item.name))
+        })).filter(section => section.items.length > 0);
+        
+        // If we found matches, sort items within each section by distance
+        // and sort sections by the minimum distance of their items (closest match section first)
+        if (filteredSections.length > 0) {
+          const distanceMap = new Map(closestColors.map(c => [c.name, c.distance]));
+          
+          // Sort items within each section and calculate section min distance
+          const sectionsWithSortedItems = filteredSections.map(section => {
+            const sortedItems = [...section.items].sort((a, b) => {
+              const distA = distanceMap.get(a.name) ?? Infinity;
+              const distB = distanceMap.get(b.name) ?? Infinity;
+              return distA - distB;
+            });
+            // Min distance is the distance of the first (closest) item
+            const minDistance = sortedItems.length > 0 
+              ? (distanceMap.get(sortedItems[0].name) ?? Infinity) 
+              : Infinity;
+            return {
+              ...section,
+              items: sortedItems,
+              minDistance
+            };
+          });
+          
+          // Sort sections by minimum distance (section with closest color first)
+          sectionsWithSortedItems.sort((a, b) => a.minDistance - b.minDistance);
+          
+          // Remove the temporary minDistance property
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const sortedSections = sectionsWithSortedItems.map(({minDistance, ...section}) => section);
+          
+          return {
+            sections: sortedSections,
+            exactMatches,
+            closestMatches
+          };
+        }
+      }
+    }
+    
+    // Default text search
+    const searchLower = searchValue.toLowerCase();
+    return {
+      sections: colorSections.map(section => ({
+        ...section,
+        items: section.items.filter(item => 
+          item.name.toLowerCase().includes(searchLower)
+        )
+      })).filter(section => section.items.length > 0),
+      exactMatches: new Set(),
+      closestMatches: new Set()
+    };
+  }, [searchValue, colorHexMap]);
+}
+
 export function useSearchTagSelection(
   searchValue: string,
   sectionTags: Tag[],
   resourceTags: Tag[],
-  initialTagId: string
+  initialTagId: string,
+  isOpen: boolean
 ) {
   const [selectedTagId, setSelectedTagId] = useState<string>(initialTagId);
+  const [hasAllBeenShown, setHasAllBeenShown] = useState<boolean>(false);
   const prevSearchWasEmptyRef = useRef<boolean>(true);
 
   // Ensure selected tag is valid for the current library
@@ -217,15 +609,25 @@ export function useSearchTagSelection(
   const resourceTagIds = resourceTags.map(t => t.id);
   const allBaseIds = useMemo(() => [...baseSectionIds, ...resourceTagIds], [baseSectionIds, resourceTagIds]);
   const isResourceSelected = selectedTagId && resourceTagIds.includes(selectedTagId);
+
+  // "All" tag is shown when search starts (first time search value is non-empty and no resource is selected)
+  const shouldTriggerAll = searchValue.trim().length > 0 && !isResourceSelected;
+
+  // Track if "All" has been shown, and once shown, keep showing it
+  if (shouldTriggerAll && !hasAllBeenShown) {
+    setHasAllBeenShown(true);
+  } else if (!isOpen && hasAllBeenShown) {
+    setHasAllBeenShown(false);
+  }
+
   const sectionIds = useMemo(() => {
-    return searchValue.trim().length > 0 && !isResourceSelected ? ['all', ...allBaseIds] : allBaseIds;
-  }, [searchValue, isResourceSelected, allBaseIds]);
-  
-  useEffect(() => {
-    if (!selectedTagId || !sectionIds.includes(selectedTagId)) {
-      setSelectedTagId(sectionIds[0] || 'components');
-    }
-  }, [selectedTagId, sectionIds, setSelectedTagId]);
+    return hasAllBeenShown ? ['all', ...allBaseIds] : allBaseIds;
+  }, [hasAllBeenShown, allBaseIds]);
+
+  let defaultTagId = sectionIds.includes(initialTagId) ? initialTagId : sectionIds[0] || 'components';
+  if (!selectedTagId || !sectionIds.includes(selectedTagId) || (!isOpen && selectedTagId !== defaultTagId)) {
+    setSelectedTagId(defaultTagId);
+  }
 
   // Auto-select "All" when search starts (unless resource is selected)
   useEffect(() => {
@@ -243,22 +645,35 @@ export function useSectionTagsForDisplay(
   sections: Section[],
   searchValue: string,
   selectedTagId: string,
-  resourceTagIds: string[]
+  resourceTagIds: string[],
+  isOpen: boolean
 ): Tag[] {
+  const [hasAllBeenShown, setHasAllBeenShown] = useState<boolean>(false);
+
+  // Track if "All" should be triggered (search value exists and no resource is selected)
+  const shouldTriggerAll = searchValue.trim().length > 0 && !resourceTagIds.includes(selectedTagId);
+
+  // Once "All" has been shown, keep showing it
+  if (shouldTriggerAll && !hasAllBeenShown) {
+    setHasAllBeenShown(true);
+  } else if (!isOpen && hasAllBeenShown) {
+    setHasAllBeenShown(false);
+  }
+
   return useMemo(() => {
     const base = sections.map(s => ({id: s.id, name: s.name}));
-    if (searchValue.trim().length > 0 && !resourceTagIds.includes(selectedTagId)) {
+    if (hasAllBeenShown) {
       return [{id: 'all', name: 'All'}, ...base];
     }
     return base;
-  }, [sections, searchValue, selectedTagId, resourceTagIds]);
+  }, [sections, hasAllBeenShown]);
 }
 
-export function sortItemsForDisplay<T extends {name: string, date?: string}>(items: T[], searchValue: string): T[] {
+export function sortItemsForDisplay<T extends {name: string, href: string, date?: string}>(items: T[], searchValue: string): T[] {
   if (searchValue.trim().length === 0) {
     return [...items].sort((a, b) => {
-      const aIsIntro = a.name === 'Introduction';
-      const bIsIntro = b.name === 'Introduction';
+      const aIsIntro = a.href.endsWith('/');
+      const bIsIntro = b.href.endsWith('/');
 
       // Date sorting for Blog/Releases
       if (a.date && b.date) {
@@ -278,7 +693,8 @@ export function sortItemsForDisplay<T extends {name: string, date?: string}>(ite
       if (!aIsIntro && bIsIntro) {
         return 1;
       }
-      return 0;
+      // Sort alphabetically by name
+      return a.name.localeCompare(b.name);
     });
   }
   return items;
@@ -312,4 +728,190 @@ export function SearchEmptyState({searchValue, libraryLabel}: {searchValue: stri
       )}
     </IllustratedMessage>
   );
+}
+
+export const LazyIconSearchView = React.lazy(() =>
+  import('./IconSearchView').then(({IconSearchView}) => ({default: IconSearchView}))
+);
+
+export const LazyColorSearchView = React.lazy(() =>
+  import('./ColorSearchView').then(({ColorSearchView}) => ({default: ColorSearchView}))
+);
+
+export interface SearchMenuStateOptions {
+  pages: Page[],
+  currentPage: Page,
+  initialSearchValue?: string,
+  initialTag?: string,
+  isOpen: boolean
+}
+
+export interface SearchMenuState {
+  // Library state
+  selectedLibrary: Library,
+  setSelectedLibrary: (library: Library) => void,
+  orderedLibraries: ReturnType<typeof getOrderedLibraries>,
+
+  // Search state
+  searchValue: string,
+  setSearchValue: (value: string) => void,
+
+  // Section state
+  sections: Section[],
+  filteredSections: Section[],
+  sectionTags: Tag[],
+  sectionTagsForDisplay: Tag[],
+
+  // Resource tags (icons, etc.)
+  resourceTags: Tag[],
+  resourceTagIds: string[],
+
+  // Tag selection
+  selectedTagId: string,
+  setSelectedTagId: (id: string) => void,
+  handleTagSelectionChange: (keys: Iterable<Key>) => void,
+
+  // Icons
+  filteredIcons: typeof iconList,
+  iconFilter: ReturnType<typeof useIconFilter>,
+  isIconsSelected: boolean,
+
+  // Computed items
+  selectedItems: ComponentItem[],
+  selectedSectionName: string,
+
+  // Helpers
+  getPlaceholderText: (libraryLabel: string) => string
+}
+
+export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuState {
+  const {pages, currentPage, initialSearchValue = '', initialTag} = options;
+
+  // Library state
+  const currentLibrary = getLibraryFromPage(currentPage);
+  const [selectedLibrary, setSelectedLibrary] = useState<Library>(currentLibrary);
+  const orderedLibraries = useMemo(() => getOrderedLibraries(currentPage), [currentPage]);
+
+  // Search state
+  const [searchValue, setSearchValue] = useState(initialSearchValue);
+
+  // Build sections for the selected library
+  const {sections, filteredSections} = useLibrarySections(
+    pages || [],
+    selectedLibrary,
+    searchValue
+  );
+
+  // Section and resource tags
+  const sectionTags = useMemo(() => sections.map(s => ({id: s.id, name: s.name})), [sections]);
+  const resourceTags = useMemo(() => getResourceTags(selectedLibrary), [selectedLibrary]);
+  const resourceTagIds = useMemo(() => resourceTags.map(t => t.id), [resourceTags]);
+
+  // Compute initial selected section
+  const initialSelectedSection = useMemo(() => {
+    const currentSection = sections.find(s =>
+      s.children.some(c => c.href === currentPage.url)
+    );
+    return initialTag || currentSection?.id || currentPage.exports?.section?.toLowerCase() || 'components';
+  }, [initialTag, currentPage, sections]);
+
+  // Tag selection
+  const [selectedTagId, setSelectedTagId] = useSearchTagSelection(
+    searchValue,
+    sectionTags,
+    resourceTags,
+    initialSelectedSection,
+    options.isOpen
+  );
+
+  // Section tags for display (includes "All" when searching)
+  const sectionTagsForDisplay = useSectionTagsForDisplay(
+    sections,
+    searchValue,
+    selectedTagId,
+    resourceTagIds,
+    options.isOpen
+  );
+
+  // Icons
+  const filteredIcons = useFilteredIcons(searchValue);
+  const iconFilter = useIconFilter();
+  const isIconsSelected = selectedTagId === 'icons';
+
+  // Handler for tag selection change (works with TagGroup's onSelectionChange)
+  const handleTagSelectionChange = useCallback((keys: Iterable<Key>) => {
+    const firstKey = Array.from(keys)[0] as string;
+    if (firstKey) {
+      setSelectedTagId(firstKey);
+    }
+  }, [setSelectedTagId]);
+
+  // Computed selected items
+  const selectedItems = useMemo(() => {
+    return getItemsForSection(filteredSections, selectedTagId, searchValue, resourceTagIds);
+  }, [filteredSections, selectedTagId, searchValue, resourceTagIds]);
+
+  // Computed section name for aria-label
+  const selectedSectionName = useMemo(() => {
+    if (selectedTagId === 'all') {
+      return 'All';
+    }
+    return (filteredSections.find(s => s.id === selectedTagId)?.name)
+      || (sections.find(s => s.id === selectedTagId)?.name)
+      || 'Items';
+  }, [filteredSections, sections, selectedTagId]);
+
+  // Helper to get placeholder text based on selected resource tag
+  const getPlaceholderText = useCallback((libraryLabel: string) => {
+    const selectedResourceTag = resourceTags.find(tag => tag.id === selectedTagId);
+    if (selectedTagId === 'colors') {
+      return 'Search color names or hex values';
+    }
+    return selectedResourceTag
+      ? `Search ${selectedResourceTag.name}`
+      : `Search ${libraryLabel}`;
+  }, [resourceTags, selectedTagId]);
+
+  // Reset search value after search menu closes.
+  if (!options.isOpen && searchValue) {
+    setSearchValue('');
+  }
+
+  return {
+    // Library state
+    selectedLibrary,
+    setSelectedLibrary,
+    orderedLibraries,
+
+    // Search state
+    searchValue,
+    setSearchValue,
+
+    // Section state
+    sections,
+    filteredSections,
+    sectionTags,
+    sectionTagsForDisplay,
+
+    // Resource tags
+    resourceTags,
+    resourceTagIds,
+
+    // Tag selection
+    selectedTagId,
+    setSelectedTagId,
+    handleTagSelectionChange,
+
+    // Icons
+    filteredIcons,
+    iconFilter,
+    isIconsSelected,
+
+    // Computed items
+    selectedItems,
+    selectedSectionName,
+
+    // Helpers
+    getPlaceholderText
+  };
 }

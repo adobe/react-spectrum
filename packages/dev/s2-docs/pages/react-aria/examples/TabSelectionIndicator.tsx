@@ -7,7 +7,7 @@ export function TabSelectionIndicator() {
 
   // Generate keyframes for each tab using CSS anchor positioning.
   let animationId = useId();
-  let keyframes = [];
+  let keyframes: string[] = [];
   for (let item of state.collection) {
     keyframes.push(`${Math.round(item.index / (state.collection.size - 1) * 100)}% {
       top: anchor(--tab-${item.key} start);

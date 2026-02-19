@@ -1,6 +1,6 @@
 'use client';
 
-import {ActionButton, UNSTABLE_ToastQueue as ToastQueue, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
+import {ActionButton, ToastQueue, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import Copy from '@react-spectrum/s2/icons/Copy';
 import React, {useEffect, useRef, useState} from 'react';

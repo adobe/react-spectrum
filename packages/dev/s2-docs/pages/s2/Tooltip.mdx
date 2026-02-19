@@ -5,12 +5,13 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['hint', 'popup', 'info'];
+export const description = 'Displays a description of an element on hover or focus.';
 
 # Tooltip
 
 <PageDescription>{docs.exports.Tooltip.description}</PageDescription>
 
-```tsx render docs={docs.exports.TooltipTrigger} links={docs.links} props={['placement', 'offset', 'crossOffset', 'shouldFlip']} type="s2"
+```tsx render docs={docs.exports.TooltipTrigger} links={docs.links} props={['placement', 'crossOffset', 'shouldFlip', 'shouldCloseOnPress']} type="s2"
 "use client";
 import {Tooltip, TooltipTrigger, ActionButton} from '@react-spectrum/s2';
 import Edit from '@react-spectrum/s2/icons/Edit';
@@ -25,7 +26,7 @@ import Edit from '@react-spectrum/s2/icons/Edit';
 
 Tooltips appear after a "warmup" delay when hovering, or instantly on focus. Once a tooltip is displayed, other tooltips display immediately. If the user waits for the "cooldown period" before hovering another element, the warmup timer restarts.
 
-```tsx render docs={docs.exports.TooltipTrigger} links={docs.links} props={['trigger', 'delay', 'isDisabled']} type="vanilla"
+```tsx render docs={docs.exports.TooltipTrigger} links={docs.links} props={['trigger', 'delay', 'isDisabled']} type="s2"
 "use client";
 import {TooltipTrigger, Tooltip, ActionButton} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -60,16 +61,16 @@ function Example(props) {
 
 <InlineAlert variant="notice" UNSAFE_style={{marginTop: '2rem'}}>
   <Heading>Accessibility</Heading>
-  <Content>Tooltips are not shown on touch screen interactions. Ensure that your UI is usable without tooltips, or use an alternative component such as a [Popover](Popover.html) to show information in an adjacent element.</Content>
+  <Content>Tooltips are not shown on touch screen interactions. Ensure that your UI is usable without tooltips, or use an alternative component such as a [Popover](Popover) to show information in an adjacent element.</Content>
 </InlineAlert>
 
 ## Non-interactive elements
 
-Tooltips must be placed on focusable elements so they are accessible to keyboard and screen reader users. Use [ContextualHelp](ContextualHelp.html) to provide context for non-interactive elements such as plain text or disabled buttons.
+Tooltips must be placed on focusable elements so they are accessible to keyboard and screen reader users. Use [ContextualHelp](ContextualHelp) to provide context for non-interactive elements such as plain text or disabled buttons.
 
 ```tsx render
 "use client";
-import {Tooltip, TooltipTrigger, Button, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
+import {Button, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
@@ -87,7 +88,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ## API
 
-```tsx links={{TooltipTrigger: '#tooltiptrigger', Tooltip: '#tooltip', Button: 'Button.html'}}
+```tsx links={{TooltipTrigger: '#tooltiptrigger', Tooltip: '#tooltip', Button: 'Button'}}
 <TooltipTrigger>
   <Button />
   <Tooltip />

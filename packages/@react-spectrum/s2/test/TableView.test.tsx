@@ -19,24 +19,46 @@ import {
   MenuItem,
   MenuSection,
   Row,
+  Tab,
   TableBody,
   TableHeader,
   TableView,
+  TabList,
+  Tabs,
   Text
 } from '../src';
+import {DisabledBehavior} from '@react-types/shared';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
-import React from 'react';
-import {User} from '@react-aria/test-utils';
+import {pointerMap, User} from '@react-aria/test-utils';
+import React, {useState} from 'react';
+import userEvent from '@testing-library/user-event';
 
 // @ts-ignore
 window.getComputedStyle = (el) => el.style;
 
 describe('TableView', () => {
   let offsetWidth, offsetHeight;
+  let user;
   let testUtilUser = new User({advanceTimer: jest.advanceTimersByTime});
   beforeAll(function () {
+    user = userEvent.setup({delay: null, pointerMap});
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 400);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 200);
+    window.CSSTransition = jest.fn(({children}) => children);
+
+    // Mock the getAnimations method
+    Element.prototype.getAnimations = jest.fn().mockImplementation(() => {
+      // Return an array of mock Animation objects
+      return [
+        {
+          // Mock the properties and methods you need
+          finished: Promise.resolve(), // Useful for waiting for animations to "finish"
+          play: jest.fn(),
+          pause: jest.fn(),
+          cancel: jest.fn()
+        }
+      ];
+    });
     jest.useFakeTimers();
   });
 
@@ -107,5 +129,81 @@ describe('TableView', () => {
     let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
     await tableTester.triggerColumnHeaderAction({column: 1, action: 0, interactionType: 'keyboard'});
     expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('if the previously focused cell\'s row is disabled, the focus should still be restored to the cell when the disabled behavior is changed and the user navigates to the collection', async () => {
+    function Example() {
+      let [disabledBehavior, setDisabledBehavior] = useState<DisabledBehavior>('selection');
+      return (
+        <>
+          <button>Before</button>
+          <TableView aria-label="Dynamic table" disabledBehavior={disabledBehavior} disabledKeys={['2']}>
+            <TableHeader columns={columns}>
+              {(column) => <Column {...column}>{column.name}</Column>}
+            </TableHeader>
+            <TableBody>
+              <Row id="1"><Cell>Foo 1</Cell><Cell>Bar 1</Cell><Cell>Baz 1</Cell><Cell>Yah 1</Cell></Row>
+              <Row id="2"><Cell>Foo 2</Cell><Cell>Bar 2</Cell><Cell>Baz 2</Cell><Cell>Yah 2</Cell></Row>
+              <Row id="3"><Cell>Foo 3</Cell><Cell>Bar 3</Cell><Cell>Baz 3</Cell><Cell>Yah 3</Cell></Row>
+            </TableBody>
+          </TableView>
+          <button onClick={() => setDisabledBehavior('all')}>After</button>
+        </>
+      );
+    }
+
+    let {getAllByRole, getByRole} = render(<Example />);
+    await user.click(document.body);
+
+    let cells = getAllByRole('gridcell');
+    let afterButton = getByRole('button', {name: 'After'});
+    await user.click(cells[3]); // Bar 2
+    expect(document.activeElement).toBe(cells[3]);
+
+    await user.click(afterButton);
+    await user.tab({shift: true});
+    await user.tab({shift: true});
+    await user.tab();
+    expect(document.activeElement).toBe(cells[3]);
+  });
+
+  it('should render empty state + nested collection without crashing', async () => {
+    const tabItems = [
+      {id: 'general', label: 'General'},
+      {id: 'advanced', label: 'Advanced'}
+    ];
+    const renderEmptyState = () => (
+      <Tabs aria-label="Settings">
+        <TabList items={tabItems}>
+          {(item) => (
+            <Tab>
+              {item.label}
+            </Tab>
+          )}
+        </TabList>
+      </Tabs>
+    );
+
+    let {getAllByRole} = render(
+      <TableView aria-label="Debug table" selectionMode="none">
+        <TableHeader columns={columns}>
+          {(column) => (
+            <Column>
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+        <TableBody items={[]} renderEmptyState={renderEmptyState} />
+      </TableView>
+    );
+    await act(() => Promise.resolve());
+
+    let tabs = getAllByRole('tab');
+    expect(tabs).toHaveLength(tabs.length);
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'false');
+    await user.click(tabs[1]);
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'false');
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
   });
 });

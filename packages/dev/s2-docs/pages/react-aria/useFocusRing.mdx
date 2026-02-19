@@ -14,33 +14,15 @@ import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/focus';
 
 export const section = 'Interactions';
+export const description = 'Determines whether a focus ring should be displayed for keyboard focus.';
 
 # useFocusRing
 
 <PageDescription>{docs.exports.useFocusRing.description}</PageDescription>
 
-## Introduction
-
-The `useFocusRing` hook returns whether a focus ring should be displayed to indicate keyboard focus for a component.
-This helps keyboard users determine which element on a page or in an application has keyboard focus as they
-navigate around. Focus rings are only visible when interacting with a keyboard so as not to distract mouse
-and touch screen users.
-
-If CSS classes are being used for styling, see the [FocusRing](FocusRing.html) component for a shortcut.
-
-## Example
-
-This example shows how to use `useFocusRing` to adjust styling when keyboard focus is on a button.
-Specifically, the `outline` property is used to create the focus ring when `isFocusVisible` is true.
-
-{/* Not implemented yet */}
-{/* See [useCheckbox](useCheckbox.html#styling), [useRadioGroup](useRadioGroup.html#styling), and
-[useSwitch](useSwitch.html#example) for more advanced examples of focus rings with other styling
-techniques. */}
-
 ```tsx render
 'use client';
-import {useFocusRing} from '@react-aria/focus';
+import {useFocusRing} from 'react-aria';
 
 function Example() {
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -55,7 +37,8 @@ function Example() {
         border: 'none',
         color: 'white',
         fontSize: 14,
-        padding: '4px 8px',
+        padding: '8px 12px',
+        borderRadius: 8,
         outline: isFocusVisible ? '2px solid dodgerblue' : 'none',
         outlineOffset: 2
       }}>
@@ -64,6 +47,15 @@ function Example() {
   );
 }
 ```
+
+## Features
+
+The `useFocusRing` hook returns whether a focus ring should be displayed to indicate keyboard focus for a component.
+This helps keyboard users determine which element on a page or in an application has keyboard focus as they
+navigate around. Focus rings are only visible when interacting with a keyboard so as not to distract mouse
+and touch screen users.
+
+If CSS classes are being used for styling, see the [FocusRing](FocusRing) component for a shortcut.
 
 ## API
 

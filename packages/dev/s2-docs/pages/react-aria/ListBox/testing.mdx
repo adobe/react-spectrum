@@ -1,0 +1,72 @@
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+import testUtilDocs from 'docs:@react-aria/test-utils';
+import {InstallCommand} from '../../../src/InstallCommand';
+import {PatternTestingFAQ} from '../../../src/PatternTestingFAQ';
+
+export const isSubpage = true;
+export const hideFromSearch = true;
+export const tags = ['testing', 'listbox', 'test-utils'];
+export const description = 'Testing ListBox with React Aria test utils';
+
+# Testing ListBox
+
+## General setup
+
+ListBox supports long press interactions on its options in certain configurations. See the following sections on how to handle these behaviors in your tests.
+
+* [Timers](../testing#timers)
+* [Long press](../testing#simulating-long-press)
+
+## Test utils
+
+`@react-aria/test-utils` offers common listbox interaction testing utilities. Install it with your preferred package manager.
+
+<InstallCommand pkg="@react-aria/test-utils" flags="--dev" />
+
+<InlineAlert variant="notice">
+  <Heading>Requirements</Heading>
+  <Content>Please note that this library uses [@testing-library/react@16](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
+</InlineAlert>
+
+Initialize a `User` object at the top of your test file, and use it to create a `ListBox` pattern tester in your test cases. The tester has methods that you can call within your test to query for specific subcomponents or simulate common interactions.
+
+```ts
+// ListBox.test.ts
+import {render} from '@testing-library/react';
+import {User} from '@react-aria/test-utils';
+
+let testUtilUser = new User({
+  interactionType: 'mouse'
+});
+// ...
+
+it('ListBox can select an option via keyboard', async function () {
+  // Render your test component/app and initialize the listbox tester
+  let {getByTestId} = render(
+    <ListBox selectionMode="single" data-testid="test-listbox">
+      ...
+    </ListBox>
+  );
+  let listboxTester = testUtilUser.createTester('ListBox', {root: getByTestId('test-listbox'), interactionType: 'keyboard'});
+
+  await listboxTester.toggleOptionSelection({option: 4});
+  expect(listboxTester.options()[4]).toHaveAttribute('aria-selected', 'true');
+});
+```
+
+## API
+
+### User
+
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
+
+### ListBoxTester
+
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.ListBoxTester} />
+
+## Testing FAQ
+
+<PatternTestingFAQ patternName="listbox" />

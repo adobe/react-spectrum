@@ -2,11 +2,21 @@
 
 import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 import {Folder, File} from 'lucide-react';
-import {useDragAndDrop, isTextDropItem} from 'react-aria-components';
-import {useListData} from 'react-stately';
+import {useDragAndDrop, isTextDropItem, useListData, ListData} from 'react-aria-components';
 import React from 'react';
 
-function BidirectionalDnDListBox(props) {
+interface ListItem {
+  id: string;
+  type: 'file' | 'folder';
+  name: string;
+}
+
+interface BidirectionalDnDListBoxProps {
+  list: ListData<ListItem>;
+  'aria-label': string;
+}
+
+function BidirectionalDnDListBox(props: BidirectionalDnDListBoxProps) {
   let {list} = props;
   let {dragAndDropHooks} = useDragAndDrop({
     acceptedDragTypes: ['custom-app-type-bidirectional'],
@@ -14,7 +24,7 @@ function BidirectionalDnDListBox(props) {
     getAllowedDropOperations: () => ['move'],
     getItems(keys) {
       return [...keys].map(key => {
-        let item = list.getItem(key);
+        let item = list.getItem(key)!;
         // Setup the drag types and associated info for each dragged item.
         return {
           'custom-app-type-bidirectional': JSON.stringify(item),
@@ -94,7 +104,7 @@ function BidirectionalDnDListBox(props) {
 }
 
 export default function DragBetweenListsExample() {
-  let list1 = useListData({
+  let list1 = useListData<ListItem>({
     initialItems: [
       {id: '1', type: 'file', name: 'Adobe Photoshop'},
       {id: '2', type: 'file', name: 'Adobe XD'},
@@ -105,7 +115,7 @@ export default function DragBetweenListsExample() {
     ]
   });
 
-  let list2 = useListData({
+  let list2 = useListData<ListItem>({
     initialItems: [
       {id: '7', type: 'folder', name: 'Pictures'},
       {id: '8', type: 'file', name: 'Adobe Fresco'},

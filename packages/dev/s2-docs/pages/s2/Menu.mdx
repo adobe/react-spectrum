@@ -5,6 +5,10 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['dropdown'];
+export const relatedPages = [
+  {title: 'Testing Menu', url: './Menu/testing'}
+];
+export const description = 'Displays a list of actions or options that a user can choose.';
 
 # Menu
 
@@ -80,7 +84,7 @@ function Example(props) {
 
 ## Content
 
-`Menu` follows the [Collection Components API](collections.html?component=Menu), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+`Menu` follows the [Collection Components API](collections?component=Menu), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
 
 ```tsx render
 "use client";
@@ -222,7 +226,7 @@ Wrap a `<MenuItem>` and a `<Menu>` with a `<SubmenuTrigger>` to create a submenu
 
 ```tsx render
 "use client";
-import {Menu, MenuTrigger, MenuItem, SubmenuTrigger, Popover, ActionButton} from '@react-spectrum/s2';
+import {Menu, MenuTrigger, MenuItem, SubmenuTrigger, ActionButton} from '@react-spectrum/s2';
 
 <MenuTrigger>
   <ActionButton>Actions</ActionButton>
@@ -233,14 +237,12 @@ import {Menu, MenuTrigger, MenuItem, SubmenuTrigger, Popover, ActionButton} from
     {/*- begin highlight -*/}
     <SubmenuTrigger>
       <MenuItem id="share">Share</MenuItem>
-      <Popover>
       <Menu>
       {/*- end highlight -*/}
         <MenuItem>Email</MenuItem>
         <MenuItem>SMS</MenuItem>
         <MenuItem>Copy Link</MenuItem>
       </Menu>
-      </Popover>
     </SubmenuTrigger>
   </Menu>
 </MenuTrigger>
@@ -248,7 +250,7 @@ import {Menu, MenuTrigger, MenuItem, SubmenuTrigger, Popover, ActionButton} from
 
 ### Links
 
-Use the `href` prop on a `<MenuItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework.
+Use the `href` prop on a `<MenuItem>` to create a link. See the [getting started guide](getting-started) to learn how to integrate with your framework.
 
 ```tsx render docs={docs.exports.Menu} links={docs.links} props={['hideLinkOutIcon']} type="s2" wide
 "use client";
@@ -273,11 +275,11 @@ function Example(props) {
 
 ### Popover content
 
-Wrap the Menu in a [Popover](Popover.html) to add additional sibling elements. This example includes a header with interactive content.
+Wrap the Menu in a [Popover](Popover) to add additional sibling elements. This example includes a header with interactive content.
 
 ```tsx render
 "use client";
-import {Popover, MenuTrigger, ActionButton, SearchField, Menu, MenuItem, MenuSection, SubmenuTrigger, Avatar, Switch, Divider, Text} from '@react-spectrum/s2';
+import {Popover, MenuTrigger, ActionButton, Menu, MenuItem, MenuSection, SubmenuTrigger, Avatar, Switch, Divider, Text} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Buildings from '@react-spectrum/s2/icons/Buildings';
 import Settings from '@react-spectrum/s2/icons/Settings';
@@ -330,7 +332,7 @@ import Settings from '@react-spectrum/s2/icons/Settings';
 
 ### Autocomplete
 
-Use [Autocomplete](react-aria/Autocomplete.html) from React Aria Components with a [SearchField](SearchField.html) to make a menu searchable.
+Use [Autocomplete](react-aria:Autocomplete) from React Aria Components with a [SearchField](SearchField) to make a menu searchable.
 
 ```tsx render
 "use client";
@@ -369,7 +371,7 @@ function Example() {
 
 ## Selection
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=Menu) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=Menu) for more details.
 
 ```tsx render docs={docs.exports.Menu} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide align="start" type="s2"
 "use client";
@@ -474,7 +476,7 @@ import {MenuTrigger, Menu, MenuItem, ActionButton} from '@react-spectrum/s2';
 
 ## API
 
-```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button.html', Menu: '#menu', MenuItem: '#menuitem', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger'}}
+```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button', Menu: '#menu', MenuItem: '#menuitem', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger', Icon: 'icons', Image: 'Image', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span', Keyboard: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/kbd', Header: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/header', Heading: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements'}}
 <MenuTrigger>
   <Button />
   <Menu>

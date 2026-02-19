@@ -330,10 +330,10 @@ describe('TooltipTrigger', function () {
     expect(queryByRole('tooltip')).toBeNull();
   });
 
-  it('does not close if the trigger is clicked when closeOnPress is false',  async () => {
+  it('does not close if the trigger is clicked when shouldCloseOnPress is false',  async () => {
     let {getByRole, getByLabelText} = render(
       <Provider theme={theme}>
-        <TooltipTrigger onOpenChange={onOpenChange} delay={0} closeOnPress={false}>
+        <TooltipTrigger onOpenChange={onOpenChange} delay={0} shouldCloseOnPress={false}>
           <ActionButton aria-label="trigger" />
           <Tooltip>Helpful information.</Tooltip>
         </TooltipTrigger>
@@ -351,10 +351,10 @@ describe('TooltipTrigger', function () {
     expect(tooltip).toBeVisible();
   });
 
-  it('does not close if the trigger is clicked with the keyboard when closeOnPress is false',  async () => {
+  it('does not close if the trigger is clicked with the keyboard when shouldCloseOnPress is false',  async () => {
     let {getByRole, getByLabelText} = render(
       <Provider theme={theme}>
-        <TooltipTrigger onOpenChange={onOpenChange} delay={0} closeOnPress={false}>
+        <TooltipTrigger onOpenChange={onOpenChange} delay={0} shouldCloseOnPress={false}>
           <ActionButton aria-label="trigger" />
           <Tooltip>Helpful information.</Tooltip>
         </TooltipTrigger>

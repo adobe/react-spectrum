@@ -88,3 +88,146 @@ export const DefaultSelectRange: Story = {
     }
   }
 };
+
+export const SelectRangeDisabled: Story = {
+  args: {
+    defaultFocusedValue: date,
+    minValue: new CalendarDate(2022, 2, 2),
+    maxValue: new CalendarDate(2022, 2, 26),
+    allowsNonContiguousRanges: true,
+    isDisabled: true
+  },
+  parameters: {
+    chromaticProvider: {
+      colorSchemes: ['light', 'dark'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    }
+  }
+};
+
+export const InvalidNonContiguousRange: Story = {
+  args: {
+    defaultFocusedValue: date,
+    value: {start: new CalendarDate(2022, 2, 5), end: new CalendarDate(2022, 2, 20)},
+    isDateUnavailable: (date: DateValue) => {
+      return date.day >= 10 && date.day <= 15;
+    },
+    isInvalid: true,
+    errorMessage: 'Selected range contains unavailable dates'
+  },
+  parameters: {
+    chromaticProvider: {
+      colorSchemes: ['light', 'dark'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    }
+  }
+};
+
+export const InvalidRangeStartUnavailable: Story = {
+  args: {
+    defaultFocusedValue: date,
+    value: {start: new CalendarDate(2022, 2, 10), end: new CalendarDate(2022, 2, 20)},
+    isDateUnavailable: (date: DateValue) => {
+      return date.day >= 10 && date.day <= 15;
+    },
+    isInvalid: true,
+    errorMessage: 'Start date is unavailable'
+  },
+  parameters: {
+    chromaticProvider: {
+      colorSchemes: ['light', 'dark'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    }
+  }
+};
+
+// Invalid range: end date is unavailable
+export const InvalidRangeEndUnavailable: Story = {
+  args: {
+    defaultFocusedValue: date,
+    value: {start: new CalendarDate(2022, 2, 5), end: new CalendarDate(2022, 2, 15)},
+    isDateUnavailable: (date: DateValue) => {
+      return date.day >= 10 && date.day <= 15;
+    },
+    isInvalid: true,
+    errorMessage: 'End date is unavailable'
+  },
+  parameters: {
+    chromaticProvider: {
+      colorSchemes: ['light', 'dark'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    }
+  }
+};
+
+// Invalid range: both start and end dates are unavailable
+export const InvalidRangeBothUnavailable: Story = {
+  args: {
+    defaultFocusedValue: date,
+    value: {start: new CalendarDate(2022, 2, 10), end: new CalendarDate(2022, 2, 15)},
+    isDateUnavailable: (date: DateValue) => {
+      return date.day >= 10 && date.day <= 15;
+    },
+    isInvalid: true,
+    errorMessage: 'Both start and end dates are unavailable'
+  },
+  parameters: {
+    chromaticProvider: {
+      colorSchemes: ['light', 'dark'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    }
+  }
+};
+
+// Invalid range with Tuesday as first day of week
+export const InvalidRangeTuesdayFirstDay: Story = {
+  args: {
+    defaultFocusedValue: new CalendarDate(2024, 12, 20),
+    value: {start: new CalendarDate(2024, 12, 18), end: new CalendarDate(2024, 12, 31)},
+    isDateUnavailable: (date: DateValue) => {
+      return date.day >= 23 && date.day <= 29;
+    },
+    firstDayOfWeek: 'tue',
+    isInvalid: true,
+    errorMessage: 'Selected range contains unavailable dates'
+  },
+  parameters: {
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    }
+  }
+};
+
+export const InvalidRangeDisabled: Story = {
+  args: {
+    defaultFocusedValue: date,
+    value: {start: new CalendarDate(2022, 2, 10), end: new CalendarDate(2022, 2, 20)},
+    isDateUnavailable: (date: DateValue) => {
+      return date.day >= 10 && date.day <= 15;
+    },
+    isInvalid: true,
+    errorMessage: 'Invalid and disabled',
+    isDisabled: true
+  },
+  parameters: {
+    chromaticProvider: {
+      colorSchemes: ['light', 'dark'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    }
+  }
+};

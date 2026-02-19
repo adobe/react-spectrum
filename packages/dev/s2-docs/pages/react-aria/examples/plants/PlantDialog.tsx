@@ -51,10 +51,10 @@ export function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item:
                 <input type="hidden" name="image" value={droppedImage} />
               </DropZone>
               <div className="flex flex-col gap-3 flex-1 min-w-0">
-                <ComboBox label="Common Name" name="common_name" isRequired items={plants} defaultInputValue={item?.common_name} allowsCustomValue autoFocus={navigator.maxTouchPoints === 0}>
+                <ComboBox label="Common Name" placeholder="Enter plant name" name="common_name" isRequired items={plants} defaultInputValue={item?.common_name} allowsCustomValue autoFocus={navigator.maxTouchPoints === 0}>
                   {plant => <ComboBoxItem>{plant.common_name}</ComboBoxItem>}
                 </ComboBox>
-                <TextField label="Scientific Name" name="scientific_name" isRequired defaultValue={item?.scientific_name?.join('')} />
+                <TextField label="Scientific Name" placeholder="Enter scientific name" name="scientific_name" isRequired defaultValue={item?.scientific_name?.join('')} />
               </div>
             </div>
             <Select label="Cycle" name="cycle" isRequired defaultSelectedKey={item?.cycle}>

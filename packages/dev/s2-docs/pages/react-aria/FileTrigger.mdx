@@ -6,19 +6,20 @@ import '../../tailwind/tailwind.css';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['upload', 'input'];
+export const description = 'Allows a user to access the file system with any pressable React Aria or React Spectrum component.';
 
 # FileTrigger
 
 <PageDescription>{docs.exports.FileTrigger.description}</PageDescription>
 
-```tsx render docs={docs.exports.FileTrigger} links={docs.links} props={['acceptedFileTypes', 'allowsMultiple', 'acceptDirectory', 'defaultCamera']} initialProps={{acceptedFileTypes: ['image/*']}} type="vanilla"
+```tsx render docs={docs.exports.FileTrigger} links={docs.links} props={['acceptedFileTypes', 'allowsMultiple', 'acceptDirectory', 'defaultCamera']} initialProps={{acceptedFileTypes: ['image/*']}} type="vanilla" hideShadcn
 "use client";
 import {FileTrigger} from 'react-aria-components';
 import {Button} from 'vanilla-starter/Button';
 import {useState} from 'react';
 
 function Example(props) {
-  let [files, setFiles] = useState([]);
+  let [files, setFiles] = useState<string[]>([]);
 
   return (
     <>
@@ -42,7 +43,7 @@ function Example(props) {
 
 ## Custom trigger
 
-`FileTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](https://react-spectrum.adobe.com/react-aria/usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
+`FileTrigger` works with any pressable React Aria component (e.g. [Button](Button), [Link](Link), etc.). Use the `<Pressable>` component or [usePress](usePress) hook to wrap a custom trigger element such as a third party component or DOM element.
 
 ```tsx render
 "use client"
@@ -70,7 +71,7 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 
 ## API
 
-```tsx links={{FileTrigger: '#filetrigger', Button: 'Button.html'}}
+```tsx links={{FileTrigger: '#filetrigger', Button: 'Button'}}
 <FileTrigger>
   <Button />
 </FileTrigger>

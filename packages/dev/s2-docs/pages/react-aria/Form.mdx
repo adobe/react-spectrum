@@ -5,6 +5,7 @@ import docs from 'docs:react-aria-components';
 import '../../tailwind/tailwind.css';
 
 export const tags = ['input', 'field'];
+export const description = 'A group of inputs that allows users to submit data to a server.';
 
 # Form
 
@@ -47,7 +48,7 @@ export const tags = ['input', 'field'];
 
 ## Submitting data
 
-When using React 19, use the `action` prop to handle form submission. This receives a [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData) object containing the values for each form field. In React 18 or earlier, use the `onSubmit` event instead. See the [Forms](forms.html) guide details about integrating with frameworks.
+When using React 19, use the `action` prop to handle form submission. This receives a [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData) object containing the values for each form field. In React 18 or earlier, use the `onSubmit` event instead. See the [Forms](forms) guide details about integrating with frameworks.
 
 <ExampleSwitcher type={null} examples={['React 19', 'React 18']}>
 
@@ -82,12 +83,13 @@ import {Button} from 'vanilla-starter/Button';
     event.preventDefault();
 
     // Get data from form.
-    let formData = new FormData(event.target);
+    let form = event.target as HTMLFormElement;
+    let formData = new FormData(form);
     let name = formData.get('name');
     alert(`Hello, ${name}!`);
 
     // Reset form after submission.
-    event.target.reset();
+    form.reset();
   }}>
   {/*- end highlight -*/}
   <TextField name="name" label="Name" placeholder="Enter your full name" />
@@ -99,7 +101,7 @@ import {Button} from 'vanilla-starter/Button';
 
 ## Validation
 
-Use validation props on each form field to prevent submission of invalid values. When `validationBehavior="aria"`, form submission will not be prevented and validation will occur as the value is edited instead of on form submission. See the [Forms](forms.html) guide for more details.
+Use validation props on each form field to prevent submission of invalid values. When `validationBehavior="aria"`, form submission will not be prevented and validation will occur as the value is edited instead of on form submission. See the [Forms](forms) guide for more details.
 
 ```tsx render docs={docs.exports.Form} links={docs.links} props={['validationBehavior']} type="vanilla" files={["starters/docs/src/Form.tsx", "starters/docs/src/Form.css"]}
 "use client";
