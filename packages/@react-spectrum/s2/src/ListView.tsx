@@ -128,6 +128,9 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
   borderStyle: 'solid'
 }, getAllowedOverrides({height: true}));
 
+/**
+ * A ListView displays a list of interactive items, and allows a user to navigate, select, or perform an action.
+ */
 export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListView<T extends object>(
   props: ListViewProps<T>,
   ref: DOMRef<HTMLDivElement>
