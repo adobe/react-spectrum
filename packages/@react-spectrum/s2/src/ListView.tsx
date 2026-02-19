@@ -11,7 +11,7 @@
  */
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
-import {baseColor, edgeToText, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   ContextValue,
@@ -30,6 +30,7 @@ import {
 import {controlFont, getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
 import {pressScale} from './pressScale';
