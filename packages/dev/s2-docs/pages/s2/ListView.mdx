@@ -1,0 +1,180 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['list', 'data', 'collection', 'table', 'grid'];
+
+# ListView
+
+<PageDescription>{docs.exports.ListView.description}</PageDescription>
+
+```tsx render docs={docs.exports.ListView} links={docs.links} props={['selectionMode', 'selectionStyle']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="s2"
+import {ListView, ListViewItem} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<ListView
+  aria-label="Files"
+  /* PROPS */
+  styles={style({width: 'full', height: 320})}>
+  <ListViewItem id="a">Adobe Photoshop</ListViewItem>
+  <ListViewItem id="b">Adobe XD</ListViewItem>
+  <ListViewItem id="c">Adobe InDesign</ListViewItem>
+</ListView>
+```
+
+## Content
+
+`ListView` follows the [Collection Components API](collections.html?component=TreeView), accepting both static and dynamic collections.
+
+```tsx render type="s2"
+"use client";
+import {ListView, ListViewItem} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+///- begin collapse -///
+let files = [
+  {id: 'a', name: 'Adobe Photoshop'},
+  {id: 'b', name: 'Adobe XD'},
+  {id: 'c', name: 'Adobe InDesign'}
+];
+///- end collapse -///
+
+<ListView aria-label="Dynamic files" items={files} styles={style({width: 'full', height: 320})}>
+  {item => (
+    <ListViewItem id={item.id}>{item.name}</ListViewItem>
+  )}
+</ListView>
+```
+
+### Slots
+
+`ListViewItem` supports icons, `Text`, image content, and action content.
+
+```tsx render type="s2"
+"use client";
+import {ActionButton, ActionButtonGroup, ListView, ListViewItem, Text} from '@react-spectrum/s2';
+import Delete from '@react-spectrum/s2/icons/Delete';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import File from '@react-spectrum/s2/icons/File';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+///- begin collapse -///
+let files = [
+  {id: 'a', name: 'Project brief.pdf'},
+  {id: 'b', name: 'Design directions.fig'},
+  {id: 'c', name: 'Final assets.zip'}
+];
+///- end collapse -///
+
+<ListView aria-label="Rich content files" items={files} styles={style({width: 'full', height: 320})}>
+  {item => (
+    <ListViewItem id={item.id}>
+      <File />
+      <Text>{item.name}</Text>
+      <ActionButtonGroup>
+        <ActionButton aria-label="Edit">
+          <Edit />
+        </ActionButton>
+        <ActionButton aria-label="Delete">
+          <Delete />
+        </ActionButton>
+      </ActionButtonGroup>
+    </ListViewItem>
+  )}
+</ListView>
+```
+
+### Selection and Actions
+
+Use `selectionStyle="checkbox"` (default) for toggle selection with checkboxes, or `selectionStyle="highlight"` for row highlight selection behavior. Use `onAction` to handle row actions.
+
+```tsx render docs={docs.exports.ListView} links={docs.links} props={['selectionMode', 'selectionStyle']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple', selectionStyle: 'highlight'}} type="s2"
+"use client";
+import {ListView, ListViewItem} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<ListView
+  aria-label="Selectable files"
+  styles={style({width: 'full', height: 320})}
+  onAction={(key) => alert(`Action on ${key}`)}
+  /* PROPS */>
+  <ListViewItem id="a">Brand guidelines.pdf</ListViewItem>
+  <ListViewItem id="b">Icon set.svg</ListViewItem>
+  <ListViewItem id="c">Homepage comp.fig</ListViewItem>
+</ListView>
+```
+
+### Links
+
+Use the `href` prop on a `ListViewItem` to create links.
+
+```tsx render docs={docs.exports.ListView} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple'}} type="s2"
+import {ListView, ListViewItem} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<ListView aria-label="Bookmarks" styles={style({width: 'full', height: 320})}>
+  <ListViewItem id="adobe" href="https://adobe.com" target="_blank">
+    adobe.com
+  </ListViewItem>
+  <ListViewItem id="spectrum" href="https://spectrum.adobe.com" target="_blank">
+    spectrum.adobe.com
+  </ListViewItem>
+  <ListViewItem id="react-spectrum" href="https://react-spectrum.adobe.com" target="_blank">
+    react-spectrum.adobe.com
+  </ListViewItem>
+</ListView>
+```
+
+### Asynchronous loading
+
+Use the `loadingState` and `onLoadMore` props to enable async loading and infinite scrolling.
+
+```tsx render type="s2"
+"use client";
+import {ListView, ListViewItem} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useAsyncList} from 'react-stately';
+
+interface Character {
+  name: string
+}
+
+function AsyncListView() {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <ListView
+      aria-label="Star Wars characters"
+      ///- begin highlight -///
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}
+      ///- end highlight -///
+      items={list.items}
+      styles={style({width: 'full', height: 320})}>
+      {item => (
+        <ListViewItem id={item.name}>{item.name}</ListViewItem>
+      )}
+    </ListView>
+  );
+}
+```
+
+### Empty State
+
+Use `renderEmptyState` to render placeholder content when there are no items.
+
+
