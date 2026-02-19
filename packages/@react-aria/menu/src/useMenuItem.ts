@@ -33,6 +33,10 @@ export interface MenuItemAria {
   /** Props for the keyboard shortcut text element inside the item, if any. */
   keyboardShortcutProps: DOMAttributes,
 
+  // TODO: this is quite specific, but description and keyboardShortcut above are also very specific
+  /** Props for the descriptive element in the end slot inside the menu item (e.g. info icon, chevron). */
+  endSlotProps: DOMAttributes,
+
   /** Whether the item is currently focused. */
   isFocused: boolean,
   /** Whether the item is keyboard focused. */
@@ -170,6 +174,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let labelId = useSlotId();
   let descriptionId = useSlotId();
   let keyboardId = useSlotId();
+  let endSlotId = useSlotId();
 
   let ariaProps = {
     id,
@@ -177,7 +182,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     role,
     'aria-label': props['aria-label'],
     'aria-labelledby': labelId,
-    'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ') || undefined,
+    'aria-describedby': [descriptionId, keyboardId, endSlotId].filter(Boolean).join(' ') || undefined,
     'aria-controls': props['aria-controls'],
     'aria-haspopup': hasPopup,
     'aria-expanded': props['aria-expanded']
@@ -341,6 +346,9 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     },
     keyboardShortcutProps: {
       id: keyboardId
+    },
+    endSlotProps: {
+      id: endSlotId
     },
     isFocused,
     isFocusVisible: isFocused && selectionManager.isFocused && isFocusVisible() && !isTriggerExpanded,

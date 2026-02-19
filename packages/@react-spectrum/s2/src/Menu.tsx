@@ -25,10 +25,12 @@ import {
   UnavailableMenuItemTriggerProps as AriaUnavailableMenuItemTriggerProps,
   ContextValue,
   DEFAULT_SLOT,
+  EndSlotContext,
   MenuItemRenderProps,
   Provider,
   Separator,
-  SeparatorProps
+  SeparatorProps,
+  useSlottedContext
 } from 'react-aria-components';
 import {baseColor, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
@@ -480,6 +482,33 @@ const linkIconSize = {
   XL: 'XL'
 } as const;
 
+interface UnavailableIconWrapperProps {
+  direction: 'ltr' | 'rtl',
+  size: 'S' | 'M' | 'L' | 'XL'
+}
+
+function UnavailableIconWrapper(props: UnavailableIconWrapperProps) {
+  let endSlotProps = useSlottedContext(EndSlotContext);
+  let {direction, size} = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+
+  return (
+    <div slot="descriptor" className={descriptor} id={endSlotProps?.id}>
+      <Provider values={[[IconContext, {slots: {icon: {styles: descriptorIcon({size})}}}]]}>
+        <InfoCircleIcon
+          aria-label={stringFormatter.format('menu.unavailable')}
+          className={style({
+            scaleX: {
+              direction: {
+                rtl: -1
+              }
+            }
+          })({direction})} />
+      </Provider>
+    </div>
+  );
+}
+
 export function MenuItem(props: MenuItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
@@ -487,7 +516,6 @@ export function MenuItem(props: MenuItemProps): ReactNode {
   let {size, hideLinkOutIcon} = useContext(InternalMenuContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   return (
     <AriaMenuItem
@@ -541,20 +569,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                 </div>
               )}
               {renderProps.isUnavailable && (
-                <div slot="descriptor" className={descriptor}>
-                  {/* Need to avoid the icon context set above since that gets a marginEnd that will then propagate to InfoCircleIcon */}
-                  <Provider values={[[IconContext, {slots: {icon: {styles: descriptorIcon({size})}}}]]}>
-                    <InfoCircleIcon
-                      aria-label={stringFormatter.format('menu.unavailable')}
-                      className={style({
-                        scaleX: {
-                          direction: {
-                            rtl: -1
-                          }
-                        }
-                      })({direction})} />
-                  </Provider>
-                </div>
+                <UnavailableIconWrapper direction={direction} size={size} />
               )}
               {renderProps.hasSubmenu && (
                 <div slot="descriptor" className={descriptor}>
