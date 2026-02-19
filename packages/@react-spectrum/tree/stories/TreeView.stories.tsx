@@ -383,9 +383,10 @@ export function renderEmptyState(): JSX.Element {
   );
 }
 
-export const EmptyTree: StoryObj<typeof TreeView> = {
+export const EmptyTree: StoryObj<typeof TreeExampleDynamic> = {
   ...TreeExampleDynamic,
   args: {
+    ...TreeExampleDynamic.args,
     items: [],
     renderEmptyState
   },
