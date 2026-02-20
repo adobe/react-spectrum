@@ -1,4 +1,4 @@
-import {addons} from '@storybook/preview-api';
+import {addons} from 'storybook/preview-api';
 import clsx from 'clsx';
 import React, {useEffect, useState} from 'react';
 

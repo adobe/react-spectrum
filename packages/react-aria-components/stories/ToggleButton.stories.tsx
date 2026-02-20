@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {classNames} from '@react-spectrum/utils';
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';

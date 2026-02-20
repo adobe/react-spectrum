@@ -7,10 +7,9 @@ module.exports = {
   ],
 
   addons: [
-    "@storybook/addon-actions",
-    "@storybook/addon-a11y",
-    "@storybook/addon-controls",
-    "storybook-dark-mode",
+    'storybook/actions',
+    '@storybook/addon-a11y',
+    '@vueless/storybook-dark-mode',
     './custom-addons/provider/register.js',
     './custom-addons/descriptions/register.js',
     './custom-addons/theme/register.js',
@@ -24,8 +23,8 @@ module.exports = {
   },
 
   framework: {
-    name: "storybook-react-parcel",
-    options: {},
+    name: 'storybook-react-parcel',
+    options: {}
   },
 
   core: {

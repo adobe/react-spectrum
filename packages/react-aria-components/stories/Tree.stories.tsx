@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Button, Checkbox, CheckboxProps, Collection, DroppableCollectionReorderEvent, isTextDropItem, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeHeader, TreeItem, TreeItemContent, TreeItemProps, TreeProps, TreeSection, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
@@ -569,7 +569,7 @@ const TreeSectionExampleDynamicRender = <T extends object>(args: TreeProps<T>): 
           <TreeSection>
             <TreeHeader>{section.value.name}</TreeHeader>
             <Collection items={section.children ?? []}>
-              {item =>  
+              {item =>
                 (<DynamicTreeItem id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
                   {item.value.name}
                 </DynamicTreeItem>)

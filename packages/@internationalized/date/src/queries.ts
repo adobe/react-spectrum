@@ -130,6 +130,7 @@ export function getHoursInDay(a: CalendarDate, timeZone: string): number {
 }
 
 let localTimeZone: string | null = null;
+let localTimeZoneOverride = false;
 
 /** Returns the time zone identifier for the current user. */
 export function getLocalTimeZone(): string {
@@ -142,12 +143,19 @@ export function getLocalTimeZone(): string {
 
 /** Sets the time zone identifier for the current user. */
 export function setLocalTimeZone(timeZone: string): void {
+  localTimeZoneOverride = true;
   localTimeZone = timeZone;
 }
 
 /** Resets the time zone identifier for the current user. */
 export function resetLocalTimeZone(): void {
+  localTimeZoneOverride = false;
   localTimeZone = null;
+}
+
+/** Returns whether the local time zone has been explicitly overridden via `setLocalTimeZone`. */
+export function isLocalTimeZoneOverridden(): boolean {
+  return localTimeZoneOverride;
 }
 
 /** Returns the first date of the month for the given date. */

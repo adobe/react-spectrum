@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ActionMenu} from '..';
 import {Alignment} from '@react-types/shared';
 import {Checkbox} from '@react-spectrum/checkbox';

@@ -22,7 +22,7 @@ import React, {JSX} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import TextIndentIncrease from '@spectrum-icons/workflow/TextIndentIncrease';
 import TextItalics from '@spectrum-icons/workflow/TextItalic';
-import {userEvent, within} from '@storybook/test';
+import {userEvent, within} from 'storybook/test';
 
 const meta: Meta<SpectrumMenuTriggerProps> = {
   title: 'MenuTrigger/SubmenuTrigger',

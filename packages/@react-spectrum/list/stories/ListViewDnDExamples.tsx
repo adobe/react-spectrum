@@ -1,4 +1,4 @@
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ActionMenu} from '@react-spectrum/menu';
 import {chain} from '@react-aria/utils';
 import Delete from '@spectrum-icons/workflow/Delete';
