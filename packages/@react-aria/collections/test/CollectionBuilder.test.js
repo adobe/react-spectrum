@@ -18,7 +18,7 @@ const SectionOld = createBranchComponent('section', (props, ref) =>  {
   return <div {...props} ref={ref} />;
 });
 
-const renderItems = (items, spyCollection, children = jest.fn()) => (
+const renderItems = (items, spyCollection, children = () => null) => (
   <CollectionBuilder content={<Collection>{items.map((item) => <Item key={item} />)}</Collection>}>
     {collection => {
       spyCollection.current = collection;
@@ -27,7 +27,7 @@ const renderItems = (items, spyCollection, children = jest.fn()) => (
   </CollectionBuilder>
 );
 
-const renderItemsOld = (items, spyCollection, children = jest.fn()) => (
+const renderItemsOld = (items, spyCollection, children = () => null) => (
   <CollectionBuilder
     content={
       <Collection>
