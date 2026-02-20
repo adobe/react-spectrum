@@ -40,7 +40,7 @@ import {Breadcrumbs, Item, Menu, MenuTrigger, SubmenuTrigger, Button, Section, H
 `);
 
 test('Does not affect unimplemented collections', `
-import {Item, ActionBarContainer, ActionBar, ListView, ListBox} from '@adobe/react-spectrum';
+import {Item, ActionBarContainer, ActionBar, ListBox} from '@adobe/react-spectrum';
 import {SearchAutocomplete} from '@react-spectrum/autocomplete';
 import {StepList} from '@react-spectrum/steplist';
 
@@ -51,11 +51,6 @@ import {StepList} from '@react-spectrum/steplist';
     <Item key="three">Three</Item>
   </SearchAutocomplete>
   <ActionBarContainer height={300} maxWidth="size-6000">
-    <ListView>
-      <Item key="photoshop">Adobe Photoshop</Item>
-      <Item key="illustrator">Adobe Illustrator</Item>
-      <Item key="xd">Adobe XD</Item>
-    </ListView>
     <ActionBar>
       <Item key="one">One</Item>
       <Item key="two">Two</Item>

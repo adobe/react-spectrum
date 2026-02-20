@@ -259,6 +259,7 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>If within <Code>Picker</Code>: Update <Code>Item</Code> to be a <Code>PickerItem</Code></li>
           <li className={style({font: 'body', marginY: 8})}>If within <Code>ComboBox</Code>: Update <Code>Item</Code> to be a <Code>ComboBoxItem</Code></li>
           <li className={style({font: 'body', marginY: 8})}>If within <Code>ListBox</Code>: Update <Code>Item</Code> to be a <Code>ListBoxItem</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>If within <Code>ListView</Code>: Update <Code>Item</Code> to be a <Code>ListViewItem</Code></li>
           <li className={style({font: 'body', marginY: 8})}>If within <Code>TabList</Code>: Update <Code>Item</Code> to be a <Code>Tab</Code></li>
           <li className={style({font: 'body', marginY: 8})}>If within <Code>TabPanels</Code>: Update <Code>Item</Code> to be a <Code>TabPanel</Code> and remove surrounding <Code>TabPanels</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Update <Code>key</Code> to be <Code>id</Code> (and keep <Code>key</Code> if rendered inside <Code>array.map</Code>)</li>
@@ -273,6 +274,12 @@ export function Migrating() {
         <H3>ListBox</H3>
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>ListBoxItem</Code></li>
+        </ul>
+
+        <H3>ListView</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>density</Code> (it has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>dragAndDropHooks</Code> (it has not been implemented yet)</li>
         </ul>
 
         <H3>Menu</H3>
