@@ -517,6 +517,7 @@ const emptyStateWrapper = style({
   justifyContent: 'center',
   width: 'full',
   height: 'full',
+  boxSizing: 'border-box',
   padding: 16
 });
 
