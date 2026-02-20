@@ -466,7 +466,7 @@ let image = style({
   borderRadius: 'sm',
   width: 32,
   aspectRatio: 'square',
-  objectFit: 'contain'
+  objectFit: 'cover'
 });
 
 let actionButtonGroup = style({
