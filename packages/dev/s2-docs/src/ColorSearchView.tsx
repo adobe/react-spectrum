@@ -201,10 +201,11 @@ interface ColorSearchViewProps {
   /** Names of colors that exactly match the searched hex value. */
   exactMatches?: Set<string>,
   /** Names of the closest matching colors when no exact matches exist. */
-  closestMatches?: Set<string>
+  closestMatches?: Set<string>,
+  listBoxClassName?: string
 }
 
-export function ColorSearchView({filteredItems, exactMatches = new Set(), closestMatches = new Set()}: ColorSearchViewProps) {
+export function ColorSearchView({filteredItems, exactMatches = new Set(), closestMatches = new Set(), listBoxClassName}: ColorSearchViewProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -261,7 +262,7 @@ export function ColorSearchView({filteredItems, exactMatches = new Set(), closes
           }
         }}
         layout="grid"
-        className={style({
+        className={listBoxClassName || style({
           width: 'full',
           display: 'flex',
           flexDirection: 'column',
