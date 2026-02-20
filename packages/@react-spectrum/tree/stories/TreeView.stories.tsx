@@ -317,6 +317,7 @@ const DynamicTreeItem = (props) => {
 };
 
 export const TreeExampleDynamic: StoryObj<typeof TreeView> = {
+  ...TreeExampleStatic,
   render: (args: SpectrumTreeViewProps<unknown>) => (
     <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
       <TreeView disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')} {...args}>
@@ -331,7 +332,6 @@ export const TreeExampleDynamic: StoryObj<typeof TreeView> = {
       </TreeView>
     </div>
   ),
-  ...TreeExampleStatic,
   parameters: undefined
 };
 

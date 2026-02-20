@@ -150,6 +150,46 @@ describe('TimeField', () => {
     expect(group).toHaveAttribute('data-disabled-state', 'disabled');
   });
 
+  it('should support required render prop', () => {
+    let {getByRole} = render(
+      <TimeField isRequired>
+        {({isRequired}) => (
+          <>
+            <Label>Time</Label>
+            <DateInput
+              data-required-state={isRequired ? 'required' : null}>
+              {segment => <DateSegment segment={segment} />}
+            </DateInput>
+          </>
+        )}
+      </TimeField>
+    );
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-required-state', 'required');
+  });
+
+  it('should support required state', () => {
+    let {getByRole, rerender} = render(
+      <TimeField>
+        <Label>Time</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </TimeField>
+    );
+    let group = getByRole('group');
+    expect(group.closest('.react-aria-TimeField')).not.toHaveAttribute('data-required');
+    rerender(
+      <TimeField isRequired>
+        <Label>Time</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </TimeField>
+    );
+    expect(group.closest('.react-aria-TimeField')).toHaveAttribute('data-required');
+  });
+
   it('should support form value', () => {
     render(
       <TimeField name="time" form="test" value={new Time(8, 30)}>

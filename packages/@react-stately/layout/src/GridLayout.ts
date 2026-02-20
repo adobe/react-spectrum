@@ -50,7 +50,13 @@ export interface GridLayoutOptions {
    * The thickness of the drop indicator.
    * @default 2
    */
-  dropIndicatorThickness?: number
+  dropIndicatorThickness?: number,
+  /**
+   * The fixed height of a loader element in px. This loader is specifically for
+   * "load more" elements rendered when loading more rows at the root level or inside nested row/sections.
+   * @default 48
+   */
+  loaderHeight?: number
 }
 
 const DEFAULT_OPTIONS = {
@@ -60,7 +66,8 @@ const DEFAULT_OPTIONS = {
   minSpace: new Size(18, 18),
   maxSpace: Infinity,
   maxColumns: Infinity,
-  dropIndicatorThickness: 2
+  dropIndicatorThickness: 2,
+  loaderHeight: 48
 };
 
 /**
@@ -84,7 +91,8 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       || (!(newOptions.minItemSize || DEFAULT_OPTIONS.minItemSize).equals(oldOptions.minItemSize || DEFAULT_OPTIONS.minItemSize))
       || (!(newOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize).equals(oldOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize))
       || (!(newOptions.minSpace || DEFAULT_OPTIONS.minSpace).equals(oldOptions.minSpace || DEFAULT_OPTIONS.minSpace))
-      || newOptions.maxHorizontalSpace !== oldOptions.maxHorizontalSpace;
+      || newOptions.maxHorizontalSpace !== oldOptions.maxHorizontalSpace
+      || newOptions.loaderHeight !== oldOptions.loaderHeight;
   }
 
   update(invalidationContext: InvalidationContext<O>): void {
@@ -95,7 +103,8 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       minSpace = DEFAULT_OPTIONS.minSpace,
       maxHorizontalSpace = DEFAULT_OPTIONS.maxSpace,
       maxColumns = DEFAULT_OPTIONS.maxColumns,
-      dropIndicatorThickness = DEFAULT_OPTIONS.dropIndicatorThickness
+      dropIndicatorThickness = DEFAULT_OPTIONS.dropIndicatorThickness,
+      loaderHeight = DEFAULT_OPTIONS.loaderHeight
     } = invalidationContext.layoutOptions || {};
     this.dropIndicatorThickness = dropIndicatorThickness;
 
@@ -209,9 +218,16 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     // Always add the loader sentinel if present in the collection so we can make sure it is never virtualized out.
     let lastNode = collection.getItem(collection.getLastKey()!);
     if (lastNode?.type === 'loader') {
-      let rect = new Rect(horizontalSpacing, y, itemWidth, 0);
+      if (skeletonCount > 0 || !lastNode.props.isLoading) {
+        loaderHeight = 0;
+      }
+      const loaderWidth = visibleWidth - horizontalSpacing * 2;
+      // Note that if the user provides isLoading to their sentinel during a case where they only want to render the emptyState, this will reserve
+      // room for the loader alongside rendering the emptyState
+      let rect = new Rect(horizontalSpacing, y, loaderWidth, loaderHeight);
       let layoutInfo = new LayoutInfo('loader', lastNode.key, rect);
       newLayoutInfos.set(lastNode.key, layoutInfo);
+      y = layoutInfo.rect.maxY;
     }
 
     this.layoutInfos = newLayoutInfos;
