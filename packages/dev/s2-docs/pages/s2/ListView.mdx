@@ -1,7 +1,7 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {ListView, ListViewItem, ListViewLoadMoreItem, Text, ActionMenu, MenuItem, ActionButton, ActionButtonGroup, Image, IllustratedMessage, Heading, Content, Link} from '@react-spectrum/s2';
+import {ListView, ListViewItem, ListViewLoadMoreItem, Text, ActionMenu, MenuItem, ActionButton, ActionButtonGroup, Image, IllustratedMessage, Heading, Content, Link, Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['list', 'data', 'collection', 'table', 'grid'];
@@ -238,6 +238,85 @@ function Example(props) {
         <ListViewItem id="d" isDisabled>Archived.zip</ListViewItem>
       </ListView>
       <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+### Navigation
+
+Use the `hasChildItems` prop on `ListViewItem` to display a chevron indicator, signaling that an item can be navigated into. Combine with `onAction` and [Breadcrumbs](Breadcrumbs) to build a drill-down navigation pattern.
+
+```tsx render type="s2"
+"use client";
+import {Breadcrumbs, Breadcrumb, ListView, ListViewItem, Text} from '@react-spectrum/s2';
+import Folder from '@react-spectrum/s2/icons/Folder';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+///- begin collapse -///
+let rootItems = [
+  {id: 'photoshop', name: 'Adobe Photoshop', type: 'file'},
+  {id: 'xd', name: 'Adobe XD', type: 'file'},
+  {id: 'documents', name: 'Documents', type: 'folder', children: [
+    {id: 'sales-pitch', name: 'Sales Pitch', type: 'file'},
+    {id: 'demo', name: 'Demo', type: 'file'},
+    {id: 'taxes', name: 'Taxes', type: 'file'}
+  ]},
+  {id: 'indesign', name: 'Adobe InDesign', type: 'file'},
+  {id: 'utilities', name: 'Utilities', type: 'folder', children: [
+    {id: 'activity-monitor', name: 'Activity Monitor', type: 'file'}
+  ]},
+  {id: 'aftereffects', name: 'Adobe AfterEffects', type: 'file'},
+  {id: 'illustrator', name: 'Adobe Illustrator', type: 'file'},
+  {id: 'pictures', name: 'Pictures', type: 'folder', children: [
+    {id: 'yosemite', name: 'Yosemite', type: 'file'},
+    {id: 'jackson-hole', name: 'Jackson Hole', type: 'file'},
+    {id: 'crater-lake', name: 'Crater Lake', type: 'file'}
+  ]}
+];
+///- end collapse -///
+
+function NavigationExample() {
+  let [breadcrumbs, setBreadcrumbs] = useState([
+    {id: 'root', name: 'Root', children: rootItems}
+  ]);
+
+  let currentItems = breadcrumbs[breadcrumbs.length - 1].children;
+
+  let onAction = (key) => {
+    let item = currentItems.find(item => item.id === key);
+    if (item?.type === 'folder') {
+      setBreadcrumbs(prev => [...prev, item]);
+    }
+  };
+
+  let onBreadcrumbAction = (key) => {
+    let index = breadcrumbs.findIndex(item => item.id === key);
+    setBreadcrumbs(breadcrumbs.slice(0, index + 1));
+  };
+
+  return (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 8, width: 'full', maxWidth: 400})}>
+      {/*- begin highlight -*/}
+      <Breadcrumbs onAction={onBreadcrumbAction}>
+        {breadcrumbs.map(item => (
+          <Breadcrumb key={item.id} id={item.id}>{item.name}</Breadcrumb>
+        ))}
+      </Breadcrumbs>
+      <ListView
+        aria-label={breadcrumbs[breadcrumbs.length - 1].name}
+        items={currentItems}
+        onAction={onAction}
+        styles={style({width: 'full', height: 320})}>
+        {item => (
+          <ListViewItem id={item.id} textValue={item.name} hasChildItems={item.type === 'folder'}>
+            {item.type === 'folder' ? <Folder /> : null}
+            <Text>{item.name}</Text>
+          </ListViewItem>
+        )}
+      </ListView>
+      {/*- end highlight -*/}
     </div>
   );
 }
