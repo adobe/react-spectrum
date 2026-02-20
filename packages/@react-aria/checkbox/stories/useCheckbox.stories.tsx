@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {AriaCheckboxProps, useCheckbox} from '../';
 import React from 'react';
 import {StoryObj} from '@storybook/react';

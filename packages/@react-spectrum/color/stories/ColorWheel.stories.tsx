@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ColorSwatch, ColorWheel} from '../';
-import {Flex, SpectrumColorWheelProps, useLocale} from '@adobe/react-spectrum';
+import {Flex, useLocale} from '@adobe/react-spectrum';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {parseColor} from '@react-stately/color';
 import React, {JSX, useState} from 'react';
+import {SpectrumColorWheelProps} from '@react-types/color';
 
 export type ColorWheelStory = StoryObj<typeof ColorWheel>;
 

@@ -1,4 +1,4 @@
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
 import {ActionMenu} from '@react-spectrum/menu';

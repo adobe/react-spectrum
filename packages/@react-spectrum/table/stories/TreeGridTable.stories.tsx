@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
 import {chain} from '@react-aria/utils';

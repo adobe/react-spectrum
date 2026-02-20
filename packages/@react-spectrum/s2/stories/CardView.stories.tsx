@@ -29,7 +29,7 @@ import {
 } from '../src';
 import EmptyIcon from '../spectrum-illustrations/gradient/generic1/Image';
 import ErrorIcon from '../spectrum-illustrations/linear/AlertNotice';
-import {fn} from '@storybook/test';
+import {fn} from 'storybook/test';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};

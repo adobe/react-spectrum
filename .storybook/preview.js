@@ -1,4 +1,4 @@
-import {configureActions} from '@storybook/addon-actions';
+import {configureActions} from 'storybook/actions';
 import React from 'react';
 import {withProviderSwitcher} from './custom-addons/provider';
 import {withScrollingSwitcher} from './custom-addons/scrolling';
