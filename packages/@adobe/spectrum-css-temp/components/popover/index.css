@@ -51,6 +51,14 @@ governing permissions and limitations under the License.
   overflow: hidden;
 }
 
+/* Prevent clicks during exit animation (e.g. Picker selecting wrong item).
+   pointer-events is not inherited, so we must disable it on the popover and all descendants. */
+.spectrum-Popover.is-exiting,
+.spectrum-Popover.is-exiting * {
+  pointer-events: none;
+  touch-action: none;
+}
+
 .is-open {
   composes: spectrum-overlay--open;
 }
