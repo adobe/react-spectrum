@@ -5,6 +5,7 @@ import docs from 'docs:react-aria-components';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/MenuAnatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+import {VersionBadge} from '../../src/VersionBadge';
 
 export const tags = ['dropdown'];
 export const relatedPages = [
@@ -271,7 +272,7 @@ import {Button} from 'vanilla-starter/Button';
 </MenuTrigger>
 ```
 
-### Unavailable items
+### Unavailable items <VersionBadge version="alpha" />
 
 Wrap a `<MenuItem>` and a `<Popover>` with a `<UnavailableMenuItemTrigger>` and apply `isUnavailable` to disable the item's default action and show an informational popover instead.
 
