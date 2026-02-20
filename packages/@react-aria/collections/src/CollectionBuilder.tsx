@@ -17,6 +17,7 @@ import {createPortal} from 'react-dom';
 import {FocusableContext} from '@react-aria/interactions';
 import {forwardRefType, Key, Node} from '@react-types/shared';
 import {Hidden} from './Hidden';
+import {mergeRefs} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
@@ -130,7 +131,7 @@ function createCollectionNodeClass(type: string): CollectionNodeClass<any> {
   return NodeClass;
 }
 
-function useSSRCollectionNode<T extends Element>(CollectionNodeClass: CollectionNodeClass<T> | string, props: object, ref: ForwardedRef<T>, rendered?: any, children?: ReactNode, render?: (node: Node<any>) => ReactElement) {
+function useSSRCollectionNode<T extends Element>(CollectionNodeClass: CollectionNodeClass<T> | string, props: object, ref: ForwardedRef<T>, rendered?: any, children?: ReactNode, render?: (node: Node<any>, ref?: ForwardedRef<T>) => ReactElement) {
   // To prevent breaking change, if CollectionNodeClass is a string, create a CollectionNodeClass using the string as the type
   if (typeof CollectionNodeClass === 'string') {
     CollectionNodeClass = createCollectionNodeClass(CollectionNodeClass);
@@ -169,7 +170,7 @@ function useSSRCollectionNode<T extends Element>(CollectionNodeClass: Collection
 export function createLeafComponent<T extends object, P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any> | string, render: (props: P, ref: ForwardedRef<E>) => ReactElement | null): (props: P & React.RefAttributes<E>) => ReactElement | null;
 export function createLeafComponent<T extends object, P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any> | string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null): (props: P & React.RefAttributes<E>) => ReactElement | null;
 export function createLeafComponent<P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any> | string, render: (props: P, ref: ForwardedRef<E>, node?: any) => ReactElement | null): (props: P & React.RefAttributes<any>) => ReactElement | null {
-  let Component = ({node}) => render(node.props, node.props.ref, node);
+  let Component = (forwardRef as forwardRefType)(({node}: {node: Node<any>}, ref: ForwardedRef<E>) => render(node.props, mergeRefs(node.props.ref, ref), node));
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let focusableProps = useContext(FocusableContext);
     let isShallow = useContext(ShallowRenderContext);
@@ -186,10 +187,10 @@ export function createLeafComponent<P extends object, E extends Element>(Collect
       ref,
       'children' in props ? props.children : null,
       null,
-      node => (
+      (node, ref) => (
         // Forward FocusableContext to real DOM tree so tooltips work.
         <FocusableContext.Provider value={focusableProps}>
-          <Component node={node} />
+          <Component node={node} ref={ref} />
         </FocusableContext.Provider>
       )
     );
@@ -200,10 +201,10 @@ export function createLeafComponent<P extends object, E extends Element>(Collect
 }
 
 export function createBranchComponent<T extends object, P extends {children?: any}, E extends Element>(CollectionNodeClass: CollectionNodeClass<any> | string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null, useChildren: (props: P) => ReactNode = useCollectionChildren): (props: P & React.RefAttributes<E>) => ReactElement | null {
-  let Component = ({node}) => render(node.props, node.props.ref, node);
+  let Component = (forwardRef as forwardRefType)(({node}: {node: Node<any>}, ref: ForwardedRef<E>) => render(node.props, mergeRefs(node.props.ref, ref), node));
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let children = useChildren(props);
-    return useSSRCollectionNode(CollectionNodeClass, props, ref, null, children, node => <Component node={node} />) ?? <></>;
+    return useSSRCollectionNode(CollectionNodeClass, props, ref, null, children, (node, ref) => <Component node={node} ref={ref} />) ?? <></>;
   });
   // @ts-ignore
   Result.displayName = render.name;

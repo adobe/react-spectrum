@@ -385,7 +385,7 @@ let CollapsingCollectionRenderer: CollectionRenderer = {
 };
 
 let useCollectionRender = (collection: Collection<Node<unknown>>) => {
-  let {CollectionNode = DefaultCollectionRenderer.CollectionNode} = useContext(CollectionRendererContext);
+  let {CollectionNode} = DefaultCollectionRenderer;
   let {containerRef, onAction} = useContext(CollapseContext) ?? {};
   let [visibleItems, setVisibleItems] = useState(collection.size);
   let {size = 'M'} = useContext(InternalBreadcrumbsContext);

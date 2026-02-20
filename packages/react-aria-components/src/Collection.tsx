@@ -116,9 +116,13 @@ export interface CollectionNodeProps<T = Node<unknown>> extends HTMLAttributes<H
   /** The parent node of the item to render. */
   parent: T | null,
   /** The content that should be rendered before the item. */
-  before?: ReactNode,
+  before?: ReactNode[],
   /** The content that should be rendered after the item. */
-  after?: ReactNode
+  after?: ReactNode[],
+  /** A function that renders this node to a React Element in the DOM. */
+  render?: (node: Node<any>, ref?: ForwardedRef<Element>) => ReactElement,
+  /** A ref to the rendered element of this node. */
+  nodeRef?: ForwardedRef<Element>
 }
 
 export interface CollectionBranchProps extends HTMLAttributes<HTMLElement> {
@@ -168,8 +172,8 @@ export const DefaultCollectionRenderer: DefaultRenderer = {
   CollectionBranch({collection, parent, renderDropIndicator}) {
     return useCollectionRender(collection, parent, renderDropIndicator);
   },
-  CollectionNode({node, before, after}) {
-    return <>{before}{node.render!(node)}{after}</>;
+  CollectionNode({before = [], node, render = node.render, nodeRef, after = []}) {
+    return <>{...before}{render!(node, nodeRef)}{...after}</>;
   }
 };
 
@@ -190,13 +194,13 @@ function useCollectionRender(
         return <></>;
       }
 
-      let pseudoProps = {};
+      let pseudoProps: Pick<CollectionNodeProps<Node<unknown>>, 'before' | 'after'> = {};
 
       if (renderDropIndicator && node.type === 'item') {
-        pseudoProps = {
-          before: renderDropIndicator({type: 'item', key: node.key, dropPosition: 'before'}),
-          after: renderAfterDropIndicators(collection, node, renderDropIndicator)
-        };
+        let beforeIndicator = renderDropIndicator({type: 'item', key: node.key, dropPosition: 'before'});
+        let afterIndicator = renderAfterDropIndicators(collection, node, renderDropIndicator);
+
+        pseudoProps = {before: new Array(beforeIndicator), after: new Array(afterIndicator)};
       }
 
       return <CollectionNode {...pseudoProps} node={node} parent={parent} collection={collection} key={node.key} />;

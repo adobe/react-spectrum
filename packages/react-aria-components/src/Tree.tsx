@@ -629,6 +629,7 @@ class TreeItemNode extends CollectionNode<any> {
  */
 export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
   let state = useContext(TreeStateContext)!;
+  let {CollectionNode = DefaultCollectionRenderer.CollectionNode} = useContext(CollectionRendererContext);
   ref = useObjectRef<HTMLDivElement>(ref);
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
 
@@ -733,10 +734,10 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
 
   let children = useCachedChildren({
     items: state.collection.getChildren!(item.key),
-    children: item => {
-      switch (item.type) {
+    children: node => {
+      switch (node.type) {
         case 'content': {
-          return item.render!(item);
+          return <CollectionNode node={node} parent={item} collection={state.collection} key={item.key} />;
         }
         // Skip item since we don't render the nested rows as children of the parent row, the flattened collection
         // will render them each as siblings instead
@@ -744,7 +745,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
         case 'item':
           return <></>;
         default:
-          throw new Error('Unsupported element type in TreeRow: ' + item.type);
+          throw new Error('Unsupported element type in TreeRow: ' + node.type);
       }
     }
   });
