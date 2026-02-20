@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, isIOS, isScrollable, useLayoutEffect, willOpenKeyboard} from '@react-aria/utils';
+import {chain, getActiveElement, getEventTarget, getScrollParent, isIOS, isScrollable, useLayoutEffect, willOpenKeyboard} from '@react-aria/utils';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -88,7 +88,7 @@ function preventScrollStandard() {
 //    by preventing default in a `touchmove` event. This is best effort: we can't prevent default when pinch
 //    zooming or when an element contains text selection, which may allow scrolling in some cases.
 // 3. Prevent default on `touchend` events on input elements and handle focusing the element ourselves.
-// 4. When focus moves to an input, create an off screen input and focus that temporarily. This prevents 
+// 4. When focus moves to an input, create an off screen input and focus that temporarily. This prevents
 //    Safari from scrolling the page. After a small delay, focus the real input and scroll it into view
 //    ourselves, without scrolling the whole page.
 function preventScrollMobileSafari() {
@@ -96,19 +96,27 @@ function preventScrollMobileSafari() {
   let allowTouchMove = false;
   let onTouchStart = (e: TouchEvent) => {
     // Store the nearest scrollable parent element from the element that the user touched.
-    let target = e.target as Element;
+    let target = getEventTarget(e) as Element;
     scrollable = isScrollable(target) ? target : getScrollParent(target, true);
     allowTouchMove = false;
-    
+
     // If the target is selected, don't preventDefault in touchmove to allow user to adjust selection.
     let selection = target.ownerDocument.defaultView!.getSelection();
     if (selection && !selection.isCollapsed && selection.containsNode(target, true)) {
       allowTouchMove = true;
     }
 
+    // If this is a range input, allow touch move to allow user to adjust the slider value
+    if (e.composedPath().some((el) =>
+      el instanceof HTMLInputElement &&
+      el.type === 'range'
+    )) {
+      allowTouchMove = true;
+    }
+
     // If this is a focused input element with a selected range, allow user to drag the selection handles.
     if (
-      'selectionStart' in target && 
+      'selectionStart' in target &&
       'selectionEnd' in target &&
       (target.selectionStart as number) < (target.selectionEnd as number) &&
       target.ownerDocument.activeElement === target
@@ -154,7 +162,7 @@ function preventScrollMobileSafari() {
   };
 
   let onBlur = (e: FocusEvent) => {
-    let target = e.target as HTMLElement;
+    let target = getEventTarget(e) as HTMLElement;
     let relatedTarget = e.relatedTarget as HTMLElement | null;
     if (relatedTarget && willOpenKeyboard(relatedTarget)) {
       // Focus without scrolling the whole page, and then scroll into view manually.
@@ -175,7 +183,8 @@ function preventScrollMobileSafari() {
   let focus = HTMLElement.prototype.focus;
   HTMLElement.prototype.focus = function (opts) {
     // Track whether the keyboard was already visible before.
-    let wasKeyboardVisible = document.activeElement != null && willOpenKeyboard(document.activeElement);
+    let activeElement = getActiveElement();
+    let wasKeyboardVisible = activeElement != null && willOpenKeyboard(activeElement);
 
     // Focus the element without scrolling the page.
     focus.call(this, {...opts, preventScroll: true});

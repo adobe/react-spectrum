@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ActionGroup} from '../';
 import BookIcon from '@spectrum-icons/workflow/Book';
 import Brush from '@spectrum-icons/workflow/Brush';

@@ -13,6 +13,7 @@ import {AriaToggleButtonGroupProps, useToggleButtonGroup} from 'react-aria';
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   RenderProps,
   SlotProps,
   useContextProps,
@@ -73,7 +74,7 @@ export const ToggleButtonGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(fu
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <div
+    <dom.div
       {...mergeProps(DOMProps, renderProps, groupProps)}
       ref={ref}
       slot={props.slot || undefined}
@@ -84,6 +85,6 @@ export const ToggleButtonGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(fu
           {renderProps.children}
         </SharedElementTransition>
       </ToggleGroupStateContext.Provider>
-    </div>
+    </dom.div>
   );
 });

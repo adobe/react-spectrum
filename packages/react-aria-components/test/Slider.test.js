@@ -59,6 +59,20 @@ describe('Slider', () => {
     expect(group.querySelector('.react-aria-SliderOutput')).toHaveAttribute('data-output', 'output');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} = renderSlider(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <output {...props} data-custom="true" />}
+    );
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-custom', 'true');
+    expect(group.querySelector('.react-aria-SliderThumb')).toHaveAttribute('data-custom', 'true');
+    expect(group.querySelector('.react-aria-SliderTrack')).toHaveAttribute('data-custom', 'true');
+    expect(group.querySelector('.react-aria-SliderOutput')).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support render props', () => {
     let {getByTestId} = render(
       <Slider orientation="vertical">

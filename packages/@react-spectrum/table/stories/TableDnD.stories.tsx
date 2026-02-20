@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import defaultConfig, {TableStory} from './Table.stories';
 import {Divider} from '@react-spectrum/divider';
 import {DragBetweenTablesExample, DragBetweenTablesRootOnlyExample, DragExample, DragOntoRowExample, DragWithoutRowHeaderExample, items, ReorderExample} from './TableDnDExamples';

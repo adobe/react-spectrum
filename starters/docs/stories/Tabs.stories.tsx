@@ -1,5 +1,5 @@
 import {Tabs, Tab, TabList, TabPanel, TabPanels} from '../src/Tabs';
-import {fn} from '@storybook/test';
+import {fn} from 'storybook/test';
 
 import type {Meta, StoryFn} from '@storybook/react';
 

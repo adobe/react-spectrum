@@ -12,9 +12,6 @@ function getAbsolutePath(value) {
 const config = {
   stories: ["../stories/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: [
-    getAbsolutePath("@storybook/addon-essentials"),
-    getAbsolutePath("@storybook/addon-links"),
-    getAbsolutePath("@storybook/addon-interactions"),
     getAbsolutePath("@storybook/addon-webpack5-compiler-babel"),
   ],
   framework: {

@@ -29,7 +29,7 @@ const example = style({
   marginX: 'auto'
 });
 
-const standaloneCode = style({
+export const standaloneCode = style({
   '--code-padding-start': {
     type: 'paddingStart',
     value: {

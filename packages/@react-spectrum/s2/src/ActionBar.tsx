@@ -161,8 +161,8 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
         ref={objectRef}
         {...otherProps}
         {...keyboardProps}
-        className={actionBarStyles({isEmphasized, isInContainer: !!scrollRef, isEntering, isExiting})}
-        style={{insetInlineEnd: `calc(var(--insetEnd) + ${scrollbarWidth}px)`}}>
+        className={(props.UNSAFE_className || '') + actionBarStyles({isEmphasized, isInContainer: !!scrollRef, isEntering, isExiting})}
+        style={{insetInlineEnd: `calc(var(--insetEnd) + ${scrollbarWidth}px)`, ...props.UNSAFE_style}}>
         <div className={style({order: 1, marginStart: 'auto'})}>
           <ActionButtonGroup
             staticColor={isEmphasized ? 'auto' : undefined}

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ActionButton} from '@react-spectrum/button';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
@@ -27,7 +27,7 @@ import {Meta, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {JSX, useState} from 'react';
 import {useAsyncList} from '@react-stately/data';
-import {userEvent, within} from '@storybook/test';
+import {userEvent, within} from 'storybook/test';
 
 let flatOptions = [
   {id: 1, name: 'Aardvark'},

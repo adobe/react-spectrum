@@ -74,6 +74,10 @@ export interface Calendar {
    * eras may begin in the middle of a month.
    */
   getMinimumDayInMonth?(date: AnyCalendarDate): number,
+  /** Returns the maximum months across all years. */
+  getMaximumMonthsInYear(): number,
+  /** Returns the maximum days across all months. */
+  getMaximumDaysInMonth(): number,
   /**
    * Returns a date that is the first day of the month for the given date.
    * This is used to determine the month that the given date falls in, if

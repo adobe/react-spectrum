@@ -17,10 +17,12 @@ import {
   ButtonContext,
   CellRenderProps,
   Collection,
+  CollectionRendererContext,
   ColumnRenderProps,
   ColumnResizer,
   ContextValue,
   DEFAULT_SLOT,
+  DefaultCollectionRenderer,
   Form,
   Key,
   OverlayTriggerStateContext,
@@ -59,7 +61,7 @@ import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {ColumnSize} from '@react-types/table';
 import {CustomDialog, DialogContainer} from '..';
 import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
-import {getActiveElement, getOwnerDocument, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import {getActiveElement, getOwnerDocument, isFocusWithin, nodeContains, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -120,7 +122,7 @@ interface S2TableProps {
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
-export interface TableViewProps extends Omit<RACTableProps, 'style' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, S2TableProps {
+export interface TableViewProps extends Omit<RACTableProps, 'style' | 'className' | 'render' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, S2TableProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
@@ -388,7 +390,7 @@ const centeredWrapper = style({
   height: 'full'
 });
 
-export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | keyof GlobalDOMAttributes> {}
+export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes> {}
 
 /**
  * The body of a `<Table>`, containing the table rows.
@@ -439,7 +441,9 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   if (renderEmptyState != null && !isLoading) {
     emptyRender = (props: TableBodyRenderProps) => (
       <div className={centeredWrapper}>
-        {renderEmptyState(props)}
+        <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+          {renderEmptyState(props)}
+        </CollectionRendererContext.Provider>
       </div>
     );
   } else if (loadingState === 'loading') {
@@ -522,7 +526,7 @@ const columnStyles = style({
   forcedColorAdjust: 'none'
 });
 
-export interface ColumnProps extends Omit<RACColumnProps, 'style' | 'className' | keyof GlobalDOMAttributes> {
+export interface ColumnProps extends Omit<RACColumnProps, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes> {
   /** Whether the column should render a divider between it and the next column. */
   showDivider?: boolean,
   /** Whether the column allows resizing. */
@@ -885,7 +889,7 @@ const selectAllCheckboxColumn = style({
   backgroundColor: 'gray-75'
 });
 
-export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | keyof GlobalDOMAttributes> {}
+export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'render' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | keyof GlobalDOMAttributes> {}
 
 /**
  * A header within a `<Table>`, containing the table columns.
@@ -955,7 +959,8 @@ const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
   ...commonCellStyles,
   color: {
     default: baseColor('neutral-subdued'),
-    isSelected: baseColor('neutral')
+    isSelected: baseColor('neutral'),
+    forcedColors: 'ButtonText'
   },
   paddingY: centerPadding(),
   minHeight: {
@@ -1030,7 +1035,7 @@ const cellContent = style({
   }
 });
 
-export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | keyof GlobalDOMAttributes>, Pick<ColumnProps, 'align' | 'showDivider'> {
+export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, Pick<ColumnProps, 'align' | 'showDivider'> {
   /** @private */
   isSticky?: boolean,
   /** The content to render as the cell children. */
@@ -1220,7 +1225,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
     if (isOpen) {
       let activeElement = getActiveElement(getOwnerDocument(formRef.current));
       if (activeElement
-        && formRef.current?.contains(activeElement)
+        && nodeContains(formRef.current, activeElement)
         // not going to handle contenteditable https://stackoverflow.com/questions/6139107/programmatically-select-text-in-a-contenteditable-html-element
         // seems like an edge case anyways
         && (
@@ -1301,7 +1306,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
             onOpenChange={setIsOpen}
             ref={popoverRef}
             shouldCloseOnInteractOutside={() => {
-              if (!popoverRef.current?.contains(document.activeElement)) {
+              if (!isFocusWithin(popoverRef.current)) {
                 return false;
               }
               formRef.current?.requestSubmit();
@@ -1465,7 +1470,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       className={renderProps => row({
         ...renderProps,
         ...tableVisualOptions
-      }) + (renderProps.isFocusVisible && ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)'))}
+      }) + (renderProps.isFocusVisible ? ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')}
       {...otherProps}>
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
         // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.

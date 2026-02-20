@@ -22,7 +22,7 @@ import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, StyleProps {
+export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The size of the disclosure.
    * @default 'M'
@@ -295,7 +295,7 @@ export const DisclosureTitle = forwardRef(function DisclosureTitle(props: Disclo
   );
 });
 
-export interface DisclosurePanelProps extends Omit<RACDisclosurePanelProps, 'className' | 'style' | 'children'>, UnsafeStyles, DOMProps, AriaLabelingProps {
+export interface DisclosurePanelProps extends Omit<RACDisclosurePanelProps, 'className' | 'style' | 'render' | 'children'>, UnsafeStyles, DOMProps, AriaLabelingProps {
   children: React.ReactNode
 }
 

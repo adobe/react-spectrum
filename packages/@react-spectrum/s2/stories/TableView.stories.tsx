@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {
   ActionButton,
   Cell,
@@ -26,6 +26,7 @@ import {
   Picker,
   PickerItem,
   Row,
+  SortDescriptor,
   StatusLight,
   TableBody,
   TableHeader,
@@ -41,7 +42,6 @@ import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {Key} from '@react-types/shared';
 import type {Meta, StoryObj} from '@storybook/react';
 import React, {ReactElement, useCallback, useEffect, useRef, useState} from 'react';
-import {SortDescriptor} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useEffectEvent} from '@react-aria/utils';

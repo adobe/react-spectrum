@@ -72,7 +72,7 @@ interface PressState {
   isOverTarget: boolean,
   pointerType: PointerType | null,
   userSelect?: string,
-  metaKeyEvents?: Map<string, KeyboardEvent>,
+  metaKeyEvents?: Map<string, globalThis.KeyboardEvent>,
   disposables: Array<() => void>
 }
 
@@ -84,7 +84,8 @@ interface EventBase {
   altKey: boolean,
   clientX?: number,
   clientY?: number,
-  targetTouches?: Array<{clientX?: number, clientY?: number}>
+  targetTouches?: Array<{clientX?: number, clientY?: number}>,
+  key?: string
 }
 
 export interface PressResult {
@@ -98,7 +99,9 @@ function usePressResponderContext(props: PressHookProps): PressHookProps {
   // Consume context from <PressResponder> and merge with props.
   let context = useContext(PressResponderContext);
   if (context) {
-    let {register, ...contextProps} = context;
+    // Prevent mergeProps from merging ref.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let {register, ref, ...contextProps} = context;
     props = mergeProps(contextProps, props) as PressHookProps;
     register();
   }
@@ -117,6 +120,7 @@ class PressEvent implements IPressEvent {
   altKey: boolean;
   x: number;
   y: number;
+  key: string | undefined;
   #shouldStopPropagation = true;
 
   constructor(type: IPressEvent['type'], pointerType: PointerType, originalEvent: EventBase, state?: PressState) {
@@ -146,6 +150,7 @@ class PressEvent implements IPressEvent {
     this.altKey = originalEvent.altKey;
     this.x = x;
     this.y = y;
+    this.key = originalEvent.key;
   }
 
   continuePropagation() {
@@ -334,12 +339,12 @@ export function usePress(props: PressHookProps): PressResult {
     if (isElemKeyPressed) {
       let onKeyUp = (e: KeyboardEvent) => {
         if (state.isPressed && state.target && isValidKeyboardEvent(e, state.target)) {
-          if (shouldPreventDefaultKeyboard(getEventTarget(e), e.key)) {
+          if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e.key)) {
             e.preventDefault();
           }
 
-          let target = getEventTarget(e);
-          let wasPressed = nodeContains(state.target, getEventTarget(e));
+          let target = getEventTarget(e) as Element;
+          let wasPressed = nodeContains(state.target, target);
           triggerPressEndEvent(createEvent(state.target, e), 'keyboard', wasPressed);
           if (wasPressed) {
             triggerSyntheticClickEvent(e, state.target);
@@ -374,8 +379,8 @@ export function usePress(props: PressHookProps): PressResult {
       // instead of the same element where the key down event occurred. Make it capturing so that it will trigger
       // before stopPropagation from useKeyboard on a child element may happen and thus we can still call triggerPress for the parent element.
       let originalTarget = state.target;
-      let pressUp = (e) => {
-        if (originalTarget && isValidKeyboardEvent(e, originalTarget) && !e.repeat && nodeContains(originalTarget, getEventTarget(e)) && state.target) {
+      let pressUp = (e: KeyboardEvent) => {
+        if (originalTarget && isValidKeyboardEvent(e, originalTarget) && !e.repeat && nodeContains(originalTarget, getEventTarget(e) as Element) && state.target) {
           triggerPressUpEvent(createEvent(state.target, e), 'keyboard');
         }
       };
@@ -393,7 +398,7 @@ export function usePress(props: PressHookProps): PressResult {
     if (isPointerPressed === 'pointer') {
       let onPointerUp = (e: PointerEvent) => {
         if (e.pointerId === state.activePointerId && state.isPressed && e.button === 0 && state.target) {
-          if (nodeContains(state.target, getEventTarget(e)) && state.pointerType != null) {
+          if (nodeContains(state.target, getEventTarget(e) as Element) && state.pointerType != null) {
             // Wait for onClick to fire onPress. This avoids browser issues when the DOM
             // is mutated between onPointerUp and onClick, and is more compatible with third party libraries.
             // https://github.com/adobe/react-spectrum/issues/1513
@@ -417,7 +422,9 @@ export function usePress(props: PressHookProps): PressResult {
             }, 80);
             // Use a capturing listener to track if a click occurred.
             // If stopPropagation is called it may never reach our handler.
-            addGlobalListener(e.currentTarget as Document, 'click', () => clicked = true, true);
+            if (e.currentTarget) {
+              addGlobalListener(e.currentTarget, 'click', () => clicked = true, true);
+            }
             state.disposables.push(() => clearTimeout(timeout));
           } else {
             cancelEvent(e);
@@ -450,7 +457,7 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        if (state.target && state.target.contains(e.target as Element) && state.pointerType != null) {
+        if (state.target && nodeContains(state.target, e.target as Element) && state.pointerType != null) {
           // Wait for onClick to fire onPress. This avoids browser issues when the DOM
           // is mutated between onMouseUp and onClick, and is more compatible with third party libraries.
         } else {
@@ -466,7 +473,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
     } else if (isPointerPressed === 'touch' && process.env.NODE_ENV === 'test') {
       let onScroll = (e: Event) => {
-        if (state.isPressed && nodeContains(getEventTarget(e), state.target)) {
+        if (state.isPressed && nodeContains(getEventTarget(e) as Element, state.target)) {
           cancelEvent({
             currentTarget: state.target,
             shiftKey: false,
@@ -488,8 +495,8 @@ export function usePress(props: PressHookProps): PressResult {
     let state = ref.current;
     let pressProps: DOMAttributes = {
       onKeyDown(e) {
-        if (isValidKeyboardEvent(e.nativeEvent, e.currentTarget) && nodeContains(e.currentTarget, getEventTarget(e.nativeEvent))) {
-          if (shouldPreventDefaultKeyboard(getEventTarget(e.nativeEvent), e.key)) {
+        if (isValidKeyboardEvent(e.nativeEvent, e.currentTarget as Element) && nodeContains(e.currentTarget as Element, getEventTarget(e) as Element)) {
+          if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e.key)) {
             e.preventDefault();
           }
 
@@ -524,7 +531,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
       },
       onClick(e) {
-        if (e && !nodeContains(e.currentTarget, getEventTarget(e.nativeEvent))) {
+        if (e && !nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
 
@@ -563,7 +570,7 @@ export function usePress(props: PressHookProps): PressResult {
     if (typeof PointerEvent !== 'undefined') {
       pressProps.onPointerDown = (e) => {
         // Only handle left clicks, and ignore events that bubbled through portals.
-        if (e.button !== 0 || !nodeContains(e.currentTarget, getEventTarget(e.nativeEvent))) {
+        if (e.button !== 0 || !nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
 
@@ -594,9 +601,15 @@ export function usePress(props: PressHookProps): PressResult {
 
           // Release pointer capture so that touch interactions can leave the original target.
           // This enables onPointerLeave and onPointerEnter to fire.
-          let target = getEventTarget(e.nativeEvent);
+          let target = getEventTarget(e);
           if ('releasePointerCapture' in target) {
-            target.releasePointerCapture(e.pointerId);
+            if ('hasPointerCapture' in target) {
+              if (target.hasPointerCapture(e.pointerId)) {
+                target.releasePointerCapture(e.pointerId);
+              }
+            } else {
+              (target as Element).releasePointerCapture(e.pointerId);
+            }
           }
         }
 
@@ -606,7 +619,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onMouseDown = (e) => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e.nativeEvent))) {
+        if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
 
@@ -624,7 +637,7 @@ export function usePress(props: PressHookProps): PressResult {
 
       pressProps.onPointerUp = (e) => {
         // iOS fires pointerup with zero width and height, so check the pointerType recorded during pointerdown.
-        if (!nodeContains(e.currentTarget, getEventTarget(e.nativeEvent)) || state.pointerType === 'virtual') {
+        if (!nodeContains(e.currentTarget, getEventTarget(e)) || state.pointerType === 'virtual') {
           return;
         }
 
@@ -651,7 +664,7 @@ export function usePress(props: PressHookProps): PressResult {
 
 
       pressProps.onDragStart = (e) => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e.nativeEvent))) {
+        if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
 
@@ -664,7 +677,7 @@ export function usePress(props: PressHookProps): PressResult {
 
       pressProps.onMouseDown = (e) => {
         // Only handle left clicks
-        if (e.button !== 0 || !nodeContains(e.currentTarget, getEventTarget(e.nativeEvent))) {
+        if (e.button !== 0 || !nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
 
@@ -694,7 +707,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onMouseEnter = (e) => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e.nativeEvent))) {
+        if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
 
@@ -710,7 +723,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onMouseLeave = (e) => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e.nativeEvent))) {
+        if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
 
@@ -727,7 +740,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onMouseUp = (e) => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e.nativeEvent))) {
+        if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
 
@@ -737,7 +750,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onTouchStart = (e) => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e.nativeEvent))) {
+        if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
 
@@ -764,7 +777,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onTouchMove = (e) => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e.nativeEvent))) {
+        if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
 
@@ -792,7 +805,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onTouchEnd = (e) => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e.nativeEvent))) {
+        if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
 
@@ -827,7 +840,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onTouchCancel = (e) => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e.nativeEvent))) {
+        if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
 
@@ -838,7 +851,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onDragStart = (e) => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e.nativeEvent))) {
+        if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
 
@@ -911,7 +924,7 @@ function isHTMLAnchorLink(target: Element): target is HTMLAnchorElement {
   return target.tagName === 'A' && target.hasAttribute('href');
 }
 
-function isValidKeyboardEvent(event: KeyboardEvent, currentTarget: Element): boolean {
+function isValidKeyboardEvent(event: KeyboardEvent | globalThis.KeyboardEvent, currentTarget: Element): boolean {
   const {key, code} = event;
   const element = currentTarget as HTMLElement;
   const role = element.getAttribute('role');
@@ -977,7 +990,8 @@ function createEvent(target: FocusableElement, e: EventBase): EventBase {
     metaKey: e.metaKey,
     altKey: e.altKey,
     clientX,
-    clientY
+    clientY,
+    key: e.key
   };
 }
 

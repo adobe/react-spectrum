@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import React, {JSX, useEffect, useRef} from 'react';
 import {StoryObj} from '@storybook/react';
 import {useInteractOutside, usePress} from '../';

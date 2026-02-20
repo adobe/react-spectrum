@@ -12,7 +12,7 @@
 
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {clamp} from '@react-aria/utils';
 import {Flex} from '@react-spectrum/layout';
 import React, {JSX, useRef, useState} from 'react';

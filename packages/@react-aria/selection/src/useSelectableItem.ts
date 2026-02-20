@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, isCtrlKeyPressed, mergeProps, openLink, useId, useRouter} from '@react-aria/utils';
+import {chain, getActiveElement, getEventTarget, isCtrlKeyPressed, mergeProps, openLink, useId, useRouter} from '@react-aria/utils';
 import {DOMAttributes, DOMProps, FocusableElement, Key, LongPressEvent, PointerType, PressEvent, RefObject} from '@react-types/shared';
 import {focusSafely, PressHookProps, useLongPress, usePress} from '@react-aria/interactions';
 import {getCollectionId, isNonContiguousSelectionModifier} from './utils';
@@ -169,7 +169,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       if (!shouldUseVirtualFocus) {
         if (focus) {
           focus();
-        } else if (document.activeElement !== ref.current && ref.current) {
+        } else if (getActiveElement() !== ref.current && ref.current) {
           focusSafely(ref.current);
         }
       } else {
@@ -188,7 +188,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     itemProps = {
       tabIndex: key === manager.focusedKey ? 0 : -1,
       onFocus(e) {
-        if (e.target === ref.current) {
+        if (getEventTarget(e) === ref.current) {
           manager.setFocusedKey(key);
         }
       }
@@ -199,6 +199,12 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       e.preventDefault();
     };
   }
+
+  useEffect(() => {
+    if (isDisabled && manager.focusedKey === key) {
+      manager.setFocusedKey(null);
+    }
+  }, [manager, isDisabled, key]);
 
   // With checkbox selection, onAction (i.e. navigation) becomes primary, and occurs on a single click of the row.
   // Clicking the checkbox enters selection mode, after which clicking anywhere on any row toggles selection for that row.
@@ -246,7 +252,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     itemPressProps.onPressStart = (e) => {
       modality.current = e.pointerType;
       longPressEnabledOnPressStart.current = longPressEnabled;
-      if (e.pointerType === 'keyboard' && (!hasAction || isSelectionKey())) {
+      if (e.pointerType === 'keyboard' && (!hasAction || isSelectionKey(e.key))) {
         onSelect(e);
       }
     };
@@ -256,7 +262,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     if (!allowsDifferentPressOrigin) {
       itemPressProps.onPress = (e) => {
         if (hasPrimaryAction || (hasSecondaryAction && e.pointerType !== 'mouse')) {
-          if (e.pointerType === 'keyboard' && !isActionKey()) {
+          if (e.pointerType === 'keyboard' && !isActionKey(e.key)) {
             return;
           }
 
@@ -290,7 +296,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       if (
         allowsSelection && (
           (e.pointerType === 'mouse' && !hasPrimaryAction) ||
-          (e.pointerType === 'keyboard' && (!allowsActions || isSelectionKey()))
+          (e.pointerType === 'keyboard' && (!allowsActions || isSelectionKey(e.key)))
         )
       ) {
         onSelect(e);
@@ -305,7 +311,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         e.pointerType === 'touch' ||
         e.pointerType === 'pen' ||
         e.pointerType === 'virtual' ||
-        (e.pointerType === 'keyboard' && hasAction && isActionKey()) ||
+        (e.pointerType === 'keyboard' && hasAction && isActionKey(e.key)) ||
         (e.pointerType === 'mouse' && hadPrimaryActionOnPressStart.current)
       ) {
         if (hasAction) {
@@ -407,12 +413,10 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   };
 }
 
-function isActionKey() {
-  let event = window.event as KeyboardEvent;
-  return event?.key === 'Enter';
+function isActionKey(key: string | undefined) {
+  return key === 'Enter';
 }
 
-function isSelectionKey() {
-  let event = window.event as KeyboardEvent;
-  return event?.key === ' ' || event?.code === 'Space';
+function isSelectionKey(key: string | undefined) {
+  return key === ' ';
 }

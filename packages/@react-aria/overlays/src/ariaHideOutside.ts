@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {getOwnerWindow} from '@react-aria/utils';
+import {createShadowTreeWalker, getOwnerDocument, getOwnerWindow, nodeContains} from '@react-aria/utils';
+import {shadowDOM} from '@react-stately/flags';
+
 const supportsInert = typeof HTMLElement !== 'undefined' && 'inert' in HTMLElement.prototype;
 
 interface AriaHideOutsideOptions {
@@ -64,6 +66,22 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
     }
   };
 
+  let shadowRootsToWatch = new Set<ShadowRoot>();
+  if (shadowDOM()) {
+    // find all shadow roots that are ancestors of the targets
+    // traverse upwards until the root is reached
+    for (let target of targets) {
+      let node = target;
+      while (node && node !== root) {
+        let root = node.getRootNode();
+        if ('shadowRoot' in root) {
+          shadowRootsToWatch.add(root.shadowRoot as ShadowRoot);
+        }
+        node = root.parentNode as Element;
+      }
+    }
+  }
+
   let walk = (root: Element) => {
     // Keep live announcer and top layer elements (e.g. toasts) visible.
     for (let element of root.querySelectorAll('[data-live-announcer], [data-react-aria-top-layer]')) {
@@ -85,7 +103,7 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
 
       // Skip this node but continue to children if one of the targets is inside the node.
       for (let target of visibleNodes) {
-        if (node.contains(target)) {
+        if (nodeContains(node, target)) {
           return NodeFilter.FILTER_SKIP;
         }
       }
@@ -93,7 +111,8 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
       return NodeFilter.FILTER_ACCEPT;
     };
 
-    let walker = document.createTreeWalker(
+    let walker = createShadowTreeWalker(
+      getOwnerDocument(root),
       root,
       NodeFilter.SHOW_ELEMENT,
       {acceptNode}
@@ -147,7 +166,12 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
 
       // If the parent element of the added nodes is not within one of the targets,
       // and not already inside a hidden node, hide all of the new children.
-      if (![...visibleNodes, ...hiddenNodes].some(node => node.contains(change.target))) {
+      if (
+        change.target.isConnected &&
+        ![...visibleNodes, ...hiddenNodes].some((node) =>
+          nodeContains(node, change.target)
+        )
+      ) {
         for (let node of change.addedNodes) {
           if (
             (node instanceof HTMLElement || node instanceof SVGElement) &&
@@ -159,10 +183,65 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
           }
         }
       }
+
+      if (shadowDOM()) {
+        // if any of the observed shadow roots were removed, stop observing them
+        for (let shadowRoot of shadowRootsToWatch) {
+          if (!shadowRoot.isConnected) {
+            observer.disconnect();
+            break;
+          }
+        }
+      }
     }
   });
 
   observer.observe(root, {childList: true, subtree: true});
+  let shadowObservers = new Set<MutationObserver>();
+  if (shadowDOM()) {
+    for (let shadowRoot of shadowRootsToWatch) {
+      // Disconnect single target instead of all https://github.com/whatwg/dom/issues/126
+      let shadowObserver = new MutationObserver(changes => {
+        for (let change of changes) {
+          if (change.type !== 'childList') {
+            continue;
+          }
+
+          // If the parent element of the added nodes is not within one of the targets,
+          // and not already inside a hidden node, hide all of the new children.
+          if (
+            change.target.isConnected &&
+            ![...visibleNodes, ...hiddenNodes].some((node) =>
+              nodeContains(node, change.target)
+            )
+          ) {
+            for (let node of change.addedNodes) {
+              if (
+                (node instanceof HTMLElement || node instanceof SVGElement) &&
+                (node.dataset.liveAnnouncer === 'true' || node.dataset.reactAriaTopLayer === 'true')
+              ) {
+                visibleNodes.add(node);
+              } else if (node instanceof Element) {
+                walk(node);
+              }
+            }
+          }
+
+          if (shadowDOM()) {
+            // if any of the observed shadow roots were removed, stop observing them
+            for (let shadowRoot of shadowRootsToWatch) {
+              if (!shadowRoot.isConnected) {
+                observer.disconnect();
+                break;
+              }
+            }
+          }
+        }
+      });
+      shadowObserver.observe(shadowRoot, {childList: true, subtree: true});
+      shadowObservers.add(shadowObserver);
+    }
+  }
 
   let observerWrapper: ObserverWrapper = {
     visibleNodes,
@@ -179,6 +258,11 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
 
   return (): void => {
     observer.disconnect();
+    if (shadowDOM()) {
+      for (let shadowObserver of shadowObservers) {
+        shadowObserver.disconnect();
+      }
+    }
 
     for (let node of hiddenNodes) {
       let count = refCountMap.get(node);

@@ -2,9 +2,7 @@
 import React, { useContext } from "react";
 import {
   Disclosure as AriaDisclosure,
-  DisclosureGroup as AriaDisclosureGroup,
   DisclosureProps as AriaDisclosureProps,
-  DisclosureGroupProps as AriaDisclosureGroupProps,
   DisclosurePanel as AriaDisclosurePanel,
   DisclosurePanelProps as AriaDisclosurePanelProps,
   composeRenderProps,
@@ -79,17 +77,5 @@ export function DisclosurePanel({ children, ...props }: DisclosurePanelProps) {
     <AriaDisclosurePanel {...props} className={composeTailwindRenderProps(props.className, 'h-(--disclosure-panel-height) motion-safe:transition-[height] overflow-clip')}>
       <div className="px-4 py-2">{children}</div>
     </AriaDisclosurePanel>
-  );
-}
-
-export interface DisclosureGroupProps extends AriaDisclosureGroupProps {
-  children: React.ReactNode;
-}
-
-export function DisclosureGroup({ children, ...props }: DisclosureGroupProps) {
-  return (
-    <AriaDisclosureGroup {...props}>
-      {children}
-    </AriaDisclosureGroup>
   );
 }

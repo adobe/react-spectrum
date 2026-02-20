@@ -13,6 +13,7 @@ import {AriaDateFieldProps, AriaTimeFieldProps, DateValue, HoverEvents, mergePro
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -56,7 +57,12 @@ export interface DateFieldRenderProps {
    * Whether the date field is read only.
    * @selector [data-readonly]
    */
-  isReadOnly: boolean
+  isReadOnly: boolean,
+  /**
+   * Whether the date field is required.
+   * @selector [data-required]
+   */
+  isRequired: boolean
 }
 export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
@@ -112,7 +118,8 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
       state,
       isInvalid: state.isInvalid,
       isDisabled: state.isDisabled,
-      isReadOnly: state.isReadOnly
+      isReadOnly: state.isReadOnly,
+      isRequired: props.isRequired || false
     },
     defaultClassName: 'react-aria-DateField'
   });
@@ -135,14 +142,15 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
         }],
         [FieldErrorContext, validation]
       ]}>
-      <div
+      <dom.div
         {...DOMProps}
         {...renderProps}
         ref={ref}
         slot={props.slot || undefined}
         data-invalid={state.isInvalid || undefined}
         data-disabled={state.isDisabled || undefined}
-        data-readonly={state.isReadOnly || undefined} />
+        data-readonly={state.isReadOnly || undefined}
+        data-required={props.isRequired || undefined} />
       <HiddenDateInput
         autoComplete={props.autoComplete}
         name={props.name}
@@ -185,7 +193,8 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
       state,
       isInvalid: state.isInvalid,
       isDisabled: state.isDisabled,
-      isReadOnly: state.isReadOnly
+      isReadOnly: state.isReadOnly,
+      isRequired: props.isRequired || false
     },
     defaultClassName: 'react-aria-TimeField'
   });
@@ -208,14 +217,15 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
         }],
         [FieldErrorContext, validation]
       ]}>
-      <div
+      <dom.div
         {...DOMProps}
         {...renderProps}
         ref={ref}
         slot={props.slot || undefined}
         data-invalid={state.isInvalid || undefined}
         data-disabled={state.isDisabled || undefined}
-        data-readonly={state.isReadOnly || undefined} />
+        data-readonly={state.isReadOnly || undefined}
+        data-required={props.isRequired || undefined} />
     </Provider>
   );
 });
@@ -361,7 +371,7 @@ export interface DateSegmentRenderProps extends Omit<IDateSegment, 'isEditable'>
   type: DateSegmentType
 }
 
-export interface DateSegmentProps extends RenderProps<DateSegmentRenderProps>, HoverEvents, GlobalDOMAttributes<HTMLSpanElement> {
+export interface DateSegmentProps extends RenderProps<DateSegmentRenderProps, 'span'>, HoverEvents, GlobalDOMAttributes<HTMLSpanElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-DateSegment'
@@ -398,7 +408,7 @@ export const DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   });
 
   return (
-    <span
+    <dom.span
       {...mergeProps(filterDOMProps(otherProps, {global: true}), segmentProps, focusProps, hoverProps)}
       {...renderProps}
       style={segmentProps.style}

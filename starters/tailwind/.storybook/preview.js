@@ -1,4 +1,4 @@
-import { themes } from "@storybook/theming";
+import { themes } from "storybook/theming";
 import '../src/index.css';
 
 /** @type { import('@storybook/react').Preview } */
