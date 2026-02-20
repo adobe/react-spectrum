@@ -74,6 +74,11 @@ interface ListViewStylesProps {
    * @default 'checkbox'
    */
   selectionStyle?: 'highlight' | 'checkbox',
+  /**
+   * Sets the overflow behavior for item contents.
+   * @default 'truncate'
+   */
+  overflowMode?: 'wrap' | 'truncate',
   highlightMode?: 'normal' | 'inverse'
 }
 
@@ -98,7 +103,7 @@ const ListViewRendererContext = createContext<ListViewRendererContextValue>({});
 
 export const ListViewContext = createContext<ContextValue<Partial<ListViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
-let InternalListViewContext = createContext<{isQuiet?: boolean, selectionStyle?: 'highlight' | 'checkbox'}>({});
+let InternalListViewContext = createContext<{isQuiet?: boolean, selectionStyle?: 'highlight' | 'checkbox', overflowMode?: 'wrap' | 'truncate', scale?: 'medium' | 'large'}>({});
 
 const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
   ...focusRing(),
@@ -139,9 +144,10 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   ref: DOMRef<HTMLDivElement>
 ) {
   [props, ref] = useSpectrumContextProps(props, ref, ListViewContext);
-  let {children, isQuiet, selectionStyle = 'checkbox', loadingState, onLoadMore, renderEmptyState: userRenderEmptyState, ...otherProps} = props;
+  let {children, isQuiet, selectionStyle = 'checkbox', overflowMode = 'truncate', loadingState, onLoadMore, renderEmptyState: userRenderEmptyState, ...otherProps} = props;
   let scale = useScale();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let rowHeight = scale === 'large' ? 50 : 40;
 
   let renderer;
   if (typeof children === 'function') {
@@ -206,11 +212,11 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
     <Virtualizer
       layout={ListLayout}
       layoutOptions={{
-        estimatedRowHeight: scale === 'large' ? 50 : 40,
+        estimatedRowHeight: rowHeight,
         loaderHeight: 60
       }}>
       <ListViewRendererContext.Provider value={{renderer}}>
-        <InternalListViewContext.Provider value={{isQuiet, selectionStyle}}>
+        <InternalListViewContext.Provider value={{isQuiet, selectionStyle, overflowMode, scale}}>
           <GridList
             ref={domRef}
             {...gridListProps}
@@ -241,7 +247,8 @@ const listitem = style<GridListItemRenderProps & {
   isPrevSelected?: boolean,
   isPrevNotSelected?: boolean,
   isNextNotSelected?: boolean,
-  selectionStyle?: 'highlight' | 'checkbox'
+  selectionStyle?: 'highlight' | 'checkbox',
+  scale?: 'medium' | 'large'
 }>({
   ...focusRing(),
   boxSizing: 'border-box',
@@ -272,7 +279,12 @@ const listitem = style<GridListItemRenderProps & {
     ':has([slot=description])': space(1)
   },
   alignItems: 'baseline',
-  minHeight: 40,
+  minHeight: {
+    default: 40,
+    scale: {
+      large: 50
+    }
+  },
   textDecoration: 'none',
   cursor: {
     default: 'default',
@@ -426,12 +438,25 @@ export let label = style({
   alignSelf: 'center',
   font: controlFont(),
   color: 'inherit',
-  truncate: true
+  truncate: true,
+  whiteSpace: {
+    default: 'nowrap',
+    overflowMode: {
+      wrap: 'normal'
+    }
+  }
 });
 
 export let description = style({
   gridArea: 'description',
   alignSelf: 'center',
+  truncate: true,
+  whiteSpace: {
+    default: 'nowrap',
+    overflowMode: {
+      wrap: 'normal'
+    }
+  },
   font: 'ui-sm',
   color: {
     default: baseColor('neutral-subdued'),
@@ -527,7 +552,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
   let ref = useRef(null);
   let {hasChildItems, ...otherProps} = props;
   let isLink = props.href != null;
-  let {isQuiet, selectionStyle} = useContext(InternalListViewContext);
+  let {isQuiet, selectionStyle, overflowMode, scale} = useContext(InternalListViewContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
 
@@ -541,6 +566,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
         ...renderProps,
         isLink,
         isQuiet,
+        scale,
         selectionStyle,
         isPrevNotSelected: !renderProps.isPrevSelected,
         isNextNotSelected: !renderProps.isNextSelected
@@ -553,9 +579,9 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
             values={[
               [TextContext, {
                 slots: {
-                  [DEFAULT_SLOT]: {styles: label(renderProps)},
-                  label: {styles: label(renderProps)},
-                  description: {styles: description(renderProps)}
+                  [DEFAULT_SLOT]: {styles: label({...renderProps, overflowMode})},
+                  label: {styles: label({...renderProps, overflowMode})},
+                  description: {styles: description({...renderProps, overflowMode})}
                 }
               }],
               [IconContext, {
