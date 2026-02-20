@@ -54,15 +54,15 @@ const LayoutContext = createContext<LayoutContextValue | null>(null);
 export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
   let {children, layout: layoutProp, layoutOptions} = props;
   let layout = useMemo(() => typeof layoutProp === 'function' ? new layoutProp() : layoutProp, [layoutProp]);
-  let {CollectionNode: CtxCollectionNode} = useContext(CollectionRendererContext);
+  let {CollectionNode} = useContext(CollectionRendererContext);
   let renderer: CollectionRenderer<ReusableView<Node<unknown>, ReactNode>> = useMemo(() => ({
     isVirtualized: true,
     layoutDelegate: layout,
     dropTargetDelegate: layout.getDropTargetFromPoint ? layout as DropTargetDelegate : undefined,
     CollectionRoot,
     CollectionBranch,
-    CollectionNode: CtxCollectionNode
-  }), [CtxCollectionNode, layout]);
+    CollectionNode
+  }), [CollectionNode, layout]);
 
   return (
     <CollectionRendererContext.Provider value={renderer}>
