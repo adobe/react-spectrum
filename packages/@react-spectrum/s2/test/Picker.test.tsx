@@ -169,9 +169,8 @@ describe('Picker', () => {
     let dialog = tree.getByRole('dialog');
     expect(dialog).toBeVisible();
 
-    // Because of the fake DOM we'll see this twice
-    expect(tree.getAllByText('Title here')[1]).toBeVisible();
-    expect(tree.getAllByText('Contents')[1]).toBeVisible();
+    expect(tree.getAllByText('Title here')[0]).toBeVisible();
+    expect(tree.getAllByText('Contents')[0]).toBeVisible();
     warn.mockRestore();
   });
 });
