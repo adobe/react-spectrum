@@ -1056,6 +1056,377 @@ describe('Autocomplete', () => {
     options = within(listbox).getAllByRole('option');
     expect(options).toHaveLength(3);
   });
+
+  it('should preserve select all selection when toggling an item in a filtered collection', async function () {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticListbox selectionMode="multiple" defaultSelectedKeys="all" onSelectionChange={onSelectionChange} />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    let listbox = getByRole('listbox');
+
+    // All 3 items should be selected initially (Foo, Bar, Baz)
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+    expect(options[2]).toHaveAttribute('aria-selected', 'true');
+
+    // Filter to show only "Ba" items (Bar, Baz)
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('Ba');
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(2);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+
+    // Move down and deselect Baz
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{Enter}');
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    // Should contain Foo and Bar
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1', '2']));
+
+    // Clear the filter
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    // All items should be visible, with Foo and Bar still selected
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+    expect(options[2]).toHaveAttribute('aria-selected', 'false');
+  });
+
+  it('should keep filtered-out items selected when all are selected and filter is applied', async function () {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticListbox selectionMode="multiple" defaultSelectedKeys="all" onSelectionChange={onSelectionChange} />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    let listbox = getByRole('listbox');
+
+    // All 3 visible and selected
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    for (let opt of options) {
+      expect(opt).toHaveAttribute('aria-selected', 'true');
+    }
+
+    // Filter to "Foo" - only Foo should be visible
+    await user.tab();
+    await user.keyboard('Foo');
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(1);
+    expect(options[0]).toHaveTextContent('Foo');
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+
+    // Clear the filter - all 3 should still be selected because no toggle happened
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+    expect(options[2]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('should deselect the only visible item during filter and preserve other selections', async function () {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticListbox selectionMode="multiple" defaultSelectedKeys="all" onSelectionChange={onSelectionChange} />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    let listbox = getByRole('listbox');
+
+    // Filter to "Foo"
+    await user.tab();
+    await user.keyboard('Foo');
+    act(() => jest.runAllTimers());
+
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(1);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+
+    // Deselect Foo
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{Enter}');
+
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    // Foo (id=1) should be deselected, Bar and Baz still selected
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['2', '3']));
+
+    // Clear filter
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+
+    // Foo deselected, Bar and Baz still selected
+    expect(options[0]).toHaveAttribute('aria-selected', 'false');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+    expect(options[2]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('should preserve select all selection with sections when toggling an item in a filtered collection', async function () {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <ListBoxWithSections selectionMode="multiple" defaultSelectedKeys="all" onSelectionChange={onSelectionChange} />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    let listbox = getByRole('listbox');
+
+    // All 6 items across 2 sections should be selected
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(6);
+    for (let opt of options) {
+      expect(opt).toHaveAttribute('aria-selected', 'true');
+    }
+
+    // Filter to "Ba" — should match Bar and Baz in section 1
+    await user.tab();
+    await user.keyboard('Ba');
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(2);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+
+    await user.keyboard('{ArrowDown}'); // Move focus to Baz
+    await user.keyboard('{Enter}'); // Deselect Baz
+
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    // Baz (id=3) should be deselected; Foo, Bar, Copy, Cut, Paste still selected
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1', '2', '4', '5', '6']));
+
+    // Clear filter
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(6);
+    // Foo selected, Bar selected, Baz deselected, Copy/Cut/Paste selected
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');  // Foo
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');  // Bar
+    expect(options[2]).toHaveAttribute('aria-selected', 'false'); // Baz
+    expect(options[3]).toHaveAttribute('aria-selected', 'true');  // Copy
+    expect(options[4]).toHaveAttribute('aria-selected', 'true');  // Cut
+    expect(options[5]).toHaveAttribute('aria-selected', 'true');  // Paste
+  });
+
+  it('should handle multiple filter-toggle-clear cycles correctly', async function () {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticListbox selectionMode="multiple" defaultSelectedKeys="all" onSelectionChange={onSelectionChange} />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    let listbox = getByRole('listbox');
+
+    // Cycle 1: Filter to "Ba", deselect Baz, clear filter
+    await user.tab();
+    await user.keyboard('Ba');
+    act(() => jest.runAllTimers());
+
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(2);
+
+    await user.keyboard('{ArrowDown}'); // Move focus to Baz
+    await user.keyboard('{Enter}'); // Deselect Baz
+    
+    // Baz (id=3) deselected, Foo and Bar remain
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1', '2']));
+
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');  // Foo
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');  // Bar
+    expect(options[2]).toHaveAttribute('aria-selected', 'false'); // Baz
+
+    // Cycle 2: Filter to "Foo", deselect Foo, clear filter
+    onSelectionChange.mockClear();
+    await user.keyboard('Foo');
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(1);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true'); // Foo
+
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{Enter}');
+    // Foo deselected, only Bar remains selected
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['2']));
+
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveAttribute('aria-selected', 'false'); // Foo
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');  // Bar
+    expect(options[2]).toHaveAttribute('aria-selected', 'false'); // Baz
+  });
+
+  it('should lose track of filtered-out items when filtering is handled externally via controlled items', async function () {
+    // When filtering is handled externally (i.e. items prop changes rather than using Autocomplete's filter),
+    // the fullCollection only knows about the items currently in the collection. This means
+    // defaultSelectedKeys="all" will only materialize against the current items, and toggling
+    // an item while filtered will lose the filtered-out items from the selection.
+    // For this use case, consumers should use controlled selectedKeys instead.
+    let onSelectionChange = jest.fn();
+    function ExternallyFilteredList() {
+      const [filteredItems, setFilteredItems] = useState(items);
+      const [inputValue, onInputChange] = useState('');
+
+      let [prevInputValue, setPrevInputValue] = useState(inputValue);
+      if (prevInputValue !== inputValue) {
+        setFilteredItems(
+          items.filter((item) => item.name.toLowerCase().includes(inputValue.toLowerCase()))
+        );
+        setPrevInputValue(inputValue);
+      }
+
+      return (
+        <Autocomplete inputValue={inputValue} onInputChange={onInputChange}>
+          <SearchField aria-label="Search">
+            <Input aria-label="Search" placeholder="Search..." />
+            <Button>X</Button>
+          </SearchField>
+          <ListBox
+            selectionMode="multiple"
+            defaultSelectedKeys="all"
+            onSelectionChange={onSelectionChange}>
+            <Collection items={filteredItems} dependencies={[inputValue]}>
+              {(item: AutocompleteItem) => (
+                <ListBoxItem id={item.id}>{item.name}</ListBoxItem>
+              )}
+            </Collection>
+          </ListBox>
+        </Autocomplete>
+      );
+    }
+
+    let {getByRole} = render(<ExternallyFilteredList />);
+
+    let input = getByRole('searchbox');
+    let listbox = getByRole('listbox');
+
+    // All 3 items visible and selected
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    for (let opt of options) {
+      expect(opt).toHaveAttribute('aria-selected', 'true');
+    }
+
+    // Type "Ba" to externally filter — items prop changes to [Bar, Baz]
+    await user.tab();
+    await user.keyboard('Ba');
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(2);
+    // Both visible items should still show as selected (state is still 'all')
+    expect(options[0]).toHaveAttribute('aria-selected', 'true'); // Bar
+    expect(options[1]).toHaveAttribute('aria-selected', 'true'); // Baz
+
+    // Deselect Baz (ArrowDown from auto-focused Bar to Baz, then Enter)
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{Enter}');
+
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    // Since fullCollection only contains [Bar, Baz] (the externally filtered items),
+    // materializing 'all' only produces those two. Toggling Baz off leaves only Bar.
+    // Foo is lost because it wasn't in any collection the SelectionManager knew about.
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['2']));
+
+    // Clear filter — all items come back
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    // Only Bar is selected — Foo was lost when 'all' was materialized against the filtered collection
+    expect(options[0]).toHaveAttribute('aria-selected', 'false'); // Foo (lost)
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');  // Bar
+    expect(options[2]).toHaveAttribute('aria-selected', 'false'); // Baz (deselected)
+  });
+
+  it('should handle select all with disabled keys in filtered collection', async function () {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticListbox
+          selectionMode="multiple"
+          defaultSelectedKeys="all"
+          disabledKeys={['2']}
+          onSelectionChange={onSelectionChange} />
+      </AutocompleteWrapper>
+    );
+
+    let listbox = getByRole('listbox');
+    let input = getByRole('searchbox');
+
+    // Bar (id=2) is disabled, so only Foo and Baz should be selected
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');  // Foo
+    expect(options[1]).toHaveAttribute('aria-selected', 'false'); // Bar (disabled)
+    expect(options[2]).toHaveAttribute('aria-selected', 'true');  // Baz
+
+    // Filter to "Ba" — Bar (disabled) and Baz visible
+    await user.tab();
+    await user.keyboard('Ba');
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(2);
+    expect(options[0]).toHaveAttribute('aria-selected', 'false'); // Bar (disabled)
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');  // Baz
+
+    // Deselect Baz
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{Enter}');
+
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    // Only Foo should remain selected (Bar is disabled, Baz was deselected)
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1']));
+
+    // Clear filter
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');  // Foo
+    expect(options[1]).toHaveAttribute('aria-selected', 'false'); // Bar (disabled)
+    expect(options[2]).toHaveAttribute('aria-selected', 'false'); // Baz
+  });
 });
 
 AriaAutocompleteTests({
