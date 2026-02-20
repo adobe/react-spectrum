@@ -14,7 +14,7 @@ import {BlendModes, DynamicExample, Example, KeyboardShortcuts, PublishAndExport
 import {expect} from '@storybook/jest';
 import {Menu} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
-import {userEvent, within} from '@storybook/test';
+import {userEvent, within} from 'storybook/test';
 
 const meta: Meta<typeof Menu<any>> = {
   component: Menu,

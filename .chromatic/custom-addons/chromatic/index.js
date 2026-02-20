@@ -1,5 +1,5 @@
 import {expressThemes, locales, S2Backgrounds, S2ColorThemes, scales, themes} from '../../constants';
-import {makeDecorator} from '@storybook/preview-api';
+import {makeDecorator} from 'storybook/preview-api';
 import {Provider, View} from '@adobe/react-spectrum';
 import {Provider as S2Provider} from '@react-spectrum/s2';
 import React, {useEffect} from 'react';

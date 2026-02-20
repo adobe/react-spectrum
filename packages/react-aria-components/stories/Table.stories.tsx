@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
 import {LoadingSpinner, MyMenuItem} from './utils';

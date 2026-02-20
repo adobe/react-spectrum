@@ -11,6 +11,7 @@ import {Button} from './Button';
 import {X} from 'lucide-react';
 import './Toast.css';
 import {flushSync} from 'react-dom';
+import { CSSProperties } from 'react';
 
 // Define the type for your toast content. This interface defines the properties of your toast content, affecting what you
 // pass to the queue calls as arguments.
@@ -38,7 +39,7 @@ export function MyToastRegion() {
     // The ToastRegion should be rendered at the root of your app.
     <ToastRegion queue={queue}>
       {({toast}) => (
-        <MyToast toast={toast} style={{viewTransitionName: toast.key}}>
+        <MyToast toast={toast} style={{viewTransitionName: toast.key} as CSSProperties}>
           <ToastContent>
             <Text slot="title">{toast.content.title}</Text>
             {toast.content.description && (

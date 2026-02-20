@@ -4,11 +4,7 @@ const config = {
     "../stories/**/*.mdx",
     "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)",
   ],
-  addons: [
-    "@storybook/addon-essentials",
-    "@storybook/addon-links",
-    "@storybook/addon-interactions"
-  ],
+  addons: [],
   framework: {
     name: "@storybook/react-vite",
     options: {},

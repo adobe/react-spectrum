@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {AriaMenuTriggerProps, useMenu, useMenuItem, useMenuTrigger} from '@react-aria/menu';
 import {CollectionBase} from '@react-types/shared';
 import {DismissButton, useOverlay} from '@react-aria/overlays';
