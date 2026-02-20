@@ -325,7 +325,6 @@ let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean}>({
 
 let descriptor = style({
   gridArea: 'descriptor',
-  // TODO: currently the unavailable icon is misaligned with the submenu arrow, check with spectrum
   placeSelf: 'end',
   marginStart: 8,
   '--iconPrimary': {
@@ -493,7 +492,7 @@ function UnavailableIconWrapper(props: UnavailableIconWrapperProps) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   return (
-    <div slot="descriptor" className={descriptor} id={endSlotProps?.id}>
+    <div slot="descriptor" className={mergeStyles(descriptor, style({marginBottom: fontRelative(-1)}))} id={endSlotProps?.id}>
       <Provider values={[[IconContext, {slots: {icon: {styles: descriptorIcon({size})}}}]]}>
         <InfoCircleIcon
           aria-label={stringFormatter.format('menu.unavailable')}
