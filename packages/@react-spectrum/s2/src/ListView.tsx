@@ -51,13 +51,9 @@ import {useLocale, useLocalizedStringFormatter} from 'react-aria';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | 'selectionBehavior' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, ListViewStylesProps, SlotProps {
+export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | 'selectionBehavior' | 'dragAndDropHooks' | 'layout' | 'render' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, ListViewStylesProps, SlotProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
-  /**
-   * Whether to automatically focus the ListView when it first renders.
-   */
-  autoFocus?: boolean,
   /** The current loading state of the ListView. */
   loadingState?: LoadingState,
   /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
