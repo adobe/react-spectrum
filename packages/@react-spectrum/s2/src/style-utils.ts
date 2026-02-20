@@ -14,6 +14,21 @@ import {CSSProperties} from 'react';
 import {fontRelative} from '../style';
 import {StyleString} from '../style/types';
 
+/**
+ * Calculates vertical padding to center a single line of text within a container.
+ * Uses the CSS `self()` function and `1lh` unit to compute the padding based on
+ * the container's minimum height and border widths.
+ *
+ * @param minHeight - A CSS expression for the minimum height to center within. Defaults to `'self(minHeight)'`.
+ * @returns A CSS `calc()` expression wrapped as an arbitrary style value.
+ *
+ * @example
+ * ```tsx
+ * const styles = style({
+ *   paddingY: centerPadding()
+ * });
+ * ```
+ */
 export function centerPadding(minHeight: string = 'self(minHeight)'): `[${string}]` {
   return `[calc((${minHeight} - self(borderTopWidth, 0px) - self(borderBottomWidth, 0px) - 1lh) / 2)]`;
 }
@@ -113,7 +128,20 @@ export const fieldInput = () => ({
   containIntrinsicWidth: 'calc(var(--defaultWidth) - self(paddingStart, 0px) - self(paddingEnd, 0px) - self(borderStartWidth, 0px) - self(borderEndWidth, 0px))'
 } as const);
 
-export const colorScheme = () => ({
+/**
+ * Returns style properties that set the CSS `color-scheme` for a component.
+ * Defaults to the page's color scheme and supports `'light'`, `'dark'`, and `'light dark'` values
+ * via the `colorScheme` render prop condition.
+ *
+ * @example
+ * ```tsx
+ * const styles = style({
+ *   ...setColorScheme(),
+ *   backgroundColor: 'layer-1'
+ * });
+ * ```
+ */
+export const setColorScheme = () => ({
   colorScheme: {
     // Default to page color scheme if none is defined.
     default: '[var(--lightningcss-light, light) var(--lightningcss-dark, dark)]',
@@ -312,12 +340,18 @@ export const widthProperties = [
   'maxWidth'
 ] as const;
 
+/** The set of width-related CSS property names (`width`, `minWidth`, `maxWidth`). */
+export type WidthProperties = (typeof widthProperties)[number];
+
 export const heightProperties = [
   'size',
   'height',
   'minHeight',
   'maxHeight'
 ] as const;
+
+/** The set of height-related CSS property names (`size`, `height`, `minHeight`, `maxHeight`). */
+export type HeightProperties = (typeof heightProperties)[number];
 
 export type StylesProp = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number]>;
 export type StylesPropWithHeight = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number] | (typeof heightProperties)[number]>;
@@ -335,6 +369,28 @@ export interface StyleProps extends UnsafeStyles {
   styles?: StylesProp
 }
 
+/**
+ * Returns the list of CSS property names that are allowed as style overrides via the `styles` prop.
+ * By default includes layout properties (margin, position, grid, etc.) and width properties.
+ * Optionally includes height properties.
+ *
+ * @param options - Configuration for which property groups to include.
+ * @param options.width - Whether to include width properties (`width`, `minWidth`, `maxWidth`). Defaults to `true`.
+ * @param options.height - Whether to include height properties (`height`, `minHeight`, `maxHeight`, `size`). Defaults to `false`.
+ * @returns An array of allowed CSS property names.
+ *
+ * @example
+ * ```tsx
+ * const styles = style({
+ *   // ... component styles
+ * }, getAllowedOverrides());
+ *
+ * // With height overrides enabled:
+ * const styles = style({
+ *   // ... component styles
+ * }, getAllowedOverrides({height: true}));
+ * ```
+ */
 export function getAllowedOverrides({width = true, height = false} = {}): string[] {
   return (allowedOverrides as unknown as string[]).concat(width ? widthProperties : []).concat(height ? heightProperties : []);
 }

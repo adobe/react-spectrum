@@ -20,10 +20,10 @@ import {
   OverlayTriggerStateContext,
   useLocale
 } from 'react-aria-components';
-import {colorScheme, getAllowedOverrides, heightProperties, UnsafeStyles, widthProperties} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
 import {createContext, ForwardedRef, forwardRef, ReactNode, useCallback, useContext, useMemo} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
+import {getAllowedOverrides, heightProperties, setColorScheme, UnsafeStyles, widthProperties} from './style-utils' with {type: 'macro'};
 import {lightDark, style} from '../style' with {type: 'macro'};
 import {mergeRefs} from '@react-aria/utils';
 import {mergeStyles} from '../style/runtime';
@@ -62,7 +62,7 @@ export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps,
 }
 
 let popover = style({
-  ...colorScheme(),
+  ...setColorScheme(),
   '--s2-container-bg': {
     type: 'backgroundColor',
     value: {

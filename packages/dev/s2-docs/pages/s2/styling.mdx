@@ -238,12 +238,12 @@ const styles = style({
 
 ### Built-in utilities
 
-Use `focusRing()` to add the standard Spectrum focus ring.
+The style macro system includes built-in utilities for common patterns like focus rings, color helpers, spacing, sizing, animations, and more. For example, use `focusRing()` to add the standard Spectrum focus ring to interactive components:
 
 ```tsx
 "use client";
 import {style, focusRing} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Button} from '@react-spectrum/s2';
+import {Button} from 'react-aria-components';
 
 const buttonStyle = style({
   ...focusRing(),
@@ -252,6 +252,8 @@ const buttonStyle = style({
 
 <Button styles={buttonStyle}>Press me</Button>
 ```
+
+See the [Utilities](style-macro#utilities) section in the style macro reference page for a full list of available utilities and examples.
 
 ## Setting CSS variables
 

@@ -36,6 +36,21 @@ import {StyleString} from './types';
 //   };
 // }
 
+/**
+ * Merges multiple style strings together, combining the CSS properties from each.
+ * Later styles take precedence over earlier ones for the same property.
+ * Useful for composing styles from multiple `style()` macro calls.
+ *
+ * @example
+ * ```tsx
+ * import {mergeStyles} from '@react-spectrum/s2';
+ * import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
+ * const baseStyles = style({padding: 8});
+ * const overrideStyles = style({padding: 16, color: 'heading'});
+ * const merged = mergeStyles(baseStyles, overrideStyles);
+ * ```
+ */
 export function mergeStyles(...styles: (StyleString | null | undefined)[]): StyleString {
   let definedStyles = styles.filter(Boolean) as StyleString[];
   if (definedStyles.length === 1) {
