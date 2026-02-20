@@ -173,7 +173,13 @@ export const DefaultCollectionRenderer: DefaultRenderer = {
     return useCollectionRender(collection, parent, renderDropIndicator);
   },
   CollectionNode({before = [], node, render = node.render, nodeRef, after = []}) {
-    return <>{...before}{render!(node, nodeRef)}{...after}</>;
+    return (
+      <>
+        {before.map((el, i) => <React.Fragment key={`${node.key}::before::${i}`}>{el}</React.Fragment>)}
+        {render!(node, nodeRef)}
+        {after.map((el, i) => <React.Fragment key={`${node.key}::after::${i}`}>{el}</React.Fragment>)}
+      </>
+    );
   }
 };
 
