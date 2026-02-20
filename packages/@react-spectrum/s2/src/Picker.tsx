@@ -57,7 +57,6 @@ import {
   listboxItem,
   LOADER_ROW_HEIGHTS
 } from './ComboBox';
-import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   FieldErrorIcon,
   FieldLabel,

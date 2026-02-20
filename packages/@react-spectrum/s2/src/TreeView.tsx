@@ -435,17 +435,6 @@ const treeActionMenu = style({
   gridArea: 'actionmenu'
 });
 
-const cellFocus = {
-  outlineStyle: {
-    default: 'none',
-    isFocusVisible: 'solid'
-  },
-  outlineOffset: -2,
-  outlineWidth: 2,
-  outlineColor: 'focus-ring',
-  borderRadius: '[6px]'
-} as const;
-
 const treeRowFocusIndicator = raw(`
   &:before {
     content: "";
