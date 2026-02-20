@@ -29,7 +29,7 @@ import {baseColor, focusRing, size, style} from '../style' with { type: 'macro' 
 import ChevronIcon from '../ui-icons/Chevron';
 import {Collection, DOMRef, DOMRefValue, GlobalDOMAttributes, LinkDOMProps, Node} from '@react-types/shared';
 import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, Fragment, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 // @ts-ignore
 import FolderIcon from '../s2wf-icons/S2_Icon_FolderBreadcrumb_20_N.svg';
 import {forwardRefType} from './types';
@@ -385,6 +385,7 @@ let CollapsingCollectionRenderer: CollectionRenderer = {
 };
 
 let useCollectionRender = (collection: Collection<Node<unknown>>) => {
+  let {CollectionNode} = DefaultCollectionRenderer;
   let {containerRef, onAction} = useContext(CollapseContext) ?? {};
   let [visibleItems, setVisibleItems] = useState(collection.size);
   let {size = 'M'} = useContext(InternalBreadcrumbsContext);
@@ -473,13 +474,13 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
       <HiddenBreadcrumbs items={children} size={size} listRef={listRef} />
       {visibleItems < collection.size && collection.size > 2 ? (
         <>
-          {children[0].render?.(children[0])}
+          <CollectionNode node={children[0]} parent={null} collection={collection} />
           <BreadcrumbMenu items={children.slice(1, sliceIndex)} onAction={onAction} />
-          {children.slice(sliceIndex).map(node => <Fragment key={node.key}>{node.render?.(node)}</Fragment >)}
+          {children.slice(sliceIndex).map(node => <CollectionNode node={node} parent={null} collection={collection} key={node.key} />)}
         </>
       ) : (
         <>
-          {children.map(node => <Fragment key={node.key}>{node.render?.(node)}</Fragment>)}
+          {children.map(node => <CollectionNode node={node} parent={null} collection={collection} key={node.key} />)}
         </>
       )}
     </>

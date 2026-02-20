@@ -108,7 +108,24 @@ export const Section = /*#__PURE__*/ createBranchComponent('section', <T extends
   return render(props, ref, section, 'react-aria-Section');
 });
 
-export interface CollectionBranchProps {
+export interface CollectionNodeProps<T = Node<unknown>> extends HTMLAttributes<HTMLElement> {
+  /** The collection of items to render. */
+  collection: ICollection<Node<unknown>>,
+  /** The node of the item to render. */
+  node: T,
+  /** The parent node of the item to render. */
+  parent: T | null,
+  /** The content that should be rendered before the item. */
+  before?: ReactNode[],
+  /** The content that should be rendered after the item. */
+  after?: ReactNode[],
+  /** A function that renders this node to a React Element in the DOM. */
+  render?: (node: Node<any>, ref?: ForwardedRef<Element>) => ReactElement,
+  /** A ref to the rendered element of this node. */
+  nodeRef?: ForwardedRef<Element>
+}
+
+export interface CollectionBranchProps extends HTMLAttributes<HTMLElement> {
   /** The collection of items to render. */
   collection: ICollection<Node<unknown>>,
   /** The parent node of the items to render. */
@@ -128,7 +145,7 @@ export interface CollectionRootProps extends HTMLAttributes<HTMLElement> {
   renderDropIndicator?: (target: ItemDropTarget) => ReactNode
 }
 
-export interface CollectionRenderer {
+export interface CollectionRenderer<T = Node<unknown>> {
   /** Whether this is a virtualized collection. */
   isVirtualized?: boolean,
   /** A delegate object that provides layout information for items in the collection. */
@@ -138,15 +155,31 @@ export interface CollectionRenderer {
   /** A component that renders the root collection items. */
   CollectionRoot: React.ComponentType<CollectionRootProps>,
    /** A component that renders the child collection items. */
-  CollectionBranch: React.ComponentType<CollectionBranchProps>
+  CollectionBranch: React.ComponentType<CollectionBranchProps>,
+  /** A component that renders the collection item. */
+  CollectionNode?: React.ComponentType<CollectionNodeProps<T>>
 }
 
-export const DefaultCollectionRenderer: CollectionRenderer = {
+interface DefaultRenderer extends CollectionRenderer<Node<unknown>> {
+  /** A component that renders the collection item. */
+  CollectionNode: React.ComponentType<CollectionNodeProps<Node<unknown>>>
+}
+
+export const DefaultCollectionRenderer: DefaultRenderer = {
   CollectionRoot({collection, renderDropIndicator}) {
     return useCollectionRender(collection, null, renderDropIndicator);
   },
   CollectionBranch({collection, parent, renderDropIndicator}) {
     return useCollectionRender(collection, parent, renderDropIndicator);
+  },
+  CollectionNode({before = [], node, render = node.render, nodeRef, after = []}) {
+    return (
+      <>
+        {before.map((el, i) => <React.Fragment key={`${node.key}::before::${i}`}>{el}</React.Fragment>)}
+        {render!(node, nodeRef)}
+        {after.map((el, i) => <React.Fragment key={`${node.key}::after::${i}`}>{el}</React.Fragment>)}
+      </>
+    );
   }
 };
 
@@ -155,9 +188,11 @@ function useCollectionRender(
   parent: Node<unknown> | null,
   renderDropIndicator?: (target: ItemDropTarget) => ReactNode
 ) {
+  let {CollectionNode = DefaultCollectionRenderer.CollectionNode} = useContext(CollectionRendererContext);
+
   return useCachedChildren({
     items: parent ? collection.getChildren!(parent.key) : collection,
-    dependencies: [renderDropIndicator],
+    dependencies: [CollectionNode, parent, renderDropIndicator],
     children(node) {
       // Return a empty fragment since we don't want to render the content twice
       // If we don't skip the content node here, we end up rendering them twice in a Tree since we also render the content node in TreeItem
@@ -165,18 +200,16 @@ function useCollectionRender(
         return <></>;
       }
 
-      let rendered = node.render!(node);
-      if (!renderDropIndicator || node.type !== 'item') {
-        return rendered;
+      let pseudoProps: Pick<CollectionNodeProps<Node<unknown>>, 'before' | 'after'> = {};
+
+      if (renderDropIndicator && node.type === 'item') {
+        let beforeIndicator = renderDropIndicator({type: 'item', key: node.key, dropPosition: 'before'});
+        let afterIndicator = renderAfterDropIndicators(collection, node, renderDropIndicator);
+
+        pseudoProps = {before: new Array(beforeIndicator), after: new Array(afterIndicator)};
       }
 
-      return (
-        <>
-          {renderDropIndicator({type: 'item', key: node.key, dropPosition: 'before'})}
-          {rendered}
-          {renderAfterDropIndicators(collection, node, renderDropIndicator)}
-        </>
-      );
+      return <CollectionNode {...pseudoProps} node={node} parent={parent} collection={collection} key={node.key} />;
     }
   });
 }
@@ -217,7 +250,7 @@ export function renderAfterDropIndicators(collection: ICollection<Node<unknown>>
   return afterIndicators;
 }
 
-export const CollectionRendererContext = createContext<CollectionRenderer>(DefaultCollectionRenderer);
+export const CollectionRendererContext = createContext<CollectionRenderer<any>>(DefaultCollectionRenderer);
 
 type PersistedKeysReturnValue = Set<Key> | null;
 export function usePersistedKeys(focusedKey: Key | null): PersistedKeysReturnValue {

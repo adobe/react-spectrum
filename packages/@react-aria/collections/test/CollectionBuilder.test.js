@@ -1,33 +1,33 @@
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent} from '../src';
-import React from 'react';
+import React, {createRef} from 'react';
 import {render} from '@testing-library/react';
 
 class ItemNode extends CollectionNode {
   static type = 'item';
 }
 
-const Item = createLeafComponent(ItemNode, () => {
-  return <div />;
+const Item = createLeafComponent(ItemNode, (props, ref) => {
+  return <div {...props} ref={ref} />;
 });
 
-const ItemsOld = createLeafComponent('item', () => {
-  return <div />;
+const ItemsOld = createLeafComponent('item', (props, ref) => {
+  return <div {...props} ref={ref} />;
 });
 
-const SectionOld = createBranchComponent('section', () =>  {
-  return <div />;
+const SectionOld = createBranchComponent('section', (props, ref) =>  {
+  return <div {...props} ref={ref} />;
 });
 
-const renderItems = (items, spyCollection) => (
+const renderItems = (items, spyCollection, children = () => null) => (
   <CollectionBuilder content={<Collection>{items.map((item) => <Item key={item} />)}</Collection>}>
     {collection => {
       spyCollection.current = collection;
-      return null;
+      return children(collection);
     }}
   </CollectionBuilder>
 );
 
-const renderItemsOld = (items, spyCollection) => (
+const renderItemsOld = (items, spyCollection, children = () => null) => (
   <CollectionBuilder
     content={
       <Collection>
@@ -40,7 +40,7 @@ const renderItemsOld = (items, spyCollection) => (
     }>
     {collection => {
       spyCollection.current = collection;
-      return null;
+      return children(collection);
     }}
   </CollectionBuilder>
 );
@@ -69,5 +69,13 @@ describe('CollectionBuilder', () => {
     expect(spyCollection.current.keyMap.get('react-aria-2').type).toBe('section');
     expect(spyCollection.current.keyMap.get('react-aria-2').firstChildKey).toBe('react-aria-1');
     expect(spyCollection.current.keyMap.get('react-aria-1').type).toBe('item');
+  });
+
+  it('should support ref attachment to a rendered node', () => {
+    let spyRef = createRef();
+    render(renderItems(['a'], {}, collection => Array.from(collection).map(
+      item => <React.Fragment key={item.key}>{item.render(item, spyRef)}</React.Fragment>
+    )));
+    expect(spyRef.current).toBeEmptyDOMElement();
   });
 });

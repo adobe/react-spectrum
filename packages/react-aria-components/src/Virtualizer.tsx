@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBranchProps, CollectionRenderer, CollectionRendererContext, CollectionRootProps, renderAfterDropIndicators} from './Collection';
+import {CollectionBranchProps, CollectionNodeProps, CollectionRenderer, CollectionRendererContext, CollectionRootProps, DefaultCollectionRenderer, renderAfterDropIndicators} from './Collection';
 import {DropTargetDelegate, ItemDropTarget, Node} from '@react-types/shared';
 import {Layout, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
-import React, {createContext, JSX, ReactNode, useContext, useMemo} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import React, {createContext, ForwardedRef, JSX, ReactNode, useContext, useMemo} from 'react';
 import {useScrollView, VirtualizerItem} from '@react-aria/virtualizer';
 
 type View = ReusableView<Node<unknown>, ReactNode>;
@@ -53,13 +54,15 @@ const LayoutContext = createContext<LayoutContextValue | null>(null);
 export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
   let {children, layout: layoutProp, layoutOptions} = props;
   let layout = useMemo(() => typeof layoutProp === 'function' ? new layoutProp() : layoutProp, [layoutProp]);
-  let renderer: CollectionRenderer = useMemo(() => ({
+  let {CollectionNode} = useContext(CollectionRendererContext);
+  let renderer: CollectionRenderer<ReusableView<Node<unknown>, ReactNode>> = useMemo(() => ({
     isVirtualized: true,
     layoutDelegate: layout,
     dropTargetDelegate: layout.getDropTargetFromPoint ? layout as DropTargetDelegate : undefined,
     CollectionRoot,
-    CollectionBranch
-  }), [layout]);
+    CollectionBranch,
+    CollectionNode
+  }), [CollectionNode, layout]);
 
   return (
     <CollectionRendererContext.Provider value={renderer}>
@@ -70,15 +73,14 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
   );
 }
 
-function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicator}: CollectionRootProps) {
+function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicator, ...props}: CollectionRootProps) {
   let {layout, layoutOptions} = useContext(LayoutContext)!;
   let layoutOptions2 = layout.useLayoutOptions?.();
   let state = useVirtualizerState({
     layout,
     collection,
-    renderView: (type, item) => {
-      return item?.render?.(item);
-    },
+    // If we don't skip rendering the node here, we end up rendering them twice.
+    renderView: () => null,
     onVisibleRectChange(rect) {
       let element = scrollRef?.current;
       if (element) {
@@ -103,9 +105,9 @@ function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicat
   }, scrollRef!);
 
   return (
-    <div {...contentProps}>
+    <div {...mergeProps(contentProps, props)} style={{...contentProps.style, ...props.style}}>
       <VirtualizerContext.Provider value={state}>
-        {renderChildren(null, state.visibleViews, renderDropIndicator)}
+        {useRenderChildren(null, state.visibleViews, renderDropIndicator)}
       </VirtualizerContext.Provider>
     </div>
   );
@@ -114,41 +116,36 @@ function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicat
 function CollectionBranch({parent, renderDropIndicator}: CollectionBranchProps) {
   let virtualizer = useContext(VirtualizerContext);
   let parentView = virtualizer!.virtualizer.getVisibleView(parent.key)!;
-  return renderChildren(parentView, Array.from(parentView.children), renderDropIndicator);
+
+  return useRenderChildren(parentView, Array.from(parentView.children), renderDropIndicator);
 }
 
-function renderChildren(parent: View | null, children: View[], renderDropIndicator?: (target: ItemDropTarget) => ReactNode) {
-  return children.map(view => renderWrapper(parent, view, renderDropIndicator));
-}
+function useRenderChildren(parent: View | null, children: View[], renderDropIndicator?: (target: ItemDropTarget) => ReactNode) {
+  let {CollectionNode = DefaultCollectionRenderer.CollectionNode} = useContext(CollectionRendererContext);
 
-function renderWrapper(
-  parent: View | null,
-  reusableView: View,
-  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
-): ReactNode {
-  let rendered = (
-    <VirtualizerItem
-      key={reusableView.key}
-      layoutInfo={reusableView.layoutInfo!}
-      virtualizer={reusableView.virtualizer}
-      parent={parent?.layoutInfo}>
-      {reusableView.rendered}
-    </VirtualizerItem>
-  );
+  return children.map(node => {
+    let {collection, layout} = node.virtualizer;
+    let pseudoProps: Pick<CollectionNodeProps<ReusableView<Node<unknown>, ReactNode>>, 'before' | 'after'> = {};
 
-  let {collection, layout} = reusableView.virtualizer;
-  let node = reusableView.content;
-  if (node?.type === 'item' && renderDropIndicator && layout.getDropTargetLayoutInfo) {
-    rendered = (
-      <React.Fragment key={reusableView.key}>
-        {renderDropIndicatorWrapper(parent, reusableView, {type: 'item', key: reusableView.content!.key, dropPosition: 'before'}, renderDropIndicator)}
-        {rendered}
-        {renderAfterDropIndicators(collection, node, target => renderDropIndicatorWrapper(parent, reusableView, target, renderDropIndicator))}
-      </React.Fragment>
+    if (layout.getDropTargetLayoutInfo && renderDropIndicator && node.content?.type === 'item') {
+      let beforeIndicator = renderDropIndicatorWrapper(parent, node, {type: 'item', key: node.content!.key, dropPosition: 'before'}, renderDropIndicator);
+      let afterIndicator = renderAfterDropIndicators(collection, node.content, target => renderDropIndicatorWrapper(parent, node, target, renderDropIndicator));
+
+      pseudoProps = {before: new Array(beforeIndicator), after: new Array(afterIndicator)};
+    }
+
+    let render = (item: Node<unknown>, itemRef?: ForwardedRef<Element>) => (
+      <VirtualizerItem
+        layoutInfo={node.layoutInfo!}
+        virtualizer={node.virtualizer}
+        parent={parent?.layoutInfo}
+        key={node.key}>
+        {item.render!(item, itemRef)}
+      </VirtualizerItem>
     );
-  }
 
-  return rendered;
+    return <CollectionNode {...pseudoProps} render={render} node={node.content!} parent={parent?.content ?? null} collection={collection} key={node.key} />;
+  });
 }
 
 function renderDropIndicatorWrapper(
