@@ -17,7 +17,7 @@ import {AnyCalendarDate, AnyDateTime, AnyTime, Calendar, DateFields, Disambiguat
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {constrain} from './manipulation';
 import {getExtendedYear, GregorianCalendar} from './calendars/GregorianCalendar';
-import {getLocalTimeZone, isLocalTimeZoneOverridden, isEqualCalendar} from './queries';
+import {getLocalTimeZone, isEqualCalendar, isLocalTimeZoneOverridden} from './queries';
 import {Mutable} from './utils';
 
 export function epochFromDate(date: AnyDateTime): number {

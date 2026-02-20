@@ -25,6 +25,7 @@ import {
   isEqualMonth,
   isEqualYear,
   IslamicUmalquraCalendar,
+  isLocalTimeZoneOverridden,
   isSameDay,
   isSameMonth,
   isSameYear,
@@ -369,6 +370,28 @@ describe('queries', function () {
       expect(getLocalTimeZone()).toBe('America/Denver');
       resetLocalTimeZone();
       expect(getLocalTimeZone()).toBe(systemTimeZone);
+    });
+  });
+
+  describe('isLocalTimeZoneOverridden', function () {
+    afterEach(() => {
+      resetLocalTimeZone();
+    });
+
+    it('returns false by default', function () {
+      expect(isLocalTimeZoneOverridden()).toBe(false);
+    });
+
+    it('returns true after setLocalTimeZone', function () {
+      setLocalTimeZone('America/Denver');
+      expect(isLocalTimeZoneOverridden()).toBe(true);
+    });
+
+    it('returns false after resetLocalTimeZone', function () {
+      setLocalTimeZone('America/Denver');
+      expect(isLocalTimeZoneOverridden()).toBe(true);
+      resetLocalTimeZone();
+      expect(isLocalTimeZoneOverridden()).toBe(false);
     });
   });
 });
