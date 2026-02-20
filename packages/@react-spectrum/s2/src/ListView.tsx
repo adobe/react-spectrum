@@ -15,6 +15,7 @@ import {ActionMenuContext} from './ActionMenu';
 import {baseColor, colorMix, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
+import Chevron from '../ui-icons/Chevron';
 import {
   Collection,
   CollectionRendererContext,
@@ -46,7 +47,7 @@ import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useLocalizedStringFormatter} from 'react-aria';
+import {useLocale, useLocalizedStringFormatter} from 'react-aria';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -80,7 +81,9 @@ export interface ListViewItemProps extends Omit<GridListItemProps, 'children' | 
   /**
    * The contents of the item.
    */
-  children: ReactNode
+  children: ReactNode,
+  /** Whether the item has child items (renders a chevron indicator). */
+  hasChildItems?: boolean
 }
 
 export interface ListViewLoadMoreItemProps extends Pick<GridListLoadMoreItemProps, 'onLoadMore'> {
@@ -491,6 +494,15 @@ const listCheckbox = style({
   }
 });
 
+const listChevron = style({
+  gridArea: 'chevron',
+  gridRowEnd: 'span 2',
+  alignSelf: 'center',
+  display: 'flex',
+  alignItems: 'center',
+  marginStart: 'text-to-visual'
+});
+
 const centeredWrapper = style({
   display: 'flex',
   alignItems: 'center',
@@ -510,13 +522,15 @@ const emptyStateWrapper = style({
 
 export function ListViewItem(props: ListViewItemProps): ReactNode {
   let ref = useRef(null);
+  let {hasChildItems, ...otherProps} = props;
   let isLink = props.href != null;
   let {isQuiet, selectionStyle} = useContext(InternalListViewContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
+  let {direction} = useLocale();
 
   return (
     <GridListItem
-      {...props}
+      {...otherProps}
       textValue={textValue}
       ref={ref}
       style={pressScale(ref, props.UNSAFE_style)}
@@ -566,6 +580,23 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
               </div>
             )}
             {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
+            {hasChildItems && (
+              <div className={listChevron}>
+                <Chevron
+                  className={style({
+                    scale: {
+                      direction: {
+                        ltr: '1',
+                        rtl: '-1'
+                      }
+                    },
+                    '--iconPrimary': {
+                      type: 'fill',
+                      value: 'currentColor'
+                    }
+                  })({direction})} />
+              </div>
+            )}
           </Provider>
         );
       }}
