@@ -443,7 +443,9 @@ export let description = style({
 export let iconCenterWrapper = style({
   display: 'flex',
   gridArea: 'icon',
-  alignSelf: 'center'
+  gridRowEnd: 'span 2',
+  alignSelf: 'center',
+  alignItems: 'center'
 });
 
 export let icon = style({
