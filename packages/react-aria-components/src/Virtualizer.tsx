@@ -11,7 +11,7 @@
  */
 
 import {CollectionBranchProps, CollectionNodeProps, CollectionRenderer, CollectionRendererContext, CollectionRootProps, renderAfterDropIndicators} from './Collection';
-import {DropTargetDelegate, ItemDropTarget, Key, Node} from '@react-types/shared';
+import {DropTargetDelegate, ItemDropTarget, Node} from '@react-types/shared';
 import {Layout, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import {mergeProps} from '@react-aria/utils';
 import React, {createContext, JSX, ReactNode, useContext, useMemo} from 'react';
@@ -137,7 +137,7 @@ function CollectionNode({node, parent, before, after, ...props}: CollectionNodeP
   );
 }
 
-function useRenderChildren(parent: View | null, children: View[], renderDropIndicator?: (target: ItemDropTarget, keys?: Set<Key>, draggedKey?: Key) => ReactNode) {
+function useRenderChildren(parent: View | null, children: View[], renderDropIndicator?: (target: ItemDropTarget) => ReactNode) {
   let {CollectionNode: Item = CollectionNode} = useContext(CollectionRendererContext);
 
   return children.map(node => {
@@ -159,11 +159,9 @@ function renderDropIndicatorWrapper(
   parent: View | null,
   reusableView: View,
   target: ItemDropTarget,
-  renderDropIndicator: (target: ItemDropTarget, keys?: Set<Key>, draggedKey?: Key) => ReactNode,
-  keys: Set<Key> = new Set(),
-  draggedKey?: Key
+  renderDropIndicator: (target: ItemDropTarget) => ReactNode
 ) {
-  let indicator = renderDropIndicator(target, keys, draggedKey);
+  let indicator = renderDropIndicator(target);
   if (indicator) {
     let layoutInfo = reusableView.virtualizer.layout.getDropTargetLayoutInfo!(target);
     indicator = (

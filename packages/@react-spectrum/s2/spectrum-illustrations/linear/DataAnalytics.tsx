@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import DataAnalytics_L from 'illustration:./S2_lin_dataAnalytics_160.svg';
 import DataAnalytics_M from 'illustration:./S2_lin_dataAnalytics_96.svg';
 import DataAnalytics_S from 'illustration:./S2_lin_dataAnalytics_48.svg';

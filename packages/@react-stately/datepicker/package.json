@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/datepicker",
-  "version": "3.14.2",
+  "version": "3.16.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -26,13 +26,14 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/date": "^3.8.2",
+    "@internationalized/date": "^3.11.0",
+    "@internationalized/number": "^3.6.5",
     "@internationalized/string": "^3.2.7",
-    "@react-stately/form": "^3.1.5",
-    "@react-stately/overlays": "^3.6.17",
-    "@react-stately/utils": "^3.10.7",
-    "@react-types/datepicker": "^3.12.2",
-    "@react-types/shared": "^3.30.0",
+    "@react-stately/form": "^3.2.3",
+    "@react-stately/overlays": "^3.6.22",
+    "@react-stately/utils": "^3.11.0",
+    "@react-types/datepicker": "^3.13.4",
+    "@react-types/shared": "^3.33.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

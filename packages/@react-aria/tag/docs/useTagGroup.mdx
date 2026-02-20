@@ -234,7 +234,7 @@ function Tag<T>(props: TagProps<T>) {
 
 ### Button
 
-The `Button` component is used in the above example to remove a tag. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+The `Button` component is used in the above example to remove a tag. It is built using the [useButton](../Button/useButton.html) hook, and can be shared with many other components.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -296,7 +296,7 @@ function Example() {
 
 TagGroup supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
 Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `key` prop of the items.
-See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
+See the `react-stately` [Selection docs](v3:selection.html) for more details.
 
 ```tsx example
 import type {Selection} from 'react-stately';
@@ -340,14 +340,14 @@ Tags may be links to another page or website. This can be achieved by passing th
 
 #### Client side routing
 
-The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [framework setup guide](../frameworks) to learn how to set this up.
 
 ### Disabled tags
 
 TagGroup supports marking items as disabled using the `disabledKeys` prop. Each key in this list
 corresponds with the `key` prop passed to the `Item` component, or automatically derived from the values passed
 to the `items` prop. Disabled items are not focusable, selectable, or keyboard navigable.
-See [Collections](../react-stately/collections.html) for more details.
+See [Collections](v3:collections.html) for more details.
 
 ```tsx example
 <TagGroup label="Sandwich contents" selectionMode="multiple" disabledKeys={['tuna']}>

@@ -35,6 +35,11 @@ echo 'build RAC Spectrum Tailwind app'
 cd examples/rac-spectrum-tailwind
 yarn config set npmRegistryServer $registry
 yarn install --no-immutable
+yarn up @adobe/react-spectrum
+yarn up @react-spectrum/provider
+yarn up @spectrum-icons/illustrations
+yarn up @spectrum-icons/workflow
+yarn up react-aria-components
 yarn build --public-url ./
 
 echo 'build RAC Spectrum Tailwind app done'

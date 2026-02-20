@@ -434,12 +434,7 @@ describe('ListView', function () {
         expect(onDrop).toHaveBeenCalledTimes(1);
 
         fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 110}));
-        // TODO: fix in strict mode, due to https://github.com/facebook/react/issues/29585
-        if (isReact19) {
-          expect(onDragEnd).toHaveBeenCalledTimes(2);
-        } else {
-          expect(onDragEnd).toHaveBeenCalledTimes(1);
-        }
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
 
         act(() => jest.runAllTimers());
 
@@ -482,18 +477,10 @@ describe('ListView', function () {
         fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 150}));
         act(() => jest.runAllTimers());
         await act(async () => Promise.resolve());
-        if (isReact19) {
-          expect(onDrop).toHaveBeenCalledTimes(1);
-        } else {
-          expect(onDrop).toHaveBeenCalledTimes(1);
-        }
+        expect(onDrop).toHaveBeenCalledTimes(1);
 
         fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 150}));
-        if (isReact19) {
-          expect(onDragEnd).toHaveBeenCalledTimes(2);
-        } else {
-          expect(onDragEnd).toHaveBeenCalledTimes(1);
-        }
+        expect(onDrop).toHaveBeenCalledTimes(1);
 
         act(() => jest.runAllTimers());
 
@@ -2437,7 +2424,6 @@ describe('ListView', function () {
           await user.keyboard('{Escape}');
 
           tree.rerender(<DragBetweenListsComplex secondListDnDOptions={{...mockUtilityOptions, onRootDrop: null, onInsert: null}} />);
-          await user.tab({shift: true});
           await user.tab({shift: true});
           await beginDrag(tree);
           await user.tab();

@@ -103,12 +103,20 @@ describe('Picker', () => {
     let options = selectTester.options();
     for (let [index, option] of options.entries()) {
       expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
+      expect(option).toHaveAttribute('aria-setsize', `${items.length}`);
     }
 
     tree.rerender(<DynamicPicker items={items} loadingState="loadingMore" />);
     options = selectTester.options();
     for (let [index, option] of options.entries()) {
-      expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
+      if (index === options.length - 1) {
+        // The last row is the loader here which shouldn't have posinset
+        expect(option).not.toHaveAttribute('aria-posinset');
+        expect(option).not.toHaveAttribute('aria-setsize');
+      } else {
+        expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
+        expect(option).toHaveAttribute('aria-setsize', `${items.length}`);
+      }
     }
 
     let newItems = [...items, {name: 'Chocolate Mint'}, {name: 'Chocolate Chip Cookie Dough'}];
@@ -117,7 +125,44 @@ describe('Picker', () => {
     options = selectTester.options();
     for (let [index, option] of options.entries()) {
       expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
+      expect(option).toHaveAttribute('aria-setsize', `${newItems.length}`);
     }
+  });
+
+  it('should support custom renderValue output', async () => {
+    let items = [
+      {id: 'chocolate', name: 'Chocolate'},
+      {id: 'strawberry', name: 'Strawberry'},
+      {id: 'vanilla', name: 'Vanilla'}
+    ];
+    let renderValue = jest.fn((selectedItems) => (
+      <span data-testid="custom-value">
+        {selectedItems.map((item) => item.name).join(', ')}
+      </span>
+    ));
+    let tree = render(
+      <Picker
+        label="Test picker"
+        selectionMode="multiple"
+        items={items}
+        renderValue={renderValue}>
+        {(item: any) => <PickerItem id={item.id} textValue={item.name}>{item.name}</PickerItem>}
+      </Picker>
+    );
+
+    // expect the placeholder to be rendered when no items are selected
+    expect(tree.queryByTestId('custom-value')).toBeNull();
+
+    let selectTester = testUtilUser.createTester('Select', {root: tree.container, interactionType: 'mouse'});
+    await selectTester.open();
+    await selectTester.selectOption({option: 0});
+    await selectTester.selectOption({option: 2});
+    await selectTester.close();
+
+    // check that the clicked items are rendered in the custom renderValue output
+    let lastSelectedItems = renderValue.mock.calls[renderValue.mock.calls.length - 1][0];
+    expect(lastSelectedItems.map((item) => item.name)).toEqual(['Chocolate', 'Vanilla']);
+    expect(tree.getByTestId('custom-value')).toHaveTextContent('Chocolate, Vanilla');
   });
 
   it('should support contextual help', async () => {

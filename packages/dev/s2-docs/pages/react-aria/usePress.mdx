@@ -1,0 +1,98 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../src/FunctionAPI';
+import docs from 'docs:@react-aria/interactions';
+import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {InterfaceType} from '../../src/types';
+export const section = 'Interactions';
+export const description = 'Handles press interactions across mouse, touch, and keyboard.';
+
+# usePress
+
+<PageDescription>{docs.exports.usePress.description}</PageDescription>
+
+```tsx render
+"use client";
+import React from 'react';
+import {usePress} from 'react-aria';
+
+function Example() {
+  let [events, setEvents] = React.useState<string[]>([]);
+  let {pressProps, isPressed} = usePress({
+    onPressStart: e => setEvents(
+      events => [...events, `press start with ${e.pointerType}`]
+    ),
+    onPressEnd: e => setEvents(
+      events => [...events, `press end with ${e.pointerType}`]
+    ),
+    onPress: e => setEvents(
+      events => [...events, `press with ${e.pointerType}`]
+    )
+  });
+
+  return (
+    <>
+      <div
+        {...pressProps}
+        style={{
+          background: isPressed ? 'darkgreen' : 'green',
+          color: 'white',
+          display: 'inline-block',
+          padding: '8px 12px',
+          borderRadius: 8,
+          cursor: 'pointer'
+        }}
+        role="button"
+        tabIndex={0}>
+        Press me!
+      </div>
+      <ul
+        style={{
+          maxHeight: '200px',
+          overflow: 'auto'
+        }}>
+        {events.map((e, i) => <li key={i}>{e}</li>)}
+      </ul>
+    </>
+  );
+}
+```
+
+## Features
+
+`usePress` returns the current press state, which can be used to adjust the visual appearance of the target. If the pointer is released over the target, then an `onPress` event is fired.
+
+* Handles mouse and touch events
+* Handles <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key presses
+* Handles screen reader virtual clicks
+* Normalizes focus behavior on mouse and touch interactions across browsers
+* Disables text selection while the press interaction is active
+* Cancels press interactions on scroll
+* Normalizes many cross browser inconsistencies
+
+Read our [blog post](blog/building-a-button-part-1) learn more.
+
+## API
+
+<FunctionAPI function={docs.exports.usePress} links={docs.links} />
+
+### PressEvents
+
+<InterfaceType {...typesDocs.exports.PressEvents} />
+
+### PressResult
+
+<InterfaceType {...docs.exports.PressResult} />
+
+### PressEvent
+
+<InterfaceType {...typesDocs.exports.PressEvent} />

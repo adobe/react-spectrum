@@ -11,7 +11,7 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, ButtonContext, ProgressBar, Text} from '../';
+import {Button, ButtonContext, Dialog, DialogTrigger, Heading, Modal, ProgressBar, Text} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -44,6 +44,32 @@ describe('Button', () => {
     expect(button).toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support custom render function', async () => {
+    let {getByRole} = render(<Button render={(props, {isPressed}) => <button {...props} data-custom={isPressed ? 'pressed' : 'bar'} />}>Test</Button>);
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('data-custom', 'bar');
+
+    await user.pointer({target: button, keys: '[MouseLeft>]'});
+    expect(button).toHaveAttribute('data-custom', 'pressed');
+
+    await user.pointer({target: button, keys: '[/MouseLeft]'});
+    expect(button).toHaveAttribute('data-custom', 'bar');
+  });
+
+  it('should warn when rendering the wrong element type', () => {
+    let warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    render(<Button render={props => <div {...props} data-custom="bar" />}>Test</Button>);
+    expect(warn).toHaveBeenCalledWith('Unexpected DOM element returned by custom `render` function. Expected <button>, got <div>. This may break the component behavior and accessibility.');
+    warn.mockRestore();
+  });
+
+  it('should warn when ref is not passed through', () => {
+    let warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    render(<Button render={() => <div data-custom="bar" />}>Test</Button>);
+    expect(warn).toHaveBeenCalledWith('Ref was not connected to DOM element returned by custom `render` function. Did you forget to pass through or merge the `ref`?');
+    warn.mockRestore();
+  });
+
   it('should support form props', () => {
     let {getByRole} = render(<form id="foo"><Button form="foo" formMethod="post">Test</Button></form>);
     let button = getByRole('button');
@@ -55,6 +81,18 @@ describe('Button', () => {
     let {getByRole} = render(<Button aria-current="page">Test</Button>);
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('should not have aria-disabled defined by default', () => {
+    let {getByRole} = render(<Button>Test</Button>);
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('aria-disabled');
+  });
+
+  it('should support aria-disabled passthrough', () => {
+    let {getByRole} = render(<Button aria-disabled="true">Test</Button>);
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('should support slot', () => {
@@ -112,7 +150,8 @@ describe('Button', () => {
   it('should support press state', async () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
-    let {getByRole} = render(<Button className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick}>Test</Button>);
+    let onClickCapture = jest.fn();
+    let {getByRole} = render(<Button className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</Button>);
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-pressed');
@@ -128,6 +167,7 @@ describe('Button', () => {
 
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
   });
 
   it('should support disabled state', () => {
@@ -307,6 +347,7 @@ describe('Button', () => {
     function TestComponent(props) {
       let [pending, setPending] = useState(false);
       return (
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
         <form
           onSubmit={(e) => {
             // forms are submitted implicitly on keydown, so we need to wait to set pending until after to set pending
@@ -351,5 +392,36 @@ describe('Button', () => {
 
     await user.keyboard('{Enter}');
     expect(onSubmitSpy).not.toHaveBeenCalled();
+  });
+
+  it('disables press when in pending state for context', async function () {
+    let onFocusSpy = jest.fn();
+    let onBlurSpy = jest.fn();
+    let {getByRole, queryByRole} = render(
+      <DialogTrigger>
+        <Button isPending onFocus={onFocusSpy} onBlur={onBlurSpy}>Delete…</Button>
+        <Modal data-test="modal">
+          <Dialog role="alertdialog" data-test="dialog">
+            {({close}) => (
+              <>
+                <Heading slot="title">Alert</Heading>
+                <Button onPress={close}>Close</Button>
+              </>
+            )}
+          </Dialog>
+        </Modal>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+    await user.click(button);
+    expect(onFocusSpy).toHaveBeenCalled();
+    expect(onBlurSpy).not.toHaveBeenCalled();
+
+    let dialog = queryByRole('alertdialog');
+    expect(dialog).toBeNull();
+
+    await user.click(document.body);
+    expect(onBlurSpy).toHaveBeenCalled();
   });
 });

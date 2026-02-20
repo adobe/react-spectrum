@@ -21,32 +21,45 @@ import {
   DropIndicator,
   GridLayout,
   GridList,
+  GridListHeader,
   GridListItem,
   GridListItemProps,
+  GridListLoadMoreItem,
+  GridListProps,
+  GridListSection,
   Heading,
   ListLayout,
   Modal,
   ModalOverlay,
+  ModalOverlayProps,
   Popover,
   Size,
   Tag,
   TagGroup,
   TagList,
+  Text,
   useDragAndDrop,
-  Virtualizer
+  Virtualizer,
+  WaterfallLayout
 } from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {Key, useAsyncList, useListData} from 'react-stately';
 import {LoadingSpinner} from './utils';
-import React, {useState} from 'react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import React, {JSX, useState} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
+import './styles.css';
+import {LoadingState} from '@react-types/shared';
 
 export default {
-  title: 'React Aria Components/GridList'
-};
+  title: 'React Aria Components/GridList',
+  component: GridList,
+  excludeStories: ['MyGridListItem']
+} as Meta<typeof GridList>;
 
-export const GridListExample = (args) => (
+export type GridListStory = StoryFn<typeof GridList>;
+
+export const GridListExample: GridListStory = (args) => (
   <GridList
     {...args}
     className={styles.menu}
@@ -58,19 +71,19 @@ export const GridListExample = (args) => (
       gridTemplate: args.layout === 'grid' ? 'repeat(3, 1fr) / repeat(3, 1fr)' : 'auto / 1fr',
       gridAutoFlow: 'row'
     }}>
-    <MyGridListItem>1,1 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>2,1 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>2,2 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>2,3 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>3,1 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>3,2 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>3,3 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="1,1">1,1 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="1,2">1,2 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="1,3">1,3 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="2,1">2,1 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="2,2">2,2 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="2,3">2,3 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="3,1">3,1 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="3,2">3,2 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="3,3">3,3 <Button>Actions</Button></MyGridListItem>
   </GridList>
 );
 
-const MyGridListItem = (props: GridListItemProps) => {
+export const MyGridListItem = (props: GridListItemProps) => {
   return (
     <GridListItem
       {...props}
@@ -93,7 +106,8 @@ GridListExample.story = {
   args: {
     layout: 'stack',
     escapeKeyBehavior: 'clearSelection',
-    shouldSelectOnPressUp: false
+    shouldSelectOnPressUp: false,
+    disallowTypeAhead: false
   },
   argTypes: {
     layout: {
@@ -138,7 +152,106 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   );
 };
 
-export function VirtualizedGridList() {
+
+export const GridListSectionExample = (args) => (
+  <GridList
+    {...args}
+    className={styles.menu}
+    aria-label="test gridlist"
+    style={{
+      width: 400,
+      height: 400
+    }}>
+    <GridListSection>
+      <GridListHeader>Section 1</GridListHeader>
+      <MyGridListItem>1,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
+    </GridListSection>
+    <GridListSection>
+      <GridListHeader>Section 2</GridListHeader>
+      <MyGridListItem>2,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>2,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>2,3 <Button>Actions</Button></MyGridListItem>
+    </GridListSection>
+    <GridListSection>
+      <GridListHeader>Section 3</GridListHeader>
+      <MyGridListItem>3,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>3,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>3,3 <Button>Actions</Button></MyGridListItem>
+    </GridListSection>
+  </GridList>
+);
+
+GridListSectionExample.story = {
+  args: {
+    layout: 'stack',
+    escapeKeyBehavior: 'clearSelection',
+    shouldSelectOnPressUp: false
+  },
+  argTypes: {
+    layout: {
+      control: 'radio',
+      options: ['stack', 'grid']
+    },
+    keyboardNavigationBehavior: {
+      control: 'radio',
+      options: ['arrow', 'tab']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    escapeKeyBehavior: {
+      control: 'radio',
+      options: ['clearSelection', 'none']
+    }
+  }
+};
+
+export function VirtualizedGridListSection() {
+  let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
+  for (let s = 0; s < 10; s++) {
+    let items: {id: string, name: string}[] = [];
+    for (let i = 0; i < 3; i++) {
+      items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}`});
+    }
+    sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
+  }
+
+  return (
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: 25
+      }}>
+      <GridList
+        className={styles.menu}
+        // selectionMode="multiple"
+        style={{height: 400}}
+        aria-label="virtualized with grid section"
+        items={sections}>
+        <Collection items={sections}>
+          {section => (
+            <GridListSection>
+              <GridListHeader>{section.name}</GridListHeader>
+              <Collection items={section.children} >
+                {item => <MyGridListItem>{item.name}</MyGridListItem>}
+              </Collection>
+            </GridListSection>
+          )}
+        </Collection>
+      </GridList>
+    </Virtualizer>
+  );
+}
+
+
+const VirtualizedGridListRender = (args: GridListProps<any> & {isLoading: boolean}) => {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -175,15 +288,40 @@ export function VirtualizedGridList() {
         selectionMode="multiple"
         dragAndDropHooks={dragAndDropHooks}
         style={{height: 400}}
-        aria-label="virtualized listbox"
+        aria-label="virtualized gridlist"
         items={list.items}>
-        {item => <MyGridListItem>{item.name}</MyGridListItem>}
+        <Collection items={list.items}>
+          {item => <MyGridListItem>{item.name}</MyGridListItem>}
+        </Collection>
+        <MyGridListLoaderIndicator isLoading={args.isLoading} />
       </GridList>
     </Virtualizer>
   );
+};
+
+export const VirtualizedGridList: StoryObj<typeof VirtualizedGridListRender> = {
+  render: (args) => <VirtualizedGridListRender {...args} />,
+  args: {
+    isLoading: false
+  }
+};
+
+interface VirtualizedGridListGridProps {
+  minItemSizeWidth?: number,
+  maxItemSizeWidth?: number,
+  maxColumns?: number,
+  minHorizontalSpace?: number,
+  maxHorizontalSpace?: number
 }
 
-export function VirtualizedGridListGrid() {
+export let VirtualizedGridListGrid: StoryFn<VirtualizedGridListGridProps> = (args) => {
+  const {
+    minItemSizeWidth = 40,
+    maxItemSizeWidth = 65,
+    maxColumns = Infinity,
+    minHorizontalSpace = 0,
+    maxHorizontalSpace = Infinity
+  } = args;
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -193,14 +331,55 @@ export function VirtualizedGridListGrid() {
     <Virtualizer
       layout={GridLayout}
       layoutOptions={{
-        minItemSize: new Size(40, 40)
+        minItemSize: new Size(minItemSizeWidth, 40),
+        maxItemSize: new Size(maxItemSizeWidth, 40),
+        minSpace: new Size(minHorizontalSpace, 18),
+        maxColumns,
+        maxHorizontalSpace
       }}>
       <GridList className={styles.menu} layout="grid" style={{height: 400, width: 400}} aria-label="virtualized listbox" items={items}>
         {item => <MyGridListItem>{item.name}</MyGridListItem>}
       </GridList>
     </Virtualizer>
   );
-}
+};
+
+VirtualizedGridListGrid.story = {
+  args: {
+    minItemSizeWidth: 40,
+    maxItemSizeWidth: 65,
+    maxColumns: undefined,
+    minHorizontalSpace: 0,
+    maxHorizontalSpace: undefined
+  },
+  argTypes: {
+    minItemSizeWidth: {
+      control: 'number',
+      description: 'The minimum width of each item in the grid list',
+      defaultValue: 40
+    },
+    maxItemSizeWidth: {
+      control: 'number',
+      description: 'Maximum width of each item in the grid list.',
+      defaultValue: 65
+    },
+    maxColumns: {
+      control: 'number',
+      description: 'Maximum number of columns in the grid list.',
+      defaultValue: undefined
+    },
+    minHorizontalSpace: {
+      control: 'number',
+      description: 'Minimum horizontal space between grid items.',
+      defaultValue: 0
+    },
+    maxHorizontalSpace: {
+      control: 'number',
+      description: 'Maximum horizontal space between grid items.',
+      defaultValue: undefined
+    }
+  }
+};
 
 let renderEmptyState = ({isLoading}) => {
   return  (
@@ -219,7 +398,7 @@ interface Character {
 
 const MyGridListLoaderIndicator = (props) => {
   return (
-    <UNSTABLE_GridListLoadingSentinel
+    <GridListLoadMoreItem
       style={{
         height: 30,
         width: '100%',
@@ -229,18 +408,18 @@ const MyGridListLoaderIndicator = (props) => {
       }}
       {...props}>
       <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
-    </UNSTABLE_GridListLoadingSentinel>
+    </GridListLoadMoreItem>
   );
 };
 
-export const AsyncGridList = (args) => {
+function AsyncGridListRender(props: {delay: number}): JSX.Element {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      await new Promise(resolve => setTimeout(resolve, args.delay));
+      await new Promise(resolve => setTimeout(resolve, props.delay));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
@@ -265,22 +444,23 @@ export const AsyncGridList = (args) => {
       <MyGridListLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
     </GridList>
   );
-};
+}
 
-AsyncGridList.story = {
+export let AsyncGridList: StoryObj<typeof AsyncGridListRender> = {
+  render: (args) => <AsyncGridListRender {...args} />,
   args: {
     delay: 50
   }
 };
 
-export const AsyncGridListVirtualized = (args) => {
+function AsyncGridListVirtualizedRender(props: {delay: number}): JSX.Element {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      await new Promise(resolve => setTimeout(resolve, args.delay));
+      await new Promise(resolve => setTimeout(resolve, props.delay));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
       return {
@@ -311,13 +491,14 @@ export const AsyncGridListVirtualized = (args) => {
   );
 };
 
-AsyncGridListVirtualized.story = {
+export let AsyncGridListVirtualized: StoryObj<typeof AsyncGridListVirtualizedRender> = {
+  render: (args) => <AsyncGridListVirtualizedRender {...args} />,
   args: {
     delay: 50
   }
 };
 
-export function TagGroupInsideGridList() {
+export let TagGroupInsideGridList: GridListStory = () => {
   return (
     <GridList
       className={styles.menu}
@@ -359,7 +540,7 @@ export function TagGroupInsideGridList() {
       </MyGridListItem>
     </GridList>
   );
-}
+};
 
 const GridListDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -402,7 +583,7 @@ const GridListDropdown = () => {
   );
 };
 
-function GridListInModalPickerRender(props) {
+function GridListInModalPickerRender(props: ModalOverlayProps): JSX.Element {
   const [mainModalOpen, setMainModalOpen] = useState(true);
   return (
     <>
@@ -447,13 +628,116 @@ function GridListInModalPickerRender(props) {
   );
 }
 
-export const GridListInModalPicker = {
+export let GridListInModalPicker: StoryObj<typeof GridListInModalPickerRender> = {
   render: (args) => <GridListInModalPickerRender {...args} />,
   parameters: {
     docs: {
       description: {
         component: 'Selecting an option from the grid list over the backdrop should not result in the modal closing.'
       }
+    }
+  }
+};
+
+type Item = {
+  id: number,
+  user: {
+    name: string,
+    profile_image: { small: string }
+  },
+  urls: { regular: string },
+  description: string,
+  alt_description: string,
+  width: number,
+  height: number
+};
+
+interface AsyncGridListGridVirtualizedRenderProps {
+  delay: number,
+  layout: 'grid' | 'waterfall',
+  loaderHeight: number,
+  loadingState: LoadingState
+}
+
+function AsyncGridListGridVirtualizedRender(props: AsyncGridListGridVirtualizedRenderProps) {
+  const list = useAsyncList<Item, number | null>({
+    async load({cursor, items, signal}) {
+      const page = cursor || 1;
+      await new Promise((resolve) => setTimeout(resolve, props.delay));
+      const res = await fetch(
+        `https://api.unsplash.com/topics/nature/photos?page=${page}&per_page=30&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
+        {signal}
+      );
+      let nextItems = await res.json();
+      // Filter duplicates which might be returned by the API.
+      const existingKeys = new Set(items.map((i) => i.id));
+      nextItems = nextItems.filter((i) => !existingKeys.has(i.id) && (i.description || i.alt_description));
+      return {cursor: nextItems.length ? page + 1 : null, items: nextItems};
+    }
+  });
+  const layout = props.layout === 'waterfall' ? WaterfallLayout : GridLayout;
+  const loadingState = props.loadingState === 'idle' ? list.loadingState : props.loadingState;
+
+  return (
+    <Virtualizer
+      layout={layout}
+      layoutOptions={{
+        loaderHeight: props.loaderHeight,
+        maxItemSize: new Size(140, 140),
+        minItemSize: new Size(100, 100),
+        minSpace: new Size(6, 6)
+      }}>
+      <GridList
+        aria-label="async virtualized gridlist"
+        className={styles.menu}
+        layout="grid"
+        renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}
+        style={{height: 400, width: 400}}>
+        <Collection items={list.items}>
+          {(item) => (
+            <GridListItem
+              style={{display: 'flex', flexDirection: 'column'}}
+              textValue={item.description || item.alt_description}>
+              <img
+                alt=""
+                width={item.width}
+                height={item.height}
+                src={item.urls.regular}
+                style={{height: 200, objectFit: 'cover', width: '100%'}} />
+              <Text slot="description">By {item.user.name}</Text>
+            </GridListItem>
+          )}
+        </Collection>
+        <MyGridListLoaderIndicator
+          isLoading={loadingState === 'loadingMore'}
+          onLoadMore={loadingState === 'idle' ? list.loadMore : undefined} />
+      </GridList>
+    </Virtualizer>
+  );
+}
+
+export const AsyncGridListGridVirtualized: StoryObj<typeof AsyncGridListGridVirtualizedRender> = {
+  render: AsyncGridListGridVirtualizedRender,
+  args: {
+    delay: 50,
+    layout: 'grid',
+    loaderHeight: 30,
+    loadingState: 'idle'
+  },
+  argTypes: {
+    delay: {
+      control: 'number'
+    },
+    layout: {
+      control: 'select',
+      options: ['grid', 'waterfall']
+    },
+    loaderHeight: {
+      control: 'number'
+    },
+    loadingState: {
+      control: 'select',
+      options: ['idle', 'loadingMore']
     }
   }
 };

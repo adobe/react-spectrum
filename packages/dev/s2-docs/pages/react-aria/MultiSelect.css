@@ -1,0 +1,19 @@
+.multi-select {
+  .react-aria-Group {
+    display: flex;
+    gap: var(--spacing-2);
+    align-items: center;
+    width: 250px;
+    padding: var(--spacing-2);
+    padding-inline-start: 8px;
+    box-sizing: border-box;
+    border: 0.5px solid var(--border-color);
+    border-radius: var(--radius);
+    background: var(--gray-50);
+  }
+
+  .react-aria-Button.react-aria-Button {
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+  }
+}

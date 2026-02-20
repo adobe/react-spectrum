@@ -45,12 +45,12 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
           rendered = children(item);
           // @ts-ignore
           let key = rendered.props.id ?? item.key ?? item.id;
-           
+
           if (key == null) {
             throw new Error('Could not determine key for item');
           }
-           
-          if (idScope) {
+
+          if (idScope != null) {
             key = idScope + ':' + key;
           }
           // Note: only works if wrapped Item passes through id...

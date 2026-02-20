@@ -11,10 +11,10 @@
  */
 
 import {FormValidationState} from '@react-stately/form';
+import {getEventTarget, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {RefObject, Validation, ValidationResult} from '@react-types/shared';
 import {setInteractionModality} from '@react-aria/interactions';
 import {useEffect, useRef} from 'react';
-import {useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 
 type ValidatableElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
@@ -94,7 +94,7 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
       // This is best-effort. There may be false positives, e.g. setTimeout.
       form.reset = () => {
         // React uses MessageChannel for scheduling, so ignore 'message' events.
-        isIgnoredReset.current = !window.event || (window.event.type === 'message' && window.event.target instanceof MessagePort);
+        isIgnoredReset.current = !window.event || (window.event.type === 'message' && getEventTarget(window.event) instanceof MessagePort);
         reset?.call(form);
         isIgnoredReset.current = false;
       };
@@ -112,7 +112,7 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
         form.reset = reset;
       }
     };
-  }, [ref, onInvalid, onChange, onReset, validationBehavior]);
+  }, [ref, validationBehavior]);
 }
 
 function getValidity(input: ValidatableElement) {
@@ -145,7 +145,7 @@ function getNativeValidity(input: ValidatableElement): ValidationResult {
 function getFirstInvalidInput(form: HTMLFormElement): ValidatableElement | null {
   for (let i = 0; i < form.elements.length; i++) {
     let element = form.elements[i] as ValidatableElement;
-    if (!element.validity.valid) {
+    if (element.validity?.valid === false) {
       return element;
     }
   }

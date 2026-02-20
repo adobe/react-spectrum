@@ -27,7 +27,7 @@
             <rect x="0.5" y="0.5" width="193" height="31" rx="3.5" fill="none"/>
           </g>
           <rect id="Rectangle_139994" data-name="Rectangle 139994" width="193.812" height="32" rx="4" transform="translate(2747 367)" fill="none"/>
-          <text id="Documents" transform="translate(2785 373)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="14">Documents</tspan></text>
+          <text id="Documents" transform="translate(2785 373)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="14">Documents</tspan></text>
           <g id="Group_151515" data-name="Group 151515" transform="translate(2759 374)">
             <rect id="Canvas" width="18" height="18" fill="var(--anatomy-gray-600)" opacity="0"/>
             <path id="Path_35493" data-name="Path 35493" d="M16.5,4H9.334L7.682,2.3A1,1,0,0,0,6.965,2H2A1,1,0,0,0,1,3V14.5a.5.5,0,0,0,.5.5h15a.5.5,0,0,0,.5-.5V4.5A.5.5,0,0,0,16.5,4ZM2,3H6.965L8.908,5H2Z" fill="var(--anatomy-gray-700)"/>
@@ -36,7 +36,7 @@
       </g>
       <g id="Symbol_12707_24" data-name="Symbol 12707 – 24" transform="translate(3478 1028)">
         <rect id="Rectangle_140819" data-name="Rectangle 140819" width="18" height="18" rx="4" fill="var(--anatomy-gray-800)"/>
-        <text id="_5" data-name="5" transform="translate(2 1)" fill="var(--anatomy-gray-50)" font-size="12" font-family="Adobe-Clean"><tspan x="4.12" y="12">5</tspan></text>
+        <text id="_5" data-name="5" transform="translate(2 1)" fill="var(--anatomy-gray-50)" font-size="12" font-family="var(--anatomy-font)"><tspan x="4.12" y="12">5</tspan></text>
       </g>
     </g>
     <g id="Page-1" transform="translate(1028 49)">

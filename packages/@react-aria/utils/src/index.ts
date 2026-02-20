@@ -12,7 +12,7 @@
 export {useId, mergeIds, useSlotId} from './useId';
 export {chain} from './chain';
 export {createShadowTreeWalker, ShadowTreeWalker} from './shadowdom/ShadowTreeWalker';
-export {getActiveElement, getEventTarget, nodeContains} from './shadowdom/DOMFunctions';
+export {getActiveElement, getEventTarget, nodeContains, isFocusWithin} from './shadowdom/DOMFunctions';
 export {getOwnerDocument, getOwnerWindow, isShadowRoot} from './domHelpers';
 export {mergeProps} from './mergeProps';
 export {mergeRefs} from './mergeRefs';
@@ -45,10 +45,10 @@ export {useEffectEvent} from './useEffectEvent';
 export {useDeepMemo} from './useDeepMemo';
 export {useFormReset} from './useFormReset';
 export {useLoadMore} from './useLoadMore';
-export {UNSTABLE_useLoadMoreSentinel} from './useLoadMoreSentinel';
+export {useLoadMoreSentinel, useLoadMoreSentinel as UNSTABLE_useLoadMoreSentinel} from './useLoadMoreSentinel';
 export {inertValue} from './inertValue';
 export {CLEAR_FOCUS_EVENT, FOCUS_EVENT} from './constants';
-export {isCtrlKeyPressed} from './keyboard';
+export {isCtrlKeyPressed, willOpenKeyboard} from './keyboard';
 export {useEnterAnimation, useExitAnimation} from './animation';
 export {isFocusable, isTabbable} from './isFocusable';
 

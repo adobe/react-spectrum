@@ -39,12 +39,13 @@ type: component
 
 ```tsx example
 import {TextField, Label, Group, Input, Button} from 'react-aria-components';
+import {Plus} from 'lucide-react';
 
 <TextField>
   <Label>Email</Label>
   <Group>
     <Input />
-    <Button aria-label="Add email">+</Button>
+    <Button aria-label="Add email"><Plus size={16} /></Button>
   </Group>
 </TextField>
 ```

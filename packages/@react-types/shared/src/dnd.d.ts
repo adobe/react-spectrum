@@ -275,9 +275,9 @@ export interface DraggableCollectionEndEvent extends DragEndEvent {
   isInternal: boolean
 }
 
-export type DragPreviewRenderer = (items: DragItem[], callback: (node: HTMLElement | null) => void) => void;
+export type DragPreviewRenderer = (items: DragItem[], callback: (node: HTMLElement | null, x?: number, y?: number) => void) => void;
 
-export interface DraggableCollectionProps {
+export interface DraggableCollectionProps<T = object> {
   /** Handler that is called when a drag operation is started. */
   onDragStart?: (e: DraggableCollectionStartEvent) => void,
   /** Handler that is called when the drag is moved. */
@@ -285,7 +285,7 @@ export interface DraggableCollectionProps {
   /** Handler that is called when the drag operation is ended, either as a result of a drop or a cancellation. */
   onDragEnd?: (e: DraggableCollectionEndEvent) => void,
   /** A function that returns the items being dragged. */
-  getItems: (keys: Set<Key>) => DragItem[],
+  getItems: (keys: Set<Key>, items: T[]) => DragItem[],
   /** The ref of the element that will be rendered as the drag preview while dragging. */
   preview?: RefObject<DragPreviewRenderer | null>,
   /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */

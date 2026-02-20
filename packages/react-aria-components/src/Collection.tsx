@@ -127,7 +127,7 @@ export interface CollectionBranchProps extends HTMLAttributes<HTMLElement> {
   /** The parent node of the items to render. */
   parent: Node<unknown>,
   /** A function that renders a drop indicator between items. */
-  renderDropIndicator?: (target: ItemDropTarget, keys?: Set<Key>, draggedKey?: Key) => ReactNode
+  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
 }
 
 export interface CollectionRootProps extends HTMLAttributes<HTMLElement> {
@@ -138,7 +138,7 @@ export interface CollectionRootProps extends HTMLAttributes<HTMLElement> {
   /** A ref to the scroll container for the collection. */
   scrollRef?: RefObject<HTMLElement | null>,
   /** A function that renders a drop indicator between items. */
-  renderDropIndicator?: (target: ItemDropTarget, keys?: Set<Key>, draggedKey?: Key) => ReactNode
+  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
 }
 
 export interface CollectionRenderer<T = Node<unknown>> {
@@ -176,7 +176,7 @@ export const DefaultCollectionRenderer: DefaultRenderer = {
 function useCollectionRender(
   collection: ICollection<Node<unknown>>,
   parent: Node<unknown> | null,
-  renderDropIndicator?: (target: ItemDropTarget, keys?: Set<Key>, draggedKey?: Key) => ReactNode
+  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
 ) {
   let {CollectionNode = DefaultCollectionRenderer.CollectionNode} = useContext(CollectionRendererContext);
 
@@ -184,6 +184,12 @@ function useCollectionRender(
     items: parent ? collection.getChildren!(parent.key) : collection,
     dependencies: [CollectionNode, parent, renderDropIndicator],
     children(node) {
+      // Return a empty fragment since we don't want to render the content twice
+      // If we don't skip the content node here, we end up rendering them twice in a Tree since we also render the content node in TreeItem
+      if (node.type === 'content') {
+        return <></>;
+      }
+
       let pseudoProps = {};
 
       if (renderDropIndicator && node.type === 'item') {
@@ -198,7 +204,7 @@ function useCollectionRender(
   });
 }
 
-export function renderAfterDropIndicators(collection: ICollection<Node<unknown>>, node: Node<unknown>, renderDropIndicator: (target: ItemDropTarget, keys?: Set<Key>, draggedKey?: Key) => ReactNode): ReactNode {
+export function renderAfterDropIndicators(collection: ICollection<Node<unknown>>, node: Node<unknown>, renderDropIndicator: (target: ItemDropTarget) => ReactNode): ReactNode {
   let key = node.key;
   let keyAfter = collection.getKeyAfter(key);
   let nextItemInFlattenedCollection = keyAfter != null ? collection.getItem(keyAfter) : null;
@@ -218,7 +224,7 @@ export function renderAfterDropIndicators(collection: ICollection<Node<unknown>>
   let afterIndicators: ReactNode[] = [];
   if (nextItemInSameLevel == null) {
     let current: Node<unknown> | null = node;
-    while (current && (!nextItemInFlattenedCollection || (current.parentKey !== nextItemInFlattenedCollection.parentKey && nextItemInFlattenedCollection.level < current.level))) {
+    while (current?.type === 'item' && (!nextItemInFlattenedCollection || (current.parentKey !== nextItemInFlattenedCollection.parentKey && nextItemInFlattenedCollection.level < current.level))) {
       let indicator = renderDropIndicator({
         type: 'item',
         key: current.key,

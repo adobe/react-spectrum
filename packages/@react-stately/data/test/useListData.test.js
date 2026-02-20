@@ -44,6 +44,85 @@ describe('useListData', function () {
     expect(result.current.selectedKeys).toEqual(new Set(['Sam', 'Julia']));
   });
 
+  describe('addKeysToSelection', function () {
+    it('should add selected keys', function () {
+      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam']}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.addKeysToSelection(['Julia']);
+      });
+      expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
+      expect(result.current.selectedKeys).toEqual(new Set(['Sam', 'Julia']));
+    });
+
+    it('should support adding "all" to selected keys', function () {
+      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam']}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.addKeysToSelection('all');
+      });
+      expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
+      expect(result.current.selectedKeys).toEqual('all');
+    });
+
+    it('should still return "all" if selected keys was already "all"', function () {
+      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: 'all'}));
+
+      act(() => {
+        result.current.addKeysToSelection(['Same']);
+      });
+      expect(result.current.selectedKeys).toEqual('all');
+    });
+  });
+
+  describe('removeKeysFromSelection', function () {
+    it('should remove all keys', function () {
+      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.removeKeysFromSelection('all');
+      });
+      expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
+      expect(result.current.selectedKeys).toEqual(new Set());
+    });
+
+    it('should remove the selected keys', function () {
+      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.removeKeysFromSelection(['Sam']);
+      });
+      expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
+      expect(result.current.selectedKeys).toEqual(new Set(['Julia']));
+    });
+
+    it('should remove the selected keys from an "all" set', function () {
+      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: 'all'}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.removeKeysFromSelection(['Sam', 'David']);
+      });
+      expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
+      expect(result.current.selectedKeys).toEqual(new Set(['Julia']));
+    });
+
+    it('should support removing "all"', function () {
+      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.removeKeysFromSelection('all');
+      });
+      expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
+      expect(result.current.selectedKeys).toEqual(new Set([]));
+    });
+  });
+
   it('should get an item by key', function () {
     let {result} = renderHook(() => useListData({initialItems: initial, getKey}));
     expect(result.current.getItem('Sam')).toBe(initial[1]);

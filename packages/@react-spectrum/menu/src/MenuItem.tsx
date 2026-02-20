@@ -64,7 +64,11 @@ export function MenuItem<T>(props: MenuItemProps<T>): JSX.Element {
   }
 
   let isDisabled = state.disabledKeys.has(key);
-  let isSelectable = !isSubmenuTrigger && state.selectionManager.selectionMode !== 'none';
+  let isContextualHelpTrigger = isSubmenuTrigger && isUnavailable !== undefined;
+  let isSelectable = (
+    (isContextualHelpTrigger ? !isUnavailable : !isSubmenuTrigger) &&
+    state.selectionManager.selectionMode !== 'none'
+  );
   let isSelected = isSelectable && state.selectionManager.isSelected(key);
   let itemref = useRef<any>(null);
   let ref = useObjectRef(useMemo(() => mergeRefs(itemref, triggerRef), [itemref, triggerRef]));

@@ -7,12 +7,12 @@
       <rect x="0.75" y="0.75" width="46.5" height="46.5" rx="5.25" fill="none" />
     </g>
     <g transform="translate(41 -154)">
-      <path d="M-4012,154h12l-6,6Zm-25,0a4,4,0,0,1-4-4V122a4,4,0,0,1,4-4h62a4,4,0,0,1,4,4v28a4,4,0,0,1-4,4Z" transform="translate(4137 62)" fill="var(--anatomy-gray-700)" /><text transform="translate(131 204)" fill="var(--anatomy-gray-50)" font-size="18" font-family="Adobe-Clean">
+      <path d="M-4012,154h12l-6,6Zm-25,0a4,4,0,0,1-4-4V122a4,4,0,0,1,4-4h62a4,4,0,0,1,4,4v28a4,4,0,0,1-4,4Z" transform="translate(4137 62)" fill="var(--anatomy-gray-700)" /><text transform="translate(131 204)" fill="var(--anatomy-gray-50)" font-size="18" font-family="var(--anatomy-font)">
         <tspan x="-13.23" y="0">Flip</tspan>
       </text>
     </g>
     <g transform="translate(-38 2)">
-      <text transform="translate(156 35)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <text transform="translate(156 35)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" style="font-style: italic">
         <tspan x="-34.333" y="0">Tooltip</tspan>
       </text>
       <circle cx="2.5" cy="2.5" r="2.5" transform="translate(180 29.5)" fill="var(--anatomy-gray-500)" />
@@ -57,12 +57,12 @@
       </g>
     </g>
     <g transform="translate(-38 2)">
-      <text transform="translate(156 35)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <text transform="translate(156 35)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" style="font-style: italic">
         <tspan x="-34.333" y="0">Tooltip</tspan>
       </text>
       <circle cx="2.5" cy="2.5" r="2.5" transform="translate(180 29.5)" fill="var(--anatomy-gray-500)" />
       <rect width="21" height="1" transform="translate(160 31.5)" fill="var(--anatomy-gray-500)" />
-    </g><text transform="translate(254 101)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+    </g><text transform="translate(254 101)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" style="font-style: italic">
       <tspan x="-35.282" y="0">Trigger</tspan>
     </text>
     <g transform="translate(0 -18)">

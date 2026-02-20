@@ -33,5 +33,5 @@ export function useEvent<K extends keyof GlobalEventHandlersEventMap>(
     return () => {
       element.removeEventListener(event, handleEvent as EventListener, options);
     };
-  }, [ref, event, options, isDisabled, handleEvent]);
+  }, [ref, event, options, isDisabled]);
 }

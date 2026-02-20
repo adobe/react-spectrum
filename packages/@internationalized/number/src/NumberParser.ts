@@ -215,6 +215,12 @@ class NumberParserImpl {
       }
     }
 
+    // In some locale styles, such as swiss currency, the group character can be a special single quote
+    // that keyboards don't typically have. This expands the character to include the easier to type single quote.
+    if (this.symbols.group === '’' && value.includes("'")) {
+      value = replaceAll(value, "'", this.symbols.group);
+    }
+
     // fr-FR group character is narrow non-breaking space, char code 8239 (U+202F), but that's not a key on the french keyboard,
     // so allow space and non-breaking space as a group char as well
     if (this.options.locale === 'fr-FR' && this.symbols.group) {

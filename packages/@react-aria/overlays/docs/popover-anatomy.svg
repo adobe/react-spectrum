@@ -17,12 +17,12 @@
     </g>
     <g id="Group_3983" data-name="Group 3983" transform="translate(-188 498.5)">
       <rect id="Rectangle_3659" data-name="Rectangle 3659" width="20" height="20" transform="translate(354 -349.5)" fill="red" opacity="0"/>
-      <text id="Arrow_optional_" data-name="Arrow (optional)" transform="translate(364 -316.5)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-42.296" y="0">Arrow (optional)</tspan></text>
+      <text id="Arrow_optional_" data-name="Arrow (optional)" transform="translate(364 -316.5)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="-42.296" y="0">Arrow (optional)</tspan></text>
       <path id="Union_44-3" data-name="Union 44" d="M-7607-414.5v-15.05a2.5,2.5,0,0,1-2-2.452,2.5,2.5,0,0,1,2.5-2.5,2.5,2.5,0,0,1,2.5,2.5,2.5,2.5,0,0,1-2,2.452v15.05Z" transform="translate(7970.5 85)" fill="var(--anatomy-gray-500)"/>
     </g>
     <g id="Group_22735" data-name="Group 22735" transform="translate(-297 387)">
       <rect id="Rectangle_3659-2" data-name="Rectangle 3659" width="20" height="23" transform="translate(392 -343)" fill="red" opacity="0"/>
-      <text id="Popover" transform="translate(402 -342)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-20.761" y="0">Popover</tspan></text>
+      <text id="Popover" transform="translate(402 -342)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="-20.761" y="0">Popover</tspan></text>
       <path id="Union_56" data-name="Union 56" d="M-9134-352.5a2.5,2.5,0,0,1,2-2.449V-370h1v15.051a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9134-352.5Z" transform="translate(9533.5 33)" fill="var(--anatomy-gray-500)"/>
     </g>
   </g>

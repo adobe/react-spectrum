@@ -1,0 +1,48 @@
+<svg style="background:var(--anatomy-gray-100); padding: 60px 10px" height="32" viewBox="0 0 222 32">
+  <rect id="Placement_Area" data-name="Placement Area" width="222" height="32" fill="red" opacity="0"/>
+  <g id="Toolbar" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+    <rect width="222" height="32" rx="4" stroke="none"/>
+    <rect x="0.5" y="0.5" width="221" height="31" rx="3.5" fill="none"/>
+  </g>
+  
+  <!-- Text Alignment Group -->
+  <g id="Align_Left" transform="translate(4 4)">
+    <rect width="24" height="24" rx="4" fill="var(--anatomy-gray-700)"/>
+    <path d="M6,8 L18,8 M6,12 L14,12 M6,16 L18,16" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  <g id="Align_Center" transform="translate(32 4)">
+    <rect width="24" height="24" rx="4" fill="var(--anatomy-gray-200)"/>
+    <path d="M6,8 L18,8 M8,12 L16,12 M6,16 L18,16" stroke="var(--anatomy-gray-700)" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  <g id="Align_Right" transform="translate(60 4)">
+    <rect width="24" height="24" rx="4" fill="var(--anatomy-gray-200)"/>
+    <path d="M6,8 L18,8 M10,12 L18,12 M6,16 L18,16" stroke="var(--anatomy-gray-700)" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  
+  <rect id="Separator_1" x="90" y="6" width="1" height="20" fill="var(--anatomy-gray-400)"/>
+  
+  <!-- Text Formatting Group -->
+  <g id="Bold" transform="translate(97 4)">
+    <rect width="24" height="24" rx="4" fill="var(--anatomy-gray-200)"/>
+    <text transform="translate(12 16)" fill="var(--anatomy-gray-700)" font-size="14" font-family="var(--anatomy-font)" font-weight="700" text-anchor="middle"><tspan x="0" y="0">B</tspan></text>
+  </g>
+  <g id="Italic" transform="translate(125 4)">
+    <rect width="24" height="24" rx="4" fill="var(--anatomy-gray-200)"/>
+    <text transform="translate(12 16)" fill="var(--anatomy-gray-700)" font-size="14" font-family="var(--anatomy-font)" font-weight="700" text-anchor="middle" font-style="italic"><tspan x="0" y="0">I</tspan></text>
+  </g>
+  <g id="Underline" transform="translate(153 4)">
+    <rect width="24" height="24" rx="4" fill="var(--anatomy-gray-200)"/>
+    <text transform="translate(12 15)" fill="var(--anatomy-gray-700)" font-size="14" font-family="var(--anatomy-font)" font-weight="700" text-anchor="middle"><tspan x="0" y="0">U</tspan></text>
+    <line x1="7" y1="18" x2="17" y2="18" stroke="var(--anatomy-gray-700)" stroke-width="1.5"/>
+  </g>
+  
+  <rect id="Separator_2" x="183" y="6" width="1" height="20" fill="var(--anatomy-gray-400)"/>
+  
+  <!-- More Options -->
+  <g id="More_Options" transform="translate(190 4)">
+    <rect width="24" height="24" rx="4" fill="var(--anatomy-gray-200)"/>
+    <circle cx="12" cy="8" r="1.5" fill="var(--anatomy-gray-700)"/>
+    <circle cx="12" cy="12" r="1.5" fill="var(--anatomy-gray-700)"/>
+    <circle cx="12" cy="16" r="1.5" fill="var(--anatomy-gray-700)"/>
+  </g>
+</svg>

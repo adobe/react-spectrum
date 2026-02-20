@@ -6,10 +6,30 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Does nothing', `
-import {DateRangePicker} from '@adobe/react-spectrum';
+test('Removes isQuiet', `
 
+import {DateRangePicker} from '@adobe/react-spectrum';
+let isQuiet = true;
+let props = {isQuiet: true};
 <div>
-  <DateRangePicker label="Event date range" />
+  <DateRangePicker isQuiet />
+  <DateRangePicker isQuiet={true} />
+  <DateRangePicker isQuiet={false} />
+  <DateRangePicker isQuiet={isQuiet} />
+  <DateRangePicker isQuiet={'foo' === 'foo'} />
+  <DateRangePicker {...props} />
 </div>
+`);
+
+
+test('changes validationState to isInvalid or nothing', `
+  import {DateRangePicker} from '@adobe/react-spectrum';
+  let validationState = 'invalid';
+  let props = {validationState: 'invalid'};
+  <div>
+    <DateRangePicker validationState="invalid" />
+    <DateRangePicker validationState="valid" />
+    <DateRangePicker validationState={validationState} />
+    <DateRangePicker {...props} />
+  </div>
 `);

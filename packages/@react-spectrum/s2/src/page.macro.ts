@@ -25,14 +25,16 @@ export function generatePageStyles(this: MacroContext | void): void {
   if (this && typeof this.addAsset === 'function') {
     this.addAsset({
       type: 'css',
-      content: `html {
+      content: `:where(:root, :host) {
         color-scheme: light dark;
         --s2-container-bg: ${colorToken(tokens['background-base-color'])};
         background: var(--s2-container-bg);
         --s2-scale: 1;
+        --s2-font-size-base: 14;
 
         @media not ((hover: hover) and (pointer: fine)) {
           --s2-scale: 1.25;
+          --s2-font-size-base: 17;
         }
 
         &[data-color-scheme=light] {
@@ -66,10 +68,11 @@ export function generateDefaultColorSchemeStyles(this: MacroContext | void): voi
     this.addAsset({
       type: 'css',
       content: `@layer _.a {
-        :where(html) {
+        :where(:root, :host) {
           --lightningcss-light: initial;
           --lightningcss-dark: ;
           --s2-scale: 1;
+          --s2-font-size-base: 14;
 
           @media (prefers-color-scheme: dark) {
             --lightningcss-light: ;
@@ -78,6 +81,7 @@ export function generateDefaultColorSchemeStyles(this: MacroContext | void): voi
 
           @media not ((hover: hover) and (pointer: fine)) {
             --s2-scale: 1.25;
+            --s2-font-size-base: 17;
           }
         }
       }`

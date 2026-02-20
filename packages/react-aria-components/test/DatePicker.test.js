@@ -98,6 +98,12 @@ describe('DatePicker', () => {
     expect(group).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} =  render(<TestDatePicker render={props => <div {...props} data-custom="true" />} />);
+    let group = getByRole('group').closest('.react-aria-DatePicker');
+    expect(group).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should apply isPressed state to button when expanded', async () => {
     let {getByRole} = render(<TestDatePicker />);
     let button = getByRole('button');
@@ -150,6 +156,49 @@ describe('DatePicker', () => {
 
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
+  });
+
+  it('should support required render prop', () => {
+    let {getByRole} = render(
+      <DatePicker isRequired>
+        {({isRequired}) => (
+          <>
+            <Label>Birth date</Label>
+            <Group data-required-state={isRequired ? 'required' : null}>
+              <DateInput>
+                {(segment) => <DateSegment segment={segment} />}
+              </DateInput>
+              <Button>▼</Button>
+            </Group>
+            <Popover>
+              <Dialog>
+                <Calendar>
+                  <header>
+                    <Button slot="previous">◀</Button>
+                    <Heading />
+                    <Button slot="next">▶</Button>
+                  </header>
+                  <CalendarGrid>
+                    {(date) => <CalendarCell date={date} />}
+                  </CalendarGrid>
+                </Calendar>
+              </Dialog>
+            </Popover>
+          </>
+        )}
+      </DatePicker>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-required-state', 'required');
+  });
+
+  it('should support required state', () => {
+    let {getByRole, rerender} = render(<TestDatePicker />);
+    let group = getByRole('group');
+    expect(group.closest('.react-aria-DatePicker')).not.toHaveAttribute('data-required');
+    rerender(<TestDatePicker isRequired />);
+    expect(group.closest('.react-aria-DatePicker')).toHaveAttribute('data-required');
   });
 
   it('should support form value', () => {
@@ -323,5 +372,15 @@ describe('DatePicker', () => {
 
     let text = popover.querySelector('.react-aria-Text');
     expect(text).not.toHaveAttribute('id');
+  });
+
+  it('should support autofill', async() => {
+    let {getByRole} = render(<TestDatePicker />);
+
+    let hiddenDateInput = document.querySelector('input[type=date]');
+    await user.type(hiddenDateInput, '2000-05-30');
+    let group = getByRole('group');
+    let input = group.querySelector('.react-aria-DateInput');
+    expect(input).toHaveTextContent('5/30/2000');
   });
 });

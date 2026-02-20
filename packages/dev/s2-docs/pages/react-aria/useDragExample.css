@@ -1,0 +1,25 @@
+.draggable {
+  display: inline-block;
+  vertical-align: top;
+  border: 1px solid gray;
+  padding: 10px;
+}
+
+.draggable.dragging {
+  opacity: 0.5;
+}
+
+.droppable {
+  width: 100px;
+  height: 80px;
+  border-radius: 6px;
+  display: inline-block;
+  padding: 20px;
+  margin-left: 20px;
+  border: 2px dotted gray;
+  white-space: pre-wrap;
+}
+
+.droppable.target {
+  border: 2px solid var(--blue);
+}

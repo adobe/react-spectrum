@@ -1,9 +1,22 @@
-import {ContextValue, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  StyleRenderProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
 import {HoverEvents, mergeProps, useFocusRing, useHover} from 'react-aria';
 import {InputRenderProps} from './Input';
 import React, {createContext, ForwardedRef, forwardRef, TextareaHTMLAttributes} from 'react';
 
-export interface TextAreaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'className' | 'style'>, HoverEvents, StyleRenderProps<InputRenderProps> {}
+export interface TextAreaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'className' | 'style'>, HoverEvents, StyleRenderProps<InputRenderProps, 'textarea'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-TextArea'
+   */
+  className?: ClassNameOrFunction<InputRenderProps>
+}
 
 export const TextAreaContext = createContext<ContextValue<TextAreaProps, HTMLTextAreaElement>>({});
 
@@ -39,7 +52,7 @@ export const TextArea = forwardRef(function TextArea(props: TextAreaProps, ref: 
   });
 
   return (
-    <textarea
+    <dom.textarea
       {...mergeProps(filterHoverProps(props), focusProps, hoverProps)}
       {...renderProps}
       ref={ref}

@@ -29,26 +29,53 @@ import {
   SpectrumTextInputBase,
   StyleProps,
   TextInputBase,
-  Validation
+  Validation,
+  ValueBase
 } from '@react-types/shared';
 
 export type MenuTriggerAction = 'focus' | 'input' | 'manual';
+export type SelectionMode = 'single' | 'multiple';
+export type ValueType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
+type ValidationType<M extends SelectionMode> = M extends 'single' ? Key : Key[];
 
-export interface ComboBoxValidationValue {
-  /** The selected key in the ComboBox. */
+export interface ComboBoxValidationValue<M extends SelectionMode = 'single'> {
+  /**
+   * The selected key in the ComboBox.
+   * @deprecated
+   */
   selectedKey: Key | null,
+  /** The keys of the currently selected items. */
+  value: ValidationType<M>,
   /** The value of the ComboBox input. */
   inputValue: string
 }
 
-export interface ComboBoxProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection' | 'onSelectionChange'>, InputBase, TextInputBase, Validation<ComboBoxValidationValue>, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
+export interface ComboBoxProps<T, M extends SelectionMode = 'single'> extends CollectionBase<T>, InputBase, ValueBase<ValueType<M>>, TextInputBase, Validation<ComboBoxValidationValue>, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
   /** The list of ComboBox items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of ComboBox items (controlled). */
   items?: Iterable<T>,
   /** Method that is called when the open state of the menu changes. Returns the new open state and the action that caused the opening of the menu. */
   onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void,
-  /** Handler that is called when the selection changes. */
+  /**
+   * Whether single or multiple selection is enabled.
+   * @default 'single'
+   */
+  selectionMode?: M,
+  /**
+   * The currently selected key in the collection (controlled).
+   * @deprecated
+   */
+  selectedKey?: Key | null,
+  /**
+   * The initial selected key in the collection (uncontrolled).
+   * @deprecated
+   */
+  defaultSelectedKey?: Key,
+  /**
+   * Handler that is called when the selection changes.
+   * @deprecated
+   */
   onSelectionChange?: (key: Key | null) => void,
   /** The value of the ComboBox input (controlled). */
   inputValue?: string,
@@ -57,7 +84,7 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, Omit<SingleSelectio
   /** Handler that is called when the ComboBox input value changes. */
   onInputChange?: (value: string) => void,
   /** Whether the ComboBox allows a non-item matching input value to be set. */
-  allowsCustomValue?: boolean,
+allowsCustomValue?: boolean,
   // /**
   //  * Whether the Combobox should only suggest matching options or autocomplete the field with the nearest matching option.
   //  * @default 'suggest'
@@ -70,12 +97,12 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, Omit<SingleSelectio
   menuTrigger?: MenuTriggerAction
 }
 
-export interface AriaComboBoxProps<T> extends ComboBoxProps<T>, DOMProps, InputDOMProps, AriaLabelingProps {
+export interface AriaComboBoxProps<T, M extends SelectionMode = 'single'> extends ComboBoxProps<T, M>, DOMProps, InputDOMProps, AriaLabelingProps {
   /** Whether keyboard navigation is circular. */
   shouldFocusWrap?: boolean
 }
 
-export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<AriaComboBoxProps<T>, 'menuTrigger' | 'isInvalid' | 'validationState'>, SpectrumFieldValidation<ComboBoxValidationValue>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<AriaComboBoxProps<T>, 'menuTrigger' | 'isInvalid' | 'validationState' | 'selectionMode' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange' | 'value' | 'defaultValue' | 'onChange'>, Omit<SingleSelection, 'disallowEmptySelection'>, SpectrumFieldValidation<ComboBoxValidationValue>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
    * The interaction required to display the ComboBox menu. Note that this prop has no effect on the mobile ComboBox experience.
    * @default 'input'
@@ -84,7 +111,7 @@ export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<Ar
   /** Whether the ComboBox should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Alignment of the menu relative to the input target.
-   * @default 'end'
+   * @default 'start'
    */
   align?: 'start' | 'end',
   /**

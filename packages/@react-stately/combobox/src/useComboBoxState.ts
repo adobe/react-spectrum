@@ -10,17 +10,45 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionStateBase, FocusStrategy, Key, Node} from '@react-types/shared';
-import {ComboBoxProps, MenuTriggerAction} from '@react-types/combobox';
+import {Collection, CollectionStateBase, FocusStrategy, Key, Node, Selection} from '@react-types/shared';
+import {ComboBoxProps, MenuTriggerAction, SelectionMode, ValueType} from '@react-types/combobox';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getChildNodes} from '@react-stately/collections';
-import {ListCollection, useSingleSelectListState} from '@react-stately/list';
-import {SelectState} from '@react-stately/select';
+import {ListCollection, ListState, useListState} from '@react-stately/list';
+import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
-import {useOverlayTriggerState} from '@react-stately/overlays';
 
-export interface ComboBoxState<T> extends SelectState<T>, FormValidationState{
+export interface ComboBoxState<T, M extends SelectionMode = 'single'> extends ListState<T>, OverlayTriggerState, FormValidationState {
+  /**
+   * The key for the first selected item.
+   * @deprecated
+   */
+  readonly selectedKey: Key | null,
+
+  /**
+   * The default selected key.
+   * @deprecated
+   */
+  readonly defaultSelectedKey: Key | null,
+  /**
+   * Sets the selected key.
+   * @deprecated
+   */
+  setSelectedKey(key: Key | null): void,
+  /** The current combobox value. */
+  readonly value: ValueType<M>,
+  /** The default combobox value. */
+  readonly defaultValue: ValueType<M>,
+  /** Sets the combobox value. */
+  setValue(value: Key | readonly Key[] | null): void,
+  /**
+   * The value of the first selected item.
+   * @deprecated
+   */
+  readonly selectedItem: Node<T> | null,
+  /** The value of the selected items. */
+  readonly selectedItems: Node<T>[],
   /** The current value of the combo box input. */
   inputValue: string,
   /** The default value of the combo box input. */
@@ -31,6 +59,10 @@ export interface ComboBoxState<T> extends SelectState<T>, FormValidationState{
   commit(): void,
   /** Controls which item will be auto focused when the menu opens. */
   readonly focusStrategy: FocusStrategy | null,
+  /** Whether the select is currently focused. */
+  readonly isFocused: boolean,
+  /** Sets whether the select is focused. */
+  setFocused(isFocused: boolean): void,
   /** Opens the menu. */
   open(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void,
   /** Toggles the menu. */
@@ -41,7 +73,7 @@ export interface ComboBoxState<T> extends SelectState<T>, FormValidationState{
 
 type FilterFn = (textValue: string, inputValue: string) => boolean;
 
-export interface ComboBoxStateOptions<T> extends Omit<ComboBoxProps<T>, 'children'>, CollectionStateBase<T> {
+export interface ComboBoxStateOptions<T, M extends SelectionMode = 'single'> extends Omit<ComboBoxProps<T, M>, 'children'>, CollectionStateBase<T> {
   /** The filter function used to determine if a option should be included in the combo box list. */
   defaultFilter?: FilterFn,
   /** Whether the combo box allows the menu to be open when the collection is empty. */
@@ -50,56 +82,102 @@ export interface ComboBoxStateOptions<T> extends Omit<ComboBoxProps<T>, 'childre
   shouldCloseOnBlur?: boolean
 }
 
+const EMPTY_VALUE: Key[] = [];
+
 /**
  * Provides state management for a combo box component. Handles building a collection
  * of items from props and manages the option selection state of the combo box. In addition, it tracks the input value,
  * focus state, and other properties of the combo box.
  */
-export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T>): ComboBoxState<T> {
+export function useComboBoxState<T extends object, M extends SelectionMode = 'single'>(props: ComboBoxStateOptions<T, M>): ComboBoxState<T> {
   let {
     defaultFilter,
     menuTrigger = 'input',
     allowsEmptyCollection = false,
     allowsCustomValue,
-    shouldCloseOnBlur = true
+    shouldCloseOnBlur = true,
+    selectionMode = 'single' as SelectionMode
   } = props;
 
   let [showAllItems, setShowAllItems] = useState(false);
   let [isFocused, setFocusedState] = useState(false);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
 
-  let onSelectionChange = (key) => {
-    if (props.onSelectionChange) {
-      props.onSelectionChange(key);
-    }
+  let defaultValue = useMemo(() => {
+    return props.defaultValue !== undefined ? props.defaultValue : (selectionMode === 'single' ? props.defaultSelectedKey ?? null : []) as ValueType<M>;
+  }, [props.defaultValue, props.defaultSelectedKey, selectionMode]);
+  let value = useMemo(() => {
+    return props.value !== undefined ? props.value : (selectionMode === 'single' ? props.selectedKey : undefined) as ValueType<M>;
+  }, [props.value, props.selectedKey, selectionMode]);
+  let [controlledValue, setControlledValue] = useControlledState<Key | readonly Key[] | null>(value, defaultValue, props.onChange as any);
+  // Only display the first selected item if in single selection mode but the value is an array.
+  let displayValue: ValueType<M> = selectionMode === 'single' && Array.isArray(controlledValue) ? controlledValue[0] : controlledValue;
 
-    // If key is the same, reset the inputValue and close the menu
-    // (scenario: user clicks on already selected option)
-    if (key === selectedKey) {
-      resetInputValue();
-      closeMenu();
+  let setValue = (value: Key | Key[] | null) => {
+    if (selectionMode === 'single') {
+      let key = Array.isArray(value) ? value[0] ?? null : value;
+      setControlledValue(key);
+      if (key !== displayValue) {
+        props.onSelectionChange?.(key);
+      }
+    } else {
+      let keys: Key[] = [];
+      if (Array.isArray(value)) {
+        keys = value;
+      } else if (value != null) {
+        keys = [value];
+      }
+
+      setControlledValue(keys);
     }
   };
 
-  let {collection,
+  let {
+    collection,
     selectionManager,
-    selectedKey,
-    setSelectedKey,
-    selectedItem,
     disabledKeys
-  } = useSingleSelectListState({
+  } = useListState({
     ...props,
-    onSelectionChange,
-    items: props.items ?? props.defaultItems
+    items: props.items ?? props.defaultItems,
+    selectionMode,
+    disallowEmptySelection: selectionMode === 'single',
+    allowDuplicateSelectionEvents: true,
+    selectedKeys: useMemo(() => convertValue(displayValue), [displayValue]),
+    onSelectionChange: (keys: Selection) => {
+      // impossible, but TS doesn't know that
+      if (keys === 'all') {
+        return;
+      }
+
+      if (selectionMode === 'single') {
+        let key = keys.values().next().value ?? null;
+        if (key === displayValue) {
+          props.onSelectionChange?.(key);
+          // If key is the same, reset the inputValue and close the menu
+          // (scenario: user clicks on already selected option)
+          resetInputValue();
+          closeMenu();
+        } else {
+          setValue(key);
+        }
+      } else {
+        setValue([...keys]);
+      }
+    }
   });
+
+  let selectedKey = selectionMode === 'single' ? selectionManager.firstSelectedKey : null;
+  let selectedItems = useMemo(() => {
+    return [...selectionManager.selectedKeys].map(key => collection.getItem(key)).filter(item => item != null);
+  }, [selectionManager.selectedKeys, collection]);
 
   let [inputValue, setInputValue] = useControlledState(
     props.inputValue,
     getDefaultInputValue(props.defaultInputValue, selectedKey, collection) || '',
     props.onInputChange
   );
-  let [initialSelectedKey] = useState(selectedKey);
-  let [initialValue] = useState(inputValue);
+  let [initialValue] = useState(displayValue);
+  let [initialInputValue] = useState(inputValue);
 
   // Preserve original collection so we can show all items on demand
   let originalCollection = collection;
@@ -191,7 +269,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     setInputValue(itemText);
   };
 
-  let lastSelectedKey = useRef(props.selectedKey ?? props.defaultSelectedKey ?? null);
+  let lastValueRef = useRef(displayValue);
   let lastSelectedKeyText = useRef(
     selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : ''
   );
@@ -223,8 +301,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
 
     // Close when an item is selected.
     if (
-      selectedKey != null &&
-      selectedKey !== lastSelectedKey.current
+      displayValue != null &&
+      displayValue !== lastValueRef.current &&
+      selectionMode === 'single'
     ) {
       closeMenu();
     }
@@ -234,19 +313,19 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       selectionManager.setFocusedKey(null);
       setShowAllItems(false);
 
-      // Set selectedKey to null when the user clears the input.
+      // Set value to null when the user clears the input.
       // If controlled, this is the application developer's responsibility.
-      if (inputValue === '' && (props.inputValue === undefined || props.selectedKey === undefined)) {
-        setSelectedKey(null);
+      if (selectionMode === 'single' && inputValue === '' && (props.inputValue === undefined || value === undefined)) {
+        setValue(null);
       }
     }
 
-    // If the selectedKey changed, update the input value.
-    // Do nothing if both inputValue and selectedKey are controlled.
+    // If the value changed, update the input value.
+    // Do nothing if both inputValue and value are controlled.
     // In this case, it's the user's responsibility to update inputValue in onSelectionChange.
     if (
-      selectedKey !== lastSelectedKey.current &&
-      (props.inputValue === undefined || props.selectedKey === undefined)
+      displayValue !== lastValueRef.current &&
+      (props.inputValue === undefined || value === undefined)
     ) {
       resetInputValue();
     } else if (lastValue !== inputValue) {
@@ -258,20 +337,20 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     // Only reset if the user isn't currently within the field so we don't erroneously modify user input.
     // If inputValue is controlled, it is the user's responsibility to update the inputValue when items change.
     let selectedItemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
-    if (!isFocused && selectedKey != null && props.inputValue === undefined && selectedKey === lastSelectedKey.current) {
+    if (!isFocused && selectedKey != null && props.inputValue === undefined && selectedKey === lastValueRef.current) {
       if (lastSelectedKeyText.current !== selectedItemText) {
         setLastValue(selectedItemText);
         setInputValue(selectedItemText);
       }
     }
 
-    lastSelectedKey.current = selectedKey;
+    lastValueRef.current = displayValue;
     lastSelectedKeyText.current = selectedItemText;
   });
 
   let validation = useFormValidationState({
     ...props,
-    value: useMemo(() => ({inputValue, selectedKey}), [inputValue, selectedKey])
+    value: useMemo(() => Array.isArray(displayValue) && displayValue.length === 0 ? null : ({inputValue, value: displayValue as any, selectedKey}), [inputValue, selectedKey, displayValue])
   });
 
   // Revert input value and close menu
@@ -284,15 +363,17 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
   };
 
   let commitCustomValue = () => {
-    lastSelectedKey.current = null;
-    setSelectedKey(null);
+    let value = selectionMode === 'multiple' ? EMPTY_VALUE : null;
+    lastValueRef.current = value as any;
+    setValue(value);
     closeMenu();
   };
 
   let commitSelection = () => {
     // If multiple things are controlled, call onSelectionChange
-    if (props.selectedKey !== undefined && props.inputValue !== undefined) {
+    if (value !== undefined && props.inputValue !== undefined) {
       props.onSelectionChange?.(selectedKey);
+      props.onChange?.(displayValue);
 
       // Stop menu from reopening from useEffect
       let itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
@@ -319,10 +400,10 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     if (triggerState.isOpen && selectionManager.focusedKey != null) {
       // Reset inputValue and close menu here if the selected key is already the focused key. Otherwise
       // fire onSelectionChange to allow the application to control the closing.
-      if (selectedKey === selectionManager.focusedKey) {
+      if (selectionManager.isSelected(selectionManager.focusedKey) && selectionMode === 'single') {
         commitSelection();
       } else {
-        setSelectedKey(selectionManager.focusedKey);
+        selectionManager.select(selectionManager.focusedKey);
       }
     } else {
       commitValue();
@@ -361,7 +442,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     }
   }, [triggerState.isOpen, originalCollection, filteredCollection, showAllItems, lastCollection]);
 
-  let defaultSelectedKey = props.defaultSelectedKey ?? initialSelectedKey;
+  let defaultSelectedKey = props.defaultSelectedKey ?? (selectionMode === 'single' ? initialValue as Key : null);
 
   return {
     ...validation,
@@ -371,16 +452,20 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     open,
     close: commitValue,
     selectionManager,
+    value: displayValue as any,
+    defaultValue: defaultValue ?? initialValue as any,
+    setValue,
     selectedKey,
+    selectedItems,
     defaultSelectedKey,
-    setSelectedKey,
+    setSelectedKey: setValue,
     disabledKeys,
     isFocused,
     setFocused,
-    selectedItem,
+    selectedItem: selectedItems[0] ?? null,
     collection: displayedCollection,
     inputValue,
-    defaultInputValue: getDefaultInputValue(props.defaultInputValue, defaultSelectedKey, collection) ?? initialValue,
+    defaultInputValue: getDefaultInputValue(props.defaultInputValue, defaultSelectedKey, collection) ?? initialInputValue,
     setInputValue,
     commit,
     revert
@@ -417,4 +502,14 @@ function getDefaultInputValue(defaultInputValue: string | null | undefined, sele
   }
 
   return defaultInputValue;
+}
+
+function convertValue(value: Key | Key[] | null | undefined) {
+  if (value === undefined) {
+    return undefined;
+  }
+  if (value === null) {
+    return [];
+  }
+  return Array.isArray(value) ? value : [value];
 }

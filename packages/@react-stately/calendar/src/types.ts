@@ -106,11 +106,11 @@ export interface CalendarState extends CalendarStateBase {
   setValue(value: CalendarDate | null): void
 }
 
-export interface RangeCalendarState extends CalendarStateBase {
+export interface RangeCalendarState<T extends DateValue = DateValue> extends CalendarStateBase {
   /** The currently selected date range. */
-  readonly value: RangeValue<DateValue> | null,
+  readonly value: RangeValue<T> | null,
   /** Sets the currently selected date range. */
-  setValue(value: RangeValue<DateValue> | null): void,
+  setValue(value: RangeValue<T> | null): void,
   /** Highlights the given date during selection, e.g. by hovering or dragging. */
   highlightDate(date: CalendarDate): void,
   /** The current anchor date that the user clicked on to begin range selection. */

@@ -39,6 +39,8 @@ export interface BaseTesterOpts extends UserOpts {
   root: HTMLElement
 }
 
+export interface CheckboxGroupTesterOpts extends BaseTesterOpts {}
+
 export interface ComboBoxTesterOpts extends BaseTesterOpts {
   /**
    * The base element for the combobox. If provided the wrapping element around the target combobox (as is the the case with a ref provided to RSP ComboBox),
@@ -50,6 +52,17 @@ export interface ComboBoxTesterOpts extends BaseTesterOpts {
    * within the `root` provided or that the `root` serves as the trigger.
    */
   trigger?: HTMLElement
+}
+
+export interface DialogTesterOpts extends BaseTesterOpts {
+  /**
+   * The trigger element for the dialog.
+   */
+  root: HTMLElement,
+  /**
+   * The overlay type of the dialog. Used to inform the tester how to find the dialog.
+   */
+  overlayType?: 'modal' | 'popover'
 }
 
 export interface GridListTesterOpts extends BaseTesterOpts {}
@@ -74,6 +87,14 @@ export interface MenuTesterOpts extends BaseTesterOpts {
    * The root menu of the menu tree. Only available if the menu is a submenu.
    */
   rootMenu?: HTMLElement
+}
+
+export interface RadioGroupTesterOpts extends BaseTesterOpts {
+  /**
+   * The horizontal layout direction, typically affected by locale.
+   * @default 'ltr'
+   */
+  direction?: Direction
 }
 
 export interface SelectTesterOpts extends BaseTesterOpts {

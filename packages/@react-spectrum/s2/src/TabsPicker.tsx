@@ -23,7 +23,7 @@ import {
   Provider,
   SelectValue
 } from 'react-aria-components';
-import {baseColor, edgeToText, focusRing, size, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, size, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
@@ -37,6 +37,7 @@ import {
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {controlFont, fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   FieldLabel
 } from './Field';
@@ -44,8 +45,8 @@ import {FocusableRef, FocusableRefValue, SpectrumLabelableProps} from '@react-ty
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
-import {Placement} from 'react-aria';
-import {PopoverBase} from './Popover';
+import {Placement, useLocale} from 'react-aria';
+import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
@@ -55,7 +56,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface PickerStyleProps {
 }
 export interface PickerProps<T extends object> extends
-  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | 'placeholder'>,
+  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | 'render' | 'placeholder'>,
   PickerStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -178,10 +179,14 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
   const menuOffset: number = 6;
   const size = 'M';
   let ariaLabelledby = props['aria-labelledby'] ?? '';
+  let {direction: dir} = useLocale();
+  let RTLFlipOffset = dir === 'rtl' ? -1 : 1;
+
   return (
     <div>
       <AriaSelect
         {...pickerProps}
+        className=""
         aria-labelledby={`${labelBehavior === 'hide' ? valueId : ''} ${ariaLabelledby}`}>
         {({isOpen}) => (
           <>
@@ -241,37 +246,43 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                 size={size}
                 className={iconStyles} />
             </Button>
-            <PopoverBase
+            <Popover
               hideArrow
               offset={menuOffset}
+              crossOffset={RTLFlipOffset * -12}
               placement={`${direction} ${align}` as Placement}
               shouldFlip={shouldFlip}
               styles={style({
-                marginStart: -12,
                 minWidth: 192,
-                width: 'calc(var(--trigger-width) + (-2 * self(marginStart)))'
+                width: 'calc(var(--trigger-width) - 24)'
               })}>
-              <Provider
-                values={[
-                  [HeaderContext, {styles: sectionHeader({size})}],
-                  [HeadingContext, {
-                    // @ts-ignore
-                    role: 'presentation',
-                    styles: sectionHeading
-                  }],
-                  [TextContext, {
-                    slots: {
-                      description: {styles: description({size})}
-                    }
-                  }]
-                ]}>
-                <ListBox
-                  items={items}
-                  className={menu}>
-                  {children}
-                </ListBox>
-              </Provider>
-            </PopoverBase>
+              <div
+                className={style({
+                  display: 'flex',
+                  size: 'full'
+                })}>
+                <Provider
+                  values={[
+                    [HeaderContext, {styles: sectionHeader({size})}],
+                    [HeadingContext, {
+                      // @ts-ignore
+                      role: 'presentation',
+                      styles: sectionHeading
+                    }],
+                    [TextContext, {
+                      slots: {
+                        description: {styles: description({size})}
+                      }
+                    }]
+                  ]}>
+                  <ListBox
+                    items={items}
+                    className={menu}>
+                    {children}
+                  </ListBox>
+                </Provider>
+              </div>
+            </Popover>
           </>
         )}
       </AriaSelect>
@@ -307,7 +318,7 @@ function TabLine(props: {isDisabled?: boolean}) {
 }
 
 
-export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
+export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'render'>, StyleProps {
   children: ReactNode
 }
 export function PickerItem(props: PickerItemProps): ReactNode {

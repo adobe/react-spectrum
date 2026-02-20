@@ -22,22 +22,22 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useId, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
-export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'> {
+export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'render' | 'children'> {
   /** The content to display in the tabs. */
   children: ReactNode
 }
 
-export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className'> {
+export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className' | 'render'> {
   /** The content to display in the tab. */
   children: ReactNode
 }
 
-export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className' | 'aria-label' | 'aria-labelledby'> {
+export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className' | 'render' | 'aria-label' | 'aria-labelledby'> {
   /** The content to display in the tablist. */
   children: ReactNode | ((item: T) => ReactNode)
 }
 
-export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'> {
+export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className' | 'render'> {
   /** The content to display in the tab panels. */
   children: ReactNode
 }
@@ -74,7 +74,7 @@ const tablist = style({
   paddingStart: 12,
   flexShrink: 0,
   flexBasis: '[0%]',
-  gap: 32,
+  gap: 24,
   maxWidth: 240,
   height: 'full',
   paddingY: 4
@@ -161,7 +161,7 @@ function TabLine(props: TabLineProps) {
   );
 }
 
-const tab = style<TabRenderProps & {density?: 'compact' | 'regular', labelBehavior?: 'show' | 'hide'}>({
+const tab = style<TabRenderProps & {density?: 'compact' | 'regular', orientation?: 'vertical' | 'horizontal', labelBehavior?: 'show' | 'hide'}>({
   ...focusRing(),
   display: 'flex',
   color: {
@@ -173,7 +173,26 @@ const tab = style<TabRenderProps & {density?: 'compact' | 'regular', labelBehavi
   },
   borderRadius: 'sm',
   gap: 'text-to-visual',
-  height: 48,
+  height: {
+    orientation: {
+      horizontal: {
+        density: {
+          compact: 32,
+          regular: 48
+        }
+      }
+    }
+  },
+  minHeight: {
+    orientation: {
+      vertical: {
+        density: {
+          compact: 32,
+          regular: 48
+        }
+      }
+    }
+  },
   alignItems: 'center',
   position: 'relative',
   cursor: 'default',

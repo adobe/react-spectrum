@@ -617,6 +617,42 @@ describe('MenuTrigger', function () {
         expect(tree.queryByRole('dialog')).toBeNull();
       });
 
+      it('shows selection state for available ContextualHelpTrigger items', async function () {
+        render(
+          <Provider theme={theme}>
+            <MenuTrigger defaultOpen>
+              <ActionButton>Menu</ActionButton>
+              <Menu selectionMode="single">
+                <Item key="1">One</Item>
+                <ContextualHelpTrigger>
+                  <Item key="foo" textValue="Hello">
+                    <Text>Hello</Text>
+                    <Text slot="description">Is it me you're looking for?</Text>
+                  </Item>
+                  <Dialog>
+                    <Heading>Lionel Richie says:</Heading>
+                    <Content>I can see it in your eyes</Content>
+                  </Dialog>
+                </ContextualHelpTrigger>
+              </Menu>
+            </MenuTrigger>
+          </Provider>
+        );
+
+        act(() => {jest.runAllTimers();});
+
+        let menu = screen.getByRole('menu');
+        let availableItem = within(menu).getByRole('menuitemradio', {name: 'Hello'});
+
+        expect(availableItem).toBeVisible();
+        expect(availableItem).toHaveAttribute('aria-checked', 'false');
+        fireEvent.click(availableItem);
+        act(() => {jest.runAllTimers();});
+
+        expect(availableItem).toHaveAttribute('aria-checked', 'true');
+        expect(availableItem).not.toHaveAttribute('aria-haspopup', 'dialog');
+      });
+
       it('can open a sub dialog with keyboard', async function () {
         renderTree();
         let menu = await openMenu();
@@ -809,7 +845,7 @@ describe('MenuTrigger', function () {
     });
   });
 
-  it('closes if menu is tabbed away from', async function () {
+  it('does not close if menu is tabbed away from', async function () {
     let tree = render(
       <Provider theme={theme}>
         <MenuTrigger>
@@ -835,8 +871,8 @@ describe('MenuTrigger', function () {
     await user.tab();
     act(() => {jest.runAllTimers();});
     act(() => {jest.runAllTimers();});
-    expect(menu).not.toBeInTheDocument();
-    expect(document.activeElement).toBe(menuTester.trigger);
+    expect(menu).toBeInTheDocument();
+    expect(document.activeElement).toBe(menuTester.options()[0]);
   });
 });
 
@@ -929,22 +965,6 @@ AriaMenuTests({
     ),
     multipleSelection: () => render(
       <SelectionStatic selectionMode="multiple" />
-    ),
-    siblingFocusableElement: () => render(
-      <Provider theme={theme}>
-        <input aria-label="before" />
-        <MenuTrigger>
-          <Button variant="primary">
-            {triggerText}
-          </Button>
-          <Menu>
-            <Item id="1">One</Item>
-            <Item id="2">Two</Item>
-            <Item id="3">Three</Item>
-          </Menu>
-        </MenuTrigger>
-        <input aria-label="after" />
-      </Provider>
     ),
     multipleMenus: () => render(
       <Provider theme={theme}>
@@ -1081,24 +1101,6 @@ AriaMenuTests({
     ),
     multipleSelection: () => render(
       <SelectionStatic selectionMode="multiple" />
-    ),
-    siblingFocusableElement: () => render(
-      <Provider theme={theme}>
-        <input aria-label="before" />
-        <MenuTrigger>
-          <Button variant="primary">
-            {triggerText}
-          </Button>
-          <Menu items={ariaWithSection}>
-            {item => (
-              <Section key={item.name} items={item.children} title={item.name}>
-                {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
-              </Section>
-            )}
-          </Menu>
-        </MenuTrigger>
-        <input aria-label="after" />
-      </Provider>
     ),
     multipleMenus: () => render(
       <Provider theme={theme}>

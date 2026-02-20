@@ -45,7 +45,7 @@ the stepper buttons. `useNumberField` helps achieve accessible number fields tha
 formatting options and can be styled as needed.
 
 * Support for internationalized number formatting and parsing including decimals, percentages, currency values, and units
-* Support for the Latin, Arabic, and Han positional decimal numbering systems in [over 30 locales](internationalization.html#supported-locales)
+* Support for the Latin, Arabic, and Han positional decimal numbering systems in [over 30 locales](../quality#supported-locales)
 * Automatically detects the numbering system used and supports parsing numbers not in the default numbering system for the locale
 * Support for multiple currency formats including symbol, code, and name in standard or accounting notation
 * Validates keyboard entry as the user types so that only valid numeric input according to the locale and numbering system is accepted
@@ -63,7 +63,7 @@ formatting options and can be styled as needed.
 * Uses an ARIA live region to ensure that value changes are announced
 * Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
 
-Read our [blog post](../blog/how-we-internationalized-our-numberfield.html) for more details about the interactions and internationalization support implemented by `useNumberField`.
+Read our [blog post](../blog/how-we-internationalized-our-numberfield) for more details about the interactions and internationalization support implemented by `useNumberField`.
 
 ## Anatomy
 
@@ -98,10 +98,10 @@ is independent and can be used separately from `NumberField`.
 **Note:** Due to [a bug](https://bugs.webkit.org/show_bug.cgi?id=219188) in Safari on macOS, pointer events may not
 be dispatched after a `<button>` element is disabled while the mouse is pressed. This may require the user to click
 twice when incrementing or decrementing the value from the minimum or maximum value. While out of scope for this example,
-you may wish to use a `<div>` element instead of a `<button>` to avoid this issue. See the [useButton docs](useButton.html#custom-element-type)
+you may wish to use a `<div>` element instead of a `<button>` to avoid this issue. See the [useButton docs](../Button/useButton.html#custom-element-type)
 for an example of a button with a custom element type.
 
-In addition, see [useTextField](useTextField.html) for an example of the description and error message elements.
+In addition, see [useTextField](../TextField/useTextField.html) for an example of the description and error message elements.
 
 ```tsx example export=true
 import {useNumberField} from '@react-aria/numberfield';
@@ -146,7 +146,7 @@ function NumberField(props) {
 
 ### Button
 
-The `Button` component is used in the above example to increment and decrement the value. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+The `Button` component is used in the above example to increment and decrement the value. It is built using the [useButton](../Button/useButton.html) hook, and can be shared with many other components.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>

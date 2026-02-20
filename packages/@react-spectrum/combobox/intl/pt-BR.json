@@ -2,5 +2,6 @@
   "clear": "Limpar",
   "invalid": "(inválido)",
   "loading": "Carregando...",
-  "noResults": "Nenhum resultado"
+  "noResults": "Nenhum resultado",
+  "valid": "(válido)"
 }

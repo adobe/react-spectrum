@@ -10,16 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, FocusEvents, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
-import {Collection, CollectionBuilder, createHideableComponent, createLeafComponent} from '@react-aria/collections';
+import {ClassNameOrFunction, ContextValue, dom, DOMRenderProps, PossibleLinkDOMRenderProps, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
+import {Collection, CollectionBuilder, CollectionNode, createHideableComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, usePersistedKeys} from './Collection';
-import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
-import {filterDOMProps, inertValue, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, inertValue, useEnterAnimation, useExitAnimation, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {Collection as ICollection, Node, TabListState, useTabListState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, JSX, useContext, useMemo} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, useContext, useMemo, useRef, useState} from 'react';
+import {SelectionIndicatorContext} from './SelectionIndicator';
+import {SharedElementTransition} from './SharedElementTransition';
 
-export interface TabsProps extends Omit<AriaTabListProps<any>, 'items' | 'children'>, RenderProps<TabsRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
+export interface TabsProps extends Omit<AriaTabListProps<any>, 'items' | 'children'>, RenderProps<TabsRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Tabs'
+   */
+  className?: ClassNameOrFunction<TabsRenderProps>
+}
 
 export interface TabsRenderProps {
   /**
@@ -29,7 +37,13 @@ export interface TabsRenderProps {
   orientation: Orientation
 }
 
-export interface TabListProps<T> extends StyleRenderProps<TabListRenderProps>, AriaLabelingProps, Omit<CollectionProps<T>, 'disabledKeys'>, GlobalDOMAttributes<HTMLDivElement> {}
+export interface TabListProps<T> extends StyleRenderProps<TabListRenderProps>, AriaLabelingProps, Omit<CollectionProps<T>, 'disabledKeys'>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-TabList'
+   */
+  className?: ClassNameOrFunction<TabListRenderProps>
+}
 
 export interface TabListRenderProps {
   /**
@@ -43,7 +57,12 @@ export interface TabListRenderProps {
   state: TabListState<unknown>
 }
 
-export interface TabProps extends RenderProps<TabRenderProps>, AriaLabelingProps, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+export interface TabProps extends Omit<RenderProps<TabRenderProps>, 'render'>, PossibleLinkDOMRenderProps<'div', TabRenderProps>, AriaLabelingProps, LinkDOMProps, HoverEvents, FocusEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Tab'
+   */
+  className?: ClassNameOrFunction<TabRenderProps>,
   /** The unique id of the tab. */
   id?: Key,
   /** Whether the tab is disabled. */
@@ -85,6 +104,11 @@ export interface TabRenderProps {
 
 export interface TabPanelProps extends AriaTabPanelProps, RenderProps<TabPanelRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-TabPanel'
+   */
+  className?: ClassNameOrFunction<TabPanelRenderProps>,
+  /**
    * Whether to mount the tab panel in the DOM even when it is not currently selected.
    * Inactive tab panels are inert and cannot be interacted with. They must be styled appropriately so this is clear to the user visually.
    * @default false
@@ -109,6 +133,16 @@ export interface TabPanelRenderProps {
    * @selector [data-inert]
    */
   isInert: boolean,
+  /**
+   * Whether the tab panel is currently entering. Use this to apply animations.
+   * @selector [data-entering]
+   */
+  isEntering: boolean,
+  /**
+   * Whether the tab panel is currently exiting. Use this to apply animations.
+   * @selector [data-exiting]
+   */
+  isExiting: boolean,
   /**
    * State of the tab list.
    */
@@ -165,7 +199,7 @@ function TabsInner({props, tabsRef: ref, collection}: TabsInnerProps) {
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <div
+    <dom.div
       {...mergeProps(DOMProps, renderProps, focusProps)}
       ref={ref}
       slot={props.slot || undefined}
@@ -180,7 +214,7 @@ function TabsInner({props, tabsRef: ref, collection}: TabsInnerProps) {
         ]}>
         {renderProps.children}
       </Provider>
-    </div>
+    </dom.div>
   );
 }
 
@@ -226,19 +260,25 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
   delete DOMProps.id;
 
   return (
-    <div
+    <dom.div
       {...mergeProps(DOMProps, renderProps, tabListProps)}
       ref={objectRef}
       data-orientation={orientation || undefined}>
-      <CollectionRoot collection={state.collection} persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)} />
-    </div>
+      <SharedElementTransition>
+        <CollectionRoot collection={state.collection} persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)} />
+      </SharedElementTransition>
+    </dom.div>
   );
+}
+
+class TabItemNode extends CollectionNode<unknown> {
+  static readonly type = 'item';
 }
 
 /**
  * A Tab provides a title for an individual item within a TabList.
  */
-export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
+export const Tab = /*#__PURE__*/ createLeafComponent(TabItemNode, (props: TabProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
   let state = useContext(TabListStateContext)!;
   let ref = useObjectRef<any>(forwardedRef);
   let {tabProps, isSelected, isDisabled, isPressed} = useTab({key: item.key, ...props}, state, ref);
@@ -250,7 +290,7 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
     onHoverChange: props.onHoverChange
   });
 
-  let renderProps = useRenderProps({
+  let renderProps = useRenderProps<TabRenderProps, any>({
     ...props,
     id: undefined,
     children: item.rendered,
@@ -265,7 +305,7 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
     }
   });
 
-  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
+  let ElementType = item.props.href ? dom.a : dom.div;
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
   delete DOMProps.onClick;
@@ -280,8 +320,92 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined}>
-      {renderProps.children}
+      <SelectionIndicatorContext.Provider value={{isSelected}}>
+        {renderProps.children}
+      </SelectionIndicatorContext.Provider>
     </ElementType>
+  );
+});
+
+export interface TabPanelsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleProps, DOMRenderProps<'div', undefined>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-TabPanels'
+   */
+  className?: string
+}
+
+/**
+ * Groups multiple `<TabPanel>` elements, and provides CSS variables for animated transitions.
+ */
+export const TabPanels = /*#__PURE__*/ createHideableComponent(function TabPanels<T extends object>(props: TabPanelsProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>) {
+  let state = useContext(TabListStateContext)!;
+  let ref = useObjectRef(forwardedRef);
+
+  let selectedKeyRef = useRef(state.selectedKey);
+  let prevSize = useRef<DOMRect | null>(null);
+  let hasTransition = useRef<boolean | null>(null);
+  useLayoutEffect(() => {
+    let el = ref.current;
+    if (!el) {
+      return;
+    }
+
+    if (hasTransition.current == null) {
+      hasTransition.current = /width|height|all/.test(window.getComputedStyle(el).transition);
+    }
+
+    if (hasTransition.current && selectedKeyRef.current != null && selectedKeyRef.current !== state.selectedKey) {
+      // Measure auto size.
+      el.style.setProperty('--tab-panel-width', 'auto');
+      el.style.setProperty('--tab-panel-height', 'auto');
+      let {width, height} = el.getBoundingClientRect();
+
+      if (prevSize.current && (prevSize.current.width !== width || prevSize.current.height !== height)) {
+        // Revert to previous size.
+        el.style.setProperty('--tab-panel-width', prevSize.current.width + 'px');
+        el.style.setProperty('--tab-panel-height', prevSize.current.height + 'px');
+
+        // Force style re-calculation to trigger animations.
+        window.getComputedStyle(el).height;
+
+        // Animate to current pixel size.
+        el.style.setProperty('--tab-panel-width', width + 'px');
+        el.style.setProperty('--tab-panel-height', height + 'px');
+
+        // When animations complete, revert back to auto size.
+        Promise.all(el.getAnimations().map(a => a.finished))
+          .then(() => {
+            el.style.setProperty('--tab-panel-width', 'auto');
+            el.style.setProperty('--tab-panel-height', 'auto');
+          })
+          .catch(() => {});
+      }
+    }
+
+    selectedKeyRef.current = state.selectedKey;
+  }, [ref, state.selectedKey]);
+
+  // Store previous size before DOM updates occur.
+  // This breaks the rules of hooks because there is no effect that runs _before_ DOM updates.
+  // eslint-disable-next-line rulesdir/pure-render
+  if (state.selectedKey != null && state.selectedKey !== selectedKeyRef.current && ref.current && hasTransition.current) {
+    // eslint-disable-next-line rulesdir/pure-render
+    prevSize.current = ref.current.getBoundingClientRect();
+  }
+
+  let DOMProps = filterDOMProps(props, {labelable: true, global: true});
+  delete DOMProps.id;
+
+  return (
+    <dom.div
+      render={props.render}
+      {...DOMProps}
+      ref={ref}
+      style={props.style}
+      className={props.className || 'react-aria-TabPanels'}>
+      <Collection {...props} />
+    </dom.div>
   );
 });
 
@@ -291,12 +415,40 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
 export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElement>) {
   const state = useContext(TabListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
+
+  // Track if the tab panel was initially selected on mount (after extra render to populate the collection).
+  // In this case, we don't want to trigger animations.
+  let isSelected = state.selectedKey === props.id;
+  let [isInitiallySelected, setInitiallySelected] = useState<boolean | null>(state.selectedKey != null ? isSelected : null);
+  if (isInitiallySelected == null && state.selectedKey != null) {
+    setInitiallySelected(isSelected);
+  } else if (!isSelected && isInitiallySelected) {
+    setInitiallySelected(false);
+  }
+
+  let isExiting = useExitAnimation(ref, isSelected);
+  if (!isSelected && !props.shouldForceMount && !isExiting) {
+    return null;
+  }
+
+  return (
+    <TabPanelInner
+      {...props}
+      tabPanelRef={ref}
+      isInitiallySelected={isInitiallySelected || false}
+      isExiting={isExiting} />
+  );
+});
+
+function TabPanelInner(props: TabPanelProps & {tabPanelRef: RefObject<HTMLDivElement | null>, isInitiallySelected: boolean, isExiting: boolean}) {
+  let state = useContext(TabListStateContext)!;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {id, ...otherProps} = props;
+  let {id, tabPanelRef: ref, isInitiallySelected, isExiting, ...otherProps} = props;
   let {tabPanelProps} = useTabPanel(props, state, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
 
   let isSelected = state.selectedKey === props.id;
+  let isEntering = useEnterAnimation(ref) && !isInitiallySelected;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-TabPanel',
@@ -305,30 +457,30 @@ export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(
       isFocusVisible,
       // @ts-ignore - compatibility with React < 19
       isInert: inertValue(!isSelected),
+      isEntering,
+      isExiting,
       state
     }
   });
-
-  if (!isSelected && !props.shouldForceMount) {
-    return null;
-  }
 
   let DOMProps = filterDOMProps(otherProps, {global: true});
   delete DOMProps.id;
 
   let domProps = isSelected
     ? mergeProps(DOMProps, tabPanelProps, focusProps, renderProps)
-    : renderProps;
+    : mergeProps(DOMProps, renderProps);
 
   return (
-    <div
+    <dom.div
       {...domProps}
       ref={ref}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       // @ts-ignore
       inert={inertValue(!isSelected || props.inert)}
-      data-inert={!isSelected ? 'true' : undefined}>
+      data-inert={!isSelected ? 'true' : undefined}
+      data-entering={isEntering || undefined}
+      data-exiting={isExiting || undefined}>
       <Provider
         values={[
           [TabsContext, null],
@@ -338,6 +490,6 @@ export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(
           {renderProps.children}
         </CollectionRendererContext.Provider>
       </Provider>
-    </div>
+    </dom.div>
   );
-});
+}

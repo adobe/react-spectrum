@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import DropToUpload_L from 'illustration:./S2_fill_dropToUpload_generic2_160.svg';
 import DropToUpload_M from 'illustration:./S2_fill_dropToUpload_generic2_96.svg';
 import DropToUpload_S from 'illustration:./S2_fill_dropToUpload_generic2_48.svg';

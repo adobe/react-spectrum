@@ -31,7 +31,9 @@ export interface AriaTableColumnHeaderProps<T> {
 
 export interface TableColumnHeaderAria {
   /** Props for the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) element. */
-  columnHeaderProps: DOMAttributes
+  columnHeaderProps: DOMAttributes,
+  /** Whether the column is currently in a pressed state. */
+  isPressed: boolean
 }
 
 /**
@@ -48,7 +50,7 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
 
   let isSelectionCellDisabled = node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';
 
-  let {pressProps} = usePress({
+  let {pressProps, isPressed} = usePress({
     isDisabled: !allowsSorting || isSelectionCellDisabled,
     onPress() {
       state.sort(node.key);
@@ -100,6 +102,7 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
       id: getColumnHeaderId(state, node.key),
       'aria-colspan': node.colSpan && node.colSpan > 1 ? node.colSpan : undefined,
       'aria-sort': ariaSort
-    }
+    },
+    isPressed
   };
 }

@@ -11,12 +11,14 @@
  */
 
 import Bold from '../s2wf-icons/S2_Icon_TextBold_20_N.svg';
-import {categorizeArgTypes, StaticColorDecorator} from './utils';
+import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
 import Italic from '../s2wf-icons/S2_Icon_TextItalic_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 import {Text, ToggleButton, ToggleButtonGroup} from '../src';
 import Underline from '../s2wf-icons/S2_Icon_TextUnderline_20_N.svg';
+
+const events = ['onSelectionChange'];
 
 const meta: Meta<typeof ToggleButtonGroup> = {
   component: ToggleButtonGroup,
@@ -26,9 +28,10 @@ const meta: Meta<typeof ToggleButtonGroup> = {
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onSelectionChange']),
+    ...categorizeArgTypes('Events', events),
     children: {table: {disable: true}}
   },
+  args: {...getActionArgs(events)},
   title: 'ToggleButtonGroup'
 };
 

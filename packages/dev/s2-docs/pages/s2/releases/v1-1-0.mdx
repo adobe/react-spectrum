@@ -1,0 +1,45 @@
+
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'S2'];
+export const date = 'February 4, 2026';
+export const title = 'v1.1.0';
+export const description = 'It’s our first release of the new year and we’ve got plenty of exciting treats we’re bringing to the table. Our documentation site now includes a new dark/light mode switch, a new Color section in the search menu, and Agent Skills to be used by your AI coding tools. There are also several other bug fixes, including properly rendering menu popovers and updating the disabledBehavior style for TreeView.';
+export const isSubpage = true;
+
+# v1.1.0
+
+It’s our first release of the new year and we’ve got plenty of exciting treats we’re bringing to the table. We’ve added a variety of new features to our documentation site including a new dark/light mode switch in the site header. Our search menu also now features a Colors section where you can browse the Spectrum-defined colors and search by name or hex value to find close or exact matches. We also now offer our docs in the form of [Agent Skills](../ai#agent-skills) that can be installed locally and used by your favorite AI coding tools.
+
+This release also includes several bugs fixes, such as properly rendering menus when rendered from within a popover and updates to TreeView disabledBehavior styling to match the latest designs. 
+
+Thank you for all of your feedback on 1.0 and stay tuned for more updates and enhancements coming throughout the year!
+
+## Change log
+### ActionBar
+  * Add missing `UNSAFE_className` and `UNSAFE_style` - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9529)
+### ColorWheel
+  * Fix broken track when placed within a container - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9440)
+### Documentation
+  * Add color scheme switcher to docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9403), [PR](https://github.com/adobe/react-spectrum/pull/9476), [PR](https://github.com/adobe/react-spectrum/pull/9534)
+  * Improve markdown output for Style Macro reference page - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9535)
+### Menu
+  * Fix typescript for `children` in MenuSection - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9480)
+  * Render menu popover if MenuTrigger is inside the popover - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9549)
+### TreeView
+  * Fix hover state from persisting on iOS 26 - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9530)
+  * Update `disabledBehavior` style - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9472)

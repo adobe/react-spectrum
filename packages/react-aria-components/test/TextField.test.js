@@ -70,6 +70,12 @@ describe('TextField', () => {
       expect(textbox).toHaveAttribute('aria-label', 'test');
     });
 
+    it('should support custom render function', () => {
+      let {getByRole} = render(<TestTextField input={component} render={props => <div {...props} data-custom="true" />} />);
+      let field = getByRole('textbox').closest('.react-aria-TextField');
+      expect(field).toHaveAttribute('data-custom', 'true');
+    });
+
     it('should support hover state', async () => {
       let hoverStartSpy = jest.fn();
       let hoverChangeSpy = jest.fn();
@@ -266,5 +272,35 @@ describe('TextField', () => {
       let input = getByRole('textbox');
       expect(input).toHaveAttribute('form', 'test');
     });
+
+    if (parseInt(React.version, 10) >= 19) {
+      it('resets to defaultValue when submitting form action', async () => {
+        const Component = component;
+        function Test() {
+          const [value, formAction] = React.useActionState((_, formData) => formData.get('value'), 'initial');
+
+          return (
+            <form action={formAction}>
+              <TextField defaultValue={value} name="value">
+                <Label>Value</Label>
+                <Component data-testid="input" />
+              </TextField>
+              <input data-testid="submit" type="submit" />
+            </form>
+          );
+        }
+
+        const {getByTestId} = render(<Test />);
+        const input = getByTestId('input');
+        expect(input).toHaveValue('initial');
+
+        await user.tab();
+        await user.keyboard('Devon');
+
+        const button = getByTestId('submit');
+        await user.click(button);
+        expect(input).toHaveValue('Devon');
+      });
+    }
   });
 });

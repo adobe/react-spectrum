@@ -10,14 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Dialog, DialogTrigger, Heading, Modal, ModalOverlay} from 'react-aria-components';
-import React, {useEffect} from 'react';
+import {Button, ComboBox, Dialog, DialogTrigger, Heading, Input, Label, ListBox, Modal, ModalOverlay, Popover, TextField} from 'react-aria-components';
+import {Meta, StoryFn} from '@storybook/react';
+import React from 'react';
+import './styles.css';
+import {DateRangePickerExample} from './DatePicker.stories';
+import {MyListBoxItem} from './utils';
+import styles from '../example/index.css';
+
 
 export default {
-  title: 'React Aria Components/Modal'
-};
+  title: 'React Aria Components/Modal',
+  component: Modal
+} as Meta<typeof Modal>;
 
-export const ModalExample = () => (
+export type ModalStory = StoryFn<typeof Modal>;
+
+export const ModalExample: ModalStory = () => (
   <DialogTrigger>
     <Button>Open modal</Button>
     <ModalOverlay
@@ -61,32 +70,12 @@ export const ModalExample = () => (
   </DialogTrigger>
 );
 
-export const ModalInteractionOutsideExample = () => {
-
-  useEffect(() => {
-    let button = document.createElement('button');
-    button.id = 'test-button';
-    button.textContent = 'Click to close';
-    button.style.position = 'fixed';
-    button.style.top = '0';
-    button.style.right = '0';
-    button.style.zIndex = '200';
-    document.body.appendChild(button);
-
-    return () => {
-      document.body.removeChild(button);
-    };
-  }, []);
-
+function InertTest() {
   return (
     <DialogTrigger>
       <Button>Open modal</Button>
       <ModalOverlay
         isDismissable
-        shouldCloseOnInteractOutside={el => {
-          if (el.id === 'test-button') {return true;}
-          return false;
-        }}
         style={{
           position: 'fixed',
           zIndex: 100,
@@ -107,79 +96,100 @@ export const ModalInteractionOutsideExample = () => {
             padding: 30
           }}>
           <Dialog>
-            {({close}) => (
-              <form style={{display: 'flex', flexDirection: 'column'}}>
-                <Heading slot="title" style={{marginTop: 0}}>Sign up</Heading>
-                <label>
-                  First Name: <input placeholder="John" />
-                </label>
-                <label>
-                  Last Name: <input placeholder="Smith" />
-                </label>
-                <Button onPress={close} style={{marginTop: 10}}>
-                  Submit
-                </Button>
-              </form>
-        )}
+            {() => (
+              <>
+                <TextField>
+                  <Label>First name</Label>
+                  <Input />
+                </TextField>
+                <DialogTrigger>
+                  <Button>Combobox Trigger</Button>
+                  <Popover placement="bottom start">
+                    <Dialog>
+                      {() => (
+                        <ComboBox
+                          menuTrigger="focus"
+                          autoFocus
+                          name="combo-box-example"
+                          data-testid="combo-box-example"
+                          allowsEmptyCollection>
+                          <Label style={{display: 'block'}}>Test</Label>
+                          <div style={{display: 'flex'}}>
+                            <Input />
+                            <Button>
+                              <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+                            </Button>
+                          </div>
+                          <ListBox
+                            className={styles.menu}>
+                            <MyListBoxItem>Foo</MyListBoxItem>
+                            <MyListBoxItem>Bar</MyListBoxItem>
+                            <MyListBoxItem>Baz</MyListBoxItem>
+                            <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+                          </ListBox>
+                        </ComboBox>
+                      )}
+                    </Dialog>
+                  </Popover>
+                </DialogTrigger>
+              </>
+            )}
           </Dialog>
         </Modal>
       </ModalOverlay>
     </DialogTrigger>
   );
+}
+
+export const InertTestStory = {
+  render: () => <InertTest />,
+  parameters: {
+    description: {
+      data: 'You should be able to click "Combobox Trigger" and then click on the textfield, closing the subdialog. A second click should move focus into the textfield'
+    }
+  }
 };
 
-export const ModalInteractionOutsideDefaultOverlayExample = () => {
-
-  useEffect(() => {
-    let button = document.createElement('button');
-    button.id = 'test-button';
-    button.textContent = 'Click to close';
-    button.style.position = 'fixed';
-    button.style.top = '0';
-    button.style.right = '0';
-    button.style.zIndex = '200';
-    document.body.appendChild(button);
-    return () => {
-      document.body.removeChild(button);
-    };
-  }, []);
-
+function DateRangePickerInsideModal() {
   return (
     <DialogTrigger>
       <Button>Open modal</Button>
-      <Modal
+      <ModalOverlay
         isDismissable
-        shouldCloseOnInteractOutside={el => {
-          if (el.id === 'test-button') {return true;}
-          return false;
-        }}
         style={{
+          alignItems: 'center',
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
           position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          background: 'Canvas',
-          color: 'CanvasText',
-          border: '1px solid gray',
-          padding: 30
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          zIndex: 100
         }}>
-        <Dialog>
-          {({close}) => (
-            <form style={{display: 'flex', flexDirection: 'column'}}>
-              <Heading slot="title" style={{marginTop: 0}}>Sign up</Heading>
-              <label>
-                First Name: <input placeholder="John" />
-              </label>
-              <label>
-                Last Name: <input placeholder="Smith" />
-              </label>
-              <Button onPress={close} style={{marginTop: 10}}>
-                Submit
-              </Button>
-            </form>
-        )}
-        </Dialog>
-      </Modal>
+        <Modal
+          style={{
+            background: 'Canvas',
+            border: '1px solid gray',
+            color: 'CanvasText',
+            padding: 30
+          }}>
+          <Dialog>
+            {/* @ts-ignore */}
+            <DateRangePickerExample />
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
     </DialogTrigger>
   );
+}
+
+export const DateRangePickerInsideModalStory = {
+  render: () => <DateRangePickerInsideModal />,
+  parameters: {
+    description: {
+      data: 'Open the Modal, then open the DateRangePicker and select a start date. Clicking outside the Modal should close the picker but keep the Modal open.'
+    }
+  }
 };

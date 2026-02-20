@@ -1,9 +1,11 @@
 import {CodeOutput, Control, Output, VisualExampleClient} from './VisualExampleClient';
-import {Files, getFiles} from './CodeBlock';
+import {DownloadFiles, Files, getFiles} from './CodeBlock';
+import {FileProvider, ShadcnProvider} from './CodePlatter';
+import json5 from 'json5';
 import path from 'path';
 import React, {ReactNode} from 'react';
-import {renderHTMLfromMarkdown, TComponent, TProperty, Type} from './types';
-import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {renderHTMLfromMarkdown, TComponent, TInterface, TProperty, Type} from './types';
+import {size, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
 const exampleStyle = style({
   backgroundColor: 'layer-1',
@@ -13,7 +15,7 @@ const exampleStyle = style({
   },
   marginTop: {
     default: 20,
-    ':is([data-example-switcher] > *)': 0
+    ':is([data-example-switcher] *)': 0
   },
   borderRadius: 'xl',
   display: 'grid',
@@ -55,7 +57,7 @@ const exampleStyle = style({
 const controlsStyle = style({
   display: 'grid',
   gridTemplateColumns: {
-    default: 'repeat(auto-fit, minmax(130px, 1fr))',
+    default: `repeat(auto-fit, minmax(${size(130)}, 1fr))`,
     lg: ['1fr']
   },
   gridAutoFlow: 'dense',
@@ -66,14 +68,25 @@ const controlsStyle = style({
     default: 12,
     lg: 16
   },
-  gridArea: 'controls'
+  gridArea: 'controls',
+  borderStyle: 'solid',
+  borderWidth: 0,
+  borderColor: 'gray-200',
+  borderTopWidth: {
+    default: 1,
+    lg: 0
+  },
+  paddingTop: {
+    default: 16,
+    lg: 0
+  }
 });
 
 export interface VisualExampleProps {
   /** The component to render. */
   component: any,
   /** The TS docs for this component. */
-  docs: TComponent,
+  docs: TComponent | TInterface,
   links: any,
   /** The props to display as controls. */
   props: string[],
@@ -85,10 +98,15 @@ export interface VisualExampleProps {
   importSource?: string,
   /** When provided, the source code for the listed filenames will be included as tabs. */
   files?: string[],
+  downloadFiles?: DownloadFiles,
   type?: 'vanilla' | 'tailwind' | 's2',
   code?: ReactNode,
   wide?: boolean,
-  align?: 'center' | 'start' | 'end'
+  align?: 'center' | 'start' | 'end',
+  acceptOrientation?: boolean,
+  propsObject?: string,
+  showCoachMark?: boolean,
+  hideShadcn?: boolean
 }
 
 export interface PropControl extends Omit<TProperty, 'description'> {
@@ -102,8 +120,8 @@ export interface PropControl extends Omit<TProperty, 'description'> {
 /**
  * Displays a component example with controls for changing the props.
  */
-export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, code, wide, slots, align, type}: VisualExampleProps) {
-  let componentProps = docs.props;
+export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, downloadFiles, code, wide, slots, align, acceptOrientation, type, propsObject, showCoachMark, hideShadcn}: VisualExampleProps) {
+  let componentProps = docs.type === 'interface' ? docs : docs.props;
   if (componentProps?.type !== 'interface') {
     return null;
   }
@@ -130,7 +148,7 @@ export function VisualExample({component, docs, links, importSource, props, init
     if (typeof defaultValue === 'string') {
       defaultValue = defaultValue.replace(/^['"](.+)['"].*$/, '"$1"');
       try {
-        defaultValue = JSON.parse(defaultValue);
+        defaultValue = json5.parse(defaultValue);
       } catch {
         // ignore
       }
@@ -152,26 +170,37 @@ export function VisualExample({component, docs, links, importSource, props, init
     importSource = './' + path.basename(files[0], path.extname(files[0]));
   }
 
+  if (!downloadFiles) {
+    if (files) {
+      downloadFiles = getFiles(files, type);
+    } else {
+      downloadFiles = {files: {}, deps: {}};
+    }
+  }
+
   let output = (
     <CodeOutput
       code={code}
-      files={files ? getFiles(files) : undefined}
       type={type}
-      registryUrl={type === 's2' ? undefined : `${process.env.REGISTRY_URL || 'http://localhost:8081'}/${type}/${docs.name}.json`} />
+      showCoachMark={showCoachMark} />
   );
 
   // Render the corresponding client component to make the controls interactive.
   return (
-    <VisualExampleClient component={component} name={docs.name} importSource={importSource} controls={controls} initialProps={initialProps}>
-      <div className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
-        <Output align={align} />
-        <div className={controlsStyle}>
-          {Object.keys(controls).map(control => <Control key={control} name={control} />)}
-        </div>
-        <div style={{gridArea: 'files', overflow: 'hidden'}}>
-          {files ? <Files files={files}>{output}</Files> : output}
-        </div>
-      </div>
+    <VisualExampleClient component={component} name={docs.name} importSource={importSource} controls={controls} initialProps={initialProps} propsObject={propsObject}>
+      <FileProvider value={downloadFiles}>
+        <ShadcnProvider value={!type || type === 's2' || docs.type !== 'component' || hideShadcn ? null : {type, component: docs.name}}>
+          <div role="group" aria-label="Example" className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
+            <Output align={align} acceptOrientation={acceptOrientation} />
+            {props.length > 0 && <div role="group" aria-label="Controls" className={controlsStyle}>
+              {Object.keys(controls).map(control => <Control key={control} name={control} />)}
+            </div>}
+            <div style={{gridArea: 'files', overflow: 'hidden'}}>
+              {files ? <Files files={files} downloadFiles={downloadFiles.files} type={type}>{output}</Files> : output}
+            </div>
+          </div>
+        </ShadcnProvider>
+      </FileProvider>
     </VisualExampleClient>
   );
 }

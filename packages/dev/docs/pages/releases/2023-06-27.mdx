@@ -17,7 +17,7 @@ date: 2023-06-27
 
 # June 27, 2023 Release
 
-Our summer release is delivering new features, bug fixes, a new version of React Aria Components, and improved compatibility with new React features. React Spectrum and React Aria can now be run in [React Strict Mode](https://react.dev/reference/react/StrictMode), and we now use the builtin `React.useId` hook to generate ids in React 18 ([see below](#useid-changes)). `Calendar` and `DatePicker` have been updated to allow for controlling page behavior and locale overrides as well as fixing a number of other related bugs. Lastly, we have released a new version of React Aria Components, which includes the addition of `TagGroup` [(see docs)](/react-aria/TagGroup.html), an update to `Tabs` [(see updates)](#under-construction), and support for standalone Popovers.
+Our summer release is delivering new features, bug fixes, a new version of React Aria Components, and improved compatibility with new React features. React Spectrum and React Aria can now be run in [React Strict Mode](https://react.dev/reference/react/StrictMode), and we now use the builtin `React.useId` hook to generate ids in React 18 ([see below](#useid-changes)). `Calendar` and `DatePicker` have been updated to allow for controlling page behavior and locale overrides as well as fixing a number of other related bugs. Lastly, we have released a new version of React Aria Components, which includes the addition of `TagGroup` [(see docs)](react-aria:TagGroup), an update to `Tabs` [(see updates)](#under-construction), and support for standalone Popovers.
 
 Thank you to our community for their support and contributions!
 
@@ -29,7 +29,7 @@ Thank you to our community for their support and contributions!
 
 ### useId changes
 
-In this release, we updated our [useId](https://react-spectrum.adobe.com/react-aria/useId.html) hook, which all of our components use to generate unique DOM `id` attributes. If you're using React 18, we now use React's builtin [useId](https://react.dev/reference/react/useId) hook internally. This enables better compatibility with React's new streaming server side renderer and concurrent features, and improves performance.
+In this release, we updated our [useId](react-aria:useId) hook, which all of our components use to generate unique DOM `id` attributes. If you're using React 18, we now use React's builtin [useId](https://react.dev/reference/react/useId) hook internally. This enables better compatibility with React's new streaming server side renderer and concurrent features, and improves performance.
 
 After you update, you can remove the `SSRProvider` component wrapping your app completely if you are using React 18. It is now unnecessary, and does nothing in modern React versions. You'll see a console warning recommending this after you update. The algorithm for generating ids has also changed, so if you use snapshot testing you will see some changes in the output. Otherwise, the changes should be completely transparent.
 
@@ -83,10 +83,10 @@ Fixes to pre-released components are listed below. Please feel free to try them 
 
 #### React Aria Components Tabs API changes
 
-In this release, we updated the [Tabs](https://react-spectrum.adobe.com/react-aria/Tabs.html) API in React Aria Components. The `<TabPanels>` component is no longer necessary and has been removed. Instead, each individual `<TabPanel>` now chooses whether to render itself based on the selected tab state. In addition, a new `shouldForceMount` prop has been added to force even non-selected tabs to render to the DOM. This can be used to implement animations between tabs or preserve state when a tab is not visible. Check out the [updated documentation](https://react-spectrum.adobe.com/react-aria/Tabs.html) for more details.
+In this release, we updated the [Tabs](react-aria:Tabs) API in React Aria Components. The `<TabPanels>` component is no longer necessary and has been removed. Instead, each individual `<TabPanel>` now chooses whether to render itself based on the selected tab state. In addition, a new `shouldForceMount` prop has been added to force even non-selected tabs to render to the DOM. This can be used to implement animations between tabs or preserve state when a tab is not visible. Check out the [updated documentation](react-aria:Tabs) for more details.
 
 ### InlineAlert (rc)
-* [React Spectrum docs](https://react-spectrum.adobe.com/react-spectrum/InlineAlert.html)
+* [React Spectrum docs](../InlineAlert.html)
 
 
 ## Released packages

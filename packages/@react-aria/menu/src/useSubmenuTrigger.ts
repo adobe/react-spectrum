@@ -14,7 +14,7 @@ import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps, OverlayProps} from '@react-aria/overlays';
 import {FocusableElement, FocusStrategy, KeyboardEvent, Node, PressEvent, RefObject} from '@react-types/shared';
-import {focusWithoutScrolling, useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
+import {focusWithoutScrolling, getActiveElement, getEventTarget, isFocusWithin, nodeContains, useEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import type {SubmenuTriggerState} from '@react-stately/menu';
 import {useCallback, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
@@ -81,15 +81,15 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
     }
   }, [openTimeout]);
 
-  let onSubmenuOpen = useEffectEvent((focusStrategy?: FocusStrategy) => {
+  let onSubmenuOpen = useCallback((focusStrategy?: FocusStrategy) => {
     cancelOpenTimeout();
     state.open(focusStrategy);
-  });
+  }, [state, cancelOpenTimeout]);
 
-  let onSubmenuClose = useEffectEvent(() => {
+  let onSubmenuClose = useCallback(() => {
     cancelOpenTimeout();
     state.close();
-  });
+  }, [state, cancelOpenTimeout]);
 
   useLayoutEffect(() => {
     return () => {
@@ -100,13 +100,13 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
   let submenuKeyDown = (e: KeyboardEvent) => {
     // If focus is not within the menu, assume virtual focus is being used.
     // This means some other input element is also within the popover, so we shouldn't close the menu.
-    if (!e.currentTarget.contains(document.activeElement)) {
+    if (!isFocusWithin(e.currentTarget)) {
       return;
     }
 
     switch (e.key) {
       case 'ArrowLeft':
-        if (direction === 'ltr' && e.currentTarget.contains(e.target as Element)) {
+        if (direction === 'ltr' && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
           e.preventDefault();
           e.stopPropagation();
           onSubmenuClose();
@@ -116,7 +116,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
         }
         break;
       case 'ArrowRight':
-        if (direction === 'rtl' && e.currentTarget.contains(e.target as Element)) {
+        if (direction === 'rtl' && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
           e.preventDefault();
           e.stopPropagation();
           onSubmenuClose();
@@ -127,7 +127,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
         break;
       case 'Escape':
         // TODO: can remove this when we fix collection event leaks
-        if (submenuRef.current?.contains(e.target as Element)) {
+        if (nodeContains(submenuRef.current, getEventTarget(e) as Element)) {
           e.stopPropagation();
           onSubmenuClose();
           if (!shouldUseVirtualFocus && ref.current) {
@@ -159,7 +159,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
               onSubmenuOpen('first');
             }
 
-            if (type === 'menu' && !!submenuRef?.current && document.activeElement === ref?.current) {
+            if (type === 'menu' && !!submenuRef?.current && getActiveElement() === ref?.current) {
               focusWithoutScrolling(submenuRef.current);
             }
           } else if (state.isOpen) {
@@ -178,7 +178,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
               onSubmenuOpen('first');
             }
 
-            if (type === 'menu' && !!submenuRef?.current && document.activeElement === ref?.current) {
+            if (type === 'menu' && !!submenuRef?.current && getActiveElement() === ref?.current) {
               focusWithoutScrolling(submenuRef.current);
             }
           } else if (state.isOpen) {
@@ -223,11 +223,13 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
     }
   };
 
-  let onBlur = (e) => {
-    if (state.isOpen && (parentMenuRef.current?.contains(e.relatedTarget))) {
+  useEvent(parentMenuRef, 'focusin', (e) => {
+    // If we detect focus moved to a different item in the same menu that the currently open submenu trigger is in
+    // then close the submenu. This is for a case where the user hovers a root menu item when multiple submenus are open
+    if (state.isOpen && (nodeContains(parentMenuRef.current, getEventTarget(e) as HTMLElement) && getEventTarget(e) !== ref.current)) {
       onSubmenuClose();
     }
-  };
+  });
 
   let shouldCloseOnInteractOutside = (target) => {
     if (target !== ref.current) {
@@ -249,7 +251,6 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
       onPress,
       onHoverChange,
       onKeyDown: submenuTriggerKeyDown,
-      onBlur,
       isOpen: state.isOpen
     },
     submenuProps,

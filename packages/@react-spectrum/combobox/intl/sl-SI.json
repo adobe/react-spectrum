@@ -2,5 +2,6 @@
   "clear": "Jasen",
   "invalid": "(neveljavno)",
   "loading": "Nalaganje...",
-  "noResults": "Ni rezultatov"
+  "noResults": "Ni rezultatov",
+  "valid": "(veljavno)"
 }

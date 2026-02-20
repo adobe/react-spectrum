@@ -89,31 +89,6 @@ let props = {isQuiet: true};
 </div>"
 `;
 
-exports[`Removes placeholder 1`] = `
-"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
-let placeholder = 'is this actually removed?';
-let props = {placeholder: 'is this actually removed?'};
-<div>
-  <ComboBox>
-    <ComboBoxItem>Red Panda</ComboBoxItem>
-    <ComboBoxItem>Cat</ComboBoxItem>
-  </ComboBox>
-  <ComboBox>
-    <ComboBoxItem>Red Panda</ComboBoxItem>
-    <ComboBoxItem>Cat</ComboBoxItem>
-  </ComboBox>
-  <ComboBox>
-    <ComboBoxItem>Red Panda</ComboBoxItem>
-    <ComboBoxItem>Cat</ComboBoxItem>
-  </ComboBox>
-  <ComboBox // TODO(S2-upgrade): check this spread for style props
-  {...props}>
-    <ComboBoxItem>Red Panda</ComboBoxItem>
-    <ComboBoxItem>Cat</ComboBoxItem>
-  </ComboBox>
-</div>"
-`;
-
 exports[`Static - Converts menuWidth to px value 1`] = `
 "import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
 let menuWidth = 'size-10';

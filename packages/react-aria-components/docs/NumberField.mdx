@@ -46,13 +46,14 @@ type: component
 
 ```tsx example
 import {NumberField, Label, Group, Input, Button} from 'react-aria-components';
+import {Plus, Minus} from 'lucide-react';
 
 <NumberField defaultValue={1024} minValue={0}>
   <Label>Width</Label>
   <Group>
-    <Button slot="decrement">-</Button>
+    <Button slot="decrement"><Minus size={18} /></Button>
     <Input />
-    <Button slot="increment">+</Button>
+    <Button slot="increment"><Plus size={18} /></Button>
   </Group>
 </NumberField>
 ```
@@ -90,6 +91,9 @@ import {NumberField, Label, Group, Input, Button} from 'react-aria-components';
     font-size: 1.4rem;
     width: 2.3rem;
     padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
     &[slot=decrement] {
       border-start-end-radius: 0;
@@ -236,9 +240,9 @@ function MyNumberField({label, description, errorMessage, ...props}: MyNumberFie
     <NumberField {...props}>
       <Label>{label}</Label>
       <Group>
-        <Button slot="decrement">-</Button>
+        <Button slot="decrement"><Minus size={18} /></Button>
         <Input />
-        <Button slot="increment">+</Button>
+        <Button slot="increment"><Plus size={18} /></Button>
       </Group>
       {description && <Text slot="description">{description}</Text>}
       <FieldError>{errorMessage}</FieldError>
@@ -442,9 +446,9 @@ import {Form, FieldError} from 'react-aria-components';
   {/*- end highlight -*/}
     <Label>Width</Label>
     <Group>
-       <Button slot="decrement">-</Button>
+       <Button slot="decrement"><Minus size={18} /></Button>
        <Input />
-       <Button slot="increment">+</Button>
+       <Button slot="increment"><Plus size={18} /></Button>
      </Group>
     {/*- begin highlight -*/}
     <FieldError />
@@ -492,9 +496,9 @@ The `description` slot can be used to associate additional help text with a numb
 <NumberField>
   <Label>Width</Label>
   <Group>
-    <Button slot="decrement">-</Button>
+    <Button slot="decrement"><Minus size={18} /></Button>
     <Input />
-    <Button slot="increment">+</Button>
+    <Button slot="increment"><Plus size={18} /></Button>
   </Group>
   {/*- begin highlight -*/}
   <Text slot="description">Enter a width in centimeters.</Text>
@@ -758,9 +762,9 @@ Now you can use `MyCustomLabel` within a `NumberField`, in place of the builtin 
   <MyCustomLabel>Value</MyCustomLabel>
   {/*- end highlight -*/}
   <Group>
-    <Button slot="decrement">-</Button>
+    <Button slot="decrement"><Minus size={18} /></Button>
     <Input />
-    <Button slot="increment">+</Button>
+    <Button slot="increment"><Plus size={18} /></Button>
   </Group>
 </NumberField>
 ```

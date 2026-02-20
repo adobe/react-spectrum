@@ -37,7 +37,7 @@ import './tailwind.global.css';
 ```tsx example standalone
 import {Button} from 'react-aria-components';
 import {useEffect, useRef, useState} from 'react';
-import Airplane from '@spectrum-icons/workflow/Airplane';
+import {Plane} from 'lucide-react';
 
 function RippleButton(props) {
   const [coords, setCoords] = useState(null);
@@ -80,7 +80,7 @@ function RippleButton(props) {
   )
 }
 
-<RippleButton><Airplane size="S" /> Book flight</RippleButton>
+<RippleButton><Plane className="w-6 h-6" /> Book flight</RippleButton>
 ```
 ```css
 @keyframes ripple {

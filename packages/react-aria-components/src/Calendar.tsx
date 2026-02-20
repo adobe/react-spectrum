@@ -24,9 +24,22 @@ import {
   VisuallyHidden
 } from 'react-aria';
 import {ButtonContext} from './Button';
-import {CalendarDate, CalendarIdentifier, createCalendar, DateDuration, endOfMonth, Calendar as ICalendar, isSameDay, isSameMonth} from '@internationalized/date';
+import {CalendarDate, CalendarIdentifier, createCalendar, DateDuration, endOfMonth, Calendar as ICalendar, isSameDay, isSameMonth, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
-import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  DOMProps,
+  DOMRenderProps,
+  Provider,
+  RenderProps,
+  SlotProps,
+  StyleProps,
+  useContextProps,
+  useRenderProps,
+  useSlottedContext
+} from './utils';
 import {DOMAttributes, FocusableElement, forwardRefType, GlobalDOMAttributes, HoverEvents} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './RSPContexts';
@@ -57,13 +70,17 @@ export interface RangeCalendarRenderProps extends Omit<CalendarRenderProps, 'sta
   state: RangeCalendarState
 }
 
-export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<CalendarRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<CalendarRenderProps, 'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Calendar'
+   */
+  className?: ClassNameOrFunction<CalendarRenderProps>,
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
    */
   visibleDuration?: DateDuration,
-
   /**
    * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
    * object for a given calendar identifier. If not provided, the `createCalendar` function
@@ -72,13 +89,17 @@ export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarPro
   createCalendar?: (identifier: CalendarIdentifier) => ICalendar
 }
 
-export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<RangeCalendarRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<RangeCalendarRenderProps, 'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-RangeCalendar'
+   */
+  className?: ClassNameOrFunction<RangeCalendarRenderProps>,
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
    */
   visibleDuration?: DateDuration,
-
   /**
    * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
    * object for a given calendar identifier. If not provided, the `createCalendar` function
@@ -119,7 +140,7 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <div
+    <dom.div
       {...mergeProps(DOMProps, renderProps, calendarProps)}
       ref={ref}
       slot={props.slot || undefined}
@@ -162,7 +183,7 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
             tabIndex={-1} />
         </VisuallyHidden>
       </Provider>
-    </div>
+    </dom.div>
   );
 });
 
@@ -197,7 +218,7 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <div
+    <dom.div
       {...mergeProps(renderProps, DOMProps, calendarProps)}
       ref={ref}
       slot={props.slot || undefined}
@@ -240,7 +261,7 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
             tabIndex={-1} />
         </VisuallyHidden>
       </Provider>
-    </div>
+    </dom.div>
   );
 });
 
@@ -317,10 +338,20 @@ export interface CalendarCellRenderProps {
    * Whether the cell is part of an invalid selection.
    * @selector [data-invalid]
    */
-  isInvalid: boolean
+  isInvalid: boolean,
+  /**
+   * Whether the cell is today.
+   * @selector [data-today]
+   */
+  isToday: boolean
 }
 
-export interface CalendarGridProps extends StyleProps, GlobalDOMAttributes<HTMLTableElement> {
+export interface CalendarGridProps extends StyleProps, DOMRenderProps<'table', undefined>, GlobalDOMAttributes<HTMLTableElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-CalendarGrid'
+   */
+  className?: string,
   /**
    * Either a function to render calendar cells for each date in the month,
    * or children containing a `<CalendarGridHeader>`` and `<CalendarGridBody>`
@@ -378,10 +409,12 @@ export const CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
 
   return (
     <InternalCalendarGridContext.Provider value={{headerProps, weekDays, startDate, weeksInMonth}}>
-      <table
+      <dom.table
+        render={props.render}
         {...mergeProps(DOMProps, gridProps)}
         ref={ref}
         style={props.style}
+        cellPadding={0}
         className={props.className ?? 'react-aria-CalendarGrid'}>
         {typeof props.children !== 'function'
           ? props.children
@@ -394,12 +427,17 @@ export const CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
             </CalendarGridBodyForwardRef>
           </>)
         }
-      </table>
+      </dom.table>
     </InternalCalendarGridContext.Provider>
   );
 });
 
-export interface CalendarGridHeaderProps extends StyleProps, GlobalDOMAttributes<HTMLTableSectionElement> {
+export interface CalendarGridHeaderProps extends StyleProps, DOMRenderProps<'thead', undefined>, GlobalDOMAttributes<HTMLTableSectionElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-CalendarGridHeader'
+   */
+  className?: string,
   /** A function to render a `<CalendarHeaderCell>` for a weekday name. */
   children: (day: string) => ReactElement
 }
@@ -410,15 +448,16 @@ function CalendarGridHeader(props: CalendarGridHeaderProps, ref: ForwardedRef<HT
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <thead
+    <dom.thead
+      render={props.render}
       {...mergeProps(DOMProps, headerProps)}
       ref={ref}
       style={style}
-      className={className || 'react-aria-CalendarGridHeader'}>
+      className={className ?? 'react-aria-CalendarGridHeader'}>
       <tr>
         {weekDays.map((day, key) => React.cloneElement(children(day), {key}))}
       </tr>
-    </thead>
+    </dom.thead>
   );
 }
 
@@ -428,19 +467,26 @@ function CalendarGridHeader(props: CalendarGridHeaderProps, ref: ForwardedRef<HT
 const CalendarGridHeaderForwardRef = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarGridHeader);
 export {CalendarGridHeaderForwardRef as CalendarGridHeader};
 
-export interface CalendarHeaderCellProps extends DOMProps, GlobalDOMAttributes<HTMLTableHeaderCellElement> {}
+export interface CalendarHeaderCellProps extends DOMProps, DOMRenderProps<'th', undefined>, GlobalDOMAttributes<HTMLTableHeaderCellElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-CalendarHeaderCell'
+   */
+  className?: string
+}
 
 function CalendarHeaderCell(props: CalendarHeaderCellProps, ref: ForwardedRef<HTMLTableCellElement>) {
   let {children, style, className} = props;
   let DOMProps = filterDOMProps(props, {global: true});
   return (
-    <th
+    <dom.th
+      render={props.render}
       {...DOMProps}
       ref={ref}
       style={style}
       className={className || 'react-aria-CalendarHeaderCell'}>
       {children}
-    </th>
+    </dom.th>
   );
 }
 
@@ -450,7 +496,12 @@ function CalendarHeaderCell(props: CalendarHeaderCellProps, ref: ForwardedRef<HT
 const CalendarHeaderCellForwardRef = forwardRef(CalendarHeaderCell);
 export {CalendarHeaderCellForwardRef as CalendarHeaderCell};
 
-export interface CalendarGridBodyProps extends StyleProps, GlobalDOMAttributes<HTMLTableSectionElement> {
+export interface CalendarGridBodyProps extends StyleProps, DOMRenderProps<'tbody', undefined>, GlobalDOMAttributes<HTMLTableSectionElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-CalendarGridBody'
+   */
+  className?: string,
   /** A function to render a `<CalendarCell>` for a given date. */
   children: (date: CalendarDate) => ReactElement
 }
@@ -464,11 +515,12 @@ function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTa
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <tbody
+    <dom.tbody
+      render={props.render}
       {...DOMProps}
       ref={ref}
       style={style}
-      className={className || 'react-aria-CalendarGridBody'}>
+      className={className ?? 'react-aria-CalendarGridBody'}>
       {[...new Array(weeksInMonth).keys()].map((weekIndex) => (
         <tr key={weekIndex}>
           {state.getDatesInWeek(weekIndex, startDate).map((date, i) => (
@@ -478,7 +530,7 @@ function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTa
           ))}
         </tr>
       ))}
-    </tbody>
+    </dom.tbody>
   );
 }
 
@@ -488,7 +540,12 @@ function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTa
 const CalendarGridBodyForwardRef = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarGridBody);
 export {CalendarGridBodyForwardRef as CalendarGridBody};
 
-export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps>, HoverEvents, GlobalDOMAttributes<HTMLTableCellElement> {
+export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps, 'div'>, HoverEvents, GlobalDOMAttributes<HTMLTableCellElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-CalendarCell'
+   */
+  className?: ClassNameOrFunction<CalendarCellRenderProps>,
   /** The date to render in the cell. */
   date: CalendarDate
 }
@@ -502,6 +559,7 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
   let state = calendarState ?? rangeCalendarState!;
   let {startDate: currentMonth} = useContext(InternalCalendarGridContext) ?? {startDate: state.visibleRange.start};
   let isOutsideMonth = !isSameMonth(currentMonth, date);
+  let istoday = isToday(date, state.timeZone);
 
   let buttonRef = useRef<HTMLDivElement>(null);
   let {cellProps, buttonProps, ...states} = useCalendarCell(
@@ -531,6 +589,7 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
       isFocusVisible,
       isSelectionStart,
       isSelectionEnd,
+      isToday: istoday,
       ...states
     }
   });
@@ -547,14 +606,15 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
     'data-selected': states.isSelected || undefined,
     'data-selection-start': isSelectionStart || undefined,
     'data-selection-end': isSelectionEnd || undefined,
-    'data-invalid': states.isInvalid || undefined
+    'data-invalid': states.isInvalid || undefined,
+    'data-today': istoday || undefined
   };
 
   let DOMProps = filterDOMProps(otherProps, {global: true});
 
   return (
     <td {...cellProps} ref={ref}>
-      <div {...mergeProps(DOMProps, buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={buttonRef} />
+      <dom.div {...mergeProps(DOMProps, buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={buttonRef} />
     </td>
   );
 });

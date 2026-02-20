@@ -92,8 +92,7 @@ const people = [
 ```tsx example standalone
 import {ComboBox, Label, Input, Group, Button, Popover, ListBox, ListBoxItem} from 'react-aria-components';
 import type {ListBoxItemProps} from 'react-aria-components';
-import ChevronUpDownIcon from '@spectrum-icons/workflow/ChevronUpDown';
-import CheckIcon from '@spectrum-icons/workflow/Checkmark';
+import {Check, ChevronsUpDown} from 'lucide-react';
 
 function ComboBoxExample() {
   return (
@@ -103,7 +102,7 @@ function ComboBoxExample() {
         <Group className="flex rounded-lg bg-white/90 focus-within:bg-white transition shadow-md ring-1 ring-black/10 focus-visible:ring-2 focus-visible:ring-black">
           <Input className="flex-1 w-full border-none py-2 px-3 leading-5 text-gray-900 bg-transparent outline-hidden text-base" />
           <Button className="px-3 flex items-center text-gray-700 transition border-0 border-solid border-l border-l-sky-200 bg-transparent rounded-r-lg pressed:bg-sky-100">
-            <ChevronUpDownIcon size="XS" />
+            <ChevronsUpDown className="w-4 h-4" />
           </Button>
         </Group>
         <Popover className="max-h-60 w-(--trigger-width) overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
@@ -131,7 +130,7 @@ function UserItem(props: ListBoxItemProps & {children: React.ReactNode}) {
           <span className="flex-1 flex items-center gap-3 truncate font-normal group-selected:font-medium">{props.children}</span>
           {isSelected &&
             <span className="w-5 flex items-center text-sky-600 group-focus:text-white">
-              <CheckIcon size="S" />
+              <Check className="w-4 h-4" />
             </span>
           }
         </>

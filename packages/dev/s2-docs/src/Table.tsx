@@ -1,3 +1,4 @@
+'use client';
 import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import React, {HTMLAttributes, TableHTMLAttributes, TdHTMLAttributes, ThHTMLAttributes} from 'react';
 import {style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};

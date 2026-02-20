@@ -50,6 +50,7 @@ First, render a `ToastRegion` in the root of your app.
 
 ```tsx example hidden export=true
 import {UNSTABLE_ToastRegion as ToastRegion, UNSTABLE_Toast as Toast, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastContent as ToastContent, Button, Text} from 'react-aria-components';
+import {X} from 'lucide-react';
 
 // Define the type for your toast content.
 interface MyToastContent {
@@ -71,7 +72,7 @@ export function App() {
               <Text slot="title">{toast.content.title}</Text>
               <Text slot="description">{toast.content.description}</Text>
             </ToastContent>
-            <Button slot="close">x</Button>
+            <Button slot="close"><X size={16} /></Button>
           </Toast>
         )}
       </ToastRegion>
@@ -183,7 +184,7 @@ There is no built in way to display toast notifications in HTML. `<ToastRegion>`
 
 <Anatomy role="img" aria-label="Toast anatomy diagram, showing the toast's title and close button within the toast region." />
 
-A `<ToastRegion>` is an [ARIA landmark region](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/) labeled "Notifications" by default. A `<ToastRegion>` accepts a function to render one or more visible toasts, in chronological order. When the limit is reached, additional toasts are queued until the user dismisses one. Each `<Toast>` is a non-modal ARIA [alertdialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/), containing the content of the notification and a close button.
+A `<ToastRegion>` is an [ARIA landmark region](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/) labeled "Notifications" by default. A `<ToastRegion>` accepts a function to render one or more visible toasts, in chronological order. When the limit is reached, additional toasts are queued until the user dismisses one. Each `<Toast>` is a non-modal ARIA [alertdialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/), containing the content of the notification and a close button. The toast's content gets announced by screen readers when the toast appears, so it is recommended to render the close button as a sibling of `<ToastContent>` instead of inside it, but this is not a requirement.
 
 Landmark regions including the toast container can be navigated using the keyboard by pressing the <Keyboard>F6</Keyboard> key to move forward, and the <Keyboard>Shift</Keyboard> + <Keyboard>F6</Keyboard> key to move backward. This provides an easy way for keyboard users to jump to the toasts from anywhere in the app. When the last toast is closed, keyboard focus is restored.
 
@@ -281,7 +282,7 @@ const queue = new ToastQueue<MyToastContent>({
         <Text slot="title">{toast.content.title}</Text>
         <Text slot="description">{toast.content.description}</Text>
       </ToastContent>
-      <Button slot="close">x</Button>
+      <Button slot="close"><X size={16} /></Button>
     </Toast>
   )}
 </ToastRegion>

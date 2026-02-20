@@ -12,14 +12,14 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
-import {AriaComboBoxProps} from '@react-types/combobox';
+import {AriaComboBoxProps, SelectionMode} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {BaseEvent, DOMAttributes, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
-import {chain, getActiveElement, getOwnerDocument, isAppleDevice, mergeProps, useLabels, useRouter, useUpdateEffect} from '@react-aria/utils';
+import {chain, getActiveElement, getEventTarget, getOwnerDocument, isAppleDevice, mergeProps, nodeContains, useEvent, useFormReset, useId, useLabels, useRouter, useUpdateEffect} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {dispatchVirtualFocus} from '@react-aria/focus';
-import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef} from 'react';
+import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {getChildNodes, getItemCount} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -29,7 +29,7 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useTextField} from '@react-aria/textfield';
 
-export interface AriaComboBoxOptions<T> extends Omit<AriaComboBoxProps<T>, 'children'> {
+export interface AriaComboBoxOptions<T, M extends SelectionMode = 'single'> extends Omit<AriaComboBoxProps<T, M>, 'children'> {
   /** The ref for the input element. */
   inputRef: RefObject<HTMLInputElement | null>,
   /** The ref for the list box popover. */
@@ -53,10 +53,12 @@ export interface ComboBoxAria<T> extends ValidationResult {
   labelProps: DOMAttributes,
   /** Props for the combo box input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  /** Props for the list box, to be passed to [useListBox](useListBox.html). */
+  /** Props for the list box, to be passed to `useListBox`. */
   listBoxProps: AriaListBoxOptions<T>,
-  /** Props for the optional trigger button, to be passed to [useButton](useButton.html). */
+  /** Props for the optional trigger button, to be passed to `useButton`. */
   buttonProps: AriaButtonProps,
+  /** Props for the element representing the selected value. */
+  valueProps: DOMAttributes,
   /** Props for the combo box description element, if any. */
   descriptionProps: DOMAttributes,
   /** Props for the combo box error message element, if any. */
@@ -69,7 +71,7 @@ export interface ComboBoxAria<T> extends ValidationResult {
  * @param props - Props for the combo box.
  * @param state - State for the select, as returned by `useComboBoxState`.
  */
-export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxState<T>): ComboBoxAria<T> {
+export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaComboBoxOptions<T, M>, state: ComboBoxState<T, M>): ComboBoxAria<T> {
   let {
     buttonRef,
     popoverRef,
@@ -139,23 +141,26 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
         }
 
         // If the focused item is a link, trigger opening it. Items that are links are not selectable.
-        if (state.isOpen && listBoxRef.current && state.selectionManager.focusedKey != null && state.selectionManager.isLink(state.selectionManager.focusedKey)) {
-          let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
-          if (e.key === 'Enter' && item instanceof HTMLAnchorElement) {
-            let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
-            if (collectionItem) {
+        if (state.isOpen && listBoxRef.current && state.selectionManager.focusedKey != null) {
+          let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
+          if (collectionItem?.props.href) {
+            let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
+            if (e.key === 'Enter' && item instanceof HTMLAnchorElement) {
               router.open(item, e, collectionItem.props.href, collectionItem.props.routerOptions as RouterOptions);
             }
+            state.close();
+            break;
+          } else if (collectionItem?.props.onAction) {
+            collectionItem.props.onAction();
+            state.close();
+            break;
           }
-
-          state.close();
-        } else {
-          state.commit();
         }
+        state.commit();
         break;
       case 'Escape':
         if (
-          state.selectedKey !== null ||
+          !state.selectionManager.isEmpty ||
           state.inputValue === '' ||
           props.allowsCustomValue
         ) {
@@ -178,7 +183,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
 
   let onBlur = (e: FocusEvent<HTMLInputElement>) => {
     let blurFromButton = buttonRef?.current && buttonRef.current === e.relatedTarget;
-    let blurIntoPopover = popoverRef.current?.contains(e.relatedTarget);
+    let blurIntoPopover = nodeContains(popoverRef.current, e.relatedTarget);
     // Ignore blur if focused moved to the button(if exists) or into the popover.
     if (blurFromButton || blurIntoPopover) {
       return;
@@ -203,6 +208,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     state.setFocused(true);
   };
 
+  let valueId = useValueId([state.selectedItems, state.selectionManager.selectionMode]);
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,
@@ -214,9 +220,12 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     onFocus,
     autoComplete: 'off',
     validate: undefined,
-    [privateValidationStateProp]: state
+    [privateValidationStateProp]: state,
+    'aria-describedby': [valueId, props['aria-describedby']].filter(Boolean).join(' ') || undefined
   }, inputRef);
 
+  useFormReset(inputRef, state.defaultValue, state.setValue);
+  
   // Press handlers for the ComboBox button
   let onPress = (e: PressEvent) => {
     if (e.pointerType === 'touch') {
@@ -259,7 +268,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       return;
     }
 
-    let rect = (e.target as Element).getBoundingClientRect();
+    let rect = (getEventTarget(e) as Element).getBoundingClientRect();
     let touch = e.changedTouches[0];
 
     let centerX = Math.ceil(rect.left + .5 * rect.width);
@@ -327,6 +336,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
   });
 
   // Announce when a selection occurs for VoiceOver. Other screen readers typically do this automatically.
+  // TODO: do we need to do this for multi-select?
   let lastSelectedKey = useRef(state.selectedKey);
   useEffect(() => {
     if (isAppleDevice() && state.isFocused && state.selectedItem && state.selectedKey !== lastSelectedKey.current) {
@@ -350,6 +360,10 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       dispatchVirtualFocus(inputRef.current, null);
     }
   }, [focusedItem]);
+
+  useEvent(listBoxRef, 'react-aria-item-action', state.isOpen ? () => {
+    state.close();
+  } : undefined);
 
   return {
     labelProps,
@@ -380,12 +394,42 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
       shouldFocusOnHover: true,
-      linkBehavior: 'selection' as const
+      linkBehavior: 'selection' as const,
+      ['UNSTABLE_itemBehavior']: 'action'
     }),
+    valueProps: {
+      id: valueId
+    },
     descriptionProps,
     errorMessageProps,
     isInvalid,
     validationErrors,
     validationDetails
   };
+}
+
+// This is a modified version of useSlotId that uses useEffect instead of useLayoutEffect.
+// Triggering re-renders from useLayoutEffect breaks useComboBoxState's useEffect logic in React 18.
+// These re-renders preempt async state updates in the useEffect, which ends up running multiple times
+// prior to the state being updated. This results in onSelectionChange being called multiple times.
+// TODO: refactor useComboBoxState to avoid this.
+function useValueId(depArray: ReadonlyArray<any> = []): string | undefined {
+  let id = useId();
+  let [exists, setExists] = useState(true);
+  let [lastDeps, setLastDeps] = useState(depArray);
+
+  // If the deps changed, set exists to true so we can test whether the element exists.
+  if (lastDeps.some((v, i) => !Object.is(v, depArray[i]))) {
+    setExists(true);
+    setLastDeps(depArray);
+  }
+
+  useEffect(() => {
+    if (exists && !document.getElementById(id)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setExists(false);
+    }
+  }, [id, exists, lastDeps]);
+
+  return exists ? id : undefined;
 }

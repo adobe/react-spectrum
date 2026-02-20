@@ -10,12 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {centerBaselineBefore} from './CenterBaseline';
 import {ContextValue, SlotProps} from 'react-aria-components';
 import {createContext, forwardRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Image} from './Image';
+import {isDocsEnv} from './macros' with {type: 'macro'};
 import {style} from '../style' with { type: 'macro' };
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -37,6 +39,8 @@ export interface AvatarProps extends UnsafeStyles, DOMProps, SlotProps {
 }
 
 const imageStyles = style({
+  display: 'flex',
+  alignItems: 'center',
   borderRadius: 'full',
   size: 20,
   flexShrink: 0,
@@ -73,7 +77,8 @@ export const Avatar = forwardRef(function Avatar(props: AvatarProps, ref: DOMRef
   } = props;
   const domProps = filterDOMProps(otherProps);
 
-  let remSize = size / 16 + 'rem';
+  // In the docs build, we need to be able to simulate font scaling.
+  let remSize = isDocsEnv() ? `calc(${size / 16} * var(--rem, 1rem))` : `${size / 16}rem`;
   let isLarge = size >= 64;
   return (
     <Image
@@ -86,7 +91,7 @@ export const Avatar = forwardRef(function Avatar(props: AvatarProps, ref: DOMRef
         width: remSize,
         height: remSize
       }}
-      UNSAFE_className={UNSAFE_className}
+      UNSAFE_className={UNSAFE_className + ' ' +  centerBaselineBefore}
       styles={imageStyles({isOverBackground, isLarge}, props.styles)}
       src={src} />
   );

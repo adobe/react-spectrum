@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, pointerMap, render, User, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
 import {Checkbox, CheckboxGroup} from '../';
 import {Form} from '@react-spectrum/form';
@@ -21,6 +21,7 @@ import userEvent from '@testing-library/user-event';
 
 describe('CheckboxGroup', () => {
   let user;
+  let testUtilUser = new User();
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
@@ -417,9 +418,9 @@ describe('CheckboxGroup', () => {
 
   if (parseInt(React.version, 10) >= 19) {
     it('resets to defaultValue when submitting form action', async () => {
-      function Test() {        
+      function Test() {
         const [value, formAction] = React.useActionState(() => ['dogs', 'cats'], []);
-        
+
         return (
           <Provider theme={theme}>
             <form action={formAction}>
@@ -774,6 +775,53 @@ describe('CheckboxGroup', () => {
         await user.click(checkboxes[0]);
         expect(group).not.toHaveAttribute('aria-describedby');
       });
+    });
+  });
+
+  describe('keyboard', () => {
+    it.each`
+      Name                    | props
+      ${'ltr + vertical'}     | ${{locale: 'de-DE', orientation: 'vertical'}}
+      ${'rtl + verfical'}     | ${{locale: 'ar-AE', orientation: 'vertical'}}
+      ${'ltr + horizontal'}   | ${{locale: 'de-DE', orientation: 'horizontal'}}
+      ${'rtl + horizontal'}   | ${{locale: 'ar-AE', orientation: 'horizontal'}}
+    `('$Name should select the correct checkbox regardless of orientation and disabled checkboxes', async function ({props}) {
+      let {getByRole} = render(
+        <Provider locale={props.locale} theme={theme}>
+          <CheckboxGroup label="Favorite sports">
+            <Checkbox value="soccer">Soccer</Checkbox>
+            <Checkbox value="baseball" isDisabled>Baseball</Checkbox>
+            <Checkbox value="basketball" isDisabled>Basketball</Checkbox>
+            <Checkbox value="tennis">Tennis</Checkbox>
+            <Checkbox value="Rugby">Rugby</Checkbox>
+          </CheckboxGroup>
+        </Provider>
+      );
+
+      let checkboxGroupTester = testUtilUser.createTester('CheckboxGroup', {root: getByRole('group')});
+      expect(checkboxGroupTester.checkboxgroup).toHaveAttribute('role');
+      let checkboxes = checkboxGroupTester.checkboxes;
+      await checkboxGroupTester.toggleCheckbox({checkbox: checkboxes[0]});
+      expect(checkboxes[0]).toBeChecked();
+      expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(1);
+
+      await checkboxGroupTester.toggleCheckbox({checkbox: 4, interactionType: 'keyboard'});
+      expect(checkboxes[4]).toBeChecked();
+      expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(2);
+
+      let checkbox4 = checkboxGroupTester.findCheckbox({checkboxIndexOrText: 3});
+      await checkboxGroupTester.toggleCheckbox({checkbox: checkbox4, interactionType: 'keyboard'});
+      expect(checkboxes[3]).toBeChecked();
+      expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(3);
+
+      await checkboxGroupTester.toggleCheckbox({checkbox: 'Soccer', interactionType: 'keyboard'});
+      expect(checkboxes[0]).not.toBeChecked();
+      expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(2);
+
+      let checkbox5 = checkboxGroupTester.findCheckbox({checkboxIndexOrText: 'Rugby'});
+      await checkboxGroupTester.toggleCheckbox({checkbox: checkbox5, interactionType: 'mouse'});
+      expect(checkboxes[4]).not.toBeChecked();
+      expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(1);
     });
   });
 });

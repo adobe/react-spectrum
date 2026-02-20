@@ -385,7 +385,14 @@ function DraggableCollectionExample(props) {
   };
 
   return (
-    <DraggableCollection items={list.items} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} onDragEnd={onDragEnd} onCut={onCut} isDisabled={props.isDisabled}>
+    <DraggableCollection
+      items={list.items}
+      selectedKeys={list.selectedKeys}
+      onSelectionChange={list.setSelectedKeys}
+      onDragEnd={onDragEnd}
+      onCut={onCut}
+      isDisabled={props.isDisabled}
+      {...props}>
       {item => (
         <Item textValue={item.text}>
           {item.type === 'folder' && <Folder size="S" />}
@@ -397,7 +404,7 @@ function DraggableCollectionExample(props) {
 }
 
 function DraggableCollection(props) {
-  let {isDisabled} = props;
+  let {isDisabled, mode, offsetX, offsetY} = props;
   let ref = React.useRef<HTMLDivElement>(null);
   let state = useListState<ItemValue>(props);
   let gridState = useGridState({
@@ -472,7 +479,7 @@ function DraggableCollection(props) {
           let selectedKeys = dragState.draggingKeys;
           let draggedKey = [...selectedKeys][0];
           let item = state.collection.getItem(draggedKey);
-          return (
+          let element = (
             <div className={classNames(dndStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': selectedKeys.size > 1})}>
               <div className={classNames(dndStyles, 'drag-handle')}>
                 <ShowMenu size="XS" />
@@ -483,6 +490,12 @@ function DraggableCollection(props) {
               }
             </div>
           );
+
+          if (mode === 'custom') {
+            return {element, x: offsetX, y: offsetY};
+          }
+
+          return element;
         }}
       </DragPreview>
     </div>
@@ -573,5 +586,131 @@ export const DroppableEnabledDisabledControl: DnDStoryObj = {
       control: 'boolean',
       defaultValue: true
     }
+  }
+};
+
+interface PreviewOffsetArgs {
+  /** Strategy for positioning the preview. */
+  mode: 'default' | 'custom',
+  /** X offset in pixels (only used when mode = custom). */
+  offsetX: number,
+  /** Y offset in pixels (only used when mode = custom). */
+  offsetY: number
+}
+
+function DraggableWithPreview({mode, offsetX, offsetY}: PreviewOffsetArgs): JSX.Element {
+  const preview = React.useRef(null);
+
+  const {dragProps, isDragging} = useDrag({
+    getItems() {
+      return [{
+        'text/plain': 'preview offset demo'
+      }];
+    },
+    preview,
+    onDragStart: action('onDragStart'),
+    onDragEnd: action('onDragEnd')
+  });
+
+  const {clipboardProps} = useClipboard({
+    getItems() {
+      return [{
+        'text/plain': 'preview offset demo'
+      }];
+    }
+  });
+
+  const ref = React.useRef<HTMLDivElement>(null);
+  const {buttonProps} = useButton({elementType: 'div'}, ref);
+
+  return (
+    <>
+      <div
+        ref={ref}
+        {...mergeProps(dragProps, buttonProps, clipboardProps)}
+        className={classNames(dndStyles, 'draggable', {'is-dragging': isDragging})}
+        style={{cursor: 'grab'}}>
+        <ShowMenu size="XS" />
+        <span>Drag me</span>
+      </div>
+
+      {/* Custom drag preview */}
+      <DragPreview ref={preview}>
+        {() => {
+          const elem = (
+            <div className={classNames(dndStyles, 'draggable', 'is-drag-preview')}>
+              <ShowMenu size="XS" />
+              <span>Preview</span>
+            </div>
+          );
+
+          if (mode === 'custom') {
+            return {element: elem, x: offsetX, y: offsetY};
+          }
+
+          return elem;
+        }}
+      </DragPreview>
+    </>
+  );
+}
+
+export const PreviewOffset: DnDStoryObj = {
+  render: (args) => (
+    <Flex direction="column" gap="size-200" alignItems="center">
+      <DraggableWithPreview {...args} />
+      <Droppable />
+    </Flex>
+  ),
+  name: 'Preview offset',
+  argTypes: {
+    mode: {
+      control: 'select',
+      options: ['default', 'custom'],
+      defaultValue: 'default'
+    },
+    offsetX: {
+      control: 'number',
+      defaultValue: 20
+    },
+    offsetY: {
+      control: 'number',
+      defaultValue: 20
+    }
+  },
+  args: {
+    mode: 'default',
+    offsetX: 20,
+    offsetY: 20
+  }
+};
+
+export const CollectionPreviewOffset: DnDStoryObj = {
+  render: (args) => (
+    <Flex direction="column" gap="size-200" alignItems="center">
+      <DraggableCollectionExample {...args} />
+      <Droppable />
+    </Flex>
+  ),
+  name: 'Collection preview offset',
+  argTypes: {
+    mode: {
+      control: 'select',
+      options: ['default', 'custom'],
+      defaultValue: 'default'
+    },
+    offsetX: {
+      control: 'number',
+      defaultValue: 20
+    },
+    offsetY: {
+      control: 'number',
+      defaultValue: 20
+    }
+  },
+  args: {
+    mode: 'default',
+    offsetX: 20,
+    offsetY: 20
   }
 };

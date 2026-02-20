@@ -9,19 +9,35 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
+import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSection, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
-import {CheckboxContext} from './RSPContexts';
-import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
-import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {CheckboxContext, FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  DEFAULT_SLOT,
+  dom,
+  DOMProps,
+  DOMRenderProps,
+  Provider,
+  RenderProps,
+  SlotProps,
+  StyleProps,
+  StyleRenderProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
+import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent, HeaderNode, ItemNode, LoaderNode, SectionNode} from '@react-aria/collections';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, SectionProps} from './Collection';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
-import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
-import {filterDOMProps, inertValue, LoadMoreSentinelProps, UNSTABLE_useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
+import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
+import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import {SelectionIndicatorContext} from './SelectionIndicator';
+import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
 
 export interface GridListRenderProps {
@@ -58,6 +74,11 @@ export interface GridListRenderProps {
 
 export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<GridListRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-GridList'
+   */
+  className?: ClassNameOrFunction<GridListRenderProps>,
+  /**
    * Whether typeahead navigation is disabled.
    * @default false
    */
@@ -68,7 +89,7 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
    */
   selectionBehavior?: SelectionBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the GridList. */
-  dragAndDropHooks?: DragAndDropHooks,
+  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>,
   /** Provides content to display when there are no items in the list. */
   renderEmptyState?: (props: GridListRenderProps) => ReactNode,
   /**
@@ -97,27 +118,31 @@ export const GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(function Gr
 });
 
 interface GridListInnerProps<T extends object> {
-  props: GridListProps<T>,
+  props: GridListProps<T> & SelectableCollectionContextValue<T>,
   collection: ICollection<Node<object>>,
-  gridListRef: RefObject<HTMLDivElement | null>
+  gridListRef: RefObject<HTMLElement | null>
 }
 
 function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
+  [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {shouldUseVirtualFocus, filter, disallowTypeAhead, ...DOMCollectionProps} = props;
   let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;
   let {CollectionRoot, isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate} = useContext(CollectionRendererContext);
-  let state = useListState({
-    ...props,
+  let gridlistState = useListState({
+    ...DOMCollectionProps,
     collection,
     children: undefined,
     layoutDelegate
   });
 
+  let filteredState = UNSTABLE_useFilteredListState(gridlistState as ListState<T>, filter);
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let {disabledBehavior, disabledKeys} = state.selectionManager;
+  let {disabledBehavior, disabledKeys} = filteredState.selectionManager;
   let {direction} = useLocale();
   let keyboardDelegate = useMemo(() => (
     new ListKeyboardDelegate({
-      collection,
+      collection: filteredState.collection,
       collator,
       ref,
       disabledKeys,
@@ -126,18 +151,19 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       layout,
       direction
     })
-  ), [collection, ref, layout, disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
+  ), [filteredState.collection, ref, layout, disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
 
   let {gridProps} = useGridList({
-    ...props,
+    ...DOMCollectionProps,
     keyboardDelegate,
     // Only tab navigation is supported in grid layout.
     keyboardNavigationBehavior: layout === 'grid' ? 'tab' : keyboardNavigationBehavior,
     isVirtualized,
-    shouldSelectOnPressUp: props.shouldSelectOnPressUp
-  }, state, ref);
+    shouldSelectOnPressUp: props.shouldSelectOnPressUp,
+    disallowTypeAhead
+  }, filteredState, ref);
 
-  let selectionManager = state.selectionManager;
+  let selectionManager = filteredState.selectionManager;
   let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
   let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
   let dragHooksProvided = useRef(isListDraggable);
@@ -163,7 +189,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 
   if (isListDraggable && dragAndDropHooks) {
     dragState = dragAndDropHooks.useDraggableCollectionState!({
-      collection,
+      collection: filteredState.collection,
       selectionManager,
       preview: dragAndDropHooks.renderDragPreview ? preview : undefined
     });
@@ -177,12 +203,12 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 
   if (isListDroppable && dragAndDropHooks) {
     dropState = dragAndDropHooks.useDroppableCollectionState!({
-      collection,
+      collection: filteredState.collection,
       selectionManager
     });
 
     let keyboardDelegate = new ListKeyboardDelegate({
-      collection,
+      collection: filteredState.collection,
       disabledKeys: selectionManager.disabledKeys,
       disabledBehavior: selectionManager.disabledBehavior,
       ref
@@ -197,19 +223,18 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   }
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
-  // TODO: What do we think about this check? Ideally we could just query the collection and see if ALL node are loaders and thus have it return that it is empty
-  let isEmpty = state.collection.size === 0 || (state.collection.size === 1 && state.collection.getItem(state.collection.getFirstKey()!)?.type === 'loader');
+  let isEmpty = filteredState.collection.size === 0;
   let renderValues = {
     isDropTarget: isRootDropTarget,
     isEmpty,
     isFocused,
     isFocusVisible,
     layout,
-    state
+    state: filteredState
   };
   let renderProps = useRenderProps({
-    className: props.className,
-    style: props.style,
+    ...props,
+    children: undefined,
     defaultClassName: 'react-aria-GridList',
     values: renderValues
   });
@@ -232,9 +257,9 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 
   return (
     <FocusScope>
-      <div
+      <dom.div
         {...mergeProps(DOMProps, renderProps, gridProps, focusProps, droppableCollection?.collectionProps, emptyStatePropOverrides)}
-        ref={ref}
+        ref={ref as RefObject<HTMLDivElement>}
         slot={props.slot || undefined}
         onScroll={props.onScroll}
         data-drop-target={isRootDropTarget || undefined}
@@ -244,20 +269,22 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
         data-layout={layout}>
         <Provider
           values={[
-            [ListStateContext, state],
+            [ListStateContext, filteredState],
             [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
             [DropIndicatorContext, {render: GridListDropIndicatorWrapper}]
           ]}>
           {isListDroppable && <RootDropIndicator />}
-          <CollectionRoot
-            collection={collection}
-            scrollRef={ref}
-            persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
-            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState, dragState)} />
+          <SharedElementTransition>
+            <CollectionRoot
+              collection={filteredState.collection}
+              scrollRef={ref}
+              persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
+              renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+          </SharedElementTransition>
         </Provider>
         {emptyState}
         {dragPreview}
-      </div>
+      </dom.div>
     </FocusScope>
   );
 }
@@ -265,6 +292,11 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 export interface GridListItemRenderProps extends ItemRenderProps {}
 
 export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-GridListItem'
+   */
+  className?: ClassNameOrFunction<GridListItemRenderProps>,
   /** The unique id of the item. */
   id?: Key,
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */
@@ -283,7 +315,7 @@ export interface GridListItemProps<T = object> extends RenderProps<GridListItemR
 /**
  * A GridListItem represents an individual item in a GridList.
  */
-export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function GridListItem<T extends object>(props: GridListItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function GridListItem<T extends object>(props: GridListItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
@@ -372,7 +404,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
           </div>
         </div>
       }
-      <div
+      <dom.div
         {...mergeProps(DOMProps, renderProps, rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
         ref={ref}
         data-selected={states.isSelected || undefined}
@@ -413,12 +445,15 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
                 }
               }],
               [CollectionRendererContext, DefaultCollectionRenderer],
-              [ListStateContext, null]
+              [ListStateContext, null],
+              [SelectableCollectionContext, null],
+              [FieldInputContext, null],
+              [SelectionIndicatorContext, {isSelected: states.isSelected}]
             ]}>
             {renderProps.children}
           </Provider>
         </div>
-      </div>
+      </dom.div>
     </>
   );
 });
@@ -466,7 +501,7 @@ function GridListDropIndicator(props: GridListDropIndicatorProps, ref: Forwarded
   });
 
   return (
-    <div
+    <dom.div
       {...renderProps}
       role="row"
       ref={ref as RefObject<HTMLDivElement | null>}
@@ -475,7 +510,7 @@ function GridListDropIndicator(props: GridListDropIndicatorProps, ref: Forwarded
         <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={buttonRef} />
         {renderProps.children}
       </div>
-    </div>
+    </dom.div>
   );
 }
 
@@ -503,7 +538,12 @@ function RootDropIndicator() {
   );
 }
 
-export interface GridListLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface GridListLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, DOMRenderProps<'div', undefined>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-GridListLoadMoreItem'
+   */
+  className?: string,
   /**
    * The load more spinner to render when loading additional items.
    */
@@ -514,7 +554,7 @@ export interface GridListLoadingSentinelProps extends Omit<LoadMoreSentinelProps
   isLoading?: boolean
 }
 
-export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', function GridListLoadingIndicator<T extends object>(props: GridListLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const GridListLoadMoreItem = createLeafComponent(LoaderNode, function GridListLoadingIndicator(props: GridListLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<object>) {
   let state = useContext(ListStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
@@ -526,15 +566,18 @@ export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', fu
     sentinelRef,
     scrollOffset
   }), [onLoadMore, scrollOffset, state?.collection]);
-  UNSTABLE_useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+  useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
 
   let renderProps = useRenderProps({
     ...otherProps,
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-GridListLoadingIndicator',
-    values: null
+    values: undefined
   });
+  // For now don't include aria-posinset and aria-setsize on loader since they aren't keyboard focusable
+  // Arguably shouldn't include them ever since it might be confusing to the user to include the loaders as part of the
+  // item count
 
   return (
     <>
@@ -544,19 +587,83 @@ export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', fu
         <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
       </div>
       {isLoading && renderProps.children && (
-        <div
+        <dom.div
           {...renderProps}
           {...filterDOMProps(props, {global: true})}
           role="row"
-          aria-rowindex={isVirtualized ? item.index + 1 : undefined}
           ref={ref}>
           <div
             aria-colindex={isVirtualized ? 1 : undefined}
             role="gridcell">
             {renderProps.children}
           </div>
-        </div>
+        </dom.div>
       )}
     </>
+  );
+});
+
+export interface GridListSectionProps<T> extends SectionProps<T>, DOMRenderProps<'div', undefined> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-GridListSection'
+   */
+  className?: string
+}
+
+/**
+ * A GridListSection represents a section within a GridList.
+ */
+export const GridListSection = /*#__PURE__*/ createBranchComponent(SectionNode, <T extends object>(props: GridListSectionProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
+  let state = useContext(ListStateContext)!;
+  let {CollectionBranch} = useContext(CollectionRendererContext);
+  let headingRef = useRef(null);
+  ref = useObjectRef<HTMLDivElement>(ref);
+  let {rowHeaderProps, rowProps, rowGroupProps} = useGridListSection({
+    'aria-label': props['aria-label'] ?? undefined
+  }, state, ref);
+  let renderProps = useRenderProps({
+    ...props,
+    id: undefined,
+    children: undefined,
+    defaultClassName: 'react-aria-GridListSection',
+    values: undefined
+  });
+
+  let DOMProps = filterDOMProps(props as any, {global: true});
+  delete DOMProps.id;
+
+  return (
+    <dom.div
+      {...mergeProps(DOMProps, renderProps, rowGroupProps)}
+      ref={ref}>
+      <Provider
+        values={[
+          [GridListHeaderContext, {...rowProps, ref: headingRef}],
+          [GridListHeaderInnerContext, {...rowHeaderProps}]
+        ]}>
+        <CollectionBranch
+          collection={state.collection}
+          parent={item} />
+      </Provider>
+    </dom.div>
+  );
+});
+
+export interface GridListHeaderProps extends DOMRenderProps<'div', undefined>, DOMProps, GlobalDOMAttributes<HTMLElement> {}
+
+export const GridListHeaderContext = createContext<ContextValue<GridListHeaderProps, HTMLDivElement>>({});
+export const GridListHeaderInnerContext = createContext<HTMLAttributes<HTMLElement> | null>(null);
+
+export const GridListHeader = /*#__PURE__*/ createLeafComponent(HeaderNode, function Header(props: GridListHeaderProps, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, GridListHeaderContext);
+  let rowHeaderProps = useContext(GridListHeaderInnerContext);
+
+  return (
+    <dom.div render={props.render} className="react-aria-GridListHeader" ref={ref} {...props}>
+      <div {...rowHeaderProps} style={{display: 'contents'}}>
+        {props.children}
+      </div>
+    </dom.div>
   );
 });

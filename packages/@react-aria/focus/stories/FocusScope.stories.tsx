@@ -278,3 +278,34 @@ export const FocusableInputForm: FocusScopeStoryObj = {
     }
   }
 };
+
+export let ContainsHiddenElement: FocusScopeStoryObj = {
+  render: (args) => (
+    <FocusScope {...args}>
+      <input />
+      <input style={{visibility: 'hidden'}} />
+      <input />
+    </FocusScope>
+  ),
+  args: {
+    contain: true
+  },
+  argTypes: {
+    contain: {
+      control: 'boolean'
+    },
+    restoreFocus: {
+      control: 'boolean'
+    },
+    autoFocus: {
+      control: 'boolean'
+    }
+  },
+  parameters: {
+    description: {
+      data: `
+Should be able to tab navigate from the first input to the last input.
+`
+    }
+  }
+};

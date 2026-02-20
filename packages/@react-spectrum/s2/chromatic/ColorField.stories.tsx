@@ -45,7 +45,7 @@ const Template = ({combos, ...args}: ColorFieldProps & {combos: any[]}): ReactEl
           key = 'default';
         }
         return (
-          <ColorField data-testid={fullComboName} defaultValue="#e21" label={key} description="test description" errorMessage="test error" {...c} {...args}  />
+          <ColorField data-testid={fullComboName} defaultValue="#e21" label={key} description="test description" errorMessage="test error" placeholder="######" {...c} {...args}  />
         );
       })}
     </div>

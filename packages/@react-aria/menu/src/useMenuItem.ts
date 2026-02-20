@@ -11,9 +11,9 @@
  */
 
 import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents, RefObject} from '@react-types/shared';
-import {filterDOMProps, handleLinkClick, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, getEventTarget, handleLinkClick, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
 import {getItemCount} from '@react-stately/collections';
-import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria/interactions';
+import {isFocusVisible, useFocusable, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {menuData} from './utils';
 import {MouseEvent, useRef} from 'react';
 import {SelectionManager} from '@react-stately/selection';
@@ -72,9 +72,12 @@ export interface AriaMenuItemProps extends DOMProps, PressEvents, HoverEvents, K
 
   /**
    * Whether the menu should close when the menu item is selected.
-   * @default true
+   * @deprecated - use shouldCloseOnSelect instead.
    */
   closeOnSelect?: boolean,
+
+  /** Whether the menu should close when the menu item is selected. */
+  shouldCloseOnSelect?: boolean,
 
   /** Whether the menu item is contained in a virtual scrolling menu. */
   isVirtualized?: boolean,
@@ -109,9 +112,10 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     id,
     key,
     closeOnSelect,
+    shouldCloseOnSelect,
     isVirtualized,
     'aria-haspopup': hasPopup,
-    onPressStart: pressStartProp,
+    onPressStart,
     onPressUp: pressUpProp,
     onPress,
     onPressChange: pressChangeProp,
@@ -184,37 +188,29 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   }
 
   if (isVirtualized) {
-    ariaProps['aria-posinset'] = item?.index;
+    let index = Number(item?.index);
+    ariaProps['aria-posinset'] = Number.isNaN(index) ? undefined : index + 1;
     ariaProps['aria-setsize'] = getItemCount(state.collection);
   }
 
-  let onPressStart = (e: PressEvent) => {
-    // Trigger native click event on keydown unless this is a link (the browser will trigger onClick then).
-    if (e.pointerType === 'keyboard' && !selectionManager.isLink(key)) {
-      (e.target as HTMLElement).click();
-    }
-
-    pressStartProp?.(e);
-  };
   let isPressedRef = useRef(false);
   let onPressChange = (isPressed: boolean) => {
     pressChangeProp?.(isPressed);
     isPressedRef.current = isPressed;
   };
 
+  let interaction = useRef<{pointerType: string, key?: string} | null>(null);
   let onPressUp = (e: PressEvent) => {
+    if (e.pointerType !== 'keyboard') {
+      interaction.current = {pointerType: e.pointerType};
+    }
+
     // If interacting with mouse, allow the user to mouse down on the trigger button,
     // drag, and release over an item (matching native behavior).
     if (e.pointerType === 'mouse') {
       if (!isPressedRef.current) {
         (e.target as HTMLElement).click();
       }
-    }
-
-    // Pressing a menu item should close by default in single selection mode but not multiple
-    // selection mode, except if overridden by the closeOnSelect prop.
-    if (e.pointerType !== 'keyboard' && !isTrigger && onClose && (closeOnSelect ?? (selectionManager.selectionMode !== 'multiple' || selectionManager.isLink(key)))) {
-      onClose();
     }
 
     pressUpProp?.(e);
@@ -224,6 +220,21 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     onClickProp?.(e);
     performAction();
     handleLinkClick(e, router, item!.props.href, item?.props.routerOptions);
+
+    let shouldClose = interaction.current?.pointerType === 'keyboard'
+      // Always close when pressing Enter key, or if item is not selectable.
+      ? interaction.current?.key === 'Enter' || selectionManager.selectionMode === 'none' || selectionManager.isLink(key)
+      // Close except if multi-select is enabled.
+      : selectionManager.selectionMode !== 'multiple' || selectionManager.isLink(key);
+
+
+    shouldClose = shouldCloseOnSelect ?? closeOnSelect ?? shouldClose;
+
+    if (onClose && !isTrigger && shouldClose) {
+      onClose();
+    }
+
+    interaction.current = null;
   };
 
   let {itemProps, isFocused} = useSelectableItem({
@@ -274,14 +285,15 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
       switch (e.key) {
         case ' ':
-          if (!isDisabled && selectionManager.selectionMode === 'none' && !isTrigger && closeOnSelect !== false && onClose) {
-            onClose();
-          }
+          interaction.current = {pointerType: 'keyboard', key: ' '};
+          (getEventTarget(e) as HTMLElement).click();
           break;
         case 'Enter':
-          // The Enter key should always close on select, except if overridden.
-          if (!isDisabled && closeOnSelect !== false && !isTrigger && onClose) {
-            onClose();
+          interaction.current = {pointerType: 'keyboard', key: 'Enter'};
+
+          // Trigger click unless this is a link. Links trigger click natively.
+          if ((getEventTarget(e) as HTMLElement).tagName !== 'A') {
+            (getEventTarget(e) as HTMLElement).click();
           }
           break;
         default:
@@ -296,7 +308,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     onKeyUp
   });
 
-  let {focusProps} = useFocus({onBlur, onFocus, onFocusChange});
+  let {focusableProps} = useFocusable({onBlur, onFocus, onFocusChange}, ref);
   let domProps = filterDOMProps(item?.props);
   delete domProps.id;
   let linkProps = useLinkProps(item?.props);
@@ -307,13 +319,13 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       ...mergeProps(
         domProps,
         linkProps,
-        isTrigger 
-          ? {onFocus: itemProps.onFocus, 'data-collection': itemProps['data-collection'], 'data-key': itemProps['data-key']} 
+        isTrigger
+          ? {onFocus: itemProps.onFocus, 'data-collection': itemProps['data-collection'], 'data-key': itemProps['data-key']}
           : itemProps,
         pressProps,
         hoverProps,
         keyboardProps,
-        focusProps,
+        focusableProps,
         // Prevent DOM focus from moving on mouse down when using virtual focus or this is a submenu/subdialog trigger.
         data.shouldUseVirtualFocus || isTrigger ? {onMouseDown: e => e.preventDefault()} : undefined,
         isDisabled ? undefined : {onClick}

@@ -1,0 +1,46 @@
+<svg style="background:var(--anatomy-gray-100); width: calc(100% - 20px); padding: 10px; max-height: 205px;" viewBox="0 0 176 205">
+  <defs>
+    <filter id="Background_AC" x="0" y="57" width="176" height="148" filterUnits="userSpaceOnUse">
+      <feOffset dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-opacity="0.149"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Autocomplete">
+    <g id="Input_Field" data-name="Input Field">
+      <g id="Placement_Area" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+        <rect width="176" height="56" stroke="none"/>
+        <rect x="0.5" y="0.5" width="175" height="55" fill="none"/>
+      </g>
+      <text id="Label" transform="translate(0 16)" fill="var(--anatomy-gray-700)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">Favorite animal</tspan></text>
+      <g id="Text_Area" data-name="Text Area" transform="translate(0 24)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-600)" stroke-width="1">
+        <rect width="176" height="32" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="175" height="31" rx="3.5" fill="none"/>
+      </g>
+      <text id="Text" transform="translate(12 44)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Ca</tspan></text>
+      <line id="Cursor" x1="0" y1="0" x2="0" y2="14" transform="translate(28 31)" stroke="var(--anatomy-gray-900)" stroke-width="1"/>
+    </g>
+    <g id="Menu">
+      <g id="Placement_Area-2" data-name="Placement Area" transform="translate(0 62)" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+        <rect width="176" height="136" stroke="none"/>
+        <rect x="0.5" y="0.5" width="175" height="135" fill="none"/>
+      </g>
+      <g transform="matrix(1, 0, 0, 1, 0, 0)" filter="url(#Background_AC)">
+        <g id="Background-2" data-name="Background" transform="translate(0 62)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+          <rect width="176" height="136" rx="4" stroke="none"/>
+          <rect x="0.5" y="0.5" width="175" height="135" rx="3.5" fill="none"/>
+        </g>
+      </g>
+      <g id="Hover" transform="translate(2 130)" fill="var(--anatomy-gray-900)" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0.04">
+        <rect width="172" height="32" stroke="none"/>
+        <rect x="0.5" y="0.5" width="171" height="31" fill="none"/>
+      </g>
+      <text id="Camel" transform="translate(12 86)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Camel</tspan></text>
+      <text id="Capybara" transform="translate(12 118)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Capybara</tspan></text>
+      <text id="Caribou" transform="translate(12 150)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Caribou</tspan></text>
+      <text id="Cat" transform="translate(12 182)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Cat</tspan></text>
+    </g>
+  </g>
+</svg>

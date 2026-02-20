@@ -10,41 +10,99 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSelectionCheckbox, useHover, useId, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
+import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSection, useGridListSelectionCheckbox, useHover, useId, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
-import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {
+  ChildrenOrFunction,
+  ClassNameOrFunction,
+  ContextValue,
+  DEFAULT_SLOT,
+  dom,
+  DOMRenderProps,
+  Provider,
+  RenderProps,
+  SlotProps,
+  StyleRenderProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
+import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, LoaderNode, SectionNode, useCachedChildren} from '@react-aria/collections';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, SectionProps} from './Collection';
 import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents, RefObject, SelectionMode} from '@react-types/shared';
 import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
+import {GridListHeader, GridListHeaderContext, GridListHeaderInnerContext, GridListHeaderProps} from './GridList';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {SelectionIndicatorContext} from './SelectionIndicator';
+import {SharedElementTransition} from './SharedElementTransition';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useControlledState} from '@react-stately/utils';
-
 class TreeCollection<T> implements ICollection<Node<T>> {
-  private flattenedRows: Node<T>[];
   private keyMap: Map<Key, CollectionNode<T>> = new Map();
+  private itemCount: number = 0;
+  private expandedKeys;
+  private collection;
 
   constructor(opts) {
-    let {collection, expandedKeys} = opts;
-    let {flattenedRows, keyMap} = flattenTree<T>(collection, {expandedKeys});
-    this.flattenedRows = flattenedRows;
+    let {collection, lastExpandedKeys, expandedKeys} = opts;
+    let {keyMap, itemCount} = generateKeyMap<T>(collection, {expandedKeys});
     // Use generated keyMap because it contains the modified collection nodes (aka it adjusts the indexes so that they ignore the existence of the Content items)
+    // Also adjusts the levels of node inside of a section
     this.keyMap = keyMap;
+    this.collection = collection;
+    this.itemCount = itemCount;
+    this.expandedKeys = expandedKeys;
+    // We do this so React knows to re-render since the same item won't cause a new render but a clone creating a new object with the same value will
+    // Without this change, the items won't expand and collapse when virtualized inside a section
+    TreeCollection.cloneAncestorSections(expandedKeys, lastExpandedKeys, this.keyMap, (k) => this.getItem(k));
+    TreeCollection.cloneAncestorSections(lastExpandedKeys, expandedKeys, this.keyMap, (k) => this.getItem(k));    
   }
 
-  // TODO: should this collection's getters reflect the flattened structure or the original structure
-  // If we respresent the flattened structure, it is easier for the keyboard nav but harder to find all the nodes
+  // diff lastExpandedKeys and expandedKeys so we only clone what has changed
+  private static cloneAncestorSections<T>(
+    keys: Iterable<Key>,
+    excludeSet: Set<Key>,
+    keyMap: Map<Key, CollectionNode<T>>,
+    getItem: (key: Key) => Node<T> | null
+  ) {
+    for (let key of keys) {
+      if (!excludeSet.has(key)) {
+        let currentKey: Key | null = key;
+        while (currentKey != null) {
+          let item = getItem(currentKey) as CollectionNode<T>;
+          if (item?.type === 'section') {
+            keyMap.set(currentKey, item.clone());
+            break;
+          } else {
+            currentKey = item?.parentKey ?? null;
+          }
+        }
+      }
+    }
+  }
+
   *[Symbol.iterator]() {
-    yield* this.flattenedRows;
+    let firstKey = this.getFirstKey();
+    let node: Node<T> | null = firstKey != null ? this.getItem(firstKey) : null;
+
+    while (node) {
+      yield node as Node<T>;
+      if (node.type === 'section') {
+        node = node.nextKey ? this.getItem(node.nextKey) : null;
+      } else {
+        // This will include both item and content nodes
+        // We handle the content nodes in useCollectionRenderer and ListLayout
+        let key = this.getKeyAfter(node.key);
+        node = key ? this.getItem(key) : null;
+      }
+    }
   }
 
   get size() {
-    return this.flattenedRows.length;
+    return this.itemCount;
   }
 
   getKeys() {
@@ -55,38 +113,87 @@ class TreeCollection<T> implements ICollection<Node<T>> {
     return this.keyMap.get(key) || null;
   }
 
-  at(idx: number) {
-    return this.flattenedRows[idx];
+  at(): Node<T> {
+    throw new Error('Not implemented');
   }
 
   getFirstKey() {
-    return this.flattenedRows[0]?.key;
+    return this.collection.getFirstKey();
   }
 
   getLastKey() {
-    return this.flattenedRows[this.size - 1]?.key;
+    return this.collection.getLastKey();
   }
 
   getKeyAfter(key: Key) {
-    let index = this.flattenedRows.findIndex(row => row.key === key);
-    return this.flattenedRows[index + 1]?.key;
+    let node = this.getItem(key) as CollectionNode<T>;
+    if (!node) {
+      return null;
+    }
+
+    if ((this.expandedKeys.has(node.key) || node.type !== 'item') && node.firstChildKey != null) {
+      return node.firstChildKey;
+    }
+
+    while (node) {
+      if (node.nextKey != null) {
+        return node.nextKey;
+      }
+
+      if (node.parentKey != null) {
+        node = this.getItem(node.parentKey) as CollectionNode<T>;
+      } else {
+        return null;
+      }
+    }
+
+    return null;
   }
 
   getKeyBefore(key: Key) {
-    let index = this.flattenedRows.findIndex(row => row.key === key);
-    return this.flattenedRows[index - 1]?.key;
+    let node = this.getItem(key) as CollectionNode<T>;
+    if (!node) {
+      return null;
+    }
+
+    if (node.prevKey != null) {
+      node = this.getItem(node.prevKey) as CollectionNode<T>;
+
+      while (node && node.type !== 'item' && node.lastChildKey != null) {
+        node = this.getItem(node.lastChildKey) as CollectionNode<T>;
+      }
+
+      // If the lastChildKey is expanded, check its lastChildKey
+      while (node && this.expandedKeys.has(node.key) && node.lastChildKey != null) {
+        node = this.getItem(node.lastChildKey) as CollectionNode<T>;
+      }
+
+      return node?.key ?? null;
+    }
+
+    return node.parentKey;
   }
 
-  // Note that this will return Content nodes in addition to nested TreeItems
   getChildren(key: Key): Iterable<Node<T>> {
     let keyMap = this.keyMap;
+    let self = this;
     return {
       *[Symbol.iterator]() {
         let parent = keyMap.get(key);
-        let node = parent?.firstChildKey != null ? keyMap.get(parent.firstChildKey) : null;
-        while (node) {
-          yield node as Node<T>;
-          node = node.nextKey != null ? keyMap.get(node.nextKey) : undefined;
+        let node = parent?.firstChildKey ? keyMap.get(parent.firstChildKey) : null;
+        if (parent && parent.type === 'section' && node) {
+          // Stop once either the node is null or the node is the parent's sibling
+          while (node && node.key !== parent.nextKey) {
+            yield keyMap.get(node.key) as Node<T>;
+            // This will include content nodes which we skip in ListLayout
+            let key = self.getKeyAfter(node.key);
+            node = key ? keyMap.get(key) : undefined;
+          }
+        } else {
+          while (node) {
+            yield node as Node<T>;
+            node = node.nextKey != null ? keyMap.get(node.nextKey) : undefined;
+          }
         }
       }
     };
@@ -134,6 +241,11 @@ export interface TreeEmptyStateRenderProps extends Omit<TreeRenderProps, 'isEmpt
 
 export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, MultipleSelection, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, SlotProps, Expandable, GlobalDOMAttributes<HTMLDivElement> {
   /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Tree'
+   */
+  className?: ClassNameOrFunction<TreeRenderProps>,
+  /**
    * How multiple selection should behave in the tree.
    * @default "toggle"
    */
@@ -146,7 +258,7 @@ export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, Multip
    */
   disabledBehavior?: DisabledBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Tree. */
-  dragAndDropHooks?: DragAndDropHooks
+  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>
 }
 
 
@@ -214,14 +326,22 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   // Kinda annoying that we have to replicate this code here as well as in useTreeState, but don't want to add
   // flattenCollection stuff to useTreeState. Think about this later
   let [expandedKeys, setExpandedKeys] = useControlledState(
-    propExpandedKeys ? convertExpanded(propExpandedKeys) : undefined,
-    propDefaultExpandedKeys ? convertExpanded(propDefaultExpandedKeys) : new Set(),
+    propExpandedKeys ? new Set(propExpandedKeys) : undefined,
+    propDefaultExpandedKeys ? new Set(propDefaultExpandedKeys) : new Set(),
     onExpandedChange
   );
 
-  let flattenedCollection = useMemo(() => {
-    return new TreeCollection<object>({collection, expandedKeys});
-  }, [collection, expandedKeys]);
+  let [lastCollection, setLastCollection] = useState(collection);
+  let [lastExpandedKeys, setLastExpandedKeys] = useState(expandedKeys);
+  let [flattenedCollection, setFlattenedCollection] = useState(() => new TreeCollection<object>({collection, lastExpandedKeys: new Set(), expandedKeys}));
+
+
+  // if the lastExpandedKeys is not the same as the currentExpandedKeys or the collection has changed, then run this
+  if (!areSetsEqual(lastExpandedKeys, expandedKeys) || collection !== lastCollection) {
+    setFlattenedCollection(new TreeCollection<object>({collection, lastExpandedKeys, expandedKeys}));
+    setLastCollection(collection);
+    setLastExpandedKeys(expandedKeys);
+  }
 
   let state = useTreeState({
     ...props,
@@ -233,10 +353,26 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     disabledBehavior
   });
 
+  // useSelectableList is not aware of expandedKeys, so create a new ListKeyboardDelegate which will handle that
+  let keyboardDelegate = useMemo(() =>
+    new ListKeyboardDelegate({
+      collection: state.collection,
+      collator,
+      ref,
+      disabledKeys: state.selectionManager.disabledKeys,
+      disabledBehavior: state.selectionManager.disabledBehavior,
+      direction,
+      layoutDelegate,
+      expandedKeys
+    }),
+    [state.collection, collator, ref, state.selectionManager.disabledKeys, state.selectionManager.disabledBehavior, direction, layoutDelegate, expandedKeys]
+  );
+
   let {gridProps} = useTree({
     ...props,
     isVirtualized,
-    layoutDelegate
+    layoutDelegate,
+    keyboardDelegate
   }, state, ref);
 
   let dragState: DraggableCollectionState | undefined = undefined;
@@ -268,17 +404,6 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     });
     let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(state.collection, ref, {direction});
     treeDropTargetDelegate.setup(dropTargetDelegate, state, direction);
-
-    let keyboardDelegate =
-      new ListKeyboardDelegate({
-        collection: state.collection,
-        collator,
-        ref,
-        disabledKeys: state.selectionManager.disabledKeys,
-        disabledBehavior: state.selectionManager.disabledBehavior,
-        direction,
-        layoutDelegate
-      });
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
       {
         keyboardDelegate,
@@ -288,7 +413,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
           if (e.target.type === 'item') {
             let key = e.target.key;
             let item = state.collection.getItem(key);
-            let isExpanded = expandedKeys !== 'all' && expandedKeys.has(key);
+            let isExpanded = expandedKeys.has(key);
             if (item && item.hasChildNodes && (!isExpanded || dragAndDropHooks?.isVirtualDragging?.())) {
               state.toggleKey(key);
             }
@@ -352,8 +477,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   };
 
   let renderProps = useRenderProps({
-    className: props.className,
-    style: props.style,
+    ...props,
+    children: undefined,
     defaultClassName: 'react-aria-Tree',
     values: renderValues
   });
@@ -364,9 +489,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     let {isEmpty, ...values} = renderValues;
     let content = props.renderEmptyState({...values});
     let treeGridRowProps = {
-      'aria-level': 1,
-      'aria-posinset': 1,
-      'aria-setsize': 1
+      'aria-level': 1
     };
 
     emptyState = (
@@ -383,7 +506,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   return (
     <>
       <FocusScope>
-        <div
+        <dom.div
           {...mergeProps(DOMProps, renderProps, gridProps, focusProps, droppableCollection?.collectionProps)}
           ref={ref}
           slot={props.slot || undefined}
@@ -400,14 +523,16 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
               [DropIndicatorContext, {render: TreeDropIndicatorWrapper}]
             ]}>
             {hasDropHooks && <RootDropIndicator />}
-            <CollectionRoot
-              collection={state.collection}
-              persistedKeys={useDndPersistedKeys(state.selectionManager, dragAndDropHooks, dropState)}
-              scrollRef={ref}
-              renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState, dragState)} />
+            <SharedElementTransition>
+              <CollectionRoot
+                collection={state.collection}
+                persistedKeys={useDndPersistedKeys(state.selectionManager, dragAndDropHooks, dropState)}
+                scrollRef={ref}
+                renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+            </SharedElementTransition>
           </Provider>
           {emptyState}
-        </div>
+        </dom.div>
       </FocusScope>
       {dragPreview}
     </>
@@ -446,9 +571,16 @@ export interface TreeItemContentRenderProps extends TreeItemRenderProps {}
 
 // The TreeItemContent is the one that accepts RenderProps because we would get much more complicated logic in TreeItem otherwise since we'd
 // need to do a bunch of check to figure out what is the Content and what are the actual collection elements (aka child rows) of the TreeItem
-export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRenderProps>, 'children'> {}
+export interface TreeItemContentProps {
+  /** The children of the component. A function may be provided to alter the children based on component state. */
+  children: ChildrenOrFunction<TreeItemContentRenderProps>
+}
 
-export const TreeItemContent = /*#__PURE__*/ createLeafComponent('content', function TreeItemContent(props: TreeItemContentProps) {
+class TreeContentNode extends CollectionNode<any> {
+  static readonly type = 'content';
+}
+
+export const TreeItemContent = /*#__PURE__*/ createLeafComponent(TreeContentNode, function TreeItemContent(props: TreeItemContentProps) {
   let values = useContext(TreeItemContentContext)!;
   let renderProps = useRenderProps({
     children: props.children,
@@ -464,6 +596,11 @@ export const TreeItemContent = /*#__PURE__*/ createLeafComponent('content', func
 export const TreeItemContentContext = createContext<TreeItemContentRenderProps | null>(null);
 
 export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Pick<AriaTreeItemOptions, 'hasChildItems'>, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-TreeItem'
+   */
+  className?: ClassNameOrFunction<TreeItemRenderProps>,
   /** The unique id of the tree row. */
   id?: Key,
   /** The object value that this tree item represents. When using dynamic collections, this is set automatically. */
@@ -483,10 +620,14 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
   onAction?: () => void
 }
 
+class TreeItemNode extends CollectionNode<any> {
+  static readonly type = 'item';
+}
+
 /**
  * A TreeItem represents an individual item in a Tree.
  */
-export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
+export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
   let state = useContext(TreeStateContext)!;
   ref = useObjectRef<HTMLDivElement>(ref);
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
@@ -498,7 +639,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
     shouldSelectOnPressUp: !!dragState
   }, state, ref);
   let isExpanded = rowProps['aria-expanded'] === true;
-  let hasChildItems = props.hasChildItems || [...state.collection.getChildren!(item.key)]?.length > 1;;
+  let hasChildItems = props.hasChildItems || [...state.collection.getChildren!(item.key)]?.length > 1;
   let level = rowProps['aria-level'] || 1;
 
   let {hoverProps, isHovered} = useHover({
@@ -616,28 +757,28 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   return (
     <>
       {dropIndicator && !dropIndicator.isHidden && (
-        <div
-          role="row"
-          aria-level={rowProps['aria-level']}
-          aria-expanded={rowProps['aria-expanded']}
-          aria-label={dropIndicator.dropIndicatorProps['aria-label']}>
-          <div role="gridcell" aria-colindex={1} style={{display: 'contents'}}>
-            <div role="button" {...visuallyHiddenProps} {...dropIndicator.dropIndicatorProps} ref={dropIndicatorRef} />
-            {rowProps['aria-expanded'] != null ? (
-              // Button to allow touch screen reader users to expand the item while dragging.
-              <div
-                role="button"
-                {...visuallyHiddenProps}
-                id={activateButtonId}
-                aria-label={expandButtonProps['aria-label']}
-                aria-labelledby={`${activateButtonId} ${rowProps.id}`}
-                tabIndex={-1}
-                ref={activateButtonRef} />
-            ) : null}
-          </div>
-        </div>
-      )}
       <div
+        role="row"
+        aria-level={rowProps['aria-level']}
+        aria-expanded={rowProps['aria-expanded']}
+        aria-label={dropIndicator.dropIndicatorProps['aria-label']}>
+        <div role="gridcell" aria-colindex={1} style={{display: 'contents'}}>
+          <div role="button" {...visuallyHiddenProps} {...dropIndicator.dropIndicatorProps} ref={dropIndicatorRef} />
+          {rowProps['aria-expanded'] != null ? (
+            // Button to allow touch screen reader users to expand the item while dragging.
+            <div
+              role="button"
+              {...visuallyHiddenProps}
+              id={activateButtonId}
+              aria-label={expandButtonProps['aria-label']}
+              aria-labelledby={`${activateButtonId} ${rowProps.id}`}
+              tabIndex={-1}
+              ref={activateButtonRef} />
+          ) : null}
+        </div>
+      </div>
+    )}
+      <dom.div
         {...mergeProps(
           DOMProps,
           rowProps,
@@ -648,7 +789,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
         )}
         {...renderProps}
         ref={ref}
-        // TODO: missing selectionBehavior, hasAction and allowsSelection data attribute equivalents (available in renderProps). Do we want those?
+      // TODO: missing selectionBehavior, hasAction and allowsSelection data attribute equivalents (available in renderProps). Do we want those?
         data-expanded={(hasChildItems && isExpanded) || undefined}
         data-has-child-items={hasChildItems || undefined}
         data-level={level}
@@ -670,8 +811,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
                   selection: checkboxProps
                 }
               }],
-              // TODO: support description in the tree row
-              // TODO: don't think I need to pass isExpanded to the button here since it can be sourced from the renderProps? Might be worthwhile passing it down?
+            // TODO: support description in the tree row
+            // TODO: don't think I need to pass isExpanded to the button here since it can be sourced from the renderProps? Might be worthwhile passing it down?
               [ButtonContext, {
                 slots: {
                   [DEFAULT_SLOT]: {},
@@ -690,17 +831,18 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
               }],
               [TreeItemContentContext, {
                 ...renderPropValues
-              }]
+              }],
+            [SelectionIndicatorContext, {isSelected: states.isSelected}]
             ]}>
             {children}
           </Provider>
         </div>
-      </div>
+      </dom.div>
     </>
   );
 });
 
-export interface UNSTABLE_TreeLoadingIndicatorRenderProps {
+export interface TreeLoadMoreItemRenderProps {
   /**
    * What level the tree item has within the tree.
    * @selector [data-level]
@@ -708,23 +850,51 @@ export interface UNSTABLE_TreeLoadingIndicatorRenderProps {
   level: number
 }
 
-export interface TreeLoaderProps extends RenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps>, StyleRenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps> {}
+export interface TreeLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<TreeLoadMoreItemRenderProps> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-TreeLoadMoreItem'
+   */
+  className?: ClassNameOrFunction<TreeLoadMoreItemRenderProps>,
+  /**
+   * The load more spinner to render when loading additional items.
+   */
+  children?: ChildrenOrFunction<TreeLoadMoreItemRenderProps>,
+  /**
+   * Whether or not the loading spinner should be rendered or not.
+   */
+  isLoading?: boolean
+}
 
-export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const TreeLoadMoreItem = createLeafComponent(LoaderNode, function TreeLoadingSentinel<T extends object>(props: TreeLoadMoreItemProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+  let {isVirtualized} = useContext(CollectionRendererContext);
   let state = useContext(TreeStateContext)!;
-  // This loader row is is non-interactable, but we want the same aria props calculated as a typical row
-  // @ts-ignore
-  let {rowProps} = useTreeItem({node: item}, state, ref);
+  let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
+  let sentinelRef = useRef(null);
+  let memoedLoadMoreProps = useMemo(() => ({
+    onLoadMore,
+    // this collection will update anytime a row is expanded/collapsed becaused the flattenedRows will change.
+    // This means onLoadMore will trigger but that might be ok cause the user should have logic to handle multiple loadMore calls
+    collection: state?.collection,
+    sentinelRef,
+    scrollOffset
+  }), [onLoadMore, scrollOffset, state?.collection]);
+  useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+
+  ref = useObjectRef<HTMLDivElement>(ref);
+  let {rowProps, gridCellProps} = useTreeItem({node: item}, state, ref);
   let level = rowProps['aria-level'] || 1;
 
+  // For now don't include aria-posinset and aria-setsize on loader since they aren't keyboard focusable
+  // Arguably shouldn't include them ever since it might be confusing to the user to include the loaders as part of the
+  // item count
   let ariaProps = {
-    'aria-level': rowProps['aria-level'],
-    'aria-posinset': rowProps['aria-posinset'],
-    'aria-setsize': rowProps['aria-setsize']
+    role: 'row',
+    'aria-level': rowProps['aria-level']
   };
 
   let renderProps = useRenderProps({
-    ...props,
+    ...otherProps,
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-TreeLoader',
@@ -732,49 +902,53 @@ export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', funct
       level
     }
   });
+  let style = {};
+
+  if (isVirtualized) {
+    style = {display: 'contents'};
+  }
 
   return (
     <>
-      <div
-        role="row"
-        ref={ref}
-        {...mergeProps(filterDOMProps(props as any), ariaProps)}
-        {...renderProps}
-        data-level={level}>
-        <div role="gridcell" aria-colindex={1}>
-          {renderProps.children}
-        </div>
+      {/* Alway render the sentinel. For now onus is on the user for styling when using flex + gap (this would introduce a gap even though it doesn't take room) */}
+      {/* @ts-ignore - compatibility with React < 19 */}
+      <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
+        <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
       </div>
+      {isLoading && renderProps.children && (
+        <dom.div
+          ref={ref}
+          {...mergeProps(filterDOMProps(props as any), ariaProps)}
+          {...renderProps}
+          data-level={level}>
+          <div {...gridCellProps} style={style}>
+            {renderProps.children}
+          </div>
+        </dom.div>
+      )}
     </>
   );
 });
 
-function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
-  if (!expanded) {
-    return new Set<Key>();
-  }
-
-  return expanded === 'all'
-    ? 'all'
-    : new Set(expanded);
-}
 interface TreeGridCollectionOptions {
   expandedKeys: Set<Key>
 }
 
 interface FlattenedTree<T> {
-  flattenedRows: Node<T>[],
-  keyMap: Map<Key, CollectionNode<T>>
+  keyMap: Map<Key, CollectionNode<T>>,
+  itemCount: number
 }
 
-function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionOptions): FlattenedTree<T> {
+function generateKeyMap<T>(collection: TreeCollection<T>, opts: TreeGridCollectionOptions): FlattenedTree<T> {
   let {
     expandedKeys = new Set()
   } = opts;
   let keyMap: Map<Key, CollectionNode<T>> = new Map();
-  let flattenedRows: Node<T>[] = [];
+  // Need to count the items here because BaseCollection will return the full item count regardless if items are hidden via collapsed rows
+  let itemCount = 0;
+  let parentLookup: Map<Key, boolean> = new Map();
 
-  let visitNode = (node: Node<T>) => {
+  let visitNode = (node: Node<T>, isInSection: boolean) => {
     if (node.type === 'item' || node.type === 'loader') {
       let parentKey = node?.parentKey;
       let clone = {...node};
@@ -784,6 +958,12 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
         let hasContentNode = [...collection.getChildren(parentKey)][0].type !== 'item';
         if (hasContentNode) {
           clone.index = node?.index != null ? node?.index - 1 : 0;
+        }
+
+        if (isInSection) {
+          if (node.type === 'item') {
+            clone.level = node?.level != null ? node?.level - 1 : 0;
+          }
         }
 
         // For loader nodes that have a parent (aka non-root level loaders), these need their levels incremented by 1 for parity with their sibiling rows
@@ -797,26 +977,31 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
         keyMap.set(node.key, node as CollectionNode<T>);
       }
 
-      if (node.level === 0 || (parentKey != null && expandedKeys.has(parentKey) && flattenedRows.find(row => row.key === parentKey))) {
-        // Grab the modified node from the key map so our flattened list and modified key map point to the same nodes
-        flattenedRows.push(keyMap.get(node.key) || node);
+      // Grab the modified node from the key map so our flattened list and modified key map point to the same nodes
+      let modifiedNode = keyMap.get(node.key) || node;
+      if (modifiedNode.level === 0 || (modifiedNode.parentKey != null && expandedKeys.has(modifiedNode.parentKey) && parentLookup.get(modifiedNode.parentKey))) {
+        if (modifiedNode.type === 'item') {
+          itemCount++;
+        }
+
+        parentLookup.set(modifiedNode.key, true);
       }
     } else if (node.type !== null) {
       keyMap.set(node.key, node as CollectionNode<T>);
     }
 
     for (let child of collection.getChildren(node.key)) {
-      visitNode(child);
+      visitNode(child, isInSection);
     }
   };
 
   for (let node of collection) {
-    visitNode(node);
+    visitNode(node, node.type === 'section');
   }
 
   return {
-    flattenedRows,
-    keyMap
+    keyMap,
+    itemCount
   };
 }
 
@@ -876,7 +1061,7 @@ function TreeDropIndicator(props: TreeDropIndicatorProps, ref: ForwardedRef<HTML
   });
 
   return (
-    <div
+    <dom.div
       {...renderProps}
       role="row"
       aria-level={level}
@@ -886,7 +1071,7 @@ function TreeDropIndicator(props: TreeDropIndicatorProps, ref: ForwardedRef<HTML
         <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={buttonRef} />
         {renderProps.children}
       </div>
-    </div>
+    </dom.div>
   );
 }
 
@@ -912,4 +1097,66 @@ function RootDropIndicator() {
       </div>
     </div>
   );
+}
+
+export interface GridListSectionProps<T> extends SectionProps<T>, DOMRenderProps<'section', undefined>  {}
+
+/**
+ * A TreeSection represents a section within a Tree.
+ */
+export const TreeSection = /*#__PURE__*/ createBranchComponent(SectionNode, <T extends object>(props: GridListSectionProps<T>, ref: ForwardedRef<HTMLElement>, item: Node<T>) => {
+  let state = useContext(TreeStateContext)!;
+  let {CollectionBranch} = useContext(CollectionRendererContext);
+  let headingRef = useRef(null);
+  ref = useObjectRef<HTMLElement>(ref);
+  let {rowHeaderProps, rowProps, rowGroupProps} = useGridListSection({
+    'aria-label': props['aria-label'] ?? undefined
+  }, state, ref);
+  let renderProps = useRenderProps({
+    ...props,
+    id: undefined,
+    children: undefined,
+    defaultClassName: 'react-aria-TreeSection',
+    values: undefined
+  });
+
+  let DOMProps = filterDOMProps(props as any, {global: true});
+  delete DOMProps.id;
+
+  return (
+    <dom.section
+      {...mergeProps(DOMProps, renderProps, rowGroupProps)}
+      ref={ref}>
+      <Provider
+        values={[
+          [GridListHeaderContext, {...rowProps, ref: headingRef}],
+          [GridListHeaderInnerContext, {...rowHeaderProps}]
+        ]}>
+        <CollectionBranch
+          collection={state.collection}
+          parent={item} />
+      </Provider>
+    </dom.section>
+  );
+});
+
+export const TreeHeader = (props: GridListHeaderProps): ReactNode => {
+  return (
+    <GridListHeader className="react-aria-TreeHeader" {...props}>
+      {props.children}
+    </GridListHeader>
+  );
+};
+
+function areSetsEqual<T>(a: Set<T>, b: Set<T>) {
+  if (a.size !== b.size) {
+    return false;
+  }
+
+  for (let item of a) {
+    if (!b.has(item)) {
+      return false;
+    }
+  }
+  return true;
 }

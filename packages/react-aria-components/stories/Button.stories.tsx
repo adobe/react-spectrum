@@ -11,26 +11,38 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, ProgressBar, Text} from 'react-aria-components';
+import {Button, ProgressBar, Text, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {mergeProps} from '@react-aria/utils';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useEffect, useRef, useState} from 'react';
 import * as styles from './button-ripple.css';
 import * as styles2 from './button-pending.css';
+import './styles.css';
 
 export default {
-  title: 'React Aria Components/Button'
-};
+  title: 'React Aria Components/Button',
+  component: Button
+} as Meta<typeof Button>;
 
-export const ButtonExample = () => {
-  return (
+export type ButtonStory = StoryObj<typeof Button>;
+
+export const ButtonExample: ButtonStory = {
+  render: () => (
     <Button data-testid="button-example" onPress={action('onPress')} onClick={action('onClick')}>Press me</Button>
-  );
+  )
 };
 
-export const PendingButton = {
+export const PendingButton: ButtonStory = {
   render: (args) => <PendingButtonExample {...args} />,
   args: {
     children: 'Press me'
+  }
+};
+
+export const PendingButtonTooltip: ButtonStory = {
+  render: (args) => <PendingButtonTooltipExample {...args} />,
+  args: {
+    children: 'Press me, then hover again to see tooltip'
   }
 };
 
@@ -79,10 +91,29 @@ function PendingButtonExample(props) {
   );
 }
 
-export const RippleButtonExample = () => {
+function PendingButtonTooltipExample(props) {
   return (
-    <RippleButton data-testid="button-example">Press me</RippleButton>
+    <TooltipTrigger>
+      <PendingButtonExample {...props} />
+      <Tooltip
+        offset={6}
+        style={{
+          background: 'Canvas',
+          color: 'CanvasText',
+          border: '1px solid gray',
+          padding: 5,
+          borderRadius: 4
+        }}>
+        Tooltip should appear on hover
+      </Tooltip>
+    </TooltipTrigger>
   );
+}
+
+export const RippleButtonExample: ButtonStory = {
+  render: () => (
+    <RippleButton data-testid="button-example">Press me</RippleButton>
+  )
 };
 
 function RippleButton(props) {
@@ -148,7 +179,7 @@ function ButtonPerformanceExample() {
   );
 }
 
-export const ButtonPerformance = {
+export const ButtonPerformance: ButtonStory = {
   render: (args) => <ButtonPerformanceExample {...args} />,
   parameters: {
     description: {
@@ -156,3 +187,11 @@ export const ButtonPerformance = {
     }
   }
 };
+
+export const ButtonRender: ButtonStory = {
+  render: (args) => <Button {...args} render={props => <CustomButton {...props} />}>Testing</Button>
+};
+
+function CustomButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return <button {...props} style={{background: 'red'}} />;
+}

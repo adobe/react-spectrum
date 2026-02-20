@@ -12,19 +12,34 @@
 
 import {AriaProgressBarProps, useProgressBar} from 'react-aria';
 import {clamp} from '@react-stately/utils';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot
+} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
-export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'label'>, RenderProps<ProgressBarRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
+export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'label'>, RenderProps<ProgressBarRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-ProgressBar'
+   */
+  className?: ClassNameOrFunction<ProgressBarRenderProps>
+}
 
 export interface ProgressBarRenderProps {
   /**
    * The value as a percentage between the minimum and maximum.
    */
-  percentage?: number,
+  percentage: number | undefined,
   /**
    * A formatted version of the value.
    * @selector [aria-valuetext]
@@ -77,10 +92,10 @@ export const ProgressBar = forwardRef(function ProgressBar(props: ProgressBarPro
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <div {...mergeProps(DOMProps, renderProps, progressBarProps)} ref={ref} slot={props.slot || undefined}>
+    <dom.div {...mergeProps(DOMProps, renderProps, progressBarProps)} ref={ref} slot={props.slot || undefined}>
       <LabelContext.Provider value={{...labelProps, ref: labelRef, elementType: 'span'}}>
         {renderProps.children}
       </LabelContext.Provider>
-    </div>
+    </dom.div>
   );
 });

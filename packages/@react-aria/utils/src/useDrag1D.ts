@@ -12,6 +12,7 @@
 
  /* eslint-disable rulesdir/pure-render */
 
+import {getEventTarget, nodeContains} from './shadowdom/DOMFunctions';
 import {getOffset} from './getOffset';
 import {Orientation} from '@react-types/shared';
 import React, {HTMLAttributes, MutableRefObject, useRef} from 'react';
@@ -80,7 +81,7 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
   };
 
   let onMouseUp = (e: MouseEvent) => {
-    const target = e.target as HTMLElement;
+    let target = getEventTarget(e) as HTMLElement;
     dragging.current = false;
     let nextOffset = getNextOffset(e);
     if (handlers.current.onDrag) {
@@ -99,7 +100,7 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
     const target = e.currentTarget;
     // If we're already handling dragging on a descendant with useDrag1D, then
     // we don't want to handle the drag motion on this target as well.
-    if (draggingElements.some(elt => target.contains(elt))) {
+    if (draggingElements.some(elt => nodeContains(target, elt))) {
       return;
     }
     draggingElements.push(target);

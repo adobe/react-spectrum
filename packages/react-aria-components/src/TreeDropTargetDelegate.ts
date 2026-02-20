@@ -84,11 +84,15 @@ export class TreeDropTargetDelegate<T> {
     if (target.dropPosition === 'before') {
       let keyBefore = this.state!.collection.getKeyBefore(target.key);
       if (keyBefore != null) {
-        target = {
+        let convertedTarget = {
           type: 'item',
           key: keyBefore,
           dropPosition: 'after'
         } as const;
+
+        if (isValidDropTarget(convertedTarget)) {
+          target = convertedTarget;
+        }
       }
     }
 

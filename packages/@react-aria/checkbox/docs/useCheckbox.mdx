@@ -85,10 +85,10 @@ function Checkbox(props) {
   let {children} = props;
   let state = useToggleState(props);
   let ref = React.useRef(null);
-  let {inputProps} = useCheckbox(props, state, ref);
+  let {inputProps, labelProps} = useCheckbox(props, state, ref);
 
   return (
-    <label style={{display: 'block'}}>
+    <label {...labelProps} style={{display: 'block'}}>
       <input {...inputProps} ref={ref} />
       {children}
     </label>
@@ -120,12 +120,12 @@ import {mergeProps} from '@react-aria/utils';
 function Checkbox(props) {
   let state = useToggleState(props);
   let ref = React.useRef(null);
-  let {inputProps} = useCheckbox(props, state, ref);
+  let {inputProps, labelProps} = useCheckbox(props, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   let isSelected = state.isSelected && !props.isIndeterminate;
 
   return (
-    <label style={{display: 'flex', alignItems: 'center', opacity: props.isDisabled ? 0.4 : 1}}>
+    <label {...labelProps} style={{display: 'flex', alignItems: 'center', opacity: props.isDisabled ? 0.4 : 1}}>
       <VisuallyHidden>
         <input {...mergeProps(inputProps, focusProps)} ref={ref} />
       </VisuallyHidden>

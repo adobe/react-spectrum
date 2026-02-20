@@ -13,9 +13,10 @@
 import {ariaHideOutside, keepVisible} from './ariaHideOutside';
 import {AriaPositionProps, useOverlayPosition} from './useOverlayPosition';
 import {DOMAttributes, RefObject} from '@react-types/shared';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import {PlacementAxis} from '@react-types/overlays';
+import {useEffect} from 'react';
 import {useOverlay} from './useOverlay';
 import {usePreventScroll} from './usePreventScroll';
 
@@ -28,6 +29,8 @@ export interface AriaPopoverProps extends Omit<AriaPositionProps, 'isOpen' | 'on
    * The ref for the popover element.
    */
   popoverRef: RefObject<Element | null>,
+  /** A ref for the popover arrow element. */
+  arrowRef?: RefObject<Element | null>,
   /**
    * An optional ref for a group of popovers, e.g. submenus.
    * When provided, this element is used to detect outside interactions
@@ -69,7 +72,9 @@ export interface PopoverAria {
   /** Props to apply to the underlay element, if any. */
   underlayProps: DOMAttributes,
   /** Placement of the popover with respect to the trigger. */
-  placement: PlacementAxis | null
+  placement: PlacementAxis | null,
+  /** The origin of the target in the overlay's coordinate system. Useful for animations. */
+  triggerAnchorPoint: {x: number, y: number} | null
 }
 
 /**
@@ -101,7 +106,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     groupRef ?? popoverRef
   );
 
-  let {overlayProps: positionProps, arrowProps, placement} = useOverlayPosition({
+  let {overlayProps: positionProps, arrowProps, placement, triggerAnchorPoint: origin} = useOverlayPosition({
     ...otherProps,
     targetRef: triggerRef,
     overlayRef: popoverRef,
@@ -113,12 +118,12 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     isDisabled: isNonModal || !state.isOpen
   });
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (state.isOpen && popoverRef.current) {
       if (isNonModal) {
         return keepVisible(groupRef?.current ?? popoverRef.current);
       } else {
-        return ariaHideOutside([groupRef?.current ?? popoverRef.current]);
+        return ariaHideOutside([groupRef?.current ?? popoverRef.current], {shouldUseInert: true});
       }
     }
   }, [isNonModal, state.isOpen, popoverRef, groupRef]);
@@ -127,6 +132,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     popoverProps: mergeProps(overlayProps, positionProps),
     arrowProps,
     underlayProps,
-    placement
+    placement,
+    triggerAnchorPoint: origin
   };
 }

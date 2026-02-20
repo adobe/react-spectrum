@@ -19,6 +19,7 @@ import {
   ButtonRenderProps,
   ContextValue,
   InputContext,
+  InputProps,
   useContextProps
 } from 'react-aria-components';
 import {baseColor, space, style} from '../style' with {type: 'macro'};
@@ -28,8 +29,8 @@ import {createFocusableRef} from '@react-spectrum/utils';
 import Dash from '../ui-icons/Dash';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {filterDOMProps, mergeProps, mergeRefs} from '@react-aria/utils';
-import {FormContext} from './Form';
-import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {FormContext, useFormProps} from './Form';
+import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {pressScale} from './pressScale';
 import {TextFieldRef} from '@react-types/textfield';
 import {useButton, useFocusRing, useHover} from 'react-aria';
@@ -37,10 +38,11 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface NumberFieldProps extends
-  Omit<AriaNumberFieldProps, 'children' | 'className' | 'style'>,
+  Omit<AriaNumberFieldProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
   StyleProps,
   SpectrumLabelableProps,
-  HelpTextProps {
+  HelpTextProps,
+  Pick<InputProps, 'placeholder'> {
   /**
    * Whether to hide the increment and decrement buttons.
    * @default false
@@ -139,6 +141,7 @@ const stepperContainerStyles = style({
  */
 export const NumberField = forwardRef(function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, NumberFieldContext);
+  props = useFormProps(props);
   let {
     label,
     contextualHelp,
@@ -173,9 +176,9 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
     }
   }));
 
-
   return (
     <AriaNumberField
+      ref={domRef}
       isRequired={isRequired}
       {...numberFieldProps}
       style={UNSAFE_style}

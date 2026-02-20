@@ -16,7 +16,28 @@ html:active-view-transition-type(toast-add, toast-remove, toast-expand, toast-co
   }
 
   &::view-transition-group(toast-background) {
-    z-index: -1;
+    z-index: 0;
+    will-change: transform;
+  }
+
+  &::view-transition-group(.toast),
+  &::view-transition-group(toast-list-expanded),
+  &::view-transition-group(toast-list-collapsed) {
+    z-index: 1;
+    will-change: transform;
+  }
+
+  &::view-transition-group(toast-controls) {
+    z-index: 2;
+    will-change: transform;
+  }
+
+  &::view-transition-group(toast-content),
+  &::view-transition-group(toast-expand),
+  &::view-transition-group(toast-action),
+  &::view-transition-group(toast-close) {
+    z-index: 3;
+    will-change: transform;
   }
 
   &::view-transition-group(*) {
@@ -28,7 +49,7 @@ html.toast-add,
 html.toast-remove,
 html:active-view-transition-type(toast-add, toast-remove) {
   /* The new toast should slide in and out. With reduce motion enabled, it fades by default. */
-  @media (prefers-reduced-motion: no-preference) {
+  &:not(.reduceMotion) {
     &::view-transition-new(.toast):only-child {
       animation-name: slide-in;
     }
@@ -78,7 +99,7 @@ html:active-view-transition-type(toast-collapse) {
 html.toast-expand,
 html.toast-collapse,
 html:active-view-transition-type(toast-expand, toast-collapse) {
-  @media (prefers-reduced-motion: no-preference) {
+  &:not(.reduceMotion) {
     /* When expanding/collapsing, animate the components of the main toast individually. */
     .toast-content {
       view-transition-name: toast-content;
@@ -122,7 +143,7 @@ html:active-view-transition-type(toast-expand, toast-collapse) {
     }
   }
 
-  @media (prefers-reduced-motion) {
+  &.reduceMotion {
     /* Do not animate individual toasts in reduced motion. The whole list cross-fades instead. */
     .toast {
       view-transition-name: none !important;

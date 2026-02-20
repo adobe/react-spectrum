@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, Tag, TagGroup, TagList, UNSTABLE_TableLoadingSentinel, useDragAndDrop, useTableOptions, Virtualizer} from '../';
+import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, TableLoadMoreItem, Tag, TagGroup, TagList, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import React, {useMemo, useState} from 'react';
@@ -331,6 +331,40 @@ describe('Table', () => {
 
     for (let cell of getAllByRole('gridcell')) {
       expect(cell).toHaveAttribute('data-testid', 'cell');
+    }
+  });
+
+  it('should support custom render function', () => {
+    let {getByRole, getAllByRole} = renderTable({
+      tableProps: {render: props => <table {...props} data-custom="true" />},
+      tableHeaderProps: {render: props => <thead {...props} data-custom="true" />},
+      columnProps: {render: props => <th {...props} data-custom="true" />},
+      tableBodyProps: {render: props => <tbody {...props} data-custom="true" />},
+      rowProps: {render: props => <tr {...props} data-custom="true" />},
+      cellProps: {render: props => <td {...props} data-custom="true" />}
+    });
+    let table = getByRole('grid');
+    expect(table).toHaveAttribute('data-custom', 'true');
+
+    for (let row of getAllByRole('row').slice(1)) {
+      expect(row).toHaveAttribute('data-custom', 'true');
+    }
+
+    let rowGroups = getAllByRole('rowgroup');
+    expect(rowGroups).toHaveLength(2);
+    expect(rowGroups[0]).toHaveAttribute('data-custom', 'true');
+    expect(rowGroups[1]).toHaveAttribute('data-custom', 'true');
+
+    for (let cell of getAllByRole('columnheader')) {
+      expect(cell).toHaveAttribute('data-custom', 'true');
+    }
+
+    for (let cell of getAllByRole('rowheader')) {
+      expect(cell).toHaveAttribute('data-custom', 'true');
+    }
+
+    for (let cell of getAllByRole('gridcell')) {
+      expect(cell).toHaveAttribute('data-custom', 'true');
     }
   });
 
@@ -858,6 +892,104 @@ describe('Table', () => {
     expect(cells[0]).toHaveTextContent('Foo (focused)');
   });
 
+  it('should support column index in render props', () => {
+    let {getAllByRole} = render(
+      <Table aria-label="Search results">
+        <TableHeader>
+          <Column isRowHeader>Name</Column>
+          <Column isRowHeader>Type</Column>
+          <Column isRowHeader>Price</Column>
+          <Column isRowHeader>Total</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>
+              {({columnIndex}) => `cell index: ${columnIndex}`}
+            </Cell>
+            <Cell>
+              {({columnIndex}) => `cell index: ${columnIndex}`}
+            </Cell>
+            <Cell>
+              {({columnIndex}) => `cell index: ${columnIndex}`}
+            </Cell>
+            <Cell>
+              {({columnIndex}) => `cell index: ${columnIndex}`}
+            </Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    );
+
+    let cells = getAllByRole('rowheader');
+    expect(cells[0]).toHaveTextContent('cell index: 0');
+    expect(cells[1]).toHaveTextContent('cell index: 1');
+    expect(cells[2]).toHaveTextContent('cell index: 2');
+    expect(cells[3]).toHaveTextContent('cell index: 3');
+    expect(cells[0]).toHaveAttribute('data-column-index', '0');
+    expect(cells[1]).toHaveAttribute('data-column-index', '1');
+    expect(cells[2]).toHaveAttribute('data-column-index', '2');
+    expect(cells[3]).toHaveAttribute('data-column-index', '3');
+  });
+
+  it('should support colspan with cell index', () => {
+    let {getAllByRole} = render(
+      <Table aria-label="Search results">
+        <TableHeader>
+          <Column isRowHeader>Name</Column>
+          <Column isRowHeader>Type</Column>
+          <Column isRowHeader>Price</Column>
+          <Column isRowHeader>Total</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell colSpan={2}>
+              {({columnIndex}) => `cell index: ${columnIndex}`}
+            </Cell>
+            <Cell>
+              {({columnIndex}) => `cell index: ${columnIndex}`}
+            </Cell>
+            <Cell>
+              {({columnIndex}) => `cell index: ${columnIndex}`}
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              {({columnIndex}) => `cell index: ${columnIndex}`}
+            </Cell>
+            <Cell>
+              {({columnIndex}) => `cell index: ${columnIndex}`}
+            </Cell>
+            <Cell>
+              {({columnIndex}) => `cell index: ${columnIndex}`}
+            </Cell>
+            <Cell>
+              {({columnIndex}) => `cell index: ${columnIndex}`}
+            </Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    );
+
+    let cells = getAllByRole('rowheader');
+    // first row
+    expect(cells[0]).toHaveTextContent('cell index: 0');
+    expect(cells[1]).toHaveTextContent('cell index: 2');
+    expect(cells[2]).toHaveTextContent('cell index: 3');
+    expect(cells[0]).toHaveAttribute('data-column-index', '0');
+    expect(cells[1]).toHaveAttribute('data-column-index', '2');
+    expect(cells[2]).toHaveAttribute('data-column-index', '3');
+
+    // second row
+    expect(cells[3]).toHaveTextContent('cell index: 0');
+    expect(cells[4]).toHaveTextContent('cell index: 1');
+    expect(cells[5]).toHaveTextContent('cell index: 2');
+    expect(cells[6]).toHaveTextContent('cell index: 3');
+    expect(cells[3]).toHaveAttribute('data-column-index', '0');
+    expect(cells[4]).toHaveAttribute('data-column-index', '1');
+    expect(cells[5]).toHaveAttribute('data-column-index', '2');
+    expect(cells[6]).toHaveAttribute('data-column-index', '3');
+  });
+
   it('should support columnHeader typeahead', async () => {
     let {getAllByRole} = render(
       <Table aria-label="Files">
@@ -1310,6 +1442,56 @@ describe('Table', () => {
         expect(checkbox).toBeChecked();
       }
     });
+
+    it('support drop target keyboard navigation', async () => {
+      const DndTableExample = stories.DndTableExample;
+      render(<DndTableExample />);
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Adobe Photoshop and Adobe XD');
+      await user.tab();
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+
+      const labels = ['Pictures', 'Adobe Fresco', 'Apps', 'Adobe Illustrator', 'Adobe Lightroom', 'Adobe Dreamweaver'];
+
+      for (let i = 0; i <= labels.length; i++) {
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+        if (i === 0) {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert before ${labels[i]}`);
+        } else if (i === labels.length) {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert after ${labels[i - 1]}`);
+        } else {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert between ${labels[i - 1]} and ${labels[i]}`);
+        }
+      }
+
+      await user.keyboard('{Home}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+
+      for (let i = labels.length; i >= 0; i--) {
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+
+        if (i === 0) {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert before ${labels[i]}`);
+        } else if (i === labels.length) {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert after ${labels[i - 1]}`);
+        } else {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert between ${labels[i - 1]} and ${labels[i]}`);
+        }
+      }
+
+      await user.keyboard('{End}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Adobe Dreamweaver');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+      await user.keyboard('{Escape}');
+      act(() => jest.runAllTimers());
+    });
   });
 
   describe('column resizing', () => {
@@ -1633,7 +1815,7 @@ describe('Table', () => {
   });
 
   describe('load more spinner', () => {
-    let offsetHeight, scrollHeight;
+    let clientHeight, scrollHeight;
     let DndTable = stories.DndTable;
     let initialItems = [
       {id: '1', type: 'file', name: 'Adobe Photoshop'},
@@ -1641,7 +1823,7 @@ describe('Table', () => {
     ];
     beforeAll(function () {
       scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 200);
-      offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function () {
+      clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(function () {
         if (this.getAttribute('role') === 'grid') {
           return 200;
         }
@@ -1651,7 +1833,7 @@ describe('Table', () => {
     });
 
     afterAll(function () {
-      offsetHeight.mockReset();
+      clientHeight.mockReset();
       scrollHeight.mockReset();
     });
 
@@ -1873,9 +2055,9 @@ describe('Table', () => {
                   </MyRow>
                 )}
               </Collection>
-              <UNSTABLE_TableLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+              <TableLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
                 <div>spinner</div>
-              </UNSTABLE_TableLoadingSentinel>
+              </TableLoadMoreItem>
             </TableBody>
           </Table>
         </ResizableTableContainer>
@@ -2074,9 +2256,9 @@ describe('Table', () => {
                     </Row>
                   )}
                 </Collection>
-                <UNSTABLE_TableLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
+                <TableLoadMoreItem isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
                   <div>spinner</div>
-                </UNSTABLE_TableLoadingSentinel>
+                </TableLoadMoreItem>
               </TableBody>
             </Table>
           </Virtualizer>
@@ -2090,7 +2272,7 @@ describe('Table', () => {
         expect(rows).toHaveLength(7);
         let loaderRow = rows[6];
         expect(loaderRow).toHaveTextContent('spinner');
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '52');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         let loaderParentStyles = loaderRow.parentElement.style;
 
         // 50 items * 25px = 1250
@@ -2144,12 +2326,9 @@ describe('Table', () => {
         expect(rows).toHaveLength(1);
 
         let loaderRow = rows[0];
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '2');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         expect(loaderRow).toHaveTextContent('loading');
-        for (let [index, row] of rows.entries()) {
-          // the header row is the first row but isn't included in "rows" so add +2
-          expect(row).toHaveAttribute('aria-rowindex', `${index + 2}`);
-        }
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
 
         tree.rerender(<VirtualizedTableLoad items={items} />);
         rows = tableTester.rows;
@@ -2163,7 +2342,7 @@ describe('Table', () => {
         rows = tableTester.rows;
         expect(rows).toHaveLength(7);
         loaderRow = rows[6];
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '52');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         for (let [index, row] of rows.entries()) {
           if (index === 6) {
             continue;
@@ -2649,7 +2828,7 @@ describe('Table', () => {
       let {getByRole} = renderTable({rowProps: {onAction, onPressStart, onPressEnd, onPress, onClick}});
       let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
       await tableTester.triggerRowAction({row: 1, interactionType});
-  
+
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onPressStart).toHaveBeenCalledTimes(1);
       expect(onPressEnd).toHaveBeenCalledTimes(1);

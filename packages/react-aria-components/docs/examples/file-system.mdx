@@ -82,7 +82,7 @@ const filesystem = [
 
 ```tsx example standalone
 import {Button, Collection, Tree, TreeItem, TreeItemContent} from 'react-aria-components';
-import ChevronIcon from '@spectrum-icons/ui/ChevronRightMedium';
+import {ChevronRight} from 'lucide-react';
 
 function FileSystemExample() {
   return (
@@ -104,7 +104,7 @@ function FileSystemExample() {
                       {hasChildItems ? <Button slot="chevron" className={`shrink-0 w-8 h-8
                         group-data-[expanded=true]:rotate-90 transition-rotate duration-200
                         inline-flex items-center justify-center bg-transparent border-0 me-0
-                        cursor-default outline-hidden text-white`}><ChevronIcon /></Button> : <div className="shrink-0 w-8 h-8" />}
+                        cursor-default outline-hidden text-white`}><ChevronRight className="w-4 h-4" /></Button> : <div className="shrink-0 w-8 h-8" />}
                       <div>{item.name}</div>
                     </div>
                   )}

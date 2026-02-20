@@ -12,14 +12,13 @@
 
 import {AriaTextFieldProps} from '@react-types/textfield';
 import {DOMAttributes, ValidationResult} from '@react-types/shared';
-import {filterDOMProps, getOwnerWindow, mergeProps, useFormReset} from '@react-aria/utils';
+import {filterDOMProps, getEventTarget, mergeProps, useFormReset} from '@react-aria/utils';
 import React, {
   ChangeEvent,
   HTMLAttributes,
   type JSX,
   LabelHTMLAttributes,
   RefObject,
-  useEffect,
   useState
 } from 'react';
 import {useControlledState} from '@react-stately/utils';
@@ -147,24 +146,6 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
   useFormReset(ref, props.defaultValue ?? initialValue, setValue);
   useFormValidation(props, validationState, ref);
 
-  useEffect(() => {
-    // This works around a React/Chrome bug that prevents textarea elements from validating when controlled.
-    // We prevent React from updating defaultValue (i.e. children) of textarea when `value` changes,
-    // which causes Chrome to skip validation. Only updating `value` is ok in our case since our
-    // textareas are always controlled. React is planning on removing this synchronization in a
-    // future major version.
-    // https://github.com/facebook/react/issues/19474
-    // https://github.com/facebook/react/issues/11896
-    if (ref.current instanceof getOwnerWindow(ref.current).HTMLTextAreaElement) {
-      let input = ref.current;
-      Object.defineProperty(input, 'defaultValue', {
-        get: () => input.value,
-        set: () => {},
-        configurable: true
-      });
-    }
-  }, [ref]);
-
   return {
     labelProps,
     inputProps: mergeProps(
@@ -182,7 +163,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         'aria-haspopup': props['aria-haspopup'],
         'aria-controls': props['aria-controls'],
         value,
-        onChange: (e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value),
+        onChange: (e: ChangeEvent<HTMLInputElement>) => setValue(getEventTarget(e).value),
         autoComplete: props.autoComplete,
         autoCapitalize: props.autoCapitalize,
         maxLength: props.maxLength,

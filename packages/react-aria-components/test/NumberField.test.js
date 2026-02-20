@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+jest.mock('@react-aria/live-announcer');
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {announce} from '@react-aria/live-announcer';
 import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -68,6 +70,12 @@ describe('NumberField', () => {
     let textbox = getByRole('textbox');
     expect(textbox.closest('.react-aria-NumberField')).toHaveAttribute('slot', 'test');
     expect(textbox).toHaveAttribute('aria-label', 'test');
+  });
+
+  it('should support custom render function', () => {
+    let {getByRole} = render(<TestNumberField render={props => <div {...props} data-custom="true" />} />);
+    let field = getByRole('textbox').closest('.react-aria-NumberField');
+    expect(field).toHaveAttribute('data-custom', 'true');
   });
 
   it('should support hover state', async () => {
@@ -135,6 +143,12 @@ describe('NumberField', () => {
     expect(input).toHaveValue('');
   });
 
+  it('should support disabled when having a form value', () => {
+    render(<TestNumberField isDisabled name="test" form="test" value={25} formatOptions={{style: 'currency', currency: 'USD'}} />);
+    let input = document.querySelector('input[name=test]');
+    expect(input).toBeDisabled();
+  });
+
   it('should render data- attributes only on the outer element', () => {
     let {getAllByTestId} = render(
       <TestNumberField data-testid="number-field" />
@@ -182,5 +196,58 @@ describe('NumberField', () => {
     await user.tab();
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(numberfield).not.toHaveAttribute('data-invalid');
+  });
+
+  it('should trigger onChange via programmatic click() on stepper buttons', () => {
+    const onChange = jest.fn();
+    const {container} = render(
+      <TestNumberField defaultValue={1024} onChange={onChange} />
+    );
+    act(() => {
+      container.querySelector('[slot=increment]').click();
+    });
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith(1025);
+    act(() => {
+      container.querySelector('[slot=decrement]').click();
+    });
+    expect(onChange).toHaveBeenCalledTimes(2);
+    expect(onChange).toHaveBeenCalledWith(1024);
+  });
+
+  it('supports onChange', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = render(<TestNumberField defaultValue={200} onChange={onChange} />);
+    let input = getByRole('textbox');
+    await user.tab();
+    await user.clear(input);
+    await user.keyboard('1024');
+    await user.keyboard('{Enter}');
+    expect(onChange).toHaveBeenCalledWith(1024);
+  });
+
+  it('should support pasting into a format', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = render(<TestNumberField defaultValue={200} onChange={onChange} formatOptions={{style: 'currency', currency: 'USD'}} />);
+    let input = getByRole('textbox');
+    await user.tab();
+    await user.clear(input);
+    await user.paste('1,024');
+    expect(input).toHaveValue('$1,024.00');
+    expect(announce).toHaveBeenCalledTimes(2);
+    expect(announce).toHaveBeenLastCalledWith('$1,024.00', 'assertive');
+    expect(onChange).toHaveBeenCalledWith(1024);
+  });
+
+  it('should not change the input value if the new value is not accepted', async () => {
+    let {getByRole} = render(<TestNumberField value={200} />);
+    let input = getByRole('textbox');
+    await user.tab();
+    await user.clear(input);
+    await user.paste('1024');
+    expect(input).toHaveValue('200');
+    expect(announce).toHaveBeenLastCalledWith('200', 'assertive');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('200');
   });
 });

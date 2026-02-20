@@ -27,8 +27,10 @@ npm set registry $registry
 
 cd starters/docs
 yarn config set npmRegistryServer $registry
+yarn config set nmHoistingLimits workspaces
 cd ../tailwind
 yarn config set npmRegistryServer $registry
+yarn config set nmHoistingLimits workspaces
 cd ../..
 
 # build prod docs with a public url of /reactspectrum/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
@@ -39,5 +41,7 @@ PUBLIC_URL=/reactspectrum/`git rev-parse HEAD~0`/verdaccio/docs make website-pro
 verdaccio_path=verdaccio_dist/`git rev-parse HEAD~0`/verdaccio/docs
 mkdir -p $verdaccio_path
 mv dist/production/docs/* $verdaccio_path
+
+echo "Available versions of react-aria-components:" && curl -s "$registry/react-aria-components" | jq -r '.versions | keys[]' 2>/dev/null || curl -s "$registry/react-aria-components" | grep -o '"version":"[^"]*"' | sed 's/"version":"//g' | sed 's/"//g' | sort -V
 
 netstat -tpln | awk -F'[[:space:]/:]+' '$5 == 4000 {print $(NF-2)}' | xargs kill

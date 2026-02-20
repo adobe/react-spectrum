@@ -16,5 +16,5 @@
     <path id="Path_14" data-name="Path 14" d="M5.823,11l1.189,1.19L1.962,17.2,0,18l.822-1.987Z" transform="translate(7 7)" fill="var(--anatomy-gray-700)"/>
     <path id="Path_15" data-name="Path 15" d="M11.977,13.16,12,10.144,16.146,6l1.135-.011a.726.726,0,0,0,.5-1.24L15.521,2.48,13.25.242a.723.723,0,0,0-1.234.505L12,1.854,7.853,6l-3.012.022a.723.723,0,0,0-.554,1.233h0l3.229,3.229,3.229,3.229a.721.721,0,0,0,1.231-.554Z" transform="translate(7 7)" fill="var(--anatomy-gray-700)"/>
   </g>
-  <text id="Text" transform="translate(32 20)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Pin</tspan></text>
+  <text id="Text" transform="translate(32 20)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Pin</tspan></text>
 </svg>

@@ -16,7 +16,6 @@ channel.on(DARK_MODE_EVENT_NAME, isDark => document.documentElement.dataset.colo
 /** @type { import('@storybook/react').Preview } */
 const preview = {
   parameters: {
-    actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
       matchers: {},
       exclude: ['key', 'ref']
