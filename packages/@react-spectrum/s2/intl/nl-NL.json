@@ -23,6 +23,7 @@
   "label.(optional)": "(optioneel)",
   "label.(required)": "(vereist)",
   "menu.moreActions": "Meer handelingen",
+  "menu.unavailable": "Niet beschikbaar, uitvouwen voor meer informatie",
   "notificationbadge.indicatorOnly": "Nieuwe activiteit",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Selecteren…",

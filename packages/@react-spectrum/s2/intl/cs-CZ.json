@@ -23,6 +23,7 @@
   "label.(optional)": "(volitelně)",
   "label.(required)": "(požadováno)",
   "menu.moreActions": "Další akce",
+  "menu.unavailable": "Není k dispozici, rozbalením zobrazíte podrobnosti",
   "notificationbadge.indicatorOnly": "Nová aktivita",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Vybrat…",

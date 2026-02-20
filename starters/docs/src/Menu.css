@@ -46,7 +46,7 @@
   forced-color-adjust: none;
   -webkit-tap-highlight-color: transparent;
 
-  > svg:not(.lucide-check, .lucide-dot, .lucide-chevron-right) {
+  > svg:not(.lucide-check, .lucide-dot, .lucide-chevron-right, .lucide-info) {
     grid-area: icon;
     width: var(--spacing-4);
     height: var(--spacing-4);
@@ -127,7 +127,8 @@
     border-color: rgb(255 255 255 / 0.2);
   }
 
-  .lucide-chevron-right {
+  .lucide-chevron-right,
+  &[data-unavailable] .lucide-info {
     grid-area: end;
     margin-left: var(--spacing-1);
     justify-self: end;

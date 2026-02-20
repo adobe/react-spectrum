@@ -11,7 +11,7 @@
  */
 
 import {action} from 'storybook/actions';
-import {Button, Header, Heading, Input, Keyboard, Label, ListLayout, Menu, MenuItemProps, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, SubmenuTriggerProps, Text, TextField, Virtualizer} from 'react-aria-components';
+import {Button, Header, Heading, Input, Keyboard, Label, ListLayout, Menu, MenuItemProps, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, SubmenuTriggerProps, Text, TextField, UnavailableMenuItemTrigger, Virtualizer} from 'react-aria-components';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {MyMenuItem} from './utils';
 import React, {JSX} from 'react';
@@ -482,3 +482,39 @@ export const VirtualizedExample: MenuStory = () => {
     </MenuTrigger>
   );
 };
+
+export const UnavailableMenuItemExample: MenuStory = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu className={styles.menu} onAction={action('onAction')}>
+        <MyMenuItem id="favorite">Favorite</MyMenuItem>
+        <UnavailableMenuItemTrigger>
+          <MyMenuItem id="edit">Edit</MyMenuItem>
+          <Popover className={styles.popover}>
+            <div style={{padding: 8, maxWidth: 200}}>
+              Contact your administrator for permissions to edit this item.
+            </div>
+          </Popover>
+        </UnavailableMenuItemTrigger>
+        <UnavailableMenuItemTrigger isUnavailable>
+          <MyMenuItem id="delete">Delete</MyMenuItem>
+          <Popover className={styles.popover}>
+            <div style={{padding: 8, maxWidth: 200}}>
+              Contact your administrator for permissions to delete this item.
+            </div>
+          </Popover>
+        </UnavailableMenuItemTrigger>
+        <SubmenuTrigger>
+          <MyMenuItem id="share">Share</MyMenuItem>
+          <Popover className={styles.popover}>
+            <Menu className={styles.menu} onAction={action('onAction')}>
+              <MyMenuItem id="sms">SMS</MyMenuItem>
+              <MyMenuItem id="email">Email</MyMenuItem>
+            </Menu>
+          </Popover>
+        </SubmenuTrigger>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);

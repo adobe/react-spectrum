@@ -23,6 +23,7 @@
   "label.(optional)": "(незадължително)",
   "label.(required)": "(задължително)",
   "menu.moreActions": "Повече действия",
+  "menu.unavailable": "Недостъпно, разгънете за подробности",
   "notificationbadge.indicatorOnly": "Нова дейност",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Изберете…",

@@ -18,7 +18,7 @@ export function Popover({ children, hideArrow, ...props }: PopoverProps) {
     (
       <AriaPopover {...props} className={clsx("react-aria-Popover", props.className)}>
         {({trigger}) => <>
-          {!hideArrow && trigger !== 'MenuTrigger' && trigger !== 'SubmenuTrigger' && (
+          {!hideArrow && trigger !== 'MenuTrigger' && trigger !== 'SubmenuTrigger' && trigger !== 'UnavailableMenuItemTrigger' && (
             <OverlayArrow>
               <svg width={12} height={12} viewBox="0 0 12 12">
                 <path d="M0 0 L6 6 L12 0" />

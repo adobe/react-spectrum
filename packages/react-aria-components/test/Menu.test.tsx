@@ -12,7 +12,7 @@
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaMenuTests} from './AriaMenu.test-util';
-import {Button, Collection, Header, Heading, Input, Keyboard, Label, Menu, MenuContext, MenuItem, MenuSection, MenuTrigger, Popover, Pressable, Separator, SubmenuTrigger, Text, TextField} from '..';
+import {Button, Collection, Header, Heading, Input, Keyboard, Label, Menu, MenuContext, MenuItem, MenuSection, MenuTrigger, Popover, Pressable, Separator, SubmenuTrigger, Text, TextField, UnavailableMenuItemTrigger} from '..';
 import React, {useState} from 'react';
 import {Selection, SelectionMode} from '@react-types/shared';
 import {UNSAFE_PortalProvider} from '@react-aria/overlays';
@@ -1736,6 +1736,76 @@ describe('Menu', () => {
     expect(onPressEnd).toHaveBeenCalledTimes(1);
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  describe('unavailable', () => {
+    it('should open popover when isUnavailable is true and item is activated', async () => {
+      let onAction = jest.fn();
+      let {getByRole, getAllByRole, findByText} = render(
+        <MenuTrigger>
+          <Button>Menu Button</Button>
+          <Popover>
+            <Menu onAction={onAction}>
+              <UnavailableMenuItemTrigger isUnavailable>
+                <MenuItem id="delete">Delete</MenuItem>
+                <Popover>
+                  <div>Contact your administrator for permissions to delete.</div>
+                </Popover>
+              </UnavailableMenuItemTrigger>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      await user.click(getByRole('button'));
+      let items = getAllByRole('menuitem');
+      expect(items[0]).toHaveAttribute('data-unavailable');
+      expect(items[0]).not.toHaveAttribute('data-has-submenu');
+
+      await user.click(items[0]);
+      expect(await findByText('Contact your administrator for permissions to delete.')).toBeInTheDocument();
+      expect(onAction).not.toHaveBeenCalled();
+
+      // Make sure the dialog behavior instead of submenu behavior is being applied here
+      let dialogs = getAllByRole('dialog');
+      expect(document.activeElement).toBe(dialogs[1]);
+      await user.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(dialogs[1]);
+      await user.keyboard('{Escape}');
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(items[0]);
+    });
+
+    it('should not open popover when isUnavailable is false and item acts as normal', async () => {
+      let onAction = jest.fn();
+      let {getByRole, getAllByRole, queryByText, queryAllByRole} = render(
+        <MenuTrigger>
+          <Button>Menu Button</Button>
+          <Popover>
+            <Menu onAction={onAction}>
+              <UnavailableMenuItemTrigger>
+                <MenuItem id="delete">Delete</MenuItem>
+                <Popover>
+                  <div>Contact your administrator for permissions to delete.</div>
+                </Popover>
+              </UnavailableMenuItemTrigger>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      await user.click(getByRole('button'));
+      let items = getAllByRole('menuitem');
+      expect(items[0]).not.toHaveAttribute('data-unavailable');
+      expect(items[0]).not.toHaveAttribute('data-has-submenu');
+      expect(items[0]).not.toHaveAttribute('aria-haspopup');
+      await user.click(items[0]);
+      expect(onAction).toHaveBeenCalled();
+      act(() => {jest.runAllTimers();});
+      let menus = queryAllByRole('menu');
+      expect(menus).toHaveLength(0);
+      expect(queryByText('Contact your administrator for permissions to delete.')).toBeNull();
+    });
   });
 });
 

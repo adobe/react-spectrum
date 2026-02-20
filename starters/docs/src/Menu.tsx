@@ -1,5 +1,5 @@
 'use client';
-import {Check, ChevronRight, Dot} from 'lucide-react';
+import {Check, ChevronRight, Dot, Info} from 'lucide-react';
 import {
   Menu as AriaMenu,
   MenuItem as AriaMenuItem,
@@ -43,7 +43,7 @@ export function MenuItem(props: Omit<MenuItemProps, 'children'> & { children?: R
   return (
     (
       <AriaMenuItem {...props} textValue={textValue}>
-        {({ hasSubmenu, isSelected, selectionMode }) => (
+        {({ hasSubmenu, isSelected, selectionMode, isUnavailable }) => (
           <>
             {isSelected && selectionMode === 'multiple' ? <Check /> : null}
             {isSelected && selectionMode === 'single' ? <Dot /> : null}
@@ -51,6 +51,7 @@ export function MenuItem(props: Omit<MenuItemProps, 'children'> & { children?: R
             {hasSubmenu && (
               <ChevronRight />
             )}
+            {isUnavailable && <Info />}
           </>
         )}
       </AriaMenuItem>

@@ -23,6 +23,7 @@
   "label.(optional)": "(اختياري)",
   "label.(required)": "(مطلوب)",
   "menu.moreActions": "المزيد من الإجراءات",
+  "menu.unavailable": "غير مُتوفر، قُم بالتوسيع للحصول على التفاصيل",
   "notificationbadge.indicatorOnly": "نشاط جديد",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "تحديد…",

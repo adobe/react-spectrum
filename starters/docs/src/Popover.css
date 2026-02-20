@@ -18,6 +18,10 @@
     padding: 0;
   }
 
+  &[data-trigger=UnavailableMenuItemTrigger] {
+    font-weight: 500;
+  }
+
   .react-aria-OverlayArrow svg {
     display: block;
     fill: var(--background-color);

@@ -23,6 +23,7 @@
   "label.(optional)": "(opcionális)",
   "label.(required)": "(kötelező)",
   "menu.moreActions": "További lehetőségek",
+  "menu.unavailable": "Nem érhető el, a részletekért bontsa ki",
   "notificationbadge.indicatorOnly": "Új tevékenység",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Kiválasztás…",
