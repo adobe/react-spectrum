@@ -24,7 +24,8 @@
       "types": "./i18n/lang.d.ts",
       "import": "./i18n/*.mjs",
       "require": "./i18n/*.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
