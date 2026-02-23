@@ -314,12 +314,6 @@ const listitem = style<GridListItemRenderProps & {
   },
   borderTopEndRadius: {
     isFirstItem: 'default'
-  },
-  borderBottomStartRadius: {
-    isLastItem: 'default'
-  },
-  borderBottomEndRadius: {
-    isLastItem: 'default'
   }
 }, getAllowedOverrides());
 
@@ -376,12 +370,6 @@ const listRowBackground = style<GridListItemRenderProps & {
   },
   borderTopEndRadius: {
     isFirstItem: 'default'
-  },
-  borderBottomStartRadius: {
-    isLastItem: 'default'
-  },
-  borderBottomEndRadius: {
-    isLastItem: 'default'
   },
   borderTopWidth: {
     default: 1,
