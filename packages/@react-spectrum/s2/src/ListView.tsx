@@ -45,7 +45,6 @@ import {IconContext} from './Icon';
 import {ImageContext} from './Image';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -568,7 +567,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
       {...otherProps}
       textValue={textValue}
       ref={ref}
-      style={pressScale(ref, props.UNSAFE_style)}
+      style={props.UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + listitem({
         ...renderProps,
         isLink,
