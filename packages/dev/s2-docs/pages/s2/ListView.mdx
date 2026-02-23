@@ -256,6 +256,7 @@ Use the `hasChildItems` prop on `ListViewItem` to display a chevron indicator, s
 import {Breadcrumbs, Breadcrumb, ListView, ListViewItem, Text} from '@react-spectrum/s2';
 import Folder from '@react-spectrum/s2/icons/Folder';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Key} from 'react-aria';
 import {useState} from 'react';
 
 ///- begin collapse -///
@@ -293,14 +294,14 @@ function NavigationExample() {
 
   let currentItems = breadcrumbs[breadcrumbs.length - 1].children;
 
-  let onAction = (key: string) => {
+  let onAction = (key: Key) => {
     let item = currentItems.find(item => item.id === key);
     if (item?.type === 'folder') {
       setBreadcrumbs(prev => [...prev, item]);
     }
   };
 
-  let onBreadcrumbAction = (key: string) => {
+  let onBreadcrumbAction = (key: Key) => {
     let index = breadcrumbs.findIndex(item => item.id === key);
     setBreadcrumbs(breadcrumbs.slice(0, index + 1));
   };
