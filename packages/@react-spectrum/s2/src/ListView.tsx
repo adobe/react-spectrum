@@ -46,6 +46,7 @@ import {ImageContext} from './Image';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from './ProgressCircle';
+import {raw} from '../style/style-macro' with {type: 'macro'};
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale, useLocalizedStringFormatter} from 'react-aria';
@@ -301,15 +302,7 @@ const listitem = style<GridListItemRenderProps & {
     }
   },
   borderTopWidth: 0,
-  borderBottomWidth: {
-    default: 1,
-    isSelected: {
-      selectionStyle: {
-        highlight: 0,
-        checkbox: 1
-      }
-    }
-  },
+  borderBottomWidth: 1,
   borderStartWidth: 0,
   borderEndWidth: 0,
   borderStyle: 'solid',
@@ -317,10 +310,7 @@ const listitem = style<GridListItemRenderProps & {
     default: '--borderColor',
     isSelected: {
       selectionStyle: {
-        highlight: {
-          default: '--borderColor',
-          isNextSelected: 'transparent'
-        },
+        highlight: 'transparent',
         checkbox: '--borderColor'
       }
     }
@@ -428,6 +418,23 @@ const listRowBackground = style<GridListItemRenderProps & {
     }
   }
 });
+
+// Masks the 1px transparent border between adjacent highlight-selected rows.
+const listRowBackgroundSeamMask = raw(`
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline-start: -1px;
+    inset-inline-end: -1px;
+    inset-block-end: -1px;
+    height: 1px;
+    background-color: inherit;
+    border-inline-start: 1px solid var(--borderColor);
+    border-inline-end: 1px solid var(--borderColor);
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+`);
 
 export let label = style({
   gridArea: 'label',
@@ -608,7 +615,11 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                 isDisabled
               }]
             ]}>
-            <div className={listRowBackground({...renderProps, selectionStyle, isPrevNotSelected: !renderProps.isPrevSelected, isNextNotSelected: !renderProps.isNextSelected})} />
+            <div
+              className={
+                listRowBackground({...renderProps, selectionStyle, isPrevNotSelected: !renderProps.isPrevSelected, isNextNotSelected: !renderProps.isNextSelected}) +
+                (selectionStyle === 'highlight' && renderProps.isSelected && renderProps.isNextSelected ? ` ${listRowBackgroundSeamMask}` : '')
+              } />
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               <ListSelectionCheckbox isDisabled={isDisabled} />
             )}
