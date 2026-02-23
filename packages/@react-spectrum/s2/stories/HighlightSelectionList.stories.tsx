@@ -83,7 +83,6 @@ export const AttributesList: StoryObj<typeof ListView> = {
   ),
   args: {
     selectionStyle: 'highlight',
-    selectionMode: 'multiple',
-    highlightMode: 'inverse'
+    selectionMode: 'multiple'
   }
 };

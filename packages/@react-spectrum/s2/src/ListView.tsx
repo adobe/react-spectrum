@@ -76,8 +76,7 @@ interface ListViewStylesProps {
    * Sets the overflow behavior for item contents.
    * @default 'truncate'
    */
-  overflowMode?: 'wrap' | 'truncate',
-  highlightMode?: 'normal' | 'inverse'
+  overflowMode?: 'wrap' | 'truncate'
 }
 
 export interface ListViewItemProps extends Omit<GridListItemProps, 'children' | 'style' | 'className'>, StyleProps {
