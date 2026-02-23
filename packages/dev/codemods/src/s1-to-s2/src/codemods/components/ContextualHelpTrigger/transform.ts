@@ -9,7 +9,7 @@ let availableComponents = getComponents();
  * Transforms ContextualHelpTrigger:
  * - Rename ContextualHelpTrigger to UnavailableMenuItemTrigger.
  * - Replace the old Dialog with Popover.
- * - Add a TODO if the old Dialog had children
+ * - Add a TODO if the old Dialog had children.
  */
 export default function transformContextualHelpTrigger(path: NodePath<t.JSXElement>): void {
   let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
