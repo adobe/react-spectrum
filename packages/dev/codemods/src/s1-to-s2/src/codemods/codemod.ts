@@ -28,7 +28,7 @@ availableComponents.delete('Provider');
 availableComponents.add('ActionGroup');
 
 // components renamed between v3 and S2
-let renamedComponents = {
+let renamedComponents: Record<string, string> = {
   ContextualHelpTrigger: 'UnavailableMenuItemTrigger'
 };
 
@@ -69,13 +69,13 @@ export default function transformer(file: FileInfo, api: API, options: Options):
               let isUsed = false;
               for (let path of binding.referencePaths) {
                 let propName = path.parentPath?.isJSXMemberExpression() && path.parentPath.node.property.name;
-                if (propName && path.parentPath.parentPath.parentPath?.isJSXElement()) {
+                if (propName && path.parentPath!.parentPath?.parentPath?.isJSXElement()) {
                   if (componentsToTransform.has(propName)) {
                     importedComponents.set(propName, clonedSpecifier);
-                    elements.push([propName, path.parentPath.parentPath.parentPath]);
+                    elements.push([propName, path.parentPath!.parentPath.parentPath]);
                   } else if (v3ComponentsToRename.has(propName)) {
                     S2ComponentsToImport.add(renamedComponents[propName]);
-                    elements.push([propName, path.parentPath.parentPath.parentPath]);
+                    elements.push([propName, path.parentPath!.parentPath.parentPath]);
                   } else {
                     isUsed = true;
                   }

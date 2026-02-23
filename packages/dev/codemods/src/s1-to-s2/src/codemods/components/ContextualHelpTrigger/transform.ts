@@ -35,7 +35,7 @@ export default function transformContextualHelpTrigger(path: NodePath<t.JSXEleme
       }
 
       // since s2 Popover doesn't have slot styles, need to tell user to refactor
-      addComment(dialog, ' TODO(S2-upgrade): Popover does not provide Dialog-style slots (Heading, Header, Content). Refactor the content layout as needed (e.g. use style macro or custom wrappers).');
+      addComment(dialog, ' TODO(S2-upgrade): Popover does not provide Dialog-style slots. Refactor the content layout as needed (e.g. use style macro or custom wrappers).');
     }
   }
 }
