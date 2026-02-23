@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, ActionButtonGroup, ActionMenu, Content, Heading, IllustratedMessage, ListView, ListViewItem, MenuItem, Text} from '../src';
+import {ActionButton, ActionButtonGroup, ActionMenu, Content, Heading, IllustratedMessage, Image, ListView, ListViewItem, MenuItem, Text} from '../src';
+import {checkers} from '../stories/assets/check';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
@@ -73,6 +74,19 @@ export const Quiet: Story = {
     ...Example.args,
     isQuiet: true
   }
+};
+
+export const WithImages: Story = {
+  render: (args) => (
+    <ListView {...args} aria-label="Images" styles={listViewStyles} items={items}>
+      {(item) => (
+        <ListViewItem textValue={item.name}>
+          <Text>{item.name}</Text>
+          <Image src={checkers} alt={item.name} />
+        </ListViewItem>
+      )}
+    </ListView>
+  )
 };
 
 export const OverflowTruncate: Story = {
@@ -140,6 +154,29 @@ export const DisabledBehaviorSelection: Story = {
   }
 };
 
+export const CheckboxSelection: Story = {
+  ...Example,
+  args: {
+    ...Example.args,
+    selectionStyle: 'checkbox',
+    selectedKeys: ['photoshop', 'illustrator']
+  }
+};
+
+export const Links: Story = {
+  render: (args) => (
+    <ListView {...args} aria-label="Bookmarks" styles={listViewStyles}>
+      <ListViewItem id="https://adobe.com/" href="https://adobe.com/" target="_blank">Adobe</ListViewItem>
+      <ListViewItem id="https://google.com/" href="https://google.com/" target="_blank">Google</ListViewItem>
+      <ListViewItem id="https://apple.com/" href="https://apple.com/" target="_blank">Apple</ListViewItem>
+      <ListViewItem id="https://nytimes.com/" href="https://nytimes.com/" target="_blank">New York Times</ListViewItem>
+    </ListView>
+  ),
+  args: {
+    selectionMode: 'none'
+  }
+};
+
 export const WithActions: Story = {
   render: (args) => (
     <ListView {...args} aria-label="Files" styles={listViewStyles}>
@@ -170,6 +207,32 @@ export const WithActions: Story = {
   ),
   args: {
     selectionMode: 'single'
+  }
+};
+
+export const Loading: Story = {
+  render: (args) => (
+    <ListView {...args} aria-label="Loading list" styles={listViewStyles}>
+      {[]}
+    </ListView>
+  ),
+  args: {
+    loadingState: 'loading'
+  }
+};
+
+export const LoadingMore: Story = {
+  render: (args) => (
+    <ListView {...args} aria-label="Loading more list" styles={listViewStyles} items={items} onLoadMore={() => {}}>
+      {(item) => (
+        <ListViewItem textValue={item.name}>
+          {item.name}
+        </ListViewItem>
+      )}
+    </ListView>
+  ),
+  args: {
+    loadingState: 'loadingMore'
   }
 };
 
