@@ -315,7 +315,7 @@ const listitem = style<GridListItemRenderProps & {
   borderTopEndRadius: {
     isFirstItem: 'default'
   }
-}, getAllowedOverrides());
+});
 
 const selectedBackground = colorMix('gray-25', 'gray-900', 7);
 const selectedActiveBackground = colorMix('gray-25', 'gray-900', 10);
@@ -556,8 +556,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
       {...otherProps}
       textValue={textValue}
       ref={ref}
-      style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + listitem({
+      className={renderProps => listitem({
         ...renderProps,
         isLink,
         isQuiet,
@@ -565,7 +564,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
         selectionStyle,
         isPrevNotSelected: !renderProps.isPrevSelected,
         isNextNotSelected: !renderProps.isNextSelected
-      }, props.styles)}>
+      })}>
       {(renderProps) => {
         let {children} = props;
         let {selectionMode, selectionBehavior, isDisabled} = renderProps;
