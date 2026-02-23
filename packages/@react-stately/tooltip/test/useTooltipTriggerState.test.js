@@ -53,7 +53,7 @@ function ManualTooltipTrigger(props) {
     props.onOpenChange(isOpen);
     setOpen(isOpen);
   };
-  
+
   return (
     <TooltipTrigger
       label={props.label}
@@ -77,6 +77,8 @@ describe('useTooltipTriggerState', function () {
 
   afterEach(() => {
     onOpenChange.mockClear();
+    fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+    fireEvent.keyUp(document.activeElement, {key: 'Escape'});
     // there's global state, so we need to make sure to run out the cooldown for every test
     act(() => {jest.runAllTimers();});
   });
@@ -211,6 +213,125 @@ describe('useTooltipTriggerState', function () {
 
       fireEvent.mouseLeave(button);
       expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+  });
+
+  describe('warmup delay', () => {
+    it('clears previous warmup timeout when open is called multiple times rapidly', () => {
+      let delay = 1000;
+
+      function ManualTriggerComponent(props) {
+        let state = useTooltipTriggerState(props);
+        let ref = React.useRef();
+
+        let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
+
+        return (
+          <span>
+            <button
+              ref={ref}
+              {...triggerProps}
+              data-testid="trigger-button">
+              {props.children}
+            </button>
+            <button
+              data-testid="manual-open"
+              onClick={() => state.open(false)}>
+              Manual Open
+            </button>
+            <button
+              data-testid="manual-close"
+              onClick={() => state.close(true)}>
+              Manual Close
+            </button>
+            {state.isOpen &&
+              <span role="tooltip" {...tooltipProps}>{props.tooltip}</span>}
+          </span>
+        );
+      }
+
+      let {queryByRole, getByTestId} = render(
+        <ManualTriggerComponent onOpenChange={onOpenChange} delay={delay} tooltip="Helpful information">
+          Trigger
+        </ManualTriggerComponent>
+      );
+
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body);
+
+      let manualOpenButton = getByTestId('manual-open');
+
+      // First call to open() - starts a warmup timer
+      fireEvent.click(manualOpenButton);
+      expect(queryByRole('tooltip')).toBeNull();
+
+      // Run 60% through the delay
+      act(() => jest.advanceTimersByTime(delay * 0.6));
+      expect(queryByRole('tooltip')).toBeNull();
+
+      // Second call to open() - should clear previous timeout and start a new one
+      fireEvent.click(manualOpenButton);
+
+      // If the old timeout wasn't cleared, the tooltip would open after just 400ms more
+      // But since it was cleared and restarted, we need the full 1000ms from the second call
+      act(() => jest.advanceTimersByTime(delay * 0.4));
+      expect(queryByRole('tooltip')).toBeNull();
+      expect(onOpenChange).not.toHaveBeenCalled();
+
+      // Advancing the remaining 600ms from the second trigger should open it
+      act(() => jest.advanceTimersByTime(delay * 0.6));
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(queryByRole('tooltip')).toBeVisible();
+    });
+
+    it('does not open immediately when open() is called twice during warmup', () => {
+      function TooltipTriggerWithDoubleOpen(props) {
+        let state = useTooltipTriggerState(props);
+        let ref = React.useRef();
+
+        let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
+
+        let onMouseEnter = (e) => {
+          triggerProps.onMouseEnter?.(e);
+          state.open(false);
+        };
+
+        return (
+          <span>
+            <button ref={ref} {...triggerProps} onMouseEnter={onMouseEnter}>{props.children}</button>
+            {state.isOpen &&
+              <span role="tooltip" {...tooltipProps}>{props.tooltip}</span>}
+          </span>
+        );
+      }
+
+      let delay = 1000;
+
+      let {queryByRole, getByRole} = render(
+        <TooltipTriggerWithDoubleOpen onOpenChange={onOpenChange} delay={delay} tooltip="Helpful information">
+          Trigger
+        </TooltipTriggerWithDoubleOpen>
+      );
+
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body);
+
+      let button = getByRole('button');
+
+      fireEvent.mouseEnter(button);
+      fireEvent.mouseMove(button);
+
+      expect(onOpenChange).not.toHaveBeenCalled();
+      expect(queryByRole('tooltip')).toBeNull();
+
+      // run halfway through the delay timer and confirm that it is still closed
+      act(() => jest.advanceTimersByTime(delay / 2));
+      expect(queryByRole('tooltip')).toBeNull();
+
+      // run through the rest of the delay timer and confirm that it has opened
+      act(() => jest.advanceTimersByTime(delay / 2));
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(getByRole('tooltip')).toBeVisible();
     });
   });
 

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {BuddhistCalendar, CalendarDate, CalendarDateTime, EthiopicAmeteAlemCalendar, EthiopicCalendar, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar, Time, toCalendar, toCalendarDate, toCalendarDateTime, toTime, ZonedDateTime} from '..';
+import {BuddhistCalendar, CalendarDate, CalendarDateTime, EthiopicAmeteAlemCalendar, EthiopicCalendar, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, resetLocalTimeZone, setLocalTimeZone, TaiwanCalendar, Time, toCalendar, toCalendarDate, toCalendarDateTime, toTime, ZonedDateTime} from '..';
 import {Custom454Calendar} from './customCalendarImpl';
-import {fromAbsolute, possibleAbsolutes, toAbsolute, toDate} from '../src/conversion';
+import {fromAbsolute, getTimeZoneOffset, possibleAbsolutes, toAbsolute, toDate} from '../src/conversion';
 
 describe('CalendarDate conversion', function () {
   describe('toAbsolute', function () {
@@ -520,6 +520,53 @@ describe('CalendarDate conversion', function () {
     it('should convert a CalendarDateTime to a Time', function () {
       let dateTime = new CalendarDateTime(2020, 2, 3, 8, 23, 10, 80);
       expect(toTime(dateTime)).toEqual(new Time(8, 23, 10, 80));
+    });
+  });
+
+  describe('setLocalTimeZone', function () {
+    afterEach(() => {
+      resetLocalTimeZone();
+    });
+
+    it('should use the overridden timezone in getTimeZoneOffset instead of native Date', function () {
+      let ms = new Date('2020-06-15T12:00:00Z').getTime();
+
+      // Get the offset using the Intl-based slow path for a non-local timezone
+      let expectedOffset = getTimeZoneOffset(ms, 'Etc/GMT-10');
+
+      // Now override the local timezone to 'Etc/GMT-10' and verify it still computes correctly
+      setLocalTimeZone('Etc/GMT-10');
+      let actualOffset = getTimeZoneOffset(ms, 'Etc/GMT-10');
+
+      expect(actualOffset).toBe(expectedOffset);
+    });
+
+    it('should use the overridden timezone in toAbsolute instead of native Date', function () {
+      let date = new CalendarDateTime(2020, 6, 15, 12, 0, 0);
+
+      // Get the expected result using the Intl-based slow path for a non-local timezone
+      let expected = toAbsolute(date, 'Etc/GMT-10');
+
+      // Now override the local timezone and verify it still computes correctly
+      setLocalTimeZone('Etc/GMT-10');
+      let actual = toAbsolute(date, 'Etc/GMT-10');
+
+      expect(actual).toBe(expected);
+    });
+
+    it('should produce correct results after resetLocalTimeZone', function () {
+      let ms = new Date('2020-06-15T12:00:00Z').getTime();
+      let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      // Get the offset before any override
+      let offsetBefore = getTimeZoneOffset(ms, tz);
+
+      setLocalTimeZone('Etc/GMT-10');
+      resetLocalTimeZone();
+
+      // After reset, the fast path should be restored and produce the same result
+      let offsetAfter = getTimeZoneOffset(ms, tz);
+      expect(offsetAfter).toBe(offsetBefore);
     });
   });
 });

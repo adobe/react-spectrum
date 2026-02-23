@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {addons} from '@storybook/preview-api';
-import {makeDecorator} from '@storybook/preview-api';
+import {addons} from 'storybook/preview-api';
+import {makeDecorator} from 'storybook/preview-api';
 import {Provider} from '@react-spectrum/provider';
 import {expressThemes, themes, defaultTheme} from '../../constants';
 

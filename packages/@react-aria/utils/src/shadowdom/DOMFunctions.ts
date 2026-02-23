@@ -1,5 +1,5 @@
 // Source: https://github.com/microsoft/tabster/blob/a89fc5d7e332d48f68d03b1ca6e344489d1c3898/src/Shadowdomize/DOMFunctions.ts#L16
-/* eslint-disable rsp-rules/no-non-shadow-contains */
+/* eslint-disable rsp-rules/no-non-shadow-contains, rsp-rules/safe-event-target */
 
 import {getOwnerWindow, isShadowRoot} from '../domHelpers';
 import {shadowDOM} from '@react-stately/flags';
@@ -62,20 +62,20 @@ export const getActiveElement = (doc: Document = document): Element | null => {
 // Type helper to extract the target element type from an event
 type EventTargetType<T> = T extends SyntheticEvent<infer E, any> ? E : EventTarget;
 
+// Possibly we can improve the types for this using https://github.com/adobe/react-spectrum/pull/8991/changes#diff-2d491c0c91701d28d08e1cf9fcadbdb21a030b67ab681460c9934140f29127b8R68 but it was more changes than I
+// wanted to make to fix the function.
 /**
  * ShadowDOM safe version of event.target.
  */
 export function getEventTarget<T extends Event | SyntheticEvent>(event: T): EventTargetType<T> {
-  // For React synthetic events, use the native event
-  let nativeEvent: Event = 'nativeEvent' in event ? (event as SyntheticEvent).nativeEvent : event as Event;
-  let target = nativeEvent.target!;
-
-  if (shadowDOM() && (target as HTMLElement).shadowRoot) {
-    if (nativeEvent.composedPath) {
-      return nativeEvent.composedPath()[0] as EventTargetType<T>;
+  if (shadowDOM() && (event.target instanceof Element) && event.target.shadowRoot) {
+    if ('composedPath' in event) {
+      return (event.composedPath()[0] ?? null) as EventTargetType<T>;
+    } else if ('composedPath' in event.nativeEvent) {
+      return (event.nativeEvent.composedPath()[0] ?? null) as EventTargetType<T>;
     }
   }
-  return target as EventTargetType<T>;
+  return event.target as EventTargetType<T>;
 }
 
 /**
