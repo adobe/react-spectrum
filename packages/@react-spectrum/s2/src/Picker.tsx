@@ -48,7 +48,7 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {control, controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {control, controlBorderRadius, controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createHideableComponent} from '@react-aria/collections';
 import {
   Divider,
@@ -57,6 +57,7 @@ import {
   listboxItem,
   LOADER_ROW_HEIGHTS
 } from './ComboBox';
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   FieldErrorIcon,
   FieldLabel,
@@ -188,6 +189,27 @@ const quietFocusLine = style({
     default: 'blue-800',
     forcedColors: 'Highlight'
   }
+});
+
+export let menu = style({
+  outlineStyle: 'none',
+  display: 'grid',
+  width: 'full',
+  gridTemplateColumns: {
+    size: {
+      S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(24)],
+      M: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
+      L: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(40)],
+      XL: [edgeToText(48), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(48)]
+    }
+  },
+  boxSizing: 'border-box',
+  maxHeight: 'inherit',
+  overflow: 'auto',
+  padding: 8,
+  fontFamily: 'sans',
+  fontSize: controlFont(),
+  gridAutoRows: 'min-content'
 });
 
 const invalidBorder = style({
