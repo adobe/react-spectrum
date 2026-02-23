@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ActionButton, ActionButtonGroup, ActionMenu, Breadcrumb, Breadcrumbs, Content, Heading, IllustratedMessage, Image, ListView, ListViewItem, MenuItem, Text} from '../';
 import {categorizeArgTypes} from './utils';
 import {chain} from '@react-aria/utils';

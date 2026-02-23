@@ -51,6 +51,8 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 interface S2TreeProps {
   /** Handler that is called when a user performs an action on a row. */
   onAction?: (key: Key) => void,
+  /** Whether to remove the outer border/background from the container. */
+  isDetached?: boolean,
   /** Whether the tree should be displayed with a [emphasized style](https://spectrum.adobe.com/page/tree-view/#Emphasis). */
   isEmphasized?: boolean,
   selectionStyle?: 'highlight' | 'checkbox',
