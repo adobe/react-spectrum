@@ -258,7 +258,12 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 ///- begin collapse -///
-let rootItems = [
+type FileItem = {id: string, name: string, type: 'file'};
+type FolderItem = {id: string, name: string, type: 'folder', children: ListItem[]};
+type ListItem = FileItem | FolderItem;
+type BreadcrumbItem = {id: string, name: string, children: ListItem[]};
+
+let rootItems: ListItem[] = [
   {id: 'photoshop', name: 'Adobe Photoshop', type: 'file'},
   {id: 'xd', name: 'Adobe XD', type: 'file'},
   {id: 'documents', name: 'Documents', type: 'folder', children: [
@@ -281,20 +286,20 @@ let rootItems = [
 ///- end collapse -///
 
 function NavigationExample() {
-  let [breadcrumbs, setBreadcrumbs] = useState([
+  let [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([
     {id: 'root', name: 'Root', children: rootItems}
   ]);
 
   let currentItems = breadcrumbs[breadcrumbs.length - 1].children;
 
-  let onAction = (key) => {
+  let onAction = (key: string) => {
     let item = currentItems.find(item => item.id === key);
     if (item?.type === 'folder') {
       setBreadcrumbs(prev => [...prev, item]);
     }
   };
 
-  let onBreadcrumbAction = (key) => {
+  let onBreadcrumbAction = (key: string) => {
     let index = breadcrumbs.findIndex(item => item.id === key);
     setBreadcrumbs(breadcrumbs.slice(0, index + 1));
   };
