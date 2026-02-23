@@ -15,8 +15,8 @@ import {ActionMenuContext} from './ActionMenu';
 import {baseColor, colorMix, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
-import Chevron from '../ui-icons/Chevron';
 import {
+  CheckboxContext,
   Collection,
   CollectionRendererContext,
   ContextValue,
@@ -33,8 +33,10 @@ import {
   ListLayout,
   Provider,
   SlotProps,
+  useSlottedContext,
   Virtualizer
 } from 'react-aria-components';
+import Chevron from '../ui-icons/Chevron';
 import {controlFont, getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState} from '@react-types/shared';
@@ -544,6 +546,16 @@ const emptyStateWrapper = style({
   padding: 16
 });
 
+function ListSelectionCheckbox({isDisabled}: {isDisabled: boolean}) {
+  let selectionContext = useSlottedContext(CheckboxContext, 'selection');
+  let isSelectionDisabled = isDisabled || !!selectionContext?.isDisabled;
+  return (
+    <div className={listCheckbox({isDisabled: isSelectionDisabled})}>
+      <Checkbox slot="selection" />
+    </div>
+  );
+}
+
 export function ListViewItem(props: ListViewItemProps): ReactNode {
   let ref = useRef(null);
   let {hasChildItems, ...otherProps} = props;
@@ -600,9 +612,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
             ]}>
             <div className={listRowBackground({...renderProps, selectionStyle, isPrevNotSelected: !renderProps.isPrevSelected, isNextNotSelected: !renderProps.isNextSelected})} />
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
-              <div className={listCheckbox({isDisabled})}>
-                <Checkbox slot="selection" />
-              </div>
+              <ListSelectionCheckbox isDisabled={isDisabled} />
             )}
             {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
             {hasChildItems && (
