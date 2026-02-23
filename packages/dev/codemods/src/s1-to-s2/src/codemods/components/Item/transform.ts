@@ -16,6 +16,7 @@ export default function transformItem(path: NodePath<t.JSXElement>): void {
   // Update Items based on parent collection component
   updateComponentWithinCollection(path, {parentComponentName: 'Menu', newComponentName: 'MenuItem'});
   updateComponentWithinCollection(path, {parentComponentName: 'ActionMenu', newComponentName: 'MenuItem'});
+  updateComponentWithinCollection(path, {parentComponentName: 'ContextualHelpTrigger', newComponentName: 'MenuItem'});
   updateComponentWithinCollection(path, {parentComponentName: 'TagGroup', newComponentName: 'Tag'});
   updateComponentWithinCollection(path, {parentComponentName: 'Breadcrumbs', newComponentName: 'Breadcrumb'});
   updateComponentWithinCollection(path, {parentComponentName: 'Picker', newComponentName: 'PickerItem'});

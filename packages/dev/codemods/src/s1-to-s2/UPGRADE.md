@@ -62,6 +62,11 @@ Note that `[PENDING]` indicates that future changes will occur before the final 
 - Remove `validationState=“valid”` (it is no longer supported)
 - [PENDING] Comment out `onLoadMore` (it has not been implemented yet)
 
+## ContextualHelpTrigger
+- Component has been renamed to `UnavailableMenuItemTrigger`
+- Now expects a `Popover` as its second child
+- S2 `Popover` does not provide Dialog-style slots. Refactor the content inside the Popover as needed (e.g. use the style macro or custom wrappers for layout).
+
 ## Dialog
 - Update children to move render props from being the second child of `DialogTrigger` to being a child of `Dialog`
 - Remove `onDismiss` and use `onOpenChange` on the `DialogTrigger`, or `onDismiss` on the `DialogContainer` instead
