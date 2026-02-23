@@ -15,6 +15,8 @@ import React, {createContext, JSX, ReactNode, useContext} from 'react';
 export interface PortalProviderProps {
   /** Should return the element where we should portal to. Can clear the context by passing null. */
   getContainer?: (() => HTMLElement | null) | null,
+  /** Returns the visual bounds of the container where overlays should be constrained. Used for shadow DOM and iframe scenarios. */
+  getContainerBounds?: (() => DOMRect | null) | null,
   /** The content of the PortalProvider. Should contain all children that want to portal their overlays to the element returned by the provided `getContainer()`. */
   children: ReactNode
 }
@@ -27,10 +29,15 @@ export const PortalContext: React.Context<PortalProviderContextValue> = createCo
  * Sets the portal container for all overlay elements rendered by its children.
  */
 export function UNSAFE_PortalProvider(props: PortalProviderProps): JSX.Element {
-  let {getContainer} = props;
-  let {getContainer: ctxGetContainer} = useUNSAFE_PortalContext();
+  let {getContainer, getContainerBounds} = props;
+  let {getContainer: ctxGetContainer, getContainerBounds: ctxGetContainerBounds} = useUNSAFE_PortalContext();
+
   return (
-    <PortalContext.Provider value={{getContainer: getContainer === null ? undefined : getContainer ?? ctxGetContainer}}>
+    <PortalContext.Provider
+      value={{
+        getContainer: getContainer === null ? undefined : getContainer ?? ctxGetContainer,
+        getContainerBounds: getContainerBounds === null ? undefined : getContainerBounds ?? ctxGetContainerBounds
+      }}>
       {props.children}
     </PortalContext.Provider>
   );
