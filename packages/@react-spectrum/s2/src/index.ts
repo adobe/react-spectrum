@@ -88,7 +88,7 @@ export {ToastContainer, ToastQueue} from './Toast';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {ToggleButtonGroup, ToggleButtonGroupContext} from './ToggleButtonGroup';
 export {Tooltip, TooltipTrigger} from './Tooltip';
-export {TreeView, TreeViewItem, TreeViewItemContent, TreeViewContext, TreeViewLoadMoreItem} from './TreeView';
+export {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem} from './TreeView';
 
 export {pressScale} from './pressScale';
 
