@@ -27,7 +27,6 @@ import {
   GridListItemProps,
   GridListItemRenderProps,
   GridListLoadMoreItem,
-  GridListLoadMoreItemProps,
   GridListProps,
   GridListRenderProps,
   ListLayout,
@@ -86,11 +85,6 @@ export interface ListViewItemProps extends Omit<GridListItemProps, 'children' | 
   children: ReactNode,
   /** Whether the item has child items (renders a chevron indicator). */
   hasChildItems?: boolean
-}
-
-export interface ListViewLoadMoreItemProps extends Pick<GridListLoadMoreItemProps, 'onLoadMore'> {
-  /** The current loading state of the ListView. */
-  loadingState?: LoadingState
 }
 
 interface ListViewRendererContextValue {
@@ -648,17 +642,3 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
   );
 }
 
-export const ListViewLoadMoreItem = (props: ListViewLoadMoreItemProps): ReactNode => {
-  let {loadingState, onLoadMore} = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
-  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-  return (
-    <GridListLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full', paddingY: 8})}>
-      <div className={centeredWrapper}>
-        <ProgressCircle
-          isIndeterminate
-          aria-label={stringFormatter.format('table.loadingMore')} />
-      </div>
-    </GridListLoadMoreItem>
-  );
-};

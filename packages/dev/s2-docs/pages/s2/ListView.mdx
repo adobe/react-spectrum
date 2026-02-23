@@ -1,7 +1,7 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {ListView, ListViewItem, ListViewLoadMoreItem, Text, ActionMenu, MenuItem, ActionButton, ActionButtonGroup, Image, IllustratedMessage, Heading, Content, Link, Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
+import {ListView, ListViewItem, Text, ActionMenu, MenuItem, ActionButton, ActionButtonGroup, Image, IllustratedMessage, Heading, Content, Link, Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['list', 'data', 'collection', 'table', 'grid'];
@@ -334,7 +334,7 @@ function NavigationExample() {
 
 ## API
 
-```tsx links={{ListView: '#listview', ListViewItem: '#listviewitem', ListViewLoadMoreItem: '#listviewloadmoreitem', ActionMenu: 'ActionMenu', ActionButtonGroup: 'ActionButtonGroup', Icon: 'icons', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span', Image: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img'}}
+```tsx links={{ListView: '#listview', ListViewItem: '#listviewitem', ActionMenu: 'ActionMenu', ActionButtonGroup: 'ActionButtonGroup', Icon: 'icons', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span', Image: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img'}}
 <ListView>
   <ListViewItem>
     <Icon />
@@ -343,7 +343,6 @@ function NavigationExample() {
     <Text slot="description" />
     <ActionMenu /> or <ActionButtonGroup />
   </ListViewItem>
-  <ListViewLoadMoreItem />
 </ListView>
 ```
 
@@ -354,7 +353,3 @@ function NavigationExample() {
 ### ListViewItem
 
 <PropTable component={docs.exports.ListViewItem} links={docs.links} showDescription />
-
-### ListViewLoadMoreItem
-
-<PropTable component={docs.exports.ListViewLoadMoreItem} links={docs.links} showDescription />
