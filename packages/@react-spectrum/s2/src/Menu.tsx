@@ -25,12 +25,10 @@ import {
   UnavailableMenuItemTriggerProps as AriaUnavailableMenuItemTriggerProps,
   ContextValue,
   DEFAULT_SLOT,
-  EndSlotContext,
   MenuItemRenderProps,
   Provider,
   Separator,
-  SeparatorProps,
-  useSlottedContext
+  SeparatorProps
 } from 'react-aria-components';
 import {baseColor, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
@@ -55,7 +53,7 @@ import {mergeStyles} from '../style/runtime';
 import {Placement, useLocale} from 'react-aria';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
-import {useGlobalListeners} from '@react-aria/utils';
+import {useGlobalListeners, useId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
@@ -353,6 +351,7 @@ let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu
 });
 
 let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'> | null>(null);
+let UnavailableContext = createContext(false);
 
 let wrappingDiv = style({
   display: 'flex',
@@ -483,16 +482,16 @@ const linkIconSize = {
 
 interface UnavailableIconWrapperProps {
   direction: 'ltr' | 'rtl',
-  size: 'S' | 'M' | 'L' | 'XL'
+  size: 'S' | 'M' | 'L' | 'XL',
+  id?: string
 }
 
 function UnavailableIconWrapper(props: UnavailableIconWrapperProps) {
-  let endSlotProps = useSlottedContext(EndSlotContext);
-  let {direction, size} = props;
+  let {direction, size, id} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   return (
-    <div slot="descriptor" className={mergeStyles(descriptor, style({marginBottom: fontRelative(-1)}))} id={endSlotProps?.id}>
+    <div slot="descriptor" className={mergeStyles(descriptor, style({marginBottom: fontRelative(-1)}))} id={id}>
       <Provider values={[[IconContext, {slots: {icon: {styles: descriptorIcon({size})}}}]]}>
         <InfoCircleIcon
           aria-label={stringFormatter.format('menu.unavailable')}
@@ -515,10 +514,13 @@ export function MenuItem(props: MenuItemProps): ReactNode {
   let {size, hideLinkOutIcon} = useContext(InternalMenuContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
+  let isUnavailable = useContext(UnavailableContext);
+  let infoIconId = useId();
 
   return (
     <AriaMenuItem
       {...props}
+      aria-describedby={isUnavailable ? infoIconId : undefined}
       textValue={textValue}
       ref={ref}
       style={pressScale(ref, props.UNSAFE_style)}
@@ -567,8 +569,9 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                     })({direction})} />
                 </div>
               )}
+              {/* TODO replace with context prop when we remove the concept of unavailbable from RAC */}
               {renderProps.isUnavailable && (
-                <UnavailableIconWrapper direction={direction} size={size} />
+                <UnavailableIconWrapper direction={direction} size={size} id={infoIconId} />
               )}
               {renderProps.hasSubmenu && (
                 <div slot="descriptor" className={descriptor}>
@@ -671,12 +674,14 @@ export interface UnavailableMenuItemTriggerProps extends AriaUnavailableMenuItem
 // and has the concept of isUnavailable which will make the item render normally when false
 function UnavailableMenuItemTrigger(props: UnavailableMenuItemTriggerProps): JSX.Element {
   return (
-    <AriaUnavailableMenuItemTrigger {...props}>
-      {props.children[0]}
-      <PopoverContext.Provider value={{hideArrow: true, offset: -2, crossOffset: -8, placement: 'end top'}}>
-        {props.children[1]}
-      </PopoverContext.Provider>
-    </AriaUnavailableMenuItemTrigger>
+    <UnavailableContext.Provider value={props.isUnavailable ?? false}>
+      <AriaUnavailableMenuItemTrigger {...props}>
+        {props.children[0]}
+        <PopoverContext.Provider value={{hideArrow: true, offset: -2, crossOffset: -8, placement: 'end top'}}>
+          {props.children[1]}
+        </PopoverContext.Provider>
+      </AriaUnavailableMenuItemTrigger>
+    </UnavailableContext.Provider>
   );
 }
 

@@ -508,13 +508,12 @@ interface MenuItemContextProps<T = object> extends MenuItemProps<T> {
 
 const MenuItemContext = createContext<ContextValue<MenuItemContextProps, HTMLDivElement>>(null);
 
-/** Context for the descriptive element in the end slot of the menu item (e.g. info icon). Propagates the appropriate labelling props to associate the element with the parent menu item. */
-export const EndSlotContext = createContext<ContextValue<{id?: string}, HTMLElement>>(null);
-
 /**
  * A MenuItem represents an individual action in a Menu.
  */
 export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function MenuItem<T extends object>(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+  // TODO: revert back to what we had before if we remove the concept of isUnavailable from RAC here. Will have to figure out
+  // the updates to the styling without the data attribute for unavailable
   let [mergedProps, mergedRef] = useContextProps(props, forwardedRef, MenuItemContext) as [MenuItemContextProps<T>, ForwardedRef<HTMLDivElement>];
   forwardedRef = mergedRef;
   let id = useSlottedContext(MenuItemContext)?.id as string;
@@ -522,7 +521,7 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
   let ref = useObjectRef<any>(forwardedRef);
   let selectionManager = useContext(SelectionManagerContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
-  let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, endSlotProps, ...states} = useMenuItem({
+  let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({
     ...mergedProps,
     id,
     key: item.key,
@@ -579,7 +578,6 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
             }
           }],
           [KeyboardContext, keyboardShortcutProps],
-          [EndSlotContext, endSlotProps],
           [SelectionIndicatorContext, {isSelected: states.isSelected}]
         ]}>
         {renderProps.children}
