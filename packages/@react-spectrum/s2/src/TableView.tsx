@@ -17,10 +17,12 @@ import {
   ButtonContext,
   CellRenderProps,
   Collection,
+  CollectionRendererContext,
   ColumnRenderProps,
   ColumnResizer,
   ContextValue,
   DEFAULT_SLOT,
+  DefaultCollectionRenderer,
   Form,
   Key,
   OverlayTriggerStateContext,
@@ -439,7 +441,9 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   if (renderEmptyState != null && !isLoading) {
     emptyRender = (props: TableBodyRenderProps) => (
       <div className={centeredWrapper}>
-        {renderEmptyState(props)}
+        <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+          {renderEmptyState(props)}
+        </CollectionRendererContext.Provider>
       </div>
     );
   } else if (loadingState === 'loading') {

@@ -48,6 +48,7 @@ export {
   toTimeZone,
   toLocalTimeZone,
   fromDate,
+  fromDateToLocal,
   fromAbsolute
 } from './conversion';
 export {
@@ -65,6 +66,7 @@ export {
   getLocalTimeZone,
   setLocalTimeZone,
   resetLocalTimeZone,
+  isLocalTimeZoneOverridden,
   startOfMonth,
   startOfWeek,
   startOfYear,

@@ -20,7 +20,7 @@ export const description = 'Combines a text input with a listbox, allowing users
 <PageDescription>{docs.exports.ComboBox.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['label', 'isDisabled']} initialProps={{label: 'Favorite Animal', placeholder: 'Select an animal'}} type="vanilla" files={["starters/docs/src/ComboBox.tsx", "starters/docs/src/ComboBox.css"]}
+  ```tsx render docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['label', 'selectionMode', 'isDisabled']} initialProps={{label: 'Favorite Animal', placeholder: 'Select an animal'}} type="vanilla" files={["starters/docs/src/ComboBox.tsx", "starters/docs/src/ComboBox.css"]}
   "use client";
   import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 
@@ -34,7 +34,7 @@ export const description = 'Combines a text input with a listbox, allowing users
   </ComboBox>
   ```
 
-  ```tsx render docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['label', 'isDisabled']} initialProps={{label: 'Favorite Animal', placeholder: 'Select an animal'}} type="tailwind" files={["starters/tailwind/src/ComboBox.tsx"]}
+  ```tsx render docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['label', 'selectionMode', 'isDisabled']} initialProps={{label: 'Favorite Animal', placeholder: 'Select an animal'}} type="tailwind" files={["starters/tailwind/src/ComboBox.tsx"]}
   "use client";
   import {ComboBox, ComboBoxItem} from 'tailwind-starter/ComboBox';
 
@@ -107,9 +107,111 @@ function Example() {
 }
 ```
 
-## Selection
+### TagGroup
 
-Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of an item. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=ComboBox#single-selection) for more details.
+Use the `ComboBoxValue` render prop function to display the selected items as a [TagGroup](TagGroup).
+
+```tsx render
+"use client";
+import {ComboBox, ComboBoxValue, Input} from 'react-aria-components';
+import {ComboBoxListBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
+import {Label, FieldButton} from 'vanilla-starter/Form';
+import {Popover} from 'vanilla-starter/Popover';
+import {Tag, TagGroup} from 'vanilla-starter/TagGroup';
+import {ChevronDown} from 'lucide-react';
+
+/*- begin collapse -*/
+const states = [
+  {id: 'AL', name: 'Alabama'},
+  {id: 'AK', name: 'Alaska'},
+  {id: 'AZ', name: 'Arizona'},
+  {id: 'AR', name: 'Arkansas'},
+  {id: 'CA', name: 'California'},
+  {id: 'CO', name: 'Colorado'},
+  {id: 'CT', name: 'Connecticut'},
+  {id: 'DE', name: 'Delaware'},
+  {id: 'DC', name: 'District of Columbia'},
+  {id: 'FL', name: 'Florida'},
+  {id: 'GA', name: 'Georgia'},
+  {id: 'HI', name: 'Hawaii'},
+  {id: 'ID', name: 'Idaho'},
+  {id: 'IL', name: 'Illinois'},
+  {id: 'IN', name: 'Indiana'},
+  {id: 'IA', name: 'Iowa'},
+  {id: 'KS', name: 'Kansas'},
+  {id: 'KY', name: 'Kentucky'},
+  {id: 'LA', name: 'Louisiana'},
+  {id: 'ME', name: 'Maine'},
+  {id: 'MD', name: 'Maryland'},
+  {id: 'MA', name: 'Massachusetts'},
+  {id: 'MI', name: 'Michigan'},
+  {id: 'MN', name: 'Minnesota'},
+  {id: 'MS', name: 'Mississippi'},
+  {id: 'MO', name: 'Missouri'},
+  {id: 'MT', name: 'Montana'},
+  {id: 'NE', name: 'Nebraska'},
+  {id: 'NV', name: 'Nevada'},
+  {id: 'NH', name: 'New Hampshire'},
+  {id: 'NJ', name: 'New Jersey'},
+  {id: 'NM', name: 'New Mexico'},
+  {id: 'NY', name: 'New York'},
+  {id: 'NC', name: 'North Carolina'},
+  {id: 'ND', name: 'North Dakota'},
+  {id: 'OH', name: 'Ohio'},
+  {id: 'OK', name: 'Oklahoma'},
+  {id: 'OR', name: 'Oregon'},
+  {id: 'PA', name: 'Pennsylvania'},
+  {id: 'RI', name: 'Rhode Island'},
+  {id: 'SC', name: 'South Carolina'},
+  {id: 'SD', name: 'South Dakota'},
+  {id: 'TN', name: 'Tennessee'},
+  {id: 'TX', name: 'Texas'},
+  {id: 'UT', name: 'Utah'},
+  {id: 'VT', name: 'Vermont'},
+  {id: 'VA', name: 'Virginia'},
+  {id: 'WA', name: 'Washington'},
+  {id: 'WV', name: 'West Virginia'},
+  {id: 'WI', name: 'Wisconsin'},
+  {id: 'WY', name: 'Wyoming'}
+];
+/*- end collapse -*/
+
+<ComboBox selectionMode="multiple">
+  <Label>States</Label>
+  <div className="combobox-field">
+    <Input className="react-aria-Input inset" placeholder="Select a state" />
+    <FieldButton><ChevronDown /></FieldButton>
+  </div>
+  {/*- begin highlight -*/}
+  <ComboBoxValue<typeof states[0]>>
+    {({selectedItems, state}) => (
+      <TagGroup
+        aria-label="Selected states"
+        style={{marginTop: 8}}
+        items={selectedItems.filter(item => item != null)}
+        renderEmptyState={() => 'No selected items'}
+        onRemove={(keys) => {
+          // Remove keys from ComboBox state.
+          if (Array.isArray(state.value)) {
+            state.setValue(state.value.filter(k => !keys.has(k)));
+          }
+        }}>
+        {item => <Tag>{item.name}</Tag>}
+      </TagGroup>
+    )}
+  </ComboBoxValue>
+  {/*- end highlight -*/}
+  <Popover hideArrow className="combobox-popover">
+    <ComboBoxListBox items={states}>
+      {state => <ComboBoxItem>{state.name}</ComboBoxItem>}
+    </ComboBoxListBox>
+  </Popover>
+</ComboBox>
+```
+
+## Value
+
+Use the `defaultValue` or `value` prop to set the selected item. The value corresponds to the `id` prop of an item. Items can be disabled with the `isDisabled` prop.
 
 ```tsx render
 "use client";
@@ -126,8 +228,8 @@ function Example() {
         label="Favorite Animal"
         placeholder="Select an animal"
         /*- begin highlight -*/
-        selectedKey={animal}
-        onSelectionChange={setAnimal}>
+        value={animal}
+        onChange={setAnimal}>
         {/*- end highlight -*/}
         <ComboBoxItem id="koala">Koala</ComboBoxItem>
         <ComboBoxItem id="kangaroo">Kangaroo</ComboBoxItem>
@@ -180,7 +282,7 @@ function Example(props) {
 
 ### Fully controlled
 
-Both `inputValue` and `selectedKey` can be controlled simultaneously. However, each interaction will only trigger either `onInputChange` or `onSelectionChange`, not both. When controlling both props, you must update both values accordingly.
+Both `inputValue` and `value` can be controlled simultaneously. However, each interaction will only trigger either `onInputChange` or `onChange`, not both. When controlling both props, you must update both values accordingly.
 
 ```tsx render
 "use client";
@@ -203,24 +305,24 @@ function ControlledComboBox() {
   ];
   /*- end collapse -*/
 
-  let [fieldState, setFieldState] = useState<{selectedKey: Key | null, inputValue: string}>({
-    selectedKey: null,
+  let [fieldState, setFieldState] = useState<{value: Key | null, inputValue: string}>({
+    value: null,
     inputValue: ''
   });
 
-  let onSelectionChange = (id: Key | null) => {
-    // Update inputValue when selectedKey changes.
+  let onChange = (id: Key | null) => {
+    // Update inputValue when value changes.
     setFieldState({
       inputValue: id == null ? '' : options.find(o => o.id === id)?.name ?? '',
-      selectedKey: id
+      value: id
     });
   };
 
   let onInputChange = (value: string) => {
-    // Reset selectedKey to null if the input is cleared.
+    // Reset value to null if the input is cleared.
     setFieldState(prevState => ({
       inputValue: value,
-      selectedKey: value === '' ? null : prevState.selectedKey
+      value: value === '' ? null : prevState.value
     }));
   };
 
@@ -231,15 +333,15 @@ function ControlledComboBox() {
         placeholder="Select a major"
         /*- begin highlight -*/
         defaultItems={options}
-        selectedKey={fieldState.selectedKey}
+        value={fieldState.value}
         inputValue={fieldState.inputValue}
-        onSelectionChange={onSelectionChange}
+        onChange={onChange}
         onInputChange={onInputChange}>
         {/*- end highlight -*/}
         {item => <ComboBoxItem>{item.name}</ComboBoxItem>}
       </ComboBox>
       <pre style={{fontSize: 12}}>
-        Current selected major id: {fieldState.selectedKey}{'\n'}
+        Current selected major id: {fieldState.value}{'\n'}
         Current input text: {fieldState.inputValue}
       </pre>
     </div>
@@ -342,11 +444,12 @@ import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 
 <Anatomy />
 
-```tsx links={{ComboBox: '#combobox', Button: 'Button', Popover: 'Popover', ListBox: 'ListBox'}}
+```tsx links={{ComboBox: '#combobox', ComboBoxValue: '#comboboxvalue', Button: 'Button', Popover: 'Popover', ListBox: 'ListBox'}}
 <ComboBox>
   <Label />
   <Input />
   <Button />
+  <ComboBoxValue />
   <Text slot="description" />
   <FieldError />
   <Popover>
@@ -358,3 +461,7 @@ import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 ### ComboBox
 
 <PropTable component={docs.exports.ComboBox} links={docs.links} />
+
+### ComboBoxValue
+
+<PropTable component={docs.exports.ComboBoxValue} links={docs.links} showDescription />
