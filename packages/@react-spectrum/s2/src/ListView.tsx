@@ -368,6 +368,7 @@ const listRowBackground = style<GridListItemRenderProps & {
     default: 0,
     isSelected: {
       selectionStyle: {
+        checkbox: 0,
         highlight: {
           default: 0,
           isNextSelected: '[-1px]'
