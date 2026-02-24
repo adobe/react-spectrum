@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Adobe. All rights reserved.
+ * Copyright 2026 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -38,7 +38,7 @@ import {
 } from 'react-aria-components';
 import Chevron from '../ui-icons/Chevron';
 import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
+import {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState} from '@react-types/shared';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -89,11 +89,6 @@ export interface ListViewItemProps extends Omit<GridListItemProps, 'children' | 
   /** Whether the item has child items (renders a chevron indicator). */
   hasChildItems?: boolean
 }
-
-interface ListViewRendererContextValue {
-  renderer?: (item) => ReactElement<any, string | JSXElementConstructor<any>>
-}
-const ListViewRendererContext = createContext<ListViewRendererContextValue>({});
 
 export const ListViewContext = createContext<ContextValue<Partial<ListViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
@@ -153,11 +148,6 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   let scale = useScale();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let rowHeight = scale === 'large' ? 50 : 40;
-
-  let renderer;
-  if (typeof children === 'function') {
-    renderer = children;
-  }
 
   let domRef = useDOMRef(ref);
   let scrollRef = useRef<HTMLElement | null>(null);
@@ -227,29 +217,27 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
           estimatedRowHeight: rowHeight,
           loaderHeight: 60
         }}>
-        <ListViewRendererContext.Provider value={{renderer}}>
-          <InternalListViewContext.Provider value={{isQuiet, selectionStyle, overflowMode, scale}}>
-            <GridList
-              ref={scrollRef as any}
-              {...gridListProps}
-              selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
-              selectionMode={gridListProps.selectionMode}
-              renderEmptyState={renderEmptyState}
-              style={{
-                paddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0,
-                scrollPaddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0
-              }}
-              className={(renderProps) => listView({
-                ...renderProps,
-                isQuiet
-              })}
-              selectedKeys={selectedKeys}
-              defaultSelectedKeys={undefined}
-              onSelectionChange={onSelectionChange}>
-              {wrappedChildren}
-            </GridList>
-          </InternalListViewContext.Provider>
-        </ListViewRendererContext.Provider>
+        <InternalListViewContext.Provider value={{isQuiet, selectionStyle, overflowMode, scale}}>
+          <GridList
+            ref={scrollRef as any}
+            {...gridListProps}
+            selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
+            selectionMode={gridListProps.selectionMode}
+            renderEmptyState={renderEmptyState}
+            style={{
+              paddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0,
+              scrollPaddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0
+            }}
+            className={(renderProps) => listView({
+              ...renderProps,
+              isQuiet
+            })}
+            selectedKeys={selectedKeys}
+            defaultSelectedKeys={undefined}
+            onSelectionChange={onSelectionChange}>
+            {wrappedChildren}
+          </GridList>
+        </InternalListViewContext.Provider>
       </Virtualizer>
       {actionBar}
     </div>
