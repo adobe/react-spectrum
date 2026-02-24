@@ -1,6 +1,9 @@
 import {Layout} from '../../src/Layout';
 import {InlineAlert, Heading, Content, Link} from '@react-spectrum/s2';
+import {FunctionJSDoc} from '../../src/FunctionJSDoc';
 import {StyleMacroProperties} from '../../src/StyleMacroProperties';
+import docs from 'docs:@react-spectrum/s2';
+import styleDocs from 'docs:@react-spectrum/s2/style';
 import {getPropertyDefinitions} from '../../src/styleProperties';
 export default Layout;
 
@@ -62,196 +65,61 @@ The style macro system provides built-in utility functions for common patterns.
 
 ### baseColor
 
-Returns a set of stateful color token references for the default, hovered, focus-visible, and pressed states of a component.
-
-```tsx
-import {baseColor, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-const styles = style({
-  backgroundColor: baseColor('gray-100')
-});
-```
+<FunctionJSDoc function={styleDocs.exports.baseColor} />
 
 ### color
 
-Resolves a Spectrum color token name to a CSS color value string. Supports opacity modifiers via the `color/opacity` syntax.
-
-```tsx
-import {color, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-const styles = style({
-  color: color('gray-800'),
-  borderColor: color('accent-900/50')
-});
-```
+<FunctionJSDoc function={styleDocs.exports.color} />
 
 ### lightDark
 
-Produces a `light-dark()` CSS color value that resolves to different colors depending on the current color scheme.
-
-```tsx
-import {lightDark, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-const styles = style({
-  backgroundColor: lightDark('gray-25', 'gray-900')
-});
-```
+<FunctionJSDoc function={styleDocs.exports.lightDark} />
 
 ### colorMix
 
-Mixes two Spectrum colors by a given percentage using CSS `color-mix()` in sRGB color space.
-
-```tsx
-import {colorMix, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-const styles = style({
-  backgroundColor: colorMix('accent-900', 'gray-25', 50)
-});
-```
+<FunctionJSDoc function={styleDocs.exports.colorMix} />
 
 ### size
 
-Converts a pixel value to a scalable CSS size expression using the current Spectrum scale factor.
-
-```tsx
-import {size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-const styles = style({
-  width: size(200),
-  height: size(48)
-});
-```
+<FunctionJSDoc function={styleDocs.exports.size} />
 
 ### space
 
-Converts a pixel value to a Spectrum spacing token in `rem` units.
-
-```tsx
-import {space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-const styles = style({
-  gap: space(12)
-});
-```
+<FunctionJSDoc function={styleDocs.exports.space} />
 
 ### fontRelative
 
-Converts a pixel value to a font-relative `em` length. Useful for sizing elements relative to the current font size.
-
-```tsx
-import {fontRelative, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-const styles = style({
-  gap: fontRelative(2)
-});
-```
+<FunctionJSDoc function={styleDocs.exports.fontRelative} />
 
 ### focusRing
 
-Returns consistent Spectrum focus ring outline styles for interactive components. Requires `isFocusVisible` to be passed as a condition.
-
-```tsx
-import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-const styles = style({
-  ...focusRing(),
-  borderRadius: 'lg'
-});
-```
+<FunctionJSDoc function={styleDocs.exports.focusRing} />
 
 ### iconStyle
 
-Generates styles for an icon element with the given size, color, and layout options. See the [Icons](icons#api) page for more information.
-
-```tsx
-import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-<MyIcon className={iconStyle({size: 'L', color: 'accent'})} />
-```
+<FunctionJSDoc function={styleDocs.exports.iconStyle} />
+See the [Icons](icons#api) page for more information.
 
 ### raw
 
-Injects a raw CSS string into the style system. The CSS is wrapped in a generated class name and placed within a CSS `@layer`. Returns the generated class name.
-
-```tsx
-import {raw} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-const blurClass = raw(`
-  backdrop-filter: blur(8px);
-`);
-```
+<FunctionJSDoc function={styleDocs.exports.raw} />
 
 ### keyframes
 
-Defines a CSS `@keyframes` animation and returns the generated animation name.
-
-```tsx
-import {keyframes, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-const fadeIn = keyframes(`
-  from { opacity: 0; }
-  to { opacity: 1; }
-`);
-
-const styles = style({
-  animation: fadeIn
-});
-```
+<FunctionJSDoc function={styleDocs.exports.keyframes} />
 
 ### mergeStyles
 
-Merges multiple style strings together at runtime, combining the CSS properties from each. Later styles take precedence over earlier ones for the same property.
-
-```tsx
-import {mergeStyles} from '@react-spectrum/s2';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-const baseStyles = style({padding: 8});
-const overrideStyles = style({padding: 16, color: 'heading'});
-const merged = mergeStyles(baseStyles, overrideStyles);
-```
+<FunctionJSDoc function={docs.exports.mergeStyles} />
 
 ### getAllowedOverrides
 
-Returns the list of CSS property names that are allowed as style overrides via the `styles` prop. By default includes layout properties (margin, position, grid, etc.) and width properties. Optionally includes height properties.
-
-```tsx
-import {getAllowedOverrides} from '@react-spectrum/s2';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-const styles = style({
-  // ...component styles
-}, getAllowedOverrides());
-
-// With height overrides enabled:
-const styles = style({
-  // ...component styles
-}, getAllowedOverrides({height: true}));
-```
+<FunctionJSDoc function={docs.exports.getAllowedOverrides} />
 
 ### centerPadding
 
-Calculates vertical padding to center a single line of text within a container using the CSS `self()` function and `1lh` unit. Useful when flex centering is not practical for a given layout.
-
-```tsx
-import {centerPadding} from '@react-spectrum/s2';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-const styles = style({
-  paddingY: centerPadding()
-});
-```
+<FunctionJSDoc function={docs.exports.centerPadding} />
 
 ### setColorScheme
 
-Returns style properties that set the CSS `color-scheme` for a component. Defaults to the page's color scheme and supports `'light'`, `'dark'`, and `'light dark'` values via the `colorScheme` render prop condition. Intended for container surfaces like providers, modals, and popovers.
-
-```tsx
-import {setColorScheme} from '@react-spectrum/s2';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-const styles = style({
-  ...setColorScheme(),
-  backgroundColor: 'layer-1'
-});
-```
+<FunctionJSDoc function={docs.exports.setColorScheme} />
