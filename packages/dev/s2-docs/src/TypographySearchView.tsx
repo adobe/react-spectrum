@@ -303,7 +303,7 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
                     setPreviewText('Sample Text');
                   }
                 }}
-                className={style({maxWidth: 'full'})}>
+                className={style({maxWidth: 'full', display: 'flex'})}>
                 <Input
                   ref={inputRef}
                   className={previewInputStyle}
