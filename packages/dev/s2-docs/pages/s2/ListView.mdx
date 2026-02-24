@@ -210,7 +210,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ## Selection and actions
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Return an [ActionBar](ActionBar) from `renderActionBar` to handle bulk actions, and use `onAction` for item navigation. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=ListView) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=ListView) for more details.
 
 ```tsx render docs={docs.exports.ListView} links={docs.links} props={['selectionMode', 'selectionStyle', 'isQuiet', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="s2"
 "use client";
