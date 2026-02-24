@@ -25,6 +25,9 @@ import {StyleString} from '../style/types';
  *
  * @example
  * ```tsx
+ * import {centerPadding} from '@react-spectrum/s2';
+ * import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
  * const styles = style({
  *   paddingY: centerPadding()
  * });
@@ -137,6 +140,9 @@ export const fieldInput = () => ({
  *
  * @example
  * ```tsx
+ * import {setColorScheme} from '@react-spectrum/s2';
+ * import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
  * const styles = style({
  *   ...setColorScheme(),
  *   backgroundColor: 'layer-1'
@@ -383,6 +389,9 @@ export interface StyleProps extends UnsafeStyles {
  *
  * @example
  * ```tsx
+ * import {getAllowedOverrides} from '@react-spectrum/s2';
+ * import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
  * const styles = style({
  *   // ... component styles
  * }, getAllowedOverrides());

@@ -203,6 +203,8 @@ type BaseColor = keyof typeof baseColors;
  *
  * @example
  * ```tsx
+ * import {baseColor, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
  * const styles = style({
  *   backgroundColor: baseColor('gray-100')
  * });
@@ -228,6 +230,8 @@ type SpectrumColor = Color<BaseColor> | ArbitraryValue;
  *
  * @example
  * ```tsx
+ * import {color, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
  * const styles = style({
  *   color: color('gray-800'),
  *   borderColor: color('accent-900/50')
@@ -253,6 +257,8 @@ export function color(value: SpectrumColor): string {
  *
  * @example
  * ```tsx
+ * import {lightDark, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
  * const styles = style({
  *   backgroundColor: lightDark('gray-25', 'gray-900')
  * });
@@ -272,6 +278,8 @@ export function lightDark(light: SpectrumColor, dark: SpectrumColor): `[${string
  *
  * @example
  * ```tsx
+ * import {colorMix, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
  * const styles = style({
  *   backgroundColor: colorMix('accent-900', 'gray-25', 50)
  * });
@@ -416,6 +424,8 @@ const padding = {
  *
  * @example
  * ```tsx
+ * import {size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
  * const styles = style({
  *   width: size(200),
  *   height: size(48)

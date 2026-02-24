@@ -64,6 +64,8 @@ export function fontRelative(base: number, baseFontSize = 14): `[${string}]` {
  *
  * @example
  * ```tsx
+ * import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
  * const styles = style({
  *   ...focusRing(),
  *   borderRadius: 'lg'
