@@ -11,9 +11,10 @@
  */
 
 import {action} from 'storybook/actions';
-import {ActionButton, ActionButtonGroup, ActionMenu, Breadcrumb, Breadcrumbs, Content, Heading, IllustratedMessage, Image, ListView, ListViewItem, MenuItem, Text} from '../';
+import {ActionBar, ActionButton, ActionButtonGroup, ActionMenu, Breadcrumb, Breadcrumbs, Content, Heading, IllustratedMessage, Image, ListView, ListViewItem, MenuItem, Text} from '../';
 import {categorizeArgTypes} from './utils';
 import {chain} from '@react-aria/utils';
+import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
@@ -487,4 +488,104 @@ function NavigationExample(props: {disabledType?: 'file' | 'folder', showActions
 export const Navigation: Story = {
   render: () => <NavigationExample />,
   name: 'hasChildItems navigation'
+};
+
+function ActionBarExample(props) {
+  let [selectedKeys, setSelectedKeys] = useState(new Set<Key>());
+
+  return (
+    <ListView
+      aria-label="Files with action bar"
+      selectionMode="multiple"
+      selectionStyle="checkbox"
+      selectedKeys={selectedKeys}
+      onSelectionChange={chain(setSelectedKeys as any, action('onSelectionChange'))}
+      items={items}
+      renderActionBar={(keys) => {
+        let selection = keys === 'all' ? 'all' : [...keys].join(', ');
+        return (
+          <ActionBar>
+            <ActionButton onPress={() => action('edit')(selection)}>
+              <Edit />
+              <Text>Edit</Text>
+            </ActionButton>
+            <ActionButton onPress={() => action('copy')(selection)}>
+              <Copy />
+              <Text>Copy</Text>
+            </ActionButton>
+            <ActionButton onPress={() => action('delete')(selection)}>
+              <Delete />
+              <Text>Delete</Text>
+            </ActionButton>
+          </ActionBar>
+        );
+      }}
+      styles={style({height: 320})}
+      {...props}>
+      {(item: Item) => (
+        <ListViewItem textValue={item.name}>
+          {item.type === 'folder' ? <Folder /> : <File />}
+          <Text>{item.name}</Text>
+        </ListViewItem>
+      )}
+    </ListView>
+  );
+}
+
+export const WithActionBar: Story = {
+  render: (args) => <ActionBarExample {...args} />,
+  args: {
+    'aria-label': 'Files with action bar'
+  },
+  name: 'with ActionBar'
+};
+
+function ActionBarEmphasizedExample(props) {
+  let [selectedKeys, setSelectedKeys] = useState(new Set<Key>());
+
+  return (
+    <ListView
+      aria-label="Files with emphasized action bar"
+      selectionMode="multiple"
+      selectionStyle="checkbox"
+      selectedKeys={selectedKeys}
+      onSelectionChange={chain(setSelectedKeys as any, action('onSelectionChange'))}
+      items={items}
+      renderActionBar={(keys) => {
+        let selection = keys === 'all' ? 'all' : [...keys].join(', ');
+        return (
+          <ActionBar isEmphasized>
+            <ActionButton onPress={() => action('edit')(selection)}>
+              <Edit />
+              <Text>Edit</Text>
+            </ActionButton>
+            <ActionButton onPress={() => action('copy')(selection)}>
+              <Copy />
+              <Text>Copy</Text>
+            </ActionButton>
+            <ActionButton onPress={() => action('delete')(selection)}>
+              <Delete />
+              <Text>Delete</Text>
+            </ActionButton>
+          </ActionBar>
+        );
+      }}
+      styles={style({height: 320})}
+      {...props}>
+      {(item: Item) => (
+        <ListViewItem textValue={item.name}>
+          {item.type === 'folder' ? <Folder /> : <File />}
+          <Text>{item.name}</Text>
+        </ListViewItem>
+      )}
+    </ListView>
+  );
+}
+
+export const WithActionBarEmphasized: Story = {
+  render: (args) => <ActionBarEmphasizedExample {...args} />,
+  args: {
+    'aria-label': 'Files with emphasized action bar'
+  },
+  name: 'with ActionBar (emphasized)'
 };

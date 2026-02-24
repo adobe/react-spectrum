@@ -29,6 +29,7 @@ import {
   GridListLoadMoreItem,
   GridListProps,
   GridListRenderProps,
+  Key,
   ListLayout,
   Provider,
   SlotProps,
@@ -46,6 +47,7 @@ import {ImageContext} from './Image';
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
+import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale, useLocalizedStringFormatter} from 'react-aria';
 import {useScale} from './utils';
@@ -59,7 +61,9 @@ export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | '
   /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
   onLoadMore?: () => void,
   /** The children of the ListView. */
-  children: ReactNode | ((item: T) => ReactNode)
+  children: ReactNode | ((item: T) => ReactNode),
+  /** Provides the ActionBar to display when items are selected in the ListView. */
+  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement
 }
 
 interface ListViewStylesProps {
@@ -95,6 +99,17 @@ export const ListViewContext = createContext<ContextValue<Partial<ListViewProps<
 
 let InternalListViewContext = createContext<{isQuiet?: boolean, selectionStyle?: 'highlight' | 'checkbox', overflowMode?: 'wrap' | 'truncate', scale?: 'medium' | 'large'}>({});
 
+const listViewWrapper = style({
+  minHeight: 0,
+  minWidth: 0,
+  display: 'flex',
+  isolation: 'isolate',
+  disableTapHighlight: true,
+  position: 'relative',
+  // Clip ActionBar animation.
+  overflow: 'clip'
+}, getAllowedOverrides({height: true}));
+
 const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
   ...focusRing(),
   outlineOffset: {
@@ -124,7 +139,7 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
     isQuiet: 0
   },
   borderStyle: 'solid'
-}, getAllowedOverrides({height: true}));
+});
 
 /**
  * A ListView displays a list of interactive items, and allows a user to navigate, select, or perform an action.
@@ -145,6 +160,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   }
 
   let domRef = useDOMRef(ref);
+  let scrollRef = useRef<HTMLElement | null>(null);
 
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let renderEmptyState: ListViewProps<T>['renderEmptyState'] | undefined;
@@ -198,30 +214,45 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
     );
   }
 
+  let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
+
   return (
-    <Virtualizer
-      layout={ListLayout}
-      layoutOptions={{
-        estimatedRowHeight: rowHeight,
-        loaderHeight: 60
-      }}>
-      <ListViewRendererContext.Provider value={{renderer}}>
-        <InternalListViewContext.Provider value={{isQuiet, selectionStyle, overflowMode, scale}}>
-          <GridList
-            ref={domRef}
-            {...gridListProps}
-            selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
-            renderEmptyState={renderEmptyState}
-            style={props.UNSAFE_style}
-            className={(renderProps) => (props.UNSAFE_className || '') + listView({
-              ...renderProps,
-              isQuiet
-            }, props.styles)}>
-            {wrappedChildren}
-          </GridList>
-        </InternalListViewContext.Provider>
-      </ListViewRendererContext.Provider>
-    </Virtualizer>
+    <div
+      ref={domRef}
+      className={(props.UNSAFE_className || '') + listViewWrapper(null, props.styles)}
+      style={props.UNSAFE_style}>
+      <Virtualizer
+        layout={ListLayout}
+        layoutOptions={{
+          estimatedRowHeight: rowHeight,
+          loaderHeight: 60
+        }}>
+        <ListViewRendererContext.Provider value={{renderer}}>
+          <InternalListViewContext.Provider value={{isQuiet, selectionStyle, overflowMode, scale}}>
+            <GridList
+              ref={scrollRef as any}
+              {...gridListProps}
+              selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
+              selectionMode={gridListProps.selectionMode}
+              renderEmptyState={renderEmptyState}
+              style={{
+                paddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0,
+                scrollPaddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0
+              }}
+              className={(renderProps) => listView({
+                ...renderProps,
+                isQuiet
+              })}
+              selectedKeys={selectedKeys}
+              defaultSelectedKeys={undefined}
+              onSelectionChange={onSelectionChange}>
+              {wrappedChildren}
+            </GridList>
+          </InternalListViewContext.Provider>
+        </ListViewRendererContext.Provider>
+      </Virtualizer>
+      {actionBar}
+    </div>
   );
 });
 
