@@ -14,7 +14,7 @@ const listBoxStyle = style({
   width: 'full',
   display: 'flex',
   flexDirection: 'row',
-  gap: 24,
+  gap: 12,
   flexWrap: 'wrap',
   alignItems: 'start'
 });
@@ -28,10 +28,10 @@ const sectionStyle = style({
 const headerStyle = style({
   font: 'heading-xs',
   marginBottom: 4,
-  color: 'neutral-subdued',
   display: 'flex',
   alignItems: 'center',
-  gap: 4
+  gap: 4,
+  paddingX: 8
 });
 
 const typographySections = [
@@ -78,7 +78,7 @@ const itemStyle = style({
   display: 'flex',
   alignItems: 'center',
   paddingX: 12,
-  paddingY: 8,
+  paddingY: 4,
   backgroundColor: {
     default: 'gray-50',
     isHovered: 'gray-100',
