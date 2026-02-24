@@ -244,6 +244,9 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   );
 });
 
+const selectedBackground = colorMix('gray-25', 'gray-900', 7);
+const selectedActiveBackground = colorMix('gray-25', 'gray-900', 10);
+
 const listitem = style<GridListItemRenderProps & {
   isFocused: boolean,
   isLink?: boolean,
@@ -322,8 +325,14 @@ const listitem = style<GridListItemRenderProps & {
     default: '--borderColor',
     isSelected: {
       selectionStyle: {
-        highlight: 'transparent',
-        checkbox: '--borderColor'
+        highlight: {
+          default: 'transparent',
+          isNextSelected: 'transparent'
+        },
+        checkbox: {
+          default: '--borderColor',
+          isNextSelected: selectedBackground
+        }
       }
     }
   },
@@ -334,9 +343,6 @@ const listitem = style<GridListItemRenderProps & {
     isFirstItem: 'default'
   }
 });
-
-const selectedBackground = colorMix('gray-25', 'gray-900', 7);
-const selectedActiveBackground = colorMix('gray-25', 'gray-900', 10);
 
 const listRowBackground = style<GridListItemRenderProps & {
   isFirstItem?: boolean,
@@ -407,7 +413,8 @@ const listRowBackground = style<GridListItemRenderProps & {
     default: 1,
     isPrevSelected: {
       selectionStyle: {
-        highlight: 0
+        highlight: 0,
+        checkbox: 0
       }
     }
   },
@@ -415,7 +422,8 @@ const listRowBackground = style<GridListItemRenderProps & {
     default: 1,
     isNextSelected: {
       selectionStyle: {
-        highlight: 0
+        highlight: 0,
+        checkbox: 0
       }
     }
   },
