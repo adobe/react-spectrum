@@ -18,6 +18,7 @@ import {StyleString} from '../style/types';
  * Calculates vertical padding to center a single line of text within a container.
  * Uses the CSS `self()` function and `1lh` unit to compute the padding based on
  * the container's minimum height and border widths.
+ * This is useful for precise vertical centering without introducing a flex/grid layout to the container.
  *
  * @param minHeight - A CSS expression for the minimum height to center within. Defaults to `'self(minHeight)'`.
  * @returns A CSS `calc()` expression wrapped as an arbitrary style value.
@@ -132,6 +133,7 @@ export const fieldInput = () => ({
  * Returns style properties that set the CSS `color-scheme` for a component.
  * Defaults to the page's color scheme and supports `'light'`, `'dark'`, and `'light dark'` values
  * via the `colorScheme` render prop condition.
+ * Intended for root containers (e.g. providers, modals, and popovers), and not needed for individual components.
  *
  * @example
  * ```tsx
@@ -350,7 +352,7 @@ export const heightProperties = [
   'maxHeight'
 ] as const;
 
-/** The set of height-related CSS property names (`size`, `height`, `minHeight`, `maxHeight`). */
+/** The set of height-related CSS property names (`height`, `minHeight`, `maxHeight`) plus `size` (which controls both width and height). */
 export type HeightProperties = (typeof heightProperties)[number];
 
 export type StylesProp = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number]>;
@@ -376,7 +378,7 @@ export interface StyleProps extends UnsafeStyles {
  *
  * @param options - Configuration for which property groups to include.
  * @param options.width - Whether to include width properties (`width`, `minWidth`, `maxWidth`). Defaults to `true`.
- * @param options.height - Whether to include height properties (`height`, `minHeight`, `maxHeight`, `size`). Defaults to `false`.
+ * @param options.height - Whether to include height properties (`height`, `minHeight`, `maxHeight`) and `size` (applies to both axes). Defaults to `false`.
  * @returns An array of allowed CSS property names.
  *
  * @example

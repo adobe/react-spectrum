@@ -30,7 +30,7 @@ export type {StyleString} from './types';
  * import {space} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
  * const styles = style({
- *   gap: space(12)
+ *   gap: space(12) // 12/16 = 0.75rem
  * });
  * ```
  */
@@ -40,7 +40,7 @@ export function space(px: number): `[${string}]` {
 
 /**
  * Converts a pixel value to a font-relative `em` length. Useful for sizing elements
- * relative to the current font size.
+ * relative to the current font size. Defaults to a 14px base.
  *
  * @param base - The pixel value to convert.
  * @param baseFontSize - The base font size in pixels to divide by. Defaults to `14`.
@@ -55,7 +55,7 @@ export function space(px: number): `[${string}]` {
  * });
  * ```
  */
-export function fontRelative(base: number, baseFontSize?: number): `[${string}]` {
+export function fontRelative(base: number, baseFontSize = 14): `[${string}]` {
   return `[${internalFontRelative(base, baseFontSize)}]`;
 }
 

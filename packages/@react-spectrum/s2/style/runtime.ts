@@ -49,6 +49,7 @@ import {StyleString} from './types';
  * const baseStyles = style({padding: 8});
  * const overrideStyles = style({padding: 16, color: 'heading'});
  * const merged = mergeStyles(baseStyles, overrideStyles);
+ * // merged has `padding: 16` and `color: heading`.
  * ```
  */
 export function mergeStyles(...styles: (StyleString | null | undefined)[]): StyleString {

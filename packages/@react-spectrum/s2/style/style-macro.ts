@@ -866,6 +866,8 @@ class ConditionalRule extends GroupRule {
 /**
  * Injects a raw CSS string into the style system. The CSS is wrapped in a generated
  * class name and placed within the specified `@layer`. Returns the generated class name.
+ * This is an escape hatch for advanced cases (e.g. pseudo selectors or features not yet
+ * available in the style macro API), and should be used sparingly.
  * Must be imported with `{type: 'macro'}`.
  *
  * @param css - The raw CSS declarations to inject.

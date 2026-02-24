@@ -372,19 +372,6 @@ export type PositiveSpacing = keyof typeof baseSpacing;
 export type NegativeSpacing = keyof typeof negativeSpacing;
 export type Spacing = PositiveSpacing | NegativeSpacing;
 
-/**
- * Converts a pixel value to a font-relative `em` length.
- *
- * @param base - The pixel value to convert.
- * @param baseFontSize - The base font size in pixels to divide by. Defaults to `14`.
- * @returns A CSS `em` value string.
- *
- * @example
- * ```tsx
- * fontRelative(7) // => '0.5em' (7 / 14)
- * fontRelative(8, 16) // => '0.5em' (8 / 16)
- * ```
- */
 export function fontRelative(this: MacroContext | void, base: number, baseFontSize = 14): string {
   return (base / baseFontSize) + 'em';
 }
@@ -393,18 +380,6 @@ export function edgeToText(this: MacroContext | void, height: keyof typeof baseS
   return `calc(${baseSpacing[height]} * 3 / 8)`;
 }
 
-/**
- * Converts a pixel value to `rem` units using a 16px base.
- *
- * @param px - The spacing in pixels.
- * @returns A `rem` value string.
- *
- * @example
- * ```tsx
- * space(16) // => '1rem'
- * space(8)  // => '0.5rem'
- * ```
- */
 export function space(this: MacroContext | void, px: number): string {
   return pxToRem(px);
 }
@@ -434,6 +409,7 @@ const padding = {
 /**
  * Converts a pixel value to a scalable CSS size expression using the Spectrum 2 scale factor.
  * The result is a `calc()` expression that multiplies the rem-converted value by the current scale factor.
+ * The scale factor differs between touch and non-touch devices.
  *
  * @param px - The size in pixels.
  * @returns A CSS `calc()` expression.
