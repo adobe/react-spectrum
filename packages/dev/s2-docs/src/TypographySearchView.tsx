@@ -3,7 +3,7 @@
 import {ActionButton, Content, Heading, IllustratedMessage, Link} from '@react-spectrum/s2';
 import {CopyButton} from './CopyButton';
 import Edit from '@react-spectrum/s2/icons/Edit';
-import {FieldInputContext, Header, Input, InputRenderProps, Key, ListBox, ListBoxItem, ListBoxSection, TextField} from 'react-aria-components';
+import {FieldInputContext, Header, Input, InputRenderProps, Key, ListBox, ListBoxItem, ListBoxSection, OverlayTriggerStateContext, TextField} from 'react-aria-components';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {InfoMessage} from './colorSearchData';
 // eslint-disable-next-line monorepo/no-internal-import
@@ -313,20 +313,22 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
                   }} />
               </TextField>
             </FieldInputContext.Provider>
-            <ActionButton
-              aria-label="Edit sample text"
-              isQuiet
-              size="S"
-              styles={editButtonStyle({isHidden: isPreviewFocused})}
-              onPress={() => {
-                const input = inputRef.current;
-                if (input) {
-                  input.focus();
-                  input.select();
-                }
-              }}>
-              <Edit />
-            </ActionButton>
+            <OverlayTriggerStateContext.Provider value={null}>
+              <ActionButton
+                aria-label="Edit sample text"
+                isQuiet
+                size="S"
+                styles={editButtonStyle({isHidden: isPreviewFocused})}
+                onPress={() => {
+                  const input = inputRef.current;
+                  if (input) {
+                    input.focus();
+                    input.select();
+                  }
+                }}>
+                <Edit />
+              </ActionButton>
+            </OverlayTriggerStateContext.Provider>
           </div>
         </div>
         
