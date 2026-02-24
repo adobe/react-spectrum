@@ -230,7 +230,7 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
   return (
     <>
       <InfoMessage>Select a typography style and customize the sample text to preview its rendered output and code snippet. See <Link href="styling">styling</Link> for more information.</InfoMessage>
-      <div className={style({flexGrow: 1, overflow: 'auto', padding: 8})}>
+      <div className={style({flexShrink: 1, minHeight: 0, overflow: 'auto', padding: 8})}>
         <ListBox
           aria-label="Typography styles"
           selectionMode="single"
@@ -273,6 +273,7 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
           padding: 16,
           display: 'flex',
           flexDirection: 'column',
+          flexShrink: 0,
           gap: 16,
           borderWidth: 1,
           borderColor: 'gray-200',
