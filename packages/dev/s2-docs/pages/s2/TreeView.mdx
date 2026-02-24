@@ -1,7 +1,7 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {TreeView, TreeViewItem, TreeViewItemContent, Collection, Text, ActionMenu, MenuItem, InlineAlert, Heading, Content} from '@react-spectrum/s2';
+import {TreeView, TreeViewItem, TreeViewItemContent, Collection, Text, ActionMenu, ActionBar, ActionButton, MenuItem, InlineAlert, Heading, Content} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['hierarchy', 'data', 'nested'];
@@ -293,11 +293,14 @@ import FolderOpen from '@react-spectrum/s2/illustrations/linear/FolderOpen';
 
 ## Selection and actions
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=Tree) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Return an [ActionBar](ActionBar) from `renderActionBar` to handle bulk actions, and use `onAction` for item navigation. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=Tree) for more details.
 
 ```tsx render docs={docs.exports.TreeView} links={docs.links} props={['selectionMode', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
-import {TreeView, TreeViewItem, TreeViewItemContent, type Selection} from '@react-spectrum/s2';
+import {TreeView, TreeViewItem, TreeViewItemContent, ActionBar, ActionButton, Text, type Selection} from '@react-spectrum/s2';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import Copy from '@react-spectrum/s2/icons/Copy';
+import Delete from '@react-spectrum/s2/icons/Delete';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
@@ -309,14 +312,32 @@ function Example(props) {
       <TreeView
         {...props}
         aria-label="Pokemon evolution"
-        styles={style({height: 250, width: 'full', maxWidth: 300})}
+        styles={style({height: 250, width: 'full', maxWidth: 400})}
         ///- begin highlight -///
         /* PROPS */
         selectedKeys={selected}
         onSelectionChange={setSelected}
         onAction={key => alert(`Clicked ${key}`)}
+        renderActionBar={(selectedKeys) => {
         ///- end highlight -///
-      >
+          let selection = selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ');
+          return (
+            <ActionBar>
+              <ActionButton onPress={() => alert(`Edit ${selection}`)}>
+                <Edit />
+                <Text>Edit</Text>
+              </ActionButton>
+              <ActionButton onPress={() => alert(`Copy ${selection}`)}>
+                <Copy />
+                <Text>Copy</Text>
+              </ActionButton>
+              <ActionButton onPress={() => alert(`Delete ${selection}`)}>
+                <Delete />
+                <Text>Delete</Text>
+              </ActionButton>
+            </ActionBar>
+          );
+        }}>
         <TreeViewItem id="bulbasaur" textValue="Bulbasaur">
           <TreeViewItemContent>Bulbasaur</TreeViewItemContent>
           <TreeViewItem id="ivysaur" textValue="Ivysaur">
