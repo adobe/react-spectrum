@@ -1,12 +1,11 @@
 'use client';
 
-import {ActionButton, Content, Heading, IllustratedMessage, Link, Text, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
+import {ActionButton, Content, Heading, IllustratedMessage, Link} from '@react-spectrum/s2';
 import {CopyButton} from './CopyButton';
+import Edit from '@react-spectrum/s2/icons/Edit';
 import {FieldInputContext, Header, Input, InputRenderProps, Key, ListBox, ListBoxItem, ListBoxSection, TextField} from 'react-aria-components';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {InfoMessage} from './colorSearchData';
-// eslint-disable-next-line monorepo/no-internal-import
-import Edit from '@react-spectrum/s2/icons/Edit';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import React, {useMemo, useRef, useState} from 'react';
@@ -72,21 +71,6 @@ const typographySections = [
     description: 'Use for less important metadata',
     items: ['detail-sm', 'detail', 'detail-lg', 'detail-xl']
   }
-];
-
-const htmlElements = [
-  {id: 'h1', name: '<h1>'},
-  {id: 'h2', name: '<h2>'},
-  {id: 'h3', name: '<h3>'},
-  {id: 'h4', name: '<h4>'},
-  {id: 'h5', name: '<h5>'},
-  {id: 'h6', name: '<h6>'},
-  {id: 'p', name: '<p>'},
-  {id: 'span', name: '<span>'},
-  {id: 'div', name: '<div>'},
-  {id: 'label', name: '<label>'},
-  {id: 'strong', name: '<strong>'},
-  {id: 'em', name: '<em>'}
 ];
 
 const itemStyle = style({
@@ -197,13 +181,11 @@ interface TypographySearchViewProps {
 
 export function TypographySearchView({searchValue = ''}: TypographySearchViewProps) {
   const [selectedFont, setSelectedFont] = useState<string>('heading');
-  const [selectedElement, setSelectedElement] = useState<Key>('h1');
   const [previewText, setPreviewText] = useState<string>('Sample Text');
   const [isPreviewFocused, setIsPreviewFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const selectedElementTag = String(selectedElement || 'span');
-  const codeSnippet = `<${selectedElementTag} className={style({font: '${selectedFont}'})}>${previewText}</${selectedElementTag}>`;
+  const codeSnippet = `<div className={style({font: '${selectedFont}'})}>${previewText}</div>`;
   const fontStyleClass = selectedFont in fontStyles ? fontStyles[selectedFont as FontStyleKey] : undefined;
   const previewInputStyle = (renderProps: InputRenderProps) => `${defaultPreviewInputStyle(renderProps)} ${fontStyleClass || ''}`;
 
@@ -231,13 +213,6 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
       // Handle cases like "ui-2xl" or "heading-xl"
       const fontName = parts.slice(1).join('-');
       setSelectedFont(fontName);
-    }
-  };
-
-  const handleElementChange = (keys: Set<Key>) => {
-    const selectedKey = Array.from(keys)[0];
-    if (selectedKey) {
-      setSelectedElement(selectedKey);
     }
   };
 
@@ -291,124 +266,105 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
         </ListBox>
       </div>
 
-      <div className={style({flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 8, paddingX: 8, paddingBottom: 8})}>
-        <div className={style({overflowX: 'auto', overflowY: 'visible', width: 'full', paddingY: 8, paddingX: 4})}>
-          <ToggleButtonGroup
-            aria-label="Element type"
-            density="compact"
-            selectionMode="single"
-            disallowEmptySelection
-            selectedKeys={[selectedElement]}
-            onSelectionChange={handleElementChange as (keys: Set<Key>) => void}>
-            {htmlElements.map(option => (
-              <ToggleButton key={option.id} id={option.id}>
-                <Text>{option.name}</Text>
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
-        </div>
-        
+      <div
+        className={style({
+          backgroundColor: 'layer-1',
+          borderRadius: 'lg',
+          padding: 16,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 16,
+          borderWidth: 1,
+          borderColor: 'gray-200',
+          borderStyle: 'solid',
+          margin: 8
+        })}>
         <div
           className={style({
-            backgroundColor: 'layer-1',
-            borderRadius: 'lg',
+            backgroundColor: 'layer-2',
+            borderRadius: 'default',
             padding: 16,
             display: 'flex',
-            flexDirection: 'column',
-            gap: 16,
-            borderWidth: 1,
-            borderColor: 'gray-200',
-            borderStyle: 'solid'
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: 80
           })}>
+          <div className={style({position: 'relative', display: 'inline-flex', alignItems: 'center', maxWidth: 'full'})}>
+            <FieldInputContext.Provider value={null}>
+              <TextField
+                aria-label="Editable preview text"
+                value={previewText}
+                onChange={setPreviewText}
+                onFocus={() => setIsPreviewFocused(true)}
+                onBlur={() => {
+                  setIsPreviewFocused(false);
+                  if (previewText.trim() === '') {
+                    setPreviewText('Sample Text');
+                  }
+                }}
+                className={style({maxWidth: 'full'})}>
+                <Input
+                  ref={inputRef}
+                  className={previewInputStyle}
+                  style={{
+                    /* @ts-ignore - https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/field-sizing */
+                    fieldSizing: 'content'
+                  }} />
+              </TextField>
+            </FieldInputContext.Provider>
+            <ActionButton
+              aria-label="Edit sample text"
+              isQuiet
+              size="S"
+              styles={editButtonStyle({isHidden: isPreviewFocused})}
+              onPress={() => {
+                const input = inputRef.current;
+                if (input) {
+                  input.focus();
+                  input.select();
+                }
+              }}>
+              <Edit />
+            </ActionButton>
+          </div>
+        </div>
+        
+        <div className={style({display: 'flex', flexDirection: 'column', gap: 12})}>
           <div
             className={style({
-              backgroundColor: 'layer-2',
-              borderRadius: 'default',
-              padding: 16,
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              minHeight: 80
+              gap: 8,
+              backgroundColor: 'gray-100',
+              borderRadius: 'default',
+              paddingX: 12,
+              paddingY: 8,
+              font: 'code'
             })}>
-            <div className={style({position: 'relative', display: 'inline-flex', alignItems: 'center', maxWidth: 'full'})}>
-              <FieldInputContext.Provider value={null}>
-                <TextField
-                  aria-label="Editable preview text"
-                  value={previewText}
-                  onChange={setPreviewText}
-                  onFocus={() => setIsPreviewFocused(true)}
-                  onBlur={() => {
-                    setIsPreviewFocused(false);
-                    if (previewText.trim() === '') {
-                      setPreviewText('Sample Text');
-                    }
-                  }}
-                  className={style({maxWidth: 'full'})}
-                  >
-                  <Input
-                    ref={inputRef}
-                    className={previewInputStyle}
-                    style={{
-                      /* @ts-ignore - https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/field-sizing */
-                      fieldSizing: 'content'
-                    }}
-                  />
-                </TextField>
-              </FieldInputContext.Provider>
-              <ActionButton
-                aria-label="Edit sample text"
-                isQuiet
-                size="S"
-                styles={editButtonStyle({isHidden: isPreviewFocused})}
-                onPress={() => {
-                  const input = inputRef.current;
-                  if (input) {
-                    input.focus();
-                    input.select();
-                  }
-                }}>
-                <Edit />
-              </ActionButton>
-            </div>
-          </div>
-          
-          <div className={style({display: 'flex', flexDirection: 'column', gap: 12})}>
-            <div
-              className={style({
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                backgroundColor: 'gray-100',
-                borderRadius: 'default',
-                paddingX: 12,
-                paddingY: 8,
-                font: 'code'
-              })}>
-              <code className={style({flexGrow: 1, overflow: 'auto', whiteSpace: 'nowrap'})}>
-                &lt;
-                <span className={syntaxStyles.tag}>{selectedElementTag}</span>
-                {' '}
-                <span className={syntaxStyles.attribute}>className</span>
-                =
-                {'{'}
-                <span className={syntaxStyles.tag}>style</span>
-                {'('}
-                {'{'}
-                <span className={syntaxStyles.attribute}>font</span>
-                :
-                {' '}
-                <span className={syntaxStyles.string}>'{selectedFont}'</span>
-                {'}'}
-                {')'}
-                {'}'}
-                &gt;
-                {previewText}
-                &lt;/
-                <span className={syntaxStyles.tag}>{selectedElementTag}</span>
-                &gt;
-              </code>
-              <CopyButton size="M" text={codeSnippet} tooltip="Copy code snippet" ariaLabel="Copy code snippet" />
-            </div>
+            <code className={style({flexGrow: 1, overflow: 'auto', whiteSpace: 'nowrap'})}>
+              &lt;
+              <span className={syntaxStyles.tag}>div</span>
+              {' '}
+              <span className={syntaxStyles.attribute}>className</span>
+              =
+              {'{'}
+              <span className={syntaxStyles.tag}>style</span>
+              {'('}
+              {'{'}
+              <span className={syntaxStyles.attribute}>font</span>
+              :
+              {' '}
+              <span className={syntaxStyles.string}>'{selectedFont}'</span>
+              {'}'}
+              {')'}
+              {'}'}
+              &gt;
+              {previewText}
+              &lt;/
+              <span className={syntaxStyles.tag}>div</span>
+              &gt;
+            </code>
+            <CopyButton size="M" text={codeSnippet} tooltip="Copy code snippet" ariaLabel="Copy code snippet" />
           </div>
         </div>
       </div>
