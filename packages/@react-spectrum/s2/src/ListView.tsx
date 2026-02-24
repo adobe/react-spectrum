@@ -330,7 +330,7 @@ const listitem = style<GridListItemRenderProps & {
   borderStartWidth: 0,
   borderEndWidth: 0,
   borderStyle: 'solid',
-  borderBottomColor: {
+  borderColor: {
     default: '--borderColor',
     isSelected: {
       selectionStyle: {
@@ -526,7 +526,7 @@ const listCheckbox = style({
   gridArea: 'checkmark',
   gridRowEnd: 'span 2',
   alignSelf: 'center',
-  marginEnd: 'text-to-visual',
+  marginEnd: 8,
   visibility: {
     default: 'visible',
     isDisabled: 'hidden'
