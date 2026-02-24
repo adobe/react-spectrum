@@ -39,7 +39,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ## Content
 
-`ListView` follows the [Collection Components API](collections.html?component=ListView), accepting both static and dynamic collections.
+`ListView` follows the [Collection Components API](collections.html?component=ListView), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the items prop, and a function to render the children.
 
 ```tsx render type="s2"
 "use client";
@@ -63,9 +63,7 @@ let files = [
 
 ### Slots
 
-`ListViewItem` supports icons, `Text`, [Image](Image) content, [ActionMenu](ActionMenu), and [ActionButtonGroup](ActionButtonGroup) as children.
-
-Use `textValue` when item content includes non-text children so typeahead and accessibility can still use a clear text label.
+`ListViewItem` supports icons, `Text`, [Image](Image), [ActionMenu](ActionMenu), and [ActionButtonGroup](ActionButtonGroup) as children, and must have a `textValue` prop for accessibility.
 
 ```tsx render type="s2"
 "use client";
@@ -165,7 +163,7 @@ function AsyncListView() {
 
 ### Links
 
-Use the `href` prop on a `ListViewItem` to create links. See the [getting started guide](getting-started) to learn how to integrate with your framework.
+Use the `href` prop on a `ListViewItem` to create a link. See the [getting started guide](getting-started) to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection) for more details.
 
 ```tsx render docs={docs.exports.ListView} links={docs.links} props={['selectionMode', 'isQuiet']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'none'}} type="s2"
 import {ListView, ListViewItem} from '@react-spectrum/s2';
@@ -212,7 +210,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ## Selection and actions
 
-Use the `selectionMode` prop to enable single or multiple selection. Use `selectionStyle="checkbox"` (default) for toggle selection with checkboxes, or `selectionStyle="highlight"` for row highlight selection behavior. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=ListView) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=ListView) for more details.
 
 ```tsx render docs={docs.exports.ListView} links={docs.links} props={['selectionMode', 'selectionStyle', 'isQuiet', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="s2"
 "use client";
