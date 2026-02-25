@@ -250,12 +250,11 @@ import {Menu, MenuTrigger, MenuItem, SubmenuTrigger, ActionButton} from '@react-
 
 ### Unavailable items
 
-Wrap a `<MenuItem>` and a `<Popover>` with a `<UnavailableMenuItemTrigger>` and apply `isUnavailable` to disable the item's default action and show an informational popover instead.
+Wrap a `<MenuItem>` and a `<ContextualHelpPopover>` with a `<UnavailableMenuItemTrigger>` and apply `isUnavailable` to disable the item's default action and show an informational popover instead. The `<ContextualHelpPopover>` supports `<Heading>`, `<Content>`, and `<Footer>` slots.
 
 ```tsx render docs={docs.exports.UnavailableMenuItemTrigger} links={docs.links} props={['isUnavailable']} initialProps={{isUnavailable: true}} type="s2" wide
 "use client";
-import {Menu, MenuTrigger, MenuItem, UnavailableMenuItemTrigger, Popover, ActionButton} from '@react-spectrum/s2';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {ActionButton, Content, ContextualHelpPopover, Heading, Menu, MenuTrigger, MenuItem, UnavailableMenuItemTrigger} from '@react-spectrum/s2';
 
 function Example(props) {
   return (
@@ -265,11 +264,10 @@ function Example(props) {
         <MenuItem id="favorite">Favorite</MenuItem>
         <UnavailableMenuItemTrigger {...props}/* PROPS */>
           <MenuItem id="delete">Delete</MenuItem>
-          <Popover>
-            <div className={style({font: 'ui', padding: 8, maxWidth: 200})}>
-              Contact your administrator for permissions to delete.
-            </div>
-          </Popover>
+          <ContextualHelpPopover>
+            <Heading>Permission required</Heading>
+            <Content>Contact your administrator for permissions to delete.</Content>
+          </ContextualHelpPopover>
         </UnavailableMenuItemTrigger>
       </Menu>
     </MenuTrigger>

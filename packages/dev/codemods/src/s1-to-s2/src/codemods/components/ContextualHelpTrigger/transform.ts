@@ -1,4 +1,4 @@
-import {addComment, addComponentImport, getName} from '../../shared/utils';
+import {addComponentImport, getName} from '../../shared/utils';
 import {getComponents} from '../../../getComponents';
 import {NodePath} from '@babel/traverse';
 import * as t from '@babel/types';
@@ -8,8 +8,7 @@ let availableComponents = getComponents();
 /**
  * Transforms ContextualHelpTrigger:
  * - Rename ContextualHelpTrigger to UnavailableMenuItemTrigger.
- * - Replace the old Dialog with Popover.
- * - Add a TODO if the old Dialog had children.
+ * - Replace the old Dialog with ContextualHelpPopover.
  */
 export default function transformContextualHelpTrigger(path: NodePath<t.JSXElement>): void {
   let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
@@ -21,21 +20,18 @@ export default function transformContextualHelpTrigger(path: NodePath<t.JSXEleme
     path.node.closingElement.name = t.jsxIdentifier(localName);
   }
 
-  // replace Dialog with S2 Popover
+  // replace Dialog with ContextualHelpPopover
   let dialog = path.node.children.filter((c): c is t.JSXElement => t.isJSXElement(c))[1];
   if (dialog && t.isJSXIdentifier(dialog.openingElement.name)) {
     let name = getName(path, dialog.openingElement.name);
     if (name === 'Dialog') {
-      let popover = availableComponents.has('Popover')
-        ? addComponentImport(program, 'Popover')
-        : 'Popover';
-      dialog.openingElement.name = t.jsxIdentifier(popover);
+      let contextualHelpPopover = availableComponents.has('ContextualHelpPopover')
+        ? addComponentImport(program, 'ContextualHelpPopover')
+        : 'ContextualHelpPopover';
+      dialog.openingElement.name = t.jsxIdentifier(contextualHelpPopover);
       if (dialog.closingElement) {
-        dialog.closingElement.name = t.jsxIdentifier(popover);
+        dialog.closingElement.name = t.jsxIdentifier(contextualHelpPopover);
       }
-
-      // since s2 Popover doesn't have slot styles, need to tell user to refactor
-      addComment(dialog, ' TODO(S2-upgrade): Popover does not provide Dialog-style slots. Refactor the content layout as needed (e.g. use style macro or custom wrappers).');
     }
   }
 }

@@ -199,7 +199,7 @@ const sections = [
 </div>
 `);
 
-test('Renames ContextualHelpTrigger to UnavailableMenuItemTrigger and Dialog to Popover', `
+test('Renames ContextualHelpTrigger to UnavailableMenuItemTrigger and Dialog to ContextualHelpPopover', `
 import {Menu, MenuTrigger, ContextualHelpTrigger, Item, Button, Dialog, Heading, Content} from '@adobe/react-spectrum';
 
 <MenuTrigger>

@@ -151,10 +151,10 @@ const items = [
 </div>"
 `;
 
-exports[`Renames ContextualHelpTrigger to UnavailableMenuItemTrigger and Dialog to Popover 1`] = `
+exports[`Renames ContextualHelpTrigger to UnavailableMenuItemTrigger and Dialog to ContextualHelpPopover 1`] = `
 "import {
   UnavailableMenuItemTrigger,
-  Popover,
+  ContextualHelpPopover,
   MenuItem,
   Menu,
   MenuTrigger,
@@ -171,11 +171,10 @@ exports[`Renames ContextualHelpTrigger to UnavailableMenuItemTrigger and Dialog 
     <MenuItem id="redo">Redo</MenuItem>
     <UnavailableMenuItemTrigger isUnavailable>
       <MenuItem id="cut">Cut</MenuItem>
-      // TODO(S2-upgrade): Popover does not provide Dialog-style slots. Refactor the content layout as needed (e.g. use style macro or custom wrappers).
-      <Popover>
+      <ContextualHelpPopover>
         <Heading>Cut</Heading>
         <Content>Please select text for Cut to be enabled.</Content>
-      </Popover>
+      </ContextualHelpPopover>
     </UnavailableMenuItemTrigger>
   </Menu>
 </MenuTrigger>"

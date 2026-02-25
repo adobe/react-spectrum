@@ -11,7 +11,7 @@
  */
 
 import {AriaMenuTests} from '../../../react-aria-components/test/AriaMenu.test-util';
-import {Button, Collection, Header, Heading, Menu, MenuItem, MenuSection, MenuTrigger, Popover, SubmenuTrigger, UnavailableMenuItemTrigger} from '../src';
+import {Button, Collection, Content, ContextualHelpPopover, Header, Heading, Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger, UnavailableMenuItemTrigger} from '../src';
 import {pointerMap} from '@react-aria/test-utils';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
@@ -73,9 +73,10 @@ describe('Menu unavailable', () => {
         <Menu onAction={onAction}>
           <UnavailableMenuItemTrigger isUnavailable>
             <MenuItem id="delete">Delete</MenuItem>
-            <Popover>
-              <div>Contact your administrator for permissions to delete.</div>
-            </Popover>
+            <ContextualHelpPopover>
+              <Heading>Permission required</Heading>
+              <Content>Contact your administrator for permissions to delete.</Content>
+            </ContextualHelpPopover>
           </UnavailableMenuItemTrigger>
         </Menu>
       </MenuTrigger>
@@ -98,9 +99,10 @@ describe('Menu unavailable', () => {
         <Menu onAction={onAction}>
           <UnavailableMenuItemTrigger>
             <MenuItem id="delete">Delete</MenuItem>
-            <Popover>
-              <div>Contact your administrator for permissions to delete.</div>
-            </Popover>
+            <ContextualHelpPopover>
+              <Heading>Permission required</Heading>
+              <Content>Contact your administrator for permissions to delete.</Content>
+            </ContextualHelpPopover>
           </UnavailableMenuItemTrigger>
         </Menu>
       </MenuTrigger>

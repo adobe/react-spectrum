@@ -64,8 +64,7 @@ Note that `[PENDING]` indicates that future changes will occur before the final 
 
 ## ContextualHelpTrigger
 - Component has been renamed to `UnavailableMenuItemTrigger`
-- Now expects a `Popover` as its second child
-- S2 `Popover` does not provide Dialog-style slots. Refactor the content inside the Popover as needed (e.g. use the style macro or custom wrappers for layout).
+- Replace `Dialog` with  `ContextualHelpPopover`, and child elements with their S2 counterparts.
 
 ## Dialog
 - Update children to move render props from being the second child of `DialogTrigger` to being a child of `Dialog`
