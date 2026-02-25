@@ -1406,7 +1406,7 @@ describe('ListBox', () => {
       act(() => jest.runAllTimers());
 
       expect(onReorder).toHaveBeenCalledTimes(1);
-      
+
       // Verify we're no longer in drag mode
       options = getAllByRole('option');
       expect(options.filter(opt => opt.classList.contains('react-aria-DropIndicator'))).toHaveLength(0);
@@ -1946,6 +1946,28 @@ describe('ListBox', () => {
       expect(onPressEnd).toHaveBeenCalledTimes(1);
       expect(onPress).toHaveBeenCalledTimes(1);
       expect(onClick).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('onKeyDown', () => {
+    it('should call key handler when key is pressed on item', async () => {
+      let onKeyDown = jest.fn((e) => e.continuePropagation());
+      let onKeyUp = jest.fn();
+      let onSelectionChange = jest.fn();
+      renderListbox({selectionMode: 'multiple', onSelectionChange}, {onKeyDown, onKeyUp});
+
+      await user.tab();
+      expect(onKeyUp).toHaveBeenCalledTimes(1);
+      onKeyUp.mockClear();
+      await user.keyboard('{Enter}');
+      expect(onKeyDown).toHaveBeenCalledTimes(1);
+      expect(onKeyUp).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+
+      await user.keyboard('{Escape}');
+      expect(onKeyDown).toHaveBeenCalledTimes(2);
+      expect(onKeyUp).toHaveBeenCalledTimes(2);
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
     });
   });
 
