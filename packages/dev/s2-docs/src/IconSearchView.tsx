@@ -51,7 +51,9 @@ export function useCopyImport() {
     if (timeout.current) {
       clearTimeout(timeout.current);
     }
-    navigator.clipboard.writeText(`import ${id} from '@react-spectrum/s2/icons/${id}';`).then(() => {
+    // Use underscore prefix for names starting with a number (invalid JS identifier)
+    let importName = id.replace(/^(\d)/, '_$1');
+    navigator.clipboard.writeText(`import ${importName} from '@react-spectrum/s2/icons/${id}';`).then(() => {
       setCopiedId(id);
       timeout.current = setTimeout(() => setCopiedId(null), 2000);
     }).catch(() => {
