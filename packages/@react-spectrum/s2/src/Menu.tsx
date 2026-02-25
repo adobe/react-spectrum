@@ -21,8 +21,6 @@ import {
   MenuTriggerProps as AriaMenuTriggerProps,
   SubmenuTrigger as AriaSubmenuTrigger,
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
-  UnavailableMenuItemTrigger as AriaUnavailableMenuItemTrigger,
-  UnavailableMenuItemTriggerProps as AriaUnavailableMenuItemTriggerProps,
   ContextValue,
   DEFAULT_SLOT,
   MenuItemRenderProps,
@@ -36,7 +34,7 @@ import {centerBaseline} from './CenterBaseline';
 import {centerPadding, control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
-import {createContext, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
+import {createContext, forwardRef, JSX, ReactElement, ReactNode, useContext, useRef, useState} from 'react';
 import {divider} from './Divider';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, PressEvent} from '@react-types/shared';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
@@ -569,22 +567,22 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                     })({direction})} />
                 </div>
               )}
-              {/* TODO replace with context prop when we remove the concept of unavailbable from RAC */}
-              {renderProps.isUnavailable && (
-                <UnavailableIconWrapper direction={direction} size={size} id={infoIconId} />
-              )}
               {renderProps.hasSubmenu && (
-                <div slot="descriptor" className={descriptor}>
-                  <ChevronRightIcon
-                    size={size}
-                    className={style({
-                      scaleX: {
-                        direction: {
-                          rtl: -1
-                        }
-                      }
-                    })({direction})} />
-                </div>
+                isUnavailable
+                  ? <UnavailableIconWrapper direction={direction} size={size} id={infoIconId} />
+                  : (
+                    <div slot="descriptor" className={descriptor}>
+                      <ChevronRightIcon
+                        size={size}
+                        className={style({
+                          scaleX: {
+                            direction: {
+                              rtl: -1
+                            }
+                          }
+                        })({direction})} />
+                    </div>
+                  )
               )}
             </Provider>
           </>
@@ -667,22 +665,34 @@ function SubmenuTrigger(props: SubmenuTriggerProps): JSX.Element {
   );
 }
 
-export interface UnavailableMenuItemTriggerProps extends AriaUnavailableMenuItemTriggerProps {}
+export interface UnavailableMenuItemTriggerProps {
+  /**
+   * The contents of the UnavailableMenuItemTrigger. The first child should be a MenuItem and the second child be a ContextualHelpPopover.
+   */
+  children: ReactElement[],
+  /**
+   * Whether the menu item is currently unavailable.
+   * @default false
+   */
+  isUnavailable?: boolean
+}
 
-// TODO: consider if we should instead pull the RAC defined trigger here into S2. Feels useful for RAC users though, but
-// maybe shouldn't be specific to unavailable. It is very similar to SubmenuTrigger but it renders a dialog type behavior (see useSubmenuTrigger)
-// and has the concept of isUnavailable which will make the item render normally when false
 function UnavailableMenuItemTrigger(props: UnavailableMenuItemTriggerProps): JSX.Element {
-  return (
-    <UnavailableContext.Provider value={props.isUnavailable ?? false}>
-      <AriaUnavailableMenuItemTrigger {...props}>
-        {props.children[0]}
-        <PopoverContext.Provider value={{hideArrow: true, offset: -2, crossOffset: -8, placement: 'end top'}}>
-          {props.children[1]}
-        </PopoverContext.Provider>
-      </AriaUnavailableMenuItemTrigger>
-    </UnavailableContext.Provider>
-  );
+  let {isUnavailable = false, children} = props;
+  if (isUnavailable) {
+    return (
+      <UnavailableContext.Provider value={isUnavailable}>
+        <AriaSubmenuTrigger>
+          {children[0]}
+          <PopoverContext.Provider value={{hideArrow: true, offset: -2, crossOffset: -8, placement: 'end top'}}>
+            {children[1]}
+          </PopoverContext.Provider>
+        </AriaSubmenuTrigger>
+      </UnavailableContext.Provider>
+    );
+  }
+
+  return children[0] as JSX.Element;
 }
 
 export {MenuTrigger, SubmenuTrigger, UnavailableMenuItemTrigger};

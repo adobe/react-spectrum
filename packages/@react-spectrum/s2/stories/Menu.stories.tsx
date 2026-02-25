@@ -14,7 +14,7 @@ import AlignLeft from '../s2wf-icons/S2_Icon_TextAlignLeft_20_N.svg';
 import AlignMiddle from '../s2wf-icons/S2_Icon_TextAlignCenter_20_N.svg';
 import AlignRight from '../s2wf-icons/S2_Icon_TextAlignRight_20_N.svg';
 import Bold from '../s2wf-icons/S2_Icon_TextBold_20_N.svg';
-import {Button, Header, Heading, Image, Keyboard, Menu, MenuItem, MenuProps, MenuSection, MenuTrigger, Popover, SubmenuTrigger, Text, UnavailableMenuItemTrigger} from '../src';
+import {Button, Content, ContextualHelpPopover, Footer, Header, Heading, Image, Keyboard, Link, Menu, MenuItem, MenuProps, MenuSection, MenuTrigger,  SubmenuTrigger, Text, UnavailableMenuItemTrigger} from '../src';
 import {categorizeArgTypes, getActionArgs} from './utils';
 import ClockPendingIcon from '../s2wf-icons/S2_Icon_ClockPending_20_N.svg';
 import {CombinedMenu} from '../src/Menu';
@@ -32,7 +32,6 @@ import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
 import {ReactElement, useState} from 'react';
 import {Selection} from 'react-aria-components';
-import {style} from '../style' with {type: 'macro'};
 import TextIcon from '../s2wf-icons/S2_Icon_Text_20_N.svg';
 import Underline from '../s2wf-icons/S2_Icon_TextUnderline_20_N.svg';
 
@@ -326,19 +325,31 @@ export const UnavailableMenuItem: Story = {
           <MenuItem>Favorite</MenuItem>
           <UnavailableMenuItemTrigger>
             <MenuItem>Edit</MenuItem>
-            <Popover>
-              <div className={style({font: 'ui', padding: 8, maxWidth: 200})}>
-                Contact your administrator for permissions to edit this item.
-              </div>
-            </Popover>
+            <ContextualHelpPopover>
+              <Heading>Permission Denied</Heading>
+              <Content>
+                <Text>
+                  Contact your administrator for permissions to edit this item.
+                </Text>
+              </Content>
+              <Footer>
+                <Link isStandalone href="https://google.com" target="_blank">Learn more</Link>
+              </Footer>
+            </ContextualHelpPopover>
           </UnavailableMenuItemTrigger>
           <UnavailableMenuItemTrigger isUnavailable>
             <MenuItem>Delete</MenuItem>
-            <Popover>
-              <div className={style({font: 'ui', padding: 8, maxWidth: 200})}>
-                Contact your administrator for permissions to delete this item.
-              </div>
-            </Popover>
+            <ContextualHelpPopover>
+              <Heading>Permission Denied</Heading>
+              <Content>
+                <Text>
+                  Contact your administrator for permissions to delete this item.
+                </Text>
+              </Content>
+              <Footer>
+                <Link isStandalone href="https://google.com" target="_blank">Learn more</Link>
+              </Footer>
+            </ContextualHelpPopover>
           </UnavailableMenuItemTrigger>
           <SubmenuTrigger>
             <MenuItem>Share</MenuItem>

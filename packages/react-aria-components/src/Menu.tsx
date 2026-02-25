@@ -182,81 +182,6 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent(SubmenuTrigge
   );
 }, props => props.children[0]);
 
-export interface UnavailableMenuItemTriggerProps {
-  /**
-   * The contents of the UnavailableMenuItemTrigger. The first child should be an MenuItem (the trigger) and the second child should be the Popover (for the subdialog explaining the unavailable state).
-   */
-  children: ReactElement[],
-  /**
-   * Whether the menu item is currently unavailable.
-   * @default false
-   */
-  isUnavailable?: boolean
-}
-
-class UnavailableMenuItemTriggerNode<T> extends CollectionNode<T> {
-  static readonly type = 'unavailable';
-
-  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string, node: Node<T>) => boolean): CollectionNode<T> | null {
-    let triggerNode = collection.getItem(this.firstChildKey!);
-    if (triggerNode && filterFn(triggerNode.textValue, this)) {
-      let clone = this.clone();
-      newCollection.addDescendants(clone, collection);
-      return clone;
-    }
-
-    return null;
-  }
-}
-
-/**
- * A unavailable menu item trigger is used to wrap a unavailable menu item. When the menu item is unavailable,
- * selecting it opens the wrapped Popover instead of performing the item's action.
- *
- * @version alpha
- */
-export const UnavailableMenuItemTrigger = /*#__PURE__*/ createBranchComponent(UnavailableMenuItemTriggerNode, (props: UnavailableMenuItemTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
-  let {isUnavailable = false} = props;
-  let {CollectionBranch} = useContext(CollectionRendererContext);
-  let state = useContext(MenuStateContext)!;
-  let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
-  let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
-  let submenuRef = useRef<HTMLDivElement>(null);
-  let itemRef = useObjectRef(ref);
-  let {parentMenuRef, shouldUseVirtualFocus} = useContext(SubmenuTriggerContext)!;
-  let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
-    parentMenuRef,
-    submenuRef,
-    // one of the only distinguishing factors from the submenuTrigger implementation
-    type: 'dialog',
-    isDisabled: !isUnavailable,
-    shouldUseVirtualFocus
-  }, submenuTriggerState, itemRef);
-
-  // avoid passing non relevant aria attributes like aria-expanded
-  let menuItemContextValue = isUnavailable
-    ? {...submenuTriggerProps, isUnavailable, ref: itemRef}
-    : {isUnavailable, ref: itemRef};
-
-  return (
-    <Provider
-      values={[
-        [MenuItemContext, menuItemContextValue],
-        [OverlayTriggerStateContext, submenuTriggerState],
-        [PopoverContext, {
-          trigger: 'UnavailableMenuItemTrigger',
-          triggerRef: itemRef,
-          placement: 'end top',
-          'aria-labelledby': submenuProps['aria-labelledby'],
-          ...popoverProps
-        }]
-      ]}>
-      <CollectionBranch collection={state.collection} parent={item} />
-      {props.children[1]}
-    </Provider>
-  );
-}, props => props.children[0]);
-
 export interface MenuRenderProps {
   /**
    * Whether the menu has no items and should display its empty state.
@@ -470,13 +395,7 @@ export interface MenuItemRenderProps extends ItemRenderProps {
    *
    * @selector [data-open]
    */
-  isOpen: boolean,
-  /**
-   * Whether the item is an unavailable menu item.
-   *
-   * @selector [data-unavailable]
-   */
-  isUnavailable?: boolean
+  isOpen: boolean
 }
 
 export interface MenuItemProps<T = object> extends Omit<RenderProps<MenuItemRenderProps>, 'render'>, PossibleLinkDOMRenderProps<'div', MenuItemRenderProps>, LinkDOMProps, HoverEvents, FocusEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
@@ -501,28 +420,20 @@ export interface MenuItemProps<T = object> extends Omit<RenderProps<MenuItemRend
   shouldCloseOnSelect?: boolean
 }
 
-interface MenuItemContextProps<T = object> extends MenuItemProps<T> {
-  /** Whether the item is an unavailable menu item. */
-  isUnavailable?: boolean
-}
-
-const MenuItemContext = createContext<ContextValue<MenuItemContextProps, HTMLDivElement>>(null);
+const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement>>(null);
 
 /**
  * A MenuItem represents an individual action in a Menu.
  */
 export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function MenuItem<T extends object>(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
-  // TODO: revert back to what we had before if we remove the concept of isUnavailable from RAC here. Will have to figure out
-  // the updates to the styling without the data attribute for unavailable
-  let [mergedProps, mergedRef] = useContextProps(props, forwardedRef, MenuItemContext) as [MenuItemContextProps<T>, ForwardedRef<HTMLDivElement>];
-  forwardedRef = mergedRef;
+  [props, forwardedRef] = useContextProps(props, forwardedRef, MenuItemContext);
   let id = useSlottedContext(MenuItemContext)?.id as string;
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(forwardedRef);
   let selectionManager = useContext(SelectionManagerContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({
-    ...mergedProps,
+    ...props,
     id,
     key: item.key,
     selectionManager,
@@ -533,7 +444,7 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
     isDisabled: states.isDisabled
   });
   let renderProps = useRenderProps<MenuItemRenderProps, any>({
-    ...mergedProps,
+    ...props,
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-MenuItem',
@@ -543,14 +454,13 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
       isFocusVisible: states.isFocusVisible,
       selectionMode: selectionManager.selectionMode,
       selectionBehavior: selectionManager.selectionBehavior,
-      hasSubmenu: mergedProps['aria-haspopup'] === 'menu',
-      isOpen: mergedProps['aria-expanded'] === 'true',
-      isUnavailable: mergedProps.isUnavailable
+      hasSubmenu: !!props['aria-haspopup'],
+      isOpen: props['aria-expanded'] === 'true'
     }
   });
 
-  let ElementType = mergedProps.href ? dom.a : dom.div;
-  let DOMProps = filterDOMProps(mergedProps as any, {global: true});
+  let ElementType = props.href ? dom.a : dom.div;
+  let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
   delete DOMProps.onClick;
 
@@ -565,9 +475,8 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
       data-pressed={states.isPressed || undefined}
       data-selected={states.isSelected || undefined}
       data-selection-mode={selectionManager.selectionMode === 'none' ? undefined : selectionManager.selectionMode}
-      data-has-submenu={mergedProps['aria-haspopup'] === 'menu' || undefined}
-      data-open={mergedProps['aria-expanded'] === 'true' || undefined}
-      data-unavailable={mergedProps.isUnavailable || undefined}>
+      data-has-submenu={!!props['aria-haspopup'] || undefined}
+      data-open={props['aria-expanded'] === 'true' || undefined}>
       <Provider
         values={[
           [TextContext, {
