@@ -35,10 +35,7 @@ export function Illustrations() {
                     size="XS"
                     isQuiet
                     aria-label="Copy"
-                    onPress={() => {
-                      let importName = icon.replace(/^(\d)/, '_$1');
-                      navigator.clipboard.writeText(`import ${importName} from '@react-spectrum/s2/illustrations/gradient/${gradientStyle}/${icon}';`);
-                    }}>
+                    onPress={() => navigator.clipboard.writeText(`import ${icon} from '@react-spectrum/s2/illustrations/gradient/${gradientStyle}/${icon}';`)}>
                     <Paste />
                   </ActionButton>
                 </span>
@@ -61,10 +58,7 @@ export function Illustrations() {
                     size="XS"
                     isQuiet
                     aria-label="Copy"
-                    onPress={() => {
-                      let importName = icon.replace(/^(\d)/, '_$1');
-                      navigator.clipboard.writeText(`import ${importName} from '@react-spectrum/s2/illustrations/linear/${icon}';`);
-                    }}>
+                    onPress={() => navigator.clipboard.writeText(`import ${icon} from '@react-spectrum/s2/illustrations/linear/${icon}';`)}>
                     <Paste />
                   </ActionButton>
                 </span>
