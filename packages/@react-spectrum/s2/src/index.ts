@@ -57,7 +57,7 @@ export {Image, ImageContext} from './Image';
 export {ImageCoordinator} from './ImageCoordinator';
 export {InlineAlert, InlineAlertContext} from './InlineAlert';
 export {Link, LinkContext} from './Link';
-export {ListView, ListViewItem} from './ListView';
+export {ListView, ListViewContext, ListViewItem} from './ListView';
 export {MenuItem, MenuTrigger, Menu, MenuSection, SubmenuTrigger, MenuContext} from './Menu';
 export {Meter, MeterContext} from './Meter';
 export {NotificationBadge, NotificationBadgeContext} from './NotificationBadge';
