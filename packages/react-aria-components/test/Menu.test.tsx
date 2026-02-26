@@ -1770,6 +1770,38 @@ describe('Menu', () => {
       act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(getByRole('button'));
     });
+
+    it('should auto focus the Popover if in keyboard modality', async () => {
+      let onAction = jest.fn();
+      let {getByRole, getAllByRole, findByRole, findByText} = render(
+        <MenuTrigger>
+          <Button>Menu Button</Button>
+          <Popover>
+            <Menu onAction={onAction}>
+              <SubmenuTrigger>
+                <MenuItem id="delete">Delete</MenuItem>
+                <Popover>
+                  <div>Contact your administrator for permissions to delete.</div>
+                </Popover>
+              </SubmenuTrigger>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button'), interactionType: 'keyboard'});
+      await menuTester.open();
+      await findByRole('menu');
+      await menuTester.selectOption({option: 0});
+      expect(await findByText('Contact your administrator for permissions to delete.')).toBeInTheDocument();
+      expect(onAction).not.toHaveBeenCalled();
+      let dialogs = getAllByRole('dialog');
+      expect(dialogs).toHaveLength(2);
+      expect(document.activeElement).toBe(dialogs[1]);
+      await user.keyboard('{Escape}');
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(menuTester.options()[0]);
+    });
   });
 });
 

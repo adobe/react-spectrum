@@ -16,7 +16,7 @@ import {classNames} from '@react-spectrum/utils';
 import {mergeProps} from 'react-aria';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {MyMenuItem} from './utils';
-import React, {createContext, JSX, ReactElement, useContext, useEffect, useRef} from 'react';
+import React, {createContext, JSX, ReactElement, useContext} from 'react';
 import styles from '../example/index.css';
 import './styles.css';
 
@@ -486,20 +486,6 @@ export const VirtualizedExample: MenuStory = () => {
 
 let UnavailableContext = createContext(false);
 
-// TODO: alternative is to a wrapping RAC Dialog instead or change Popover so we can set autofocus and trigger the autofocus behavior it already has
-// or a way to turn off the submenutrigger default behavior
-function AutofocusWrapper({children}: {children: React.ReactNode}) {
-  let ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    ref.current?.focus();
-  }, []);
-  return (
-    <div ref={ref} tabIndex={-1}>
-      {children}
-    </div>
-  );
-}
-
 function UnavailableMenuItemTrigger(props: {isUnavailable?: boolean, children: ReactElement[]}) {
   let {isUnavailable = false, children} = props;
   if (isUnavailable) {
@@ -508,7 +494,7 @@ function UnavailableMenuItemTrigger(props: {isUnavailable?: boolean, children: R
         <SubmenuTrigger>
           {children[0]}
           <Popover className={classNames(styles, 'unavailable-popover')}>
-            <AutofocusWrapper>{children[1]}</AutofocusWrapper>
+            {children[1]}
           </Popover>
         </SubmenuTrigger>
       </UnavailableContext.Provider>

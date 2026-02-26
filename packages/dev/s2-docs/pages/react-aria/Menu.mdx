@@ -21,7 +21,6 @@ export const description = 'Displays a list of actions or options that a user ca
   ```tsx render type="vanilla" files={["starters/docs/src/Menu.tsx", "starters/docs/src/Menu.css"]}
   "use client";
   import {MenuTrigger, SubmenuTrigger, Menu, MenuItem, MenuSection, UnavailableMenuItemTrigger} from 'vanilla-starter/Menu';
-  import {Popover} from 'vanilla-starter/Popover';
   import {Separator, Text, Keyboard} from 'react-aria-components';
   import {Button} from 'vanilla-starter/Button';
   import {Ellipsis, FolderOpen, Pencil, Copy, Trash, Share, Mail, Smartphone, Instagram} from 'lucide-react';
@@ -265,13 +264,13 @@ import {Button} from 'vanilla-starter/Button';
 </MenuTrigger>
 ```
 
-You can use a `<SubmenuTrigger>` a `<Menu>` child to display arbitrary supplemental information about the `<MenuItem>`.
+Note that you can use a `<SubmenuTrigger>` and a `<Popover>` together without rendering a child `<Menu>` within.
 The example below creates a `<UnavailableMenuItemTrigger>` wrapper around the `<SubmenuTrigger>` to provide additional props and
 render a informational popover instead of a submenu.
 
 ```tsx render type="vanilla" files={["starters/docs/src/Menu.tsx", "starters/docs/src/Menu.css"]}
 "use client";
-import {Menu, MenuTrigger, MenuItem, UnavailableMenuItemTrigger} from 'vanilla-starter/Menu';
+import {Menu, MenuTrigger, MenuItem, UnavailableMenuItemTrigger, SubmenuTrigger} from 'vanilla-starter/Menu';
 import {Button} from 'vanilla-starter/Button';
 
 function Example() {

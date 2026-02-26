@@ -88,7 +88,7 @@ export function UnavailableMenuItemTrigger(props: UnavailableMenuItemTriggerProp
       <UnavailableContext.Provider value={isUnavailable}>
         <AriaSubmenuTrigger>
           {children[0]}
-          <Popover hideArrow offset={-2} crossOffset={-4}>
+          <Popover hideArrow offset={-2} crossOffset={-4} className="unavailable">
             {children[1]}
           </Popover>
         </AriaSubmenuTrigger>

@@ -14,7 +14,7 @@
   padding: 8px;
 
   &[data-trigger=MenuTrigger],
-  &[data-trigger=SubmenuTrigger] {
+  &[data-trigger=SubmenuTrigger]:not(.unavailable) {
     padding: 0;
   }
 
