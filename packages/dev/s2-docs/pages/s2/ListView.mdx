@@ -89,7 +89,7 @@ let images = [
 ///- end collapse -///
 
 <div className={style({display: 'flex', gap: 24, width: 'full', flexWrap: 'wrap', justifyContent: 'center'})}>
-  <ListView aria-label="Documents" items={documents} styles={style({flex: 1, minWidth: 280, maxWidth: 400, height: 320})}>
+  <ListView aria-label="Documents" items={documents} styles={style({flexGrow: 1, flexShrink: 1, flexBasis: 0, minWidth: 280, maxWidth: 400, height: 320})}>
     {item => (
       <ListViewItem id={item.id} textValue={item.name}>
         {/*- begin highlight -*/}
@@ -108,7 +108,7 @@ let images = [
       </ListViewItem>
     )}
   </ListView>
-  <ListView aria-label="Images" items={images} styles={style({flex: 1, minWidth: 280, maxWidth: 400, height: 320})}>
+  <ListView aria-label="Images" items={images} styles={style({flexGrow: 1, flexShrink: 1, flexBasis: 0, minWidth: 280, maxWidth: 400, height: 320})}>
     {item => (
       <ListViewItem id={item.id} textValue={item.name}>
         {/*- begin highlight -*/}
