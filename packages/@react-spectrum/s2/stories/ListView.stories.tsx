@@ -36,9 +36,12 @@ const meta: Meta<typeof ListView> = {
     ...categorizeArgTypes('Events', ['onSelectionChange'])
   },
   title: 'ListView',
+  args: {
+    styles: style({height: 320})
+  },
   decorators: [
     (Story) => (
-      <div style={{width: '300px', resize: 'both', height: '320px'}}>
+      <div style={{width: '300px', resize: 'both', height: '320px', minHeight: '320px'}}>
         <Story />
       </div>
     )
@@ -467,7 +470,8 @@ function NavigationExample(props: {disabledType?: 'file' | 'folder', showActions
         onSelectionChange={chain(setSelectedKeys as any, action('onSelectionChange'))}
         items={children}
         disabledKeys={props.disabledType ? children.filter(item => item.type === props.disabledType).map(item => item.id) : undefined}
-        onAction={chain(onAction, action('onAction'))}>
+        onAction={chain(onAction, action('onAction'))}
+        styles={style({height: 280, minHeight: 280})}>
         {(item: Item) => (
           <ListViewItem textValue={item.name} hasChildItems={item.type === 'folder'}>
             {item.type === 'folder' ? <Folder /> : null}
@@ -505,17 +509,14 @@ function ActionBarExample(props) {
         let selection = keys === 'all' ? 'all' : [...keys].join(', ');
         return (
           <ActionBar>
-            <ActionButton onPress={() => action('edit')(selection)}>
+            <ActionButton aria-label="Edit" onPress={() => action('edit')(selection)}>
               <Edit />
-              <Text>Edit</Text>
             </ActionButton>
-            <ActionButton onPress={() => action('copy')(selection)}>
+            <ActionButton aria-label="Copy" onPress={() => action('copy')(selection)}>
               <Copy />
-              <Text>Copy</Text>
             </ActionButton>
-            <ActionButton onPress={() => action('delete')(selection)}>
+            <ActionButton aria-label="Delete" onPress={() => action('delete')(selection)}>
               <Delete />
-              <Text>Delete</Text>
             </ActionButton>
           </ActionBar>
         );
@@ -555,17 +556,14 @@ function ActionBarEmphasizedExample(props) {
         let selection = keys === 'all' ? 'all' : [...keys].join(', ');
         return (
           <ActionBar isEmphasized>
-            <ActionButton onPress={() => action('edit')(selection)}>
+            <ActionButton aria-label="Edit" onPress={() => action('edit')(selection)}>
               <Edit />
-              <Text>Edit</Text>
             </ActionButton>
-            <ActionButton onPress={() => action('copy')(selection)}>
+            <ActionButton aria-label="Copy" onPress={() => action('copy')(selection)}>
               <Copy />
-              <Text>Copy</Text>
             </ActionButton>
-            <ActionButton onPress={() => action('delete')(selection)}>
+            <ActionButton aria-label="Delete" onPress={() => action('delete')(selection)}>
               <Delete />
-              <Text>Delete</Text>
             </ActionButton>
           </ActionBar>
         );
