@@ -108,6 +108,9 @@ const listViewWrapper = style({
   overflow: 'clip'
 }, getAllowedOverrides({height: true}));
 
+// When any row has a trailing icon, reserve space so actions align.
+const hasTrailingIconRows = ':has([data-has-trailing-icon]) [role="row"]';
+
 const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
   ...focusRing(),
   outlineOffset: {
@@ -136,7 +139,14 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
     default: 1,
     isQuiet: 0
   },
-  borderStyle: 'solid'
+  borderStyle: 'solid',
+  '--trailing-icon-width': {
+    type: 'width',
+    value: {
+      default: 'auto',
+      [hasTrailingIconRows]: fontRelative(20)
+    }
+  }
 });
 
 /**
@@ -288,7 +298,7 @@ const listitem = style<GridListItemRenderProps & {
     '. checkmark icon label       actions actionmenu trailing-icon .',
     '. .         .    description actions actionmenu trailing-icon .'
   ],
-  gridTemplateColumns: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(40)],
+  gridTemplateColumns: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'var(--trailing-icon-width)', edgeToText(40)],
   gridTemplateRows: '1fr auto',
   rowGap: {
     ':has([slot=description])': space(1)
@@ -577,12 +587,14 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
   let {isQuiet, selectionStyle, overflowMode, scale, hideLinkOutIcon = false} = useContext(InternalListViewContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
+  let hasTrailingIcon = hasChildItems || (isLinkOut && !hideLinkOutIcon);
 
   return (
     <GridListItem
       {...otherProps}
       textValue={textValue}
       ref={ref}
+      {...(hasTrailingIcon ? {'data-has-trailing-icon': ''} : {})}
       className={renderProps => listitem({
         ...renderProps,
         isLink,
