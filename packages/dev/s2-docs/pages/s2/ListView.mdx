@@ -68,9 +68,11 @@ let files = [
 ```tsx render type="s2"
 "use client";
 import {ActionButton, ActionButtonGroup, ActionMenu, Image, ListView, ListViewItem, MenuItem, Text} from '@react-spectrum/s2';
+import Copy from '@react-spectrum/s2/icons/Copy';
 import Delete from '@react-spectrum/s2/icons/Delete';
 import Edit from '@react-spectrum/s2/icons/Edit';
 import File from '@react-spectrum/s2/icons/File';
+import Share from '@react-spectrum/s2/icons/Share';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
@@ -101,12 +103,12 @@ let files = [
       <ActionMenu>
       {/*- end highlight -*/}
         <MenuItem>
-          <Edit />
-          <Text>Edit</Text>
+          <Copy />
+          <Text>Copy</Text>
         </MenuItem>
         <MenuItem>
-          <Delete />
-          <Text>Delete</Text>
+          <Share />
+          <Text>Share</Text>
         </MenuItem>
       </ActionMenu>
     </ListViewItem>
@@ -214,7 +216,7 @@ Use the `selectionMode` prop to enable single or multiple selection. The selecte
 
 ```tsx render docs={docs.exports.ListView} links={docs.links} props={['selectionMode', 'selectionStyle', 'isQuiet', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="s2"
 "use client";
-import {ListView, ListViewItem, ActionBar, ActionButton, Text, type Selection} from '@react-spectrum/s2';
+import {ListView, ListViewItem, ActionBar, ActionButton, type Selection} from '@react-spectrum/s2';
 import Edit from '@react-spectrum/s2/icons/Edit';
 import Copy from '@react-spectrum/s2/icons/Copy';
 import Delete from '@react-spectrum/s2/icons/Delete';
@@ -240,17 +242,14 @@ function Example(props) {
           let selection = selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ');
           return (
             <ActionBar>
-              <ActionButton onPress={() => alert(`Edit ${selection}`)}>
+              <ActionButton aria-label="Edit" onPress={() => alert(`Edit ${selection}`)}>
                 <Edit />
-                <Text>Edit</Text>
               </ActionButton>
-              <ActionButton onPress={() => alert(`Copy ${selection}`)}>
+              <ActionButton aria-label="Copy" onPress={() => alert(`Copy ${selection}`)}>
                 <Copy />
-                <Text>Copy</Text>
               </ActionButton>
-              <ActionButton onPress={() => alert(`Delete ${selection}`)}>
+              <ActionButton aria-label="Delete" onPress={() => alert(`Delete ${selection}`)}>
                 <Delete />
-                <Text>Delete</Text>
               </ActionButton>
             </ActionBar>
           );
