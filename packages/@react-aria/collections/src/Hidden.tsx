@@ -20,11 +20,6 @@ import React, {Context, createContext, forwardRef, JSX, ReactElement, ReactNode,
 // does the same for appendChild/removeChild/insertBefore as per the issue below
 // See https://github.com/facebook/react/issues/19932
 if (typeof HTMLTemplateElement !== 'undefined') {
-  const getFirstChild = Object.getOwnPropertyDescriptor(Node.prototype, 'firstChild')!.get!;
-  const originalAppendChild = Object.getOwnPropertyDescriptor(Node.prototype, 'appendChild')!.value!;
-  const originalRemoveChild = Object.getOwnPropertyDescriptor(Node.prototype, 'removeChild')!.value!;
-  const originalInsertBefore = Object.getOwnPropertyDescriptor(Node.prototype, 'insertBefore')!.value!;
-
   Object.defineProperty(HTMLTemplateElement.prototype, 'firstChild', {
     configurable: true,
     enumerable: true,
