@@ -430,7 +430,7 @@ export const LongText: Story = {
   }
 };
 
-function NavigationExample(props: {disabledType?: 'file' | 'folder', showActions?: boolean}) {
+function NavigationExample(props) {
   let [selectedKeys, setSelectedKeys] = useState(new Set<Key>());
   let [breadcrumbs, setBreadcrumbs] = useState<Item[]>([
     {
@@ -467,21 +467,15 @@ function NavigationExample(props: {disabledType?: 'file' | 'folder', showActions
         selectionMode="multiple"
         selectionStyle="checkbox"
         selectedKeys={selectedKeys}
-        onSelectionChange={chain(setSelectedKeys as any, action('onSelectionChange'))}
+        onSelectionChange={chain(setSelectedKeys, action('onSelectionChange'))}
         items={children}
-        disabledKeys={props.disabledType ? children.filter(item => item.type === props.disabledType).map(item => item.id) : undefined}
         onAction={chain(onAction, action('onAction'))}
-        styles={style({height: 280, minHeight: 280})}>
+        styles={style({height: 280, minHeight: 280})}
+        {...props}>
         {(item: Item) => (
           <ListViewItem textValue={item.name} hasChildItems={item.type === 'folder'}>
             {item.type === 'folder' ? <Folder /> : null}
             <Text>{item.name}</Text>
-            {props.showActions && (
-              <ActionMenu onAction={action('actionMenuAction')}>
-                <MenuItem id="edit"><Edit /><Text>Edit</Text></MenuItem>
-                <MenuItem id="delete"><Delete /><Text>Delete</Text></MenuItem>
-              </ActionMenu>
-            )}
           </ListViewItem>
         )}
       </ListView>
@@ -490,7 +484,7 @@ function NavigationExample(props: {disabledType?: 'file' | 'folder', showActions
 }
 
 export const Navigation: Story = {
-  render: () => <NavigationExample />,
+  render: (args) => <NavigationExample {...args} />,
   name: 'hasChildItems navigation'
 };
 
@@ -503,7 +497,7 @@ function ActionBarExample(props) {
       selectionMode="multiple"
       selectionStyle="checkbox"
       selectedKeys={selectedKeys}
-      onSelectionChange={chain(setSelectedKeys as any, action('onSelectionChange'))}
+      onSelectionChange={chain(setSelectedKeys, action('onSelectionChange'))}
       items={items}
       renderActionBar={(keys) => {
         let selection = keys === 'all' ? 'all' : [...keys].join(', ');
@@ -550,7 +544,7 @@ function ActionBarEmphasizedExample(props) {
       selectionMode="multiple"
       selectionStyle="checkbox"
       selectedKeys={selectedKeys}
-      onSelectionChange={chain(setSelectedKeys as any, action('onSelectionChange'))}
+      onSelectionChange={chain(setSelectedKeys, action('onSelectionChange'))}
       items={items}
       renderActionBar={(keys) => {
         let selection = keys === 'all' ? 'all' : [...keys].join(', ');
