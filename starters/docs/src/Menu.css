@@ -128,7 +128,7 @@
   }
 
   .lucide-chevron-right,
-  &[data-unavailable] .lucide-info {
+  .lucide-info {
     grid-area: end;
     margin-left: var(--spacing-1);
     justify-self: end;

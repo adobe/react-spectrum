@@ -18,6 +18,7 @@
     padding: 0;
   }
 
+  /* TODO update */
   &[data-trigger=UnavailableMenuItemTrigger] {
     font-weight: 500;
   }

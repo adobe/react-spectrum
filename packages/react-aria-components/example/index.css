@@ -153,15 +153,9 @@ html {
   color: white;
 }
 
-.item[data-has-submenu]::after {
+.item[data-has-submenu]:not(.unavailable)::after {
   content: '›';
   content: '›' / '';
-  justify-self: end;
-}
-
-.item[data-unavailable]::after {
-  content: 'ⓘ';
-  content: 'ⓘ' / '';
   justify-self: end;
 }
 
@@ -173,8 +167,16 @@ html {
   margin-right: -8px;
 }
 
-.popover[data-trigger="UnavailableMenuItemTrigger"] {
+.unavailable-popover {
   background: lightgray;
+  border: 1px solid gray;
+  &[data-placement="right"] {
+     margin-left: -8px;
+  }
+
+  &[data-placement="left"] {
+    margin-right: -8px;
+  }
 }
 
 .wrapper {
