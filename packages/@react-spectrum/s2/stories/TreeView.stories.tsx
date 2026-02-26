@@ -12,6 +12,8 @@
 
 import {action} from 'storybook/actions';
 import {
+  ActionBar,
+  ActionButton,
   ActionMenu,
   Collection,
   Content,
@@ -29,13 +31,16 @@ import {
   TreeViewProps
 } from '../src';
 import {categorizeArgTypes, getActionArgs} from './utils';
+import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
+import {Key} from 'react-aria';
 import type {Meta, StoryObj} from '@storybook/react';
 import React, {ReactElement, useCallback, useState} from 'react';
+import {style} from '../style' with {type: 'macro'};
 import {useAsyncList, useListData} from 'react-stately';
 
 let onActionFunc = action('onAction');
@@ -758,4 +763,166 @@ const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & TreeViewIt
       }
     }
   }
+};
+
+function ActionBarExample(args: TreeViewProps<any>) {
+  let [selectedKeys, setSelectedKeys] = useState(new Set<Key>());
+
+  return (
+    <div style={{width: '400px', resize: 'both', height: '320px'}}>
+      <TreeView
+        {...args}
+        aria-label="Tree with action bar"
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys as any}
+        onExpandedChange={action('onExpandedChange')}
+        styles={style({width: 'full', height: 'full'})}
+        renderActionBar={(keys) => {
+          let selection = keys === 'all' ? 'all' : [...keys].join(', ');
+          return (
+            <ActionBar>
+              <ActionButton onPress={() => action('edit')(selection)}>
+                <Edit />
+                <Text>Edit</Text>
+              </ActionButton>
+              <ActionButton onPress={() => action('copy')(selection)}>
+                <Copy />
+                <Text>Copy</Text>
+              </ActionButton>
+              <ActionButton onPress={() => action('delete')(selection)}>
+                <Delete />
+                <Text>Delete</Text>
+              </ActionButton>
+            </ActionBar>
+          );
+        }}>
+        <TreeViewItem id="Photos" textValue="Photos">
+          <TreeViewItemContent>
+            <Text>Photos</Text>
+            <Folder />
+          </TreeViewItemContent>
+        </TreeViewItem>
+        <TreeViewItem id="projects" textValue="Projects">
+          <TreeViewItemContent>
+            <Text>Projects</Text>
+            <Folder />
+          </TreeViewItemContent>
+          <TreeViewItem id="projects-1" textValue="Projects-1">
+            <TreeViewItemContent>
+              <Text>Projects-1</Text>
+              <Folder />
+            </TreeViewItemContent>
+            <TreeViewItem id="projects-1A" textValue="Projects-1A">
+              <TreeViewItemContent>
+                <Text>Projects-1A</Text>
+                <FileTxt />
+              </TreeViewItemContent>
+            </TreeViewItem>
+          </TreeViewItem>
+          <TreeViewItem id="projects-2" textValue="Projects-2">
+            <TreeViewItemContent>
+              <Text>Projects-2</Text>
+              <FileTxt />
+            </TreeViewItemContent>
+          </TreeViewItem>
+          <TreeViewItem id="projects-3" textValue="Projects-3">
+            <TreeViewItemContent>
+              <Text>Projects-3</Text>
+              <FileTxt />
+            </TreeViewItemContent>
+          </TreeViewItem>
+        </TreeViewItem>
+      </TreeView>
+    </div>
+  );
+}
+
+export const WithActionBar: StoryObj<typeof ActionBarExample> = {
+  render: ActionBarExample,
+  args: {
+    selectionMode: 'multiple'
+  },
+  name: 'with ActionBar'
+};
+
+function ActionBarEmphasizedExample(args: TreeViewProps<any>) {
+  let [selectedKeys, setSelectedKeys] = useState(new Set<Key>());
+
+  return (
+    <div style={{width: '400px', resize: 'both', height: '320px'}}>
+      <TreeView
+        {...args}
+        aria-label="Tree with emphasized action bar"
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys as any}
+        onExpandedChange={action('onExpandedChange')}
+        styles={style({width: 'full', height: 'full'})}
+        renderActionBar={(keys) => {
+          let selection = keys === 'all' ? 'all' : [...keys].join(', ');
+          return (
+            <ActionBar isEmphasized>
+              <ActionButton onPress={() => action('edit')(selection)}>
+                <Edit />
+                <Text>Edit</Text>
+              </ActionButton>
+              <ActionButton onPress={() => action('copy')(selection)}>
+                <Copy />
+                <Text>Copy</Text>
+              </ActionButton>
+              <ActionButton onPress={() => action('delete')(selection)}>
+                <Delete />
+                <Text>Delete</Text>
+              </ActionButton>
+            </ActionBar>
+          );
+        }}>
+        <TreeViewItem id="Photos" textValue="Photos">
+          <TreeViewItemContent>
+            <Text>Photos</Text>
+            <Folder />
+          </TreeViewItemContent>
+        </TreeViewItem>
+        <TreeViewItem id="projects" textValue="Projects">
+          <TreeViewItemContent>
+            <Text>Projects</Text>
+            <Folder />
+          </TreeViewItemContent>
+          <TreeViewItem id="projects-1" textValue="Projects-1">
+            <TreeViewItemContent>
+              <Text>Projects-1</Text>
+              <Folder />
+            </TreeViewItemContent>
+            <TreeViewItem id="projects-1A" textValue="Projects-1A">
+              <TreeViewItemContent>
+                <Text>Projects-1A</Text>
+                <FileTxt />
+              </TreeViewItemContent>
+            </TreeViewItem>
+          </TreeViewItem>
+          <TreeViewItem id="projects-2" textValue="Projects-2">
+            <TreeViewItemContent>
+              <Text>Projects-2</Text>
+              <FileTxt />
+            </TreeViewItemContent>
+          </TreeViewItem>
+          <TreeViewItem id="projects-3" textValue="Projects-3">
+            <TreeViewItemContent>
+              <Text>Projects-3</Text>
+              <FileTxt />
+            </TreeViewItemContent>
+          </TreeViewItem>
+        </TreeViewItem>
+      </TreeView>
+    </div>
+  );
+}
+
+export const WithActionBarEmphasized: StoryObj<typeof ActionBarEmphasizedExample> = {
+  render: ActionBarEmphasizedExample,
+  args: {
+    selectionMode: 'multiple'
+  },
+  name: 'with ActionBar (emphasized)'
 };
