@@ -178,9 +178,11 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   } else if (loadingState === 'loading') {
     renderEmptyState = () => (
       <div className={centeredWrapper}>
-        <ProgressCircle
-          isIndeterminate
-          aria-label={stringFormatter.format('table.loading')} />
+        <div className={loadingSpinnerWrapper}>
+          <ProgressCircle
+            isIndeterminate
+            aria-label={stringFormatter.format('table.loading')} />
+        </div>
       </div>
     );
   }
@@ -188,9 +190,11 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   let loadMoreSpinner = onLoadMore ? (
     <GridListLoadMoreItem isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full', paddingY: 8})}>
       <div className={centeredWrapper}>
-        <ProgressCircle
-          isIndeterminate
-          aria-label={stringFormatter.format('table.loadingMore')} />
+        <div className={loadingSpinnerWrapper}>
+          <ProgressCircle
+            isIndeterminate
+            aria-label={stringFormatter.format('table.loadingMore')} />
+        </div>
       </div>
     </GridListLoadMoreItem>
   ) : null;
@@ -557,6 +561,10 @@ const centeredWrapper = style({
   justifyContent: 'center',
   width: 'full',
   height: 'full'
+});
+
+const loadingSpinnerWrapper = style({
+  padding: space(4)
 });
 
 const emptyStateWrapper = style({
