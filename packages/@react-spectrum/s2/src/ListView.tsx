@@ -45,6 +45,7 @@ import {IconContext} from './Icon';
 import {ImageContext} from './Image';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import LinkOutIcon from '../ui-icons/LinkOut';
 import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
@@ -63,7 +64,9 @@ export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | '
   /** The children of the ListView. */
   children: ReactNode | ((item: T) => ReactNode),
   /** Provides the ActionBar to display when items are selected in the ListView. */
-  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement
+  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement,
+  /** Hides the default link out icons on items that open links in a new tab. */
+  hideLinkOutIcon?: boolean
 }
 
 interface ListViewStylesProps {
@@ -92,7 +95,7 @@ export interface ListViewItemProps extends Omit<GridListItemProps, 'children' | 
 
 export const ListViewContext = createContext<ContextValue<Partial<ListViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
-let InternalListViewContext = createContext<{isQuiet?: boolean, selectionStyle?: 'highlight' | 'checkbox', overflowMode?: 'wrap' | 'truncate', scale?: 'medium' | 'large'}>({});
+let InternalListViewContext = createContext<{isQuiet?: boolean, selectionStyle?: 'highlight' | 'checkbox', overflowMode?: 'wrap' | 'truncate', scale?: 'medium' | 'large', hideLinkOutIcon?: boolean}>({});
 
 const listViewWrapper = style({
   minHeight: 0,
@@ -144,7 +147,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   ref: DOMRef<HTMLDivElement>
 ) {
   [props, ref] = useSpectrumContextProps(props, ref, ListViewContext);
-  let {children, isQuiet, selectionStyle = 'checkbox', overflowMode = 'truncate', loadingState, onLoadMore, renderEmptyState: userRenderEmptyState, ...otherProps} = props;
+  let {children, isQuiet, selectionStyle = 'checkbox', overflowMode = 'truncate', loadingState, onLoadMore, renderEmptyState: userRenderEmptyState, hideLinkOutIcon = false, ...otherProps} = props;
   let scale = useScale();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let rowHeight = scale === 'large' ? 50 : 40;
@@ -217,7 +220,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
           estimatedRowHeight: rowHeight,
           loaderHeight: 60
         }}>
-        <InternalListViewContext.Provider value={{isQuiet, selectionStyle, overflowMode, scale}}>
+        <InternalListViewContext.Provider value={{isQuiet, selectionStyle, overflowMode, scale, hideLinkOutIcon}}>
           <GridList
             ref={scrollRef as any}
             {...gridListProps}
@@ -282,8 +285,8 @@ const listitem = style<GridListItemRenderProps & {
   gridColumnEnd: -1,
   display: 'grid',
   gridTemplateAreas: [
-    '. checkmark icon label       actions actionmenu chevron .',
-    '. .         .    description actions actionmenu chevron .'
+    '. checkmark icon label       actions actionmenu trailing-icon .',
+    '. .         .    description actions actionmenu trailing-icon .'
   ],
   gridTemplateColumns: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(40)],
   gridTemplateRows: '1fr auto',
@@ -529,8 +532,8 @@ const listCheckbox = style({
   }
 });
 
-const listChevron = style({
-  gridArea: 'chevron',
+const listTrailingIcon = style({
+  gridArea: 'trailing-icon',
   gridRowEnd: 'span 2',
   alignSelf: 'center',
   display: 'flex',
@@ -570,7 +573,8 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
   let ref = useRef(null);
   let {hasChildItems, ...otherProps} = props;
   let isLink = props.href != null;
-  let {isQuiet, selectionStyle, overflowMode, scale} = useContext(InternalListViewContext);
+  let isLinkOut = isLink && props.target === '_blank';
+  let {isQuiet, selectionStyle, overflowMode, scale, hideLinkOutIcon = false} = useContext(InternalListViewContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
 
@@ -627,8 +631,25 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
               <ListSelectionCheckbox isDisabled={isDisabled} />
             )}
             {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
-            {hasChildItems && (
-              <div className={listChevron}>
+            {isLinkOut && !hideLinkOutIcon && (
+              <div className={listTrailingIcon}>
+                <LinkOutIcon
+                  size="M"
+                  className={style({
+                    scaleX: {
+                      direction: {
+                        rtl: -1
+                      }
+                    },
+                    '--iconPrimary': {
+                      type: 'fill',
+                      value: 'currentColor'
+                    }
+                  })({direction})} />
+              </div>
+            )}
+            {hasChildItems && !isLinkOut && (
+              <div className={listTrailingIcon}>
                 <Chevron
                   className={style({
                     scale: {
