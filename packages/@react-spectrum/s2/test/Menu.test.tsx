@@ -74,7 +74,7 @@ describe('Menu unavailable', () => {
           <UnavailableMenuItemTrigger isUnavailable>
             <MenuItem id="delete">Delete</MenuItem>
             <ContextualHelpPopover>
-              <Heading>Permission required</Heading>
+              <Heading slot="title">Permission required</Heading>
               <Content>Contact your administrator for permissions to delete.</Content>
             </ContextualHelpPopover>
           </UnavailableMenuItemTrigger>
@@ -84,11 +84,13 @@ describe('Menu unavailable', () => {
 
     await user.click(getByRole('button'));
     let items = getAllByRole('menuitem');
-    expect(items[0]).toHaveAttribute('data-unavailable');
     await user.click(items[0]);
     expect(await findByText('Contact your administrator for permissions to delete.')).toBeInTheDocument();
     expect(onAction).not.toHaveBeenCalled();
 
+    let dialog = getAllByRole('dialog')[1];
+    let title = await findByText('Permission required');
+    expect(dialog).toHaveAttribute('aria-labelledby', title.id);
   });
 
   it('should not open popover when isUnavailable is false and item acts as normal', async () => {
@@ -100,7 +102,7 @@ describe('Menu unavailable', () => {
           <UnavailableMenuItemTrigger>
             <MenuItem id="delete">Delete</MenuItem>
             <ContextualHelpPopover>
-              <Heading>Permission required</Heading>
+              <Heading slot="title">Permission required</Heading>
               <Content>Contact your administrator for permissions to delete.</Content>
             </ContextualHelpPopover>
           </UnavailableMenuItemTrigger>

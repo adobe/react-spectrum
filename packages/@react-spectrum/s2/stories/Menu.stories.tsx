@@ -326,7 +326,7 @@ export const UnavailableMenuItem: Story = {
           <UnavailableMenuItemTrigger>
             <MenuItem>Edit</MenuItem>
             <ContextualHelpPopover>
-              <Heading>Permission Denied</Heading>
+              <Heading slot="title">Permission Denied</Heading>
               <Content>
                 <Text>
                   Contact your administrator for permissions to edit this item.
@@ -340,7 +340,7 @@ export const UnavailableMenuItem: Story = {
           <UnavailableMenuItemTrigger isUnavailable>
             <MenuItem>Delete</MenuItem>
             <ContextualHelpPopover>
-              <Heading>Permission Denied</Heading>
+              <Heading slot="title">Permission Denied</Heading>
               <Content>
                 <Text>
                   Contact your administrator for permissions to delete this item.

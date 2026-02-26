@@ -5,7 +5,7 @@ import {ContextValue, DEFAULT_SLOT, Provider, Dialog as RACDialog, TextContext} 
 import {createContext, forwardRef, ReactNode} from 'react';
 import {dialogInner} from './Dialog';
 import {DialogTrigger, DialogTriggerProps} from './DialogTrigger';
-import {filterDOMProps, mergeProps, useLabels} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useLabels, useSlotId} from '@react-aria/utils';
 import HelpIcon from '../s2wf-icons/S2_Icon_HelpCircle_20_N.svg';
 import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 // @ts-ignore
@@ -32,12 +32,19 @@ const wrappingDiv = style({
   height: 'full'
 });
 
-// TODO write docs for this. Where to document (ContextualHelp docs I guess)?
+const headingStyles = style({
+  font: 'heading-xs',
+  margin: 0,
+  marginBottom: space(8) // This only makes it 10px on mobile and should be 12px
+});
+
+// TODO: docs to come after release, for now this is just mentioned in unavaiable menu docs
 /**
  * A popover with contextual help styling that supports Heading, Content, and Footer.
  */
 export function ContextualHelpPopover(props: ContextualHelpPopoverProps) {
   let {children, ...popoverProps} = props;
+  let titleId = useSlotId();
   return (
     <Popover
       padding="none"
@@ -45,7 +52,9 @@ export function ContextualHelpPopover(props: ContextualHelpPopoverProps) {
       {...popoverProps}>
       <div
         className={wrappingDiv}>
-        <RACDialog className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: 'calc(self(paddingTop) * -1)', padding: 24}))}>
+        <RACDialog
+          aria-labelledby={titleId}
+          className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: 'calc(self(paddingTop) * -1)', padding: 24}))}>
           <Provider
             values={[
               [TextContext, {
@@ -55,11 +64,16 @@ export function ContextualHelpPopover(props: ContextualHelpPopoverProps) {
               }],
               // Make sure to clear context from above Menu
               [SpectrumTextContext, null],
-              [HeadingContext, {styles: style({
-                font: 'heading-xs',
-                margin: 0,
-                marginBottom: space(8) // This only makes it 10px on mobile and should be 12px
-              })}],
+              [HeadingContext, {
+                styles: headingStyles,
+                slots: {
+                  // needed so combobox/picker does not need to provide slot="title" to their provided
+                  // ContextualHelp (they get the aria-labelled by from the button)
+                  // otherwise, use the heading if available aka unavaiable menu item
+                  [DEFAULT_SLOT]: {styles: headingStyles},
+                  title: {id: titleId, styles: headingStyles}
+                }
+              }],
               [ContentContext, {styles: style({
                 font: 'body-sm'
               })}],

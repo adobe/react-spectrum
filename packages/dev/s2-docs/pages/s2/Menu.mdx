@@ -250,7 +250,8 @@ import {Menu, MenuTrigger, MenuItem, SubmenuTrigger, ActionButton} from '@react-
 
 ### Unavailable items
 
-Wrap a `<MenuItem>` and a `<ContextualHelpPopover>` with a `<UnavailableMenuItemTrigger>` and apply `isUnavailable` to disable the item's default action and show an informational popover instead. The `<ContextualHelpPopover>` supports `<Heading>`, `<Content>`, and `<Footer>` slots.
+Wrap a `<MenuItem>` and a `<ContextualHelpPopover>` with a `<UnavailableMenuItemTrigger>` and apply `isUnavailable` to disable the item's default action and show an informational popover instead.
+The `<ContextualHelpPopover>` supports `<Heading slot="title">`, `<Content>`, and `<Footer>` slots.
 
 ```tsx render docs={docs.exports.UnavailableMenuItemTrigger} links={docs.links} props={['isUnavailable']} initialProps={{isUnavailable: true}} type="s2" wide
 "use client";
@@ -265,7 +266,7 @@ function Example(props) {
         <UnavailableMenuItemTrigger {...props}/* PROPS */>
           <MenuItem id="delete">Delete</MenuItem>
           <ContextualHelpPopover>
-            <Heading>Permission required</Heading>
+            <Heading slot="title">Permission required</Heading>
             <Content>Contact your administrator for permissions to delete.</Content>
           </ContextualHelpPopover>
         </UnavailableMenuItemTrigger>
