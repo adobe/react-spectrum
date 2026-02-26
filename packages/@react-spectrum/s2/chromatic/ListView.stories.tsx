@@ -11,7 +11,7 @@
  */
 
 import {ActionButton, ActionButtonGroup, ActionMenu, Content, Heading, IllustratedMessage, Image, ListView, ListViewItem, MenuItem, Text} from '../src';
-import {checkers} from '../stories/assets/check';
+import {checkers} from './check';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
