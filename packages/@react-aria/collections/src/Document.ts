@@ -277,8 +277,8 @@ export class ElementNode<T> extends BaseNode<T> {
   }
 
   get level(): number {
-    if (this.parentNode instanceof ElementNode) {
-      return this.parentNode.level + (this.node?.type === 'item' ? 1 : 0);
+    if (this.parentNode instanceof ElementNode && this.parentNode.node?.type === 'item') {
+      return this.parentNode.level + 1;
     }
 
     return 0;
