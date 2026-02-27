@@ -250,8 +250,7 @@ import {Menu, MenuTrigger, MenuItem, SubmenuTrigger, ActionButton} from '@react-
 
 ### Unavailable items
 
-Wrap a `<MenuItem>` and a `<ContextualHelpPopover>` with a `<UnavailableMenuItemTrigger>` and apply `isUnavailable` to disable the item's default action and show an informational popover instead.
-The `<ContextualHelpPopover>` supports `<Heading slot="title">`, `<Content>`, and `<Footer>` slots.
+Wrap a `<MenuItem>` with an `<UnavailableMenuItemTrigger>` to disable the item's default action and show a [contextual help](ContextualHelp) popover instead.
 
 ```tsx render docs={docs.exports.UnavailableMenuItemTrigger} links={docs.links} props={['isUnavailable']} initialProps={{isUnavailable: true}} type="s2" wide
 "use client";
@@ -527,7 +526,7 @@ import {MenuTrigger, Menu, MenuItem, ActionButton} from '@react-spectrum/s2';
     </SubmenuTrigger>
     <UnavailableMenuItemTrigger>
       <MenuItem />
-      <Popover />
+      <ContextualHelpPopover />
     </UnavailableMenuItemTrigger>
   </Menu>
 </MenuTrigger>
