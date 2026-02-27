@@ -20,7 +20,7 @@ export const description = 'Displays a list of actions or options that a user ca
 <ExampleSwitcher>
   ```tsx render type="vanilla" files={["starters/docs/src/Menu.tsx", "starters/docs/src/Menu.css"]}
   "use client";
-  import {MenuTrigger, SubmenuTrigger, Menu, MenuItem, MenuSection, UnavailableMenuItemTrigger} from 'vanilla-starter/Menu';
+  import {MenuTrigger, SubmenuTrigger, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
   import {Separator, Text, Keyboard} from 'react-aria-components';
   import {Button} from 'vanilla-starter/Button';
   import {Ellipsis, FolderOpen, Pencil, Copy, Trash, Share, Mail, Smartphone, Instagram} from 'lucide-react';
@@ -46,15 +46,11 @@ export const description = 'Displays a list of actions or options that a user ca
           <Text slot="label">Duplicate</Text>
           <Keyboard>⌘D</Keyboard>
         </MenuItem>
-        <UnavailableMenuItemTrigger isUnavailable>
-          <MenuItem id="delete">
-            <Trash />
-            <Text slot="label">Delete…</Text>
-          </MenuItem>
-          <div style={{padding: 8, maxWidth: 200}}>
-            Contact your administrator for permissions to delete.
-          </div>
-        </UnavailableMenuItemTrigger>
+        <MenuItem onAction={() => alert('delete')}>
+          <Trash />
+          <Text slot="label">Delete…</Text>
+          <Keyboard>⌘⌫</Keyboard>
+        </MenuItem>
         <SubmenuTrigger>
           <MenuItem>
             <Share />
@@ -87,7 +83,7 @@ export const description = 'Displays a list of actions or options that a user ca
 
   ```tsx render type="tailwind" files={["starters/tailwind/src/Menu.tsx"]}
   "use client";
-  import {MenuTrigger, SubmenuTrigger, UnavailableMenuItemTrigger, Menu, MenuItem, MenuSection, MenuSeparator} from 'tailwind-starter/Menu';
+  import {MenuTrigger, SubmenuTrigger, Menu, MenuItem, MenuSection, MenuSeparator} from 'tailwind-starter/Menu';
   import {Button} from 'tailwind-starter/Button';
   import {MoreHorizontal} from 'lucide-react';
 
@@ -99,12 +95,7 @@ export const description = 'Displays a list of actions or options that a user ca
       <MenuItem onAction={() => alert('open')}>Open</MenuItem>
       <MenuItem onAction={() => alert('rename')}>Rename…</MenuItem>
       <MenuItem onAction={() => alert('duplicate')}>Duplicate</MenuItem>
-      <UnavailableMenuItemTrigger isUnavailable>
-        <MenuItem id="delete">Delete…</MenuItem>
-        <div className="px-4 py-4 max-w-[200px] text-sm text-neutral-900 dark:text-neutral-100">
-          Contact your administrator for permissions to delete.
-        </div>
-      </UnavailableMenuItemTrigger>
+      <MenuItem onAction={() => alert('delete')}>Delete…</MenuItem>
       <SubmenuTrigger>
         <MenuItem>Share</MenuItem>
         <Menu>
@@ -262,49 +253,6 @@ import {Button} from 'vanilla-starter/Button';
     </SubmenuTrigger>
   </Menu>
 </MenuTrigger>
-```
-
-Note that you can use a `<SubmenuTrigger>` and a `<Popover>` together without rendering a child `<Menu>` within.
-The example below creates a `<UnavailableMenuItemTrigger>` wrapper around the `<SubmenuTrigger>` to provide additional props and
-render a informational popover instead of a submenu.
-
-```tsx render type="vanilla" files={["starters/docs/src/Menu.tsx", "starters/docs/src/Menu.css"]}
-"use client";
-import {Menu, MenuTrigger, MenuItem, UnavailableMenuItemTrigger, SubmenuTrigger} from 'vanilla-starter/Menu';
-import {Button} from 'vanilla-starter/Button';
-
-function Example() {
-  return (
-    <MenuTrigger>
-      <Button>Actions</Button>
-      <Menu onAction={(action) => alert(`Triggering ${action}`)}>
-        <MenuItem id="favorite">Favorite</MenuItem>
-        {/*- begin highlight -*/}
-        <UnavailableMenuItemTrigger isUnavailable>
-          <MenuItem id="delete">Delete</MenuItem>
-          <div style={{padding: 8, maxWidth: 200}}>
-            Contact your administrator for permissions to delete.
-          </div>
-        </UnavailableMenuItemTrigger>
-        {/*- end highlight -*/}
-        <SubmenuTrigger>
-          <MenuItem>Share</MenuItem>
-          <Menu>
-            <MenuItem>SMS</MenuItem>
-            <MenuItem>Instagram</MenuItem>
-            <SubmenuTrigger>
-              <MenuItem>Email</MenuItem>
-              <Menu>
-                <MenuItem>Work</MenuItem>
-                <MenuItem>Personal</MenuItem>
-              </Menu>
-            </SubmenuTrigger>
-          </Menu>
-        </SubmenuTrigger>
-      </Menu>
-    </MenuTrigger>
-  );
-}
 ```
 
 ### Separators
@@ -563,7 +511,7 @@ import {ChevronDown} from 'lucide-react';
 
 <Anatomy />
 
-```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button', Popover: 'Popover', Menu: '#menu', MenuItem: '#menuitem', Separator: 'Separator', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger',  SelectionIndicator: 'selection#animated-selectionindicator'}}
+```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button', Popover: 'Popover', Menu: '#menu', MenuItem: '#menuitem', Separator: 'Separator', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger', SelectionIndicator: 'selection#animated-selectionindicator'}}
 <MenuTrigger>
   <Button />
   <Popover>

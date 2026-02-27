@@ -1,6 +1,6 @@
 'use client';
-import {Check, ChevronRight, Info} from 'lucide-react';
-import React, {createContext, useContext} from 'react';
+import { Check, ChevronRight } from 'lucide-react';
+import React from 'react';
 import {
   Menu as AriaMenu,
   MenuItem as AriaMenuItem,
@@ -18,10 +18,8 @@ import {
   SubmenuTriggerProps,
   MenuTriggerProps as AriaMenuTriggerProps
 } from 'react-aria-components';
-import {dropdownItemStyles} from './ListBox';
-import {Popover, PopoverProps} from './Popover';
-
-export let UnavailableContext = createContext(false);
+import { dropdownItemStyles } from './ListBox';
+import { Popover, PopoverProps } from './Popover';
 
 export function Menu<T extends object>(props: MenuProps<T>) {
   return (
@@ -31,7 +29,6 @@ export function Menu<T extends object>(props: MenuProps<T>) {
 
 export function MenuItem(props: MenuItemProps) {
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
-  let isUnavailable = useContext(UnavailableContext);
   return (
     <AriaMenuItem textValue={textValue} {...props} className={dropdownItemStyles}>
       {composeRenderProps(props.children, (children, {selectionMode, isSelected, hasSubmenu}) => <>
@@ -43,11 +40,8 @@ export function MenuItem(props: MenuItemProps) {
         <span className="flex items-center flex-1 gap-2 font-normal truncate group-selected:font-semibold">
           {children}
         </span>
-        {hasSubmenu && !isUnavailable && (
+        {hasSubmenu && (
           <ChevronRight aria-hidden className="absolute w-4 h-4 right-2" />
-        )}
-        {hasSubmenu && isUnavailable && (
-          <Info aria-hidden className="absolute w-4 h-4 right-2" />
         )}
       </>)}
     </AriaMenuItem>
@@ -102,26 +96,4 @@ export function SubmenuTrigger(
       </Popover>
     </AriaSubmenuTrigger>
   );
-}
-
-export interface UnavailableMenuItemTriggerProps {
-  isUnavailable?: boolean,
-  children: React.ReactElement[]
-}
-
-export function UnavailableMenuItemTrigger(props: UnavailableMenuItemTriggerProps) {
-  let { isUnavailable = false, children } = props;
-  if (isUnavailable) {
-    return (
-      <UnavailableContext.Provider value={isUnavailable}>
-        <AriaSubmenuTrigger>
-          {children[0]}
-          <Popover offset={-2} crossOffset={-4}>
-            {children[1]}
-          </Popover>
-        </AriaSubmenuTrigger>
-      </UnavailableContext.Provider>
-    );
-  }
-  return children[0];
 }

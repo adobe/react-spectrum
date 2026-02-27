@@ -14,12 +14,8 @@
   padding: 8px;
 
   &[data-trigger=MenuTrigger],
-  &[data-trigger=SubmenuTrigger]:not(.unavailable) {
+  &[data-trigger=SubmenuTrigger] {
     padding: 0;
-  }
-
-  &.unavailable {
-    font-weight: 500;
   }
 
   .react-aria-OverlayArrow svg {
