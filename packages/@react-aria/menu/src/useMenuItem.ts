@@ -288,7 +288,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
           interaction.current = {pointerType: 'keyboard', key: ' '};
           (getEventTarget(e) as HTMLElement).click();
 
-          // click above sets modality to "virutal", need to set interaction modality back to 'keyboard' so focusSafely calls properly move focus
+          // click above sets modality to "virtual", need to set interaction modality back to 'keyboard' so focusSafely calls properly move focus
           // to the newly opened submenu's first item.
           setInteractionModality('keyboard');
           break;
@@ -300,7 +300,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
             (getEventTarget(e) as HTMLElement).click();
           }
 
-          // click above sets modality to "virutal", need to set interaction modality back to 'keyboard' so focusSafely calls properly move focus
+          // click above sets modality to "virtual", need to set interaction modality back to 'keyboard' so focusSafely calls properly move focus
           // to the newly opened submenu's first item.
           setInteractionModality('keyboard');
           break;
