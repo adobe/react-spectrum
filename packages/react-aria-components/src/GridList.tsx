@@ -290,10 +290,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 }
 
 export interface GridListItemRenderProps extends ItemRenderProps {
-  isFirstItem: boolean,
-  isLastItem: boolean,
-  isNextSelected: boolean,
-  isPrevSelected: boolean
+  item: Node<unknown>,
+  state: ListState<unknown>
 }
 
 export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
@@ -372,17 +370,15 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
     defaultClassName: 'react-aria-GridListItem',
     values: {
       ...states,
-      isFirstItem: item.key === state.collection.getFirstKey(),
-      isLastItem: item.key === state.collection.getLastKey(),
-      isNextSelected: state.collection.getKeyAfter(item.key) !== null && state.selectionManager.isSelected(state.collection.getKeyAfter(item.key)!) || false,
-      isPrevSelected: state.collection.getKeyBefore(item.key) !== null && state.selectionManager.isSelected(state.collection.getKeyBefore(item.key)!) || false,
       isHovered,
       isFocusVisible,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior,
       allowsDragging: !!dragState,
       isDragging,
-      isDropTarget: dropIndicator?.isDropTarget
+      isDropTarget: dropIndicator?.isDropTarget,
+      item,
+      state
     }
   });
 
