@@ -374,10 +374,18 @@ const listitem = style<GridListItemRenderProps & {
     isFirstItem: 'default'
   },
   borderBottomStartRadius: {
-    isLastItem: 'default'
+    isLastItem: {
+      isQuiet: {
+        isSelected: 'default'
+      }
+    }
   },
   borderBottomEndRadius: {
-    isLastItem: 'default'
+    isLastItem: {
+      isQuiet: {
+        isSelected: 'default'
+      }
+    }
   }
 });
 
@@ -448,10 +456,18 @@ const listRowBackground = style<GridListItemRenderProps & {
     isFirstItem: 'default'
   },
   borderBottomStartRadius: {
-    isLastItem: 'default'
+    isLastItem: {
+      isQuiet: {
+        isSelected: 'default'
+      }
+    }
   },
   borderBottomEndRadius: {
-    isLastItem: 'default'
+    isLastItem: {
+      isQuiet: {
+        isSelected: 'default'
+      }
+    }
   },
   borderTopWidth: {
     default: 1,
