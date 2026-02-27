@@ -321,7 +321,7 @@ const listitem = style<GridListItemRenderProps & {
   },
   transition: 'default',
   '--borderColor': {
-    type: 'borderTopColor',
+    type: 'borderColor',
     value: {
       default: 'gray-300',
       isSelected: {

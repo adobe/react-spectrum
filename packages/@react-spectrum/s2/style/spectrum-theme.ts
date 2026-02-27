@@ -626,29 +626,10 @@ export const style = createTheme({
       pasteboard: weirdColorToken('background-pasteboard-color'),
       elevated: weirdColorToken('background-elevated-color')
     }),
-    borderStartColor: new SpectrumColorProperty('borderInlineStartColor', {
+    borderColor: new SpectrumColorProperty('borderColor', {
       ...baseColors,
       negative: colorToken('negative-border-color-default'),
-      disabled: colorToken('disabled-border-color'),
-      'neutral-subdued': colorToken('neutral-subdued-content-color-default')
-    }),
-    borderTopColor: new SpectrumColorProperty('borderTopColor', {
-      ...baseColors,
-      negative: colorToken('negative-border-color-default'),
-      disabled: colorToken('disabled-border-color'),
-      'neutral-subdued': colorToken('neutral-subdued-content-color-default')
-    }),
-    borderEndColor: new SpectrumColorProperty('borderInlineEndColor', {
-      ...baseColors,
-      negative: colorToken('negative-border-color-default'),
-      disabled: colorToken('disabled-border-color'),
-      'neutral-subdued': colorToken('neutral-subdued-content-color-default')
-    }),
-    borderBottomColor: new SpectrumColorProperty('borderBottomColor', {
-      ...baseColors,
-      negative: colorToken('negative-border-color-default'),
-      disabled: colorToken('disabled-border-color'),
-      'neutral-subdued': colorToken('neutral-subdued-content-color-default')
+      disabled: colorToken('disabled-border-color')
     }),
     outlineColor: new SpectrumColorProperty('outlineColor', {
       ...baseColors,
@@ -1020,7 +1001,6 @@ export const style = createTheme({
     borderBottomRadius: ['borderBottomStartRadius', 'borderBottomEndRadius'] as const,
     borderStartRadius: ['borderTopStartRadius', 'borderBottomStartRadius'] as const,
     borderEndRadius: ['borderTopEndRadius', 'borderBottomEndRadius'] as const,
-    borderColor: ['borderTopColor', 'borderBottomColor', 'borderStartColor', 'borderEndColor'] as const,
     translate: ['translateX', 'translateY'] as const,
     scale: ['scaleX', 'scaleY'] as const,
     inset: ['top', 'bottom', 'insetStart', 'insetEnd'] as const,
