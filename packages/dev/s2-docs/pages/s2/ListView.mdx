@@ -292,49 +292,52 @@ Use the `hasChildItems` prop on `ListViewItem` to display a chevron indicator, s
 ```tsx render type="s2"
 "use client";
 import {Breadcrumbs, Breadcrumb, ListView, ListViewItem, Text} from '@react-spectrum/s2';
+import App from '@react-spectrum/s2/icons/App';
 import Folder from '@react-spectrum/s2/icons/Folder';
+import File from '@react-spectrum/s2/icons/File';
+import Image from '@react-spectrum/s2/icons/Image';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Key} from 'react-aria';
 import {useState} from 'react';
 
 ///- begin collapse -///
-type FileItem = {id: string, name: string, type: 'file'};
-type FolderItem = {id: string, name: string, type: 'folder', children: ListItem[]};
+type FileItem = {id: string, name: string, icon: React.ReactNode};
+type FolderItem = {id: string, name: string, icon: React.ReactNode, children: ListItem[]};
 type ListItem = FileItem | FolderItem;
-type BreadcrumbItem = {id: string, name: string, children: ListItem[]};
+type BreadcrumbItem = {id: string, name: string, icon: React.ReactNode, children: ListItem[]};
 
 let rootItems: ListItem[] = [
-  {id: 'photoshop', name: 'Adobe Photoshop', type: 'file'},
-  {id: 'xd', name: 'Adobe XD', type: 'file'},
-  {id: 'documents', name: 'Documents', type: 'folder', children: [
-    {id: 'sales-pitch', name: 'Sales Pitch', type: 'file'},
-    {id: 'demo', name: 'Demo', type: 'file'},
-    {id: 'taxes', name: 'Taxes', type: 'file'}
+  {id: 'photoshop', name: 'Adobe Photoshop', icon: <App />},
+  {id: 'xd', name: 'Adobe XD', icon: <App />},
+  {id: 'documents', name: 'Documents', icon: <Folder />, children: [
+    {id: 'sales-pitch', name: 'Sales Pitch', icon: <File />},
+    {id: 'demo', name: 'Demo', icon: <File />},
+    {id: 'taxes', name: 'Taxes', icon: <File />}
   ]},
-  {id: 'indesign', name: 'Adobe InDesign', type: 'file'},
-  {id: 'utilities', name: 'Utilities', type: 'folder', children: [
-    {id: 'activity-monitor', name: 'Activity Monitor', type: 'file'}
+  {id: 'indesign', name: 'Adobe InDesign', icon: <App />},
+  {id: 'utilities', name: 'Utilities', icon: <Folder />, children: [
+    {id: 'activity-monitor', name: 'Activity Monitor', icon: <App />}
   ]},
-  {id: 'aftereffects', name: 'Adobe AfterEffects', type: 'file'},
-  {id: 'illustrator', name: 'Adobe Illustrator', type: 'file'},
-  {id: 'pictures', name: 'Pictures', type: 'folder', children: [
-    {id: 'yosemite', name: 'Yosemite', type: 'file'},
-    {id: 'jackson-hole', name: 'Jackson Hole', type: 'file'},
-    {id: 'crater-lake', name: 'Crater Lake', type: 'file'}
+  {id: 'aftereffects', name: 'Adobe AfterEffects', icon: <App />},
+  {id: 'illustrator', name: 'Adobe Illustrator', icon: <App />},
+  {id: 'pictures', name: 'Pictures', icon: <Folder />, children: [
+    {id: 'yosemite', name: 'Yosemite', icon: <Image />},
+    {id: 'jackson-hole', name: 'Jackson Hole', icon: <Image />},
+    {id: 'crater-lake', name: 'Crater Lake', icon: <Image />}
   ]}
 ];
 ///- end collapse -///
 
 function NavigationExample() {
   let [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([
-    {id: 'root', name: 'Root', children: rootItems}
+    {id: 'root', name: 'Root', icon: <Folder />, children: rootItems}
   ]);
 
   let currentItems = breadcrumbs[breadcrumbs.length - 1].children;
 
   let onAction = (key: Key) => {
     let item = currentItems.find(item => item.id === key);
-    if (item?.type === 'folder') {
+    if (item && 'children' in item) {
       setBreadcrumbs(prev => [...prev, item]);
     }
   };
@@ -358,8 +361,8 @@ function NavigationExample() {
         onAction={onAction}
         styles={style({width: 'full', height: 320})}>
         {item => (
-          <ListViewItem id={item.id} textValue={item.name} hasChildItems={item.type === 'folder'}>
-            {item.type === 'folder' ? <Folder /> : null}
+          <ListViewItem id={item.id} textValue={item.name} hasChildItems={item && 'children' in item}>
+            {item.icon}
             <Text>{item.name}</Text>
           </ListViewItem>
         )}
