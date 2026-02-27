@@ -4,13 +4,14 @@ import {removeProp, updateComponentWithinCollection, updateToNewComponentName} f
 import * as t from '@babel/types';
 
 function transformTabList(tabListPath: NodePath<t.JSXElement>): t.JSXElement {
-  tabListPath.get('children').forEach(itemPath => {
-    if (
-      t.isJSXElement(itemPath.node) &&
-      t.isJSXIdentifier(itemPath.node.openingElement.name) &&
-      getName(itemPath as NodePath<t.JSXElement>, itemPath.node.openingElement.name) === 'Item'
-    ) {
-      updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponentName: 'TabList', newComponentName: 'Tab'});
+  tabListPath.traverse({
+    JSXElement(itemPath) {
+      if (
+        t.isJSXIdentifier(itemPath.node.openingElement.name) &&
+        getName(itemPath as NodePath<t.JSXElement>, itemPath.node.openingElement.name) === 'Item'
+      ) {
+        updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponentName: 'TabList', newComponentName: 'Tab'});
+      }
     }
   });
   return tabListPath.node;
