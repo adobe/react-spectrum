@@ -335,7 +335,20 @@ const listitem = style<GridListItemRenderProps & {
     }
   },
   borderTopWidth: 0,
-  borderBottomWidth: 1,
+  borderBottomWidth: {
+    default: 1,
+    isLastItem: {
+      isQuiet: {
+        selectionStyle: {
+          checkbox: 0,
+          highlight: {
+            default: 0,
+            isSelected: 1
+          }
+        }
+      }
+    }
+  },
   borderStartWidth: 0,
   borderEndWidth: 0,
   borderStyle: 'solid',
@@ -359,12 +372,19 @@ const listitem = style<GridListItemRenderProps & {
   },
   borderTopEndRadius: {
     isFirstItem: 'default'
+  },
+  borderBottomStartRadius: {
+    isLastItem: 'default'
+  },
+  borderBottomEndRadius: {
+    isLastItem: 'default'
   }
 });
 
 const listRowBackground = style<GridListItemRenderProps & {
   isFirstItem?: boolean,
   isLastItem?: boolean,
+  isQuiet?: boolean,
   isPrevSelected?: boolean,
   isNextSelected?: boolean,
   isPrevNotSelected?: boolean,
@@ -427,6 +447,12 @@ const listRowBackground = style<GridListItemRenderProps & {
   borderTopEndRadius: {
     isFirstItem: 'default'
   },
+  borderBottomStartRadius: {
+    isLastItem: 'default'
+  },
+  borderBottomEndRadius: {
+    isLastItem: 'default'
+  },
   borderTopWidth: {
     default: 1,
     isPrevSelected: {
@@ -442,6 +468,17 @@ const listRowBackground = style<GridListItemRenderProps & {
       selectionStyle: {
         highlight: 0,
         checkbox: 0
+      }
+    },
+    isLastItem: {
+      isQuiet: {
+        selectionStyle: {
+          checkbox: 0,
+          highlight: {
+            default: 0,
+            isSelected: 1
+          }
+        }
       }
     }
   },
@@ -680,6 +717,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                 listRowBackground({
                   ...renderProps,
                   selectionStyle,
+                  isQuiet,
                   isPrevSelected: isPrevSelected(item, state),
                   isNextSelected: isNextSelected(item, state),
                   isPrevNotSelected: !isPrevSelected(item, state),
