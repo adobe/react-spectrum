@@ -40,7 +40,7 @@ import {
 import Chevron from '../ui-icons/Chevron';
 import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
-import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState, Node} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState} from '@react-types/shared';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
@@ -625,32 +625,32 @@ function ListSelectionCheckbox({isDisabled}: {isDisabled: boolean}) {
   );
 }
 
-function isNextSelected(item: Node<unknown>, state: ListState<unknown>) {
-  if (!item?.key || !state) {
+function isNextSelected(id: Key | undefined, state: ListState<unknown>) {
+  if (id == null || !state) {
     return false;
   }
-  let keyAfter = state.collection.getKeyAfter(item.key);
+  let keyAfter = state.collection.getKeyAfter(id);
   return keyAfter != null && state.selectionManager.isSelected(keyAfter);
 }
-function isPrevSelected(item: Node<unknown>, state: ListState<unknown>) {
-  if (!item?.key || !state) {
+function isPrevSelected(id: Key | undefined, state: ListState<unknown>) {
+  if (id == null || !state) {
     return false;
   }
-  let keyBefore = state.collection.getKeyBefore(item.key);
+  let keyBefore = state.collection.getKeyBefore(id);
   return keyBefore != null && state.selectionManager.isSelected(keyBefore);
 }
 
-function isFirstItem(item: Node<unknown>, state: ListState<unknown>) {
-  if (!item?.key || !state) {
+function isFirstItem(id: Key | undefined, state: ListState<unknown>) {
+  if (id == null || !state) {
     return false;
   }
-  return state.collection.getFirstKey() === item.key;
+  return state.collection.getFirstKey() === id;
 }
-function isLastItem(item: Node<unknown>, state: ListState<unknown>) {
-  if (!item?.key || !state) {
+function isLastItem(id: Key | undefined, state: ListState<unknown>) {
+  if (id == null || !state) {
     return false;
   }
-  return state.collection.getLastKey() === item.key;
+  return state.collection.getLastKey() === id;
 }
 
 export function ListViewItem(props: ListViewItemProps): ReactNode {
@@ -675,15 +675,15 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
         isQuiet,
         scale,
         selectionStyle,
-        isPrevNotSelected: !isPrevSelected(renderProps.item, renderProps.state),
-        isNextSelected: isNextSelected(renderProps.item, renderProps.state),
-        isNextNotSelected: !isNextSelected(renderProps.item, renderProps.state),
-        isFirstItem: isFirstItem(renderProps.item, renderProps.state),
-        isLastItem: isLastItem(renderProps.item, renderProps.state)
+        isPrevNotSelected: !isPrevSelected(renderProps.id, renderProps.state),
+        isNextSelected: isNextSelected(renderProps.id, renderProps.state),
+        isNextNotSelected: !isNextSelected(renderProps.id, renderProps.state),
+        isFirstItem: isFirstItem(renderProps.id, renderProps.state),
+        isLastItem: isLastItem(renderProps.id, renderProps.state)
       })}>
       {(renderProps) => {
         let {children} = props;
-        let {selectionMode, selectionBehavior, isDisabled, item, state} = renderProps;
+        let {selectionMode, selectionBehavior, isDisabled, id, state} = renderProps;
         return (
           <Provider
             values={[
@@ -718,12 +718,12 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                   ...renderProps,
                   selectionStyle,
                   isQuiet,
-                  isPrevSelected: isPrevSelected(item, state),
-                  isNextSelected: isNextSelected(item, state),
-                  isPrevNotSelected: !isPrevSelected(item, state),
-                  isNextNotSelected: !isNextSelected(item, state),
-                  isFirstItem: isFirstItem(item, state),
-                  isLastItem: isLastItem(item, state)
+                  isPrevSelected: isPrevSelected(id, state),
+                  isNextSelected: isNextSelected(id, state),
+                  isPrevNotSelected: !isPrevSelected(id, state),
+                  isNextNotSelected: !isNextSelected(id, state),
+                  isFirstItem: isFirstItem(id, state),
+                  isLastItem: isLastItem(id, state)
                 })
               } />
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (

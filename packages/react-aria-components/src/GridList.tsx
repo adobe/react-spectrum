@@ -290,7 +290,11 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 }
 
 export interface GridListItemRenderProps extends ItemRenderProps {
-  item: Node<unknown>,
+  /** The unique id of the item. */
+  id?: Key,
+  /**
+   * State of the grid list.
+   */
   state: ListState<unknown>
 }
 
@@ -377,7 +381,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
       allowsDragging: !!dragState,
       isDragging,
       isDropTarget: dropIndicator?.isDropTarget,
-      item,
+      id: item.key,
       state
     }
   });
