@@ -29,6 +29,7 @@ import {
   ListLayout,
   Provider,
   SectionProps,
+  SelectStateContext,
   SelectValue,
   Virtualizer
 } from 'react-aria-components';
@@ -520,6 +521,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let renderValueRef = useRef(null);
 
+  let state = useContext(SelectStateContext)!;
   useEffect(() => {
     if (process.env.NODE_ENV === 'production' || !renderValue) {
       return;
@@ -536,7 +538,6 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
       NodeFilter.SHOW_ELEMENT,
       {
         acceptNode(node: Element) {
-
           let role = node.getAttribute('role');
           let interactive = isFocusable(node) || (role != null && INTERACTIVE_ARIA_ROLES.has(role));
           return interactive ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
@@ -547,7 +548,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
     if (next) {
       console.warn('Picker\'s value should not have interactive children for accessibility.');
     }
-  });
+  }, [state.selectedItems, renderValue]);
 
   // For mouse interactions, pickers open on press start. When the popover underlay appears
   // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
