@@ -338,6 +338,7 @@ const listitem = style<GridListItemRenderProps & {
   borderBottomWidth: {
     default: 1,
     isLastItem: {
+      default: 1,
       isQuiet: {
         selectionStyle: {
           checkbox: 0,
@@ -487,6 +488,7 @@ const listRowBackground = style<GridListItemRenderProps & {
       }
     },
     isLastItem: {
+      default: 1,
       isQuiet: {
         selectionStyle: {
           checkbox: 0,
