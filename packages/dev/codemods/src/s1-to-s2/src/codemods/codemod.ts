@@ -147,7 +147,9 @@ export default function transformer(file: FileInfo, api: API, options: Options):
         return;
       }
 
-      if (arg.value !== '@adobe/react-spectrum' && !arg.value.startsWith('@react-spectrum/')) {
+      let isV3ImportSource = arg.value === '@adobe/react-spectrum'
+        || (arg.value.startsWith('@react-spectrum/') && arg.value !== '@react-spectrum/s2');
+      if (!isV3ImportSource) {
         return;
       }
 
