@@ -24,6 +24,12 @@ import {getInteractionModality} from './useFocusVisible';
  * as page scrolling and screen reader issues with CSS transitions.
  */
 export function focusSafely(element: FocusableElement): void {
+  // don't try to focus in template element's document fragment, but let this work for shadow dom
+  let root = element.getRootNode();
+  if (root instanceof DocumentFragment && !('host' in root)) {
+    return;
+  }
+
   // If the user is interacting with a virtual cursor, e.g. screen reader, then
   // wait until after any animated transitions that are currently occurring on
   // the page before shifting focus. This avoids issues with VoiceOver on iOS
