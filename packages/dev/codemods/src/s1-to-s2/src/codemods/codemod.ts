@@ -46,7 +46,9 @@ export default function transformer(file: FileInfo, api: API, options: Options):
     }
   });
   let root = j(file.source);
-  let componentsToTransform = options.components ? new Set(options.components.split(',').filter(s => availableComponents.has(s))) : availableComponents;
+  let componentsToTransform = options.components
+    ? new Set(options.components.split(',').map(s => s.trim()).filter(s => availableComponents.has(s)))
+    : availableComponents;
   let v3ComponentsToRename = new Set(Object.keys(renamedComponents));
   let S2ComponentsToImport = new Set<string>();
 
