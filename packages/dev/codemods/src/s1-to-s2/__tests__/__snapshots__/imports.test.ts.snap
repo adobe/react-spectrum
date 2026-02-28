@@ -1,9 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`does not leave a comment on dynamic s2 imports 1`] = `"const LazyButton = React.lazy(() => import('@react-spectrum/s2'))"`;
+
 exports[`leaves a comment on dynamic imports 1`] = `
 "const LazyButton = React.lazy(() => // TODO(S2-upgrade): check this dynamic import
 import('@react-spectrum/button'))"
 `;
+
+exports[`should handle empty files safely 1`] = `""`;
 
 exports[`should keep import aliases 1`] = `
 "import { Button as RSPButton } from "@react-spectrum/s2";

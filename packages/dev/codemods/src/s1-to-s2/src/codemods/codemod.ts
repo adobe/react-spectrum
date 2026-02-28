@@ -259,16 +259,30 @@ export default function transformer(file: FileInfo, api: API, options: Options):
 
     if (existingImport.length) {
       let importDecl = existingImport.get();
-      for (let specifier of importDecl.node.specifiers) {
-        if (specifier.type === 'ImportSpecifier'
-          && importedComponents.has(specifier.imported.name)) {
-          importSpecifiers.add(specifier);
-        }
-      }
+      let existingSpecifiers = importDecl.value.specifiers;
       // add importSpecifiers to existing import
       importDecl.value.specifiers = [...importDecl.value.specifiers, ...[...importSpecifiers].filter(specifier => {
-        // @ts-ignore
-        return specifier.imported.name !== 'Item' && ![...importDecl.value.specifiers].find(s => s.imported.name === specifier.imported.name);
+        if (t.isImportSpecifier(specifier) && t.isIdentifier(specifier.imported)) {
+          if (specifier.imported.name === 'Item') {
+            return false;
+          }
+
+          let localName = specifier.local?.name || specifier.imported.name;
+          return !existingSpecifiers.find((s) =>
+            t.isImportSpecifier(s)
+            && t.isIdentifier(s.imported)
+            && s.imported.name === specifier.imported.name
+            && (s.local?.name || s.imported.name) === localName
+          );
+        }
+
+        if (t.isImportNamespaceSpecifier(specifier)) {
+          return !existingSpecifiers.find((s) =>
+            t.isImportNamespaceSpecifier(s) && s.local.name === specifier.local.name
+          );
+        }
+
+        return false;
       })];
     } else {
       if (importSpecifiers.size > 0) {
