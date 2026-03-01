@@ -13,11 +13,11 @@
 import {action} from 'storybook/actions';
 import {Button, Text} from '../src';
 import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
+import {FocusScope} from '@react-aria/focus';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {useEffect, useRef, useState} from 'react';
-import { FocusScope } from '@react-aria/focus';
 import './buttonstyles.css';
 
 const events = ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'];
@@ -131,9 +131,8 @@ export function App() {
           <button
             className="Button"
             onClick={() => {
-              console.log("WIN!");
-            }}
-          >
+              console.log('WIN!');
+            }}>
             BUTTON
           </button>
         </div>
