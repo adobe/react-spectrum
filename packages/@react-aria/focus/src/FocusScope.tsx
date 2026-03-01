@@ -331,6 +331,7 @@ function isTabbableRadio(element: HTMLInputElement): boolean {
 
 function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: boolean) {
   let focusedNode = useRef<FocusableElement>(undefined);
+  let lastPointerDownTarget = useRef<Element | null>(null);
 
   let raf = useRef<ReturnType<typeof requestAnimationFrame>>(undefined);
   useLayoutEffect(() => {
@@ -395,6 +396,10 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
       }
     };
 
+    let onPointerDown: EventListener = (e) => {
+      lastPointerDownTarget.current = getEventTarget(e) as Element;
+    };
+
     let onBlur: EventListener = (e) => {
       // Firefox doesn't shift focus back to the Dialog properly without this
       if (raf.current) {
@@ -407,27 +412,57 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
         let modality = getInteractionModality();
         let shouldSkipFocusRestore = (modality === 'virtual' || modality === null) && isAndroid() && isChrome();
 
-        // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
         let activeElement = getActiveElement(ownerDocument);
-        if (!shouldSkipFocusRestore && activeElement && shouldContainFocus(scopeRef) && !isElementInChildScope(activeElement, scopeRef)) {
-          activeScope = scopeRef;
-          let target = getEventTarget(e) as FocusableElement;
-          if (target && target.isConnected) {
-            focusedNode.current = target;
-            focusedNode.current?.focus();
-          } else if (activeScope.current) {
-            focusFirstInScope(activeScope.current);
+        let shouldContain = !shouldSkipFocusRestore && shouldContainFocus(scopeRef) && (!activeElement || !isElementInChildScope(activeElement, scopeRef));
+        if (!shouldContain) {
+          lastPointerDownTarget.current = null;
+          return;
+        }
+
+        activeScope = scopeRef;
+        // Safari moves focus to body when clicking a focusable element (e.g. button); relatedTarget is null.
+        // Use the pointerdown target so we focus what the user actually clicked instead of the element that lost focus.
+        let pointerTarget = lastPointerDownTarget.current;
+        let safariFocusTarget: FocusableElement | null = null;
+        if (activeElement === ownerDocument.body && pointerTarget?.isConnected && isElementInChildScope(pointerTarget, scopeRef)) {
+          safariFocusTarget = isFocusable(pointerTarget as FocusableElement) ? (pointerTarget as FocusableElement) : null;
+          if (!safariFocusTarget && pointerTarget instanceof Element) {
+            let el: Element | null = pointerTarget;
+            while (el && isElementInChildScope(el, scopeRef)) {
+              if (isFocusable(el as FocusableElement)) {
+                safariFocusTarget = el as FocusableElement;
+                break;
+              }
+              el = el.parentElement;
+            }
           }
+        }
+        lastPointerDownTarget.current = null;
+
+        if (safariFocusTarget?.isConnected && isElementInChildScope(safariFocusTarget, scopeRef)) {
+          focusedNode.current = safariFocusTarget;
+          focusElement(safariFocusTarget);
+          return;
+        }
+
+        let target = getEventTarget(e) as FocusableElement;
+        if (target && target.isConnected) {
+          focusedNode.current = target;
+          focusedNode.current?.focus();
+        } else if (activeScope.current) {
+          focusFirstInScope(activeScope.current);
         }
       });
     };
 
     ownerDocument.addEventListener('keydown', onKeyDown, false);
+    ownerDocument.addEventListener('pointerdown', onPointerDown, true);
     ownerDocument.addEventListener('focusin', onFocus, false);
     scope?.forEach(element => element.addEventListener('focusin', onFocus, false));
     scope?.forEach(element => element.addEventListener('focusout', onBlur, false));
     return () => {
       ownerDocument.removeEventListener('keydown', onKeyDown, false);
+      ownerDocument.removeEventListener('pointerdown', onPointerDown, true);
       ownerDocument.removeEventListener('focusin', onFocus, false);
       scope?.forEach(element => element.removeEventListener('focusin', onFocus, false));
       scope?.forEach(element => element.removeEventListener('focusout', onBlur, false));
