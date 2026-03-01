@@ -92,6 +92,10 @@ function preventScrollStandard() {
 //    Safari from scrolling the page. After a small delay, focus the real input and scroll it into view
 //    ourselves, without scrolling the whole page.
 function preventScrollMobileSafari() {
+  // Set overflow hidden so scrollIntoViewport() (useSelectableCollection) sees isScrollPrevented and
+  // scrolls only scroll parents instead of calling native scrollIntoView() which moves the window.
+  let restoreOverflow = setStyle(document.documentElement, 'overflow', 'hidden');
+
   let scrollable: Element;
   let allowTouchMove = false;
   let onTouchStart = (e: TouchEvent) => {
@@ -201,6 +205,7 @@ function preventScrollMobileSafari() {
   );
 
   return () => {
+    restoreOverflow();
     removeEvents();
     style.remove();
     HTMLElement.prototype.focus = focus;
