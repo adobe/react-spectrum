@@ -23,6 +23,7 @@
   "label.(optional)": "(valfritt)",
   "label.(required)": "(krävs)",
   "menu.moreActions": "Fler åtgärder",
+  "menu.unavailable": "Ej tillgänglig, expandera för mer information",
   "notificationbadge.indicatorOnly": "Ny aktivitet",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Välj…",

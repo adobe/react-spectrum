@@ -10,6 +10,8 @@ export const description = 'Used when a user needs to perform actions on one or 
 
 <PageDescription>{docs.exports.ActionBar.description}</PageDescription>
 
+<ExampleSwitcher type={null} examples={['TableView', 'ListView']}>
+
 ```tsx render docs={docs.exports.ActionBar} links={docs.links} props={['isEmphasized']} type="s2" wide
 "use client";
 import {ActionBar, ActionButton, TableView, TableHeader, TableBody, Column, Row, Cell, Text} from '@react-spectrum/s2';
@@ -68,6 +70,60 @@ function Example(props) {
   );
 }
 ```
+
+```tsx render docs={docs.exports.ActionBar} links={docs.links} props={['isEmphasized']} type="s2" wide
+"use client";
+import {ActionBar, ActionButton, ListView, ListViewItem, Text} from '@react-spectrum/s2';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import Copy from '@react-spectrum/s2/icons/Copy';
+import Delete from '@react-spectrum/s2/icons/Delete';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+let items = [
+  {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+  {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+  {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+  {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
+];
+
+function Example(props) {
+  return (
+    <ListView
+      aria-label="List with action bar"
+      selectionMode="multiple"
+      defaultSelectedKeys={[2]}
+      styles={style({width: 'full', height: 250})}
+      items={items}
+      renderActionBar={(selectedKeys) => (
+        /*- begin focus -*/
+        <ActionBar {...props}/* PROPS */>
+          <ActionButton onPress={() => alert('Edit action')}>
+            <Edit />
+            <Text>Edit</Text>
+          </ActionButton>
+          <ActionButton onPress={() => alert('Copy action')}>
+            <Copy />
+            <Text>Copy</Text>
+          </ActionButton>
+          <ActionButton onPress={() => alert('Delete action')}>
+            <Delete />
+            <Text>Delete</Text>
+          </ActionButton>
+        </ActionBar>
+        /*- end focus -*/
+      )}>
+      {item => (
+        <ListViewItem id={item.id} textValue={item.name}>
+          <Text>{item.name}</Text>
+          <Text slot="description">{item.type} • Level {item.level}</Text>
+        </ListViewItem>
+      )}
+    </ListView>
+  );
+}
+```
+
+</ExampleSwitcher>
 
 ## API
 

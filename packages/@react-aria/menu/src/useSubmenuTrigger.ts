@@ -43,7 +43,7 @@ export interface AriaSubmenuTriggerProps {
   shouldUseVirtualFocus?: boolean
 }
 
-interface SubmenuTriggerProps extends Omit<AriaMenuItemProps, 'key'> {
+interface SubmenuTriggerProps extends Omit<AriaMenuItemProps, 'key' | 'onAction'> {
   /** Whether the submenu trigger is in an expanded state. */
   isOpen: boolean
 }

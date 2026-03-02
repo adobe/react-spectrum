@@ -23,6 +23,7 @@
   "label.(optional)": "(선택 사항)",
   "label.(required)": "(필수 사항)",
   "menu.moreActions": "기타 액션",
+  "menu.unavailable": "사용할 수 없음, 자세히 보려면 펼치기",
   "notificationbadge.indicatorOnly": "새로운 활동",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "선택…",

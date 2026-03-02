@@ -23,6 +23,7 @@
   "label.(optional)": "(אופציונלי)",
   "label.(required)": "(נדרש)",
   "menu.moreActions": "פעולות נוספות",
+  "menu.unavailable": "לא זמין, הרחב לפרטים",
   "notificationbadge.indicatorOnly": "פעילות חדשה",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "בחר…",

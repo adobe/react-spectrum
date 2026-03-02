@@ -29,6 +29,7 @@ import {
   ListLayout,
   Provider,
   SectionProps,
+  SelectStateContext,
   SelectValue,
   Virtualizer
 } from 'react-aria-components';
@@ -50,6 +51,7 @@ import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {control, controlBorderRadius, controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createHideableComponent} from '@react-aria/collections';
+import {createShadowTreeWalker, getOwnerDocument, isFocusable, useGlobalListeners, useSlotId} from '@react-aria/utils';
 import {
   Divider,
   listbox,
@@ -76,9 +78,8 @@ import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
-import {useGlobalListeners, useSlotId} from '@react-aria/utils';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -491,6 +492,13 @@ const avatarSize = {
   XL: 26
 } as const;
 
+// https://w3c.github.io/aria/#widget_roles
+let INTERACTIVE_ARIA_ROLES = new Set([
+  'application', 'button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem',
+  'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'searchbox', 'separator',
+  'slider', 'spinbutton', 'switch', 'tab', 'textbox', 'treeitem'
+]);
+
 interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>, Pick<PickerProps<T>, 'loadingState' | 'renderValue'> {
   loadingCircle: ReactNode,
   buttonRef: RefObject<HTMLButtonElement | null>
@@ -511,6 +519,36 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
     renderValue
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let renderValueRef = useRef(null);
+
+  let state = useContext(SelectStateContext)!;
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production' || !renderValue) {
+      return;
+    }
+
+    if (!renderValueRef.current) {
+      return;
+    }
+
+    let doc = getOwnerDocument(renderValueRef.current);
+    let walker = createShadowTreeWalker(
+      doc,
+      renderValueRef.current,
+      NodeFilter.SHOW_ELEMENT,
+      {
+        acceptNode(node: Element) {
+          let role = node.getAttribute('role');
+          let interactive = isFocusable(node) || (role != null && INTERACTIVE_ARIA_ROLES.has(role));
+          return interactive ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+        }
+      }
+    );
+    let next = walker.nextNode();
+    if (next) {
+      console.warn('Picker\'s value should not have interactive children for accessibility.');
+    }
+  }, [state.selectedItems, renderValue]);
 
   // For mouse interactions, pickers open on press start. When the popover underlay appears
   // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
@@ -601,7 +639,11 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                       }],
                       [InsideSelectValueContext, true]
                     ]}>
-                    {renderedValue}
+                    {renderValue ? (
+                      <div ref={renderValueRef} style={{display: 'contents'}}>
+                        {renderedValue}
+                      </div>
+                      ) : renderedValue}
                   </Provider>
                 );
               }}
