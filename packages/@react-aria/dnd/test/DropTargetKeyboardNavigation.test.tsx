@@ -48,7 +48,7 @@ class TestCollection implements Collection<Node<Item>> {
   constructor(items: Item[]) {
     this.map = new Map<Key, Node<Item>>();
     let visitItem = (item: Item, index: number, level = 0, parentKey: string | null = null): Node<Item> => {
-      let childNodes = item.childItems ? visitItems(item.childItems, level + 1, item.id) : [];
+      let childNodes = visitItems(item.childItems ?? [], level + 1, item.id);
       return {
         type: 'item',
         key: item.id,
@@ -67,6 +67,24 @@ class TestCollection implements Collection<Node<Item>> {
       let last: Node<Item> | null = null;
       let index = 0;
       let nodes: Node<Item>[] = [];
+      if (parentKey != null) {
+        let contentNode = {
+          type: 'content',
+          key: parentKey + '-content',
+          value: null,
+          level: level,
+          hasChildNodes: false,
+          childNodes: [],
+          rendered: null,
+          textValue: '',
+          index: index++,
+          parentKey
+        };
+        this.map.set(contentNode.key, contentNode);
+        nodes.push(contentNode);
+        last = contentNode;
+      }
+
       for (let item of items) {
         let node = visitItem(item, index, level, parentKey);
         this.map.set(item.id, node);
@@ -236,25 +254,45 @@ describe('drop target keyboard navigation', () => {
 
     let expectedKeys = [
       'projects',
+      'projects-content',
       'project-1',
+      'project-1-content',
       'project-2',
+      'project-2-content',
       'project-2A',
+      'project-2A-content',
       'project-2B',
+      'project-2B-content',
       'project-2C',
+      'project-2C-content',
       'project-3',
+      'project-3-content',
       'project-4',
+      'project-4-content',
       'project-5',
+      'project-5-content',
       'project-5A',
+      'project-5A-content',
       'project-5B',
+      'project-5B-content',
       'project-5C',
+      'project-5C-content',
       'reports',
+      'reports-content',
       'reports-1',
+      'reports-1-content',
       'reports-1A',
+      'reports-1A-content',
       'reports-1AB',
+      'reports-1AB-content',
       'reports-1ABC',
+      'reports-1ABC-content',
       'reports-1B',
+      'reports-1B-content',
       'reports-1C',
-      'reports-2'
+      'reports-1C-content',
+      'reports-2',
+      'reports-2-content'
     ];
     
     expect(nextKeys).toEqual(expectedKeys);
