@@ -39,7 +39,7 @@ import {
 } from 'react-aria-components';
 import Chevron from '../ui-icons/Chevron';
 import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
+import {createContext, forwardRef, ReactElement, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState} from '@react-types/shared';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -50,7 +50,7 @@ import LinkOutIcon from '../ui-icons/LinkOut';
 import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef, useResizeObserver} from '@react-spectrum/utils';
 import {useLocale, useLocalizedStringFormatter} from 'react-aria';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -96,7 +96,7 @@ export interface ListViewItemProps extends Omit<GridListItemProps, 'children' | 
 
 export const ListViewContext = createContext<ContextValue<Partial<ListViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
-let InternalListViewContext = createContext<{isQuiet?: boolean, selectionStyle?: 'highlight' | 'checkbox', overflowMode?: 'wrap' | 'truncate', scale?: 'medium' | 'large', hideLinkOutIcon?: boolean}>({});
+let InternalListViewContext = createContext<{isQuiet?: boolean, selectionStyle?: 'highlight' | 'checkbox', overflowMode?: 'wrap' | 'truncate', scale?: 'medium' | 'large', hideLinkOutIcon?: boolean, isVerticalScrollbarVisible?: boolean, isHorizontalScrollbarVisible?: boolean}>({});
 
 const listViewWrapper = style({
   minHeight: 0,
@@ -224,6 +224,22 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
 
+  let [isVerticalScrollbarVisible, setVerticalScollbarVisible] = useState(false);
+  let [isHorizontalScrollbarVisible, setHorizontalScollbarVisible] = useState(false);
+  let viewport = useRef({clientWidth: 0, clientHeight: 0, offsetWidth: 0, offsetHeight: 0});
+  let onVisibleRectChange = useCallback(() => {
+    viewport.current = {
+      clientWidth: scrollRef.current?.clientWidth || 0,
+      clientHeight: scrollRef.current?.clientHeight || 0,
+      offsetWidth: scrollRef.current?.offsetWidth || 0,
+      offsetHeight: scrollRef.current?.offsetHeight || 0
+    };
+
+    setVerticalScollbarVisible(viewport.current.clientWidth + 2 < viewport.current.offsetWidth);
+    setHorizontalScollbarVisible(viewport.current.clientHeight + 2 < viewport.current.offsetHeight);
+  }, []);
+  useResizeObserver({ref: scrollRef, onResize: onVisibleRectChange});
+
   return (
     <div
       ref={domRef}
@@ -235,7 +251,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
           estimatedRowHeight: rowHeight,
           loaderHeight: 60
         }}>
-        <InternalListViewContext.Provider value={{isQuiet, selectionStyle, overflowMode, scale, hideLinkOutIcon}}>
+        <InternalListViewContext.Provider value={{isQuiet, selectionStyle, overflowMode, scale, hideLinkOutIcon, isVerticalScrollbarVisible, isHorizontalScrollbarVisible}}>
           <GridList
             ref={scrollRef as any}
             {...gridListProps}
@@ -398,7 +414,8 @@ const listRowBackground = style<GridListItemRenderProps & {
   isNextSelected?: boolean,
   isPrevNotSelected?: boolean,
   isNextNotSelected?: boolean,
-  selectionStyle?: 'highlight' | 'checkbox'
+  selectionStyle?: 'highlight' | 'checkbox',
+  isVerticalScrollbarVisible?: boolean
 }>({
   position: 'absolute',
   zIndex: -1,
@@ -410,10 +427,7 @@ const listRowBackground = style<GridListItemRenderProps & {
     isSelected: {
       selectionStyle: {
         checkbox: 0,
-        highlight: {
-          default: 0,
-          isNextSelected: '[-1px]'
-        }
+        highlight: '[-1px]'
       }
     }
   },
@@ -450,24 +464,31 @@ const listRowBackground = style<GridListItemRenderProps & {
       default: 'Background'
     }
   },
+  '--borderRadiusInsetCalculation': {
+    type: 'borderTopStartRadius',
+    value: 'default'
+  },
   borderTopStartRadius: {
-    isFirstItem: 'default'
+    isFirstItem: 'calc(var(--borderRadiusInsetCalculation) - 1px)'
   },
   borderTopEndRadius: {
-    isFirstItem: 'default'
+    isFirstItem: 'calc(var(--borderRadiusInsetCalculation) - 1px)',
+    isVerticalScrollbarVisible: 'none'
   },
   borderBottomStartRadius: {
     isLastItem: {
       isQuiet: {
-        isSelected: 'default'
-      }
+        isSelected: 'calc(var(--borderRadiusInsetCalculation) - 1px)'
+      },
+      isVerticalScrollbarVisible: 'calc(var(--borderRadiusInsetCalculation) - 1px)'
     }
   },
   borderBottomEndRadius: {
     isLastItem: {
       isQuiet: {
-        isSelected: 'default'
-      }
+        isSelected: 'calc(var(--borderRadiusInsetCalculation) - 1px)'
+      },
+      isVerticalScrollbarVisible: 'none'
     }
   },
   borderTopWidth: {
@@ -676,7 +697,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
   let {hasChildItems, ...otherProps} = props;
   let isLink = props.href != null;
   let isLinkOut = isLink && props.target === '_blank';
-  let {isQuiet, selectionStyle, overflowMode, scale, hideLinkOutIcon = false} = useContext(InternalListViewContext);
+  let {isQuiet, selectionStyle, overflowMode, scale, hideLinkOutIcon = false, isVerticalScrollbarVisible = false} = useContext(InternalListViewContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
   let hasTrailingIcon = hasChildItems || (isLinkOut && !hideLinkOutIcon);
@@ -741,7 +762,8 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                   isPrevNotSelected: !isPrevSelected(id, state),
                   isNextNotSelected: !isNextSelected(id, state),
                   isFirstItem: isFirstItem(id, state),
-                  isLastItem: isLastItem(id, state)
+                  isLastItem: isLastItem(id, state),
+                  isVerticalScrollbarVisible
                 })
               } />
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
