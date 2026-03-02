@@ -947,21 +947,13 @@ const commonCellStyles = {
   borderXWidth: 0,
   borderStyle: 'solid',
   position: 'relative',
-  color: {
-    default: 'gray-800',
-    forcedColors: 'ButtonText'
-  },
+  color: '--rowTextColor',
   outlineStyle: 'none',
   paddingX: 16 // table-edge-to-content
 } as const;
 
 const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
   ...commonCellStyles,
-  color: {
-    default: baseColor('neutral-subdued'),
-    isSelected: baseColor('neutral'),
-    forcedColors: 'ButtonText'
-  },
   paddingY: centerPadding(),
   minHeight: {
     default: 40,
@@ -1398,6 +1390,16 @@ const rowBackgroundColor = {
   }
 } as const;
 
+const rowTextColor = {
+  default: baseColor('neutral-subdued'),
+  isSelected: baseColor('neutral'),
+  isDisabled: {
+    default: 'disabled',
+    forcedColors: 'GrayText'
+  },
+  forcedColors: 'ButtonText'
+} as const;
+
 const row = style<RowRenderProps & S2TableProps>({
   height: 'full',
   position: 'relative',
@@ -1406,6 +1408,10 @@ const row = style<RowRenderProps & S2TableProps>({
   '--rowBackgroundColor': {
     type: 'backgroundColor',
     value: rowBackgroundColor
+  },
+  '--rowTextColor': {
+    type: 'color',
+    value: rowTextColor
   },
   '--rowFocusIndicatorColor': {
     type: 'outlineColor',
