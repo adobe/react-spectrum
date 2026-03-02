@@ -77,7 +77,7 @@ import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {Button as SpectrumButton} from './Button';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {VisuallyHidden} from 'react-aria';
@@ -955,7 +955,7 @@ const commonCellStyles = {
   paddingX: 16 // table-edge-to-content
 } as const;
 
-const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
+const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean, isTreeColumnWithNoChildren: boolean}>({
   ...commonCellStyles,
   color: {
     default: baseColor('neutral-subdued'),
@@ -963,6 +963,21 @@ const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
     forcedColors: 'ButtonText'
   },
   paddingY: centerPadding(),
+  '--indent': {
+    type: 'width',
+    value: 16
+  },
+  '--treeColumnPadding': {
+    type: 'width',
+    value: {
+      default: 16,
+      isTreeColumnWithNoChildren: 36
+    }
+  },
+  paddingStart: {
+    default: 16,
+    isTreeColumn: 'calc(var(--treeColumnPadding) + (var(--table-row-level, 1) - 1) * var(--indent))'
+  },
   minHeight: {
     default: 40,
     density: {
@@ -1060,12 +1075,16 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       className={renderProps => cell({
         ...renderProps,
         ...tableVisualOptions,
-        isDivider: showDivider
+        isDivider: showDivider,
+        isTreeColumnWithNoChildren: renderProps.isTreeColumn && !renderProps.hasChildItems
       })}
       textValue={textValue}
       {...otherProps}>
-      {({isFocusVisible}) => (
+      {({isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
+          {hasChildItems && isTreeColumn && 
+            <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />
+          }
           <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
           {isFocusVisible && <CellFocusRing />}
         </>
@@ -1074,6 +1093,74 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
   );
 });
 
+interface ExpandableRowChevronProps {
+  isExpanded?: boolean,
+  isDisabled?: boolean,
+  isRTL?: boolean,
+  isHidden?: boolean
+}
+
+const expandButton = style<ExpandableRowChevronProps>({
+  gridArea: 'expand-button',
+  color: {
+    default: 'inherit',
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
+  },
+  height: 'full',
+  width: 40,
+  marginStart: -12,
+  display: 'flex',
+  flexWrap: 'wrap',
+  alignContent: 'center',
+  justifyContent: 'center',
+  outlineStyle: 'none',
+  cursor: 'default',
+  transform: {
+    isExpanded: {
+      default: 'rotate(90deg)',
+      isRTL: 'rotate(-90deg)'
+    }
+  },
+  padding: 0,
+  transition: 'default',
+  backgroundColor: 'transparent',
+  borderStyle: 'none',
+  disableTapHighlight: true,
+  visibility: {
+    isHidden: 'hidden'
+  }
+});
+
+function ExpandableRowChevron(props: ExpandableRowChevronProps) {
+  let ref = useRef<HTMLButtonElement>(null);
+  let {isExpanded, isHidden} = props;
+  let {direction} = useLocale();
+
+  return (
+    <Button
+      {...props}
+      ref={ref}
+      slot="chevron"
+      className={renderProps => expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl', isHidden})}>
+      <Chevron
+        className={style({
+          scale: {
+            direction: {
+              ltr: '1',
+              rtl: '-1'
+            }
+          },
+          '--iconPrimary': {
+            type: 'fill',
+            value: 'currentColor'
+          }
+        })({direction})} />
+    </Button>
+  );
+}
 
 const editableCell = style<CellRenderProps & S2TableProps & {isDivider: boolean, selectionMode?: 'none' | 'single' | 'multiple', isSaving?: boolean}>({
   ...commonCellStyles,

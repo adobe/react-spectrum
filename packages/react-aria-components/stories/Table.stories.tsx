@@ -18,7 +18,7 @@ import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, startTransition, Suspense, useState} from 'react';
 import {Selection, useAsyncList, useListData} from 'react-stately';
 import styles from '../example/index.css';
-import {TableLoadMoreItem} from '../src/Table';
+import {CellProps, TableLoadMoreItem} from '../src/Table';
 import './styles.css';
 
 export default {
@@ -1606,5 +1606,58 @@ export const TableWithReactTransition: TableStory = () => {
         </TableBody>
       </Table>
     </div>
+  );
+};
+
+function NameCell(props: CellProps) {
+  return (
+    <Cell style={({level}) => ({paddingLeft: (level - 1) * 32})}>
+      {({hasChildItems, isExpanded}) => (<>
+        {hasChildItems && (
+          <Button className={styles.chevron} slot="chevron">
+            <div style={{transform: `rotate(${isExpanded ? 90 : 0}deg)`, width: '16px', height: '16px'}}>
+              <svg viewBox="0 0 24 24" style={{width: '16px', height: '16px'}}>
+                <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+              </svg>
+            </div>
+          </Button>
+        )}
+        {props.children}
+      </>)}
+    </Cell>
+  )
+}
+
+export const TableNestedRows: TableStory = (args) => {
+  return (
+    <Table aria-label="Files" selectionMode="multiple" {...args}>
+      <TableHeader>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+        <Column>Date Modified</Column>
+      </TableHeader>
+      <TableBody>
+        <MyRow>
+          <NameCell>Games</NameCell>
+          <Cell>File folder</Cell>
+          <Cell>6/7/2020</Cell>
+          <MyRow>
+            <NameCell>Pokemon</NameCell>
+            <Cell>File</Cell>
+            <Cell>2/3/2025</Cell>
+          </MyRow>
+        </MyRow>
+        <MyRow>
+          <NameCell>Program Files</NameCell>
+          <Cell>File folder</Cell>
+          <Cell>4/7/2021</Cell>
+        </MyRow>
+        <MyRow>
+          <NameCell>bootmgr</NameCell>
+          <Cell>System file</Cell>
+          <Cell>11/20/2010</Cell>
+        </MyRow>
+      </TableBody>
+    </Table>
   );
 };
