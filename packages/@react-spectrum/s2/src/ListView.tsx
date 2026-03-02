@@ -334,24 +334,7 @@ const listitem = style<GridListItemRenderProps & {
       forcedColors: 'ButtonBorder'
     }
   },
-  borderTopWidth: 0,
-  borderBottomWidth: {
-    default: 1,
-    isLastItem: {
-      default: 1,
-      isQuiet: {
-        selectionStyle: {
-          checkbox: 0,
-          highlight: {
-            default: 0,
-            isSelected: 1
-          }
-        }
-      }
-    }
-  },
-  borderStartWidth: 0,
-  borderEndWidth: 0,
+  borderWidth: 0,
   borderStyle: 'solid',
   borderColor: {
     default: '--borderColor',
@@ -405,15 +388,7 @@ const listRowBackground = style<GridListItemRenderProps & {
   top: 0,
   left: 0,
   right: 0,
-  bottom: {
-    default: 0,
-    isSelected: {
-      selectionStyle: {
-        checkbox: 0,
-        highlight: '[-1px]'
-      }
-    }
-  },
+  bottom: 0,
   backgroundColor: {
     default: '--rowBackgroundColor',
     isHovered: {
@@ -468,13 +443,17 @@ const listRowBackground = style<GridListItemRenderProps & {
     }
   },
   borderTopWidth: {
-    default: 1,
-    isPrevSelected: {
-      selectionStyle: {
-        highlight: 0,
-        checkbox: 0
+    default: 0,
+    isSelected: 1,
+    isFirstItem: {
+      default: 0,
+      isSelected: 1,
+      isQuiet: {
+        default: 0,
+        isSelected: 1
       }
-    }
+    },
+    isPrevSelected: 0
   },
   borderBottomWidth: {
     default: 1,
@@ -487,6 +466,7 @@ const listRowBackground = style<GridListItemRenderProps & {
     isLastItem: {
       default: 1,
       isQuiet: {
+        isLastItem: 0,
         selectionStyle: {
           checkbox: 0,
           highlight: {
@@ -497,11 +477,17 @@ const listRowBackground = style<GridListItemRenderProps & {
       }
     }
   },
-  borderStartWidth: 1,
-  borderEndWidth: 1,
+  borderStartWidth: {
+    default: 0,
+    isSelected: 1
+  },
+  borderEndWidth: {
+    default: 0,
+    isSelected: 1
+  },
   borderStyle: 'solid',
   borderColor: {
-    default: 'transparent',
+    default: '--borderColor',
     isSelected: {
       selectionStyle: {
         highlight: '--borderColor',
