@@ -14,7 +14,7 @@ export const description = 'Used when a user needs to perform actions on one or 
 
 ```tsx render docs={docs.exports.ActionBar} links={docs.links} props={['isEmphasized']} type="s2" wide
 "use client";
-import {ActionBar, ActionButton, TableView, TableHeader, TableBody, Column, Row, Cell, Text} from '@react-spectrum/s2';
+import {ActionBar, ActionButton, TableView, TableHeader, TableBody, Column, Row, Cell} from '@react-spectrum/s2';
 import Edit from '@react-spectrum/s2/icons/Edit';
 import Copy from '@react-spectrum/s2/icons/Copy';
 import Delete from '@react-spectrum/s2/icons/Delete';
@@ -37,17 +37,14 @@ function Example(props) {
       renderActionBar={(selectedKeys) => (
         /*- begin focus -*/
         <ActionBar {...props}/* PROPS */>
-          <ActionButton onPress={() => alert('Edit action')}>
+          <ActionButton aria-label="Edit" onPress={() => alert('Edit action')}>
             <Edit />
-            <Text>Edit</Text>
           </ActionButton>
-          <ActionButton onPress={() => alert('Copy action')}>
+          <ActionButton aria-label="Copy" onPress={() => alert('Copy action')}>
             <Copy />
-            <Text>Copy</Text>
           </ActionButton>
-          <ActionButton onPress={() => alert('Delete action')}>
+          <ActionButton aria-label="Delete" onPress={() => alert('Delete action')}>
             <Delete />
-            <Text>Delete</Text>
           </ActionButton>
         </ActionBar>
         /*- end focus -*/
@@ -97,17 +94,14 @@ function Example(props) {
       renderActionBar={(selectedKeys) => (
         /*- begin focus -*/
         <ActionBar {...props}/* PROPS */>
-          <ActionButton onPress={() => alert('Edit action')}>
+          <ActionButton aria-label="Edit" onPress={() => alert('Edit action')}>
             <Edit />
-            <Text>Edit</Text>
           </ActionButton>
-          <ActionButton onPress={() => alert('Copy action')}>
+          <ActionButton aria-label="Copy" onPress={() => alert('Copy action')}>
             <Copy />
-            <Text>Copy</Text>
           </ActionButton>
-          <ActionButton onPress={() => alert('Delete action')}>
+          <ActionButton aria-label="Delete" onPress={() => alert('Delete action')}>
             <Delete />
-            <Text>Delete</Text>
           </ActionButton>
         </ActionBar>
         /*- end focus -*/
@@ -125,7 +119,7 @@ function Example(props) {
 
 ```tsx render docs={docs.exports.ActionBar} links={docs.links} props={['isEmphasized']} type="s2" wide
 "use client";
-import {ActionBar, ActionButton, TreeView, TreeViewItem, TreeViewItemContent, Text} from '@react-spectrum/s2';
+import {ActionBar, ActionButton, TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/s2';
 import Edit from '@react-spectrum/s2/icons/Edit';
 import Copy from '@react-spectrum/s2/icons/Copy';
 import Delete from '@react-spectrum/s2/icons/Delete';
@@ -142,17 +136,14 @@ function Example(props) {
       renderActionBar={(selectedKeys) => (
         /*- begin focus -*/
         <ActionBar {...props}/* PROPS */>
-          <ActionButton onPress={() => alert('Edit action')}>
+          <ActionButton aria-label="Edit" onPress={() => alert('Edit action')}>
             <Edit />
-            <Text>Edit</Text>
           </ActionButton>
-          <ActionButton onPress={() => alert('Copy action')}>
+          <ActionButton aria-label="Copy" onPress={() => alert('Copy action')}>
             <Copy />
-            <Text>Copy</Text>
           </ActionButton>
-          <ActionButton onPress={() => alert('Delete action')}>
+          <ActionButton aria-label="Delete" onPress={() => alert('Delete action')}>
             <Delete />
-            <Text>Delete</Text>
           </ActionButton>
         </ActionBar>
         /*- end focus -*/
