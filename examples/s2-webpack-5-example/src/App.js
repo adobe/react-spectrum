@@ -21,6 +21,8 @@ import {
   ButtonGroup,
   Cell,
   Column,
+  Content,
+  ContextualHelpPopover,
   Divider,
   Heading,
   LinkButton,
@@ -43,7 +45,8 @@ import {
   ToggleButtonGroup,
   TreeView,
   TreeViewItem,
-  TreeViewItemContent
+  TreeViewItemContent,
+  UnavailableMenuItemTrigger
 } from "@react-spectrum/s2";
 import Edit from "@react-spectrum/s2/icons/Edit";
 import FileTxt from "@react-spectrum/s2/icons/FileText";
@@ -170,7 +173,13 @@ function App() {
                   <MenuItem id="sms">SMS</MenuItem>
                 </Menu>
               </SubmenuTrigger>
-              <MenuItem id="delete">Delete</MenuItem>
+              <UnavailableMenuItemTrigger isUnavailable>
+                <MenuItem id="delete">Delete</MenuItem>
+                <ContextualHelpPopover>
+                  <Heading slot="title">Permission required</Heading>
+                  <Content>Contact your administrator for permissions to delete.</Content>
+                </ContextualHelpPopover>
+              </UnavailableMenuItemTrigger>
             </Menu>
           </MenuTrigger>
           <MenuTrigger>
