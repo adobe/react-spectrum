@@ -24,6 +24,8 @@ import {
   Divider,
   Heading,
   LinkButton,
+  ListView,
+  ListViewItem,
   Menu,
   MenuItem,
   MenuTrigger,
@@ -182,6 +184,23 @@ function App() {
               <MenuItem>Paste</MenuItem>
             </Menu>
           </MenuTrigger>
+          <ListView
+            aria-label="Files"
+            selectionMode="multiple"
+            styles={style({width: 320, height: 320})}>
+            <ListViewItem id="adobe-photoshop" textValue="Adobe Photoshop">
+              <Text>Adobe Photoshop</Text>
+              <Text slot="description">Image editing software</Text>
+            </ListViewItem>
+            <ListViewItem id="adobe-xd" textValue="Adobe XD">
+              <Text>Adobe XD</Text>
+              <Text slot="description">UI/UX design tool</Text>
+            </ListViewItem>
+            <ListViewItem id="adobe-indesign" textValue="Adobe InDesign">
+              <Text>Adobe InDesign</Text>
+              <Text slot="description">Desktop publishing</Text>
+            </ListViewItem>
+          </ListView>
           <TableView
             aria-label="Files"
             styles={style({width: 320, height: 320})}
