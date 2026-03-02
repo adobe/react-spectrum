@@ -28,7 +28,7 @@ import {StyleString} from '../style/types';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'render' | 'children'>, StyleProps {
+export interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'render' | 'children'>, StyleProps {
   isDisabled?: boolean,
   isRequired?: boolean,
   size?: 'S' | 'M' | 'L' | 'XL',

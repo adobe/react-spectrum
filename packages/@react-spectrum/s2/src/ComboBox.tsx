@@ -35,7 +35,7 @@ import {
 } from 'react-aria-components';
 import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SingleSelection, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
-import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
+import {BaseCollection, CollectionNode, createLeafComponent, useIsHidden} from '@react-aria/collections';
 import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -52,7 +52,7 @@ import ChevronIcon from '../ui-icons/Chevron';
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
-import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
+import {FieldErrorIcon, FieldGroup, FieldLabel, FieldLabelProps, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
@@ -602,7 +602,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
   return (
     <>
       <InternalComboboxContext.Provider value={{size}}>
-        <FieldLabel
+        <ComboBoxFieldLabel
           isDisabled={isDisabled}
           isRequired={isRequired}
           size={size}
@@ -611,7 +611,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           necessityIndicator={necessityIndicator}
           contextualHelp={props.contextualHelp}>
           {label}
-        </FieldLabel>
+        </ComboBoxFieldLabel>
         <FieldGroup
           ref={triggerRef}
           role="presentation"
@@ -725,6 +725,14 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
     </>
   );
 });
+
+function ComboBoxFieldLabel(props: FieldLabelProps) {
+  let isHidden = useIsHidden();
+  if (isHidden) {
+    return null;
+  }
+  return <FieldLabel {...props} />;
+}
 
 class SeparatorNode extends CollectionNode<any> {
   static readonly type = 'separator';

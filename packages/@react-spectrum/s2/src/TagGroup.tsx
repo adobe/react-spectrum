@@ -32,11 +32,11 @@ import {AvatarContext} from './Avatar';
 import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with { type: 'macro' };
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
-import {Collection, CollectionBuilder} from '@react-aria/collections';
+import {Collection, CollectionBuilder, useIsHidden} from '@react-aria/collections';
 import {control, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, HelpTextProps, LabelableProps, Node, SpectrumLabelableProps} from '@react-types/shared';
-import {FieldLabel, helpTextStyles} from './Field';
+import {FieldLabel, FieldLabelProps, helpTextStyles} from './Field';
 import {flushSync} from 'react-dom';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
@@ -271,13 +271,13 @@ function TagGroupInner<T>({
         labelPosition: labelPosition,
         isInForm: !!formContext
       }, props.styles)}>
-      <FieldLabel
+      <TagGroupFieldLabel
         size={size}
         labelPosition={labelPosition}
         labelAlign={labelAlign}
         contextualHelp={props.contextualHelp}>
         {label}
-      </FieldLabel>
+      </TagGroupFieldLabel>
       <div
         ref={containerRef}
         className={style({
@@ -373,6 +373,15 @@ function TagGroupInner<T>({
       {helpText}
     </AriaTagGroup>
   );
+}
+
+
+function TagGroupFieldLabel(props: FieldLabelProps) {
+  let isHidden = useIsHidden();
+  if (isHidden) {
+    return null;
+  }
+  return <FieldLabel {...props} />;
 }
 
 function ActionGroup(props) {

@@ -50,7 +50,7 @@ import {
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {control, controlBorderRadius, controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createHideableComponent} from '@react-aria/collections';
+import {createHideableComponent, useIsHidden} from '@react-aria/collections';
 import {createShadowTreeWalker, getOwnerDocument, isFocusable, useGlobalListeners, useSlotId} from '@react-aria/utils';
 import {
   Divider,
@@ -63,6 +63,7 @@ import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   FieldErrorIcon,
   FieldLabel,
+  FieldLabelProps,
   HelpText
 } from './Field';
 import {FormContext, useFormProps} from './Form';
@@ -371,7 +372,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
       {({isDisabled, isOpen, isFocusVisible, isInvalid, isRequired}) => (
         <>
           <InternalPickerContext.Provider value={{size}}>
-            <FieldLabel
+            <PickerFieldLabel
               includeNecessityIndicatorInAccessibilityName
               isDisabled={isDisabled}
               isRequired={isRequired}
@@ -382,7 +383,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
               necessityIndicator={necessityIndicator}
               contextualHelp={props.contextualHelp}>
               {label}
-            </FieldLabel>
+            </PickerFieldLabel>
             <PickerButton
               loadingState={loadingState}
               renderValue={renderValue}
@@ -468,6 +469,14 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     </AriaSelect>
   );
 });
+
+function PickerFieldLabel(props: FieldLabelProps) {
+  let isHidden = useIsHidden();
+  if (isHidden) {
+    return null;
+  }
+  return <FieldLabel {...props} />;
+}
 
 function PickerProgressCircle(props) {
   let {
