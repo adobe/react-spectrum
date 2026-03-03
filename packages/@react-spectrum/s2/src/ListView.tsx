@@ -320,7 +320,6 @@ const listitem = style<GridListItemRenderProps & {
     default: 'default',
     isLink: 'pointer'
   },
-  transition: 'default',
   '--borderColor': {
     type: 'borderColor',
     value: {
@@ -334,42 +333,21 @@ const listitem = style<GridListItemRenderProps & {
       forcedColors: 'ButtonBorder'
     }
   },
-  borderWidth: 0,
+  borderTopWidth: 0,
+  borderBottomWidth: {
+    default: 1,
+    isLastItem: {
+      default: 1,
+      isQuiet: 0
+    }
+  },
+  borderStartWidth: 0,
+  borderEndWidth: 0,
   borderStyle: 'solid',
   borderColor: {
     default: '--borderColor',
-    isSelected: {
-      selectionStyle: {
-        highlight: {
-          default: 'transparent',
-          isNextSelected: 'transparent'
-        },
-        checkbox: {
-          default: '--borderColor',
-          isNextSelected: selectedBackground
-        }
-      }
-    }
-  },
-  borderTopStartRadius: {
-    isFirstItem: 'default'
-  },
-  borderTopEndRadius: {
-    isFirstItem: 'default'
-  },
-  borderBottomStartRadius: {
-    isLastItem: {
-      isQuiet: {
-        isSelected: 'default'
-      }
-    }
-  },
-  borderBottomEndRadius: {
-    isLastItem: {
-      isQuiet: {
-        isSelected: 'default'
-      }
-    }
+    isNextSelected: 'transparent',
+    isSelected: 'transparent'
   }
 });
 
@@ -385,10 +363,17 @@ const listRowBackground = style<GridListItemRenderProps & {
 }>({
   position: 'absolute',
   zIndex: -1,
-  top: 0,
+  top: {
+    default: 0,
+    isSelected: '[-1px]',
+    isFirstItem: 0
+  },
   left: 0,
   right: 0,
-  bottom: 0,
+  bottom: {
+    default: 0,
+    isSelected: '[-1px]'
+  },
   backgroundColor: {
     default: '--rowBackgroundColor',
     isHovered: {
@@ -412,9 +397,10 @@ const listRowBackground = style<GridListItemRenderProps & {
           isFocusVisible: selectedActiveBackground
         },
         highlight: {
-          default: 'blue-900/10',
-          isHovered: 'blue-900/15',
-          isPressed: 'blue-900/15'
+          // Use solid colors rather than transparent because the rows overlap.
+          default: colorMix('gray-25', 'blue-900', 10),
+          isHovered: colorMix('gray-25', 'blue-900', 15),
+          isPressed: colorMix('gray-25', 'blue-900', 15)
         }
       }
     },
@@ -424,74 +410,89 @@ const listRowBackground = style<GridListItemRenderProps & {
   },
   borderTopStartRadius: {
     isFirstItem: {
+      isSelected: {
+        selectionStyle: {
+          checkbox: 'none',
+          highlight: 'default'
+        }
+      },
       isQuiet: 'default'
     }
   },
   borderTopEndRadius: {
     isFirstItem: {
+      isSelected: {
+        selectionStyle: {
+          checkbox: 'none',
+          highlight: 'default'
+        }
+      },
       isQuiet: 'default'
     }
   },
   borderBottomStartRadius: {
     isLastItem: {
+      isSelected: {
+        selectionStyle: {
+          checkbox: 'none',
+          highlight: 'default'
+        }
+      },
       isQuiet: 'default'
     }
   },
   borderBottomEndRadius: {
     isLastItem: {
+      isSelected: {
+        selectionStyle: {
+          checkbox: 'none',
+          highlight: 'default'
+        }
+      },
       isQuiet: 'default'
     }
   },
   borderTopWidth: {
-    default: 0,
-    isSelected: 1,
-    isFirstItem: {
-      default: 0,
-      isSelected: 1,
-      isQuiet: {
-        default: 0,
-        isSelected: 1
+    default: {
+      selectionStyle: {
+        checkbox: 0,
+        highlight: 1
       }
     },
     isPrevSelected: 0
   },
   borderBottomWidth: {
-    default: 1,
-    isNextSelected: {
+    default: {
       selectionStyle: {
-        highlight: 0,
-        checkbox: 0
+        checkbox: 0,
+        highlight: 1
       }
     },
-    isLastItem: {
-      default: 1,
-      isQuiet: {
-        isLastItem: 0,
-        selectionStyle: {
-          checkbox: 0,
-          highlight: {
-            default: 0,
-            isSelected: 1
-          }
-        }
+    isNextSelected: 0
+  },
+  borderStartWidth: {
+    default: {
+      selectionStyle: {
+        checkbox: 0,
+        highlight: 1
       }
     }
   },
-  borderStartWidth: {
-    default: 0,
-    isSelected: 1
-  },
   borderEndWidth: {
-    default: 0,
-    isSelected: 1
+    default: {
+      selectionStyle: {
+        checkbox: 0,
+        highlight: 1
+      }
+    }
   },
   borderStyle: 'solid',
   borderColor: {
-    default: '--borderColor',
+    default: 'transparent',
     isSelected: {
       selectionStyle: {
-        highlight: '--borderColor',
-        checkbox: 'transparent'
+        checkbox: 'transparent',
+        highlight: '--borderColor'
       }
     }
   }
