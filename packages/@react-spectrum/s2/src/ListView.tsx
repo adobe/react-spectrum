@@ -419,7 +419,8 @@ const listRowBackground = style<GridListItemRenderProps & {
           highlight: 'default'
         }
       },
-      isQuiet: 'default'
+      isQuiet: 'default',
+      isFocusVisible: 'default'
     }
   },
   borderTopEndRadius: {
@@ -430,7 +431,8 @@ const listRowBackground = style<GridListItemRenderProps & {
           highlight: 'default'
         }
       },
-      isQuiet: 'default'
+      isQuiet: 'default',
+      isFocusVisible: 'default'
     }
   },
   borderBottomStartRadius: {
@@ -441,7 +443,8 @@ const listRowBackground = style<GridListItemRenderProps & {
           highlight: 'default'
         }
       },
-      isQuiet: 'default'
+      isQuiet: 'default',
+      isFocusVisible: 'default'
     }
   },
   borderBottomEndRadius: {
@@ -452,7 +455,8 @@ const listRowBackground = style<GridListItemRenderProps & {
           highlight: 'default'
         }
       },
-      isQuiet: 'default'
+      isQuiet: 'default',
+      isFocusVisible: 'default'
     }
   },
   borderTopWidth: {
