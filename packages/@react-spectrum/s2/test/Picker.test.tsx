@@ -165,6 +165,40 @@ describe('Picker', () => {
     expect(tree.getByTestId('custom-value')).toHaveTextContent('Chocolate, Vanilla');
   });
 
+  it('should warn if the custom render value output has a interactive child', async () => {
+    let spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let items = [
+      {id: 'chocolate', name: 'Chocolate'},
+      {id: 'strawberry', name: 'Strawberry'},
+      {id: 'vanilla', name: 'Vanilla'}
+    ];
+    let renderValue = jest.fn(() => (
+      <span data-testid="custom-value">
+        <div role="button">test</div>
+      </span>
+    ));
+    let tree = render(
+      <Picker
+        label="Test picker"
+        selectionMode="multiple"
+        items={items}
+        renderValue={renderValue}>
+        {(item: any) => <PickerItem id={item.id} textValue={item.name}>{item.name}</PickerItem>}
+      </Picker>
+    );
+
+    // expect the placeholder to be rendered when no items are selected
+    expect(tree.queryByTestId('custom-value')).toBeNull();
+
+    let selectTester = testUtilUser.createTester('Select', {root: tree.container, interactionType: 'mouse'});
+    await selectTester.open();
+    await selectTester.selectOption({option: 0});
+    await selectTester.selectOption({option: 2});
+    await selectTester.close();
+
+    expect(spy).toHaveBeenCalledWith('Picker\'s value should not have interactive children for accessibility.');
+  });
+
   it('should support contextual help', async () => {
     // Issue with how we don't render the contextual help button in the fake DOM since PressResponder isn't using createHideableComponent
     let warn = jest.spyOn(global.console, 'warn').mockImplementation();

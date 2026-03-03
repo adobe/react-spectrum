@@ -23,6 +23,7 @@
   "label.(optional)": "(isteğe bağlı)",
   "label.(required)": "(gerekli)",
   "menu.moreActions": "Daha fazla eylem",
+  "menu.unavailable": "Kullanılamıyor, ayrıntıları görmek için genişletin",
   "notificationbadge.indicatorOnly": "Yeni etkinlik",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Seçin…",
