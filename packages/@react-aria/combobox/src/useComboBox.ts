@@ -157,7 +157,9 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
             break;
           }
         }
-        state.commit();
+        if (e.key === 'Enter' || state.isOpen) {
+          state.commit();
+        }
         break;
       case 'Escape':
         if (
