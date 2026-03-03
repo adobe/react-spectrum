@@ -25,7 +25,6 @@ import {
   isEqualMonth,
   isEqualYear,
   IslamicUmalquraCalendar,
-  isLocalTimeZoneOverridden,
   isSameDay,
   isSameMonth,
   isSameYear,
@@ -40,6 +39,8 @@ import {
   startOfYear,
   ZonedDateTime
 } from '..';
+import {isLocalTimeZoneOverridden} from '../src/queries';
+
 
 describe('queries', function () {
   describe('isSameDay', function () {
