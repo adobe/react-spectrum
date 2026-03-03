@@ -71,7 +71,7 @@ export interface ComboBoxProps<T, M extends SelectionMode = 'single'> extends Co
    * The initial selected key in the collection (uncontrolled).
    * @deprecated
    */
-  defaultSelectedKey?: Key,
+  defaultSelectedKey?: Key | null,
   /**
    * Handler that is called when the selection changes.
    * @deprecated

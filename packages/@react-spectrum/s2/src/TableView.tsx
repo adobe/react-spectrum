@@ -947,21 +947,13 @@ const commonCellStyles = {
   borderXWidth: 0,
   borderStyle: 'solid',
   position: 'relative',
-  color: {
-    default: 'gray-800',
-    forcedColors: 'ButtonText'
-  },
+  color: '--rowTextColor',
   outlineStyle: 'none',
   paddingX: 16 // table-edge-to-content
 } as const;
 
 const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean, isTreeColumnWithNoChildren: boolean}>({
   ...commonCellStyles,
-  color: {
-    default: baseColor('neutral-subdued'),
-    isSelected: baseColor('neutral'),
-    forcedColors: 'ButtonText'
-  },
   paddingY: centerPadding(),
   '--indent': {
     type: 'width',
@@ -1485,6 +1477,16 @@ const rowBackgroundColor = {
   }
 } as const;
 
+const rowTextColor = {
+  default: baseColor('neutral-subdued'),
+  isSelected: baseColor('neutral'),
+  isDisabled: {
+    default: 'disabled',
+    forcedColors: 'GrayText'
+  },
+  forcedColors: 'ButtonText'
+} as const;
+
 const row = style<RowRenderProps & S2TableProps>({
   height: 'full',
   position: 'relative',
@@ -1493,6 +1495,10 @@ const row = style<RowRenderProps & S2TableProps>({
   '--rowBackgroundColor': {
     type: 'backgroundColor',
     value: rowBackgroundColor
+  },
+  '--rowTextColor': {
+    type: 'color',
+    value: rowTextColor
   },
   '--rowFocusIndicatorColor': {
     type: 'outlineColor',
@@ -1538,6 +1544,13 @@ const row = style<RowRenderProps & S2TableProps>({
   forcedColorAdjust: 'none'
 });
 
+const selectionCheckbox = style({
+  visibility: {
+    default: 'visible',
+    ':is([slot="selection"][data-disabled="true"])': 'hidden'
+  }
+});
+
 export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'isDisabled' | 'onAction' | 'children' | 'textValue' | 'dependencies' | keyof GlobalDOMAttributes>, LinkDOMProps {}
 
 /**
@@ -1564,7 +1577,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         // The `spread` otherProps must be after className in Cell.
         // @ts-ignore
         <Cell isSticky className={checkboxCellStyle}>
-          <Checkbox slot="selection" />
+          <Checkbox slot="selection" styles={selectionCheckbox} />
         </Cell>
       )}
       <Collection items={columns} dependencies={[...dependencies, columns]}>
