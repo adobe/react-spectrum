@@ -17,60 +17,36 @@ export const section = 'Releases';
 export const tags = ['release', 'S2'];
 export const date = 'March 3, 2026';
 export const title = 'v1.2.0';
-export const description = '';
+export const description = 'In this release, we are excited to announce ListView and unavailable menu item support in S2! In addition, ActionBar is TreeView and custom renderer support for Picker is also available.';
 export const isSubpage = true;
 
 # v1.2.0
 
+In this release, we are excited to announce that [ListView](../ListView) and [unavailable menu items](../Menu#unavailable-items) are now available!
+In addition, we have added [ActionBar](../ActionBar) support for TreeView and [custom renderer support](../Picker#custom-render-value) for the Picker's display value.
+We also shipped multiple TableView fixes and a set of documentation improvements including a Typography search view now available
+in the main search menu.
+
+Thanks to all of our contributors for the updates in this release.
+
+## New Components
+* [ListView](../ListView)
 
 ## Change log
-### ActionBar
-  * Add missing `UNSAFE_className` and `UNSAFE_style` - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9529)
 
-* docs: Restructure old docs in preparation of new docs site - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9154)
-* fix: all node.contains for shadow dom usage - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9485)
-* chore: no shadow support for test utils right now - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9581)
-* Revert "feat: support modern useEffectEvent (#9095)" - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9590)
-* chore: Revert "fix: offset calculation to handle transformed elements with translateY or translateX in scrollIntoView (#7717)" - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9592)
-* fix test snapshots - Devon Govett
-* feat: numberfield announce pasted value - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8604)
-* fix: apply WHCM S2 table text color - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9589)
-* fix(calendar): prevent setFocusedDate from stealing focus - [@AryanBagade](https://github.com/AryanBagade) - [PR](https://github.com/adobe/react-spectrum/pull/9463)
-* fix: export HeaderProps type from react-aria-components - [@RobHannay](https://github.com/RobHannay) - [PR](https://github.com/adobe/react-spectrum/pull/9613)
-* fix: add date picker placeholder for Icelandic - [@ofurtumi](https://github.com/ofurtumi) - [PR](https://github.com/adobe/react-spectrum/pull/9600)
-* fix(focus): handle single radio button in FocusScope - [@jtstothard](https://github.com/jtstothard) - [PR](https://github.com/adobe/react-spectrum/pull/9587)
-* fix: allow tooltip to show on hover when Button has isPending (#9460) - [@albertdugba](https://github.com/albertdugba) - [PR](https://github.com/adobe/react-spectrum/pull/9619)
-* fix(RAC): move native input inside the combobox div - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9554)
-* fix: correct aria-posinset to use 1-based index in virtualized Menu - [@sonsu-lee](https://github.com/sonsu-lee) - [PR](https://github.com/adobe/react-spectrum/pull/9615)
-* fix: collections nested within Activities (React 19.2) - [@mhornbacher](https://github.com/mhornbacher) - [PR](https://github.com/adobe/react-spectrum/pull/9300)
-* fix: export LongPressEvent and MoveEvent types - [@poetryofcode](https://github.com/poetryofcode) - [PR](https://github.com/adobe/react-spectrum/pull/9522)
-* fix: only handle blur event for resizing viewport on iOS - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9393)
-* fix(form): prevent TypeError when form contains elements without validity - [@sonsu-lee](https://github.com/sonsu-lee) - [PR](https://github.com/adobe/react-spectrum/pull/9614)
-* fix: overlay positioning for v3 submenus (aka non viewport containers) - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9343)
-* chore: faster node contains paths - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9536)
-* fix: all active element access for shadow dom - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9608)
-* fix: prevent the selectedKey be set to null in Tabs - [@abeljohn](https://github.com/abeljohn) - [PR](https://github.com/adobe/react-spectrum/pull/9585)
-* fix: all event target for shadow dom - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9551)
-* fix: fix TableView from crashing when another collection is rendered as empty state - [@DPandyan](https://github.com/DPandyan) - [PR](https://github.com/adobe/react-spectrum/pull/9557)
-* chore: bump node version from 22 to 24 - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9537)
-* feat: Update aria hideoutside to work with shadow doms - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9607)
-* fix: export `fromDateToLocal` - [@maximepvrt](https://github.com/maximepvrt) - [PR](https://github.com/adobe/react-spectrum/pull/9548)
-* chore: Revert "Revert "fix: scrollIntoView should respect scroll-margin (#8715)""  - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/9146)
-* fix(table): make TableHeaderProps.columns accept readonly arrays - [@sonsu-lee](https://github.com/sonsu-lee) - [PR](https://github.com/adobe/react-spectrum/pull/9611)
-* feat: Add support for multi-select ComboBox - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9525)
-* fix: scrollIntoView scrollbar width & rtl layout support - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/9634)
-* fix: getEventTarget returned the wrong target - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9639)
-* fix(submenus): restore safe area behavior when submenu mounts - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9645)
-* feat: add support for tree sections - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9013)
-* feat: allow custom react element for S2 Picker value - [@BrknRules](https://github.com/BrknRules) - [PR](https://github.com/adobe/react-spectrum/pull/9541)
-* feat(RAC): add loaderHeight prop to GridLayout and WaterfallLayout - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/9625)
-* fix(RAC): use KeyboardProps in Keyboard component and context - [@artola](https://github.com/artola) - [PR](https://github.com/adobe/react-spectrum/pull/9668)
-* feat: expose isRequired in render props for DateField, TimeField, DatePicker, and DateRangePicker - [@solssak](https://github.com/solssak) - [PR](https://github.com/adobe/react-spectrum/pull/9659)
-* fix: respect delay when open() is called twice in useTooltipTriggerState - [@gohsue](https://github.com/gohsue) - [PR](https://github.com/adobe/react-spectrum/pull/9518)
-* feat: add `onKeyDown` prop to ListBoxItem for custom keyboard handling - [@hasegawa-101](https://github.com/hasegawa-101) - [PR](https://github.com/adobe/react-spectrum/pull/9181)
-* chore: update storybook to 9 - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8634)
-* fix: skip native Date fast path when local timezone is overridden via setLocalTimeZone - [@apoorvdarshan](https://github.com/apoorvdarshan) - [PR](https://github.com/adobe/react-spectrum/pull/9678)
-* fix: combobox interactoutside - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9646)
-* tentative fix - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9635)
-* fix: patch additional methods so React doesnt break with template elements - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9385)
-* feat(S2): add ActionBar support to TreeView - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9695)
+### ComboBox
+* Always close ComboBox upon interacting outside the dropdown - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9646)
+
+### Menu
+* Support UnavailableMenuItemTrigger - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9657)
+
+### Picker
+* Support custom renderer for the Picker's displayed value - [@BrknRules](https://github.com/BrknRules) - [PR](https://github.com/adobe/react-spectrum/pull/9541)
+
+### TableView
+* Fix WHCM S2 table text color - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9589)
+* fix TableView from crashing when another collection is rendered inside its empty state - [@DPandyan](https://github.com/DPandyan) - [PR](https://github.com/adobe/react-spectrum/pull/9557)
+* Updated disabled behavior to match ListView/TreeView - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9720)
+
+### TreeView
+* Add ActionBar support to TreeView - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9695)
