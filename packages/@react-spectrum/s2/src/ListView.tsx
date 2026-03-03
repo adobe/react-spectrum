@@ -280,9 +280,8 @@ const listitem = style<GridListItemRenderProps & {
   selectionStyle?: 'highlight' | 'checkbox',
   scale?: 'medium' | 'large'
 }>({
-  ...focusRing(),
+  outlineStyle: 'none',
   boxSizing: 'border-box',
-  outlineOffset: -2,
   columnGap: 0,
   paddingX: 0,
   paddingY: 8,
@@ -361,11 +360,15 @@ const listRowBackground = style<GridListItemRenderProps & {
   isNextNotSelected?: boolean,
   selectionStyle?: 'highlight' | 'checkbox'
 }>({
+  ...focusRing(),
+  outlineOffset: -2,
   position: 'absolute',
   zIndex: -1,
   top: {
     default: 0,
     isSelected: '[-1px]',
+    // Don't overlap focus ring of row above.
+    isPrevSelected: 0,
     isFirstItem: 0
   },
   left: 0,
