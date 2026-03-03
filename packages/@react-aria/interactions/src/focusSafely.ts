@@ -24,9 +24,7 @@ import {getInteractionModality} from './useFocusVisible';
  * as page scrolling and screen reader issues with CSS transitions.
  */
 export function focusSafely(element: FocusableElement): void {
-  // don't try to focus in template element's document fragment, but let this work for shadow dom
-  let root = element.getRootNode();
-  if (root instanceof DocumentFragment && !('host' in root)) {
+  if (!element.isConnected) {
     return;
   }
 
