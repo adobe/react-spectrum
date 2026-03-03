@@ -740,7 +740,6 @@ function ReorderableTable() {
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys, items: typeof tree.items) => items.map(item => ({'text/plain': item.value.title})),
     onMove(e) {
-      console.log(e)
       if (e.target.dropPosition === 'before') {
         tree.moveBefore(e.target.key, e.keys);
       } else if (e.target.dropPosition === 'after') {

@@ -87,6 +87,7 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
       };
 
       expandButtonProps = {
+        isDisabled: states.isDisabled,
         onPress: () => {
           if (!states.isDisabled) {
             state.toggleKey(node.key);

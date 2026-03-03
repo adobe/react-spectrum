@@ -489,6 +489,17 @@ let TableElementType = forwardRef(function TableElementType(props: any, ref: For
   return <dom.table {...props} ref={ref} />;
 });
 
+const EXPANSION_KEYS = {
+  'expand': {
+    ltr: 'ArrowRight',
+    rtl: 'ArrowLeft'
+  },
+  'collapse': {
+    ltr: 'ArrowLeft',
+    rtl: 'ArrowRight'
+  }
+};
+
 function TableInner({props, forwardedRef: ref, selectionState, collection}: TableInnerProps) {
   [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -589,16 +600,6 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
         }
       },
       onKeyDown: e => {
-        const EXPANSION_KEYS = {
-          'expand': {
-            ltr: 'ArrowRight',
-            rtl: 'ArrowLeft'
-          },
-          'collapse': {
-            ltr: 'ArrowLeft',
-            rtl: 'ArrowRight'
-          }
-        };
         let target = dropState?.target;
         if (target && target.type === 'item' && target.dropPosition === 'on') {
           let item = tableState.collection.getItem(target.key);
@@ -610,31 +611,6 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
         }
       }
     }, dropState, ref);
-
-    // Prevent dropping items onto themselves or their descendants
-    let originalGetDropOperation = dropState.getDropOperation;
-    dropState.getDropOperation = (options) => {
-      let {target, isInternal} = options;
-      let currentDraggingKeys = dragState?.draggingKeys ?? new Set();
-
-      if (isInternal && target.type === 'item' && currentDraggingKeys.size > 0) {
-        if (currentDraggingKeys.has(target.key) && target.dropPosition === 'on') {
-          return 'cancel';
-        }
-
-        let currentKey: Key | null = target.key;
-        while (currentKey != null) {
-          let item = tableState.collection.getItem(currentKey);
-          let parentKey = item?.parentKey;
-          if (parentKey != null && currentDraggingKeys.has(parentKey)) {
-            return 'cancel';
-          }
-          currentKey = parentKey ?? null;
-        }
-      }
-
-      return originalGetDropOperation(options);
-    };
 
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
@@ -1636,7 +1612,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
       data-column-index={columnIndex}
       data-expanded={isExpanded || undefined}
       data-has-child-items={hasChildItems || undefined}
-      data-level={cell.level + 1}
+      data-level={row.level + 1}
       data-tree-column={cell.column.key === state.treeColumn || undefined}
       data-disabled={isDisabled || undefined}>
       <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
