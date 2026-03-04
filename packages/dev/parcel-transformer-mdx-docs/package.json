@@ -7,15 +7,15 @@
     "parcel": "^2.0.0"
   },
   "dependencies": {
-    "@mdx-js/mdx": "next",
-    "@mdx-js/react": "next",
+    "@mdx-js/mdx": "^3.1.1",
+    "@mdx-js/react": "^3.1.1",
     "@parcel/core": "^2.16.3",
     "@parcel/plugin": "^2.16.3",
     "dprint-node": "^1.0.7",
     "js-yaml": "^3.13.1",
     "mdast-util-toc": "^6.1.0",
-    "remark-frontmatter": "^4.0.1",
-    "remark-slug": "^7.0.1",
+    "rehype-slug": "^6.0.0",
+    "remark-frontmatter": "^5.0.0",
     "tree-sitter-highlight": "^1.0.1",
     "unist-util-flatmap": "^1.0.0",
     "unist-util-visit": "^4.0.0"

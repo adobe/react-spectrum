@@ -7,8 +7,8 @@
     "parcel": "^2.0.0"
   },
   "dependencies": {
-    "@mdx-js/mdx": "next",
-    "@mdx-js/react": "next",
+    "@mdx-js/mdx": "^3.1.1",
+    "@mdx-js/react": "^3.1.1",
     "@parcel/plugin": "^2.16.3"
   },
   "peerDependencies": {

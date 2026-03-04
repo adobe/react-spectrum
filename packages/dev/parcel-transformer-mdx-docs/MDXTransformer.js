@@ -429,7 +429,7 @@ module.exports = new Transformer({
 
     let {compile} = await import('@mdx-js/mdx');
     let frontmatter = (await import('remark-frontmatter')).default;
-    let slug = (await import('remark-slug')).default;
+    let slug = (await import('rehype-slug')).default;
     let compiled = await compile(await asset.getCode(), {
       providerImportSource: '@mdx-js/react',
       remarkPlugins: [

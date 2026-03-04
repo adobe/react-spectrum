@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "@parcel/plugin": "^2.16.3",
-    "remark-mdx": "^2.0.0-rc.2",
-    "remark-parse": "^10.0.1",
+    "remark-mdx": "^3.1.0",
+    "remark-parse": "^11.0.0",
     "unified": "^10.0.1",
     "unist-util-visit": "^4.0.0"
   }
