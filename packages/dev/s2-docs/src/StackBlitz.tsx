@@ -80,7 +80,7 @@ function getFiles(
           'tailwindcss-animate': '^1'
         } : {}),
         ...(type === 's2' ? {
-          'unplugin-parcel-macros': '^0.1.2-alpha.1'
+          'unplugin-parcel-macros': '^0.2.0'
         } : {})
       }
     }, null, 2) + '\n',
