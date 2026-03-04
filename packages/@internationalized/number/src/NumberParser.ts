@@ -19,7 +19,9 @@ interface Symbols {
   group?: string,
   literals: RegExp,
   numeral: RegExp,
-  index: (v: string) => string
+  numerals: string[],
+  index: (v: string) => string,
+  noNumeralUnits: Array<{unit: string, value: number}>
 }
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
@@ -130,13 +132,17 @@ class NumberParserImpl {
   }
 
   parse(value: string) {
+    let isGroupSymbolAllowed = this.formatter.resolvedOptions().useGrouping;
     // to parse the number, we need to remove anything that isn't actually part of the number, for example we want '-10.40' not '-10.40 USD'
     let fullySanitizedValue = this.sanitize(value);
 
-    if (this.symbols.group) {
-      // Remove group characters, and replace decimal points and numerals with ASCII values.
-      fullySanitizedValue = replaceAll(fullySanitizedValue, this.symbols.group, '');
+    // Return NaN if there is a group symbol but useGrouping is false
+    if (!isGroupSymbolAllowed && this.symbols.group && fullySanitizedValue.includes(this.symbols.group)) {
+      return NaN;
+    } else if (this.symbols.group) {
+      fullySanitizedValue = fullySanitizedValue.replaceAll(this.symbols.group!, '');
     }
+
     if (this.symbols.decimal) {
       fullySanitizedValue = fullySanitizedValue.replace(this.symbols.decimal!, '.');
     }
@@ -189,12 +195,17 @@ class NumberParserImpl {
     if (this.options.currencySign === 'accounting' && CURRENCY_SIGN_REGEX.test(value)) {
       newValue = -1 * newValue;
     }
-
     return newValue;
   }
 
   sanitize(value: string) {
-    // Remove literals and whitespace, which are allowed anywhere in the string
+    let isGroupSymbolAllowed = this.formatter.resolvedOptions().useGrouping;
+    // If the value is only a unit and it matches one of the formatted numbers where the value is part of the unit and doesn't have any numerals, then
+    // return the known value for that case.
+    if (this.symbols.noNumeralUnits.length > 0 && this.symbols.noNumeralUnits.find(obj => obj.unit === value)) {
+      return this.symbols.noNumeralUnits.find(obj => obj.unit === value)!.value.toString();
+    }
+
     value = value.replace(this.symbols.literals, '');
 
     // Replace the ASCII minus sign with the minus sign used in the current locale
@@ -207,23 +218,23 @@ class NumberParserImpl {
     // instead they use the , (44) character or apparently the (1548) character.
     if (this.options.numberingSystem === 'arab') {
       if (this.symbols.decimal) {
-        value = value.replace(',', this.symbols.decimal);
-        value = value.replace(String.fromCharCode(1548), this.symbols.decimal);
+        value = replaceAll(value, ',', this.symbols.decimal);
+        value = replaceAll(value, String.fromCharCode(1548), this.symbols.decimal);
       }
-      if (this.symbols.group) {
+      if (this.symbols.group && isGroupSymbolAllowed) {
         value = replaceAll(value, '.', this.symbols.group);
       }
     }
 
     // In some locale styles, such as swiss currency, the group character can be a special single quote
     // that keyboards don't typically have. This expands the character to include the easier to type single quote.
-    if (this.symbols.group === '’' && value.includes("'")) {
+    if (this.symbols.group === '’' && value.includes("'") && isGroupSymbolAllowed) {
       value = replaceAll(value, "'", this.symbols.group);
     }
 
     // fr-FR group character is narrow non-breaking space, char code 8239 (U+202F), but that's not a key on the french keyboard,
     // so allow space and non-breaking space as a group char as well
-    if (this.options.locale === 'fr-FR' && this.symbols.group) {
+    if (this.options.locale === 'fr-FR' && this.symbols.group && isGroupSymbolAllowed) {
       value = replaceAll(value, ' ', this.symbols.group);
       value = replaceAll(value, /\u00A0/g, this.symbols.group);
     }
@@ -232,6 +243,7 @@ class NumberParserImpl {
   }
 
   isValidPartialNumber(value: string, minValue: number = -Infinity, maxValue: number = Infinity): boolean {
+    let isGroupSymbolAllowed = this.formatter.resolvedOptions().useGrouping;
     value = this.sanitize(value);
 
     // Remove minus or plus sign, which must be at the start of the string.
@@ -241,18 +253,13 @@ class NumberParserImpl {
       value = value.slice(this.symbols.plusSign.length);
     }
 
-    // Numbers cannot start with a group separator
-    if (this.symbols.group && value.startsWith(this.symbols.group)) {
-      return false;
-    }
-
     // Numbers that can't have any decimal values fail if a decimal character is typed
     if (this.symbols.decimal && value.indexOf(this.symbols.decimal) > -1 && this.options.maximumFractionDigits === 0) {
       return false;
     }
 
     // Remove numerals, groups, and decimals
-    if (this.symbols.group) {
+    if (this.symbols.group && isGroupSymbolAllowed) {
       value = replaceAll(value, this.symbols.group, '');
     }
     value = value.replace(this.symbols.numeral, '');
@@ -282,12 +289,21 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
     maximumSignificantDigits: 21,
     roundingIncrement: 1,
     roundingPriority: 'auto',
-    roundingMode: 'halfExpand'
+    roundingMode: 'halfExpand',
+    useGrouping: true
   });
   // Note: some locale's don't add a group symbol until there is a ten thousands place
   let allParts = symbolFormatter.formatToParts(-10000.111);
   let posAllParts = symbolFormatter.formatToParts(10000.111);
   let pluralParts = pluralNumbers.map(n => symbolFormatter.formatToParts(n));
+  // if the plural parts include a unit but no integer or fraction, then we need to add the unit to the special set
+  let noNumeralUnits = pluralParts.map((p, i) => {
+    let unit = p.find(p => p.type === 'unit');
+    if (unit && !p.some(p => p.type === 'integer' || p.type === 'fraction')) {
+      return {unit: unit.value, value: pluralNumbers[i]};
+    }
+    return null;
+  }).filter(p => !!p);
 
   let minusSign = allParts.find(p => p.type === 'minusSign')?.value ?? '-';
   let plusSign = posAllParts.find(p => p.type === 'plusSign')?.value;
@@ -311,9 +327,10 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
   let pluralPartsLiterals = pluralParts.flatMap(p => p.filter(p => !nonLiteralParts.has(p.type)).map(p => escapeRegex(p.value)));
   let sortedLiterals = [...new Set([...allPartsLiterals, ...pluralPartsLiterals])].sort((a, b) => b.length - a.length);
 
+  // Match both whitespace and formatting characters
   let literals = sortedLiterals.length === 0 ?
-      new RegExp('[\\p{White_Space}]', 'gu') :
-      new RegExp(`${sortedLiterals.join('|')}|[\\p{White_Space}]`, 'gu');
+      new RegExp('\\p{White_Space}|\\p{Cf}', 'gu') :
+      new RegExp(`${sortedLiterals.join('|')}|\\p{White_Space}|\\p{Cf}`, 'gu');
 
   // These are for replacing non-latn characters with the latn equivalent
   let numerals = [...new Intl.NumberFormat(intlOptions.locale, {useGrouping: false}).format(9876543210)].reverse();
@@ -321,7 +338,7 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
   let numeral = new RegExp(`[${numerals.join('')}]`, 'g');
   let index = d => String(indexes.get(d));
 
-  return {minusSign, plusSign, decimal, group, literals, numeral, index};
+  return {minusSign, plusSign, decimal, group, literals, numeral, numerals, index, noNumeralUnits};
 }
 
 function replaceAll(str: string, find: string | RegExp, replace: string) {
