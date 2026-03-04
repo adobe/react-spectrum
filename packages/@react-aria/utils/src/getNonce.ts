@@ -34,7 +34,7 @@ export function getNonce(doc?: Document): string | undefined {
   }
 
   let meta = d.querySelector('meta[property="csp-nonce"]');
-  let nonce = (meta && meta instanceof getOwnerWindow(meta).HTMLMetaElement && (meta?.nonce || meta?.content)) || globalThis['__webpack_nonce__'] || undefined;
+  let nonce = (meta && meta instanceof getOwnerWindow(meta).HTMLMetaElement && (meta.nonce || meta.content)) || globalThis['__webpack_nonce__'] || undefined;
 
   nonceCache.set(d, nonce);
   return nonce;

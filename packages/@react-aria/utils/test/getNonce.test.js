@@ -57,4 +57,62 @@ describe('getNonce', () => {
 
     expect(getNonce()).toBe('meta-nonce');
   });
+
+  it('prefers nonce attribute over content attribute on the same meta tag', () => {
+    let meta = document.createElement('meta');
+    meta.setAttribute('property', 'csp-nonce');
+    meta.nonce = 'nonce-attr';
+    meta.setAttribute('content', 'content-attr');
+    document.head.appendChild(meta);
+
+    expect(getNonce()).toBe('nonce-attr');
+  });
+
+  it('caches the nonce per document', () => {
+    let meta = document.createElement('meta');
+    meta.setAttribute('property', 'csp-nonce');
+    meta.nonce = 'cached-nonce';
+    document.head.appendChild(meta);
+
+    expect(getNonce()).toBe('cached-nonce');
+
+    // Remove the meta tag — cached value should still be returned
+    meta.remove();
+    expect(getNonce()).toBe('cached-nonce');
+  });
+
+  it('resetNonceCache clears the cached value', () => {
+    let meta = document.createElement('meta');
+    meta.setAttribute('property', 'csp-nonce');
+    meta.nonce = 'first-nonce';
+    document.head.appendChild(meta);
+
+    expect(getNonce()).toBe('first-nonce');
+
+    // Change the nonce and clear the cache
+    meta.nonce = 'second-nonce';
+    resetNonceCache();
+
+    expect(getNonce()).toBe('second-nonce');
+  });
+
+  it('treats empty string nonce as no nonce', () => {
+    let meta = document.createElement('meta');
+    meta.setAttribute('property', 'csp-nonce');
+    meta.nonce = '';
+    meta.setAttribute('content', '');
+    document.head.appendChild(meta);
+
+    expect(getNonce()).toBeUndefined();
+  });
+
+  it('falls back to content when nonce attribute is empty', () => {
+    let meta = document.createElement('meta');
+    meta.setAttribute('property', 'csp-nonce');
+    meta.nonce = '';
+    meta.setAttribute('content', 'content-fallback');
+    document.head.appendChild(meta);
+
+    expect(getNonce()).toBe('content-fallback');
+  });
 });
