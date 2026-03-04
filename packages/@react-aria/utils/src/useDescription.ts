@@ -80,31 +80,56 @@ export function useDescription(description?: string): AriaLabelingProps {
  */
 export function useDynamicDescription(description: string | undefined, descriptionKey: string): AriaLabelingProps {
   let [id, setId] = useState<string | undefined>();
+  let subscriptionRef = useRef<{key: string, desc: {refCount: number, element: HTMLElement}} | null>(null);
   let nodeRef = useRef<HTMLElement | null>(null);
 
   useLayoutEffect(() => {
-    let desc = getOrCreateDynamicDescriptionNode(descriptionKey);
-    desc.refCount++;
-    nodeRef.current = desc.element;
-    setId(desc.element.id);
-
-    return () => {
-      if (--desc.refCount === 0) {
-        desc.element.remove();
-        dynamicDescriptionNodes.delete(descriptionKey);
+    let subscription = subscriptionRef.current;
+    if (subscription && subscription.key !== descriptionKey) {
+      if (--subscription.desc.refCount === 0) {
+        subscription.desc.element.remove();
+        dynamicDescriptionNodes.delete(subscription.key);
       }
 
-      if (nodeRef.current === desc.element) {
+      subscriptionRef.current = null;
+      if (nodeRef.current === subscription.desc.element) {
         nodeRef.current = null;
       }
-    };
-  }, [descriptionKey]);
+      subscription = null;
+    }
+
+    if (!subscription && description) {
+      let desc = getOrCreateDynamicDescriptionNode(descriptionKey);
+      desc.refCount++;
+      subscriptionRef.current = {key: descriptionKey, desc};
+      nodeRef.current = desc.element;
+      setId(desc.element.id);
+      desc.element.textContent = description;
+    }
+  }, [descriptionKey, description]);
 
   useLayoutEffect(() => {
-    if (nodeRef.current) {
-      nodeRef.current.textContent = description || '';
+    if (description && nodeRef.current) {
+      nodeRef.current.textContent = description;
     }
   }, [description]);
+
+  useLayoutEffect(() => {
+    return () => {
+      let subscription = subscriptionRef.current;
+      if (subscription) {
+        if (--subscription.desc.refCount === 0) {
+          subscription.desc.element.remove();
+          dynamicDescriptionNodes.delete(subscription.key);
+        }
+
+        subscriptionRef.current = null;
+        if (nodeRef.current === subscription.desc.element) {
+          nodeRef.current = null;
+        }
+      }
+    };
+  }, []);
 
   return {
     'aria-describedby': description ? id : undefined

@@ -113,7 +113,7 @@ describe('useDynamicDescription', () => {
 
     expect(result.current['aria-describedby']).toBeUndefined();
     expect(document.getElementById(id!)).toBe(node);
-    expect(node?.textContent).toBe('');
+    expect(node?.textContent).toBe('Test description');
 
     act(() => {
       rerender({description: 'Updated description'});

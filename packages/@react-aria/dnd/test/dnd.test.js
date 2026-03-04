@@ -2543,7 +2543,7 @@ describe('useDrag and useDrop', function () {
       expect(document.getElementById(restoredStartDescriptionId)).toHaveTextContent('Click to start dragging');
       expect(droppable).not.toHaveAttribute('aria-describedby');
       expect(document.getElementById(dropDescriptionId)).toBe(dropDescriptionNode);
-      expect(dropDescriptionNode).toHaveTextContent('');
+      expect(dropDescriptionNode).toHaveTextContent('Click to drop.');
 
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
