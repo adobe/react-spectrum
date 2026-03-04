@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {getNonce, resetNonceCache} from '../';
+import {getNonce} from '../';
+import {resetNonceCache} from '../src/getNonce';
 
 describe('getNonce', () => {
   afterEach(() => {

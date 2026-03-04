@@ -12,13 +12,11 @@
 
 import {getOwnerWindow} from './domHelpers';
 
-let cachedNonce: string | undefined;
-let cachePopulated = false;
+let nonceCache = new WeakMap<Document, string | undefined>();
 
 /** Reset the cached nonce value. Exported for testing only. */
 export function resetNonceCache(): void {
-  cachedNonce = undefined;
-  cachePopulated = false;
+  nonceCache = new WeakMap();
 }
 
 /**
@@ -26,20 +24,18 @@ export function resetNonceCache(): void {
  * This allows dynamically injected `<style>` elements to work with Content Security Policy.
  */
 export function getNonce(doc?: Document): string | undefined {
-  if (!doc && cachePopulated) {
-    return cachedNonce;
+  let d = doc ?? (typeof document !== 'undefined' ? document : undefined);
+  if (!d) {
+    return globalThis['__webpack_nonce__'] || undefined;
   }
 
-  let d = doc ?? (typeof document !== 'undefined' ? document : undefined);
-  let meta = d
-    ? d.querySelector('meta[property="csp-nonce"]')
-    : null;
+  if (nonceCache.has(d)) {
+    return nonceCache.get(d);
+  }
+
+  let meta = d.querySelector('meta[property="csp-nonce"]');
   let nonce = (meta && meta instanceof getOwnerWindow(meta).HTMLMetaElement && (meta?.nonce || meta?.content)) || globalThis['__webpack_nonce__'] || undefined;
 
-  if (!doc) {
-    cachedNonce = nonce;
-    cachePopulated = true;
-  }
-
+  nonceCache.set(d, nonce);
   return nonce;
 }
