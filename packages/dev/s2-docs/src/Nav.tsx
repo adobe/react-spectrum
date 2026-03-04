@@ -7,6 +7,7 @@ import {getLibraryFromPage} from './library';
 import LinkOutIcon from '../../../@react-spectrum/s2/ui-icons/LinkOut';
 import type {Page} from '@parcel/rsc';
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
+import {scrollIntoViewport} from '@react-aria/utils';
 import {usePendingPage, useRouter} from './Router';
 
 type SectionValue = Page[] | Map<string, Page[]>;
@@ -188,7 +189,7 @@ export function Nav() {
           );
         }
         return (
-          <Disclosure id={name} key={name} isQuiet density="spacious" defaultExpanded={name === 'Components' || name === currentPage.exports?.section} styles={style({minWidth: 185})}>
+          <Disclosure id={name} key={name} isQuiet density="spacious" defaultExpanded={name === 'Components' || name === currentPage.exports?.section || name === currentPage.exports?.group} styles={style({minWidth: 185})}>
             <DisclosureTitle>{name}</DisclosureTitle>
             <DisclosurePanel>
               <div className={style({paddingStart: space(18)})}>{nav}</div>
@@ -258,7 +259,15 @@ export function SideNavLink(props) {
   let linkRef = useRef(null);
   let selected = useContext(SideNavContext);
   let {isExternal, ...linkProps} = props;
-  
+
+  useEffect(() => {
+    if (!linkRef.current || !props.isSelected) {
+      return;
+    }
+
+    scrollIntoViewport(linkRef.current, {block: 'start', behavior: 'smooth'});
+  }, [props.isSelected]);
+
   return (
     <BaseLink
       {...linkProps}
@@ -283,7 +292,8 @@ export function SideNavLink(props) {
         },
         textDecoration: 'none',
         borderRadius: 'default',
-        transition: 'default'
+        transition: 'default',
+        scrollMarginTop: 64
       })}>
       {(renderProps) => (<>
         <span

@@ -17,13 +17,19 @@ interface ScrollIntoViewOpts {
   /** The position to align items along the block axis in. */
   block?: ScrollLogicalPosition,
   /** The position to align items along the inline axis in. */
-  inline?: ScrollLogicalPosition
+  inline?: ScrollLogicalPosition,
+  /** The behavior to determine whether scrolling should animate smoothly or happen instantly. */
+  behavior?: ScrollIntoViewOptions['behavior']
 }
 
 
 interface ScrollIntoViewportOpts {
   /** The optional containing element of the target to be centered in the viewport. */
-  containingElement?: Element | null
+  containingElement?: Element | null,
+  /** The optional alignment of the target element within the viewport. */
+  block?: ScrollIntoViewOptions['block'],
+  /** The optional behavior that determines whether scrolling is instant or animates smoothly. */
+  behavior?: ScrollIntoViewOptions['behavior']
 }
 
 /**
@@ -32,7 +38,7 @@ interface ScrollIntoViewportOpts {
  * but doesn't affect parents above `scrollView`.
  */
 export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, opts: ScrollIntoViewOpts = {}): void {
-  let {block = 'nearest', inline = 'nearest'} = opts;
+  let {block = 'nearest', inline = 'nearest', behavior = 'auto'} = opts;
 
   if (scrollView === element) { return; }
 
@@ -120,16 +126,17 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, op
     return;
   }
 
-  scrollView.scrollTo({left: x, top: y});
+  scrollView.scrollTo({left: x, top: y, behavior});
 }
 
 /**
  * Scrolls the `targetElement` so it is visible in the viewport. Accepts an optional `opts.containingElement`
- * that will be centered in the viewport prior to scrolling the targetElement into view. If scrolling is prevented on
+ * that will be centered in the viewport prior to scrolling the targetElement into view, as well as optional `opts.block` and `opts.behavior`
+ * to determine the alignment and animation behavior of the target element. If scrolling is prevented on
  * the body (e.g. targetElement is in a popover), this will only scroll the scroll parents of the targetElement up to but not including the body itself.
  */
 export function scrollIntoViewport(targetElement: Element | null, opts: ScrollIntoViewportOpts = {}): void {
-  let {containingElement} = opts;
+  let {containingElement, block = 'nearest', behavior = 'auto'} = opts;
   if (targetElement && targetElement.isConnected) {
     let root = document.scrollingElement || document.documentElement;
     let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
@@ -140,12 +147,12 @@ export function scrollIntoViewport(targetElement: Element | null, opts: ScrollIn
 
       // use scrollIntoView({block: 'nearest'}) instead of .focus to check if the element is fully in view or not since .focus()
       // won't cause a scroll if the element is already focused and doesn't behave consistently when an element is partially out of view horizontally vs vertically
-      targetElement?.scrollIntoView?.({block: 'nearest'});
+      targetElement?.scrollIntoView?.({block, behavior});
       let {left: newLeft, top: newTop} = targetElement.getBoundingClientRect();
       // Account for sub pixel differences from rounding
       if ((Math.abs(originalLeft - newLeft) > 1) || (Math.abs(originalTop - newTop) > 1)) {
         containingElement?.scrollIntoView?.({block: 'center', inline: 'center'});
-        targetElement.scrollIntoView?.({block: 'nearest'});
+        targetElement.scrollIntoView?.({block, behavior});
       }
     } else {
       let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
@@ -153,14 +160,14 @@ export function scrollIntoViewport(targetElement: Element | null, opts: ScrollIn
       // If scrolling is prevented, we don't want to scroll the body since it might move the overlay partially offscreen and the user can't scroll it back into view.
       let scrollParents = getScrollParents(targetElement, true);
       for (let scrollParent of scrollParents) {
-        scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement);
+        scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement, {block: opts.block || 'start', behavior});
       }
       let {left: newLeft, top: newTop} = targetElement.getBoundingClientRect();
       // Account for sub pixel differences from rounding
       if ((Math.abs(originalLeft - newLeft) > 1) || (Math.abs(originalTop - newTop) > 1)) {
         scrollParents = containingElement ? getScrollParents(containingElement, true) : [];
         for (let scrollParent of scrollParents) {
-          scrollIntoView(scrollParent as HTMLElement, containingElement as HTMLElement, {block: 'center', inline: 'center'});
+          scrollIntoView(scrollParent as HTMLElement, containingElement as HTMLElement, {block: opts.block || 'center', inline: 'center', behavior});
         }
       }
     }
