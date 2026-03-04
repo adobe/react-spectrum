@@ -12,10 +12,32 @@
 
 import {AriaLabelingProps} from '@react-types/shared';
 import {useLayoutEffect} from './useLayoutEffect';
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 
 let descriptionId = 0;
-const descriptionNodes = new Map<string, {refCount: number, element: Element}>();
+const descriptionNodes = new Map<string, {refCount: number, element: HTMLElement}>();
+const dynamicDescriptionNodes = new Map<string, {refCount: number, element: HTMLElement}>();
+
+function createDescriptionNode(id: string, description: string): HTMLElement {
+  let node = document.createElement('div');
+  node.id = id;
+  node.style.display = 'none';
+  node.textContent = description;
+  document.body.appendChild(node);
+  return node;
+}
+
+function getOrCreateDynamicDescriptionNode(descriptionKey: string) {
+  let desc = dynamicDescriptionNodes.get(descriptionKey);
+  if (!desc) {
+    let id = `react-aria-description-${descriptionId++}`;
+    let node = createDescriptionNode(id, '');
+    desc = {refCount: 0, element: node};
+    dynamicDescriptionNodes.set(descriptionKey, desc);
+  }
+
+  return desc;
+}
 
 export function useDescription(description?: string): AriaLabelingProps {
   let [id, setId] = useState<string | undefined>();
@@ -30,11 +52,7 @@ export function useDescription(description?: string): AriaLabelingProps {
       let id = `react-aria-description-${descriptionId++}`;
       setId(id);
 
-      let node = document.createElement('div');
-      node.id = id;
-      node.style.display = 'none';
-      node.textContent = description;
-      document.body.appendChild(node);
+      let node = createDescriptionNode(id, description);
       desc = {refCount: 0, element: node};
       descriptionNodes.set(description, desc);
     } else {
@@ -48,6 +66,44 @@ export function useDescription(description?: string): AriaLabelingProps {
         descriptionNodes.delete(description);
       }
     };
+  }, [description]);
+
+  return {
+    'aria-describedby': description ? id : undefined
+  };
+}
+
+/**
+ * Provides a stable `aria-describedby` id for descriptions that change over time.
+ * Unlike `useDescription`, this shares a hidden element by `descriptionKey`
+ * and updates its text content in place so many consumers can reuse one id.
+ */
+export function useDynamicDescription(description: string | undefined, descriptionKey: string): AriaLabelingProps {
+  let [id, setId] = useState<string | undefined>();
+  let nodeRef = useRef<HTMLElement | null>(null);
+
+  useLayoutEffect(() => {
+    let desc = getOrCreateDynamicDescriptionNode(descriptionKey);
+    desc.refCount++;
+    nodeRef.current = desc.element;
+    setId(desc.element.id);
+
+    return () => {
+      if (--desc.refCount === 0) {
+        desc.element.remove();
+        dynamicDescriptionNodes.delete(descriptionKey);
+      }
+
+      if (nodeRef.current === desc.element) {
+        nodeRef.current = null;
+      }
+    };
+  }, [descriptionKey]);
+
+  useLayoutEffect(() => {
+    if (nodeRef.current) {
+      nodeRef.current.textContent = description || '';
+    }
   }, [description]);
 
   return {

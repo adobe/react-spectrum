@@ -2511,6 +2511,84 @@ describe('useDrag and useDrop', function () {
       expect(announce).toHaveBeenCalledWith('Drop canceled.');
     });
 
+    it('should keep dynamic description ids stable while description text updates', async () => {
+      let tree = render(<>
+        <Draggable />
+        <Droppable />
+      </>);
+
+      let draggable = tree.getByText('Drag me');
+      let droppable = tree.getByText('Drop here');
+
+      fireEvent.focus(draggable);
+      let draggableDescriptionId = draggable.getAttribute('aria-describedby');
+      expect(document.getElementById(draggableDescriptionId)).toHaveTextContent('Click to start dragging');
+
+      fireEvent.click(draggable);
+      act(() => jest.runAllTimers());
+
+      expect(draggable).toHaveAttribute('data-dragging', 'true');
+      let dragEndDescriptionId = draggable.getAttribute('aria-describedby');
+      expect(dragEndDescriptionId).not.toBe(draggableDescriptionId);
+      expect(document.getElementById(dragEndDescriptionId)).toHaveTextContent('Dragging. Click to cancel drag.');
+
+      let dropDescriptionId = droppable.getAttribute('aria-describedby');
+      let dropDescriptionNode = document.getElementById(dropDescriptionId);
+      expect(dropDescriptionNode).toHaveTextContent('Click to drop.');
+
+      fireEvent.click(draggable);
+
+      expect(draggable).toHaveAttribute('data-dragging', 'false');
+      let restoredStartDescriptionId = draggable.getAttribute('aria-describedby');
+      expect(document.getElementById(restoredStartDescriptionId)).toHaveTextContent('Click to start dragging');
+      expect(droppable).not.toHaveAttribute('aria-describedby');
+      expect(document.getElementById(dropDescriptionId)).toBe(dropDescriptionNode);
+      expect(dropDescriptionNode).toHaveTextContent('');
+
+      fireEvent.click(draggable);
+      act(() => jest.runAllTimers());
+
+      let secondDragEndDescriptionId = draggable.getAttribute('aria-describedby');
+      expect(document.getElementById(secondDragEndDescriptionId)).toHaveTextContent('Dragging. Click to cancel drag.');
+      expect(droppable.getAttribute('aria-describedby')).toBe(dropDescriptionId);
+      expect(document.getElementById(dropDescriptionId)).toBe(dropDescriptionNode);
+      expect(dropDescriptionNode).toHaveTextContent('Click to drop.');
+
+      fireEvent.click(draggable);
+    });
+
+    it('should share drag start descriptions across many draggables', () => {
+      let tree = render(<>
+        <Draggable>Drag me 1</Draggable>
+        <Draggable>Drag me 2</Draggable>
+        <Draggable>Drag me 3</Draggable>
+        <Draggable>Drag me 4</Draggable>
+        <Draggable>Drag me 5</Draggable>
+        <Draggable>Drag me 6</Draggable>
+        <Draggable>Drag me 7</Draggable>
+        <Draggable>Drag me 8</Draggable>
+        <Draggable>Drag me 9</Draggable>
+        <Draggable>Drag me 10</Draggable>
+      </>);
+
+      let ids = [
+        tree.getByText('Drag me 1').getAttribute('aria-describedby'),
+        tree.getByText('Drag me 2').getAttribute('aria-describedby'),
+        tree.getByText('Drag me 3').getAttribute('aria-describedby'),
+        tree.getByText('Drag me 4').getAttribute('aria-describedby'),
+        tree.getByText('Drag me 5').getAttribute('aria-describedby'),
+        tree.getByText('Drag me 6').getAttribute('aria-describedby'),
+        tree.getByText('Drag me 7').getAttribute('aria-describedby'),
+        tree.getByText('Drag me 8').getAttribute('aria-describedby'),
+        tree.getByText('Drag me 9').getAttribute('aria-describedby'),
+        tree.getByText('Drag me 10').getAttribute('aria-describedby')
+      ];
+
+      expect(new Set(ids).size).toBe(1);
+      expect(document.querySelectorAll('[id^="react-aria-description-"]')).toHaveLength(1);
+      expect(document.getElementById(ids[0])).toHaveTextContent('Click to start dragging');
+    });
+
     it('should support clicking the original drag target to cancel drag (virtual pointer event)', async () => {
       let tree = render(<>
         <Draggable />
