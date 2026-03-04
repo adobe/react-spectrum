@@ -338,6 +338,30 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
+  `('$Name will allow typing of a number less than the min when value snapping is disabled', async () => {
+    let {
+      container,
+      textField
+    } = renderNumberField({onChange: onChangeSpy, minValue: 10, isValueSnappingDisabled: true});
+
+    expect(container).not.toHaveAttribute('aria-invalid');
+
+    act(() => {textField.focus();});
+    await user.clear(textField);
+    await user.keyboard('5');
+    expect(onChangeSpy).toHaveBeenCalledTimes(0);
+    expect(textField).toHaveAttribute('value', '5');
+    act(() => {textField.blur();});
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(5);
+    expect(textField).toHaveAttribute('value', '5');
+
+    expect(container).not.toHaveAttribute('aria-invalid');
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
   `('$Name will allow typing of a number between min and max', async () => {
     let {
       textField
@@ -381,6 +405,37 @@ describe('NumberField', function () {
     act(() => {textField.blur();});
     expect(onChangeSpy).not.toHaveBeenCalled();
     expect(textField).toHaveAttribute('value', '1');
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name will allow typing of a number greater than the max when value snapping is disabled', async () => {
+    let {
+      container,
+      textField
+    } = renderNumberField({onChange: onChangeSpy, maxValue: 1, defaultValue: 0, isValueSnappingDisabled: true});
+
+    expect(container).not.toHaveAttribute('aria-invalid');
+
+    act(() => {textField.focus();});
+    await user.keyboard('2');
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    act(() => {textField.blur();});
+    expect(onChangeSpy).toHaveBeenCalled();
+    expect(onChangeSpy).toHaveBeenCalledWith(2);
+    expect(textField).toHaveAttribute('value', '2');
+
+    expect(container).not.toHaveAttribute('aria-invalid');
+
+    onChangeSpy.mockReset();
+    act(() => {textField.focus();});
+    await user.keyboard('2');
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    act(() => {textField.blur();});
+    expect(onChangeSpy).toHaveBeenCalled();
+    expect(onChangeSpy).toHaveBeenCalledWith(22);
+    expect(textField).toHaveAttribute('value', '22');
   });
 
   it.each`
@@ -770,6 +825,20 @@ describe('NumberField', function () {
     await user.keyboard(value);
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', result);
+  });
+
+  it.each`
+    Name                           | value  
+    ${'NumberField down positive'} | ${'6'} 
+    ${'NumberField up positive'}   | ${'8'} 
+    ${'NumberField down negative'} | ${'-8'}
+    ${'NumberField up negative'}   | ${'-6'}
+  `('$Name does not round to step on commit when value snapping is disabled', async ({value}) => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, step: 5, isValueSnappingDisabled: true});
+    act(() => {textField.focus();});
+    await user.keyboard(value);
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', value);
   });
 
   it.each`

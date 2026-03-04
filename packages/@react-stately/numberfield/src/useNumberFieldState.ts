@@ -90,7 +90,8 @@ export function useNumberFieldState(
     onChange,
     locale,
     isDisabled,
-    isReadOnly
+    isReadOnly,
+    isValueSnappingDisabled
   } = props;
 
   if (value === null) {
@@ -168,7 +169,9 @@ export function useNumberFieldState(
 
     // Clamp to min and max, round to the nearest step, and round to specified number of digits
     let clampedValue: number;
-    if (step === undefined || isNaN(step)) {
+    if (isValueSnappingDisabled) {
+      clampedValue = newParsedValue;
+    } else if (step === undefined || isNaN(step)) {
       clampedValue = clamp(newParsedValue, minValue, maxValue);
     } else {
       clampedValue = snapValueToStep(newParsedValue, minValue, maxValue, step);

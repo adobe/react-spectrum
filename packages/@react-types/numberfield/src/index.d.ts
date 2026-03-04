@@ -29,7 +29,11 @@ export interface NumberFieldProps extends InputBase, Validation<number>, Focusab
    * Formatting options for the value displayed in the number field.
    * This also affects what characters are allowed to be typed by the user.
    */
-  formatOptions?: Intl.NumberFormatOptions
+  formatOptions?: Intl.NumberFormatOptions,
+  /**
+   * Disables value snapping when user finishes editing the value (e.g. on blur).
+   */
+  isValueSnappingDisabled?: boolean
 }
 
 export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps, TextInputDOMEvents {

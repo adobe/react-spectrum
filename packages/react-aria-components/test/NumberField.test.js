@@ -250,4 +250,15 @@ describe('NumberField', () => {
     await user.keyboard('{Enter}');
     expect(input).toHaveValue('200');
   });
+
+  it('should not change the edited input value when value snapping is disabled', async () => {
+    let {getByRole} = render(<TestNumberField defaultValue={20} minValue={10} step={10} maxValue={50} isValueSnappingDisabled />);
+    let input = getByRole('textbox');
+    await user.tab();
+    await user.clear(input);
+    await user.keyboard('1024');
+    await user.tab();
+    expect(input).toHaveValue('1,024');
+    expect(announce).toHaveBeenLastCalledWith('1,024', 'assertive');
+  });
 });
