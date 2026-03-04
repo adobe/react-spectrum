@@ -34,7 +34,7 @@ export const ListBoxExample: ListBoxStory = (args) => (
   <ListBox className={styles.menu} {...args} aria-label="test listbox">
     <MyListBoxItem>Foo</MyListBoxItem>
     <MyListBoxItem>Bar</MyListBoxItem>
-    <MyListBoxItem>Baz</MyListBoxItem>
+    <MyListBoxItem aria-label="Baz with custom label">Baz (Custom aria-label)</MyListBoxItem>
     <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
   </ListBox>
 );
