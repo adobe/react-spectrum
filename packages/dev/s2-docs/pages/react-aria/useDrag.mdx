@@ -253,6 +253,7 @@ function Draggable() {
   let {dragProps, dragButtonProps, isDragging} = useDrag({
     /*- begin highlight -*/
     hasDragButton: true,
+    pointerDragSource: 'dragButton',
     /*- end highlight -*/
     getItems() {
       return [{
@@ -267,7 +268,7 @@ function Draggable() {
   return (
     <div {...dragProps} className={`draggable ${isDragging ? 'dragging' : ''}`} style={{display: 'inline-flex', alignItems: 'center', gap: 5}}>
       {/*- begin highlight -*/}
-      <span {...buttonProps} aria-label="Drag" ref={ref} style={{fontSize: 18}}>≡</span>
+      <span {...buttonProps} aria-label="Drag" ref={ref} style={{fontSize: 18, cursor: 'grab'}}>≡</span>
       {/*- end highlight -*/}
       <span>Some text</span>
       <button onClick={() => alert('action')}>Action</button>

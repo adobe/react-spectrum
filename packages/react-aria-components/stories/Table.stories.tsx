@@ -34,6 +34,7 @@ const ReorderableTable = ({initialItems}: {initialItems: {id: string, name: stri
   let list = useListData({initialItems});
 
   const {dragAndDropHooks} = useDragAndDrop({
+    pointerDragSource: 'dragButton',
     getItems: keys => {
       return [...keys].filter(k => !!list.getItem(k)).map(k => {
         const item = list.getItem(k);
@@ -381,6 +382,7 @@ function DndTableRender(props: DndTableProps): JSX.Element {
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
+    pointerDragSource: 'dragButton',
     isDisabled: props.isDisabled,
     // Provide drag data in a custom format as well as plain text.
     getItems(keys) {
@@ -462,7 +464,7 @@ function DndTableRender(props: DndTableProps): JSX.Element {
         <Collection items={list.items}>
           {item => (
             <Row>
-              <Cell><Button slot="drag">≡</Button></Cell>
+              <Cell><Button slot="drag" style={{cursor: 'grab'}}>≡</Button></Cell>
               <Cell><MyCheckbox slot="selection" /></Cell>
               <Cell>{item.id}</Cell>
               <Cell>{item.name}</Cell>
@@ -542,6 +544,7 @@ function DndTableWithNoValidDropTargetsRender(): JSX.Element {
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
+    pointerDragSource: 'dragButton',
     getItems(keys) {
       return [...keys].filter(k => !!list.getItem(k)).map((key) => {
         let item = list.getItem(key);
@@ -833,6 +836,7 @@ export const VirtualizedTable: TableStory = () => {
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
+    pointerDragSource: 'dragButton',
     getItems: (keys) => {
       return [...keys].filter(k => !!list.getItem(k)).map(key => ({'text/plain': list.getItem(key)!.foo}));
     },

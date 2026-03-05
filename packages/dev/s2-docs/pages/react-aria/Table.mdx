@@ -609,6 +609,7 @@ function ReorderableTable() {
 
   ///- begin highlight -///
   let {dragAndDropHooks} = useDragAndDrop({
+    pointerDragSource: 'dragButton',
     getItems: (keys, items: typeof list.items) => items.map(item => ({
       'text/plain': item.name
     })),
