@@ -1799,13 +1799,17 @@ describe('Tree', () => {
     });
 
     it('should make the drag button pointer-interactive when pointerDragSource="dragButton"', () => {
-      let {getAllByRole, rerender} = render(<DraggableTree />);
+      let {getAllByRole, getByRole, rerender} = render(<DraggableTree />);
       let button = getAllByRole('button')[0];
+      let tree = getByRole('treegrid');
       expect(button.style.pointerEvents).toBe('none');
+      expect(tree).toHaveAttribute('data-pointer-drag-source', 'item');
 
       rerender(<DraggableTree pointerDragSource="dragButton" />);
       button = getAllByRole('button')[0];
+      tree = getByRole('treegrid');
       expect(button.style.pointerEvents).toBe('');
+      expect(tree).toHaveAttribute('data-pointer-drag-source', 'dragButton');
     });
 
     it('should require mouse drags to start from drag button when pointerDragSource="dragButton"', () => {
@@ -1927,6 +1931,7 @@ describe('Tree', () => {
 
       let tree = getByRole('treegrid');
       expect(tree).not.toHaveAttribute('data-allows-dragging', 'true');
+      expect(tree).not.toHaveAttribute('data-pointer-drag-source');
       expect(tree).not.toHaveAttribute('draggable', 'true');
 
       let rows = within(tree).getAllByRole('row');

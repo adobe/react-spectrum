@@ -216,6 +216,11 @@ export interface TreeRenderProps {
    */
   allowsDragging: boolean,
   /**
+   * Where pointer dragging can start.
+   * @selector [data-pointer-drag-source="item | dragButton"]
+   */
+  pointerDragSource?: 'item' | 'dragButton',
+  /**
    * State of the tree.
    */
   state: TreeState<unknown>
@@ -443,6 +448,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   }
 
   let isTreeDraggable = !!(hasDragHooks && !dragState?.isDisabled);
+  let pointerDragSource = isTreeDraggable ? dragAndDropHooks?.pointerDragSource : undefined;
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderValues = {
@@ -452,6 +458,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     isDropTarget: isRootDropTarget,
     selectionMode: state.selectionManager.selectionMode,
     allowsDragging: !!isTreeDraggable,
+    pointerDragSource,
     state
   };
 
@@ -494,7 +501,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
           data-drop-target={isRootDropTarget || undefined}
           data-focus-visible={isFocusVisible || undefined}
           data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}
-          data-allows-dragging={!!isTreeDraggable || undefined}>
+          data-allows-dragging={!!isTreeDraggable || undefined}
+          data-pointer-drag-source={pointerDragSource}>
           <Provider
             values={[
               [TreeStateContext, state],

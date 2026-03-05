@@ -1311,13 +1311,17 @@ describe('Table', () => {
     });
 
     it('should make the drag button pointer-interactive when pointerDragSource="dragButton"', () => {
-      let {getAllByRole, rerender} = render(<DraggableTable />);
+      let {getAllByRole, getByRole, rerender} = render(<DraggableTable />);
       let button = getAllByRole('button')[0];
+      let table = getByRole('grid');
       expect(button.style.pointerEvents).toBe('none');
+      expect(table).toHaveAttribute('data-pointer-drag-source', 'item');
 
       rerender(<DraggableTable pointerDragSource="dragButton" />);
       button = getAllByRole('button')[0];
+      table = getByRole('grid');
       expect(button.style.pointerEvents).toBe('');
+      expect(table).toHaveAttribute('data-pointer-drag-source', 'dragButton');
     });
 
     it('should require mouse drags to start from drag button when pointerDragSource="dragButton"', () => {
@@ -1445,6 +1449,7 @@ describe('Table', () => {
 
       let table = getByRole('grid');
       expect(table).not.toHaveAttribute('data-allows-dragging', 'true');
+      expect(table).not.toHaveAttribute('data-pointer-drag-source');
       expect(table).not.toHaveAttribute('draggable', 'true');
 
       let rows = getAllByRole('row');

@@ -907,13 +907,17 @@ describe('GridList', () => {
     });
 
     it('should make the drag button pointer-interactive when pointerDragSource="dragButton"', () => {
-      let {getAllByRole, rerender} = render(<DraggableGridList />);
+      let {getAllByRole, getByRole, rerender} = render(<DraggableGridList />);
       let button = getAllByRole('button')[0];
+      let gridList = getByRole('grid');
       expect(button.style.pointerEvents).toBe('none');
+      expect(gridList).toHaveAttribute('data-pointer-drag-source', 'item');
 
       rerender(<DraggableGridList pointerDragSource="dragButton" />);
       button = getAllByRole('button')[0];
+      gridList = getByRole('grid');
       expect(button.style.pointerEvents).toBe('');
+      expect(gridList).toHaveAttribute('data-pointer-drag-source', 'dragButton');
     });
 
     it('should require mouse drags to start from drag button when pointerDragSource="dragButton"', () => {
