@@ -110,7 +110,11 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   let inputId = useId(id);
   let {focusProps} = useFocus({
     onBlur() {
-      commitAndAnnounce();
+      // Only commit if the input value has actually changed from the state's input value.
+      // This prevents validation from being reset when the user focuses and blurs without editing.
+      if (inputRef.current?.value !== inputValue) {
+        commitAndAnnounce();
+      }
     }
   });
 
