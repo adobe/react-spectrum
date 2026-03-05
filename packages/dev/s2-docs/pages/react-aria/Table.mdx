@@ -238,7 +238,7 @@ Rows can be nested to display hierarchical data. Use the `treeColumn` prop to de
 ```tsx render
 "use client";
 import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
-import {Collection} from 'react-aria-components';
+import {Collection, type Key} from 'react-aria-components';
 import {useState} from 'react';
 
 /*- begin collapse -*/
@@ -257,7 +257,7 @@ const rows = [
 /*- end collapse -*/
 
 function Example() {
-  let [expandedKeys, setExpandedKeys] = useState(new Set(['1']))
+  let [expandedKeys, setExpandedKeys] = useState(new Set<Key>(['1']))
 
   return (
     <Table
@@ -275,7 +275,7 @@ function Example() {
       <TableBody items={rows}>
         {function renderItem(item) {
           return (
-            <Row id={item.key}>
+            <Row id={item.id}>
               <Cell>{item.title}</Cell>
               <Cell>{item.type}</Cell>
               <Cell>{item.date}</Cell>

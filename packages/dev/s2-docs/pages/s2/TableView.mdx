@@ -165,7 +165,7 @@ Rows can be nested to display hierarchical data. Use the `treeColumn` prop to de
 
 ```tsx render
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, Collection} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, Collection, type Key} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
@@ -185,7 +185,7 @@ const rows = [
 /*- end collapse -*/
 
 function Example() {
-  let [expandedKeys, setExpandedKeys] = useState(new Set(['1']))
+  let [expandedKeys, setExpandedKeys] = useState(new Set<Key>(['1']))
 
   return (
     <TableView
@@ -204,7 +204,7 @@ function Example() {
       <TableBody items={rows}>
         {function renderItem(item) {
           return (
-            <Row id={item.key}>
+            <Row id={item.id}>
               <Cell>{item.title}</Cell>
               <Cell>{item.type}</Cell>
               <Cell>{item.date}</Cell>
