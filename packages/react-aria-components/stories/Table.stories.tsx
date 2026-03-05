@@ -12,13 +12,13 @@
 
 import {action} from 'storybook/actions';
 import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
+import {CellProps, TableLoadMoreItem} from '../src/Table';
 import {isTextDropItem} from 'react-aria';
 import {LoadingSpinner, MyMenuItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, startTransition, Suspense, useState} from 'react';
 import {Selection, useAsyncList, useListData} from 'react-stately';
 import styles from '../example/index.css';
-import {CellProps, TableLoadMoreItem} from '../src/Table';
 import './styles.css';
 
 export default {
@@ -1625,7 +1625,7 @@ function NameCell(props: CellProps) {
         {props.children}
       </>)}
     </Cell>
-  )
+  );
 }
 
 export const TableNestedRows: TableStory = (args) => {

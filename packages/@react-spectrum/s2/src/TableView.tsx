@@ -952,9 +952,7 @@ const commonCellStyles = {
   paddingX: 16 // table-edge-to-content
 } as const;
 
-const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean, isTreeColumnWithNoChildren: boolean}>({
-  ...commonCellStyles,
-  paddingY: centerPadding(),
+const treeColumnStyles = {
   '--indent': {
     type: 'width',
     value: 16
@@ -969,7 +967,12 @@ const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean, isTreeC
   paddingStart: {
     default: 16,
     isTreeColumn: 'calc(var(--treeColumnPadding) + (var(--table-row-level, 1) - 1) * var(--indent))'
-  },
+  }
+} as const;
+
+const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean, isTreeColumnWithNoChildren: boolean}>({
+  ...commonCellStyles,
+  ...treeColumnStyles,
   minHeight: {
     default: 40,
     density: {
@@ -1154,8 +1157,9 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
   );
 }
 
-const editableCell = style<CellRenderProps & S2TableProps & {isDivider: boolean, selectionMode?: 'none' | 'single' | 'multiple', isSaving?: boolean}>({
+const editableCell = style<CellRenderProps & S2TableProps & {isDivider: boolean, selectionMode?: 'none' | 'single' | 'multiple', isSaving?: boolean, isTreeColumnWithNoChildren: boolean}>({
   ...commonCellStyles,
+  ...treeColumnStyles,
   color: {
     default: baseColor('neutral'),
     isSaving: baseColor('neutral-subdued')
@@ -1239,12 +1243,18 @@ export const EditableCell = forwardRef(function EditableCell(props: EditableCell
         ...renderProps,
         ...tableVisualOptions,
         isDivider: showDivider,
-        isSaving
+        isSaving,
+        isTreeColumnWithNoChildren: renderProps.isTreeColumn && !renderProps.hasChildItems
       })}
       textValue={textValue}
       {...otherProps}>
-      {({isFocusVisible}) => (
-        <EditableCellInner {...props} isFocusVisible={isFocusVisible} cellRef={domRef as RefObject<HTMLDivElement>} />
+      {({isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
+        <>
+          {hasChildItems && isTreeColumn && 
+            <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />
+          }
+          <EditableCellInner {...props} isFocusVisible={isFocusVisible} cellRef={domRef as RefObject<HTMLDivElement>} />
+        </>
       )}
     </RACCell>
   );
@@ -1292,7 +1302,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
     let boundingRect = cell?.parentElement?.getBoundingClientRect();
     let verticalOffset = (boundingRect?.top ?? 0) - (boundingRect?.bottom ?? 0);
 
-    let tableWidth = cellRef.current?.closest('[role="grid"]')?.clientWidth || 0;
+    let tableWidth = cellRef.current?.closest('[role="grid"],[role="treegrid"]')?.clientWidth || 0;
     setTriggerWidth(width);
     setVerticalOffset(verticalOffset);
     setTableWidth(tableWidth);
