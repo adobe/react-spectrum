@@ -11,13 +11,14 @@
  */
 
 import {action} from 'storybook/actions';
-import {Button, Header, Heading, Input, Keyboard, Label, ListLayout, Menu, MenuItemProps, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, SubmenuTriggerProps, Text, TextField, Virtualizer} from 'react-aria-components';
+import {Button, Header, Heading, Input, Keyboard, Label, ListLayout, Menu, MenuItem, MenuItemProps, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, SubmenuTriggerProps, Text, TextField, Virtualizer} from 'react-aria-components';
+import {classNames} from '@react-spectrum/utils';
+import {mergeProps} from 'react-aria';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {MyMenuItem} from './utils';
-import React, {JSX} from 'react';
+import React, {createContext, JSX, ReactElement, useContext} from 'react';
 import styles from '../example/index.css';
 import './styles.css';
-import {mergeProps} from 'react-aria';
 
 export default {
   title: 'React Aria Components/Menu',
@@ -482,3 +483,75 @@ export const VirtualizedExample: MenuStory = () => {
     </MenuTrigger>
   );
 };
+
+let UnavailableContext = createContext(false);
+
+function UnavailableMenuItemTrigger(props: {isUnavailable?: boolean, children: ReactElement[]}) {
+  let {isUnavailable = false, children} = props;
+  if (isUnavailable) {
+    return (
+      <UnavailableContext.Provider value>
+        <SubmenuTrigger>
+          {children[0]}
+          <Popover className={classNames(styles, 'unavailable-popover')}>
+            {children[1]}
+          </Popover>
+        </SubmenuTrigger>
+      </UnavailableContext.Provider>
+    );
+  }
+  return children[0];
+}
+
+function UnavailableMenuItem(props: MenuItemProps) {
+  let isUnavailable = useContext(UnavailableContext);
+  return (
+    <MenuItem
+      {...props}
+      className={({isFocused, isSelected, isOpen, isFocusVisible}) => classNames(styles, 'item', {
+        focused: isFocused,
+        selected: isSelected,
+        open: isOpen,
+        focusVisible: isFocusVisible
+      }, isUnavailable ? 'unavailable' : undefined)}>
+      {(renderProps) => (
+        <>
+          {typeof props.children === 'function' ? props.children(renderProps) : props.children}
+          {renderProps.hasSubmenu && isUnavailable && <span style={{justifySelf: 'end'}} aria-hidden>ⓘ</span>}
+        </>
+      )}
+    </MenuItem>
+  );
+}
+
+export const UnavailableMenuItemExample: MenuStory = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu className={styles.menu} onAction={action('onAction')}>
+        <MyMenuItem id="favorite">Favorite</MyMenuItem>
+        <UnavailableMenuItemTrigger>
+          <UnavailableMenuItem id="edit">Edit</UnavailableMenuItem>
+          <div style={{padding: 8, maxWidth: 200}}>
+            Contact your administrator for permissions to edit this item.
+          </div>
+        </UnavailableMenuItemTrigger>
+        <UnavailableMenuItemTrigger isUnavailable>
+          <UnavailableMenuItem id="delete">Delete</UnavailableMenuItem>
+          <div style={{padding: 8, maxWidth: 200}}>
+            Contact your administrator for permissions to delete this item.
+          </div>
+        </UnavailableMenuItemTrigger>
+        <SubmenuTrigger>
+          <MyMenuItem id="share">Share</MyMenuItem>
+          <Popover className={styles.popover}>
+            <Menu className={styles.menu} onAction={action('onAction')}>
+              <MyMenuItem id="sms">SMS</MyMenuItem>
+              <MyMenuItem id="email">Email</MyMenuItem>
+            </Menu>
+          </Popover>
+        </SubmenuTrigger>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);

@@ -151,6 +151,35 @@ const items = [
 </div>"
 `;
 
+exports[`Renames ContextualHelpTrigger to UnavailableMenuItemTrigger and Dialog to ContextualHelpPopover 1`] = `
+"import {
+  UnavailableMenuItemTrigger,
+  ContextualHelpPopover,
+  MenuItem,
+  Menu,
+  MenuTrigger,
+  Button,
+  Dialog,
+  Heading,
+  Content,
+} from "@react-spectrum/s2";
+
+<MenuTrigger>
+  <Button>Edit</Button>
+  <Menu>
+    <MenuItem id="undo">Undo</MenuItem>
+    <MenuItem id="redo">Redo</MenuItem>
+    <UnavailableMenuItemTrigger isUnavailable>
+      <MenuItem id="cut">Cut</MenuItem>
+      <ContextualHelpPopover>
+        <Heading>Cut</Heading>
+        <Content>Please select text for Cut to be enabled.</Content>
+      </ContextualHelpPopover>
+    </UnavailableMenuItemTrigger>
+  </Menu>
+</MenuTrigger>"
+`;
+
 exports[`Static - Renames Item to MenuItem, Section to MenuSection 1`] = `
 "import {
   MenuItem,

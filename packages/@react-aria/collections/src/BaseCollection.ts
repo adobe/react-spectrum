@@ -135,11 +135,11 @@ export class SectionNode<T> extends FilterableNode<T> {
  * custom collection behaviors.
  */
 export class BaseCollection<T> implements ICollection<Node<T>> {
-  private keyMap: Map<Key, CollectionNode<T>> = new Map();
-  private firstKey: Key | null = null;
-  private lastKey: Key | null = null;
-  private frozen = false;
-  private itemCount: number = 0;
+  protected keyMap: Map<Key, CollectionNode<T>> = new Map();
+  protected firstKey: Key | null = null;
+  protected lastKey: Key | null = null;
+  protected frozen = false;
+  protected itemCount: number = 0;
 
   get size(): number {
     return this.itemCount;

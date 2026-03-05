@@ -23,6 +23,7 @@
   "label.(optional)": "(valinnainen)",
   "label.(required)": "(pakollinen)",
   "menu.moreActions": "Lisää toimintoja",
+  "menu.unavailable": "Ei saatavilla, laajenna saadaksesi lisätietoja",
   "notificationbadge.indicatorOnly": "Uusi toiminta",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Valitse…",

@@ -11,8 +11,7 @@
  */
 
 import {forwardRefType} from '@react-types/shared';
-import React, {Context, createContext, forwardRef, JSX, ReactElement, ReactNode, useContext, useRef} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
+import React, {Context, createContext, forwardRef, JSX, ReactElement, ReactNode, useContext} from 'react';
 
 // React doesn't understand the <template> element, which doesn't have children like a normal element.
 // It will throw an error during hydration when it expects the firstChild to contain content rendered
@@ -21,20 +20,11 @@ import {useLayoutEffect} from '@react-aria/utils';
 // does the same for appendChild/removeChild/insertBefore as per the issue below
 // See https://github.com/facebook/react/issues/19932
 if (typeof HTMLTemplateElement !== 'undefined') {
-  const getFirstChild = Object.getOwnPropertyDescriptor(Node.prototype, 'firstChild')!.get!;
-  const originalAppendChild = Object.getOwnPropertyDescriptor(Node.prototype, 'appendChild')!.value!;
-  const originalRemoveChild = Object.getOwnPropertyDescriptor(Node.prototype, 'removeChild')!.value!;
-  const originalInsertBefore = Object.getOwnPropertyDescriptor(Node.prototype, 'insertBefore')!.value!;
-
   Object.defineProperty(HTMLTemplateElement.prototype, 'firstChild', {
     configurable: true,
     enumerable: true,
     get: function () {
-      if (this.dataset.reactAriaHidden) {
-        return this.content.firstChild;
-      } else {
-        return getFirstChild.call(this);
-      }
+      return this.content.firstChild;
     }
   });
 
@@ -42,11 +32,7 @@ if (typeof HTMLTemplateElement !== 'undefined') {
     configurable: true,
     enumerable: true,
     value: function (node) {
-      if (this.dataset.reactAriaHidden) {
-        return this.content.appendChild(node);
-      } else {
-        return originalAppendChild.call(this, node);
-      }
+      return this.content.appendChild(node);
     }
   });
 
@@ -54,11 +40,7 @@ if (typeof HTMLTemplateElement !== 'undefined') {
     configurable: true,
     enumerable: true,
     value: function (node) {
-      if (this.dataset.reactAriaHidden) {
-        return this.content.removeChild(node);
-      } else {
-        return originalRemoveChild.call(this, node);
-      }
+      return this.content.removeChild(node);
     }
   });
 
@@ -66,11 +48,7 @@ if (typeof HTMLTemplateElement !== 'undefined') {
     configurable: true,
     enumerable: true,
     value: function (node, child) {
-      if (this.dataset.reactAriaHidden) {
-        return this.content.insertBefore(node, child);
-      } else {
-        return originalInsertBefore.call(this, node, child);
-      }
+      return this.content.insertBefore(node, child);
     }
   });
 }
@@ -79,18 +57,6 @@ export const HiddenContext: Context<boolean> = createContext<boolean>(false);
 
 export function Hidden(props: {children: ReactNode}): JSX.Element {
   let isHidden = useContext(HiddenContext);
-  let templateRef = useRef<HTMLTemplateElement>(null);
-  // somehow React might add children to the template and we never hit the reactAriaHidden parts of the above overrides
-  // so we need to move those children into the content of the template since templates can't have direct children
-  useLayoutEffect(() => {
-    let el = templateRef.current;
-    if (!el?.dataset.reactAriaHidden) {
-      return;
-    }
-    while (el.childNodes.length > 0) {
-      el.content.appendChild(el.childNodes[0]);
-    }
-  }, []);
 
   if (isHidden) {
     // Don't hide again if we are already hidden.
@@ -106,7 +72,7 @@ export function Hidden(props: {children: ReactNode}): JSX.Element {
   // In SSR, portals are not supported by React. Instead, always render into a <template>
   // element, which the browser will never display to the user. In addition, the
   // content is not part of the accessible DOM tree, so it won't affect ids or other accessibility attributes.
-  return <template ref={templateRef} data-react-aria-hidden>{children}</template>;
+  return <template>{children}</template>;
 }
 
 /** Creates a component that forwards its ref and returns null if it is in a hidden subtree. */
