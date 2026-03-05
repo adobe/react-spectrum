@@ -522,7 +522,16 @@ let listRowFocusRing = style({
     default: '[-1px]',
     isFirstItem: 0
   },
-  bottom: '[-1px]',
+  bottom: {
+    selectionStyle: {
+      checkbox: {
+        default: '[-1px]',
+        // Avoid the next row's selected background covering this row's focus ring.
+        isNextSelected: 0
+      },
+      highlight: '[-1px]'
+    }
+  },
   borderRadius: {
     default: insetBorderRadius,
     isQuiet: 'default'
