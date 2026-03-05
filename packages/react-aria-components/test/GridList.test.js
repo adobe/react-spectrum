@@ -33,6 +33,7 @@ import {
   useDragAndDrop,
   Virtualizer
 } from '../';
+import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {GridListLoadMoreItem} from '../src/GridList';
 import {installPointerEvent, User} from '@react-aria/test-utils';
@@ -903,6 +904,34 @@ describe('GridList', () => {
       let {getAllByRole} = render(<DraggableGridList />);
       let button = getAllByRole('button')[0];
       expect(button).toHaveAttribute('aria-label', 'Drag Cat');
+    });
+
+    it('should make the drag button pointer-interactive when pointerDragSource="dragButton"', () => {
+      let {getAllByRole, rerender} = render(<DraggableGridList />);
+      let button = getAllByRole('button')[0];
+      expect(button.style.pointerEvents).toBe('none');
+
+      rerender(<DraggableGridList pointerDragSource="dragButton" />);
+      button = getAllByRole('button')[0];
+      expect(button.style.pointerEvents).toBe('');
+    });
+
+    it('should require mouse drags to start from drag button when pointerDragSource="dragButton"', () => {
+      let getItems = jest.fn((keys) => [...keys].map((key) => ({'text/plain': key})));
+      let {getAllByRole} = render(<DraggableGridList pointerDragSource="dragButton" getItems={getItems} />);
+
+      let row = getAllByRole('row')[0];
+      let dragButton = within(row).getAllByRole('button')[0];
+      let dataTransfer = new DataTransfer();
+
+      fireEvent.pointerDown(row, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+      fireEvent(row, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      expect(getItems).toHaveBeenCalledTimes(0);
+
+      dataTransfer = new DataTransfer();
+      fireEvent.pointerDown(dragButton, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+      fireEvent(dragButton, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      expect(getItems).toHaveBeenCalledTimes(1);
     });
 
     it('should render drop indicators', async () => {

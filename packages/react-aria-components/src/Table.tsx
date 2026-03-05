@@ -1230,6 +1230,9 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     let DOMProps = filterDOMProps(props as any, {global: true});
     delete DOMProps.id;
     delete DOMProps.onClick;
+    let dragButtonStyle: React.CSSProperties | undefined = dragAndDropHooks?.pointerDragSource === 'dragButton'
+      ? undefined
+      : {pointerEvents: 'none'};
 
     return (
       <>
@@ -1267,9 +1270,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
                   drag: {
                     ...draggableItem?.dragButtonProps,
                     ref: dragButtonRef,
-                    style: {
-                      pointerEvents: 'none'
-                    }
+                    style: dragButtonStyle
                   }
                 }
               }],

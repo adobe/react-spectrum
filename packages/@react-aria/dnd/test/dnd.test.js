@@ -18,6 +18,8 @@ import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, Fil
 import {Draggable, Droppable} from './examples';
 import {DragTypes} from '../src/utils';
 import React, {useEffect} from 'react';
+import {useButton} from '@react-aria/button';
+import {useDrag} from '../src';
 import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {
@@ -32,6 +34,35 @@ function pointerEvent(type, opts) {
     height: 1
   }, opts);
   return evt;
+}
+
+function DraggableWithDragButton(props) {
+  let {dragProps, dragButtonProps, isDragging} = useDrag({
+    getItems() {
+      return [{
+        'text/plain': 'hello world'
+      }];
+    },
+    hasDragButton: true,
+    ...props
+  });
+  let buttonRef = React.useRef(null);
+  let {buttonProps} = useButton({
+    ...dragButtonProps,
+    elementType: 'div'
+  }, buttonRef);
+
+  return (
+    <div
+      {...dragProps}
+      role="button"
+      tabIndex={0}
+      data-dragging={isDragging}
+      data-testid="drag-root">
+      <div {...buttonProps} ref={buttonRef} data-testid="drag-button">Drag handle</div>
+      <div>Drag me</div>
+    </div>
+  );
 }
 
 describe('useDrag and useDrop', function () {
@@ -208,6 +239,49 @@ describe('useDrag and useDrop', function () {
       expect(onDropEnter).not.toHaveBeenCalled();
       expect(onDropMove).not.toHaveBeenCalled();
       expect(onDrop).not.toHaveBeenCalled();
+    });
+
+    it('should require mouse drags to start from the drag button when pointerDragSource is dragButton', () => {
+      let onDragStart = jest.fn();
+      let tree = render(<DraggableWithDragButton pointerDragSource="dragButton" onDragStart={onDragStart} />);
+      let draggable = tree.getByTestId('drag-root');
+      let dataTransfer = new DataTransfer();
+
+      fireEvent.pointerDown(draggable, {pointerType: 'mouse', button: 0, pointerId: 1});
+      fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      act(() => jest.runAllTimers());
+
+      expect(onDragStart).not.toHaveBeenCalled();
+      expect(draggable).toHaveAttribute('data-dragging', 'false');
+    });
+
+    it('should allow mouse drags from the drag button when pointerDragSource is dragButton', () => {
+      let onDragStart = jest.fn();
+      let tree = render(<DraggableWithDragButton pointerDragSource="dragButton" onDragStart={onDragStart} />);
+      let draggable = tree.getByTestId('drag-root');
+      let dragButton = tree.getByTestId('drag-button');
+      let dataTransfer = new DataTransfer();
+
+      fireEvent.pointerDown(dragButton, {pointerType: 'mouse', button: 0, pointerId: 1});
+      fireEvent(dragButton, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      act(() => jest.runAllTimers());
+
+      expect(onDragStart).toHaveBeenCalledTimes(1);
+      expect(draggable).toHaveAttribute('data-dragging', 'true');
+    });
+
+    it('should fallback to item drags when pointerDragSource is dragButton and no drag button is rendered', () => {
+      let onDragStart = jest.fn();
+      let tree = render(<Draggable hasDragButton pointerDragSource="dragButton" onDragStart={onDragStart} />);
+      let draggable = tree.getByText('Drag me');
+      let dataTransfer = new DataTransfer();
+
+      fireEvent.pointerDown(draggable, {pointerType: 'mouse', button: 0, pointerId: 1});
+      fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      act(() => jest.runAllTimers());
+
+      expect(onDragStart).toHaveBeenCalledTimes(1);
+      expect(draggable).toHaveAttribute('data-dragging', 'true');
     });
 
     describe('events', () => {
@@ -1542,6 +1616,20 @@ describe('useDrag and useDrop', function () {
       expect(draggable).toHaveAttribute('data-dragging', 'false');
       expect(droppable).toHaveAttribute('data-droptarget', 'false');
       expect(droppable2).toHaveAttribute('data-droptarget', 'false');
+    });
+
+    it('should support keyboard dragging when pointerDragSource is dragButton', async () => {
+      let onDragStart = jest.fn();
+      render(<>
+        <Draggable pointerDragSource="dragButton" onDragStart={onDragStart} />
+        <Droppable />
+      </>);
+
+      await user.tab();
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      expect(onDragStart).toHaveBeenCalledTimes(1);
     });
 
     it('useDrag should support isDisabled', async () => {

@@ -255,6 +255,23 @@ describe('TableView', function () {
         expect(dataTransfer._dragImage.y).toBe(5);
       });
 
+      it('should start mouse drags from row content by default', function () {
+        let {getByRole} = render(
+          <DraggableTableView />
+        );
+
+        let grid = getByRole('grid');
+        let rowgroups = within(grid).getAllByRole('rowgroup');
+        let row = within(rowgroups[1]).getAllByRole('row')[0];
+        let cell = within(row).getAllByRole('rowheader')[0];
+        let dataTransfer = new DataTransfer();
+
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+      });
+
 
       it('should allow drag and drop of a single row', async function () {
         let {getByRole, getByText} = render(

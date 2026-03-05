@@ -1310,6 +1310,37 @@ describe('Table', () => {
       expect(button).toHaveAttribute('aria-label', 'Drag Games');
     });
 
+    it('should make the drag button pointer-interactive when pointerDragSource="dragButton"', () => {
+      let {getAllByRole, rerender} = render(<DraggableTable />);
+      let button = getAllByRole('button')[0];
+      expect(button.style.pointerEvents).toBe('none');
+
+      rerender(<DraggableTable pointerDragSource="dragButton" />);
+      button = getAllByRole('button')[0];
+      expect(button.style.pointerEvents).toBe('');
+    });
+
+    it('should require mouse drags to start from drag button when pointerDragSource="dragButton"', () => {
+      let getItems = jest.fn((keys) => [...keys].map((key) => ({'text/plain': key})));
+      let {getByRole} = render(<DraggableTable pointerDragSource="dragButton" getItems={getItems} />);
+
+      let grid = getByRole('grid');
+      let rowgroups = within(grid).getAllByRole('rowgroup');
+      let row = within(rowgroups[1]).getAllByRole('row')[0];
+      let dragCell = within(row).getAllByRole('rowheader')[0];
+      let dragButton = within(row).getAllByRole('button')[0];
+
+      let dataTransfer = new DataTransfer();
+      fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+      fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      expect(getItems).toHaveBeenCalledTimes(0);
+
+      dataTransfer = new DataTransfer();
+      fireEvent.pointerDown(dragButton, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+      fireEvent(dragButton, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      expect(getItems).toHaveBeenCalledTimes(1);
+    });
+
     it('should render drop indicators', async () => {
       let onReorder = jest.fn();
       let {getAllByRole} = render(<DraggableTable onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
@@ -2012,18 +2043,16 @@ describe('Table', () => {
       act(() => jest.runAllTimers());
       rows = getAllByRole('row');
 
-      let dragCell = within(rows[1]).getAllByRole('rowheader')[0];
-
       let dataTransfer = new DataTransfer();
-      fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-      fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      fireEvent.pointerDown(dragButton, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+      fireEvent(dragButton, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
       let dropTarget = rows[2];
-      fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
-      fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+      fireEvent.pointerMove(dragButton, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+      fireEvent(dragButton, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
       fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 80}));
-      fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+      fireEvent.pointerUp(dragButton, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
       fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 80}));
-      fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+      fireEvent(dragButton, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
       act(() => jest.runAllTimers());
 
       rows = getAllByRole('row');

@@ -21,6 +21,8 @@ import {globalDropEffect, setGlobalAllowedDropOperations, setGlobalDropEffect, u
 import intlMessages from '../intl/*.json';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
+const DRAG_BUTTON_ATTR = 'data-react-aria-drag-button';
+
 export interface DragOptions {
   /** Handler that is called when a drag operation is started. */
   onDragStart?: (e: DragStartEvent) => void,
@@ -42,7 +44,13 @@ export interface DragOptions {
   /**
    * Whether the drag operation is disabled. If true, the element will not be draggable.
    */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /**
+   * Controls where pointer dragging can start.
+   * `"item"` allows dragging from anywhere on the draggable item.
+   * `"dragButton"` requires mouse dragging to start from the drag button, if one is present.
+   */
+  pointerDragSource?: 'item' | 'dragButton'
 }
 
 export interface DragResult {
@@ -74,7 +82,7 @@ const MESSAGES = {
  * based drag and drop, in addition to full parity for keyboard and screen reader users.
  */
 export function useDrag(options: DragOptions): DragResult {
-  let {hasDragButton, isDisabled} = options;
+  let {hasDragButton, isDisabled, pointerDragSource = 'item'} = options;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
   let state = useRef({
     options,
@@ -90,6 +98,8 @@ export function useDrag(options: DragOptions): DragResult {
   };
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
   let modalityOnPointerDown = useRef<string>(null);
+  let pointerTypeOnPointerDown = useRef<string>(null);
+  let isPointerDownOnDragButton = useRef(false);
 
   let onDragStart = (e: DragEvent) => {
     if (e.defaultPrevented) {
@@ -105,6 +115,16 @@ export function useDrag(options: DragOptions): DragResult {
       startDragging(getEventTarget(e) as HTMLElement);
       modalityOnPointerDown.current = null;
       return;
+    }
+
+    if (hasDragButton && pointerDragSource === 'dragButton' && (pointerTypeOnPointerDown.current == null || pointerTypeOnPointerDown.current === 'mouse')) {
+      let hasRenderedDragButton = !!(e.currentTarget as HTMLElement).querySelector(`[${DRAG_BUTTON_ATTR}]`);
+      let target = getEventTarget(e);
+      let isDragStartOnDragButton = target instanceof Element && !!target.closest(`[${DRAG_BUTTON_ATTR}]`);
+      if (hasRenderedDragButton && !isPointerDownOnDragButton.current && !isDragStartOnDragButton) {
+        e.preventDefault();
+        return;
+      }
     }
 
     if (typeof options.onDragStart === 'function') {
@@ -238,6 +258,8 @@ export function useDrag(options: DragOptions): DragResult {
     removeAllGlobalListeners();
     setGlobalAllowedDropOperations(DROP_OPERATION.none);
     setGlobalDropEffect(undefined);
+    pointerTypeOnPointerDown.current = null;
+    isPointerDownOnDragButton.current = false;
   };
 
   // If the dragged element is removed from the DOM via onDrop, onDragEnd won't fire: https://bugzilla.mozilla.org/show_bug.cgi?id=460801
@@ -373,18 +395,30 @@ export function useDrag(options: DragOptions): DragResult {
     };
   }
 
+  let onPointerDownCapture: HTMLAttributes<HTMLElement>['onPointerDownCapture'] = (e) => {
+    pointerTypeOnPointerDown.current = e.pointerType;
+    if (hasDragButton && pointerDragSource === 'dragButton' && e.pointerType === 'mouse') {
+      let target = getEventTarget(e);
+      isPointerDownOnDragButton.current = target instanceof Element && !!target.closest(`[${DRAG_BUTTON_ATTR}]`);
+    } else {
+      isPointerDownOnDragButton.current = false;
+    }
+  };
+
   return {
     dragProps: {
       ...interactions,
       draggable: 'true',
+      onPointerDownCapture,
       onDragStart,
       onDrag,
       onDragEnd
     },
     dragButtonProps: {
       ...descriptionProps,
-      onPress
-    },
+      onPress,
+      [DRAG_BUTTON_ATTR]: 'true'
+    } as AriaButtonProps,
     isDragging
   };
 }
