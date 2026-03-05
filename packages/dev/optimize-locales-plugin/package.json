@@ -4,7 +4,7 @@
   "main": "LocalesPlugin.js",
   "types": "LocalesPlugin.d.ts",
   "dependencies": {
-    "unplugin": "^1.4.0"
+    "unplugin": "^3.0.0"
   },
   "publishConfig": {
     "access": "public"
