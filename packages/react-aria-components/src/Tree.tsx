@@ -1003,16 +1003,16 @@ function RootDropIndicator() {
   );
 }
 
-export interface GridListSectionProps<T> extends SectionProps<T>, DOMRenderProps<'section', undefined>  {}
+export interface GridListSectionProps<T> extends SectionProps<T>, DOMRenderProps<'div', undefined>  {}
 
 /**
  * A TreeSection represents a section within a Tree.
  */
-export const TreeSection = /*#__PURE__*/ createBranchComponent(SectionNode, <T extends object>(props: GridListSectionProps<T>, ref: ForwardedRef<HTMLElement>, item: Node<T>) => {
+export const TreeSection = /*#__PURE__*/ createBranchComponent(SectionNode, <T extends object>(props: GridListSectionProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
   let state = useContext(TreeStateContext)!;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let headingRef = useRef(null);
-  ref = useObjectRef<HTMLElement>(ref);
+  ref = useObjectRef<HTMLDivElement>(ref);
   let {rowHeaderProps, rowProps, rowGroupProps} = useGridListSection({
     'aria-label': props['aria-label'] ?? undefined
   }, state, ref);
@@ -1028,7 +1028,7 @@ export const TreeSection = /*#__PURE__*/ createBranchComponent(SectionNode, <T e
   delete DOMProps.id;
 
   return (
-    <dom.section
+    <dom.div
       {...mergeProps(DOMProps, renderProps, rowGroupProps)}
       ref={ref}>
       <Provider
@@ -1040,7 +1040,7 @@ export const TreeSection = /*#__PURE__*/ createBranchComponent(SectionNode, <T e
           collection={state.collection}
           parent={item} />
       </Provider>
-    </dom.section>
+    </dom.div>
   );
 });
 
