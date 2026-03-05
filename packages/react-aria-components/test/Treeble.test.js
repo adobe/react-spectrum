@@ -554,6 +554,7 @@ describe('Treeble', () => {
     await user.keyboard('{ArrowUp}');
     await user.keyboard('{ArrowUp}');
     await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
     await user.keyboard('{ArrowRight}');
 
     expect(tree.getAllByRole('button').map(r => r.getAttribute('aria-label'))).toEqual([

@@ -1162,7 +1162,7 @@ function TableRow({item, children, layoutInfo, parent, ...otherProps}: {item: Gr
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({isDisabled: !isInteractive});
-  let isFirstRow = state.collection.rows.find(row => row.level === 0)?.key === item.key;
+  let isFirstRow = state.collection.rows.find(row => row.type === 'item' && row.level === 0)?.key === item.key;
   let isLastRow = item.nextKey == null;
   // Figure out if the TableView content is equal or greater in height to the container. If so, we'll need to round the bottom
   // border corners of the last row when selected.
