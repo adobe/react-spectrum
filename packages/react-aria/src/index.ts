@@ -68,7 +68,7 @@ export type {AriaFieldProps, FieldAria, LabelAria, LabelAriaProps} from '@react-
 export type {AriaLandmarkRole, AriaLandmarkProps, LandmarkAria, LandmarkController} from '@react-aria/landmark';
 export type {AriaLinkOptions, LinkAria} from '@react-aria/link';
 export type {AriaListBoxOptions, AriaListBoxProps, AriaListBoxSectionProps, AriaOptionProps, ListBoxAria, ListBoxSectionAria, OptionAria} from '@react-aria/listbox';
-export type {AriaGridListOptions, GridListProps, AriaGridListProps, GridListAria, AriaGridListItemOptions, GridListItemAria, AriaGridSelectionCheckboxProps, GridSelectionCheckboxAria} from '@react-aria/gridlist';
+export type {AriaGridListOptions, GridListProps, AriaGridListProps, GridListAria, AriaGridListItemOptions, GridListItemAria, AriaGridSelectionCheckboxProps, GridSelectionCheckboxAria, AriaGridListSectionProps, GridListSectionAria} from '@react-aria/gridlist';
 export type {AriaMenuProps, AriaMenuItemProps, AriaMenuOptions, AriaMenuSectionProps, AriaMenuTriggerProps, MenuAria, MenuItemAria, MenuSectionAria, MenuTriggerAria, SubmenuTriggerAria, AriaSubmenuTriggerProps} from '@react-aria/menu';
 export type {AriaMeterProps, MeterAria} from '@react-aria/meter';
 export type {AriaNumberFieldProps, NumberFieldAria} from '@react-aria/numberfield';
