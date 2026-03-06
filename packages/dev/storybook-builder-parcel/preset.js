@@ -1,6 +1,6 @@
 const { Parcel } = require("@parcel/core");
 const path = require("path");
-const { createProxyMiddleware } = require("http-proxy-middleware");
+const http = require("http");
 const fs = require("fs");
 
 const { generateIframeModern } = require("./gen-iframe-modern.js");
@@ -16,35 +16,43 @@ exports.start = async function ({ options, router }) {
       return next();
     }
 
-    let proxy = createProxyMiddleware({
-      target: "http://localhost:3000/",
-      selfHandleResponse: true,
-      logLevel: "warn",
-      onProxyRes(proxyRes, req, res) {
-        // Parcel dev server responds with main HTML page if the file doesn't exist...
-        if (
-          proxyRes.statusCode === 404 ||
-          (proxyRes.headers["content-type"]?.startsWith("text/html") &&
-            !req.url.startsWith("/iframe.html"))
-        ) {
-          return next();
-        } else {
-          res.statusCode = proxyRes.statusCode;
-          for (let header in proxyRes.headers) {
-            res.setHeader(header, proxyRes.headers[header]);
-          }
-          proxyRes.pipe(res);
-        }
-      },
+    const proxyOptions = {
+      hostname: "127.0.0.1",
+      port: 3000,
+      path: req.url,
+      method: req.method,
+      headers: { ...req.headers, host: "127.0.0.1:3000" },
+    };
+
+    const proxyReq = http.request(proxyOptions, (proxyRes) => {
+      // Parcel dev server responds with main HTML page if the file doesn't exist...
+      if (
+        proxyRes.statusCode === 404 ||
+        (proxyRes.headers["content-type"]?.startsWith("text/html") &&
+          !req.url.startsWith("/iframe.html"))
+      ) {
+        proxyRes.resume();
+        return next();
+      }
+
+      res.writeHead(proxyRes.statusCode, proxyRes.headers);
+      proxyRes.pipe(res);
     });
 
-    // Remove socket/connection temporarily to prevent proxy from subscribing to `close` event and triggering warning.
-    let { socket, connection } = req;
-    req.socket = null;
-    req.connection = null;
-    await proxy(req, res, next);
-    req.socket = socket;
-    req.connection = connection;
+    proxyReq.on("error", (err) => {
+      if (err.code === "ECONNREFUSED") return next();
+      if (!res.headersSent) res.writeHead(502).end(); 
+    });
+
+    req.on("close", () => {
+      proxyReq.destroy();
+    });
+
+    if (req.method === "POST" || req.method === "PUT" || req.method === "PATCH") {
+      req.pipe(proxyReq);
+    } else {
+      proxyReq.end();
+    }
   });
 
   let subscription = await parcel.watch();
@@ -89,11 +97,13 @@ async function createParcel(options, isDev = false) {
     serveOptions: isDev
       ? {
           port: 3000,
+          host: "127.0.0.1",
         }
       : null,
     hmrOptions: isDev
       ? {
           port: 3001,
+          host: "127.0.0.1",
         }
       : null,
     additionalReporters: [
