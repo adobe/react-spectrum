@@ -65,6 +65,7 @@ const interfaceTableCache = new Map();
 const classTableCache = new Map();
 const propTableCache = new Map();
 const descriptionCache = new Map();
+const functionExamplesCache = new Map();
 let tsFileIndex = null;
 let styleMacroDataCache = null;
 const styleMacroTableCache = new Map();
@@ -1050,6 +1051,154 @@ function getComponentDescription(componentName, file) {
 }
 
 /**
+ * Extracts one or more `@example` tag contents from JSDoc comments.
+ * @param {string} text - The text to extract examples from.
+ * @returns {string[]} An array of examples.
+ */
+function extractExamplesFromText(text) {
+  if (!text || typeof text !== 'string') {
+    return [];
+  }
+
+  let lines = text.split('\n').map(line => line.replace(/^\s*\*?\s?/, ''));
+  let examples = [];
+  let current = null;
+
+  for (let line of lines) {
+    if (/^@example\b/.test(line)) {
+      if (current) {
+        let prev = current.join('\n').trim();
+        if (prev) {
+          examples.push(prev);
+        }
+      }
+
+      current = [];
+      let inlineExample = line.replace(/^@example\b\s*/, '');
+      if (inlineExample) {
+        current.push(inlineExample);
+      }
+      continue;
+    }
+
+    if (current) {
+      if (/^@\w+/.test(line)) {
+        let example = current.join('\n').trim();
+        if (example) {
+          examples.push(example);
+        }
+        current = null;
+        continue;
+      }
+
+      current.push(line);
+    }
+  }
+
+  if (current) {
+    let example = current.join('\n').trim();
+    if (example) {
+      examples.push(example);
+    }
+  }
+
+  return examples;
+}
+
+function parseFencedCodeBlock(example) {
+  if (!example || typeof example !== 'string') {
+    return null;
+  }
+
+  let trimmed = example.trim();
+  let match = trimmed.match(/^```([^\n`]*)\n([\s\S]*?)\n```$/);
+  if (!match) {
+    return null;
+  }
+
+  let [, lang, code] = match;
+  return {
+    lang: lang?.trim() || undefined,
+    code
+  };
+}
+
+function getFunctionExamples(functionName, file) {
+  const cacheKey = getCacheKey(`${functionName}:examples`, file);
+  if (functionExamplesCache.has(cacheKey)) {
+    return functionExamplesCache.get(cacheKey);
+  }
+
+  const functionPath = resolveComponentPath(functionName, file);
+  if (!functionPath) {
+    functionExamplesCache.set(cacheKey, []);
+    return [];
+  }
+
+  const source = project.addSourceFileAtPathIfExists(functionPath);
+  if (!source) {
+    functionExamplesCache.set(cacheKey, []);
+    return [];
+  }
+
+  const exportedDecl = source.getExportedDeclarations().get(functionName)?.[0];
+  const possibleNodes = [exportedDecl, source.getVariableDeclaration(functionName), source.getFunction(functionName)];
+
+  let firstNodeExamples = [];
+  for (let node of possibleNodes.filter(Boolean)) {
+    let current = node;
+    let isDirectNode = true;
+
+    while (current) {
+      let docs = typeof current.getJsDocs === 'function' ? current.getJsDocs() : [];
+      if (!docs?.length) {
+        isDirectNode = false;
+        current = current.getParent?.();
+        continue;
+      }
+
+      let directExamples = [];
+      for (let doc of docs) {
+        let tags = doc.getTags?.() || [];
+        let tagExamples = tags
+          .filter(tag => tag.getTagName?.() === 'example')
+          .map(tag => tag.getCommentText?.())
+          .filter(Boolean)
+          .map(value => value.trim());
+        directExamples.push(...tagExamples);
+
+        if (tagExamples.length === 0) {
+          let docText = doc.getInnerText?.() || doc.getText?.() || '';
+          directExamples.push(...extractExamplesFromText(docText));
+        }
+      }
+
+      directExamples = [...new Set(directExamples.filter(Boolean))];
+      if (!directExamples.length) {
+        isDirectNode = false;
+        current = current.getParent?.();
+        continue;
+      }
+
+      if (isDirectNode) {
+        functionExamplesCache.set(cacheKey, directExamples);
+        return directExamples;
+      }
+
+      if (!firstNodeExamples.length) {
+        firstNodeExamples = directExamples;
+      }
+
+      isDirectNode = false;
+      current = current.getParent?.();
+    }
+  }
+
+  functionExamplesCache.set(cacheKey, firstNodeExamples);
+  return firstNodeExamples;
+}
+
+/**
  * Build a markdown table of props for the given component by analyzing its interface.
  */
 function generatePropTable(componentName, file) {
@@ -1500,6 +1649,56 @@ function remarkDocsComponentsToMarkdown() {
         // If failed, wipe element.
         parent.children.splice(index, 1);
         return index;
+      }
+
+      // Render function description + examples from JSDoc.
+      if (name === 'FunctionJSDoc') {
+        const functionAttr = node.attributes?.find((a) => a.name === 'function');
+        let functionName = null;
+        if (functionAttr && functionAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          const m = functionAttr.value.value.match(/\.exports\.([\w$]+)/);
+          if (m) {
+            functionName = m[1];
+          }
+        }
+
+        if (!functionName) {
+          parent.children.splice(index, 1);
+          return index;
+        }
+
+        const newNodes = [];
+        const description = getComponentDescription(functionName, file);
+        if (description) {
+          const descTree = unified().use(remarkParse).parse(description);
+          newNodes.push(...descTree.children);
+        }
+
+        const examples = getFunctionExamples(functionName, file);
+        for (let [exampleIndex, example] of examples.entries()) {
+          if (examples.length > 1) {
+            newNodes.push({
+              type: 'paragraph',
+              children: [{type: 'strong', children: [{type: 'text', value: `Example ${exampleIndex + 1}:`}]}]
+            });
+          }
+
+          const fenced = parseFencedCodeBlock(example);
+          if (fenced) {
+            newNodes.push({
+              type: 'code',
+              lang: fenced.lang || 'tsx',
+              meta: '',
+              value: fenced.code
+            });
+          } else {
+            const exampleTree = unified().use(remarkParse).parse(example);
+            newNodes.push(...exampleTree.children);
+          }
+        }
+
+        parent.children.splice(index, 1, ...newNodes);
+        return index + newNodes.length;
       }
 
       // Render a table of props.
