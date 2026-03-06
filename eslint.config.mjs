@@ -60,7 +60,8 @@ export default [{
         "packages/dev/storybook-builder-parcel/*",
         "packages/dev/storybook-react-parcel/*",
         "packages/dev/s2-docs/pages/**",
-        "packages/dev/mcp/*/dist"
+        "packages/dev/mcp/*/dist",
+        "packages/dev/codemods/src/s1-to-s2/__testfixtures__/cli/**"
     ],
 }, ...compat.extends("eslint:recommended"), {
     plugins: {
