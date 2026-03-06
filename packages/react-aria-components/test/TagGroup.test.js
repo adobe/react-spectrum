@@ -588,7 +588,7 @@ describe('TagGroup', () => {
   });
 
   describe('press events', () => {
-    it.only.each`
+    it.each`
       interactionType
       ${'mouse'}
       ${'keyboard'}
