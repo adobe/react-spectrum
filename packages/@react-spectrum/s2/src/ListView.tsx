@@ -100,7 +100,7 @@ let InternalListViewContext = createContext<{isQuiet?: boolean, selectionStyle?:
 
 const listViewWrapper = style({
   minHeight: 0,
-  minWidth: 0,
+  minWidth: 200,
   display: 'flex',
   isolation: 'isolate',
   disableTapHighlight: true,
@@ -347,8 +347,14 @@ const listitem = style<GridListItemRenderProps & {
     default: '--borderColor',
     isNextSelected: 'transparent',
     isSelected: 'transparent'
+  },
+  '--radius': {
+    type: 'borderTopStartRadius',
+    value: 'default'
   }
 });
+
+const insetBorderRadius = 'calc(var(--radius) - 1px)';
 
 const listRowBackground = style<GridListItemRenderProps & {
   isFirstItem?: boolean,
@@ -360,8 +366,6 @@ const listRowBackground = style<GridListItemRenderProps & {
   isNextNotSelected?: boolean,
   selectionStyle?: 'highlight' | 'checkbox'
 }>({
-  ...focusRing(),
-  outlineOffset: -2,
   position: 'absolute',
   zIndex: -1,
   top: {
@@ -412,51 +416,55 @@ const listRowBackground = style<GridListItemRenderProps & {
     }
   },
   borderTopStartRadius: {
-    isFirstItem: {
+    isQuiet: 'default',
+    isSelected: 'none',
+    isPrevNotSelected: {
       isSelected: {
         selectionStyle: {
           checkbox: 'none',
-          highlight: 'default'
+          highlight: insetBorderRadius
         }
       },
-      isQuiet: 'default',
-      isFocusVisible: 'default'
+      isQuiet: 'default'
     }
   },
   borderTopEndRadius: {
-    isFirstItem: {
+    isQuiet: 'default',
+    isSelected: 'none',
+    isPrevNotSelected: {
       isSelected: {
         selectionStyle: {
           checkbox: 'none',
-          highlight: 'default'
+          highlight: insetBorderRadius
         }
       },
-      isQuiet: 'default',
-      isFocusVisible: 'default'
+      isQuiet: 'default'
     }
   },
   borderBottomStartRadius: {
-    isLastItem: {
+    isQuiet: 'default',
+    isSelected: 'none',
+    isNextNotSelected: {
       isSelected: {
         selectionStyle: {
           checkbox: 'none',
-          highlight: 'default'
+          highlight: insetBorderRadius
         }
       },
-      isQuiet: 'default',
-      isFocusVisible: 'default'
+      isQuiet: 'default'
     }
   },
   borderBottomEndRadius: {
-    isLastItem: {
+    isQuiet: 'default',
+    isSelected: 'none',
+    isNextNotSelected: {
       isSelected: {
         selectionStyle: {
           checkbox: 'none',
-          highlight: 'default'
+          highlight: insetBorderRadius
         }
       },
-      isQuiet: 'default',
-      isFocusVisible: 'default'
+      isQuiet: 'default'
     }
   },
   borderTopWidth: {
@@ -503,6 +511,33 @@ const listRowBackground = style<GridListItemRenderProps & {
       }
     }
   }
+});
+
+let listRowFocusRing = style({
+  ...focusRing(),
+  outlineOffset: -2,
+  position: 'absolute',
+  inset: 0,
+  top: {
+    default: '[-1px]',
+    isFirstItem: 0
+  },
+  bottom: {
+    selectionStyle: {
+      checkbox: {
+        default: '[-1px]',
+        // Avoid the next row's selected background covering this row's focus ring.
+        isNextSelected: 0
+      },
+      highlight: '[-1px]'
+    }
+  },
+  borderRadius: {
+    default: insetBorderRadius,
+    isQuiet: 'default'
+  },
+  zIndex: 1,
+  pointerEvents: 'none'
 });
 
 export let label = style({
@@ -735,6 +770,20 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                   isLastItem: isLastItem(id, state)
                 })
               } />
+            {renderProps.isFocusVisible && 
+              <div
+                className={listRowFocusRing({
+                  ...renderProps,
+                  selectionStyle,
+                  isQuiet,
+                  isPrevSelected: isPrevSelected(id, state),
+                  isNextSelected: isNextSelected(id, state),
+                  isPrevNotSelected: !isPrevSelected(id, state),
+                  isNextNotSelected: !isNextSelected(id, state),
+                  isFirstItem: isFirstItem(id, state),
+                  isLastItem: isLastItem(id, state)
+                })} />
+            }
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               <ListSelectionCheckbox isDisabled={isDisabled} />
             )}
