@@ -35,7 +35,14 @@ export interface S1ToS2CodemodOptions extends JSCodeshiftOptions {
    * An optional subset of components to have the s1-to-s2 codemod apply to.
    * Provide a comma-separated list of component names.
    */
-  components?: string
+  components?: string,
+  /**
+   * Whether to run the codemod in agent mode, which skips interactive prompts
+   * and package installation. This matches the shipped CLI behavior.
+   *
+   * @default false
+   */
+  agent?: boolean
 }
 
 export interface UseMonopackagesCodemodOptions extends JSCodeshiftOptions {
@@ -67,6 +74,9 @@ const options = {
   },
   'components': {
     type: 'string'
+  },
+  'agent': {
+    type: 'boolean'
   }
 };
 
@@ -80,22 +90,24 @@ if (positionals.length < 1) {
   process.exit(1);
 }
 
-const codemodName = positionals[0];
-const codemodFunction = codemods[codemodName];
+async function main() {
+  const codemodName = positionals[0];
+  const codemodFunction = codemods[codemodName];
 
-if (!codemodFunction) {
-  console.error(`Unknown codemod: ${codemodName}, available codemods: ${Object.keys(codemods).join(', ')}`);
-  process.exit(1);
-}
+  if (!codemodFunction) {
+    console.error(`Unknown codemod: ${codemodName}, available codemods: ${Object.keys(codemods).join(', ')}`);
+    process.exit(1);
+  }
 
-try {  
-  codemodFunction({
+  await Promise.resolve(codemodFunction({
     parser: 'tsx',
     ignorePattern: '**/node_modules/**',
     path: '.',
     ...values
-  });
-} catch (error) {
+  }));
+}
+
+main().catch((error) => {
   console.error(`Error running codemod: ${error}`);
   process.exit(1);
-}
+});

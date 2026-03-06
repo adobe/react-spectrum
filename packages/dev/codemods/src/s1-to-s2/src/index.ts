@@ -7,7 +7,29 @@ import {transform} from './transform.js';
 import {waitForKeypress} from './utils/waitForKeypress.js';
 const boxen = require('boxen');
 
+function printNextSteps(nextSteps: string[]) {
+  console.log(boxen(
+    `Next steps:\n\n ${nextSteps.map((step, i) => `${i + 1}. ${step}`).join('\n\n\n')}`,
+    {borderStyle: 'round', padding: 1, borderColor: 'green'}
+  ));
+}
+
 export async function s1_to_s2(options: S1ToS2CodemodOptions): Promise<void> {
+  if (options.agent) {
+    logger.info('Running s1-to-s2 in agent mode (non-interactive, transform-only).');
+    logger.info('Upgrading components...');
+    await transform(options);
+    logger.success('Upgrade complete!');
+    printNextSteps([
+      `Ensure ${chalk.bold('@react-spectrum/s2')} is installed.`,
+      `If your bundler is not Parcel v2.12.0+, configure the Spectrum 2 style macro support. See: ${chalk.underline('https://react-spectrum.adobe.com/s2/index.html?path=/docs/intro--docs#configuring-your-bundler')}`,
+      `Add ${chalk.bold('import \'@react-spectrum/s2/page.css\';')} to your entry component if needed.`,
+      `Search for ${chalk.bold('TODO(S2-upgrade)')} and resolve remaining manual migration updates.`,
+      `Reference the migration guide: ${chalk.underline('https://react-spectrum.adobe.com/s2/index.html?path=/docs/migrating--docs')}`
+    ]);
+    return;
+  }
+
   console.log(boxen(
     'Welcome to the React Spectrum v3 to Spectrum 2 upgrade assistant!\n\n' +
     'This tool will:\n\n' +
@@ -66,11 +88,7 @@ export async function s1_to_s2(options: S1ToS2CodemodOptions): Promise<void> {
     `For additional help, reference the Spectrum 2 Migration Guide: ${chalk.underline('https://react-spectrum.adobe.com/s2/index.html?path=/docs/migrating--docs')}`
   );
 
-  console.log(boxen(
-    `Next steps:\n\n ${nextSteps.map((step, i) => `${i + 1}. ${step}`).join('\n\n\n')}`,
-    {borderStyle: 'round', padding: 1, borderColor: 'green'}
-  ));
+  printNextSteps(nextSteps);
 
   process.exit(0);
 }
-

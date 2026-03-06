@@ -267,17 +267,18 @@ export default function transformer(file: FileInfo, api: API, options: Options):
             return false;
           }
 
-          let localName = specifier.local?.name || specifier.imported.name;
-          return !existingSpecifiers.find((s) =>
+          let importedName = specifier.imported.name;
+          let localName = specifier.local?.name || importedName;
+          return !existingSpecifiers.find((s: t.ImportSpecifier | t.ImportDefaultSpecifier | t.ImportNamespaceSpecifier) =>
             t.isImportSpecifier(s)
             && t.isIdentifier(s.imported)
-            && s.imported.name === specifier.imported.name
+            && s.imported.name === importedName
             && (s.local?.name || s.imported.name) === localName
           );
         }
 
         if (t.isImportNamespaceSpecifier(specifier)) {
-          return !existingSpecifiers.find((s) =>
+          return !existingSpecifiers.find((s: t.ImportSpecifier | t.ImportDefaultSpecifier | t.ImportNamespaceSpecifier) =>
             t.isImportNamespaceSpecifier(s) && s.local.name === specifier.local.name
           );
         }
