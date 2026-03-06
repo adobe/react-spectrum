@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, within} from '@testing-library/react';
+import {act} from 'react';
+import {within} from '@testing-library/dom';
 import {Direction, Orientation, RadioGroupTesterOpts, UserOpts} from './types';
 import {pressElement} from './events';
 
