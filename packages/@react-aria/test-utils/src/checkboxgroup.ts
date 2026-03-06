@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act} from 'react';
-import {within} from '@testing-library/dom';
+import {act} from './act';
 import {CheckboxGroupTesterOpts, UserOpts} from './types';
 import {pressElement} from './events';
+import {within} from '@testing-library/dom';
 
 interface TriggerCheckboxOptions {
   /**

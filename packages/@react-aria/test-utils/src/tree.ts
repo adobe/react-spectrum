@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act} from 'react';
-import {within} from '@testing-library/dom';
+import {act} from './act';
 import {BaseGridRowInteractionOpts, GridRowActionOpts, ToggleGridRowOpts, TreeTesterOpts, UserOpts} from './types';
 import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
+import {within} from '@testing-library/dom';
 
 interface TreeToggleExpansionOpts extends BaseGridRowInteractionOpts {}
 interface TreeToggleRowOpts extends ToggleGridRowOpts {}

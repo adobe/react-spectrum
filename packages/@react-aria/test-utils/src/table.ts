@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act} from 'react';
-import {waitFor, within} from '@testing-library/dom';
+import {act} from './act';
 import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
 import {GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
+import {waitFor, within} from '@testing-library/dom';
 
 interface TableToggleRowOpts extends ToggleGridRowOpts {}
 interface TableToggleSortOpts {
