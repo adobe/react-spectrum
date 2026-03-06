@@ -61,7 +61,8 @@
       "require": "./illustrations/*.cjs"
     },
     "./illustrations/linear/internal/*": null,
-    "./illustrations/gradient/*/internal/*": null
+    "./illustrations/gradient/*/internal/*": null,
+    "./package.json": "./package.json"
   },
   "targets": {
     "module": {},
