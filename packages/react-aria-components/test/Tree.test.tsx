@@ -16,6 +16,7 @@ import {Button, Checkbox, Collection, DropIndicator, ListLayout, Text, Tree, Tre
 import {composeStories} from '@storybook/react';
 // @ts-ignore
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
+import {Key} from 'react-aria-components';
 import React from 'react';
 import * as stories from '../stories/Tree.stories';
 import {User} from '@react-aria/test-utils';
@@ -1797,6 +1798,38 @@ describe('Tree', () => {
       expect(button).toHaveAttribute('aria-label', 'Drag Projects');
     });
 
+    it('should make the drag button pointer-interactive when pointerDragSource="dragButton"', () => {
+      let {getAllByRole, getByRole, rerender} = render(<DraggableTree />);
+      let button = getAllByRole('button')[0];
+      let tree = getByRole('treegrid');
+      expect(button.style.pointerEvents).toBe('none');
+      expect(tree).toHaveAttribute('data-pointer-drag-source', 'item');
+
+      rerender(<DraggableTree pointerDragSource="dragButton" />);
+      button = getAllByRole('button')[0];
+      tree = getByRole('treegrid');
+      expect(button.style.pointerEvents).toBe('');
+      expect(tree).toHaveAttribute('data-pointer-drag-source', 'dragButton');
+    });
+
+    it('should require mouse drags to start from drag button when pointerDragSource="dragButton"', () => {
+      let getItems = jest.fn((keys: Set<Key>) => [...keys].map((key) => ({'text/plain': String(key)})));
+      let {getAllByRole} = render(<DraggableTree pointerDragSource="dragButton" getItems={getItems} />);
+
+      let row = getAllByRole('row')[0];
+      let dragButton = within(row).getAllByRole('button')[0];
+      let dataTransfer = new DataTransfer();
+
+      fireEvent.pointerDown(row, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+      fireEvent(row, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      expect(getItems).toHaveBeenCalledTimes(0);
+
+      dataTransfer = new DataTransfer();
+      fireEvent.pointerDown(dragButton, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+      fireEvent(dragButton, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      expect(getItems).toHaveBeenCalledTimes(1);
+    });
+
     it('should render drop indicators', async () => {
       let onReorder = jest.fn();
       let {getAllByRole} = render(<DraggableTree onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
@@ -1898,6 +1931,7 @@ describe('Tree', () => {
 
       let tree = getByRole('treegrid');
       expect(tree).not.toHaveAttribute('data-allows-dragging', 'true');
+      expect(tree).not.toHaveAttribute('data-pointer-drag-source');
       expect(tree).not.toHaveAttribute('draggable', 'true');
 
       let rows = within(tree).getAllByRole('row');

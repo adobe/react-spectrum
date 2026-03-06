@@ -51,7 +51,8 @@ interface DragHooks<T = object> {
   useDraggableItem?: (props: DraggableItemProps, state: DraggableCollectionState) => DraggableItemResult,
   DragPreview?: typeof DragPreview,
   renderDragPreview?: (items: DragItem[]) => JSX.Element | {element: JSX.Element, x: number, y: number},
-  isVirtualDragging?: () => boolean
+  isVirtualDragging?: () => boolean,
+  pointerDragSource?: 'item' | 'dragButton'
 }
 
 interface DropHooks {
@@ -91,7 +92,14 @@ export interface DragAndDropOptions<T = object> extends Omit<DraggableCollection
   /** A custom delegate object that provides drop targets for pointer coordinates within the collection. */
   dropTargetDelegate?: DropTargetDelegate,
   /** Whether the drag and drop events should be disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /**
+   * Controls where pointer dragging can start for mouse input.
+   * `"item"` allows dragging from anywhere on the draggable item.
+   * `"dragButton"` requires dragging to start from the drag button, if one is present.
+   * @default "item"
+   */
+  pointerDragSource?: 'item' | 'dragButton'
 }
 
 /**
@@ -109,7 +117,8 @@ export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): Drag
       getItems,
       renderDragPreview,
       renderDropIndicator,
-      dropTargetDelegate
+      dropTargetDelegate,
+      pointerDragSource = 'item'
     } = options;
 
     let isDraggable = !!getItems;
@@ -121,10 +130,13 @@ export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): Drag
         return useDraggableCollectionState({...props, ...options} as DraggableCollectionStateOptions);
       };
       hooks.useDraggableCollection = useDraggableCollection;
-      hooks.useDraggableItem = useDraggableItem;
+      hooks.useDraggableItem = function useDraggableItemOverride(props: DraggableItemProps, state: DraggableCollectionState) {
+        return useDraggableItem({...props, pointerDragSource}, state);
+      };
       hooks.DragPreview = DragPreview;
       hooks.renderDragPreview = renderDragPreview;
       hooks.isVirtualDragging = isVirtualDragging;
+      hooks.pointerDragSource = pointerDragSource;
     }
 
     if (isDroppable) {

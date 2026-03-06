@@ -32,6 +32,14 @@
     min-height: 100px;
   }
 
+  &[data-pointer-drag-source=dragButton] .drag-button {
+    cursor: grab;
+  }
+
+  &[data-pointer-drag-source=dragButton] .react-aria-Row[data-dragging] .drag-button {
+    cursor: grabbing;
+  }
+
   .react-aria-TableHeader {
     color: var(--text-color);
   }

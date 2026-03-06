@@ -320,6 +320,11 @@ export interface TableRenderProps {
    */
   isDropTarget: boolean,
   /**
+   * Where pointer dragging can start.
+   * @selector [data-pointer-drag-source="item | dragButton"]
+   */
+  pointerDragSource?: 'item' | 'dragButton',
+  /**
    * State of the table.
    */
   state: TableState<unknown>
@@ -476,6 +481,8 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
+  let isListDraggable = !!(hasDragHooks && !dragState?.isDisabled);
+  let pointerDragSource = isListDraggable ? dragAndDropHooks?.pointerDragSource : undefined;
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderProps = useRenderProps({
     ...props,
@@ -485,11 +492,10 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       isDropTarget: isRootDropTarget,
       isFocused,
       isFocusVisible,
+      pointerDragSource,
       state: filteredState
     }
   });
-
-  let isListDraggable = !!(hasDragHooks && !dragState?.isDisabled);
 
   let style = renderProps.style;
   let layoutState: TableColumnResizeState<unknown> | null = null;
@@ -526,6 +532,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
           slot={props.slot || undefined}
           onScroll={props.onScroll}
           data-allows-dragging={isListDraggable || undefined}
+          data-pointer-drag-source={pointerDragSource}
           data-drop-target={isRootDropTarget || undefined}
           data-focused={isFocused || undefined}
           data-focus-visible={isFocusVisible || undefined}>
@@ -1230,6 +1237,9 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     let DOMProps = filterDOMProps(props as any, {global: true});
     delete DOMProps.id;
     delete DOMProps.onClick;
+    let dragButtonStyle: React.CSSProperties | undefined = dragAndDropHooks?.pointerDragSource === 'dragButton'
+      ? undefined
+      : {pointerEvents: 'none'};
 
     return (
       <>
@@ -1267,9 +1277,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
                   drag: {
                     ...draggableItem?.dragButtonProps,
                     ref: dragButtonRef,
-                    style: {
-                      pointerEvents: 'none'
-                    }
+                    style: dragButtonStyle
                   }
                 }
               }],

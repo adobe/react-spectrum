@@ -67,6 +67,11 @@ export interface GridListRenderProps {
    */
   layout: 'stack' | 'grid',
   /**
+   * Where pointer dragging can start.
+   * @selector [data-pointer-drag-source="item | dragButton"]
+   */
+  pointerDragSource?: 'item' | 'dragButton',
+  /**
    * State of the grid list.
    */
   state: ListState<unknown>
@@ -222,6 +227,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
+  let pointerDragSource = (isListDraggable && !dragState?.isDisabled) ? dragAndDropHooks?.pointerDragSource : undefined;
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let isEmpty = filteredState.collection.size === 0;
   let renderValues = {
@@ -230,6 +236,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     isFocused,
     isFocusVisible,
     layout,
+    pointerDragSource,
     state: filteredState
   };
   let renderProps = useRenderProps({
@@ -266,7 +273,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
         data-empty={isEmpty || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
-        data-layout={layout}>
+        data-layout={layout}
+        data-pointer-drag-source={pointerDragSource}>
         <Provider
           values={[
             [ListStateContext, filteredState],
@@ -403,6 +411,9 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
   delete DOMProps.onClick;
+  let dragButtonStyle: React.CSSProperties | undefined = dragAndDropHooks?.pointerDragSource === 'dragButton'
+    ? undefined
+    : {pointerEvents: 'none'};
 
   return (
     <>
@@ -441,9 +452,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
                   drag: {
                     ...draggableItem?.dragButtonProps,
                     ref: dragButtonRef,
-                    style: {
-                      pointerEvents: 'none'
-                    }
+                    style: dragButtonStyle
                   }
                 }
               }],

@@ -30,6 +30,12 @@ export interface DraggableItemProps {
    */
   hasDragButton?: boolean,
   /**
+   * Controls where pointer dragging can start for mouse input.
+   * `"item"` allows dragging from anywhere on the item.
+   * `"dragButton"` requires dragging to start from the drag button, if one is present.
+   */
+  pointerDragSource?: 'item' | 'dragButton',
+  /**
    * Whether the item has a primary action (e.g. Enter key or long press) that would
    * conflict with initiating accessible drag and drop. If true, the Alt key must be held to
    * start dragging with a keyboard, and long press is disabled until selection mode is entered.
@@ -73,6 +79,7 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     preview: state.preview,
     getAllowedDropOperations: state.getAllowedDropOperations,
     hasDragButton: props.hasDragButton,
+    pointerDragSource: props.pointerDragSource,
     onDragStart(e) {
       state.startDrag(props.key, e);
       // Track draggingKeys for useDroppableCollection's default onDrop handler and useDroppableCollectionState's default getDropOperation
