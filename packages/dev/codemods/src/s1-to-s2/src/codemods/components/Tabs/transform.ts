@@ -1,16 +1,17 @@
-import {getName, removeComponentImport} from '../../shared/utils';
+import {getName, removeComponentImport, removeComponentImportIfUnused} from '../../shared/utils';
 import {NodePath} from '@babel/traverse';
 import {removeProp, updateComponentWithinCollection, updateToNewComponentName} from '../../shared/transforms';
 import * as t from '@babel/types';
 
 function transformTabList(tabListPath: NodePath<t.JSXElement>): t.JSXElement {
-  tabListPath.get('children').forEach(itemPath => {
-    if (
-      t.isJSXElement(itemPath.node) &&
-      t.isJSXIdentifier(itemPath.node.openingElement.name) &&
-      getName(itemPath as NodePath<t.JSXElement>, itemPath.node.openingElement.name) === 'Item'
-    ) {
-      updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponentName: 'TabList', newComponentName: 'Tab'});
+  tabListPath.traverse({
+    JSXElement(itemPath) {
+      if (
+        t.isJSXIdentifier(itemPath.node.openingElement.name) &&
+        getName(itemPath as NodePath<t.JSXElement>, itemPath.node.openingElement.name) === 'Item'
+      ) {
+        updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponentName: 'TabList', newComponentName: 'Tab'});
+      }
     }
   });
   return tabListPath.node;
@@ -96,4 +97,6 @@ export default function transformTabs(path: NodePath<t.JSXElement>): void {
 
   // Remove isQuiet
   removeProp(path, {propName: 'isQuiet'});
+
+  removeComponentImportIfUnused(program, 'Item');
 }

@@ -10,6 +10,28 @@ exports[`Should not update components that are not provided to --components opti
 </div>"
 `;
 
+exports[`Should only update ComboBox related shared components provided to --components option 1`] = `
+"import { ComboBoxSection, ComboBoxItem, ComboBox } from "@react-spectrum/s2";
+import { Menu, MenuTrigger, Button, Section, Item } from '@adobe/react-spectrum';
+
+<>
+  <ComboBox>
+    <ComboBoxSection><Header>Animals</Header>
+      <ComboBoxItem id="dog">Dog</ComboBoxItem>
+      <ComboBoxItem id="cat">Cat</ComboBoxItem>
+    </ComboBoxSection>
+  </ComboBox>
+  <MenuTrigger>
+    <Button>Open</Button>
+    <Menu>
+      <Section title="Actions">
+        <Item key="cut">Cut</Item>
+      </Section>
+    </Menu>
+  </MenuTrigger>
+</>"
+`;
+
 exports[`Should only update components provided to --components option 1`] = `
 "import { TextArea } from '@adobe/react-spectrum';
 
@@ -22,6 +44,92 @@ import { Button } from "@react-spectrum/s2";
 </div>"
 `;
 
+exports[`Should update ActionGroup related components provided to --components option 1`] = `
+"import { ActionButtonGroup, ActionButton } from "@react-spectrum/s2";
+
+<ActionButtonGroup>
+  <ActionButton key="add" onPress={() => onAction("add")}>Add</ActionButton>
+  <ActionButton key="delete" onPress={() => onAction("delete")}>Delete</ActionButton>
+  <ActionButton key="edit" onPress={() => onAction("edit")}>Edit</ActionButton>
+</ActionButtonGroup>"
+`;
+
+exports[`Should update DialogTrigger related components provided to --components option 1`] = `
+"import { Button, Heading, Content } from '@adobe/react-spectrum';
+
+import { DialogTrigger, Dialog } from "@react-spectrum/s2";
+
+<DialogTrigger>
+  <Button>Test</Button>
+  <Dialog>
+    <Heading>Test</Heading>
+
+    <Content>Content</Content>
+  </Dialog>
+</DialogTrigger>"
+`;
+
+exports[`Should update Menu related components provided to --components option 1`] = `
+"import {
+  UnavailableMenuItemTrigger,
+  ContextualHelpPopover,
+  MenuItem,
+  MenuSection,
+  Menu,
+  MenuTrigger,
+  SubmenuTrigger,
+} from "@react-spectrum/s2";
+
+import { Breadcrumbs, Item, Button, Heading, Content } from '@adobe/react-spectrum';
+
+<>
+  <MenuTrigger>
+    <Button>Edit</Button>
+    <Menu>
+      <MenuItem id="undo">Undo</MenuItem>
+      <SubmenuTrigger>
+        <MenuItem id="share">Share</MenuItem>
+        <Menu>
+          <MenuItem id="sms">SMS</MenuItem>
+        </Menu>
+      </SubmenuTrigger>
+      <MenuSection><Header>Help</Header>
+        <UnavailableMenuItemTrigger isUnavailable>
+          <MenuItem id="cut">Cut</MenuItem>
+          <ContextualHelpPopover>
+            <Heading>Cut</Heading>
+            <Content>Please select text for Cut to be enabled.</Content>
+          </ContextualHelpPopover>
+        </UnavailableMenuItemTrigger>
+      </MenuSection>
+    </Menu>
+  </MenuTrigger>
+  <Breadcrumbs>
+    <Item key="home">Home</Item>
+  </Breadcrumbs>
+</>"
+`;
+
+exports[`Should update Tabs related components provided to --components option 1`] = `
+"import { Tab, TabPanel, Tabs, TabList } from "@react-spectrum/s2";
+
+<Tabs aria-label="History of Ancient Rome"><TabList>
+    <Tab id="FoR">Founding of Rome</Tab>
+    <Tab id="MaR">Monarchy and Republic</Tab>
+  </TabList><TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel><TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel></Tabs>"
+`;
+
+exports[`Should update TooltipTrigger related components provided to --components option 1`] = `
+"import { ActionButton } from '@adobe/react-spectrum';
+
+import { TooltipTrigger, Tooltip } from "@react-spectrum/s2";
+
+<TooltipTrigger placement="bottom">
+  <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+  <Tooltip>Change Name</Tooltip>
+</TooltipTrigger>"
+`;
+
 exports[`Should update multiple components provided to --components option 1`] = `
 "import { Button, TextArea } from "@react-spectrum/s2";
 
@@ -30,4 +138,25 @@ exports[`Should update multiple components provided to --components option 1`] =
   <Button variant="primary" staticColor="white">Test</Button>
   <TextArea />
 </div>"
+`;
+
+exports[`Should update related TableView components provided to --components option 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+<TableView>
+  <TableHeader>
+    <Column id="test" isRowHeader={true}>Test</Column>
+    <Column id="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>"
 `;

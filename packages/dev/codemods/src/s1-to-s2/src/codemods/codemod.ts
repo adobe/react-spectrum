@@ -1,5 +1,5 @@
 /* eslint-disable max-depth */
-import {addComment} from './shared/utils';
+import {addComment, getName} from './shared/utils';
 import {API, FileInfo} from 'jscodeshift';
 import {getComponents} from '../getComponents';
 import {iconMap} from './icons/iconMap';
@@ -37,6 +37,138 @@ interface Options {
   components?: string
 }
 
+interface RelatedComponentGroup {
+  components?: string[],
+  scopedComponents?: Record<string, string[]>
+}
+
+interface ComponentSelection {
+  components: Set<string>,
+  explicitComponents: Set<string>,
+  scopedComponents: Map<string, Set<string>>
+}
+
+const relatedComponentGroups: Record<string, RelatedComponentGroup> = {
+  ActionMenu: {
+    scopedComponents: {
+      Item: ['ActionMenu']
+    }
+  },
+  Breadcrumbs: {
+    scopedComponents: {
+      Item: ['Breadcrumbs']
+    }
+  },
+  ComboBox: {
+    scopedComponents: {
+      Item: ['ComboBox'],
+      Section: ['ComboBox']
+    }
+  },
+  DialogContainer: {
+    components: ['Dialog']
+  },
+  DialogTrigger: {
+    components: ['Dialog']
+  },
+  Menu: {
+    components: ['ContextualHelpTrigger', 'MenuTrigger', 'SubmenuTrigger'],
+    scopedComponents: {
+      Item: ['Menu'],
+      Section: ['Menu']
+    }
+  },
+  Picker: {
+    scopedComponents: {
+      Item: ['Picker'],
+      Section: ['Picker']
+    }
+  },
+  TableView: {
+    components: ['Cell', 'Column', 'Row', 'TableBody', 'TableHeader']
+  },
+  Tabs: {
+    components: ['TabList', 'TabPanels']
+  },
+  TagGroup: {
+    scopedComponents: {
+      Item: ['TagGroup']
+    }
+  },
+  TooltipTrigger: {
+    components: ['Tooltip']
+  }
+};
+
+function addScopedParents(scopedComponents: Map<string, Set<string>>, component: string, parents: string[]) {
+  let existingParents = scopedComponents.get(component) ?? new Set<string>();
+  for (let parent of parents) {
+    existingParents.add(parent);
+  }
+  scopedComponents.set(component, existingParents);
+}
+
+function getComponentSelection(components?: string): ComponentSelection {
+  if (!components) {
+    return {
+      components: new Set(availableComponents),
+      explicitComponents: new Set(availableComponents),
+      scopedComponents: new Map()
+    };
+  }
+
+  let explicitComponents = new Set(
+    components.split(',').map(s => s.trim()).filter(Boolean)
+  );
+  let expandedComponents = new Set(explicitComponents);
+  let scopedComponents = new Map<string, Set<string>>();
+
+  for (let component of explicitComponents) {
+    let relatedComponents = relatedComponentGroups[component];
+    if (!relatedComponents) {
+      continue;
+    }
+
+    for (let relatedComponent of relatedComponents.components ?? []) {
+      expandedComponents.add(relatedComponent);
+    }
+
+    for (let [relatedComponent, parents] of Object.entries(relatedComponents.scopedComponents ?? {})) {
+      expandedComponents.add(relatedComponent);
+      if (!explicitComponents.has(relatedComponent)) {
+        addScopedParents(scopedComponents, relatedComponent, parents);
+      }
+    }
+  }
+
+  return {
+    components: new Set([...expandedComponents].filter(component => availableComponents.has(component))),
+    explicitComponents: new Set([...explicitComponents].filter(component => availableComponents.has(component))),
+    scopedComponents
+  };
+}
+
+function shouldTransformElement(
+  componentName: string,
+  path: NodePath<t.JSXElement>,
+  selection: ComponentSelection
+): boolean {
+  if (selection.explicitComponents.has(componentName)) {
+    return true;
+  }
+
+  let allowedParents = selection.scopedComponents.get(componentName);
+  if (!allowedParents || allowedParents.size === 0) {
+    return true;
+  }
+
+  return !!path.findParent((parentPath) =>
+    t.isJSXElement(parentPath.node)
+    && t.isJSXIdentifier(parentPath.node.openingElement.name)
+    && allowedParents.has(getName(path, parentPath.node.openingElement.name))
+  );
+}
+
 export default function transformer(file: FileInfo, api: API, options: Options):string {
   let j = api.jscodeshift.withParser({
     parse(source: string) {
@@ -46,7 +178,8 @@ export default function transformer(file: FileInfo, api: API, options: Options):
     }
   });
   let root = j(file.source);
-  let componentsToTransform = options.components ? new Set(options.components.split(',').filter(s => availableComponents.has(s))) : availableComponents;
+  let selection = getComponentSelection(options.components);
+  let componentsToTransform = selection.components;
   let v3ComponentsToRename = new Set(Object.keys(renamedComponents));
   let S2ComponentsToImport = new Set<string>();
 
@@ -72,7 +205,10 @@ export default function transformer(file: FileInfo, api: API, options: Options):
                 if (propName && path.parentPath!.parentPath?.parentPath?.isJSXElement()) {
                   if (componentsToTransform.has(propName)) {
                     importedComponents.set(propName, clonedSpecifier);
-                    elements.push([propName, path.parentPath!.parentPath.parentPath]);
+                    let elementPath = path.parentPath!.parentPath.parentPath as NodePath<t.JSXElement>;
+                    if (shouldTransformElement(propName, elementPath, selection)) {
+                      elements.push([propName, elementPath]);
+                    }
                   } else if (v3ComponentsToRename.has(propName)) {
                     S2ComponentsToImport.add(renamedComponents[propName]);
                     elements.push([propName, path.parentPath!.parentPath.parentPath]);
@@ -112,7 +248,10 @@ export default function transformer(file: FileInfo, api: API, options: Options):
               bindings.push(binding);
               for (let path of binding.referencePaths) {
                 if (path.parentPath?.isJSXOpeningElement() && path.parentPath.parentPath.isJSXElement()) {
-                  elements.push([specifier.imported.name, path.parentPath.parentPath]);
+                  let elementPath = path.parentPath.parentPath as NodePath<t.JSXElement>;
+                  if (shouldTransformElement(specifier.imported.name, elementPath, selection)) {
+                    elements.push([specifier.imported.name, elementPath]);
+                  }
                 }
               }
             }
@@ -147,7 +286,9 @@ export default function transformer(file: FileInfo, api: API, options: Options):
         return;
       }
 
-      if (arg.value !== '@adobe/react-spectrum' && !arg.value.startsWith('@react-spectrum/')) {
+      let isV3ImportSource = arg.value === '@adobe/react-spectrum'
+        || (arg.value.startsWith('@react-spectrum/') && arg.value !== '@react-spectrum/s2');
+      if (!isV3ImportSource) {
         return;
       }
 
@@ -255,16 +396,31 @@ export default function transformer(file: FileInfo, api: API, options: Options):
 
     if (existingImport.length) {
       let importDecl = existingImport.get();
-      for (let specifier of importDecl.node.specifiers) {
-        if (specifier.type === 'ImportSpecifier'
-          && importedComponents.has(specifier.imported.name)) {
-          importSpecifiers.add(specifier);
-        }
-      }
+      let existingSpecifiers = importDecl.value.specifiers;
       // add importSpecifiers to existing import
       importDecl.value.specifiers = [...importDecl.value.specifiers, ...[...importSpecifiers].filter(specifier => {
-        // @ts-ignore
-        return specifier.imported.name !== 'Item' && ![...importDecl.value.specifiers].find(s => s.imported.name === specifier.imported.name);
+        if (t.isImportSpecifier(specifier) && t.isIdentifier(specifier.imported)) {
+          if (specifier.imported.name === 'Item') {
+            return false;
+          }
+
+          let importedName = specifier.imported.name;
+          let localName = specifier.local?.name || importedName;
+          return !existingSpecifiers.find((s: t.ImportSpecifier | t.ImportDefaultSpecifier | t.ImportNamespaceSpecifier) =>
+            t.isImportSpecifier(s)
+            && t.isIdentifier(s.imported)
+            && s.imported.name === importedName
+            && (s.local?.name || s.imported.name) === localName
+          );
+        }
+
+        if (t.isImportNamespaceSpecifier(specifier)) {
+          return !existingSpecifiers.find((s: t.ImportSpecifier | t.ImportDefaultSpecifier | t.ImportNamespaceSpecifier) =>
+            t.isImportNamespaceSpecifier(s) && s.local.name === specifier.local.name
+          );
+        }
+
+        return false;
       })];
     } else {
       if (importSpecifiers.size > 0) {
