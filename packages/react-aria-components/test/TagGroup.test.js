@@ -176,6 +176,29 @@ describe('TagGroup', () => {
     expect(onHoverEnd).not.toHaveBeenCalled();
   });
 
+  it('should show hover state when tag has an href even without selectionMode', async () => {
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderTagGroup({}, {}, {href: '/', className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
+    let row = getAllByRole('row')[0];
+
+    expect(row).not.toHaveAttribute('data-hovered');
+    expect(row).not.toHaveClass('hover');
+
+    await user.hover(row);
+    expect(row).toHaveAttribute('data-hovered', 'true');
+    expect(row).toHaveClass('hover');
+    expect(onHoverStart).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(1);
+
+    await user.unhover(row);
+    expect(row).not.toHaveAttribute('data-hovered');
+    expect(row).not.toHaveClass('hover');
+    expect(onHoverEnd).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(2);
+  });
+
   it('should support focus ring', async () => {
     let onFocus = jest.fn();
     let onFocusChange = jest.fn();
