@@ -66,7 +66,6 @@ export {
   getLocalTimeZone,
   setLocalTimeZone,
   resetLocalTimeZone,
-  isLocalTimeZoneOverridden,
   startOfMonth,
   startOfWeek,
   startOfYear,
