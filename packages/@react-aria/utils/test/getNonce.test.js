@@ -16,6 +16,7 @@ import {resetNonceCache} from '../src/getNonce';
 describe('getNonce', () => {
   afterEach(() => {
     document.querySelectorAll('meta[property="csp-nonce"]').forEach(el => el.remove());
+    document.querySelectorAll('iframe').forEach(el => el.remove());
     delete globalThis['__webpack_nonce__'];
     resetNonceCache();
   });
@@ -114,5 +115,39 @@ describe('getNonce', () => {
     document.head.appendChild(meta);
 
     expect(getNonce()).toBe('content-fallback');
+  });
+
+  it('does not cache a missing nonce', () => {
+    // First call: no nonce configured — should return undefined
+    expect(getNonce()).toBeUndefined();
+
+    // Now set a nonce — it should be picked up because undefined wasn't cached
+    globalThis['__webpack_nonce__'] = 'late-nonce';
+    expect(getNonce()).toBe('late-nonce');
+  });
+
+  it('detects a meta nonce added after an initial miss', () => {
+    // First call: no meta tag — should return undefined
+    expect(getNonce()).toBeUndefined();
+
+    // Add a meta tag after the initial miss
+    let meta = document.createElement('meta');
+    meta.setAttribute('property', 'csp-nonce');
+    meta.nonce = 'late-meta-nonce';
+    document.head.appendChild(meta);
+
+    expect(getNonce()).toBe('late-meta-nonce');
+  });
+
+  it('reads __webpack_nonce__ from the provided document window', () => {
+    let iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+
+    // Set different nonces on parent and iframe windows
+    globalThis['__webpack_nonce__'] = 'parent-nonce';
+    iframe.contentWindow['__webpack_nonce__'] = 'iframe-nonce';
+
+    // When given the iframe's document, should prefer the iframe's nonce
+    expect(getNonce(iframe.contentDocument)).toBe('iframe-nonce');
   });
 });

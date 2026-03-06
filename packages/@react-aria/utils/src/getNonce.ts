@@ -12,7 +12,16 @@
 
 import {getOwnerWindow} from './domHelpers';
 
-let nonceCache = new WeakMap<Document, string | undefined>();
+type NonceWindow = Window & typeof globalThis & {
+  __webpack_nonce__?: string
+};
+
+function getWebpackNonce(doc?: Document): string | undefined {
+  let ownerWindow = doc?.defaultView as NonceWindow | null | undefined;
+  return ownerWindow?.__webpack_nonce__ || globalThis['__webpack_nonce__'] || undefined;
+}
+
+let nonceCache = new WeakMap<Document, string>();
 
 /** Reset the cached nonce value. Exported for testing only. */
 export function resetNonceCache(): void {
@@ -26,7 +35,7 @@ export function resetNonceCache(): void {
 export function getNonce(doc?: Document): string | undefined {
   let d = doc ?? (typeof document !== 'undefined' ? document : undefined);
   if (!d) {
-    return globalThis['__webpack_nonce__'] || undefined;
+    return getWebpackNonce(d);
   }
 
   if (nonceCache.has(d)) {
@@ -34,8 +43,10 @@ export function getNonce(doc?: Document): string | undefined {
   }
 
   let meta = d.querySelector('meta[property="csp-nonce"]');
-  let nonce = (meta && meta instanceof getOwnerWindow(meta).HTMLMetaElement && (meta.nonce || meta.content)) || globalThis['__webpack_nonce__'] || undefined;
+  let nonce = (meta && meta instanceof getOwnerWindow(meta).HTMLMetaElement && (meta.nonce || meta.content)) || getWebpackNonce(d) || undefined;
 
-  nonceCache.set(d, nonce);
+  if (nonce !== undefined) {
+    nonceCache.set(d, nonce);
+  }
   return nonce;
 }
