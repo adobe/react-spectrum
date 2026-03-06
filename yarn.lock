@@ -93,6 +93,7 @@ __metadata:
   resolution: "@adobe/react-spectrum@workspace:packages/@adobe/react-spectrum"
   dependencies:
     "@adobe/react-spectrum": "npm:3.46.0"
+    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@babel/cli": "npm:^7.12.10"
     "@babel/core": "npm:^7.24.3"
     "@internationalized/date": "npm:^3.10.1"
@@ -5308,7 +5309,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/actiongroup@workspace:packages/@react-aria/actiongroup"
   dependencies:
+    "@react-types/actiongroup": "npm:^3.4.21"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5319,9 +5324,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/aria-modal-polyfill@workspace:packages/@react-aria/aria-modal-polyfill"
   dependencies:
+    "@swc/helpers": "npm:^0.5.0"
+    aria-hidden: "npm:^1.2.3"
     react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -5329,7 +5337,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/autocomplete@workspace:packages/@react-aria/autocomplete"
   dependencies:
+    "@react-types/autocomplete": "npm:3.0.0-alpha.36"
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5340,6 +5353,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/breadcrumbs@workspace:packages/@react-aria/breadcrumbs"
   dependencies:
+    "@react-types/breadcrumbs": "npm:^3.7.17"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5351,7 +5367,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/button@workspace:packages/@react-aria/button"
   dependencies:
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5362,7 +5382,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/calendar@workspace:packages/@react-aria/calendar"
   dependencies:
+    "@internationalized/date": "npm:^3.10.1"
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/calendar": "npm:^3.8.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5373,18 +5399,25 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/checkbox@workspace:packages/@react-aria/checkbox"
   dependencies:
+    "@react-types/checkbox": "npm:^3.10.2"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
-"@react-aria/collections@npm:^3.0.1, @react-aria/collections@workspace:packages/@react-aria/collections":
+"@react-aria/collections@workspace:packages/@react-aria/collections":
   version: 0.0.0-use.local
   resolution: "@react-aria/collections@workspace:packages/@react-aria/collections"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5395,7 +5428,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/color@workspace:packages/@react-aria/color"
   dependencies:
+    "@react-types/color": "npm:^3.1.2"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5406,7 +5443,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/combobox@workspace:packages/@react-aria/combobox"
   dependencies:
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/combobox": "npm:^3.13.10"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5417,7 +5459,17 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/datepicker@workspace:packages/@react-aria/datepicker"
   dependencies:
+    "@internationalized/date": "npm:^3.10.1"
+    "@internationalized/number": "npm:^3.6.5"
+    "@internationalized/string": "npm:^3.2.7"
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/calendar": "npm:^3.8.1"
+    "@react-types/datepicker": "npm:^3.13.3"
+    "@react-types/dialog": "npm:^3.5.22"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5428,6 +5480,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/dialog@workspace:packages/@react-aria/dialog"
   dependencies:
+    "@react-types/dialog": "npm:^3.5.22"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5439,18 +5494,26 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/disclosure@workspace:packages/@react-aria/disclosure"
   dependencies:
+    "@react-types/button": "npm:^3.14.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
-"@react-aria/dnd@npm:^3.0.0, @react-aria/dnd@npm:^3.1.0, @react-aria/dnd@npm:^3.11.4, @react-aria/dnd@workspace:packages/@react-aria/dnd":
+"@react-aria/dnd@npm:^3.0.0, @react-aria/dnd@npm:^3.1.0, @react-aria/dnd@workspace:packages/@react-aria/dnd":
   version: 0.0.0-use.local
   resolution: "@react-aria/dnd@workspace:packages/@react-aria/dnd"
   dependencies:
+    "@internationalized/string": "npm:^3.2.7"
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5467,6 +5530,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/focus@workspace:packages/@react-aria/focus"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    clsx: "npm:^2.0.0"
     react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5478,7 +5544,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/form@workspace:packages/@react-aria/form"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5489,7 +5558,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/grid@workspace:packages/@react-aria/grid"
   dependencies:
+    "@react-types/checkbox": "npm:^3.10.2"
+    "@react-types/grid": "npm:^3.3.6"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5500,17 +5574,26 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/gridlist@workspace:packages/@react-aria/gridlist"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
-"@react-aria/i18n@npm:^3.12.10, @react-aria/i18n@npm:^3.12.14, @react-aria/i18n@workspace:packages/@react-aria/i18n":
+"@react-aria/i18n@npm:^3.12.10, @react-aria/i18n@workspace:packages/@react-aria/i18n":
   version: 0.0.0-use.local
   resolution: "@react-aria/i18n@workspace:packages/@react-aria/i18n"
   dependencies:
+    "@internationalized/date": "npm:^3.10.1"
+    "@internationalized/message": "npm:^3.1.8"
+    "@internationalized/number": "npm:^3.6.5"
+    "@internationalized/string": "npm:^3.2.7"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5518,11 +5601,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/interactions@npm:^3.1.0, @react-aria/interactions@npm:^3.25.1, @react-aria/interactions@npm:^3.26.0, @react-aria/interactions@workspace:packages/@react-aria/interactions":
+"@react-aria/interactions@npm:^3.1.0, @react-aria/interactions@npm:^3.25.1, @react-aria/interactions@workspace:packages/@react-aria/interactions":
   version: 0.0.0-use.local
   resolution: "@react-aria/interactions@workspace:packages/@react-aria/interactions"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5533,6 +5619,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/label@workspace:packages/@react-aria/label"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5544,7 +5632,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/landmark@workspace:packages/@react-aria/landmark"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5555,6 +5646,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/link@workspace:packages/@react-aria/link"
   dependencies:
+    "@react-types/link": "npm:^3.6.5"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5566,7 +5660,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/listbox@workspace:packages/@react-aria/listbox"
   dependencies:
+    "@react-types/listbox": "npm:^3.7.4"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5577,7 +5675,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/live-announcer@workspace:packages/@react-aria/live-announcer"
   dependencies:
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -5598,7 +5700,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/menu@workspace:packages/@react-aria/menu"
   dependencies:
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/menu": "npm:^3.10.5"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5609,6 +5716,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/meter@workspace:packages/@react-aria/meter"
   dependencies:
+    "@react-types/meter": "npm:^3.4.13"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5620,7 +5730,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/numberfield@workspace:packages/@react-aria/numberfield"
   dependencies:
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/numberfield": "npm:^3.8.16"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5635,11 +5750,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/overlays@npm:^3.31.0, @react-aria/overlays@workspace:packages/@react-aria/overlays":
+"@react-aria/overlays@workspace:packages/@react-aria/overlays":
   version: 0.0.0-use.local
   resolution: "@react-aria/overlays@workspace:packages/@react-aria/overlays"
   dependencies:
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/overlays": "npm:^3.9.2"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5658,6 +5778,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/progress@workspace:packages/@react-aria/progress"
   dependencies:
+    "@react-types/progress": "npm:^3.5.16"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5669,7 +5792,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/radio@workspace:packages/@react-aria/radio"
   dependencies:
+    "@react-types/radio": "npm:^3.9.2"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5680,7 +5807,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/searchfield@workspace:packages/@react-aria/searchfield"
   dependencies:
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/searchfield": "npm:^3.6.6"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5691,7 +5823,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/select@workspace:packages/@react-aria/select"
   dependencies:
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/select": "npm:^3.12.0"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5702,7 +5839,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/selection@workspace:packages/@react-aria/selection"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5713,6 +5853,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/separator@workspace:packages/@react-aria/separator"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5724,7 +5866,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/slider@workspace:packages/@react-aria/slider"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/slider": "npm:^3.8.2"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5735,6 +5881,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/spinbutton@workspace:packages/@react-aria/spinbutton"
   dependencies:
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5742,13 +5891,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/ssr@npm:^3.0.0, @react-aria/ssr@npm:^3.9.10, @react-aria/ssr@workspace:packages/@react-aria/ssr":
+"@react-aria/ssr@npm:^3.0.0, @react-aria/ssr@workspace:packages/@react-aria/ssr":
   version: 0.0.0-use.local
   resolution: "@react-aria/ssr@workspace:packages/@react-aria/ssr"
   dependencies:
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -5756,7 +5907,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/steplist@workspace:packages/@react-aria/steplist"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5767,7 +5921,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/switch@workspace:packages/@react-aria/switch"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/switch": "npm:^3.5.15"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5778,7 +5936,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/table@workspace:packages/@react-aria/table"
   dependencies:
+    "@react-types/checkbox": "npm:^3.10.2"
+    "@react-types/grid": "npm:^3.3.6"
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/table": "npm:^3.13.4"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5789,7 +5953,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/tabs@workspace:packages/@react-aria/tabs"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/tabs": "npm:^3.3.20"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5800,7 +5968,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/tag@workspace:packages/@react-aria/tag"
   dependencies:
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5824,7 +5996,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/textfield@workspace:packages/@react-aria/textfield"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/textfield": "npm:^3.12.6"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5835,7 +6011,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/toast@workspace:packages/@react-aria/toast"
   dependencies:
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5846,7 +6026,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/toggle@workspace:packages/@react-aria/toggle"
   dependencies:
+    "@react-types/checkbox": "npm:^3.10.2"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5857,6 +6041,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/toolbar@workspace:packages/@react-aria/toolbar"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5868,7 +6054,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/tooltip@workspace:packages/@react-aria/tooltip"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/tooltip": "npm:^3.5.0"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5879,18 +6069,26 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/tree@workspace:packages/@react-aria/tree"
   dependencies:
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
-"@react-aria/utils@npm:^3.29.0, @react-aria/utils@npm:^3.32.0, @react-aria/utils@npm:^3.8.0, @react-aria/utils@workspace:packages/@react-aria/utils":
+"@react-aria/utils@npm:^3.29.0, @react-aria/utils@npm:^3.8.0, @react-aria/utils@workspace:packages/@react-aria/utils":
   version: 0.0.0-use.local
   resolution: "@react-aria/utils@workspace:packages/@react-aria/utils"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    clsx: "npm:^2.0.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5901,7 +6099,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/virtualizer@workspace:packages/@react-aria/virtualizer"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5912,6 +6113,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/visually-hidden@workspace:packages/@react-aria/visually-hidden"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5925,8 +6128,12 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-aria-components: "npm:^1.14.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -5938,8 +6145,13 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/actionbar": "npm:^3.1.19"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -5951,8 +6163,14 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/actiongroup": "npm:^3.4.21"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@spectrum-icons/workflow": "npm:^4.2.26"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.2.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -5964,8 +6182,14 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/autocomplete": "npm:3.0.0-alpha.36"
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -5977,8 +6201,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/avatar": "npm:^3.0.19"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.2.1
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -5990,8 +6217,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/badge": "npm:^3.1.21"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6003,8 +6233,13 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/breadcrumbs": "npm:^3.7.17"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6017,9 +6252,14 @@ __metadata:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-spectrum/test-utils-internal": "npm:3.0.0-alpha.1"
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6031,9 +6271,12 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/buttongroup": "npm:^3.3.21"
+    "@react-types/shared": "npm:^3.32.1"
     "@spectrum-icons/workflow": "npm:^4.0.0"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6045,9 +6288,16 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@internationalized/date": "npm:^3.10.1"
     "@react-spectrum/test-utils-internal": "npm:3.0.0-alpha.1"
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/calendar": "npm:^3.8.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6059,8 +6309,13 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/card": "npm:3.0.0-alpha.41"
+    "@react-types/provider": "npm:^3.8.13"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6072,9 +6327,15 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/checkbox": "npm:^3.10.2"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-aria-components: "npm:^1.14.0"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6114,8 +6375,14 @@ __metadata:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-spectrum/style-macro-s1": "npm:3.0.0-alpha.5"
+    "@react-types/color": "npm:^3.1.2"
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/textfield": "npm:^3.12.6"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-aria-components: "npm:^1.14.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6127,8 +6394,14 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/combobox": "npm:^3.13.10"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6142,8 +6415,12 @@ __metadata:
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-spectrum/link": "npm:^3.2.0"
     "@react-spectrum/view": "npm:^3.1.3"
+    "@react-types/contextualhelp": "npm:^3.2.22"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/workflow": "npm:^4.2.26"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6155,9 +6432,16 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@internationalized/date": "npm:^3.10.1"
     "@react-spectrum/test-utils-internal": "npm:3.0.0-alpha.1"
+    "@react-types/datepicker": "npm:^3.13.3"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@spectrum-icons/workflow": "npm:^4.2.26"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6170,8 +6454,14 @@ __metadata:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-spectrum/test-utils-internal": "npm:3.0.0-alpha.1"
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/dialog": "npm:^3.5.22"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6183,6 +6473,10 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/divider": "npm:^3.3.21"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -6195,8 +6489,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6206,6 +6503,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/docs@workspace:packages/dev/docs"
   dependencies:
+    "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@mdx-js/react": "npm:next"
     "@react-aria/aria-modal-polyfill": "npm:^3.1.0"
@@ -6247,9 +6545,12 @@ __metadata:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-spectrum/test-utils-internal": "npm:3.0.0-alpha.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-aria-components: "npm:^1.14.0"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6261,9 +6562,10 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria-components: "npm:^1.14.0"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6275,21 +6577,27 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/form": "npm:^3.7.16"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/icon@npm:^3.8.10, @react-spectrum/icon@workspace:packages/@react-spectrum/icon":
+"@react-spectrum/icon@workspace:packages/@react-spectrum/icon":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/icon@workspace:packages/@react-spectrum/icon"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6301,8 +6609,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/illustratedmessage": "npm:^3.3.21"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6314,8 +6625,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/image": "npm:^3.5.2"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6327,8 +6641,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6340,8 +6657,12 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/label": "npm:^3.9.15"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6353,8 +6674,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@internationalized/date": "npm:^3.10.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6366,8 +6690,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/layout": "npm:^3.3.27"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6379,8 +6706,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/link": "npm:^3.6.5"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6395,8 +6725,14 @@ __metadata:
     "@react-aria/dnd": "npm:^3.0.0"
     "@react-spectrum/button": "npm:^3.8.1"
     "@react-stately/dnd": "npm:^3.0.0"
+    "@react-types/grid": "npm:^3.3.6"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
+    react-transition-group: "npm:^4.4.5"
   peerDependencies:
-    "@react-spectrum/provider": ^3.2.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6408,8 +6744,13 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/listbox": "npm:^3.7.4"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.2.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6435,8 +6776,15 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/menu": "npm:^3.10.5"
+    "@react-types/overlays": "npm:^3.9.2"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@spectrum-icons/workflow": "npm:^4.2.26"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6448,8 +6796,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/meter": "npm:^3.4.13"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6462,8 +6813,15 @@ __metadata:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-spectrum/test-utils-internal": "npm:3.0.0-alpha.1"
+    "@react-types/button": "npm:^3.14.1"
+    "@react-types/numberfield": "npm:^3.8.16"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@spectrum-icons/workflow": "npm:^4.2.26"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6475,8 +6833,13 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/overlays": "npm:^3.9.2"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
+    react-transition-group: "npm:^4.4.5"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6509,8 +6872,13 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/select": "npm:^3.12.0"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.1.4
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6522,8 +6890,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/progress": "npm:^3.5.16"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6535,6 +6906,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/provider": "npm:^3.8.13"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    clsx: "npm:^2.0.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -6547,8 +6923,12 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/radio": "npm:^3.9.2"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6633,12 +7013,7 @@ __metadata:
     "@internationalized/date": "npm:^3.10.1"
     "@internationalized/number": "npm:^3.6.5"
     "@parcel/macros": "npm:^2.16.3"
-    "@react-aria/collections": "npm:^3.0.1"
-    "@react-aria/i18n": "npm:^3.12.14"
     "@react-aria/test-utils": "npm:^1.0.0-alpha.8"
-    "@react-aria/utils": "npm:^3.32.0"
-    "@react-stately/color": "npm:^3.9.3"
-    "@react-stately/toast": "npm:^3.1.2"
     "@react-types/dialog": "npm:^3.5.22"
     "@react-types/grid": "npm:^3.3.6"
     "@react-types/overlays": "npm:^3.9.2"
@@ -6668,8 +7043,13 @@ __metadata:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-spectrum/test-utils-internal": "npm:3.0.0-alpha.1"
+    "@react-types/searchfield": "npm:^3.6.6"
+    "@react-types/textfield": "npm:^3.12.6"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6681,8 +7061,12 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/slider": "npm:^3.8.2"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6694,8 +7078,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/statuslight": "npm:^3.3.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6707,8 +7094,12 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6739,8 +7130,12 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/switch": "npm:^3.5.15"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6754,8 +7149,14 @@ __metadata:
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-aria/dnd": "npm:^3.1.0"
     "@react-stately/dnd": "npm:^3.1.0"
+    "@react-types/grid": "npm:^3.3.6"
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/table": "npm:^3.13.4"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6767,8 +7168,13 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/select": "npm:^3.12.0"
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/tabs": "npm:^3.3.20"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6780,8 +7186,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6831,9 +7240,13 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/text": "npm:^3.3.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-aria-components: "npm:^1.14.0"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6845,9 +7258,14 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/textfield": "npm:^3.12.6"
+    "@spectrum-icons/ui": "npm:^3.6.21"
     "@spectrum-icons/workflow": "npm:^4.0.0"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6859,8 +7277,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/provider": "npm:^3.8.13"
+    "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -6870,8 +7291,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/provider": "npm:^3.8.13"
+    "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -6881,8 +7305,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/provider": "npm:^3.8.13"
+    "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -6892,8 +7319,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/provider": "npm:^3.8.13"
+    "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -6904,9 +7334,14 @@ __metadata:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-spectrum/test-utils-internal": "npm:3.0.0-alpha.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
     "@types/use-sync-external-store": "npm:^0.0.3"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
+    use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6918,8 +7353,14 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/overlays": "npm:^3.9.2"
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/tooltip": "npm:^3.5.0"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-stately: "npm:^3.43.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6932,8 +7373,12 @@ __metadata:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-spectrum/style-macro-s1": "npm:3.0.0-alpha.5"
+    "@react-types/shared": "npm:^3.32.1"
+    "@spectrum-icons/ui": "npm:^3.6.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
+    react-aria-components: "npm:^1.14.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6950,6 +7395,10 @@ __metadata:
   resolution: "@react-spectrum/utils@workspace:packages/@react-spectrum/utils"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
+    clsx: "npm:^2.0.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -6962,8 +7411,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/view": "npm:^3.4.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -6975,19 +7427,25 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.0"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/well": "npm:^3.3.21"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria: "npm:^3.45.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
-"@react-stately/autocomplete@npm:3.0.0-beta.4, @react-stately/autocomplete@workspace:packages/@react-stately/autocomplete":
+"@react-stately/autocomplete@workspace:packages/@react-stately/autocomplete":
   version: 0.0.0-use.local
   resolution: "@react-stately/autocomplete@workspace:packages/@react-stately/autocomplete"
   dependencies:
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -6995,9 +7453,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/calendar@workspace:packages/@react-stately/calendar"
   dependencies:
+    "@internationalized/date": "npm:^3.10.1"
+    "@react-types/calendar": "npm:^3.8.1"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7005,9 +7468,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/checkbox@workspace:packages/@react-stately/checkbox"
   dependencies:
+    "@react-types/checkbox": "npm:^3.10.2"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7015,19 +7482,28 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/collections@workspace:packages/@react-stately/collections"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
-"@react-stately/color@npm:^3.9.3, @react-stately/color@workspace:packages/@react-stately/color":
+"@react-stately/color@workspace:packages/@react-stately/color":
   version: 0.0.0-use.local
   resolution: "@react-stately/color@workspace:packages/@react-stately/color"
   dependencies:
+    "@internationalized/number": "npm:^3.6.5"
+    "@internationalized/string": "npm:^3.2.7"
+    "@react-types/color": "npm:^3.1.2"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7035,9 +7511,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/combobox@workspace:packages/@react-stately/combobox"
   dependencies:
+    "@react-types/combobox": "npm:^3.13.10"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7045,9 +7525,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/data@workspace:packages/@react-stately/data"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7055,9 +7538,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/datepicker@workspace:packages/@react-stately/datepicker"
   dependencies:
+    "@internationalized/date": "npm:^3.10.1"
+    "@internationalized/string": "npm:^3.2.7"
+    "@react-types/datepicker": "npm:^3.13.3"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7065,9 +7554,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/disclosure@workspace:packages/@react-stately/disclosure"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7075,9 +7567,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/dnd@workspace:packages/@react-stately/dnd"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7085,7 +7580,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/flags@workspace:packages/@react-stately/flags"
   dependencies:
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7093,9 +7592,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/form@workspace:packages/@react-stately/form"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7103,16 +7605,24 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/grid@workspace:packages/@react-stately/grid"
   dependencies:
+    "@react-types/grid": "npm:^3.3.6"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
-"@react-stately/layout@npm:^4.5.2, @react-stately/layout@workspace:packages/@react-stately/layout":
+"@react-stately/layout@workspace:packages/@react-stately/layout":
   version: 0.0.0-use.local
   resolution: "@react-stately/layout@workspace:packages/@react-stately/layout"
   dependencies:
+    "@react-types/grid": "npm:^3.3.6"
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/table": "npm:^3.13.4"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -7124,9 +7634,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/list@workspace:packages/@react-stately/list"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7134,9 +7647,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/menu@workspace:packages/@react-stately/menu"
   dependencies:
+    "@react-types/menu": "npm:^3.10.5"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7144,9 +7661,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/numberfield@workspace:packages/@react-stately/numberfield"
   dependencies:
+    "@internationalized/number": "npm:^3.6.5"
+    "@react-types/numberfield": "npm:^3.8.16"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7154,9 +7675,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/overlays@workspace:packages/@react-stately/overlays"
   dependencies:
+    "@react-types/overlays": "npm:^3.9.2"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7164,9 +7688,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/radio@workspace:packages/@react-stately/radio"
   dependencies:
+    "@react-types/radio": "npm:^3.9.2"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7174,9 +7702,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/searchfield@workspace:packages/@react-stately/searchfield"
   dependencies:
+    "@react-types/searchfield": "npm:^3.6.6"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7184,19 +7715,26 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/select@workspace:packages/@react-stately/select"
   dependencies:
+    "@react-types/select": "npm:^3.12.0"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
-"@react-stately/selection@npm:^3.20.7, @react-stately/selection@workspace:packages/@react-stately/selection":
+"@react-stately/selection@workspace:packages/@react-stately/selection":
   version: 0.0.0-use.local
   resolution: "@react-stately/selection@workspace:packages/@react-stately/selection"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7204,9 +7742,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/slider@workspace:packages/@react-stately/slider"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/slider": "npm:^3.8.2"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7214,19 +7756,27 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/steplist@workspace:packages/@react-stately/steplist"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
-"@react-stately/table@npm:^3.15.2, @react-stately/table@workspace:packages/@react-stately/table":
+"@react-stately/table@workspace:packages/@react-stately/table":
   version: 0.0.0-use.local
   resolution: "@react-stately/table@workspace:packages/@react-stately/table"
   dependencies:
+    "@react-types/grid": "npm:^3.3.6"
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/table": "npm:^3.13.4"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7234,20 +7784,27 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/tabs@workspace:packages/@react-stately/tabs"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@react-types/tabs": "npm:^3.3.20"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
-"@react-stately/toast@npm:^3.1.2, @react-stately/toast@workspace:packages/@react-stately/toast":
+"@react-stately/toast@workspace:packages/@react-stately/toast":
   version: 0.0.0-use.local
   resolution: "@react-stately/toast@workspace:packages/@react-stately/toast"
   dependencies:
+    "@swc/helpers": "npm:^0.5.0"
     "@types/use-sync-external-store": "npm:^0.0.3"
     react-stately: "npm:^3.43.0"
+    use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7255,9 +7812,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/toggle@workspace:packages/@react-stately/toggle"
   dependencies:
+    "@react-types/checkbox": "npm:^3.10.2"
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7265,9 +7826,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/tooltip@workspace:packages/@react-stately/tooltip"
   dependencies:
+    "@react-types/tooltip": "npm:^3.5.0"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7275,19 +7839,24 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/tree@workspace:packages/@react-stately/tree"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
-"@react-stately/utils@npm:^3.11.0, @react-stately/utils@workspace:packages/@react-stately/utils":
+"@react-stately/utils@workspace:packages/@react-stately/utils":
   version: 0.0.0-use.local
   resolution: "@react-stately/utils@workspace:packages/@react-stately/utils"
   dependencies:
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
@@ -7295,6 +7864,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/virtualizer@workspace:packages/@react-stately/virtualizer"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
+    "@swc/helpers": "npm:^0.5.0"
     react-stately: "npm:^3.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -7903,12 +8474,11 @@ __metadata:
   resolution: "@spectrum-icons/color@workspace:packages/@spectrum-icons/color"
   dependencies:
     "@adobe/react-spectrum-workflow-color": "npm:1.1.1"
-    "@react-spectrum/icon": "npm:^3.8.10"
     "@spectrum-icons/build-tools": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
+    "@adobe/react-spectrum": ^3.46.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -7919,11 +8489,10 @@ __metadata:
   resolution: "@spectrum-icons/express@workspace:packages/@spectrum-icons/express"
   dependencies:
     "@adobe/spectrum-css-ccx-workflow-icons": "npm:1.0.2"
-    "@react-spectrum/icon": "npm:^3.8.10"
     "@spectrum-icons/build-tools": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
+    "@adobe/react-spectrum": ^3.46.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -7933,12 +8502,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@spectrum-icons/illustrations@workspace:packages/@spectrum-icons/illustrations"
   dependencies:
-    "@react-aria/utils": "npm:^3.32.0"
-    "@react-spectrum/icon": "npm:^3.8.10"
     "@spectrum-icons/build-tools": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
+    "@adobe/react-spectrum": ^3.46.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -7950,12 +8517,11 @@ __metadata:
   dependencies:
     "@adobe/react-spectrum-ui": "npm:1.2.1"
     "@babel/runtime": "npm:^7.24.4"
-    "@react-spectrum/icon": "npm:^3.8.10"
     "@spectrum-icons/build-tools": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
+    "@adobe/react-spectrum": ^3.46.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -7966,12 +8532,11 @@ __metadata:
   resolution: "@spectrum-icons/workflow@workspace:packages/@spectrum-icons/workflow"
   dependencies:
     "@adobe/react-spectrum-workflow": "npm:2.3.5"
-    "@react-spectrum/icon": "npm:^3.8.10"
     "@spectrum-icons/build-tools": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
   peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
+    "@adobe/react-spectrum": ^3.46.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -23472,32 +24037,10 @@ __metadata:
   dependencies:
     "@internationalized/date": "npm:^3.10.1"
     "@internationalized/string": "npm:^3.2.7"
-    "@react-aria/collections": "npm:^3.0.1"
-    "@react-aria/dnd": "npm:^3.11.4"
-    "@react-aria/interactions": "npm:^3.26.0"
-    "@react-aria/overlays": "npm:^3.31.0"
-    "@react-aria/ssr": "npm:^3.9.10"
-    "@react-aria/utils": "npm:^3.32.0"
-    "@react-stately/autocomplete": "npm:3.0.0-beta.4"
-    "@react-stately/layout": "npm:^4.5.2"
-    "@react-stately/selection": "npm:^3.20.7"
-    "@react-stately/table": "npm:^3.15.2"
-    "@react-stately/utils": "npm:^3.11.0"
-    "@react-stately/virtualizer": "npm:^4.4.4"
-    "@react-types/calendar": "npm:^3.8.1"
-    "@react-types/checkbox": "npm:^3.10.2"
-    "@react-types/color": "npm:^3.1.2"
-    "@react-types/datepicker": "npm:^3.13.3"
-    "@react-types/dialog": "npm:^3.5.22"
     "@react-types/form": "npm:^3.7.16"
     "@react-types/grid": "npm:^3.3.6"
-    "@react-types/listbox": "npm:^3.7.4"
-    "@react-types/menu": "npm:^3.10.5"
-    "@react-types/overlays": "npm:^3.9.2"
-    "@react-types/searchfield": "npm:^3.6.6"
     "@react-types/shared": "npm:^3.32.1"
     "@react-types/table": "npm:^3.13.4"
-    "@react-types/textfield": "npm:^3.12.6"
     "@swc/helpers": "npm:^0.5.0"
     "@tailwindcss/postcss": "npm:^4.0.0"
     client-only: "npm:^0.0.1"

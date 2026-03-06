@@ -1,3 +1,4 @@
+/* eslint-disable max-depth */
 import fs from 'fs';
 import {parse} from '@babel/parser';
 import path from 'path';
@@ -115,6 +116,7 @@ let parentFile = {
   'useDroppableItem': 'useDroppableCollection',
   // 'utils': '',
   'useGridListItem': 'useGridList',
+  'useGridListSection': 'useGridList',
   'useGridListSelectionCheckbox': 'useGridList',
   // 'useFocusable': '',
   // 'useInteractOutside': '',
@@ -139,12 +141,14 @@ let parentFile = {
   'useTableColumnResize': 'useTable',
   'useTableHeaderRow': 'useTable',
   'useTableRow': 'useTable',
+  'useTableRowGroup': 'useTable',
   'useTableSelectionCheckbox': 'useTable',
   'useTab': 'useTabList',
   'useTabPanel': 'useTabList',
   'useTag': 'useTagGroup',
   'useToastRegion': 'useToast',
   'useTooltip': 'useTooltipTrigger',
+  'ToastContainer': 'Toast',
   // 'useTree': '',
   // 'chain': '',
   // 'openLink': '',
@@ -223,6 +227,8 @@ migrateToMonopackage('@react-spectrum/s2');
 // Special case
 rewriteMonopackageImports('packages/@internationalized/number/test/NumberParser.test.js');
 
+writePrivateExports();
+
 function migrateScope(scope, monopackage) {
   prepareMonopackage(monopackage);
 
@@ -257,13 +263,6 @@ function prepareMonopackage(monopackage) {
       import: './dist/exports/index.mjs',
       require: './dist/exports/index.cjs'
     },
-    './private/*': {
-      // extensionless works in parcel, typescript requires an extension and supports fallbacks.
-      source: ['./src/*', './src/*.ts', './src/*.tsx'],
-      types: './dist/types/src/*.d.ts',
-      import: './dist/private/*.mjs',
-      require: './dist/private/*.cjs'
-    },
     './*': {
       source: './exports/*.ts',
       types: './dist/types/exports/*.d.ts',
@@ -282,14 +281,14 @@ function prepareMonopackage(monopackage) {
     module: false,
     types: false,
     'exports-module': {
-      'source': ['exports/*.ts', 'src/**/*.{ts,tsx}'],
+      'source': ['exports/**/*.ts'],
       'distDir': 'dist',
       'isLibrary': true,
       'outputFormat': 'esmodule',
       'includeNodeModules': includeNodeModules
     },
     'exports-main': {
-      'source': ['exports/*.ts', 'src/**/*.{ts,tsx}'],
+      'source': ['exports/**/*.ts'],
       'distDir': 'dist',
       'isLibrary': true,
       'outputFormat': 'commonjs',
@@ -584,7 +583,7 @@ function rewriteMonopackageImports(file, pkg, subpath) {
           hadImports = true;
           break;
         case '@react-aria/dnd/src/constants':
-          node.source.value = 'react-aria/private/dnd/constants';
+          node.source.value = 'react-aria/src/dnd/constants';
           hadImports = true;
           break;
         case '@react-aria/dnd/test/examples':
@@ -592,7 +591,7 @@ function rewriteMonopackageImports(file, pkg, subpath) {
           hadImports = true;
           break;
         case '@react-aria/dnd/src/utils':
-          node.source.value = 'react-aria/private/dnd/utils';
+          node.source.value = 'react-aria/src/dnd/utils';
           hadImports = true;
           break;
         case '@react-aria/numberfield/intl/*.json':
@@ -617,10 +616,10 @@ function rewriteMonopackageImports(file, pkg, subpath) {
       // Hard coding special cases here
       switch (node.arguments[0].value) {
         case '@react-aria/live-announcer':
-          node.arguments[0].value = 'react-aria/private/live-announcer/LiveAnnouncer';
+          node.arguments[0].value = file.startsWith('packages/react-aria') ? '../../src/live-announcer/LiveAnnouncer' : 'react-aria/src/live-announcer/LiveAnnouncer';
           break;
         case '@react-aria/utils/src/scrollIntoView':
-          node.arguments[0].value = 'react-aria/private/utils/scrollIntoView';
+          node.arguments[0].value = file.startsWith('packages/react-aria') ? '../../src/utils/scrollIntoView' : 'react-aria/src/utils/scrollIntoView';
           break;
         case '@react-aria/utils':
           node.arguments[0].value = '../../src/utils/focusWithoutScrolling';
@@ -795,7 +794,7 @@ function createPublicExports(file, monopackage, scope, pkg) {
       node.specifiers = node.specifiers.filter(s => importMap[monopackage][s.exported.name]);
       if (node.source.value.startsWith('./') && node.specifiers.length > 0) {
         let source = node.source.value.slice(2);
-        node.source.value = pkg ? `${monopackage}/private/${pkg}/${source}` : `../src/${source}`;
+        node.source.value = pkg ? `../src/${pkg}/${source}` : `../src/${source}`;
         if (standalone.has(source) || (monopackage === 'react-aria-components' && source === 'utils')) {
           groups[source] ||= [];
           groups[source].push(node);
@@ -837,5 +836,59 @@ function createPublicExports(file, monopackage, scope, pkg) {
     }, {objectCurlySpacing: false, quote: 'single'}).code;
     fs.mkdirSync(`packages/${scope}/${pkg}/src`);
     fs.writeFileSync(`packages/${scope}/${pkg}/src/index.ts`, index);
+  }
+}
+
+function writePrivateExports() {
+  let privateExports = {};
+
+  for (let file of fs.globSync('packages/**/*.{ts,tsx,js}')) {
+    let content = fs.readFileSync(file, 'utf8');
+    let ast = parse(content, {
+      sourceType: 'module',
+      plugins: ['typescript', 'jsx', 'importAttributes'],
+      sourceFilename: file,
+      tokens: true,
+      errorRecovery: true
+    });
+
+    for (let item of ast.program.body) {
+      if (item.type === 'ImportDeclaration' || (item.type === 'ExportNamedDeclaration' && item.source)) {
+        if (item.source.value.includes('/private/')) {
+          privateExports[item.source.value] ??= new Set();
+          for (let specifier of item.specifiers) {
+            let importedName = specifier.type === 'ImportSpecifier' ? specifier.imported.name : specifier.local.name;
+            privateExports[item.source.value].add(importedName);
+          }
+        }
+      }
+    }
+  }
+
+  console.log(privateExports)
+  for (let specifier in privateExports) {
+    let file = `packages/${specifier.replace('/private/', '/exports/private/')}.ts`;
+    fs.mkdirSync(path.dirname(file), {recursive: true});
+
+    let contents = 'export {';
+    let first = true;
+    for (let exp of privateExports[specifier]) {
+      if (!first) {
+        contents += ', ';
+      }
+      first = false;
+      if ((!/^(use|UNSTABLE_use)/.test(exp) && /(Aria|Props|State|Options)$/.test(exp) && exp !== 'filterDOMProps' && exp !== 'getSyntheticLinkProps' && exp !== 'baseStyleProps' && exp !== 'viewStyleProps' && exp !== 'convertStyleProps') || exp === 'LayoutNode' || exp === 'MultipleSelectionManager' || exp === 'RectCorner' || exp === 'InvalidationContext' || exp === 'CollectionBuilderContext' || exp === 'PartialNode' || exp === 'Modality' || exp === 'SelectableItemStates' || exp === 'RTLOffsetType' || exp === 'FormatMessage' || exp === 'FocusVisibleHandler' || exp === 'IconPropsWithoutChildren' || exp === 'IllustrationPropsWithoutChildren' || exp === 'UIIconPropsWithoutChildren' || exp === 'StyleHandlers' || exp === 'Filter' || exp === 'Locale') {
+        contents += 'type ';
+      }
+      contents += exp;
+    }
+
+    contents += '} from ';
+
+    let originalFile = `packages/${specifier.replace('/private/', '/src/')}`;
+    specifier = path.relative(path.dirname(file), originalFile);
+
+    contents += `'${specifier}'` + ';\n';
+    fs.writeFileSync(file, contents);
   }
 }
