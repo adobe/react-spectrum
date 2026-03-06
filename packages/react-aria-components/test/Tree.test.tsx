@@ -24,7 +24,8 @@ import {useTreeData} from 'react-stately';
 
 let {
   EmptyTreeStaticStory: EmptyLoadingTree,
-  LoadingStoryDepOnTopStory: LoadingMoreTree
+  LoadingStoryDepOnTopStory: LoadingMoreTree,
+  TreeWithDragAndDrop
 } = composeStories(stories);
 
 let onSelectionChange = jest.fn();
@@ -1884,6 +1885,44 @@ describe('Tree', () => {
       act(() => jest.runAllTimers());
 
       expect(onRootDrop).toHaveBeenCalledTimes(1);
+    });
+
+    it('should focus the first inserted item after a drop', async () => {
+      const {getAllByRole} = render(<TreeWithDragAndDrop />);
+
+      const trees = getAllByRole('treegrid');
+      let rows = within(trees[0]).getAllByRole('row');
+      const dataTransfer = new DataTransfer();
+
+      fireEvent(rows[0], new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
+      act(() => jest.runAllTimers());
+
+      fireEvent(trees[1], new DragEvent('dragenter', {dataTransfer, clientX: 50, clientY: 50}));
+      fireEvent(trees[1], new DragEvent('dragover', {dataTransfer, clientX: 50, clientY: 50}));
+      expect(trees[1]).toHaveAttribute('data-drop-target', 'true');
+
+      // ¯\_(ツ)_/¯
+      await act(async () => fireEvent(trees[1], new DragEvent('drop', {dataTransfer, clientX: 50, clientY: 50})));
+      act(() => jest.runAllTimers());
+      await user.click(document.body);
+      act(() => jest.runAllTimers());
+
+      await user.tab();
+      await user.keyboard('{ArrowRight}');  // expand the projects item
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      await user.tab();
+      act(() => jest.runAllTimers());
+
+      rows = within(trees[1]).getAllByRole('row');
+      expect(rows).toHaveLength(4);
+      expect(within(rows[3]).getAllByRole('button')[0]).toHaveAttribute('aria-label', 'Insert after Projects');
+      expect(document.activeElement).toBe(within(rows[3]).getAllByRole('button')[0]);
+      expect(rows[3]).toHaveAttribute('data-drop-target', 'true');
+
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
     });
 
     it('should support disabled drag and drop', async () => {
