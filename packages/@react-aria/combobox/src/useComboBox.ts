@@ -120,6 +120,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
     keyboardDelegate: delegate,
     disallowTypeAhead: true,
     disallowEmptySelection: true,
+    autoFocus: 'first',
     shouldFocusWrap,
     ref: inputRef,
     // Prevent item scroll behavior from being applied here, should be handled in the user's Popover + ListBox component
