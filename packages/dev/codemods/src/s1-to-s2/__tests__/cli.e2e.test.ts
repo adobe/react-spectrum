@@ -226,6 +226,22 @@ test('runs the shipped assistant in agent mode', async () => {
   expectProjectToMatchFixture(result.projectDir, 'full-project');
 });
 
+test('respects --components in agent mode', async () => {
+  let result = await runFixtureCLI({
+    fixtureName: 'subset-project',
+    args: ['--agent', '--components', 'Button']
+  });
+
+  expect(result.exitCode).toBe(0);
+  expect(result.stderr).toBe('');
+  expect(result.stdout).toContain('Running s1-to-s2 in agent mode (non-interactive, transform-only).');
+  expect(result.stdout).toContain('Upgrade complete!');
+  expect(result.stdout).not.toContain(PROMPT_TO_START);
+  expect(result.stdout).not.toContain(PROMPT_TO_UPGRADE);
+  expect(result.packageManagerCalls).toEqual([]);
+  expectProjectToMatchFixture(result.projectDir, 'subset-project');
+});
+
 test('runs the interactive assistant flow against a real project fixture', async () => {
   let result = await runFixtureCLI({
     fixtureName: 'full-project',

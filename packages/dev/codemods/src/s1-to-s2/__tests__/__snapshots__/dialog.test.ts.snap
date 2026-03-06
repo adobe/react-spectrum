@@ -127,7 +127,7 @@ exports[`Replaces type="fullscreen" with FullscreenDialog component 1`] = `
   <Button>Test</Button>
   <FullscreenDialog isKeyboardDismissDisabled>
     <Heading>Test</Heading>
-    <Divider />
+
     <Content>Content</Content>
   </FullscreenDialog>
 </DialogTrigger>"
@@ -147,12 +147,12 @@ exports[`Replaces type="fullscreen" with FullscreenDialog component in DialogCon
 <DialogContainer>
   {showDialog1 && <FullscreenDialog isKeyboardDismissDisabled>
     <Heading>Test</Heading>
-    <Divider />
+
     <Content>Content</Content>
   </FullscreenDialog>}
   {showDialog2 && <FullscreenDialog isKeyboardDismissDisabled>
     <Heading>Test</Heading>
-    <Divider />
+
     <Content>Content</Content>
   </FullscreenDialog>}
 </DialogContainer>"
@@ -165,7 +165,7 @@ exports[`Replaces type="fullscreenTakeover" with FullscreenDialog component 1`] 
   <Button>Test</Button>
   <FullscreenDialog variant="fullscreenTakeover">
     <Heading>Test</Heading>
-    <Divider />
+
     <Content>Content</Content>
   </FullscreenDialog>
 </DialogTrigger>"
@@ -195,7 +195,7 @@ exports[`Replaces type="popover" with Popover component 1`] = `
   <Button>Test</Button>
   <Popover hideArrow>
     <Heading>Test</Heading>
-    <Divider />
+
     <Content>Content</Content>
   </Popover>
 </DialogTrigger>"

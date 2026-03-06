@@ -1,4 +1,4 @@
-import {getName, removeComponentImport} from '../../shared/utils';
+import {getName, removeComponentImport, removeComponentImportIfUnused} from '../../shared/utils';
 import {NodePath} from '@babel/traverse';
 import {removeProp, updateComponentWithinCollection, updateToNewComponentName} from '../../shared/transforms';
 import * as t from '@babel/types';
@@ -97,4 +97,6 @@ export default function transformTabs(path: NodePath<t.JSXElement>): void {
 
   // Remove isQuiet
   removeProp(path, {propName: 'isQuiet'});
+
+  removeComponentImportIfUnused(program, 'Item');
 }
