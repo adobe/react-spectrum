@@ -273,6 +273,15 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
               first = item.parentKey;
             }
 
+            if (item?.type === 'content') {
+              for (const node of state.collection) {
+                if (node.type === 'item' && newKeys.has(node.key)) {
+                  first = node.key;
+                  break;
+                }
+              }
+            }
+
             // eslint-disable-next-line max-depth
             if (first != null) {
               state.selectionManager.setFocusedKey(first);
