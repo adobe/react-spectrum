@@ -5441,7 +5441,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/button@npm:^3.14.4, @react-aria/button@npm:^3.14.5, @react-aria/button@workspace:packages/@react-aria/button":
+"@react-aria/button@npm:^3.14.5, @react-aria/button@workspace:packages/@react-aria/button":
   version: 0.0.0-use.local
   resolution: "@react-aria/button@workspace:packages/@react-aria/button"
   dependencies:
@@ -6124,7 +6124,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/table@workspace:packages/@react-aria/table"
   dependencies:
-    "@react-aria/button": "npm:^3.14.4"
+    "@react-aria/button": "npm:^3.14.5"
     "@react-aria/focus": "npm:^3.21.5"
     "@react-aria/grid": "npm:^3.14.8"
     "@react-aria/i18n": "npm:^3.12.16"
