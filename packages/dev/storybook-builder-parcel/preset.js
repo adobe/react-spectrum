@@ -39,6 +39,13 @@ exports.start = async function ({ options, router }) {
       proxyRes.pipe(res);
     });
 
+    proxyReq.setTimeout(10000, () => {
+      proxyReq.destroy(new Error("Proxy request timed out after 10 seconds"));
+      if (!res.headersSent) {
+        res.writeHead(504).end("Proxy Timeout");
+      }
+    });
+    
     proxyReq.on("error", (err) => {
       if (err.code === "ECONNREFUSED") return next();
       if (!res.headersSent) res.writeHead(502).end(); 
