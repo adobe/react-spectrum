@@ -36,7 +36,7 @@ import {
 export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 export type SelectionMode = 'single' | 'multiple';
 export type ValueType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
-type ValidationType<M extends SelectionMode> = M extends 'single' ? Key : Key[];
+type ValidationType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
 
 export interface ComboBoxValidationValue<M extends SelectionMode = 'single'> {
   /**
@@ -50,7 +50,7 @@ export interface ComboBoxValidationValue<M extends SelectionMode = 'single'> {
   inputValue: string
 }
 
-export interface ComboBoxProps<T, M extends SelectionMode = 'single'> extends CollectionBase<T>, InputBase, ValueBase<ValueType<M>>, TextInputBase, Validation<ComboBoxValidationValue>, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
+export interface ComboBoxProps<T, M extends SelectionMode = 'single'> extends CollectionBase<T>, InputBase, ValueBase<ValueType<M>>, TextInputBase, Validation<ComboBoxValidationValue<M>>, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
   /** The list of ComboBox items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of ComboBox items (controlled). */
