@@ -70,6 +70,10 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
       let parent = state.collection.getItem(node.parentKey!)!;
       let isParentBody = parent.type === 'tablebody' || parent.type === 'body';
       let lastSibling = getLastChild(state.collection, parent)!;
+      while (lastSibling && lastSibling.type !== 'item' && lastSibling.prevKey != null) {
+        lastSibling = state.collection.getItem(lastSibling.prevKey)!;
+      }
+
       treeGridRowProps = {
         onKeyDown: (e) => {
           if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === treeNode.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(treeNode.key)) {

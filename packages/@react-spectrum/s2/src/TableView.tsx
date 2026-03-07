@@ -1075,10 +1075,10 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       })}
       textValue={textValue}
       {...otherProps}>
-      {({isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
+      {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
           {hasChildItems && isTreeColumn && 
-            <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />
+            <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
           }
           <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
           {isFocusVisible && <CellFocusRing />}
@@ -1248,10 +1248,10 @@ export const EditableCell = forwardRef(function EditableCell(props: EditableCell
       })}
       textValue={textValue}
       {...otherProps}>
-      {({isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
+      {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
           {hasChildItems && isTreeColumn && 
-            <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />
+            <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
           }
           <EditableCellInner {...props} isFocusVisible={isFocusVisible} cellRef={domRef as RefObject<HTMLDivElement>} />
         </>

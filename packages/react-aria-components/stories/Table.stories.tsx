@@ -1612,8 +1612,8 @@ export const TableWithReactTransition: TableStory = () => {
 function NameCell(props: CellProps) {
   return (
     <Cell style={({level}) => ({paddingLeft: (level - 1) * 32})}>
-      {({hasChildItems, isExpanded}) => (<>
-        {hasChildItems && (
+      {({hasChildItems, isTreeColumn, isExpanded}) => (<>
+        {hasChildItems && isTreeColumn && (
           <Button className={styles.chevron} slot="chevron">
             <div style={{transform: `rotate(${isExpanded ? 90 : 0}deg)`, width: '16px', height: '16px'}}>
               <svg viewBox="0 0 24 24" style={{width: '16px', height: '16px'}}>
@@ -1630,11 +1630,11 @@ function NameCell(props: CellProps) {
 
 export const TableNestedRows: TableStory = (args) => {
   return (
-    <Table aria-label="Files" selectionMode="multiple" {...args}>
+    <Table aria-label="Files" selectionMode="multiple" treeColumn="name" {...args}>
       <TableHeader>
-        <Column isRowHeader>Name</Column>
-        <Column>Type</Column>
-        <Column>Date Modified</Column>
+        <Column id="name" isRowHeader>Name</Column>
+        <Column id="type">Type</Column>
+        <Column id="date">Date Modified</Column>
       </TableHeader>
       <TableBody>
         <MyRow>
