@@ -7,5 +7,7 @@
   "resizerDescription": "按“输入”键开始调整大小。",
   "select": "选择",
   "selectAll": "全选",
-  "sortable": "可排序的列"
+  "sortable": "可排序的列",
+  "collapse": "折叠",
+  "expand": "扩展"
 }
