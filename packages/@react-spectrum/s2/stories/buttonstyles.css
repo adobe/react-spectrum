@@ -1,0 +1,64 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.ScollContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 200px;
+  overflow: auto;
+  padding: 24px;
+  border: 1px solid black;
+  background-color: #eee;
+}
+
+.Button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 64px;
+  flex-shrink: 0;
+  font-size: 24px;
+  font-weight: 700;
+  border: 1px solid royalblue;
+  background: royalblue;
+}
+
+.StickyElement {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 64px;
+  flex-shrink: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.Spacer {
+  display: flex;
+  flex-shrink: 0;
+  width: 100%;
+  height: 1000px;
+}
+
+.Input {
+  display: block;
+  width: 100%;
+  height: 64px;
+  padding: 0 24px;
+  flex-shrink: 0;
+  font-size: 24px;
+  font-weight: 700;
+  border: 1px solid royalblue;
+}
