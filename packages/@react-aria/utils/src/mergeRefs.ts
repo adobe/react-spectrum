@@ -18,6 +18,8 @@ import {MutableRefObject, Ref} from 'react';
 export function mergeRefs<T>(...refs: Array<Ref<T> | MutableRefObject<T> | null | undefined>): Ref<T> {
   if (refs.length === 1 && refs[0]) {
     return refs[0];
+  } else if (refs.every(ref => ref == null)) {
+    return null;
   }
 
   return (value: T | null) => {
