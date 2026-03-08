@@ -20,4 +20,48 @@ describe('FieldError', function () {
     const element = getByTestId(TEST_ID);
     expect(element).toHaveTextContent('An error');
   });
+
+  it('renders as span by default', async () => {
+    const {getByText} = render(
+      <TextField isInvalid>
+        <Label>Email</Label>
+        <Input />
+        <FieldError>An error</FieldError>
+      </TextField>
+    );
+
+    const element = getByText('An error');
+    expect(element.tagName).toBe('SPAN');
+  });
+
+  it('supports elementType prop', async () => {
+    const {getByText} = render(
+      <TextField isInvalid>
+        <Label>Email</Label>
+        <Input />
+        <FieldError elementType="div">An error</FieldError>
+      </TextField>
+    );
+
+    const element = getByText('An error');
+    expect(element.tagName).toBe('DIV');
+  });
+
+  it('allows block-level children when elementType is div', async () => {
+    const {getByRole} = render(
+      <TextField isInvalid>
+        <Label>Email</Label>
+        <Input />
+        <FieldError elementType="div">
+          <ul>
+            <li>Error one</li>
+            <li>Error two</li>
+          </ul>
+        </FieldError>
+      </TextField>
+    );
+
+    const list = getByRole('list');
+    expect(list).toBeInTheDocument();
+  });
 });
