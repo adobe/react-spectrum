@@ -177,6 +177,7 @@ export function useMove(props: MoveEvents): MoveResult {
       let onPointerUp = (e: PointerEvent) => {
         if (e.pointerId === state.current.id) {
           let pointerType = (e.pointerType || 'mouse') as PointerType;
+          // eslint-disable-next-line react-hooks/rules-of-hooks
           endEvent(e, pointerType);
           state.current.id = null;
           removeGlobalListener(window, 'pointermove', onPointerMove, false);
