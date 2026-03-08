@@ -47,21 +47,37 @@ describe('FieldError', function () {
     expect(element.tagName).toBe('DIV');
   });
 
-  it('allows block-level children when elementType is div', async () => {
-    const {getByRole} = render(
+  it('does not warn when render prop returns element matching elementType', async () => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    render(
       <TextField isInvalid>
         <Label>Email</Label>
         <Input />
-        <FieldError elementType="div">
-          <ul>
-            <li>Error one</li>
-            <li>Error two</li>
-          </ul>
+        <FieldError elementType="div" render={(props) => <div {...props}><ul><li>Error</li></ul></div>}>
+          Error
         </FieldError>
       </TextField>
     );
 
-    const list = getByRole('list');
-    expect(list).toBeInTheDocument();
+    expect(warnSpy).not.toHaveBeenCalledWith(expect.stringContaining('Unexpected DOM element'));
+    warnSpy.mockRestore();
+  });
+
+  it('warns when render prop returns element that does not match elementType', async () => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    render(
+      <TextField isInvalid>
+        <Label>Email</Label>
+        <Input />
+        <FieldError render={(props) => <div {...props} />}>
+          Error
+        </FieldError>
+      </TextField>
+    );
+
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('Unexpected DOM element'));
+    warnSpy.mockRestore();
   });
 });
