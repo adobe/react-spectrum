@@ -737,7 +737,7 @@ function getRenamedSpecifier(specifier, from, importedName, relative = true) {
 
   let isPrivate = importedName == null || privateNames.has(importedName);
   if (
-    (monopackage === 'react-aria' && name === 'Virtualizer') ||
+    ((monopackage === 'react-aria' || monopackage === 'react-stately') && (name === 'Virtualizer' || parentFile[name] === 'Virtualizer')) ||
     (monopackage === '@adobe/react-spectrum' && (name === 'CardView' || name === 'Card' || name === 'Overlay' || name === 'Popover' || name === 'Modal' || name === 'StepList' || name === 'SearchAutocomplete' || name === 'Label'))
   ) {
     isPrivate = true;
@@ -797,7 +797,13 @@ function createPublicExports(file, monopackage, scope, pkg) {
         unmatched.push(n);
       }
 
-      node.specifiers = node.specifiers.filter(s => importMap[monopackage][s.exported.name]);
+      node.specifiers = node.specifiers.filter(s => {
+        if (s.exported.name === 'theme') {
+          s.exported = s.local;
+          return true;
+        }
+        return importMap[monopackage][s.exported.name];
+      });
       if (node.source.value.startsWith('./') && node.specifiers.length > 0) {
         let source = node.source.value.slice(2);
         node.source.value = pkg ? `../src/${pkg}/${source}` : `../src/${source}`;
@@ -814,11 +820,12 @@ function createPublicExports(file, monopackage, scope, pkg) {
 
   for (let source in groups) {
     groups[source][0].comments = ast.program.body[0].leadingComments;
+    let f = `packages/${monopackage}/exports/${path.basename(source)}.ts`;
     let content = recast.print({
       type: 'Program',
       body: groups[source]
     }, {objectCurlySpacing: false, quote: 'single'}).code;
-    fs.writeFileSync(`packages/${monopackage}/exports/${path.basename(source)}.ts`, content);
+    fs.writeFileSync(f, content);
   }
 
   if (scope) {
