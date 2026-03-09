@@ -120,7 +120,6 @@ const tree = style({
 
 let InternalTreeViewContext = createContext<{selectionStyle?: 'highlight' | 'checkbox'}>({});
 
-
 /**
  * A tree view provides users with a way to navigate nested hierarchical information.
  */
@@ -176,11 +175,12 @@ const rowBackgroundColor = {
   default: '--s2-container-bg',
   isFocusVisibleWithin: colorMix('gray-25', 'gray-900', 7),
   isHovered: colorMix('gray-25', 'gray-900', 7),
+  isPressed: colorMix('gray-25', 'gray-900', 7),
   isSelected: {
-    default: 'gray-100',
-    isFocusVisibleWithin: 'gray-200',
-    isHovered: 'gray-200',
-    isPressed: 'gray-200'
+    default: colorMix('gray-25', 'gray-900', 7),
+    isFocusVisibleWithin: colorMix('gray-25', 'gray-900', 10),
+    isHovered: colorMix('gray-25', 'gray-900', 10),
+    isPressed: colorMix('gray-25', 'gray-900', 10)
   },
   forcedColors: {
     default: 'Background'
@@ -201,7 +201,6 @@ const treeRow = style({
     isSelected: baseColor('neutral'),
     forcedColors: 'ButtonText'
   },
-  // outlineStyle: 'none',
   cursor: {
     default: 'default',
     isLink: 'pointer'
@@ -210,34 +209,11 @@ const treeRow = style({
     type: 'backgroundColor',
     value: rowBackgroundColor
   },
-  // '--rowFocusIndicatorColor': {
-  //   type: 'outlineColor',
-  //   value: {
-  //     default: 'focus-ring',
-  //     forcedColors: 'Highlight'
-  //   }
-  // },
   '--borderRadiusTreeItem': {
     type: 'borderTopStartRadius',
     value: 'sm'
   },
   borderRadius: 'sm'
-  // borderTopStartRadius: {
-  //   default: '--borderRadiusTreeItem',
-  //   isPreviousSelected: 'none'
-  // },
-  // borderTopEndRadius: {
-  //   default: '--borderRadiusTreeItem',
-  //   isPreviousSelected: 'none'
-  // },
-  // borderBottomStartRadius: {
-  //   default: '--borderRadiusTreeItem',
-  //   isNextSelected: 'none'
-  // },
-  // borderBottomEndRadius: {
-  //   default: '--borderRadiusTreeItem',
-  //   isNextSelected: 'none'
-  // }
 });
 
 const treeCellGrid = style({
@@ -295,7 +271,8 @@ const treeRowBackground = style({
     default: '--rowBackgroundColor',
     selectionStyle: {
       highlight: {
-        default: '--rowBackgroundColor',
+        isHovered: colorMix('gray-25', 'gray-900', 7),
+        isPressed: colorMix('gray-25', 'gray-900', 7),
         isSelected: {
           default: colorMix('gray-25', 'blue-900', 10),
           isHovered: colorMix('gray-25', 'blue-900', 15),
@@ -434,15 +411,8 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
   return (
     <TreeItemContent>
       {({isExpanded, hasChildItems, selectionMode, selectionBehavior, isDisabled, isSelected, id, state, isHovered, isFocusVisible}) => {
-        // let isNextSelected = false;
-        let isNextFocused = false;
-        // let keyAfter = state.collection.getKeyAfter(id);
-        // if (keyAfter != null) {
-        //   isNextSelected = state.selectionManager.isSelected(keyAfter);
-        // }
-        let isFirst = state.collection.getFirstKey() === id;
         return (
-          <div className={treeCellGrid({isDisabled, isNextSelected: isNextSelected(id, state), isSelected, isFirst, isNextFocused, selectionStyle})}>
+          <div className={treeCellGrid({isDisabled, isNextSelected: isNextSelected(id, state), isSelected, selectionStyle})}>
             <div className={treeRowBackground({isHovered, isFocusVisible, isSelected, selectionStyle, isNextSelected: isNextSelected(id, state), isPreviousSelected: isPrevSelected(id, state)})} />
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && selectionStyle !== 'highlight' && (
               // TODO: add transition?
@@ -595,17 +565,3 @@ function isPrevSelected(id: Key | undefined, state: TreeState<unknown>) {
   let keyBefore = state.collection.getKeyBefore(id);
   return keyBefore != null && state.selectionManager.isSelected(keyBefore);
 }
-
-// function isFirstItem(id: Key | undefined, state: TreeState<unknown>) {
-//   if (id == null || !state) {
-//     return false;
-//   }
-//   return state.collection.getFirstKey() === id;
-// }
-
-// function isLastItem(id: Key | undefined, state: TreeState<unknown>) {
-//   if (id == null || !state) {
-//     return false;
-//   }
-//   return state.collection.getLastKey() === id;
-// }
