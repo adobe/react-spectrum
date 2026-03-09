@@ -18,7 +18,7 @@ import {dispatchVirtualBlur, dispatchVirtualFocus, getVirtuallyFocusedElement, m
 import {getInteractionModality, getPointerType} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {FocusEvent as ReactFocusEvent, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {FocusEvent as ReactFocusEvent, KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface CollectionOptions extends DOMProps, AriaLabelingProps {
@@ -420,6 +420,19 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     }
   };
 
+  // Clicking an already-focused input won't emit a new focus event, so clear virtual focus
+  // on pointer down to restore the input's focused styling before the click completes.
+  // Touch is excluded because touch interactions should not move focus back to the input.
+  let onPointerDown = (e: ReactPointerEvent) => {
+    if (e.button !== 0 || e.pointerType === 'touch' || queuedActiveDescendant.current == null || inputRef.current == null) {
+      return;
+    }
+
+    if (getEventTarget(e) === inputRef.current && getActiveElement(getOwnerDocument(inputRef.current)) === inputRef.current) {
+      clearVirtualFocus();
+    }
+  };
+
   // Only apply the autocomplete specific behaviors if the collection component wrapped by it is actually
   // being filtered/allows filtering by the Autocomplete.
   let inputProps = {
@@ -431,7 +444,8 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     onKeyDown,
     'aria-activedescendant': state.focusedNodeId ?? undefined,
     onBlur,
-    onFocus
+    onFocus,
+    onPointerDown
   };
 
   if (hasCollection) {
