@@ -271,11 +271,11 @@ const treeRowBackground = style({
     default: '--rowBackgroundColor',
     selectionStyle: {
       highlight: {
-        isHovered: colorMix('gray-25', 'gray-900', 7),
-        isPressed: colorMix('gray-25', 'gray-900', 7),
+        default: '--rowBackgroundColor',
         isSelected: {
           default: colorMix('gray-25', 'blue-900', 10),
           isHovered: colorMix('gray-25', 'blue-900', 15),
+          isPressed: colorMix('gray-25', 'blue-900', 15),
           isFocusVisible: colorMix('gray-25', 'blue-900', 15)
         }
       }
