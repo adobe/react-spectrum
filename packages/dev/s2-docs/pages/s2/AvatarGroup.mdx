@@ -11,6 +11,7 @@ export const description = 'A grouping of avatars that are related to each other
 <PageDescription>{docs.exports.AvatarGroup.description}</PageDescription>
 
 ```tsx render docs={docs.exports.AvatarGroup} links={docs.links} props={['label', 'size']} initialProps={{'aria-label': 'Collaborators', label: '123 members'}} controlOptions={{size: {control: 'picker'}}} type="s2"
+"use client";
 import {AvatarGroup, Avatar} from '@react-spectrum/s2';
 
 <AvatarGroup/* PROPS */>

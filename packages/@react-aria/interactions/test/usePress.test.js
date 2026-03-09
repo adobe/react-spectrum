@@ -2276,7 +2276,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'presschange',
@@ -2291,7 +2292,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'pressend',
@@ -2302,7 +2304,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'presschange',
@@ -2317,7 +2320,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'click',
@@ -2366,7 +2370,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: 'Enter'
         },
         {
           type: 'presschange',
@@ -2381,7 +2386,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: 'Enter'
         },
         {
           type: 'pressend',
@@ -2392,7 +2398,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: 'Enter'
         },
         {
           type: 'presschange',
@@ -2407,7 +2414,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: 'Enter'
         },
         {
           type: 'click'
@@ -2450,7 +2458,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: 'Enter'
         },
         {
           type: 'presschange',
@@ -2465,7 +2474,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: 'Enter'
         },
         {
           type: 'pressend',
@@ -2476,7 +2486,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: 'Enter'
         },
         {
           type: 'presschange',
@@ -2491,7 +2502,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: 'Enter'
         },
         {
           type: 'click'
@@ -2531,7 +2543,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'presschange',
@@ -2546,7 +2559,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'pressend',
@@ -2557,7 +2571,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'presschange',
@@ -2572,7 +2587,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'click'
@@ -2607,7 +2623,8 @@ describe('usePress', function () {
           shiftKey: true,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'presschange',
@@ -2622,7 +2639,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'pressend',
@@ -2633,7 +2651,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'presschange',
@@ -2648,7 +2667,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'click',
@@ -2694,7 +2714,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: 'Enter'
         },
         {
           type: 'presschange',
@@ -2709,7 +2730,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: 'Enter'
         },
         {
           type: 'pressend',
@@ -2720,7 +2742,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: 'Enter'
         },
         {
           type: 'presschange',
@@ -2735,7 +2758,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: 'Enter'
         },
         {
           type: 'click',
@@ -2779,7 +2803,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'presschange',
@@ -2794,7 +2819,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'presschange',
@@ -2811,7 +2837,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'presschange',
@@ -2826,7 +2853,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'pressend',
@@ -2837,7 +2865,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'presschange',
@@ -2852,7 +2881,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'click',
@@ -2915,7 +2945,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'presschange',
@@ -2935,7 +2966,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'presschange',
@@ -2950,7 +2982,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'pressend',
@@ -2961,7 +2994,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'presschange',
@@ -2976,7 +3010,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'click',
@@ -3726,7 +3761,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'presschange',
@@ -3741,7 +3777,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'pressend',
@@ -3752,7 +3789,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         },
         {
           type: 'presschange',
@@ -3767,7 +3805,8 @@ describe('usePress', function () {
           shiftKey: false,
           altKey: false,
           x: 0,
-          y: 0
+          y: 0,
+          key: ' '
         }
       ]);
     });
@@ -4827,7 +4866,8 @@ describe('coordinates', () => {
         shiftKey: false,
         altKey: false,
         x: 50,
-        y: 50
+        y: 50,
+        key: ' '
       },
       {
         type: 'presschange',
@@ -4842,7 +4882,8 @@ describe('coordinates', () => {
         shiftKey: false,
         altKey: false,
         x: 50,
-        y: 50
+        y: 50,
+        key: ' '
       },
       {
         type: 'pressend',
@@ -4853,7 +4894,8 @@ describe('coordinates', () => {
         shiftKey: false,
         altKey: false,
         x: 50,
-        y: 50
+        y: 50,
+        key: ' '
       },
       {
         type: 'presschange',
@@ -4868,7 +4910,8 @@ describe('coordinates', () => {
         shiftKey: false,
         altKey: false,
         x: 50,
-        y: 50
+        y: 50,
+        key: ' '
       }
     ]);
   });

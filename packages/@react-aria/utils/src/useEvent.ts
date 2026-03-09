@@ -11,7 +11,7 @@
  */
 
 import {RefObject} from '@react-types/shared';
-import {useCallback, useEffect} from 'react';
+import {useEffect} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 
 export function useEvent<K extends keyof GlobalEventHandlersEventMap>(
@@ -20,8 +20,7 @@ export function useEvent<K extends keyof GlobalEventHandlersEventMap>(
   handler?: (this: Document, ev: GlobalEventHandlersEventMap[K]) => any,
   options?: boolean | AddEventListenerOptions
 ): void {
-  let noop = useCallback(() => {}, []);
-  let handleEvent = useEffectEvent(handler ?? noop);
+  let handleEvent = useEffectEvent(handler);
   let isDisabled = handler == null;
 
   useEffect(() => {

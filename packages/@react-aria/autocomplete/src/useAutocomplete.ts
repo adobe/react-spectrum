@@ -13,7 +13,7 @@
 import {AriaLabelingProps, BaseEvent, DOMProps, FocusableElement, FocusEvents, KeyboardEvents, Node, RefObject, ValueBase} from '@react-types/shared';
 import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isAndroid, isCtrlKeyPressed, isIOS, mergeProps, mergeRefs, useEffectEvent, useEvent, useId, useLabels, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getEventTarget, getOwnerDocument, isAndroid, isCtrlKeyPressed, isIOS, mergeProps, mergeRefs, useEffectEvent, useEvent, useId, useLabels, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {dispatchVirtualBlur, dispatchVirtualFocus, getVirtuallyFocusedElement, moveVirtualFocus} from '@react-aria/focus';
 import {getInteractionModality, getPointerType} from '@react-aria/interactions';
 // @ts-ignore
@@ -112,7 +112,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
       inputRef.current.focus();
     }
 
-    let target = e.target as Element | null;
+    let target = getEventTarget(e) as Element | null;
     if (e.isTrusted || !target || queuedActiveDescendant.current === target.id) {
       return;
     }
@@ -225,12 +225,20 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
   let keyDownTarget = useRef<Element | null>(null);
   // For textfield specific keydown operations
   let onKeyDown = (e: BaseEvent<ReactKeyboardEvent<any>>) => {
-    keyDownTarget.current = e.target as Element;
+    keyDownTarget.current = getEventTarget(e) as Element;
     if (e.nativeEvent.isComposing) {
       return;
     }
 
     let focusedNodeId = queuedActiveDescendant.current;
+    if (focusedNodeId !== null && getOwnerDocument(inputRef.current).getElementById(focusedNodeId) == null) {
+      // if the focused id doesn't exist in document, then we need to clear the tracked focused node, otherwise
+      // we will be attempting to fire key events on a non-existing node instead of trying to focus the newly swapped wrapped collection.
+      // This can happen if you are swapping out the Autocomplete wrapped collection component like in the docs search.
+      queuedActiveDescendant.current = null;
+      focusedNodeId = null;
+    }
+
     switch (e.key) {
       case 'a':
         if (isCtrlKeyPressed(e)) {
@@ -260,9 +268,26 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
       case 'PageDown':
       case 'PageUp':
       case 'ArrowUp':
-      case 'ArrowDown': {
+      case 'ArrowDown':
+      case 'ArrowRight':
+      case 'ArrowLeft': {
         if ((e.key === 'Home' || e.key === 'End') && focusedNodeId == null && e.shiftKey) {
           return;
+        }
+
+        // If there is text within the input field, we'll want continue propagating events down
+        // to the wrapped collection if there is a focused node so that a user can continue moving the
+        // virtual focus. However, if the user doesn't have a focus in the collection, just move the text
+        // cursor instead. They can move focus down into the collection via down/up arrow if need be
+        if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && state.inputValue.length > 0) {
+          if (focusedNodeId == null) {
+            if (!e.isPropagationStopped()) {
+              e.stopPropagation();
+            }
+            return;
+          }
+
+          break;
         }
 
         // Prevent these keys from moving the text cursor in the input
@@ -329,7 +354,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     // Dispatch simulated key up events for things like triggering links in listbox
     // Make sure to stop the propagation of the input keyup event so that the simulated keyup/down pair
     // is detected by usePress instead of the original keyup originating from the input
-    if (e.target === keyDownTarget.current) {
+    if (getEventTarget(e) === keyDownTarget.current) {
       e.stopImmediatePropagation();
       let focusedNodeId = queuedActiveDescendant.current;
       if (focusedNodeId == null) {
@@ -386,7 +411,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
 
     let curFocusedNode = queuedActiveDescendant.current ? document.getElementById(queuedActiveDescendant.current) : null;
     if (curFocusedNode) {
-      let target = e.target;
+      let target = getEventTarget(e);
       queueMicrotask(() => {
         // instead of focusing the last focused node, just focus the collection instead and have the collection handle what item to focus via useSelectableCollection/Item
         dispatchVirtualBlur(target, collectionRef.current);

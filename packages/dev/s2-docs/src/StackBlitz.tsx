@@ -80,7 +80,7 @@ function getFiles(
           'tailwindcss-animate': '^1'
         } : {}),
         ...(type === 's2' ? {
-          'unplugin-parcel-macros': '^0.1.2-alpha.1'
+          'unplugin-parcel-macros': '^0.2.0'
         } : {})
       }
     }, null, 2) + '\n',
@@ -111,6 +111,7 @@ createRoot(document.getElementById('root')!).render(${type === 's2' ? `\n  <Prov
 `,
     'tsconfig.json': JSON.stringify({
       compilerOptions: {
+        'noImplicitAny': false,
         'target': 'ES2022',
         'useDefineForClassFields': true,
         'lib': ['ES2022', 'DOM', 'DOM.Iterable'],

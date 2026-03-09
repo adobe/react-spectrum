@@ -196,7 +196,7 @@ function AsyncLoadingExample() {
 
 ### Links
 
-Use the `href` prop on a `<ListBoxItem>` to create a link. See the [framework setup guide](frameworks) to learn how to integrate with your framework.
+Use the `href` prop on a `<ListBoxItem>` to create a link.
 
 By default, link items in a ListBox are not selectable, and only perform navigation when the user interacts with them. However, with `selectionBehavior="replace"`, items will be selected when single clicking or pressing the <Keyboard>Space</Keyboard> key, and navigate to the link when double clicking or pressing the <Keyboard>Enter</Keyboard> key.
 
@@ -212,6 +212,18 @@ import {ListBox, ListBoxItem} from 'react-aria-components';
   <ListBoxItem href="https://google.com/" target="_blank">Google</ListBoxItem>
   <ListBoxItem href="https://microsoft.com/" target="_blank">Microsoft</ListBoxItem>
 </ListBox>
+```
+
+By default, links are rendered as an `<a>` element. Use the `render` prop to integrate your framework's link component. An `href` should still be passed to `ListBoxItem` so React Aria knows it is a link.
+
+```tsx
+<ListBoxItem
+  {...props}
+  render={domProps =>
+    'href' in domProps
+      ? <RouterLink {...domProps} />
+      : <div {...domProps} />
+  } />
 ```
 
 ### Empty state

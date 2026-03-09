@@ -15,6 +15,7 @@ import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -120,7 +121,7 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
   delete DOMProps.id;
 
   return (
-    <div
+    <dom.div
       {...DOMProps}
       {...renderProps}
       ref={ref}
@@ -146,6 +147,6 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
         ]}>
         {renderProps.children}
       </Provider>
-    </div>
+    </dom.div>
   );
 });

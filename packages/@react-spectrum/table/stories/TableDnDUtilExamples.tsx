@@ -1,5 +1,5 @@
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '..';
 import {DIRECTORY_DRAG_TYPE, DragAndDropOptions, useDragAndDrop} from '@react-spectrum/dnd';
 import {Flex} from '@react-spectrum/layout';

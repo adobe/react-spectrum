@@ -23,6 +23,7 @@
   "label.(optional)": "(pasirenkama)",
   "label.(required)": "(privaloma)",
   "menu.moreActions": "Daugiau veiksmų",
+  "menu.unavailable": "Nepasiekiama, norėdami gauti daugiau informacijos, išskleiskite",
   "notificationbadge.indicatorOnly": "Nauja veikla",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Pasirinkite…",

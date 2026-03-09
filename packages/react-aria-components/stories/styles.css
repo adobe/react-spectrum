@@ -79,6 +79,12 @@
     flex-direction: row;
   }
 
+  &[data-drop-target] {
+    outline: 2px solid purple;
+    outline-offset: -2px;
+    background: rgb(from purple r g b / 20%);
+  }
+
   :global(.react-aria-MenuItem),
   :global(.react-aria-ListBoxItem) {
     position: relative;

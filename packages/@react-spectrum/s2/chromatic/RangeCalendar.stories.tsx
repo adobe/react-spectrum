@@ -15,7 +15,7 @@ import {Custom454Calendar} from '/packages/@internationalized/date/tests/customC
 import {DateValue} from 'react-aria';
 import type {Meta, StoryObj} from '@storybook/react';
 import {RangeCalendar} from '../src';
-import {userEvent} from '@storybook/test';
+import {userEvent} from 'storybook/test';
 
 const meta: Meta<typeof RangeCalendar> = {
   component: RangeCalendar,

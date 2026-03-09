@@ -70,6 +70,12 @@ describe('TextField', () => {
       expect(textbox).toHaveAttribute('aria-label', 'test');
     });
 
+    it('should support custom render function', () => {
+      let {getByRole} = render(<TestTextField input={component} render={props => <div {...props} data-custom="true" />} />);
+      let field = getByRole('textbox').closest('.react-aria-TextField');
+      expect(field).toHaveAttribute('data-custom', 'true');
+    });
+
     it('should support hover state', async () => {
       let hoverStartSpy = jest.fn();
       let hoverChangeSpy = jest.fn();

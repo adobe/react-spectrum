@@ -41,21 +41,24 @@ import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useRef} from 'react';
 import {Text, TextContext} from './Content';
+import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from './useDOMRef';
 import {useLocale, useLocalizedStringFormatter} from 'react-aria';
 import {useScale} from './utils';
 
 interface S2TreeProps {
   /** Handler that is called when a user performs an action on a row. */
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  /** Provides the ActionBar to display when items are selected in the TreeView. */
+  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement
 }
 
-export interface TreeViewProps<T> extends Omit<RACTreeProps<T>, 'style' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, UnsafeStyles, S2TreeProps {
+export interface TreeViewProps<T> extends Omit<RACTreeProps<T>, 'style' | 'className' | 'render' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, UnsafeStyles, S2TreeProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
 
-export interface TreeViewItemProps extends Omit<RACTreeItemProps, 'className' | 'style' | 'onClick' | keyof GlobalDOMAttributes> {
+export interface TreeViewItemProps extends Omit<RACTreeItemProps, 'className' | 'style' | 'render' | 'onClick' | keyof GlobalDOMAttributes> {
   /** Whether this item has children, even if not loaded yet. */
   hasChildItems?: boolean
 }
@@ -70,6 +73,16 @@ interface TreeRendererContextValue {
 }
 const TreeRendererContext = createContext<TreeRendererContextValue>({});
 
+
+const treeViewWrapper = style({
+  minHeight: 0,
+  minWidth: 160,
+  display: 'flex',
+  isolation: 'isolate',
+  disableTapHighlight: true,
+  position: 'relative',
+  overflow: 'clip'
+}, getAllowedOverrides({height: true}));
 
 // TODO: the below is needed so the borders of the top and bottom row isn't cut off if the TreeView is wrapped within a container by always reserving the 2px needed for the
 // keyboard focus ring. Perhaps find a different way of rendering the outlines since the top of the item doesn't
@@ -94,7 +107,7 @@ const tree = style({
     type: 'width',
     value: 16
   }
-}, getAllowedOverrides({height: true}));
+});
 
 /**
  * A tree view provides users with a way to navigate nested hierarchical information.
@@ -109,24 +122,39 @@ export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tr
   }
 
   let domRef = useDOMRef(ref);
+  let scrollRef = useRef<HTMLDivElement | null>(null);
+
+  let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
 
   return (
-    <Virtualizer
-      layout={ListLayout}
-      layoutOptions={{
-        rowHeight: scale === 'large' ? 50 : 40
-      }}>
-      <TreeRendererContext.Provider value={{renderer}}>
-        <Tree
-          {...props}
-          style={UNSAFE_style}
-          className={renderProps => (UNSAFE_className ?? '') + tree({...renderProps}, props.styles)}
-          selectionBehavior="toggle"
-          ref={domRef}>
-          {props.children}
-        </Tree>
-      </TreeRendererContext.Provider>
-    </Virtualizer>
+    <div
+      ref={domRef}
+      className={(UNSAFE_className ?? '') + treeViewWrapper(null, props.styles)}
+      style={UNSAFE_style}>
+      <Virtualizer
+        layout={ListLayout}
+        layoutOptions={{
+          rowHeight: scale === 'large' ? 50 : 40
+        }}>
+        <TreeRendererContext.Provider value={{renderer}}>
+          <Tree
+            {...props}
+            style={{
+              paddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0,
+              scrollPaddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0
+            }}
+            className={tree}
+            selectionBehavior="toggle"
+            selectedKeys={selectedKeys}
+            defaultSelectedKeys={undefined}
+            onSelectionChange={onSelectionChange}
+            ref={scrollRef}>
+            {props.children}
+          </Tree>
+        </TreeRendererContext.Provider>
+      </Virtualizer>
+      {actionBar}
+    </div>
   );
 });
 
@@ -217,7 +245,11 @@ const treeCheckbox = style({
   gridArea: 'checkbox',
   marginStart: 12,
   marginEnd: 0,
-  paddingEnd: 0
+  paddingEnd: 0,
+  visibility: {
+    default: 'visible',
+    isDisabled: 'hidden'
+  }
 });
 
 const treeIcon = style({
@@ -302,7 +334,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
           <div className={treeCellGrid({isDisabled, isNextSelected, isSelected, isFirst, isNextFocused})}>
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               // TODO: add transition?
-              <div className={treeCheckbox}>
+              <div className={treeCheckbox({isDisabled: isDisabled || !state.selectionManager.canSelectItem(id) || state.disabledKeys.has(id)})}>
                 <Checkbox slot="selection" />
               </div>
             )}
@@ -319,8 +351,8 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
                   render: centerBaseline({slot: 'icon', styles: treeIcon}),
                   styles: style({size: fontRelative(20), flexShrink: 0})
                 }],
-                [ActionButtonGroupContext, {styles: treeActions}],
-                [ActionMenuContext, {styles: treeActionMenu, isQuiet: true}]
+                [ActionButtonGroupContext, {styles: treeActions, isDisabled}],
+                [ActionMenuContext, {styles: treeActionMenu, isQuiet: true, isDisabled}]
               ]}>
               {typeof children === 'string' ? <Text>{children}</Text> : children}
             </Provider>

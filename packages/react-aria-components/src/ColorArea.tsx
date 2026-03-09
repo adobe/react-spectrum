@@ -2,6 +2,7 @@ import {AriaColorAreaProps, useColorArea} from 'react-aria';
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   Provider,
   RenderProps,
   SlotProps,
@@ -72,7 +73,7 @@ export const ColorArea = forwardRef(function ColorArea(props: ColorAreaProps, re
   delete DOMProps.id;
 
   return (
-    <div
+    <dom.div
       ref={ref}
       {...mergeProps(DOMProps, colorAreaProps, renderProps)}
       slot={props.slot || undefined}
@@ -84,6 +85,6 @@ export const ColorArea = forwardRef(function ColorArea(props: ColorAreaProps, re
         ]}>
         {renderProps.children}
       </Provider>
-    </div>
+    </dom.div>
   );
 });

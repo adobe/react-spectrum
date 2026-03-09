@@ -14,6 +14,7 @@ import {AriaColorFieldProps, useColorChannelField, useColorField, useLocale} fro
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -228,7 +229,7 @@ function useChildren(
         }],
         [FieldErrorContext, validation]
       ]}>
-      <div
+      <dom.div
         {...DOMProps}
         {...renderProps}
         ref={ref}
