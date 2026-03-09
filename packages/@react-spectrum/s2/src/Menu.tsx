@@ -294,8 +294,7 @@ export let description = style<{size: 'S' | 'M' | 'L' | 'XL', isFocused: boolean
     isFocused: 'gray-800',
     isDisabled: 'disabled',
     forcedColors: {
-      default: 'ButtonText',
-      isDisabled: 'GrayText'
+      default: 'inherit'
     }
   },
   transition: 'default'
@@ -315,9 +314,7 @@ let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean, isFocus
     default: 'gray-600',
     isDisabled: 'disabled',
     forcedColors: {
-      default: 'ButtonText',
-      isFocused: 'HighlightText',
-      isDisabled: 'GrayText'
+      default: 'inherit'
     }
   },
   unicodeBidi: 'plaintext'
