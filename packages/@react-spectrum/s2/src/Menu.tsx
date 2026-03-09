@@ -295,7 +295,6 @@ export let description = style<{size: 'S' | 'M' | 'L' | 'XL', isFocused: boolean
     isDisabled: 'disabled',
     forcedColors: {
       default: 'ButtonText',
-      isFocused: 'HighlightText',
       isDisabled: 'GrayText'
     }
   },
