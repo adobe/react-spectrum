@@ -1059,12 +1059,16 @@ function getJsDocData(node) {
       .find(Boolean) || '',
     defaultValue: tags.find(tag => tag.getTagName() === 'default')?.getCommentText() || '',
     selector: tags.find(tag => tag.getTagName() === 'selector')?.getCommentText() || '',
-    deprecated: tags.some(tag => tag.getTagName() === 'deprecated')
+    deprecated: tags.some(tag => tag.getTagName() === 'deprecated'),
+    private: tags.some(tag => tag.getTagName() === 'private')
   };
 }
 
-function isDeprecatedSymbol(sym) {
-  return (sym.getDeclarations?.() || []).some(decl => getJsDocData(decl).deprecated);
+function shouldOmitSymbol(sym) {
+  return (sym.getDeclarations?.() || []).some(decl => {
+    const docData = getJsDocData(decl);
+    return docData.deprecated || docData.private;
+  });
 }
 
 /**
@@ -1105,7 +1109,7 @@ function generatePropTable(componentName, file) {
   const propSymbols = iface.getType().getProperties();
 
   const rows = propSymbols.flatMap((sym) => {
-    if (isDeprecatedSymbol(sym)) {
+    if (shouldOmitSymbol(sym)) {
       return [];
     }
 
@@ -1174,7 +1178,7 @@ function generateInterfaceTable(interfaceName, file) {
   const methods = [];
 
   for (const sym of propSymbols) {
-    if (isDeprecatedSymbol(sym)) {
+    if (shouldOmitSymbol(sym)) {
       continue;
     }
 
@@ -2626,7 +2630,8 @@ function generateClassAPITable(className, file) {
   // Generate properties documentation
   const properties = classDecl.getProperties().filter(p => {
     const scope = p.getScope();
-    return (scope === undefined || scope === 1) && !getJsDocData(p).deprecated; // public, non-deprecated properties only
+    const docData = getJsDocData(p);
+    return (scope === undefined || scope === 1) && !docData.deprecated && !docData.private; // public, non-deprecated, non-private properties only
   });
 
   if (properties.length > 0) {
@@ -2687,7 +2692,7 @@ function generateStateTable(renderPropsName, {showOptional = false, hideSelector
 
   // Build rows
   const rows = propSymbols.map(sym => {
-    if (isDeprecatedSymbol(sym)) {
+    if (shouldOmitSymbol(sym)) {
       return null;
     }
 
