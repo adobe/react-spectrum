@@ -83,6 +83,14 @@ standalone.add('ImageCoordinator');
 standalone.add('NotificationBadge');
 standalone.add('SkeletonCollection');
 
+standalone.add('useOverlayTrigger');
+standalone.add('useId');
+standalone.add('useToolbar');
+
+standalone.add('theme-default');
+standalone.add('theme-dark');
+standalone.add('theme-light');
+
 // these are questionable.
 standalone.add('ColorThumb');
 standalone.add('FieldError');
@@ -164,11 +172,11 @@ let parentFile = {
   'useSubmenuTriggerState': 'useMenuTriggerState',
   // 'types': '',
   'useTableColumnResizeState': 'useTableState',
-  // 'Layout': 'useVirtualizerState',
-  // 'LayoutInfo': 'useVirtualizerState',
-  // 'Point': 'useVirtualizerState',
-  // 'Rect': 'useVirtualizerState',
-  // 'Size': 'useVirtualizerState',
+  'Layout': 'Virtualizer',
+  'LayoutInfo': 'Virtualizer',
+  'Point': 'Virtualizer',
+  'Rect': 'Virtualizer',
+  'Size': 'Virtualizer',
   'DateSegmentType': 'useDateFieldState',
   'DragAndDrop': 'useDragAndDrop',
   parseColor: 'Color',
