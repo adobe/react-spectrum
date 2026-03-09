@@ -88,7 +88,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adobe/react-spectrum@npm:^3.46.0, @adobe/react-spectrum@workspace:packages/@adobe/react-spectrum":
+"@adobe/react-spectrum@npm:^3.46.2, @adobe/react-spectrum@workspace:packages/@adobe/react-spectrum":
   version: 0.0.0-use.local
   resolution: "@adobe/react-spectrum@workspace:packages/@adobe/react-spectrum"
   dependencies:
@@ -6857,7 +6857,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/docs@workspace:packages/dev/docs"
   dependencies:
-    "@adobe/react-spectrum": "npm:^3.46.0"
+    "@adobe/react-spectrum": "npm:^3.46.2"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@mdx-js/react": "npm:next"
     "@react-aria/aria-modal-polyfill": "npm:^3.1.0"
@@ -9005,7 +9005,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
   peerDependencies:
-    "@adobe/react-spectrum": ^3.46.0
+    "@adobe/react-spectrum": ^3.46.2
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -9019,7 +9019,7 @@ __metadata:
     "@spectrum-icons/build-tools": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    "@adobe/react-spectrum": ^3.46.0
+    "@adobe/react-spectrum": ^3.46.2
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -9032,7 +9032,7 @@ __metadata:
     "@spectrum-icons/build-tools": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    "@adobe/react-spectrum": ^3.46.0
+    "@adobe/react-spectrum": ^3.46.2
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -9048,7 +9048,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
   peerDependencies:
-    "@adobe/react-spectrum": ^3.46.0
+    "@adobe/react-spectrum": ^3.46.2
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -9063,7 +9063,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
   peerDependencies:
-    "@adobe/react-spectrum": ^3.46.0
+    "@adobe/react-spectrum": ^3.46.2
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
