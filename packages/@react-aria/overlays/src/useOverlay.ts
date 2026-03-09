@@ -99,7 +99,6 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(getEventTarget(e) as Element)) {
       if (topMostOverlay === ref) {
         e.stopPropagation();
-        e.preventDefault();
       }
     }
   };
@@ -108,7 +107,6 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(getEventTarget(e) as Element)) {
       if (visibleOverlays[visibleOverlays.length - 1] === ref) {
         e.stopPropagation();
-        e.preventDefault();
       }
       if (lastVisibleOverlay.current === ref) {
         onHide();

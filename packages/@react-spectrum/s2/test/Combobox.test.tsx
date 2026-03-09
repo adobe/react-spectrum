@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, pointerMap, render, setupIntersectionObserverMock, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {act, pointerMap, render, setupIntersectionObserverMock, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
 import {Button, ComboBox, ComboBoxItem, Content, ContextualHelp, Dialog, DialogTrigger, Heading, Text} from '../src';
 import React from 'react';
