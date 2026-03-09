@@ -178,7 +178,10 @@ let parentFile = {
   'DateSegmentType': 'useDateFieldState',
   'DragAndDrop': 'useDragAndDrop',
   parseColor: 'Color',
-  useLocale: 'I18nProvider'
+  useLocale: 'I18nProvider',
+  ColorEditor: 'ColorPicker',
+  SubmenuTrigger: 'Menu',
+  ContextualHelpTrigger: 'Menu'
 };
 
 // Names that are included in public files but not exported by monopackages.
@@ -649,14 +652,36 @@ function getImportStatements(node, file, relative = true) {
   let groups = {};
   for (let specifier of node.specifiers) {
     let importedName = specifier.type === 'ImportSpecifier' ? specifier.imported.name : specifier.local.name;
-    if (!importedName || !importMap[source][importedName]) {
+    if (!importedName) {
       continue;
     }
+    let local = node.type === 'ImportDeclaration' ? specifier.local : specifier.exported;
     let importSource = source;
-    let [src, imported] = importMap[source][importedName];
-    while (importMap[src] && importMap[src][imported]) {
-      importSource = src;
-      [src, imported] = importMap[src][imported];
+    let src, imported;
+    if (source === '@react-spectrum/theme-default') {
+      src = '@adobe/react-spectrum/defaultTheme';
+      imported = 'defaultTheme';
+      local = file.includes('@react-spectrum') ? t.identifier('theme') : local;
+    } else if (source === '@react-spectrum/theme-dark') {
+      src = '@adobe/react-spectrum/darkTheme';
+      imported = 'darkTheme';
+      local = file.includes('@react-spectrum') ? t.identifier('theme') : local;
+    } else if (source === '@react-spectrum/theme-light') {
+      src = '@adobe/react-spectrum/lightTheme';
+      imported = 'lightTheme';
+      local = file.includes('@react-spectrum') ? t.identifier('theme') : local;
+    } else if (source === '@react-spectrum/theme-express') {
+      src = '@adobe/react-spectrum/private/theme-express/expressTheme';
+      imported = 'expressTheme';
+      local = file.includes('@react-spectrum') ? t.identifier('theme') : local;
+    } else if (!importMap[source][importedName]) {
+      continue;
+    } else {
+      [src, imported] = importMap[source][importedName];
+      while (importMap[src] && importMap[src][imported]) {
+        importSource = src;
+        [src, imported] = importMap[src][imported];
+      }
     }
 
     if (src.startsWith('./')) {
@@ -665,9 +690,9 @@ function getImportStatements(node, file, relative = true) {
     }
     groups[src] ||= [];
     if (node.type === 'ImportDeclaration') {
-      groups[src].push(t.importSpecifier(specifier.local, t.identifier(imported)));
+      groups[src].push(t.importSpecifier(local, t.identifier(imported)));
     } else if (node.type === 'ExportNamedDeclaration') {
-      groups[src].push(t.exportSpecifier(t.identifier(imported), specifier.exported));
+      groups[src].push(t.exportSpecifier(t.identifier(imported), local));
     }
   }
   
@@ -760,6 +785,8 @@ function getRenamedSpecifier(specifier, from, importedName, relative = true) {
     subpath = name;
   } else if (parentFile[name] && !isPrivate) {
     subpath = parentFile[name];
+  } else if (name === 'Column' && monopackage === '@adobe/react-spectrum') {
+    subpath = 'TableView';
   } else if (pkg === monopackage) {
     subpath = `private/${name}`;
   } else {
@@ -831,11 +858,16 @@ function createPublicExports(file, monopackage, scope, pkg) {
   }
 
   for (let source in groups) {
-    groups[source][0].comments = ast.program.body[0].leadingComments;
     let f = `packages/${monopackage}/exports/${path.basename(source)}.ts`;
+    let body = groups[source];
+    if (monopackage === 'react-aria-components') {
+      body = [ast.program.body[0], ...body]; // import 'client-only';
+    } else {
+      groups[source][0].comments = ast.program.body[0].leadingComments;
+    }
     let content = recast.print({
       type: 'Program',
-      body: groups[source]
+      body
     }, {objectCurlySpacing: false, quote: 'single'}).code;
     fs.writeFileSync(f, content);
   }

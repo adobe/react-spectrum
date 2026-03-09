@@ -45,7 +45,7 @@ import React, {DOMAttributes, HTMLAttributes, ReactElement, ReactNode, useCallba
 import {Resizer, ResizeStateContext} from './Resizer';
 import {RootDropIndicator} from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
-import {SpectrumTableProps} from './TableViewWrapper';
+import {SpectrumTableProps} from './TableView';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {TableState, TreeGridState, useTableColumnResizeState} from '@react-stately/table';

@@ -12,15 +12,15 @@
 
 /// <reference types="css-module-types" />
 
-export {TableView, Column} from './TableViewWrapper';
-
 export {
+  TableView,
   TableHeader,
   TableBody,
+  Column,
   Section,
   Row,
   Cell
-} from '@react-stately/table';
+} from './TableView';
 
 export type {SpectrumColumnProps, TableHeaderProps, TableBodyProps, RowProps, CellProps} from '@react-types/table';
-export type {SpectrumTableProps} from './TableViewWrapper';
+export type {SpectrumTableProps} from './TableView';
