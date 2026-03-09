@@ -26,13 +26,14 @@ import {
   TreeItemContentProps,
   TreeLoadMoreItem,
   TreeLoadMoreItemProps,
+  TreeState,
   useContextProps,
   Virtualizer
 } from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
-import {DOMRef, forwardRefType, GlobalDOMAttributes, Key, LoadingState, SelectionBehavior} from '@react-types/shared';
+import {DOMRef, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -175,12 +176,11 @@ const rowBackgroundColor = {
   default: '--s2-container-bg',
   isFocusVisibleWithin: colorMix('gray-25', 'gray-900', 7),
   isHovered: colorMix('gray-25', 'gray-900', 7),
-  isPressed: colorMix('gray-25', 'gray-900', 10),
   isSelected: {
-    default: colorMix('gray-100', 'gray-900', 7),
-    isFocusVisibleWithin: colorMix('gray-200', 'gray-900', 10),
-    isHovered: colorMix('gray-200', 'gray-900', 10),
-    isPressed: colorMix('gray-200', 'gray-900', 10)
+    default: 'gray-100',
+    isFocusVisibleWithin: 'gray-200',
+    isHovered: 'gray-200',
+    isPressed: 'gray-200'
   },
   forcedColors: {
     default: 'Background'
@@ -188,6 +188,8 @@ const rowBackgroundColor = {
 } as const;
 
 const treeRow = style({
+  ...focusRing(),
+  outlineOffset: -2,
   position: 'relative',
   display: 'flex',
   height: 40,
@@ -199,7 +201,7 @@ const treeRow = style({
     isSelected: baseColor('neutral'),
     forcedColors: 'ButtonText'
   },
-  outlineStyle: 'none',
+  // outlineStyle: 'none',
   cursor: {
     default: 'default',
     isLink: 'pointer'
@@ -208,14 +210,34 @@ const treeRow = style({
     type: 'backgroundColor',
     value: rowBackgroundColor
   },
-  '--rowFocusIndicatorColor': {
-    type: 'outlineColor',
-    value: {
-      default: 'focus-ring',
-      forcedColors: 'Highlight'
-    }
+  // '--rowFocusIndicatorColor': {
+  //   type: 'outlineColor',
+  //   value: {
+  //     default: 'focus-ring',
+  //     forcedColors: 'Highlight'
+  //   }
+  // },
+  '--borderRadiusTreeItem': {
+    type: 'borderTopStartRadius',
+    value: 'sm'
   },
   borderRadius: 'sm'
+  // borderTopStartRadius: {
+  //   default: '--borderRadiusTreeItem',
+  //   isPreviousSelected: 'none'
+  // },
+  // borderTopEndRadius: {
+  //   default: '--borderRadiusTreeItem',
+  //   isPreviousSelected: 'none'
+  // },
+  // borderBottomStartRadius: {
+  //   default: '--borderRadiusTreeItem',
+  //   isNextSelected: 'none'
+  // },
+  // borderBottomEndRadius: {
+  //   default: '--borderRadiusTreeItem',
+  //   isNextSelected: 'none'
+  // }
 });
 
 const treeCellGrid = style({
@@ -231,14 +253,6 @@ const treeCellGrid = style({
   gridTemplateAreas: [
     'drag-handle checkbox level-padding expand-button icon content actions actionmenu'
   ],
-  backgroundColor: {
-    default: '--rowBackgroundColor',
-    selectionStyle: {
-      highlight: {
-        isSelected: colorMix('gray-25', 'blue-900', 10)
-      }
-    }
-  },
   paddingEnd: 4, // account for any focus rings on the last item in the cell
   color: {
     isDisabled: {
@@ -260,6 +274,78 @@ const treeCellGrid = style({
       default: 'focus-ring',
       forcedColors: 'Highlight'
     }
+  },
+  '--borderColor': {
+    type: 'borderColor',
+    value: {
+      default: 'transparent',
+      selectionStyle: {
+        highlight: 'blue-900'
+      },
+      forcedColors: 'ButtonBorder'
+    }
+  }
+});
+
+const treeRowBackground = style({
+  position: 'absolute',
+  zIndex: -1,
+  inset: 0,
+  backgroundColor: {
+    default: '--rowBackgroundColor',
+    selectionStyle: {
+      highlight: {
+        default: '--rowBackgroundColor',
+        isSelected: {
+          default: colorMix('gray-25', 'blue-900', 10),
+          isHovered: colorMix('gray-25', 'blue-900', 15),
+          isFocusVisible: colorMix('gray-25', 'blue-900', 15)
+        }
+      }
+    }
+  },
+  borderTopStartRadius: {
+    default: '--borderRadiusTreeItem',
+    isPreviousSelected: {
+      default: '--borderRadiusTreeItem',
+      isSelected: 'none'
+    }
+  },
+  borderTopEndRadius: {
+    default: '--borderRadiusTreeItem',
+    isPreviousSelected: {
+      default: '--borderRadiusTreeItem',
+      isSelected: 'none'
+    }
+  },
+  borderBottomStartRadius: {
+    default: '--borderRadiusTreeItem',
+    isNextSelected: {
+      default: '--borderRadiusTreeItem',
+      isSelected: 'none'
+    }
+  },
+  borderBottomEndRadius: {
+    default: '--borderRadiusTreeItem',
+    isNextSelected: {
+      default: '--borderRadiusTreeItem',
+      isSelected: 'none'
+    }
+  },
+  borderTopWidth: {
+    default: 1,
+    isPreviousSelected: 0
+  },
+  borderBottomWidth: {
+    default: 1,
+    isNextSelected: 0
+  },
+  borderStartWidth: 1,
+  borderEndWidth: 1,
+  borderStyle: 'solid',
+  borderColor: {
+    default: 'transparent',
+    isSelected: '--borderColor'
   }
 });
 
@@ -326,7 +412,8 @@ export const TreeViewItem = (props: TreeViewItemProps): ReactNode => {
       {...props}
       className={(renderProps) => treeRow({
         ...renderProps,
-        isLink: !!href
+        isLink: !!href,
+        isPreviousSelected: isPrevSelected(renderProps.id, renderProps.state)
       }) + (renderProps.isFocusVisible ? ' ' + treeRowFocusIndicator : '')} />
   );
 };
@@ -346,16 +433,17 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
   
   return (
     <TreeItemContent>
-      {({isExpanded, hasChildItems, selectionMode, selectionBehavior, isDisabled, isSelected, id, state}) => {
-        let isNextSelected = false;
+      {({isExpanded, hasChildItems, selectionMode, selectionBehavior, isDisabled, isSelected, id, state, isHovered, isFocusVisible}) => {
+        // let isNextSelected = false;
         let isNextFocused = false;
-        let keyAfter = state.collection.getKeyAfter(id);
-        if (keyAfter != null) {
-          isNextSelected = state.selectionManager.isSelected(keyAfter);
-        }
+        // let keyAfter = state.collection.getKeyAfter(id);
+        // if (keyAfter != null) {
+        //   isNextSelected = state.selectionManager.isSelected(keyAfter);
+        // }
         let isFirst = state.collection.getFirstKey() === id;
         return (
-          <div className={treeCellGrid({isDisabled, isNextSelected, isSelected, isFirst, isNextFocused, selectionStyle})}>
+          <div className={treeCellGrid({isDisabled, isNextSelected: isNextSelected(id, state), isSelected, isFirst, isNextFocused, selectionStyle})}>
+            <div className={treeRowBackground({isHovered, isFocusVisible, isSelected, selectionStyle, isNextSelected: isNextSelected(id, state), isPreviousSelected: isPrevSelected(id, state)})} />
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && selectionStyle !== 'highlight' && (
               // TODO: add transition?
               <div className={treeCheckbox({isDisabled: isDisabled || !state.selectionManager.canSelectItem(id) || state.disabledKeys.has(id)})}>
@@ -483,3 +571,41 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
     </Button>
   );
 }
+
+function isNextSelected(id: Key | undefined, state: TreeState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+  let keyAfter = state.collection.getKeyAfter(id);
+
+  // skip nodes that are not item nodes because the selection manager will map non-item nodes to their parent item before checking selection
+  let node = keyAfter ? state.collection.getItem(keyAfter) : null;
+  while (node && node.type !== 'item' && keyAfter) {
+    keyAfter = state.collection.getKeyAfter(keyAfter);
+    node = keyAfter ? state.collection.getItem(keyAfter) : null;
+  }
+
+  return keyAfter != null && state.selectionManager.isSelected(keyAfter);
+}
+
+function isPrevSelected(id: Key | undefined, state: TreeState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+  let keyBefore = state.collection.getKeyBefore(id);
+  return keyBefore != null && state.selectionManager.isSelected(keyBefore);
+}
+
+// function isFirstItem(id: Key | undefined, state: TreeState<unknown>) {
+//   if (id == null || !state) {
+//     return false;
+//   }
+//   return state.collection.getFirstKey() === id;
+// }
+
+// function isLastItem(id: Key | undefined, state: TreeState<unknown>) {
+//   if (id == null || !state) {
+//     return false;
+//   }
+//   return state.collection.getLastKey() === id;
+// }
