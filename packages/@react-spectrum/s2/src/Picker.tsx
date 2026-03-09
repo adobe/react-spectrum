@@ -445,6 +445,11 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                         // @ts-ignore
                         role: 'presentation',
                         styles: sectionHeading
+                      }],
+                      [TextContext, {
+                        slots: {
+                          'description': {styles: description({size, isFocused: false, isDisabled: false})}
+                        }
                       }]
                     ]}>
                     <ListBox
