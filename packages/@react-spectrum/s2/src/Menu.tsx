@@ -385,6 +385,11 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
             role: 'presentation',
             styles: sectionHeading
           }],
+          [TextContext, {
+            slots: {
+              'description': {styles: description({size, isFocused: false, isDisabled: false})}
+            }
+          }],
           [InPopoverContext, false]
         ]}>
         <AriaMenu
