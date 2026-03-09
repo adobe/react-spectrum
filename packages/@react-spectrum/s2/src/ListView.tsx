@@ -530,7 +530,11 @@ const listRowBackground = style<GridListItemRenderProps & {
 let listRowFocusRing = style<GridListItemRenderProps & {
   selectionStyle?: 'highlight' | 'checkbox',
   isFirstItem?: boolean,
+  isPrevSelected?: boolean,
+  isPrevNotSelected?: boolean,
   isNextSelected?: boolean,
+  isNextNotSelected?: boolean,
+  isLastItem?: boolean,
   isQuiet?: boolean
 }>({
   ...focusRing(),
@@ -572,8 +576,7 @@ let listRowFocusRing = style<GridListItemRenderProps & {
     isQuiet: 'default'
   },
   zIndex: 1,
-  pointerEvents: 'none',
-
+  pointerEvents: 'none'
 });
 
 export let label = style({
