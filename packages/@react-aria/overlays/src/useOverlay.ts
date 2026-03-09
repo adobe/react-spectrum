@@ -151,20 +151,11 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
     }
   });
 
-  let onPointerDownUnderlay = e => {
-    // fixes a firefox issue that starts text selection https://bugzilla.mozilla.org/show_bug.cgi?id=1675846
-    if (getEventTarget(e) === e.currentTarget) {
-      e.preventDefault();
-    }
-  };
-
   return {
     overlayProps: {
       onKeyDown,
       ...focusWithinProps
     },
-    underlayProps: {
-      onPointerDown: onPointerDownUnderlay
-    }
+    underlayProps: {}
   };
 }
