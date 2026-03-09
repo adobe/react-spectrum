@@ -250,6 +250,7 @@ Use the `renderValue` prop to provide a custom element to display selected items
 ```tsx render
 "use client";
 import {Avatar, AvatarGroup, Picker, PickerItem, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
 let users = [
@@ -269,7 +270,7 @@ function Example() {
         selectionMode={"multiple"}
         ///- begin highlight -///
         renderValue={(selectedItems) => (
-          <AvatarGroup aria-label="Selected users">
+          <AvatarGroup aria-label="Selected users" styles={style({marginX: 4})}>
             {selectedItems.map(item => (
               <Avatar key={item.id} src={item.avatar} alt={item.name} />
             ))}

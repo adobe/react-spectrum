@@ -289,7 +289,14 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   );
 }
 
-export interface GridListItemRenderProps extends ItemRenderProps {}
+export interface GridListItemRenderProps extends ItemRenderProps {
+  /** The unique id of the item. */
+  id?: Key,
+  /**
+   * State of the grid list.
+   */
+  state: ListState<unknown>
+}
 
 export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
@@ -373,7 +380,9 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
       selectionBehavior: state.selectionManager.selectionBehavior,
       allowsDragging: !!dragState,
       isDragging,
-      isDropTarget: dropIndicator?.isDropTarget
+      isDropTarget: dropIndicator?.isDropTarget,
+      id: item.key,
+      state
     }
   });
 
