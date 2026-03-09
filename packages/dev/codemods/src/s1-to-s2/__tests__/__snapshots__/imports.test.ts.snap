@@ -35,8 +35,6 @@ import { Button } from "@react-spectrum/s2";
 exports[`should leave unimplemented components untouched in namespace imports 1`] = `
 "import * as RSP from '@adobe/react-spectrum';
 
-import * as RSP1 from "@react-spectrum/s2";
-
 <>
   <RSP.Button>Test</RSP.Button>
   <RSP.Fake>Foo</RSP.Fake>
@@ -62,7 +60,7 @@ import { ListBox, Item } from '@adobe/react-spectrum';
 `;
 
 exports[`should not import Section from S2 1`] = `
-"import { MenuSection, MenuItem, Menu } from "@react-spectrum/s2";
+"import { MenuSection, Header, MenuItem, Menu } from "@react-spectrum/s2";
 import { Section, Item, ListBox } from '@adobe/react-spectrum';
 
 <div>
@@ -105,7 +103,7 @@ import { Button, StatusLight } from "@react-spectrum/s2";
 `;
 
 exports[`should remove unused Item/Section import even if name taken in different scope 1`] = `
-"import { MenuSection, MenuItem, Menu } from "@react-spectrum/s2";
+"import { MenuSection, Header, MenuItem, Menu } from "@react-spectrum/s2";
 
 function foo() {
   let Item = 'something else';
@@ -123,7 +121,7 @@ function foo() {
 `;
 
 exports[`should remove unused Item/Section import if aliased 1`] = `
-"import { MenuSection, MenuItem, Menu } from "@react-spectrum/s2";
+"import { MenuSection, Header, MenuItem, Menu } from "@react-spectrum/s2";
 import {Section, Item} from 'elsewhere';
 
 <div>

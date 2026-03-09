@@ -11,7 +11,7 @@ exports[`Should not update components that are not provided to --components opti
 `;
 
 exports[`Should only update ComboBox related shared components provided to --components option 1`] = `
-"import { ComboBoxSection, ComboBoxItem, ComboBox } from "@react-spectrum/s2";
+"import { ComboBoxSection, Header, ComboBoxItem, ComboBox } from "@react-spectrum/s2";
 import { Menu, MenuTrigger, Button, Section, Item } from '@adobe/react-spectrum';
 
 <>
@@ -75,6 +75,7 @@ exports[`Should update Menu related components provided to --components option 1
   ContextualHelpPopover,
   MenuItem,
   MenuSection,
+  Header,
   Menu,
   MenuTrigger,
   SubmenuTrigger,

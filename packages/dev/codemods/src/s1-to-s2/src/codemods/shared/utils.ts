@@ -152,7 +152,7 @@ export function removeComponentImportIfUnused(path: NodePath<t.Program>, compone
     return t.isImportDeclaration(node)
       && (
         node.source.value === '@adobe/react-spectrum'
-        || (node.source.value.startsWith('@react-spectrum/') && node.source.value !== '@react-spectrum/s2')
+        || node.source.value.startsWith('@react-spectrum/')
       );
   });
 
@@ -166,6 +166,35 @@ export function removeComponentImportIfUnused(path: NodePath<t.Program>, compone
       ) {
         let localName = specifier.local?.name ?? specifier.imported.name;
         let binding = path.scope.getBinding(localName);
+        return !!binding?.referencePaths.length;
+      }
+
+      return true;
+    });
+
+    if (importDecl.specifiers.length === 0 && previousLength > 0) {
+      path.node.body = path.node.body.filter((node) => node !== importDecl);
+    }
+  }
+}
+
+export function removeUnusedImports(path: NodePath<t.Program>, sources: string[]): void {
+  path.scope.crawl();
+
+  let sourceSet = new Set(sources);
+  let imports = path.node.body.filter((node): node is t.ImportDeclaration => {
+    return t.isImportDeclaration(node) && sourceSet.has(node.source.value);
+  });
+
+  for (let importDecl of imports) {
+    let previousLength = importDecl.specifiers.length;
+    importDecl.specifiers = importDecl.specifiers.filter((specifier) => {
+      if (
+        t.isImportSpecifier(specifier)
+        || t.isImportDefaultSpecifier(specifier)
+        || t.isImportNamespaceSpecifier(specifier)
+      ) {
+        let binding = path.scope.getBinding(specifier.local.name);
         return !!binding?.referencePaths.length;
       }
 

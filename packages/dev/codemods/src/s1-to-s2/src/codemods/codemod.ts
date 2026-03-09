@@ -1,5 +1,5 @@
 /* eslint-disable max-depth */
-import {addComment, getName} from './shared/utils';
+import {addComment, getName, removeUnusedImports} from './shared/utils';
 import {API, FileInfo} from 'jscodeshift';
 import {getComponents} from '../getComponents';
 import {iconMap} from './icons/iconMap';
@@ -188,8 +188,12 @@ export default function transformer(file: FileInfo, api: API, options: Options):
   let elements: [string, NodePath<t.JSXElement>][] = [];
   let lastImportPath: NodePath<t.ImportDeclaration> | null = null;
   let iconImports: Map<string, {path: NodePath<t.ImportDeclaration>, newName: string | null}> = new Map();
+  let programPath: NodePath<t.Program> | null = null;
   const leadingComments = root.find(j.Program).get('body', 0).node.leadingComments;
   traverse(root.paths()[0].node, {
+    Program(path) {
+      programPath = path;
+    },
     ImportDeclaration(path) {
       if (path.node.source.value === '@adobe/react-spectrum' || (path.node.source.value.startsWith('@react-spectrum/') && path.node.source.value !== '@react-spectrum/s2')) {
         lastImportPath = path;
@@ -454,6 +458,10 @@ export default function transformer(file: FileInfo, api: API, options: Options):
         decl.remove();
       }
     });
+  }
+
+  if (programPath) {
+    removeUnusedImports(programPath, ['@react-spectrum/s2']);
   }
 
   root.find(j.Program).get('body', 0).node.comments = leadingComments;
