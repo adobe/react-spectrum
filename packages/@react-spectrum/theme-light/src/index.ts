@@ -11,4 +11,4 @@
  */
 
 /// <reference types="css-module-types" />
-export {theme} from './theme-light';
+export {lightTheme as theme} from './lightTheme';

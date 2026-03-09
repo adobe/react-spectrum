@@ -12,17 +12,22 @@
 
 /// <reference types="css-module-types" />
 
-import dark from '@adobe/spectrum-css-temp/vars/spectrum-dark.css';
-import darkest from '@adobe/spectrum-css-temp/vars/spectrum-darkest.css';
-import global from '@adobe/spectrum-css-temp/vars/spectrum-global.css';
-import large from '@adobe/spectrum-css-temp/vars/spectrum-large.css';
-import medium from '@adobe/spectrum-css-temp/vars/spectrum-medium.css';
+import {theme as defaultTheme} from '@react-spectrum/theme-default';
+import express from '@adobe/spectrum-css-temp/vars/express.css';
 import {Theme} from '@react-types/provider';
 
-export let theme: Theme = {
-  global,
-  light: dark,
-  dark: darkest,
-  medium,
-  large
+export let expressTheme: Theme = {
+  ...defaultTheme,
+  global: {
+    ...defaultTheme.global,
+    express: express.express
+  },
+  medium: {
+    ...defaultTheme.medium,
+    express: express.medium
+  },
+  large: {
+    ...defaultTheme.large,
+    express: express.large
+  }
 };

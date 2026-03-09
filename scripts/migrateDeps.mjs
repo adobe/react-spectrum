@@ -86,10 +86,11 @@ standalone.add('SkeletonCollection');
 standalone.add('useOverlayTrigger');
 standalone.add('useId');
 standalone.add('useToolbar');
+standalone.add('Virtualizer');
 
-standalone.add('theme-default');
-standalone.add('theme-dark');
-standalone.add('theme-light');
+standalone.add('defaultTheme');
+standalone.add('darkTheme');
+standalone.add('lightTheme');
 
 // these are questionable.
 standalone.add('ColorThumb');
@@ -101,9 +102,6 @@ standalone.add('OverlayArrow');
 standalone.add('SelectionIndicator');
 standalone.add('SharedElementTransition');
 standalone.add('pressScale');
-standalone.add('theme-default');
-standalone.add('theme-light');
-standalone.add('theme-dark');
 
 // Documented but not in the monopackage.
 standalone.delete('useAutocomplete');

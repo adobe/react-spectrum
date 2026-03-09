@@ -11,4 +11,4 @@
  */
 
 /// <reference types="css-module-types" />
-export {theme} from './theme-dark';
+export {darkTheme as theme} from './darkTheme';

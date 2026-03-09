@@ -11,4 +11,4 @@
  */
 
 /// <reference types="css-module-types" />
-export {theme} from './theme-express';
+export {expressTheme as theme} from './expressTheme';

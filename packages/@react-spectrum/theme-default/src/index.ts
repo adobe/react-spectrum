@@ -11,4 +11,4 @@
  */
 
 /// <reference types="css-module-types" />
-export {theme} from './theme-default';
+export {defaultTheme as theme} from './defaultTheme';
