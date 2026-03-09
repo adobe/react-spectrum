@@ -169,13 +169,11 @@ export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> &
   },
   color: {
     default: baseColor('neutral'),
+    isDisabled: 'disabled',
     forcedColors: {
       default: 'ButtonText',
-      isFocused: 'HighlightText'
-    },
-    isDisabled: {
-      default: 'disabled',
-      forcedColors: 'GrayText'
+      isFocused: 'HighlightText',
+      isDisabled: 'GrayText'
     }
   },
   position: 'relative',
@@ -278,7 +276,7 @@ export let label = style<{size: string}>({
   marginTop: '--labelPadding'
 });
 
-export let description = style({
+export let description = style<{size: 'S' | 'M' | 'L' | 'XL', isFocused: boolean, isDisabled: boolean}>({
   gridArea: 'description',
   font: {
     default: 'ui-sm',
@@ -294,7 +292,12 @@ export let description = style({
     // Ideally this would use the same token as hover, but we don't have access to that here.
     // TODO: should we always consider isHovered and isFocused to be the same thing?
     isFocused: 'gray-800',
-    isDisabled: 'disabled'
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonText',
+      isFocused: 'HighlightText',
+      isDisabled: 'GrayText'
+    }
   },
   transition: 'default'
 });
@@ -304,7 +307,7 @@ let value = style({
   marginStart: 8
 });
 
-let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean}>({
+let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean, isFocused: boolean}>({
   gridArea: 'keyboard',
   marginStart: 8,
   font: 'ui',
@@ -313,6 +316,8 @@ let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean}>({
     default: 'gray-600',
     isDisabled: 'disabled',
     forcedColors: {
+      default: 'ButtonText',
+      isFocused: 'HighlightText',
       isDisabled: 'GrayText'
     }
   },
@@ -383,11 +388,6 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
             // @ts-ignore
             role: 'presentation',
             styles: sectionHeading
-          }],
-          [TextContext, {
-            slots: {
-              'description': {styles: description({size})}
-            }
           }],
           [InPopoverContext, false]
         ]}>
@@ -526,6 +526,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
       {(renderProps) => {
         let {children} = props;
         let checkboxRenderProps = {...renderProps, size, isFocused: false, isFocusVisible: false, isIndeterminate: false, isReadOnly: false, isInvalid: false, isRequired: false};
+        let isFocused = (renderProps.hasSubmenu && renderProps.isOpen) || renderProps.isFocused;
         return (
           <>
             <Provider
@@ -540,11 +541,11 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                   slots: {
                     [DEFAULT_SLOT]: {styles: label({size})},
                     label: {styles: label({size})},
-                    description: {styles: description({...renderProps, size})},
+                    description: {styles: description({...renderProps, size, isFocused})},
                     value: {styles: value}
                   }
                 }],
-                [KeyboardContext, {styles: keyboard({size, isDisabled: renderProps.isDisabled})}],
+                [KeyboardContext, {styles: keyboard({...renderProps, size, isFocused})}],
                 [ImageContext, {styles: image({size})}]
               ]}>
               {renderProps.selectionMode === 'single' && !renderProps.hasSubmenu && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
