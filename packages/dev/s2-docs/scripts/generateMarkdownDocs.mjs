@@ -42,6 +42,7 @@ function getBaseUrl(library) {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '../../../../');
 const S2_SRC_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/src');
+const S2_STYLE_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/style');
 const RAC_SRC_ROOT = path.join(REPO_ROOT, 'packages/react-aria-components/src');
 const INTL_SRC_ROOT = path.join(REPO_ROOT, 'packages/@internationalized');
 const COMPONENT_SRC_ROOTS = [S2_SRC_ROOT, RAC_SRC_ROOT, INTL_SRC_ROOT];
@@ -886,17 +887,6 @@ function extractJSXText(node, file) {
   return '';
 }
 
-function getRootsForFile(file) {
-  if (file?.path) {
-    if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
-      return [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
-    } else if (file.path.includes(path.join('pages', 'react-aria'))) {
-      return [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-    }
-  }
-  return COMPONENT_SRC_ROOTS;
-}
-
 function getCacheKey(name, file) {
   if (file?.path) {
     if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
@@ -910,14 +900,88 @@ function getCacheKey(name, file) {
   return `default:${name}`;
 }
 
-function resolveComponentPath(componentName, file) {
+function getDocsImportSource(identifier, file) {
+  return file?.data?.docsImports?.[identifier] || null;
+}
+
+function getExistingRoots(roots) {
+  return [...new Set(roots.filter(root => root && fs.existsSync(root)))];
+}
+
+function getRootsForDocsSource(docsSource, file) {
+  if (!docsSource) {
+    return null;
+  }
+
+  if (docsSource === '@react-spectrum/s2') {
+    return getExistingRoots([S2_SRC_ROOT, S2_STYLE_ROOT]);
+  }
+
+  if (docsSource === '@react-spectrum/s2/style') {
+    return getExistingRoots([S2_STYLE_ROOT]);
+  }
+
+  if (docsSource.startsWith('./') || docsSource.startsWith('../')) {
+    if (!file?.path) {
+      return null;
+    }
+
+    const resolved = path.resolve(path.dirname(file.path), docsSource);
+    const candidates = [
+      resolved,
+      `${resolved}.ts`,
+      `${resolved}.tsx`,
+      `${resolved}.d.ts`,
+      path.join(resolved, 'index.ts'),
+      path.join(resolved, 'index.tsx'),
+      path.join(resolved, 'index.d.ts')
+    ];
+
+    return getExistingRoots(candidates.map(candidate => {
+      if (!fs.existsSync(candidate)) {
+        return null;
+      }
+
+      return fs.statSync(candidate).isDirectory() ? candidate : path.dirname(candidate);
+    }));
+  }
+
+  const packagePath = path.join(REPO_ROOT, 'packages', docsSource);
+  if (fs.existsSync(packagePath)) {
+    if (fs.statSync(packagePath).isDirectory()) {
+      return getExistingRoots([path.join(packagePath, 'src'), packagePath]);
+    }
+
+    return getExistingRoots([path.dirname(packagePath)]);
+  }
+
+  return null;
+}
+
+function getRootsForFile(file, docsSource) {
+  const docsRoots = getRootsForDocsSource(docsSource, file);
+  if (docsRoots?.length) {
+    return docsRoots;
+  }
+
+  if (file?.path) {
+    if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
+      return [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+    } else if (file.path.includes(path.join('pages', 'react-aria'))) {
+      return [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
+    }
+  }
+  return COMPONENT_SRC_ROOTS;
+}
+
+function resolveComponentPath(componentName, file, docsSource) {
   // Check unified cache first
-  const cacheKey = getCacheKey(componentName, file);
+  const cacheKey = getCacheKey(`${docsSource || 'default'}:${componentName}:path`, file);
   if (interfacePathCache.has(cacheKey)) {
     return interfacePathCache.get(cacheKey);
   }
-  
-  let roots = getRootsForFile(file);
+
+  let roots = getRootsForFile(file, docsSource);
 
   // Fast path: check direct file paths first
   for (let root of roots) {
@@ -970,14 +1034,14 @@ function resolveComponentPath(componentName, file) {
 /**
  * Extract the leading JSDoc description comment placed immediately above the export for a component.
  */
-function getComponentDescription(componentName, file) {
+function getComponentDescription(componentName, file, docsSource) {
   // Check cache first
-  const cacheKey = getCacheKey(componentName, file);
+  const cacheKey = getCacheKey(`${docsSource || 'default'}:${componentName}:description`, file);
   if (descriptionCache.has(cacheKey)) {
     return descriptionCache.get(cacheKey);
   }
 
-  const componentPath = resolveComponentPath(componentName, file);
+  const componentPath = resolveComponentPath(componentName, file, docsSource);
   if (!componentPath) {
     descriptionCache.set(cacheKey, null);
     return null;
@@ -1123,13 +1187,13 @@ function parseFencedCodeBlock(example) {
   };
 }
 
-function getFunctionExamples(functionName, file) {
-  const cacheKey = getCacheKey(`${functionName}:examples`, file);
+function getFunctionExamples(functionName, file, docsSource) {
+  const cacheKey = getCacheKey(`${docsSource || 'default'}:${functionName}:examples`, file);
   if (functionExamplesCache.has(cacheKey)) {
     return functionExamplesCache.get(cacheKey);
   }
 
-  const functionPath = resolveComponentPath(functionName, file);
+  const functionPath = resolveComponentPath(functionName, file, docsSource);
   if (!functionPath) {
     functionExamplesCache.set(cacheKey, []);
     return [];
@@ -1438,11 +1502,38 @@ function generateInterfaceTable(interfaceName, file) {
  * Custom remark plugin that removes MDX import/export statements.
  */
 function remarkRemoveImportsExports() {
-  return (tree) => {
+  return (tree, file) => {
+    let docsImports = {};
     visit(tree, 'mdxjsEsm', (node, index, parent) => {
+      if (node.value) {
+        try {
+          const ast = babel.parse(node.value, {
+            sourceType: 'module',
+            plugins: ['jsx', 'typescript']
+          });
+
+          for (const statement of ast.program.body) {
+            if (statement.type !== 'ImportDeclaration' || typeof statement.source.value !== 'string' || !statement.source.value.startsWith('docs:')) {
+              continue;
+            }
+
+            const docsSource = statement.source.value.slice(5);
+            for (const specifier of statement.specifiers) {
+              if (specifier.local?.name) {
+                docsImports[specifier.local.name] = docsSource;
+              }
+            }
+          }
+        } catch {
+          // Ignore non-import ESM blocks.
+        }
+      }
+
       parent.children.splice(index, 1);
       return index;
     });
+
+    file.data.docsImports = docsImports;
   };
 }
 
@@ -1655,10 +1746,17 @@ function remarkDocsComponentsToMarkdown() {
       if (name === 'FunctionJSDoc') {
         const functionAttr = node.attributes?.find((a) => a.name === 'function');
         let functionName = null;
+        let docsSource = null;
         if (functionAttr && functionAttr.value?.type === 'mdxJsxAttributeValueExpression') {
-          const m = functionAttr.value.value.match(/\.exports\.([\w$]+)/);
+          const m = functionAttr.value.value.match(/^([\w$]+)\.exports\.([\w$]+)$/);
           if (m) {
-            functionName = m[1];
+            docsSource = getDocsImportSource(m[1], file);
+            functionName = m[2];
+          } else {
+            const fallback = functionAttr.value.value.match(/\.exports\.([\w$]+)/);
+            if (fallback) {
+              functionName = fallback[1];
+            }
           }
         }
 
@@ -1668,13 +1766,13 @@ function remarkDocsComponentsToMarkdown() {
         }
 
         const newNodes = [];
-        const description = getComponentDescription(functionName, file);
+        const description = getComponentDescription(functionName, file, docsSource);
         if (description) {
           const descTree = unified().use(remarkParse).parse(description);
           newNodes.push(...descTree.children);
         }
 
-        const examples = getFunctionExamples(functionName, file);
+        const examples = getFunctionExamples(functionName, file, docsSource);
         for (let [exampleIndex, example] of examples.entries()) {
           if (examples.length > 1) {
             newNodes.push({
