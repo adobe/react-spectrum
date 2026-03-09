@@ -691,11 +691,6 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
                   // @ts-ignore
                   role: 'presentation',
                   styles: sectionHeading
-                }],
-                [TextContext, {
-                  slots: {
-                    'description': {styles: description({size})}
-                  }
                 }]
               ]}>
               <Virtualizer

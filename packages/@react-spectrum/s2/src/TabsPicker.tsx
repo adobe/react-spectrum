@@ -27,7 +27,6 @@ import {baseColor, focusRing, size, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
-  description,
   icon,
   label,
   menuitem,
@@ -268,11 +267,6 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                       // @ts-ignore
                       role: 'presentation',
                       styles: sectionHeading
-                    }],
-                    [TextContext, {
-                      slots: {
-                        description: {styles: description({size})}
-                      }
                     }]
                   ]}>
                   <ListBox
