@@ -548,7 +548,7 @@ function isNextSelected(id: Key | undefined, state: TreeState<unknown>) {
   }
   let keyAfter = state.collection.getKeyAfter(id);
 
-  // skip nodes that are not item nodes because the selection manager will map non-item nodes to their parent item before checking selection
+  // We need to skip non-item nodes because the selection manager will map non-item nodes to their parent before checking selection
   let node = keyAfter ? state.collection.getItem(keyAfter) : null;
   while (node && node.type !== 'item' && keyAfter) {
     keyAfter = state.collection.getKeyAfter(keyAfter);
