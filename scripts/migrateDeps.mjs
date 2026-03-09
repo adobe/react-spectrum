@@ -735,6 +735,18 @@ function getRenamedSpecifier(specifier, from, importedName, relative = true) {
     return `${monopackage}/${name}`;
   }
 
+  if (specifier === '@react-spectrum/theme-default') {
+    return '@adobe/react-spectrum/defaultTheme';
+  }
+
+  if (specifier === '@react-spectrum/theme-dark') {
+    return '@adobe/react-spectrum/darkTheme';
+  }
+
+  if (specifier === '@react-spectrum/theme-light') {
+    return '@adobe/react-spectrum/lightTheme';
+  }
+
   let isPrivate = importedName == null || privateNames.has(importedName);
   if (
     ((monopackage === 'react-aria' || monopackage === 'react-stately') && (name === 'Virtualizer' || parentFile[name] === 'Virtualizer')) ||

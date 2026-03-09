@@ -11,8 +11,8 @@
  */
 
 import {AnyDateTime, Calendar, CalendarDate, ZonedDateTime} from '@internationalized/date';
+import {DateSegmentType} from './useDateFieldState';
 import {DateValue} from '@react-types/datepicker';
-import {SegmentType} from './useDateFieldState';
 
 type HourCycle = 'h12' | 'h11' | 'h23' | 'h24';
 
@@ -74,12 +74,12 @@ export class IncompleteDate {
   }
 
   /** Checks whether all the specified segments have a value. */
-  isComplete(segments: SegmentType[]) {
+  isComplete(segments: DateSegmentType[]) {
     return segments.every(segment => this[segment] != null);
   }
 
   /** Checks whether the given date value matches this value for the specified segments. */
-  validate(dt: DateValue, segments: SegmentType[]) {
+  validate(dt: DateValue, segments: DateSegmentType[]) {
     return segments.every(segment => {
       if ((segment === 'hour' || segment === 'dayPeriod') && 'hour' in dt) {
         let [dayPeriod, hour] = toHourCycle(dt.hour, this.hourCycle);
@@ -90,12 +90,12 @@ export class IncompleteDate {
   }
 
   /** Checks if the date is empty (i.e. all specified segments are null). */
-  isCleared(segments: SegmentType[]): boolean {
+  isCleared(segments: DateSegmentType[]): boolean {
     return segments.every(segment => this[segment] === null);
   }
 
   /** Sets the given field. */
-  set(field: SegmentType, value: number | string, placeholder: DateValue): IncompleteDate {
+  set(field: DateSegmentType, value: number | string, placeholder: DateValue): IncompleteDate {
     let result = this.copy();
     result[field] = value;
     if (field === 'hour' && result.dayPeriod == null && 'hour' in placeholder) {
@@ -113,7 +113,7 @@ export class IncompleteDate {
   }
 
   /** Sets the given field to null. */
-  clear(field: SegmentType): IncompleteDate {
+  clear(field: DateSegmentType): IncompleteDate {
     let result = this.copy();
     // @ts-ignore
     result[field] = null;
@@ -127,7 +127,7 @@ export class IncompleteDate {
   }
 
   /** Increments or decrements the given field. If it is null, then it is set to the placeholder value. */
-  cycle(field: SegmentType, amount: number, placeholder: DateValue, displaySegments: SegmentType[]): IncompleteDate {
+  cycle(field: DateSegmentType, amount: number, placeholder: DateValue, displaySegments: DateSegmentType[]): IncompleteDate {
     let res = this.copy();
 
     // If field is null, default to placeholder.
