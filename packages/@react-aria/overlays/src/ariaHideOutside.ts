@@ -15,6 +15,10 @@ import {shadowDOM} from '@react-stately/flags';
 
 const supportsInert = typeof HTMLElement !== 'undefined' && 'inert' in HTMLElement.prototype;
 
+function isAlwaysVisibleNode(node: HTMLElement | SVGElement): boolean {
+  return node.dataset.liveAnnouncer === 'true' || node.dataset.reactAriaTopLayer !== undefined;
+}
+
 interface AriaHideOutsideOptions {
   root?: Element,
   shouldUseInert?: boolean
@@ -175,7 +179,7 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
         for (let node of change.addedNodes) {
           if (
             (node instanceof HTMLElement || node instanceof SVGElement) &&
-            (node.dataset.liveAnnouncer === 'true' || node.dataset.reactAriaTopLayer === 'true')
+            isAlwaysVisibleNode(node)
           ) {
             visibleNodes.add(node);
           } else if (node instanceof Element) {
@@ -218,7 +222,7 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
             for (let node of change.addedNodes) {
               if (
                 (node instanceof HTMLElement || node instanceof SVGElement) &&
-                (node.dataset.liveAnnouncer === 'true' || node.dataset.reactAriaTopLayer === 'true')
+                isAlwaysVisibleNode(node)
               ) {
                 visibleNodes.add(node);
               } else if (node instanceof Element) {
