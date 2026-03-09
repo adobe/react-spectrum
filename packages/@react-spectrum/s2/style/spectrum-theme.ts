@@ -295,6 +295,23 @@ interface LinearGradient {
   stops: [SpectrumColor, number][]
 }
 
+/**
+ * Creates a linear gradient value for use with the `backgroundImage` style property.
+ * Each color stop is registered as a CSS custom property so gradients can transition smoothly.
+ *
+ * @param angle - The CSS gradient direction or angle (e.g. `'to bottom right'`, `'45deg'`).
+ * @param tokens - Gradient color stops as `[color, percent]` tuples.
+ * @returns A gradient descriptor wrapped for use in the style macro.
+ *
+ * @example
+ * ```tsx
+ * import {linearGradient, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
+ * const styles = style({
+ *   backgroundImage: linearGradient('to bottom right', ['fuchsia-900', 0], ['indigo-900', 66], ['blue-900', 100])
+ * });
+ * ```
+ */
 export function linearGradient(this: MacroContext | void, angle: string, ...tokens: [SpectrumColor, number][]): [LinearGradient] {
   // Generate @property rules for each gradient stop color. This allows the gradient to be animated.
   let propertyDefinitions: string[] = [];
