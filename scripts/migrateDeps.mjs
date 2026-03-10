@@ -225,7 +225,7 @@ for (let pkg of ['react-aria', 'react-stately', 'react-aria-components', '@react
     }
     let p = `${specifier}/${s.slice(2)}`;
     publicFiles.add(p);    
-  }
+}
 }
 
 migrateScope('@react-aria', 'react-aria');
@@ -238,6 +238,10 @@ migrateToMonopackage('@react-spectrum/s2');
 rewriteMonopackageImports('packages/@internationalized/number/test/NumberParser.test.js');
 
 writePrivateExports();
+
+for (let f of fs.globSync('packages/dev/s2-docs/pages/**/*.mdx')) {
+  rewriteMdx(f);
+}
 
 function migrateScope(scope, monopackage) {
   prepareMonopackage(monopackage);
@@ -273,6 +277,7 @@ function prepareMonopackage(monopackage) {
       import: './dist/exports/index.mjs',
       require: './dist/exports/index.cjs'
     },
+    './package.json': './package.json',
     './*': {
       source: './exports/*.ts',
       types: './dist/types/exports/*.d.ts',
@@ -365,6 +370,13 @@ function migratePackage(scope, name, monopackage) {
     types: false // TODO: i18n package
   };
 
+  if (!packageJSON.exports['.']) {
+    packageJSON.exports = {
+      '.': {...packageJSON.exports}
+    };
+  }
+  packageJSON.exports['./package.json'] = './package.json';
+
   Object.assign(packageJSON.peerDependencies ??= {}, {
     react: '^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1',
     'react-dom': '^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1'
@@ -428,6 +440,7 @@ function migrateToMonopackage(pkg) {
   packageJSON.module = './dist/exports/index.mjs';
   packageJSON.exports['.'].import = './dist/exports/index.mjs';
 
+  packageJSON.exports['./package.json'] = './package.json';
   packageJSON.exports['./*'] = {
     source: './exports/*.ts',
     types: './dist/types/exports/*.d.ts',
@@ -495,6 +508,7 @@ function buildImportMap(file) {
 
 function rewriteMonopackageImports(file, pkg, subpath) {
   if (path.extname(file) === '.mdx') {
+    rewriteMdx(file);
     return;
   }
 
@@ -646,6 +660,19 @@ function rewriteMonopackageImports(file, pkg, subpath) {
 
   content = recast.print(ast, {objectCurlySpacing: false, quote: 'single'}).code;
   fs.writeFileSync(file, content);
+}
+
+function rewriteMdx(file) {
+  let contents = fs.readFileSync(file, 'utf8');
+  contents = contents.replace(/\/packages\/@(react-aria|react-spectrum|react-stately)\/(.+?)\/docs\/(.+\.svg)/g, (_, scope, pkg, file) => {
+    let monopackage = scope === 'react-spectrum' ? '@adobe/react-spectrum' : scope;
+    return `/packages/${monopackage}/docs/${pkg}/${file}`;
+  }).replace(/(['"])@(react-aria|react-spectrum|react-stately)\/(.+?)\/docs\/(.+\.svg)/g, (_, q, scope, pkg, file) => {
+    let monopackage = scope === 'react-spectrum' ? '@adobe/react-spectrum' : scope;
+    return `${q}/packages/${monopackage}/docs/${pkg}/${file}`;
+  });
+
+  fs.writeFileSync(file, contents);
 }
 
 function getImportStatements(node, file, relative = true) {

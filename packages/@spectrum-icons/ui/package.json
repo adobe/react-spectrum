@@ -8,6 +8,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "exports": {
+    "./package.json": "./package.json",
     "./*": {
       "types": "./*.d.ts",
       "import": "./*.module.mjs",
