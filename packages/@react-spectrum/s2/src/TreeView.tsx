@@ -190,6 +190,15 @@ const rowBackgroundColor = {
 const treeRow = style({
   ...focusRing(),
   outlineOffset: -2,
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: {
+      default: 'Highlight',
+      selectionStyle: {
+        highlight: 'ButtonBorder'
+      }
+    }
+  },
   position: 'relative',
   display: 'flex',
   height: 40,
@@ -234,6 +243,14 @@ const treeCellGrid = style({
     isDisabled: {
       default: 'gray-400',
       forcedColors: 'GrayText'
+    },
+    forcedColors: {
+      default: 'ButtonText',
+      selectionStyle: {
+        highlight: {
+          isSelected: 'HighlightText'
+        }
+      }
     }
   },
   '--rowSelectedBorderColor': {
@@ -260,7 +277,8 @@ const treeCellGrid = style({
       },
       forcedColors: 'ButtonBorder'
     }
-  }
+  },
+  forcedColorAdjust: 'none'
 });
 
 const treeRowBackground = style({
@@ -277,6 +295,14 @@ const treeRowBackground = style({
           isHovered: colorMix('gray-25', 'blue-900', 15),
           isPressed: colorMix('gray-25', 'blue-900', 15),
           isFocusVisible: colorMix('gray-25', 'blue-900', 15)
+        }
+      }
+    },
+    forcedColors: {
+      default: 'Background',
+      selectionStyle: {
+        highlight: {
+          isSelected: 'Highlight'
         }
       }
     }
@@ -383,6 +409,7 @@ export const TreeViewItem = (props: TreeViewItemProps): ReactNode => {
   let {
     href
   } = props;
+  let {selectionStyle} = useContext(InternalTreeViewContext);
 
   return (
     <TreeItem
@@ -390,6 +417,7 @@ export const TreeViewItem = (props: TreeViewItemProps): ReactNode => {
       className={(renderProps) => treeRow({
         ...renderProps,
         isLink: !!href,
+        selectionStyle,
         isPreviousSelected: isPrevSelected(renderProps.id, renderProps.state)
       }) + (renderProps.isFocusVisible ? ' ' + treeRowFocusIndicator : '')} />
   );
