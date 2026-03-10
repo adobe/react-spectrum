@@ -181,7 +181,8 @@ let parentFile = {
   useLocale: 'I18nProvider',
   ColorEditor: 'ColorPicker',
   SubmenuTrigger: 'Menu',
-  ContextualHelpTrigger: 'Menu'
+  ContextualHelpTrigger: 'Menu',
+  MenuTrigger: 'Menu'
 };
 
 // Names that are included in public files but not exported by monopackages.
@@ -853,6 +854,14 @@ function createPublicExports(file, monopackage, scope, pkg) {
           groups[parentFile[source]] ||= [];
           groups[parentFile[source]].push(node);
         }
+      }
+    }
+  }
+
+  if (scope && unmatched.length) {
+    for (let node of unmatched) {
+      for (let key in groups) {
+        groups[key].push(node);
       }
     }
   }
