@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Button, ProgressBar, Text, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {mergeProps} from '@react-aria/utils';
 import {Meta, StoryObj} from '@storybook/react';

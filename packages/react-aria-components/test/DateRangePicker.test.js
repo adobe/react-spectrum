@@ -184,6 +184,53 @@ describe('DateRangePicker', () => {
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
   });
 
+  it('should support required render prop', () => {
+    let {getByRole} = render(
+      <DateRangePicker isRequired>
+        {({isRequired}) => (
+          <>
+            <Label>Trip dates</Label>
+            <Group data-required-state={isRequired ? 'required' : null}>
+              <DateInput slot="start">
+                {(segment) => <DateSegment segment={segment} />}
+              </DateInput>
+              <span aria-hidden="true">–</span>
+              <DateInput slot="end">
+                {(segment) => <DateSegment segment={segment} />}
+              </DateInput>
+              <Button>▼</Button>
+            </Group>
+            <Popover>
+              <Dialog>
+                <RangeCalendar>
+                  <header>
+                    <Button slot="previous">◀</Button>
+                    <Heading />
+                    <Button slot="next">▶</Button>
+                  </header>
+                  <CalendarGrid>
+                    {(date) => <CalendarCell date={date} />}
+                  </CalendarGrid>
+                </RangeCalendar>
+              </Dialog>
+            </Popover>
+          </>
+        )}
+      </DateRangePicker>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-required-state', 'required');
+  });
+
+  it('should support required state', () => {
+    let {getByRole, rerender} = render(<TestDateRangePicker />);
+    let group = getByRole('group');
+    expect(group.closest('.react-aria-DateRangePicker')).not.toHaveAttribute('data-required');
+    rerender(<TestDateRangePicker isRequired />);
+    expect(group.closest('.react-aria-DateRangePicker')).toHaveAttribute('data-required');
+  });
+
   it('should support form value', () => {
     render(<TestDateRangePicker startName="start" endName="end" form="test" value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}} />);
     let start = document.querySelector('input[name=start]');

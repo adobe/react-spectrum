@@ -79,7 +79,7 @@ export function SearchTagGroups({
                 items={resourceTags}
                 UNSAFE_style={{whiteSpace: 'nowrap'}}>
                 {(tag) => (
-                  <Tag key={tag.id} id={tag.id} href={tag.href} target="_blank">
+                  <Tag key={tag.id} id={tag.id} href={tag.href} target="_blank" textValue={tag.href ?? tag.name}>
                     {tag.name}
                     {tag.href &&
                       <LinkOutIcon

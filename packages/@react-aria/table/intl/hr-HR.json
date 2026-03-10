@@ -7,5 +7,7 @@
   "resizerDescription": "Pritisnite Enter da biste započeli promenu veličine",
   "select": "Odaberite",
   "selectAll": "Odaberite sve",
-  "sortable": "stupac koji se može razvrstati"
+  "sortable": "stupac koji se može razvrstati",
+  "collapse": "Sažmi",
+  "expand": "Proširi"
 }

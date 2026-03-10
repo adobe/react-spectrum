@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Leave a comment for density 1`] = `
+"import { ListViewItem, ListView } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): density has not been implemented yet.
+<ListView>
+  <ListViewItem id="photoshop">Adobe Photoshop</ListViewItem>
+  <ListViewItem id="illustrator">Adobe Illustrator</ListViewItem>
+</ListView>"
+`;
+
+exports[`Leave a comment for dragAndDropHooks 1`] = `
+"import { ListViewItem, ListView } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): dragAndDropHooks has not been implemented yet.
+<ListView>
+  <ListViewItem id="photoshop">Adobe Photoshop</ListViewItem>
+  <ListViewItem id="illustrator">Adobe Illustrator</ListViewItem>
+</ListView>"
+`;
