@@ -1,5 +1,4 @@
 import {Collection, DropTarget, Key, KeyboardDelegate, Node} from '@react-types/shared';
-import {getChildNodes} from '@react-stately/collections';
 
 export function navigate(
   keyboardDelegate: KeyboardDelegate,
@@ -261,14 +260,14 @@ function getLastChild(collection: Collection<Node<unknown>>, key: Key): DropTarg
   let nextKey = getNextItem(collection, key, key => collection.getKeyAfter(key));
   let nextNode = nextKey != null ? collection.getItem(nextKey) : null;
   if (targetNode && nextNode && nextNode.level > targetNode.level) {
-    let lastChild;
+    let lastChild: Node<unknown> | null = null;
     if ('lastChildKey' in targetNode) {
       lastChild = targetNode.lastChildKey != null ? collection.getItem(targetNode.lastChildKey) : null;
       while (lastChild && lastChild.type !== 'item' && lastChild.prevKey != null) {
         lastChild = collection.getItem(lastChild.prevKey)!;
       }
     } else {
-      lastChild = Array.from(targetNode.childNodes).findLast(item => item.type === 'item');
+      lastChild = Array.from(targetNode.childNodes).findLast(item => item.type === 'item') || null;
     }
 
     if (lastChild) {
