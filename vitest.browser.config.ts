@@ -210,9 +210,12 @@ export default defineConfig({
       provider: playwright(),
       enabled: true,
       instances: [
-        {browser: 'chromium'},
-        {browser: 'firefox'},
-        {browser: 'webkit'}
+        {browser: 'chromium', name: 'chromium-mobile', viewport: {width: 414, height: 896}},
+        {browser: 'chromium', name: 'chromium-desktop', viewport: {width: 1280, height: 720}},
+        {browser: 'firefox', name: 'firefox-mobile', viewport: {width: 414, height: 896}},
+        {browser: 'firefox', name: 'firefox-desktop', viewport: {width: 1280, height: 720}},
+        {browser: 'webkit', name: 'webkit-mobile', viewport: {width: 414, height: 896}},
+        {browser: 'webkit', name: 'webkit-desktop', viewport: {width: 1280, height: 720}}
       ]
     },
     coverage: {
