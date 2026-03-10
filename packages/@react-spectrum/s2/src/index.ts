@@ -93,7 +93,6 @@ export {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem} from 
 export {pressScale} from './pressScale';
 
 export {
-  getAllowedOverrides,
   centerPadding,
   setColorScheme
 } from './style-utils';

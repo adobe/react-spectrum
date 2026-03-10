@@ -377,31 +377,6 @@ export interface StyleProps extends UnsafeStyles {
   styles?: StylesProp
 }
 
-/**
- * Returns the list of CSS property names that are allowed as style overrides via the `styles` prop.
- * By default includes layout properties (margin, position, grid, etc.) and width properties.
- * Optionally includes height properties.
- *
- * @param options - Configuration for which property groups to include.
- * @param options.width - Whether to include width properties (`width`, `minWidth`, `maxWidth`). Defaults to `true`.
- * @param options.height - Whether to include height properties (`height`, `minHeight`, `maxHeight`) and `size` (applies to both axes). Defaults to `false`.
- * @returns An array of allowed CSS property names.
- *
- * @example
- * ```tsx
- * import {getAllowedOverrides} from '@react-spectrum/s2';
- * import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
- *
- * const styles = style({
- *   // ... component styles
- * }, getAllowedOverrides());
- *
- * // With height overrides enabled:
- * const styles = style({
- *   // ... component styles
- * }, getAllowedOverrides({height: true}));
- * ```
- */
 export function getAllowedOverrides({width = true, height = false} = {}): string[] {
   return (allowedOverrides as unknown as string[]).concat(width ? widthProperties : []).concat(height ? heightProperties : []);
 }
