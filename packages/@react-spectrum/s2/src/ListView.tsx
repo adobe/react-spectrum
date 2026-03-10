@@ -606,7 +606,8 @@ export let description = style({
   font: 'ui-sm',
   color: {
     default: baseColor('neutral-subdued'),
-    isDisabled: 'disabled'
+    isDisabled: 'disabled',
+    forcedColors: 'inherit'
   },
   transition: 'default'
 });
