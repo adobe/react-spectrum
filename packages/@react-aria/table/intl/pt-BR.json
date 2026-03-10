@@ -7,5 +7,7 @@
   "resizerDescription": "Pressione Enter para começar a redimensionar",
   "select": "Selecionar",
   "selectAll": "Selecionar tudo",
-  "sortable": "coluna classificável"
+  "sortable": "coluna classificável",
+  "collapse": "Recolher",
+  "expand": "Expandir"
 }
