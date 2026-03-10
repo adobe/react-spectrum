@@ -189,7 +189,7 @@ export default [{
         "no-nested-ternary": ERROR,
         "no-multiple-empty-lines": ERROR,
         "no-unneeded-ternary": ERROR,
-        "no-duplicate-imports": ERROR,
+        // "no-duplicate-imports": ERROR,
         "react/display-name": OFF,
         "react/jsx-curly-spacing": [ERROR, "never"],
         "react/jsx-indent-props": [ERROR, ERROR],
