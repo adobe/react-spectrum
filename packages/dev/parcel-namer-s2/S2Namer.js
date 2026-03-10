@@ -17,7 +17,6 @@ module.exports = new Namer({
   name({bundle}) {
     let mainAsset = bundle.getMainEntry();
 
-    // if (mainAsset?.filePath.includes('@react-spectrum/s2') || !mainAsset?.filePath.includes('react-spectrum/packages')) {
     if (bundle.needsStableName && bundle.target.distEntry) {
       return bundle.target.distEntry;
     }
@@ -26,7 +25,8 @@ module.exports = new Namer({
       ext = bundle.env.outputFormat === 'esmodule' ? '.mjs' : '.cjs';
     }
     let originalExt = path.extname(mainAsset.filePath);
-    let name = path.basename(mainAsset.filePath, originalExt).replace(/\*/g, 'intlStrings');
+    let basename = path.basename(mainAsset.filePath, originalExt).replace(/\*/g, 'intlStrings');
+    let name = basename;
     let m = mainAsset.filePath.match(/spectrum-illustrations\/(linear|gradient\/generic\d)/);
     if (m) {
       if (originalExt === '.svg') {
@@ -34,7 +34,8 @@ module.exports = new Namer({
       }
       return m[1] + '/' + name + ext;
     } else if (mainAsset.filePath.includes('/exports/')) {
-      name = 'exports/' + name;
+      let index = mainAsset.filePath.indexOf('/exports/');
+      name = path.dirname(mainAsset.filePath.slice(index + 1)) + '/' + name;
     } else if (bundle.target.distDir.endsWith('/dist')) {
       let index = mainAsset.filePath.indexOf('/src/');
       if (index >= 0) {
@@ -50,7 +51,7 @@ module.exports = new Namer({
     }
 
     if (mainAsset.filePath.includes('@adobe/spectrum-css-temp')) {
-      name = mainAsset.filePath.split(path.sep).at(-2) + '_' + name;
+      name = 'private/' + mainAsset.filePath.split(path.sep).at(-2) + '_' + basename;
     }
     if (path.extname(mainAsset.filePath) === '.css' && mainAsset.type === 'js') {
       // CSS module
