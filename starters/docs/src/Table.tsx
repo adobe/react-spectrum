@@ -18,11 +18,12 @@ import {
   ColumnResizer,
   Group,
   TableLoadMoreItem as AriaTableLoadMoreItem,
-  TableLoadMoreItemProps
+  TableLoadMoreItemProps,
+  composeRenderProps
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
 import {ProgressCircle} from './ProgressCircle';
-import {ChevronUp, ChevronDown, GripVertical} from 'lucide-react';
+import {ChevronUp, ChevronDown, GripVertical, ChevronRight} from 'lucide-react';
 import './Table.css';
 
 export function Table(props: TableProps) {
@@ -112,7 +113,18 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
 }
 
 export function Cell(props: CellProps) {
-  return <AriaCell {...props} />;
+  return (
+    <AriaCell {...props}>
+      {composeRenderProps(props.children, (children, {hasChildItems, isTreeColumn}) => (<>
+        {isTreeColumn && hasChildItems && 
+          <Button slot="chevron">
+            <ChevronRight />
+          </Button>
+        }
+        {children}
+      </>))}
+    </AriaCell>
+  )
 }
 
 export function TableLoadMoreItem(props: TableLoadMoreItemProps) {

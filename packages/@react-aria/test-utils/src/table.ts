@@ -11,10 +11,11 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
+import {BaseGridRowInteractionOpts, GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
 import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
-import {GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
 
 interface TableToggleRowOpts extends ToggleGridRowOpts {}
+interface TableToggleExpansionOpts extends BaseGridRowInteractionOpts {}
 interface TableToggleSortOpts {
   /**
    * The index, text, or node of the column to toggle selection for.
@@ -158,6 +159,50 @@ export class TableTester {
         if (selectionBehavior === 'replace' && interactionType !== 'touch') {
           await this.user.keyboard(`[/${metaKey}]`);
         }
+      }
+    }
+  };
+
+  /**
+   * Toggles the expansion for the specified tree row. Defaults to using the interaction type set on the tree tester.
+   */
+  async toggleRowExpansion(opts: TableToggleExpansionOpts): Promise<void> {
+    let {
+      row,
+      interactionType = this._interactionType
+    } = opts;
+    if (!this.table.contains(document.activeElement)) {
+      await act(async () => {
+        this.table.focus();
+      });
+    }
+
+    if (typeof row === 'string' || typeof row === 'number') {
+      row = this.findRow({rowIndexOrText: row});
+    }
+
+    if (!row) {
+      throw new Error('Target row not found in the table.');
+    } else if (row.getAttribute('aria-expanded') == null) {
+      throw new Error('Target row is not expandable.');
+    }
+
+    if (interactionType === 'mouse' || interactionType === 'touch') {
+      let rowExpander = within(row).getAllByRole('button')[0]; // what happens if the button is not first? how can we differentiate?
+      await pressElement(this.user, rowExpander, interactionType);
+    } else if (interactionType === 'keyboard') {
+      if (row?.getAttribute('aria-disabled') === 'true') {
+        return;
+      }
+
+      // TODO: We always Use Option/Ctrl when keyboard navigating so selection isn't changed
+      // in selectionmode="replace"/highlight selection when navigating to the row that the user wants
+      // to expand. Discuss if this is useful or not
+      await this.keyboardNavigateToRow({row});
+      if (row.getAttribute('aria-expanded') === 'true') {
+        await this.user.keyboard('[ArrowLeft]');
+      } else {
+        await this.user.keyboard('[ArrowRight]');
       }
     }
   };

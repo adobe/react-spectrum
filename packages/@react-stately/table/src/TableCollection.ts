@@ -317,6 +317,9 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
   }
 
   getItem(key: Key): GridNode<T> | null {
+    if (key === this.body.key) {
+      return this.body;
+    }
     return this.keyMap.get(key) ?? null;
   }
 
@@ -328,6 +331,11 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
   getChildren(key: Key): Iterable<GridNode<T>> {
     if (key === this.body.key) {
       return this.body.childNodes;
+    }
+
+    let node = this.getItem(key);
+    if (node?.type === 'item') {
+      return [...node.childNodes].filter(n => n.type === 'cell');
     }
 
     return super.getChildren(key);
