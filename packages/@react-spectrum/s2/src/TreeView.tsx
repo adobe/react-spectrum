@@ -192,10 +192,10 @@ const treeRow = style({
   outlineOffset: -2,
   outlineColor: {
     default: 'focus-ring',
-    forcedColors: {
-      default: 'Highlight',
-      selectionStyle: {
-        highlight: 'ButtonBorder'
+    forcedColors: 'Highlight',
+    selectionStyle: {
+      highlight: {
+        forcedColors: 'ButtonBorder'
       }
     }
   },
@@ -244,11 +244,11 @@ const treeCellGrid = style({
       default: 'gray-400',
       forcedColors: 'GrayText'
     },
-    forcedColors: {
-      default: 'ButtonText',
-      selectionStyle: {
-        highlight: {
-          isSelected: 'HighlightText'
+    forcedColors: 'ButtonText',
+    selectionStyle: {
+      highlight: {
+        isSelected: {
+          forcedColors: 'HighlightText'
         }
       }
     }
@@ -287,6 +287,7 @@ const treeRowBackground = style({
   inset: 0,
   backgroundColor: {
     default: '--rowBackgroundColor',
+    forcedColors: 'Background',
     selectionStyle: {
       highlight: {
         default: '--rowBackgroundColor',
@@ -294,15 +295,8 @@ const treeRowBackground = style({
           default: colorMix('gray-25', 'blue-900', 10),
           isHovered: colorMix('gray-25', 'blue-900', 15),
           isPressed: colorMix('gray-25', 'blue-900', 15),
-          isFocusVisible: colorMix('gray-25', 'blue-900', 15)
-        }
-      }
-    },
-    forcedColors: {
-      default: 'Background',
-      selectionStyle: {
-        highlight: {
-          isSelected: 'Highlight'
+          isFocusVisible: colorMix('gray-25', 'blue-900', 15),
+          forcedColors: 'Highlight'
         }
       }
     }
