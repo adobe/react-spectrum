@@ -18,10 +18,13 @@ import * as propertyInfo from './properties.json';
 const json = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
 const POSTFIX = json.version.includes('nightly') ? json.version.match(/-nightly-(.*)/)[1] : json.version.replace(/[0.]/g, '');
 
-/** Encodes macro metadata for safe use in a CSS custom property value (avoids { } ; which break the CSS parser). */
+/** Encodes macro metadata for safe use in a CSS custom property value (base64 avoids { } ; % which break CSS parsers).
+ * Runs in Node at build time; Buffer handles UTF-8 natively so we don't need the unescape(encodeURIComponent(...))
+ * workaround that the runtime (browser) path uses for btoa(). Both produce the same base64 for the same input. */
 function encodeMacroDataForCSS(data: {style: unknown, loc: string}): string {
-  return encodeURIComponent(JSON.stringify(data));
+  return Buffer.from(JSON.stringify(data), 'utf8').toString('base64');
 }
+
 export class ArbitraryProperty<T extends Value> implements Property<T> {
   property: string;
   toCSS: (value: T) => CSSValue;
@@ -430,7 +433,9 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       js += '      }\n';
       js += '    }\n';
       js += `    let macroMetadata = {style: currentRules, loc: ${JSON.stringify(loc)}};\n`;
-      js += '    let macroEncoded = encodeURIComponent(JSON.stringify(macroMetadata));\n';
+      // btoa() only accepts Latin1 (code points 0–255). unescape(encodeURIComponent(...)) turns UTF-8
+      // into a byte string so metadata with non-ASCII (e.g. file paths) encodes correctly.
+      js += '    let macroEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(macroMetadata))));\n';
       js += '    let cssRule = ".-macro-dynamic-" + hashStr + " { --macro-data-" + hashStr + ": " + macroEncoded + "; }";\n';
       js += '    if (ruleIndex >= 0) {\n';
       js += '      sheet.deleteRule(ruleIndex);\n';

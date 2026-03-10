@@ -46,13 +46,16 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
     }
   });
 
-  // Decode macro data from CSS custom property value (encodeURIComponent-encoded to avoid { } ; in CSS)
+  // Decode macro data from CSS custom property value (base64, avoids { } ; % for CSS parsers).
+  // decodeURIComponent(escape(atob(...))) is the inverse of the encode side: atob gives bytes,
+  // escape turns them into %XX, decodeURIComponent interprets as UTF-8 so non-ASCII metadata is correct.
   function decodeMacroDataFromCSS(encoded) {
     if (!encoded) {
       return null;
     }
     try {
-      return JSON.parse(decodeURIComponent(encoded));
+      const json = decodeURIComponent(escape(atob(encoded)));
+      return JSON.parse(json);
     } catch {
       return null;
     }
