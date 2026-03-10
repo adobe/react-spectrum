@@ -154,7 +154,7 @@ describe('MenuTrigger', function () {
   it.each`
     Name             | Component      | props
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, isOpen: true}}
-  `('$Name supports a controlled open state ', async function ({Component, props}) {
+  `('$Name supports a controlled open state ', function ({Component, props}) {
     let tree = renderComponent(Component, props);
     act(() => {jest.runAllTimers();});
     expect(onOpenChange).toBeCalledTimes(0);
@@ -163,7 +163,8 @@ describe('MenuTrigger', function () {
     expect(menu).toBeInTheDocument();
 
     let triggerButton = tree.getByText('Menu Button');
-    await user.click(triggerButton);
+    fireEvent.mouseDown(triggerButton, {button: 0});
+    fireEvent.mouseUp(triggerButton, {button: 0});
     act(() => {jest.runAllTimers();});
 
     expect(menu).toBeInTheDocument();

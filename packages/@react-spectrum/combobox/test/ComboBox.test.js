@@ -4362,7 +4362,8 @@ describe('ComboBox', function () {
         let dismissButtons = within(tray).getAllByRole('button');
         switch (Method) {
           case 'clicking outside tray':
-            await user.click(document.body);
+            fireEvent.mouseDown(document.body, {button: 0});
+            fireEvent.mouseUp(document.body, {button: 0});
             break;
           case 'dismiss button':
             // TODO: not entirely sure why using user.click here breaks the test... It seems to cause the selectedKey
@@ -5268,9 +5269,9 @@ describe('ComboBox', function () {
 
       if (parseInt(React.version, 10) >= 19) {
         it('resets to defaultSelectedKey when submitting form action', async () => {
-          function Test(props) {        
+          function Test(props) {
             const [value, formAction] = React.useActionState(() => '2', '1');
-            
+
             return (
               <Provider theme={theme}>
                 <form action={formAction}>
@@ -5280,11 +5281,11 @@ describe('ComboBox', function () {
               </Provider>
             );
           }
-    
+
           let {getByTestId, getByRole, rerender} = render(<Test />);
           let input = getByRole('combobox');
           expect(input).toHaveValue('One');
-    
+
           let button = getByTestId('submit');
           // For some reason, user.click() causes act warnings related to suspense...
           await act(() => button.click());
@@ -5604,7 +5605,7 @@ describe('ComboBox', function () {
         it('resets to defaultSelectedKey when submitting form action', async () => {
           function Test(props) {
             const [value, formAction] = React.useActionState(() => '2', '1');
-            
+
             return (
               <Provider theme={theme}>
                 <form action={formAction}>
@@ -5614,11 +5615,11 @@ describe('ComboBox', function () {
               </Provider>
             );
           }
-    
+
           let {getByTestId, rerender} = render(<Test />);
           let input = document.querySelector('input[name=combobox]');
           expect(input).toHaveValue('One');
-    
+
           let button = getByTestId('submit');
           await act(async () => await user.click(button));
           expect(input).toHaveValue('Two');
