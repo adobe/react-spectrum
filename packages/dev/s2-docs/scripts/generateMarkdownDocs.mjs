@@ -1114,6 +1114,28 @@ function getComponentDescription(componentName, file, docsSource) {
   return null;
 }
 
+function getJsDocData(node) {
+  const docs = typeof node?.getJsDocs === 'function' ? node.getJsDocs() : [];
+  const tags = docs.flatMap(doc => doc.getTags());
+
+  return {
+    description: docs
+      .map(doc => doc.getDescription().replace(/\n+/g, ' ').trim())
+      .find(Boolean) || '',
+    defaultValue: tags.find(tag => tag.getTagName() === 'default')?.getCommentText() || '',
+    selector: tags.find(tag => tag.getTagName() === 'selector')?.getCommentText() || '',
+    deprecated: tags.some(tag => tag.getTagName() === 'deprecated'),
+    private: tags.some(tag => tag.getTagName() === 'private')
+  };
+}
+
+function shouldOmitSymbol(sym) {
+  return (sym.getDeclarations?.() || []).some(decl => {
+    const docData = getJsDocData(decl);
+    return docData.deprecated || docData.private;
+  });
+}
+
 /**
  * Extracts one or more `@example` tag contents from JSDoc comments.
  * @param {string} text - The text to extract examples from.
@@ -1299,25 +1321,17 @@ function generatePropTable(componentName, file) {
 
   const propSymbols = iface.getType().getProperties();
 
-  const rows = propSymbols.map((sym) => {
+  const rows = propSymbols.flatMap((sym) => {
+    if (shouldOmitSymbol(sym)) {
+      return [];
+    }
+
     const name = sym.getName();
     const decl = sym.getDeclarations()?.[0];
     const type = cleanTypeText(sym.getTypeAtLocation(iface).getText(iface));
+    const docData = getJsDocData(decl);
 
-    let description = '';
-    let defVal = '';
-    if (decl && typeof decl.getJsDocs === 'function') {
-      const docsArr = decl.getJsDocs();
-      if (docsArr.length) {
-        description = docsArr[0].getDescription().replace(/\n+/g, ' ').trim();
-        const defaultTag = docsArr[0].getTags().find((t) => t.getTagName() === 'default');
-        if (defaultTag) {
-          defVal = defaultTag.getCommentText();
-        }
-      }
-    }
-
-    return {name, type, defVal, description};
+    return [{name, type, defVal: docData.defaultValue, description: docData.description}];
   });
 
   if (!rows.length) {
@@ -1377,6 +1391,10 @@ function generateInterfaceTable(interfaceName, file) {
   const methods = [];
 
   for (const sym of propSymbols) {
+    if (shouldOmitSymbol(sym)) {
+      continue;
+    }
+
     const name = sym.getName();
     const decl = sym.getDeclarations()?.[0];
     
@@ -1397,15 +1415,10 @@ function generateInterfaceTable(interfaceName, file) {
     let defVal = '';
     let optional = false;
 
-    if (decl && typeof decl.getJsDocs === 'function') {
-      const docsArr = decl.getJsDocs();
-      if (docsArr.length) {
-        description = docsArr[0].getDescription().replace(/\n+/g, ' ').trim();
-        const defaultTag = docsArr[0].getTags().find((t) => t.getTagName() === 'default');
-        if (defaultTag) {
-          defVal = defaultTag.getCommentText();
-        }
-      }
+    if (decl) {
+      const docData = getJsDocData(decl);
+      description = docData.description;
+      defVal = docData.defaultValue;
     }
 
     if (decl && decl.hasQuestionToken?.()) {
@@ -2914,7 +2927,8 @@ function generateClassAPITable(className, file) {
   // Generate properties documentation
   const properties = classDecl.getProperties().filter(p => {
     const scope = p.getScope();
-    return scope === undefined || scope === 1; // public properties only
+    const docData = getJsDocData(p);
+    return (scope === undefined || scope === 1) && !docData.deprecated && !docData.private; // public, non-deprecated, non-private properties only
   });
 
   if (properties.length > 0) {
@@ -2975,29 +2989,22 @@ function generateStateTable(renderPropsName, {showOptional = false, hideSelector
 
   // Build rows
   const rows = propSymbols.map(sym => {
+    if (shouldOmitSymbol(sym)) {
+      return null;
+    }
+
     const name = sym.getName();
 
     const decl = sym.getDeclarations()?.[0];
-    let description = '';
-    let selector = '';
     let optional = false;
 
     if (decl) {
       optional = decl.hasQuestionToken?.() || false;
-      if (typeof decl.getJsDocs === 'function') {
-        const docsArr = decl.getJsDocs();
-        if (docsArr.length) {
-          description = docsArr[0].getDescription().replace(/\n+/g, ' ').trim();
-          const selTag = docsArr[0].getTags().find(t => t.getTagName() === 'selector');
-          if (selTag) {
-            selector = selTag.getCommentText();
-          }
-        }
-      }
     }
 
-    return {name, selector: selector || '—', description, optional};
-  });
+    const docData = getJsDocData(decl);
+    return {name, selector: docData.selector || '—', description: docData.description, optional};
+  }).filter(Boolean);
 
   // Filter optional props if showOptional is false
   const filteredRows = showOptional ? rows : rows.filter(r => !r.optional);

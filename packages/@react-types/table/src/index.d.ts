@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, DOMProps, Key, LinkDOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, DOMProps, Expandable, Key, LinkDOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {JSX, ReactElement, ReactNode} from 'react';
 
@@ -25,7 +25,7 @@ export type ColumnDynamicSize = `${number}fr`; // match regex: /^(\d+)(?=fr$)/
 /** All possible sizes a column can be assigned. */
 export type ColumnSize = ColumnStaticSize | ColumnDynamicSize;
 
-export interface TableProps<T> extends MultipleSelection, Sortable {
+export interface TableProps<T> extends MultipleSelection, Sortable, Expandable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
   /** A list of row keys to disable. */
@@ -40,7 +40,9 @@ export interface TableProps<T> extends MultipleSelection, Sortable {
    */
   escapeKeyBehavior?: 'clearSelection' | 'none',
   /** Whether selection should occur on press up instead of press down. */
-  shouldSelectOnPressUp?: boolean
+  shouldSelectOnPressUp?: boolean,
+  /** The id of the column that displays hierarchical data. */
+  treeColumn?: Key
 }
 
 /**
