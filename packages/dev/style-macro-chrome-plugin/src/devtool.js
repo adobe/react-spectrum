@@ -46,13 +46,25 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
     }
   });
 
+  // Decode macro data from CSS custom property value (encodeURIComponent-encoded to avoid { } ; in CSS)
+  function decodeMacroDataFromCSS(encoded) {
+    if (!encoded) {
+      return null;
+    }
+    try {
+      return JSON.parse(decodeURIComponent(encoded));
+    } catch {
+      return null;
+    }
+  }
+
   // Get macro data from the CSS custom property (works for both static and dynamic)
   function getMacroData(className) {
     let promise = new Promise((resolve) => {
       debugLog('Getting macro data for:', className);
       chrome.devtools.inspectedWindow.eval(`window.getComputedStyle($0).getPropertyValue("--macro-data-${className}")`, (style) => {
         debugLog('Got style:', style);
-        resolve(style ? JSON.parse(style) : null);
+        resolve(style ? decodeMacroDataFromCSS(style) : null);
       });
     });
     return promise;

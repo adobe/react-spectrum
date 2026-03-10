@@ -18,6 +18,10 @@ import * as propertyInfo from './properties.json';
 const json = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
 const POSTFIX = json.version.includes('nightly') ? json.version.match(/-nightly-(.*)/)[1] : json.version.replace(/[0.]/g, '');
 
+/** Encodes macro metadata for safe use in a CSS custom property value (avoids { } ; which break the CSS parser). */
+function encodeMacroDataForCSS(data: {style: unknown, loc: string}): string {
+  return encodeURIComponent(JSON.stringify(data));
+}
 export class ArbitraryProperty<T extends Value> implements Property<T> {
   property: string;
   toCSS: (value: T) => CSSValue;
@@ -388,7 +392,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     if (isStatic && process.env.NODE_ENV !== 'production') {
       let id = toBase62(hash(className + loc));
       css += `.-macro-static-${id} {
-        --macro-data-${id}: ${JSON.stringify({style, loc})};
+        --macro-data-${id}: ${encodeMacroDataForCSS({style, loc})};
       }\n\n`;
       className += ` -macro-static-${id}`;
     }
@@ -426,7 +430,8 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       js += '      }\n';
       js += '    }\n';
       js += `    let macroMetadata = {style: currentRules, loc: ${JSON.stringify(loc)}};\n`;
-      js += '    let cssRule = ".-macro-dynamic-" + hashStr + " { --macro-data-" + hashStr + ": " + JSON.stringify(macroMetadata) + "; }";\n';
+      js += '    let macroEncoded = encodeURIComponent(JSON.stringify(macroMetadata));\n';
+      js += '    let cssRule = ".-macro-dynamic-" + hashStr + " { --macro-data-" + hashStr + ": " + macroEncoded + "; }";\n';
       js += '    if (ruleIndex >= 0) {\n';
       js += '      sheet.deleteRule(ruleIndex);\n';
       js += '      sheet.insertRule(cssRule, ruleIndex);\n';

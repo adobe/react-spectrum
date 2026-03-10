@@ -54,7 +54,7 @@ describe('style-macro', () => {
 }
 
 .-macro-static-a9a4ic {
-        --macro-data-a9a4ic: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
+        --macro-data-a9a4ic: %7B%22style%22%3A%7B%22marginTop%22%3A%7B%22%3Afirst-child%22%3A%7B%22default%22%3A4%2C%22lg%22%3A8%7D%7D%7D%2C%22loc%22%3A%22undefined%3Aundefined%3Aundefined%22%7D;
       }
 
 "
@@ -119,7 +119,7 @@ describe('style-macro', () => {
 }
 
 .-macro-static-K2u2od {
-        --macro-data-K2u2od: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
+        --macro-data-K2u2od: %7B%22style%22%3A%7B%22borderWidth%22%3A2%2C%22paddingX%22%3A%22edge-to-text%22%2C%22width%22%3A%22calc(200px%20-%20self(borderStartWidth)%20-%20self(paddingStart))%22%7D%2C%22loc%22%3A%22undefined%3Aundefined%3Aundefined%22%7D;
       }
 
 "
@@ -397,7 +397,7 @@ describe('style-macro', () => {
 }
 
 .-macro-static-1ohgA {
-        --macro-data-1ohgA: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
+        --macro-data-1ohgA: %7B%22style%22%3A%7B%22padding%22%3A24%7D%2C%22loc%22%3A%22undefined%3Aundefined%3Aundefined%22%7D;
       }
 
 "
@@ -419,7 +419,7 @@ describe('style-macro', () => {
 }
 
 .-macro-static-Ukgglb {
-        --macro-data-Ukgglb: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
+        --macro-data-Ukgglb: %7B%22style%22%3A%7B%22backgroundColor%22%3A%22blue-1000%2F50%22%7D%2C%22loc%22%3A%22undefined%3Aundefined%3Aundefined%22%7D;
       }
 
 "
@@ -444,7 +444,7 @@ describe('style-macro', () => {
 }
 
 .-macro-static-mL70N {
-        --macro-data-mL70N: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
+        --macro-data-mL70N: %7B%22style%22%3A%7B%22--foo%22%3A%7B%22type%22%3A%22backgroundColor%22%2C%22value%22%3A%22gray-300%22%7D%7D%2C%22loc%22%3A%22undefined%3Aundefined%3Aundefined%22%7D;
       }
 
 "
