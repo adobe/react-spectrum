@@ -3,6 +3,7 @@ import {addComment, getName, removeUnusedImports} from './shared/utils';
 import {API, FileInfo} from 'jscodeshift';
 import {getComponents} from '../getComponents';
 import {iconMap} from './icons/iconMap';
+import {illustrationMap} from './illustrations/illustrationMap';
 import {parse as recastParse} from 'recast';
 import * as t from '@babel/types';
 import transformStyleProps from './shared/styleProps';
@@ -188,6 +189,7 @@ export default function transformer(file: FileInfo, api: API, options: Options):
   let elements: [string, NodePath<t.JSXElement>][] = [];
   let lastImportPath: NodePath<t.ImportDeclaration> | null = null;
   let iconImports: Map<string, {path: NodePath<t.ImportDeclaration>, newName: string | null}> = new Map();
+  let illustrationImports: Map<string, {path: NodePath<t.ImportDeclaration>, newName: string | null}> = new Map();
   let programPath: NodePath<t.Program> | null = null;
   const leadingComments = root.find(j.Program).get('body', 0).node.leadingComments;
   traverse(root.paths()[0].node, {
@@ -277,6 +279,21 @@ export default function transformer(file: FileInfo, api: API, options: Options):
         } else {
           iconImports.set(localName, {path, newName: null});
         }
+      } else if (path.node.source.value.startsWith('@spectrum-icons/illustrations/')) {
+        let illustrationName = path.node.source.value.split('/').pop();
+        if (!illustrationName) {return;}
+
+        let specifier = path.node.specifiers[0];
+        if (!specifier || !t.isImportDefaultSpecifier(specifier)) {return;}
+
+        let localName = specifier.local.name;
+
+        if (illustrationMap.has(illustrationName)) {
+          let newIllustrationName = illustrationMap.get(illustrationName)!;
+          illustrationImports.set(localName, {path, newName: newIllustrationName});
+        } else {
+          illustrationImports.set(localName, {path, newName: null});
+        }
       }
     },
     Import(path) {
@@ -307,6 +324,12 @@ export default function transformer(file: FileInfo, api: API, options: Options):
           addComment(path.node, ` TODO(S2-upgrade): A Spectrum 2 equivalent to '${name.name}' was not found. Please update this icon manually.`);
         }
       }
+      if (t.isJSXIdentifier(name) && illustrationImports.has(name.name)) {
+        let illustrationInfo = illustrationImports.get(name.name)!;
+        if (illustrationInfo.newName === null) {
+          addComment(path.node, ` TODO(S2-upgrade): A Spectrum 2 equivalent to '${name.name}' was not found. Please update this illustration manually.`);
+        }
+      }
     }
   });
 
@@ -331,6 +354,29 @@ export default function transformer(file: FileInfo, api: API, options: Options):
       }
 
       // Update the import
+      path.node.source = t.stringLiteral(newImportSource);
+      path.node.specifiers = [t.importDefaultSpecifier(t.identifier(newLocalName))];
+    }
+  });
+
+  illustrationImports.forEach((illustrationInfo, localName) => {
+    let {path, newName} = illustrationInfo;
+    if (newName) {
+      let newImportSource = `@react-spectrum/s2/illustrations/linear/${newName}`;
+
+      let newLocalName = localName;
+      if (localName === path.node.source.value.split('/').pop() && localName !== newName) {
+        let binding = path.scope.getBinding(localName);
+        if (binding && !path.scope.hasBinding(newName)) {
+          newLocalName = newName;
+          binding.referencePaths.forEach(refPath => {
+            if (t.isJSXIdentifier(refPath.node)) {
+              refPath.node.name = newName;
+            }
+          });
+        }
+      }
+
       path.node.source = t.stringLiteral(newImportSource);
       path.node.specifiers = [t.importDefaultSpecifier(t.identifier(newLocalName))];
     }
