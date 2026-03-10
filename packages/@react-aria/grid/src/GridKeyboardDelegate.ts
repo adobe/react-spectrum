@@ -206,8 +206,8 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     if (this.isRow(item)) {
       let children = getChildNodes(item, this.collection);
       return (this.direction === 'rtl'
-        ? getLastItem(children, item => item.type === 'cell')?.key
-        : getFirstItem(children, item => item.type === 'cell')?.key) ?? null;
+        ? getLastItem(children)?.key
+        : getFirstItem(children)?.key) ?? null;
     }
 
     // If focus is on a cell, focus the next cell if any,
@@ -219,8 +219,8 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       }
       let children = getChildNodes(parent, this.collection);
       let next = (this.direction === 'rtl'
-        ? getNthItem(children, item.index - 1, item => item.type === 'cell')
-        : getNthItem(children, item.index + 1, item => item.type === 'cell')) ?? null;
+        ? getNthItem(children, item.index - 1)
+        : getNthItem(children, item.index + 1)) ?? null;
 
       if (next) {
         return next.key ?? null;
@@ -246,8 +246,8 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     if (this.isRow(item)) {
       let children = getChildNodes(item, this.collection);
       return (this.direction === 'rtl'
-        ? getFirstItem(children, item => item.type === 'cell')?.key
-        : getLastItem(children, item => item.type === 'cell')?.key) ?? null;
+        ? getFirstItem(children)?.key
+        : getLastItem(children)?.key) ?? null;
     }
 
     // If focus is on a cell, focus the previous cell if any,
@@ -259,8 +259,8 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       }
       let children = getChildNodes(parent, this.collection);
       let prev = (this.direction === 'rtl'
-        ? getNthItem(children, item.index + 1, item => item.type === 'cell')
-        : getNthItem(children, item.index - 1, item => item.type === 'cell')) ?? null;
+        ? getNthItem(children, item.index + 1)
+        : getNthItem(children, item.index - 1)) ?? null;
 
       if (prev) {
         return prev.key ?? null;
@@ -292,7 +292,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
         if (!parent) {
           return null;
         }
-        return getFirstItem(getChildNodes(parent, this.collection), item => item.type === 'cell')?.key ?? null;
+        return getFirstItem(getChildNodes(parent, this.collection))?.key ?? null;
       }
     }
 
@@ -305,7 +305,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       if (!item) {
         return null;
       }
-      key = getFirstItem(getChildNodes(item, this.collection), item => item.type === 'cell')?.key ?? null;
+      key = getFirstItem(getChildNodes(item, this.collection))?.key ?? null;
     }
 
     // Otherwise, focus the row itself.
@@ -329,7 +329,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
           return null;
         }
         let children = getChildNodes(parent, this.collection);
-        return getLastItem(children, item => item.type === 'cell')?.key ?? null;
+        return getLastItem(children)?.key ?? null;
       }
     }
 
@@ -343,7 +343,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
         return null;
       }
       let children = getChildNodes(item, this.collection);
-      key = getLastItem(children, item => item.type === 'cell')?.key ?? null;
+      key = getLastItem(children)?.key ?? null;
     }
 
     // Otherwise, focus the row itself.

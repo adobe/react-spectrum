@@ -22,11 +22,11 @@ export function getChildNodes<T>(node: Node<T>, collection: Collection<Node<T>>)
   return node.childNodes;
 }
 
-export function getFirstItem<T>(iterable: Iterable<T>, pred?: (item: T) => boolean): T | undefined {
-  return getNthItem(iterable, 0, pred);
+export function getFirstItem<T>(iterable: Iterable<T>): T | undefined {
+  return getNthItem(iterable, 0);
 }
 
-export function getNthItem<T>(iterable: Iterable<T>, index: number, pred?: (item: T) => boolean): T | undefined {
+export function getNthItem<T>(iterable: Iterable<T>, index: number): T | undefined {
   if (index < 0) {
     return undefined;
   }
@@ -34,28 +34,17 @@ export function getNthItem<T>(iterable: Iterable<T>, index: number, pred?: (item
   let i = 0;
   for (let item of iterable) {
     if (i === index) {
-      if (!pred || pred(item)) {
-        return item;
-      }
-
-      return undefined;
+      return item;
     }
 
-    if (!pred || pred(item)) {
-      i++;
-    }
+    i++;
   }
-
-  // should only reach here if the entire iterable didn't contain a nth item that matched the pred
-  return undefined;
 }
 
-export function getLastItem<T>(iterable: Iterable<T>, pred?: (item: T) => boolean): T | undefined {
+export function getLastItem<T>(iterable: Iterable<T>): T | undefined {
   let lastItem: T | undefined = undefined;
   for (let value of iterable) {
-    if (!pred || pred(value)) {
-      lastItem = value;
-    }
+    lastItem = value;
   }
 
   return lastItem;

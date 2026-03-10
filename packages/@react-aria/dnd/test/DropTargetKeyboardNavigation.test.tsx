@@ -186,7 +186,7 @@ class TestCollection implements Collection<Node<Item>> {
 
   getChildren(key: Key): Iterable<Node<Item>> {
     let item = this.map.get(key);
-    return item?.childNodes ?? [];
+    return Array.from(item?.childNodes || [])?.filter(item => item.type !== 'item') ?? [];
   }
 }
 
@@ -294,7 +294,7 @@ describe('drop target keyboard navigation', () => {
       'reports-2',
       'reports-2-content'
     ];
-    
+
     expect(nextKeys).toEqual(expectedKeys);
 
     let prevKeys: Key[] = [];

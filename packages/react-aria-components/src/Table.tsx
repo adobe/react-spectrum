@@ -210,7 +210,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     if (k == null) {
       k = node.parentKey;
     }
-
+    
     if (k != null && this.getItem(k)?.type === 'tablebody') {
       return null;
     }
@@ -249,10 +249,13 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
         let parent = self.getItem(key) as CollectionNode<T> | null;
         let node = parent?.firstChildKey != null ? self.getItem(parent.firstChildKey) as CollectionNode<T> | null : null;
         while (node) {
-          // note that we are returning ALL children not just cells now aka including child rows. Keep this in mind when getting a row's children
-          // since previously we had assumed this would only be cells
           yield node as Node<T>;
           node = node.nextKey != null ? self.getItem(node.nextKey) as CollectionNode<T> | null : null;
+
+          // Return only cells as children of rows (nested rows are flattened into the body).
+          if (parent?.type === 'item' && node?.type !== 'cell') {
+            break;
+          }
         }
       }
     };
@@ -284,10 +287,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     let rowHeaderColumnKeys = this.rowHeaderColumnKeys;
     let text: string[] = [];
     for (let cell of this.getChildren(key)) {
-      // need to skip the child rows now that getChildren returns those
-      if (cell.type !== 'cell') {
-        continue;
-      }
       let column = this.columns[cell.index!];
       if (rowHeaderColumnKeys.has(column.key) && cell.textValue) {
         text.push(cell.textValue);
@@ -1284,12 +1283,8 @@ class TableRowNode<T> extends CollectionNode<T> {
   static readonly type = 'item';
 
   filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string, node: Node<T>) => boolean): TableRowNode<T> | null {
-    for (let cell of collection.getChildren(this.key)) {
-      if (cell.type !== 'cell') {
-        // todo: skip child rows? this keeps it in line with previous behavior but we'll want to consider allowing customizations for
-        // this (keep/skip child rows). Also applies to Tree https://github.com/orgs/adobe/projects/19/views/4?sliceBy%5Bvalue%5D=Autocomplete&pane=issue&itemId=164093367
-        continue;
-      }
+    let cells = collection.getChildren(this.key);
+    for (let cell of cells) {
       if (filterFn(cell.textValue, cell)) {
         let clone = this.clone();
         newCollection.addDescendants(clone, collection);
@@ -1318,7 +1313,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     let ref = useObjectRef<HTMLTableRowElement | HTMLDivElement>(forwardedRef);
     let state = useContext(TableStateContext)!;
     let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
-    let {isVirtualized} = useContext(CollectionRendererContext);
+    let {isVirtualized, CollectionBranch} = useContext(CollectionRendererContext);
     let {rowProps, expandButtonProps, ...states} = useTableRow(
       {
         node: item,
@@ -1397,20 +1392,6 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       }
     });
 
-    let children = useCachedChildren({
-      items: state.collection.getChildren!(item.key),
-      children: item => {
-        switch (item.type) {
-          // skip loader and child rows since these are flattened in the body and are rendered as siblings, just like in Tree
-          case 'loader':
-          case 'item':
-            return <></>;
-          default:
-            return item.render!(item);
-        }
-      }
-    });
-
     let DOMProps = filterDOMProps(props as any, {global: true});
     delete DOMProps.id;
     delete DOMProps.onClick;
@@ -1463,7 +1444,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
               }],
               [SelectionIndicatorContext, {isSelected: states.isSelected}]
             ]}>
-            {children}
+            <CollectionBranch collection={state.collection} parent={item} />
           </Provider>
         </TableRowElementType>
       </>
