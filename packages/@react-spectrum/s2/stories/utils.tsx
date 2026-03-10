@@ -12,7 +12,7 @@
 
 
 import {Collection, Header, Heading, Picker, PickerItem, PickerSection, Provider} from '../src';
-import {fn} from '@storybook/test';
+import {fn} from 'storybook/test';
 import {Key, useLocale} from 'react-aria';
 import {PropsWithChildren, ReactElement, ReactNode, useMemo, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};

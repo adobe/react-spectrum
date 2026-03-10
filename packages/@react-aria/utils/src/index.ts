@@ -12,7 +12,7 @@
 export {useId, mergeIds, useSlotId} from './useId';
 export {chain} from './chain';
 export {createShadowTreeWalker, ShadowTreeWalker} from './shadowdom/ShadowTreeWalker';
-export {getActiveElement, getEventTarget, nodeContains} from './shadowdom/DOMFunctions';
+export {getActiveElement, getEventTarget, nodeContains, isFocusWithin} from './shadowdom/DOMFunctions';
 export {getOwnerDocument, getOwnerWindow, isShadowRoot} from './domHelpers';
 export {mergeProps} from './mergeProps';
 export {mergeRefs} from './mergeRefs';

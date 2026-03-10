@@ -309,7 +309,6 @@ function getMaxHeight(
     top: Math.max(boundaryDimensions.top + boundaryToContainerTransformOffset, (visualViewport?.offsetTop ?? boundaryDimensions.top) + boundaryToContainerTransformOffset),
     bottom: Math.min((boundaryDimensions.top + boundaryDimensions.height + boundaryToContainerTransformOffset), (visualViewport?.offsetTop ?? 0) + (visualViewport?.height ?? 0))
   };
-
   let maxHeight = heightGrowthDirection !== 'top' ?
     // We want the distance between the top of the overlay to the bottom of the boundary
     Math.max(0,
@@ -558,10 +557,33 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
   // Otherwise this returns the height/width of a arbitrary boundary element, and its top/left with respect to the viewport (NOTE THIS MEANS IT DOESNT INCLUDE SCROLL)
   let boundaryDimensions = getContainerDimensions(boundaryElement, visualViewport);
   let containerDimensions = getContainerDimensions(container, visualViewport);
-  // If the container is the HTML element wrapping the body element, the retrieved scrollTop/scrollLeft will be equal to the
-  // body element's scroll. Set the container's scroll values to 0 since the overlay's edge position value in getDelta don't then need to be further offset
-  // by the container scroll since they are essentially the same containing element and thus in the same coordinate system
-  let containerOffsetWithBoundary: Offset = getPosition(boundaryElement, container,  false);
+
+  // There are several difference cases of how to calculate the containerOffsetWithBoundary:
+  // - boundaryElement is body or HTML and the container is an arbitrary element in the boundary (aka submenu with parent menu as container in v3)
+  // - boundaryElement and container are both body or HTML element (aka standard popover case)
+  // - boundaryElement is customized by the user. Container can also be arbitrary (either body/HTML or some other element)
+  // containerOffsetWithBoundary should always return a value that is the boundary's coordinate offset with respect to the container coord system (container is 0, 0)
+  let containerOffsetWithBoundary: Offset;
+  if ((boundaryElement.tagName === 'BODY' || boundaryElement.tagName === 'HTML') && !isViewportContainer) {
+    // Use getRect instead of getOffset because boundaryDimensions for BODY/HTML is in viewport coordinate space,
+    // not document coordinate space
+    let containerRect = getRect(container, false);
+    // the offset should be negative because if container is at viewport position x,y, then viewport top (aka 0)
+    // is at position -x,y in container-relative coordinates
+    containerOffsetWithBoundary = {
+      top: -(containerRect.top - boundaryDimensions.top),
+      left: -(containerRect.left - boundaryDimensions.left),
+      width: 0,
+      height: 0
+    };
+  } else if ((boundaryElement.tagName === 'BODY' || boundaryElement.tagName === 'HTML') && isViewportContainer) {
+    // both are the same viewport container, no offset needed
+    containerOffsetWithBoundary = {top: 0, left: 0, width: 0, height: 0};
+  } else {
+    // This returns the boundary's coordinate with respect to the container. This case captures cases such as when you provide a custom boundary
+    // like in ScrollingBoundaryContainerExample in Popover.stories.
+    containerOffsetWithBoundary = getPosition(boundaryElement, container, false);
+  }
 
   let isContainerDescendentOfBoundary = nodeContains(boundaryElement, container);
   return calculatePositionInternal(

@@ -1,11 +1,11 @@
 'use client';
 
-import {CopyInfoMessage} from './ColorSearchView';
 import {getColorHexMap} from './color.macro' with {type: 'macro'};
 import {Header, ListBox, ListBoxItem, ListBoxSection} from 'react-aria-components';
+import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
+import {Link, Skeleton, Text} from '@react-spectrum/s2';
 import React, {useMemo, useRef} from 'react';
-import {Skeleton, Text} from '@react-spectrum/s2';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 export const colorHexMaps = getColorHexMap();
 
@@ -148,6 +148,22 @@ const headerStyle = style({
   marginBottom: 4
 });
 
+interface InfoMessageProps {
+  /** The content to display in the message. */
+  children: React.ReactNode
+}
+
+export function InfoMessage({children}: InfoMessageProps) {
+  return (
+    <div className={style({display: 'flex', gap: 4, padding: 8, alignItems: 'center'})}>
+      <InfoCircle styles={iconStyle({size: 'XS'})} />
+      <span className={style({font: 'ui'})}>
+        {children}
+      </span>
+    </div>
+  );
+}
+
 function SkeletonColorItem({item}: {item: {id: string}}) {
   const ref = useRef(null);
   return (
@@ -204,7 +220,7 @@ export function ColorSearchSkeleton() {
 
   return (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-      <CopyInfoMessage />
+      <InfoMessage>Press a color to copy its name. See <Link href="styling">styling</Link> for more information.</InfoMessage>
       <Skeleton isLoading>
         <ListBox
           aria-label="Colors loading"

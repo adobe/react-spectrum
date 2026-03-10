@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
+import {AriaComboBoxProps, useComboBox, useFilter, useListFormatter} from 'react-aria';
 import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
@@ -26,19 +26,21 @@ import {
   useSlottedContext
 } from './utils';
 import {Collection, ComboBoxState, Node, useComboBoxState} from 'react-stately';
-import {CollectionBuilder} from '@react-aria/collections';
+import {CollectionBuilder, createHideableComponent} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, Key, RefObject} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, useCallback, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
+
+type SelectionMode = 'single' | 'multiple';
 
 export interface ComboBoxRenderProps {
   /**
@@ -63,7 +65,7 @@ export interface ComboBoxRenderProps {
   isRequired: boolean
 }
 
-export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<ComboBoxRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ComboBoxProps<T extends object, M extends SelectionMode = 'single'> extends Omit<AriaComboBoxProps<T, M>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<ComboBoxRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ComboBox'
@@ -81,13 +83,13 @@ export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<
   allowsEmptyCollection?: boolean
 }
 
-export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any>, HTMLDivElement>>(null);
-export const ComboBoxStateContext = createContext<ComboBoxState<any> | null>(null);
+export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any, SelectionMode>, HTMLDivElement>>(null);
+export const ComboBoxStateContext = createContext<ComboBoxState<any, SelectionMode> | null>(null);
 
 /**
  * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
  */
-export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T extends object, M extends SelectionMode = 'single'>(props: ComboBoxProps<T, M>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
   let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
   let content = useMemo(() => (
@@ -115,7 +117,7 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
 const CLEAR_CONTEXTS = [LabelContext, ButtonContext, InputContext, GroupContext, TextContext];
 
 interface ComboBoxInnerProps<T extends object> {
-  props: ComboBoxProps<T>,
+  props: ComboBoxProps<T, SelectionMode>,
   collection: Collection<Node<T>>,
   comboBoxRef: RefObject<HTMLDivElement | null>
 }
@@ -157,6 +159,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     labelProps,
     descriptionProps,
     errorMessageProps,
+    valueProps,
     ...validation
   } = useComboBox({
     ...removeDataAttributes(props),
@@ -203,6 +206,18 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
   let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
+  let inputs: ReactElement[] = [];
+  if (name && formValue === 'key') {
+    let values: (Key | null)[] = Array.isArray(state.value) ? state.value : [state.value];
+    if (values.length === 0) {
+      values = [null];
+    }
+
+    inputs = values.map((value, i) => (
+      <input key={i} type="hidden" name={name} form={props.form} value={value ?? ''} />
+    ));
+  }
+
   return (
     <Provider
       values={[
@@ -230,7 +245,8 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
           }
         }],
         [GroupContext, {isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
-        [FieldErrorContext, validation]
+        [FieldErrorContext, validation],
+        [ComboBoxValueContext, valueProps]
       ]}>
       <dom.div
         {...DOMProps}
@@ -241,8 +257,69 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}
         data-invalid={validation.isInvalid || undefined}
-        data-required={props.isRequired || undefined} />
-      {name && formValue === 'key' && <input type="hidden" name={name} form={props.form} value={state.selectedKey ?? ''} />}
+        data-required={props.isRequired || undefined}>
+        {renderProps.children}
+        {inputs}
+      </dom.div>
     </Provider>
   );
 }
+
+export interface ComboBoxValueRenderProps<T> {
+  /**
+   * Whether the value is a placeholder.
+   * @selector [data-placeholder]
+   */
+  isPlaceholder: boolean,
+  /** The object values of the currently selected items. */
+  selectedItems: (T | null)[],
+  /** The textValue of the currently selected items. */
+  selectedText: string,
+  /** The state of the ComboBox. */
+  state: ComboBoxState<T, 'single' | 'multiple'>
+}
+
+export interface ComboBoxValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<ComboBoxValueRenderProps<T>, 'div'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-ComboBoxValue'
+   */
+  className?: ClassNameOrFunction<ComboBoxValueRenderProps<T>>,
+  /** A value to display when no items are selected. */
+  placeholder?: ReactNode
+}
+
+export const ComboBoxValueContext = createContext<ContextValue<ComboBoxValueProps<any>, HTMLDivElement>>(null);
+
+/**
+ * ComboBoxValue renders the selected values of a ComboBox, or a placeholder if no value is selected.
+ * By default, the items are rendered as a comma separated list. Use the render function to customize this.
+ */
+export const ComboBoxValue = /*#__PURE__*/ createHideableComponent(function ComboBoxValue<T extends object>(props: ComboBoxValueProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, ComboBoxValueContext);
+  let state = useContext(ComboBoxStateContext)!;
+  let formatter = useListFormatter();
+  let selectedText = useMemo(() => formatter.format(state.selectedItems.map(item => item?.textValue || '').filter(v => v !== '')), [formatter, state.selectedItems]);
+
+  let renderProps = useRenderProps({
+    ...props,
+    defaultChildren: selectedText || props.placeholder,
+    defaultClassName: 'react-aria-ComboBoxValue',
+    values: {
+      selectedItems: useMemo(() => state.selectedItems.map(item => item.value as T ?? null), [state.selectedItems]),
+      selectedText,
+      isPlaceholder: state.selectedItems.length === 0,
+      state
+    }
+  });
+
+  let DOMProps = filterDOMProps(props, {global: true});
+
+  return (
+    <dom.div
+      ref={ref}
+      {...DOMProps}
+      {...renderProps}
+      data-placeholder={state.selectedItems.length === 0 || undefined} />
+  );
+});

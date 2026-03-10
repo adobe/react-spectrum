@@ -168,11 +168,13 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
   );
 });
 
+// Events to preserve when isPending is true (for tooltips and other overlays)
+const PRESERVED_EVENT_PATTERN = /Focus|Blur|Hover|Pointer(Enter|Leave|Over|Out)|Mouse(Enter|Leave|Over|Out)/;
+
 function useDisableInteractions(props, isPending) {
-  // Don't allow interaction while isPending is true
   if (isPending) {
     for (const key in props) {
-      if (key.startsWith('on') && !(key.includes('Focus') || key.includes('Blur'))) {
+      if (key.startsWith('on') && !PRESERVED_EVENT_PATTERN.test(key)) {
         props[key] = undefined;
       }
     }

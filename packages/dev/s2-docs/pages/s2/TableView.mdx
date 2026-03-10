@@ -14,7 +14,8 @@ export const description = 'Displays data in rows and columns, with row selectio
 
 <PageDescription>{docs.exports.TableView.description}</PageDescription>
 
-```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'overflowMode', 'density', 'isQuiet']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="s2"
+```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'overflowMode', 'density', 'isQuiet']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple', 'treeColumn': 'name'}} type="s2"
+"use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -22,27 +23,57 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
   /* PROPS */
   styles={style({width: 'full'})}>
   <TableHeader>
-    <Column isRowHeader>Name</Column>
-    <Column>Type</Column>
-    <Column>Date Modified</Column>
+    <Column id="name" isRowHeader>Name</Column>
+    <Column id="type">Type</Column>
+    <Column id="date">Date Modified</Column>
   </TableHeader>
   <TableBody>
-    <Row id="1">
-      <Cell>Projects</Cell>
-      <Cell>File folder</Cell>
-      <Cell>6/7/2025</Cell>
+    <Row id="games">
+      <Cell>Games</Cell>
+      <Cell>Folder</Cell>
+      <Cell>6/7/2023</Cell>
+      <Row id="mario">
+        <Cell>Mario Kart</Cell>
+        <Cell>Game</Cell>
+        <Cell>8/27/1992</Cell>
+      </Row>
+      <Row id="tetris">
+        <Cell>Tetris</Cell>
+        <Cell>Game</Cell>
+        <Cell>1/27/1988</Cell>
+      </Row>
+      <Row id="pacman">
+        <Cell>Pac-Man</Cell>
+        <Cell>Game</Cell>
+        <Cell>5/22/1980</Cell>
+      </Row>
     </Row>
-    <Row id="2">
-      <Cell>Pictures</Cell>
-      <Cell>File folder</Cell>
+    <Row id="apps">
+      <Cell>Applications</Cell>
+      <Cell>Folder</Cell>
       <Cell>4/7/2025</Cell>
+      <Row id="ps">
+        <Cell>Photoshop</Cell>
+        <Cell>Application</Cell>
+        <Cell>2/19/1990</Cell>
+      </Row>
+      <Row id="premiere">
+        <Cell>Premiere</Cell>
+        <Cell>Application</Cell>
+        <Cell>9/24/2003</Cell>
+      </Row>
+      <Row id="lightroom">
+        <Cell>Lightroom</Cell>
+        <Cell>Application</Cell>
+        <Cell>10/18/2017</Cell>
+      </Row>
     </Row>
-    <Row id="3">
-      <Cell>2024 Annual Financial Report</Cell>
-      <Cell>Text document</Cell>
+    <Row id="report">
+      <Cell>2024 Financial Report</Cell>
+      <Cell>PDF Document</Cell>
       <Cell>12/30/2024</Cell>
     </Row>
-    <Row id="4">
+    <Row id="job">
       <Cell>Job Posting</Cell>
       <Cell>Text Document</Cell>
       <Cell>1/18/2025</Cell>
@@ -128,6 +159,69 @@ function FileTable() {
 on external state (e.g. `columns` in this example).</Content>
 </InlineAlert>
 
+### Expandable rows
+
+Rows can be nested to display hierarchical data. Use the `treeColumn` prop to designate the expandable column, and `expandedKeys` to control the expanded rows.
+
+```tsx render
+"use client";
+import {TableView, TableHeader, Column, TableBody, Row, Cell, Collection, type Key} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+/*- begin collapse -*/
+const rows = [
+  {id: '1', title: 'Documents', type: 'Directory', date: '10/20/2025', children: [
+    {id: '2', title: 'Project', type: 'Directory', date: '8/2/2025', children: [
+      {id: '3', title: 'Weekly Report', type: 'File', date: '7/10/2025', children: []},
+      {id: '4', title: 'Budget', type: 'File', date: '8/20/2025', children: []}
+    ]}
+  ]},
+  {id: '5', title: 'Photos', type: 'Directory', date: '2/3/2026', children: [
+    {id: '6', title: 'Image 1', type: 'File', date: '1/23/2026', children: []},
+    {id: '7', title: 'Image 2', type: 'File', date: '2/3/2026', children: []}
+  ]}
+];
+/*- end collapse -*/
+
+function Example() {
+  let [expandedKeys, setExpandedKeys] = useState(new Set<Key>(['1']))
+
+  return (
+    <TableView
+      aria-label="Files"
+      styles={style({width: 'full'})}
+      /*- begin highlight -*/
+      treeColumn="name"
+      expandedKeys={expandedKeys}
+      onExpandedChange={setExpandedKeys}>
+      {/*- end highlight -*/}
+      <TableHeader>
+        <Column id="name" isRowHeader>Name</Column>
+        <Column id="type">Type</Column>
+        <Column id="date">Date Modified</Column>
+      </TableHeader>
+      <TableBody items={rows}>
+        {function renderItem(item) {
+          return (
+            <Row id={item.id}>
+              <Cell>{item.title}</Cell>
+              <Cell>{item.type}</Cell>
+              <Cell>{item.date}</Cell>
+              {/*- begin highlight -*/}
+              {/* recursively render children */}
+              <Collection items={item.children}>
+                {renderItem}
+              </Collection>
+              {/*- end highlight -*/}
+            </Row>
+          );
+        }}
+      </TableBody>
+    </TableView>
+  );
+}
+```
 
 ### Asynchronous loading
 

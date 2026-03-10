@@ -11,6 +11,7 @@ export const description = 'Displays a list of items, with support for keyboard 
 <PageDescription>{docs.exports.TagGroup.description}</PageDescription>
 
 ```tsx render docs={docs.exports.TagGroup} links={docs.links} props={['label', 'selectionMode', 'size', 'labelPosition', 'maxRows', 'description', 'contextualHelp', 'isEmphasized']} initialProps={{label: 'Ice cream flavors', selectionMode: 'multiple', maxRows: 2}} controlOptions={{maxRows: {minValue: 1}}} type="s2"
+"use client";
 import {TagGroup, Tag} from '@react-spectrum/s2';
 
 <TagGroup/* PROPS */>

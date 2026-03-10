@@ -12,7 +12,6 @@
 
 import {act, waitFor, within} from '@testing-library/react';
 import {MenuTesterOpts, UserOpts} from './types';
-import {nodeContains} from '@react-aria/utils';
 import {triggerLongPress} from './events';
 
 interface MenuOpenOpts {
@@ -216,7 +215,7 @@ export class MenuTester {
           return;
         }
 
-        if (document.activeElement !== menu && !nodeContains(menu, document.activeElement)) {
+        if (document.activeElement !== menu && !menu.contains(document.activeElement)) {
           act(() => menu.focus());
         }
 
@@ -263,7 +262,7 @@ export class MenuTester {
         // close. In React 16, focus actually makes it all the way to the root menu's submenu trigger so we need check the root menu
         if (this._isSubmenu) {
           await waitFor(() => {
-            if (document.activeElement === this.trigger || nodeContains(this._rootMenu, document.activeElement)) {
+            if (document.activeElement === this.trigger || this._rootMenu?.contains(document.activeElement)) {
               throw new Error('Expected focus after selecting an submenu option to move away from the original submenu trigger.');
             } else {
               return true;
@@ -343,7 +342,7 @@ export class MenuTester {
   private async keyboardNavigateToOption(opts: {option: HTMLElement}) {
     let {option} = opts;
     let options = this.options();
-    let targetIndex = options.findIndex(opt => (opt === option) || nodeContains(opt, option));
+    let targetIndex = options.findIndex(opt => (opt === option) || opt.contains(option));
 
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the menu');
@@ -379,7 +378,7 @@ export class MenuTester {
         }
       });
 
-      if (nodeContains(document, menu)) {
+      if (document.contains(menu)) {
         throw new Error('Expected the menu to not be in the document after closing it.');
       }
     }

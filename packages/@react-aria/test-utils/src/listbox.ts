@@ -13,7 +13,6 @@
 import {act, within} from '@testing-library/react';
 import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
 import {ListBoxTesterOpts, UserOpts} from './types';
-import {nodeContains} from '@react-aria/utils';
 
 interface ListBoxToggleOptionOpts {
   /**
@@ -104,7 +103,7 @@ export class ListBoxTester {
       throw new Error('Option provided is not in the listbox');
     }
 
-    if (document.activeElement !== this._listbox && !nodeContains(this._listbox, document.activeElement)) {
+    if (document.activeElement !== this._listbox && !this._listbox.contains(document.activeElement)) {
       act(() => this._listbox.focus());
       await this.user.keyboard(`${selectionOnNav === 'none' ? `[${altKey}>]` : ''}[ArrowDown]${selectionOnNav === 'none' ? `[/${altKey}]` : ''}`);
     }

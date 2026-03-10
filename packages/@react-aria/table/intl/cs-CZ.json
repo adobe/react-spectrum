@@ -7,5 +7,7 @@
   "resizerDescription": "Stisknutím klávesy Enter začnete měnit velikost",
   "select": "Vybrat",
   "selectAll": "Vybrat vše",
-  "sortable": "sloupec s možností řazení"
+  "sortable": "sloupec s možností řazení",
+  "collapse": "Sbalit",
+  "expand": "Roztáhnout"
 }

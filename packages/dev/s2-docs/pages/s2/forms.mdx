@@ -17,6 +17,7 @@ export const description = 'How to build accessible forms with validation.';
 Accessible forms start with clear, descriptive labels for each field. Use the `label` prop to add a visible label to any field. Additional help text can also be added via the `description` prop. The label and help text are announced by screen readers when the field is focused.
 
 ```tsx render
+"use client";
 import {TextField} from '@react-spectrum/s2';
 
 <TextField

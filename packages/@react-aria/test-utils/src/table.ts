@@ -11,11 +11,11 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
+import {BaseGridRowInteractionOpts, GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
 import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
-import {GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
-import {nodeContains} from '@react-aria/utils';
 
 interface TableToggleRowOpts extends ToggleGridRowOpts {}
+interface TableToggleExpansionOpts extends BaseGridRowInteractionOpts {}
 interface TableToggleSortOpts {
   /**
    * The index, text, or node of the column to toggle selection for.
@@ -66,7 +66,7 @@ export class TableTester {
     }
 
     // Move focus into the table
-    if (document.activeElement !== this._table && !nodeContains(this._table, document.activeElement)) {
+    if (document.activeElement !== this._table && !this._table.contains(document.activeElement)) {
       act(() => this._table.focus());
     }
 
@@ -75,14 +75,14 @@ export class TableTester {
     }
 
     // If focus is currently somewhere in the first row group (aka on a column), we want to keyboard navigate downwards till we reach the rows
-    if (nodeContains(this.rowGroups[0], document.activeElement)) {
+    if (this.rowGroups[0].contains(document.activeElement)) {
       do {
         await this.user.keyboard('[ArrowDown]');
-      } while (!nodeContains(this.rowGroups[1], document.activeElement));
+      } while (!this.rowGroups[1].contains(document.activeElement));
     }
 
     // Move focus onto the row itself
-    if (nodeContains(this.rowGroups[1], document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
+    if (this.rowGroups[1].contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
       do {
         await this.user.keyboard('[ArrowLeft]');
       } while (document.activeElement!.getAttribute('role') !== 'row');
@@ -164,6 +164,50 @@ export class TableTester {
   };
 
   /**
+   * Toggles the expansion for the specified tree row. Defaults to using the interaction type set on the tree tester.
+   */
+  async toggleRowExpansion(opts: TableToggleExpansionOpts): Promise<void> {
+    let {
+      row,
+      interactionType = this._interactionType
+    } = opts;
+    if (!this.table.contains(document.activeElement)) {
+      await act(async () => {
+        this.table.focus();
+      });
+    }
+
+    if (typeof row === 'string' || typeof row === 'number') {
+      row = this.findRow({rowIndexOrText: row});
+    }
+
+    if (!row) {
+      throw new Error('Target row not found in the table.');
+    } else if (row.getAttribute('aria-expanded') == null) {
+      throw new Error('Target row is not expandable.');
+    }
+
+    if (interactionType === 'mouse' || interactionType === 'touch') {
+      let rowExpander = within(row).getAllByRole('button')[0]; // what happens if the button is not first? how can we differentiate?
+      await pressElement(this.user, rowExpander, interactionType);
+    } else if (interactionType === 'keyboard') {
+      if (row?.getAttribute('aria-disabled') === 'true') {
+        return;
+      }
+
+      // TODO: We always Use Option/Ctrl when keyboard navigating so selection isn't changed
+      // in selectionmode="replace"/highlight selection when navigating to the row that the user wants
+      // to expand. Discuss if this is useful or not
+      await this.keyboardNavigateToRow({row});
+      if (row.getAttribute('aria-expanded') === 'true') {
+        await this.user.keyboard('[ArrowLeft]');
+      } else {
+        await this.user.keyboard('[ArrowRight]');
+      }
+    }
+  };
+
+  /**
    * Toggles the sort order for the specified table column. Defaults to using the interaction type set on the table tester.
    */
   async toggleSort(opts: TableToggleSortOpts): Promise<void> {
@@ -223,7 +267,7 @@ export class TableTester {
           }
 
           await waitFor(() => {
-            if (nodeContains(document, menu)) {
+            if (document.contains(menu)) {
               throw new Error('Expected table column menu listbox to not be in the document after selecting an option');
             } else {
               return true;
@@ -309,7 +353,7 @@ export class TableTester {
           await pressElement(this.user, within(menu).getAllByRole('menuitem')[action], interactionType);
 
           await waitFor(() => {
-            if (nodeContains(document, menu)) {
+            if (document.contains(menu)) {
               throw new Error('Expected table column menu listbox to not be in the document after selecting an option');
             } else {
               return true;
