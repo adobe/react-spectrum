@@ -84,10 +84,10 @@ export function useFocus<Target extends FocusableElement = FocusableElement>(pro
 
   return {
     focusProps: {
-      // onFocus: (!isDisabled && (onFocusProp || onFocusChange || onBlurProp)) ? onFocus : undefined,
-      // onBlur: (!isDisabled && (onBlurProp || onFocusChange)) ? onBlur : undefined
-      onFocus: onFocus,
-      onBlur: onBlur
+      onFocus: (!isDisabled && (onFocusProp || onFocusChange || onBlurProp)) ? onFocus : undefined,
+      onBlur: (!isDisabled && (onBlurProp || onFocusChange)) ? onBlur : undefined
+      // onFocus: onFocus,
+      // onBlur: onBlur
     }
   };
 }

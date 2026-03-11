@@ -1412,7 +1412,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
           </TableRowElementType>
         )}
         <TableRowElementType
-          {...mergeProps(DOMProps, renderProps, rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
+          {...mergeProps(DOMProps, renderProps, rowProps, focusProps, hoverProps, draggableItem?.dragProps, focusWithinProps, {onBlur: () => console.log('BLLLLURING from', item.key)})}
           ref={ref as any}
           data-disabled={states.isDisabled || undefined}
           data-selected={states.isSelected || undefined}

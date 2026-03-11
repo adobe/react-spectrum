@@ -100,7 +100,7 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
           }
         },
         excludeFromTabOrder: true,
-        // preventFocusOnPress: true,
+        preventFocusOnPress: true,
         // @ts-ignore
         'data-react-aria-prevent-focus': true,
         ...labelProps
