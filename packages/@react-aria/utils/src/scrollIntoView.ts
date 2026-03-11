@@ -11,7 +11,7 @@
  */
 
 import {getScrollParents} from './getScrollParents';
-import {isChrome, isIOS} from './platform';
+import {isIOS} from './platform';
 
 interface ScrollIntoViewOpts {
   /** The position to align items along the block axis in. */
