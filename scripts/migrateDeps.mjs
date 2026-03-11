@@ -640,10 +640,10 @@ function rewriteMonopackageImports(file, pkg, subpath) {
       // Hard coding special cases here
       switch (node.arguments[0].value) {
         case '@react-aria/live-announcer':
-          node.arguments[0].value = file.startsWith('packages/react-aria') ? '../../src/live-announcer/LiveAnnouncer' : 'react-aria/src/live-announcer/LiveAnnouncer';
+          node.arguments[0].value = file.startsWith('packages/react-aria/') ? '../../src/live-announcer/LiveAnnouncer' : 'react-aria/src/live-announcer/LiveAnnouncer';
           break;
         case '@react-aria/utils/src/scrollIntoView':
-          node.arguments[0].value = file.startsWith('packages/react-aria') ? '../../src/utils/scrollIntoView' : 'react-aria/src/utils/scrollIntoView';
+          node.arguments[0].value = file.startsWith('packages/react-aria/') ? '../../src/utils/scrollIntoView' : 'react-aria/src/utils/scrollIntoView';
           break;
         case '@react-aria/utils':
           node.arguments[0].value = '../../src/utils/focusWithoutScrolling';
@@ -687,19 +687,19 @@ function getImportStatements(node, file, relative = true) {
     let importSource = source;
     let src, imported;
     if (source === '@react-spectrum/theme-default') {
-      src = '@adobe/react-spectrum/defaultTheme';
+      src = file.includes('@adobe/react-spectrum') ? path.relative(path.dirname(file), 'packages/@adobe/react-spectrum/src/theme-default/defaultTheme') : '@adobe/react-spectrum/defaultTheme';
       imported = 'defaultTheme';
       local = file.includes('@react-spectrum') ? t.identifier('theme') : local;
     } else if (source === '@react-spectrum/theme-dark') {
-      src = '@adobe/react-spectrum/darkTheme';
+      src = file.includes('@adobe/react-spectrum') ? path.relative(path.dirname(file), 'packages/@adobe/react-spectrum/src/theme-dark/darkTheme') : '@adobe/react-spectrum/darkTheme';
       imported = 'darkTheme';
       local = file.includes('@react-spectrum') ? t.identifier('theme') : local;
     } else if (source === '@react-spectrum/theme-light') {
-      src = '@adobe/react-spectrum/lightTheme';
+      src = file.includes('@adobe/react-spectrum') ? path.relative(path.dirname(file), 'packages/@adobe/react-spectrum/src/theme-light/lightTheme') : '@adobe/react-spectrum/lightTheme';
       imported = 'lightTheme';
       local = file.includes('@react-spectrum') ? t.identifier('theme') : local;
     } else if (source === '@react-spectrum/theme-express') {
-      src = '@adobe/react-spectrum/private/theme-express/expressTheme';
+      src = file.includes('@adobe/react-spectrum') ? path.relative(path.dirname(file), 'packages/@adobe/react-spectrum/src/theme-express/expressTheme') : '@adobe/react-spectrum/private/theme-express/expressTheme';
       imported = 'expressTheme';
       local = file.includes('@react-spectrum') ? t.identifier('theme') : local;
     } else if (!importMap[source][importedName]) {
@@ -857,11 +857,7 @@ function createPublicExports(file, monopackage, scope, pkg) {
           specifiers.push(...node.specifiers);
         }
       } else {
-        let n = t.cloneNode(node, true);
-        if (n.source.value.startsWith('../')) {
-          n.source.value = `${monopackage}/private/${n.source.value.slice(3)}`;
-        }
-        unmatched.push(n);
+        unmatched.push(node);
       }
 
       node.specifiers = node.specifiers.filter(s => {
@@ -888,7 +884,11 @@ function createPublicExports(file, monopackage, scope, pkg) {
   if (scope && unmatched.length) {
     for (let node of unmatched) {
       for (let key in groups) {
-        groups[key].push(node);
+        let n = t.cloneNode(node, true);
+        if (n.source.value.startsWith('../')) {
+          n.source.value = path.relative(`packages/${monopackage}/exports`, `packages/${monopackage}/src/${n.source.value.slice(3)}`);
+        }
+        groups[key].push(n);
       }
     }
   }
@@ -920,7 +920,13 @@ function createPublicExports(file, monopackage, scope, pkg) {
       decl.exportKind = 'type';
       imports.push(...getImportStatements(decl, `packages/${scope}/${pkg}/src/index.ts`, false));
     }
-    imports.push(...unmatched);
+    for (let node of unmatched) {
+      let n = t.cloneNode(node, true);
+      if (n.source.value.startsWith('../')) {
+        n.source.value = `${monopackage}/private/${n.source.value.slice(3)}`;
+      }
+      imports.push(n);
+    }
 
     imports[0].comments = ast.program.body[0].leadingComments;
     let index = recast.print({
