@@ -54,8 +54,6 @@ export function useFocusRing(props: AriaFocusRingProps = {}): FocusRingAria {
 
   let onFocusChange = useCallback(isFocused => {
     state.current.isFocused = isFocused;
-    state.current.isFocusVisible = isFocusVisible();
-    // console.log('setting is focused', isFocused)
     setFocused(isFocused);
     updateState();
   }, [updateState]);
@@ -64,7 +62,7 @@ export function useFocusRing(props: AriaFocusRingProps = {}): FocusRingAria {
     state.current.isFocusVisible = isFocusVisible;
     // console.log('setting is visible 2', isFocusVisible)
     updateState();
-  }, [isTextInput, isFocused], {enabled: isFocused, isTextInput});
+  }, [], {isTextInput});
 
   let {focusProps} = useFocus({
     isDisabled: within,
