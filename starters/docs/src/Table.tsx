@@ -115,9 +115,9 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
 export function Cell(props: CellProps) {
   return (
     <AriaCell {...props}>
-      {composeRenderProps(props.children, (children, {hasChildItems, isTreeColumn}) => (<>
-        {isTreeColumn && hasChildItems && 
-          <Button slot="chevron">
+      {composeRenderProps(props.children, (children, {hasChildItems, isTreeColumn, id}) => (<>
+        {isTreeColumn && hasChildItems &&
+          <Button key={id} slot="chevron">
             <ChevronRight />
           </Button>
         }

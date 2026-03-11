@@ -1332,7 +1332,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     if (isFocused === true) {
       console.log('item thinks it is focused', item.key, item, isFocusVisible)
     } else {
-      // console.log('item thinks it not focused', item.key, item, isFocusVisible)
+      console.log('item thinks it not focused', item.key, item, isFocusVisible)
     }
     let {hoverProps, isHovered} = useHover({
       isDisabled: !states.allowsSelection && !states.hasAction,
@@ -1412,7 +1412,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
           </TableRowElementType>
         )}
         <TableRowElementType
-          {...mergeProps(DOMProps, renderProps, rowProps, focusProps, hoverProps, draggableItem?.dragProps, focusWithinProps)}
+          {...mergeProps(DOMProps, renderProps, rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
           ref={ref as any}
           data-disabled={states.isDisabled || undefined}
           data-selected={states.isSelected || undefined}

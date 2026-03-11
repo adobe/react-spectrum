@@ -43,11 +43,13 @@ export function useFocus<Target extends FocusableElement = FocusableElement>(pro
   } = props;
 
   const onBlur: FocusProps<Target>['onBlur'] = useCallback((e: FocusEvent<Target>) => {
+    console.log('BLURRRKJBFKJEBGKJEB', e.currentTarget, e.relatedTarget)
+
     if (getEventTarget(e) === e.currentTarget) {
       if (onBlurProp) {
         onBlurProp(e);
       }
-
+      console.log('blurring', e.relatedTarget, e.currentTarget, onFocusChange)
       if (onFocusChange) {
         onFocusChange(false);
       }
@@ -71,6 +73,7 @@ export function useFocus<Target extends FocusableElement = FocusableElement>(pro
         onFocusProp(e);
       }
 
+      console.log('focusing', eventTarget, e.currentTarget)
       if (onFocusChange) {
         onFocusChange(true);
       }
@@ -81,8 +84,10 @@ export function useFocus<Target extends FocusableElement = FocusableElement>(pro
 
   return {
     focusProps: {
-      onFocus: (!isDisabled && (onFocusProp || onFocusChange || onBlurProp)) ? onFocus : undefined,
-      onBlur: (!isDisabled && (onBlurProp || onFocusChange)) ? onBlur : undefined
+      // onFocus: (!isDisabled && (onFocusProp || onFocusChange || onBlurProp)) ? onFocus : undefined,
+      // onBlur: (!isDisabled && (onBlurProp || onFocusChange)) ? onBlur : undefined
+      onFocus: onFocus,
+      onBlur: onBlur
     }
   };
 }
