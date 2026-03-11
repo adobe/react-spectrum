@@ -29,10 +29,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/number": "^3.6.5",
-    "@internationalized/string": "^3.2.7",
     "@react-types/color": "^3.1.4",
-    "@react-types/shared": "^3.33.1",
     "@swc/helpers": "^0.5.0",
     "react-stately": "^3.45.0"
   },

@@ -34,14 +34,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/overlays": "^3.9.4",
-    "@react-types/shared": "^3.33.1",
-    "@react-types/tooltip": "^3.5.2",
-    "@spectrum-icons/ui": "^3.6.23",
-    "@swc/helpers": "^0.5.0",
-    "react-aria": "^3.47.0",
     "@adobe/react-spectrum": "^3.46.2",
-    "react-stately": "^3.45.0"
+    "@react-types/tooltip": "^3.5.2",
+    "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"

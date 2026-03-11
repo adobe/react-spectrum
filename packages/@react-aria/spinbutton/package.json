@@ -29,8 +29,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/button": "^3.15.1",
-    "@react-types/shared": "^3.33.1",
     "@swc/helpers": "^0.5.0",
     "react-aria": "^3.47.0"
   },

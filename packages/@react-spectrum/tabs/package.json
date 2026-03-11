@@ -34,12 +34,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/select": "^3.12.2",
-    "@react-types/shared": "^3.33.1",
+    "@adobe/react-spectrum": "^3.46.2",
     "@react-types/tabs": "^3.3.22",
     "@swc/helpers": "^0.5.0",
-    "react-aria": "^3.47.0",
-    "@adobe/react-spectrum": "^3.46.2",
     "react-stately": "^3.45.0"
   },
   "devDependencies": {

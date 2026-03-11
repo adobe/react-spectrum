@@ -34,15 +34,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/date": "^3.12.0",
-    "@react-types/button": "^3.15.1",
-    "@react-types/calendar": "^3.8.3",
-    "@react-types/shared": "^3.33.1",
-    "@spectrum-icons/ui": "^3.6.23",
-    "@swc/helpers": "^0.5.0",
-    "react-aria": "^3.47.0",
     "@adobe/react-spectrum": "^3.46.2",
-    "react-stately": "^3.45.0"
+    "@react-types/calendar": "^3.8.3",
+    "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",

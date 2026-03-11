@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "@swc/helpers": "^0.5.0",
-    "aria-hidden": "^1.2.3",
     "react-aria": "^3.47.0"
   },
   "peerDependencies": {
