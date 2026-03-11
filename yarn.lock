@@ -88,11 +88,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adobe/react-spectrum@npm:3.46.2, @adobe/react-spectrum@npm:^3.46.2, @adobe/react-spectrum@workspace:packages/@adobe/react-spectrum":
+"@adobe/react-spectrum@npm:^3.46.2, @adobe/react-spectrum@workspace:packages/@adobe/react-spectrum":
   version: 0.0.0-use.local
   resolution: "@adobe/react-spectrum@workspace:packages/@adobe/react-spectrum"
   dependencies:
-    "@adobe/react-spectrum": "npm:3.46.2"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@babel/cli": "npm:^7.12.10"
     "@babel/core": "npm:^7.24.3"
@@ -6085,6 +6084,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/actionbar@workspace:packages/@react-spectrum/actionbar"
   dependencies:
+    "@adobe/react-spectrum": "npm:^3.46.2"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-types/actionbar": "npm:^3.1.21"
     "@swc/helpers": "npm:^0.5.0"
@@ -6099,6 +6099,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/actiongroup@workspace:packages/@react-spectrum/actiongroup"
   dependencies:
+    "@adobe/react-spectrum": "npm:^3.46.2"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-types/actiongroup": "npm:^3.4.23"
     "@swc/helpers": "npm:^0.5.0"
@@ -6113,6 +6114,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/autocomplete@workspace:packages/@react-spectrum/autocomplete"
   dependencies:
+    "@adobe/react-spectrum": "npm:^3.46.2"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-types/autocomplete": "npm:3.0.0-alpha.38"
     "@swc/helpers": "npm:^0.5.0"
@@ -6127,6 +6129,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/avatar@workspace:packages/@react-spectrum/avatar"
   dependencies:
+    "@adobe/react-spectrum": "npm:^3.46.2"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-types/avatar": "npm:^3.0.21"
     "@swc/helpers": "npm:^0.5.0"
@@ -6140,6 +6143,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/badge@workspace:packages/@react-spectrum/badge"
   dependencies:
+    "@adobe/react-spectrum": "npm:^3.46.2"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-types/badge": "npm:^3.1.23"
     "@swc/helpers": "npm:^0.5.0"
@@ -6153,6 +6157,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/breadcrumbs@workspace:packages/@react-spectrum/breadcrumbs"
   dependencies:
+    "@adobe/react-spectrum": "npm:^3.46.2"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-types/breadcrumbs": "npm:^3.7.19"
     "@swc/helpers": "npm:^0.5.0"
@@ -6167,6 +6172,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/button@workspace:packages/@react-spectrum/button"
   dependencies:
+    "@adobe/react-spectrum": "npm:^3.46.2"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-spectrum/test-utils-internal": "npm:3.0.0-alpha.1"
     "@react-types/button": "npm:^3.15.1"
@@ -6182,6 +6188,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/buttongroup@workspace:packages/@react-spectrum/buttongroup"
   dependencies:
+    "@adobe/react-spectrum": "npm:^3.46.2"
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-types/buttongroup": "npm:^3.3.23"
     "@spectrum-icons/workflow": "npm:^4.0.0"
@@ -23894,7 +23901,6 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
     aria-hidden: "npm:^1.2.3"
     clsx: "npm:^2.0.0"
-    react-aria: "npm:3.47.0"
     react-stately: "npm:3.45.0"
     use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
@@ -24153,7 +24159,6 @@ __metadata:
     "@react-types/tabs": "npm:^3.3.22"
     "@react-types/tooltip": "npm:^3.5.2"
     "@swc/helpers": "npm:^0.5.0"
-    react-stately: "npm:3.45.0"
     use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1

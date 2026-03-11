@@ -80,7 +80,6 @@
     "@swc/helpers": "^0.5.0",
     "aria-hidden": "^1.2.3",
     "clsx": "^2.0.0",
-    "react-aria": "3.47.0",
     "react-stately": "3.45.0",
     "use-sync-external-store": "^1.6.0"
   },
