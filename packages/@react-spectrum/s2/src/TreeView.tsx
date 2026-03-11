@@ -38,6 +38,7 @@ import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-u
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {isPrevSelected} from './ListView';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
@@ -580,10 +581,10 @@ function isNextSelected(id: Key | undefined, state: TreeState<unknown>) {
   return keyAfter != null && state.selectionManager.isSelected(keyAfter);
 }
 
-function isPrevSelected(id: Key | undefined, state: TreeState<unknown>) {
-  if (id == null || !state) {
-    return false;
-  }
-  let keyBefore = state.collection.getKeyBefore(id);
-  return keyBefore != null && state.selectionManager.isSelected(keyBefore);
-}
+// function isPrevSelected(id: Key | undefined, state: TreeState<unknown>) {
+//   if (id == null || !state) {
+//     return false;
+//   }
+//   let keyBefore = state.collection.getKeyBefore(id);
+//   return keyBefore != null && state.selectionManager.isSelected(keyBefore);
+// }
