@@ -57,7 +57,7 @@ interface S2TreeProps {
 
 interface TreeViewStyleProps {
   /**
-   * How selection should be displayed.
+   * How selection should be displayed. For guidance on when to use which option, refer to the [Spectrum](https://spectrum.adobe.com/page/tree-view/#Checkbox-or-highlight-selection-style) page.
    * @default 'checkbox'
    */
   selectionStyle?: 'highlight' | 'checkbox'
@@ -580,11 +580,3 @@ function isNextSelected(id: Key | undefined, state: TreeState<unknown>) {
 
   return keyAfter != null && state.selectionManager.isSelected(keyAfter);
 }
-
-// function isPrevSelected(id: Key | undefined, state: TreeState<unknown>) {
-//   if (id == null || !state) {
-//     return false;
-//   }
-//   let keyBefore = state.collection.getKeyBefore(id);
-//   return keyBefore != null && state.selectionManager.isSelected(keyBefore);
-// }
