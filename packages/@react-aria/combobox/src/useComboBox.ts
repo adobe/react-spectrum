@@ -208,7 +208,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
     state.setFocused(true);
   };
 
-  let valueId = useValueId([state.selectedItems, state.selectionManager.selectionMode]);
+  let valueId = useValueId([state.selectionManager.selectedKeys, state.selectionManager.selectionMode]);
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,
