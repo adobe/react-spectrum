@@ -89,7 +89,7 @@ const EMPTY_VALUE: Key[] = [];
  * of items from props and manages the option selection state of the combo box. In addition, it tracks the input value,
  * focus state, and other properties of the combo box.
  */
-export function useComboBoxState<T extends object, M extends SelectionMode = 'single'>(props: ComboBoxStateOptions<T, M>): ComboBoxState<T> {
+export function useComboBoxState<T extends object, M extends SelectionMode = 'single'>(props: ComboBoxStateOptions<T, M>): ComboBoxState<T, M> {
   let {
     defaultFilter,
     menuTrigger = 'input',
