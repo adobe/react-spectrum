@@ -15,7 +15,7 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 describe('Breadcrumbs SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {Breadcrumbs, Item} from '../';
+      import {Breadcrumbs, Item} from '../../exports/index.ts';
 
       <Breadcrumbs>
         <Item key="one">One</Item>

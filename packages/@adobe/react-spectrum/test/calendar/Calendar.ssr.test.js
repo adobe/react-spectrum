@@ -15,14 +15,14 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 describe('Calendar SSR', function () {
   it('should render a Calendar without errors', async function () {
     await testSSR(__filename, `
-      import {Calendar} from '../';
+      import {Calendar} from '../../exports/index.ts';
       <Calendar />
     `);
   });
 
   it('should render a RangeCalendar without errors', async function () {
     await testSSR(__filename, `
-      import {RangeCalendar} from '../';
+      import {RangeCalendar} from '../../exports/index.ts';
       <RangeCalendar />
     `);
   });

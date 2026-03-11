@@ -15,7 +15,7 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 describe('Header SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {Header} from '../';
+      import {Header} from '../../exports/index.ts';
       <Header />
     `);
   });

@@ -15,7 +15,7 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 describe('ButtonGroup SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {ButtonGroup} from '../';
+      import {ButtonGroup} from '../../exports/index.ts';
       import {Button} from '@react-spectrum/button';
       import {Provider} from '@react-spectrum/provider';
       import {theme} from '@react-spectrum/theme-default';

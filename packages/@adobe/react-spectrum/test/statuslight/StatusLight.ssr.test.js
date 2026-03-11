@@ -15,7 +15,7 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 describe('StatusLight SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {StatusLight} from '../';
+      import {StatusLight} from '../../exports/index.ts';
 
       <StatusLight>Status</StatusLight>
     `);

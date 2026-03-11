@@ -15,7 +15,7 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 describe('OverlayContainer SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {OverlayContainer, OverlayProvider} from '..';
+      import {OverlayContainer, OverlayProvider} from '../../exports/index.ts';
       import React from 'react';
 
       <OverlayProvider data-testid="root-provider">

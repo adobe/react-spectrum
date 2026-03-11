@@ -17,7 +17,7 @@ describe('ToastContainer SSR', function () {
     await testSSR(__filename, `
       import {Provider} from '@react-spectrum/provider';
       import {theme} from '@react-spectrum/theme-default';
-      import {ToastContainer} from '../';
+      import {ToastContainer} from '../../exports/index.ts';
 
       <Provider theme={theme}>
         <ToastContainer />

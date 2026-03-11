@@ -15,7 +15,7 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 describe('Badge SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {Badge} from '../';
+      import {Badge} from '../../exports/index.ts';
 
       <Badge>Badge text</Badge>
     `);
