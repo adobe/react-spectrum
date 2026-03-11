@@ -476,7 +476,10 @@ const cellFocus = {
   },
   outlineOffset: -2,
   outlineWidth: 2,
-  outlineColor: 'focus-ring',
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  },
   borderRadius: '[6px]'
 } as const;
 
