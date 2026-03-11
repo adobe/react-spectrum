@@ -38,9 +38,8 @@ import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-u
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isPrevSelected} from './ListView';
+import {isFirstItem, isPrevSelected} from './ListView';
 import {ProgressCircle} from './ProgressCircle';
-import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
@@ -189,17 +188,7 @@ const rowBackgroundColor = {
 } as const;
 
 const treeRow = style({
-  ...focusRing(),
-  outlineOffset: -2,
-  outlineColor: {
-    default: 'focus-ring',
-    forcedColors: 'Highlight',
-    selectionStyle: {
-      highlight: {
-        forcedColors: 'ButtonBorder'
-      }
-    }
-  },
+  outlineStyle: 'none',
   position: 'relative',
   display: 'flex',
   height: 40,
@@ -385,20 +374,29 @@ const treeActionMenu = style({
   gridArea: 'actionmenu'
 });
 
-const treeRowFocusIndicator = raw(`
-  &:before {
-    content: "";
-    display: inline-block;
-    position: sticky;
-    inset-inline-start: 0;
-    width: 3px;
-    height: 100%;
-    margin-inline-end: -3px;
-    margin-block-end: 1px;
-    z-index: 3;
-    background-color: var(--rowFocusIndicatorColor);
-  }`
-);
+
+let treeRowFocusRing = style({
+  ...focusRing(),
+  outlineOffset: -2,
+  position: 'absolute',
+  inset: 0,
+  top: {
+    default: '[-1px]',
+    isFirstItem: 0
+  },
+  bottom: {
+    selectionStyle: {
+      checkbox: 0,
+      highlight: {
+        default: 0,
+        isNextSelected: '[-1px]'
+      }
+    }
+  },
+  borderRadius: 'sm',
+  zIndex: 1,
+  pointerEvents: 'none'
+});
 
 export const TreeViewItem = (props: TreeViewItemProps): ReactNode => {
   let {
@@ -414,7 +412,7 @@ export const TreeViewItem = (props: TreeViewItemProps): ReactNode => {
         isLink: !!href,
         selectionStyle,
         isPreviousSelected: isPrevSelected(renderProps.id, renderProps.state)
-      }) + (renderProps.isFocusVisible ? ' ' + treeRowFocusIndicator : '')} />
+      })} />
   );
 };
 
@@ -437,6 +435,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
         return (
           <div className={treeCellGrid({isDisabled, isNextSelected: isNextSelected(id, state), isSelected, selectionStyle})}>
             <div className={treeRowBackground({isHovered, isFocusVisible, isSelected, selectionStyle, isNextSelected: isNextSelected(id, state), isPreviousSelected: isPrevSelected(id, state)})} />
+            {isFocusVisible && <div className={treeRowFocusRing({isFocusVisible, selectionStyle, isNextSelected: isNextSelected(id, state), isFirstItem: isFirstItem(id, state)})} />}
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && selectionStyle !== 'highlight' && (
               // TODO: add transition?
               <div className={treeCheckbox({isDisabled: isDisabled || !state.selectionManager.canSelectItem(id) || state.disabledKeys.has(id)})}>
