@@ -154,14 +154,21 @@ export let tableTests = () => {
   let user;
   let testUtilUser = new User({advanceTimer: (time) => jest.advanceTimersByTime(time)});
 
+  let innerHeight, innerWidth;
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
+    innerHeight = window.innerHeight;
+    innerWidth = window.innerWidth;
+    Object.defineProperty(window, 'innerHeight', {value: 1000, configurable: true, writable: true});
+    Object.defineProperty(window, 'innerWidth', {value: 1000, configurable: true, writable: true});
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 400);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 200);
     jest.useFakeTimers();
   });
 
   afterAll(function () {
+    window.innerHeight = innerHeight;
+    window.innerWidth = innerWidth;
     offsetWidth.mockReset();
     offsetHeight.mockReset();
   });

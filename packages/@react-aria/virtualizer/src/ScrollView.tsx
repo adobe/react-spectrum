@@ -12,8 +12,9 @@
 
 // @ts-ignore
 import {flushSync} from 'react-dom';
-import {getEventTarget, useEffectEvent, useEvent, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {getEventTarget, nodeContains, useEffectEvent, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {getScrollLeft} from './utils';
+import {Point, Rect, Size} from '@react-stately/virtualizer';
 import React, {
   CSSProperties,
   ForwardedRef,
@@ -25,17 +26,17 @@ import React, {
   useRef,
   useState
 } from 'react';
-import {Rect, Size} from '@react-stately/virtualizer';
 import {useLocale} from '@react-aria/i18n';
 
-interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
+interface ScrollViewProps extends Omit<HTMLAttributes<HTMLElement>, 'onScroll'> {
   contentSize: Size,
   onVisibleRectChange: (rect: Rect) => void,
   children?: ReactNode,
   innerStyle?: CSSProperties,
   onScrollStart?: () => void,
   onScrollEnd?: () => void,
-  scrollDirection?: 'horizontal' | 'vertical' | 'both'
+  scrollDirection?: 'horizontal' | 'vertical' | 'both',
+  onScroll?: (e: Event) => void
 }
 
 function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | null>) {
@@ -70,39 +71,76 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     onScrollStart,
     onScrollEnd,
     scrollDirection = 'both',
+    onScroll: onScrollProp,
     ...otherProps
   } = props;
 
   let state = useRef({
-    scrollTop: 0,
-    scrollLeft: 0,
+    // Internal scroll position of the scroll view.
+    scrollPosition: new Point(),
+    // Size of the scroll view.
+    size: new Size(),
+    // Offset of the scroll view relative to the window viewport.
+    viewportOffset: new Point(),
+    // Size of the window viewport.
+    viewportSize: new Size(),
     scrollEndTime: 0,
     scrollTimeout: null as ReturnType<typeof setTimeout> | null,
-    width: 0,
-    height: 0,
     isScrolling: false
   }).current;
   let {direction} = useLocale();
 
+  let updateVisibleRect = useCallback(() => {
+    // Intersect the window viewport with the scroll view itself to find the actual visible rectangle.
+    // This allows virtualized components to have unbounded height but still virtualize when scrolled with the page.
+    // While there may be other scrollable elements between the <body> and the scroll view, we do not take
+    // their sizes into account for performance reasons. Their scroll positions are accounted for in viewportOffset
+    // though (due to getBoundingClientRect). This may result in more rows than absolutely necessary being rendered,
+    // but no more than the entire height of the viewport which is good enough for virtualization use cases.
+    let visibleRect = new Rect(
+      state.viewportOffset.x + state.scrollPosition.x,
+      state.viewportOffset.y + state.scrollPosition.y,
+      Math.max(0, Math.min(state.size.width - state.viewportOffset.x, state.viewportSize.width)),
+      Math.max(0, Math.min(state.size.height - state.viewportOffset.y, state.viewportSize.height))
+    );
+    onVisibleRectChange(visibleRect);
+  }, [state, onVisibleRectChange]);
+
   let [isScrolling, setScrolling] = useState(false);
 
-  let onScroll = useCallback((e) => {
-    if (getEventTarget(e) !== e.currentTarget) {
+  let onScroll = useCallback((e: Event) => {
+    let target = getEventTarget(e) as Element;
+    if (!nodeContains(target, ref.current!)) {
       return;
     }
 
-    if (props.onScroll) {
-      props.onScroll(e);
+    if (onScrollProp && target === ref.current) {
+      onScrollProp(e);
+    }
+
+    if (target !== ref.current) {
+      // An ancestor element or the window was scrolled. Update the position of the scroll view relative to the viewport.
+      let boundingRect = ref.current!.getBoundingClientRect();
+      let x = boundingRect.x < 0 ? -boundingRect.x : 0;
+      let y = boundingRect.y < 0 ? -boundingRect.y : 0;
+      if (x === state.viewportOffset.x && y === state.viewportOffset.y) {
+        return;
+      }
+
+      state.viewportOffset = new Point(x, y);
+    } else {
+      // The scroll view itself was scrolled. Update the local scroll position.
+      // Prevent rubber band scrolling from shaking when scrolling out of bounds
+      let scrollTop = target.scrollTop;
+      let scrollLeft = getScrollLeft(target, direction);
+      state.scrollPosition = new Point(
+        Math.max(0, Math.min(scrollLeft, contentSize.width - state.size.width)),
+        Math.max(0, Math.min(scrollTop, contentSize.height - state.size.height))
+      );
     }
 
     flushSync(() => {
-      let scrollTop = e.currentTarget.scrollTop;
-      let scrollLeft = getScrollLeft(e.currentTarget, direction);
-
-      // Prevent rubber band scrolling from shaking when scrolling out of bounds
-      state.scrollTop = Math.max(0, Math.min(scrollTop, contentSize.height - state.height));
-      state.scrollLeft = Math.max(0, Math.min(scrollLeft, contentSize.width - state.width));
-      onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, state.width, state.height));
+      updateVisibleRect();
 
       if (!state.isScrolling) {
         state.isScrolling = true;
@@ -138,10 +176,13 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
         }, 300);
       }
     });
-  }, [props, direction, state, contentSize, onVisibleRectChange, onScrollStart, onScrollEnd]);
+  }, [onScrollProp, ref, direction, state, contentSize, updateVisibleRect, onScrollStart, onScrollEnd]);
 
-  // Attach event directly to ref so RAC Virtualizer doesn't need to send props upward.
-  useEvent(ref, 'scroll', onScroll);
+  // Attach a document-level capturing scroll listener so we can account for scrollable ancestors.
+  useEffect(() => {
+    document.addEventListener('scroll', onScroll, true);
+    return () => document.removeEventListener('scroll', onScroll, true);
+  }, [onScroll]);
 
   useEffect(() => {
     return () => {
@@ -175,11 +216,18 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     let w = isTestEnv && !isClientWidthMocked ? Infinity : clientWidth;
     let h = isTestEnv && !isClientHeightMocked ? Infinity : clientHeight;
 
-    if (state.width !== w || state.height !== h) {
-      state.width = w;
-      state.height = h;
+    // Update the window viewport size.
+    let viewportWidth = window.innerWidth;
+    let viewportHeight = window.innerHeight;
+    let viewportSizeChanged = state.viewportSize.width !== viewportWidth || state.viewportSize.height !== viewportHeight;
+    if (viewportSizeChanged) {
+      state.viewportSize = new Rect(viewportWidth, viewportHeight);
+    }
+
+    if (state.size.width !== w || state.size.height !== h || viewportSizeChanged) {
+      state.size = new Size(w, h);
       flush(() => {
-        onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, w, h));
+        updateVisibleRect();
       });
 
       // If the clientWidth or clientHeight changed, scrollbars appeared or disappeared as
@@ -188,17 +236,29 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
       // again, resulting in extra padding. We stop after a maximum of two layout passes to avoid
       // an infinite loop. This matches how browsers behavior with native CSS grid layout.
       if (!isTestEnv && clientWidth !== dom.clientWidth || clientHeight !== dom.clientHeight) {
-        state.width = dom.clientWidth;
-        state.height = dom.clientHeight;
+        state.size = new Size(dom.clientWidth, dom.clientHeight);
         flush(() => {
-          onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, state.width, state.height));
+          updateVisibleRect();
         });
       }
     }
 
     isUpdatingSize.current = false;
-  }, [ref, state, onVisibleRectChange]);
+  }, [ref, state, updateVisibleRect]);
   let updateSizeEvent = useEffectEvent(updateSize);
+
+  // Track the size of the entire window viewport, which is used to bound the size of the virtualizer's visible rectangle.
+  useLayoutEffect(() => {
+    // Initialize viewportRect before updating size for the first time.
+    state.viewportSize = new Size(window.innerWidth, window.innerHeight);
+
+    let onWindowResize = () => {
+      updateSizeEvent(flushSync);
+    };
+
+    window.addEventListener('resize', onWindowResize);
+    return () => window.removeEventListener('resize', onWindowResize);
+  }, [state]);
 
   // Update visible rect when the content size changes, in case scrollbars need to appear or disappear.
   let lastContentSize = useRef<Size | null>(null);
@@ -250,7 +310,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   if (scrollDirection === 'horizontal') {
     style.overflowX = 'auto';
     style.overflowY = 'hidden';
-  } else if (scrollDirection === 'vertical' || contentSize.width === state.width) {
+  } else if (scrollDirection === 'vertical' || contentSize.width === state.size.width) {
     // Set overflow-x: hidden if content size is equal to the width of the scroll view.
     // This prevents horizontal scrollbars from flickering during resizing due to resize observer
     // firing slower than the frame rate, which may cause an infinite re-render loop.
