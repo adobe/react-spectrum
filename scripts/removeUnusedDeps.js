@@ -3,7 +3,7 @@ const glob = require('glob').sync;
 const path = require('path');
 const fs = require('fs');
 
-for (let pkg of glob('packages/{react-aria-components,{@react-aria,@react-spectrum,@react-stately,@react-types,@internationalized}/*}/package.json')) {
+for (let pkg of glob('packages/{react-aria-components,react-aria,react-stately,@adobe/react-spectrum,{@react-aria,@react-spectrum,@react-stately,@react-types,@internationalized}/*}/package.json')) {
   let json = JSON.parse(fs.readFileSync(pkg, 'utf8'));
   if (json.name === '@internationalized/string-compiler') {
     // This is a CommonJS package, so we can't analyze it.
@@ -14,7 +14,7 @@ for (let pkg of glob('packages/{react-aria-components,{@react-aria,@react-spectr
   let dir = path.dirname(pkg);
   let seenDeps = new Set(['@swc/helpers']);
 
-  for (let file of glob(`${dir}/src/*.{ts,tsx}`)) {
+  for (let file of glob(`${dir}/**/*.{ts,tsx}`)) {
     let ast = parse(fs.readFileSync(file, 'utf8'), {
       filename: file,
       allowReturnOutsideFunction: true,
