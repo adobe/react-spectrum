@@ -210,7 +210,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     if (k == null) {
       k = node.parentKey;
     }
-    
+
     if (k != null && this.getItem(k)?.type === 'tablebody') {
       return null;
     }
@@ -616,6 +616,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   }
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+
   let renderProps = useRenderProps({
     ...props,
     children: undefined,
@@ -1328,6 +1329,11 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       isFocusVisible: isFocusVisibleWithin,
       focusProps: focusWithinProps
     } = useFocusRing({within: true});
+    if (isFocused === true) {
+      console.log('item thinks it is focused', item.key, item, isFocusVisible)
+    } else {
+      // console.log('item thinks it not focused', item.key, item, isFocusVisible)
+    }
     let {hoverProps, isHovered} = useHover({
       isDisabled: !states.allowsSelection && !states.hasAction,
       onHoverStart: props.onHoverStart,
