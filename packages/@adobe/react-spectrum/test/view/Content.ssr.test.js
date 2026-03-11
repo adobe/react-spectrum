@@ -15,7 +15,7 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 describe('Content SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {Content} from '../';
+      import {Content} from '../../exports/index.ts';
       <Content />
     `);
   });

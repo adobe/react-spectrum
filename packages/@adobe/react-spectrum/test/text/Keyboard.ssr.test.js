@@ -15,7 +15,7 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 describe('Keyboard SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {Keyboard} from '../';
+      import {Keyboard} from '../../exports/index.ts';
       <Keyboard />
     `);
   });

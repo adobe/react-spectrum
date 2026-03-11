@@ -15,7 +15,7 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 describe('ProgressCircle SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {ProgressCircle} from '../';
+      import {ProgressCircle} from '../../exports/index.ts';
       <ProgressCircle aria-label="progress" />
     `);
   });

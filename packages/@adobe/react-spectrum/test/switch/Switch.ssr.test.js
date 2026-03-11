@@ -15,7 +15,7 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 describe('Switch SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {Switch} from '../';
+      import {Switch} from '../../exports/index.ts';
 
       <Switch>Switching</Switch>
     `);

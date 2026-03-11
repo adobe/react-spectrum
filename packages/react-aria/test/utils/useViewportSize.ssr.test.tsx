@@ -15,7 +15,7 @@ import {screen, testSSR} from '@react-spectrum/test-utils-internal';
 describe('useViewportSize SSR', () => {
   it('should render without errors', async () => {
     await testSSR(__filename, `
-      import {useViewportSize} from '../src';
+      import {useViewportSize} from '../../src/utils/useViewportSize.ts';
 
       function Viewport() {
         useViewportSize();
@@ -28,7 +28,7 @@ describe('useViewportSize SSR', () => {
 
   it('should update dimensions after hydration', async () => {
     await testSSR(__filename, `
-      import {useViewportSize} from '../src';
+      import {useViewportSize} from '../../src/utils/useViewportSize.ts';
 
       function Viewport() {
         let size = useViewportSize();

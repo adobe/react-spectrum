@@ -15,7 +15,7 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 describe('DatePicker SSR', function () {
   it('should render a DatePicker without errors', async function () {
     await testSSR(__filename, `
-      import {DatePicker} from '../';
+      import {DatePicker} from '../../exports/index.ts';
       import {Provider} from '@react-spectrum/provider';
       import {theme} from '@react-spectrum/theme-default';
 
@@ -27,7 +27,7 @@ describe('DatePicker SSR', function () {
 
   it('should render a DateRangePicker without errors', async function () {
     await testSSR(__filename, `
-      import {DateRangePicker} from '../';
+      import {DateRangePicker} from '../../exports/index.ts';
       import {Provider} from '@react-spectrum/provider';
       import {theme} from '@react-spectrum/theme-default';
 
@@ -39,7 +39,7 @@ describe('DatePicker SSR', function () {
 
   it('should render a DateField without errors', async function () {
     await testSSR(__filename, `
-      import {DateField} from '../';
+      import {DateField} from '../../exports/index.ts';
       import {Provider} from '@react-spectrum/provider';
       import {theme} from '@react-spectrum/theme-default';
 
@@ -51,7 +51,7 @@ describe('DatePicker SSR', function () {
 
   it('should render a TimeField without errors', async function () {
     await testSSR(__filename, `
-      import {TimeField} from '../';
+      import {TimeField} from '../../exports/index.ts';
       import {Provider} from '@react-spectrum/provider';
       import {theme} from '@react-spectrum/theme-default';
 

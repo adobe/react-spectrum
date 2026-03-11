@@ -15,7 +15,7 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 describe('Divider SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {Divider} from '../';
+      import {Divider} from '../../exports/index.ts';
       <Divider />
     `);
   });

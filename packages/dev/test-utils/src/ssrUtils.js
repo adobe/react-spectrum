@@ -45,7 +45,7 @@ Module._resolveFilename = (request, parent) => {
   let resolved = resolver(request, {
     basedir: path.dirname(parent.filename),
     extensions: ['.js', '.json', '.ts', '.tsx'],
-    defaultResolver: (request, opts) => resolve.sync(request, opts)
+    defaultResolver: (request, opts) => resolve.sync(request, {...opts, engines: '>= 24', conditions: ['source']})
   });
 
   return fs.realpathSync(resolved);

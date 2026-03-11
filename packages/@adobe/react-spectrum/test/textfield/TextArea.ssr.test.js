@@ -15,7 +15,7 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 describe('TextArea SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {TextArea} from '../';
+      import {TextArea} from '../../exports/index.ts';
 
       <TextArea label="area" />
     `);

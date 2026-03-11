@@ -15,7 +15,7 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 describe('Menu SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {Menu, Item} from '../';
+      import {Menu, Item} from '../../exports/index.ts';
       <Menu aria-label="Menu">
         <Item>Left</Item>
         <Item>Middle</Item>
