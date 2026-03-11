@@ -305,7 +305,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Return an [ActionBar](ActionBar) from `renderActionBar` to handle bulk actions, and use `onAction` for item navigation. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=Tree) for more details.
 
-```tsx render docs={docs.exports.TreeView} links={docs.links} props={['selectionMode', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
+```tsx render docs={docs.exports.TreeView} links={docs.links} props={['selectionMode', 'disabledBehavior', 'disallowEmptySelection', 'selectionStyle']} initialProps={{selectionMode: 'multiple', selectionStyle: 'checkbox'}} wide
 "use client";
 import {TreeView, TreeViewItem, TreeViewItemContent, ActionBar, ActionButton, Text, type Selection} from '@react-spectrum/s2';
 import Edit from '@react-spectrum/s2/icons/Edit';
