@@ -3,8 +3,8 @@
   "version": "3.45.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
-  "main": "dist/main.js",
-  "module": "dist/module.js",
+  "main": "./dist/exports/index.cjs",
+  "module": "./dist/exports/index.mjs",
   "exports": {
     ".": {
       "source": "./exports/index.ts",
@@ -20,10 +20,12 @@
       "require": "./dist/exports/*.cjs"
     }
   },
-  "types": "dist/types.d.ts",
+  "types": "./dist/types/exports/index.d.ts",
   "source": "exports/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "*.mjs",
+    "*.cjs"
   ],
   "sideEffects": false,
   "scripts": {
