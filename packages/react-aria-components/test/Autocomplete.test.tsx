@@ -511,14 +511,46 @@ describe('Autocomplete', () => {
     let menu = getByRole('menu');
     let options = within(menu).getAllByRole('menuitem');
     await user.hover(options[1]);
-    options = within(menu).getAllByRole('menuitem');
 
     expect(options[1]).toHaveAttribute('data-focused');
     expect(input).not.toHaveAttribute('data-focused');
     expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
 
     await user.click(input);
-    act(() => jest.runAllTimers());
+
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(options[1]).not.toHaveAttribute('data-focused');
+  });
+
+  it('should restore the input state after clicking outside the autocomplete and then back into the input', async () => {
+    let {getByRole} = render(
+      <>
+        <button type="button">Outside</button>
+        <AutocompleteWrapper>
+          <StaticMenu />
+        </AutocompleteWrapper>
+      </>
+    );
+
+    let input = getByRole('searchbox');
+    await user.click(input);
+
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    await user.hover(options[1]);
+
+    expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
+    expect(options[1]).toHaveAttribute('data-focused');
+
+    await user.click(getByRole('button', {name: 'Outside'}));
+    expect(document.activeElement).toHaveTextContent('Outside');
+    expect(input).not.toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+
+    await user.click(input);
 
     expect(document.activeElement).toBe(input);
     expect(input).toHaveAttribute('data-focused');

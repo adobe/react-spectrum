@@ -420,15 +420,16 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     }
   };
 
-  // Clicking an already-focused input won't emit a new focus event, so clear virtual focus
-  // on pointer down to restore the input's focused styling before the click completes.
+  // Clicking back into the input can happen after focus moved elsewhere in the dialog, while
+  // virtual focus is still on an option. Clear virtual focus on pointer down so mouse
+  // interactions restore the input state before the click's focus handling runs.
   // Touch is excluded because touch interactions should not move focus back to the input.
   let onPointerDown = (e: ReactPointerEvent) => {
     if (e.button !== 0 || e.pointerType === 'touch' || queuedActiveDescendant.current == null || inputRef.current == null) {
       return;
     }
 
-    if (getEventTarget(e) === inputRef.current && getActiveElement(getOwnerDocument(inputRef.current)) === inputRef.current) {
+    if (getEventTarget(e) === inputRef.current) {
       clearVirtualFocus();
     }
   };
