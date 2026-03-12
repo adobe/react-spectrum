@@ -20,7 +20,7 @@ for (let pkg of fs.globSync(['packages/@react-{spectrum,aria,stately}/*/', 'pack
 }
 
 // Add extra shims for bundlers that don't support package.json exports.
-for (let pkg of ['@adobe/react-spectrum', 'react-aria', 'react-stately']) {
+for (let pkg of ['@adobe/react-spectrum', 'react-aria', 'react-stately', 'react-aria-components']) {
   for (let file of fs.globSync(`packages/${pkg}/dist/exports/**/*.{mjs,cjs}`)) {
     let shim = file.replace('/dist/exports/', '/');
     let specifier = `./${file.replace(`packages/${pkg}/`, '')}`;

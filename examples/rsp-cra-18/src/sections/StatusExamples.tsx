@@ -1,5 +1,4 @@
-import {Flex, Divider, Badge, InlineAlert, Heading, Content, LabeledValue, Meter, ProgressBar, ProgressCircle, StatusLight, Button} from '@adobe/react-spectrum';
-import {ToastContainer, ToastQueue} from '@react-spectrum/toast'
+import {Flex, Divider, Badge, InlineAlert, Heading, Content, LabeledValue, Meter, ProgressBar, ProgressCircle, StatusLight, Button, ToastContainer, ToastQueue} from '@adobe/react-spectrum';
 
 export default function StatusExamples() {
   return (
