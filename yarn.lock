@@ -6124,6 +6124,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/table@workspace:packages/@react-aria/table"
   dependencies:
+    "@react-aria/button": "npm:^3.14.5"
     "@react-aria/focus": "npm:^3.21.5"
     "@react-aria/grid": "npm:^3.14.8"
     "@react-aria/i18n": "npm:^3.12.16"
@@ -6189,6 +6190,7 @@ __metadata:
   dependencies:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
+    "@testing-library/dom": ^10.1.0
     "@testing-library/react": ^16.0.0
     "@testing-library/user-event": ^14.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -7808,6 +7810,7 @@ __metadata:
     "@react-aria/test-utils": "npm:1.0.0-beta.2"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
+    "@testing-library/dom": ^10.1.0
     "@testing-library/react": ^16.0.0
     "@testing-library/user-event": ^14.0.0
     jest: ^29.5.0

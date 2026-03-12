@@ -134,15 +134,13 @@ export class TreeDropTargetDelegate<T> {
 
     // If target has children and is expanded, use "before first child"
     if (currentItem && currentItem.hasChildNodes && this.state!.expandedKeys.has(currentItem.key) && collection.getChildren && target.dropPosition === 'after') {
-      let firstChildItemNode: Node<T> | null = null;
-      for (let child of collection.getChildren(currentItem.key)) {
-        if (child.type === 'item') {
-          firstChildItemNode = child;
-          break;
-        }
+      // Find the first item child (traverse keys directly instead of using collection.getChildren, which may only include cells).
+      let firstChildItemNode = currentItem.firstChildKey != null ? collection.getItem(currentItem.firstChildKey) : null;
+      while (firstChildItemNode && firstChildItemNode.type !== 'item') {
+        firstChildItemNode = firstChildItemNode.nextKey != null ? collection.getItem(firstChildItemNode.nextKey) : null;
       }
 
-      if (firstChildItemNode) {
+      if (firstChildItemNode?.type === 'item') {
         const beforeFirstChildTarget = {
           type: 'item',
           key: firstChildItemNode.key,
