@@ -221,7 +221,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     let viewportHeight = window.innerHeight;
     let viewportSizeChanged = state.viewportSize.width !== viewportWidth || state.viewportSize.height !== viewportHeight;
     if (viewportSizeChanged) {
-      state.viewportSize = new Rect(viewportWidth, viewportHeight);
+      state.viewportSize = new Size(viewportWidth, viewportHeight);
     }
 
     if (state.size.width !== w || state.size.height !== h || viewportSizeChanged) {
