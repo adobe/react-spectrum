@@ -36,7 +36,10 @@ const meta = {
 };
 
 
-export {
+const plugin = {
   meta,
   rules
 };
+
+export default plugin;
+export { meta, rules };
