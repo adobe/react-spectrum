@@ -378,6 +378,20 @@ const treeActionMenu = style({
 let treeRowFocusRing = style({
   ...focusRing(),
   outlineOffset: -2,
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight',
+    selectionStyle: {
+      highlight: {
+        default: 'focus-ring',
+        forcedColors: 'Highlight',
+        isSelected: {
+          default: 'focus-ring',
+          forcedColors: 'ButtonBorder'
+        }
+      }
+    }
+  },
   position: 'absolute',
   inset: 0,
   top: {
@@ -435,7 +449,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
         return (
           <div className={treeCellGrid({isDisabled, isNextSelected: isNextSelected(id, state), isSelected, selectionStyle})}>
             <div className={treeRowBackground({isHovered, isFocusVisible, isSelected, selectionStyle, isNextSelected: isNextSelected(id, state), isPreviousSelected: isPrevSelected(id, state)})} />
-            {isFocusVisible && <div className={treeRowFocusRing({isFocusVisible, selectionStyle, isNextSelected: isNextSelected(id, state), isFirstItem: isFirstItem(id, state)})} />}
+            {isFocusVisible && <div className={treeRowFocusRing({isFocusVisible, selectionStyle, isSelected, isNextSelected: isNextSelected(id, state), isFirstItem: isFirstItem(id, state)})} />}
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && selectionStyle !== 'highlight' && (
               // TODO: add transition?
               <div className={treeCheckbox({isDisabled: isDisabled || !state.selectionManager.canSelectItem(id) || state.disabledKeys.has(id)})}>
