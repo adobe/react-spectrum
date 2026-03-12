@@ -22,11 +22,10 @@ interface ContextValue<T> {
 export function useSyncRef<T>(context?: ContextValue<T> | null, ref?: RefObject<T | null>): void {
   useLayoutEffect(() => {
     if (context && context.ref && ref) {
-      context.ref.current = ref.current;
+      let contextRef = context.ref;
+      contextRef.current = ref.current;
       return () => {
-        if (context.ref) {
-          context.ref.current = null;
-        }
+        contextRef.current = null;
       };
     }
   });

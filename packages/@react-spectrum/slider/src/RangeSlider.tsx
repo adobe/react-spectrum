@@ -51,7 +51,7 @@ export const RangeSlider = React.forwardRef(function RangeSlider(props: Spectrum
   let {direction} = useLocale();
 
   return (
-    <SliderBase {...baseProps} classes={'spectrum-Slider--range'} ref={ref}>
+    <SliderBase {...baseProps} classes={['spectrum-Slider--range']} ref={ref}>
       {({trackRef, inputRef, state}: SliderBaseChildArguments) => {
         let cssDirection = direction === 'rtl' ? 'right' : 'left';
         return (

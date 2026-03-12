@@ -1,0 +1,7 @@
+diff --git a/node_modules/rsc-html-stream/client.d.ts b/node_modules/rsc-html-stream/client.d.ts
+index 7268b72..f3f80de 100644
+--- a/node_modules/rsc-html-stream/client.d.ts
++++ b/node_modules/rsc-html-stream/client.d.ts
+@@ -1 +1 @@
+-declare export let rscStream: ReadableStream;
++export declare let rscStream: ReadableStream;

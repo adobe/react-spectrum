@@ -95,11 +95,12 @@ export function SubmenuAnimation(): JSX.Element {
         }
       ]);
 
+      let mouse = mouseRef.current;
       return () => {
         cancel();
         setIsSubmenuOpen(false);
         setHovered('Option 1');
-        mouseRef.current!.getAnimations().forEach(a => a.cancel());
+        mouse?.getAnimations().forEach(a => a.cancel());
         isAnimating.current = false;
       };
     };
