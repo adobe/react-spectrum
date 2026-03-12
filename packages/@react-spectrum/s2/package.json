@@ -28,10 +28,7 @@
     },
     "./style": {
       "source": "./style/index.ts",
-      "types": [
-        "./style/dist/types.d.ts",
-        "./style/index.ts"
-      ],
+      "types": "./dist/types/style/index.d.ts",
       "module": "./style/dist/module.mjs",
       "import": "./style/dist/module.mjs",
       "require": "./style/dist/main.cjs"

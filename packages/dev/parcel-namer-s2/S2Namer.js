@@ -36,7 +36,7 @@ module.exports = new Namer({
     } else if (mainAsset.filePath.includes('/exports/')) {
       let index = mainAsset.filePath.indexOf('/exports/');
       name = path.dirname(mainAsset.filePath.slice(index + 1)) + '/' + name;
-    } else if (bundle.target.distDir.endsWith('/dist')) {
+    } else if (bundle.target.distDir.endsWith('/dist') && !bundle.target.distDir.includes('/style/')) {
       let index = mainAsset.filePath.indexOf('/src/');
       if (index >= 0) {
         name = 'private/' + path.dirname(mainAsset.filePath.slice(index + 5)) + '/' + name;
