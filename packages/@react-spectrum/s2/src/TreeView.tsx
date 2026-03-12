@@ -403,7 +403,11 @@ let treeRowFocusRing = style({
       checkbox: 0,
       highlight: {
         default: 0,
-        isNextSelected: '[-1px]'
+        isNextSelected: '[-1px]',
+        isSelected: {
+          default: 0,
+          isNextSelected: 0
+        }
       }
     }
   },
