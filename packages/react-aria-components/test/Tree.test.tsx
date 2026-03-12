@@ -1359,7 +1359,7 @@ describe('Tree', () => {
       expect(loaderRow).toHaveTextContent('Loading...');
 
       let sentinel = tree.getByTestId('loadMoreSentinel');
-      expect(sentinel.closest('[inert]')).toBeTruthy;
+      expect(sentinel.closest('[inert]')).toBeTruthy();
 
       // Should render the second sentinel if the row is expanded
       tree.rerender(<LoadingSentinelTree expandedKeys={new Set(['projects', 'projects-1'])} isLoading />);
@@ -1539,7 +1539,7 @@ describe('Tree', () => {
         expect(rootLoaderParentStyles.top).toBe('200px');
         expect(rootLoaderParentStyles.height).toBe('30px');
         let sentinel = tree.getByTestId('loadMoreSentinel');
-        expect(sentinel.closest('[inert]')).toBeTruthy;
+        expect(sentinel.closest('[inert]')).toBeTruthy();
         let sentinels = tree.queryAllByTestId('loadMoreSentinel');
         expect(sentinels).toHaveLength(1);
 
@@ -1570,7 +1570,7 @@ describe('Tree', () => {
         sentinels = tree.queryAllByTestId('loadMoreSentinel');
         expect(sentinels).toHaveLength(2);
         for (let sentinel of sentinels) {
-          expect(sentinel.closest('[inert]')).toBeTruthy;
+          expect(sentinel.closest('[inert]')).toBeTruthy();
         }
 
         // Expand projects-1, adding 10 rows to the tree
@@ -1607,7 +1607,7 @@ describe('Tree', () => {
         sentinels = tree.queryAllByTestId('loadMoreSentinel');
         expect(sentinels).toHaveLength(3);
         for (let sentinel of sentinels) {
-          expect(sentinel.closest('[inert]')).toBeTruthy;
+          expect(sentinel.closest('[inert]')).toBeTruthy();
         }
 
         // Expand projects-1, adding 10 rows to the tree
@@ -1651,7 +1651,7 @@ describe('Tree', () => {
         sentinels = tree.queryAllByTestId('loadMoreSentinel');
         expect(sentinels).toHaveLength(4);
         for (let sentinel of sentinels) {
-          expect(sentinel.closest('[inert]')).toBeTruthy;
+          expect(sentinel.closest('[inert]')).toBeTruthy();
         }
       });
 

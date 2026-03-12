@@ -367,7 +367,7 @@ export const TabPanels = /*#__PURE__*/ createHideableComponent(function TabPanel
         el.style.setProperty('--tab-panel-height', prevSize.current.height + 'px');
 
         // Force style re-calculation to trigger animations.
-        window.getComputedStyle(el).height;
+        void window.getComputedStyle(el).height;
 
         // Animate to current pixel size.
         el.style.setProperty('--tab-panel-width', width + 'px');

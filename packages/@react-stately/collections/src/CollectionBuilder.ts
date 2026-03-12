@@ -197,6 +197,7 @@ export class CollectionBuilder<T extends object> {
     }
 
     // Create full node
+    // oxlint-disable-next-line typescript-eslint/no-this-alias -- iterator pattern requires capturing this
     let builder = this;
     let node: Node<T> = {
       type: partialNode.type,

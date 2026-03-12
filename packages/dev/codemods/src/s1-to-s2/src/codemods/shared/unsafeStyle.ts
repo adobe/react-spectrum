@@ -1,3 +1,4 @@
+/* oxlint-disable max-depth */
 import {borderRadius, borderWidths, StylePropValue} from './styleProps';
 import {capitalize, nameFromExpression} from './utils';
 import {convertUnsafeDimension} from './dimensions';

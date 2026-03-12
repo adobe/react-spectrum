@@ -103,11 +103,19 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
           dir = 'y';
           break;
         case 'Home':
-          direction === 'rtl' ? state.incrementX(state.xChannelPageStep) : state.decrementX(state.xChannelPageStep);
+          if (direction === 'rtl') {
+            state.incrementX(state.xChannelPageStep);
+          } else {
+            state.decrementX(state.xChannelPageStep);
+          }
           dir = 'x';
           break;
         case 'End':
-          direction === 'rtl' ? state.decrementX(state.xChannelPageStep) : state.incrementX(state.xChannelPageStep);
+          if (direction === 'rtl') {
+            state.decrementX(state.xChannelPageStep);
+          } else {
+            state.incrementX(state.xChannelPageStep);
+          }
           dir = 'x';
           break;
       }

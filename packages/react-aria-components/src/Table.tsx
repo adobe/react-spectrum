@@ -228,6 +228,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     }
 
     // Flatten all rows into the body.
+    // oxlint-disable-next-line typescript-eslint/no-this-alias -- iterator pattern requires capturing this
     let self = this;
     if (key === this.body.key) {
       return {

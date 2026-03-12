@@ -366,6 +366,7 @@ export class ElementNode<T> extends BaseNode<T> {
     // We'll handle this by setting the element to hidden and invalidating
     // its siblings/parent. Hidden elements remain in the Document, but
     // are removed from the Collection.
+    // oxlint-disable-next-line typescript-eslint/no-this-alias -- iterator pattern requires capturing this
     let element = this;
     return {
       get display() {

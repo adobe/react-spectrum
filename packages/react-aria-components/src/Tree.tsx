@@ -160,6 +160,7 @@ class TreeCollection<T> extends BaseCollection<T> {
   }
 
   getChildren(key: Key): Iterable<Node<T>> {
+    // oxlint-disable-next-line typescript-eslint/no-this-alias -- iterator pattern requires capturing this
     let self = this;
     return {
       *[Symbol.iterator]() {

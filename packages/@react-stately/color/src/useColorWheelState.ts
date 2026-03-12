@@ -124,7 +124,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
   };
 
   let channelRange = value.getChannelRange('hue');
-  let {minValue: minValueX, maxValue: maxValueX, step: step, pageSize: pageStep} = channelRange;
+  let {minValue: minValueX, maxValue: maxValueX, step, pageSize: pageStep} = channelRange;
   let [isDragging, setDragging] = useState(false);
   let isDraggingRef = useRef(false);
 

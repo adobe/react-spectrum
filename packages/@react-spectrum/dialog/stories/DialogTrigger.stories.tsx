@@ -826,7 +826,7 @@ function AdjustableDialog() {
     <Flex gap="size-200">
       <Flex direction="column" width="size-2000" gap="size-100">
         <Checkbox onChange={setShowHero}>Show Hero</Checkbox>
-        <Checkbox onChange={(isChecked) => {isChecked ? setHeading(headingStrings[1]) : setHeading(headingStrings[0]);}}>Toggle Heading Values</Checkbox>
+        <Checkbox onChange={(isChecked) => {if (isChecked) { setHeading(headingStrings[1]); } else { setHeading(headingStrings[0]); }}}>Toggle Heading Values</Checkbox>
         <Checkbox onChange={setShowHeader}>Show Header</Checkbox>
         <Checkbox onChange={setShowTypeIcon}>Show TypeIcon</Checkbox>
         <Checkbox onChange={setIsDismissable}>Show Dismissable</Checkbox>

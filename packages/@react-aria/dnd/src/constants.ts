@@ -1,3 +1,4 @@
+/* oxlint-disable typescript-eslint/no-duplicate-enum-values -- none and cancel intentionally both 0 */
 /*
  * Copyright 2020 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -21,6 +22,7 @@ export interface IDropOperation {
   readonly all: number
 }
 
+/* oxlint-disable-next-line typescript/no-duplicate-enum-values -- none and cancel intentionally both 0 */
 export enum DROP_OPERATION {
   none = 0,
   cancel = 0,

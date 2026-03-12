@@ -128,6 +128,7 @@ export function FocusScope(props: FocusScopeProps): JSX.Element {
 
   useLayoutEffect(() => {
     // Find all rendered nodes between the sentinels and add them to the scope.
+    // oxlint-disable-next-line typescript-eslint/no-non-null-asserted-optional-chain -- startRef is set before this runs
     let node = startRef.current?.nextSibling!;
     let nodes: Element[] = [];
     let stopPropagation = e => e.stopPropagation();

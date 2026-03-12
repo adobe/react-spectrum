@@ -25,6 +25,7 @@ export function keepSpectrumClassNames(): void {
   }
 }
 
+/* oxlint-disable-next-line typescript-eslint/no-wrapper-object-types -- Object used for generic object shape */
 export function classNames(cssModule: {[key: string]: string}, ...values: Array<string | Object | undefined>): string {
   let classes: Array<{} | undefined> = [];
   for (let value of values) {

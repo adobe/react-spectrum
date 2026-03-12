@@ -260,6 +260,7 @@ export class Virtualizer<T extends object, V> {
 
   /** Performs layout and updates visible views as needed. */
   render(opts: VirtualizerRenderOptions<T>): ReusableView<T, V>[] {
+    // oxlint-disable-next-line typescript-eslint/no-this-alias -- iterator pattern requires capturing this
     let mutableThis: Mutable<this> = this;
     let needsLayout = false;
     let offsetChanged = false;

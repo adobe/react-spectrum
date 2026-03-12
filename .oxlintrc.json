@@ -139,7 +139,7 @@
     "react/jsx-boolean-value": "error",
     "react/self-closing-comp": "error",
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/exhaustive-deps": "off",
     "rsp-rules/no-react-key": [
       "error"
     ],

@@ -64,11 +64,11 @@ export const ControlledHSLRender = (props: SpectrumColorWheelProps): JSX.Element
   let {locale} = useLocale();
   let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
   let onChangeEnd = (color) => {
-    props.onChangeEnd && props.onChangeEnd(color);
+    if (props.onChangeEnd) { props.onChangeEnd(color); }
     setColor(color);
   };
   let onChange = (color) => {
-    props.onChange && props.onChange(color);
+    if (props.onChange) { props.onChange(color); }
     setColor(color);
   };
   return (

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* oxlint-disable max-depth */
 
 import * as babel from '@babel/parser';
 import {fileURLToPath} from 'url';

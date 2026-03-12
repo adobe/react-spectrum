@@ -1,3 +1,4 @@
+/* oxlint-disable max-depth */
 import {addComment, getPropValue} from './utils';
 import {convertColor} from './colors';
 import {convertDimension, convertGridTrack} from './dimensions';

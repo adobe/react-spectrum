@@ -107,7 +107,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
           panel.style.setProperty('--disclosure-panel-height', panel.scrollHeight + 'px');
 
           // Force style re-calculation to trigger animations.
-          window.getComputedStyle(panel).height;
+          void window.getComputedStyle(panel).height;
 
           // Animate to zero size.
           panel.style.setProperty('--disclosure-panel-width', '0px');

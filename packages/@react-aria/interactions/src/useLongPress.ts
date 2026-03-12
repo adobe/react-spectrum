@@ -103,7 +103,7 @@ export function useLongPress(props: LongPressProps): LongPressResult {
           };
 
           addGlobalListener(e.target, 'contextmenu', onContextMenu, {once: true});
-          addGlobalListener(window, 'pointerup', () => {
+          addGlobalListener(/* oxlint-disable-next-line no-restricted-globals */ window, 'pointerup', () => {
             // If no contextmenu event is fired quickly after pointerup, remove the handler
             // so future context menu events outside a long press are not prevented.
             setTimeout(() => {

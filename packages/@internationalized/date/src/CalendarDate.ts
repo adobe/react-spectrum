@@ -43,6 +43,7 @@ export class CalendarDate {
   // i.e. a ZonedDateTime should not be be passable to a parameter that expects CalendarDate.
   // If that behavior is desired, use the AnyCalendarDate interface instead.
   // @ts-ignore
+  // oxlint-disable-next-line no-unused-private-class-members
   #type;
   /** The calendar system associated with this date, e.g. Gregorian. */
   public readonly calendar: Calendar;
@@ -126,6 +127,7 @@ export class CalendarDate {
 export class Time {
   // This prevents TypeScript from allowing other types with the same fields to match.
   // @ts-ignore
+  // oxlint-disable-next-line no-unused-private-class-members
   #type;
   /** The hour, numbered from 0 to 23. */
   public readonly hour: number;
@@ -192,6 +194,7 @@ export class Time {
 export class CalendarDateTime {
   // This prevents TypeScript from allowing other types with the same fields to match.
   // @ts-ignore
+  // oxlint-disable-next-line no-unused-private-class-members
   #type;
   /** The calendar system associated with this date, e.g. Gregorian. */
   public readonly calendar: Calendar;
@@ -300,6 +303,7 @@ export class CalendarDateTime {
 export class ZonedDateTime {
   // This prevents TypeScript from allowing other types with the same fields to match.
   // @ts-ignore
+  // oxlint-disable-next-line no-unused-private-class-members
   #type;
   /** The calendar system associated with this date, e.g. Gregorian. */
   public readonly calendar: Calendar;

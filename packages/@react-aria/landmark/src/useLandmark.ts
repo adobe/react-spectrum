@@ -395,6 +395,7 @@ class LandmarkManager implements LandmarkManagerApi {
   }
 
   public createLandmarkController(): LandmarkController {
+    // oxlint-disable-next-line typescript-eslint/no-this-alias -- required for refCount management
     let instance: LandmarkManager | null = this;
     instance.refCount++;
     instance.setupIfNeeded();

@@ -177,7 +177,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   let descriptionProps = useDescription(description);
   let ariaProps = {
     'aria-label': ariaLabel,
-    'aria-orientation': 'horizontal' as 'horizontal',
+    'aria-orientation': 'horizontal' as const,
     'aria-labelledby': `${id} ${getColumnHeaderId(state.tableState, item.key)}`,
     'aria-valuetext': stringFormatter.format('columnSize', {value}),
     'type': 'range',

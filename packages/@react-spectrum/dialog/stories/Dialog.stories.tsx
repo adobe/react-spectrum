@@ -399,7 +399,7 @@ function RenderWithThreeButtonsAndFooter({width = 'auto', ...props}) {
 
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <Button variant="primary" onPress={() => {whichLabels ? setWhichLabels(0) : setWhichLabels(1);}}>Toggle labels</Button>
+      <Button variant="primary" onPress={() => {if (whichLabels) { setWhichLabels(0); } else { setWhichLabels(1); }}}>Toggle labels</Button>
       <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
         {(close) => (

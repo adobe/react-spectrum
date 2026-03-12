@@ -594,7 +594,7 @@ function fixSafariTransform(el: HTMLDivElement | null) {
   if (el && isWebKit()) {
     let translate = el.style.translate;
     el.style.translate = '';
-    el.offsetHeight;
+    void el.offsetHeight;
     el.style.translate = translate;
   }
 }
