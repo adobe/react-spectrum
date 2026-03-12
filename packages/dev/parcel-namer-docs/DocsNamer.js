@@ -85,7 +85,7 @@ module.exports = new Namer({
         }
 
         if (/use(.+?)\.html$/.test(basename)) {
-          return path.join(...parts.slice(4, -1), basename.replace(/use(.*?)\.html$/, (_, name) => `${mappings[name] || name}/use${name}.html`));
+          return path.join(...parts.slice(4, -1), basename.replace(/use(.*?)\.html$/, (_, matchName) => `${mappings[matchName] || matchName}/use${matchName}.html`));
         }
 
         return path.join(...parts.slice(4, -1), basename);

@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+/* oxlint-disable no-redeclare -- Type augmentation for polyfill module */
 
 declare module 'abortcontroller-polyfill/dist/cjs-ponyfill' {
   type AbortSignal = any;

@@ -77,8 +77,8 @@ module.exports = new Transformer({
             if (!options.includes('render=false')) {
               let props = options.includes('hidden') ? 'isHidden' : '';
               if (/function (.|\n)*}\s*$/.test(code)) {
-                let name = code.match(/function (.*?)\s*\(/)[1];
-                code = `${code}\nRENDER_FNS.push(() => ReactDOM.createRoot(document.getElementById("${id}")).render(<${provider} ${props}><${name} /></${provider}>));`;
+                let fnName = code.match(/function (.*?)\s*\(/)[1];
+                code = `${code}\nRENDER_FNS.push(() => ReactDOM.createRoot(document.getElementById("${id}")).render(<${provider} ${props}><${fnName} /></${provider}>));`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
                 code = code.replace(/^(<(.|\n)*>)$/m, `RENDER_FNS.push(() => ReactDOM.createRoot(document.getElementById("${id}")).render(<${provider} ${props}>$1</${provider}>));`);
               }
@@ -263,12 +263,12 @@ module.exports = new Transformer({
           if (tree.type === 'list') {
             return tree.children.map(treeNode => treeConverter(treeNode));
           } else if (tree.type === 'listItem') {
-            let [name, nodes] = tree.children;
+            let [linkNode, nodes] = tree.children;
             newTree.children = [];
             if (nodes) {
               newTree.children = treeConverter(nodes);
             }
-            let link = findLink(name);
+            let link = findLink(linkNode);
             newTree.id = link.url.split('#').pop();
             newTree.textContent = link.children[0].value;
           }
@@ -351,13 +351,13 @@ module.exports = new Transformer({
           if (node.value.includes('- begin highlight -')) {
             let highlightParent = null;
             let highlightedNodes = [];
-            flatMap(highlighted, (node, index, parent) => {
+            flatMap(highlighted, (node, index, parentNode) => {
               if (node.properties?.className === 'comment' && /- begin highlight -/.test(node.children[0].value)) {
                 // Handle JSX-style comments, e.g. {/* foo */}
-                let prev = parent.children[index - 1];
+                let prev = parentNode.children[index - 1];
                 if (prev?.children?.[0]?.value === '{') {
                   prev.children = [];
-                  prev = parent.children[index - 2];
+                  prev = parentNode.children[index - 2];
                 }
 
                 // Remove extra newline before comment.
@@ -365,7 +365,7 @@ module.exports = new Transformer({
                   prev.value = prev.value.replace(/\n( *)$/, '\n');
                 }
 
-                highlightParent = parent;
+                highlightParent = parentNode;
                 highlightedNodes = [];
                 return [];
               } else if (node.properties?.className === 'comment' && /- end highlight -/.test(node.children?.[0].value)) {
@@ -400,10 +400,10 @@ module.exports = new Transformer({
                 }
 
                 // Remove closing brace from JSX-style ending comments.
-                let next = parent.children?.[index + 1];
+                let next = parentNode.children?.[index + 1];
                 if (next?.children?.[0]?.value === '}') {
-                  parent.children[index + 1] = {type: 'text', value: ''};
-                  next = parent.children?.[index + 2];
+                  parentNode.children[index + 1] = {type: 'text', value: ''};
+                  next = parentNode.children?.[index + 2];
                 }
 
                 // Remove extra newline after ending comment.
@@ -412,7 +412,7 @@ module.exports = new Transformer({
                 }
 
                 return res;
-              } else if (highlightParent && parent === highlightParent) {
+              } else if (highlightParent && parentNode === highlightParent) {
                 highlightedNodes.push(node);
                 return [];
               }
@@ -612,7 +612,7 @@ function transformExample(node, preRelease, keepIndividualImports) {
       },
       Program: {
         exit(path) {
-          let process = (specifiers, importKind) => {
+          let processImports = (specifiers, importKind) => {
             for (let lib in specifiers) {
               let names = specifiers[lib];
               if (names.length > 0) {
@@ -630,8 +630,8 @@ function transformExample(node, preRelease, keepIndividualImports) {
             }
           };
 
-          process(specifiers, 'value');
-          process(typeSpecifiers, 'type');
+          processImports(specifiers, 'value');
+          processImports(typeSpecifiers, 'type');
         }
       }
     });

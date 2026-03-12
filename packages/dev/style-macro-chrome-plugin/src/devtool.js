@@ -3,6 +3,8 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
   sidebar.setObject({});
 
   // Helper function to log to both DevTools-for-DevTools console and inspected page console
+  // oxlint-disable-next-line no-unused-vars -- debug helper, args used when logging enabled
+  // oxlint-disable-next-line no-unused-vars
   const debugLog = (...args) => {
     // console.log(...args); // Logs to DevTools-for-DevTools console
     // const message = args.map(arg =>

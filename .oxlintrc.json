@@ -1453,7 +1453,8 @@
         "rsp-rules/shadow-safe-active-element": "off",
         "rsp-rules/faster-node-contains": "off",
         "rulesdir/imports": "off",
-        "monorepo/no-internal-import": "off"
+        "monorepo/no-internal-import": "off",
+        "jsx-a11y/no-noninteractive-tabindex": "off"
       },
       "jsPlugins": [
         "./packages/dev/eslint-plugin-rsp-rules/index.js",
@@ -2681,6 +2682,9 @@
       "files": [
         "packages/dev/style-macro-chrome-plugin/**"
       ],
+      "rules": {
+        "no-unused-vars": ["error", { "args": "none", "argsIgnorePattern": "^_" }]
+      },
       "globals": {
         "AbortController": "readonly",
         "AbortSignal": "readonly",

@@ -30,9 +30,9 @@ module.exports = async function processCSS(cssCode, asset, options, minimal = fa
       safari: 15 << 16
     },
     resolver: {
-      resolve(specifier, parent) {
+      resolve(specifier, parentPath) {
         if (specifier.startsWith('.')) {
-          return path.resolve(path.dirname(parent), specifier);
+          return path.resolve(path.dirname(parentPath), specifier);
         }
 
         if (path.extname(specifier) === '') {
@@ -41,7 +41,7 @@ module.exports = async function processCSS(cssCode, asset, options, minimal = fa
           return require.resolve(specifier);
         }
 
-        let baseDir = process.env.DOCS_ENV === 'production' ? 'docs' : 'packages';
+        let baseDir = globalThis.process.env.DOCS_ENV === 'production' ? 'docs' : 'packages';
         return path.resolve(options.projectRoot, baseDir, specifier);
       },
       read(filePath) {

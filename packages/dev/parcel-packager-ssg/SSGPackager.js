@@ -86,14 +86,14 @@ module.exports = new Packager({
             let resolution = {id: resolved.id};
 
             // Dependencies may be re-targeted to follow re-exports.
-            for (let [name, sym] of dep.symbols) {
+            for (let [exportName, sym] of dep.symbols) {
               let rewritten = sym.meta?.rewritten;
               /* eslint-disable max-depth */
               if (typeof rewritten === 'string') {
                 if (Array.isArray(resolution)) {
-                  resolution.push([rewritten, resolved.id, name]);
+                  resolution.push([rewritten, resolved.id, exportName]);
                 } else {
-                  resolution = [[rewritten, resolved.id, name]];
+                  resolution = [[rewritten, resolved.id, exportName]];
                 }
               }
             }
@@ -242,7 +242,7 @@ module.exports = new Packager({
       }
     }, null);
 
-    let name = rename(bundle);
+    let pageName = rename(bundle);
     let mainAsset = bundle.getMainEntry();
     let code = ReactDOMServer.renderToStaticMarkup(
       React.createElement(Component, {
@@ -257,9 +257,9 @@ module.exports = new Packager({
         currentPage: {
           filePath: mainAsset.filePath,
           category: mainAsset.meta.category,
-          name,
+          name: pageName,
           title: mainAsset.meta.title,
-          url: urlJoin(bundle.target.publicUrl, name),
+          url: urlJoin(bundle.target.publicUrl, pageName),
           description: mainAsset.meta.description,
           keywords: mainAsset.meta.keywords,
           date: mainAsset.meta.date,

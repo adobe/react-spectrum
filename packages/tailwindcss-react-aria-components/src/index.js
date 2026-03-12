@@ -126,8 +126,8 @@ module.exports = plugin.withOptions((options) => (({addVariant}) => {
   Object.keys(attributes.enum).forEach((attributeName) => {
     attributes.enum[attributeName].forEach(
       (attributeValue, i) => {
-        let name = shortNames[attributeName] || attributeName;
-        let variantName = `${prefix}${name}-${attributeValue}`;
+        let displayName = shortNames[attributeName] || attributeName;
+        let variantName = `${prefix}${displayName}-${attributeValue}`;
         let selectors = getSelector(prefix, attributeName, attributeValue);
         addVariants(variantName, selectors, addVariant, i);
       }

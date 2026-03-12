@@ -57,14 +57,14 @@ module.exports = new Transformer({
           });
         } else if (path.node.declaration) {
           if (t.isIdentifier(path.node.declaration.id)) {
-            let name = path.node.declaration.id.name;
-            asset.symbols.set(name, name);
-            let prev = exports[name];
+            let exportName = path.node.declaration.id.name;
+            asset.symbols.set(exportName, exportName);
+            let prev = exports[exportName];
             let val = processExport(path.get('declaration'));
             if (val) {
-              exports[name] = val;
-              if (!exports[name].description && prev?.description) {
-                exports[name].description = prev.description;
+              exports[exportName] = val;
+              if (!exports[exportName].description && prev?.description) {
+                exports[exportName].description = prev.description;
               }
             }
           } else {
@@ -161,11 +161,11 @@ module.exports = new Transformer({
       }
 
       if (path.isClassProperty()) {
-        let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
+        let propName = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
         let docs = getJSDocs(path);
         return Object.assign(node, addDocs({
           type: 'property',
-          name,
+          name: propName,
           value: path.node.typeAnnotation
             ? processExport(path.get('typeAnnotation.typeAnnotation'))
             : {type: 'any'},
@@ -194,11 +194,11 @@ module.exports = new Transformer({
       }
 
       if (path.isObjectProperty()) {
-        let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
+        let propName = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
         let docs = getJSDocs(path);
         return Object.assign(node, addDocs({
           type: 'property',
-          name,
+          name: propName,
           value: processExport(path.get('value')),
           optional: false
         }, docs));
@@ -207,7 +207,7 @@ module.exports = new Transformer({
       if (path.isClassMethod() || path.isTSDeclareMethod() || path.isObjectMethod()) {
         // not sure why isTSDeclareMethod isn't a recognized method, can't find documentation on it either, but it works and that's the type
         // it seems to be mostly abstract class methods that comes through as this?
-        let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
+        let methodName = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
         let docs = getJSDocs(path);
 
         let value;
@@ -234,7 +234,7 @@ module.exports = new Transformer({
 
         return Object.assign(node, addDocs({
           type: value.type === 'function' ? 'method' : 'property',
-          name,
+          name: methodName,
           value,
           access: path.node.accessibility,
           static: path.node.static,
@@ -424,34 +424,34 @@ module.exports = new Transformer({
       }
 
       if (path.isTSPropertySignature()) {
-        let name;
+        let propName;
         if (t.isStringLiteral(path.node.key)) {
-          name = path.node.key.value;
+          propName = path.node.key.value;
         } else if (t.isNumericLiteral(path.node.key)) {
-          name = String(path.node.key.value);
+          propName = String(path.node.key.value);
         } else if (t.isIdentifier(path.node.key)) {
-          name = path.node.key.name;
+          propName = path.node.key.name;
         } else {
           console.log('Unknown key', path.node.key);
-          name = 'unknown';
+          propName = 'unknown';
         }
 
         let docs = getJSDocs(path);
         let value = processExport(path.get('typeAnnotation.typeAnnotation'));
         return Object.assign(node, addDocs({
           type: 'property',
-          name,
+          name: propName,
           value,
           optional: path.node.optional || false
         }, docs));
       }
 
       if (path.isTSMethodSignature()) {
-        let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
+        let methodName = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
         let docs = getJSDocs(path);
         return Object.assign(node, addDocs({
           type: 'method',
-          name,
+          name: methodName,
           value: {
             type: 'function',
             parameters: path.get('parameters').map(processParameter),
@@ -466,11 +466,11 @@ module.exports = new Transformer({
       }
 
       if (path.isTSIndexSignature()) {
-        let name = path.node.parameters[0].name;
+        let indexParamName = path.node.parameters[0].name;
         let docs = getJSDocs(path);
         return Object.assign(node, addDocs({
           type: 'property',
-          name,
+          name: indexParamName,
           indexType: processExport(path.get('parameters.0.typeAnnotation.typeAnnotation')),
           value: processExport(path.get('typeAnnotation.typeAnnotation'))
         }, docs));
@@ -692,7 +692,7 @@ module.exports = new Transformer({
       );
     }
 
-    function isReactCall(path, name, module = 'react') {
+    function isReactCall(path, calleeName, module = 'react') {
       if (!path.isCallExpression()) {
         return false;
       }
@@ -705,11 +705,11 @@ module.exports = new Transformer({
       }
 
       if (!t.isMemberExpression(callee)) {
-        return calleePath.referencesImport(module, name);
+        return calleePath.referencesImport(module, calleeName);
       }
 
       if (calleePath.get('object').referencesImport(module, 'default')) {
-        return t.isIdentifier(callee.property, {name});
+        return t.isIdentifier(callee.property, {name: calleeName});
       }
 
       return false;

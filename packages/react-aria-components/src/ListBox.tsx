@@ -504,6 +504,7 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
       {...dropIndicatorProps}
       {...renderProps}
       role="option"
+      aria-selected={false}
       ref={ref as RefObject<HTMLDivElement | null>}
       data-drop-target={isDropTarget || undefined} />
   );
@@ -566,8 +567,8 @@ export const ListBoxLoadMoreItem = createLeafComponent(LoaderNode, function List
         <dom.div
           {...mergeProps(filterDOMProps(props, {global: true}), optionProps)}
           {...renderProps}
-          // aria-selected isn't needed here since this option is not selectable.
           role="option"
+          aria-selected={false}
           ref={ref as ForwardedRef<HTMLDivElement>}>
           {renderProps.children}
         </dom.div>

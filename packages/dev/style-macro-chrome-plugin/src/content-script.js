@@ -4,17 +4,19 @@ if (window.__macrosLoaded) {
 }
 window.__macrosLoaded = true;
 
+// oxlint-disable-next-line no-unused-vars -- debug helper, args used when logging enabled
+// oxlint-disable-next-line no-unused-vars
 let debugLog = (...args) => {
   // console.log('[Content Script]', ...args);
 };
 
-window.addEventListener('message', function (event) {
+window.addEventListener('message', function (evt) {
   // Only accept messages from the same frame
-  if (event.source !== window) {
+  if (evt.source !== window) {
     return;
   }
 
-  var message = event.data;
+  var message = evt.data;
 
   // Only accept messages that we know are ours. Note that this is not foolproof
   // and the page can easily spoof messages if it wants to.
@@ -23,8 +25,8 @@ window.addEventListener('message', function (event) {
       debugLog('Forwarding stylemacro-update-macros for hash:', message.hash);
 
       // if this script is run multiple times on the page, then only handle it once
-      event.stopImmediatePropagation();
-      event.stopPropagation();
+      evt.stopImmediatePropagation();
+      evt.stopPropagation();
 
       // Forward message directly to background script (which forwards to DevTools)
       try {
@@ -42,8 +44,8 @@ window.addEventListener('message', function (event) {
       debugLog('Forwarding stylemacro-class-changed for element:', message.elementId);
 
       // if this script is run multiple times on the page, then only handle it once
-      event.stopImmediatePropagation();
-      event.stopPropagation();
+      evt.stopImmediatePropagation();
+      evt.stopPropagation();
 
       try {
         chrome.runtime.sendMessage({

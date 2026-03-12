@@ -42,7 +42,7 @@ function compileParts(parts, inline = false, pluralValue = '') {
 
     switch (part.type) {
       case TYPE.literal:
-        res += escape(part.value);
+        res += escapeString(part.value);
         break;
       case TYPE.argument:
         res += '${args.' + part.value + '}';
@@ -100,6 +100,6 @@ function compileOptions(options, pluralValue) {
   return res;
 }
 
-function escape(string) {
+function escapeString(string) {
   return string.replace(/([$`])/g, '\\$1');
 }

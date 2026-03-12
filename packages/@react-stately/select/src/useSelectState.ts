@@ -83,10 +83,16 @@ export function useSelectState<T extends object, M extends SelectionMode = 'sing
   let triggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
   let defaultValue = useMemo(() => {
-    return props.defaultValue !== undefined ? props.defaultValue : (selectionMode === 'single' ? props.defaultSelectedKey ?? null : []) as ValueType<M>;
+    if (props.defaultValue !== undefined) {
+      return props.defaultValue;
+    }
+    return (selectionMode === 'single' ? props.defaultSelectedKey ?? null : []) as ValueType<M>;
   }, [props.defaultValue, props.defaultSelectedKey, selectionMode]);
   let value = useMemo(() => {
-    return props.value !== undefined ? props.value : (selectionMode === 'single' ? props.selectedKey : undefined) as ValueType<M>;
+    if (props.value !== undefined) {
+      return props.value;
+    }
+    return (selectionMode === 'single' ? props.selectedKey : undefined) as ValueType<M>;
   }, [props.value, props.selectedKey, selectionMode]);
   let [controlledValue, setControlledValue] = useControlledState<Key | readonly Key[] | null>(value, defaultValue, props.onChange as any);
   // Only display the first selected item if in single selection mode but the value is an array.
