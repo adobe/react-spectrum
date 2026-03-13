@@ -36,7 +36,9 @@
   "files": [
     "dist",
     "src",
-    "i18n"
+    "i18n",
+    "*.mjs",
+    "*.cjs"
   ],
   "sideEffects": [
     "*.css"
