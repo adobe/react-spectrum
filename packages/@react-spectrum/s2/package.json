@@ -145,8 +145,7 @@
     "icons",
     "illustrations",
     "src",
-    "*.mjs",
-    "*.cjs"
+    "*.js"
   ],
   "scripts": {
     "prepublishOnly": "rm -rf dist/page.cjs* && mv dist/private/page*.css page.css && mv dist/private/page.css.map page.css.map || true",

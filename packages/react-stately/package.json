@@ -24,8 +24,7 @@
   "source": "exports/index.ts",
   "files": [
     "dist",
-    "*.mjs",
-    "*.cjs"
+    "*.js"
   ],
   "sideEffects": false,
   "repository": {
