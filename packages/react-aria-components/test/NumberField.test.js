@@ -13,7 +13,7 @@
 jest.mock('@react-aria/live-announcer');
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
-import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
+import {Button, FieldError, Group, I18nProvider, Input, Label, NumberField, NumberFieldContext, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -198,6 +198,114 @@ describe('NumberField', () => {
     expect(numberfield).not.toHaveAttribute('data-invalid');
   });
 
+  it('supports pasting value in another numbering system', async () => {
+    let {getByRole, rerender} = render(<TestNumberField />);
+    let input = getByRole('textbox');
+    await user.tab();
+    act(() => {
+      input.setSelectionRange(0, input.value.length);
+    });
+    await user.paste('3.000.000,25');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('1,024');
+
+    act(() => {
+      input.setSelectionRange(0, input.value.length);
+    });
+    await user.paste('3 000 000,25');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('300,000,025');
+
+    rerender(<TestNumberField formatOptions={{style: 'currency', currency: 'USD'}} />);
+
+    act(() => {
+      input.setSelectionRange(0, input.value.length);
+    });
+    await user.paste('3 000 000,256789');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('$3,000,000,256,789.00');
+
+    act(() => {
+      input.setSelectionRange(0, input.value.length);
+    });
+    await user.paste('1,000');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('$1,000.00', 'Ambiguous value should be parsed using the current locale');
+
+    act(() => {
+      input.setSelectionRange(0, input.value.length);
+    });
+
+    await user.paste('1.000');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('$1.00', 'Ambiguous value should be parsed using the current locale');
+  });
+
+  it('should support arabic singular and dual counts', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = render(
+      <I18nProvider locale="ar-AE">
+        <NumberField defaultValue={0} onChange={onChange} formatOptions={{style: 'unit', unit: 'day', unitDisplay: 'long'}}>
+          <Label>Test</Label>
+          <Group style={{display: 'flex'}}>
+            <Button slot="decrement">-</Button>
+            <Input />
+            <Button slot="increment">+</Button>
+          </Group>
+          <FieldError />
+        </NumberField>
+      </I18nProvider>
+    );
+    let input = getByRole('textbox');
+    await user.tab();
+    await user.keyboard('{ArrowUp}');
+    expect(onChange).toHaveBeenLastCalledWith(1);
+    expect(input).toHaveValue('يوم');
+
+    await user.keyboard('{ArrowUp}');
+    expect(input).toHaveValue('يومان');
+    expect(onChange).toHaveBeenLastCalledWith(2);
+  });
+
+  it('should not type the grouping characters when useGrouping is false', async () => {
+    let {getByRole} = render(<TestNumberField formatOptions={{useGrouping: false}} />);
+    let input = getByRole('textbox');
+
+    await user.keyboard('102,4');
+    expect(input).toHaveAttribute('value', '1024');
+
+    await user.clear(input);
+    expect(input).toHaveAttribute('value', '');
+
+    await user.paste('102,4');
+    await user.tab();
+    expect(input).toHaveAttribute('value', '1024');
+
+    await user.paste('1,024');
+    await user.tab();
+    expect(input).toHaveAttribute('value', '1024');
+
+  });
+
+  it('should not type the grouping characters when useGrouping is false and in German locale', async () => {
+    let {getByRole} = render(<I18nProvider locale="de-DE"><TestNumberField formatOptions={{useGrouping: false}} /></I18nProvider>);
+    let input = getByRole('textbox');
+
+    await user.keyboard('102.4');
+    expect(input).toHaveAttribute('value', '1024');
+
+    await user.clear(input);
+    expect(input).toHaveAttribute('value', '');
+
+    await user.paste('102.4');
+    await user.tab();
+    expect(input).toHaveAttribute('value', '1024');
+
+    await user.paste('1.024');
+    await user.tab();
+    expect(input).toHaveAttribute('value', '1024');
+  });
+
   it('should trigger onChange via programmatic click() on stepper buttons', () => {
     const onChange = jest.fn();
     const {container} = render(
@@ -213,6 +321,18 @@ describe('NumberField', () => {
     });
     expect(onChange).toHaveBeenCalledTimes(2);
     expect(onChange).toHaveBeenCalledWith(1024);
+  });
+
+  it('should allow you to delete the first digit in a number if it is followed by a group separator', async () => {
+    let {getByRole} = render(<TestNumberField defaultValue={1024} formatOptions={{useGrouping: true}} />);
+    let input = getByRole('textbox');
+    await user.tab();
+    await user.keyboard('{ArrowLeft}');
+    await user.keyboard('{ArrowRight}');
+    await user.keyboard('{Backspace}');
+    expect(input).toHaveValue(',024');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('24');
   });
 
   it('supports onChange', async () => {
