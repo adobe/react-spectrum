@@ -11,9 +11,8 @@
  */
 
 import {Meta, StoryObj} from '@storybook/react';
-import {ProgressCircle} from '../';
+import {ProgressCircle, SpectrumProgressCircleProps} from '../';
 import React, {CSSProperties} from 'react';
-import {SpectrumProgressCircleProps} from '@react-types/progress';
 
 const meta: Meta<SpectrumProgressCircleProps> = {
   title: 'ProgressCircle',

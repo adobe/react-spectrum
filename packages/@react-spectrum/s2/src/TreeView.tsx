@@ -42,7 +42,7 @@ import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useRef} from 'react';
 import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useLocale, useLocalizedStringFormatter} from 'react-aria';
 import {useScale} from './utils';
 

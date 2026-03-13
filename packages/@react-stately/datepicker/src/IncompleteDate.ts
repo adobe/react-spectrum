@@ -11,7 +11,7 @@
  */
 
 import {AnyDateTime, Calendar, CalendarDate, ZonedDateTime} from '@internationalized/date';
-import {DateValue} from '@react-types/datepicker';
+import {DateValue} from './types';
 import {SegmentType} from './useDateFieldState';
 
 type HourCycle = 'h12' | 'h11' | 'h23' | 'h24';

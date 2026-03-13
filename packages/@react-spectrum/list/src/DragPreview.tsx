@@ -11,7 +11,7 @@
  */
 import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {Grid} from '@react-spectrum/layout';
-import {GridNode} from '@react-types/grid';
+import {GridNode} from '@react-stately/grid';
 import listStyles from './styles.css';
 import React, {JSX} from 'react';
 import type {SpectrumListViewProps} from './ListView';

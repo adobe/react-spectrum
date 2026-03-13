@@ -11,7 +11,7 @@
  */
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import {Button} from '@react-spectrum/button';
+import {Button, SpectrumButtonProps} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain, filterDOMProps} from '@react-aria/utils';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
@@ -19,15 +19,41 @@ import {Content} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
-import {DOMRef} from '@react-types/shared';
+import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {Heading} from '@react-spectrum/text';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {forwardRef, useContext} from 'react';
-import {SpectrumAlertDialogProps} from '@react-types/dialog';
-import {SpectrumButtonProps} from '@react-types/button';
+import React, {forwardRef, ReactNode, useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+
+export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
+  /** The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.  */
+  variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning',
+  /** The title of the AlertDialog. */
+  title: string,
+  /** The contents of the AlertDialog. */
+  children: ReactNode,
+  /** The label to display within the cancel button. */
+  cancelLabel?: string,
+  /** The label to display within the confirm button. */
+  primaryActionLabel: string,
+  /** The label to display within the secondary button. */
+  secondaryActionLabel?: string,
+  /** Whether the primary button is disabled. */
+  isPrimaryActionDisabled?: boolean,
+  /** Whether the secondary button is disabled. */
+  isSecondaryActionDisabled?: boolean,
+  /** Handler that is called when the cancel button is pressed. */
+  onCancel?: () => void,
+  /** Handler that is called when the primary button is pressed. */
+  onPrimaryAction?: () => void,
+  /** Handler that is called when the secondary button is pressed. */
+  onSecondaryAction?: () => void,
+  /** Button to focus by default when the dialog opens. */
+  autoFocusButton?: 'cancel' | 'primary' | 'secondary'
+  // allowsKeyboardConfirmation?: boolean, // triggers primary action
+}
 
 /**
  * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.

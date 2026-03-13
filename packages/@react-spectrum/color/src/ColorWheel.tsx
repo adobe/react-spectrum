@@ -10,18 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaColorWheelProps, useColorWheel} from '@react-aria/color';
 import {classNames, dimensionValue, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {ColorThumb} from './ColorThumb';
 import {ColorWheelContext, useContextProps} from 'react-aria-components';
-import {FocusableRef} from '@react-types/shared';
+import {DimensionValue, FocusableRef, StyleProps} from '@react-types/shared';
 import React, {useCallback, useRef, useState} from 'react';
-import {SpectrumColorWheelProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorwheel/vars.css';
-import {useColorWheel} from '@react-aria/color';
 import {useColorWheelState} from '@react-stately/color';
 import {useFocusRing} from '@react-aria/focus';
 import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useProviderProps} from '@react-spectrum/provider';
+
+export interface SpectrumColorWheelProps extends AriaColorWheelProps, Omit<StyleProps, 'width' | 'height'> {
+  /** The outer diameter of the ColorWheel. */
+  size?: DimensionValue
+}
 
 const WHEEL_THICKNESS = 24;
 

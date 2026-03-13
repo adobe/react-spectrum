@@ -10,11 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color, ColorSliderProps} from '@react-types/color';
+import {Color, ColorChannel, ColorSpace} from './types';
 import {normalizeColor, parseColor} from './Color';
-import {SliderState, useSliderState} from '@react-stately/slider';
+import {SliderProps, SliderState, useSliderState} from '@react-stately/slider';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
+
+export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue' | 'step' | 'pageSize' | 'onChange' | 'onChangeEnd'> {
+  /**
+   * The color space that the slider operates in. The `channel` must be in this color space.
+   * If not provided, this defaults to the color space of the `color` or `defaultColor` value.
+   */
+  colorSpace?: ColorSpace,
+  /** The color channel that the slider manipulates. */
+  channel: ColorChannel,
+  /** Handler that is called when the value changes, as the user drags. */
+  onChange?: (value: Color) => void,
+  /** Handler that is called when the user stops dragging. */
+  onChangeEnd?: (value: Color) => void
+}
 
 export interface ColorSliderState extends SliderState {
   /** The current color value represented by the color slider. */

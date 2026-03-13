@@ -10,21 +10,35 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaDateFieldProps, useDateField} from '@react-aria/datepicker';
 import {classNames} from '@react-spectrum/utils';
 import {createCalendar} from '@internationalized/date';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './styles.css';
-import {DateValue, SpectrumDateFieldProps} from '@react-types/datepicker';
+import {DateValue, MappedDateValue, useDateFieldState} from '@react-stately/datepicker';
 import {Field} from '@react-spectrum/label';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, HelpTextProps, SpectrumFieldValidation, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Input} from './Input';
 import React, {ReactElement, useRef} from 'react';
-import {useDateField} from '@react-aria/datepicker';
-import {useDateFieldState} from '@react-stately/datepicker';
 import {useFocusManagerRef, useFormatHelpText, useFormattedDateWidth} from './utils';
 import {useFormProps} from '@react-spectrum/form';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+
+export interface SpectrumDateFieldBase<T extends DateValue> extends SpectrumLabelableProps, HelpTextProps, SpectrumFieldValidation<MappedDateValue<T>>, StyleProps {
+  /**
+   * Whether the date picker should be displayed with a quiet style.
+   * @default false
+   */
+  isQuiet?: boolean,
+  /**
+   * Whether to show the localized date format as help text below the field.
+   * @default false
+   */
+  showFormatHelpText?: boolean
+}
+
+export interface SpectrumDateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'isInvalid' | 'validationState' | 'autoComplete'>, SpectrumDateFieldBase<T> {}
 
 /**
  * DateFields allow users to enter and edit date and time values using a keyboard.

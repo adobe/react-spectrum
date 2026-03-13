@@ -10,15 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaCheckboxProps} from '@react-types/checkbox';
+import {AriaToggleProps, useToggle} from '@react-aria/toggle';
+import {InputDOMProps, RefObject, ValidationResult} from '@react-types/shared';
 import {InputHTMLAttributes, LabelHTMLAttributes, useEffect, useMemo} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {privateValidationStateProp, useFormValidationState} from '@react-stately/form';
-import {RefObject, ValidationResult} from '@react-types/shared';
-import {ToggleState} from '@react-stately/toggle';
+import {ToggleProps, ToggleState} from '@react-stately/toggle';
 import {useFormValidation} from '@react-aria/form';
 import {usePress} from '@react-aria/interactions';
-import {useToggle} from '@react-aria/toggle';
+
+export interface CheckboxProps extends ToggleProps {
+  /**
+   * Indeterminism is presentational only.
+   * The indeterminate visual representation remains regardless of user interaction.
+   */
+  isIndeterminate?: boolean
+}
+
+export interface AriaCheckboxProps extends CheckboxProps, InputDOMProps, AriaToggleProps {}
 
 export interface CheckboxAria extends ValidationResult {
   /** Props for the label wrapper element. */

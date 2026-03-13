@@ -10,12 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {forwardRef} from 'react';
-import {SpectrumWellProps} from '@react-types/well';
+import React, {forwardRef, ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/well/vars.css';
+
+export interface SpectrumWellProps extends DOMProps, AriaLabelingProps, StyleProps {
+  /**
+   * The contents of the Well.
+   */
+  children: ReactNode,
+  /**
+   * An accessibility role for the well. Use `'region'` when the contents of the well
+   * is important enough to be included in the page table of contents, and `'group'` otherwise.
+   * If a role is provided, then an aria-label or aria-labelledby must also be provided.
+   */
+  role?: 'region' | 'group'
+}
 
 /**
  * A Well is a content container that displays non-editable content separate from other content on the screen.

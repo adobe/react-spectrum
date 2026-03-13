@@ -11,10 +11,20 @@
  */
 
 import {ClearSlots, useDOMRef, useSlotProps, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
-import {ColorVersion, DOMRef} from '@react-types/shared';
+import {ColorVersion, DOMProps, DOMRef, ViewStyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {forwardRef, ReactElement} from 'react';
-import {ViewProps} from '@react-types/view';
+import React, {forwardRef, JSXElementConstructor, ReactElement, ReactNode} from 'react';
+
+export interface ViewProps<C extends ColorVersion> extends ViewStyleProps<C>, DOMProps {
+  /**
+   * The element to render as the node.
+   */
+  elementType?: string | JSXElementConstructor<any>,
+  /**
+   * Children to be displayed in the View.
+   */
+  children?: ReactNode
+}
 
 /**
  * View is a general purpose container with no specific semantics that can be used for custom styling purposes.

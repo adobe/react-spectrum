@@ -18,7 +18,7 @@ import {createContext, forwardRef, ReactNode} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {style} from '../style' with {type: 'macro'};
 import {Text} from './Content';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useIsSkeleton} from './Skeleton';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

@@ -11,9 +11,10 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
+import {AriaMenuProps, useMenu} from '@react-aria/menu';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {classNames, useDOMRef, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, StyleProps} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -23,11 +24,11 @@ import {MenuSection} from './MenuSection';
 import {mergeProps, useLayoutEffect, useSlotId, useSyncRef} from '@react-aria/utils';
 import React, {KeyboardEventHandler, ReactElement, ReactNode, RefObject, useContext, useEffect, useRef, useState} from 'react';
 import {RootMenuTriggerState} from '@react-stately/menu';
-import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useMenu} from '@react-aria/menu';
+
+export interface SpectrumMenuProps<T> extends AriaMenuProps<T>, StyleProps {}
 
 /**
  * Menus display a list of actions or options that a user can choose.

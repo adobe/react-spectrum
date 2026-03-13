@@ -11,13 +11,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '..';
+import {Card, CardView, GalleryLayout, GridLayout, SpectrumCardViewProps, WaterfallLayout} from '..';
 import {Content} from '@react-spectrum/view';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX, useMemo} from 'react';
-import {SpectrumCardViewProps} from '@react-types/card';
 import {useCollator} from '@react-aria/i18n';
 
 const meta: Meta<SpectrumCardViewProps<object>> = {

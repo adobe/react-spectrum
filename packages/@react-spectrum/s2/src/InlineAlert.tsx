@@ -24,7 +24,7 @@ import InfoCircle from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useFocusRing} from 'react-aria';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';

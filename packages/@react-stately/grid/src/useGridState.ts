@@ -1,10 +1,10 @@
 import {getChildNodes, getFirstItem, getLastItem} from '@react-stately/collections';
-import {GridCollection, GridNode} from '@react-types/grid';
+import {GridNode, IGridCollection} from './GridCollection';
 import {Key} from '@react-types/shared';
 import {MultipleSelectionState, MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {useEffect, useMemo, useRef} from 'react';
 
-export interface GridState<T, C extends GridCollection<T>> {
+export interface GridState<T, C extends IGridCollection<T>> {
   collection: C,
   /** A set of keys for rows that are disabled. */
   disabledKeys: Set<Key>,
@@ -14,7 +14,7 @@ export interface GridState<T, C extends GridCollection<T>> {
   isKeyboardNavigationDisabled: boolean
 }
 
-export interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelectionStateProps {
+export interface GridStateOptions<T, C extends IGridCollection<T>> extends MultipleSelectionStateProps {
   collection: C,
   disabledKeys?: Iterable<Key>,
   focusMode?: 'row' | 'cell',
@@ -25,7 +25,7 @@ export interface GridStateOptions<T, C extends GridCollection<T>> extends Multip
 /**
  * Provides state management for a grid component. Handles row selection and focusing a grid cell's focusable child if applicable.
  */
-export function useGridState<T extends object, C extends GridCollection<T>>(props: GridStateOptions<T, C>): GridState<T, C> {
+export function useGridState<T extends object, C extends IGridCollection<T>>(props: GridStateOptions<T, C>): GridState<T, C> {
   let {collection, focusMode} = props;
   // eslint-disable-next-line react-hooks/rules-of-hooks
   let selectionState = props.UNSAFE_selectionState || useMultipleSelectionState(props);

@@ -12,11 +12,18 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {ProgressBarBase} from '@react-spectrum/progress';
+import {ProgressBarBase, SpectrumProgressBarBaseProps} from '@react-spectrum/progress';
 import React from 'react';
-import {SpectrumMeterProps} from '@react-types/meter';
 import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
 import {useMeter} from '@react-aria/meter';
+
+export interface SpectrumMeterProps extends SpectrumProgressBarBaseProps {
+  /** 
+   * The [visual style](https://spectrum.adobe.com/page/meter/#Options) of the Meter. 
+   * @default 'informative'
+   */
+  variant?: 'informative' | 'positive' | 'warning' | 'critical'
+}
 
 /**
  * Meters are visual representations of a quantity or an achievement.

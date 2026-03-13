@@ -11,9 +11,36 @@
  */
 
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
-import {Orientation} from '@react-types/shared';
-import {SliderProps} from '@react-types/slider';
+import {LabelableProps, Orientation, RangeInputBase, ValueBase} from '@react-types/shared';
 import {useCallback, useMemo, useRef, useState} from 'react';
+
+export interface SliderProps<T = number | number[]> extends RangeInputBase<number>, ValueBase<T>, LabelableProps {
+  /**
+   * The orientation of the Slider.
+   * @default 'horizontal'
+   */
+  orientation?: Orientation,
+  /** Whether the whole Slider is disabled. */
+  isDisabled?: boolean,
+  /** Fired when the slider stops moving, due to being let go. */
+  onChangeEnd?: (value: T) => void,
+  // These are duplicated from ValueBase to define defaults for the docs.
+  /**
+   * The slider's minimum value.
+   * @default 0
+   */
+  minValue?: number,
+  /**
+   * The slider's maximum value.
+   * @default 100
+   */
+  maxValue?: number,
+  /**
+   * The slider's step value.
+   * @default 1
+   */
+  step?: number
+}
 
 export interface SliderState {
   /**

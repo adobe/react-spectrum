@@ -12,7 +12,7 @@
 
 import {Button} from '@react-spectrum/button';
 import {Cell, Column, Row, SpectrumColumnProps, TableBody, TableHeader, TableView} from '../';
-import {ColumnSize} from '@react-types/table';
+import {ColumnSize} from '@react-stately/table';
 import {Key} from '@react-types/shared';
 import React, {JSX, useCallback, useMemo, useState} from 'react';
 
