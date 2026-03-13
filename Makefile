@@ -105,7 +105,7 @@ build:
 	node scripts/buildEsm.js
 	node scripts/buildI18n.js
 	node scripts/generateIconDts.js
-	# node scripts/fixUseClient.js
+	node scripts/fixUseClient.js
 	for pkg in types/@react-{spectrum,aria,stately}/*/ types/@internationalized/{message,string,date,number}/ types/{react-aria,react-stately,react-aria-components,@adobe/react-spectrum}; do \
 		mkdir -p packages/$${pkg#types/}/dist; \
 		mv $$pkg packages/$${pkg#types/}/dist/types; \
