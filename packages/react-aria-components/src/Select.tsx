@@ -15,6 +15,7 @@ import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -86,9 +87,7 @@ export interface SelectProps<T extends object = {}, M extends SelectionMode = 's
    * Temporary text that occupies the select when it is empty.
    * @default 'Select an item' (localized)
    */
-  placeholder?: string,
-  /** Whether the trigger is up when the overlay is open. */
-  isTriggerUpWhenOpen?: boolean
+  placeholder?: string
 }
 
 export const SelectContext = createContext<ContextValue<SelectProps<any, SelectionMode>, HTMLDivElement>>(null);
@@ -203,7 +202,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         [SelectStateContext, state],
         [SelectValueContext, valueProps],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: !props.isTriggerUpWhenOpen && state.isOpen, autoFocus: props.autoFocus}],
+        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen, autoFocus: props.autoFocus}],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
           trigger: 'Select',
@@ -224,7 +223,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         }],
         [FieldErrorContext, validation]
       ]}>
-      <div
+      <dom.div
         {...mergeProps(DOMProps, renderProps, focusProps)}
         ref={ref}
         slot={props.slot || undefined}
@@ -238,7 +237,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         <HiddenSelect
           {...hiddenSelectProps}
           autoComplete={props.autoComplete} />
-      </div>
+      </dom.div>
     </Provider>
   );
 }
@@ -262,7 +261,7 @@ export interface SelectValueRenderProps<T> {
   state: SelectState<T, 'single' | 'multiple'>
 }
 
-export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps<T>> {
+export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps<T>, 'span'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-SelectValue'
@@ -347,11 +346,11 @@ export const SelectValue = /*#__PURE__*/ createHideableComponent(function Select
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <span ref={ref} {...DOMProps} {...renderProps} data-placeholder={state.selectedItems.length === 0 || undefined}>
+    <dom.span ref={ref} {...DOMProps} {...renderProps} data-placeholder={state.selectedItems.length === 0 || undefined}>
       {/* clear description and error message slots */}
       <TextContext.Provider value={undefined}>
         {renderProps.children}
       </TextContext.Provider>
-    </span>
+    </dom.span>
   );
 });

@@ -37,7 +37,7 @@ export interface TextFieldRef<T extends HTMLInputElement | HTMLTextAreaElement =
   getInputElement(): T | null
 }
 
-export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
+export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
   /**
    * The size of the text field.
    *

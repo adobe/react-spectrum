@@ -18,7 +18,7 @@ import {tableNestedRows} from '@react-stately/flags';
 import {TableView} from './TableView';
 import {TreeGridTableView} from './TreeGridTableView';
 
-export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
+export interface SpectrumTableProps<T> extends Omit<TableProps<T>, 'treeColumn' | 'expandedKeys' | 'defaultExpandedKeys' | 'onExpandedChange'>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
   /**
    * Sets the amount of vertical padding within each cell.
    * @default 'regular'

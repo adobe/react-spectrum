@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMAttributes, DOMProps, InputDOMProps, RefObject} from '@react-types/shared';
 import {ColorWheelProps, ColorWheelState} from '@react-stately/color';
-import {focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners, useLabels} from '@react-aria/utils';
+import {focusWithoutScrolling, getEventTarget, mergeProps, useFormReset, useGlobalListeners, useLabels} from '@react-aria/utils';
 import React, {ChangeEvent, InputHTMLAttributes, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
@@ -329,7 +329,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
         name,
         form,
         onChange: (e: ChangeEvent<HTMLInputElement>) => {
-          state.setHue(parseFloat(e.target.value));
+          state.setHue(parseFloat(getEventTarget(e).value));
         },
         style: visuallyHiddenProps.style,
         'aria-errormessage': props['aria-errormessage'],

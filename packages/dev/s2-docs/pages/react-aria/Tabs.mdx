@@ -186,46 +186,16 @@ function Example() {
 
 ### Links
 
-Use the `href` prop on a `<Tab>` to create a link. See the [framework setup guide](frameworks) to learn how to integrate with your framework. This example uses a simple hash-based router to sync the selected tab to the URL.
+Use the `href` prop on a `<Tab>` to create a link. By default, links are rendered as an `<a>` element. Use the `render` prop to integrate your framework's link component.
 
-```tsx render
-"use client";
-import {Tabs, TabList, Tab, TabPanels, TabPanel} from 'vanilla-starter/Tabs';
-import {useSyncExternalStore} from 'react';
-
-export default function Example() {
-  let hash = useSyncExternalStore(subscribe, getHash, getHashServer);
-
-  return (
-    <Tabs selectedKey={hash}>
-      <TabList aria-label="Tabs">
-        {/*- begin highlight -*/}
-        <Tab id="#/" href="#/">Home</Tab>
-        {/*- end highlight -*/}
-        <Tab id="#/shared" href="#/shared">Shared</Tab>
-        <Tab id="#/deleted" href="#/deleted">Deleted</Tab>
-      </TabList>
-      <TabPanels>
-        <TabPanel id="#/">Home</TabPanel>
-        <TabPanel id="#/shared">Shared</TabPanel>
-        <TabPanel id="#/deleted">Deleted</TabPanel>
-      </TabPanels>
-    </Tabs>
-  );
-}
-
-function getHash() {
-  return location.hash.startsWith('#/') ? location.hash : '#/';
-}
-
-function getHashServer() {
-  return '#/';
-}
-
-function subscribe(fn) {
-  addEventListener('hashchange', fn);
-  return () => removeEventListener('hashchange', fn);
-}
+```tsx
+<Tab
+  href="/home"
+  render={domProps =>
+    'href' in domProps
+      ? <RouterLink {...domProps} />
+      : <div {...domProps} />
+  } />
 ```
 
 ## Selection

@@ -10,16 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import {Expandable, Key, MultipleSelection, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {GridState, useGridState} from '@react-stately/grid';
 import {ITableCollection, TableCollection} from './TableCollection';
-import {Key, MultipleSelection, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {MultipleSelectionState, MultipleSelectionStateProps} from '@react-stately/selection';
 import {ReactElement, useCallback, useMemo, useState} from 'react';
 import {TableBodyProps} from './TableBody';
 import {TableHeaderProps} from './TableHeader';
 import {useCollection} from '@react-stately/collections';
+import {useControlledState} from '@react-stately/utils';
 
-export interface TableProps<T> extends MultipleSelection, Sortable {
+export interface TableProps<T> extends MultipleSelection, Sortable, Expandable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
   /** A list of row keys to disable. */
@@ -34,7 +35,9 @@ export interface TableProps<T> extends MultipleSelection, Sortable {
    */
   escapeKeyBehavior?: 'clearSelection' | 'none',
   /** Whether selection should occur on press up instead of press down. */
-  shouldSelectOnPressUp?: boolean
+  shouldSelectOnPressUp?: boolean,
+  /** The id of the column that displays hierarchical data. */
+  treeColumn?: Key
 }
 
 export interface TableState<T> extends GridState<T, ITableCollection<T>> {
@@ -49,7 +52,13 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
   isKeyboardNavigationDisabled: boolean,
   /** Set whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
-  setKeyboardNavigationDisabled: (val: boolean) => void
+  setKeyboardNavigationDisabled: (val: boolean) => void,
+  /** A set of keys for items that are expanded. */
+  expandedKeys: Set<Key>,
+  /** Toggles the expanded state for a row by its key. */
+  toggleKey(key: Key): void,
+  /** The id of the column that displays hierarchical data. */
+  treeColumn: Key | null
 }
 
 export interface CollectionBuilderContext<T> {
@@ -59,7 +68,7 @@ export interface CollectionBuilderContext<T> {
   columns: Node<T>[]
 }
 
-export interface TableStateProps<T> extends Omit<TableProps<T>, 'children'>, MultipleSelectionStateProps, Sortable {
+export interface TableStateProps<T> extends MultipleSelectionStateProps, Expandable, Sortable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children?: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
   /** A pre-constructed collection to use instead of building one from items and children. */
@@ -71,7 +80,9 @@ export interface TableStateProps<T> extends Omit<TableProps<T>, 'children'>, Mul
    */
   showDragButtons?: boolean,
   /** @private - do not use unless you know what you're doing. */
-  UNSAFE_selectionState?: MultipleSelectionState
+  UNSAFE_selectionState?: MultipleSelectionState,
+  /** The id of the column that displays hierarchical data. */
+  treeColumn?: Key
 }
 
 const OPPOSITE_SORT_DIRECTION = {
@@ -85,7 +96,7 @@ const OPPOSITE_SORT_DIRECTION = {
  */
 export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T> {
   let [isKeyboardNavigationDisabled, setKeyboardNavigationDisabled] = useState(false);
-  let {selectionMode = 'none', showSelectionCheckboxes, showDragButtons} = props;
+  let {selectionMode = 'none', showSelectionCheckboxes, showDragButtons, treeColumn = null} = props;
 
   let context = useMemo(() => ({
     showSelectionCheckboxes: showSelectionCheckboxes && selectionMode !== 'none',
@@ -106,6 +117,12 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     disabledBehavior: props.disabledBehavior || 'selection'
   });
 
+  let [expandedKeys, setExpandedKeys] = useControlledState(
+    props.expandedKeys ? new Set(props.expandedKeys) : undefined,
+    props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
+    props.onExpandedChange
+  );
+
   return {
     collection,
     disabledKeys,
@@ -121,7 +138,21 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
           ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
           : 'ascending')
       });
-    }
+    },
+    expandedKeys,
+    toggleKey(key) {
+      setExpandedKeys(keys => {
+        let newKeys = new Set(keys);
+        if (newKeys.has(key)) {
+          newKeys.delete(key);
+        } else {
+          newKeys.add(key);
+        }
+
+        return newKeys;
+      });
+    },
+    treeColumn
   };
 }
 

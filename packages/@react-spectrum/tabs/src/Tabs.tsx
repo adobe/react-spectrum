@@ -36,7 +36,7 @@ import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
-export interface SpectrumTabsProps<T> extends Omit<SingleSelection, 'onSelectionChange' | 'disallowEmptySelection'>, AriaLabelingProps, DOMProps, StyleProps {
+export interface SpectrumTabsProps<T> extends Omit<SingleSelection, 'onSelectionChange' | 'disallowEmptySelection' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange'>, AriaLabelingProps, DOMProps, StyleProps {
   /** The children of the `<Tabs>` element. Should include `<TabList>` and `<TabPanels>` elements. */
   children: ReactNode,
   /** The item objects for each tab, for dynamic collections. */
@@ -51,6 +51,10 @@ export interface SpectrumTabsProps<T> extends Omit<SingleSelection, 'onSelection
   isEmphasized?: boolean,
   /** The amount of space between the tabs. */
   density?: 'compact' | 'regular',
+  /** The currently selected key in the collection (controlled). */
+  selectedKey?: Key,
+  /** The initial selected keys in the collection (uncontrolled). */
+  defaultSelectedKey?: Key,
   /** Handler that is called when the selection changes. */
   onSelectionChange?: (key: Key) => void,
   /**

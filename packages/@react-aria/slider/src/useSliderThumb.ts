@@ -1,5 +1,5 @@
 import {AriaLabelingProps, AriaValidationProps, DOMAttributes, DOMProps, FocusableDOMProps, FocusableProps, InputDOMProps, LabelableProps, Orientation, RefObject, ValidationState} from '@react-types/shared';
-import {clamp, focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners} from '@react-aria/utils';
+import {clamp, focusWithoutScrolling, getEventTarget, mergeProps, useFormReset, useGlobalListeners} from '@react-aria/utils';
 import {getSliderThumbId, sliderData} from './utils';
 import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {SliderState} from '@react-stately/slider';
@@ -278,7 +278,7 @@ export function useSliderThumb(
       'aria-describedby': [data['aria-describedby'], opts['aria-describedby']].filter(Boolean).join(' '),
       'aria-details': [data['aria-details'], opts['aria-details']].filter(Boolean).join(' '),
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
-        state.setThumbValue(index, parseFloat(e.target.value));
+        state.setThumbValue(index, parseFloat(getEventTarget(e).value));
       }
     }),
     thumbProps: {

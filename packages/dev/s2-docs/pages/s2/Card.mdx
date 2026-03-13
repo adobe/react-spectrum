@@ -236,6 +236,7 @@ import Select from '@react-spectrum/s2/icons/Select';
 Wrap a card in a [Skeleton](Skeleton) to display a loading state. Placeholder text content and images are displayed in a skeleton style.
 
 ```tsx render docs={docs.exports.Skeleton} links={docs.links} props={['isLoading']} initialProps={{isLoading: true}} type="s2" wide
+"use client";
 import {Skeleton, Card, CardPreview, Image, Content, Text} from '@react-spectrum/s2';
 
 <Skeleton isLoading>

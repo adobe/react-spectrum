@@ -58,7 +58,7 @@ function nextDropTarget(
     } else {
       nextKey = keyboardDelegate.getKeyBelow?.(target.key);
     }
-    let nextCollectionKey = collection.getKeyAfter(target.key);
+    let nextCollectionKey = getNextItem(collection, target.key, key => collection.getKeyAfter(key));
 
     // If the keyboard delegate did not move to the next key in the collection,
     // jump to that key with the same drop position. Otherwise, try the other
@@ -186,7 +186,7 @@ function previousDropTarget(
     } else {
       prevKey = keyboardDelegate.getKeyAbove?.(target.key);
     }
-    let prevCollectionKey = collection.getKeyBefore(target.key);
+    let prevCollectionKey = getNextItem(collection, target.key, key => collection.getKeyBefore(key));
 
     // If the keyboard delegate did not move to the next key in the collection,
     // jump to that key with the same drop position. Otherwise, try the other
@@ -258,7 +258,7 @@ function getLastChild(collection: Collection<Node<unknown>>, key: Key): DropTarg
   // getChildNodes still returns child tree items even when the item is collapsed.
   // Checking if the next item has a greater level is a silly way to determine if the item is expanded.
   let targetNode = collection.getItem(key);
-  let nextKey = collection.getKeyAfter(key);
+  let nextKey = getNextItem(collection, key, key => collection.getKeyAfter(key));
   let nextNode = nextKey != null ? collection.getItem(nextKey) : null;
   if (targetNode && nextNode && nextNode.level > targetNode.level) {
     let children = getChildNodes(targetNode, collection);
@@ -279,4 +279,15 @@ function getLastChild(collection: Collection<Node<unknown>>, key: Key): DropTarg
   }
 
   return null;
+}
+
+// Find the next or previous item in a collection, skipping over other types of nodes (e.g. content).
+function getNextItem(collection: Collection<Node<unknown>>, key: Key, getNextKey: (key: Key) => Key | null): Key | null {
+  let nextCollectionKey = getNextKey(key);
+  let nextCollectionNode = nextCollectionKey != null ? collection.getItem(nextCollectionKey) : null;
+  while (nextCollectionNode && nextCollectionNode.type !== 'item') {
+    nextCollectionKey = getNextKey(nextCollectionNode.key);
+    nextCollectionNode = nextCollectionKey != null ? collection.getItem(nextCollectionKey) : null;
+  }
+  return nextCollectionKey;
 }

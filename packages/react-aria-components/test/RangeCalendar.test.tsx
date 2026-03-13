@@ -132,6 +132,23 @@ describe('RangeCalendar', () => {
     expect(group).toHaveAttribute('aria-label', expect.stringContaining('test'));
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} = renderCalendar(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <table {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let group = getByRole('application');
+    expect(group).toHaveAttribute('data-custom', 'true');
+
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('data-custom', 'true');
+
+    for (let cell of within(grid).getAllByRole('button')) {
+      expect(cell).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
   it('should support render props', () => {
     let {getByRole} = render(
       <RangeCalendar

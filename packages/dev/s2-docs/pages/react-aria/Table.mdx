@@ -20,36 +20,66 @@ export const description = 'Displays data in rows and columns and enables a user
 <PageDescription>{docs.exports.Table.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="vanilla" files={["starters/docs/src/Table.tsx", "starters/docs/src/Table.css"]}
+  ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple', 'treeColumn': 'name'}} type="vanilla" files={["starters/docs/src/Table.tsx", "starters/docs/src/Table.css"]}
   "use client";
   import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
 
   <Table/* PROPS */>
     <TableHeader>
-      <Column isRowHeader>Name</Column>
-      <Column>Type</Column>
-      <Column>Date Modified</Column>
+      <Column id="name" isRowHeader>Name</Column>
+      <Column id="type">Type</Column>
+      <Column id="date">Date Modified</Column>
     </TableHeader>
     <TableBody>
-      <Row id="row-1">
+      <Row id="games">
         <Cell>Games</Cell>
-        <Cell>File folder</Cell>
-        <Cell>6/7/2020</Cell>
+        <Cell>Folder</Cell>
+        <Cell>6/7/2023</Cell>
+        <Row id="mario">
+          <Cell>Mario Kart</Cell>
+          <Cell>Game</Cell>
+          <Cell>8/27/1992</Cell>
+        </Row>
+        <Row id="tetris">
+          <Cell>Tetris</Cell>
+          <Cell>Game</Cell>
+          <Cell>1/27/1988</Cell>
+        </Row>
+        <Row id="pacman">
+          <Cell>Pac-Man</Cell>
+          <Cell>Game</Cell>
+          <Cell>5/22/1980</Cell>
+        </Row>
       </Row>
-      <Row id="row-2">
-        <Cell>Program Files</Cell>
-        <Cell>File folder</Cell>
-        <Cell>4/7/2021</Cell>
+      <Row id="apps">
+        <Cell>Applications</Cell>
+        <Cell>Folder</Cell>
+        <Cell>4/7/2025</Cell>
+        <Row id="ps">
+          <Cell>Photoshop</Cell>
+          <Cell>Application</Cell>
+          <Cell>2/19/1990</Cell>
+        </Row>
+        <Row id="premiere">
+          <Cell>Premiere</Cell>
+          <Cell>Application</Cell>
+          <Cell>9/24/2003</Cell>
+        </Row>
+        <Row id="lightroom">
+          <Cell>Lightroom</Cell>
+          <Cell>Application</Cell>
+          <Cell>10/18/2017</Cell>
+        </Row>
       </Row>
-      <Row id="row-3">
-        <Cell>bootmgr</Cell>
-        <Cell>System file</Cell>
-        <Cell>11/20/2010</Cell>
+      <Row id="report">
+        <Cell>2024 Financial Report</Cell>
+        <Cell>PDF Document</Cell>
+        <Cell>12/30/2024</Cell>
       </Row>
-      <Row id="row-4">
-        <Cell>log.txt</Cell>
+      <Row id="job">
+        <Cell>Job Posting</Cell>
         <Cell>Text Document</Cell>
-        <Cell>1/18/2016</Cell>
+        <Cell>1/18/2025</Cell>
       </Row>
     </TableBody>
   </Table>
@@ -61,30 +91,60 @@ export const description = 'Displays data in rows and columns and enables a user
 
   <Table/* PROPS */>
     <TableHeader>
-      <Column isRowHeader>Name</Column>
-      <Column>Type</Column>
-      <Column>Date Modified</Column>
+      <Column id="name" isRowHeader>Name</Column>
+      <Column id="type">Type</Column>
+      <Column id="date">Date Modified</Column>
     </TableHeader>
     <TableBody>
-      <Row id="row-1">
+      <Row id="games">
         <Cell>Games</Cell>
-        <Cell>File folder</Cell>
-        <Cell>6/7/2020</Cell>
+        <Cell>Folder</Cell>
+        <Cell>6/7/2023</Cell>
+        <Row id="mario">
+          <Cell>Mario Kart</Cell>
+          <Cell>Game</Cell>
+          <Cell>8/27/1992</Cell>
+        </Row>
+        <Row id="tetris">
+          <Cell>Tetris</Cell>
+          <Cell>Game</Cell>
+          <Cell>1/27/1988</Cell>
+        </Row>
+        <Row id="pacman">
+          <Cell>Pac-Man</Cell>
+          <Cell>Game</Cell>
+          <Cell>5/22/1980</Cell>
+        </Row>
       </Row>
-      <Row id="row-2">
-        <Cell>Program Files</Cell>
-        <Cell>File folder</Cell>
-        <Cell>4/7/2021</Cell>
+      <Row id="apps">
+        <Cell>Applications</Cell>
+        <Cell>Folder</Cell>
+        <Cell>4/7/2025</Cell>
+        <Row id="ps">
+          <Cell>Photoshop</Cell>
+          <Cell>Application</Cell>
+          <Cell>2/19/1990</Cell>
+        </Row>
+        <Row id="premiere">
+          <Cell>Premiere</Cell>
+          <Cell>Application</Cell>
+          <Cell>9/24/2003</Cell>
+        </Row>
+        <Row id="lightroom">
+          <Cell>Lightroom</Cell>
+          <Cell>Application</Cell>
+          <Cell>10/18/2017</Cell>
+        </Row>
       </Row>
-      <Row id="row-3">
-        <Cell>bootmgr</Cell>
-        <Cell>System file</Cell>
-        <Cell>11/20/2010</Cell>
+      <Row id="report">
+        <Cell>2024 Financial Report</Cell>
+        <Cell>PDF Document</Cell>
+        <Cell>12/30/2024</Cell>
       </Row>
-      <Row id="row-4">
-        <Cell>log.txt</Cell>
+      <Row id="job">
+        <Cell>Job Posting</Cell>
         <Cell>Text Document</Cell>
-        <Cell>1/18/2016</Cell>
+        <Cell>1/18/2025</Cell>
       </Row>
     </TableBody>
   </Table>
@@ -170,6 +230,69 @@ function FileTable() {
   <Content>Dynamic collections are automatically memoized to improve performance. Use the `dependencies` prop to invalidate cached elements that depend
 on external state (e.g. `columns` in this example).</Content>
 </InlineAlert>
+
+### Expandable rows
+
+Rows can be nested to display hierarchical data. Use the `treeColumn` prop to designate a column, and render a `<Button slot="chevron">` within the cells in that column to allow users to expand and collapse the row. Use the `expandedKeys` prop to control the expanded rows.
+
+```tsx render
+"use client";
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+import {Collection, type Key} from 'react-aria-components';
+import {useState} from 'react';
+
+/*- begin collapse -*/
+const rows = [
+  {id: '1', title: 'Documents', type: 'Directory', date: '10/20/2025', children: [
+    {id: '2', title: 'Project', type: 'Directory', date: '8/2/2025', children: [
+      {id: '3', title: 'Weekly Report', type: 'File', date: '7/10/2025', children: []},
+      {id: '4', title: 'Budget', type: 'File', date: '8/20/2025', children: []}
+    ]}
+  ]},
+  {id: '5', title: 'Photos', type: 'Directory', date: '2/3/2026', children: [
+    {id: '6', title: 'Image 1', type: 'File', date: '1/23/2026', children: []},
+    {id: '7', title: 'Image 2', type: 'File', date: '2/3/2026', children: []}
+  ]}
+];
+/*- end collapse -*/
+
+function Example() {
+  let [expandedKeys, setExpandedKeys] = useState(new Set<Key>(['1']))
+
+  return (
+    <Table
+      aria-label="Files"
+      /*- begin highlight -*/
+      treeColumn="name"
+      expandedKeys={expandedKeys}
+      onExpandedChange={setExpandedKeys}>
+      {/*- end highlight -*/}
+      <TableHeader>
+        <Column id="name" isRowHeader>Name</Column>
+        <Column id="type">Type</Column>
+        <Column id="date">Date Modified</Column>
+      </TableHeader>
+      <TableBody items={rows}>
+        {function renderItem(item) {
+          return (
+            <Row id={item.id}>
+              <Cell>{item.title}</Cell>
+              <Cell>{item.type}</Cell>
+              <Cell>{item.date}</Cell>
+              {/*- begin highlight -*/}
+              {/* recursively render children */}
+              <Collection items={item.children}>
+                {renderItem}
+              </Collection>
+              {/*- end highlight -*/}
+            </Row>
+          );
+        }}
+      </TableBody>
+    </Table>
+  );
+}
+```
 
 ### Asynchronous loading
 
@@ -261,7 +384,7 @@ function AsyncSortTable() {
 
 ### Links
 
-Use the `href` prop on a `<Row>` to create a link. See the [framework setup guide](frameworks) to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection) for more details.
+Use the `href` prop on a `<Row>` to create a link. Link interactions vary depending on the selection behavior. See the [selection guide](selection) for more details.
 
 ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple'}} wide
 "use client";
@@ -294,6 +417,11 @@ import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/
   </TableBody>
 </Table>
 ```
+
+<InlineAlert variant="notice" UNSAFE_style={{marginTop: '2rem'}}>
+  <Heading>Client-side routing</Heading>
+  <Content>Due to [HTML spec limitations](https://github.com/w3c/html-aria/issues/473), table rows cannot be rendered as `<a>` elements. React Aria handles link clicks with JavaScript and triggers native navigation. When using a client-side router, use the `onAction` event to programmatically trigger navigation instead of the `href` prop.</Content>
+</InlineAlert>
 
 ### Empty state
 
@@ -590,28 +718,42 @@ Table supports drag and drop interactions when the `dragAndDropHooks` prop is pr
 ```tsx render
 "use client";
 import {Table, TableHeader, TableBody, Column, Row, Cell} from 'vanilla-starter/Table';
-import {useDragAndDrop, useListData} from 'react-aria-components';
+import {useDragAndDrop, useTreeData, Collection} from 'react-aria-components';
 
 function ReorderableTable() {
-  let list = useListData({
+  let tree = useTreeData({
     initialItems: [
-      {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
-      {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
-      {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
-      {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+      {id: '1', title: 'Documents', type: 'Directory', date: '10/20/2025', children: [
+        {id: '2', title: 'Project', type: 'Directory', date: '8/2/2025', children: [
+          {id: '3', title: 'Weekly Report', type: 'File', date: '7/10/2025', children: []},
+          {id: '4', title: 'Budget', type: 'File', date: '8/20/2025', children: []}
+        ]}
+      ]},
+      {id: '5', title: 'Photos', type: 'Directory', date: '2/3/2026', children: [
+        {id: '6', title: 'Image 1', type: 'File', date: '1/23/2026', children: []},
+        {id: '7', title: 'Image 2', type: 'File', date: '2/3/2026', children: []}
+      ]}
     ]
   });
 
   ///- begin highlight -///
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys, items: typeof list.items) => items.map(item => ({
-      'text/plain': item.name
-    })),
-    onReorder(e) {
+    getItems: (keys, items: typeof tree.items) => items.map(item => ({'text/plain': item.value.title})),
+    onMove(e) {
       if (e.target.dropPosition === 'before') {
-        list.moveBefore(e.target.key, e.keys);
+        tree.moveBefore(e.target.key, e.keys);
       } else if (e.target.dropPosition === 'after') {
-        list.moveAfter(e.target.key, e.keys);
+        tree.moveAfter(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'on') {
+        // Move items to become children of the target
+        let targetNode = tree.getItem(e.target.key);
+        if (targetNode) {
+          let targetIndex = targetNode.children ? targetNode.children.length : 0;
+          let keyArray = Array.from(e.keys);
+          for (let i = 0; i < keyArray.length; i++) {
+            tree.move(keyArray[i], e.target.key, targetIndex + i);
+          }
+        }
       }
     }
   });
@@ -621,23 +763,30 @@ function ReorderableTable() {
     <Table
       aria-label="Files"
       selectionMode="multiple"
+      treeColumn="name"
+      defaultExpandedKeys={['5']}
       ///- begin highlight -///
       dragAndDropHooks={dragAndDropHooks}
       ///- end highlight -///
     >
       <TableHeader>
-        <Column isRowHeader>Name</Column>
-        <Column>Type</Column>
-        <Column>Date Modified</Column>
+        <Column id="name" isRowHeader>Name</Column>
+        <Column id="type">Type</Column>
+        <Column id="date">Date Modified</Column>
       </TableHeader>
-      <TableBody items={list.items}>
-        {item => (
-          <Row>
-            <Cell>{item.name}</Cell>
-            <Cell>{item.type}</Cell>
-            <Cell>{item.date}</Cell>
-          </Row>
-        )}
+      <TableBody items={tree.items}>
+        {function renderItem(item) {
+          return (
+            <Row id={item.key}>
+              <Cell>{item.value.title}</Cell>
+              <Cell>{item.value.type}</Cell>
+              <Cell>{item.value.date}</Cell>
+              {item.children && <Collection items={item.children}>
+                {renderItem}
+              </Collection>}
+            </Row>
+          );
+        }}
       </TableBody>
     </Table>
   );
@@ -662,13 +811,18 @@ function ReorderableTable() {
       <Column />
     </TableHeader>
     <TableBody>
-      <Row id="row-1">
+      <Row>
         <Cell><Button slot="drag" /></Cell>
         <Cell>
           <Checkbox slot="selection" /> or <SelectionIndicator />
         </Cell>
+        <Cell>
+          <Button slot="chevron" />
+        </Cell>
         <Cell />
-        <Cell />
+        <Row>
+          {/* ... */}
+        </Row>
       </Row>
       <TableLoadMoreItem />
     </TableBody>
@@ -694,7 +848,13 @@ function ReorderableTable() {
 
 ### Row
 
-<PropTable component={docs.exports.Row} links={docs.links} showDescription />
+<PropTable
+  component={docs.exports.Row}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--table-row-level': "The depth of the row within the table. Useful to calculate indentation."
+  }} />
 
 ### Cell
 
@@ -710,4 +870,10 @@ function ReorderableTable() {
 
 ### TableLoadMoreItem
 
-<PropTable component={docs.exports.TableLoadMoreItem} links={docs.links} showDescription />
+<PropTable
+  component={docs.exports.TableLoadMoreItem}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--table-row-level': "The depth of the row within the table. Useful to calculate indentation."
+  }} />

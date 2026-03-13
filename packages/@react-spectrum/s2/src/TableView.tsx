@@ -17,10 +17,12 @@ import {
   ButtonContext,
   CellRenderProps,
   Collection,
+  CollectionRendererContext,
   ColumnRenderProps,
   ColumnResizer,
   ContextValue,
   DEFAULT_SLOT,
+  DefaultCollectionRenderer,
   Form,
   Key,
   OverlayTriggerStateContext,
@@ -59,7 +61,7 @@ import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {ColumnSize} from 'react-stately';
 import {CustomDialog, DialogContainer} from '..';
 import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
-import {getActiveElement, getOwnerDocument, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import {getActiveElement, getOwnerDocument, isFocusWithin, nodeContains, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-stately/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -75,7 +77,7 @@ import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {Button as SpectrumButton} from './Button';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from './useDOMRef';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMediaQuery} from './useMediaQuery';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -121,7 +123,7 @@ interface S2TableProps {
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
-export interface TableViewProps extends Omit<RACTableProps, 'style' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, S2TableProps {
+export interface TableViewProps extends Omit<RACTableProps, 'style' | 'className' | 'render' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, S2TableProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
@@ -389,7 +391,7 @@ const centeredWrapper = style({
   height: 'full'
 });
 
-export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | keyof GlobalDOMAttributes> {}
+export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes> {}
 
 /**
  * The body of a `<Table>`, containing the table rows.
@@ -440,7 +442,9 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   if (renderEmptyState != null && !isLoading) {
     emptyRender = (props: TableBodyRenderProps) => (
       <div className={centeredWrapper}>
-        {renderEmptyState(props)}
+        <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+          {renderEmptyState(props)}
+        </CollectionRendererContext.Provider>
       </div>
     );
   } else if (loadingState === 'loading') {
@@ -473,7 +477,10 @@ const cellFocus = {
   },
   outlineOffset: -2,
   outlineWidth: 2,
-  outlineColor: 'focus-ring',
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  },
   borderRadius: '[6px]'
 } as const;
 
@@ -523,7 +530,7 @@ const columnStyles = style({
   forcedColorAdjust: 'none'
 });
 
-export interface ColumnProps extends Omit<RACColumnProps, 'style' | 'className' | keyof GlobalDOMAttributes> {
+export interface ColumnProps extends Omit<RACColumnProps, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes> {
   /** Whether the column should render a divider between it and the next column. */
   showDivider?: boolean,
   /** Whether the column allows resizing. */
@@ -886,7 +893,7 @@ const selectAllCheckboxColumn = style({
   backgroundColor: 'gray-75'
 });
 
-export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | keyof GlobalDOMAttributes> {}
+export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'render' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | keyof GlobalDOMAttributes> {}
 
 /**
  * A header within a `<Table>`, containing the table columns.
@@ -944,21 +951,32 @@ const commonCellStyles = {
   borderXWidth: 0,
   borderStyle: 'solid',
   position: 'relative',
-  color: {
-    default: 'gray-800',
-    forcedColors: 'ButtonText'
-  },
+  color: '--rowTextColor',
   outlineStyle: 'none',
   paddingX: 16 // table-edge-to-content
 } as const;
 
-const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
-  ...commonCellStyles,
-  color: {
-    default: baseColor('neutral-subdued'),
-    isSelected: baseColor('neutral')
+const treeColumnStyles = {
+  '--indent': {
+    type: 'width',
+    value: 16
   },
-  paddingY: centerPadding(),
+  '--treeColumnPadding': {
+    type: 'width',
+    value: {
+      default: 16,
+      isTreeColumnWithNoChildren: 36
+    }
+  },
+  paddingStart: {
+    default: 16,
+    isTreeColumn: 'calc(var(--treeColumnPadding) + (var(--table-row-level, 1) - 1) * var(--indent))'
+  }
+} as const;
+
+const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean, isTreeColumnWithNoChildren: boolean}>({
+  ...commonCellStyles,
+  ...treeColumnStyles,
   minHeight: {
     default: 40,
     density: {
@@ -1031,7 +1049,7 @@ const cellContent = style({
   }
 });
 
-export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | keyof GlobalDOMAttributes>, Pick<ColumnProps, 'align' | 'showDivider'> {
+export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, Pick<ColumnProps, 'align' | 'showDivider'> {
   /** @private */
   isSticky?: boolean,
   /** The content to render as the cell children. */
@@ -1056,12 +1074,16 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       className={renderProps => cell({
         ...renderProps,
         ...tableVisualOptions,
-        isDivider: showDivider
+        isDivider: showDivider,
+        isTreeColumnWithNoChildren: renderProps.isTreeColumn && !renderProps.hasChildItems
       })}
       textValue={textValue}
       {...otherProps}>
-      {({isFocusVisible}) => (
+      {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
+          {hasChildItems && isTreeColumn && 
+            <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
+          }
           <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
           {isFocusVisible && <CellFocusRing />}
         </>
@@ -1070,9 +1092,78 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
   );
 });
 
+interface ExpandableRowChevronProps {
+  isExpanded?: boolean,
+  isDisabled?: boolean,
+  isRTL?: boolean,
+  isHidden?: boolean
+}
 
-const editableCell = style<CellRenderProps & S2TableProps & {isDivider: boolean, selectionMode?: 'none' | 'single' | 'multiple', isSaving?: boolean}>({
+const expandButton = style<ExpandableRowChevronProps>({
+  gridArea: 'expand-button',
+  color: {
+    default: 'inherit',
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
+  },
+  height: 'full',
+  width: 40,
+  marginStart: -12,
+  display: 'flex',
+  flexWrap: 'wrap',
+  alignContent: 'center',
+  justifyContent: 'center',
+  outlineStyle: 'none',
+  cursor: 'default',
+  transform: {
+    isExpanded: {
+      default: 'rotate(90deg)',
+      isRTL: 'rotate(-90deg)'
+    }
+  },
+  padding: 0,
+  transition: 'default',
+  backgroundColor: 'transparent',
+  borderStyle: 'none',
+  disableTapHighlight: true,
+  visibility: {
+    isHidden: 'hidden'
+  }
+});
+
+function ExpandableRowChevron(props: ExpandableRowChevronProps) {
+  let ref = useRef<HTMLButtonElement>(null);
+  let {isExpanded, isHidden} = props;
+  let {direction} = useLocale();
+
+  return (
+    <Button
+      {...props}
+      ref={ref}
+      slot="chevron"
+      className={renderProps => expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl', isHidden})}>
+      <Chevron
+        className={style({
+          scale: {
+            direction: {
+              ltr: '1',
+              rtl: '-1'
+            }
+          },
+          '--iconPrimary': {
+            type: 'fill',
+            value: 'currentColor'
+          }
+        })({direction})} />
+    </Button>
+  );
+}
+
+const editableCell = style<CellRenderProps & S2TableProps & {isDivider: boolean, selectionMode?: 'none' | 'single' | 'multiple', isSaving?: boolean, isTreeColumnWithNoChildren: boolean}>({
   ...commonCellStyles,
+  ...treeColumnStyles,
   color: {
     default: baseColor('neutral'),
     isSaving: baseColor('neutral-subdued')
@@ -1156,12 +1247,18 @@ export const EditableCell = forwardRef(function EditableCell(props: EditableCell
         ...renderProps,
         ...tableVisualOptions,
         isDivider: showDivider,
-        isSaving
+        isSaving,
+        isTreeColumnWithNoChildren: renderProps.isTreeColumn && !renderProps.hasChildItems
       })}
       textValue={textValue}
       {...otherProps}>
-      {({isFocusVisible}) => (
-        <EditableCellInner {...props} isFocusVisible={isFocusVisible} cellRef={domRef as RefObject<HTMLDivElement>} />
+      {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
+        <>
+          {hasChildItems && isTreeColumn && 
+            <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
+          }
+          <EditableCellInner {...props} isFocusVisible={isFocusVisible} cellRef={domRef as RefObject<HTMLDivElement>} />
+        </>
       )}
     </RACCell>
   );
@@ -1209,7 +1306,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
     let boundingRect = cell?.parentElement?.getBoundingClientRect();
     let verticalOffset = (boundingRect?.top ?? 0) - (boundingRect?.bottom ?? 0);
 
-    let tableWidth = cellRef.current?.closest('[role="grid"]')?.clientWidth || 0;
+    let tableWidth = cellRef.current?.closest('[role="grid"],[role="treegrid"]')?.clientWidth || 0;
     setTriggerWidth(width);
     setVerticalOffset(verticalOffset);
     setTableWidth(tableWidth);
@@ -1221,7 +1318,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
     if (isOpen) {
       let activeElement = getActiveElement(getOwnerDocument(formRef.current));
       if (activeElement
-        && formRef.current?.contains(activeElement)
+        && nodeContains(formRef.current, activeElement)
         // not going to handle contenteditable https://stackoverflow.com/questions/6139107/programmatically-select-text-in-a-contenteditable-html-element
         // seems like an edge case anyways
         && (
@@ -1302,7 +1399,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
             onOpenChange={setIsOpen}
             ref={popoverRef}
             shouldCloseOnInteractOutside={() => {
-              if (!popoverRef.current?.contains(document.activeElement)) {
+              if (!isFocusWithin(popoverRef.current)) {
                 return false;
               }
               formRef.current?.requestSubmit();
@@ -1394,6 +1491,16 @@ const rowBackgroundColor = {
   }
 } as const;
 
+const rowTextColor = {
+  default: baseColor('neutral-subdued'),
+  isSelected: baseColor('neutral'),
+  isDisabled: {
+    default: 'disabled',
+    forcedColors: 'GrayText'
+  },
+  forcedColors: 'ButtonText'
+} as const;
+
 const row = style<RowRenderProps & S2TableProps>({
   height: 'full',
   position: 'relative',
@@ -1402,6 +1509,10 @@ const row = style<RowRenderProps & S2TableProps>({
   '--rowBackgroundColor': {
     type: 'backgroundColor',
     value: rowBackgroundColor
+  },
+  '--rowTextColor': {
+    type: 'color',
+    value: rowTextColor
   },
   '--rowFocusIndicatorColor': {
     type: 'outlineColor',
@@ -1447,6 +1558,13 @@ const row = style<RowRenderProps & S2TableProps>({
   forcedColorAdjust: 'none'
 });
 
+const selectionCheckbox = style({
+  visibility: {
+    default: 'visible',
+    ':is([slot="selection"][data-disabled="true"])': 'hidden'
+  }
+});
+
 export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'isDisabled' | 'onAction' | 'children' | 'textValue' | 'dependencies' | keyof GlobalDOMAttributes>, LinkDOMProps {}
 
 /**
@@ -1466,14 +1584,14 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       className={renderProps => row({
         ...renderProps,
         ...tableVisualOptions
-      }) + (renderProps.isFocusVisible && ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)'))}
+      }) + (renderProps.isFocusVisible ? ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')}
       {...otherProps}>
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
         // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
         // The `spread` otherProps must be after className in Cell.
         // @ts-ignore
         <Cell isSticky className={checkboxCellStyle}>
-          <Checkbox slot="selection" />
+          <Checkbox slot="selection" styles={selectionCheckbox} />
         </Cell>
       )}
       <Collection items={columns} dependencies={[...dependencies, columns]}>

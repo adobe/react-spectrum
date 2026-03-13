@@ -14,12 +14,16 @@ import {Collection, CollectionBase, CollectionStateBase, Key, Node, SingleSelect
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {useEffect, useRef} from 'react';
 
-export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection' | 'onSelectionChange'> {
+export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange'> {
   /**
    * Whether the TabList is disabled.
    * Shows that a selection exists, but is not available in that circumstance.
    */
   isDisabled?: boolean,
+  /** The currently selected key in the collection (controlled). */
+  selectedKey?: Key,
+  /** The initial selected keys in the collection (uncontrolled). */
+  defaultSelectedKey?: Key,
   /** Handler that is called when the selection changes. */
   onSelectionChange?: (key: Key) => void
 }

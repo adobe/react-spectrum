@@ -3,11 +3,14 @@
 import {ActionButton, SearchField, TextFieldRef} from '@react-spectrum/s2';
 import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
+import {ColorSearchSkeleton} from './colorSearchData';
 import {ComponentCardView} from './ComponentCardView';
 import {
   getResourceTags,
+  LazyColorSearchView,
   LazyIconSearchView,
   SearchEmptyState,
+  useFilteredColors,
   useSearchMenuState
 } from './searchUtils';
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
@@ -16,9 +19,10 @@ import React, {CSSProperties, Suspense, useCallback, useEffect, useRef, useState
 import {SearchTagGroups} from './SearchTagGroups';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
-import {useRouter} from './Router';
+import {TypographySearchView} from './TypographySearchView';
 import './SearchMenu.css';
 import {preloadComponentImages} from './ComponentCard';
+import {useRouter} from './Router';
 
 export const divider = style({
   marginY: 8,
@@ -87,6 +91,8 @@ export function SearchMenu(props: SearchMenuProps) {
     isOpen: isSearchOpen
   });
 
+  const filteredColors = useFilteredColors(searchValue);
+
   // Auto-focus search field when menu opens
   useEffect(() => {
     if (isSearchOpen) {
@@ -154,7 +160,10 @@ export function SearchMenu(props: SearchMenuProps) {
           const placeholderText = getPlaceholderText(tab.label);
           return (
             <TabPanel key={tab.id} id={tab.id}>
-              <Autocomplete filter={isIconsSelected ? iconFilter : undefined}>
+              <Autocomplete
+                key={selectedTagId === 'typography' ? 'typography' : 'default'}
+                filter={isIconsSelected ? iconFilter : undefined}
+                disableVirtualFocus={selectedTagId === 'typography'}>
                 <div className={style({display: 'flex', flexDirection: 'column', height: 'full'})}>
                   <div className={style({flexShrink: 0, marginStart: 16, marginEnd: 64})}>
                     <SearchField
@@ -169,16 +178,19 @@ export function SearchMenu(props: SearchMenuProps) {
                   </div>
 
                   <CloseButton onClose={onClose} />
-
-                  <SearchTagGroups
-                    sectionTags={sectionTagsForDisplay}
-                    resourceTags={tabResourceTags}
-                    selectedTagId={selectedTagId}
-                    onSectionSelectionChange={handleTagSelectionChange}
-                    onResourceSelectionChange={handleTagSelectionChange}
-                    onHover={tag => {
-                      preloadComponentImages(sections.find(s => s.id === tag)?.children?.map(c => c.name) || []);
-                    }} />
+                  <div className={style({overflow: 'auto', flexShrink: 0, paddingBottom: 8})}>
+                    <SearchTagGroups
+                      sectionTags={sectionTagsForDisplay}
+                      resourceTags={tabResourceTags}
+                      selectedTagId={selectedTagId}
+                      onSectionSelectionChange={handleTagSelectionChange}
+                      onResourceSelectionChange={handleTagSelectionChange}
+                      wrapperClassName={style({paddingTop: 16, flexShrink: 0, zIndex: 1})}
+                      contentClassName={style({display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginX: 16})}
+                      onHover={tag => {
+                        preloadComponentImages(sections.find(s => s.id === tag)?.children?.map(c => c.name) || []);
+                      }} />
+                  </div>
                   {isIconsSelected ? (
                     <div className={style({flexGrow: 1, overflow: 'auto', display: 'flex', flexDirection: 'column'})}>
                       <Suspense fallback={<IconSearchSkeleton />}>
@@ -187,7 +199,24 @@ export function SearchMenu(props: SearchMenuProps) {
                           listBoxClassName={style({flexGrow: 1, overflow: 'auto', width: '100%', scrollPaddingY: 4})} />
                       </Suspense>
                     </div>
-                  ) : (
+                  ) : null}
+                  {selectedTagId === 'colors' && (
+                    <div className={style({flexGrow: 1, overflow: 'auto', display: 'flex', flexDirection: 'column'})}>
+                      <Suspense fallback={<ColorSearchSkeleton />}>
+                        <LazyColorSearchView 
+                          filteredItems={filteredColors.sections} 
+                          exactMatches={filteredColors.exactMatches} 
+                          closestMatches={filteredColors.closestMatches}
+                          listBoxClassName={style({flexGrow: 1, overflow: 'auto', width: '100%', scrollPaddingY: 4})} />
+                      </Suspense>
+                    </div>
+                  )}
+                  {selectedTagId === 'typography' && (
+                    <div className={style({flexGrow: 1, overflow: 'auto', display: 'flex', flexDirection: 'column'})}>
+                      <TypographySearchView searchValue={searchValue} />
+                    </div>
+                  )}
+                  {selectedTagId !== 'icons' && selectedTagId !== 'colors' && selectedTagId !== 'typography' && (
                     <ComponentCardView
                       key={selectedLibrary + selectedTagId}
                       currentUrl={currentUrl}

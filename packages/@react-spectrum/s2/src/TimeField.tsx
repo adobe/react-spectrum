@@ -27,7 +27,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface TimeFieldProps<T extends TimeValue> extends
-  Omit<AriaTimeFieldProps<T>, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
+  Omit<AriaTimeFieldProps<T>, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps {

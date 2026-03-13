@@ -30,7 +30,7 @@ import {TextContext} from './Content';
 import {useFocusVisible} from 'react-aria';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>, keyof GlobalDOMAttributes | 'layout' | 'dragAndDropHooks' | 'dependencies' | 'renderEmptyState' | 'children' | 'onAction' | 'shouldFocusOnHover' | 'selectionBehavior' | 'shouldSelectOnPressUp' | 'shouldFocusWrap' | 'style' | 'className'> {
+export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>, keyof GlobalDOMAttributes | 'layout' | 'dragAndDropHooks' | 'dependencies' | 'renderEmptyState' | 'children' | 'onAction' | 'shouldFocusOnHover' | 'selectionBehavior' | 'shouldSelectOnPressUp' | 'shouldFocusWrap' | 'style' | 'className' | 'render'> {
   /**
    * The SelectBox elements contained within the SelectBoxGroup.
    */

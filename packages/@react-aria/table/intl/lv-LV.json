@@ -7,5 +7,7 @@
   "resizerDescription": "Nospiediet Enter, lai sāktu izmēru mainīšanu",
   "select": "Atlasīt",
   "selectAll": "Atlasīt visu",
-  "sortable": "kārtojamā kolonna"
+  "sortable": "kārtojamā kolonna",
+  "collapse": "Sakļaut",
+  "expand": "Izvērst"
 }

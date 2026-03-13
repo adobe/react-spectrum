@@ -20,7 +20,7 @@ import {mergeProps} from '@react-aria/utils';
 import {SearchFieldProps} from '@react-stately/searchfield';
 import {useComboBox} from '@react-aria/combobox';
 
-export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<SearchFieldProps, 'onSubmit' | 'defaultValue' | 'value'> {
+export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<SearchFieldProps, 'onChange' | 'onSubmit' | 'defaultValue' | 'value'> {
   /** The list of SearchAutocomplete items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of SearchAutocomplete items (controlled). */
@@ -49,7 +49,7 @@ export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<Sear
   onSubmit?: (value: string | null, key: Key | null) => void
 }
 
-export interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T>, Omit<AriaSearchFieldProps, 'onSubmit' | 'defaultValue' | 'value'>, DOMProps, AriaLabelingProps {}
+export interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T>, Omit<AriaSearchFieldProps, 'onChange' | 'onSubmit' | 'defaultValue' | 'value'>, DOMProps, AriaLabelingProps {}
 
 export interface SearchAutocompleteAria<T> extends ValidationResult {
   /** Props for the label element. */

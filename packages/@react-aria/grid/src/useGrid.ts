@@ -11,11 +11,11 @@
  */
 
 import {AriaLabelingProps, DOMAttributes, DOMProps, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {filterDOMProps, getEventTarget, mergeProps, nodeContains, useId} from '@react-aria/utils';
+import {FocusEventHandler, useCallback, useMemo} from 'react';
 import {IGridCollection as GridCollection, GridState} from '@react-stately/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridMap} from './utils';
-import {useCallback, useMemo} from 'react';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
 import {useHasTabbableChild} from '@react-aria/focus';
@@ -132,10 +132,10 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
 
   let domProps = filterDOMProps(props, {labelable: true});
 
-  let onFocus = useCallback((e) => {
+  let onFocus: FocusEventHandler = useCallback((e) => {
     if (manager.isFocused) {
       // If a focus event bubbled through a portal, reset focus state.
-      if (!e.currentTarget.contains(e.target)) {
+      if (!nodeContains(e.currentTarget, getEventTarget(e))) {
         manager.setFocused(false);
       }
 
@@ -143,7 +143,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     }
 
     // Focus events can bubble through portals. Ignore these events.
-    if (!e.currentTarget.contains(e.target)) {
+    if (!nodeContains(e.currentTarget, getEventTarget(e))) {
       return;
     }
 

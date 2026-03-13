@@ -218,6 +218,10 @@ export interface Node<T> {
   prevKey?: Key | null,
   /** The key of the node after this node. */
   nextKey?: Key | null,
+  /** The first child key of this node. */
+  firstChildKey?: Key | null,
+  /** The last child key of this node. */
+  lastChildKey?: Key | null,
   /** Additional properties specific to a particular node type. */
   props?: any,
   /** @private */

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Table as BackwardCompatTable} from './example-backwards-compat';
 import {Cell, Column, ColumnSize, Row, TableBody, TableHeader} from '@react-stately/table';
 import {Table as DocsTable} from './example-docs';

@@ -37,7 +37,7 @@ export interface SelectProps<T, M extends SelectionMode = 'single'> extends Coll
    * The initial selected key in the collection (uncontrolled).
    * @deprecated
    */
-  defaultSelectedKey?: Key,
+  defaultSelectedKey?: Key | null,
   /**
    * Handler that is called when the selection changes.
    * @deprecated
