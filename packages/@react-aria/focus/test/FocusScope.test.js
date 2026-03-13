@@ -1037,7 +1037,7 @@ describe('FocusScope', function () {
         let onMouseDown = e => {
           focusManager.focusNext({from: e.target, tabbable: true});
         };
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+        // eslint-disable-next-line jsx-a11y-js/no-noninteractive-element-interactions
         return <div {...props} role="group" onMouseDown={onMouseDown} />;
       }
 
@@ -1224,7 +1224,7 @@ describe('FocusScope', function () {
         let onMouseDown = e => {
           focusManager.focusPrevious({from: e.target, tabbable: true});
         };
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+        // eslint-disable-next-line jsx-a11y-js/no-noninteractive-element-interactions
         return <div {...props} role="group" onMouseDown={onMouseDown} />;
       }
 

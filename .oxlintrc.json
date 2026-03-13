@@ -192,6 +192,21 @@
     "jsx-a11y/html-has-lang": "error",
     "jsx-a11y/iframe-has-title": "error",
     "jsx-a11y/img-redundant-alt": "error",
+    "jsx-a11y-js/accessible-emoji": "error",
+    "jsx-a11y-js/interactive-supports-focus": [
+      "error",
+      {
+        "tabbable": [
+          "button",
+          "checkbox",
+          "link",
+          "searchbox",
+          "spinbutton",
+          "switch",
+          "textbox"
+        ]
+      }
+    ],
     "jsx-a11y/label-has-associated-control": [
       "error",
       {
@@ -203,6 +218,31 @@
     "jsx-a11y/mouse-events-have-key-events": "error",
     "jsx-a11y/no-access-key": "error",
     "jsx-a11y/no-distracting-elements": "error",
+    "jsx-a11y-js/no-interactive-element-to-noninteractive-role": "error",
+    "jsx-a11y-js/no-noninteractive-element-interactions": [
+      "warn",
+      {
+        "handlers": [
+          "onClick",
+          "onMouseDown",
+          "onMouseUp",
+          "onKeyPress",
+          "onKeyDown",
+          "onKeyUp"
+        ]
+      }
+    ],
+    "jsx-a11y-js/no-noninteractive-element-to-interactive-role": [
+      "error",
+      {
+        "ul": ["listbox", "menu", "menubar", "radiogroup", "tablist", "tree", "treegrid"],
+        "ol": ["listbox", "menu", "menubar", "radiogroup", "tablist", "tree", "treegrid"],
+        "li": ["menuitem", "option", "row", "tab", "treeitem"],
+        "table": ["grid"],
+        "td": ["gridcell", "columnheader", "rowheader"],
+        "th": ["columnheader", "rowheader"]
+      }
+    ],
     "jsx-a11y/no-noninteractive-tabindex": [
       "error",
       {
@@ -248,6 +288,8 @@
   },
   "jsPlugins": [
     { "name": "react-hooks-js", "specifier": "eslint-plugin-react-hooks" },
+    { "name": "jsx-a11y-js", "specifier": "eslint-plugin-jsx-a11y" },
+    { "name": "jsdoc-js", "specifier": "eslint-plugin-jsdoc" },
     "./packages/dev/eslint-plugin-rsp-rules/index.js",
     { "name": "rulesdir", "specifier": "./scripts/oxlint-rulesdir-plugin.mjs" },
     { "name": "monorepo", "specifier": "./scripts/oxlint-monorepo-plugin.mjs" }
@@ -1420,6 +1462,26 @@
             ]
           }
         ],
+        "jsdoc-js/require-description-complete-sentence": [
+          "error",
+          {
+            "abbreviations": [
+              "e.g",
+              "i.e"
+            ]
+          }
+        ],
+        "jsdoc-js/check-alignment": "error",
+        "jsdoc-js/check-indentation": "error",
+        "jsdoc-js/require-description": [
+          "error",
+          {
+            "exemptedBy": [
+              "deprecated"
+            ],
+            "checkConstructors": false
+          }
+        ],
         "no-unused-vars": "error",
         "@stylistic/member-delimiter-style": [
           "error",
@@ -1437,6 +1499,8 @@
       },
       "jsPlugins": [
         { "name": "react-hooks-js", "specifier": "eslint-plugin-react-hooks" },
+        { "name": "jsx-a11y-js", "specifier": "eslint-plugin-jsx-a11y" },
+        { "name": "jsdoc-js", "specifier": "eslint-plugin-jsdoc" },
         { "name": "@stylistic", "specifier": "@stylistic/eslint-plugin-ts" }
       ],
       "globals": {
@@ -1468,10 +1532,13 @@
         "rsp-rules/faster-node-contains": "off",
         "rulesdir/imports": "off",
         "monorepo/no-internal-import": "off",
-        "jsx-a11y/no-noninteractive-tabindex": "off"
+        "jsx-a11y/no-noninteractive-tabindex": "off",
+        "jsx-a11y-js/no-noninteractive-tabindex": "off"
       },
       "jsPlugins": [
         { "name": "react-hooks-js", "specifier": "eslint-plugin-react-hooks" },
+        { "name": "jsx-a11y-js", "specifier": "eslint-plugin-jsx-a11y" },
+        { "name": "jsdoc-js", "specifier": "eslint-plugin-jsdoc" },
         "./packages/dev/eslint-plugin-rsp-rules/index.js",
         { "name": "rulesdir", "specifier": "./scripts/oxlint-rulesdir-plugin.mjs" },
         { "name": "monorepo", "specifier": "./scripts/oxlint-monorepo-plugin.mjs" }
