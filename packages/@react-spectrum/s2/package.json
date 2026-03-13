@@ -9,7 +9,7 @@
   },
   "main": "./dist/exports/index.cjs",
   "module": "./dist/exports/index.mjs",
-  "types": "./dist/types/exports/index.ts",
+  "types": "./dist/types/exports/index.d.ts",
   "page": "dist/page.cjs",
   "style-module": "style/dist/module.mjs",
   "style-main": "style/dist/main.cjs",
@@ -17,8 +17,8 @@
   "exports": {
     ".": {
       "source": "./exports/index.ts",
-      "types": "./dist/types/exports/index.ts",
-      "module": "./dist/module.mjs",
+      "types": "./dist/types/exports/index.d.ts",
+      "module": "./dist/exports/index.mjs",
       "import": "./dist/exports/index.mjs",
       "require": "./dist/exports/index.cjs"
     },
@@ -149,7 +149,7 @@
     "*.cjs"
   ],
   "scripts": {
-    "prepublishOnly": "rm -rf dist/private/page.cjs* && mv dist/private/page*.css page.css && mv dist/private/page.css.map page.css.map || true",
+    "prepublishOnly": "rm -rf dist/page.cjs* && mv dist/private/page*.css page.css && mv dist/private/page.css.map page.css.map || true",
     "prepack": "npm pkg delete scripts devDependencies resolutions alias targets",
     "postpack": "git checkout -- package.json"
   },

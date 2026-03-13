@@ -23,7 +23,10 @@ for (let pkg of fs.globSync(['packages/@react-{spectrum,aria,stately}/*/', 'pack
 for (let pkg of ['@adobe/react-spectrum', 'react-aria', 'react-stately', 'react-aria-components']) {
   for (let file of fs.globSync(`packages/${pkg}/dist/exports/**/*.{mjs,cjs}`)) {
     let shim = file.replace('/dist/exports/', '/');
-    let specifier = `./${file.replace(`packages/${pkg}/`, '')}`;
+    let specifier = path.relative(path.dirname(shim), file);
+    if (!specifier.startsWith('.')) {
+      specifier = './' + specifier;
+    }
     let contents = '';
     if (path.extname(shim) === '.cjs') {
       contents = `module.exports = require('${specifier}');\n`;
