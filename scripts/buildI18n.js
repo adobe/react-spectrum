@@ -66,7 +66,7 @@ export default PackageLocalizedStrings;
   // Generate index files.
   for (let ext of ['.js', '.mjs']) {
     let generateImport = (exports, from) => ext === '.mjs' ? `import ${exports} from '${from}'` : `let ${exports} = require('${from}')`;
-    let index = generateImport('{PackageLocalizationProvider, getPackageLocalizationScript}', '@react-aria/i18n/server') + ';\n';
+    let index = generateImport('{PackageLocalizationProvider, getPackageLocalizationScript}', 'react-aria/private/i18n/server') + ';\n';
     index += generateImport('{LocalizedStringDictionary}', '@internationalized/string') + ';\n';
     index += generateImport('{createElement}', 'react') + ';\n';
     for (let lang in languages) {

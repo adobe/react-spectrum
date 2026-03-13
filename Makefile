@@ -101,7 +101,7 @@ publish-nightly: build
 build:
 	yarn tsgo --project tsconfig.build.json --declaration --emitDeclarationOnly --outDir types --rootDir packages
 	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/{react-aria,react-stately,react-aria-components,@adobe/react-spectrum} --no-optimize --config .parcelrc-build
-	# yarn workspaces foreach --all -pt run prepublishOnly
+	yarn workspaces foreach --all -pt run prepublishOnly
 	node scripts/buildEsm.js
 	node scripts/buildI18n.js
 	node scripts/generateIconDts.js
