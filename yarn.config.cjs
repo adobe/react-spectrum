@@ -171,7 +171,7 @@ function enforceWorkspaceDependencies({Yarn}) {
               ...workspace.manifest.peerDependencies,
               [dependency.ident]: dependency.range
             });
-          } else if (!seen.has(workspace.ident)) {
+          } else if (!seen.has(workspace.ident) && workspace.ident !== dependency.ident) {
             seen.set(workspace.ident, [dependency.ident]);
             workspace.set('peerDependencies', {
               ...workspace.manifest.peerDependencies,
