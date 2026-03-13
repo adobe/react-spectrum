@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, filterDOMProps, isMac, isWebKit, mergeProps, useLinkProps, useSlotId} from '@react-aria/utils';
+import {chain, filterDOMProps, mergeProps, useLinkProps, useSlotId} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {getItemCount} from '@react-stately/collections';
 import {getItemId, listData} from './utils';
@@ -105,17 +105,11 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
   let optionProps = {
     role: 'option',
     'aria-disabled': isDisabled || undefined,
-    'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined
+    'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined,
+    'aria-label': props['aria-label'],
+    'aria-labelledby': labelId,
+    'aria-describedby': descriptionId
   };
-
-  // Safari with VoiceOver on macOS misreads options with aria-labelledby or aria-label as simply "text".
-  // We should not map slots to the label and description on Safari and instead just have VoiceOver read the textContent.
-  // https://bugs.webkit.org/show_bug.cgi?id=209279
-  if (!(isMac() && isWebKit())) {
-    optionProps['aria-label'] = props['aria-label'];
-    optionProps['aria-labelledby'] = labelId;
-    optionProps['aria-describedby'] = descriptionId;
-  }
 
   let item = state.collection.getItem(key);
   if (isVirtualized) {

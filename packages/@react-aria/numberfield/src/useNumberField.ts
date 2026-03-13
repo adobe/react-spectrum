@@ -219,7 +219,9 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     }
 
     if (e.key === 'Enter') {
-      commit();
+      flushSync(() => {
+        commit();
+      });
       commitValidation();
     } else {
       e.continuePropagation();
