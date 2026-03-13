@@ -21,7 +21,6 @@ import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {Key} from 'react-aria';
-import {ListViewDragPreview} from '../src/ListView';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactNode, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
@@ -605,7 +604,8 @@ let reorderItems: Item[] = [
   {id: 'k', name: 'Adobe Dreamweaver', type: 'file'},
   {id: 'l', name: 'Adobe Connect', type: 'file'},
   {id: 'm', name: 'Pictures', type: 'folder'},
-  {id: 'n', name: 'Adobe Acrobat', type: 'file'}
+  {id: 'n', name: 'Adobe Acrobat', type: 'file'},
+  {id: 'o', name: 'Really really really really really long name', type: 'file'}
 ];
 
 function ReorderExample(props) {
@@ -625,24 +625,20 @@ function ReorderExample(props) {
       }
     }
   });
-  // TODO: just for testing
-  let blah = [{'text/plain': 'awegaweg', rendered: 'awegaweg'}, {'text/plain': 'agwegawkjgakwjegbkawjgbe', rendered: 'agwegawkjgakwjegbkawjgbe'}];
+
   return (
-    <>
-      <ListViewDragPreview items={blah} />
-      <ListView
-        aria-label="reorderable gridlist"
-        items={list.items}
-        dragAndDropHooks={dragAndDropHooks}
-        {...props}>
-        {(item: Item) => (
-          <ListViewItem textValue={item.name}>
-            {item.type === 'folder' ? <Folder /> : <File />}
-            <Text>{item.name}</Text>
-          </ListViewItem>
-        )}
-      </ListView>
-    </>
+    <ListView
+      aria-label="reorderable gridlist"
+      items={list.items}
+      dragAndDropHooks={dragAndDropHooks}
+      {...props}>
+      {(item: Item) => (
+        <ListViewItem textValue={item.name}>
+          {item.type === 'folder' ? <Folder /> : <File />}
+          <Text>{item.name}</Text>
+        </ListViewItem>
+      )}
+    </ListView>
   );
 }
 
@@ -766,7 +762,7 @@ function BetweenLists(props) {
       }
     },
     getAllowedDropOperations: () => ['move', 'copy'],
-    shouldAcceptItemDrop: (target) => !!list1.getItem(target.key)!.childNodes,
+    shouldAcceptItemDrop: (target) => !!list1.getItem(target.key)!.childNodes
   });
 
 // List 2 should allow reordering, on folder drops, and on root drops
@@ -777,7 +773,7 @@ function BetweenLists(props) {
       let itemString = JSON.stringify(item);
       dragItem[`${item.type}`] = itemString;
       if (item.type !== 'unique_type') {
-        dragItem['text/plain'] = itemString;
+        dragItem['text/plain'] = item.name;
       }
 
       return dragItem;
@@ -808,7 +804,7 @@ function BetweenLists(props) {
       if (dropOperation === 'copy') {
         for (let key of keys) {
           let item: typeof folderList2[0] = {...list2.getItem(key)!};
-          item = Math.random().toString(36).slice(2);
+          item.id = Math.random().toString(36).slice(2);
           itemsToCopy.push(item);
         }
       }

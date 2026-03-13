@@ -21,7 +21,6 @@ import {
   ContextValue,
   DEFAULT_SLOT,
   DefaultCollectionRenderer,
-  DragAndDropContext,
   DropIndicator,
   GridList,
   GridListItem,
@@ -51,11 +50,11 @@ import {ImageContext} from './Image';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import LinkOutIcon from '../ui-icons/LinkOut';
-import {mergeProps, useFocusRing, useLocale, useLocalizedStringFormatter, useVisuallyHidden} from 'react-aria';
 import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from '@react-spectrum/utils';
+import {useFocusRing, useLocale, useLocalizedStringFormatter, useVisuallyHidden} from 'react-aria';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -186,13 +185,12 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   let {children, isQuiet, selectionStyle = 'checkbox', overflowMode = 'truncate', loadingState, onLoadMore, renderEmptyState: userRenderEmptyState, hideLinkOutIcon = false, dragAndDropHooks, ...otherProps} = props;
   let scale = useScale();
 
-  // TODO: how to get the actual item.rendered not just the plain text
   if (dragAndDropHooks && dragAndDropHooks.renderDragPreview == null)  {
     dragAndDropHooks.renderDragPreview = (items) => <ListViewDragPreview items={items} overflowMode={overflowMode} />;
   }
 
   if (dragAndDropHooks) {
-    dragAndDropHooks.renderDropIndicator = (target) => <InsertionIndicatorVisual target={target} />;
+    dragAndDropHooks.renderDropIndicator = (target) => <InsertionIndicatorVisual target={target as ItemDropTarget} />;
   }
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
@@ -601,6 +599,10 @@ let listRowFocusRing = style({
   pointerEvents: 'none'
 });
 
+let rowWrapper = style({
+  display: 'contents'
+});
+
 export let label = style({
   gridArea: 'label',
   alignSelf: 'center',
@@ -735,8 +737,6 @@ let dragButton = style<{isFocusVisible?: boolean}>({
   }
 });
 
-// TODO: check the below drag preview styles, try to reuse styles perhaps later but for now just keep separate
-// all of these are from v3 basically
 let dragPreviewWrapper = style({
   position: 'relative'
 });
@@ -790,10 +790,17 @@ let dragPreviewBadge = style({
   paddingX: 8,
   paddingY: 2,
   borderRadius: 'sm',
-  backgroundColor: 'blue-900',
+  backgroundColor: {
+    default: 'blue-900',
+    forcedColors: 'Highlight'
+  },
   font: 'ui-sm',
   fontWeight: 'bold',
-  color: 'white'
+  color: {
+    default: 'white',
+    forcedColors: 'HighlightText'
+  },
+  forcedColorAdjust: 'none'
 });
 
 let insertionIndicatorWrapper = style({
@@ -937,7 +944,8 @@ export function ListViewDragPreview(props) {
   let {items, overflowMode} = props;
   let isDraggingMultiple = items.length > 1;
   // TODO: item here doesn't have rendered, cuz unlike in v3, we don't have access to the collection nodes at this level...
-  // let firstItem = items[0];
+  // alternatives are to perhaps export this and allow the user to pass in label/description/etc nodes as children or allow them to render
+  // anything they way and just provide the current as a default
   let itemLabel = items[0]?.['text/plain'] ?? '';
   let scale = useScale();
 
@@ -961,15 +969,11 @@ export function ListViewDragPreview(props) {
               }
             }]
           ]}>
-          {/* {typeof firstItem.rendered === 'string' ? <Text>{firstItem.rendered}</Text> : firstItem.rendered} */}
           <Text>{itemLabel}</Text>
           {isDraggingMultiple && (
             <div className={dragPreviewBadge}>{items.length}</div>
           )}
-
         </Provider>
-
-
       </div>
     </div>
   );
@@ -985,7 +989,6 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
   let {direction} = useLocale();
   let hasTrailingIcon = hasChildItems || (isLinkOut && !hideLinkOutIcon);
   let {visuallyHiddenProps} = useVisuallyHidden();
-   // TODO this doesn't seem to work
   let {
     isFocusVisible: isFocusVisibleWithin,
     focusProps: focusWithinProps
@@ -993,7 +996,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
 
   return (
     <GridListItem
-      {...mergeProps(otherProps, focusWithinProps)}
+      {...otherProps}
       textValue={textValue}
       ref={ref}
       {...(hasTrailingIcon ? {'data-has-trailing-icon': ''} : {})}
@@ -1011,7 +1014,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
       })}>
       {(renderProps) => {
         let {children} = props;
-        let {selectionMode, selectionBehavior, isDisabled, id, state, allowsDragging} = renderProps;
+        let {selectionMode, selectionBehavior, isDisabled, id, state, allowsDragging, isFocusVisible} = renderProps;
         return (
           <Provider
             values={[
@@ -1040,85 +1043,87 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                 isDisabled
               }]
             ]}>
-            <div
-              className={
-                listRowBackground({
-                  ...renderProps,
-                  selectionStyle,
-                  isQuiet,
-                  isDropTarget: renderProps.isDropTarget,
-                  isPrevSelected: isPrevSelected(id, state),
-                  isNextSelected: isNextSelected(id, state),
-                  isPrevNotSelected: !isPrevSelected(id, state),
-                  isNextNotSelected: !isNextSelected(id, state),
-                  isFirstItem: isFirstItem(id, state),
-                  isLastItem: isLastItem(id, state)
-                })
-              } />
-            {renderProps.isFocusVisible &&
+            <div className={rowWrapper} {...focusWithinProps}>
               <div
-                className={listRowFocusRing({
-                  ...renderProps,
-                  selectionStyle,
-                  isQuiet,
-                  isPrevSelected: isPrevSelected(id, state),
-                  isNextSelected: isNextSelected(id, state),
-                  isPrevNotSelected: !isPrevSelected(id, state),
-                  isNextNotSelected: !isNextSelected(id, state),
-                  isFirstItem: isFirstItem(id, state),
-                  isLastItem: isLastItem(id, state)
-                })} />
-            }
-            {allowsDragging && !isDisabled && (
-              <div className={dragButtonContainer}>
-                <Button
-                  slot="drag"
-                  // TODO: need a isFocusVisibleWithin for the row to keep it visible, consider if adding to
-                  // RAC GridList is reasonable
-                  // style={!isFocusVisibleWithin ? {...visuallyHiddenProps.style} : {}}
-                  className={dragButton}>
-                  <DragHandle size="M" />
-                </Button>
-              </div>
-            )}
-            {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
-              <ListSelectionCheckbox isDisabled={isDisabled} />
-            )}
-            {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
-            {isLinkOut && !hideLinkOutIcon && (
-              <div className={listTrailingIcon}>
-                <LinkOutIcon
-                  size="M"
-                  className={style({
-                    scaleX: {
-                      direction: {
-                        rtl: -1
+                className={
+                  listRowBackground({
+                    ...renderProps,
+                    selectionStyle,
+                    isQuiet,
+                    isDropTarget: renderProps.isDropTarget,
+                    isPrevSelected: isPrevSelected(id, state),
+                    isNextSelected: isNextSelected(id, state),
+                    isPrevNotSelected: !isPrevSelected(id, state),
+                    isNextNotSelected: !isNextSelected(id, state),
+                    isFirstItem: isFirstItem(id, state),
+                    isLastItem: isLastItem(id, state)
+                  })
+                } />
+              {renderProps.isFocusVisible &&
+                <div
+                  className={listRowFocusRing({
+                    ...renderProps,
+                    selectionStyle,
+                    isQuiet,
+                    isPrevSelected: isPrevSelected(id, state),
+                    isNextSelected: isNextSelected(id, state),
+                    isPrevNotSelected: !isPrevSelected(id, state),
+                    isNextNotSelected: !isNextSelected(id, state),
+                    isFirstItem: isFirstItem(id, state),
+                    isLastItem: isLastItem(id, state)
+                  })} />
+              }
+              {allowsDragging && !isDisabled && (
+                <div className={dragButtonContainer}>
+                  <Button
+                    slot="drag"
+                    // TODO: need a isFocusVisibleWithin for the row to keep it visible, consider if adding to
+                    // RAC GridList is reasonable
+                    style={!isFocusVisibleWithin && !isFocusVisible ? {...visuallyHiddenProps.style} : {}}
+                    className={dragButton}>
+                    <DragHandle size="M" />
+                  </Button>
+                </div>
+              )}
+              {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+                <ListSelectionCheckbox isDisabled={isDisabled} />
+              )}
+              {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
+              {isLinkOut && !hideLinkOutIcon && (
+                <div className={listTrailingIcon}>
+                  <LinkOutIcon
+                    size="M"
+                    className={style({
+                      scaleX: {
+                        direction: {
+                          rtl: -1
+                        }
+                      },
+                      '--iconPrimary': {
+                        type: 'fill',
+                        value: 'currentColor'
                       }
-                    },
-                    '--iconPrimary': {
-                      type: 'fill',
-                      value: 'currentColor'
-                    }
-                  })({direction})} />
-              </div>
-            )}
-            {hasChildItems && !isLinkOut && (
-              <div className={listTrailingIcon}>
-                <Chevron
-                  className={style({
-                    scale: {
-                      direction: {
-                        ltr: '1',
-                        rtl: '-1'
+                    })({direction})} />
+                </div>
+              )}
+              {hasChildItems && !isLinkOut && (
+                <div className={listTrailingIcon}>
+                  <Chevron
+                    className={style({
+                      scale: {
+                        direction: {
+                          ltr: '1',
+                          rtl: '-1'
+                        }
+                      },
+                      '--iconPrimary': {
+                        type: 'fill',
+                        value: 'currentColor'
                       }
-                    },
-                    '--iconPrimary': {
-                      type: 'fill',
-                      value: 'currentColor'
-                    }
-                  })({direction})} />
-              </div>
-            )}
+                    })({direction})} />
+                </div>
+              )}
+            </div>
           </Provider>
         );
       }}
