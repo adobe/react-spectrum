@@ -6,13 +6,16 @@
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "source": "./src/index.ts",
+    ".": {
+      "source": "./src/index.ts",
     "types": [
-      "./dist/types.d.ts",
-      "./src/index.ts"
-    ],
-    "import": "./dist/import.mjs",
-    "require": "./dist/main.js"
+        "./dist/types.d.ts",
+        "./src/index.ts"
+      ],
+      "import": "./dist/import.mjs",
+      "require": "./dist/main.js"
+    },
+    "./package.json": "./package.json"
   },
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
