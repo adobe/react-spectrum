@@ -185,7 +185,5 @@ export type {
   StylesPropWithoutWidth,
   UnsafeClassName,
   UnsafeStyles,
-  StyleProps,
-  WidthProperties,
-  HeightProperties
+  StyleProps
 } from './style-utils';
