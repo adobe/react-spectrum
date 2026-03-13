@@ -669,14 +669,14 @@ function ListSelectionCheckbox({isDisabled}: {isDisabled: boolean}) {
   );
 }
 
-function isNextSelected(id: Key | undefined, state: ListState<unknown>) {
+export function isNextSelected(id: Key | undefined, state: ListState<unknown>) {
   if (id == null || !state) {
     return false;
   }
   let keyAfter = state.collection.getKeyAfter(id);
   return keyAfter != null && state.selectionManager.isSelected(keyAfter);
 }
-function isPrevSelected(id: Key | undefined, state: ListState<unknown>) {
+export function isPrevSelected(id: Key | undefined, state: ListState<unknown>) {
   if (id == null || !state) {
     return false;
   }

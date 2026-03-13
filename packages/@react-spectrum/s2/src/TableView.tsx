@@ -66,6 +66,7 @@ import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {isNextSelected, isPrevSelected} from './ListView';
 import {LayoutNode} from '@react-stately/layout';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
@@ -118,7 +119,8 @@ interface S2TableProps {
   /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
   onLoadMore?: () => any,
   /** Provides the ActionBar to display when rows are selected in the TableView. */
-  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement
+  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement,
+  selectionStyle?: 'checkbox' | 'highlight'
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
@@ -127,7 +129,7 @@ export interface TableViewProps extends Omit<RACTableProps, 'style' | 'className
   styles?: StylesPropWithHeight
 }
 
-let InternalTableContext = createContext<TableViewProps & {layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean, selectionMode?: 'none' | 'single' | 'multiple'}>({});
+let InternalTableContext = createContext<TableViewProps & {layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean, selectionMode?: 'none' | 'single' | 'multiple', selectionStyle?: 'checkbox' | 'highlight'}>({});
 
 const tableWrapper = style({
   minHeight: 0,
@@ -297,6 +299,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     onAction,
     onLoadMore,
     selectionMode = 'none',
+    selectionStyle = 'checkbox',
     ...otherProps
   } = props;
 
@@ -322,8 +325,9 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     onLoadMore,
     isInResizeMode,
     setIsInResizeMode,
-    selectionMode
-  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode, selectionMode]);
+    selectionMode,
+    selectionStyle
+  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode, selectionMode, selectionStyle]);
 
   let scrollRef = useRef<HTMLElement | null>(null);
   let isCheckboxSelection = selectionMode === 'multiple' || selectionMode === 'single';
