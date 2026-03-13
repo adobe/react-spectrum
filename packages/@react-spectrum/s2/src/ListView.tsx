@@ -116,13 +116,13 @@ const listViewWrapper = style({
 // When any row has a trailing icon, reserve space so actions align.
 const hasTrailingIconRows = ':has([data-has-trailing-icon]) [role="row"]';
 
-// const dropTargetBackground = colorMix('gray-25', 'blue-900', 10);
-
+const dropTargetBackground = colorMix('gray-25', 'blue-900', 10);
 const listView = style<GridListRenderProps & {isQuiet?: boolean, isDropTarget?: boolean}>({
   ...focusRing(),
   outlineOffset: {
     default: -2,
-    isQuiet: -1
+    isQuiet: -1,
+    isDropTarget: -2
   },
   userSelect: 'none',
   minHeight: 0,
@@ -135,43 +135,37 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean, isDropTarget?: 
   backgroundColor: {
     default: 'gray-25',
     isQuiet: 'transparent',
-    forcedColors: 'Background'
-    // TODO: check this
-    // isDropTarget: dropTargetBackground,
-    // forcedColors: {
-    //   default: 'Background'
-    // }
+    isDropTarget: {
+      default: dropTargetBackground,
+      forcedColors: 'Background'
+    }
   },
   borderRadius: {
     default: 'default',
     isQuiet: 'none'
   },
   borderColor: 'gray-300',
-  // borderColor: {
-  //   default: 'gray-300',
-  //   // isDropTarget: 'blue-800',
-  //   forcedColors: {
-  //     default: 'ButtonBorder',
-  //     isDropTarget: 'Highlight'
-  //   }
-  // },
   borderWidth: {
     default: 1,
-    isQuiet: 0,
-    // forcedColors: {
-    //   isDropTarget: 0
-    // }
+    isQuiet: 0
   },
-  // TODO: will need to update the borders since they shift content if we change the width
-  // for drop target highlighting
-  // boxShadow: {
-  //   isDropTarget: 'emphasized',
-  //   forcedColors: '[inset 0 0 0 2px var(--hcm-buttonborder, ButtonBorder)]'
-  // },
-  // forcedColorAdjust: {
-  //   isDropTarget: 'none'
-  // },
   borderStyle: 'solid',
+  // use outline with negative offset instead of border for the drop target styling to avoid layout shifting
+  outlineWidth: {
+    isDropTarget: 2
+  },
+  outlineStyle: {
+    isDropTarget: 'solid'
+  },
+  outlineColor: {
+    isDropTarget: 'blue-800',
+    forcedColors: {
+      isDropTarget: 'Highlight'
+    }
+  },
+  forcedColorAdjust: {
+    isDropTarget: 'none'
+  },
   '--trailing-icon-width': {
     type: 'width',
     value: {
@@ -325,17 +319,27 @@ const listitem = style<GridListItemRenderProps & {
   scale?: 'medium' | 'large',
   isDropTarget?: boolean
 }>({
-  outlineStyle: 'none',
+  outlineStyle: {
+    default: 'none',
+    isDropTarget: 'solid'
+  },
+  outlineWidth: {
+    isDropTarget: 2
+  },
+  outlineOffset: {
+    isDropTarget: -2
+  },
+  outlineColor: {
+    isDropTarget: 'blue-800',
+    forcedColors: {
+      isDropTarget: 'Highlight'
+    }
+  },
   boxSizing: 'border-box',
   columnGap: 0,
   paddingX: 0,
   paddingY: 8,
   backgroundColor: 'transparent',
-  // backgroundColor: {
-  //   default: 'transparent',
-  //   isDropTarget: dropTargetBackground,
-  //   forcedColors: {default: 'transparent', isDropTarget: 'Highlight'}
-  // },
   color: {
     default: baseColor('neutral-subdued'),
     isSelected: baseColor('neutral'),
@@ -382,37 +386,25 @@ const listitem = style<GridListItemRenderProps & {
       forcedColors: 'ButtonBorder'
     }
   },
-  borderTopWidth: {
-    default: 0,
-    // isDropTarget: 2
-  },
+  borderTopWidth: 0,
   borderBottomWidth: {
     default: 1,
     isLastItem: {
       default: 1,
       isQuiet: 0
-    },
-    // isDropTarget: 2
+    }
   },
-  borderStartWidth: {
-    default: 0,
-    // isDropTarget: 2
-  },
-  borderEndWidth: {
-    default: 0,
-    // isDropTarget: 2
-  },
+  borderStartWidth: 0,
+  borderEndWidth: 0,
   borderStyle: 'solid',
   borderColor: {
     default: '--borderColor',
     isNextSelected: 'transparent',
-    isSelected: 'transparent',
-    // isDropTarget: 'blue-800',
-    // forcedColors: {default: '--borderColor', isNextSelected: 'transparent', isSelected: 'transparent', isDropTarget: 'Highlight'}
+    isSelected: 'transparent'
   },
-  // forcedColorAdjust: {
-  //   isDropTarget: 'none'
-  // },
+  forcedColorAdjust: {
+    isDropTarget: 'none'
+  },
   '--radius': {
     type: 'borderTopStartRadius',
     value: 'default'
@@ -449,7 +441,7 @@ const listRowBackground = style<GridListItemRenderProps & {
   },
   backgroundColor: {
     default: '--rowBackgroundColor',
-    // isDropTarget: dropTargetBackground,
+    isDropTarget: dropTargetBackground,
     isHovered: {
       default: 'gray-900/5',
       selectionStyle: {
@@ -479,8 +471,9 @@ const listRowBackground = style<GridListItemRenderProps & {
       }
     },
     forcedColors: {
-      // TODO: this causes the drop indicator to be cut off in HCM, maybe use transparent?
-      default: 'Background'
+      // TODO: this causes the drop indicator for the root and the insertion drop indicator to be cut off in HCM,
+      // so we use transparent. Will need to check against a variet of HCM themes
+      default: 'transparent'
     }
   },
   borderTopStartRadius: {
