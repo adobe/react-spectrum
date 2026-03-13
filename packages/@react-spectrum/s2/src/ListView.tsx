@@ -289,9 +289,15 @@ const listitem = style<GridListItemRenderProps & {
   color: {
     default: baseColor('neutral-subdued'),
     isSelected: baseColor('neutral'),
-    isDisabled: {
-      default: 'disabled',
-      forcedColors: 'GrayText'
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonText',
+      selectionStyle: {
+        highlight: {
+          isSelected: 'HighlightText'
+        }
+      },
+      isDisabled: 'GrayText'
     }
   },
   position: 'relative',
@@ -346,12 +352,14 @@ const listitem = style<GridListItemRenderProps & {
   borderColor: {
     default: '--borderColor',
     isNextSelected: 'transparent',
-    isSelected: 'transparent'
+    isSelected: 'transparent',
+    forcedColors: 'ButtonBorder'
   },
   '--radius': {
     type: 'borderTopStartRadius',
     value: 'default'
-  }
+  },
+  forcedColorAdjust: 'none'
 });
 
 const insetBorderRadius = 'calc(var(--radius) - 1px)';
@@ -373,7 +381,8 @@ const listRowBackground = style<GridListItemRenderProps & {
     isSelected: '[-1px]',
     // Don't overlap focus ring of row above.
     isPrevSelected: 0,
-    isFirstItem: 0
+    isFirstItem: 0,
+    forcedColors: 0
   },
   left: 0,
   right: 0,
@@ -412,7 +421,12 @@ const listRowBackground = style<GridListItemRenderProps & {
       }
     },
     forcedColors: {
-      default: 'Background'
+      default: 'Background',
+      selectionStyle: {
+        highlight: {
+          isSelected: 'Highlight'
+        }
+      }
     }
   },
   borderTopStartRadius: {
@@ -513,9 +527,34 @@ const listRowBackground = style<GridListItemRenderProps & {
   }
 });
 
-let listRowFocusRing = style({
+let listRowFocusRing = style<GridListItemRenderProps & {
+  selectionStyle?: 'highlight' | 'checkbox',
+  isFirstItem?: boolean,
+  isPrevSelected?: boolean,
+  isPrevNotSelected?: boolean,
+  isNextSelected?: boolean,
+  isNextNotSelected?: boolean,
+  isLastItem?: boolean,
+  isQuiet?: boolean
+}>({
   ...focusRing(),
-  outlineOffset: -2,
+  outlineOffset: {
+    default: -2,
+    forcedColors: -3
+  },
+  outlineWidth: {
+    default: 2,
+    forcedColors: '[3px]'
+  },
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: {
+      default: 'Highlight',
+      selectionStyle: {
+        highlight: 'ButtonBorder'
+      }
+    }
+  },
   position: 'absolute',
   inset: 0,
   top: {
@@ -567,7 +606,8 @@ export let description = style({
   font: 'ui-sm',
   color: {
     default: baseColor('neutral-subdued'),
-    isDisabled: 'disabled'
+    isDisabled: 'disabled',
+    forcedColors: 'inherit'
   },
   transition: 'default'
 });
@@ -770,7 +810,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                   isLastItem: isLastItem(id, state)
                 })
               } />
-            {renderProps.isFocusVisible && 
+            {renderProps.isFocusVisible &&
               <div
                 className={listRowFocusRing({
                   ...renderProps,

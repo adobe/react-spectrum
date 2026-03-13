@@ -33,7 +33,8 @@ const meta: Meta<typeof ListView> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onSelectionChange'])
+    ...categorizeArgTypes('Events', ['onSelectionChange']),
+    children: {table: {disable: true}}
   },
   title: 'ListView',
   args: {

@@ -19,7 +19,7 @@ import {tableNestedRows} from '@react-stately/flags';
 import {TableState, TableStateProps, useTableState} from './useTableState';
 import {useControlledState} from '@react-stately/utils';
 
-export interface TreeGridState<T> extends TableState<T> {
+export interface TreeGridState<T> extends Omit<TableState<T>, 'expandedKeys'> {
   /** A set of keys for items that are expanded. */
   expandedKeys: 'all' | Set<Key>,
   /** Toggles the expanded state for a row by its key. */
@@ -92,7 +92,8 @@ export function UNSTABLE_useTreeGridState<T extends object>(props: TreeGridState
     keyMap: treeGridCollection.keyMap,
     userColumnCount: treeGridCollection.userColumnCount,
     expandedKeys,
-    toggleKey: onToggle
+    toggleKey: onToggle,
+    treeColumn: tableState.treeColumn ?? collection.rowHeaderColumnKeys.keys().next().value ?? null
   };
 }
 
@@ -142,18 +143,9 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
 
   let body: GridNode<T> | null = null;
   let flattenedRows: GridNode<T>[] = [];
-  let columnCount = 0;
   let userColumnCount = 0;
   let originalColumns: GridNode<T>[] = [];
   let keyMap = new Map();
-
-  if (opts?.showSelectionCheckboxes) {
-    columnCount++;
-  }
-
-  if (opts?.showDragButtons) {
-    columnCount++;
-  }
 
   let topLevelRows: GridNode<T>[] = [];
   let visit = (node: GridNode<T>) => {
@@ -184,89 +176,28 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
     visit(node);
   }
 
-  columnCount += userColumnCount;
-
   // Update each grid node in the treegrid table with values specific to a treegrid structure. Also store a set of flattened row nodes for TableCollection to consume
-  let globalRowCount = 0;
-  let visitNode = (node: GridNode<T>, i?: number) => {
-    // Clone row node and its children so modifications to the node for treegrid specific values aren't applied on the nodes provided
-    // to TableCollection. Index, level, and parent keys are all changed to reflect a flattened row structure rather than the treegrid structure
-    // values automatically calculated via CollectionBuilder
+  let visitNode = (node: GridNode<T>) => {
     if (node.type === 'item') {
-      let childNodes: GridNode<T>[] = [];
-      for (let child of node.childNodes) {
-        if (child.type === 'cell') {
-          let cellClone = {...child};
-          if (cellClone.index + 1 === columnCount) {
-            cellClone.nextKey = null;
-          }
-          childNodes.push({...cellClone});
-        }
-      }
-      let clone: GridNode<T> = {...node, childNodes: childNodes, parentKey: body!.key, level: 1, index: globalRowCount++};
-      flattenedRows.push(clone);
+      flattenedRows.push(node);
     }
 
-    let newProps = {};
-
-    // Assign indexOfType to cells and rows for aria-posinset
-    if (node.type !== 'placeholder' && node.type !== 'column') {
-      newProps['indexOfType'] = i;
-    }
-
-    // Use Object.assign instead of spread to preserve object reference for keyMap. Also ensures retrieving nodes
-    // via .childNodes returns the same object as the one found via keyMap look up
-    Object.assign(node, newProps);
     keyMap.set(node.key, node);
 
-    let lastNode: GridNode<T> | null = null;
-    let rowIndex = 0;
     for (let child of node.childNodes) {
       if (!(child.type === 'item' && expandedKeys !== 'all' && !expandedKeys.has(node.key))) {
-        if (child.parentKey == null) {
-          // if child is a cell/expanded row/column and the parent key isn't already established by the collection, match child node to parent row
-          child.parentKey = node.key;
-        }
-
-        if (lastNode) {
-          lastNode.nextKey = child.key;
-          child.prevKey = lastNode.key;
-        } else {
-          child.prevKey = null;
-        }
-
         if (child.type === 'item') {
-          visitNode(child, rowIndex++);
+          visitNode(child);
         } else {
           // We enforce that the cells come before rows so can just reuse cell index
-          visitNode(child, child.index);
+          visitNode(child);
         }
-
-        lastNode = child;
       }
-    }
-
-    if (lastNode) {
-      lastNode.nextKey = null;
     }
   };
 
-  let last: GridNode<T> | null = null;
-  for (let [i, node] of topLevelRows.entries()) {
-    visitNode(node as GridNode<T>, i);
-
-    if (last) {
-      last.nextKey = node.key;
-      node.prevKey = last.key;
-    } else {
-      node.prevKey = null;
-    }
-
-    last = node;
-  }
-
-  if (last) {
-    last.nextKey = null;
+  for (let node of topLevelRows) {
+    visitNode(node as GridNode<T>);
   }
 
   return {

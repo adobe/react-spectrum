@@ -140,7 +140,7 @@ export type {ToggleButtonProps, ToggleButtonRenderProps} from './ToggleButton';
 export type {ToggleButtonGroupProps, ToggleButtonGroupRenderProps} from './ToggleButtonGroup';
 export type {ToolbarProps, ToolbarRenderProps} from './Toolbar';
 export type {TooltipProps, TooltipRenderProps, TooltipTriggerComponentProps} from './Tooltip';
-export type {TreeProps, TreeRenderProps, TreeItemProps, TreeItemRenderProps, TreeItemContentProps, TreeItemContentRenderProps, TreeLoadMoreItemProps, TreeLoadMoreItemRenderProps} from './Tree';
+export type {TreeProps, TreeRenderProps, TreeEmptyStateRenderProps, TreeItemProps, TreeItemRenderProps, TreeItemContentProps, TreeItemContentRenderProps, TreeLoadMoreItemProps, TreeLoadMoreItemRenderProps} from './Tree';
 export type {DragOptions, DragResult} from '@react-aria/dnd';
 export type {DragAndDropHooks, DragAndDropOptions, DropIndicatorProps, DropIndicatorRenderProps} from './useDragAndDrop';
 export type {ContextValue, RenderProps, SlotProps, StyleRenderProps} from './utils';

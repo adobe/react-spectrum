@@ -271,7 +271,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                     }],
                     [TextContext, {
                       slots: {
-                        description: {styles: description({size})}
+                        'description': {styles: description({size, isFocused: false, isDisabled: false})}
                       }
                     }]
                   ]}>

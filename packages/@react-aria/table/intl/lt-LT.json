@@ -7,5 +7,7 @@
   "resizerDescription": "Paspauskite „Enter“, kad pradėtumėte keisti dydį",
   "select": "Pasirinkti",
   "selectAll": "Pasirinkti viską",
-  "sortable": "rikiuojamas stulpelis"
+  "sortable": "rikiuojamas stulpelis",
+  "collapse": "Sutraukti",
+  "expand": "Išskleisti"
 }

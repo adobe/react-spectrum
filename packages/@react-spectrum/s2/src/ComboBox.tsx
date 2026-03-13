@@ -694,7 +694,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
                 }],
                 [TextContext, {
                   slots: {
-                    'description': {styles: description({size})}
+                    'description': {styles: description({size, isFocused: false, isDisabled: false})}
                   }
                 }]
               ]}>

@@ -51,5 +51,6 @@ export {inertValue} from './inertValue';
 export {isCtrlKeyPressed, willOpenKeyboard} from './keyboard';
 export {useEnterAnimation, useExitAnimation} from './animation';
 export {isFocusable, isTabbable} from './isFocusable';
+export {getNonce} from './getNonce';
 
 export type {LoadMoreSentinelProps} from './useLoadMoreSentinel';

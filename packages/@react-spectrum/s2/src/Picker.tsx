@@ -448,7 +448,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                       }],
                       [TextContext, {
                         slots: {
-                          description: {styles: description({size})}
+                          'description': {styles: description({size, isFocused: false, isDisabled: false})}
                         }
                       }]
                     ]}>
