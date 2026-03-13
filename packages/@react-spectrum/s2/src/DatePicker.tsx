@@ -248,8 +248,7 @@ export function CalendarPopover(props: Omit<PopoverProps, 'children'> & {childre
       padding="none">
       <div
         className={style({
-          paddingX: 16,
-          paddingY: 32,
+          padding: 16,
           overflow: 'auto',
           display: 'flex',
           flexDirection: 'column',
