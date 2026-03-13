@@ -140,6 +140,18 @@
     "react/self-closing-comp": "error",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
+    "react-hooks-js/config": "error",
+    "react-hooks-js/error-boundaries": "error",
+    "react-hooks-js/component-hook-factories": "error",
+    "react-hooks-js/gating": "error",
+    "react-hooks-js/globals": "error",
+    "react-hooks-js/purity": "error",
+    "react-hooks-js/set-state-in-effect": "error",
+    "react-hooks-js/set-state-in-render": "error",
+    "react-hooks-js/static-components": "error",
+    "react-hooks-js/unsupported-syntax": "warn",
+    "react-hooks-js/use-memo": "error",
+    "react-hooks-js/incompatible-library": "warn",
     "rsp-rules/no-react-key": [
       "error"
     ],
@@ -235,6 +247,7 @@
     "monorepo/no-relative-import": "error"
   },
   "jsPlugins": [
+    { "name": "react-hooks-js", "specifier": "eslint-plugin-react-hooks" },
     "./packages/dev/eslint-plugin-rsp-rules/index.js",
     { "name": "rulesdir", "specifier": "./scripts/oxlint-rulesdir-plugin.mjs" },
     { "name": "monorepo", "specifier": "./scripts/oxlint-monorepo-plugin.mjs" }
@@ -1423,6 +1436,7 @@
         ]
       },
       "jsPlugins": [
+        { "name": "react-hooks-js", "specifier": "eslint-plugin-react-hooks" },
         { "name": "@stylistic", "specifier": "@stylistic/eslint-plugin-ts" }
       ],
       "globals": {
@@ -1457,6 +1471,7 @@
         "jsx-a11y/no-noninteractive-tabindex": "off"
       },
       "jsPlugins": [
+        { "name": "react-hooks-js", "specifier": "eslint-plugin-react-hooks" },
         "./packages/dev/eslint-plugin-rsp-rules/index.js",
         { "name": "rulesdir", "specifier": "./scripts/oxlint-rulesdir-plugin.mjs" },
         { "name": "monorepo", "specifier": "./scripts/oxlint-monorepo-plugin.mjs" }

@@ -44,9 +44,8 @@
     "build": "make build",
     "test:ssr": "cross-env STRICT_MODE=1 yarn jest --runInBand --config jest.ssr.config.js",
     "ci-test": "cross-env STRICT_MODE=1 yarn jest --maxWorkers=2 && cross-env STRICT_MODE=1 yarn test:ssr --runInBand",
-    "lint": "concurrently \"yarn check-types\" \"yarn lint:oxlint\" \"yarn lint:react-compiler\" \"node scripts/lint-packages.js\" \"yarn constraints\"",
+    "lint": "concurrently \"yarn check-types\" \"yarn lint:oxlint\" \"node scripts/lint-packages.js\" \"yarn constraints\"",
     "lint:oxlint": "oxlint packages",
-    "lint:react-compiler": "eslint \"packages/**/*.{js,jsx,ts,tsx}\" --cache --cache-location .cache/eslint-react-compiler --no-error-on-unmatched-pattern --ignore-pattern 'packages/@react-aria/i18n/server/**' --ignore-pattern 'packages/@spectrum-icons/color/**' --ignore-pattern 'packages/@spectrum-icons/ui/**' --ignore-pattern 'packages/@spectrum-icons/workflow/**' --ignore-pattern 'packages/@spectrum-icons/illustrations/**' --ignore-pattern 'packages/@spectrum-icons/express/**' --ignore-pattern 'packages/**/dist/**' --ignore-pattern 'packages/**/i18n/**' --ignore-pattern 'packages/dev/storybook-builder-parcel/preview.js' --ignore-pattern 'packages/dev/optimize-locales-plugin/LocalesPlugin.d.ts' --ignore-pattern 'packages/@react-spectrum/s2/icon.d.ts' --ignore-pattern 'packages/@react-spectrum/s2/spectrum-illustrations/**' --ignore-pattern 'packages/dev/parcel-config-storybook/**' --ignore-pattern 'packages/dev/parcel-resolver-storybook/**' --ignore-pattern 'packages/dev/parcel-transformer-storybook/**' --ignore-pattern 'packages/dev/storybook-builder-parcel/**' --ignore-pattern 'packages/dev/storybook-react-parcel/**' --ignore-pattern 'packages/dev/s2-docs/pages/**' --ignore-pattern 'packages/dev/mcp/*/dist/**'",
     "jest": "jest",
     "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js",
     "build:icons": "babel-node --presets @babel/env ./scripts/buildIcons.js",
@@ -196,7 +195,6 @@
     "tailwindcss-animate": "^1.0.7",
     "tempy": "^0.5.0",
     "typescript": "^5.8.2",
-    "typescript-eslint": "^8.38.0",
     "verdaccio": "^6.0.0",
     "walk-object": "^4.0.0",
     "xml": "^1.0.1"
