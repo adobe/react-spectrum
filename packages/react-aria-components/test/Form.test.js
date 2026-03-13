@@ -11,8 +11,13 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, FieldError, Form, Input, Label, TextField} from '../';
+import {Button} from '../src/Button';
+import {FieldError} from '../src/FieldError';
+import {Form} from '../src/Form';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
 import React from 'react';
+import {TextField} from '../src/TextField';
 import userEvent from '@testing-library/user-event';
 
 describe('Form', () => {

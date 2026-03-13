@@ -9,25 +9,24 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useOverlayPosition} from './useOverlayPosition';
-export {useOverlay} from './useOverlay';
-export {useOverlayTrigger} from './useOverlayTrigger';
-export {usePreventScroll} from './usePreventScroll';
-export {ModalProvider, useModalProvider, OverlayProvider, OverlayContainer, useModal} from './useModal';
-export {DismissButton} from './DismissButton';
-export {ariaHideOutside} from './ariaHideOutside';
-export {usePopover} from './usePopover';
-export {useModalOverlay} from './useModalOverlay';
-export {Overlay, useOverlayFocusContain} from './Overlay';
-export {UNSAFE_PortalProvider, useUNSAFE_PortalContext} from './PortalProvider';
+export {useOverlayPosition} from 'react-aria/private/overlays/useOverlayPosition';
 
-export type {AriaPositionProps, PositionAria} from './useOverlayPosition';
-export type {AriaOverlayProps, OverlayAria} from './useOverlay';
-export type {OverlayTriggerAria, OverlayTriggerProps} from './useOverlayTrigger';
-export type {AriaModalOptions, ModalAria, ModalProviderAria, ModalProviderProps, OverlayContainerProps} from './useModal';
-export type {DismissButtonProps} from './DismissButton';
-export type {AriaPopoverProps, PopoverAria} from './usePopover';
-export type {AriaModalOverlayProps, ModalOverlayAria} from './useModalOverlay';
-export type {OverlayProps} from './Overlay';
+export {useOverlay} from 'react-aria/private/overlays/useOverlay';
+export {useOverlayTrigger} from 'react-aria/useOverlayTrigger';
+export {usePreventScroll} from 'react-aria/private/overlays/usePreventScroll';
+export {ModalProvider, useModalProvider, OverlayProvider, OverlayContainer, useModal} from 'react-aria/private/overlays/useModal';
+export {DismissButton, Overlay} from 'react-aria/Overlay';
+export {ariaHideOutside} from 'react-aria/private/overlays/ariaHideOutside';
+export {usePopover} from 'react-aria/usePopover';
+export {useModalOverlay} from 'react-aria/useModalOverlay';
+export {useOverlayFocusContain} from 'react-aria/private/overlays/Overlay';
+export {UNSAFE_PortalProvider, useUNSAFE_PortalContext} from 'react-aria/PortalProvider';
+export type {AriaPositionProps, PositionAria} from 'react-aria/private/overlays/useOverlayPosition';
+export type {AriaOverlayProps, OverlayAria} from 'react-aria/private/overlays/useOverlay';
+export type {OverlayTriggerAria, OverlayTriggerProps} from 'react-aria/useOverlayTrigger';
+export type {AriaModalOptions, ModalAria, ModalProviderAria, ModalProviderProps, OverlayContainerProps} from 'react-aria/private/overlays/useModal';
+export type {DismissButtonProps, OverlayProps} from 'react-aria/Overlay';
+export type {AriaPopoverProps, PopoverAria} from 'react-aria/usePopover';
+export type {AriaModalOverlayProps, ModalOverlayAria} from 'react-aria/useModalOverlay';
+export type {PortalProviderProps, PortalProviderContextValue} from 'react-aria/PortalProvider';
 export type {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
-export type {PortalProviderProps, PortalProviderContextValue} from './PortalProvider';

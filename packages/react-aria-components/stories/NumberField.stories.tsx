@@ -10,8 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldProps} from 'react-aria-components';
+import {Button} from '../src/Button';
+
+import {FieldError} from '../src/FieldError';
+import {Group} from '../src/Group';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
 import {Meta, StoryObj} from '@storybook/react';
+import {NumberField, NumberFieldProps} from '../src/NumberField';
 import React, {useState} from 'react';
 import './styles.css';
 

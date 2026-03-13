@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Menu} from '../src';
+import {Menu} from '../src/Menu';
 
 import type {Meta} from '@storybook/react';
 

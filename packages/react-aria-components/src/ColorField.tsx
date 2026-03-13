@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaColorFieldProps, useColorChannelField, useColorField, useLocale} from 'react-aria';
+import {AriaColorFieldProps} from '@react-types/color';
+
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -24,15 +25,18 @@ import {
   useRenderProps,
   useSlot
 } from './utils';
-import {ColorChannel, ColorFieldState, ColorSpace, useColorChannelFieldState, useColorFieldState} from 'react-stately';
+import {ColorChannel, ColorSpace} from '@react-types/color';
+import {ColorFieldState, useColorChannelFieldState, useColorFieldState} from 'react-stately/useColorFieldState';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {GlobalDOMAttributes, InputDOMProps, ValidationResult} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, Ref, useRef} from 'react';
 import {TextContext} from './Text';
+import {useColorChannelField, useColorField} from 'react-aria/useColorField';
+import {useLocale} from 'react-aria/I18nProvider';
 
 export interface ColorFieldRenderProps {
   /**

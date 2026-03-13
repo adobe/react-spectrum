@@ -12,12 +12,11 @@
 
 /// <reference types="css-module-types" />
 
-export {MenuTrigger} from './MenuTrigger';
-export {SubmenuTrigger} from './SubmenuTrigger';
-export {Menu} from './Menu';
-export {ActionMenu} from './ActionMenu';
-export {ContextualHelpTrigger} from './ContextualHelpTrigger';
-export {Item, Section} from '@react-stately/collections';
+export {MenuTrigger} from '@adobe/react-spectrum/MenuTrigger';
+
+export {SubmenuTrigger, Menu, ContextualHelpTrigger} from '@adobe/react-spectrum/Menu';
+export {ActionMenu} from '@adobe/react-spectrum/ActionMenu';
+export type {SpectrumMenuDialogTriggerProps, SpectrumSubmenuTriggerProps} from '@adobe/react-spectrum/Menu';
+export {Item} from 'react-stately/Item';
+export {Section} from 'react-stately/Section';
 export type {SpectrumActionMenuProps, SpectrumMenuProps, SpectrumMenuTriggerProps} from '@react-types/menu';
-export type {SpectrumMenuDialogTriggerProps} from './ContextualHelpTrigger';
-export type {SpectrumSubmenuTriggerProps} from './SubmenuTrigger';

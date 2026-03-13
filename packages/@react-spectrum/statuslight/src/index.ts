@@ -12,5 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export {StatusLight} from './StatusLight';
+export {StatusLight} from '@adobe/react-spectrum/StatusLight';
+
 export type {SpectrumStatusLightProps} from '@react-types/statuslight';

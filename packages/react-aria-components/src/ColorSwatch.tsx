@@ -1,4 +1,4 @@
-import {AriaColorSwatchProps, useColorSwatch} from 'react-aria';
+import {AriaColorSwatchProps, useColorSwatch} from 'react-aria/useColorSwatch';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -8,9 +8,10 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {Color} from 'react-stately';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {Color} from '@react-types/color';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
 export interface ColorSwatchRenderProps {

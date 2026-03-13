@@ -13,10 +13,11 @@
 import {
   ColorWheel as AriaColorWheel,
   ColorWheelProps as AriaColorWheelProps,
-  ColorWheelTrack,
-  ContextValue
-} from 'react-aria-components';
+  ColorWheelTrack
+} from 'react-aria-components/ColorWheel';
+
 import {ColorHandle} from './ColorHandle';
+import {ContextValue} from 'react-aria-components/utils';
 import {createContext, forwardRef} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};

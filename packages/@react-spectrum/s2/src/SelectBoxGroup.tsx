@@ -12,22 +12,16 @@
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
 import Checkmark from '../ui-icons/Checkmark';
-import {
-  ContextValue,
-  DEFAULT_SLOT,
-  ListBox,
-  ListBoxItem,
-  ListBoxProps,
-  Provider
-} from 'react-aria-components';
+import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/utils';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, Key, Orientation} from '@react-types/shared';
 import {forwardRefType} from './types';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from '../src/Icon';
+import {ListBox, ListBoxItem, ListBoxProps} from 'react-aria-components/ListBox';
 import {pressScale} from './pressScale';
 import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef} from 'react';
 import {TextContext} from './Content';
-import {useFocusVisible} from 'react-aria';
+import {useFocusVisible} from 'react-aria/useFocusVisible';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>, keyof GlobalDOMAttributes | 'layout' | 'dragAndDropHooks' | 'dependencies' | 'renderEmptyState' | 'children' | 'onAction' | 'shouldFocusOnHover' | 'selectionBehavior' | 'shouldSelectOnPressUp' | 'shouldFocusWrap' | 'style' | 'className' | 'render'> {

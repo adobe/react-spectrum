@@ -19,27 +19,15 @@
       "source": "./src/server.tsx",
       "import": "./server/index.mjs",
       "require": "./server/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "server-module": "server/index.mjs",
   "server-main": "server/index.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "targets": {
-    "main": {},
-    "module": {},
-    "server-module": {
-      "source": "src/server.tsx",
-      "outputFormat": "esmodule",
-      "isLibrary": true,
-      "includeNodeModules": false
-    },
-    "server-main": {
-      "source": "src/server.tsx",
-      "outputFormat": "commonjs",
-      "isLibrary": true,
-      "includeNodeModules": false
-    }
+    "types": false
   },
   "files": [
     "dist",
@@ -56,10 +44,9 @@
     "@internationalized/message": "^3.1.8",
     "@internationalized/number": "^3.6.5",
     "@internationalized/string": "^3.2.7",
-    "@react-aria/ssr": "^3.9.10",
-    "@react-aria/utils": "^3.33.1",
     "@react-types/shared": "^3.33.1",
-    "@swc/helpers": "^0.5.0"
+    "@swc/helpers": "^0.5.0",
+    "react-aria": "^3.47.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",

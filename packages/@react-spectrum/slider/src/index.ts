@@ -12,6 +12,7 @@
 
 /// <reference types="css-module-types" />
 
-export {Slider} from './Slider';
-export {RangeSlider} from './RangeSlider';
+export {Slider} from '@adobe/react-spectrum/Slider';
+
+export {RangeSlider} from '@adobe/react-spectrum/RangeSlider';
 export type {SpectrumRangeSliderProps, SpectrumSliderProps} from '@react-types/slider';

@@ -11,4 +11,4 @@
  */
 
 /// <reference types="css-module-types" />
-export {defaultTheme as theme} from './defaultTheme';
+export {defaultTheme as theme} from '@adobe/react-spectrum/defaultTheme';

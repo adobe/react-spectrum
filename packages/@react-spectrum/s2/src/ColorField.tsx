@@ -10,18 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  ColorField as AriaColorField,
-  ColorFieldProps as AriaColorFieldProps,
-  ContextValue,
-  InputProps
-} from 'react-aria-components';
+import {ColorField as AriaColorField, ColorFieldProps as AriaColorFieldProps} from 'react-aria-components/ColorField';
+
+import {ContextValue} from 'react-aria-components/utils';
 import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from './useDOMRef';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {InputProps} from 'react-aria-components/Input';
 import {style} from '../style' with {type: 'macro'};
 import {TextFieldRef} from '@react-types/textfield';
 import {useSpectrumContextProps} from './useSpectrumContextProps';

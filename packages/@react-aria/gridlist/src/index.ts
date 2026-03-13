@@ -10,12 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export {useGridList} from './useGridList';
-export {useGridListItem} from './useGridListItem';
-export {useGridListSelectionCheckbox} from './useGridListSelectionCheckbox';
-export {useGridListSection} from './useGridListSection';
+export {useGridList, useGridListItem, useGridListSelectionCheckbox, useGridListSection} from 'react-aria/useGridList';
 
-export type {AriaGridListOptions, AriaGridListProps, GridListAria, GridListProps} from './useGridList';
-export type {AriaGridListItemOptions, GridListItemAria} from './useGridListItem';
-export type {AriaGridListSectionProps, GridListSectionAria} from './useGridListSection';
-export type {AriaGridSelectionCheckboxProps, GridSelectionCheckboxAria} from '@react-aria/grid';
+export type {AriaGridListOptions, AriaGridListProps, GridListAria, GridListProps, AriaGridListItemOptions, GridListItemAria, AriaGridListSectionProps, GridListSectionAria} from 'react-aria/useGridList';
+export type {AriaGridSelectionCheckboxProps, GridSelectionCheckboxAria} from 'react-aria/private/grid/useGridSelectionCheckbox';

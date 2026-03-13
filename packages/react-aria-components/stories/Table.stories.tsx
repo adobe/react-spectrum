@@ -11,14 +11,39 @@
  */
 
 import {action} from 'storybook/actions';
-import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
+import {Button} from '../src/Button';
+
+import {
+  Cell,
+  Column,
+  ColumnProps,
+  ColumnResizer,
+  ResizableTableContainer,
+  Row,
+  Table,
+  TableBody,
+  TableHeader,
+  TableLayout
+} from '../src/Table';
+
 import {CellProps, TableLoadMoreItem} from '../src/Table';
-import {isTextDropItem} from 'react-aria';
+import {Checkbox, CheckboxProps} from '../src/Checkbox';
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
+import {Heading} from '../src/Heading';
+import {isTextDropItem} from 'react-aria/private/dnd/utils';
 import {LoadingSpinner, MyMenuItem} from './utils';
+import {Menu, MenuTrigger} from '../src/Menu';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Modal, ModalOverlay} from '../src/Modal';
+import {Popover} from '../src/Popover';
 import React, {JSX, startTransition, Suspense, useState} from 'react';
-import {Selection, useAsyncList, useListData} from 'react-stately';
+import {Selection} from '@react-types/shared';
 import styles from '../example/index.css';
+import {useAsyncList} from 'react-stately/useAsyncList';
+import {useListData} from 'react-stately/useListData';
+import {Virtualizer} from '../src/Virtualizer';
 import './styles.css';
 
 export default {
@@ -474,7 +499,7 @@ function DndTableRender(props: DndTableProps): JSX.Element {
       </TableBody>
     </Table>
   );
-};
+}
 
 export const DndTable: StoryFn<typeof DndTableRender> = (props) => {
   return (
@@ -517,7 +542,7 @@ function DndTableExampleRender(props: DndTableExampleProps): JSX.Element {
         isDisabled={props.isDisabledSecondTable} />
     </div>
   );
-};
+}
 
 export const DndTableExample: StoryFn<typeof DndTableExampleRender> = (props) => {
   return <DndTableExampleRender {...props} />;
@@ -631,9 +656,9 @@ const MyTableLoadingIndicator = (props) => {
     // These styles will make the load more spinner sticky. A user would know if their table is virtualized and thus could control this styling if they wanted to
     // TODO: this doesn't work because the virtualizer wrapper around the table body has overflow: hidden. Perhaps could change this by extending the table layout and
     // making the layoutInfo for the table body have allowOverflow
-    <TableLoadMoreItem style={{height: 30, width: tableWidth}} {...otherProps}>
+    (<TableLoadMoreItem style={{height: 30, width: tableWidth}} {...otherProps}>
       <LoadingSpinner style={{height: 20, position: 'unset'}} />
-    </TableLoadMoreItem>
+    </TableLoadMoreItem>)
   );
 };
 

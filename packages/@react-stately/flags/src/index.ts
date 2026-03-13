@@ -10,4 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-export {enableTableNestedRows, tableNestedRows, enableShadowDOM, shadowDOM} from './flags';
+export {enableTableNestedRows, tableNestedRows, enableShadowDOM, shadowDOM} from 'react-stately/private/flags/flags';

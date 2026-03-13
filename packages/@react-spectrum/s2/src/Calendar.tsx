@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Header, HeaderContext, Heading, HeadingContext, pressScale} from './';
+import {ActionButton} from './ActionButton';
+
 import {
   Calendar as AriaCalendar,
   CalendarCell as AriaCalendarCell,
@@ -18,39 +19,42 @@ import {
   CalendarGrid as AriaCalendarGrid,
   CalendarHeaderCell as AriaCalendarHeaderCell,
   CalendarProps as AriaCalendarProps,
-  ButtonProps,
   CalendarCellProps,
   CalendarCellRenderProps,
   CalendarGridBody,
   CalendarGridHeader,
   CalendarHeaderCellProps,
-  CalendarState,
   CalendarStateContext,
-  ContextValue,
-  DateValue,
-  Provider,
   RangeCalendarContext,
-  RangeCalendarState,
-  RangeCalendarStateContext,
-  Text,
-  useSlottedContext
-} from 'react-aria-components';
-import {AriaCalendarGridProps} from '@react-aria/calendar';
+  RangeCalendarStateContext
+} from 'react-aria-components/Calendar';
+import {AriaCalendarGridProps} from 'react-aria/useCalendar';
+
 import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
+
+import {ButtonProps} from 'react-aria-components/Button';
 import {
   CalendarDate,
   getDayOfWeek,
   startOfMonth
 } from '@internationalized/date';
+import {CalendarState, RangeCalendarState} from 'react-stately/private/calendar/types';
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
+import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/utils';
+import {DateValue} from '@react-types/datepicker';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {Header, HeaderContext, Heading, HeadingContext} from './Content';
 import {helpTextStyles} from './Field';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
+import {pressScale} from './pressScale';
+// @ts-ignore
 import React, {createContext, CSSProperties, ForwardedRef, forwardRef, Fragment, PropsWithChildren, ReactElement, ReactNode, useContext, useMemo, useRef} from 'react';
-import {useDateFormatter, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {Text} from 'react-aria-components/Text';
+import {useDateFormatter} from 'react-aria/useDateFormatter';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 

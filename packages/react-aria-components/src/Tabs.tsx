@@ -11,15 +11,27 @@
  */
 
 import {AriaLabelingProps, FocusEvents, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
-import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
+import {AriaTabListProps, AriaTabPanelProps} from '@react-types/tabs';
 import {ClassNameOrFunction, ContextValue, dom, DOMRenderProps, PossibleLinkDOMRenderProps, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
-import {Collection, CollectionBuilder, CollectionNode, createHideableComponent, createLeafComponent} from '@react-aria/collections';
+import {Collection, CollectionBuilder, createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
+import {CollectionNode} from 'react-aria/private/collections/BaseCollection';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, usePersistedKeys} from './Collection';
-import {filterDOMProps, inertValue, useEnterAnimation, useExitAnimation, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import {Collection as ICollection, Node, TabListState, useTabListState} from 'react-stately';
+import {createHideableComponent} from 'react-aria/private/collections/Hidden';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {Collection as ICollection, Node} from '@react-types/shared';
+import {inertValue} from 'react-aria/private/utils/inertValue';
+import {mergeProps} from 'react-aria/mergeProps';
+import {Orientation} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef, JSX, useContext, useMemo, useRef, useState} from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
+import {TabListState, useTabListState} from 'react-stately/useTabListState';
+import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useObjectRef} from 'react-aria/useObjectRef';
+import {useTab, useTabList, useTabPanel} from 'react-aria/useTabList';
 
 export interface TabsProps extends Omit<AriaTabListProps<any>, 'items' | 'children'>, RenderProps<TabsRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**

@@ -9,7 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useSwitch} from './useSwitch';
+export {useSwitch} from 'react-aria/useSwitch';
+
+export type {SwitchAria} from 'react-aria/useSwitch';
 
 export type {AriaSwitchProps} from '@react-types/switch';
-export type {SwitchAria} from './useSwitch';

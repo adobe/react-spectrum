@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSearchFieldProps, useSearchField} from 'react-aria';
+import {AriaSearchFieldProps} from '@react-types/searchfield';
+
 import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
@@ -26,18 +27,19 @@ import {
   useSlot,
   useSlottedContext
 } from './utils';
-import {createHideableComponent} from '@react-aria/collections';
+import {createHideableComponent} from 'react-aria/private/collections/Hidden';
 import {FieldErrorContext} from './FieldError';
 import {FieldInputContext} from './Autocomplete';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {FormContext} from './Form';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, useRef} from 'react';
-import {SearchFieldState, useSearchFieldState} from 'react-stately';
+import {SearchFieldState, useSearchFieldState} from 'react-stately/useSearchFieldState';
 import {TextContext} from './Text';
+import {useSearchField} from 'react-aria/useSearchField';
 
 export interface SearchFieldRenderProps {
   /**

@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export {useMenuTriggerState} from './useMenuTriggerState';
-export {useSubmenuTriggerState} from './useSubmenuTriggerState';
+export {useMenuTriggerState, useSubmenuTriggerState} from 'react-stately/useMenuTriggerState';
+
+export type {MenuTriggerState, RootMenuTriggerState, SubmenuTriggerProps, SubmenuTriggerState} from 'react-stately/useMenuTriggerState';
 
 export type {MenuTriggerProps} from '@react-types/menu';
-export type {MenuTriggerState, RootMenuTriggerState} from './useMenuTriggerState';
-export type {SubmenuTriggerProps, SubmenuTriggerState} from './useSubmenuTriggerState';

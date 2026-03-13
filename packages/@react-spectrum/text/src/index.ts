@@ -12,7 +12,8 @@
 
 /// <reference types="css-module-types" />
 
-export {Text} from './Text';
-export {Heading} from './Heading';
-export {Keyboard} from './Keyboard';
+export {Text} from '@adobe/react-spectrum/Text';
+
+export {Heading} from '@adobe/react-spectrum/Heading';
+export {Keyboard} from '@adobe/react-spectrum/Keyboard';
 export type {HeadingProps, KeyboardProps, TextProps} from '@react-types/text';

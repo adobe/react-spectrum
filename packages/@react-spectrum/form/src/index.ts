@@ -12,5 +12,7 @@
 
 /// <reference types="css-module-types" />
 
-export {useFormProps, Form} from './Form';
+export {useFormProps} from '@adobe/react-spectrum/private/form/Form';
+
+export {Form} from '@adobe/react-spectrum/Form';
 export type {SpectrumFormProps} from '@react-types/form';

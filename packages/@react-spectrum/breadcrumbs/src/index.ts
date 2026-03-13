@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 /// <reference types="css-module-types" />
-export {Breadcrumbs} from './Breadcrumbs';
-export {Item} from '@react-stately/collections';
+export {Breadcrumbs} from '@adobe/react-spectrum/Breadcrumbs';
+
+export {Item} from 'react-stately/Item';
 export type {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';

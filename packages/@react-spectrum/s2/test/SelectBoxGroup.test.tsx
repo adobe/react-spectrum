@@ -1,8 +1,9 @@
 import {act, pointerMap, render, screen, waitFor} from '@react-spectrum/test-utils-internal';
 import Calendar from '../spectrum-illustrations/linear/Calendar';
 import React from 'react';
-import {SelectBox, SelectBoxGroup, Text} from '../src';
+import {SelectBox, SelectBoxGroup} from '../src/SelectBoxGroup';
 import {Selection} from '@react-types/shared';
+import {Text} from '../src/Content';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 

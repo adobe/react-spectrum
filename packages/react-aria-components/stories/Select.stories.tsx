@@ -10,14 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Collection, FieldError, Form, Input, Label, ListBox, ListLayout, OverlayArrow, Popover, Select, SelectValue, TextField, Virtualizer} from 'react-aria-components';
+import {Button} from '../src/Button';
+
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {FieldError} from '../src/FieldError';
+import {Form} from '../src/Form';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
+import {ListBox} from '../src/ListBox';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
+import {ListLayout} from 'react-stately/private/layout/ListLayout';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {OverlayArrow} from '../src/OverlayArrow';
+import {Popover} from '../src/Popover';
 import React, {JSX} from 'react';
+import {Select, SelectValue} from '../src/Select';
 import styles from '../example/index.css';
 import {Tag, TagGroup} from 'vanilla-starter/TagGroup';
-import {useAsyncList} from 'react-stately';
+import {TextField} from '../src/TextField';
+import {useAsyncList} from 'react-stately/useAsyncList';
+import {Virtualizer} from '../src/Virtualizer';
 import './styles.css';
 
 export default {
@@ -282,7 +295,7 @@ function AsyncVirtualizedCollectionRenderSelectRender(args: {delay: number}): JS
       </Virtualizer>
     </Select>
   );
-};
+}
 
 export const AsyncVirtualizedCollectionRenderSelect: StoryObj<typeof AsyncVirtualizedCollectionRenderSelectRender> = {
   render: (args) => <AsyncVirtualizedCollectionRenderSelectRender {...args} />,

@@ -10,19 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-export type {TableColumnResizeState, TableColumnResizeStateProps} from './useTableColumnResizeState';
-export type {TableState, CollectionBuilderContext, TableStateProps} from './useTableState';
-export type {TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps} from '@react-types/table';
-export type {TreeGridState, TreeGridStateProps} from './useTreeGridState';
+export {useTableColumnResizeState, useTableState, UNSTABLE_useFilteredTableState} from 'react-stately/useTableState';
 
-export {useTableColumnResizeState} from './useTableColumnResizeState';
-export {useTableState, UNSTABLE_useFilteredTableState} from './useTableState';
-export {TableHeader} from './TableHeader';
-export {TableBody} from './TableBody';
-export {Column} from './Column';
-export {Row} from './Row';
-export {Cell} from './Cell';
-export {Section} from '@react-stately/collections';
-export {TableCollection, buildHeaderRows} from './TableCollection';
-export {TableColumnLayout} from './TableColumnLayout';
-export {UNSTABLE_useTreeGridState} from './useTreeGridState';
+export {TableHeader} from 'react-stately/TableHeader';
+export {TableBody} from 'react-stately/TableBody';
+export {Column} from 'react-stately/Column';
+export {Row} from 'react-stately/Row';
+export {Cell} from 'react-stately/Cell';
+export {TableCollection, buildHeaderRows} from 'react-stately/private/table/TableCollection';
+export {TableColumnLayout} from 'react-stately/private/table/TableColumnLayout';
+export {UNSTABLE_useTreeGridState} from 'react-stately/private/table/useTreeGridState';
+export type {TableColumnResizeState, TableColumnResizeStateProps, TableState, TableStateProps} from 'react-stately/useTableState';
+export type {CollectionBuilderContext} from 'react-stately/private/table/useTableState';
+export type {TreeGridState, TreeGridStateProps} from 'react-stately/private/table/useTreeGridState';
+export type {TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps} from '@react-types/table';
+export {Section} from 'react-stately/private/collections/Section';

@@ -10,12 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu, AssetCard, Avatar, Badge, Button, Card, CardPreview, CardProps, CollectionCardPreview, Content, Divider, Footer, Image, MenuItem, Meter, ProductCard, StatusLight, Text, UserCard} from '../src';
+import {ActionMenu} from '../src/ActionMenu';
+
+import {
+  AssetCard,
+  Card,
+  CardPreview,
+  CardProps,
+  CollectionCardPreview,
+  ProductCard,
+  UserCard
+} from '../src/Card';
+
+import {Avatar} from '../src/Avatar';
+import {Badge} from '../src/Badge';
+import {Button} from '../src/Button';
+import {Content, Footer, Text} from '../src/Content';
+import {Divider} from '../src/Divider';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderGradient from '../spectrum-illustrations/gradient/generic2/FolderClose';
+import {Image} from '../src/Image';
+import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
+import {Meter} from '../src/Meter';
 import Project from '../s2wf-icons/S2_Icon_Project_20_N.svg';
 import Select from '../s2wf-icons/S2_Icon_Select_20_N.svg';
+import {StatusLight} from '../src/StatusLight';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<CardProps> = {

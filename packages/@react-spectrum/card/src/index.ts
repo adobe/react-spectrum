@@ -12,13 +12,13 @@
 
 /// <reference types="css-module-types" />
 
-export type {GalleryLayoutOptions} from './GalleryLayout';
-export type {GridLayoutOptions} from './GridLayout';
-export type {WaterfallLayoutOptions} from './WaterfallLayout';
+export {CardView} from '@adobe/react-spectrum/private/card/CardView';
 
-export {CardView} from './CardView';
-export {GalleryLayout} from './GalleryLayout';
-export {GridLayout} from './GridLayout';
-export {WaterfallLayout} from './WaterfallLayout';
-export {Card} from './Card';
-export type {SpectrumCardViewProps} from '@react-types/card';
+export {GalleryLayout} from '@adobe/react-spectrum/private/card/GalleryLayout';
+export {GridLayout} from '@adobe/react-spectrum/private/card/GridLayout';
+export {WaterfallLayout} from '@adobe/react-spectrum/private/card/WaterfallLayout';
+export {Card} from '@adobe/react-spectrum/private/card/Card';
+export type {GalleryLayoutOptions} from '@adobe/react-spectrum/private/card/GalleryLayout';
+export type {GridLayoutOptions} from '@adobe/react-spectrum/private/card/GridLayout';
+export type {WaterfallLayoutOptions} from '@adobe/react-spectrum/private/card/WaterfallLayout';
+export type {} from '@react-types/card';

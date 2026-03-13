@@ -9,10 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useSlider} from './useSlider';
-export {useSliderThumb} from './useSliderThumb';
+export {useSlider, useSliderThumb} from 'react-aria/useSlider';
+
+export type {SliderAria, AriaSliderThumbOptions, SliderThumbAria} from 'react-aria/useSlider';
 export type {AriaSliderProps} from '@react-types/slider';
-export type {SliderAria} from './useSlider';
-export type {AriaSliderThumbOptions, SliderThumbAria} from './useSliderThumb';
 export type {AriaSliderThumbProps} from '@react-types/slider';
 export type {Orientation} from '@react-types/shared';

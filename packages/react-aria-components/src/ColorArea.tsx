@@ -1,4 +1,4 @@
-import {AriaColorAreaProps, useColorArea} from 'react-aria';
+import {AriaColorAreaProps} from '@react-types/color';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -9,11 +9,13 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {ColorAreaState, useColorAreaState} from 'react-stately';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {ColorAreaState, useColorAreaState} from 'react-stately/useColorAreaState';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {InternalColorThumbContext} from './ColorThumb';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import {useColorArea} from 'react-aria/useColorArea';
 
 export interface ColorAreaRenderProps {
   /**

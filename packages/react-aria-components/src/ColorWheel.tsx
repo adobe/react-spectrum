@@ -1,4 +1,4 @@
-import {AriaColorWheelOptions, useColorWheel} from 'react-aria';
+import {AriaColorWheelOptions, useColorWheel} from 'react-aria/useColorWheel';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -10,8 +10,8 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {ColorWheelState, useColorWheelState} from 'react-stately';
-import {filterDOMProps} from '@react-aria/utils';
+import {ColorWheelState, useColorWheelState} from 'react-stately/useColorWheelState';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {InternalColorThumbContext} from './ColorThumb';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, useContext, useRef} from 'react';

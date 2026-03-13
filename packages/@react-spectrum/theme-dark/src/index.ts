@@ -11,4 +11,4 @@
  */
 
 /// <reference types="css-module-types" />
-export {darkTheme as theme} from './darkTheme';
+export {darkTheme as theme} from '@adobe/react-spectrum/darkTheme';

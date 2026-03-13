@@ -12,24 +12,24 @@
 
 import {
   RangeCalendar as AriaRangeCalendar,
-  RangeCalendarProps as AriaRangeCalendarProps,
-  ContextValue,
-  DateValue,
-  Provider,
-  Text
-} from 'react-aria-components';
+  RangeCalendarProps as AriaRangeCalendarProps
+} from 'react-aria-components/Calendar';
+
 import {CalendarButton, CalendarGrid, CalendarHeading} from './Calendar';
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
+import {ContextValue, Provider} from 'react-aria-components/utils';
 import {createContext, ForwardedRef, forwardRef, ReactNode} from 'react';
+import {DateValue} from '@react-types/datepicker';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {Header, HeaderContext, HeadingContext} from './';
+import {Header, HeaderContext, HeadingContext} from './Content';
 import {helpTextStyles} from './Field';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
+// @ts-ignore
 import {style} from '../style' with {type: 'macro'};
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {Text} from 'react-aria-components/Text';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 

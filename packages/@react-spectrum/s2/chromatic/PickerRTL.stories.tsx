@@ -11,7 +11,7 @@
  */
 
 import type {Meta} from '@storybook/react';
-import {Picker} from '../src';
+import {Picker} from '../src/Picker';
 
 const meta: Meta<typeof Picker<any>> = {
   component: Picker,

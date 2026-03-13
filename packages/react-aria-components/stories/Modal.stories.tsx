@@ -10,13 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ComboBox, Dialog, DialogTrigger, Heading, Input, Label, ListBox, Modal, ModalOverlay, Popover, TextField} from 'react-aria-components';
-import {Meta, StoryFn} from '@storybook/react';
-import React from 'react';
-import './styles.css';
+import {Button} from '../src/Button';
+
+import {ComboBox} from '../src/ComboBox';
 import {DateRangePickerExample} from './DatePicker.stories';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {Heading} from '../src/Heading';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
+import {ListBox} from '../src/ListBox';
+import {Meta, StoryFn} from '@storybook/react';
+import {Modal, ModalOverlay} from '../src/Modal';
 import {MyListBoxItem} from './utils';
+import {Popover} from '../src/Popover';
+import React from 'react';
 import styles from '../example/index.css';
+import {TextField} from '../src/TextField';
+import './styles.css';
 
 
 export default {

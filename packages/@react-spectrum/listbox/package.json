@@ -6,13 +6,16 @@
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "source": "./src/index.ts",
-    "types": [
-      "./dist/types.d.ts",
-      "./src/index.ts"
-    ],
-    "import": "./dist/import.mjs",
-    "require": "./dist/main.js"
+    ".": {
+      "source": "./src/index.ts",
+      "types": [
+        "./dist/types.d.ts",
+        "./src/index.ts"
+      ],
+      "import": "./dist/import.mjs",
+      "require": "./dist/main.js"
+    },
+    "./package.json": "./package.json"
   },
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
@@ -24,46 +27,25 @@
     "*.css"
   ],
   "targets": {
-    "main": {
-      "includeNodeModules": [
-        "@adobe/spectrum-css-temp"
-      ]
-    },
-    "module": {
-      "includeNodeModules": [
-        "@adobe/spectrum-css-temp"
-      ]
-    }
+    "types": false
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.21.5",
-    "@react-aria/i18n": "^3.12.16",
-    "@react-aria/interactions": "^3.27.1",
-    "@react-aria/listbox": "^3.15.3",
-    "@react-aria/utils": "^3.33.1",
-    "@react-aria/virtualizer": "^4.1.13",
-    "@react-spectrum/layout": "^3.6.22",
-    "@react-spectrum/progress": "^3.7.23",
-    "@react-spectrum/text": "^3.5.25",
-    "@react-spectrum/utils": "^3.12.12",
-    "@react-stately/collections": "^3.12.10",
-    "@react-stately/layout": "^4.6.0",
-    "@react-stately/list": "^3.13.4",
-    "@react-stately/virtualizer": "^4.4.6",
     "@react-types/listbox": "^3.7.6",
     "@react-types/shared": "^3.33.1",
     "@spectrum-icons/ui": "^3.6.23",
-    "@swc/helpers": "^0.5.0"
+    "@swc/helpers": "^0.5.0",
+    "react-aria": "^3.47.0",
+    "@adobe/react-spectrum": "^3.46.2",
+    "react-stately": "^3.45.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
   },
   "peerDependencies": {
-    "@react-spectrum/provider": "^3.2.0",
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
     "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   },

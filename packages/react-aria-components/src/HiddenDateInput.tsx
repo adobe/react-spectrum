@@ -12,10 +12,11 @@
 
 
 import {CalendarDate, CalendarDateTime, parseDate, parseDateTime, toCalendarDate, toCalendarDateTime, toLocalTimeZone} from '@internationalized/date';
-import {DateFieldState, DatePickerState, DateSegmentType} from 'react-stately';
-import {getEventTarget} from '@react-aria/utils';
+import {DateFieldState, DateSegmentType} from 'react-stately/useDateFieldState';
+import {DatePickerState} from 'react-stately/useDatePickerState';
+import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import React, {ReactNode} from 'react';
-import {useVisuallyHidden} from 'react-aria';
+import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 interface AriaHiddenDateInputProps {
   /**

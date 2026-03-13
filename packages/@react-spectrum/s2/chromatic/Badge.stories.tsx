@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Badge, BadgeProps} from '../src';
+import {Badge, BadgeProps} from '../src/Badge';
 import {Example} from '../stories/Badge.stories';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta, StoryObj} from '@storybook/react';

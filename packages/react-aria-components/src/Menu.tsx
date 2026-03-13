@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaMenuProps, FocusScope, mergeProps, useHover, useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from 'react-aria';
-import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, ItemNode, SectionNode} from '@react-aria/collections';
-import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, RootMenuTriggerState, TreeState, useMenuTriggerState, useSubmenuTriggerState, useTreeState} from 'react-stately';
+import {AriaMenuProps} from '@react-types/menu';
+
+import {BaseCollection, CollectionNode, ItemNode, SectionNode} from 'react-aria/private/collections/BaseCollection';
+import {MenuTriggerProps as BaseMenuTriggerProps} from '@react-types/menu';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -29,16 +30,20 @@ import {
   useSlot,
   useSlottedContext
 } from './utils';
+import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
-import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {FocusEvents, FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents} from '@react-types/shared';
+import {FocusScope} from 'react-aria/FocusScope';
 import {HeaderContext} from './Header';
+import {Collection as ICollection, Node} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';
-import {MultipleSelectionState, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {mergeProps} from 'react-aria/mergeProps';
+import {MultipleSelectionState} from 'react-stately/private/selection/types';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import {PressResponder} from '@react-aria/interactions';
+import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import React, {
   createContext,
   ForwardedRef,
@@ -53,10 +58,18 @@ import React, {
   useRef,
   useState
 } from 'react';
+import {RootMenuTriggerState, useMenuTriggerState, useSubmenuTriggerState} from 'react-stately/useMenuTriggerState';
 import {SelectionIndicatorContext} from './SelectionIndicator';
+import {SelectionManager} from 'react-stately/private/selection/SelectionManager';
 import {SeparatorContext} from './Separator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
+import {TreeState, useTreeState} from 'react-stately/useTreeState';
+import {useHover} from 'react-aria/useHover';
+import {useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from 'react-aria/useMenu';
+import {useMultipleSelectionState} from 'react-stately/useMultipleSelectionState';
+import {useObjectRef} from 'react-aria/useObjectRef';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<any> | null>(null);

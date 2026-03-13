@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {ModalContext, useSlottedContext} from 'react-aria-components';
+import {ModalContext} from 'react-aria-components/Modal';
+
 import React, {ReactElement, ReactNode, useState} from 'react';
 import {SpectrumDialogContainerProps} from '@react-types/dialog';
+import {useSlottedContext} from 'react-aria-components/utils';
 
 export interface DialogContainerProps extends Omit<SpectrumDialogContainerProps, 'type' | 'isDismissable' | 'isKeyboardDismissDisabled'> {}
 

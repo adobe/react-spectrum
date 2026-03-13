@@ -13,7 +13,7 @@
 import {createContext, forwardRef, ReactNode, useContext, useMemo} from 'react';
 import {DOMRef, GlobalDOMAttributes, SpectrumLabelableProps} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {Form as RACForm, FormProps as RACFormProps} from 'react-aria-components';
+import {Form as RACForm, FormProps as RACFormProps} from 'react-aria-components/Form';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useIsSkeleton} from './Skeleton';

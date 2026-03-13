@@ -13,11 +13,21 @@
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
 import {baseColor, colorMix, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
+import {Button, ButtonContext} from 'react-aria-components/Button';
+import {centerBaseline} from './CenterBaseline';
+import {Checkbox} from './Checkbox';
+
+import Chevron from '../ui-icons/Chevron';
+
+import {DOMRef, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
+import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {IconContext} from './Icon';
+import intlMessages from '../intl/*.json';
+import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ProgressCircle} from './ProgressCircle';
+import {Provider, useContextProps} from 'react-aria-components/utils';
+// @ts-ignore
 import {
-  Button,
-  ButtonContext,
-  ListLayout,
-  Provider,
   TreeItemProps as RACTreeItemProps,
   TreeProps as RACTreeProps,
   Tree,
@@ -25,26 +35,17 @@ import {
   TreeItemContent,
   TreeItemContentProps,
   TreeLoadMoreItem,
-  TreeLoadMoreItemProps,
-  useContextProps,
-  Virtualizer
-} from 'react-aria-components';
-import {centerBaseline} from './CenterBaseline';
-import {Checkbox} from './Checkbox';
-import Chevron from '../ui-icons/Chevron';
-import {DOMRef, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
-import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {IconContext} from './Icon';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
-import {ProgressCircle} from './ProgressCircle';
+  TreeLoadMoreItemProps
+} from 'react-aria-components/Tree';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useRef} from 'react';
 import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from './useDOMRef';
-import {useLocale, useLocalizedStringFormatter} from 'react-aria';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
+import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 interface S2TreeProps {
   /** Handler that is called when a user performs an action on a row. */
@@ -321,7 +322,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
   let scale = useScale();
 
   return (
-    <TreeItemContent>
+    (<TreeItemContent>
       {({isExpanded, hasChildItems, selectionMode, selectionBehavior, isDisabled, isSelected, id, state}) => {
         let isNextSelected = false;
         let isNextFocused = false;
@@ -331,12 +332,12 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
         }
         let isFirst = state.collection.getFirstKey() === id;
         return (
-          <div className={treeCellGrid({isDisabled, isNextSelected, isSelected, isFirst, isNextFocused})}>
+          (<div className={treeCellGrid({isDisabled, isNextSelected, isSelected, isFirst, isNextFocused})}>
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               // TODO: add transition?
-              <div className={treeCheckbox({isDisabled: isDisabled || !state.selectionManager.canSelectItem(id) || state.disabledKeys.has(id)})}>
+              (<div className={treeCheckbox({isDisabled: isDisabled || !state.selectionManager.canSelectItem(id) || state.disabledKeys.has(id)})}>
                 <Checkbox slot="selection" />
-              </div>
+              </div>)
             )}
             <div
               className={style({
@@ -356,10 +357,10 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
               ]}>
               {typeof children === 'string' ? <Text>{children}</Text> : children}
             </Provider>
-          </div>
+          </div>)
         );
       }}
-    </TreeItemContent>
+    </TreeItemContent>)
   );
 };
 

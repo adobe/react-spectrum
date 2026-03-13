@@ -9,23 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {
-  AriaCalendarProps,
-  AriaRangeCalendarProps,
-  DateValue,
-  mergeProps,
-  useCalendar,
-  useCalendarCell,
-  useCalendarGrid,
-  useFocusRing,
-  useHover,
-  useLocale,
-  useRangeCalendar,
-  VisuallyHidden
-} from 'react-aria';
+import {AriaCalendarProps, AriaRangeCalendarProps} from '@react-types/calendar';
+
 import {ButtonContext} from './Button';
 import {CalendarDate, CalendarIdentifier, createCalendar, DateDuration, endOfMonth, Calendar as ICalendar, isSameDay, isSameMonth, isToday} from '@internationalized/date';
-import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
+import {CalendarState, RangeCalendarState} from 'react-stately/private/calendar/types';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -40,11 +28,21 @@ import {
   useRenderProps,
   useSlottedContext
 } from './utils';
+import {DateValue} from '@react-types/datepicker';
 import {DOMAttributes, FocusableElement, forwardRefType, GlobalDOMAttributes, HoverEvents} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {HeadingContext} from './Heading';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
+import {useCalendar, useCalendarCell, useCalendarGrid} from 'react-aria/useCalendar';
+import {useCalendarState} from 'react-stately/useCalendarState';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useRangeCalendar} from 'react-aria/useRangeCalendar';
+import {useRangeCalendarState} from 'react-stately/useRangeCalendarState';
+import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
 export interface CalendarRenderProps {
   /**

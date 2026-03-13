@@ -9,8 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useBreadcrumbItem} from './useBreadcrumbItem';
-export {useBreadcrumbs} from './useBreadcrumbs';
+export {useBreadcrumbItem, useBreadcrumbs} from 'react-aria/useBreadcrumbs';
+
+export type {BreadcrumbItemAria, BreadcrumbsAria} from 'react-aria/useBreadcrumbs';
 export type {AriaBreadcrumbItemProps, AriaBreadcrumbsProps} from '@react-types/breadcrumbs';
-export type {BreadcrumbItemAria} from './useBreadcrumbItem';
-export type {BreadcrumbsAria} from './useBreadcrumbs';

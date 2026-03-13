@@ -12,9 +12,9 @@
 
 import {CalendarDate} from '@internationalized/date';
 import {Custom454Calendar} from '/packages/@internationalized/date/tests/customCalendarImpl';
-import {DateValue} from 'react-aria';
+import {DateValue} from '@react-types/datepicker';
 import type {Meta, StoryObj} from '@storybook/react';
-import {RangeCalendar} from '../src';
+import {RangeCalendar} from '../src/RangeCalendar';
 import {userEvent} from 'storybook/test';
 
 const meta: Meta<typeof RangeCalendar> = {
