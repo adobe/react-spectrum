@@ -21,12 +21,12 @@ import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {Key} from 'react-aria';
+import {ListViewDragPreview} from '../src/ListView';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactNode, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {useAsyncList, useListData} from 'react-stately';
 import {useDragAndDrop} from 'react-aria-components';
-import { ListViewDragPreview } from '../src/ListView';
 
 const meta: Meta<typeof ListView> = {
   component: ListView,
@@ -42,11 +42,18 @@ const meta: Meta<typeof ListView> = {
     styles: style({height: 320})
   },
   decorators: [
-    (Story) => (
-      <div style={{width: '300px', resize: 'both', height: '320px', minHeight: '320px'}}>
-        <Story />
-      </div>
-    )
+    (Story, context) => {
+      let {disableDecorator} = context.parameters;
+      if (disableDecorator) {
+        return <Story />;
+      }
+
+      return (
+        <div style={{width: '300px', resize: 'both', height: '320px', minHeight: '320px'}}>
+          <Story />
+        </div>
+      );
+    }
   ]
 };
 
@@ -700,7 +707,7 @@ function BetweenLists(props) {
       let item = list1.getItem(key)!;
       return {
         [`${item.type}`]: JSON.stringify(item),
-        'text/plain': JSON.stringify(item)
+        'text/plain': item.name
       };
     }),
     onReorder(e) {
@@ -865,8 +872,8 @@ function BetweenLists(props) {
         aria-label="First ListView in drag between list example"
         items={list1.items}
         dragAndDropHooks={dragAndDropHooksList1}
-        styles={style({height: 320})}
-        {...props}>
+        {...props}
+        styles={style({height: 320, width: 320})}>
         {(item: any) => (
           <ListViewItem id={item.id} textValue={item.name}>
             <Text>{item.name}</Text>
@@ -881,11 +888,11 @@ function BetweenLists(props) {
         )}
       </ListView>
       <ListView
-        aria-label="List 2"
+        aria-label="Second ListView in drag between list example"
         items={list2.items}
         dragAndDropHooks={dragAndDropHooksList2}
-        styles={style({height: 320})}
-        {...props}>
+        {...props}
+        styles={style({height: 320, width: 320})}>
         {(item: any) => (
           <ListViewItem id={item.id} textValue={item.name}>
             <Text>{item.name}</Text>
@@ -905,5 +912,8 @@ function BetweenLists(props) {
 
 export const DragBetweenLists: Story = {
   render: (args) => <BetweenLists {...args} />,
-  name: 'Drag between lists'
+  name: 'Drag between lists',
+  parameters: {
+    disableDecorator: true
+  }
 };

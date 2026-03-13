@@ -21,6 +21,8 @@ import {
   ContextValue,
   DEFAULT_SLOT,
   DefaultCollectionRenderer,
+  DragAndDropContext,
+  DropIndicator,
   GridList,
   GridListItem,
   GridListItemProps,
@@ -41,7 +43,7 @@ import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
-import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, ItemDropTarget, LoadingState} from '@react-types/shared';
 import DragHandle from '../ui-icons/DragHandle';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -49,11 +51,11 @@ import {ImageContext} from './Image';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import LinkOutIcon from '../ui-icons/LinkOut';
+import {mergeProps, useFocusRing, useLocale, useLocalizedStringFormatter, useVisuallyHidden} from 'react-aria';
 import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useLocale, useLocalizedStringFormatter, useVisuallyHidden} from 'react-aria';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -114,7 +116,9 @@ const listViewWrapper = style({
 // When any row has a trailing icon, reserve space so actions align.
 const hasTrailingIconRows = ':has([data-has-trailing-icon]) [role="row"]';
 
-const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
+// const dropTargetBackground = colorMix('gray-25', 'blue-900', 10);
+
+const listView = style<GridListRenderProps & {isQuiet?: boolean, isDropTarget?: boolean}>({
   ...focusRing(),
   outlineOffset: {
     default: -2,
@@ -132,16 +136,41 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
     default: 'gray-25',
     isQuiet: 'transparent',
     forcedColors: 'Background'
+    // TODO: check this
+    // isDropTarget: dropTargetBackground,
+    // forcedColors: {
+    //   default: 'Background'
+    // }
   },
   borderRadius: {
     default: 'default',
     isQuiet: 'none'
   },
   borderColor: 'gray-300',
+  // borderColor: {
+  //   default: 'gray-300',
+  //   // isDropTarget: 'blue-800',
+  //   forcedColors: {
+  //     default: 'ButtonBorder',
+  //     isDropTarget: 'Highlight'
+  //   }
+  // },
   borderWidth: {
     default: 1,
-    isQuiet: 0
+    isQuiet: 0,
+    // forcedColors: {
+    //   isDropTarget: 0
+    // }
   },
+  // TODO: will need to update the borders since they shift content if we change the width
+  // for drop target highlighting
+  // boxShadow: {
+  //   isDropTarget: 'emphasized',
+  //   forcedColors: '[inset 0 0 0 2px var(--hcm-buttonborder, ButtonBorder)]'
+  // },
+  // forcedColorAdjust: {
+  //   isDropTarget: 'none'
+  // },
   borderStyle: 'solid',
   '--trailing-icon-width': {
     type: 'width',
@@ -166,6 +195,10 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   // TODO: how to get the actual item.rendered not just the plain text
   if (dragAndDropHooks && dragAndDropHooks.renderDragPreview == null)  {
     dragAndDropHooks.renderDragPreview = (items) => <ListViewDragPreview items={items} overflowMode={overflowMode} />;
+  }
+
+  if (dragAndDropHooks) {
+    dragAndDropHooks.renderDropIndicator = (target) => <InsertionIndicatorVisual target={target} />;
   }
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
@@ -241,7 +274,8 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
         layout={ListLayout}
         layoutOptions={{
           estimatedRowHeight: rowHeight,
-          loaderHeight: 60
+          loaderHeight: 60,
+          dropIndicatorThickness: 12 // 8 + 2 + 2 aka circle height + the circle thickness * 2
         }}>
         <InternalListViewContext.Provider value={{isQuiet, selectionStyle, overflowMode, scale, hideLinkOutIcon}}>
           <GridList
@@ -257,7 +291,8 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
             }}
             className={(renderProps) => listView({
               ...renderProps,
-              isQuiet
+              isQuiet,
+              isDropTarget: renderProps.isDropTarget
             })}
             selectedKeys={selectedKeys}
             defaultSelectedKeys={undefined}
@@ -287,7 +322,8 @@ const listitem = style<GridListItemRenderProps & {
   isPrevNotSelected?: boolean,
   isNextNotSelected?: boolean,
   selectionStyle?: 'highlight' | 'checkbox',
-  scale?: 'medium' | 'large'
+  scale?: 'medium' | 'large',
+  isDropTarget?: boolean
 }>({
   outlineStyle: 'none',
   boxSizing: 'border-box',
@@ -295,6 +331,11 @@ const listitem = style<GridListItemRenderProps & {
   paddingX: 0,
   paddingY: 8,
   backgroundColor: 'transparent',
+  // backgroundColor: {
+  //   default: 'transparent',
+  //   isDropTarget: dropTargetBackground,
+  //   forcedColors: {default: 'transparent', isDropTarget: 'Highlight'}
+  // },
   color: {
     default: baseColor('neutral-subdued'),
     isSelected: baseColor('neutral'),
@@ -341,22 +382,37 @@ const listitem = style<GridListItemRenderProps & {
       forcedColors: 'ButtonBorder'
     }
   },
-  borderTopWidth: 0,
+  borderTopWidth: {
+    default: 0,
+    // isDropTarget: 2
+  },
   borderBottomWidth: {
     default: 1,
     isLastItem: {
       default: 1,
       isQuiet: 0
-    }
+    },
+    // isDropTarget: 2
   },
-  borderStartWidth: 0,
-  borderEndWidth: 0,
+  borderStartWidth: {
+    default: 0,
+    // isDropTarget: 2
+  },
+  borderEndWidth: {
+    default: 0,
+    // isDropTarget: 2
+  },
   borderStyle: 'solid',
   borderColor: {
     default: '--borderColor',
     isNextSelected: 'transparent',
-    isSelected: 'transparent'
+    isSelected: 'transparent',
+    // isDropTarget: 'blue-800',
+    // forcedColors: {default: '--borderColor', isNextSelected: 'transparent', isSelected: 'transparent', isDropTarget: 'Highlight'}
   },
+  // forcedColorAdjust: {
+  //   isDropTarget: 'none'
+  // },
   '--radius': {
     type: 'borderTopStartRadius',
     value: 'default'
@@ -373,7 +429,8 @@ const listRowBackground = style<GridListItemRenderProps & {
   isNextSelected?: boolean,
   isPrevNotSelected?: boolean,
   isNextNotSelected?: boolean,
-  selectionStyle?: 'highlight' | 'checkbox'
+  selectionStyle?: 'highlight' | 'checkbox',
+  isDropTarget?: boolean
 }>({
   position: 'absolute',
   zIndex: -1,
@@ -392,6 +449,7 @@ const listRowBackground = style<GridListItemRenderProps & {
   },
   backgroundColor: {
     default: '--rowBackgroundColor',
+    // isDropTarget: dropTargetBackground,
     isHovered: {
       default: 'gray-900/5',
       selectionStyle: {
@@ -421,6 +479,7 @@ const listRowBackground = style<GridListItemRenderProps & {
       }
     },
     forcedColors: {
+      // TODO: this causes the drop indicator to be cut off in HCM, maybe use transparent?
       default: 'Background'
     }
   },
@@ -744,6 +803,67 @@ let dragPreviewBadge = style({
   color: 'white'
 });
 
+let insertionIndicatorWrapper = style({
+  position: 'absolute',
+  inset: 0,
+  display: 'flex',
+  alignItems: 'center'
+});
+
+let insertionIndicatorBar = style<{isDropTarget?: boolean}>({
+  flexGrow: 1,
+  height: 2,
+  backgroundColor: {
+    default: 'transparent',
+    isDropTarget: 'blue-800',
+    forcedColors: {
+      default: 'transparent',
+      isDropTarget: 'Highlight'
+    }
+  },
+  borderBottomWidth: {
+    default: 0,
+    isDropTarget: 2
+  },
+  borderColor: {
+    isDropTarget: 'blue-800',
+    forcedColors: {
+      isDropTarget: 'Highlight'
+    }
+  },
+  forcedColorAdjust: {
+    isDropTarget: 'none'
+  }
+});
+
+let insertionIndicatorCircle = style<{isDropTarget: boolean}>({
+  width: 8,
+  height: 8,
+  borderRadius: 'full',
+  borderWidth: {
+    isDropTarget: 2
+  },
+  borderStyle: {
+    isDropTarget: 'solid'
+  },
+  borderColor: {
+    isDropTarget: 'blue-800',
+    forcedColors: {
+      isDropTarget: 'Highlight'
+    }
+  },
+  backgroundColor: {
+    isDropTarget: 'gray-25',
+    forcedColors: {
+      default: 'transparent',
+      isDropTarget: 'Background'
+    }
+  },
+  forcedColorAdjust: {
+    isDropTarget: 'none'
+  }
+});
+
 const centeredWrapper = style({
   display: 'flex',
   alignItems: 'center',
@@ -765,6 +885,22 @@ const emptyStateWrapper = style({
   boxSizing: 'border-box',
   padding: 16
 });
+
+// TODO: since I'm not using absolute positioning, the drop indicator at the very top isn't flush with the top edge of the listview
+// maybe ok?
+function InsertionIndicatorVisual({target}: {target: ItemDropTarget}) {
+  return (
+    <DropIndicator target={target}>
+      {({isDropTarget}) => (
+        <div className={insertionIndicatorWrapper}>
+          <div className={insertionIndicatorCircle({isDropTarget})} />
+          <div className={insertionIndicatorBar({isDropTarget})} />
+          <div className={insertionIndicatorCircle({isDropTarget})} />
+        </div>
+      )}
+    </DropIndicator>
+  );
+}
 
 function ListSelectionCheckbox({isDisabled}: {isDisabled: boolean}) {
   let selectionContext = useSlottedContext(CheckboxContext, 'selection');
@@ -856,10 +992,15 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
   let {direction} = useLocale();
   let hasTrailingIcon = hasChildItems || (isLinkOut && !hideLinkOutIcon);
   let {visuallyHiddenProps} = useVisuallyHidden();
+   // TODO this doesn't seem to work
+  let {
+    isFocusVisible: isFocusVisibleWithin,
+    focusProps: focusWithinProps
+  } = useFocusRing({within: true});
 
   return (
     <GridListItem
-      {...otherProps}
+      {...mergeProps(otherProps, focusWithinProps)}
       textValue={textValue}
       ref={ref}
       {...(hasTrailingIcon ? {'data-has-trailing-icon': ''} : {})}
@@ -877,7 +1018,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
       })}>
       {(renderProps) => {
         let {children} = props;
-        let {selectionMode, selectionBehavior, isDisabled, id, state, allowsDragging, isFocusVisible} = renderProps;
+        let {selectionMode, selectionBehavior, isDisabled, id, state, allowsDragging} = renderProps;
         return (
           <Provider
             values={[
@@ -912,6 +1053,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                   ...renderProps,
                   selectionStyle,
                   isQuiet,
+                  isDropTarget: renderProps.isDropTarget,
                   isPrevSelected: isPrevSelected(id, state),
                   isNextSelected: isNextSelected(id, state),
                   isPrevNotSelected: !isPrevSelected(id, state),
@@ -934,13 +1076,13 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                   isLastItem: isLastItem(id, state)
                 })} />
             }
-            {allowsDragging && (
+            {allowsDragging && !isDisabled && (
               <div className={dragButtonContainer}>
                 <Button
                   slot="drag"
                   // TODO: need a isFocusVisibleWithin for the row to keep it visible, consider if adding to
                   // RAC GridList is reasonable
-                  // {/* style={!isFocusVisible ? {...visuallyHiddenProps.style} : {}} */}
+                  // style={!isFocusVisibleWithin ? {...visuallyHiddenProps.style} : {}}
                   className={dragButton}>
                   <DragHandle size="M" />
                 </Button>
