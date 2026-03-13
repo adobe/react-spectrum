@@ -72,7 +72,7 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, op
 
   let scrollBarOffsetX = scrollView === root ? 0 : borderLeftWidth + borderRightWidth;
   let scrollBarOffsetY = scrollView === root ? 0 : borderTopWidth + borderBottomWidth;
-  let scrollBarWidth = scrollView.offsetWidth - scrollView.clientWidth - scrollBarOffsetX;
+  let scrollBarWidth = scrollView === root ? 0 : scrollView.offsetWidth - scrollView.clientWidth - scrollBarOffsetX;
   let scrollBarHeight = scrollView === root ? 0 : scrollView.offsetHeight - scrollView.clientHeight - scrollBarOffsetY;
 
   let scrollPortTop = viewTop + borderTopWidth + scrollPaddingTop;
