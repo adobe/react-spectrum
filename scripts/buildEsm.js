@@ -2,20 +2,32 @@ const fs = require('fs');
 const glob = require('glob');
 const path = require('path');
 
-let regex = /(.*)\.module\.js(?!.map)/g;
+let regex = /\.mjs(['"])/g;
 
 // Add .mjs equivalents for individual packages for Node.js.
 for (let pkg of fs.globSync(['packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}/'])) {
-  if (fs.existsSync(`${pkg}/dist/module.js`)) {
-    let js = fs.readFileSync(`${pkg}/dist/module.js`, 'utf8');
-    js = js.replace(regex, '$1.mjs');
-    fs.writeFileSync(`${pkg}/dist/import.mjs`, js);
+  if (pkg === 'packages/@react-spectrum/s2') {
+    continue;
   }
 
-  for (let file of glob.sync(`${pkg}/dist/*.module.js`)) {
+  let modulePath = `${pkg}/dist/module.js`;
+  if (fs.existsSync(modulePath)) {
+    fs.copyFileSync(modulePath, `${pkg}/dist/import.mjs`);
+
+    // Replace .mjs with .js for webpack 4.
+    let js = fs.readFileSync(modulePath, 'utf8');
+    js = js.replace(regex, '.js$1');
+    fs.writeFileSync(modulePath, js);
+  }
+  
+  // Create .js versions.
+  for (let file of glob.sync(`${pkg}/dist/**/*.mjs`)) {
+    if (file === `${pkg}/dist/import.mjs`) {
+      continue;
+    }
     let js = fs.readFileSync(file, 'utf8');
-    js = js.replace(regex, '$1.mjs');
-    fs.writeFileSync(file.replace(regex, '$1.mjs'), js);
+    js = js.replace(regex, '.js$1');
+    fs.writeFileSync(file.replace('.mjs', '.js'), js);
   }
 }
 
@@ -39,7 +51,7 @@ for (let pkg of ['@adobe/react-spectrum', 'react-aria', 'react-stately', 'react-
   // Copy all .mjs files in the dist directory into .js files for webpack 4.
   for (let file of fs.globSync(`packages/${pkg}/dist/**/*.mjs`)) {
     let contents = fs.readFileSync(file, 'utf8');
-    contents = contents.replace(/\.mjs(['"])/g, '.js$1');
+    contents = contents.replace(regex, '.js$1');
     fs.writeFileSync(file.replace('.mjs', '.js'), contents);
   }
 }
