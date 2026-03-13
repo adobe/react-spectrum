@@ -39,7 +39,7 @@ clean_dist:
 	rm -rf packages/@adobe/react-spectrum/i18n
 	rm -rf packages/@react-aria/i18n/server
 	rm -rf packages/@react-spectrum/s2/style/dist packages/@react-spectrum/s2/page.css packages/@react-spectrum/s2/icons packages/@react-spectrum/s2/illustrations
-	rm -rf packages/{@adobe/react-spectrum,@react-spectrum/s2,react-aria,react-stately}/*.{mjs,cjs}
+	rm -rf packages/{@adobe/react-spectrum,@react-spectrum/s2,react-aria,react-stately,react-aria-components}/*.js
 
 clean_parcel:
 	rm -rf .parcel-cache

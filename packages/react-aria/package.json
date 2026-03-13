@@ -35,8 +35,7 @@
   "files": [
     "dist",
     "i18n",
-    "*.mjs",
-    "*.cjs"
+    "*.js"
   ],
   "sideEffects": false,
   "repository": {

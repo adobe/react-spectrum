@@ -19,22 +19,27 @@ for (let pkg of fs.globSync(['packages/@react-{spectrum,aria,stately}/*/', 'pack
   }
 }
 
-// Add extra shims for bundlers that don't support package.json exports.
+// Add extra shims for bundlers that don't support package.json exports, specifically webpack 4 and Parcel (without config).
 for (let pkg of ['@adobe/react-spectrum', 'react-aria', 'react-stately', 'react-aria-components']) {
-  for (let file of fs.globSync(`packages/${pkg}/dist/exports/**/*.{mjs,cjs}`)) {
-    let shim = file.replace('/dist/exports/', '/');
-    let specifier = path.relative(path.dirname(shim), file);
+  for (let file of fs.globSync(`packages/${pkg}/dist/exports/**/*.mjs`)) {
+    // webpack 4 does not support importing non-ESM modules from .mjs files, so rename to .js
+    // This should be sufficient because Parcel prioritizes .js over .cjs.
+    // We do not support any tools that only support CommonJS.
+    let shim = file.replace('/dist/exports/', '/').replace('.mjs', '.js');
+    let specifier = path.relative(path.dirname(shim), file.replace('.mjs', '.js'));
     if (!specifier.startsWith('.')) {
       specifier = './' + specifier;
     }
-    let contents = '';
-    if (path.extname(shim) === '.cjs') {
-      contents = `module.exports = require('${specifier}');\n`;
-    } else {
-      contents = `export * from '${specifier}';\n`;
-    }
+    let contents = `export * from '${specifier}';\n`;
 
     fs.mkdirSync(path.dirname(shim), {recursive: true});
     fs.writeFileSync(shim, contents);
+  }
+
+  // Copy all .mjs files in the dist directory into .js files for webpack 4.
+  for (let file of fs.globSync(`packages/${pkg}/dist/**/*.mjs`)) {
+    let contents = fs.readFileSync(file, 'utf8');
+    contents = contents.replace(/\.mjs(['"])/g, '.js$1');
+    fs.writeFileSync(file.replace('.mjs', '.js'), contents);
   }
 }
