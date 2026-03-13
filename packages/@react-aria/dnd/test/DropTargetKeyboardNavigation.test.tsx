@@ -195,7 +195,7 @@ class TestCollection implements Collection<Node<Item>> {
 
   getChildren(key: Key): Iterable<Node<Item>> {
     let item = this.map.get(key);
-    return toArray(item?.childNodes || [], (node) => node.type !== 'content');
+    return toArray(item?.childNodes || [], (node) => node.type !== 'item');
   }
 }
 
