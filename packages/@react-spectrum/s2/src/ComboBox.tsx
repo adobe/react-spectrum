@@ -369,7 +369,7 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
   );
 });
 
-export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'render' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
+export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'render' | 'onClick' | 'onKeyDown' | 'onKeyUp' | keyof GlobalDOMAttributes>, StyleProps {
   children: ReactNode
 }
 
@@ -694,7 +694,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
                 }],
                 [TextContext, {
                   slots: {
-                    'description': {styles: description({size})}
+                    'description': {styles: description({size, isFocused: false, isDisabled: false})}
                   }
                 }]
               ]}>

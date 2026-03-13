@@ -23,6 +23,7 @@
   "label.(optional)": "(opciono)",
   "label.(required)": "(obavezno)",
   "menu.moreActions": "Dodatne radnje",
+  "menu.unavailable": "Nije dostupno, proširite za detalje",
   "notificationbadge.indicatorOnly": "Nova aktivnost",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Izaberite...",

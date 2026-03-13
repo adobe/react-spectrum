@@ -276,11 +276,41 @@
   @media (forced-colors: active) {
     --border-color: ButtonBorder;
   }
+
+  &[data-tree-column] {
+    --chevron-placeholder: var(--spacing-5);
+    padding-inline-start: calc(var(--spacing-2) + (var(--table-row-level) - 1) * var(--spacing-4) + var(--chevron-placeholder));
+
+    &[data-has-child-items] {
+      --chevron-placeholder: 0px;
+    }
+  }
+
+  .react-aria-Button[slot=chevron] {
+    all: unset;
+    vertical-align: middle;
+    margin-inline-end: var(--spacing-1);
+
+    svg {
+      rotate: 0deg;
+      transition: rotate 200ms;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 3px;
+      width: var(--spacing-4);
+      height: var(--spacing-4);
+    }
+  }
+
+  &[data-expanded] .react-aria-Button[slot=chevron] svg {
+    rotate: 90deg;
+  }
 }
 
 .react-aria-DropIndicator[data-drop-target] {
   outline: 1px solid var(--highlight-background);
   transform: translateZ(0);
+  translate: calc(68px + (var(--table-row-level) - 1) * var(--spacing-4)) 0;
 }
 
 :where(.react-aria-Row) .react-aria-Checkbox {

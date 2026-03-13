@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/s2-icon-builder",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -23,7 +23,7 @@
     "@parcel/transformer-raw": "^2.16.3",
     "@parcel/transformer-react-refresh-wrap": "^2.16.3",
     "@react-spectrum/parcel-namer-s2": "^1.0.0",
-    "@react-spectrum/parcel-transformer-s2-icon": "^1.0.0",
+    "@react-spectrum/parcel-transformer-s2-icon": "^1.0.1",
     "@swc/helpers": "^0.5.0",
     "glob": "^11.0.3"
   },

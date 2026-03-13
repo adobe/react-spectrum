@@ -119,9 +119,11 @@ function useCopyImport(variant: string, gradientStyle: string) {
     if (timeout.current) {
       clearTimeout(timeout.current);
     }
+    // Use underscore prefix for names starting with a number (invalid JS identifier)
+    let importName = id.replace(/^(\d)/, '_$1');
     let importText = variant === 'gradient' ?
-      `import ${id} from '@react-spectrum/s2/illustrations/gradient/${gradientStyle}/${id}';` :
-      `import ${id} from '@react-spectrum/s2/illustrations/linear/${id}';`;
+      `import ${importName} from '@react-spectrum/s2/illustrations/gradient/${gradientStyle}/${id}';` :
+      `import ${importName} from '@react-spectrum/s2/illustrations/linear/${id}';`;
     navigator.clipboard.writeText(importText).then(() => {
       setCopiedId(id);
       timeout.current = setTimeout(() => setCopiedId(null), 2000);

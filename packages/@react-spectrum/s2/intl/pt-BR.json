@@ -23,6 +23,7 @@
   "label.(optional)": "(opcional)",
   "label.(required)": "(obrigatório)",
   "menu.moreActions": "Mais ações",
+  "menu.unavailable": "Indisponível. Expanda para ver os detalhes",
   "notificationbadge.indicatorOnly": "Nova atividade",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Selecionar…",

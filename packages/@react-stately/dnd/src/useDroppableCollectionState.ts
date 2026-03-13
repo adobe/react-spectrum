@@ -194,6 +194,25 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
       return false;
     },
     getDropOperation(e) {
+      let {target, isInternal, draggingKeys} = e;
+
+      // Prevent dropping items onto themselves or their descendants
+      if (isInternal && target.type === 'item' && draggingKeys.size > 0) {
+        if (draggingKeys.has(target.key) && target.dropPosition === 'on') {
+          return 'cancel';
+        }
+
+        let currentKey: Key | null = target.key;
+        while (currentKey != null) {
+          let item = collection.getItem(currentKey);
+          let parentKey = item?.parentKey;
+          if (parentKey != null && draggingKeys.has(parentKey)) {
+            return 'cancel';
+          }
+          currentKey = parentKey ?? null;
+        }
+      }
+
       return defaultGetDropOperation(e);
     }
   };

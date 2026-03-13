@@ -7,5 +7,7 @@
   "resizerDescription": "Pritisnite tipko Enter da začnete spreminjati velikost",
   "select": "Izberite",
   "selectAll": "Izberite vse",
-  "sortable": "razvrstljivi stolpec"
+  "sortable": "razvrstljivi stolpec",
+  "collapse": "Strni",
+  "expand": "Razširi"
 }
