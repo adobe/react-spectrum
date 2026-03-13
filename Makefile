@@ -99,17 +99,15 @@ publish-nightly: build
 	yarn publish:nightly
 
 build:
-	yarn tsgo --project tsconfig.build.json --declaration --emitDeclarationOnly --outDir types --rootDir packages
+	mkdir -p dist
+	yarn tsgo --project tsconfig.build.json --declaration --emitDeclarationOnly --outDir dist/types --rootDir packages
 	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/{react-aria,react-stately,react-aria-components,@adobe/react-spectrum} --no-optimize --config .parcelrc-build
 	yarn workspaces foreach --all -pt run prepublishOnly
 	node scripts/buildEsm.js
 	node scripts/buildI18n.js
 	node scripts/generateIconDts.js
 	node scripts/fixUseClient.js
-	for pkg in types/@react-{spectrum,aria,stately}/*/ types/@internationalized/{message,string,date,number}/ types/{react-aria,react-stately,react-aria-components,@adobe/react-spectrum}; do \
-		mkdir -p packages/$${pkg#types/}/dist; \
-		mv $$pkg packages/$${pkg#types/}/dist/types; \
-	done
+	node scripts/moveTypes.mjs
 	rm -rf types
 
 website:
