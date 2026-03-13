@@ -25,10 +25,10 @@ import {FieldButton} from '@react-spectrum/button';
 import {FocusableRef, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Input} from './Input';
 // @ts-ignore
-import intlMessages from '../intl/*.json'; // HACK: must be included BEFORE inputgroup
+import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import React, {ReactElement, useRef} from 'react';
-import '@adobe/spectrum-css-temp/components/textfield/vars.css';
+import '@adobe/spectrum-css-temp/components/textfield/vars.css'; // HACK: must be included BEFORE inputgroup
 import {SpectrumDateFieldBase} from './DateField';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TimeField} from './TimeField';
