@@ -6,13 +6,16 @@
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "source": "./src/index.ts",
-    "types": [
-      "./dist/types.d.ts",
-      "./src/index.ts"
-    ],
-    "import": "./dist/import.mjs",
-    "require": "./dist/main.js"
+    ".": {
+      "source": "./src/index.ts",
+      "types": [
+        "./dist/types.d.ts",
+        "./src/index.ts"
+      ],
+      "import": "./dist/import.mjs",
+      "require": "./dist/main.js"
+    },
+    "./package.json": "./package.json"
   },
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
@@ -24,27 +27,18 @@
     "*.css"
   ],
   "targets": {
-    "main": {
-      "includeNodeModules": [
-        "@adobe/spectrum-css-temp"
-      ]
-    },
-    "module": {
-      "includeNodeModules": [
-        "@adobe/spectrum-css-temp"
-      ]
-    }
+    "types": false
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@adobe/react-spectrum": "^3.46.2",
     "@swc/helpers": "^0.5.0",
     "react-aria-components": "^1.16.0"
   },
   "peerDependencies": {
-    "@react-spectrum/provider": "^3.0.0",
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
     "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   },

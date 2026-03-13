@@ -9,7 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaComboBoxProps, useComboBox, useFilter, useListFormatter} from 'react-aria';
+import {AriaComboBoxProps} from '@react-types/combobox';
+
 import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
@@ -25,10 +26,12 @@ import {
   useSlot,
   useSlottedContext
 } from './utils';
-import {Collection, ComboBoxState, Node, useComboBoxState} from 'react-stately';
-import {CollectionBuilder, createHideableComponent} from '@react-aria/collections';
+import {Collection, Node} from '@react-types/shared';
+import {CollectionBuilder} from 'react-aria/private/collections/CollectionBuilder';
+import {ComboBoxState, useComboBoxState} from 'react-stately/useComboBoxState';
+import {createHideableComponent} from 'react-aria/private/collections/Hidden';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes, Key, RefObject} from '@react-types/shared';
 import {GroupContext} from './Group';
@@ -39,6 +42,10 @@ import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
+import {useComboBox} from 'react-aria/useComboBox';
+import {useFilter} from 'react-aria/useFilter';
+import {useListFormatter} from 'react-aria/useListFormatter';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 
 type SelectionMode = 'single' | 'multiple';
 

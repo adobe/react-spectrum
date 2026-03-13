@@ -10,8 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ButtonGroup, Checkbox, Content, Dialog, DialogContainer, DialogProps, DialogTrigger, Footer, Header, Heading, Image, Provider} from '../src';
+import {Button} from '../src/Button';
+
+import {ButtonGroup} from '../src/ButtonGroup';
+import {Checkbox} from '../src/Checkbox';
+import {Content, Footer, Header, Heading} from '../src/Content';
+import {Dialog, DialogProps} from '../src/Dialog';
+import {DialogContainer} from '../src/DialogContainer';
+import {DialogTrigger} from '../src/DialogTrigger';
+import {Image} from '../src/Image';
 import type {Meta, StoryObj} from '@storybook/react';
+import {Provider} from '../src/Provider';
 import {ReactElement, useState} from 'react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 

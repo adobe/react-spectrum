@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 /// <reference types="css-module-types" />
-export {Button} from './Button';
-export {ActionButton} from './ActionButton';
-export {FieldButton} from './FieldButton';
-export {LogicButton} from './LogicButton';
-export {ClearButton} from './ClearButton';
-export {ToggleButton} from './ToggleButton';
+export {Button} from '@adobe/react-spectrum/Button';
+
+export {ActionButton} from '@adobe/react-spectrum/ActionButton';
+export {FieldButton} from '@adobe/react-spectrum/private/button/FieldButton';
+export {LogicButton} from '@adobe/react-spectrum/LogicButton';
+export {ClearButton} from '@adobe/react-spectrum/private/button/ClearButton';
+export {ToggleButton} from '@adobe/react-spectrum/ToggleButton';
 export type {SpectrumActionButtonProps, SpectrumButtonProps, SpectrumLogicButtonProps, SpectrumToggleButtonProps} from '@react-types/button';

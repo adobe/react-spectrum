@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AlertDialog} from '../src';
+import {AlertDialog} from '../src/AlertDialog';
 
 import type {Meta} from '@storybook/react';
 

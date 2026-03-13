@@ -6,13 +6,16 @@
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "source": "./src/index.ts",
-    "types": [
-      "./dist/types.d.ts",
-      "./src/index.ts"
-    ],
-    "import": "./dist/import.mjs",
-    "require": "./dist/main.js"
+    ".": {
+      "source": "./src/index.ts",
+      "types": [
+        "./dist/types.d.ts",
+        "./src/index.ts"
+      ],
+      "import": "./dist/import.mjs",
+      "require": "./dist/main.js"
+    },
+    "./package.json": "./package.json"
   },
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
@@ -26,17 +29,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/form": "^3.1.5",
-    "@react-aria/interactions": "^3.27.1",
-    "@react-aria/label": "^3.7.25",
-    "@react-aria/toggle": "^3.12.5",
-    "@react-aria/utils": "^3.33.1",
-    "@react-stately/checkbox": "^3.7.5",
-    "@react-stately/form": "^3.2.4",
-    "@react-stately/toggle": "^3.9.5",
     "@react-types/checkbox": "^3.10.4",
-    "@react-types/shared": "^3.33.1",
-    "@swc/helpers": "^0.5.0"
+    "@swc/helpers": "^0.5.0",
+    "react-aria": "^3.47.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
@@ -44,5 +39,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "targets": {
+    "types": false
   }
 }

@@ -9,8 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useSelect} from './useSelect';
-export {useHiddenSelect, HiddenSelect} from './HiddenSelect';
-export type {AriaSelectOptions, SelectAria} from './useSelect';
-export type {AriaHiddenSelectProps, HiddenSelectProps} from './HiddenSelect';
+export {useSelect, useHiddenSelect, HiddenSelect} from 'react-aria/useSelect';
+
+export type {AriaSelectOptions, SelectAria, AriaHiddenSelectProps, AriaHiddenSelectOptions, HiddenSelectProps, HiddenSelectAria} from 'react-aria/useSelect';
 export type {AriaSelectProps} from '@react-types/select';

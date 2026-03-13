@@ -13,10 +13,30 @@
 import './installPointerEvent';
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Autocomplete, Breadcrumb, Breadcrumbs, Button, Cell, Collection, Column, Dialog, DialogTrigger, GridList, GridListItem, Header, Input, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Tag, TagGroup, TagList, Text, TextField, Tree, TreeItem, TreeItemContent} from '..';
+import {Autocomplete} from '../src/Autocomplete';
+import {Breadcrumb, Breadcrumbs} from '../src/Breadcrumbs';
+import {Button} from '../src/Button';
+import {Cell, Column, Row, Table, TableBody, TableHeader} from '../src/Table';
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {GridList, GridListItem} from '../src/GridList';
+import {Header} from '../src/Header';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
+import {ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection} from '../src/ListBox';
+import {Menu, MenuItem, MenuSection, SubmenuTrigger} from '../src/Menu';
+import {Popover} from '../src/Popover';
 import React, {ReactNode, useState} from 'react';
-import {useAsyncList} from 'react-stately';
-import {useFilter} from '@react-aria/i18n';
+import {SearchField} from '../src/SearchField';
+import {Select, SelectValue} from '../src/Select';
+import {Separator} from '../src/Separator';
+import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
+import {Tag, TagGroup, TagList} from '../src/TagGroup';
+import {Text} from '../src/Text';
+import {TextField} from '../src/TextField';
+import {Tree, TreeItem, TreeItemContent} from '../src/Tree';
+import {useAsyncList} from 'react-stately/useAsyncList';
+import {useFilter} from 'react-aria/useFilter';
 import userEvent from '@testing-library/user-event';
 
 interface AutocompleteItem {

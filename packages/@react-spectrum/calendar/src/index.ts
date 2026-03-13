@@ -12,6 +12,7 @@
 
 /// <reference types="css-module-types" />
 
-export {Calendar} from './Calendar';
-export {RangeCalendar} from './RangeCalendar';
+export {Calendar} from '@adobe/react-spectrum/Calendar';
+
+export {RangeCalendar} from '@adobe/react-spectrum/RangeCalendar';
 export type {SpectrumCalendarProps, SpectrumRangeCalendarProps} from '@react-types/calendar';

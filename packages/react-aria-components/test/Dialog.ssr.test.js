@@ -15,7 +15,7 @@ import {screen, testSSR} from '@react-spectrum/test-utils-internal';
 describe('Dialog SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {Button, Dialog, DialogTrigger, Heading, Input, Label, Modal, TextField} from '../';
+      import {Button, Dialog, DialogTrigger, Heading, Input, Label, Modal, TextField} from '../exports/index.ts';
 
       <React.StrictMode>
         <DialogTrigger isOpen>

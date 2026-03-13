@@ -10,20 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-export type {ColorAreaState} from './useColorAreaState';
-export type {ColorSliderState} from './useColorSliderState';
-export type {ColorWheelState} from './useColorWheelState';
-export type {ColorFieldState} from './useColorFieldState';
-export type {ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions} from './useColorChannelFieldState';
-export type {ColorPickerProps, ColorPickerState} from './useColorPickerState';
+export {parseColor, getColorChannels} from 'react-stately/Color';
 
-export {parseColor, getColorChannels} from './Color';
-export {useColorAreaState} from './useColorAreaState';
-export {useColorSliderState} from './useColorSliderState';
-export {useColorWheelState} from './useColorWheelState';
-export {useColorFieldState} from './useColorFieldState';
-export {useColorChannelFieldState} from './useColorChannelFieldState';
-export {useColorPickerState} from './useColorPickerState';
+export {useColorAreaState} from 'react-stately/useColorAreaState';
+export {useColorSliderState} from 'react-stately/useColorSliderState';
+export {useColorWheelState} from 'react-stately/useColorWheelState';
+export {useColorFieldState, useColorChannelFieldState} from 'react-stately/useColorFieldState';
+export {useColorPickerState} from 'react-stately/useColorPickerState';
+export type {ColorAreaState} from 'react-stately/useColorAreaState';
+export type {ColorSliderState, ColorSliderStateOptions} from 'react-stately/useColorSliderState';
+export type {ColorWheelState} from 'react-stately/useColorWheelState';
+export type {ColorFieldState, ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions} from 'react-stately/useColorFieldState';
+export type {ColorPickerProps, ColorPickerState} from 'react-stately/useColorPickerState';
 
 export type {Color, ColorChannel, ColorFormat, ColorSpace, ColorAreaProps, ColorFieldProps, ColorWheelProps} from '@react-types/color';
-export type {ColorSliderStateOptions} from './useColorSliderState';

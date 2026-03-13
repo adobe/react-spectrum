@@ -14,9 +14,9 @@ import AlertTriangle from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import CheckmarkCircle from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
 import {ComponentType, createContext, forwardRef, ReactNode, useEffect, useRef} from 'react';
 import {ContentContext, HeadingContext} from './Content';
-import {ContextValue, Provider, SlotProps} from 'react-aria-components';
+import {ContextValue, Provider, SlotProps} from 'react-aria-components/utils';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -24,9 +24,9 @@ import InfoCircle from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
-import {useDOMRef} from '@react-spectrum/utils';
-import {useFocusRing} from 'react-aria';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useDOMRef} from './useDOMRef';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface InlineAlertProps extends DOMProps, StyleProps, InlineStylesProps, SlotProps {

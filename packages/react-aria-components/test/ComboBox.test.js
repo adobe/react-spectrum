@@ -11,11 +11,22 @@
  */
 
 import {act} from '@testing-library/react';
-import {Button, ComboBox, ComboBoxContext, ComboBoxValue, FieldError, Form, Header, Input, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection, ListLayout, Popover, Text, Virtualizer} from '../';
+import {Button} from '../src/Button';
+import {ComboBox, ComboBoxContext, ComboBoxValue} from '../src/ComboBox';
+import {FieldError} from '../src/FieldError';
 import {fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {Form} from '../src/Form';
+import {Header} from '../src/Header';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
+import {ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection} from '../src/ListBox';
+import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {Popover} from '../src/Popover';
 import React, {useState} from 'react';
+import {Text} from '../src/Text';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
+import {Virtualizer} from '../src/Virtualizer';
 
 let renderEmptyState = () => {
   return  (

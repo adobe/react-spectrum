@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu} from '../src';
+import {ActionMenu} from '../src/ActionMenu';
 import {DynamicExample, Example} from '../stories/ActionMenu.stories';
 import type {Meta, StoryObj} from '@storybook/react';
 import {userEvent, within} from 'storybook/test';

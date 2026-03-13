@@ -9,7 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {Button, FileTrigger, Link} from '../';
+import {Button} from '../src/Button';
+
+import {FileTrigger} from '../src/FileTrigger';
+import {Link} from '../src/Link';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';

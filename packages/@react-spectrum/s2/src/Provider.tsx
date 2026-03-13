@@ -14,11 +14,12 @@ import type {ColorScheme, Router} from '@react-types/provider';
 import {colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, JSX, ReactNode, useContext} from 'react';
 import {DOMProps} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {Fonts} from './Fonts';
 import {generateDefaultColorSchemeStyles} from './page.macro' with {type: 'macro'};
-import {I18nProvider, RouterProvider, useLocale} from 'react-aria-components';
+import {I18nProvider, useLocale} from 'react-aria/I18nProvider';
 import {mergeStyles} from '../style/runtime';
+import {RouterProvider} from 'react-aria/private/utils/openLink';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 

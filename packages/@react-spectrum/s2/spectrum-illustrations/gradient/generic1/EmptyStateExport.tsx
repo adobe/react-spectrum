@@ -15,7 +15,7 @@ import EmptyStateExport_M from 'illustration:./S2_fill_EmptyStateExport_generic1
 import EmptyStateExport_S from 'illustration:./S2_fill_EmptyStateExport_generic1_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function EmptyStateExport(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

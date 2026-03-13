@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames} from '@react-spectrum/utils';
+import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
-import {Switch} from 'react-aria-components';
+import {Switch} from '../src/Switch';
 import './styles.css';
 
 export default {

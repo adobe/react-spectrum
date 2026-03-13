@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export {useGridState} from './useGridState';
-export {GridCollection} from './GridCollection';
+export {useGridState} from 'react-stately/private/grid/useGridState';
 
-export type {GridStateOptions, GridState} from './useGridState';
+export {GridCollection} from 'react-stately/private/grid/GridCollection';
+export type {GridStateOptions, GridState} from 'react-stately/private/grid/useGridState';

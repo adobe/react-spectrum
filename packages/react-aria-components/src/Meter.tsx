@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaMeterProps, useMeter} from 'react-aria';
-import {clamp} from '@react-stately/utils';
+import {AriaMeterProps} from '@react-types/meter';
+
+import {clamp} from 'react-stately/private/utils/number';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -22,10 +23,12 @@ import {
   useRenderProps,
   useSlot
 } from './utils';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {LabelContext} from './Label';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import {useMeter} from 'react-aria/useMeter';
 
 export interface MeterProps extends Omit<AriaMeterProps, 'label'>, RenderProps<MeterRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**

@@ -15,17 +15,18 @@ import {
   TooltipProps as AriaTooltipProps,
   TooltipTrigger as AriaTooltipTrigger,
   TooltipTriggerComponentProps as AriaTooltipTriggerComponentProps,
-  OverlayArrow,
-  TooltipRenderProps,
-  useLocale
-} from 'react-aria-components';
+  TooltipRenderProps
+} from 'react-aria-components/Tooltip';
+
 import {centerPadding, colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ColorScheme} from '@react-types/provider';
 import {ColorSchemeContext} from './Provider';
 import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext, useState} from 'react';
 import {DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
+import {OverlayArrow} from 'react-aria-components/OverlayArrow';
 import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
+import {useLocale} from 'react-aria/I18nProvider';
 
 export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay' | keyof GlobalDOMAttributes>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'crossOffset'> {
   /** The content of the tooltip. */

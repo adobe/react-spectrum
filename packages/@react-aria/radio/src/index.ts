@@ -9,9 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useRadio} from './useRadio';
-export {useRadioGroup} from './useRadioGroup';
+export {useRadio, useRadioGroup} from 'react-aria/useRadioGroup';
+
+export type {RadioAria, RadioGroupAria} from 'react-aria/useRadioGroup';
 export type {AriaRadioGroupProps, AriaRadioProps} from '@react-types/radio';
 export type {Orientation} from '@react-types/shared';
-export type {RadioAria} from './useRadio';
-export type {RadioGroupAria} from './useRadioGroup';

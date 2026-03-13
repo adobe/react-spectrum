@@ -12,11 +12,11 @@
 
 /// <reference types="css-module-types" />
 
-export {AlertDialog} from './AlertDialog';
-export {Dialog} from './Dialog';
-export {DialogTrigger} from './DialogTrigger';
-export {DialogContainer} from './DialogContainer';
-export {useDialogContainer} from './useDialogContainer';
+export {AlertDialog} from '@adobe/react-spectrum/AlertDialog';
+
+export {Dialog} from '@adobe/react-spectrum/Dialog';
+export {DialogTrigger} from '@adobe/react-spectrum/DialogTrigger';
+export {DialogContainer, useDialogContainer} from '@adobe/react-spectrum/DialogContainer';
+export type {DialogContainerValue} from '@adobe/react-spectrum/DialogContainer';
 
 export type {SpectrumAlertDialogProps, SpectrumDialogProps, SpectrumDialogContainerProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
-export type {DialogContainerValue} from './useDialogContainer';

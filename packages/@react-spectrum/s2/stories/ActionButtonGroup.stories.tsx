@@ -10,13 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, ActionButtonGroup, Text} from '../src';
+import {ActionButton} from '../src/ActionButton';
+
+import {ActionButtonGroup} from '../src/ActionButtonGroup';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
 import type {Meta, StoryFn} from '@storybook/react';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
 import {StaticColorDecorator} from './utils';
 import {style} from '../style' with {type: 'macro'};
+import {Text} from '../src/Content';
 
 const meta: Meta<typeof ActionButtonGroup> = {
   component: ActionButtonGroup,

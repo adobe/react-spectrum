@@ -11,16 +11,11 @@
  */
 
 import {categorizeArgTypes, getActionArgs} from './utils';
-import {
-  Content,
-  ContextualHelp,
-  Footer,
-  Heading,
-  Link,
-  SearchField,
-  Text
-} from '../src';
+import {Content, Footer, Heading, Text} from '../src/Content';
+import {ContextualHelp} from '../src/ContextualHelp';
+import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
+import {SearchField} from '../src/SearchField';
 import {style} from '../style' with {type: 'macro'};
 
 const events = ['onChange', 'onClear', 'onSubmit'];

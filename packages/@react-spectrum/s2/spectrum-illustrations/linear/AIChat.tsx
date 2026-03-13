@@ -15,7 +15,7 @@ import AIChat_M from 'illustration:./S2_lin_AIChat_96.svg';
 import AIChat_S from 'illustration:./S2_lin_AIChat_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function AIChat(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

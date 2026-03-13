@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Dialog} from '../src';
+import {Dialog} from '../src/Dialog';
 import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof Dialog> = {

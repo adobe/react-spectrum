@@ -10,16 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {announce} from '@react-aria/live-announcer';
-import {
-  AriaButtonProps,
-  HoverEvents,
-  mergeProps,
-  useButton,
-  useFocusRing,
-  useHover,
-  useId
-} from 'react-aria';
+import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
+
+import {AriaButtonProps} from '@react-types/button';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -29,11 +22,17 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {createHideableComponent} from '@react-aria/collections';
-import {filterDOMProps} from '@react-aria/utils';
+import {createHideableComponent} from 'react-aria/private/collections/Hidden';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
+import {HoverEvents} from '@react-types/shared';
+import {mergeProps} from 'react-aria/mergeProps';
 import {ProgressBarContext} from './ProgressBar';
 import React, {createContext, ForwardedRef, useEffect, useRef} from 'react';
+import {useButton} from 'react-aria/useButton';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {useId} from 'react-aria/useId';
 
 export interface ButtonRenderProps {
   /**

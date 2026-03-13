@@ -10,16 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-export {FocusScope, useFocusManager, getFocusableTreeWalker, createFocusManager, isElementInChildOfActiveScope} from './FocusScope';
-export {FocusRing} from './FocusRing';
-export {useFocusRing} from './useFocusRing';
-export {useHasTabbableChild} from './useHasTabbableChild';
-export {moveVirtualFocus, dispatchVirtualBlur, dispatchVirtualFocus, getVirtuallyFocusedElement} from './virtualFocus';
-// For backward compatibility.
-export {isFocusable} from '@react-aria/utils';
-export {FocusableProvider, Focusable, useFocusable, focusSafely} from '@react-aria/interactions';
+export {FocusScope, useFocusManager} from 'react-aria/FocusScope';
 
-export type {FocusScopeProps, FocusManager, FocusManagerOptions} from './FocusScope';
-export type {FocusRingProps} from './FocusRing';
-export type {FocusableAria, FocusableOptions, FocusableProviderProps} from '@react-aria/interactions';
-export type {AriaFocusRingProps, FocusRingAria} from './useFocusRing';
+export {getFocusableTreeWalker, createFocusManager, isElementInChildOfActiveScope} from 'react-aria/private/focus/FocusScope';
+export {FocusRing} from 'react-aria/FocusRing';
+export {useFocusRing} from 'react-aria/useFocusRing';
+export {useHasTabbableChild} from 'react-aria/private/focus/useHasTabbableChild';
+export {moveVirtualFocus, dispatchVirtualBlur, dispatchVirtualFocus, getVirtuallyFocusedElement} from 'react-aria/private/focus/virtualFocus';
+export type {FocusScopeProps, FocusManager, FocusManagerOptions} from 'react-aria/FocusScope';
+export type {FocusRingProps} from 'react-aria/FocusRing';
+export type {AriaFocusRingProps, FocusRingAria} from 'react-aria/useFocusRing';
+export {} from 'react-aria/private/utils/isFocusable';
+
+export {Focusable, useFocusable} from 'react-aria/private/interactions/useFocusable';
+export {} from 'react-aria/private/interactions/focusSafely';
+
+export type {FocusableAria, FocusableOptions} from 'react-aria/private/interactions/useFocusable';

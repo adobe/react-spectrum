@@ -12,6 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export {Tooltip} from './Tooltip';
-export {TooltipTrigger} from './TooltipTrigger';
+export {Tooltip, TooltipTrigger} from '@adobe/react-spectrum/Tooltip';
+
 export type {SpectrumTooltipProps, SpectrumTooltipTriggerProps} from '@react-types/tooltip';

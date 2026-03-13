@@ -10,5 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export {FormValidationContext, useFormValidationState, DEFAULT_VALIDATION_RESULT, VALID_VALIDITY_STATE, privateValidationStateProp, mergeValidation} from './useFormValidationState';
-export type {FormValidationState} from './useFormValidationState';
+export {FormValidationContext, useFormValidationState, DEFAULT_VALIDATION_RESULT, VALID_VALIDITY_STATE, privateValidationStateProp, mergeValidation} from 'react-stately/private/form/useFormValidationState';
+
+export type {FormValidationState} from 'react-stately/private/form/useFormValidationState';

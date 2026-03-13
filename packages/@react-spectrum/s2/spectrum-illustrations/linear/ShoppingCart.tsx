@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../src/Icon';
 import ShoppingCart_L from 'illustration:./S2_lin_shoppingCart_160.svg';
 import ShoppingCart_M from 'illustration:./S2_lin_shoppingCart_96.svg';
 import ShoppingCart_S from 'illustration:./S2_lin_shoppingCart_48.svg';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function ShoppingCart(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

@@ -12,10 +12,11 @@
 
 /// <reference types="css-module-types" />
 
-export {Icon} from './Icon';
-export {UIIcon} from './UIIcon';
-export {Illustration} from './Illustration';
+export {Icon} from '@adobe/react-spectrum/Icon';
 
-export type {IconProps, IconPropsWithoutChildren} from './Icon';
-export type {IllustrationProps, IllustrationPropsWithoutChildren} from './Illustration';
-export type {UIIconProps, UIIconPropsWithoutChildren} from './UIIcon';
+export {UIIcon} from '@adobe/react-spectrum/private/icon/UIIcon';
+export {Illustration} from '@adobe/react-spectrum/private/icon/Illustration';
+export type {IconProps} from '@adobe/react-spectrum/Icon';
+export type {IconPropsWithoutChildren} from '@adobe/react-spectrum/private/icon/Icon';
+export type {IllustrationProps, IllustrationPropsWithoutChildren} from '@adobe/react-spectrum/private/icon/Illustration';
+export type {UIIconProps, UIIconPropsWithoutChildren} from '@adobe/react-spectrum/private/icon/UIIcon';

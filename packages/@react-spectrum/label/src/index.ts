@@ -12,6 +12,7 @@
 
 /// <reference types="css-module-types" />
 
-export {Field} from './Field';
-export {Label} from './Label';
-export {HelpText} from './HelpText';
+export {Field} from '@adobe/react-spectrum/private/label/Field';
+
+export {Label} from '@adobe/react-spectrum/private/label/Label';
+export {HelpText} from '@adobe/react-spectrum/private/label/HelpText';

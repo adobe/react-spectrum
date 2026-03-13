@@ -189,7 +189,7 @@ export default [{
         "no-nested-ternary": ERROR,
         "no-multiple-empty-lines": ERROR,
         "no-unneeded-ternary": ERROR,
-        "no-duplicate-imports": ERROR,
+        // "no-duplicate-imports": ERROR,
         "react/display-name": OFF,
         "react/jsx-curly-spacing": [ERROR, "never"],
         "react/jsx-indent-props": [ERROR, ERROR],
@@ -336,16 +336,6 @@ export default [{
         "jsx-a11y/role-supports-aria-props": ERROR,
         "jsx-a11y/scope": ERROR,
         "jsx-a11y/tabindex-no-positive": ERROR,
-
-        "monorepo/no-internal-import": [ERROR, {
-            ignore: [
-                "@adobe/spectrum-css-temp",
-                "@spectrum-icons/ui",
-                "@spectrum-icons/workflow",
-                "@spectrum-icons/illustrations",
-                "@react-spectrum/s2/icons"
-            ],
-        }],
 
         "monorepo/no-relative-import": ERROR,
     },

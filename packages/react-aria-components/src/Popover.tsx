@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
-import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, useLocale, usePopover} from 'react-aria';
+import {AriaPopoverProps, usePopover} from 'react-aria/usePopover';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -21,13 +21,22 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {filterDOMProps, isFocusWithin, mergeProps, useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
-import {focusSafely, getInteractionModality} from '@react-aria/interactions';
+import {DismissButton, Overlay} from 'react-aria/Overlay';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {focusSafely} from 'react-aria/private/interactions/focusSafely';
+import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
+import {isFocusWithin} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {mergeProps} from 'react-aria/mergeProps';
 import {OverlayArrowContext} from './OverlayArrow';
-import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
+import {OverlayTriggerProps} from '@react-types/overlays';
+import {OverlayTriggerState, useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 import {OverlayTriggerStateContext} from './Dialog';
+import {PlacementAxis, PositionProps} from '@react-types/overlays';
 import React, {Context, createContext, ForwardedRef, forwardRef, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {useIsHidden} from '@react-aria/collections';
+import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
+import {useIsHidden} from 'react-aria/private/collections/Hidden';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useLocale} from 'react-aria/I18nProvider';
 
 export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'groupRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLDivElement> {
   /**

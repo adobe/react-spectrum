@@ -7,7 +7,7 @@ import {colorSwatch, getColorScale} from './color.macro' with {type: 'macro'};
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Header, ListBox, ListBoxItem, ListBoxSection} from 'react-aria-components';
 import {InfoMessage} from './colorSearchData';
-// eslint-disable-next-line monorepo/no-internal-import
+ 
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Similar from '@react-spectrum/s2/icons/Similar';

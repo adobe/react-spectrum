@@ -10,15 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, RangeCalendar, RangeCalendarProps} from '../src';
+import {ActionButton} from '../src/ActionButton';
+
 import {CalendarDate, getLocalTimeZone, isWeekend, today} from '@internationalized/date';
 import {CalendarSwitcher, categorizeArgTypes, getActionArgs} from './utils';
-import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
-import {DateValue} from 'react-aria';
+import {Custom454Calendar} from '/packages/@internationalized/date/tests/customCalendarImpl';
+import {DateValue} from '@react-types/datepicker';
 import type {Meta, StoryObj} from '@storybook/react';
+import {RangeCalendar, RangeCalendarProps} from '../src/RangeCalendar';
 import {ReactElement, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from 'react-aria/I18nProvider';
 
 const events = ['onChange'];
 

@@ -10,17 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Button,
-  Disclosure,
-  DisclosureGroup,
-  DisclosurePanel,
-  Heading,
-  Menu,
-  MenuItem,
-  MenuTrigger,
-  Popover
-} from 'react-aria-components';
+import {Button} from '../src/Button';
+
+import {Disclosure, DisclosureGroup, DisclosurePanel} from '../src/Disclosure';
+import {Heading} from '../src/Heading';
+import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
+import {Popover} from '../src/Popover';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 import userEvent from '@testing-library/user-event';

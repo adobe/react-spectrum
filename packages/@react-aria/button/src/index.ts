@@ -9,9 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useButton} from './useButton';
-export {useToggleButton} from './useToggleButton';
-export {useToggleButtonGroup, useToggleButtonGroupItem} from './useToggleButtonGroup';
-export type {AriaButtonOptions, ButtonAria} from './useButton';
+export {useButton} from 'react-aria/useButton';
+
+export {useToggleButton} from 'react-aria/useToggleButton';
+export {useToggleButtonGroup, useToggleButtonGroupItem} from 'react-aria/useToggleButtonGroup';
+export type {AriaButtonOptions, ButtonAria} from 'react-aria/useButton';
+export type {AriaToggleButtonOptions, ToggleButtonAria} from 'react-aria/useToggleButton';
+export type {AriaToggleButtonGroupProps, ToggleButtonGroupAria, AriaToggleButtonGroupItemProps, AriaToggleButtonGroupItemOptions} from 'react-aria/useToggleButtonGroup';
 export type {AriaButtonProps, AriaToggleButtonProps} from '@react-types/button';
-export type {AriaToggleButtonGroupProps, ToggleButtonGroupAria, AriaToggleButtonGroupItemProps} from './useToggleButtonGroup';

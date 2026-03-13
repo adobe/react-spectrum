@@ -15,7 +15,7 @@ import Clipboard_M from 'illustration:./S2_lin_clipboard_96.svg';
 import Clipboard_S from 'illustration:./S2_lin_clipboard_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function Clipboard(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
