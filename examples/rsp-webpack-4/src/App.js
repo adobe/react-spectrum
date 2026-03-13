@@ -3,7 +3,7 @@ import {Provider, defaultTheme, Item, TagGroup, Cell, Column, InlineAlert, Row, 
 import Lighting from './Lighting';
 import {useState} from 'react'
 import BodyContent from './BodyContent';
-import {enableTableNestedRows} from '@react-stately/flags';
+import {enableTableNestedRows} from 'react-stately/private/flags/flags';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
