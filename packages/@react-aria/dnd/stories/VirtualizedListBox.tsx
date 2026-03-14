@@ -174,6 +174,7 @@ React.forwardRef(function (props: any, ref) {
     <Context.Provider value={{state, dropState}}>
       <Virtualizer
         {...mergeProps(collectionProps, listBoxProps)}
+        onScroll={undefined}
         ref={domRef}
         className={classNames(dndStyles, 'droppable-collection', 'is-virtualized', {'is-drop-target': isDropTarget})}
         scrollDirection="vertical"
