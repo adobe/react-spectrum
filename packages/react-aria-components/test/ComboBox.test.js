@@ -614,17 +614,14 @@ describe('ComboBox', () => {
     expect(listbox).toBeInTheDocument();
     expect(listbox).toBeVisible();
 
-    // Verify we can still interact with options
     let options = comboboxTester.options();
     expect(options.length).toBeGreaterThan(0);
 
-    // Click an option
     await user.click(options[0]);
     act(() => {
       jest.runAllTimers();
     });
 
-    // Verify the combobox is closed and the value is updated
     expect(tree.queryByRole('listbox')).toBeNull();
     expect(comboboxTester.combobox).toHaveValue('Apple');
   });
@@ -718,7 +715,6 @@ describe('ComboBox', () => {
   });
 
   it('should support multi-select with custom value', async () => {
-    // allowsCustomValue doesn't really make sense to use with multi-selection, but test it anyway.
     let {container} = render(<TestComboBox selectionMode="multiple" allowsCustomValue />);
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
 
@@ -760,6 +756,47 @@ describe('ComboBox', () => {
     await user.keyboard('{ArrowDown}{Enter}');
     expect(onChange).toHaveBeenCalledTimes(2);
     expect(onChange).toHaveBeenLastCalledWith(['1']);
+  });
+
+  it('should support isRequired with multiple selection', async () => {
+    let {container, getByTestId} = render(
+      <Form data-testid="form">
+        <TestComboBox name="combobox" selectionMode="multiple" isRequired />
+        <input type="reset" />
+      </Form>
+    );
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    let combobox = comboboxTester.combobox;
+
+    expect(combobox).not.toHaveAttribute('required');
+
+    act(() => {getByTestId('form').checkValidity();});
+    expect(combobox).toHaveAttribute('aria-describedby');
+    expect(container.querySelector('.react-aria-ComboBox')).toHaveAttribute('data-invalid');
+
+    await comboboxTester.open();
+    let options = comboboxTester.options();
+    await user.click(options[0]);
+
+    act(() => {getByTestId('form').checkValidity();});
+    expect(combobox).not.toHaveAttribute('aria-describedby');
+    expect(container.querySelector('.react-aria-ComboBox')).not.toHaveAttribute('data-invalid');
+
+    let hiddenInputs = container.querySelectorAll('input[type="hidden"]');
+    expect(hiddenInputs).toHaveLength(1);
+    expect(hiddenInputs[0]).toHaveAttribute('name', 'combobox');
+    expect(hiddenInputs[0]).toHaveAttribute('value', '1');
+    expect(hiddenInputs[0]).not.toHaveAttribute('required');
+
+    await user.click(options[0]);
+    act(() => {getByTestId('form').checkValidity();});
+    expect(combobox).toHaveAttribute('aria-describedby');
+
+    hiddenInputs = container.querySelectorAll('input[type="hidden"]');
+    expect(hiddenInputs).toHaveLength(1);
+    expect(hiddenInputs[0]).toHaveAttribute('name', 'combobox');
+    expect(hiddenInputs[0]).toHaveAttribute('value', '');
+    expect(hiddenInputs[0]).toHaveAttribute('required');
   });
 
   it('should not close the combobox when clicking on the input', async () => {
