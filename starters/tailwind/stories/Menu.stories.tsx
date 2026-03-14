@@ -1,9 +1,8 @@
 import { Meta } from '@storybook/react';
 import { MoreHorizontal } from 'lucide-react';
 import React from 'react';
-import { MenuTrigger, SubmenuTrigger } from 'react-aria-components';
 import { Button } from '../src/Button';
-import { Menu, MenuItem, MenuSection, MenuSeparator } from '../src/Menu';
+import { MenuTrigger, SubmenuTrigger, Menu, MenuItem, MenuSection, MenuSeparator } from '../src/Menu';
 
 const meta: Meta<typeof Menu> = {
   component: Menu,

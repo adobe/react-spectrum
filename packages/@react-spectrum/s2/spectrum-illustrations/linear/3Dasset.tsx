@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import _3Dasset_L from 'illustration:./S2_lin_3Dasset_160.svg';
 import _3Dasset_M from 'illustration:./S2_lin_3Dasset_96.svg';
 import _3Dasset_S from 'illustration:./S2_lin_3Dasset_48.svg';

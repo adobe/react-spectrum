@@ -22,7 +22,7 @@ import React, {JSX} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import TextIndentIncrease from '@spectrum-icons/workflow/TextIndentIncrease';
 import TextItalics from '@spectrum-icons/workflow/TextItalic';
-import {userEvent, within} from '@storybook/test';
+import {userEvent, within} from 'storybook/test';
 
 const meta: Meta<SpectrumMenuTriggerProps> = {
   title: 'MenuTrigger/SubmenuTrigger',
@@ -143,6 +143,9 @@ Default.play = async ({canvasElement}) => {
   let body = canvasElement.ownerDocument.body;
   let menu = await within(body).getByRole('menu');
   let menuItems = within(menu).getAllByRole('menuitem');
+
+  // clean up any previous click state
+  await userEvent.click(document.body);
   await userEvent.hover(menuItems[0]);
   let submenuTrigger = await within(body).findByText('Baseline');
   await userEvent.hover(submenuTrigger);
@@ -166,6 +169,9 @@ Mobile.play = async ({canvasElement}) => {
   let body = canvasElement.ownerDocument.body;
   let menu = await within(body).getByRole('menu');
   let menuItems = within(menu).getAllByRole('menuitem');
+
+  // clean up any previous click state
+  await userEvent.click(document.body);
   await userEvent.click(menuItems[0]);
   await within(body).findByText('Baseline');
 };

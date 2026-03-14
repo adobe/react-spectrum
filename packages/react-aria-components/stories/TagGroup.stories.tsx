@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Button, Label, OverlayArrow, Tag, TagGroup, TagGroupProps, TagList, TagProps, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
@@ -32,7 +32,8 @@ const meta: Meta<typeof TagGroup> = {
       control: 'inline-radio',
       options: ['toggle', 'replace']
     }
-  }
+  },
+  excludeStories: ['MyTag']
 };
 
 export default meta;
@@ -70,15 +71,13 @@ export const TagGroupExample: Story = {
   )
 };
 
-
-function MyTag(props: TagProps) {
+export function MyTag(props: TagProps) {
   return (
     <Tag
       {...props}
       style={({isSelected}) => ({border: '1px solid gray', borderRadius: 4, padding: '0 4px', background: isSelected ? 'black' : '', color: isSelected ? 'white' : '', cursor: props.href ? 'pointer' : 'default'})} />
   );
 }
-
 
 export const TagGroupExampleWithRemove: Story = {
   render: (props: TagGroupProps) => (

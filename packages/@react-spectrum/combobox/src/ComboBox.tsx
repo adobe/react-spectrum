@@ -278,8 +278,6 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
         }, 500);
       }
     } else if (!isLoading) {
-      // If loading is no longer happening, clear any timers and hide the loading circle
-      setShowLoading(false);
       if (timeout.current) {
         clearTimeout(timeout.current);
       }
@@ -288,6 +286,12 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
 
     lastInputValue.current = inputValue;
   }, [isLoading, showLoading, inputValue]);
+
+  let [prevIsLoading, setPrevIsLoading] = useState(isLoading);
+  if (prevIsLoading !== isLoading && !isLoading) {
+    setShowLoading(false);
+    setPrevIsLoading(isLoading);
+  }
 
   useEffect(() => {
     return () => {

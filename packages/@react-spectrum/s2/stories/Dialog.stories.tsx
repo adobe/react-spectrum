@@ -155,7 +155,25 @@ function DialogContainerExampleRender(props: ExampleDialogProps): ReactElement {
 
 export const DialogContainerExample: StoryObj<typeof DialogContainerExampleRender> = {
   render: (args) => <DialogContainerExampleRender {...args} />,
-  args: DialogTriggerExample.args
+  args: DialogTriggerExample.args,
+  parameters: {
+    docs: {
+      source: {
+        transform: () => {
+          return `
+let [isOpen, setOpen] = useState(false);
+
+<Button variant="accent" onPress={() => setOpen(true)}>Open dialog</Button>
+<DialogContainer onDismiss={() => setOpen(false)} {...props}>
+  {isOpen &&
+    <ExampleDialog {...props} />
+  }
+</DialogContainer>
+          `;
+        }
+      }
+    }
+  }
 };
 
 export const ColorScheme: StoryObj<typeof ExampleDialog> = {

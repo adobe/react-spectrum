@@ -40,12 +40,31 @@ describe('Link', () => {
     expect(link).toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support id prop', () => {
+    let {getByRole} = render(<Link id="my-link-id">Test</Link>);
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('id', 'my-link-id');
+  });
+
   it('should support render props', async () => {
     let {getByRole} = render(<Link>{({isHovered}) => isHovered ? 'Hovered' : 'Test'}</Link>);
     let link = getByRole('link');
     expect(link).toHaveTextContent('Test');
     await user.hover(link);
     expect(link).toHaveTextContent('Hovered');
+  });
+
+  it('should support custom render function', () => {
+    // eslint-disable-next-line jsx-a11y/anchor-has-content
+    let {getByRole} =  render(<Link href="#foo" render={props => <a {...props} data-custom="true" />} />);
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('data-custom', 'true');
+  });
+
+  it('should support custom render function without href', () => {
+    let {getByRole} =  render(<Link render={props => <span {...props} data-custom="true" />} />);
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('data-custom', 'true');
   });
 
   it('should support slot', () => {
@@ -110,7 +129,8 @@ describe('Link', () => {
   it('should support press state', async () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
-    let {getByRole} = render(<Link className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick}>Test</Link>);
+    let onClickCapture = jest.fn();
+    let {getByRole} = render(<Link className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</Link>);
     let link = getByRole('link');
 
     expect(link).not.toHaveAttribute('data-pressed');
@@ -126,6 +146,7 @@ describe('Link', () => {
 
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
   });
 
   it('should support disabled state', () => {
@@ -148,5 +169,21 @@ describe('Link', () => {
     expect(link).toHaveAttribute('href', '/base/foo');
     await user.click(link);
     expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'bar'});
+  });
+
+  it('should not navigate if disabled', async () => {
+    let navigate = jest.fn();
+    let useHref = href => '/base' + href;
+    let onClick = jest.fn();
+    let {getByRole} = render(
+      <RouterProvider navigate={navigate} useHref={useHref}>
+        <Link isDisabled href="/foo" routerOptions={{foo: 'bar'}} onClick={onClick}>Test</Link>
+      </RouterProvider>
+    );
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('href', '/base/foo');
+    await user.click(link);
+    expect(navigate).not.toHaveBeenCalled();
+    expect(onClick).not.toHaveBeenCalled();
   });
 });

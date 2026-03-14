@@ -80,8 +80,9 @@ export function useDefaultLocale(): Locale {
   // We cannot determine the browser's language on the server, so default to
   // en-US. This will be updated after hydration on the client to the correct value.
   if (isSSR) {
+    let locale = typeof window !== 'undefined' && window[localeSymbol];
     return {
-      locale: 'en-US',
+      locale: locale || 'en-US',
       direction: 'ltr'
     };
   }

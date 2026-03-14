@@ -11,18 +11,14 @@
  */
 
 import type * as CSS from 'csstype';
-import {Inset, fontRelative as internalFontRelative, size as internalSize, space as internalSpace, Spacing, style} from './spectrum-theme';
+import {Inset, fontRelative as internalFontRelative, space as internalSpace, Spacing, style} from './spectrum-theme';
 import type {MacroContext} from '@parcel/macros';
 import {StyleString} from './types';
 
-export {baseColor, color, edgeToText, lightDark, linearGradient, colorMix, style} from './spectrum-theme';
+export {baseColor, color, lightDark, colorMix, size, style} from './spectrum-theme';
 export type {StyleString} from './types';
 
 // Wrap these functions in arbitrary value syntax when called from the outside.
-export function size(px: number): `[${string}]` {
-  return `[${internalSize(px)}]`;
-}
-
 export function space(px: number): `[${string}]` {
   return `[${internalSpace(px)}]`;
 }
@@ -36,7 +32,10 @@ export const focusRing = () => ({
     default: 'none',
     isFocusVisible: 'solid'
   },
-  outlineColor: 'focus-ring',
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  },
   outlineWidth: 2,
   outlineOffset: 2
 } as const);
@@ -81,7 +80,7 @@ const iconSizes = {
 
 export function iconStyle(this: MacroContext | void, options: IconStyle): StyleString<Exclude<keyof IconStyle, 'color' | 'size'>> {
   let {size = 'M', color, ...styles} = options;
-  
+
   if (color) {
     styles['--iconPrimary'] = {
       type: 'fill',

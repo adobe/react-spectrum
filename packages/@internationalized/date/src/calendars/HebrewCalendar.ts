@@ -180,6 +180,14 @@ export class HebrewCalendar implements Calendar {
     return getDaysInYear(date.year);
   }
 
+  getMaximumMonthsInYear(): number {
+    return 13;
+  }
+
+  getMaximumDaysInMonth(): number {
+    return 30;
+  }
+
   getYearsInEra(): number {
     // 6239 gregorian
     return 9999;

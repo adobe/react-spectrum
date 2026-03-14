@@ -57,3 +57,13 @@ const DynamicExampleRender = (args: InlineAlertProps): ReactElement => {
 export const DynamicExample: StoryObj<typeof DynamicExampleRender> = {
   render: (args) => <DynamicExampleRender {...args} />
 };
+
+export const NoHeading: Story = {
+  render: () => (
+    <InlineAlert variant="informative">
+      <Content>
+        There was an error processing your payment. Please check that your card information is correct, then try again.
+      </Content>
+    </InlineAlert>
+  )
+};

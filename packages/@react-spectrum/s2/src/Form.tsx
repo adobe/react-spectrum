@@ -30,7 +30,7 @@ interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'context
   isEmphasized?: boolean
 }
 
-export interface FormProps extends FormStyleProps, Omit<RACFormProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, StyleProps {
+export interface FormProps extends FormStyleProps, Omit<RACFormProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>, StyleProps {
   children: ReactNode
 }
 
@@ -74,6 +74,8 @@ export const Form = /*#__PURE__*/ forwardRef(function Form(props: FormProps, ref
     isDisabled,
     isEmphasized,
     size = 'M',
+    UNSAFE_style,
+    UNSAFE_className = '',
     ...formProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -82,8 +84,8 @@ export const Form = /*#__PURE__*/ forwardRef(function Form(props: FormProps, ref
     <RACForm
       {...formProps}
       ref={domRef}
-      style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + style({
+      style={UNSAFE_style}
+      className={UNSAFE_className + style({
         display: 'grid',
         gridTemplateColumns: {
           labelPosition: {

@@ -63,7 +63,7 @@ function isAttributeVisible(element: Element, childElement?: Element) {
  */
 export function isElementVisible(element: Element, childElement?: Element): boolean {
   if (supportsCheckVisibility) {
-    return element.checkVisibility() && !element.closest('[data-react-aria-prevent-focus]');
+    return element.checkVisibility({visibilityProperty: true}) && !element.closest('[data-react-aria-prevent-focus]');
   }
 
   return (

@@ -17,20 +17,17 @@ export class ListCollection<T> implements Collection<Node<T>> {
   private iterable: Iterable<Node<T>>;
   private firstKey: Key | null = null;
   private lastKey: Key | null = null;
+  private _size: number;
 
   constructor(nodes: Iterable<Node<T>>) {
     this.iterable = nodes;
 
     let visit = (node: Node<T>) => {
-      // Skip the loader node so it isn't added to the keymap and thus
-      // doesn't influence the size count. This should only matter for RAC and S2
-      if (node.type !== 'loader') {
-        this.keyMap.set(node.key, node);
+      this.keyMap.set(node.key, node);
 
-        if (node.childNodes && node.type === 'section') {
-          for (let child of node.childNodes) {
-            visit(child);
-          }
+      if (node.childNodes && node.type === 'section') {
+        for (let child of node.childNodes) {
+          visit(child);
         }
       }
     };
@@ -41,6 +38,7 @@ export class ListCollection<T> implements Collection<Node<T>> {
 
     let last: Node<T> | null = null;
     let index = 0;
+    let size = 0;
     for (let [key, node] of this.keyMap) {
       if (last) {
         last.nextKey = key;
@@ -54,13 +52,19 @@ export class ListCollection<T> implements Collection<Node<T>> {
         node.index = index++;
       }
 
+      // Only count sections and items when determining size so that
+      // loaders and separators in RAC/S2 don't influence the emptyState determination
+      if (node.type === 'section' || node.type === 'item') {
+        size++;
+      }
+
       last = node;
 
       // Set nextKey as undefined since this might be the last node
       // If it isn't the last node, last.nextKey will properly set at start of new loop
       last.nextKey = undefined;
     }
-
+    this._size = size;
     this.lastKey = last?.key ?? null;
   }
 
@@ -69,7 +73,7 @@ export class ListCollection<T> implements Collection<Node<T>> {
   }
 
   get size(): number {
-    return this.keyMap.size;
+    return this._size;
   }
 
   getKeys(): IterableIterator<Key> {

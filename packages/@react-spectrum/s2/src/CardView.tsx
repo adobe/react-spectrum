@@ -24,7 +24,7 @@ import {
   WaterfallLayout
 } from 'react-aria-components';
 import {CardContext, InternalCardViewContext} from './Card';
-import {createContext, forwardRef, ReactElement, useMemo, useRef, useState} from 'react';
+import {createContext, forwardRef, ReactElement, useCallback, useMemo, useRef, useState} from 'react';
 import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
@@ -34,7 +34,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style' | 'isLoading' | keyof GlobalDOMAttributes>, UnsafeStyles {
+export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style' | 'render' | 'isLoading' | keyof GlobalDOMAttributes>, UnsafeStyles {
   /**
    * The layout of the cards.
    * @default 'grid'
@@ -192,6 +192,9 @@ const wrapperStyles = style({
 
 export const CardViewContext = createContext<ContextValue<Partial<CardViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
+/**
+ * A CardView displays a group of related objects, with support for selection and bulk actions.
+ */
 export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CardViewContext);
   let {
@@ -215,7 +218,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
 
   // This calculates the maximum t-shirt size where at least two columns fit in the available width.
   let [maxSizeIndex, setMaxSizeIndex] = useState(SIZES.length - 1);
-  let updateSize = useEffectEvent(() => {
+  let updateSize = useCallback(() => {
     let w = scrollRef.current?.clientWidth ?? 0;
     let i = SIZES.length - 1;
     while (i > 0) {
@@ -226,7 +229,8 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
       i--;
     }
     setMaxSizeIndex(i);
-  });
+  }, [scrollRef, density]);
+  let updateSizeEvent = useEffectEvent(updateSize);
 
   useResizeObserver({
     ref: scrollRef,
@@ -235,8 +239,8 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
   });
 
   useLayoutEffect(() => {
-    updateSize();
-  }, [updateSize]);
+    updateSizeEvent();
+  }, []);
 
   // The actual rendered t-shirt size is the minimum between the size prop and the maximum possible size.
   let size = SIZES[Math.min(maxSizeIndex, SIZES.indexOf(sizeProp))];
@@ -282,9 +286,14 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
     }
   } : undefined;
 
+  let cardViewCtx = useMemo(() => ({
+    layout: layoutName,
+    ElementType: GridListItem
+  }), [layoutName]);
+
   let cardView = (
     <Virtualizer layout={layout} layoutOptions={options}>
-      <InternalCardViewContext.Provider value={GridListItem}>
+      <InternalCardViewContext.Provider value={cardViewCtx}>
         <CardContext.Provider value={ctx}>
           <ImageCoordinator>
             <AriaGridList

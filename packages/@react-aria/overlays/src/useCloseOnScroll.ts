@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {getEventTarget, nodeContains} from '@react-aria/utils';
 import {RefObject} from '@react-types/shared';
 import {useEffect} from 'react';
 
@@ -37,16 +38,16 @@ export function useCloseOnScroll(opts: CloseOnScrollOptions): void {
 
     let onScroll = (e: Event) => {
       // Ignore if scrolling an scrollable region outside the trigger's tree.
-      let target = e.target;
+      let target = getEventTarget(e);
       // window is not a Node and doesn't have contain, but window contains everything
-      if (!triggerRef.current || ((target instanceof Node) && !target.contains(triggerRef.current))) {
+      if (!triggerRef.current || ((target instanceof Node) && !nodeContains(target, triggerRef.current))) {
         return;
       }
 
       // Ignore scroll events on any input or textarea as the cursor position can cause it to scroll
       // such as in a combobox. Clicking the dropdown button places focus on the input, and if the
       // text inside the input extends beyond the 'end', then it will scroll so the cursor is visible at the end.
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+      if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
         return;
       }
 

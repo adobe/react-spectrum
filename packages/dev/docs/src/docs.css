@@ -152,6 +152,7 @@ html, body {
   --anatomy-gray-50: #FFFFFF;
   --docsearch-logo-color: #5468FF;
   --anatomy-radius: 4px;
+  --anatomy-font: adobe-clean;
 }
 
 .dark {
@@ -342,6 +343,9 @@ html, body {
 }
 
 .homeBtn {
+  align-items: center;
+  text-decoration: none;
+  display: inline-flex;
   margin: -4px;
   padding: 2px;
   border: 2px solid transparent;

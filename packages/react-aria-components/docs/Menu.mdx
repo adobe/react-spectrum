@@ -128,7 +128,7 @@ A menu trigger consists of a button or other trigger element combined with a men
 with a list of menu items or sections inside. Users can click, touch, or use the keyboard on the button to open the menu.
 
 ```tsx
-import {MenuTrigger, Button, Popover, Menu, MenuItem, MenuSection, Separator, Header, Text, Keyboard} from 'react-aria-components';
+import {MenuTrigger, Button, Popover, Menu, MenuItem, MenuSection, Separator, Header, Text, Keyboard, SelectionIndicator} from 'react-aria-components';
 
 <MenuTrigger>
   <Button />
@@ -138,6 +138,7 @@ import {MenuTrigger, Button, Popover, Menu, MenuItem, MenuSection, Separator, He
         <Text slot="label" />
         <Text slot="description" />
         <Keyboard />
+        <SelectionIndicator />
       </MenuItem>
       <Separator />
       <MenuSection>

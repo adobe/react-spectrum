@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render, screen, within} from '@testing-library/react';
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {AriaMenuTests} from 'react-aria-components/test/AriaMenu.test-util';
 import {Content, Footer} from '@react-spectrum/view';
@@ -154,7 +154,7 @@ describe('MenuTrigger', function () {
   it.each`
     Name             | Component      | props
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, isOpen: true}}
-  `('$Name supports a controlled open state ', async function ({Component, props}) {
+  `('$Name supports a controlled open state ', function ({Component, props}) {
     let tree = renderComponent(Component, props);
     act(() => {jest.runAllTimers();});
     expect(onOpenChange).toBeCalledTimes(0);
@@ -163,7 +163,8 @@ describe('MenuTrigger', function () {
     expect(menu).toBeInTheDocument();
 
     let triggerButton = tree.getByText('Menu Button');
-    await user.click(triggerButton);
+    fireEvent.mouseDown(triggerButton, {button: 0});
+    fireEvent.mouseUp(triggerButton, {button: 0});
     act(() => {jest.runAllTimers();});
 
     expect(menu).toBeInTheDocument();
@@ -615,6 +616,42 @@ describe('MenuTrigger', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
         expect(tree.queryByRole('dialog')).toBeNull();
+      });
+
+      it('shows selection state for available ContextualHelpTrigger items', async function () {
+        render(
+          <Provider theme={theme}>
+            <MenuTrigger defaultOpen>
+              <ActionButton>Menu</ActionButton>
+              <Menu selectionMode="single">
+                <Item key="1">One</Item>
+                <ContextualHelpTrigger>
+                  <Item key="foo" textValue="Hello">
+                    <Text>Hello</Text>
+                    <Text slot="description">Is it me you're looking for?</Text>
+                  </Item>
+                  <Dialog>
+                    <Heading>Lionel Richie says:</Heading>
+                    <Content>I can see it in your eyes</Content>
+                  </Dialog>
+                </ContextualHelpTrigger>
+              </Menu>
+            </MenuTrigger>
+          </Provider>
+        );
+
+        act(() => {jest.runAllTimers();});
+
+        let menu = screen.getByRole('menu');
+        let availableItem = within(menu).getByRole('menuitemradio', {name: 'Hello'});
+
+        expect(availableItem).toBeVisible();
+        expect(availableItem).toHaveAttribute('aria-checked', 'false');
+        fireEvent.click(availableItem);
+        act(() => {jest.runAllTimers();});
+
+        expect(availableItem).toHaveAttribute('aria-checked', 'true');
+        expect(availableItem).not.toHaveAttribute('aria-haspopup', 'dialog');
       });
 
       it('can open a sub dialog with keyboard', async function () {

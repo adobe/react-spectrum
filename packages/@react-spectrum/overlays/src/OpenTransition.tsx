@@ -11,7 +11,7 @@
  */
 
 import React, {JSX, JSXElementConstructor, ReactElement} from 'react';
-import {Transition, TransitionProps} from 'react-transition-group';
+import {Transition} from 'react-transition-group';
 
 const OPEN_STATES = {
   entering: false,
@@ -32,10 +32,10 @@ const OPEN_STATES = {
  */
 
 export function OpenTransition(
-  props: TransitionProps
+  props: any
 ): JSX.Element | ReactElement<any, string | JSXElementConstructor<any>>[] {
   // Do not apply any transition if in chromatic.
-  if (process.env.CHROMATIC) {
+  if (typeof process !== 'undefined' && process.env.CHROMATIC) {
     return React.Children.map(props.children, child => child && React.cloneElement(child, {isOpen: props.in}));
   }
 

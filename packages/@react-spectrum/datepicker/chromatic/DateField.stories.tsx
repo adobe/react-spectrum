@@ -116,7 +116,7 @@ export const ContextualHelpSideLabel: DateFieldStory = (args) => <DateField labe
 export const ArabicAlgeriaPreferences: DateFieldStory = (args) => <Provider><DateField label="Date" value={dateTime} {...args} /></Provider>;
 ArabicAlgeriaPreferences.parameters = {
   chromaticProvider: {
-    locales: ['ar-DZ-u-ca-gregory', 'ar-DZ-u-ca-islamic', 'ar-DZ-u-ca-islamic-civil', 'ar-DZ-u-ca-islamic-tbla'],
+    locales: ['ar-DZ-u-ca-gregory', 'ar-DZ-u-ca-islamic-civil', 'ar-DZ-u-ca-islamic-tbla'],
     scales: ['medium'],
     colorSchemes: ['light'],
     express: false
@@ -126,7 +126,7 @@ ArabicAlgeriaPreferences.parameters = {
 export const ArabicUAEPreferences: DateFieldStory = (args) => <Provider><DateField label="Date" value={dateTime} {...args} /></Provider>;
 ArabicUAEPreferences.parameters = {
   chromaticProvider: {
-    locales: ['ar-AE-u-ca-gregory', 'ar-AE-u-ca-islamic-umalqura', 'ar-AE-u-ca-islamic', 'ar-AE-u-ca-islamic-civil', 'ar-AE-u-ca-islamic-tbla'],
+    locales: ['ar-AE-u-ca-gregory', 'ar-AE-u-ca-islamic-umalqura', 'ar-AE-u-ca-islamic-civil', 'ar-AE-u-ca-islamic-tbla'],
     scales: ['medium'],
     colorSchemes: ['light'],
     express: false
@@ -136,7 +136,7 @@ ArabicUAEPreferences.parameters = {
 export const ArabicEgyptPreferences: DateFieldStory = (args) => <Provider><DateField label="Date" value={dateTime} {...args} /></Provider>;
 ArabicEgyptPreferences.parameters = {
   chromaticProvider: {
-    locales: ['ar-EG-u-ca-gregory', 'ar-EG-u-ca-coptic', 'ar-EG-u-ca-islamic', 'ar-EG-u-ca-islamic-civil', 'ar-EG-u-ca-islamic-tbla'],
+    locales: ['ar-EG-u-ca-gregory', 'ar-EG-u-ca-coptic', 'ar-EG-u-ca-islamic-civil', 'ar-EG-u-ca-islamic-tbla'],
     scales: ['medium'],
     colorSchemes: ['light'],
     express: false
@@ -146,7 +146,7 @@ ArabicEgyptPreferences.parameters = {
 export const ArabicSaudiPreferences: DateFieldStory = (args) => <Provider><DateField label="Date" value={dateTime} {...args} /></Provider>;
 ArabicSaudiPreferences.parameters = {
   chromaticProvider: {
-    locales: ['ar-SA-u-ca-islamic-umalqura', 'ar-SA-u-ca-gregory', 'ar-SA-u-ca-islamic', 'ar-SA-u-ca-islamic-rgsa'],
+    locales: ['ar-SA-u-ca-gregory', 'ar-SA-u-ca-islamic-umalqura'],
     scales: ['medium'],
     colorSchemes: ['light'],
     express: false

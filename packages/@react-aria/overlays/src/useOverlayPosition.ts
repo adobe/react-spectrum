@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {calculatePosition, PositionResult} from './calculatePosition';
+import {calculatePosition, getRect, PositionResult} from './calculatePosition';
 import {DOMAttributes, RefObject} from '@react-types/shared';
+import {getActiveElement, isFocusWithin, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
-import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 export interface AriaPositionProps extends PositionProps {
@@ -73,7 +73,7 @@ export interface PositionAria {
   /** Placement of the overlay with respect to the overlay trigger. */
   placement: PlacementAxis | null,
   /** The origin of the target in the overlay's coordinate system. Useful for animations. */
-  triggerOrigin: {x: number, y: number} | null,
+  triggerAnchorPoint: {x: number, y: number} | null,
   /** Updates the position of the overlay. */
   updatePosition(): void
 }
@@ -149,19 +149,13 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       return;
     }
 
-    // Don't update while the overlay is animating.
-    // Things like scale animations can mess up positioning by affecting the overlay's computed size.
-    if (overlayRef.current.getAnimations?.().length > 0) {
-      return;
-    }
-
     // Determine a scroll anchor based on the focused element.
     // This stores the offset of the anchor element from the scroll container
     // so it can be restored after repositioning. This way if the overlay height
     // changes, the focused element appears to stay in the same position.
     let anchor: ScrollAnchor | null = null;
-    if (scrollRef.current && scrollRef.current.contains(document.activeElement)) {
-      let anchorRect = document.activeElement?.getBoundingClientRect();
+    if (scrollRef.current && isFocusWithin(scrollRef.current)) {
+      let anchorRect = getActiveElement()?.getBoundingClientRect();
       let scrollRect = scrollRef.current.getBoundingClientRect();
       // Anchor from the top if the offset is in the top half of the scrollable element,
       // otherwise anchor from the bottom.
@@ -195,7 +189,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       offset,
       crossOffset,
       maxHeight,
-      arrowSize: arrowSize ?? arrowRef?.current?.getBoundingClientRect().width ?? 0,
+      arrowSize: arrowSize ?? (arrowRef?.current ? getRect(arrowRef.current, true).width : 0),
       arrowBoundaryOffset
     });
 
@@ -214,8 +208,9 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     overlay.style.maxHeight = position.maxHeight != null ?  position.maxHeight + 'px' : '';
 
     // Restore scroll position relative to anchor element.
-    if (anchor && document.activeElement && scrollRef.current) {
-      let anchorRect = document.activeElement.getBoundingClientRect();
+    let activeElement = getActiveElement();
+    if (anchor && activeElement && scrollRef.current) {
+      let anchorRect = activeElement.getBoundingClientRect();
       let scrollRect = scrollRef.current.getBoundingClientRect();
       let newOffset = anchorRect[anchor.type] - scrollRect[anchor.type];
       scrollRef.current.scrollTop += newOffset - anchor.offset;
@@ -294,14 +289,16 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   return {
     overlayProps: {
       style: {
-        position: 'absolute',
+        position: position ? 'absolute' : 'fixed',
+        top: !position ? 0 : undefined,
+        left: !position ? 0 : undefined,
         zIndex: 100000, // should match the z-index in ModalTrigger
         ...position?.position,
         maxHeight: position?.maxHeight ?? '100vh'
       }
     },
     placement: position?.placement ?? null,
-    triggerOrigin: position?.triggerOrigin ?? null,
+    triggerAnchorPoint: position?.triggerAnchorPoint ?? null,
     arrowProps: {
       'aria-hidden': 'true',
       role: 'presentation',

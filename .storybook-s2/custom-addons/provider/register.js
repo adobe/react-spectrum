@@ -1,5 +1,5 @@
 
-import {addons, types} from '@storybook/manager-api';
+import {addons, types} from 'storybook/manager-api';
 import {locales} from '../../constants';
 import React, {useEffect, useState} from 'react';
 

@@ -38,7 +38,7 @@ export interface Theme {
     [name: string]: PropertyValueMap | Property<any> | string[]
   },
   conditions: {
-    [name: string]: string
+    [name: string]: string | string[]
   },
   shorthands: {
     [name: string]: string[] | ShorthandProperty<any>

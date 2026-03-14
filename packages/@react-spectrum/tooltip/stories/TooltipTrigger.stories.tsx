@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import Delete from '@spectrum-icons/workflow/Delete';
@@ -45,6 +45,12 @@ const argTypes = {
     max: 50000,
     step: 500
   },
+  closeDelay: {
+    control: 'number',
+    min: 0,
+    max: 50000,
+    step: 500
+  },
   offset: {
     control: 'number',
     min: -500,
@@ -72,6 +78,9 @@ const argTypes = {
   },
   children: {
     control: {disable: true}
+  },
+  shouldCloseOnPress: {
+    control: 'boolean'
   }
 };
 
@@ -113,7 +122,8 @@ export default {
       <ActionButton aria-label="Edit Name"><Edit /></ActionButton>,
       <Tooltip>Change Name</Tooltip>
     ],
-    onOpenChange: action('openChange')
+    onOpenChange: action('openChange'),
+    shouldCloseOnPress: true
   },
   argTypes: argTypes
 } as Meta<typeof TooltipTrigger>;

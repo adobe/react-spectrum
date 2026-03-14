@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/checkbox';
 import packageData from '@react-spectrum/checkbox/package.json';
-import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription, VersionBadge, ClassAPI} from '@react-spectrum/docs';
 
 ```jsx import
  import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
@@ -156,7 +156,7 @@ function Example() {
 
 ## Validation
 
-CheckboxGroup supports the `isRequired` prop to ensure the user selects at least one item, as well as custom client and server-side validation. Individual checkboxes also support validation, and errors from all checkboxes are aggregated at the group level. CheckboxGroup can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+CheckboxGroup supports the `isRequired` prop to ensure the user selects at least one item, as well as custom client and server-side validation. Individual checkboxes also support validation, and errors from all checkboxes are aggregated at the group level. CheckboxGroup can also be integrated with other form libraries. See the [Forms](../forms) guide to learn more.
 
 ### Group validation
 
@@ -181,7 +181,7 @@ import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
 </Form>
 ```
 
-By default, `CheckboxGroup` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
+By default, `CheckboxGroup` displays default validation messages provided by the browser. See [Customizing error messages](../forms#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ### Individual Checkbox validation
 

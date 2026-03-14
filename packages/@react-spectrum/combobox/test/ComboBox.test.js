@@ -4362,7 +4362,8 @@ describe('ComboBox', function () {
         let dismissButtons = within(tray).getAllByRole('button');
         switch (Method) {
           case 'clicking outside tray':
-            await user.click(document.body);
+            fireEvent.mouseDown(document.body, {button: 0});
+            fireEvent.mouseUp(document.body, {button: 0});
             break;
           case 'dismiss button':
             // TODO: not entirely sure why using user.click here breaks the test... It seems to cause the selectedKey
@@ -5268,26 +5269,31 @@ describe('ComboBox', function () {
 
       if (parseInt(React.version, 10) >= 19) {
         it('resets to defaultSelectedKey when submitting form action', async () => {
-          function Test() {        
+          function Test(props) {
             const [value, formAction] = React.useActionState(() => '2', '1');
-            
+
             return (
               <Provider theme={theme}>
                 <form action={formAction}>
-                  <ExampleComboBox defaultSelectedKey={value} />
+                  <ExampleComboBox defaultSelectedKey={value} name="combobox" {...props} />
                   <input type="submit" data-testid="submit" />
                 </form>
               </Provider>
             );
           }
-    
-          let {getByTestId, getByRole} = render(<Test />);
+
+          let {getByTestId, getByRole, rerender} = render(<Test />);
           let input = getByRole('combobox');
           expect(input).toHaveValue('One');
-    
+
           let button = getByTestId('submit');
-          await act(async () => await user.click(button));
+          // For some reason, user.click() causes act warnings related to suspense...
+          await act(() => button.click());
           expect(input).toHaveValue('Two');
+
+          rerender(<Test formValue="key" />);
+          await user.click(button);
+          expect(document.querySelector('input[name=combobox]')).toHaveValue('2');
         });
       }
 
@@ -5597,26 +5603,30 @@ describe('ComboBox', function () {
 
       if (parseInt(React.version, 10) >= 19) {
         it('resets to defaultSelectedKey when submitting form action', async () => {
-          function Test() {
+          function Test(props) {
             const [value, formAction] = React.useActionState(() => '2', '1');
-            
+
             return (
               <Provider theme={theme}>
                 <form action={formAction}>
-                  <ExampleComboBox name="combobox" defaultSelectedKey={value} />
+                  <ExampleComboBox name="combobox" defaultSelectedKey={value} {...props} />
                   <input type="submit" data-testid="submit" />
                 </form>
               </Provider>
             );
           }
-    
-          let {getByTestId} = render(<Test />);
+
+          let {getByTestId, rerender} = render(<Test />);
           let input = document.querySelector('input[name=combobox]');
           expect(input).toHaveValue('One');
-    
+
           let button = getByTestId('submit');
           await act(async () => await user.click(button));
           expect(input).toHaveValue('Two');
+
+          rerender(<Test formValue="key" />);
+          await act(async () => await user.click(button));
+          expect(input).toHaveValue('2');
         });
       }
 

@@ -7,21 +7,21 @@
     </clipPath>
   </defs>
   <g transform="translate(-52 -40)">
-    <g transform="translate(-133 401)"><text transform="translate(411 -348)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+    <g transform="translate(-133 401)"><text transform="translate(411 -348)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" style="font-style: italic">
         <tspan x="-14.157" y="0">Value</tspan>
       </text>
       <path d="M-5211-360.5a2.5,2.5,0,0,1,2-2.45V-379h1v16.05a2.5,2.5,0,0,1,2,2.45,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-5211-360.5Z" transform="translate(5619.5 36)" fill="var(--anatomy-gray-500)" />
     </g>
     <g transform="translate(-336 401)">
-      <text transform="translate(402 -348)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <text transform="translate(402 -348)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" style="font-style: italic">
         <tspan x="-13.826" y="0">Label</tspan>
       </text>
       <path d="M-5008-360.5a2.5,2.5,0,0,1,2-2.45V-379h1v16.05a2.5,2.5,0,0,1,2,2.45,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-5008-360.5Z" transform="translate(5407.5 36)" fill="var(--anatomy-gray-500)" />
     </g>
     <g transform="translate(12 24)">
-      <rect width="240" height="51" transform="translate(40 45)" fill="none" /><text transform="translate(40 69)" fill="var(--anatomy-gray-600)" font-size="18" font-family="Adobe-Clean">
+      <rect width="240" height="51" transform="translate(40 45)" fill="none" /><text transform="translate(40 69)" fill="var(--anatomy-gray-600)" font-size="18" font-family="var(--anatomy-font)">
         <tspan x="0" y="0">Loading data…</tspan>
-      </text><text transform="translate(280 69)" fill="var(--anatomy-gray-700)" font-size="18" font-family="Adobe-Clean">
+      </text><text transform="translate(280 69)" fill="var(--anatomy-gray-700)" font-size="18" font-family="var(--anatomy-font)">
         <tspan x="-32.49" y="0">26%</tspan>
       </text>
       <g transform="translate(8 -70)">
@@ -32,13 +32,13 @@
       </g>
     </g>
     <g transform="translate(-143 472.5)">
-      <text transform="translate(364 -316.5)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <text transform="translate(364 -316.5)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" style="font-style: italic">
         <tspan x="-13.435" y="0">Track</tspan>
       </text>
       <path d="M-5199-425.5v-20.05a2.5,2.5,0,0,1-2-2.451,2.5,2.5,0,0,1,2.5-2.5,2.5,2.5,0,0,1,2.5,2.5,2.5,2.5,0,0,1-2,2.451v20.05Z" transform="translate(5562.5 96)" fill="var(--anatomy-gray-500)" />
     </g>
     <g transform="translate(-274 472.5)">
-      <text transform="translate(364 -316.5)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
+      <text transform="translate(364 -316.5)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" style="font-style: italic">
         <tspan x="-7.501" y="0">Fill</tspan>
       </text>
       <path d="M-5068-425.5v-20.05a2.5,2.5,0,0,1-2-2.45,2.5,2.5,0,0,1,2.5-2.5,2.5,2.5,0,0,1,2.5,2.5,2.5,2.5,0,0,1-2,2.45v20.05Z" transform="translate(5431.5 96)" fill="var(--anatomy-gray-500)" />

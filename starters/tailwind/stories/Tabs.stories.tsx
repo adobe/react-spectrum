@@ -1,6 +1,6 @@
 import { Meta } from '@storybook/react';
 import React from 'react';
-import { Tab, TabList, TabPanel, Tabs } from '../src/Tabs';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from '../src/Tabs';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,
@@ -19,14 +19,16 @@ export const Example = (args: any) => (
       <Tab id="MaR">Monarchy and Republic</Tab>
       <Tab id="Emp">Empire</Tab>
     </TabList>
-    <TabPanel id="FoR">
-      Arma virumque cano, Troiae qui primus ab oris.
-    </TabPanel>
-    <TabPanel id="MaR">
-      Senatus Populusque Romanus.
-    </TabPanel>
-    <TabPanel id="Emp">
-      Alea jacta est.
-    </TabPanel>
+    <TabPanels>
+      <TabPanel id="FoR">
+        Arma virumque cano, Troiae qui primus ab oris.
+      </TabPanel>
+      <TabPanel id="MaR">
+        Senatus Populusque Romanus.
+      </TabPanel>
+      <TabPanel id="Emp">
+        Alea jacta est.
+      </TabPanel>
+    </TabPanels>
   </Tabs>
 );

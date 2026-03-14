@@ -1,0 +1,11 @@
+<svg style="background:var(--anatomy-gray-100); padding: 50px 10px" height="100" viewBox="0 0 140 100">
+  <rect id="Placement_Area" data-name="Placement Area" width="140" height="100" fill="red" opacity="0"/>
+  <g id="Card">
+    <rect id="Background" width="140" height="100" rx="6" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-300)" stroke-width="1"/>
+    <rect id="Image_Placeholder" x="10" y="10" width="120" height="50" rx="4" fill="var(--anatomy-gray-200)"/>
+    <rect id="Icon" x="60" y="27.5" width="16" height="16" fill="var(--anatomy-gray-400)" opacity="0"/>
+    <path id="Image_Icon" d="M1.5,0H14.5A1.5,1.5,0,0,1,16,1.5v13A1.5,1.5,0,0,1,14.5,16H1.5A1.5,1.5,0,0,1,0,14.5V1.5A1.5,1.5,0,0,1,1.5,0ZM4,6.5a2.5,2.5,0,1,0-2.5-2.5A2.5,2.5,0,0,0,4,6.5ZM15.5,14l-4-4-2.5,2.5L6,9.5,0.5,14Z" transform="translate(60 27.5)" fill="var(--anatomy-gray-500)"/>
+    <rect id="Title" x="10" y="68" width="80" height="10" rx="2" fill="var(--anatomy-gray-500)"/>
+    <rect id="Description" x="10" y="82" width="110" height="6" rx="2" fill="var(--anatomy-gray-300)"/>
+  </g>
+</svg>

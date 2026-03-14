@@ -72,7 +72,7 @@ yarn version apply --all
 commit_to_revert="HEAD~0"
 
 # Publish packages to verdaccio
-yarn workspaces foreach --all --no-private -pt npm publish
+yarn workspaces foreach --all --no-private -pt npm publish --tag latest
 
 if [ "$ci" = true ];
 then
@@ -153,6 +153,13 @@ then
   yarn install --no-immutable
   yarn build
   mv dist ../../$verdaccio_path/s2-webpack-5-example
+
+  echo 'build Spectrum 2 + Next.js test app'
+  cd ../../examples/s2-next-macros
+  yarn config set npmRegistryServer $registry
+  yarn install --no-immutable
+  VERDACCIO=true yarn build
+  mv out ../../$verdaccio_path/s2-next-macros
 
   echo 'test icon builder'
   cd ../../examples/s2-webpack-5-example

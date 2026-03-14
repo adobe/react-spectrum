@@ -36,6 +36,9 @@ cd examples/rsp-webpack-4
 node ./scripts/prepareForProd.mjs
 yarn config set npmRegistryServer $registry
 yarn install --no-immutable
+yarn up @adobe/react-spectrum
+yarn up @react-spectrum/provider
+yarn up @spectrum-icons/workflow
 yarn jest
 
 # Build Webpack 4 test app and move to dist folder. Store the size of the build in a text file.

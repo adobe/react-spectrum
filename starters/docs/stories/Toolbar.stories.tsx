@@ -1,8 +1,6 @@
 import {Toolbar} from '../src/Toolbar';
-import {
-  Group,
-  Separator
-} from 'react-aria-components';
+import {Separator} from '../src/Separator';
+import {Group} from 'react-aria-components';
 import {Button} from '../src/Button';
 import {ToggleButton} from '../src/ToggleButton';
 import {Checkbox} from '../src/Checkbox';
@@ -34,13 +32,13 @@ export const Example: Story = (args) => (
         <u>U</u>
       </ToggleButton>
     </Group>
-    <Separator orientation="vertical" />
+    <Separator />
     <Group aria-label="Clipboard">
       <Button>Copy</Button>
       <Button>Paste</Button>
       <Button>Cut</Button>
     </Group>
-    <Separator orientation="vertical" />
+    <Separator />
     <Checkbox>
       Night Mode
     </Checkbox>

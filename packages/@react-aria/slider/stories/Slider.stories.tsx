@@ -1,4 +1,4 @@
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ErrorBoundary} from '@react-spectrum/story-utils';
 import React, {JSX} from 'react';
 import {StoryFn} from '@storybook/react';

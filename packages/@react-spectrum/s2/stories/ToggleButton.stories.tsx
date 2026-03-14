@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes, StaticColorDecorator} from './utils';
+import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {Text, ToggleButton} from '../src';
+
+const events = ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange'];
 
 const meta: Meta<typeof ToggleButton> = {
   component: ToggleButton,
@@ -23,9 +25,10 @@ const meta: Meta<typeof ToggleButton> = {
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange']),
+    ...categorizeArgTypes('Events', events),
     children: {table: {disable: true}}
   },
+  args: {...getActionArgs(events)},
   title: 'ToggleButton'
 };
 

@@ -69,11 +69,15 @@ function ColorLoupe({isOpen, valueCSS, containerRef, loupeRef, style}: any) {
   let thumbTop = style.top || '50%';
   if (typeof thumbTop === 'string' && thumbTop.endsWith('%')) {
     thumbTop = parseFloat(style.top || '50%') / 100 * containerRect.height;
+  } else if (typeof thumbTop === 'string' && thumbTop.endsWith('px')) {
+    thumbTop = parseFloat(thumbTop);
   }
 
   let thumbLeft = style.left || '50%';
   if (typeof thumbLeft === 'string' && thumbLeft.endsWith('%')) {
     thumbLeft = parseFloat(thumbLeft || '50%') / 100 * containerRect.width;
+  } else if (typeof thumbLeft === 'string' && thumbLeft.endsWith('px')) {
+    thumbLeft = parseFloat(thumbLeft);
   }
 
   return (

@@ -32,11 +32,11 @@
       </g>
       <rect id="Hover" width="142" height="32" transform="translate(1 4)" fill="var(--anatomy-gray-900)" fill-opacity="0.04"/>
       <rect id="Menu_Item" data-name="Menu Item" width="57" height="32" transform="translate(12 4)" fill="var(--anatomy-gray-800)" fill-opacity="0"/>
-      <text id="Edit_" data-name="Edit…" transform="translate(12 24)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Edit…</tspan></text>
+      <text id="Edit_" data-name="Edit…" transform="translate(12 24)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Edit…</tspan></text>
       <rect id="Menu_Item-2" data-name="Menu Item" width="82" height="32" transform="translate(12 36)" fill="var(--anatomy-gray-800)" fill-opacity="0"/>
-      <text id="Rename_" data-name="Rename…" transform="translate(12 56)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Rename…</tspan></text>
+      <text id="Rename_" data-name="Rename…" transform="translate(12 56)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Rename…</tspan></text>
       <rect id="Menu_Item-3" data-name="Menu Item" width="72" height="32" transform="translate(12 68)" fill="var(--anatomy-gray-800)" fill-opacity="0"/>
-      <text id="Delete_" data-name="Delete…" transform="translate(12 88)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Delete…</tspan></text>
+      <text id="Delete_" data-name="Delete…" transform="translate(12 88)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Delete…</tspan></text>
     </g>
   </g>
 </svg>

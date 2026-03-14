@@ -10,16 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
+import {ClassNameOrFunction, RenderProps, useRenderProps} from './utils';
 import {DOMProps, GlobalDOMAttributes, ValidationResult} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
-import {RenderProps, useRenderProps} from './utils';
 import {Text} from './Text';
 
 export const FieldErrorContext = createContext<ValidationResult | null>(null);
 
 export interface FieldErrorRenderProps extends ValidationResult {}
-export interface FieldErrorProps extends RenderProps<FieldErrorRenderProps>, DOMProps, GlobalDOMAttributes<HTMLDivElement> {}
+export interface FieldErrorProps extends RenderProps<FieldErrorRenderProps>, DOMProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-FieldError'
+   */
+  className?: ClassNameOrFunction<FieldErrorRenderProps>
+}
 
 /**
  * A FieldError displays validation errors for a form field.

@@ -1,0 +1,93 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'S2'];
+export const date = 'December 16, 2025';
+export const title = 'v1.0.0';
+export const description = 'Welcome to Spectrum 2 v1.0! This milestone marks the first stable version of our implementation of the updated Adobe design system. Spectrum 2 delivers modern, refined components with better accessibility, performance, and styling flexibility using style macros.';
+export const isSubpage = true;
+
+# v1.0.0
+Welcome to Spectrum 2 v1.0! This milestone marks the first stable version of our implementation of the updated [Adobe design system](https://s2.spectrum.adobe.com/). Spectrum 2 delivers modern, refined components with better accessibility, performance, and styling flexibility using [style macros](../styling). Use our updated search to browse the new components, or visit our [migration guide](../migrating) to learn how to upgrade.
+
+Along with this stable version, we have overhauled our documentation website for both React Spectrum and React Aria. The rewritten content is more concise and makes greater use of interactive examples using prop controls. Code examples have been refined to highlight what matters most, and real-world app examples show how all these pieces come together. The new search experience includes image previews and category and library filtering, helping you find what you need faster. There are more component examples, new guides, migration tools, AI-friendly page markdown, and MCP servers, all wrapped in a fresh new look!
+
+As always, this release includes new features and bug fixes, including support for inline editing for TableView. Thank you to all our contributors in this release and from this past year. We hope you enjoy the updates, see you in 2026!
+
+
+## Enhancements
+* Accordion
+  * Update Accordion to use AccordionItem - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9212)
+* Image
+  * Support conditional images - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9335)
+* TableView
+  * Support TableView inline editing - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8754), [PR](https://github.com/adobe/react-spectrum/pull/9002), [PR](https://github.com/adobe/react-spectrum/pull/8983), [PR](https://github.com/adobe/react-spectrum/pull/9108)
+  * Update TableView and TreeView to match updated Spectrum designs  - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9249)
+* Miscellaneous
+  * Add style macro properties to Spectrum 2 MCP server - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9336)
+
+## Fixes
+* ActionButton
+  * Fix XL Avatar size in ActionButton - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9149)
+  * Update ActionButton to use grid area to position NotificationBadge - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9303)
+  * Disable all ActionButtons when `isDisabled` is applied to ActionButtonGroup - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9307)
+* DateField
+  * DateField should horizontally scroll when there is not enough room to render - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9302)
+* Dialog
+  * Update header and heading font in Dialog - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9277)
+* FieldGroup
+  * Forward focus to TextArea in FieldGroup - [@tmvnkr](https://github.com/tmvnkr) - [PR](https://github.com/adobe/react-spectrum/pull/9037)
+* Form
+  * Fix passing `UNSAFE_className` and `UNSAFE_style` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9271)
+* LinkButton
+  * Support GenAI and Premium variants - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9272)
+* Modal
+  * Fix Modal position - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9007)
+* NumberField
+  * Prevent screen from shifting when pressing spin buttons on mobile - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9281), [PR](https://github.com/adobe/react-spectrum/pull/9342)
+  * Inherit Form props - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9271)
+* Picker
+  * Make `isQuiet` prop public - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9320)
+  * Remove `allowEmptyCollection` prop - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9272)
+* RangeCalendar
+  * Update `isInvalid` styling - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9313)
+  * Fix style of date range when setting `firstDayOfWeek` prop - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9340)
+* SelectBoxGroup
+  * Prevent SelectBox from overflowing container on mobile - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9272)
+  * Remove checkboxes from single select SelectBoxGroup- [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9272)
+* TableView
+  * Fix positioning of sort icon in `end` aligned TableView columns - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/9246)
+  * Update text colors to match new Spectrum design - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9280)
+* TagGroup
+  * Clear Button context provider on TagGroup items so they don't throw when in a CustomDialog - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9051)
+* TextArea
+  * Properly focus text area when tapping on invalid icon on mobile - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9073)
+* Toast
+  * Fix long words from overflowing Toast container - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8962)
+  * Remove type from view transitions - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9088)
+  * Remove `UNSTABLE` from Toast - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9311)
+  * Improve animation issues in Safari  - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9271)
+* TreeView
+  * Update text colors to match new Spectrum design-  [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9280)
+* Miscellaneous
+  * Ensure required icon has label when field is required - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9177)
+  * Support `fontSize` overrides via style macros - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9248)
+  * Override default React Aria class names for all Spectrum 2 components - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9245)
+  * Update comment for `staticColor` prop - [@devonlacross](https://github.com/devonlacross) - [PR](https://github.com/adobe/react-spectrum/pull/9052)
+  * Update fonts for Arabic and Hebrew - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9187)
+  * Add `containerType` and `containerName` to style macro - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9271)
+  * Fix icons not setting default fill color - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9271)
+  * Add `use client` to Illustrations - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9271)

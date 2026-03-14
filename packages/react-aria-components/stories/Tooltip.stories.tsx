@@ -30,6 +30,10 @@ export default {
         'left', 'left top', 'left bottom', 'start', 'start top', 'start bottom',
         'right', 'right top', 'right bottom', 'end', 'end top', 'end bottom'
       ]
+    },
+    animation: {
+      control: 'radio',
+      options: ['transition', 'animation', 'animation-delayed']
     }
   }
 } as Meta<typeof Tooltip>;
@@ -42,7 +46,7 @@ export const TooltipExample: TooltipStory = (args) => (
     <Button>Tooltip trigger</Button>
     <Tooltip
       {...args}
-      className={styles.tooltip}
+      className={`${styles['tooltip-base']} ${styles[(args as any).animation]}`}
       offset={5}
       style={{
         background: 'Canvas',

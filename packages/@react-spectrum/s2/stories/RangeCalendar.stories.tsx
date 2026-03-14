@@ -12,13 +12,15 @@
 
 import {ActionButton, RangeCalendar, RangeCalendarProps} from '../src';
 import {CalendarDate, getLocalTimeZone, isWeekend, today} from '@internationalized/date';
-import {CalendarSwitcher, categorizeArgTypes} from './utils';
+import {CalendarSwitcher, categorizeArgTypes, getActionArgs} from './utils';
 import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
 import {DateValue} from 'react-aria';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {useLocale} from '@react-aria/i18n';
+
+const events = ['onChange'];
 
 const meta: Meta<typeof RangeCalendar<any>> = {
   component: RangeCalendar,
@@ -27,7 +29,7 @@ const meta: Meta<typeof RangeCalendar<any>> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onChange']),
+    ...categorizeArgTypes('Events', events),
     errorMessage: {control: {type: 'text'}},
     visibleMonths: {
       control: {
@@ -36,6 +38,7 @@ const meta: Meta<typeof RangeCalendar<any>> = {
       options: [1, 2, 3]
     }
   },
+  args: {...getActionArgs(events)},
   title: 'RangeCalendar',
   decorators: [
     (Story) => (

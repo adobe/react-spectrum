@@ -11,24 +11,50 @@
  */
 
 import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria';
-import {ContextValue, SlotProps, StyleProps, useContextProps} from './utils';
-import {createLeafComponent} from '@react-aria/collections';
+import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
+import {ContextValue, dom, DOMRenderProps, SlotProps, StyleProps, useContextProps} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {GlobalDOMAttributes} from '@react-types/shared';
-import React, {createContext, ElementType, ForwardedRef} from 'react';
+import React, {createContext, ForwardedRef} from 'react';
 
-export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps, GlobalDOMAttributes<HTMLElement> {}
+export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps, DOMRenderProps<'hr' | 'div', undefined>, GlobalDOMAttributes<HTMLElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-Separator'
+   */
+  className?: string
+}
 
 export const SeparatorContext = createContext<ContextValue<SeparatorProps, HTMLElement>>({});
 
-export const Separator = /*#__PURE__*/ createLeafComponent('separator', function Separator(props: SeparatorProps, ref: ForwardedRef<HTMLElement>) {
+export class SeparatorNode extends CollectionNode<any> {
+  static readonly type = 'separator';
+
+  filter(collection: BaseCollection<any>, newCollection: BaseCollection<any>): CollectionNode<any> | null {
+    let prevItem = newCollection.getItem(this.prevKey!);
+    if (prevItem && prevItem.type !== 'separator') {
+      let clone = this.clone();
+      newCollection.addDescendants(clone, collection);
+      return clone;
+    }
+
+    return null;
+  }
+}
+
+/**
+ * A separator is a visual divider between two groups of content, e.g. groups of menu items or sections of a page.
+ */
+export const Separator = /*#__PURE__*/ createLeafComponent(SeparatorNode, function Separator(props: SeparatorProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, SeparatorContext);
 
   let {elementType, orientation, style, className, slot, ...otherProps} = props;
-  let Element = (elementType as ElementType) || 'hr';
+  let Element = elementType || 'hr';
   if (Element === 'hr' && orientation === 'vertical') {
     Element = 'div';
   }
+
+  let ElementType = dom[Element];
 
   let {separatorProps} = useSeparator({
     ...otherProps,
@@ -39,7 +65,8 @@ export const Separator = /*#__PURE__*/ createLeafComponent('separator', function
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <Element
+    <ElementType
+      render={props.render}
       {...mergeProps(DOMProps, separatorProps)}
       style={style}
       className={className ?? 'react-aria-Separator'}

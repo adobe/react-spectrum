@@ -320,7 +320,7 @@ const actionButtonSize = {
   XL: 'L'
 } as const;
 
-export const CoachMarkContext = createContext<ContextValue<CoachMarkProps, HTMLElement>>({});
+export const CoachMarkContext = createContext<ContextValue<Partial<CoachMarkProps>, HTMLElement>>({});
 
 export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HTMLElement>) => {
   let colorScheme = useContext(ColorSchemeContext);
@@ -504,6 +504,7 @@ export const CoachMarkIndicator = /*#__PURE__*/ (forwardRef as forwardRefType)(f
       objRef.current.style.minWidth = childMinWidth;
       objRef.current.style.minHeight = childMinHeight;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children]);
 
   return (
