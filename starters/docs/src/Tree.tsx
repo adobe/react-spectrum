@@ -9,7 +9,9 @@ import {
   TreeItemProps as AriaTreeItemProps,
   TreeProps,
   TreeLoadMoreItem as AriaTreeLoadMoreItem,
-  TreeLoadMoreItemProps
+  TreeLoadMoreItemProps,
+  TreeSection as AriaTreeSection,
+  TreeHeader as AriaTreeHeader
 } from 'react-aria-components';
 import {ChevronRight, GripVertical} from 'lucide-react';
 import {Checkbox} from './Checkbox';
@@ -45,12 +47,13 @@ export function TreeItemContent(
 }
 
 export interface TreeItemProps extends Partial<AriaTreeItemProps> {
-  title: string;
+  title: React.ReactNode;
 }
 
 export function TreeItem(props: TreeItemProps) {
+  let textValue = typeof props.title === 'string' ? props.title : '';
   return (
-    <AriaTreeItem textValue={props.title} {...props}>
+    <AriaTreeItem textValue={textValue} {...props}>
       <TreeItemContent>
         {props.title}
       </TreeItemContent>
@@ -65,4 +68,16 @@ export function TreeLoadMoreItem(props: TreeLoadMoreItemProps) {
       <ProgressCircle isIndeterminate aria-label="Loading more..." />
     </AriaTreeLoadMoreItem>
   );
+}
+
+export function TreeSection<T extends object>(
+  props: React.ComponentProps<typeof AriaTreeSection>
+) {
+  return <AriaTreeSection {...props} />;
+}
+
+export function TreeHeader(
+  props: React.ComponentProps<typeof AriaTreeHeader>
+) {
+  return <AriaTreeHeader {...props} />;
 }

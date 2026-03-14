@@ -5,13 +5,14 @@ import '../../../tailwind/tailwind.css';
 import {ComponentList} from '../../../src/ComponentCard';
 
 export const hideNav = true;
+export const isSubpage = true;
 export const section = 'Examples';
 export const keywords = ['react-aria', 'example', 'button', 'tailwind'];
 export const description = 'A button with an animated ripple effect styled with Tailwind CSS.';
 
 # Ripple Button
 
-<PageDescription>A [Button](../Button.html) with an animated ripple effect styled with [Tailwind CSS](https://tailwindcss.com/).</PageDescription>
+<PageDescription>A [Button](../Button) with an animated ripple effect styled with [Tailwind CSS](https://tailwindcss.com/).</PageDescription>
 
 ```tsx render type="tailwind" expanded dir="react-aria/examples" files={['packages/dev/s2-docs/pages/react-aria/examples/ripple.css']}
 "use client";
@@ -21,7 +22,7 @@ import {Plane} from 'lucide-react';
 import './ripple.css';
 
 function RippleButton(props) {
-  let [coords, setCoords] = useState(null);
+  let [coords, setCoords] = useState<{x: number, y: number} | null>(null);
   return (
     <Button
       onPress={(e) => {
@@ -57,5 +58,5 @@ function RippleButton(props) {
 <ComponentList
   pages={props.pages}
   components={[
-    'react-aria/Button.html'
+    'react-aria/Button'
   ]} />

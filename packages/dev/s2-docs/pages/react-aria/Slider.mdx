@@ -9,6 +9,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/slider/docs/anatomy.svg';
 
 export const tags = ['range input', 'track', 'scrubber'];
+export const relatedPages = [{'title': 'useSlider', 'url': 'Slider/useSlider.html'}];
+export const description = 'Allows a user to select one or more values within a range.';
 
 # Slider
 
@@ -69,6 +71,7 @@ function Example() {
 Set the `value` or `defaultValue` to an array of numbers to render multiple thumbs. Each thumb should have an `aria-label` to describe it for assistive technologies (provided via `thumbLabels` here).
 
 ```tsx render
+"use client";
 import {Slider} from 'vanilla-starter/Slider';
 
 <Slider

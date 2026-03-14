@@ -4,6 +4,7 @@ export default Layout;
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['collapsible', 'expandable', 'disclosure'];
+export const description = 'A grouping of related disclosures.';
 
 # Accordion
 
@@ -11,28 +12,28 @@ export const tags = ['collapsible', 'expandable', 'disclosure'];
 
 ```tsx render docs={docs.exports.Accordion} links={docs.links} props={['size', 'density', 'isQuiet', 'isDisabled', 'allowsMultipleExpanded']} type="s2"
 "use client";
-import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
+import {Accordion, AccordionItem, AccordionItemTitle, AccordionItemPanel} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Accordion styles={style({width: 220})}/* PROPS */>
-  <Disclosure id="personal">
-    <DisclosureTitle>Personal Information</DisclosureTitle>
-    <DisclosurePanel>Personal information form here.</DisclosurePanel>
-  </Disclosure>
-  <Disclosure id="billing">
-    <DisclosureTitle>Billing Address</DisclosureTitle>
-    <DisclosurePanel>Billing address form here.</DisclosurePanel>
-  </Disclosure>
+  <AccordionItem id="personal">
+    <AccordionItemTitle>Personal Information</AccordionItemTitle>
+    <AccordionItemPanel>Personal information form here.</AccordionItemPanel>
+  </AccordionItem>
+  <AccordionItem id="billing">
+    <AccordionItemTitle>Billing Address</AccordionItemTitle>
+    <AccordionItemPanel>Billing address form here.</AccordionItemPanel>
+  </AccordionItem>
 </Accordion>
 ```
 
 ## Expanding
 
-Use the `defaultExpandedKeys` or `expandedKeys` prop to set the expanded items, and `onExpandedChange` to handle user interactions. The expanded keys correspond to the `id` prop of each `<Disclosure>`.
+Use the `defaultExpandedKeys` or `expandedKeys` prop to set the expanded items, and `onExpandedChange` to handle user interactions. The expanded keys correspond to the `id` prop of each `<AccordionItem>`.
 
 ```tsx render
 "use client";
-import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel, type Key} from '@react-spectrum/s2';
+import {Accordion, AccordionItem, AccordionItemTitle, AccordionItemPanel, type Key} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
@@ -44,31 +45,80 @@ function Example() {
       expandedKeys={expandedKeys}
       onExpandedChange={setExpandedKeys}>
       {/*- end highlight -*/}
-      <Disclosure id="settings">
-        <DisclosureTitle>Settings</DisclosureTitle>
-        <DisclosurePanel>Application settings content</DisclosurePanel>
-      </Disclosure>
-      <Disclosure id="preferences">
-        <DisclosureTitle>Preferences</DisclosureTitle>
-        <DisclosurePanel>User preferences content</DisclosurePanel>
-      </Disclosure>
-      <Disclosure id="advanced">
-        <DisclosureTitle>Advanced</DisclosureTitle>
-        <DisclosurePanel>Advanced configuration options</DisclosurePanel>
-      </Disclosure>
+      <AccordionItem id="settings">
+        <AccordionItemTitle>Settings</AccordionItemTitle>
+        <AccordionItemPanel>Application settings content</AccordionItemPanel>
+      </AccordionItem>
+      <AccordionItem id="preferences">
+        <AccordionItemTitle>Preferences</AccordionItemTitle>
+        <AccordionItemPanel>User preferences content</AccordionItemPanel>
+      </AccordionItem>
+      <AccordionItem id="advanced">
+        <AccordionItemTitle>Advanced</AccordionItemTitle>
+        <AccordionItemPanel>Advanced configuration options</AccordionItemPanel>
+      </AccordionItem>
     </Accordion>
   );
 }
 ```
 
+## Content
+
+Use `AccordionItemHeader` to add additional elements alongside the title, such as action buttons or icons.
+
+```tsx render
+"use client";
+import {Accordion, AccordionItem, AccordionItemTitle, AccordionItemPanel, AccordionItemHeader, ActionButton} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<Accordion>
+  <AccordionItem styles={style({width: 250})}>
+    {/*- begin highlight -*/}
+    <AccordionItemHeader>
+      <AccordionItemTitle>Project Settings</AccordionItemTitle>
+      <ActionButton>Edit</ActionButton>
+    </AccordionItemHeader>
+    {/*- end highlight -*/}
+    <AccordionItemPanel>
+      Configure your project settings including name, description, and permissions.
+    </AccordionItemPanel>
+  </AccordionItem>
+  <AccordionItem id="preferences">
+    <AccordionItemTitle>Preferences</AccordionItemTitle>
+    <AccordionItemPanel>User preferences content</AccordionItemPanel>
+  </AccordionItem>
+</Accordion>
+```
+
 ## API
 
-```tsx links={{Accordion: '#accordion', Disclosure: 'Disclosure.html'}}
+```tsx links={{Accordion: '#accordion', AccordionItem: '#accordionitem', AccordionItemHeader: '#accordionitemheader', AccordionItemTitle: '#accordionitemtitle', AccordionItemPanel: '#accordionitempanel'}}
 <Accordion>
-  <Disclosure />
+  <AccordionItem>
+    <AccordionItemHeader>
+      <AccordionItemTitle />
+    </AccordionItemHeader>
+    <AccordionItemPanel />
+  </AccordionItem>
 </Accordion>
 ```
 
 ### Accordion
 
 <PropTable component={docs.exports.Accordion} links={docs.links} />
+
+### AccordionItem
+
+<PropTable component={docs.exports.AccordionItem} links={docs.links} showDescription />
+
+### AccordionItemHeader
+
+<PropTable component={docs.exports.AccordionItemHeader} links={docs.links} showDescription />
+
+### AccordionItemTitle
+
+<PropTable component={docs.exports.AccordionItemTitle} links={docs.links} showDescription />
+
+### AccordionItemPanel
+
+<PropTable component={docs.exports.AccordionItemPanel} links={docs.links} showDescription />

@@ -11,7 +11,6 @@ import {Layout} from '../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
-import {Time} from '../../../src/ReleasesList';
 
 export const hideNav = true;
 export const section = 'Releases';
@@ -22,11 +21,10 @@ export const description = 'We\'re excited to announce that our Disclosure compo
 export const isSubpage = true;
 
 # v1.5.0
-<Time date={date} />
 
-We're excited to announce that our Disclosure components are now generally available! This includes [Disclosure](../Disclosure.html) and [DisclosureGroup](../DisclosureGroup.html) in React Aria. These components now also use the `hidden="until-found"` API currently supported in Chrome to enable searching collapsed content with ctrl + F.
+We're excited to announce that our Disclosure components are now generally available! This includes [Disclosure](../Disclosure) and [DisclosureGroup](../DisclosureGroup) in React Aria. These components now also use the `hidden="until-found"` API currently supported in Chrome to enable searching collapsed content with ctrl + F.
 
-We are also introducing [ToggleButtonGroup](../ToggleButtonGroup.html) in React Aria Components, which supports arrow key navigation with single and multiple selection modes. In addition, Menu now supports the ability to create [Section-level selection groups](../Menu.html#section-level-selection), allowing you to mix actions, single, and multiple selection within the same menu. Menus can also be nested inside Dialog popovers to enable more complex use cases.
+We are also introducing [ToggleButtonGroup](../ToggleButtonGroup) in React Aria Components, which supports arrow key navigation with single and multiple selection modes. In addition, Menu now supports the ability to create [Section-level selection groups](../Menu#section-level-selection), allowing you to mix actions, single, and multiple selection within the same menu. Menus can also be nested inside Dialog popovers to enable more complex use cases.
 
 Last but not least, React Aria is now [Typescript Strict](https://www.typescriptlang.org/tsconfig/#strict) compliant! This has been an extremely large, multi-year effort and we thank you for your patience. This helps us reduce bugs, particularly related to `null` checks, resulting in more correct type definitions for our APIs.
 
@@ -98,7 +96,7 @@ React Aria is now [Typescript Strict](https://www.typescriptlang.org/tsconfig/#s
 
 ## Released packages
 
-```json
+```
  - react-aria@3.36.0
  - react-aria-components@1.5.0
  - react-stately@3.34.0

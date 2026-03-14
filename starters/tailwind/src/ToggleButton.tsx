@@ -6,14 +6,14 @@ import { focusRing } from './utils';
 
 let styles = tv({
   extend: focusRing,
-  base: 'font-sans px-5 py-2 [&:has(svg:only-child)]:px-2 inline-flex items-center text-sm text-center transition rounded-lg border border-black/10 dark:border-white/10 forced-colors:border-[ButtonBorder] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)] dark:shadow-none cursor-default forced-color-adjust-none',
+  base: 'relative inline-flex items-center justify-center gap-2 border border-black/10 dark:border-white/10 h-9 box-border px-3.5 [&:has(>svg:only-child)]:px-0 [&:has(>svg:only-child)]:h-8 [&:has(>svg:only-child)]:aspect-square font-sans text-sm text-center transition rounded-lg cursor-default forced-color-adjust-none [-webkit-tap-highlight-color:transparent]',
   variants: {
     isSelected: {
-      false: 'bg-gray-50 hover:bg-gray-100 pressed:bg-gray-200 text-gray-800 dark:bg-zinc-600 dark:hover:bg-zinc-500 dark:pressed:bg-zinc-400 dark:text-zinc-100 forced-colors:bg-[ButtonFace]! forced-colors:text-[ButtonText]!',
-      true: 'bg-gray-700 hover:bg-gray-800 pressed:bg-gray-900 text-white dark:bg-slate-300 dark:hover:bg-slate-200 dark:pressed:bg-slate-100 dark:text-black forced-colors:bg-[Highlight]! forced-colors:text-[HighlightText]!'
+      false: 'bg-neutral-50 hover:bg-neutral-100 pressed:bg-neutral-200 text-neutral-800 dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:pressed:bg-neutral-500 dark:text-neutral-100 forced-colors:bg-[ButtonFace]! forced-colors:text-[ButtonText]!',
+      true: 'bg-neutral-700 hover:bg-neutral-800 pressed:bg-neutral-900 text-white dark:bg-neutral-300 dark:hover:bg-neutral-200 dark:pressed:bg-neutral-100 dark:text-black forced-colors:bg-[Highlight]! forced-colors:text-[HighlightText]!'
     },
     isDisabled: {
-      true: 'bg-gray-100 dark:bg-zinc-800 forced-colors:bg-[ButtonFace]! text-gray-300 dark:text-zinc-600 forced-colors:text-[GrayText]! border-black/5 dark:border-white/5 forced-colors:border-[GrayText]'
+      true: 'border-transparent dark:border-transparent bg-neutral-100 dark:bg-neutral-800 forced-colors:bg-[ButtonFace]! text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText]!'
     }
   }
 });

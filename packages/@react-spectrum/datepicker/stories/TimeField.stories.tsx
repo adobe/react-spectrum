@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {CalendarDateTime, parseTime, parseZonedDateTime, Time, toZoned} from '@internationalized/date';
 import {Meta, StoryFn} from '@storybook/react';
 import React, {JSX} from 'react';
@@ -78,6 +78,12 @@ export const Zoned: TimeFieldStory = () => render({defaultValue: parseZonedDateT
 
 Zoned.story = {
   name: 'zoned'
+};
+
+export const ZonedPlaceholder: TimeFieldStory = () => render({placeholderValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]')});
+
+ZonedPlaceholder.story = {
+  name: 'zoned placeholder'
 };
 
 export const HideTimeZone: TimeFieldStory = () => render({defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]'), hideTimeZone: true});

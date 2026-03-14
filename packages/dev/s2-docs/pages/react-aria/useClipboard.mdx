@@ -15,6 +15,7 @@ import docs from 'docs:@react-aria/dnd';
 import sharedDocs from 'docs:@react-types/shared/src/dnd.d.ts';
 
 export const section = 'Interactions';
+export const description = 'Handles interactions with the clipboard, including copy and paste operations.';
 
 # useClipboard
 
@@ -33,8 +34,8 @@ This example shows a simple focusable element which supports copying a string wh
 ```tsx render files={["packages/dev/s2-docs/pages/react-aria/useClipboardExample.css"]}
 'use client';
 import React from 'react';
-import type {TextDropItem} from '@react-aria/dnd';
-import {useClipboard} from '@react-aria/dnd';
+import type {TextDropItem} from 'react-aria';
+import {useClipboard} from 'react-aria';
 import './useClipboardExample.css';
 import 'vanilla-starter/theme.css';
 
@@ -48,7 +49,7 @@ function Copyable() {
   });
 
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps}>
+    <div role="textbox" tabIndex={0} {...clipboardProps} aria-label="Copyable text">
       Hello world
       <kbd>⌘C</kbd>
     </div>
@@ -56,22 +57,20 @@ function Copyable() {
 }
 
 function Pasteable() {
-  let [pasted, setPasted] = React.useState(null);
+  let [pasted, setPasted] = React.useState<any[] | string | null>(null);
   let {clipboardProps} = useClipboard({
     async onPaste(items) {
       let pasted = await Promise.all(
         items
-          .filter((item) =>
-            item.kind === 'text' && item.types.has('text/plain')
-          )
-          .map((item: TextDropItem) => item.getText('text/plain'))
+          .filter((item): item is TextDropItem => item.kind === 'text' && item.types.has('text/plain'))
+          .map((item) => item.getText('text/plain'))
       );
       setPasted(pasted.join('\n'));
     }
   });
 
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps}>
+    <div role="textbox" tabIndex={0} {...clipboardProps} aria-label="Paste target">
       {pasted || 'Paste here'}
       <kbd>⌘V</kbd>
     </div>
@@ -97,7 +96,8 @@ This example copies two items, each of which contains representations as plain t
 ```tsx render
 'use client';
 import React from 'react';
-import {useClipboard} from '@react-aria/dnd';
+import type {TextDropItem} from 'react-aria';
+import {useClipboard} from 'react-aria';
 
 function Copyable() {
   let {clipboardProps} = useClipboard({
@@ -133,13 +133,13 @@ function Copyable() {
 
 ///- begin collapse -///
 function Pasteable() {
-  let [pasted, setPasted] = React.useState(null);
+  let [pasted, setPasted] = React.useState<any[] | string | null>(null);
   let {clipboardProps} = useClipboard({
     async onPaste(items) {
       let pasted = await Promise.all(
         items
-          .filter(item => item.kind === 'text' && (item.types.has('text/plain') || item.types.has('my-app-custom-type')))
-          .map(async (item: TextDropItem) => {
+          .filter((item): item is TextDropItem => item.kind === 'text' && (item.types.has('text/plain') || item.types.has('my-app-custom-type')))
+          .map(async (item) => {
             if (item.types.has('my-app-custom-type')) {
               return JSON.parse(await item.getText('my-app-custom-type'));
             } else {
@@ -151,21 +151,21 @@ function Pasteable() {
     }
   });
 
-  let message = ['Paste here'];
-  if (pasted) {
-    message = pasted.map(d => {
+  let message: React.ReactElement[] = [<div key="placeholder">Paste here</div>];
+  if (pasted && Array.isArray(pasted)) {
+    message = pasted.map((d, i) => {
       let message = d.message;
       if (d.style === 'bold') {
         message = <strong>{message}</strong>;
       } else if (d.style === 'italic') {
         message = <em>{message}</em>;
       }
-      return <div>{message}</div>;
+      return <div key={i}>{message}</div>;
     });
   }
 
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps}>
+    <div role="textbox" tabIndex={0} {...clipboardProps} aria-label="Rich text paste target">
       <div>{message || 'Paste here'}</div>
       <kbd>⌘V</kbd>
     </div>
@@ -196,7 +196,8 @@ The example below works with the above `Copyable` example using a custom app-spe
 ```tsx render
 'use client';
 import React from 'react';
-import {useClipboard} from '@react-aria/dnd';
+import type {TextDropItem} from 'react-aria';
+import {useClipboard} from 'react-aria';
 
 ///- begin collapse -///
 function Copyable() {
@@ -221,7 +222,7 @@ function Copyable() {
   });
 
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps}>
+    <div role="textbox" tabIndex={0} {...clipboardProps} aria-label="Rich text to copy">
       <div>
         <div><strong>hello world</strong></div>
         <div><em>foo bar</em></div>
@@ -233,13 +234,13 @@ function Copyable() {
 
 ///- end collapse -///
 function Pasteable() {
-  let [pasted, setPasted] = React.useState(null);
+  let [pasted, setPasted] = React.useState<any[] | string | null>(null);
   let {clipboardProps} = useClipboard({
     async onPaste(items) {
       let pasted = await Promise.all(
         items
-          .filter(item => item.kind === 'text' && (item.types.has('text/plain') || item.types.has('my-app-custom-type')))
-          .map(async (item: TextDropItem) => {
+          .filter((item): item is TextDropItem => item.kind === 'text' && (item.types.has('text/plain') || item.types.has('my-app-custom-type')))
+          .map(async (item) => {
             if (item.types.has('my-app-custom-type')) {
               return JSON.parse(await item.getText('my-app-custom-type'));
             } else {
@@ -251,21 +252,21 @@ function Pasteable() {
     }
   });
 
-  let message = ['Paste here'];
-  if (pasted) {
-    message = pasted.map(d => {
+  let message: React.ReactElement[] = [<div key="placeholder">Paste here</div>];
+  if (pasted && Array.isArray(pasted)) {
+    message = pasted.map((d, i) => {
       let message = d.message;
       if (d.style === 'bold') {
         message = <strong>{message}</strong>;
       } else if (d.style === 'italic') {
         message = <em>{message}</em>;
       }
-      return <div>{message}</div>;
+      return <div key={i}>{message}</div>;
     });
   }
 
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps}>
+    <div role="textbox" tabIndex={0} {...clipboardProps} aria-label="Rich text paste target">
       <div>{message || 'Paste here'}</div>
       <kbd>⌘V</kbd>
     </div>
@@ -285,11 +286,11 @@ This example accepts JPEG and PNG image files, and renders them by creating a lo
 ```tsx render
 'use client';
 import React from 'react';
-import {useClipboard} from '@react-aria/dnd';
-import type {FileDropItem} from '@react-aria/dnd';
+import {useClipboard} from 'react-aria';
+import type {FileDropItem} from 'react-aria';
 
 function Pasteable() {
-  let [file, setFile] = React.useState(null);
+  let [file, setFile] = React.useState<string | null>(null);
   let {clipboardProps} = useClipboard({
     async onPaste(items) {
       let item = items.find(item => item.kind === 'file' && (item.type === 'image/jpeg' || item.type === 'image/png')) as FileDropItem;
@@ -299,8 +300,8 @@ function Pasteable() {
     }
   });
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps} style={{width: 150, height: 100}}>
-      {file ? <img src={file} style={{width: '100%', height: '100%', objectFit: 'contain'}} /> : 'Paste image here'}
+    <div role="textbox" tabIndex={0} {...clipboardProps} style={{width: 150, height: 100}} aria-label="Image paste target">
+      {file ? <img src={file} alt="Pasted image" style={{width: '100%', height: '100%', objectFit: 'contain'}} /> : 'Paste image here'}
     </div>
   );
 }
@@ -312,21 +313,21 @@ This example renders the file names within a dropped directory in a grid.
 ```tsx render files={["packages/dev/s2-docs/pages/react-aria/useClipboardGrid.css"]}
 'use client';
 import React from 'react';
-import {useClipboard} from '@react-aria/dnd'
-import type {DirectoryDropItem} from '@react-aria/dnd';
+import {useClipboard} from 'react-aria'
+import type {DirectoryDropItem} from 'react-aria';
 import File from '@react-spectrum/s2/icons/File';
 import Folder from '@react-spectrum/s2/icons/Folder';
 import './useClipboardGrid.css';
 
 function Pasteable() {
-  let [files, setFiles] = React.useState(null);
+  let [files, setFiles] = React.useState<Array<{name: string, kind: 'file' | 'directory'}> | null>(null);
   let {clipboardProps} = useClipboard({
     async onPaste(items) {
       // Find the first dropped item that is a directory.
       let dir = items.find(item => item.kind === 'directory') as DirectoryDropItem;
       if (dir) {
         // Read entries in directory and update state with relevant info.
-        let files = [];
+        let files: Array<{name: string, kind: 'file' | 'directory'}> = [];
         for await (let entry of dir.getEntries()) {
           files.push({
             name: entry.name,
@@ -351,7 +352,7 @@ function Pasteable() {
     );
   }
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps} className="grid">
+    <div role="textbox" tabIndex={0} {...clipboardProps} className="grid" aria-label="Directory paste target">
       {contents}
     </div>
   );
@@ -362,8 +363,8 @@ If you need to temporarily disable copying and pasting, you can pass the `isDisa
 ```tsx render
 'use client';
 import React from 'react';
-import type {TextDropItem} from '@react-aria/dnd';
-import {useClipboard} from '@react-aria/dnd';
+import type {TextDropItem} from 'react-aria';
+import {useClipboard} from 'react-aria';
 
 function Copyable() {
   let {clipboardProps} = useClipboard({
@@ -377,22 +378,20 @@ function Copyable() {
     /*- end highlight -*/
   });
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps}>
+    <div role="textbox" tabIndex={0} {...clipboardProps} aria-label="Disabled copyable text">
       Hello world
       <kbd>⌘C</kbd>
     </div>
   );
 }
 function Pasteable() {
-  let [pasted, setPasted] = React.useState(null);
+  let [pasted, setPasted] = React.useState<any[] | string | null>(null);
   let {clipboardProps} = useClipboard({
     async onPaste(items) {
       let pasted = await Promise.all(
         items
-          .filter((item) =>
-            item.kind === 'text' && item.types.has('text/plain')
-          )
-          .map((item: TextDropItem) => item.getText('text/plain'))
+          .filter((item): item is TextDropItem => item.kind === 'text' && item.types.has('text/plain'))
+          .map((item) => item.getText('text/plain'))
       );
       setPasted(pasted.join('\n'));
     },
@@ -401,7 +400,7 @@ function Pasteable() {
     /*- end highlight -*/
   });
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps}>
+    <div role="textbox" tabIndex={0} {...clipboardProps} aria-label="Disabled paste target">
       {pasted || 'Paste here'}
       <kbd>⌘V</kbd>
     </div>

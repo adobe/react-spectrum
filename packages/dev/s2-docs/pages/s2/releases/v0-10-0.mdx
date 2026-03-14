@@ -11,7 +11,6 @@ import {Layout} from '../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
-import {Time} from '../../../src/ReleasesList';
 
 export const hideNav = true;
 export const section = 'Releases';
@@ -22,7 +21,6 @@ export const description = 'Version 0.10.0 introduces a new font for Spectrum 2:
 export const isSubpage = true;
 
 # v0.10.0
-<Time date={date} />
 
 Version 0.10.0 introduces a new font for Spectrum 2: Adobe Clean Spectrum VF, along with new date and time components including Calendar, DatePicker, DateRangePicker, and TimeField. This release also includes various component improvements and bug fixes.
 
@@ -30,20 +28,20 @@ Version 0.10.0 introduces a new font for Spectrum 2: Adobe Clean Spectrum VF, al
 
 This release introduces a new font for Spectrum 2: Adobe Clean Spectrum VF. This is an evolution of the previous Adobe Clean, with slightly updated metrics allowing for better vertical centering. Along with this update, the S2 Provider component now automatically handles loading the fonts needed for the user's language. The new font does not affect previous versions of React Spectrum.
 
-If you previously used `page.css` without a `Provider`, you'll need to add a `Provider` around your app to load the fonts. See the [Getting Started](../getting-started.html#optimizing-full-page-apps) guide for details.
+If you previously used `page.css` without a `Provider`, you'll need to add a `Provider` around your app to load the fonts. See the [Getting Started](../getting-started#optimizing-full-page-apps) guide for details.
 
 ## New Components
-* [Calendar](../Calendar.html)
-* [RangeCalendar](../RangeCalendar.html)
-* [DateField](../DateField.html)
-* [DatePicker](../DatePicker.html)
-* [DateRangePicker](../DateRangePicker.html)
-* [TimeField](../TimeField.html)
+* [Calendar](../Calendar)
+* [RangeCalendar](../RangeCalendar)
+* [DateField](../DateField)
+* [DatePicker](../DatePicker)
+* [DateRangePicker](../DateRangePicker)
+* [TimeField](../TimeField)
 
 ## Updates
-* [CardView](../CardView.html): Fix ActionBar from not scrolling
-* [ActionButton](../ActionButton.html): Fix avatar-only ActionButtons to have square dimensions
-* [Tabs](../Tabs.html): Improve selection indicator animation, fix collapsed tabs
-* [ProgressCircle](../ProgressCircle.html): Add track outline in High Contrast Mode
-* [Switch](../Switch.html): Fix the toggle in RTL locales
-* [TreeView](../TreeView.html): Support async loading
+* [CardView](../CardView): Fix ActionBar from not scrolling
+* [ActionButton](../ActionButton): Fix avatar-only ActionButtons to have square dimensions
+* [Tabs](../Tabs): Improve selection indicator animation, fix collapsed tabs
+* [ProgressCircle](../ProgressCircle): Add track outline in High Contrast Mode
+* [Switch](../Switch): Fix the toggle in RTL locales
+* [TreeView](../TreeView): Support async loading

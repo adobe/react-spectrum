@@ -7,5 +7,7 @@
   "resizerDescription": "Trykk på Enter for å starte størrelsesendring",
   "select": "Velg",
   "selectAll": "Velg alle",
-  "sortable": "kolonne som kan sorteres"
+  "sortable": "kolonne som kan sorteres",
+  "collapse": "Skjul",
+  "expand": "Utvid"
 }

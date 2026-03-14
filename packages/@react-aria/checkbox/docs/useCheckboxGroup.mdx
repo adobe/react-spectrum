@@ -90,7 +90,7 @@ an `aria-label` or `aria-labelledby` prop must be passed instead to identify the
 technology.
 
 **Note:** `useCheckboxGroupItem` should only be used when it is contained within a checkbox group. For a
-standalone checkbox, use the [useCheckbox](useCheckbox.html) hook instead.
+standalone checkbox, use the [useCheckbox](../Checkbox/useCheckbox.html) hook instead.
 
 ## Example
 
@@ -154,7 +154,7 @@ function Checkbox(props) {
 
 ## Styling
 
-See the [useCheckbox](useCheckbox.html#styling) docs for details on how to customize the styling of checkbox elements.
+See the [useCheckbox](../Checkbox/useCheckbox.html#styling) docs for details on how to customize the styling of checkbox elements.
 
 ## Styled examples
 
@@ -215,7 +215,7 @@ The `description` prop can be used to associate additional help text with a chec
 
 ### Group validation
 
-CheckboxGroup supports the `isRequired` prop to ensure the user selects at least one item, as well as custom client and server-side validation. Individual checkboxes also support validation, and errors from all checkboxes are aggregated at the group level. CheckboxGroup can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+CheckboxGroup supports the `isRequired` prop to ensure the user selects at least one item, as well as custom client and server-side validation. Individual checkboxes also support validation, and errors from all checkboxes are aggregated at the group level. CheckboxGroup can also be integrated with other form libraries. See the [Forms](../forms) guide to learn more.
 
 When a CheckboxGroup has the `validationBehavior="native"` prop, validation errors block form submission. The `isRequired` prop at the `CheckboxGroup` level requires that at least one item is selected. To display validation errors, use the `validationErrors` and `errorMessageProps` returned by `useCheckboxGroup`. This allows you to render error messages from all of the above sources with consistent custom styles.
 

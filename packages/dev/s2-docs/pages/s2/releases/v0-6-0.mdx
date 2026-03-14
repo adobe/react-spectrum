@@ -11,7 +11,6 @@ import {Layout} from '../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
-import {Time} from '../../../src/ReleasesList';
 
 export const hideNav = true;
 export const section = 'Releases';
@@ -22,20 +21,19 @@ export const description = 'Version 0.6.0 introduces the ActionBar component and
 export const isSubpage = true;
 
 # v0.6.0
-<Time date={date} />
 
 Version 0.6.0 introduces the ActionBar component and adds staticColor="auto" support to multiple components. This release includes Button gradient variants, Menu improvements, and various component fixes.
 
 ## New Components
-* [ActionBar](../ActionBar.html)
+* [ActionBar](../ActionBar)
 
 ## Updates
-* [Button](../Button.html): Add `genai` and `premium` gradient variants
-* [Menu](../Menu.html): Add `hideLinkOutIcon` prop, update alignment of items in different sections, and show checkmark on selected items that are links.
-* Added `staticColor="auto"` option to [ActionButton](../ActionButton.html), [ToggleButton](../ToggleButton.html), [Divider](../Divider.html), [Meter](../Meter.html), [ProgressBar](../ProgressBar.html), and [Link](../Link.html)
-* [ContextualHelp](../ContextualHelp.html): Fix alignment with field labels
-* [InlineAlert](../InlineAlert.html): Remove maximum width
-* [CheckboxGroup](../CheckboxGroup.html): Fix `isRequired` within a Form
+* [Button](../Button): Add `genai` and `premium` gradient variants
+* [Menu](../Menu): Add `hideLinkOutIcon` prop, update alignment of items in different sections, and show checkmark on selected items that are links.
+* Added `staticColor="auto"` option to [ActionButton](../ActionButton), [ToggleButton](../ToggleButton), [Divider](../Divider), [Meter](../Meter), [ProgressBar](../ProgressBar), and [Link](../Link)
+* [ContextualHelp](../ContextualHelp): Fix alignment with field labels
+* [InlineAlert](../InlineAlert): Remove maximum width
+* [CheckboxGroup](../CheckboxGroup): Fix `isRequired` within a Form
 
 ## Codemods
 * Added TableView codemods

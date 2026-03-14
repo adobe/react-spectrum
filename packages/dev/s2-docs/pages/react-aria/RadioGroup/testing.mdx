@@ -1,0 +1,72 @@
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+import testUtilDocs from 'docs:@react-aria/test-utils';
+import {InstallCommand} from '../../../src/InstallCommand';
+import {PatternTestingFAQ} from '../../../src/PatternTestingFAQ';
+
+export const isSubpage = true;
+export const hideFromSearch = true;
+export const tags = ['testing', 'radiogroup', 'test-utils'];
+export const description = 'Testing RadioGroup with React Aria test utils';
+
+# Testing RadioGroup
+
+## Test utils
+
+`@react-aria/test-utils` offers common radio group interaction testing utilities. Install it with your preferred package manager.
+
+<InstallCommand pkg="@react-aria/test-utils" flags="--dev" />
+
+<InlineAlert variant="notice">
+  <Heading>Requirements</Heading>
+  <Content>Please note that this library uses [@testing-library/react@16](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
+</InlineAlert>
+
+Initialize a `User` object at the top of your test file, and use it to create a `RadioGroup` pattern tester in your test cases. The tester has methods that you can call within your test to query for specific subcomponents or simulate common interactions.
+
+```ts
+// RadioGroup.test.ts
+import {render} from '@testing-library/react';
+import {User} from '@react-aria/test-utils';
+
+let testUtilUser = new User({
+  interactionType: 'mouse',
+  advanceTimer: jest.advanceTimersByTime
+});
+// ...
+
+it('RadioGroup can switch the selected radio', async function () {
+  // Render your test component/app and initialize the radiogroup tester
+  let {getByRole} = render(
+    <RadioGroup>
+      ...
+    </RadioGroup>
+  );
+
+  let radioGroupTester = testUtilUser.createTester('RadioGroup', {root: getByRole('radiogroup')});
+  let radios = radioGroupTester.radios;
+  expect(radioGroupTester.selectedRadio).toBeFalsy();
+
+  await radioGroupTester.triggerRadio({radio: radios[0]});
+  expect(radioGroupTester.selectedRadio).toBe(radios[0]);
+
+  await radioGroupTester.triggerRadio({radio: radios[1]});
+  expect(radioGroupTester.selectedRadio).toBe(radios[1]);
+});
+```
+
+## API
+
+### User
+
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
+
+### RadioGroupTester
+
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.RadioGroupTester} />
+
+## Testing FAQ
+
+<PatternTestingFAQ patternName="radio group" />

@@ -9,6 +9,7 @@ let iconIdCache: string[] | null = null;
 let illustrationIdCache: string[] | null = null;
 let iconAliasesCache: Record<string, string[]> | null = null;
 let illustrationAliasesCache: Record<string, string[]> | null = null;
+let styleMacroPropertyValuesCache: Record<string, {values: string[], additionalTypes?: string[]}> | null = null;
 
 function readBundledJson(filename: string): any | null {
   try {
@@ -44,4 +45,13 @@ export async function loadIllustrationAliases(): Promise<Record<string, string[]
   if (illustrationAliasesCache) {return illustrationAliasesCache;}
   const bundled = readBundledJson('illustrationAliases.json');
   return (illustrationAliasesCache = (bundled && typeof bundled === 'object') ? bundled : {});
+}
+
+export function loadStyleMacroPropertyValues(): Record<string, {values: string[], additionalTypes?: string[]}> {
+  if (styleMacroPropertyValuesCache) {return styleMacroPropertyValuesCache;}
+  const bundled = readBundledJson('styleMacroPropertyValues.json');
+  if (!bundled || typeof bundled !== 'object' || Array.isArray(bundled)) {
+    return (styleMacroPropertyValuesCache = {});
+  }
+  return (styleMacroPropertyValuesCache = bundled as any);
 }

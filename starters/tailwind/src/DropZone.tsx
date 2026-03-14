@@ -4,7 +4,7 @@ import {composeRenderProps, DropZoneProps, DropZone as RACDropZone} from 'react-
 import { tv } from "tailwind-variants";
 
 const dropZone = tv({
-  base: "flex items-center justify-center p-8 min-h-24 w-[30%] font-sans text-base text-balance text-center rounded-lg border border-1 border-gray-300 dark:border-zinc-800 bg-white dark:bg-zinc-900",
+  base: "flex items-center justify-center p-8 min-h-24 w-[30%] font-sans text-base text-balance text-center rounded-lg border border-1 border-neutral-300 dark:border-neutral-800 bg-white dark:bg-neutral-900",
   variants: {
     isFocusVisible: {
       true: "outline outline-2 -outline-offset-1 outline-blue-600 dark:outline-blue-500 forced-colors:outline-[Highlight]"

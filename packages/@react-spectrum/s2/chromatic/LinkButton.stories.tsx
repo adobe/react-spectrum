@@ -48,3 +48,19 @@ export const Example: Story = {
     target: '_blank'
   }
 };
+
+export const Premium: Story = {
+  ...Example,
+  args: {
+    ...Example.args,
+    variant: 'premium'
+  }
+};
+
+export const GenAI: Story = {
+  ...Example,
+  args: {
+    ...Example.args,
+    variant: 'genai'
+  }
+};

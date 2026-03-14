@@ -11,7 +11,6 @@ import {Layout} from '../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
-import {Time} from '../../../src/ReleasesList';
 
 export const hideNav = true;
 export const section = 'Releases';
@@ -22,20 +21,19 @@ export const description = 'We have a huge release! Submenu, unavailable menu it
 export const isSubpage = true;
 
 # v1.2.0
-<Time date={date} />
 
-We have a huge release today! Its a GA bonanza 🎊 – [Submenu](../Menu.html#submenus), [unavailable menu items](../Menu.html#unavailable-items), [DropZone](../DropZone.html) and [FileTrigger](../FileTrigger.html) components are now in GA. Check our [blog post](/blog/creating-a-pointer-friendly-submenu-experience.html) on the intricacies of the submenu interactions and how we handled them.
+We have a huge release today! Its a GA bonanza 🎊 – [Submenu](../Menu#submenus), [unavailable menu items](s2:v3/Menu#unavailable-items), [DropZone](../DropZone) and [FileTrigger](../FileTrigger) components are now in GA. Check our [blog post](react-aria:blog/creating-a-pointer-friendly-submenu-experience) on the intricacies of the submenu interactions and how we handled them.
 
-In addition, we have added a suite of new color components including [ColorPicker](../ColorPicker.html), [ColorArea](../ColorArea.html), [ColorField](../ColorField.html), [ColorSlider](../ColorSlider.html), [ColorSwatch](../ColorSwatch.html), [ColorSwatchPicker](../ColorSwatchPicker.html), [ColorWheel](../ColorWheel.html), currently in beta. These enable you to build fully customizable color pickers, including accessible color descriptions for screen reader support.
+In addition, we have added a suite of new color components including [ColorPicker](../ColorPicker), [ColorArea](../ColorArea), [ColorField](../ColorField), [ColorSlider](../ColorSlider), [ColorSwatch](../ColorSwatch), [ColorSwatchPicker](../ColorSwatchPicker), [ColorWheel](../ColorWheel), currently in beta. These enable you to build fully customizable color pickers, including accessible color descriptions for screen reader support.
 
 The first alpha of TreeView has also been released. This was a highly requested component and includes support for expanding, collapsing, multi-selection, keyboard navigation, and interactive children. Documentation will follow soon, check out our React Aria Components [storybook](https://github.com/adobe/react-spectrum/blob/main/packages/react-aria-components/stories/Tree.stories.tsx) source code for examples.
 
-We have also improved our integration with [client side routers](../routing.html#routerprovider), accepting options to control router-specific behaviors such as scrolling, replacing instead of pushing to the history, base path, etc. For convenience, all collection items in React Aria Components (e.g. `MenuItem`) now also support [`isDisabled`](../Menu.html#disabled-items) and [`onAction`](../Menu.html#example) props directly, rather than needing to be defined on the root collection.
+We have also improved our integration with [client side routers](../frameworks), accepting options to control router-specific behaviors such as scrolling, replacing instead of pushing to the history, base path, etc. For convenience, all collection items in React Aria Components (e.g. `MenuItem`) now also support [`isDisabled`](../Menu#selection) and [`onAction`](../Menu) props directly, rather than needing to be defined on the root collection.
 
 Last but not least, we want to acknowledge all the wonderful contributors who have dedicated their time to improve our libraries. A special thanks to [@ryo-manba](https://github.com/ryo-manba) and [@sookmax](https://github.com/sookmax), who are responsible for multiple bug fixes to Switch, IME support, ListBox, ComboBox, as well as adding new features such as additional state attributes, hover events, and language support. Thank you!! 😍
 
 **React Aria Color API updates**
-* `gradientProps` was merged into `colorAreaProps` in [`useColorArea`](../useColorArea.html).
+* `gradientProps` was merged into `colorAreaProps` in [`useColorArea`](../ColorArea/useColorArea).
 
 ## Enhancements
 * Collections
@@ -144,7 +142,7 @@ Last but not least, we want to acknowledge all the wonderful contributors who ha
 
 ## Released packages
 
-```json
+```
  - react-aria@3.33.0
  - react-aria-components@1.2.0
  - react-stately@3.31.0

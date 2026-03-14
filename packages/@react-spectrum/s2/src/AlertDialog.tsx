@@ -29,7 +29,10 @@ import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AlertDialogProps extends DOMProps, UnsafeStyles {
-  /** The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.  */
+  /**
+   * The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.
+   * @default 'confirmation'
+   */
   variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning',
   /** The title of the AlertDialog. */
   title: string,

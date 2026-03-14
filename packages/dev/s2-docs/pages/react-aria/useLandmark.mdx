@@ -13,39 +13,15 @@ import {InterfaceType} from '../../src/types';
 import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/landmark';
 export const section = 'Interactions';
+export const description = 'Enables keyboard navigation between page landmarks.';
 
 # useLandmark
 
 <PageDescription>{docs.exports.useLandmark.description}</PageDescription>
 
-## Features
-
-Landmarks provide a way to designate important subsections of a page. They allow screen reader users to get an overview of the various sections of the page, and jump to a specific section.
-By default, browsers do not provide a consistent way to navigate between landmarks using the keyboard.
-The `useLandmark` hook enables keyboard navigation between landmarks, and provides a consistent experience across browsers.
-
-* <Keyboard>F6</Keyboard> and <Keyboard>Shift+F6</Keyboard> key navigation between landmarks
-* <Keyboard>Alt+F6</Keyboard> key navigation to the main landmark
-* Support for navigating nested landmarks
-
-## Anatomy
-
-Landmark elements can be registered with the `useLandmark` hook. The `role` prop is required.
-
-Pressing <Keyboard>F6</Keyboard> will move focus to the next landmark on the page, and pressing <Keyboard>Shift+F6</Keyboard> will move focus to the previous landmark.
-If an element within a landmark was previously focused before leaving that landmark, focus will return to that element when navigating back to that landmark.
-<Keyboard>Alt+F6</Keyboard> will always move focus to the main landmark if it has been registered.
-
-If multiple landmarks are registered with the same role, they should have unique labels, which can be provided by aria-label or aria-labelledby.
-
-{/* TODO: Not implemented yet */}
-{/* For an example of landmarks in use, see the [useToastRegion](useToast.html#anatomy) documentation. */}
-
-## Example
-
 ```tsx render
 "use client";
-import {useLandmark} from '@react-aria/landmark';
+import {useLandmark} from 'react-aria';
 import {useRef} from 'react';
 
 function Navigation(props) {
@@ -94,6 +70,28 @@ function Search(props) {
   </Region>
 </div>
 ```
+
+## Features
+
+Landmarks provide a way to designate important subsections of a page. They allow screen reader users to get an overview of the various sections of the page, and jump to a specific section.
+By default, browsers do not provide a consistent way to navigate between landmarks using the keyboard.
+The `useLandmark` hook enables keyboard navigation between landmarks, and provides a consistent experience across browsers.
+
+* <Keyboard>F6</Keyboard> and <Keyboard>Shift+F6</Keyboard> key navigation between landmarks
+* <Keyboard>Alt+F6</Keyboard> key navigation to the main landmark
+* Support for navigating nested landmarks
+
+## Anatomy
+
+Landmark elements can be registered with the `useLandmark` hook. The `role` prop is required.
+
+Pressing <Keyboard>F6</Keyboard> will move focus to the next landmark on the page, and pressing <Keyboard>Shift+F6</Keyboard> will move focus to the previous landmark.
+If an element within a landmark was previously focused before leaving that landmark, focus will return to that element when navigating back to that landmark.
+<Keyboard>Alt+F6</Keyboard> will always move focus to the main landmark if it has been registered.
+
+If multiple landmarks are registered with the same role, they should have unique labels, which can be provided by aria-label or aria-labelledby.
+
+For an example of landmarks in use, see the [useToastRegion](Toast/useToast.html#anatomy) documentation.
 
 ## API
 

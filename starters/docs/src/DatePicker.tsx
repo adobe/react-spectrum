@@ -31,7 +31,7 @@ export function DatePicker<T extends DateValue>(
         <DateInput>
           {(segment) => <DateSegment segment={segment} />}
         </DateInput>
-        <FieldButton><ChevronDown size={16} /></FieldButton>
+        <FieldButton><ChevronDown /></FieldButton>
       </Group>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>

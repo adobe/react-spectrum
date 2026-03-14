@@ -3,6 +3,7 @@
 
 .react-aria-DateRangePicker {
   color: var(--text-color);
+  max-width: 100%;
 
   .react-aria-Group {
     display: flex;
@@ -29,6 +30,16 @@
     &[data-disabled] {
       color: var(--text-color-disabled);
     }
+  }
+
+  .date-fields {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    overflow-x: auto;
+    overflow-y: clip;
+    scrollbar-width: none;
   }
 
   .field-Button {

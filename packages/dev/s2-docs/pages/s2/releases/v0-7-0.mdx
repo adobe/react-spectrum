@@ -11,7 +11,6 @@ import {Layout} from '../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
-import {Time} from '../../../src/ReleasesList';
 
 export const hideNav = true;
 export const section = 'Releases';
@@ -22,19 +21,18 @@ export const description = 'Version 0.7.0 introduces the TreeView component and 
 export const isSubpage = true;
 
 # v0.7.0
-<Time date={date} />
 
 Version 0.7.0 introduces the TreeView component and includes important CSS updates to fix Safari issues. This release removes all: revert-layer from the style macro and includes Badge improvements, Tabs collapse behavior, and updated codemods.
 
 ## New Components
-* [TreeView](../TreeView.html)
+* [TreeView](../TreeView)
 
 ## Updates
-* [Badge](../Badge.html): Add `overflowMode` prop, fix icon alignment, update typo from `variant="charteuse"` to `variant="chartreuse"`
-* [CardView](../CardView.html): Fix styling when using `renderActionBar`
+* [Badge](../Badge): Add `overflowMode` prop, fix icon alignment, update typo from `variant="charteuse"` to `variant="chartreuse"`
+* [CardView](../CardView): Fix styling when using `renderActionBar`
 * Image: Add `fetchPriority` prop
-* [Menu](../Menu.html): Fix menu item's focus rings from exceeding popover boundaries
-* [Tabs](../Tabs.html): Add collapse behavior
+* [Menu](../Menu): Fix menu item's focus rings from exceeding popover boundaries
+* [Tabs](../Tabs): Add collapse behavior
 * Remove `all: revert-layer` from style macro generated CSS to fix Safari issues
 * Remove references to CSS `flex` shorthand. Please use `flexGrow`, `flexBasis`, and `flexShrink` instead.
 
@@ -46,6 +44,6 @@ Version 0.7.0 introduces the TreeView component and includes important CSS updat
 
 In this release, we have made significant changes to the way our Style Macro generates CSS in order to fix issues with Safari. The Style Macro uses [CSS Cascade Layers](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Cascade_layers) to avoid CSS specificity and ordering issues. However, this means global CSS declared outside a `@layer`, such as CSS resets, will take precedence over S2's CSS. To avoid this, we previously used [all: revert-layer](https://developer.mozilla.org/en-US/docs/Web/CSS/revert-layer). Unfortunately, due to numerous bugs in Safari 18, this caused rendering issues in our components.
 
-To fix these Safari issues, we have removed `all: revert-layer` in this release. This means that global CSS will now take precedence over S2's styles. **If you are using a CSS reset on the same page as S2 components, you will need to remove it** or put it in a `@layer` of its own. See the [Getting Started](../styling.html#css-resets) guide for more information.
+To fix these Safari issues, we have removed `all: revert-layer` in this release. This means that global CSS will now take precedence over S2's styles. **If you are using a CSS reset on the same page as S2 components, you will need to remove it** or put it in a `@layer` of its own. See the [Getting Started](../styling#css-resets) guide for more information.
 
 **If you are using a version older than React Spectrum v3 on the same page, you must update to the latest version.** See the Adobe internal documentation for more details.

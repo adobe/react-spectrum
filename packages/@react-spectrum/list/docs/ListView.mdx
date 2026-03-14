@@ -55,7 +55,7 @@ keywords: [listview, collections]
 ```
 
 ## Content
-ListView is a [collection component](../react-stately/collections.html) that provides users with a way to view, select, navigate, or drag and drop items in a list. While it may feel similar to the [ListBox](ListBox.html)
+ListView is a [collection component](collections.html) that provides users with a way to view, select, navigate, or drag and drop items in a list. While it may feel similar to the [ListBox](ListBox.html)
 component, ListView offers greater flexibility in the contents it can render and can distinguish between row selection and actions performed on a row. This makes ListView an ideal component for use cases such as file
 managers.
 
@@ -64,7 +64,7 @@ Dynamic collections, as shown below, can be used when the options come from an e
 to automatically cache the rendering of each item, which dramatically improves performance.
 
 Each item has a unique key defined by the data. In the example below, the `key` of each row element is implicitly defined by the id property of the row object.
-See [collections](../react-stately/collections.html#unique-keys) to learn more about keys in dynamic collections.
+See [collections](collections.html#unique-keys) to learn more about keys in dynamic collections.
 
 
 ```tsx example
@@ -97,7 +97,7 @@ An `aria-label` must be provided to the ListView for accessibility. If the ListV
 ListView supports loading data asynchronously, and will display a progress circle reflecting the current load state,
 set by the `loadingState` prop. It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
 
-This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data.
+This example uses the [useAsyncList](react-aria:useAsyncList.html) hook to handle loading the data.
 See the docs for more information.
 
 ```tsx example
@@ -1195,7 +1195,7 @@ isn't sufficient when resolving issues in your own test cases.
 
 ### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-`@react-spectrum/test-utils` offers common gridlist interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-spectrum/test-utils` offers common gridlist interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-spectrum-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the gridlist tester and a sample of how you could use it in your test suite.
 
 ```ts

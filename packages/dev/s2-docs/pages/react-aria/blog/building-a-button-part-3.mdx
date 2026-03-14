@@ -15,11 +15,10 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
 import React from 'react';
-import {Byline} from '../../../src/BlogList';
 
 export const hideNav = true;
 export const tags = ['react aria', 'react spectrum', 'react', 'interactions', 'button', 'keyboard', 'focus', 'web development', 'javascript', 'css'];
-export const description = 'This is the last post in our three part series on building a button component. In the [first post](building-a-button-part-1.html), we covered how React Spectrum and React Aria implement adaptive press events across mouse, touch, keyboard, and screen readers. In the [second post](building-a-button-part-2.html), we covered hover interactions. Today, we\'ll cover keyboard focus behavior.';
+export const description = 'This is the last post in our three part series on building a button component. In the [first post](building-a-button-part-1), we covered how React Spectrum and React Aria implement adaptive press events across mouse, touch, keyboard, and screen readers. In the [second post](building-a-button-part-2), we covered hover interactions. Today, we\'ll cover keyboard focus behavior.';
 export const date = '2020-09-09';
 export const author = 'Devon Govett';
 export const authorLink = 'https://x.com/devongovett';
@@ -27,9 +26,8 @@ export const section = 'Blog';
 export const isSubpage = true;
 
 # Building a Button Part 3: Keyboard Focus Behavior
-<Byline author={author} authorLink={authorLink} date={date} />
 
-This is the last post in our three part series on building a button component. In the [first post](building-a-button-part-1.html), we covered how React Spectrum and React Aria implement adaptive press events across mouse, touch, keyboard, and screen readers. In the [second post](building-a-button-part-2.html), we covered hover interactions. Today, we'll cover keyboard focus behavior.
+This is the last post in our three part series on building a button component. In the [first post](building-a-button-part-1), we covered how React Spectrum and React Aria implement adaptive press events across mouse, touch, keyboard, and screen readers. In the [second post](building-a-button-part-2), we covered hover interactions. Today, we'll cover keyboard focus behavior.
 
 ## Keyboard navigation
 
@@ -45,7 +43,7 @@ There are many aspects of focus management, and perhaps we will cover more in fu
 
 An important feature for keyboard users is a **focus ring**. This is a visual affordance for the currently focused element, which allows a keyboard user to know which element they are currently on. It may only be visible when navigating with a keyboard, however, so as not to distract mouse and touchscreen users.
 
-<video src={focusRingVideoUrl} loop autoPlay muted style={{width: '100%', display: 'block', margin: '20px auto'}} />
+<video src={focusRingVideoUrl} loop autoPlay muted playsInline style={{maxWidth: 'min(100%, 640px)', display: 'block', margin: '20px auto'}} />
 
 As you can see in the above video, the focus ring appears around each button when it receives keyboard focus, but when the user interacts with a mouse it does not appear. To implement this, we attach global event listeners for pointer, keyboard, and focus events at the document level and keep track of the most recent input modality that the user was interacting with. If the user most recently interacted with a keyboard or assistive technology, we show the focus ring, otherwise we do not show it.
 
@@ -53,11 +51,11 @@ There are many nuances to this, however. For example, when clicking a text input
 
 Another challenge is that focus events may occur without any preceding user event. For example, when navigating through a form with the next and previous buttons on the software keyboard in iOS, only a focus event is fired, with no keyboard or pointer events before it. This can also occur when navigating with an assistive technology like a screen reader. In these cases, we don't know how the navigation occurred, so we default to showing the focus ring to ensure the user knows where focus went.
 
-However, we do not want programmatic `focus()` calls to affect the current input modality. The user may click on an element with the mouse, and in response focus is moved somewhere else programatically. For example, when clicking on a button to open a menu, focus is typically moved to the first menu item. However, because `focus` events are still fired when focusing an element programmatically, we need to ignore these events to ensure the focus ring does not appear or disappear based on programatic focus movement.
+However, we do not want programmatic `focus()` calls to affect the current input modality. The user may click on an element with the mouse, and in response focus is moved somewhere else programmatically. For example, when clicking on a button to open a menu, focus is typically moved to the first menu item. However, because `focus` events are still fired when focusing an element programmatically, we need to ignore these events to ensure the focus ring does not appear or disappear based on programmatic focus movement.
 
 There are also various inconsistencies in the number and order of focus events across browsers. For example, Firefox fires two extra focus events when the user first clicks on any element in an iframe: first on the window, then on the document. Finally, it fires a focus event on the element itself. We need to ignore these extra focus events so they don't unintentionally cause the focus ring to appear when using a mouse.
 
-In the future, the [:focus-visible](https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible) pseudo class in CSS may be able to replace this code. However, since the [spec](https://drafts.csswg.org/selectors-4/#the-focus-visible-pseudo) does not say when it should apply, browsers will likely implement different heuristics, which will mean it will behave inconsistently. Until browser support improves, the [useFocusVisible](../useFocusVisible.html) and [useFocusRing](../useFocusRing.html) hooks in React Aria can be used to implement focus rings that work consistently across browsers.
+In the future, the [:focus-visible](https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible) pseudo class in CSS may be able to replace this code. However, since the [spec](https://drafts.csswg.org/selectors-4/#the-focus-visible-pseudo) does not say when it should apply, browsers will likely implement different heuristics, which will mean it will behave inconsistently. Until browser support improves, the [useFocusVisible](../useFocusVisible) and [useFocusRing](../useFocusRing) hooks in React Aria can be used to implement focus rings that work consistently across browsers.
 
 ## Ensuring consistent focus behavior
 
@@ -71,11 +69,11 @@ Unfortunately, Safari both on macOS and iOS reaaaally doesn't want to do this. N
 
 Even with this setting turned on, however, Safari still does not focus buttons and other native form elements on mouse down or touch start. A [bug](https://bugs.webkit.org/show_bug.cgi?id=22261) for this has been open against WebKit since 2008, and it seems unlikely to be fixed any time soon. In this case, we do need to normalize this to ensure browsers are consistent. We can handle focusing the element programmatically on mouse down ourselves.
 
-However, it gets even more tricky on iOS. While on macOS, Safari will respect our programatic focus, on iOS the browser attempts to forcibly blur the element *asynchronously* sometime after the `onClick` event is fired. This means that even programmatically, focusing the button will not work. 🤯
+However, it gets even more tricky on iOS. While on macOS, Safari will respect our programmatic focus, on iOS the browser attempts to forcibly blur the element *asynchronously* sometime after the `onClick` event is fired. This means that even programmatically, focusing the button will not work. 🤯
 
 The only solution is to call `event.preventDefault()` on all mouse and touch events on the element, and handle focusing ourselves. This ensures that the browser does not perform any of its default behavior, including this forced blur, but it means that we'll have to handle all of the default browser behavior ourselves.
 
-This focus normalization behavior is implemented by the [usePress](../usePress.html) hook in React Aria, which is used by [useButton](https://react-spectrum.adobe.com/react-aria/useButton.html), [useCheckbox](https://react-spectrum.adobe.com/react-aria/useCheckbox.html), [useRadio](https://react-spectrum.adobe.com/react-aria/useRadioGroup.html), and many other hooks. If you're implementing your own components, I'd highly recommend checking them out to ensure the focus behavior is consistent across browsers.
+This focus normalization behavior is implemented by the [usePress](../usePress) hook in React Aria, which is used by [useButton](../Button/useButton.html), [useCheckbox](../Checkbox/useCheckbox.html), [useRadio](../RadioGroup/useRadioGroup.html), and many other hooks. If you're implementing your own components, I'd highly recommend checking them out to ensure the focus behavior is consistent across browsers.
 
 ## Conclusion
 

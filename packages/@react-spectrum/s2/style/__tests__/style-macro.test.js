@@ -53,9 +53,13 @@ describe('style-macro', () => {
   }
 }
 
+.-macro-static-a9a4ic {
+        --macro-data-a9a4ic: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
+      }
+
 "
 `);
-    expect(js).toMatchInlineSnapshot('" Jbs12 Jbpv12"');
+    expect(js).toMatchInlineSnapshot('" Jbs12 Jbpv12 -macro-static-a9a4ic"');
   });
 
   it('should support self references', () => {
@@ -114,10 +118,14 @@ describe('style-macro', () => {
   }
 }
 
+.-macro-static-K2u2od {
+        --macro-data-K2u2od: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
+      }
+
 "
 `);
 
-    expect(js).toMatchInlineSnapshot('" _kc12 hc12 mCPFGYc12 lc12 SMBFGYc12 Rv12 ZjUQgKd12 -m_-mc12 -S_-Sv12"');
+    expect(js).toMatchInlineSnapshot('" _kc12 hc12 mCPFGYc12 lc12 SMBFGYc12 Rv12 ZjUQgKd12 -m_-mc12 -S_-Sv12 -macro-static-K2u2od"');
   });
 
   it('should support allowed overrides', () => {
@@ -134,9 +142,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gw12 pg12"');
-    expect(overrides).toMatchInlineSnapshot('" g8tmWqb12 pHJ3AUd12"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb12 pg12"');
+    expect(js()).toMatchInlineSnapshot('"  gw12 pg12 -macro-dynamic-4ucsx6"');
+    expect(overrides).toMatchInlineSnapshot('" g8tmWqb12 pHJ3AUd12 -macro-static-kcgSLc"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb12 pg12 -macro-dynamic-tuhvna"');
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -151,9 +159,9 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B12 __Ya12"');
-    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D12 __Ya12"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D12 __Ya12"');
+    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B12 __Ya12 -macro-dynamic-czb8u3"');
+    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D12 __Ya12 -macro-static-3ZdUX"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D12 __Ya12 -macro-dynamic-1dkyr5p"');
   });
 
   it('should support allowed overrides for shorthands', () => {
@@ -168,9 +176,26 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  Tk12 Qk12 Sk12 Rk12"');
-    expect(overrides).toMatchInlineSnapshot('" Tm12 Qm12 Sm12 Rm12"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm12 Qm12 Sm12 Rm12"');
+    expect(js()).toMatchInlineSnapshot('"  Tk12 Qk12 Sk12 Rk12 -macro-dynamic-wnhub5"');
+    expect(overrides).toMatchInlineSnapshot('" Tm12 Qm12 Sm12 Rm12 -macro-static-VnXYtc"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm12 Qm12 Sm12 Rm12 -macro-dynamic-1jhfsp"');
+  });
+
+  it('should support allowed overrides for fontSize', () => {
+    let {js} = testStyle(
+      {
+        fontSize: 'heading-3xl'
+      },
+      ['fontSize']
+    );
+
+    let {js: overrides} = testStyle({
+      fontSize: 'ui-xs'
+    });
+
+    expect(js()).toMatchInlineSnapshot('"  -_6BNtrc-woabcc12 vx12 -macro-dynamic-y6spui"');
+    expect(overrides).toMatchInlineSnapshot('" -_6BNtrc-a12 vx12 -macro-static-uYVOMc"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_6BNtrc-a12 vx12 -macro-dynamic-ls4ioc"');
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -185,9 +210,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gE12"');
-    expect(overrides).toMatchInlineSnapshot('" Nk12"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk12 gE12"');
+    expect(js()).toMatchInlineSnapshot('"  gE12 -macro-dynamic-1fo9npa"');
+    expect(overrides).toMatchInlineSnapshot('" Nk12 -macro-static-zdsIUb"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk12 gE12 -macro-dynamic-384ibe"');
   });
 
   it('should support runtime conditions', () => {
@@ -241,9 +266,9 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  gH12 pt12"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF12 po12"');
-    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE12 pm12"');
+    expect(js({})).toMatchInlineSnapshot('"  gH12 pt12 -macro-dynamic-1y322w8"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF12 po12 -macro-dynamic-194mta9"');
+    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE12 pm12 -macro-dynamic-b757r2"');
   });
 
   it('should support nested runtime conditions', () => {
@@ -284,10 +309,10 @@ describe('style-macro', () => {
 
 "
 `);
-    expect(js({})).toMatchInlineSnapshot('"  gH12"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF12"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h12"');
-    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot('"  g312"');
+    expect(js({})).toMatchInlineSnapshot('"  gH12 -macro-dynamic-1t0tza9"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF12 -macro-dynamic-8rpq8v"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h12 -macro-dynamic-r8ty3k"');
+    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot('"  g312 -macro-dynamic-16lzs6k"');
   });
 
   it('should support variant runtime conditions', () => {
@@ -301,9 +326,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY12"');
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe12"');
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw12"');
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY12 -macro-dynamic-19yjqaa"');
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe12 -macro-dynamic-19kakuk"');
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw12 -macro-dynamic-11dyu5s"');
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -337,8 +362,25 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  plb12"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple12"');
+    expect(js({})).toMatchInlineSnapshot('"  plb12 -macro-dynamic-1owjb9s"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple12 -macro-dynamic-37zkvn"');
+  });
+
+  it('inherits parent default when nested branch has no default key', () => {
+    let {css, js} = testStyle({
+      color: {
+        forcedColors: {
+          default: 'ButtonText',
+          variant: {
+            highlight: {isSelected: 'HighlightText'}
+          }
+        }
+      }
+    });
+    // forcedColors.default should apply when variant=highlight but !isSelected
+    expect(css).toContain('ButtonText');
+    expect(js({variant: 'highlight'})).toMatchInlineSnapshot('"  plb12 -macro-dynamic-1owjb9s"');
+    expect(js({variant: 'highlight', isSelected: true})).toMatchInlineSnapshot('"  ple12 -macro-dynamic-37zkvn"');
   });
 
   it('should expand shorthand properties to longhands', () => {
@@ -346,7 +388,7 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot('" Th12 Qh12 Sh12 Rh12"');
+    expect(js).toMatchInlineSnapshot('" Th12 Qh12 Sh12 Rh12 -macro-static-1ohgA"');
     expect(css).toMatchInlineSnapshot(`
 "@layer _.a;
 
@@ -371,6 +413,10 @@ describe('style-macro', () => {
   }
 }
 
+.-macro-static-1ohgA {
+        --macro-data-1ohgA: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
+      }
+
 "
 `);
   });
@@ -388,6 +434,10 @@ describe('style-macro', () => {
     background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
   }
 }
+
+.-macro-static-Ukgglb {
+        --macro-data-Ukgglb: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
+      }
 
 "
 `);
@@ -409,6 +459,10 @@ describe('style-macro', () => {
     --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 }
+
+.-macro-static-mL70N {
+        --macro-data-mL70N: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
+      }
 
 "
 `);

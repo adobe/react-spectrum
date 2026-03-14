@@ -27,4 +27,5 @@
   gap: var(--spacing-2);
   min-width: 192px;
   max-height: inherit;
+  overflow: auto;
 }

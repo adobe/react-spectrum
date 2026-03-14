@@ -18,7 +18,6 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
 import React from 'react';
-import {Byline} from '../../../src/BlogList';
 import {DateField, RangeCalendar} from '@react-spectrum/s2';
 import {today, getLocalTimeZone} from '@internationalized/date';
 import RangeCalendarExample from './RangeCalendarExample';
@@ -26,7 +25,7 @@ import CalendarSystems from './CalendarSystems';
 
 export const hideNav = true;
 export const tags = ['date picker', 'date', 'time', 'calendar', 'components', 'accessibility', 'mobile', 'react spectrum', 'react', 'spectrum', 'interactions', 'touch'];
-export const description = 'We are very excited to announce the release of the [React Aria](https://react-spectrum.adobe.com/react-aria/useNumberField.html) and [React Spectrum](../../s2/DatePicker.html) date and time picker components! This includes a full suite of fully featured components and hooks including calendars, date and time fields, and range pickers, all with a focus on internationalization and accessibility. It also includes [@internationalized/date](../../internationalized/date/index.html), a brand new framework-agnostic library for locale-aware date and time manipulation.';
+export const description = 'We are very excited to announce the release of the [React Aria](../DateField/useDateField.html) and [React Spectrum](s2:DatePicker) date and time picker components! This includes a full suite of fully featured components and hooks including calendars, date and time fields, and range pickers, all with a focus on internationalization and accessibility. It also includes [@internationalized/date](../internationalized/date/), a brand new framework-agnostic library for locale-aware date and time manipulation.';
 export const date = '2022-06-21';
 export const author = 'Devon Govett';
 export const authorLink = 'https://x.com/devongovett';
@@ -34,9 +33,8 @@ export const section = 'Blog';
 export const isSubpage = true;
 
 # Date and Time Pickers for All
-<Byline author={author} authorLink={authorLink} date={date} />
 
-We are very excited to announce the release of the [React Aria](https://react-spectrum.adobe.com/react-aria/useNumberField.html) and [React Spectrum](../../s2/DatePicker.html) date and time picker components! This includes a full suite of fully featured components and hooks including calendars, date and time fields, and range pickers, all with a focus on internationalization and accessibility. It also includes [@internationalized/date](../../internationalized/date/index.html), a brand new framework-agnostic library for locale-aware date and time manipulation.
+We are very excited to announce the release of the [React Aria](../DateField/useDateField.html) and [React Spectrum](s2:DatePicker) date and time picker components! This includes a full suite of fully featured components and hooks including calendars, date and time fields, and range pickers, all with a focus on internationalization and accessibility. It also includes [@internationalized/date](../internationalized/date/), a brand new framework-agnostic library for locale-aware date and time manipulation.
 
 In building these components, we have focused on the following areas:
 
@@ -45,7 +43,7 @@ In building these components, we have focused on the following areas:
 - **Accessibility** – All of our date and time picker components have been tested across desktop and mobile devices, and with many different input methods including mouse, touch, and keyboard. We have worked hard to ensure screen reader announcements are clear and consistent.
 - **Customizability** – As with all of React Aria, our hooks give you full control over the rendering and styling of your components, while letting us handle the internationalization and accessibility challenges for you. We have examples using many different styling libraries, such as Tailwind CSS, Styled Components, CSS modules, and Chakra UI.
 
-<video src={datepickerVideo} loop autoPlay muted style={{width: '100%', display: 'block', margin: '40px auto'}} />
+<video src={datepickerVideo} loop autoPlay muted playsInline style={{width: '100%', display: 'block', margin: '40px auto'}} />
 
 ## User experience
 
@@ -57,7 +55,7 @@ Picking dates and times is a complex task, and designing a user experience that 
 
 ### Date fields
 
-Many date picker components include a simple text field where the currently selected date is displayed. Sometimes, a user can also type into this field to enter a date, but this is often difficult to use because the user needs to know what date format is expected, and it's easy to make mistakes. This also poses a challenge for internationalization, because users may enter dates in many different formats, languages, [numbering systems](how-we-internationalized-our-numberfield.html#internationalization), and more. Some of these formats may be ambiguous, for example, is "2/3/2022" "February 3rd" or "March 2nd"? The answer depends on your region of the world. In practice, it is nearly impossible to reliably parse free form text that a user might enter into a date field when you consider all of these possible variations.
+Many date picker components include a simple text field where the currently selected date is displayed. Sometimes, a user can also type into this field to enter a date, but this is often difficult to use because the user needs to know what date format is expected, and it's easy to make mistakes. This also poses a challenge for internationalization, because users may enter dates in many different formats, languages, [numbering systems](how-we-internationalized-our-numberfield#internationalization), and more. Some of these formats may be ambiguous, for example, is "2/3/2022" "February 3rd" or "March 2nd"? The answer depends on your region of the world. In practice, it is nearly impossible to reliably parse free form text that a user might enter into a date field when you consider all of these possible variations.
 
 We took a different approach, and followed the lead of native date picker UIs on platforms like macOS, as well as many implementations of `<input type="date">` in browsers. Rather than a free-form text field, we render individually focusable segments for each date and time unit. Users can type a number into each segment, and focus is automatically advanced to the next segment as they go. They can also use the up and down arrow keys to increment or decrement a value, or use page up/page down to adjust the value by larger amounts. Try it out in the example below.
 
@@ -67,15 +65,15 @@ We took a different approach, and followed the lead of native date picker UIs on
 
 This approach has benefits for internationalization and accessibility, as well as usability on mobile. For internationalization, individual segments avoid the problem of parsing dates in various formats entirely. The date format is automatically determined based on the locale, and the user only needs to fill in the values and not worry about messing up the separators or getting the order wrong. Each segment is also individually labeled for accessibility, so users always know which field they are on (e.g. "year", "month", "day", etc.). This is much easier to use for screen reader users than a plain text field where the expected format is unknown. Finally, on mobile, we can take advantage of the numeric software keyboard, which is nicer to use than a full QWERTY keyboard.
 
-<video src={datepickerScreenReader} loop autoPlay muted style={{width: '100%', display: 'block', margin: '40px auto'}} />
+<video src={datepickerScreenReader + '#t=0.1'} preload="metadata" controls playsInline aria-label="Demo of the DateField component using VoiceOver, showing keyboard controls of incrementing and decrementing date and time segments." style={{width: '100%', display: 'block', margin: '40px auto'}} />
 
-The [useDateField](https://react-spectrum.adobe.com/react-aria/useDateField.html) and [useTimeField](https://react-spectrum.adobe.com/react-aria/useTimeField.html) hooks (or the [DateField](../../s2/DateField.html) and [TimeField](../../s2/TimeField.html) React Spectrum components) may be used standalone in cases where the user is likely to already know the date they need to enter, or the date is far in the past or future, e.g. a birthday or passport expiration date. In these cases, browsing through a calendar UI to find a date is tedious, and entering the date with a keyboard is much more efficient.
+The [useDateField](../DateField/useDateField.html) and [useTimeField](../TimeField/useTimeField.html) hooks (or the [DateField](s2:DateField) and [TimeField](s2:TimeField) React Spectrum components) may be used standalone in cases where the user is likely to already know the date they need to enter, or the date is far in the past or future, e.g. a birthday or passport expiration date. In these cases, browsing through a calendar UI to find a date is tedious, and entering the date with a keyboard is much more efficient.
 
 ### Calendars
 
 When a user doesn't know what date they will select, it can be useful to offer a browsing experience using a calendar component. This allows users to see dates organized into weeks and months, or with additional context such as which dates are unavailable for selection. Calendar follows the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), which allows keyboard users to navigate using the arrow keys, and press the Enter key to select a date.
 
-Calendars can quickly get complicated, with many different states which need to be represented both visually and to screen reader users. For example, a [RangeCalendar](../../s2/RangeCalendar.html) allows users to select not only a single date, but a range of dates. Certain dates can be marked as unavailable, e.g. in an appointment booking application. When combined, a user may be allowed to select only contiguously available ranges (e.g. a rental house), or non-contiguous (e.g. a time off request where weekends are not included). Minimum and maximum allowed dates may also be defined. Finally, if a user makes an invalid selection external to the calendar, we may need to display an invalid state. You can play around with some of these states in the example below.
+Calendars can quickly get complicated, with many different states which need to be represented both visually and to screen reader users. For example, a [RangeCalendar](s2:RangeCalendar) allows users to select not only a single date, but a range of dates. Certain dates can be marked as unavailable, e.g. in an appointment booking application. When combined, a user may be allowed to select only contiguously available ranges (e.g. a rental house), or non-contiguous (e.g. a time off request where weekends are not included). Minimum and maximum allowed dates may also be defined. Finally, if a user makes an invalid selection external to the calendar, we may need to display an invalid state. You can play around with some of these states in the example below.
 
 <RangeCalendarExample />
 
@@ -85,23 +83,23 @@ For range calendars, we also ensure that the selected date range is clearly comm
 
 Another important area we considered with our calendar components was mobile. With touch screen readers, users access each control on screen using swipe gestures to move a virtual cursor forward and backward. Because of this, calendars can be quite tedious to navigate because they contain so many elements, especially when multiple months are displayed at once. We made sure to provide context when a user enters a calendar of the whole range of visible dates, and included an extra visually hidden "next" button at the end of the dates so a user doesn't need to swipe all the way back to the start to navigate to the next month. The column headers are also skipped to improve ease of navigation, since the day names are already included in the label of each cell.
 
-<video src={calendarMobileScreenReader + '#t=0.1'} preload="metadata" controls aria-label="Demo of the Calendar component using VoiceOver on iOS" style={{maxHeight: '600px', width: '100%', display: 'block', margin: '40px auto'}}>
+<video src={calendarMobileScreenReader + '#t=0.1'} preload="metadata" controls playsInline aria-label="Demo of the Calendar component using VoiceOver on iOS" style={{maxHeight: '600px', maxWidth: 'min(100%, 1920px)', width: '100%', display: 'block', margin: '40px auto'}}>
   <track src={calendarMobileScreenReaderVTT} default kind="captions" label="English Captions" srcLang="en-us" type="text/vtt" />
 </video>
 
-We went through many iterations of our calendar components to come to a solution that we think works well across a wide variety of devices and screen readers. [useCalendar](https://react-spectrum.adobe.com/react-aria/useCalendar.html) and [useRangeCalendar](https://react-spectrum.adobe.com/react-aria/useRangeCalendar.html) encapsulate this research and testing into reusable hooks that you can use in your own calendar components. These are also very flexible, including support for displaying multiple months at once, or other time ranges such as a week view.
+We went through many iterations of our calendar components to come to a solution that we think works well across a wide variety of devices and screen readers. [useCalendar](../Calendar/useCalendar.html) and [useRangeCalendar](../RangeCalendar/useRangeCalendar.html) encapsulate this research and testing into reusable hooks that you can use in your own calendar components. These are also very flexible, including support for displaying multiple months at once, or other time ranges such as a week view.
 
-[useDatePicker](https://react-spectrum.adobe.com/react-aria/useNumberField.html) and [useDateRangePicker](https://react-spectrum.adobe.com/react-aria/useDateRangePicker.html) combine both a date field and calendar to create a fully featured date picking experience. Check out the docs and examples to learn more.
+[useDatePicker](../DatePicker/useDatePicker.html) and [useDateRangePicker](../DateRangePicker/useDateRangePicker.html) combine both a date field and calendar to create a fully featured date picking experience. Check out the docs and examples to learn more.
 
 ## Internationalization
 
 Dates and times are represented in many different ways by cultures around the world. This includes differences in calendar systems, time zones, daylight saving time rules, date and time formatting, weekday and weekend rules, and much more. When building applications that support users around the world, it is important to handle these aspects correctly for each locale.
 
-By default, JavaScript represents dates and times using the [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) object. However, `Date` has *many* problems, including a very difficult to use API, and lack of internationalization support. This has led to the development of [many](https://momentjs.com) [date](https://date-fns.org) [and](https://day.js.org) [time](https://moment.github.io/luxon/#/) manipulation libraries over the years, which offer a wrapper around `Date` with an easier to use API and useful utility functions. However, none of these existing solutions tackled the internationalization features we were looking to support, so we built our own library: [@internationalized/date](../../internationalized/date/index.html).
+By default, JavaScript represents dates and times using the [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) object. However, `Date` has *many* problems, including a very difficult to use API, and lack of internationalization support. This has led to the development of [many](https://momentjs.com) [date](https://date-fns.org) [and](https://day.js.org) [time](https://moment.github.io/luxon/#/) manipulation libraries over the years, which offer a wrapper around `Date` with an easier to use API and useful utility functions. However, none of these existing solutions tackled the internationalization features we were looking to support, so we built our own library: [@internationalized/date](../internationalized/date/).
 
 ### Introducing @internationalized/date
 
-[@internationalized/date](../../internationalized/date/index.html) takes a different approach from other JavaScript date libraries. Rather than wrapping a `Date` object and providing an API on top, it implements all date arithmetic and utilities from scratch. This allows it to have different object types for different purposes. For example, [CalendarDate](../../internationalized/date/CalendarDate.html) represents a date without a time, [Time](../../internationalized/date/Time.html) represents a time without a date, [CalendarDateTime](../../internationalized/date/CalendarDateTime.html) represents a date and time without a time zone, and [ZonedDateTime](../../internationalized/date/ZonedDateTime.html) puts them all together to represent a date and time in a particular time zone. Each of these objects have different use cases and behaviors, and representing them all using a JavaScript `Date` would have been difficult.
+[@internationalized/date](../internationalized/date/) takes a different approach from other JavaScript date libraries. Rather than wrapping a `Date` object and providing an API on top, it implements all date arithmetic and utilities from scratch. This allows it to have different object types for different purposes. For example, [CalendarDate](../internationalized/date/CalendarDate) represents a date without a time, [Time](../internationalized/date/Time) represents a time without a date, [CalendarDateTime](../internationalized/date/CalendarDateTime) represents a date and time without a time zone, and [ZonedDateTime](../internationalized/date/ZonedDateTime) puts them all together to represent a date and time in a particular time zone. Each of these objects have different use cases and behaviors, and representing them all using a JavaScript `Date` would have been difficult.
 
 ```tsx
 import {CalendarDate} from '@internationalized/date';
@@ -111,7 +109,7 @@ date = date.add({years: 1, months: 1, days: 1});
 date.toString(); // '2023-03-04'
 ```
 
-Despite being implemented from scratch, and supporting [13 different calendar systems](../../internationalized/date/Calendar.html#implementations), and a number of locale-aware utility functions, `@internationalized/date` is only 8 kB minified with Brotli compression, and it is tree-shakeable to reduce this even further! This is significantly smaller than many other JavaScript date libraries, while offering improved internationalization support.
+Despite being implemented from scratch, and supporting [13 different calendar systems](../internationalized/date/Calendar#implementations), and a number of locale-aware utility functions, `@internationalized/date` is only 8 kB minified with Brotli compression, and it is tree-shakeable to reduce this even further! This is significantly smaller than many other JavaScript date libraries, while offering improved internationalization support.
 
 In the future, the TC39 [Temporal](https://tc39.es/proposal-temporal/docs/index.html) proposal will be a replacement for the `Date` object in the JavaScript language. Temporal supports many of the internationalization requirements we have, and has a much nicer API as well. We were heavily inspired by its design, and hope to back the objects and functions in `@internationalized/date` with it once it is widely implemented in browsers.
 
@@ -127,7 +125,7 @@ You can see some of the differences between calendar systems in the example belo
 
 While the [Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) object built into JavaScript has support for formatting dates in multiple calendar systems, the `Date` object only supports the Gregorian calendar. Because arithmetic using `Date`, such as adding or subtracting months or years, is performed using the Gregorian calendar, the resulting dates will appear incorrect to the user when displayed in a different calendar system.
 
-The [Calendar](../../internationalized/date/Calendar.html) interface in `@internationalized/date` provides an abstraction that allows date manipulation to support arbitrary calendar systems, and implementations for 13 different calendar systems are included. All date objects are constructed with a particular calendar system, and you can also convert dates from one calendar system to another. This allows our date picking components to work with dates in any calendar system without being concerned with the details of each one at the UI layer.
+The [Calendar](../internationalized/date/Calendar) interface in `@internationalized/date` provides an abstraction that allows date manipulation to support arbitrary calendar systems, and implementations for 13 different calendar systems are included. All date objects are constructed with a particular calendar system, and you can also convert dates from one calendar system to another. This allows our date picking components to work with dates in any calendar system without being concerned with the details of each one at the UI layer.
 
 ```tsx
 import {toCalendar, HebrewCalendar, GregorianCalendar} from '@internationalized/date';
@@ -146,7 +144,7 @@ Aside from the calendar system, many other aspects of date and time handling are
 
 Another example of a locale-specific difference is which days of a week are considered weekends vs weekdays. In many countries, Saturday and Sunday are weekends, but in some such as Israel, the weekend is considered Friday and Saturday, and in Afghanistan it is Thursday and Friday.
 
-`@internationalized/date` provides functions that implement all of these details. Visit [the docs](../../internationalized/date/CalendarDate.html#queries) for more information.
+`@internationalized/date` provides functions that implement all of these details. Visit [the docs](../internationalized/date/CalendarDate#queries) for more information.
 
 ```tsx
 import {isWeekend, startOfWeek} from '@internationalized/date';
@@ -183,10 +181,10 @@ date.set({ month: 11 }, 'later');
 // => 2020-11-01T01:00:00-08:00[America/Los_Angeles]
 ```
 
-See [the docs](../../internationalized/date/ZonedDateTime.html#setting-fields) for more details on how this works.
+See [the docs](../internationalized/date/ZonedDateTime#setting-fields) for more details on how this works.
 
 ## Conclusion
 
-Correctly manipulating dates and times is *really hard*. Making assumptions about calendar systems, time zones, locales, date and time arithmetic, etc. is a recipe for bugs when users around the world interact with your app. [@internationalized/date](../../internationalized/date/index.html) provides a library of objects and functions that help handle these differences and allow you to manipulate dates from all users consistently. It is a completely independent library, so even if you aren't using React Aria, React Spectrum, or even React, you can still take advantage of it for all your date and time manipulation needs!
+Correctly manipulating dates and times is *really hard*. Making assumptions about calendar systems, time zones, locales, date and time arithmetic, etc. is a recipe for bugs when users around the world interact with your app. [@internationalized/date](../internationalized/date/) provides a library of objects and functions that help handle these differences and allow you to manipulate dates from all users consistently. It is a completely independent library, so even if you aren't using React Aria, React Spectrum, or even React, you can still take advantage of it for all your date and time manipulation needs!
 
-In addition, React Aria hooks such as [useDatePicker](https://react-spectrum.adobe.com/react-aria/useNumberField.html) and [useCalendar](https://react-spectrum.adobe.com/react-aria/useCalendar.html) can help you build international and accessible date and time picking components with completely customizable styles. We've been working on these components for a [long time](https://x.com/devongovett/status/1136402636754673664), and we really hope you like them!
+In addition, React Aria hooks such as [useDatePicker](../DatePicker/useDatePicker.html) and [useCalendar](../Calendar/useCalendar.html) can help you build international and accessible date and time picking components with completely customizable styles. We've been working on these components for a [long time](https://x.com/devongovett/status/1136402636754673664), and we really hope you like them!

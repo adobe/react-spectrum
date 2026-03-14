@@ -6,6 +6,9 @@ import vanillaDocs from 'docs:vanilla-starter/CommandPalette';
 import '../../tailwind/tailwind.css';
 
 export const tags = ['combobox', 'typeahead', 'input'];
+export const version = 'rc';
+export const relatedPages = [{'title': 'useAutocomplete', 'url': 'Autocomplete/useAutocomplete.html'}];
+export const description = 'Allows users to search or filter a list of suggestions.';
 
 # Autocomplete
 
@@ -109,9 +112,9 @@ export const tags = ['combobox', 'typeahead', 'input'];
 
 ## Content
 
-Autocomplete filters a collection component using a [TextField](TextField.html) or [SearchField](SearchField.html). It can be used to build UI patterns such as command palettes, searchable menus, filterable selects, and more.
+Autocomplete filters a collection component using a [TextField](TextField) or [SearchField](SearchField). It can be used to build UI patterns such as command palettes, searchable menus, filterable selects, and more.
 
-[Menu](Menu.html) and [ListBox](ListBox.html) support **virtual focus**, which allows arrow key navigation within the list while the text input is focused. Use `disableVirtualFocus` to require the user to tab between the input and list.
+[Menu](Menu) and [ListBox](ListBox) support **virtual focus**, which allows arrow key navigation within the list while the text input is focused. Use `disableVirtualFocus` to require the user to tab between the input and list.
 
 <ExampleSwitcher type="component" examples={['Menu', 'Select', 'ListBox', 'TagGroup', 'GridList', 'Table']}>
 
@@ -120,7 +123,6 @@ Autocomplete filters a collection component using a [TextField](TextField.html) 
 import {Autocomplete, useFilter} from 'react-aria-components';
 import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
 import {Button} from 'vanilla-starter/Button';
-import {Popover} from 'vanilla-starter/Popover';
 import {SearchField} from 'vanilla-starter/SearchField';
 
 function Example(props) {
@@ -129,7 +131,7 @@ function Example(props) {
   return (
     <MenuTrigger>
       <Button>Add tag...</Button>
-      <Popover style={{display: 'flex', flexDirection: 'column'}}>
+      <div style={{display: 'flex', flexDirection: 'column', maxHeight: 'inherit'}}>
         {/*- begin highlight -*/}
         <Autocomplete {...props}/* PROPS */ filter={contains}>
           <SearchField
@@ -150,7 +152,7 @@ function Example(props) {
             <MenuItem>Science</MenuItem>
           </Menu>
         </Autocomplete>
-      </Popover>
+      </div>
     </MenuTrigger>
   );
 }
@@ -1057,10 +1059,9 @@ When the `filter` prop is not set, the items are controlled. This example uses a
 
 ```tsx render
 "use client";
-import {Autocomplete} from 'react-aria-components';
+import {Autocomplete, useAsyncList} from 'react-aria-components';
 import {SearchField} from 'vanilla-starter/SearchField';
 import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
-import {useAsyncList} from 'react-stately';
 
 function AsyncLoadingExample() {
   let list = useAsyncList<{name: string}>({
@@ -1080,7 +1081,6 @@ function AsyncLoadingExample() {
   return (
     <Autocomplete
       /*- begin highlight -*/
-      filter={null}
       inputValue={list.filterText}
       onInputChange={list.setFilterText}>
       {/*- end highlight -*/}
@@ -1106,7 +1106,7 @@ function AsyncLoadingExample() {
 
 ## API
 
-```tsx links={{Autocomplete: '#autocomplete', SearchField: 'SearchField.html', TextField: 'TextField.html', Menu: 'Menu.html', ListBox: 'ListBox.html', TagGroup: 'TagGroup.html', GridList: 'GridList.html', Table: 'Table.html'}}
+```tsx links={{Autocomplete: '#autocomplete', SearchField: 'SearchField', TextField: 'TextField', Menu: 'Menu', ListBox: 'ListBox', TagGroup: 'TagGroup', GridList: 'GridList', Table: 'Table'}}
 <Autocomplete>
   <SearchField /> or <TextField />
   <Menu />, <ListBox />, <TagGroup />, <GridList />, or <Table />

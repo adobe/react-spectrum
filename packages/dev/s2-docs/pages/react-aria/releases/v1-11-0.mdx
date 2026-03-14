@@ -11,7 +11,6 @@ import {Layout} from '../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
-import {Time} from '../../../src/ReleasesList';
 
 export const hideNav = true;
 export const section = 'Releases';
@@ -22,11 +21,10 @@ export const description = 'Happy summer! This release adds support for async lo
 export const isSubpage = true;
 
 # v1.11.0
-<Time date={date} />
 
 Happy summer! This release adds support for async loading and infinite scrolling, improves form integration and drag and drop interactions, and adds support for additional DOM events and attributes.
 
-The new LoadMoreItem components supported in [ListBox](../ListBox.html#asynchronous-loading), [GridList](../GridList.html#asynchronous-loading), [Table](../Table.html#asynchronous-loading), and [Tree](../Tree.html#asynchronous-loading) enables infinite scrolling. These trigger the loading of additional pages of items and display a loading spinner. Multiple LoadMoreItems can be rendered within a collection too, enabling loading multiple levels of a tree or sections of data from different APIs.
+The new LoadMoreItem components supported in [ListBox](../ListBox#asynchronous-loading), [GridList](../GridList#asynchronous-loading), [Table](../Table#asynchronous-loading), and [Tree](../Tree#asynchronous-loading) enables infinite scrolling. These trigger the loading of additional pages of items and display a loading spinner. Multiple LoadMoreItems can be rendered within a collection too, enabling loading multiple levels of a tree or sections of data from different APIs.
 
 We've also opened up the React Aria Components API to pass through more DOM events and attributes. This improves integration with other libraries, for example making it possible to use another library's menu with a React Aria button.
 
@@ -102,7 +100,7 @@ As always, thanks so much to everyone who contributed to this release!
 
 ## Released packages
 
-```json
+```
  - react-aria@3.42.0
  - react-aria-components@1.11.0
  - react-stately@3.40.0

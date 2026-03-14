@@ -65,5 +65,10 @@
     .track {
       box-shadow: 0 0 0 1px var(--border-color);
     }
+
+    &[data-selected] .handle {
+      background: var(--gray-200);
+      box-shadow: none;
+    }
   }
 }

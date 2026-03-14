@@ -30,7 +30,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface DateFieldProps<T extends DateValue> extends
-  Omit<AriaDateFieldProps<T>, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
+  Omit<AriaDateFieldProps<T>, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps {
@@ -49,7 +49,9 @@ const segmentContainer = style({
   flexShrink: 1,
   minWidth: 0,
   height: 'full',
-  overflow: 'hidden',
+  overflowX: 'auto',
+  overflowY: 'hidden',
+  scrollbarWidth: 'none',
   display: 'flex',
   alignItems: 'center',
   textWrap: 'nowrap'
@@ -144,6 +146,7 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
               size={size}
               styles={style({
                 ...fieldInput(),
+                textWrap: 'nowrap',
                 paddingX: 'edge-to-text'
               })({size})}>
               <DateInputContainer>
@@ -171,7 +174,7 @@ export function DateInputContainer(props: PropsWithChildren): ReactElement {
 
 export function DateInput(props: Omit<DateInputProps, 'children'>): ReactElement {
   return (
-    <AriaDateInput {...props}>
+    <AriaDateInput className="" {...props}>
       {(segment) => (
         <AriaDateSegment
           segment={segment}

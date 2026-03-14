@@ -36,7 +36,7 @@ export function AlertDialog({
           <div className={`w-6 h-6 absolute right-6 top-6 stroke-2 ${variant === 'destructive' ? 'text-red-500' : 'text-blue-500'}`}>
             {variant === 'destructive' ? <AlertCircleIcon aria-hidden /> : <InfoIcon aria-hidden />}
           </div>
-          <p className="mt-3 text-slate-500 dark:text-zinc-400">
+          <p className="mt-3 text-neutral-500 dark:text-neutral-400">
             {children}
           </p>
           <div className="mt-6 flex justify-end gap-2">

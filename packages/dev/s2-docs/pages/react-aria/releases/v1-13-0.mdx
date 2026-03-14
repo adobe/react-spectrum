@@ -11,8 +11,6 @@ import {Layout} from '../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
-import {Time} from '../../../src/ReleasesList';
-import {ReleasedVersions} from '../../../src/ReleasesList';
 
 export const hideNav = true;
 export const section = 'Releases';
@@ -23,15 +21,14 @@ export const description = 'Happy fall! This release brings some long-awaited fe
 export const isSubpage = true;
 
 # v1.13.0
-<Time date={date} />
 
-Happy fall! This release brings some long-awaited features, including multi-selection in [React Aria Select](../Select.html#multiple-selection) and enhanced animation support across our components. For example, [Disclosure](../Disclosure.html) now provides CSS variables to easily animate expanding and collapsing. We’ve also added a new `<SelectionIndicator>` component that can be used within components that support single selection such as [Tabs](../Tabs.html) and [ToggleButtonGroup](../ToggleButtonGroup.html#animation) to animate selection changes. In addition, we have significantly improved the behavior of scrolling modals on iOS 26. Lastly, `onAction` can now be used on a [`ComboBoxItem`](../ComboBox.html#item-actions), enabling you to add a “create” option.
+Happy fall! This release brings some long-awaited features, including multi-selection in [React Aria Select](../Select#value) and enhanced animation support across our components. For example, [Disclosure](../Disclosure) now provides CSS variables to easily animate expanding and collapsing. We’ve also added a new `<SelectionIndicator>` component that can be used within components that support single selection such as [Tabs](../Tabs) and [ToggleButtonGroup](../ToggleButtonGroup#animation) to animate selection changes. In addition, we have significantly improved the behavior of scrolling modals on iOS 26. Lastly, `onAction` can now be used on a [`ComboBoxItem`](../ComboBox#item-actions), enabling you to add a “create” option.
 
 As always, thank you to our community for their support and contributions!
 
 **Multi-Selection in React Aria Select:**
 
-To support multi-selection in React Aria Select, we are updating the API from `selectedKey` to  `value`, matching the React `select` API. The deprecated API is supported for backward compatibility, but only supports single selection. Please see our [docs](../Select.html#multiple-selection) for more on how to implement multi-selection.
+To support multi-selection in React Aria Select, we are updating the API from `selectedKey` to  `value`, matching the React `select` API. The deprecated API is supported for backward compatibility, but only supports single selection. Please see our [docs](../Select#value) for more on how to implement multi-selection.
 
 ## Enhancements
 * Calendar
@@ -87,7 +84,7 @@ To support multi-selection in React Aria Select, we are updating the API from `s
 
 ## Released packages
 
-```json
+```
  - react-aria@3.44.0
  - react-aria-components@1.13.0
  - react-stately@3.42.0

@@ -13,7 +13,7 @@
 import {CalendarDate, CalendarDateTime} from '@internationalized/date';
 import {DateRangePicker} from '../';
 import type {Meta, StoryObj} from '@storybook/react';
-import {userEvent} from '@storybook/test';
+import {userEvent} from 'storybook/test';
 
 const meta: Meta<typeof DateRangePicker> = {
   component: DateRangePicker,
@@ -119,4 +119,13 @@ export const OpenPickerWithTime: Story = {
       disableAnimations: true
     }
   }
+};
+
+export const FirstDayOfWeek: Story = {
+  args: {
+    label: 'Date of birth',
+    firstDayOfWeek: 'wed',
+    value: {start: startDate, end: endDate}
+  },
+  play: OpenPicker.play
 };

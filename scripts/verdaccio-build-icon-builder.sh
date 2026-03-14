@@ -67,8 +67,8 @@ cat > icon-library-test/package.json << EOF
   },
   "peerDependencies": {
     "@react-spectrum/s2": ">=0.8.0",
-    "react": "^18.0.0 || ^19.0.0-rc.1",
-    "react-dom": "^18.0.0 || ^19.0.0-rc.1"
+    "react": "^19.0.0-rc.1",
+    "react-dom": "^19.0.0-rc.1"
   },
   "devDependencies": {
     "@react-spectrum/s2-icon-builder": "latest",

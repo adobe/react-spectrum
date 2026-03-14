@@ -11,7 +11,6 @@ import {Layout} from '../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
-import {Time} from '../../../src/ReleasesList';
 
 export const hideNav = true;
 export const section = 'Releases';
@@ -22,26 +21,25 @@ export const description = 'Happy New Year! Our first release of 2025 includes a
 export const isSubpage = true;
 
 # v1.6.0
-<Time date={date} />
 
-Happy New Year! Our first release of 2025 includes a new [firstDayOfWeek](../Calendar.html#custom-first-day-of-week) prop for our calendar and date picker components, support for [CSS transitions](../styling.html#animation) in our overlay components, a new [Autocomplete](../Autocomplete.html) component in alpha, and a new [React Aria test utils](../testing.html#react-aria-test-utils) package.
+Happy New Year! Our first release of 2025 includes a new [firstDayOfWeek](../Calendar#display-options) prop for our calendar and date picker components, support for [CSS transitions](../styling#animation) in our overlay components, a new [Autocomplete](../Autocomplete) component in alpha, and a new [React Aria test utils](../testing#react-aria-test-utils) package.
 As always, a huge shoutout to everyone in the community for their feedback and contributions!
 
 **firstDayOfWeek:**
 
-By default, our date picker components determine the first day of the week from the locale. However, a common request was for the ability to override this for certain use cases regardless of the locale. [Calendar](../Calendar.html#custom-first-day-of-week), [RangeCalendar](../RangeCalendar.html#custom-first-day-of-week), [DatePicker](../DatePicker.html#custom-first-day-of-week), and [DateRangePicker](../DateRangePicker.html#custom-first-day-of-week) now support a `firstDayOfWeek` prop to enable this. In addition, our [@internationalized/date](../internationalized/date/index.html) package now includes an option to override the locale in methods such as `startOfWeek`, `endOfWeek`, `getDayOfWeek`, and `getWeeksInMonth`.
+By default, our date picker components determine the first day of the week from the locale. However, a common request was for the ability to override this for certain use cases regardless of the locale. [Calendar](../Calendar#display-options), [RangeCalendar](../RangeCalendar#display-options), [DatePicker](../DatePicker#format-options), and [DateRangePicker](../DateRangePicker#format-options) now support a `firstDayOfWeek` prop to enable this. In addition, our [@internationalized/date](../internationalized/date/) package now includes an option to override the locale in methods such as `startOfWeek`, `endOfWeek`, `getDayOfWeek`, and `getWeeksInMonth`.
 
 **CSS transitions:**
 
-Overlay components including `Modal`, `Popover`, and `Tooltip` now support CSS transitions for entry and exit animations, in addition to the existing support for keyframe animations. CSS transitions have the benefit of being *interruptible*. If the user opens and closes an overlay quickly, transitions will smoothly animate from their current position rather than jumping to the ending state of the animation before starting the new one. You can use CSS transitions using the existing `[data-entering]` and `[data-exiting]` states. See our [animation guide](../styling.html#animation) for more details.
+Overlay components including `Modal`, `Popover`, and `Tooltip` now support CSS transitions for entry and exit animations, in addition to the existing support for keyframe animations. CSS transitions have the benefit of being *interruptible*. If the user opens and closes an overlay quickly, transitions will smoothly animate from their current position rather than jumping to the ending state of the animation before starting the new one. You can use CSS transitions using the existing `[data-entering]` and `[data-exiting]` states. See our [animation guide](../styling#animation) for more details.
 
 **Autocomplete:**
 
-The new [Autocomplete](../Autocomplete.html) component is now available in alpha! Similar to a [ComboBox](../ComboBox.html), this component provides the ability to display a list of suggestions as the user types in a text input. However, it is more flexible, supporting use cases such as command palettes and searchable menus where the text input is a sibling of the suggestion list rather than a separate popover. It supports both [TextField](../TextField.html) and [SearchField](../SearchField.html) inputs, and both [ListBox](../ListBox.html) and [Menu](../Menu.html) collections, customizable filters, and arrow key navigation while keeping focus on the input element. There are more features to come in future releases, but we'd love your feedback on this initial alpha release!
+The new [Autocomplete](../Autocomplete) component is now available in alpha! Similar to a [ComboBox](../ComboBox), this component provides the ability to display a list of suggestions as the user types in a text input. However, it is more flexible, supporting use cases such as command palettes and searchable menus where the text input is a sibling of the suggestion list rather than a separate popover. It supports both [TextField](../TextField) and [SearchField](../SearchField) inputs, and both [ListBox](../ListBox) and [Menu](../Menu) collections, customizable filters, and arrow key navigation while keeping focus on the input element. There are more features to come in future releases, but we'd love your feedback on this initial alpha release!
 
 **React Aria Test Utils:**
 
-We are also excited to announce the alpha release of the [@react-aria/test-utils](https://www.npmjs.com/package/@react-aria/test-utils) package! This package features a set of utilities that aim to make writing tests against our components much simpler and less time consuming. It includes high level methods to interact with components implementing ARIA patterns, so you don't need to figure out how to manually fire the correct sequences of events or navigate the DOM structure. See the [React Aria testing page](../testing.html#react-aria-test-utils) for more details. It is still very much a work in progress so if you discover any issues or have any feedback, please feel free to report them via GitHub issues!
+We are also excited to announce the alpha release of the [@react-aria/test-utils](https://www.npmjs.com/package/@react-aria/test-utils) package! This package features a set of utilities that aim to make writing tests against our components much simpler and less time consuming. It includes high level methods to interact with components implementing ARIA patterns, so you don't need to figure out how to manually fire the correct sequences of events or navigate the DOM structure. See the [React Aria testing page](../testing#react-aria-test-utils) for more details. It is still very much a work in progress so if you discover any issues or have any feedback, please feel free to report them via GitHub issues!
 
 ## Enhancements
 - Calendar
@@ -83,7 +81,7 @@ We are also excited to announce the alpha release of the [@react-aria/test-utils
 
 ## Released packages
 
-```json
+```
  - react-aria@3.37.0
  - react-aria-components@1.6.0
  - react-stately@3.35.0

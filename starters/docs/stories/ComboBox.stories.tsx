@@ -7,7 +7,10 @@ const meta: Meta<typeof ComboBox> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  args: {
+    placeholder: 'Choose a flavor'
+  }
 };
 
 export default meta;

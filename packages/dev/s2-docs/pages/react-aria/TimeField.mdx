@@ -9,6 +9,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/datepicker/docs/timefield-anatomy.svg';
 
 export const tags = ['date', 'input'];
+export const relatedPages = [{'title': 'useTimeField', 'url': 'TimeField/useTimeField.html'}];
+export const description = 'Allows users to enter and edit time values using a keyboard.';
 
 # TimeField
 
@@ -30,12 +32,12 @@ export const tags = ['date', 'input'];
     props={['label', 'granularity', 'isDisabled']}
     initialProps={{label: 'Time'}}
     type="tailwind"
-    files={["starters/tailwind/src/TimeField.tsx", "starters/tailwind/src/index.css"]} />
+    files={["starters/tailwind/src/TimeField.tsx"]} />
 </ExampleSwitcher>
 
 ## Value
 
-Use the `value` or `defaultValue` prop to set the time value, using objects in the [@internationalized/date](../internationalized/date/index.html) package. `TimeField` accepts plain [Time](../internationalized/date/Time.html), [CalendarDateTime](../internationalized/date/CalendarDateTime.html), or [ZonedDateTime](../internationalized/date/ZonedDateTime.html), but only displays the time.
+Use the `value` or `defaultValue` prop to set the time value, using objects in the [@internationalized/date](internationalized/date/) package. `TimeField` accepts plain [Time](internationalized/date/Time), [CalendarDateTime](internationalized/date/CalendarDateTime), or [ZonedDateTime](internationalized/date/ZonedDateTime), but only displays the time.
 
 ```tsx render
 "use client";
@@ -44,8 +46,8 @@ import {TimeField} from 'vanilla-starter/TimeField';
 import {useState} from 'react';
 
 function Example() {
-  let [time, setTime] = useState(new Time(11, 45));
-  
+  let [time, setTime] = useState<Time | null>(new Time(11, 45));
+
   return (
     <>
       <TimeField
@@ -75,7 +77,7 @@ import {TimeField} from 'vanilla-starter/TimeField';
 
 ## Forms
 
-Use the `name` prop to submit the selected date to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string. Set the `isRequired`, `minValue`, or `maxValue` props to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
+Use the `name` prop to submit the selected date to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string. Set the `isRequired`, `minValue`, or `maxValue` props to validate the value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
 ```tsx render
 "use client";

@@ -19,10 +19,10 @@ export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeC
 
 const cell = tv({
   extend: focusRing,
-  base: 'w-full h-full flex items-center justify-center rounded-full forced-color-adjust-none text-zinc-900 dark:text-zinc-200',
+  base: 'w-full h-full flex items-center justify-center rounded-full forced-color-adjust-none text-neutral-900 dark:text-neutral-200',
   variants: {
     selectionState: {
-      'none': 'group-hover:bg-gray-100 dark:group-hover:bg-zinc-700 group-pressed:bg-gray-200 dark:group-pressed:bg-zinc-600',
+      'none': 'group-hover:bg-neutral-200 dark:group-hover:bg-neutral-700 group-pressed:bg-neutral-300 dark:group-pressed:bg-neutral-600',
       'middle': [
         'group-hover:bg-blue-200 dark:group-hover:bg-blue-900 forced-colors:group-hover:bg-[Highlight]',
         'group-invalid:group-hover:bg-red-200 dark:group-invalid:group-hover:bg-red-900 forced-colors:group-invalid:group-hover:bg-[Mark]',
@@ -32,7 +32,7 @@ const cell = tv({
       'cap': 'bg-blue-600 group-invalid:bg-red-600 forced-colors:bg-[Highlight] forced-colors:group-invalid:bg-[Mark] text-white forced-colors:text-[HighlightText]'
     },
     isDisabled: {
-      true: 'text-gray-300 dark:text-zinc-600 forced-colors:text-[GrayText]'
+      true: 'text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText]'
     }
   }
 });
@@ -41,12 +41,12 @@ export function RangeCalendar<T extends DateValue>(
   { errorMessage, ...props }: RangeCalendarProps<T>
 ) {
   return (
-    <AriaRangeCalendar {...props} className={composeTailwindRenderProps(props.className, 'font-sans')}>
+    <AriaRangeCalendar {...props} className={composeTailwindRenderProps(props.className, 'font-sans w-[calc(9*var(--spacing)*7)] max-w-full @container')}>
       <CalendarHeader />
       <CalendarGrid className="[&_td]:px-0 [&_td]:py-px border-spacing-0">
         <CalendarGridHeader />
         <CalendarGridBody>
-          {(date) => <CalendarCell date={date} className="group w-9 h-9 text-sm outline outline-0 cursor-default outside-month:text-gray-300 selected:bg-blue-100 dark:selected:bg-blue-700/30 forced-colors:selected:bg-[Highlight] invalid:selected:bg-red-100 dark:invalid:selected:bg-red-700/30 forced-colors:invalid:selected:bg-[Mark] [td:first-child_&]:rounded-s-full selection-start:rounded-s-full [td:last-child_&]:rounded-e-full selection-end:rounded-e-full">
+          {(date) => <CalendarCell date={date} className="group w-[calc(100cqw/7)] aspect-square text-sm outline outline-0 cursor-default outside-month:text-neutral-300 selected:bg-blue-100 dark:selected:bg-blue-700/30 forced-colors:selected:bg-[Highlight] invalid:selected:bg-red-100 dark:invalid:selected:bg-red-700/30 forced-colors:invalid:selected:bg-[Mark] [td:first-child_&]:rounded-s-full selection-start:rounded-s-full [td:last-child_&]:rounded-e-full selection-end:rounded-e-full [-webkit-tap-highlight-color:transparent]">
             {({formattedDate, isSelected, isSelectionStart, isSelectionEnd, isFocusVisible, isDisabled}) =>
               <span
                 className={cell({

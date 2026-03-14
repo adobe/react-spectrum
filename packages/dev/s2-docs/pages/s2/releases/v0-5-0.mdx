@@ -11,7 +11,6 @@ import {Layout} from '../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
-import {Time} from '../../../src/ReleasesList';
 
 export const hideNav = true;
 export const section = 'Releases';
@@ -22,16 +21,15 @@ export const description = 'Version 0.5.0 includes major updates to Dialog and D
 export const isSubpage = true;
 
 # v0.5.0
-<Time date={date} />
 
 Version 0.5.0 includes major updates to Dialog and DialogTrigger APIs with four new dialog components: Dialog, FullscreenDialog, CustomDialog, and Popover. This release also improves style macro documentation and adds support for arbitrary pixel sizing.
 
 In this release we have updated our Dialog and DialogTrigger APIs to improve layout flexibility for custom dialogs and popovers. Dialog has been split into four components:
 
-* [Dialog](../Dialog.html) – a modal dialog with a standard layout with slots for the heading, content, hero image, button group, etc. This corresponds to the previous `type="modal"` API.
-* [FullscreenDialog](../Dialog.html#fullscreendialog) – a fullscreen or takeover modal, similar to a Dialog but with different slots and layout. This corresponds to the previous `type="fullscreen"` and `type="fullscreenTakeover"` APIs.
-* [CustomDialog](../Dialog.html#customdialog) – a modal dialog with a completely custom layout. It can have default padding or go edge-to-edge. No built-in slots are provided, the layout is entirely up to you.
-* [Popover](../Popover.html) – Popovers no longer support the previous dialog-style layout, which was rarely needed in recent apps. In addition, popover now has a reduced amount of padding by default, which was a common request.
+* [Dialog](../Dialog) – a modal dialog with a standard layout with slots for the heading, content, hero image, button group, etc. This corresponds to the previous `type="modal"` API.
+* [FullscreenDialog](../Dialog#fullscreendialog) – a fullscreen or takeover modal, similar to a Dialog but with different slots and layout. This corresponds to the previous `type="fullscreen"` and `type="fullscreenTakeover"` APIs.
+* [CustomDialog](../Dialog#customdialog) – a modal dialog with a completely custom layout. It can have default padding or go edge-to-edge. No built-in slots are provided, the layout is entirely up to you.
+* [Popover](../Popover) – Popovers no longer support the previous dialog-style layout, which was rarely needed in recent apps. In addition, popover now has a reduced amount of padding by default, which was a common request.
 
 In addition, several DialogTrigger props have moved to the above children:
 
@@ -41,27 +39,27 @@ In addition, several DialogTrigger props have moved to the above children:
 * `hideArrow`, `offset`, `crossOffset`, `containerPadding`, `placement`, and `shouldFlip` moved to Popover
 
 We've also continued to iterate on developer experience based on your feedback. Documentation on style macro usage with regards to
-[colors](../styling.html#colors) and [typography](../styling.html#typography) have been added to help clarify
-these common use cases. Style macro properties like `width` and `height` now allow for arbitrary pixel size values, please see the [docs](../styling.html#sizing)
-for more information. Finally, documentation on [optimizing CSS bundling](../styling.html#css-optimization) have also been
+[colors](../style-macro#colors) and [typography](../style-macro#text) have been added to help clarify
+these common use cases. Style macro properties like `width` and `height` now allow for arbitrary pixel size values, please see the [docs](../style-macro#dimensions)
+for more information. Finally, documentation on [optimizing CSS bundling](../styling#css-optimization) have also been
 added to help you generate a properly optimized output when using the bundler of your choice.
 
 ## New components
-* [ActionButtonGroup](../ActionButtonGroup.html)
-* [CloseButton](../Dialog.html#customdialog)
-* [CustomDialog](../Dialog.html#customdialog)
-* [FullscreenDialog](../Dialog.html#fullscreendialog)
-* [Popover](../Popover.html)
-* [ToggleButtonGroup](../ToggleButtonGroup.html)
+* [ActionButtonGroup](../ActionButtonGroup)
+* [CloseButton](../Dialog#customdialog)
+* [CustomDialog](../Dialog#customdialog)
+* [FullscreenDialog](../Dialog#fullscreendialog)
+* [Popover](../Popover)
+* [ToggleButtonGroup](../ToggleButtonGroup)
 
 ## Updates
-* [Accordion](../Accordion.html): Add support for adjacent sibling elements in header
-* [ActionButton](../ActionButton.html): Add support for Avatars in ActionButtons
-* [Dialog](../Dialog.html): See above for a summary of the changes to Dialog and Dialog adjacent components.
-* [Disclosure](../Disclosure.html): Add support for adjacent sibling elements in header
-* [DropZone](../DropZone.html): Add t-shirt sizing
-* [Menu](../Menu.html): Add support for separate user defined selection modes per MenuSection
-* [Meter](../Meter.html): Add label positioning support
+* [Accordion](../Accordion): Add support for adjacent sibling elements in header
+* [ActionButton](../ActionButton): Add support for Avatars in ActionButtons
+* [Dialog](../Dialog): See above for a summary of the changes to Dialog and Dialog adjacent components.
+* [Disclosure](../Disclosure): Add support for adjacent sibling elements in header
+* [DropZone](../DropZone): Add t-shirt sizing
+* [Menu](../Menu): Add support for separate user defined selection modes per MenuSection
+* [Meter](../Meter): Add label positioning support
 * Update Spectrum Tokens to v53
 * Allow arbitrary pixel sizes for style macro sizing properties (e.g. width, height)
 

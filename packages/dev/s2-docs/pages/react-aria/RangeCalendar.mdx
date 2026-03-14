@@ -9,6 +9,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/calendar/docs/rangecalendar-anatomy.svg';
 
 export const tags = ['calendar'];
+export const relatedPages = [{'title': 'useRangeCalendar', 'url': 'RangeCalendar/useRangeCalendar.html'}];
+export const description = 'Displays one or more date grids and allows users to select a contiguous range of dates.';
 
 # RangeCalendar
 
@@ -28,12 +30,12 @@ export const tags = ['calendar'];
     links={vanillaDocs.links}
     props={['isDisabled']}
     type="tailwind"
-    files={["starters/tailwind/src/RangeCalendar.tsx", "starters/tailwind/src/index.css"]} />
+    files={["starters/tailwind/src/RangeCalendar.tsx"]} />
 </ExampleSwitcher>
 
 ## Value
 
-Use the `value` or `defaultValue` prop to set the selected date range, using objects in the [@internationalized/date](../internationalized/date/index.html) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+Use the `value` or `defaultValue` prop to set the selected date range, using objects in the [@internationalized/date](internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
 
 ```tsx render
 "use client";
@@ -48,7 +50,7 @@ function Example() {
     end: parseDate('2025-02-12')
   });
   let formatter = useDateFormatter({ dateStyle: 'long' });
-  
+
   return (
     <>
       <RangeCalendar
@@ -87,12 +89,12 @@ import {RangeCalendar} from 'vanilla-starter/RangeCalendar';
 
 ### Custom calendar systems
 
-`RangeCalendar` also supports custom calendar systems that implement custom business rules, for example a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar. See the [@internationalized/date docs](../internationalized/date/Calendar.html#custom-calendars) for an example implementation.
+`RangeCalendar` also supports custom calendar systems that implement custom business rules, for example a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar. See the [@internationalized/date docs](internationalized/date/Calendar#custom-calendars) for an example implementation.
 
 ```tsx render
 "use client";
-import type {AnyCalendarDate} from '@internationalized/date';
-import {CalendarDate, startOfWeek, toCalendar, GregorianCalendar} from '@internationalized/date';
+import type {AnyCalendarDate, Calendar} from '@internationalized/date';
+import {CalendarDate, startOfWeek, GregorianCalendar} from '@internationalized/date';
 import {RangeCalendar} from 'vanilla-starter/RangeCalendar';
 
 export default function Example() {
@@ -108,45 +110,66 @@ export default function Example() {
 // See @internationalized/date docs linked above.
 ///- begin collapse -///
 class Custom454 extends GregorianCalendar {
-  weekPattern = [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, 4];
-  getDaysInMonth(date) {
-    return this.weekPattern[date.month - 1] * 7;
+  // The anchor date, in Gregorian calendar.
+  // The anchor date is a date that occurs in the first week of the first month of every fiscal year.
+  anchorDate = new CalendarDate(2001, 2, 4);
+
+  private getYear(year: number): [CalendarDate, number[]] {
+    let anchor = this.anchorDate.set({year});
+    let startOfYear = startOfWeek(anchor, 'en', 'sun');
+    let isBigYear = !startOfYear.add({weeks: 53}).compare(anchor.add({years: 1}));
+    let weekPattern = [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, isBigYear ? 5 : 4];
+    return [startOfYear, weekPattern];
+  }
+
+  getDaysInMonth(date: AnyCalendarDate): number {
+    let [, weekPattern] = this.getYear(date.year);
+    return weekPattern[date.month - 1] * 7;
   }
 
   fromJulianDay(jd: number): CalendarDate {
     let gregorian = super.fromJulianDay(jd);
+    let year = gregorian.year;
 
-    let monthStart = startOfWeek(new CalendarDate(gregorian.year, 1, 1), 'en');
-    for (let months = 0; months < this.weekPattern.length; months++) {
-      let weeksInMonth = this.weekPattern[months];
-      let monthEnd = monthStart.add({weeks: weeksInMonth});
-      if (monthEnd.compare(gregorian) > 0) {
-        let days = gregorian.compare(monthStart);
-        return new CalendarDate(this, monthStart.year, months + 1, days + 1);
-      }
-      monthStart = monthEnd;
+    let [monthStart, weekPattern] = this.getYear(year);
+    if (gregorian.compare(monthStart) < 0) {
+      year--;
+      [monthStart, weekPattern] = this.getYear(year);
     }
 
-    throw Error('Date is not in any month somehow!');
+    for (let month = 1; month <= 12; month++) {
+      let weeks = weekPattern[month - 1];
+      let nextMonth = monthStart.add({weeks});
+      if (nextMonth.compare(gregorian) > 0) {
+        let days = gregorian.compare(monthStart);
+        return new CalendarDate(this, year, month, days + 1);
+      }
+      monthStart = nextMonth;
+    }
+
+    throw new Error('date not found');
   }
 
   toJulianDay(date: AnyCalendarDate): number {
-    let monthStart = startOfWeek(new CalendarDate(date.year, 1, 1), 'en');
+    let [monthStart, weekPattern] = this.getYear(date.year);
     for (let month = 1; month < date.month; month++) {
-      monthStart = monthStart.add({weeks: this.weekPattern[month - 1]});
+      monthStart = monthStart.add({weeks: weekPattern[month - 1]});
     }
 
     let gregorian = monthStart.add({days: date.day - 1});
     return super.toJulianDay(gregorian);
   }
 
-  getFormattableMonth(date) {
-    let gregorian = toCalendar(date, new GregorianCalendar());
-    return gregorian.set({month: date.month, day: 1});
+  getFormattableMonth(date: AnyCalendarDate): CalendarDate {
+    let anchorMonth = this.anchorDate.month - 1;
+    let dateMonth = date.month - 1;
+    let month = ((anchorMonth + dateMonth) % 12) + 1;
+    let year = anchorMonth + dateMonth >= 12 ? date.year + 1 : date.year;
+    return new CalendarDate(year, month, 1);
   }
 
-  isEqual(other) {
-    return other instanceof Custom454;
+  isEqual(other: Calendar): boolean {
+    return other instanceof Custom454 && other.anchorDate.compare(this.anchorDate) === 0;
   }
 }
 ///- end collapse -///
@@ -159,12 +182,10 @@ Use the `minValue` and `maxValue` props to set the valid date range. The `isDate
 ```tsx render docs={vanillaDocs.exports.RangeCalendar} links={docs.links} props={['allowsNonContiguousRanges']} wide
 "use client";
 import {today, getLocalTimeZone} from '@internationalized/date';
-import {useLocale} from 'react-aria';
 import {RangeCalendar} from 'vanilla-starter/RangeCalendar';
 import {useState} from 'react';
 
 function Example(props) {
-  let {locale} = useLocale();
   let now = today(getLocalTimeZone());
   let [range, setRange] = useState({
     start: now.add({days: 6}),
@@ -230,13 +251,13 @@ function Example(props) {
         [...Array(props.visibleDuration.months).keys()].map(i => (
           <div key={i} style={{flex: 1}}>
             <header style={{minHeight: 32}}>
-              {i === 0 && 
+              {i === 0 &&
                 <Button slot="previous" variant="quiet">
                   <ChevronLeft />
                 </Button>
               }
               <Heading>{monthFormatter.format(state.visibleRange.start.add({months: i}).toDate(state.timeZone))}</Heading>
-              {i === props.visibleDuration.months - 1 && 
+              {i === props.visibleDuration.months - 1 &&
                 <Button slot="next" variant="quiet">
                   <ChevronRight />
                 </Button>
@@ -324,7 +345,7 @@ import {ChevronLeft, ChevronRight} from 'lucide-react';
   role="img"
   aria-label="Anatomy diagram of a range calendar component, which consists of a heading, grid of cells, previous, and next buttons." />
 
-```tsx links={{RangeCalendar: '#rangecalendar', Button: 'Button.html', CalendarGrid: '#calendargrid', CalendarGridHeader: '#calendargridheader', CalendarHeaderCell: '#calendarheadercell', CalendarGridBody: '#calendargridbody', CalendarCell: '#calendarcell'}}
+```tsx links={{RangeCalendar: '#rangecalendar', Button: 'Button', CalendarGrid: '#calendargrid', CalendarGridHeader: '#calendargridheader', CalendarHeaderCell: '#calendarheadercell', CalendarGridBody: '#calendargridbody', CalendarCell: '#calendarcell'}}
 <RangeCalendar>
   <Button slot="previous" />
   <Heading />

@@ -880,7 +880,7 @@ describe('Tabs', function () {
     expect(onSelectionChange).toHaveBeenCalledWith(defaultItems[0].name);
   });
 
-  it('updates the tab index of the selected tab if programatically changed', function () {
+  it('updates the tab index of the selected tab if programmatically changed', function () {
     let Example = (props) => (
       <Provider theme={theme}>
         <Tabs aria-label="Test Tabs" items={defaultItems} selectedKey={props.selectedKey}>

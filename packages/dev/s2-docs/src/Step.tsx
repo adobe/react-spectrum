@@ -32,6 +32,7 @@ export function Step({children}) {
 export function Counter() {
   return (
     <span
+      data-step
       className={raw('&::before { content: counter(step) }') + style({
         fontWeight: 'normal',
         borderRadius: 'full',

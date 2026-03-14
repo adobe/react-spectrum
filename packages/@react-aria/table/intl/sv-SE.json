@@ -7,5 +7,7 @@
   "resizerDescription": "Tryck på Retur för att börja ändra storlek",
   "select": "Markera",
   "selectAll": "Markera allt",
-  "sortable": "sorterbar kolumn"
+  "sortable": "sorterbar kolumn",
+  "collapse": "Dölj",
+  "expand": "Expandera"
 }

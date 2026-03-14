@@ -1,0 +1,84 @@
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+import testUtilDocs from 'docs:@react-spectrum/test-utils';
+import {InstallCommand} from '../../../src/InstallCommand';
+import {PatternTestingFAQ} from '../../../src/PatternTestingFAQ';
+
+export const isSubpage = true;
+export const hideFromSearch = true;
+export const tags = ['testing', 'treeview', 'test-utils'];
+export const description = 'Testing TreeView with React Spectrum test utils';
+
+# Testing TreeView
+
+## General setup
+
+TreeView supports long press interactions on its rows in certain configurations. See the following sections on how to handle these behaviors in your tests.
+
+* [Timers](../testing#timers)
+* [Long press](../testing#simulating-long-press)
+
+## Test utils
+
+`@react-spectrum/test-utils` offers common tree interaction testing utilities. Install it with your preferred package manager.
+
+<InstallCommand pkg="@react-spectrum/test-utils" flags="--dev" />
+
+<InlineAlert variant="notice">
+  <Heading>Requirements</Heading>
+  <Content>Please note that this library uses [@testing-library/react@16](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
+</InlineAlert>
+
+Initialize a `User` object at the top of your test file, and use it to create a `TreeView` pattern tester in your test cases. The tester has methods that you can call within your test to query for specific subcomponents or simulate common interactions.
+
+```ts
+// Tree.test.ts
+import {render, within} from '@testing-library/react';
+import {User} from '@react-spectrum/test-utils';
+
+let testUtilUser = new User({
+  interactionType: 'mouse'
+});
+// ...
+
+it('TreeView can select an item via keyboard', async function () {
+  // Render your test component/app and initialize the Tree tester
+  let {getByTestId} = render(
+    <Tree data-testid="test-tree" selectionMode="multiple">
+      ...
+    </Tree>
+  );
+  let treeTester = testUtilUser.createTester('Tree', {root: getByTestId('test-tree'), interactionType: 'keyboard'});
+
+  await treeTester.toggleRowSelection({row: 0});
+  expect(treeTester.selectedRows).toHaveLength(1);
+  expect(within(treeTester.rows[0]).getByRole('checkbox')).toBeChecked();
+
+  await treeTester.toggleRowSelection({row: 1});
+  expect(treeTester.selectedRows).toHaveLength(2);
+  expect(within(treeTester.rows[1]).getByRole('checkbox')).toBeChecked();
+
+  await treeTester.toggleRowSelection({row: 0});
+  expect(treeTester.selectedRows).toHaveLength(1);
+  expect(within(treeTester.rows[0]).getByRole('checkbox')).not.toBeChecked();
+
+  await treeTester.toggleRowExpansion({index: 0});
+  expect(treeTester.rows[0]).toHaveAttribute('aria-expanded', 'true');
+});
+```
+
+## API
+
+### User
+
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
+
+### TreeTester
+
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.TreeTester} />
+
+## Testing FAQ
+
+<PatternTestingFAQ patternName="tree" />

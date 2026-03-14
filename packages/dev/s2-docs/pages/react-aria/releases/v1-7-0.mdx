@@ -11,7 +11,6 @@ import {Layout} from '../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
-import {Time} from '../../../src/ReleasesList';
 import datepickerImage from 'url:../assets/datepicker-rtl.png';
 
 export const hideNav = true;
@@ -23,9 +22,8 @@ export const description = 'Buckle in because this is a big one! In this React A
 export const isSubpage = true;
 
 # v1.7.0
-<Time date={date} />
 
-Buckle in because this is a big one! In this React Aria release, we’re excited to announce three new components: [Toast](../Toast.html), [Tree](../Tree.html), and [Virtualizer](../Virtualizer.html). In addition, we have improved [Autocomplete](../Autocomplete.html) to enable UI patterns like [Searchable Menus](../Menu.html#complex-content), [Searchable Selects](../examples/searchable-select.html), and [Command Palettes](../examples/command-palette.html), added support for custom [Menu](../Menu.html#custom-trigger), [Popover](../Popover.html#custom-trigger), and [Tooltip](../Tooltip.html#custom-trigger) triggers, introduced `colSpan` support in Table, and upgraded to Tailwind CSS v4. Last but not least, we have a major refactor of [usePress](../usePress.html), which fixes many longstanding issues and improves compatibility with third party libraries.
+Buckle in because this is a big one! In this React Aria release, we’re excited to announce three new components: [Toast](../Toast), [Tree](../Tree), and [Virtualizer](../Virtualizer). In addition, we have improved [Autocomplete](../Autocomplete) to enable UI patterns like [Searchable Menus](../Menu#autocomplete), [Searchable Selects](../Select#autocomplete), and [Command Palettes](../Autocomplete), added support for custom [Menu](../Menu#custom-trigger), [Popover](../Popover#custom-trigger), and [Tooltip](../Tooltip#custom-trigger) triggers, introduced `colSpan` support in Table, and upgraded to Tailwind CSS v4. Last but not least, we have a major refactor of [usePress](../usePress), which fixes many longstanding issues and improves compatibility with third party libraries.
 
 This release would not be possible without the fantastic contributions we received from the community. A special shoutout to [@oyvinmar](https://github.com/oyvinmar) and [@nwidynski](https://github.com/nwidynski) for contributing features like `colSpan` and nested collection support. Huge thanks to everyone else who contributed as well. ❤️
 
@@ -37,7 +35,7 @@ In this release, we've improved support for right-to-left languages in our date 
 
 **usePress update:**
 
-[usePress](../usePress.html) was heavily refactored to improve focus management and compatibility with third party libraries. Prior to this refactor, we used `preventDefault` and manually managed focus due to [differences in focus behavior](https://react-spectrum.adobe.com/blog/building-a-button-part-3.html#ensuring-consistent-focus-behavior) between Safari and other browsers. Unfortunately, this resulted in many unintended side effects, such as canceling compatibility mouse events, breaking the `:active` and `:focus-visible` pseudo classes, causing issues with the mobile virtual keyboard, etc.
+[usePress](../usePress) was heavily refactored to improve focus management and compatibility with third party libraries. Prior to this refactor, we used `preventDefault` and manually managed focus due to [differences in focus behavior](../blog/building-a-button-part-3#ensuring-consistent-focus-behavior) between Safari and other browsers. Unfortunately, this resulted in many unintended side effects, such as canceling compatibility mouse events, breaking the `:active` and `:focus-visible` pseudo classes, causing issues with the mobile virtual keyboard, etc.
 
 Thanks to an update in Safari 17, all elements with an explicit `tabIndex` can now receive focus like in other browsers. This allows us to remove our reliance on `preventDefault`, and change the timing of when `onPress` is fired. As a result, browser events that used to be prevented when interacting with our components now fire as expected, greatly improving compatibility with third party libraries that rely on these events, and resolving [over 15 open issues](https://github.com/adobe/react-spectrum/pull/7542).
 
@@ -120,7 +118,7 @@ Autocomplete
 
 ## Released packages
 
-```json
+```
  - react-aria@3.38.0
  - react-aria-components@1.7.0
  - react-stately@3.36.0

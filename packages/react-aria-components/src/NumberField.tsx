@@ -15,6 +15,7 @@ import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -137,7 +138,7 @@ export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function
         }],
         [FieldErrorContext, validation]
       ]}>
-      <div
+      <dom.div
         {...DOMProps}
         {...renderProps}
         ref={ref}

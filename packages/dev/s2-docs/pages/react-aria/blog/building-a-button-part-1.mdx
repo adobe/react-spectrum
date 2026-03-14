@@ -16,7 +16,6 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
 import React from 'react';
-import {Byline} from '../../../src/BlogList';
 
 export const hideNav = true;
 export const tags = ['react aria', 'react spectrum', 'react', 'spectrum', 'interactions', 'button', 'touch'];
@@ -28,7 +27,6 @@ export const section = 'Blog';
 export const isSubpage = true;
 
 # Building a Button Part 1: Press Events
-<Byline author={author} authorLink={authorLink} date={date} />
 
 UI development is really hard. While building components has become much easier with modern UI frameworks like React, handling interactions across devices and supporting proper accessibility and internationalization is still extraordinarily difficult. Building UIs has a very [long tail](https://en.wikipedia.org/wiki/Long_tail): it's fairly easy to get the basics for a given component working, but there are many details to consider, and these add up to a majority of the work.
 
@@ -64,7 +62,7 @@ Mobile browsers often introduce delays before emulated mouse events like onClick
 
 The CSS `:active` and `:hover` pseudo-classes are also affected by mouse event emulation. For example, when tapping down on a button and dragging your finger off, the active state persists even when your finger is not over it. This makes it appear like lifting your finger will activate the button when it will not. This is not how native buttons behave, so it can feel inconsistent with user expectations.
 
-<video src={draggingVideoUrl} style={{width: '100%', display: 'block', margin: '20px auto'}} controls preload="metadata" />
+<video src={draggingVideoUrl} loop autoPlay muted playsInline style={{width: '100%', display: 'block', margin: '20px auto'}} />
 
 ## Pointer events
 
@@ -84,7 +82,7 @@ Touch events can also be canceled by scrolling. If you touch a button and then s
 
 Text selection gestures are another case where we need to determine the user's intent. On iOS, for example, a long press begins text selection. However, when pressing a button, you wouldn't usually expect text selection to start.
 
-<video src={textSelectionVideoUrl} style={{width: '100%', display: 'block', margin: '20px auto'}} controls preload="metadata" />
+<video src={textSelectionVideoUrl} loop autoPlay muted playsInline style={{width: '100%', display: 'block', margin: '20px auto'}} />
 
 It is possible to add the `user-select: none` CSS property to the button to make it non-selectable, but even with that enabled, Safari still tries to select elements nearby. The only way to avoid this is to add `user-select: none` to the entire page. We wouldn't want to do this all the time though, because some elements should allow text selection to occur. React Aria automatically handles adding `user-select: none` to the page on touch start on a pressable element, and removes it after a short delay on press up. The delay is necessary because iOS may begin selecting even after touch up within some threshold.
 
@@ -102,20 +100,20 @@ In addition, we can use various properties of the events to infer that it was tr
 
 ## Unified press events
 
-All of this together encompasses React Aria's [usePress](../usePress.html) hook. It handles mouse, touch, keyboard, and screen reader interactions and provides a unified API for handling all of these. `onPressStart` is fired when the user starts pressing via any interaction model, and `onPressEnd` is fired when the user lifts their pointer or drags it off of the target. `onPressStart` can be called again if the user drags their pointer back over the target. Finally, `onPress` is fired if the user lifts their pointer over the target.
+All of this together encompasses React Aria's [usePress](../usePress) hook. It handles mouse, touch, keyboard, and screen reader interactions and provides a unified API for handling all of these. `onPressStart` is fired when the user starts pressing via any interaction model, and `onPressEnd` is fired when the user lifts their pointer or drags it off of the target. `onPressStart` can be called again if the user drags their pointer back over the target. Finally, `onPress` is fired if the user lifts their pointer over the target.
 
 Each of these events receive a unified `PressEvent` object rather than the underlying native events, which allows the application code to handle press events from any interaction model the same way. A `pointerType` property similar to the one available in pointer events is included in press events, but with additional keyboard and virtual pointer types. This allows applications to adapt their event handling to different devices if needed.
 
-With the [usePress](../usePress.html) hook, our buttons handle interactions consistently. Dragging your pointer off the button correctly removes the active state, text selection is canceled, and issues with emulated mouse events are avoided.
+With the [usePress](../usePress) hook, our buttons handle interactions consistently. Dragging your pointer off the button correctly removes the active state, text selection is canceled, and issues with emulated mouse events are avoided.
 
-<video src={buttonVideoUrl} style={{width: '100%', display: 'block', margin: '20px auto'}} controls preload="metadata" />
+<video src={buttonVideoUrl} loop autoPlay muted playsInline style={{width: '100%', display: 'block', margin: '20px auto'}} />
 
-Try a live example for yourself in our [Button](../../s2/Button.html) docs!
+Try a live example for yourself in our [Button](s2:Button) docs!
 
 ## Conclusion
 
-As you can see, buttons are deceptively complicated once you consider all of the interactions they can support. The [useButton](https://react-spectrum.adobe.com/react-aria/useButton.html) and underlying [usePress](../usePress.html) hooks in React Aria handle all of this complexity, and ensure that everything works as expected across devices. If you are building your own button component, I'd highly recommend checking them out!
+As you can see, buttons are deceptively complicated once you consider all of the interactions they can support. The [useButton](../Button/useButton.html) and underlying [usePress](../usePress) hooks in React Aria handle all of this complexity, and ensure that everything works as expected across devices. If you are building your own button component, I'd highly recommend checking them out!
 
 I'd also like to acknowledge the work of the React core team, particularly [Dominic Gannaway](https://x.com/trueadm) and [Nicolas Gallagher](https://x.com/necolas), in researching some of the interactions described in this post. We learned a lot from their implementation in building React Aria's press event handling.
 
-In the [next part](building-a-button-part-2.html) of this series, we'll cover how React Spectrum handles hover interactions across devices.
+In the [next part](building-a-button-part-2) of this series, we'll cover how React Spectrum handles hover interactions across devices.

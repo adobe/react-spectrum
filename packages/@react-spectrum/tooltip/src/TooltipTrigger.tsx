@@ -22,7 +22,7 @@ import {useTooltipTriggerState} from '@react-stately/tooltip';
 
 const DEFAULT_OFFSET = -1; // Offset needed to reach 4px/5px (med/large) distance between tooltip and trigger button
 const DEFAULT_CROSS_OFFSET = 0;
-const DEFAULT_CLOSE_ON_PRESS = true; // Whether the tooltip should close when the trigger is pressed
+const DEFAULT_SHOULD_CLOSE_ON_PRESS = true; // Whether the tooltip should close when the trigger is pressed
 
 function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
   let {
@@ -31,7 +31,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     isDisabled,
     offset = DEFAULT_OFFSET,
     trigger: triggerAction,
-    closeOnPress = DEFAULT_CLOSE_ON_PRESS
+    shouldCloseOnPress = DEFAULT_SHOULD_CLOSE_ON_PRESS
   } = props;
 
   let [trigger, tooltip] = React.Children.toArray(children) as [ReactElement, ReactElement];
@@ -43,7 +43,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
   let {triggerProps, tooltipProps} = useTooltipTrigger({
     isDisabled,
     trigger: triggerAction,
-    closeOnPress
+    shouldCloseOnPress
   }, state, tooltipTriggerRef);
 
   let [borderRadius, setBorderRadius] = useState(0);

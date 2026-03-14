@@ -1,6 +1,6 @@
 // Map of characters to width per em, generated from Adobe Clean Spectrum VF.
 // Multiply by the font size to get the pixel width.
-let letters: Record<string, number> = {
+export let letters: Record<string, number> = {
   '0': 0.5467998461797813,
   '1': 0.33863281002940315,
   '2': 0.4949392889121938,
@@ -85,8 +85,15 @@ let letters: Record<string, number> = {
 
 // Gets the width of a string of text. Multiply by font size to get pixel width.
 export function getTextWidth(s: string) {
+  let longestWord = '';
+  for (let segment of s.split(/\s+/)) {
+    if (segment.length > longestWord.length) {
+      longestWord = segment;
+    }
+  }
+
   let width = 0;
-  for (let c of s) {
+  for (let c of longestWord) {
     let w = letters[c];
     if (w != null) {
       width += w;

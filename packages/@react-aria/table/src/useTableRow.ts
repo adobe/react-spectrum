@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusableElement, RefObject} from '@react-types/shared';
-import {getLastItem} from '@react-stately/collections';
+import {AriaButtonProps} from '@react-aria/button';
+import {Collection, FocusableElement, Node, RefObject} from '@react-types/shared';
 import {getRowLabelledBy} from './utils';
-import type {GridNode} from '@react-types/grid';
 import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
 import {HTMLAttributes} from 'react';
-import {mergeProps, useSyntheticLinkProps} from '@react-aria/utils';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {mergeProps, useLabels, useSyntheticLinkProps} from '@react-aria/utils';
 import {TableCollection} from '@react-types/table';
-import {tableNestedRows} from '@react-stately/flags';
 import {TableState, TreeGridState} from '@react-stately/table';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 const EXPANSION_KEYS = {
   expand: {
@@ -33,27 +33,47 @@ const EXPANSION_KEYS = {
   }
 };
 
+export interface TableRowAria extends GridRowAria {
+  expandButtonProps: AriaButtonProps
+}
+
 /**
  * Provides the behavior and accessibility implementation for a row in a table.
  * @param props - Props for the row.
  * @param state - State of the table, as returned by `useTableState`.
  */
-export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | TreeGridState<T>, ref: RefObject<FocusableElement | null>): GridRowAria {
+export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | TreeGridState<T>, ref: RefObject<FocusableElement | null>): TableRowAria {
   let {node, isVirtualized} = props;
-  let {rowProps, ...states} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
+  let {rowProps, ...states} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state as TableState<T>, ref);
   let {direction} = useLocale();
 
-  if (isVirtualized && !(tableNestedRows() && 'expandedKeys' in state)) {
+  if (isVirtualized && state.treeColumn == null) {
     rowProps['aria-rowindex'] = node.index + 1 + state.collection.headerRows.length; // aria-rowindex is 1 based
   } else {
     delete rowProps['aria-rowindex'];
   }
 
+  let isExpanded = state.treeColumn != null && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key));
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
+  let labelProps = useLabels({
+    'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
+    'aria-labelledby': getRowLabelledBy(state as TableState<T>, node.key)
+  });
+
   let treeGridRowProps: HTMLAttributes<HTMLElement> = {};
-  if (tableNestedRows() && 'expandedKeys' in state) {
-    let treeNode = state.keyMap.get(node.key);
+  let expandButtonProps: AriaButtonProps = {};
+  if (state.treeColumn != null) {
+    let treeNode = state.collection.getItem(node.key);
     if (treeNode != null) {
-      let hasChildRows = treeNode.props?.UNSTABLE_childItems || treeNode.props?.children?.length > state.userColumnCount;
+      let lastChild = getLastChild(state.collection, node);
+      let hasChildRows = treeNode.props?.hasChildRows || treeNode.props?.UNSTABLE_childItems || lastChild?.type !== 'cell';
+      let parent = state.collection.getItem(node.parentKey!)!;
+      let isParentBody = parent.type === 'tablebody' || parent.type === 'body';
+      let lastSibling = getLastChild(state.collection, parent)!;
+      while (lastSibling && lastSibling.type !== 'item' && lastSibling.prevKey != null) {
+        lastSibling = state.collection.getItem(lastSibling.prevKey)!;
+      }
+
       treeGridRowProps = {
         onKeyDown: (e) => {
           if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === treeNode.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(treeNode.key)) {
@@ -65,11 +85,25 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
           }
         },
         'aria-expanded': hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
-        'aria-level': treeNode.level,
-        'aria-posinset': (treeNode.indexOfType ?? 0) + 1,
-        'aria-setsize': treeNode.level > 1 ?
-          ((getLastItem(state.keyMap.get(treeNode.parentKey!)?.childNodes ?? []) as GridNode<T>)?.indexOfType ?? 0) + 1 :
-          ((getLastItem(state.collection.body.childNodes) as GridNode<T>)?.indexOfType ?? 0) + 1
+        'aria-level': treeNode.level + 1,
+        'aria-posinset': treeNode.index - (isParentBody ? 0 : state.collection.columnCount) + 1,
+        'aria-setsize': lastSibling.index - (isParentBody ? 0  : state.collection.columnCount) + 1
+      };
+
+      expandButtonProps = {
+        isDisabled: states.isDisabled,
+        onPress: () => {
+          if (!states.isDisabled) {
+            state.toggleKey(node.key);
+            state.selectionManager.setFocused(true);
+            state.selectionManager.setFocusedKey(node.key);
+          }
+        },
+        excludeFromTabOrder: true,
+        preventFocusOnPress: true,
+        // @ts-ignore
+        'data-react-aria-prevent-focus': true,
+        ...labelProps
       };
     }
   }
@@ -79,8 +113,17 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
   return {
     rowProps: {
       ...mergeProps(rowProps, treeGridRowProps, linkProps),
-      'aria-labelledby': getRowLabelledBy(state, node.key)
+      'aria-labelledby': getRowLabelledBy(state as TableState<T>, node.key)
     },
+    expandButtonProps,
     ...states
   };
+}
+
+function getLastChild(collection: Collection<Node<unknown>>, node: Node<unknown>) {
+  if ('lastChildKey' in node) {
+    return node.lastChildKey != null ? collection.getItem(node.lastChildKey) : null;
+  } else {
+    return Array.from(node.childNodes).findLast(item => item.parentKey === node.key);
+  }
 }

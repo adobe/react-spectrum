@@ -76,6 +76,11 @@
   transition-duration: 200ms;
   -webkit-tap-highlight-color: transparent;
 
+  svg {
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+  }
+
   &:where([data-hovered], [data-pressed]) {
     background: var(--tint-300);
     color: var(--tint-1200);

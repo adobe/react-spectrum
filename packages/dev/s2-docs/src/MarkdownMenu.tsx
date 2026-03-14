@@ -1,6 +1,6 @@
 'use client';
 
-import {ActionButton, Menu, MenuItem, MenuTrigger, Text, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
+import {ActionButton, Menu, MenuItem, MenuTrigger, Text, ToastQueue} from '@react-spectrum/s2';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import Copy from '@react-spectrum/s2/icons/Copy';
 import {getLibraryFromUrl, getLibraryLabel} from './library';
@@ -9,10 +9,11 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 interface MarkdownMenuProps {
+  name: string,
   url: string | undefined
 }
 
-export function MarkdownMenu({url}: MarkdownMenuProps) {
+export function MarkdownMenu({name, url}: MarkdownMenuProps) {
   let mdUrl = (url ?? '').replace(/\.html?$/i, '') + '.md';
   let [isCopied, setIsCopied] = useState(false);
   let [isPending, setPending] = useState(false);
@@ -20,7 +21,7 @@ export function MarkdownMenu({url}: MarkdownMenuProps) {
   
   let pageUrl = typeof window !== 'undefined' && url ? new URL(url, window.location.origin).href : url ?? '';
   let fullMdUrl = typeof window !== 'undefined' && mdUrl ? new URL(mdUrl, window.location.origin).href : mdUrl;
-  let library = url ? getLibraryLabel(getLibraryFromUrl(url)) : '';
+  let library = url ? getLibraryLabel(getLibraryFromUrl(name)) : '';
   let aiPrompt = `Answer questions about the following ${library} documentation page: ${pageUrl}\nMarkdown source: ${fullMdUrl}`;
   let chatGptUrl = `https://chatgpt.com/?q=${encodeURIComponent(aiPrompt)}`;
   let claudeUrl = `https://claude.ai/new?q=${encodeURIComponent(aiPrompt)}`;
@@ -61,7 +62,7 @@ export function MarkdownMenu({url}: MarkdownMenuProps) {
         {isCopied ? <CheckmarkCircle /> : <Copy />}
         <Text>Copy for LLM</Text>
       </ActionButton>
-      <MenuTrigger>
+      <MenuTrigger align="end">
         <ActionButton size="M" isQuiet aria-label="Markdown options">
           <More />
         </ActionButton>

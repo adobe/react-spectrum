@@ -76,7 +76,7 @@ A combo box can be built using the [&lt;datalist&gt;](https://developer.mozilla.
 * Custom localized announcements for option focusing, filtering, and selection using an ARIA live region to work around VoiceOver bugs
 * Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
 
-Read our [blog post](../blog/building-a-combobox.html) for more details about the interactions and accessibility features implemented by `useComboBox`.
+Read our [blog post](../blog/building-a-combobox) for more details about the interactions and accessibility features implemented by `useComboBox`.
 
 ## Anatomy
 
@@ -87,8 +87,8 @@ used to toggle the list box popup open state. Users can type within the input to
 within the list box. The list box popup may be opened by a variety of input field interactions specified
 by the `menuTrigger` prop provided to `useComboBox`, or by clicking or touching the button. `useComboBox` handles exposing
 the correct ARIA attributes for accessibility for each of the elements comprising the combo box. It should be combined
-with [useListBox](useListBox.html), which handles the implementation of the popup list box,
-and [useButton](useButton.html) which handles the button press interactions.
+with [useListBox](../ListBox/useListBox.html), which handles the implementation of the popup list box,
+and [useButton](../Button/useButton.html) which handles the button press interactions.
 
 `useComboBox` also supports optional description and error message elements, which can be used
 to provide more context about the field, and any validation messages. These are linked with the
@@ -114,15 +114,14 @@ interface, which is a generic interface to access sequential unique keyed data. 
 implement this interface yourself, e.g. by using a prop to pass a list of item objects,
 but <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useComboBoxState} /> from
 `@react-stately/combobox` implements a JSX based interface for building collections instead.
-See [Collection Components](/react-stately/collections.html) for more information,
-and [Collection Interface](/react-stately/Collection.html) for internal details.
+See [Collection Components](v3:collections.html) for more information.
 
 In addition, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useComboBoxState} />
 manages the state necessary for single selection and exposes
 a <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} />,
 which makes use of the collection to provide an interface to update the selection state.
 It also holds state to track if the popup is open, if the combo box is focused, and the current input value.
-For more information about selection, see [Selection](/react-stately/selection.html).
+For more information about selection, see [Selection](v3:selection.html).
 
 ## Example
 
@@ -131,13 +130,13 @@ is included within the `<button>` to display the dropdown arrow icon (hidden fro
 A "contains" filter function is obtained from <TypeLink links={i18nDocs.links} type={i18nDocs.exports.useFilter} /> and is passed to <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useComboBoxState} /> so
 that the list box can be filtered based on the option text and the current input text.
 
-The same `Popover`, `ListBox`, and `Button` components created with [usePopover](usePopover.html), [useListBox](useListBox.html),
-and [useButton](useButton.html) that you may already have in your component library or application should be reused. These can be shared with other
-components such as a `Select` created with [useSelect](useSelect.html) or a `Dialog` popover created with [useDialog](useDialog.html).
+The same `Popover`, `ListBox`, and `Button` components created with [usePopover](../Popover/usePopover.html), [useListBox](../ListBox/useListBox.html),
+and [useButton](../Button/useButton.html) that you may already have in your component library or application should be reused. These can be shared with other
+components such as a `Select` created with [useSelect](../Select/useSelect.html) or a `Dialog` popover created with [useDialog](../Modal/useDialog.html).
 The code for these components is also included below in the collapsed sections.
 
-In addition, see [useListBox](useListBox.html) for examples of sections (option groups), and more complex
-options. For an example of the description and error message elements, see [useTextField](useTextField.html).
+In addition, see [useListBox](../ListBox/useListBox.html) for examples of sections (option groups), and more complex
+options. For an example of the description and error message elements, see [useTextField](../TextField/useTextField.html).
 
 ```tsx example export=true
 import {Item} from '@react-stately/collections';
@@ -223,9 +222,9 @@ function ComboBox(props) {
 ### Popover
 
 The `Popover` component is used to contain the popup listbox for the ComboBox.
-It can be shared between many other components, including [Select](useSelect.html),
-[Menu](useMenu.html), and others.
-See [usePopover](usePopover.html) for more examples of popovers.
+It can be shared between many other components, including [Select](../Select/useSelect.html),
+[Menu](../Menu/useMenu.html), and others.
+See [usePopover](../Popover/usePopover.html) for more examples of popovers.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -266,8 +265,8 @@ function Popover({children, state, ...props}: PopoverProps) {
 ### ListBox
 
 The `ListBox` and `Option` components are used to show the filtered list of options as the
-user types in the ComboBox. They can also be shared with other components like a [Select](useSelect.html). See
-[useListBox](useListBox.html) for more examples, including sections and more complex items.
+user types in the ComboBox. They can also be shared with other components like a [Select](../Select/useSelect.html). See
+[useListBox](../ListBox/useListBox.html) for more examples, including sections and more complex items.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -340,7 +339,7 @@ function Option({item, state}) {
 
 ### Button
 
-The `Button` component is used in the above example to toggle the listbox popup. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+The `Button` component is used in the above example to toggle the listbox popup. It is built using the [useButton](../Button/useButton.html) hook, and can be shared with many other components.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -411,7 +410,7 @@ uncontrolled, with the default input text set by the `defaultInputValue` prop.
 
 ### Dynamic collections
 
-ComboBox follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
+ComboBox follows the [Collection Components API](v3:collections.html), accepting both static and dynamic collections.
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
@@ -635,7 +634,7 @@ receiving keyboard focus as shown in the example below. Note that you are respon
 
 ### Asynchronous loading
 
-This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
+This example uses the [useAsyncList](../useAsyncList.html) hook to handle asynchronous loading
 and filtering of data from a server. You may additionally want to display a spinner to indicate the loading
 state to the user, or support features like infinite scroll to load more data. See
 [this CodeSandbox](https://codesandbox.io/s/dreamy-burnell-3i2jy?file=/src/Autocomplete.tsx) for an example
@@ -673,7 +672,7 @@ function AsyncLoadingExample() {
 
 ### Links
 
-By default, interacting with an item in a ComboBox selects it and updates the input value. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Interacting with link items navigates to the provided URL and does not update the selection or input value. See the [links](useListBox.html#links) section in the `useListBox` docs for details on how to support this.
+By default, interacting with an item in a ComboBox selects it and updates the input value. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Interacting with link items navigates to the provided URL and does not update the selection or input value. See the [links](../ListBox/useListBox.html#links) section in the `useListBox` docs for details on how to support this.
 
 ## Internationalization
 

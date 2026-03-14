@@ -37,7 +37,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
   let {
     isDisabled,
     trigger,
-    closeOnPress = true
+    shouldCloseOnPress = true
   } = props;
 
   let tooltipId = useId();
@@ -103,8 +103,8 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
   };
 
   let onPressStart = () => {
-    // if closeOnPress is false, we should not close the tooltip
-    if (!closeOnPress) {
+    // if shouldCloseOnPress is false, we should not close the tooltip
+    if (!shouldCloseOnPress) {
       return;
     }
     // no matter how the trigger is pressed, we should close the tooltip

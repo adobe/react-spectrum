@@ -63,7 +63,7 @@ export function BundlerSwitcher({children}: BundlerSwitcherProps) {
   };
 
   return (
-    <div className={container}>
+    <div className={container} data-example-switcher>
       <div className={style({overflowX: 'auto', width: 'auto', flexGrow: 1})}>
         <SegmentedControl selectedKey={active?.id} onSelectionChange={onSelectionChange} styles={switcher}>
           {items.map(it => (
