@@ -162,9 +162,7 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean, isDropTarget?: 
       isDropTarget: 'Highlight'
     }
   },
-  forcedColorAdjust: {
-    isDropTarget: 'none'
-  },
+  forcedColorAdjust: 'none',
   '--trailing-icon-width': {
     type: 'width',
     value: {
@@ -406,9 +404,6 @@ const listitem = style<GridListItemRenderProps & {
     isNextSelected: 'transparent',
     isSelected: 'transparent',
     forcedColors: 'ButtonBorder'
-  },
-  forcedColorAdjust: {
-    isDropTarget: 'none'
   },
   '--radius': {
     type: 'borderTopStartRadius',
@@ -857,7 +852,6 @@ let insertionIndicatorBar = style<{isDropTarget?: boolean}>({
     default: 'transparent',
     isDropTarget: 'blue-800',
     forcedColors: {
-      default: 'transparent',
       isDropTarget: 'Highlight'
     }
   },
@@ -871,9 +865,7 @@ let insertionIndicatorBar = style<{isDropTarget?: boolean}>({
       isDropTarget: 'Highlight'
     }
   },
-  forcedColorAdjust: {
-    isDropTarget: 'none'
-  }
+  forcedColorAdjust: 'none'
 });
 
 let insertionIndicatorCircle = style<{isDropTarget: boolean}>({
@@ -899,9 +891,7 @@ let insertionIndicatorCircle = style<{isDropTarget: boolean}>({
       isDropTarget: 'Background'
     }
   },
-  forcedColorAdjust: {
-    isDropTarget: 'none'
-  }
+  forcedColorAdjust: 'none'
 });
 
 const centeredWrapper = style({
