@@ -250,9 +250,9 @@ describe('Select', () => {
     expect(trigger).toHaveAttribute('data-pressed', 'true');
   });
 
-  it('should close on selecting an option if shouldCloseOnSelect is false and multiple selection mode', async () => {
+  it('should close on selecting an option if shouldCloseOnSelect is true and multiple selection mode', async () => {
     let {getByTestId} = render(
-      <Select data-testid="select" shouldCloseOnSelect={false} selectionMode="multiple">
+      <Select data-testid="select" shouldCloseOnSelect selectionMode="multiple">
         <Label>Favorite Animal</Label>
         <Button>
           <SelectValue />
