@@ -252,7 +252,21 @@ describe('NumberField', () => {
   });
 
   it('should not change the edited input value when value snapping is disabled', async () => {
-    let {getByRole} = render(<TestNumberField defaultValue={20} minValue={10} step={10} maxValue={50} isValueSnappingDisabled />);
+    let minValue = 10;
+    let maxValue = 50;
+    // Note, we cannot rely on native validation around min/max because we use an input type="text"
+    // rather than type="number". This is so we can have a formatted value like $1,024.00 or a completely
+    // different numbering system.
+    // The native type="number" input would not allow know what to do with a formatted value.
+    let validate = (value) => {
+      if (value < minValue) {
+        return `Value must be at least ${minValue}`;
+      }
+      if (value > maxValue) {
+        return `Value must be at most ${maxValue}`;
+      }
+    };
+    let {getByRole} = render(<TestNumberField defaultValue={20} minValue={minValue} step={10} maxValue={maxValue} interactOutsideBehavior="none" validate={validate} />);
     let input = getByRole('textbox');
     await user.tab();
     await user.clear(input);
@@ -260,5 +274,7 @@ describe('NumberField', () => {
     await user.tab();
     expect(input).toHaveValue('1,024');
     expect(announce).toHaveBeenLastCalledWith('1,024', 'assertive');
+    expect(input.closest('.react-aria-NumberField')).toHaveAttribute('data-invalid', 'true');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
   });
 });

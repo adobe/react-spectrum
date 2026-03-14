@@ -207,10 +207,10 @@ Step3WithMin2Max21.story = {
   name: 'step = 3 with min = 2, max = 21'
 };
 
-export const Step3WithMin2Max21ValueSnappingDisabled: NumberFieldStory = () => render({step: 3, minValue: 2, maxValue: 21, isValueSnappingDisabled: true});
+export const InteractOutsideBehaviorNone: NumberFieldStory = () => render({step: 3, minValue: 2, maxValue: 21, interactOutsideBehavior: 'none'});
 
-Step3WithMin2Max21ValueSnappingDisabled.story = {
-  name: 'step = 3 with min = 2, max = 21, isValueSnappingDisabled = true'
+InteractOutsideBehaviorNone.story = {
+  name: 'interactOutsideBehavior = none'
 };
 
 export const AutoFocus: NumberFieldStory = () => render({autoFocus: true});

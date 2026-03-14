@@ -342,7 +342,7 @@ describe('NumberField', function () {
     let {
       container,
       textField
-    } = renderNumberField({onChange: onChangeSpy, minValue: 10, isValueSnappingDisabled: true});
+    } = renderNumberField({onChange: onChangeSpy, minValue: 10, interactOutsideBehavior: 'none'});
 
     expect(container).not.toHaveAttribute('aria-invalid');
 
@@ -414,7 +414,7 @@ describe('NumberField', function () {
     let {
       container,
       textField
-    } = renderNumberField({onChange: onChangeSpy, maxValue: 1, defaultValue: 0, isValueSnappingDisabled: true});
+    } = renderNumberField({onChange: onChangeSpy, maxValue: 1, defaultValue: 0, interactOutsideBehavior: 'none'});
 
     expect(container).not.toHaveAttribute('aria-invalid');
 
@@ -828,13 +828,13 @@ describe('NumberField', function () {
   });
 
   it.each`
-    Name                           | value  
-    ${'NumberField down positive'} | ${'6'} 
-    ${'NumberField up positive'}   | ${'8'} 
+    Name                           | value
+    ${'NumberField down positive'} | ${'6'}
+    ${'NumberField up positive'}   | ${'8'}
     ${'NumberField down negative'} | ${'-8'}
     ${'NumberField up negative'}   | ${'-6'}
   `('$Name does not round to step on commit when value snapping is disabled', async ({value}) => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, step: 5, isValueSnappingDisabled: true});
+    let {textField} = renderNumberField({onChange: onChangeSpy, step: 5, interactOutsideBehavior: 'none'});
     act(() => {textField.focus();});
     await user.keyboard(value);
     act(() => {textField.blur();});
