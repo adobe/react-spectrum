@@ -14,7 +14,7 @@ import Bell from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
 import {Button, Tab, TabList, TabPanel, Tabs, TabsProps} from '../src';
 import {Collection, Text} from '@react-spectrum/s2';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
-import {fn} from '@storybook/test';
+import {fn} from 'storybook/test';
 import Heart from '../s2wf-icons/S2_Icon_Heart_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import React, {ReactElement} from 'react';

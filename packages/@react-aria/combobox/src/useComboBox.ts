@@ -208,7 +208,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
     state.setFocused(true);
   };
 
-  let valueId = useValueId([state.selectedItems, state.selectionManager.selectionMode]);
+  let valueId = useValueId([state.selectionManager.selectedKeys, state.selectionManager.selectionMode]);
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,
@@ -225,7 +225,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
   }, inputRef);
 
   useFormReset(inputRef, state.defaultValue, state.setValue);
-  
+
   // Press handlers for the ComboBox button
   let onPress = (e: PressEvent) => {
     if (e.pointerType === 'touch') {

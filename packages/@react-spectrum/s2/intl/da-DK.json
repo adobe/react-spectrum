@@ -23,6 +23,7 @@
   "label.(optional)": "(valgfrit)",
   "label.(required)": "(obligatorisk)",
   "menu.moreActions": "Flere handlinger",
+  "menu.unavailable": "Ikke tilgængelig, udvid for detaljer",
   "notificationbadge.indicatorOnly": "Ny aktivitet",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Vælg…",
