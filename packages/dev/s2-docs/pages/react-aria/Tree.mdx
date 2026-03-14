@@ -7,6 +7,7 @@ import vanillaDocs from 'docs:vanilla-starter/Tree';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/TreeAnatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+import {VersionBadge} from '../../src/VersionBadge';
 
 export const tags = ['data', 'tree', 'nested', 'hierarchy'];
 export const relatedPages = [
@@ -237,6 +238,40 @@ import {Tree} from 'vanilla-starter/Tree';
 </Tree>
 ```
 
+### Sections <VersionBadge version="alpha" />
+
+Use the `<TreeSection>` component to group options. A `<TreeHeader>` element may also be included to label the section. Sections without a header must have an `aria-label`.
+
+```tsx render
+"use client";
+import {Tree, TreeHeader, TreeItem, TreeSection} from 'vanilla-starter/Tree';
+
+<Tree aria-label="Files">
+  <TreeSection>
+    <TreeHeader>Photos</TreeHeader>
+    <TreeItem id="my-photos" title="My Photos">
+      <TreeItem id="photo-1" title="Photo 1" />
+      <TreeItem id="photo-2" title="Photo 2" />
+    </TreeItem>
+    <TreeItem id="shared-photos" title="Shared Photos">
+      <TreeItem id="shared-photo-1" title="Shared Photo 1" />
+      <TreeItem id="shared-photo-2" title="Shared Photo 2" />
+    </TreeItem> 
+  </TreeSection>
+  <TreeSection>
+    <TreeHeader>Documents</TreeHeader>
+    <TreeItem id="my-documents" title="My Documents">
+      <TreeItem id="document-1" title="Document 1" />
+      <TreeItem id="document-2" title="Document 2" />
+    </TreeItem>
+    <TreeItem id="shared-documents" title="Shared Documents">
+      <TreeItem id="shared-document-1" title="Shared Document 1" />
+      <TreeItem id="shared-document-2" title="Shared Document 2" />
+    </TreeItem>
+  </TreeSection>
+</Tree>
+```
+
 ## Selection and actions
 
 Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=Tree) for more details.
@@ -367,7 +402,7 @@ function Example() {
 
 <Anatomy role="img" aria-label="Anatomy diagram of a Tree, consisting of multiple items. Each item in the tree contains a selection checkbox, an expand toggle button, and the name of the item." />
 
-```tsx links={{Tree: '#tree', TreeItem: '#treeitem', TreeItemContent: '#treeitemcontent', Button: 'Button', Checkbox: 'Checkbox', TreeLoadMoreItem: '#treeloadmoreitem', SelectionIndicator: 'selection#animated-selectionindicator'}}
+```tsx links={{Tree: '#tree', TreeItem: '#treeitem', TreeItemContent: '#treeitemcontent', TreeSection: '#treesection', TreeHeader: '#treeheader', Button: 'Button', Checkbox: 'Checkbox', TreeLoadMoreItem: '#treeloadmoreitem', SelectionIndicator: 'selection#animated-selectionindicator'}}
 <Tree>
   <TreeItem>
     <TreeItemContent>
@@ -378,8 +413,12 @@ function Example() {
     <TreeItem>
       {/* ... */}
     </TreeItem>
-    <TreeLoadMoreItem />
   </TreeItem>
+  <TreeSection>
+    <TreeHeader />
+    <TreeItem>{/* ... */}</TreeItem>
+  </TreeSection>
+  <TreeLoadMoreItem />
 </Tree>
 ```
 
@@ -400,6 +439,14 @@ function Example() {
 ### TreeItemContent
 
 <PropTable component={docs.exports.TreeItemContent} links={docs.links} showDescription hideRenderProps />
+
+### TreeSection
+
+<PropTable component={docs.exports.TreeSection} links={docs.links} showDescription />
+
+### TreeHeader
+
+`<TreeHeader>` labels the section within a Tree. It accepts all DOM attributes.
 
 ### TreeLoadMoreItem
 

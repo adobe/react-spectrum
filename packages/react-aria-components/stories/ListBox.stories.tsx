@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Collection, DragAndDropHooks, DropIndicator, GridLayout, Header, isTextDropItem, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
 import {ListBoxLoadMoreItem} from '../';
 import {LoadingSpinner, MyListBoxItem} from './utils';
@@ -34,7 +34,7 @@ export const ListBoxExample: ListBoxStory = (args) => (
   <ListBox className={styles.menu} {...args} aria-label="test listbox">
     <MyListBoxItem>Foo</MyListBoxItem>
     <MyListBoxItem>Bar</MyListBoxItem>
-    <MyListBoxItem>Baz</MyListBoxItem>
+    <MyListBoxItem aria-label="Baz with custom label">Baz (Custom aria-label)</MyListBoxItem>
     <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
   </ListBox>
 );

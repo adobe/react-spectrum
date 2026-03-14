@@ -27,6 +27,10 @@ availableComponents.delete('Provider');
 // Replaced by ActionButtonGroup and ToggleButtonGroup
 availableComponents.add('ActionGroup');
 
+// components renamed between v3 and S2
+let renamedComponents: Record<string, string> = {
+  ContextualHelpTrigger: 'UnavailableMenuItemTrigger'
+};
 
 interface Options {
   /** Comma separated list of components to transform. If not specified, all available components will be transformed. */
@@ -43,6 +47,8 @@ export default function transformer(file: FileInfo, api: API, options: Options):
   });
   let root = j(file.source);
   let componentsToTransform = options.components ? new Set(options.components.split(',').filter(s => availableComponents.has(s))) : availableComponents;
+  let v3ComponentsToRename = new Set(Object.keys(renamedComponents));
+  let S2ComponentsToImport = new Set<string>();
 
   let bindings: Binding[] = [];
   let importedComponents = new Map<string, t.ImportSpecifier | t.ImportNamespaceSpecifier>();
@@ -62,9 +68,17 @@ export default function transformer(file: FileInfo, api: API, options: Options):
             if (binding) {
               let isUsed = false;
               for (let path of binding.referencePaths) {
-                if (path.parentPath?.isJSXMemberExpression() && componentsToTransform.has(path.parentPath.node.property.name) && path.parentPath.parentPath.parentPath?.isJSXElement()) {
-                  importedComponents.set(path.parentPath.node.property.name, clonedSpecifier);
-                  elements.push([path.parentPath.node.property.name, path.parentPath.parentPath.parentPath]);
+                let propName = path.parentPath?.isJSXMemberExpression() && path.parentPath.node.property.name;
+                if (propName && path.parentPath!.parentPath?.parentPath?.isJSXElement()) {
+                  if (componentsToTransform.has(propName)) {
+                    importedComponents.set(propName, clonedSpecifier);
+                    elements.push([propName, path.parentPath!.parentPath.parentPath]);
+                  } else if (v3ComponentsToRename.has(propName)) {
+                    S2ComponentsToImport.add(renamedComponents[propName]);
+                    elements.push([propName, path.parentPath!.parentPath.parentPath]);
+                  } else {
+                    isUsed = true;
+                  }
                 } else {
                   isUsed = true;
                 }
@@ -85,12 +99,16 @@ export default function transformer(file: FileInfo, api: API, options: Options):
             typeof specifier.local.name === 'string' &&
             specifier.imported.type === 'Identifier' &&
             typeof specifier.imported.name === 'string' &&
-            componentsToTransform.has(specifier.imported.name)
+            (componentsToTransform.has(specifier.imported.name) || v3ComponentsToRename.has(specifier.imported.name))
           ) {
-            // e.g. import {Button} from '@adobe/react-spectrum';
+            // e.g. import {Button} from '@adobe/react-spectrum'; or import {ContextualHelpTrigger} from '@adobe/react-spectrum';
             let binding = path.scope.getBinding(specifier.local.name);
             if (binding) {
-              importedComponents.set(specifier.imported.name, specifier);
+              if (componentsToTransform.has(specifier.imported.name)) {
+                importedComponents.set(specifier.imported.name, specifier);
+              } else {
+                S2ComponentsToImport.add(renamedComponents[specifier.imported.name]);
+              }
               bindings.push(binding);
               for (let path of binding.referencePaths) {
                 if (path.parentPath?.isJSXOpeningElement() && path.parentPath.parentPath.isJSXElement()) {
@@ -222,11 +240,14 @@ export default function transformer(file: FileInfo, api: API, options: Options):
     lastImportPath!.insertAfter(macroImport);
   }
 
-  if (importedComponents.size) {
+  if (importedComponents.size || S2ComponentsToImport.size) {
     // Add imports to existing @react-spectrum/s2 import if it exists, otherwise add a new one.
     let importSpecifiers = new Set([...importedComponents]
       .filter(([c]) => c !== 'Flex' && c !== 'Grid' && c !== 'View' && c !== 'Item' && c !== 'Section' && c !== 'ActionGroup')
       .map(([, specifier]) => specifier));
+    for (let s2Name of S2ComponentsToImport) {
+      importSpecifiers.add(t.importSpecifier(t.identifier(s2Name), t.identifier(s2Name)));
+    }
 
     let existingImport = root.find(j.ImportDeclaration, {
       source: {value: '@react-spectrum/s2'}
@@ -282,4 +303,3 @@ export default function transformer(file: FileInfo, api: API, options: Options):
   root.find(j.Program).get('body', 0).node.comments = leadingComments;
   return root.toSource().replace(/assert\s*\{\s*type:\s*"macro"\s*\}/g, 'with { type: "macro" }');
 }
-

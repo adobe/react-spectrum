@@ -7,5 +7,7 @@
   "resizerDescription": "Tryk på Enter for at ændre størrelse",
   "select": "Vælg",
   "selectAll": "Vælg alle",
-  "sortable": "sorterbar kolonne"
+  "sortable": "sorterbar kolonne",
+  "collapse": "Skjul",
+  "expand": "Udvid"
 }
