@@ -31,11 +31,17 @@ function equalSets(setA, setB) {
 }
 
 export interface MultipleSelectionStateProps extends MultipleSelection {
-  /** How multiple selection should behave in the collection. */
+  /**
+   * How multiple selection should behave in the collection.
+   * @default 'toggle'
+   */
   selectionBehavior?: SelectionBehavior,
   /** Whether onSelectionChange should fire even if the new set of keys is the same as the last. */
   allowDuplicateSelectionEvents?: boolean,
-  /** Whether `disabledKeys` applies to all interactions, or only selection. */
+  /**
+   * Whether `disabledKeys` applies to all interactions, or only selection.
+   * @default 'all'
+   */
   disabledBehavior?: DisabledBehavior
 }
 
