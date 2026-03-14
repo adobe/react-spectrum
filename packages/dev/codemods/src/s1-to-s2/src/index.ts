@@ -7,7 +7,29 @@ import {transform} from './transform.js';
 import {waitForKeypress} from './utils/waitForKeypress.js';
 const boxen = require('boxen');
 
+function printNextSteps(nextSteps: string[]) {
+  console.log(boxen(
+    `Next steps:\n\n ${nextSteps.map((step, i) => `${i + 1}. ${step}`).join('\n\n\n')}`,
+    {borderStyle: 'round', padding: 1, borderColor: 'green'}
+  ));
+}
+
 export async function s1_to_s2(options: S1ToS2CodemodOptions): Promise<void> {
+  if (options.agent) {
+    logger.info('Running s1-to-s2 in agent mode (non-interactive, transform-only).');
+    logger.info('Upgrading components...');
+    await transform(options);
+    logger.success('Upgrade complete!');
+    printNextSteps([
+      `Ensure ${chalk.bold('@react-spectrum/s2')} is installed.`,
+      `If your bundler is not Parcel v2.12.0+, configure the Spectrum 2 style macro support. See: ${chalk.underline('https://react-spectrum.adobe.com/getting-started#framework-setup')}`,
+      `Add ${chalk.bold('import \'@react-spectrum/s2/page.css\';')} to your entry component if needed.`,
+      `Search for ${chalk.bold('TODO(S2-upgrade)')} and resolve remaining manual migration updates.`,
+      `Reference the migration guide: ${chalk.underline('https://react-spectrum.adobe.com/migrating')}`
+    ]);
+    return;
+  }
+
   console.log(boxen(
     'Welcome to the React Spectrum v3 to Spectrum 2 upgrade assistant!\n\n' +
     'This tool will:\n\n' +
@@ -53,7 +75,7 @@ export async function s1_to_s2(options: S1ToS2CodemodOptions): Promise<void> {
       `  - Vite: ${chalk.underline('https://github.com/adobe/react-spectrum/tree/main/examples/s2-vite-project')}\n` +
       `  - Rollup: ${chalk.underline('https://github.com/adobe/react-spectrum/tree/main/examples/s2-rollup-starter-app')}\n` +
       `  - ESBuild: ${chalk.underline('https://github.com/adobe/react-spectrum/tree/main/examples/s2-esbuild-starter-app')}\n\n` +
-      `or view documentation here: ${chalk.underline('https://react-spectrum.adobe.com/s2/index.html?path=/docs/intro--docs#configuring-your-bundler')}`
+      `or view documentation here: ${chalk.underline('https://react-spectrum.adobe.com/getting-started#framework-setup')}`
     );
   }
 
@@ -63,14 +85,10 @@ export async function s1_to_s2(options: S1ToS2CodemodOptions): Promise<void> {
     `${chalk.bold('TODO(S2-upgrade)')}\n\n` +
     'You should be able to search your codebase and handle these manually. \n\n' +
     'We also recommend running your project\'s code formatter (i.e. Prettier, ESLint) after the upgrade process to clean up any extraneous formatting from the codemod.\n\n' +
-    `For additional help, reference the Spectrum 2 Migration Guide: ${chalk.underline('https://react-spectrum.adobe.com/s2/index.html?path=/docs/migrating--docs')}`
+    `For additional help, reference the Spectrum 2 Migration Guide: ${chalk.underline('https://react-spectrum.adobe.com/migrating')}`
   );
 
-  console.log(boxen(
-    `Next steps:\n\n ${nextSteps.map((step, i) => `${i + 1}. ${step}`).join('\n\n\n')}`,
-    {borderStyle: 'round', padding: 1, borderColor: 'green'}
-  ));
+  printNextSteps(nextSteps);
 
   process.exit(0);
 }
-

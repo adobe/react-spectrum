@@ -140,7 +140,7 @@ let props = {validationState: 'invalid'};
 `;
 
 exports[`handles sections 1`] = `
-"import { PickerSection, PickerItem, Picker } from "@react-spectrum/s2";
+"import { PickerSection, Header, PickerItem, Picker } from "@react-spectrum/s2";
 <Picker>
   <PickerSection><Header>Section title</Header>
     <PickerItem>Item one</PickerItem>
