@@ -350,7 +350,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
 
   let validation = useFormValidationState({
     ...props,
-    value: useMemo(() => Array.isArray(displayValue) && displayValue.length === 0 ? null : ({inputValue, value: displayValue as any, selectedKey}), [inputValue, selectedKey, displayValue])
+    value: useMemo(() => ({inputValue, value: displayValue as any, selectedKey}), [inputValue, selectedKey, displayValue])
   });
 
   // Revert input value and close menu

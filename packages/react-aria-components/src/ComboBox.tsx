@@ -152,6 +152,10 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
   let [labelRef, label] = useSlot(
     !props['aria-label'] && !props['aria-labelledby']
   );
+  let comboBoxProps = removeDataAttributes(props);
+  if (props.selectionMode === 'multiple') {
+    delete comboBoxProps.isRequired;
+  }
   let {
     buttonProps,
     inputProps,
@@ -162,7 +166,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     valueProps,
     ...validation
   } = useComboBox({
-    ...removeDataAttributes(props),
+    ...comboBoxProps,
     label,
     inputRef,
     buttonRef,
@@ -210,12 +214,14 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
   if (name && formValue === 'key') {
     let values: (Key | null)[] = Array.isArray(state.value) ? state.value : [state.value];
     if (values.length === 0) {
-      values = [null];
+      // For multiple mode, add required to the hidden input when no values selected
+      let required = props.selectionMode === 'multiple' && props.isRequired;
+      inputs = [<input key="empty" type="hidden" name={name} form={props.form} value="" required={required} />];
+    } else {
+      inputs = values.map((value, i) => (
+        <input key={i} type="hidden" name={name} form={props.form} value={value ?? ''} />
+      ));
     }
-
-    inputs = values.map((value, i) => (
-      <input key={i} type="hidden" name={name} form={props.form} value={value ?? ''} />
-    ));
   }
 
   return (
