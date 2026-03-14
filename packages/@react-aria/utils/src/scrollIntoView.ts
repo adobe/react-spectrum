@@ -44,6 +44,7 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, op
   let itemStyle = window.getComputedStyle(element);
   let viewStyle = window.getComputedStyle(scrollView);
   let root = document.scrollingElement || document.documentElement;
+  let isRoot = scrollView === root;
 
   let viewTop = scrollView === root ? 0 : view.top;
   let viewBottom = scrollView === root ? scrollView.clientHeight : view.bottom;
@@ -72,13 +73,13 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, op
 
   let scrollBarOffsetX = scrollView === root ? 0 : borderLeftWidth + borderRightWidth;
   let scrollBarOffsetY = scrollView === root ? 0 : borderTopWidth + borderBottomWidth;
-  let scrollBarWidth = scrollView.offsetWidth - scrollView.clientWidth - scrollBarOffsetX;
-  let scrollBarHeight = scrollView.offsetHeight - scrollView.clientHeight - scrollBarOffsetY;
+  let scrollBarWidth = scrollView === root ? 0 : scrollView.offsetWidth - scrollView.clientWidth - scrollBarOffsetX;
+  let scrollBarHeight = scrollView === root ? 0 : scrollView.offsetHeight - scrollView.clientHeight - scrollBarOffsetY;
 
-  let scrollPortTop = viewTop + borderTopWidth + scrollPaddingTop;
-  let scrollPortBottom = viewBottom - borderBottomWidth - scrollPaddingBottom - scrollBarHeight;
-  let scrollPortLeft = viewLeft + borderLeftWidth + scrollPaddingLeft;
-  let scrollPortRight = viewRight - borderRightWidth - scrollPaddingRight;
+  let scrollPortTop = viewTop + (isRoot ? 0 : borderTopWidth) + scrollPaddingTop;
+  let scrollPortBottom = viewBottom - (isRoot ? 0 : borderBottomWidth) - scrollPaddingBottom - scrollBarHeight;
+  let scrollPortLeft = viewLeft + (isRoot ? 0 : borderLeftWidth) + scrollPaddingLeft;
+  let scrollPortRight = viewRight - (isRoot ? 0 : borderRightWidth) - scrollPaddingRight;
 
   // IOS always positions the scrollbar on the right ¯\_(ツ)_/¯
   if (viewStyle.direction === 'rtl' && !isIOS()) {
@@ -159,8 +160,12 @@ export function scrollIntoViewport(targetElement: Element | null, opts: ScrollIn
       // Account for sub pixel differences from rounding
       if ((Math.abs(originalLeft - newLeft) > 1) || (Math.abs(originalTop - newTop) > 1)) {
         scrollParents = containingElement ? getScrollParents(containingElement, true) : [];
+        // scroll containing element into view first, then rescroll target element into view like the non chrome flow above
         for (let scrollParent of scrollParents) {
           scrollIntoView(scrollParent as HTMLElement, containingElement as HTMLElement, {block: 'center', inline: 'center'});
+        }
+        for (let scrollParent of getScrollParents(targetElement, true)) {
+          scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement);
         }
       }
     }
