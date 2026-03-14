@@ -1554,6 +1554,7 @@ describe('RangeCalendar', () => {
 
       let {getByText, getAllByText} = render(
         <RangeCalendar
+          defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
           onChange={onChange}
           pointerUpOutsideAction="select" />
       );
@@ -1571,6 +1572,7 @@ describe('RangeCalendar', () => {
       const onChange = jest.fn();
       let {getByText, getAllByText, getByRole} = render(
         <RangeCalendar
+          defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
           onChange={onChange}
           pointerUpOutsideAction="clear" />
       );
@@ -1583,6 +1585,29 @@ describe('RangeCalendar', () => {
       expect(startCell).toHaveAttribute('aria-selected', 'true');
 
       await user.click(getAllByText('November 2025')[0]);
+
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith(null);
+      expect(startCell).not.toHaveAttribute('aria-selected');
+      expect(endCell).not.toHaveAttribute('aria-selected');
+    });
+
+    it('should clear the selection when pointerUpOutsideAction is "clear" no default selected range', async () => {
+      const onChange = jest.fn();
+      let {getByText, getByRole} = render(
+        <RangeCalendar
+          onChange={onChange}
+          pointerUpOutsideAction="clear" />
+      );
+
+      let startCell = getByRole('gridcell', {name: '25'});
+      let endCell = getByRole('gridcell', {name: '20'});
+
+      await user.click(getByText('25'));
+      await user.hover(getByText('20'));
+      expect(startCell).toHaveAttribute('aria-selected', 'true');
+
+      await user.click(document.body);
 
       expect(onChange).toHaveBeenCalledTimes(0);
       expect(startCell).not.toHaveAttribute('aria-selected');
@@ -1618,6 +1643,112 @@ describe('RangeCalendar', () => {
       expect(newStartCell).not.toHaveAttribute('aria-selected');
       expect(originalStartCell).toHaveAttribute('aria-selected', 'true');
       expect(originalEndCell).toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('should reset to the initial range when pointerUpOutsideAction is "reset" (controlled value)', async () => {
+      const onChange = jest.fn();
+      let {getByText, getAllByText, getByRole} = render(
+        <RangeCalendar
+          value={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
+          onChange={onChange}
+          pointerUpOutsideAction="reset" />
+      );
+
+      let originalStartCell = getByRole('gridcell', {name: '13'});
+      let originalEndCell = getByRole('gridcell', {name: '15'});
+      let newStartCell = getByRole('gridcell', {name: '25'});
+
+      await user.click(getByText('25'));
+      await user.hover(getByText('20'));
+      expect(newStartCell).toHaveAttribute('aria-selected', 'true');
+      expect(originalStartCell).not.toHaveAttribute('aria-selected');
+      expect(originalEndCell).not.toHaveAttribute('aria-selected');
+
+      await user.click(getAllByText('November 2025')[0]);
+
+      expect(onChange).toHaveBeenCalledTimes(0);
+      expect(newStartCell).not.toHaveAttribute('aria-selected');
+      expect(originalStartCell).toHaveAttribute('aria-selected', 'true');
+      expect(originalEndCell).toHaveAttribute('aria-selected', 'true');
+    });
+
+    describe('blur (e.g. tabbing away)', () => {
+      it('should select the hovered range when pointerUpOutsideAction is "select" and calendar blurs', async () => {
+        const onChange = jest.fn();
+        let {getByText, getByRole} = render(
+          <RangeCalendar
+            defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
+            onChange={onChange}
+            pointerUpOutsideAction="select" />
+        );
+
+        let startCell = getByRole('gridcell', {name: '13'});
+        let endCell = getByRole('gridcell', {name: '15'});
+
+        let newStartCell = getByRole('gridcell', {name: '25'});
+        let newEndCell = getByRole('gridcell', {name: '20'});
+
+        await user.click(getByText('25'));
+        await user.hover(getByText('20'));
+
+        await user.tab();
+
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2025, 11, 20), end: new CalendarDate(2025, 11, 25)});
+        expect(startCell).not.toHaveAttribute('aria-selected', 'true');
+        expect(endCell).not.toHaveAttribute('aria-selected', 'true');
+        expect(newStartCell).toHaveAttribute('aria-selected', 'true');
+        expect(newEndCell).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should clear the selection when pointerUpOutsideAction is "clear" and calendar blurs', async () => {
+        const onChange = jest.fn();
+        let {getByText, getByRole} = render(
+          <RangeCalendar
+            defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
+            onChange={onChange}
+            pointerUpOutsideAction="clear" />
+        );
+
+        let startCell = getByRole('gridcell', {name: '13'});
+        let endCell = getByRole('gridcell', {name: '15'});
+        let newStartCell = getByRole('gridcell', {name: '25'});
+        let newEndCell = getByRole('gridcell', {name: '20'});
+
+        await user.click(getByText('25'));
+        await user.hover(getByText('20'));
+        await user.tab();
+
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange).toHaveBeenCalledWith(null);
+        expect(startCell).not.toHaveAttribute('aria-selected', 'true');
+        expect(endCell).not.toHaveAttribute('aria-selected', 'true');
+        expect(newStartCell).not.toHaveAttribute('aria-selected', 'true');
+        expect(newEndCell).not.toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should reset to the initial range when pointerUpOutsideAction is "reset" and calendar blurs', async () => {
+        const onChange = jest.fn();
+        let {getByText, getByRole} = render(
+          <RangeCalendar
+            defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
+            onChange={onChange}
+            pointerUpOutsideAction="reset" />
+        );
+
+        let originalStartCell = getByRole('gridcell', {name: '13'});
+        let originalEndCell = getByRole('gridcell', {name: '15'});
+        let newStartCell = getByRole('gridcell', {name: '25'});
+
+        await user.click(getByText('25'));
+        await user.hover(getByText('20'));
+        await user.tab();
+
+        expect(onChange).toHaveBeenCalledTimes(0);
+        expect(originalStartCell).toHaveAttribute('aria-selected', 'true');
+        expect(originalEndCell).toHaveAttribute('aria-selected', 'true');
+        expect(newStartCell).not.toHaveAttribute('aria-selected');
+      });
     });
   });
 });
