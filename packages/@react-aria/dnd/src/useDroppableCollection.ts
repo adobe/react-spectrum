@@ -14,6 +14,7 @@ import {
   clearGlobalDnDState,
   DIRECTORY_DRAG_TYPE,
   droppableCollectionMap,
+  getItemElement,
   getTypes,
   globalDndState,
   isInternalDropOperation,
@@ -273,6 +274,25 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
               first = item.parentKey;
             }
 
+            if (item?.type === 'content') {
+              let parentKey = item.parentKey;
+              while (parentKey) {
+                let parent = state.collection.getItem(parentKey);
+                if (parent?.type !== 'item') {
+                  parentKey = parent?.parentKey;
+                  continue;
+                }
+                // If an item doesn't exist in the collection,
+                // it's because its parent is collapsed, and we should focus its parent instead.
+                let item = getItemElement(ref, parentKey);
+                if (item) {
+                  first = parentKey;
+                  break;
+                }
+                parentKey = parent.parentKey;
+              }
+            }
+
             // eslint-disable-next-line max-depth
             if (first != null) {
               state.selectionManager.setFocusedKey(first);
@@ -312,7 +332,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
       state.selectionManager.setFocused(true);
     }
-  }, [localState]);
+  }, [localState, ref]);
 
   let onDrop = useCallback((e: DropEvent, target: DropTarget) => {
     let {state} = localState;
@@ -443,6 +463,25 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         let item = key != null ? localState.state.collection.getItem(key) : null;
         if (item?.type === 'cell') {
           key = item.parentKey;
+        }
+
+        if (item?.type === 'content') {
+          let parentKey = item.parentKey;
+          while (parentKey) {
+            let parent = localState.state.collection.getItem(parentKey);
+            if (parent?.type !== 'item') {
+              parentKey = parent?.parentKey;
+              continue;
+            }
+            // If an item doesn't exist in the collection,
+            // it's because its parent is collapsed, and we should focus its parent instead.
+            let item = getItemElement(ref, parentKey);
+            if (item) {
+              key = parentKey;
+              break;
+            }
+            parentKey = parent.parentKey;
+          }
         }
 
         // If the focused item is also selected, the default drop target is after the last selected item.
