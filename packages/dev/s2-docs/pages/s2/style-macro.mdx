@@ -1,6 +1,9 @@
 import {Layout} from '../../src/Layout';
 import {InlineAlert, Heading, Content, Link} from '@react-spectrum/s2';
+import {FunctionJSDoc} from '../../src/FunctionJSDoc';
 import {StyleMacroProperties} from '../../src/StyleMacroProperties';
+import docs from 'docs:@react-spectrum/s2';
+import styleDocs from 'docs:@react-spectrum/s2/style';
 import {getPropertyDefinitions} from '../../src/styleProperties';
 export default Layout;
 
@@ -55,3 +58,68 @@ Note that `font` should be applied on a per element basis rather than globally s
 ## Conditions
 
 <StyleMacroProperties properties={getPropertyDefinitions('conditions')} sort={false} />
+
+## Utilities
+
+The style macro system provides built-in utility functions for common patterns.
+
+### baseColor
+
+<FunctionJSDoc function={styleDocs.exports.baseColor} />
+
+### color
+
+<FunctionJSDoc function={styleDocs.exports.color} />
+
+### lightDark
+
+<FunctionJSDoc function={styleDocs.exports.lightDark} />
+
+### colorMix
+
+<FunctionJSDoc function={styleDocs.exports.colorMix} />
+
+### linearGradient
+
+<FunctionJSDoc function={styleDocs.exports.linearGradient} />
+
+### size
+
+<FunctionJSDoc function={styleDocs.exports.size} />
+
+### space
+
+<FunctionJSDoc function={styleDocs.exports.space} />
+
+### fontRelative
+
+<FunctionJSDoc function={styleDocs.exports.fontRelative} />
+
+### focusRing
+
+<FunctionJSDoc function={styleDocs.exports.focusRing} />
+
+### iconStyle
+
+<FunctionJSDoc function={styleDocs.exports.iconStyle} />
+See the [Icons](icons#api) page for more information.
+
+### raw
+
+<FunctionJSDoc function={styleDocs.exports.raw} />
+
+### keyframes
+
+<FunctionJSDoc function={styleDocs.exports.keyframes} />
+
+### mergeStyles
+
+<FunctionJSDoc function={docs.exports.mergeStyles} />
+
+### centerPadding
+
+<FunctionJSDoc function={docs.exports.centerPadding} />
+
+### setColorScheme
+
+<FunctionJSDoc function={docs.exports.setColorScheme} />
