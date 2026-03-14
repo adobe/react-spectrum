@@ -1569,23 +1569,29 @@ describe('RangeCalendar', () => {
 
     it('should clear the selection when pointerUpOutsideAction is "clear"', async () => {
       const onChange = jest.fn();
-      let {getByText, getAllByText} = render(
+      let {getByText, getAllByText, getByRole} = render(
         <RangeCalendar
           onChange={onChange}
           pointerUpOutsideAction="clear" />
       );
 
+      let startCell = getByRole('gridcell', {name: '25'});
+      let endCell = getByRole('gridcell', {name: '20'});
+
       await user.click(getByText('25'));
       await user.hover(getByText('20'));
+      expect(startCell).toHaveAttribute('aria-selected', 'true');
 
       await user.click(getAllByText('November 2025')[0]);
 
       expect(onChange).toHaveBeenCalledTimes(0);
+      expect(startCell).not.toHaveAttribute('aria-selected');
+      expect(endCell).not.toHaveAttribute('aria-selected');
     });
 
     it('should reset to the initial range when pointerUpOutsideAction is "reset"', async () => {
       const onChange = jest.fn();
-      let {getByText, getAllByText} = render(
+      let {getByText, getAllByText, getByRole} = render(
         <RangeCalendar
           start={new CalendarDate(2025, 11, 13)}
           end={new CalendarDate(2025, 11, 15)}
@@ -1593,12 +1599,22 @@ describe('RangeCalendar', () => {
           pointerUpOutsideAction="reset" />
       );
 
+      let originalStartCell = getByRole('gridcell', {name: '13'});
+      let originalEndCell = getByRole('gridcell', {name: '15'});
+      let newStartCell = getByRole('gridcell', {name: '25'});
+
       await user.click(getByText('25'));
       await user.hover(getByText('20'));
+      expect(newStartCell).toHaveAttribute('aria-selected', 'true');
+      expect(originalStartCell).not.toHaveAttribute('aria-selected');
+      expect(originalEndCell).not.toHaveAttribute('aria-selected');
 
       await user.click(getAllByText('November 2025')[0]);
 
       expect(onChange).toHaveBeenCalledTimes(0);
+      expect(newStartCell).not.toHaveAttribute('aria-selected');
+      expect(originalStartCell).toHaveAttribute('aria-selected', 'true');
+      expect(originalEndCell).toHaveAttribute('aria-selected', 'true');
     });
   });
 });
