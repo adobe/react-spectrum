@@ -22,7 +22,7 @@ import {useRef} from 'react';
  * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
  */
 export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarProps<T>, state: RangeCalendarState, ref: RefObject<FocusableElement | null>): CalendarAria {
-  let {pointerUpOutsideAction = 'select', ...otherProps} = props;
+  let {interactOutsideBehavior = 'select', ...otherProps} = props;
   let res = useCalendarBase(otherProps, state);
 
   // We need to ignore virtual pointer events from VoiceOver due to these bugs.
@@ -37,13 +37,13 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
     isVirtualClick.current = e.width === 0 && e.height === 0;
   });
 
-  const pointerUpOutsideActionMapping = {
+  const interactOutsideBehaviorMapping = {
     clear: () => state.clearSelection(),
     reset: () => state.setAnchorDate(null),
     select: () => state.selectFocusedDate()
   };
 
-  // Execute method corresponding to `pointerUpOutsideAction` when pressing or releasing a pointer outside the calendar body,
+  // Execute method corresponding to `interactOutsideBehavior` when pressing or releasing a pointer outside the calendar body,
   // except when pressing the next or previous buttons to switch months.
   let endDragging = (e: PointerEvent) => {
     if (isVirtualClick.current) {
@@ -62,13 +62,13 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
       isFocusWithin(ref.current) &&
       (!nodeContains(ref.current, target) || !target.closest('button, [role="button"]'))
     ) {
-      pointerUpOutsideActionMapping[pointerUpOutsideAction]();
+      interactOutsideBehaviorMapping[interactOutsideBehavior]();
     }
   };
 
   useEvent(windowRef, 'pointerup', endDragging);
 
-  // Also execute method corresponding to `pointerUpOutsideAction` on blur,
+  // Also execute method corresponding to `interactOutsideBehavior` on blur,
   // e.g. tabbing away from the calendar.
   res.calendarProps.onBlur = e => {
     if (!ref.current) {
@@ -76,7 +76,7 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
     }
 
     if ((!e.relatedTarget || !nodeContains(ref.current, e.relatedTarget)) && state.anchorDate) {
-      pointerUpOutsideActionMapping[pointerUpOutsideAction]();
+      interactOutsideBehaviorMapping[interactOutsideBehavior]();
     }
   };
 

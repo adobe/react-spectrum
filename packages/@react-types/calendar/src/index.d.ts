@@ -97,7 +97,7 @@ export interface AriaRangeCalendarProps<T extends DateValue> extends RangeCalend
    * - `select`: select the currently hovered range of dates.
    * @default 'select'
    */
-  pointerUpOutsideAction?: 'clear' | 'reset' | 'select'
+  interactOutsideBehavior?: 'clear' | 'reset' | 'select'
 }
 
 export type PageBehavior = 'single' | 'visible';
