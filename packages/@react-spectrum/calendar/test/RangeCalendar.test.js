@@ -1593,8 +1593,7 @@ describe('RangeCalendar', () => {
       const onChange = jest.fn();
       let {getByText, getAllByText, getByRole} = render(
         <RangeCalendar
-          start={new CalendarDate(2025, 11, 13)}
-          end={new CalendarDate(2025, 11, 15)}
+          defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
           onChange={onChange}
           pointerUpOutsideAction="reset" />
       );
@@ -1602,6 +1601,10 @@ describe('RangeCalendar', () => {
       let originalStartCell = getByRole('gridcell', {name: '13'});
       let originalEndCell = getByRole('gridcell', {name: '15'});
       let newStartCell = getByRole('gridcell', {name: '25'});
+
+      expect(originalStartCell).toHaveAttribute('aria-selected', 'true');
+      expect(originalEndCell).toHaveAttribute('aria-selected', 'true');
+      expect(newStartCell).not.toHaveAttribute('aria-selected');
 
       await user.click(getByText('25'));
       await user.hover(getByText('20'));
