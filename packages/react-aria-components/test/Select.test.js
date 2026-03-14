@@ -273,8 +273,9 @@ describe('Select', () => {
     await selectTester.open();
     expect(trigger).toHaveAttribute('data-pressed', 'true');
 
-    await selectTester.selectOption({option: 'Dog'});
+    await selectTester.selectOption({option: 'Dog', closesOnSelect: true});
     expect(trigger).toHaveTextContent('Dog');
+    expect(trigger).not.toHaveAttribute('data-pressed', 'true');
   });
 
   it('should send disabled prop to the hidden field', () => {
