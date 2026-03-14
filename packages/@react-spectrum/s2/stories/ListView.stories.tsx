@@ -24,7 +24,8 @@ import {Key} from 'react-aria';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactNode, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
-import {useAsyncList} from 'react-stately';
+import {useAsyncList, useListData} from 'react-stately';
+import {useDragAndDrop} from 'react-aria-components';
 
 const meta: Meta<typeof ListView> = {
   component: ListView,
@@ -41,11 +42,18 @@ const meta: Meta<typeof ListView> = {
     styles: style({height: 320})
   },
   decorators: [
-    (Story) => (
-      <div style={{width: '300px', resize: 'both', height: '320px', minHeight: '320px'}}>
-        <Story />
-      </div>
-    )
+    (Story, context) => {
+      let {disableDecorator} = context.parameters;
+      if (disableDecorator) {
+        return <Story />;
+      }
+
+      return (
+        <div style={{width: '300px', resize: 'both', height: '320px', minHeight: '320px'}}>
+          <Story />
+        </div>
+      );
+    }
   ]
 };
 
@@ -581,4 +589,328 @@ export const WithActionBarEmphasized: Story = {
     'aria-label': 'Files with emphasized action bar'
   },
   name: 'with ActionBar (emphasized)'
+};
+
+let reorderItems: Item[] = [
+  {id: 'a', name: 'Adobe Photoshop', type: 'file'},
+  {id: 'b', name: 'Adobe XD', type: 'file'},
+  {id: 'c', name: 'Documents', type: 'folder'},
+  {id: 'd', name: 'Adobe InDesign', type: 'file'},
+  {id: 'e', name: 'Utilities', type: 'folder'},
+  {id: 'f', name: 'Adobe AfterEffects', type: 'file'},
+  {id: 'g', name: 'Adobe Illustrator', type: 'file'},
+  {id: 'h', name: 'Adobe Lightroom', type: 'file'},
+  {id: 'i', name: 'Adobe Premiere Pro', type: 'file'},
+  {id: 'j', name: 'Adobe Fresco', type: 'file'},
+  {id: 'k', name: 'Adobe Dreamweaver', type: 'file'},
+  {id: 'l', name: 'Adobe Connect', type: 'file'},
+  {id: 'm', name: 'Pictures', type: 'folder'},
+  {id: 'n', name: 'Adobe Acrobat', type: 'file'},
+  {id: 'o', name: 'Really really really really really long name', type: 'file'}
+];
+
+function ReorderExample(props) {
+  let list = useListData({
+    initialItems: reorderItems
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => {
+      return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
+    },
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+
+  return (
+    <ListView
+      aria-label="reorderable gridlist"
+      items={list.items}
+      dragAndDropHooks={dragAndDropHooks}
+      {...props}>
+      {(item: Item) => (
+        <ListViewItem textValue={item.name}>
+          {item.type === 'folder' ? <Folder /> : <File />}
+          <Text>{item.name}</Text>
+        </ListViewItem>
+      )}
+    </ListView>
+  );
+}
+
+export const Reorderable: Story = {
+  render: (args) => <ReorderExample {...args} />,
+  name: 'Drag and drop reordering'
+};
+
+let folderList1 = [
+  {id: '1', type: 'file', name: 'Adobe Photoshop'},
+  {id: '2', type: 'file', name: 'Adobe XD'},
+  {id: '3', type: 'folder', name: 'Documents',  childNodes: [] as any[]},
+  {id: '4', type: 'file', name: 'Adobe InDesign'},
+  {id: '5', type: 'folder', name: 'Utilities',  childNodes: []},
+  {id: '6', type: 'file', name: 'Adobe AfterEffects'}
+];
+
+let folderList2 = [
+  {id: '7', type: 'folder', name: 'Pictures',  childNodes: [] as any[]},
+  {id: '8', type: 'file', name: 'Adobe Fresco'},
+  {id: '9', type: 'folder', name: 'Apps',  childNodes: []},
+  {id: '10', type: 'file', name: 'Adobe Illustrator'},
+  {id: '11', type: 'file', name: 'Adobe Lightroom'},
+  {id: '12', type: 'file', name: 'Adobe Dreamweaver'},
+  {id: '13', type: 'unique_type', name: 'invalid drag item'}
+];
+
+let itemProcessor = async (items, acceptedDragTypes) => {
+  let processedItems: any[] = [];
+  let text = '';
+  for (let item of items) {
+    for (let type of acceptedDragTypes) {
+      if (item.kind === 'text' && item.types.has(type)) {
+        text = await item.getText(type);
+        processedItems.push(JSON.parse(text));
+        break;
+      } else if (item.types.size === 1 && item.types.has('text/plain')) {
+        // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+        // Multiple drag items are contained in a single string so we need to split them out
+        text = await item.getText('text/plain');
+        processedItems = text.split('\n').map(val => JSON.parse(val));
+        break;
+      }
+    }
+  }
+  return processedItems;
+};
+
+function BetweenLists(props) {
+  let list1 = useListData({
+    initialItems: folderList1
+  });
+
+  let list2 = useListData({
+    initialItems: folderList2
+  });
+  let acceptedDragTypes = ['file', 'folder', 'text/plain'];
+
+  // List 1 should allow on item drops and external drops, but disallow reordering/internal drops
+  let {dragAndDropHooks: dragAndDropHooksList1} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list1.getItem(key)!;
+      return {
+        [`${item.type}`]: JSON.stringify(item),
+        'text/plain': item.name
+      };
+    }),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list1.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list1.moveAfter(e.target.key, e.keys);
+      }
+    },
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+      action('onInsertList1')(e);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+
+      if (target.dropPosition === 'before') {
+        list1.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list1.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onRootDrop: async (e) => {
+      action('onRootDropList1')(e);
+      let processedItems = await itemProcessor(e.items, acceptedDragTypes);
+      list1.append(...processedItems);
+    },
+    onItemDrop: async (e) => {
+      let {
+        items,
+        target,
+        isInternal,
+        dropOperation
+      } = e;
+      action('onItemDropList1')(e);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let targetItem = list1.getItem(target.key)!;
+      list1.update(target.key, {...targetItem, childNodes: [...(targetItem.childNodes || []), ...processedItems]});
+
+      if (isInternal && dropOperation === 'move') {
+        let keysToRemove = processedItems.map(item => item.id);
+        list1.remove(...keysToRemove);
+      }
+    },
+    acceptedDragTypes,
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        isInternal,
+        keys
+      } = e;
+      action('onDragEndList1')(e);
+      if (dropOperation === 'move' && !isInternal) {
+        list1.remove(...keys);
+      }
+    },
+    getAllowedDropOperations: () => ['move', 'copy'],
+    shouldAcceptItemDrop: (target) => !!list1.getItem(target.key)!.childNodes
+  });
+
+// List 2 should allow reordering, on folder drops, and on root drops
+  let {dragAndDropHooks: dragAndDropHooksList2} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list2.getItem(key)!;
+      let dragItem = {};
+      let itemString = JSON.stringify(item);
+      dragItem[`${item.type}`] = itemString;
+      if (item.type !== 'unique_type') {
+        dragItem['text/plain'] = item.name;
+      }
+
+      return dragItem;
+    }),
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+      action('onInsertList2')(e);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+
+      if (target.dropPosition === 'before') {
+        list2.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list2.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onReorder: async (e) => {
+      let {
+        keys,
+        target,
+        dropOperation
+      } = e;
+      action('onReorderList2')(e);
+
+      let itemsToCopy: typeof folderList2 = [];
+      if (dropOperation === 'copy') {
+        for (let key of keys) {
+          let item: typeof folderList2[0] = {...list2.getItem(key)!};
+          item.id = Math.random().toString(36).slice(2);
+          itemsToCopy.push(item);
+        }
+      }
+
+      if (target.dropPosition === 'before') {
+        if (dropOperation === 'move') {
+          list2.moveBefore(target.key, [...keys]);
+        } else if (dropOperation === 'copy') {
+          list2.insertBefore(target.key, ...itemsToCopy);
+        }
+      } else if (target.dropPosition === 'after') {
+        if (dropOperation === 'move') {
+          list2.moveAfter(target.key, [...keys]);
+        } else if (dropOperation === 'copy') {
+          list2.insertAfter(target.key, ...itemsToCopy);
+        }
+      }
+    },
+    onRootDrop: async (e) => {
+      action('onRootDropList2')(e);
+      let processedItems = await itemProcessor(e.items, acceptedDragTypes);
+      list2.prepend(...processedItems);
+    },
+    onItemDrop: async (e) => {
+      let {
+        items,
+        target,
+        isInternal,
+        dropOperation
+      } = e;
+      action('onItemDropList2')(e);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let targetItem = list2.getItem(target.key)!;
+      list2.update(target.key, {...targetItem, childNodes: [...(targetItem.childNodes || []), ...processedItems]});
+
+      if (isInternal && dropOperation === 'move') {
+        let keysToRemove = processedItems.map(item => item.id);
+        list2.remove(...keysToRemove);
+      }
+    },
+    acceptedDragTypes,
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        isInternal,
+        keys
+      } = e;
+      action('onDragEndList2')(e);
+      if (dropOperation === 'move' && !isInternal) {
+        let keysToRemove = [...keys].filter(key => list2.getItem(key)!.type !== 'unique_type');
+        list2.remove(...keysToRemove);
+      }
+    },
+    getAllowedDropOperations: () => ['move', 'copy'],
+    shouldAcceptItemDrop: (target) => !!list2.getItem(target.key)!.childNodes
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 16}}>
+      <ListView
+        aria-label="First ListView in drag between list example"
+        items={list1.items}
+        dragAndDropHooks={dragAndDropHooksList1}
+        {...props}
+        styles={style({height: 320, width: 320})}>
+        {(item: any) => (
+          <ListViewItem id={item.id} textValue={item.name}>
+            <Text>{item.name}</Text>
+            {item.type === 'folder' &&
+              <>
+                <Folder />
+                <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+              </>
+            }
+            {item.type === 'file' && <File />}
+          </ListViewItem>
+        )}
+      </ListView>
+      <ListView
+        aria-label="Second ListView in drag between list example"
+        items={list2.items}
+        dragAndDropHooks={dragAndDropHooksList2}
+        {...props}
+        styles={style({height: 320, width: 320})}>
+        {(item: any) => (
+          <ListViewItem id={item.id} textValue={item.name}>
+            <Text>{item.name}</Text>
+            {item.type === 'folder' &&
+              <>
+                <Folder />
+                <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+              </>
+            }
+            {item.type === 'file' && <File />}
+          </ListViewItem>
+        )}
+      </ListView>
+    </div>
+  );
+}
+
+export const DragBetweenLists: Story = {
+  render: (args) => <BetweenLists {...args} />,
+  name: 'Drag between lists',
+  parameters: {
+    disableDecorator: true
+  }
 };
