@@ -277,7 +277,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       offset = 0;
     }
 
-    for (let node of collection) {
+    for (let node of collectionNodes) {
       let offsetProperty = this.orientation === 'horizontal' ? 'x' : 'y';
       let maxOffsetProperty = this.orientation === 'horizontal' ? 'maxX' : 'maxY';
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT) + this.gap;
