@@ -453,10 +453,10 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       // If a previous version of this layout info exists, reuse its height.
       // Mark as estimated if the size of the overall virtualizer changed,
       // or the content of the item changed.
-      let previous = this.layoutNodes.get(node.key);
-      if (previous) {
-        rectHeight = previous.layoutInfo.rect[heightProperty];
-        isEstimated = width !== previous.layoutInfo.rect[widthProperty] || node !== previous.node || previous.layoutInfo.estimatedSize;
+      let previousLayoutNode = this.layoutNodes.get(node.key);
+      if (previousLayoutNode) {
+        rectHeight = previousLayoutNode.layoutInfo.rect[heightProperty];
+        isEstimated = width !== previousLayoutNode.layoutInfo.rect[widthProperty] || node !== previousLayoutNode.node || previousLayoutNode.layoutInfo.estimatedSize;
       } else {
         rectHeight = node.type === 'item' || node.rendered ? this.estimatedRowHeight : 0;
         isEstimated = true;
