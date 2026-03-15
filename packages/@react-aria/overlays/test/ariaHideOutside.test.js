@@ -239,6 +239,35 @@ describe('ariaHideOutside', function () {
     expect(getAllByRole('checkbox')).toHaveLength(1);
   });
 
+  it('should recognize dynamically added top layer element with data-react-aria-top-layer="" (attribute presence)', async function () {
+    let Test = props => (
+      <>
+        <button>Button</button>
+        {props.show && (
+          <>
+            <div role="status" data-react-aria-top-layer="">Top layer (empty attr)</div>
+            <input type="checkbox" />
+          </>
+        )}
+      </>
+    );
+
+    let {getByRole, getAllByRole, rerender} = render(<Test />);
+
+    let button = getByRole('button');
+    let revert = ariaHideOutside([button]);
+
+    rerender(<Test show />);
+
+    // MutationObserver is async
+    await Promise.resolve();
+    expect(getByRole('status')).not.toHaveAttribute('aria-hidden');
+    expect(getByRole('checkbox', {hidden: true})).toHaveAttribute('aria-hidden', 'true');
+
+    revert();
+    expect(getAllByRole('checkbox')).toHaveLength(1);
+  });
+
   it('should handle when a new element is added inside a target element', async function () {
     let Test = props => (
       <>
