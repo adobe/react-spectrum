@@ -83,8 +83,7 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
    */
   layout?: 'stack' | 'grid',
   /**
-   * The primary orientation of the items. Usually this is the
-   * direction that the collection scrolls.
+   * The primary orientation of the items. Usually this is the direction that the collection scrolls.
    * @default 'vertical'
    */
   orientation?: Orientation
@@ -136,10 +135,10 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       disabledBehavior,
       layoutDelegate,
       layout,
-      direction,
-      orientation
+      orientation,
+      direction
     })
-  ), [collection, ref, layout, disabledKeys, disabledBehavior, layoutDelegate, collator, direction, orientation]);
+  ), [collection, ref, layout, disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
 
   let {gridProps} = useGridList({
     ...props,
@@ -207,7 +206,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   let isEmpty = state.collection.size === 0;
   let renderValues = {
     isDropTarget: isRootDropTarget,
-    orientation: keyboardDelegate.getOrientation(),
+    orientation,
     isEmpty,
     isFocused,
     isFocusVisible,
@@ -249,7 +248,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-layout={layout}
-        data-orientation={renderValues.orientation}>
+        data-orientation={orientation}>
         <Provider
           values={[
             [ListStateContext, state],

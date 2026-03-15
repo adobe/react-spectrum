@@ -80,7 +80,7 @@ describe('Tabs', function () {
 
     let tablist = tabsTester.tablist;
     expect(tablist).toBeTruthy();
-    expect(tablist).not.toHaveAttribute('aria-orientation');
+    expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
     let tabs = tabsTester.tabs;
     expect(tabs.length).toBe(3);
@@ -116,7 +116,7 @@ describe('Tabs', function () {
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let selectedItem = tabs[0];
-    expect(tablist).not.toHaveAttribute('aria-orientation');
+    expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
     act(() => {selectedItem.focus();});
@@ -199,7 +199,7 @@ describe('Tabs', function () {
     let firstItem = tabs[0];
     act(() => {firstItem.focus();});
 
-    expect(tablist).not.toHaveAttribute('aria-orientation');
+    expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(firstItem, {key: 'ArrowLeft', code: 37, charCode: 37});
@@ -932,15 +932,6 @@ describe('Tabs', function () {
     expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('should have aria-orientation when orientation is explicit', function () {
-    let container = renderComponent({orientation: 'vertical'});
-    let tabsTester = testUtilUser.createTester('Tabs', {root: container.getByRole('tablist')});
-
-    let tablist = tabsTester.tablist;
-    expect(tablist).toBeTruthy();
-    expect(tablist).toHaveAttribute('aria-orientation', 'vertical');
-  });
-
   describe('when using fragments', function () {
     it('renders fragment with children properly', function () {
       let container = render(
@@ -969,7 +960,7 @@ describe('Tabs', function () {
       let tablist = container.getByRole('tablist');
       expect(tablist).toBeTruthy();
 
-      expect(tablist).not.toHaveAttribute('aria-orientation');
+      expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
       let tabs = within(tablist).getAllByRole('tab');
       expect(tabs.length).toBe(2);
@@ -1016,7 +1007,7 @@ describe('Tabs', function () {
       let tablist = container.getByRole('tablist');
       expect(tablist).toBeTruthy();
 
-      expect(tablist).not.toHaveAttribute('aria-orientation');
+      expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
       let tabs = within(tablist).getAllByRole('tab');
       expect(tabs.length).toBe(2);
@@ -1067,7 +1058,7 @@ describe('Tabs', function () {
       let tablist = container.getByRole('tablist');
       expect(tablist).toBeTruthy();
 
-      expect(tablist).not.toHaveAttribute('aria-orientation');
+      expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
       let tabs = within(tablist).getAllByRole('tab');
       expect(tabs.length).toBe(3);
@@ -1114,7 +1105,7 @@ describe('Tabs', function () {
       let tablist = container.getByRole('tablist');
       expect(tablist).toBeTruthy();
 
-      expect(tablist).not.toHaveAttribute('aria-orientation');
+      expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
       let tabs = within(tablist).getAllByRole('tab');
       expect(tabs.length).toBe(2);
@@ -1161,7 +1152,7 @@ describe('Tabs', function () {
       let tablist = container.getByRole('tablist');
       expect(tablist).toBeTruthy();
 
-      expect(tablist).not.toHaveAttribute('aria-orientation');
+      expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
       let tabs = within(tablist).getAllByRole('tab');
       expect(tabs.length).toBe(2);
@@ -1208,7 +1199,7 @@ describe('Tabs', function () {
       let tablist = container.getByRole('tablist');
       expect(tablist).toBeTruthy();
 
-      expect(tablist).not.toHaveAttribute('aria-orientation');
+      expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
       let tabs = within(tablist).getAllByRole('tab');
       expect(tabs.length).toBe(2);
@@ -1255,7 +1246,7 @@ describe('Tabs', function () {
       let tablist = container.getByRole('tablist');
       expect(tablist).toBeTruthy();
 
-      expect(tablist).not.toHaveAttribute('aria-orientation');
+      expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
       let tabs = within(tablist).getAllByRole('tab');
       expect(tabs.length).toBe(3);
@@ -1302,7 +1293,7 @@ describe('Tabs', function () {
       let tablist = container.getByRole('tablist');
       expect(tablist).toBeTruthy();
 
-      expect(tablist).not.toHaveAttribute('aria-orientation');
+      expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
       let tabs = within(tablist).getAllByRole('tab');
       expect(tabs.length).toBe(3);

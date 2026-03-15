@@ -73,7 +73,7 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
   let domProps = filterDOMProps(props, {labelable: true});
   // Use props instead of state here. We don't want this to change due to long press.
   let selectionBehavior = props.selectionBehavior || 'toggle';
-  let orientation = props.orientation || props.keyboardDelegate?.getOrientation?.();
+  let orientation = props.orientation || 'vertical';
   let linkBehavior = props.linkBehavior || (selectionBehavior === 'replace' ? 'action' : 'override');
   if (selectionBehavior === 'toggle' && linkBehavior === 'action') {
     // linkBehavior="action" does not work with selectionBehavior="toggle" because there is no way
@@ -123,7 +123,7 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
       'aria-multiselectable': 'true'
     } : {}, {
       role: 'listbox',
-      'aria-orientation': orientation === 'horizontal' ? orientation : undefined,
+      'aria-orientation': orientation,
       ...mergeProps(fieldProps, listProps)
     })
   };

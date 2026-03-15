@@ -68,7 +68,7 @@ export function useTabList<T>(props: AriaTabListOptions<T>, state: TabListState<
     tabListProps: {
       ...mergeProps(collectionProps, tabListLabelProps),
       role: 'tablist',
-      'aria-orientation': orientation === 'vertical' ? orientation : undefined,
+      'aria-orientation': orientation,
       tabIndex: undefined
     }
   };

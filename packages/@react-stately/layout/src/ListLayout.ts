@@ -75,6 +75,7 @@ const DEFAULT_HEIGHT = 48;
  */
 export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> extends Layout<Node<T>, O> implements DropTargetDelegate {
   protected rowHeight: number | null;
+  protected orientation: Orientation;
   protected estimatedRowHeight: number | null;
   protected headingHeight: number | null;
   protected estimatedHeadingHeight: number | null;
@@ -97,8 +98,9 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
    * of the options that can be provided.
    */
   constructor(options: ListLayoutOptions = {}) {
-    super(options);
+    super();
     this.rowHeight = options.rowHeight ?? null;
+    this.orientation = options.orientation ?? 'vertical';
     this.estimatedRowHeight = options.estimatedRowHeight ?? null;
     this.headingHeight = options.headingHeight ?? null;
     this.estimatedHeadingHeight = options.estimatedHeadingHeight ?? null;

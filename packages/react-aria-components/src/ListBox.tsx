@@ -218,7 +218,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
     isFocused,
     isFocusVisible,
     layout: props.layout || 'stack',
-    orientation: keyboardDelegate.getOrientation?.() || 'vertical',
+    orientation,
     state
   };
   let renderProps = useRenderProps({
@@ -254,7 +254,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-layout={props.layout || 'stack'}
-        data-orientation={renderValues.orientation}>
+        data-orientation={orientation}>
         <Provider
           values={[
             [ListBoxContext, props],

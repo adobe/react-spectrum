@@ -107,8 +107,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       collection,
       disabledKeys,
       ref: listBoxRef,
-      layoutDelegate,
-      orientation: 'vertical'
+      layoutDelegate
     })
   ), [keyboardDelegate, layoutDelegate, collection, disabledKeys, listBoxRef]);
 
@@ -381,7 +380,6 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
       shouldFocusOnHover: true,
-      orientation: 'vertical' as const,
       linkBehavior: 'selection' as const
     }),
     descriptionProps,

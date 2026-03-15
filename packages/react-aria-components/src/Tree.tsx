@@ -279,7 +279,6 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
         disabledKeys: state.selectionManager.disabledKeys,
         disabledBehavior: state.selectionManager.disabledBehavior,
         direction,
-        orientation: 'vertical',
         layoutDelegate
       });
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
