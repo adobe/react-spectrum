@@ -13,7 +13,7 @@
 import {action} from 'storybook/actions';
 import {Collection, DragAndDropHooks, DropIndicator, GridLayout, Header, isTextDropItem, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
 import {ListBoxLoadMoreItem} from '../';
-import {LoadingSpinner, MyListBoxItem} from './utils';
+import {LoadingSpinner, MyHeader, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, useState} from 'react';
 import {Size} from '@react-stately/virtualizer';
@@ -344,7 +344,10 @@ function generateRandomString(minLength: number, maxLength: number): string {
   return result;
 }
 
-function VirtualizedListBoxRender({variableHeight, isLoading}: {variableHeight: boolean, isLoading?: boolean}): JSX.Element {
+function VirtualizedListBoxRender(args): JSX.Element {
+  let {variableHeight, isLoading, orientation} = args;
+  let heightProperty = orientation === 'horizontal' ? 'width' : 'height';
+  let widthProperty = orientation === 'horizontal' ? 'height' : 'width';
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
   for (let s = 0; s < 10; s++) {
     let items: {id: string, name: string}[] = [];
@@ -358,15 +361,16 @@ function VirtualizedListBoxRender({variableHeight, isLoading}: {variableHeight: 
   return (
     <Virtualizer
       layout={new ListLayout({
+        orientation,
         estimatedRowHeight: 25,
         estimatedHeadingHeight: 26,
         loaderHeight: 30
       })}>
-      <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox">
+      <ListBox orientation={orientation} className={styles.menu} style={{[heightProperty]: 400, [widthProperty]: 200}} aria-label="virtualized listbox">
         <Collection items={sections}>
           {section => (
             <ListBoxSection className={styles.group}>
-              <Header style={{fontSize: '1.2em'}}>{section.name}</Header>
+              <MyHeader style={{fontSize: '1.2em'}}>{section.name}</MyHeader>
               <Collection items={section.children}>
                 {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
               </Collection>
@@ -402,7 +406,8 @@ export let VirtualizedListBoxEmpty: ListBoxStoryObj = {
   )
 };
 
-export let VirtualizedListBoxDnd: ListBoxStory = () => {
+function VirtualizedListBoxDndRender(args): JSX.Element {
+  let {orientation} = args;
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -433,7 +438,8 @@ export let VirtualizedListBoxDnd: ListBoxStory = () => {
       <Virtualizer
         layout={ListLayout}
         layoutOptions={{
-          rowHeight: 25,
+          orientation,
+          rowHeight: orientation === 'horizontal' ? 45 : 25,
           gap: 8
         }}>
         <ListBox
@@ -449,6 +455,19 @@ export let VirtualizedListBoxDnd: ListBoxStory = () => {
       </Virtualizer>
     </div>
   );
+};
+
+export const VirtualizedListBoxDnd: StoryObj<typeof VirtualizedListBoxDndRender> = {
+  render: (args) => <VirtualizedListBoxDndRender {...args} />,
+  args: {
+    orientation: 'vertical'
+  },
+  argTypes: {
+    orientation: {
+      control: 'radio',
+      options: ['vertical', 'horizontal']
+    }
+  }
 };
 
 function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAspectRatio = false}: {minSize: number, maxSize: number, preserveAspectRatio: boolean}): JSX.Element {
