@@ -58,7 +58,8 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
   linkBehavior?: 'action' | 'selection' | 'override',
 
   /**
-   * The orientation of the listbox.
+   * The primary orientation of the items. Usually this is the direction that the collection scrolls.
+   * @default 'vertical'
    */
   orientation?: Orientation
 }

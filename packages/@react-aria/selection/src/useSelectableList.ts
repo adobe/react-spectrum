@@ -36,8 +36,8 @@ export interface AriaSelectableListOptions extends Omit<AriaSelectableCollection
    */
   disabledKeys: Set<Key>,
   /**
-   * The primary orientation of the items. Usually this is the
-   * direction that the collection scrolls.
+   * The primary orientation of the items. Usually this is the direction that the collection scrolls.
+   * @default 'vertical'
    */
   orientation?: Orientation
 }

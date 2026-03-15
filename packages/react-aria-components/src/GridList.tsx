@@ -67,8 +67,7 @@ export interface GridListRenderProps {
    */
   layout: 'stack' | 'grid',
   /**
-   * The primary orientation of the items. Usually this is the
-   * direction that the collection scrolls.
+   * The primary orientation of the items.
    * @selector [data-orientation="vertical | horizontal"]
    */
   orientation: Orientation,

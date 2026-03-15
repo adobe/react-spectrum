@@ -16,7 +16,7 @@ import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-statel
 
 export interface ListLayoutOptions {
   /**
-   * The orientation of the list.
+   * The primary orientation of the items. Usually this is the direction that the collection scrolls.
    * @default 'vertical'
    */
   orientation?: Orientation,
