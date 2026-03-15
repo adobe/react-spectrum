@@ -41,7 +41,10 @@ export const DEFAULT_VALIDATION_RESULT: ValidationResult = {
 
 export const FormValidationContext: Context<ValidationErrors> = createContext<ValidationErrors>({});
 
-export const privateValidationStateProp: string = '__formValidationState' + Date.now();
+// Private props that we pass from useFormValidationState to children.
+// Ideally we'd use a Symbol for this, but React doesn't support them: https://github.com/facebook/react/issues/7552
+// This needs to be stable across server and client module evaluation for SSR hydration.
+export const privateValidationStateProp: string = '__reactAriaFormValidationState';
 
 interface FormValidationProps<T> extends Validation<T> {
   builtinValidation?: ValidationResult,

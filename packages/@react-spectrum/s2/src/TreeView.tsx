@@ -76,7 +76,7 @@ const TreeRendererContext = createContext<TreeRendererContextValue>({});
 
 const treeViewWrapper = style({
   minHeight: 0,
-  minWidth: 0,
+  minWidth: 160,
   display: 'flex',
   isolation: 'isolate',
   disableTapHighlight: true,
@@ -122,49 +122,40 @@ export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tr
   }
 
   let domRef = useDOMRef(ref);
-  let scrollRef = useRef<HTMLElement | null>(null);
+  let scrollRef = useRef<HTMLDivElement | null>(null);
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
 
-  let treeContent = (
-    <Virtualizer
-      layout={ListLayout}
-      layoutOptions={{
-        rowHeight: scale === 'large' ? 50 : 40
-      }}>
-      <TreeRendererContext.Provider value={{renderer}}>
-        <Tree
-          {...props}
-          style={{
-            ...(!props.renderActionBar ? UNSAFE_style : {}),
-            paddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0,
-            scrollPaddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0
-          }}
-          className={renderProps => (!props.renderActionBar ? (UNSAFE_className ?? '') : '') + tree({...renderProps})}
-          selectionBehavior="toggle"
-          selectedKeys={selectedKeys}
-          defaultSelectedKeys={undefined}
-          onSelectionChange={onSelectionChange}
-          ref={props.renderActionBar ? (scrollRef as any) : domRef}>
-          {props.children}
-        </Tree>
-      </TreeRendererContext.Provider>
-    </Virtualizer>
+  return (
+    <div
+      ref={domRef}
+      className={(UNSAFE_className ?? '') + treeViewWrapper(null, props.styles)}
+      style={UNSAFE_style}>
+      <Virtualizer
+        layout={ListLayout}
+        layoutOptions={{
+          rowHeight: scale === 'large' ? 50 : 40
+        }}>
+        <TreeRendererContext.Provider value={{renderer}}>
+          <Tree
+            {...props}
+            style={{
+              paddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0,
+              scrollPaddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0
+            }}
+            className={tree}
+            selectionBehavior="toggle"
+            selectedKeys={selectedKeys}
+            defaultSelectedKeys={undefined}
+            onSelectionChange={onSelectionChange}
+            ref={scrollRef}>
+            {props.children}
+          </Tree>
+        </TreeRendererContext.Provider>
+      </Virtualizer>
+      {actionBar}
+    </div>
   );
-
-  if (props.renderActionBar) {
-    return (
-      <div
-        ref={domRef}
-        className={(UNSAFE_className ?? '') + treeViewWrapper(null, props.styles)}
-        style={UNSAFE_style}>
-        {treeContent}
-        {actionBar}
-      </div>
-    );
-  }
-
-  return treeContent;
 });
 
 const rowBackgroundColor = {

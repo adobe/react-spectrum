@@ -135,7 +135,7 @@ import {useViewportSize} from '@react-aria/utils';
 
 function Modal({state, children, ...props}) {
   let ref = React.useRef(null);
-  let {modalProps, underlayProps} = useModalOverlay(props, state, ref);
+  let {modalProps, underlayProps} = useModalOverlay({...props, isDismissable: true}, state, ref);
 
   return (
     <Overlay>
