@@ -13,10 +13,12 @@
 import {action} from 'storybook/actions';
 import {Button, Text} from '../src';
 import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
+import {FocusScope} from '@react-aria/focus';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {useEffect, useRef, useState} from 'react';
+import './buttonstyles.css';
 
 const events = ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'];
 
@@ -107,5 +109,34 @@ function PendingButtonExample(props) {
       {...props}
       isPending={isPending}
       onPress={handlePress} />
+  );
+}
+
+export function App() {
+  return (
+    <div className="App">
+      <h1>Hello, My React Aria Problem</h1>
+      <h2>
+        Click the input at the top of the scrollable content, then try clicking
+        the button at the bottom.
+      </h2>
+
+      <FocusScope restoreFocus autoFocus contain>
+        <div className="ScollContainer">
+          <input className="Input" placeholder="INPUT" />
+
+          <span className="StickyElement">Scroll to input ...</span>
+          <span className="Spacer" />
+
+          <button
+            className="Button"
+            onClick={() => {
+              console.log('WIN!');
+            }}>
+            BUTTON
+          </button>
+        </div>
+      </FocusScope>
+    </div>
   );
 }
