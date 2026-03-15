@@ -240,10 +240,6 @@ describe('ariaHideOutside', function () {
   });
 
   it('should recognize dynamically added top layer element with data-react-aria-top-layer="" (attribute presence)', async function () {
-    // The directly-added node must be the top layer element itself (no wrapper), so the
-    // MutationObserver's isAlwaysVisibleNode() is exercised. With a wrapper, walk() would
-    // find the inner element via querySelectorAll('[data-react-aria-top-layer]') and the
-    // bug (old code only checking === 'true') would not be hit.
     let Test = props => (
       <>
         <button>Button</button>
