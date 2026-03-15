@@ -265,7 +265,7 @@ export function SideNavLink(props) {
       return;
     }
 
-    scrollIntoViewport(linkRef.current, {block: 'start', behavior: 'smooth'});
+    scrollIntoViewport(linkRef.current, {block: 'start'});
   }, [props.isSelected]);
 
   return (
