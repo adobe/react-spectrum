@@ -159,6 +159,12 @@ function useCollectionRender(
     items: parent ? collection.getChildren!(parent.key) : collection,
     dependencies: [renderDropIndicator],
     children(node) {
+      // Return a empty fragment since we don't want to render the content twice
+      // If we don't skip the content node here, we end up rendering them twice in a Tree since we also render the content node in TreeItem
+      if (node.type === 'content') {
+        return <></>;
+      }
+
       let rendered = node.render!(node);
       if (!renderDropIndicator || node.type !== 'item') {
         return rendered;
@@ -195,7 +201,7 @@ export function renderAfterDropIndicators(collection: ICollection<Node<unknown>>
   let afterIndicators: ReactNode[] = [];
   if (nextItemInSameLevel == null) {
     let current: Node<unknown> | null = node;
-    while (current && (!nextItemInFlattenedCollection || (current.parentKey !== nextItemInFlattenedCollection.parentKey && nextItemInFlattenedCollection.level < current.level))) {
+    while (current?.type === 'item' && (!nextItemInFlattenedCollection || (current.parentKey !== nextItemInFlattenedCollection.parentKey && nextItemInFlattenedCollection.level < current.level))) {
       let indicator = renderDropIndicator({
         type: 'item',
         key: current.key,

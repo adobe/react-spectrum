@@ -269,7 +269,7 @@ import type {ToggleButtonProps} from 'react-aria-components';
 import {ToggleButtonContext, useContextProps} from 'react-aria-components';
 import {useToggleState} from 'react-stately';
 import {useToggleButton} from 'react-aria';
-import {motion} from 'framer-motion';
+import {motion} from 'motion/react';
 
 const AnimatedToggleButton = React.forwardRef((props: ToggleButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) => {
   // Merge the local props and ref with the ones provided via context.

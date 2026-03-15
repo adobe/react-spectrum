@@ -25,7 +25,14 @@ function getLocale() {
   // Match browser language setting here, NOT react-aria's I18nProvider, so that we match other browser-provided
   // validation messages, which to not respect our provider's language.
   // @ts-ignore
-  return (typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage)) || 'en-US';
+  let locale = typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage) || 'en-US';
+
+  try {
+    Intl.DateTimeFormat.supportedLocalesOf([locale]);
+  } catch {
+    locale = 'en-US';
+  }
+  return locale;
 }
 
 export function getValidationResult(

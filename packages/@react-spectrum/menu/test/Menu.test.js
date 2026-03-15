@@ -12,8 +12,9 @@
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import Bell from '@spectrum-icons/workflow/Bell';
+import {Button} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {Item, Menu, Section} from '../';
+import {Item, Menu, MenuTrigger, Section} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';
 import {MenuContext} from '../src/context';
 import {Provider} from '@react-spectrum/provider';
@@ -789,19 +790,30 @@ describe('Menu', function () {
   });
 
   describe('supports links', function () {
-    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+    describe.each(['mouse', 'Enter', 'Space'])('%s', (type) => {
       it.each(['none', 'single', 'multiple'])('with selectionMode = %s', async function (selectionMode) {
         let user = userEvent.setup({delay: null, pointerMap});
         let onAction = jest.fn();
         let onSelectionChange = jest.fn();
         let tree = render(
           <Provider theme={theme}>
-            <Menu aria-label="menu" selectionMode={selectionMode} onSelectionChange={onSelectionChange} onAction={onAction}>
-              <Item href="https://google.com">One</Item>
-              <Item href="https://adobe.com">Two</Item>
-            </Menu>
+            <MenuTrigger>
+              <Button>Button</Button>
+              <Menu aria-label="menu" selectionMode={selectionMode} onSelectionChange={onSelectionChange} onAction={onAction}>
+                <Item href="https://google.com">One</Item>
+                <Item href="https://adobe.com">Two</Item>
+              </Menu>
+            </MenuTrigger>
           </Provider>
         );
+
+        let button = tree.getByRole('button');
+        if (type === 'mouse') {
+          await user.click(button);
+        } else {
+          await user.tab();
+          await user.keyboard('{Enter}');
+        }
 
         let role = {
           none: 'menuitem',
@@ -820,15 +832,43 @@ describe('Menu', function () {
         if (type === 'mouse') {
           await user.click(items[1]);
         } else {
-          fireEvent.keyDown(items[1], {key: 'Enter'});
+          fireEvent.keyDown(items[1], {key: type});
           fireEvent.click(items[1]);
-          fireEvent.keyUp(items[1], {key: 'Enter'});
+          fireEvent.keyUp(items[1], {key: type});
         }
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onClick).toHaveBeenCalledTimes(1);
         window.removeEventListener('click', onClick);
       });
+    });
+
+    it('should support dragging and releasing', async () => {
+      let user = userEvent.setup({delay: null, pointerMap});
+      let onAction = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <MenuTrigger>
+            <Button>Button</Button>
+            <Menu aria-label="menu" onAction={onAction}>
+              <Item href="https://google.com">One</Item>
+              <Item href="https://adobe.com">Two</Item>
+            </Menu>
+          </MenuTrigger>
+        </Provider>
+      );
+
+      let button = tree.getByRole('button');
+      await user.pointer({target: button, keys: '[MouseLeft>]'});
+
+      let items = tree.getAllByRole('menuitem');
+      let onClick = mockClickDefault({capture: true});
+
+      await user.pointer({target: items[0], keys: '[/MouseLeft]'});
+
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
+      window.removeEventListener('click', onClick);
     });
   });
 });

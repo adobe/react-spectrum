@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, RenderProps, useContextProps, useRenderProps} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  RenderProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
 import {DOMProps, forwardRefType} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {PlacementAxis} from 'react-aria';
@@ -24,7 +31,13 @@ export const OverlayArrowContext = createContext<ContextValue<OverlayArrowContex
   placement: 'bottom'
 });
 
-export interface OverlayArrowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className' | 'style' | 'children'>, RenderProps<OverlayArrowRenderProps>, DOMProps {}
+export interface OverlayArrowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className' | 'style' | 'render' | 'children'>, RenderProps<OverlayArrowRenderProps>, DOMProps {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-OverlayArrow'
+   */
+  className?: ClassNameOrFunction<OverlayArrowRenderProps>
+}
 
 export interface OverlayArrowRenderProps {
   /**
@@ -65,7 +78,7 @@ export const OverlayArrow = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
   let DOMProps = filterDOMProps(props);
 
   return (
-    <div
+    <dom.div
       {...DOMProps}
       {...renderProps}
       style={{

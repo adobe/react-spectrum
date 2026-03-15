@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {filterDOMProps, useId, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, useId, useLayoutEffect, useSlotId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
@@ -68,7 +68,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
   // Originally was tied to animationStart/End via https://github.com/adobe/react-spectrum/pull/6223/commits/e22e319df64958e822ab7cd9685e96818cae9ba5
   // but toasts don't always have animations.
   let [isVisible, setIsVisible] = useState(false);
-  useEffect(() => {
+  useLayoutEffect(() => {
     setIsVisible(true);
   }, []);
 

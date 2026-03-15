@@ -149,12 +149,13 @@ A listbox consists of a container element, with a list of items or sections insi
 Users can select one or more items by clicking, tapping, or navigating with the keyboard.
 
 ```tsx
-import {ListBox, ListBoxItem, ListBoxSection, Header, Text} from 'react-aria-components';
+import {ListBox, ListBoxItem, ListBoxSection, Header, Text, SelectionIndicator} from 'react-aria-components';
 
 <ListBox>
   <ListBoxItem>
     <Text slot="label" />
     <Text slot="description" />
+    <SelectionIndicator />
   </ListBoxItem>
   <ListBoxSection>
     <Header />
@@ -976,6 +977,11 @@ This uses [useListData](../react-stately/useListData.html) from React Stately to
 import {useListData} from 'react-stately';
 import {useDragAndDrop} from 'react-aria-components';
 
+interface Item {
+  id: number,
+  name: string
+}
+
 function Example() {
   let list = useListData({
     initialItems: [
@@ -988,8 +994,8 @@ function Example() {
   });
 
   ///- begin highlight -///
-  let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).name})),
+  let {dragAndDropHooks} = useDragAndDrop<Item>({
+    getItems: (keys, items) => items.map(item => ({'text/plain': item.name})),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys);
@@ -1042,11 +1048,18 @@ This example renders a custom drag preview which shows the number of items being
 import {useListData} from 'react-stately';
 import {useDragAndDrop} from 'react-aria-components';
 
+///- begin collapse -///
+interface Item {
+  id: number,
+  name: string
+}
+///- end collapse -///
+
 function Example() {
-  let {dragAndDropHooks} = useDragAndDrop({
+  let {dragAndDropHooks} = useDragAndDrop<Item>({
     // ...
     ///- begin collapse -///
-    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).name})),
+    getItems: (keys, items) => items.map(item => ({'text/plain': item.name})),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys);
@@ -1123,16 +1136,22 @@ This can be done by returning multiple keys for an item from the `getItems` func
 This example provides representations of each item as plain text, HTML, and a custom app-specific data format. Dropping on the drop targets in this page will use the custom data format to render formatted items. If you drop in an external application supporting rich text, the HTML representation will be used. Dropping in a text editor will use the plain text format.
 
 ```tsx example export=true
-function DraggableListBox() {
-  let items = new Map([
-    ['ps', {name: 'Photoshop', style: 'strong'}],
-    ['xd', {name: 'XD', style: 'strong'}],
-    ['id', {name: 'InDesign', style: 'strong'}],
-    ['dw', {name: 'Dreamweaver', style: 'em'}],
-    ['co', {name: 'Connect', style: 'em'}]
-  ]);
+interface RichTextItem {
+  id: string,
+  name: string,
+  style: string
+}
 
-  let { dragAndDropHooks } = useDragAndDrop({
+function DraggableListBox() {
+  let items: RichTextItem[] = [
+    {id: 'ps', name: 'Photoshop', style: 'strong'},
+    {id: 'xd', name: 'XD', style: 'strong'},
+    {id: 'id', name: 'InDesign', style: 'strong'},
+    {id: 'dw', name: 'Dreamweaver', style: 'em'},
+    {id: 'co', name: 'Connect', style: 'em'}
+  ];
+
+  let { dragAndDropHooks } = useDragAndDrop<RichTextItem>({
     ///- begin collapse -///
     renderDragPreview(items) {
       return (
@@ -1144,13 +1163,12 @@ function DraggableListBox() {
     },
     ///- end collapse -///
     /*- begin highlight -*/
-    getItems(keys) {
-      return [...keys].map(key => {
-        let item = items.get(key as string)!;
+    getItems(keys, items) {
+      return items.map(item => {
         return {
           'text/plain': item.name,
           'text/html': `<${item.style}>${item.name}</${item.style}>`,
-          'custom-app-type': JSON.stringify({id: key, ...item})
+          'custom-app-type': JSON.stringify(item)
         };
       });
     },
@@ -1159,7 +1177,7 @@ function DraggableListBox() {
 
   return (
     <ListBox aria-label="Draggable list" selectionMode="multiple" items={items} dragAndDropHooks={dragAndDropHooks}>
-      {([id, item]) => <ListBoxItem id={id} textValue={item.name}>{React.createElement(item.style || 'span', null, item.name)}</ListBoxItem>}
+      {item => <ListBoxItem textValue={item.name}>{React.createElement(item.style || 'span', null, item.name)}</ListBoxItem>}
     </ListBox>
   );
 }
@@ -1176,10 +1194,12 @@ function DraggableListBox() {
 Dropping on the ListBox as a whole can be enabled using the `onRootDrop` event. When a valid drag hovers over the ListBox, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
 
 ```tsx example
+///- begin collapse -///
 interface Item {
   id: number,
   name: string
 }
+///- end collapse -///
 
 function Example() {
   let [items, setItems] = React.useState<Item[]>([]);
@@ -1608,6 +1628,13 @@ The `onDragEnd` event allows the drag source to respond when a drag that it init
 This example removes the dragged items from the UI when a move operation is completed. Try holding the <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> keys to change the operation to copy, and see how the behavior changes.
 
 ```tsx example
+///- begin collapse -///
+interface Item {
+  id: number,
+  name: string
+}
+///- end collapse -///
+
 function Example() {
   let list = useListData({
     initialItems: [
@@ -1619,7 +1646,7 @@ function Example() {
     ]
   });
 
-  let { dragAndDropHooks } = useDragAndDrop({
+  let { dragAndDropHooks } = useDragAndDrop<Item>({
     ///- begin collapse -///
     renderDragPreview(items) {
       return (
@@ -1629,9 +1656,8 @@ function Example() {
         </div>
       );
     },
-    getItems(keys) {
-      return [...keys].map(key => {
-        let item = list.getItem(key);
+    getItems(keys, items) {
+      return items.map(item => {
         return {
           'text/plain': item.name,
           'custom-app-type': JSON.stringify(item)
@@ -1665,6 +1691,13 @@ function Example() {
 The drag source can also control which drop operations are allowed for the data. For example, if moving data is not allowed, and only copying is supported, the `getAllowedDropOperations` function could be implemented to indicate this. When you drag the element below, the cursor now shows the copy affordance by default, and pressing a modifier to switch drop operations results in the drop being canceled.
 
 ```tsx example
+///- begin collapse -///
+interface Item {
+  id: number,
+  name: string
+}
+///- end collapse -///
+
 function Example() {
   ///- begin collapse -///
   let list = useListData({
@@ -1679,7 +1712,7 @@ function Example() {
   ///- end collapse -///
   // ...
 
-  let { dragAndDropHooks } = useDragAndDrop({
+  let { dragAndDropHooks } = useDragAndDrop<Item>({
     ///- begin collapse -///
     renderDragPreview(items) {
       return (
@@ -1689,9 +1722,8 @@ function Example() {
         </div>
       );
     },
-    getItems(keys) {
-      return [...keys].map(key => {
-        let item = list.getItem(key);
+    getItems(keys, items) {
+      return items.map(item => {
         return {
           'text/plain': item.name,
           'custom-app-type': JSON.stringify(item)
@@ -1817,7 +1849,7 @@ function DndListBox(props: DndListBoxProps) {
     initialItems: props.initialItems
   });
 
-  let { dragAndDropHooks } = useDragAndDrop({
+  let { dragAndDropHooks } = useDragAndDrop<FileItem>({
     ///- begin collapse -///
     renderDragPreview(items) {
       return (
@@ -1829,9 +1861,8 @@ function DndListBox(props: DndListBoxProps) {
     },
     ///- end collapse -///
     // Provide drag data in a custom format as well as plain text.
-    getItems(keys) {
-      return [...keys].map((key) => {
-        let item = list.getItem(key);
+    getItems(keys, items) {
+      return items.map(item => {
         return {
           'custom-app-type': JSON.stringify(item),
           'text/plain': item.name
@@ -2152,7 +2183,7 @@ If you need to customize things even further, such as accessing internal state o
 
 ## Testing
 
-### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 `@react-aria/test-utils` offers common listbox interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the listbox tester and a sample of how you could use it in your test suite.

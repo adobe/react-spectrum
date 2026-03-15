@@ -1,5 +1,5 @@
 import type {CalendarDate} from '@internationalized/date';
-import {CalendarStateContext} from 'react-aria-components';
+import {CalendarStateContext, RangeCalendarStateContext} from 'react-aria-components';
 import {ReactElement, useContext} from 'react';
 import {Select, SelectItem} from 'vanilla-starter/Select';
 import {useDateFormatter} from 'react-aria';
@@ -11,7 +11,9 @@ interface MonthItem {
 }
 
 export function MonthDropdown(): ReactElement {
-  let state = useContext(CalendarStateContext)!;
+  let calendarState = useContext(CalendarStateContext);
+  let rangeCalendarState = useContext(RangeCalendarStateContext);
+  let state = calendarState || rangeCalendarState!;
   let formatter = useDateFormatter({
     month: 'short',
     timeZone: state.timeZone
@@ -35,7 +37,7 @@ export function MonthDropdown(): ReactElement {
   return (
     <Select
       aria-label="Month"
-      style={{flex: 1}}
+      style={{flex: 1, width: 'fit-content'}}
       selectedKey={state.focusedDate.month}
       onSelectionChange={key => {
         if (typeof key === 'number') {

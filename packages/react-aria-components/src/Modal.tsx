@@ -11,14 +11,28 @@
  */
 
 import {AriaModalOverlayProps, DismissButton, Overlay, useIsSSR, useModalOverlay} from 'react-aria';
-import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  Provider,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
 import {DOMAttributes, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
-import {filterDOMProps, mergeProps, mergeRefs, useEnterAnimation, useExitAnimation, useObjectRef, useViewportSize} from '@react-aria/utils';
+import {filterDOMProps, isScrollable, mergeProps, mergeRefs, useEnterAnimation, useExitAnimation, useObjectRef, useViewportSize} from '@react-aria/utils';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {OverlayTriggerStateContext} from './Dialog';
 import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo, useRef} from 'react';
 
 export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, RenderProps<ModalRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-ModalOverlay'
+   */
+  className?: ClassNameOrFunction<ModalRenderProps>,
   /**
    * Whether the modal is currently performing an entry animation.
    */
@@ -171,14 +185,23 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
   });
 
   let viewport = useViewportSize();
+  let pageHeight: number | undefined = undefined;
+  if (typeof document !== 'undefined') {
+    let scrollingElement = isScrollable(document.body) ? document.body : document.scrollingElement || document.documentElement;
+    // Prevent Firefox from adding scrollbars when the page has a fractional height.
+    let fractionalHeightDifference = scrollingElement.getBoundingClientRect().height % 1;
+    pageHeight = scrollingElement.scrollHeight - fractionalHeightDifference;
+  }
+
   let style = {
     ...renderProps.style,
-    '--visual-viewport-height': viewport.height + 'px'
+    '--visual-viewport-height': viewport.height + 'px',
+    '--page-height': pageHeight !== undefined ? pageHeight + 'px' : undefined
   };
 
   return (
     <Overlay isExiting={props.isExiting} portalContainer={UNSTABLE_portalContainer}>
-      <div
+      <dom.div
         {...mergeProps(filterDOMProps(props, {global: true}), underlayProps)}
         {...renderProps}
         style={style}
@@ -192,12 +215,17 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
           ]}>
           {renderProps.children}
         </Provider>
-      </div>
+      </dom.div>
     </Overlay>
   );
 }
 
 interface ModalContentProps extends RenderProps<ModalRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-ModalContent'
+   */
+  className?: ClassNameOrFunction<ModalRenderProps>,
   modalRef: ForwardedRef<HTMLDivElement>
 }
 
@@ -219,7 +247,7 @@ function ModalContent(props: ModalContentProps) {
   });
 
   return (
-    <div
+    <dom.div
       {...mergeProps(filterDOMProps(props, {global: true}), modalProps)}
       {...renderProps}
       ref={ref}
@@ -229,6 +257,6 @@ function ModalContent(props: ModalContentProps) {
         <DismissButton onDismiss={state.close} />
       }
       {renderProps.children}
-    </div>
+    </dom.div>
   );
 }

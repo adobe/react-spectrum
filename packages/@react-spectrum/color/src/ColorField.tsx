@@ -13,7 +13,7 @@
 import {classNames} from '@react-spectrum/utils';
 import {ColorChannel, SpectrumColorFieldProps} from '@react-types/color';
 import {ColorFieldContext, useContextProps} from 'react-aria-components';
-import React, {Ref, useRef} from 'react';
+import React, {Ref, useEffect, useRef} from 'react';
 import styles from './colorfield.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
@@ -30,9 +30,14 @@ export const ColorField = React.forwardRef(function ColorField(props: SpectrumCo
   props = useProviderProps(props);
   props = useFormProps(props);
   [props] = useContextProps(props, null, ColorFieldContext);
-  if (props.placeholder && process.env.NODE_ENV !== 'production') {
-    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ColorField.html#help-text');
-  }
+  
+  let hasWarned = useRef(false);
+  useEffect(() => {
+    if (props.placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
+      console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ColorField.html#help-text');
+      hasWarned.current = true;
+    }
+  }, [props.placeholder]);
 
   if (props.channel) {
     return <ColorChannelField {...props} channel={props.channel} forwardedRef={ref} />;

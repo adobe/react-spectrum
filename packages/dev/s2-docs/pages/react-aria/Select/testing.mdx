@@ -1,0 +1,67 @@
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+import testUtilDocs from 'docs:@react-aria/test-utils';
+import {InstallCommand} from '../../../src/InstallCommand';
+import {PatternTestingFAQ} from '../../../src/PatternTestingFAQ';
+
+export const isSubpage = true;
+export const hideFromSearch = true;
+export const tags = ['testing', 'select', 'test-utils'];
+export const description = 'Testing Select with React Aria test utils';
+
+# Testing Select
+
+## Test utils
+
+`@react-aria/test-utils` offers common select interaction testing utilities. Install it with your preferred package manager.
+
+<InstallCommand pkg="@react-aria/test-utils" flags="--dev" />
+
+<InlineAlert variant="notice">
+  <Heading>Requirements</Heading>
+  <Content>Please note that this library uses [@testing-library/react@16](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
+</InlineAlert>
+
+Initialize a `User` object at the top of your test file, and use it to create a `Select` pattern tester in your test cases. The tester has methods that you can call within your test to query for specific subcomponents or simulate common interactions.
+
+```ts
+// Select.test.ts
+import {render} from '@testing-library/react';
+import {User} from '@react-aria/test-utils';
+
+let testUtilUser = new User({
+  interactionType: 'mouse'
+});
+// ...
+
+it('Select can select an option via keyboard', async function () {
+  // Render your test component/app and initialize the select tester
+  let {getByTestId} = render(
+    <Select data-testid="test-select">
+    ...
+    </Select>
+  );
+  let selectTester = testUtilUser.createTester('Select', {root: getByTestId('test-select'), interactionType: 'keyboard'});
+  let trigger = selectTester.trigger;
+  expect(trigger).toHaveTextContent('Select an item');
+
+  await selectTester.selectOption({option: 'Cat'});
+  expect(trigger).toHaveTextContent('Cat');
+});
+```
+
+## API
+
+### User
+
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
+
+### SelectTester
+
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.SelectTester} />
+
+## Testing FAQ
+
+<PatternTestingFAQ patternName="select" />

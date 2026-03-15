@@ -106,7 +106,7 @@ export function openLink(target: HTMLAnchorElement, modifiers: Modifiers, setOpe
   let event = isWebKit() && isMac() && !isIPad() && process.env.NODE_ENV !== 'test'
     // @ts-ignore - keyIdentifier is a non-standard property, but it's what webkit expects
     ? new KeyboardEvent('keydown', {keyIdentifier: 'Enter', metaKey, ctrlKey, altKey, shiftKey})
-    : new MouseEvent('click', {metaKey, ctrlKey, altKey, shiftKey, bubbles: true, cancelable: true});
+    : new MouseEvent('click', {metaKey, ctrlKey, altKey, shiftKey, detail: 1, bubbles: true, cancelable: true});
   (openLink as any).isOpening = setOpening;
   focusWithoutScrolling(target);
   target.dispatchEvent(event);

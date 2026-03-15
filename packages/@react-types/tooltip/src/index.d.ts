@@ -34,8 +34,15 @@ export interface TooltipTriggerProps extends OverlayTriggerProps {
 
   /**
    * By default, opens for both focus and hover. Can be made to open only for focus.
+   * @default 'hover'
    */
-  trigger?: 'focus'
+  trigger?: 'hover' | 'focus',
+
+  /**
+   * Whether the tooltip should close when the trigger is pressed.
+   * @default true
+   */
+  shouldCloseOnPress?: boolean
 }
 
 export interface SpectrumTooltipTriggerProps extends Omit<TooltipTriggerProps, 'closeDelay'>, PositionProps {

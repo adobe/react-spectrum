@@ -9,7 +9,7 @@
       <rect id="Rectangle_142240" data-name="Rectangle 142240" width="364" height="58" transform="translate(123 316)" fill="var(--anatomy-gray-50)" opacity="0"/>
       <rect id="Rectangle_142241" data-name="Rectangle 142241" width="364" height="58" transform="translate(123 374)" fill="var(--anatomy-gray-900)" fill-opacity="0.1"/>
       <rect id="Rectangle_142242" data-name="Rectangle 142242" width="364" height="58" transform="translate(123 432)" fill="var(--anatomy-gray-50)" opacity="0"/>
-      <text id="Documents" transform="translate(228 286)" fill="var(--anatomy-gray-800)" font-size="19" font-family="Adobe-Clean"><tspan x="0" y="0">Documents</tspan></text>
+      <text id="Documents" transform="translate(228 286)" fill="var(--anatomy-gray-800)" font-size="19" font-family="var(--anatomy-font)"><tspan x="0" y="0">Documents</tspan></text>
       <line id="Line_13" data-name="Line 13" x2="363.252" transform="translate(123.5 316.5)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
       <line id="Line_14" data-name="Line 14" x2="363.252" transform="translate(123.5 374.522)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
       <line id="Line_15" data-name="Line 15" x2="363.252" transform="translate(123.5 432.522)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
@@ -131,13 +131,13 @@
           </g>
         </g>
       </g>
-      <text id="_12_items" data-name="12 items" transform="translate(228 305)" fill="var(--anatomy-gray-800)" font-size="15" font-family="Adobe-Clean"><tspan x="0" y="0">12 items</tspan></text>
-      <text id="Onboarding" transform="translate(228 343)" fill="var(--anatomy-gray-800)" font-size="19" font-family="Adobe-Clean"><tspan x="0" y="0">Onboarding</tspan></text>
-      <text id="PDF" transform="translate(228 363)" fill="var(--anatomy-gray-800)" font-size="15" font-family="Adobe-Clean"><tspan x="0" y="0">PDF</tspan></text>
-      <text id="Budget" transform="translate(228 401)" fill="var(--anatomy-gray-800)" font-size="19" font-family="Adobe-Clean"><tspan x="0" y="0">Budget</tspan></text>
-      <text id="XLS" transform="translate(228 421)" fill="var(--anatomy-gray-800)" font-size="15" font-family="Adobe-Clean"><tspan x="0" y="0">XLS</tspan></text>
-      <text id="Sales_Pitch" data-name="Sales Pitch" transform="translate(228 459)" fill="var(--anatomy-gray-800)" font-size="19" font-family="Adobe-Clean"><tspan x="0" y="0">Sales Pitch</tspan></text>
-      <text id="PPT" transform="translate(228 479)" fill="var(--anatomy-gray-800)" font-size="15" font-family="Adobe-Clean"><tspan x="0" y="0">PPT</tspan></text>
+      <text id="_12_items" data-name="12 items" transform="translate(228 305)" fill="var(--anatomy-gray-800)" font-size="15" font-family="var(--anatomy-font)"><tspan x="0" y="0">12 items</tspan></text>
+      <text id="Onboarding" transform="translate(228 343)" fill="var(--anatomy-gray-800)" font-size="19" font-family="var(--anatomy-font)"><tspan x="0" y="0">Onboarding</tspan></text>
+      <text id="PDF" transform="translate(228 363)" fill="var(--anatomy-gray-800)" font-size="15" font-family="var(--anatomy-font)"><tspan x="0" y="0">PDF</tspan></text>
+      <text id="Budget" transform="translate(228 401)" fill="var(--anatomy-gray-800)" font-size="19" font-family="var(--anatomy-font)"><tspan x="0" y="0">Budget</tspan></text>
+      <text id="XLS" transform="translate(228 421)" fill="var(--anatomy-gray-800)" font-size="15" font-family="var(--anatomy-font)"><tspan x="0" y="0">XLS</tspan></text>
+      <text id="Sales_Pitch" data-name="Sales Pitch" transform="translate(228 459)" fill="var(--anatomy-gray-800)" font-size="19" font-family="var(--anatomy-font)"><tspan x="0" y="0">Sales Pitch</tspan></text>
+      <text id="PPT" transform="translate(228 479)" fill="var(--anatomy-gray-800)" font-size="15" font-family="var(--anatomy-font)"><tspan x="0" y="0">PPT</tspan></text>
     </g>
     <g id="folder_general_lightUI_32" transform="translate(177.5 261)">
       <path id="Path_35615" data-name="Path 35615" d="M3.508,34.984A2.979,2.979,0,0,1,.5,31.977V5.508A2.979,2.979,0,0,1,3.508,2.5H15.659a2.375,2.375,0,0,1,1.684.722l3.73,3.73a1.092,1.092,0,0,0,.842.361H34.789A2.979,2.979,0,0,1,37.8,10.32V31.977a2.979,2.979,0,0,1-3.008,3.008Z" transform="translate(0.102 0.102)" fill="var(--anatomy-gray-200)"/>

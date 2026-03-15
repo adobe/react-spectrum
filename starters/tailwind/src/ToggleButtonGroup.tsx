@@ -17,6 +17,6 @@ export function ToggleButtonGroup(props: ToggleButtonGroupProps) {
   return (
     <RACToggleButtonGroup
       {...props}
-      className={composeRenderProps(props.className, (className) => styles({orientation: props.orientation || 'horizontal', className}))} />
+      className={composeRenderProps(props.className, (className, renderProps) => styles({...renderProps, className}))} />
   );
 }

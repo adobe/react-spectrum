@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, waitFor, within} from '@testing-library/react';
+import {act} from './act';
 import {SelectTesterOpts, UserOpts} from './types';
+import {waitFor, within} from '@testing-library/dom';
 
 interface SelectOpenOpts {
   /**
@@ -184,6 +185,8 @@ export class SelectTester {
         throw new Error('Target option not found in the listbox.');
       }
 
+      let isMultiSelect = listbox.getAttribute('aria-multiselectable') === 'true';
+
       if (interactionType === 'keyboard') {
         if (option?.getAttribute('aria-disabled') === 'true') {
           return;
@@ -203,7 +206,7 @@ export class SelectTester {
         }
       }
 
-      if (option?.getAttribute('href') == null) {
+      if (!isMultiSelect && option?.getAttribute('href') == null) {
         await waitFor(() => {
           if (document.activeElement !== this._trigger) {
             throw new Error(`Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`);

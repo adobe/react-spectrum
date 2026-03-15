@@ -13,6 +13,7 @@
 import {Button, Content, Heading, InlineAlert, InlineAlertProps} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement, useState} from 'react';
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof InlineAlert> = {
   component: InlineAlert,
@@ -60,4 +61,31 @@ const DynamicExampleRender = (args: InlineAlertProps): ReactElement => {
 
 export const DynamicExample: StoryObj<typeof DynamicExampleRender> = {
   render: (args) => <DynamicExampleRender {...args} />
+};
+
+let NoHeadingExample = (args: InlineAlertProps & {showHeading: boolean, content: string}): ReactElement => {
+  let {showHeading = false, content} = args;
+  return (
+    <InlineAlert {...args}>
+      {showHeading && <Heading>Payment Information</Heading>}
+      <Content>
+        {content}
+      </Content>
+    </InlineAlert>
+  );
+};
+
+export const NoHeading: StoryObj<typeof NoHeadingExample> = {
+  render: (args) => (
+    <NoHeadingExample {...args} styles={style({width: 400})} />
+  ),
+  args: {
+    showHeading: false,
+    content: 'There was an error processing your payment. Please check that your card information is correct, then try again.'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
 };

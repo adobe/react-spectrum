@@ -3,10 +3,18 @@
 .react-aria-CheckboxGroup {
   display: flex;
   flex-direction: column;
-  gap: 0.499625rem;
-  color: var(--text-color);
+  
+  .checkbox-items {
+    display: flex;
+    gap: var(--spacing-3);
+    flex-direction: column;
+  }
 
-  [slot=description] {
-    font-size: 12px;
+  &[data-orientation=vertical] .checkbox-items {
+    flex-direction: column;
+  }
+
+  &[data-orientation=horizontal] .checkbox-items {
+    flex-direction: row;
   }
 }

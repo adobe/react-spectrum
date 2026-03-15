@@ -268,7 +268,7 @@ With this configured, all states for React Aria Components can be accessed with 
 
 ## Animation
 
-React Aria Components supports both [CSS transitions](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_transitions/Using_CSS_transitions) and [keyframe animations](https://developer.mozilla.org/en-US/docs/Web/CSS/@keyframes), and works with JavaScript animation libraries like [Framer Motion](https://www.framer.com/motion/).
+React Aria Components supports both [CSS transitions](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_transitions/Using_CSS_transitions) and [keyframe animations](https://developer.mozilla.org/en-US/docs/Web/CSS/@keyframes), and works with JavaScript animation libraries like [Motion](https://motion.dev/).
 
 ### CSS transitions
 
@@ -348,20 +348,20 @@ If you are using Tailwind CSS, we recommend using the [tailwindcss-animate](http
 </Popover>
 ```
 
-### Framer Motion
+### Motion
 
-[Framer Motion](https://www.framer.com/motion/) and other JavaScript animation libraries can also be used with React Aria Components. Use the [motion](https://www.framer.com/motion/component/#custom-components) function to create a wrapper component that adds support for Framer Motion's animation props.
+[Motion](https://motion.dev) and other JavaScript animation libraries can also be used with React Aria Components. Use the [motion](https://motion.dev/docs/react-motion-component#custom-components) function to create a wrapper component that adds support for Motion's animation props.
 
 ```tsx
 import {Modal, ModalOverlay} from 'react-aria-components';
-import {motion} from 'framer-motion';
+import {motion} from 'motion/react';
 
-// Create Framer Motion wrappers.
+// Create a Motion wrappers.
 const MotionModal = motion(Modal);
 const MotionModalOverlay = motion(ModalOverlay);
 ```
 
-This enables using props like [animate](https://www.framer.com/motion/animation/) with React Aria Components.
+This enables using props like [animate](https://motion.dev/docs/react-animation) with React Aria Components.
 
 ```tsx
 <MotionModal
@@ -371,7 +371,7 @@ This enables using props like [animate](https://www.framer.com/motion/animation/
 </MotionModal>
 ```
 
-Overlay exit animations can be implemented using the `isExiting` prop, which keeps the element in the DOM until an animation is complete. Framer Motion's [variants](https://www.framer.com/motion/animation/#variants) are a good way to setup named animation states.
+Overlay exit animations can be implemented using the `isExiting` prop, which keeps the element in the DOM until an animation is complete. Motion's [variants](https://motion.dev/docs/react-animation#variants) are a good way to setup named animation states.
 
 ```tsx
 type AnimationState = 'unmounted' | 'hidden' | 'visible';
@@ -418,13 +418,13 @@ function Example() {
 }
 ```
 
-**Note**: Framer Motion's `AnimatePresence` component may not work with React Aria overlays in all cases, so the example shown above is the recommended approach for exit animations.
+**Note**: Motion's `AnimatePresence` component may not work with React Aria overlays in all cases, so the example shown above is the recommended approach for exit animations.
 
-The [AnimatePresence](https://www.framer.com/motion/animate-presence/) component allows you to animate when items are added or removed in collection components. Use `array.map` to create children, and make sure each child has a unique `key` in addition to an `id` to ensure Framer Motion can track it.
+The [AnimatePresence](https://motion.dev/docs/react-animate-presence) component allows you to animate when items are added or removed in collection components. Use `array.map` to create children, and make sure each child has a unique `key` in addition to an `id` to ensure Motion can track it.
 
 ```tsx
 import {GridList, GridListItem} from 'react-aria-components';
-import {motion, AnimatePresence} from 'framer-motion';
+import {motion, AnimatePresence} from 'motion/react';
 
 const MotionItem = motion(GridListItem);
 

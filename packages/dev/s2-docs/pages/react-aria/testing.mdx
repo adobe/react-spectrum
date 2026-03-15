@@ -1,0 +1,226 @@
+import {VersionBadge} from '../../src/VersionBadge';
+import {InstallCommand} from '../../src/InstallCommand';
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import testUtilDocs from 'docs:@react-aria/test-utils';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+
+export const section = 'Guides';
+export const description = 'Writing tests for apps built with React Aria';
+
+# Testing
+
+<PageDescription>Learn how to test components and applications built with React Aria using test utilities to simulate common user interactions.</PageDescription>
+
+## Testing semantics
+
+The recommended way to query for React Aria Components and their internals is by semantics. React Aria
+Components implement [ARIA patterns](https://www.w3.org/TR/wai-aria-practices-1.2/). ARIA is a W3C standard
+that specifies the semantics for many UI components. Unlike the DOM structure of the component, these semantics are much less likely to change over time,
+making them ideal to query for.
+
+The main attribute to look for when querying is the [role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques).
+This attribute represents the type of element a DOM node represents, e.g. a button, list option, or tab.
+
+### React Testing Library
+
+[React Testing Library](https://testing-library.com/docs/react-testing-library/intro) is useful because it
+enforces that you write tests using semantics instead of implementation details. We use React Testing Library
+to test React Aria itself, and it's quite easy to [query](https://testing-library.com/docs/dom-testing-library/api-queries)
+elements by role, text, label, etc.
+
+```tsx
+import {render} from '@testing-library/react';
+
+let tree = render(<MyComponent />);
+let option = tree.getByRole('button');
+```
+
+## Test ids
+
+Querying by semantics covers many scenarios, but what if you have many buttons on a page or its text changes due to translations based on locale?
+In these cases, you may need a way to identify specific elements in tests, and that's where test ids come in.
+
+React Aria Components pass all [data attributes](https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes)
+through to their underlying DOM nodes, which allows you to use an attribute like `data-testid` to identify
+a particular instance of a component.
+
+```tsx
+import {render} from '@testing-library/react';
+import {Input, Label, TextField} from 'react-aria-components';
+
+function LoginForm() {
+  return (
+    <>
+      <TextField data-testid="username">
+        <Label>Username</Label>
+        <Input />
+      </TextField>
+      <TextField data-testid="password">
+        <Label>Username</Label>
+        <Input />
+      </TextField>
+    </>
+  );
+}
+
+let tree = render(<LoginForm />);
+let username = tree.getByTestId('username');
+let password = tree.getByTestId('password');
+```
+
+## Triggering events
+
+React Aria Components rely on many different browser events to support different devices and platforms, so it's important to simulate
+these correctly in your tests. For example, a click is really a `mousemove` and `mouseover` the target, followed
+by `mousedown`, `focus`, and `mouseup` events, and finally a `click` event.
+
+The best way to handle this is with the [user-event](https://github.com/testing-library/user-event) library.
+This lets you trigger high level interactions like a user would, and the library handles firing all of the individual
+events that make up that interaction.
+
+```tsx
+import {render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+let tree = render(<LoginForm />);
+
+// Click on the username field to focus it, and enter the value.
+userEvent.click(tree.getByLabelText('Username'));
+userEvent.type(document.activeElement, 'devon');
+
+// Tab to the password field, and enter the value.
+userEvent.tab();
+userEvent.type(document.activeElement, 'Pas$w0rd');
+
+// Tab to the submit button and click it.
+userEvent.tab();
+userEvent.click(document.activeElement);
+```
+
+## Test setup
+
+### Timers
+
+When using fake timers, you may need to advance timers after various interactions, e.g. after selection. In Jest, use `jest.runAllTimers()`. You should also run all timers after each test completes.
+See [Jest's timer docs](https://jestjs.io/docs/timer-mocks) or the equivalent docs of your test framework for more information.
+
+```tsx
+afterEach(() => {
+  act(() => jest.runAllTimers());
+});
+```
+
+Consider adding a `act(() => jest.runAllTimers());` after your simulated user interaction if you run into a test failure that looks like the following:
+
+```
+TestingLibraryElementError: Unable to find an accessible element with the role "listbox"
+```
+
+If you are using real timers instead, you can await a particular state of your app to be reached. If you are using React Testing Library, you can perform a `waitFor` query
+to wait for a dialog to appear:
+
+```tsx
+await waitFor(() => {
+  expect(getByRole('dialog')).toBeInTheDocument();
+});
+```
+
+### Simulating long press
+
+To simulate a long press event in components like Menu, mock PointerEvent globally and use the <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.triggerLongPress} /> function from `@react-aria/test-utils`.
+
+```tsx
+import {installPointerEvent, triggerLongPress} from '@react-aria/test-utils';
+installPointerEvent();
+
+// In test case
+let button = getByRole('button');
+triggerLongPress(button);
+```
+
+### Simulating move event
+
+Components like ColorArea, ColorSlider, ColorWheel, and Slider each feature a draggable handle that a user can interact with to change the component's value. To simulate a drag event, mock MouseEvent and use `fireEvent` from `@testing-library/react`
+to simulate these drag/move events in your tests. Additionally, the track dimensions for the draggable handle should be mocked so that the move operation calculations can be properly computed.
+
+```tsx
+import {fireEvent} from '@testing-library/react';
+import {installMouseEvent} from '@react-aria/test-utils';
+installMouseEvent();
+
+beforeAll(() => {
+  jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 10}));
+})
+
+// In test case
+let sliderThumb = getByRole('slider').parentElement;
+
+// With fireEvent, move thumb from 0 to 50
+fireEvent.mouseDown(thumb, {clientX: 0, pageX: 0});
+fireEvent.mouseMove(thumb, {pageX: 50});
+fireEvent.mouseUp(thumb, {pageX: 50});
+```
+
+## React Aria test utils
+<VersionBadge version="beta" />
+
+[@react-aria/test-utils](https://www.npmjs.com/package/@react-aria/test-utils) is a set of testing utilities that aims to make writing unit tests easier for consumers of React Aria
+or for users who have built their own components following the respective ARIA pattern specification.
+
+### Installation
+
+<InstallCommand pkg="@react-aria/test-utils" flags="--dev" />
+
+<InlineAlert variant="notice">
+  <Heading>Requirements</Heading>
+  <Content>Please note that this library uses [@testing-library/react@16](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
+</InlineAlert>
+
+
+### Setup
+
+Initialize a `User` object at the top of your test file, and use it to create an ARIA pattern tester in your test cases. The tester has methods that you can call within your test to query for specific subcomponents or simulate common interactions. See [below](#patterns) for what patterns are currently supported.
+
+```ts
+// YourTest.test.ts
+import {screen} from '@testing-library/react';
+import {User} from '@react-aria/test-utils';
+
+// Provide whatever method of advancing timers you use in your test, this example assumes Jest with fake timers.
+// 'interactionType' specifies what mode of interaction should be simulated by the tester
+// 'advanceTimer' is used by the tester to advance the timers in the tests for specific interactions (e.g. long press)
+let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
+// ...
+
+it('my test case', async function () {
+  // Render your test component/app
+  render();
+  // Initialize the table tester via providing the 'Table' pattern name and the root element of said table
+  let table = testUtilUser.createTester('Table', {root: screen.getByTestId('test_table')});
+
+  // ...
+});
+```
+
+### User API
+
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
+
+
+### Patterns
+
+Below is a list of the ARIA patterns testers currently supported by `createTester`. See the accompanying component testing docs pages for a sample of how to use
+the testers in your test suite.
+
+- [CheckboxGroup](./CheckboxGroup/testing)
+- [ComboBox](./ComboBox/testing)
+- [GridList](./GridList/testing)
+- [ListBox](./ListBox/testing)
+- [Menu](./Menu/testing)
+- [RadioGroup](./RadioGroup/testing)
+- [Select](./Select/testing)
+- [Table](./Table/testing)
+- [Tabs](./Tabs/testing)
+- [Tree](./Tree/testing)

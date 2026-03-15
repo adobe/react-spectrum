@@ -1,0 +1,76 @@
+[
+  {
+    "id": "favorites",
+    "name": "Favorites"
+  },
+  {
+    "id": "nature",
+    "name": "Nature",
+    "children": [
+      { "id": "nature-landscapes", "name": "Landscapes" },
+      { "id": "nature-mountains", "name": "Mountains" },
+      { "id": "nature-forests", "name": "Forests" },
+      { "id": "nature-beaches", "name": "Beaches" },
+      { "id": "nature-sunsets", "name": "Sunsets" },
+      { "id": "nature-weather", "name": "Weather & Skies" }
+    ]
+  },
+  {
+    "id": "people",
+    "name": "People",
+    "children": [
+      { "id": "people-portraits", "name": "Portraits" },
+      { "id": "people-family", "name": "Family" },
+      { "id": "people-friends", "name": "Friends" },
+      { "id": "people-candids", "name": "Candids" },
+      { "id": "people-events", "name": "Events & Celebrations" },
+      { "id": "people-street", "name": "Street Photography" }
+    ]
+  },
+  {
+    "id": "animals",
+    "name": "Animals",
+    "children": [
+      { "id": "animals-pets", "name": "Pets" },
+      { "id": "animals-wildlife", "name": "Wildlife" },
+      { "id": "animals-birds", "name": "Birds" },
+      { "id": "animals-aquatic", "name": "Aquatic Life" },
+      { "id": "animals-farm", "name": "Farm Animals" },
+      { "id": "animals-insects", "name": "Insects" }
+    ]
+  },
+  {
+    "id": "travel",
+    "name": "Travel",
+    "children": [
+      { "id": "travel-cities", "name": "Cities" },
+      { "id": "travel-landmarks", "name": "Landmarks" },
+      { "id": "travel-culture", "name": "Culture & Traditions" },
+      { "id": "travel-food", "name": "Food & Drinks" },
+      { "id": "travel-adventure", "name": "Adventure" }
+    ]
+  },
+  {
+    "id": "art",
+    "name": "Art & Creativity",
+    "children": [
+      { "id": "art-architecture", "name": "Architecture" },
+      { "id": "art-streetart", "name": "Street Art & Murals" },
+      { "id": "art-paintings", "name": "Paintings & Sculptures" },
+      { "id": "art-design", "name": "Design & Patterns" },
+      { "id": "art-blackwhite", "name": "Black & White" },
+      { "id": "art-macro", "name": "Macro Photography" }
+    ]
+  },
+  {
+    "id": "special",
+    "name": "Special Moments",
+    "children": [
+      { "id": "special-weddings", "name": "Weddings" },
+      { "id": "special-birthdays", "name": "Birthdays" },
+      { "id": "special-holidays", "name": "Holidays" },
+      { "id": "special-anniversaries", "name": "Anniversaries" },
+      { "id": "special-graduations", "name": "Graduations" }
+    ]
+  }
+]

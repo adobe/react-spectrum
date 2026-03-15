@@ -59,5 +59,5 @@ export function useLoadMoreSentinel(props: LoadMoreSentinelProps, ref: RefObject
         sentinelObserver.current.disconnect();
       }
     };
-  }, [collection, triggerLoadMore, ref, scrollOffset]);
+  }, [collection, ref, scrollOffset]);
 }

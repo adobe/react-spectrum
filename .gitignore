@@ -1,7 +1,6 @@
 .DS_Store
 .cache
 .idea
-.nyc_output
 .package-lock.json
 .parcel-cache
 build-storybook.log
@@ -9,6 +8,7 @@ coverage
 dist
 junit.xml
 .yarn/install-state.gz
+yarn-error.log
 node_modules
 npm-debug.log
 public
@@ -19,3 +19,5 @@ packages/dev/storybook-builder-parcel/iframe.html
 packages/dev/storybook-builder-parcel/preview.js
 starters/docs/registry
 starters/tailwind/registry
+starters/docs/yarn.lock
+starters/tailwind/yarn.lock

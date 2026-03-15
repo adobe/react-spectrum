@@ -4,39 +4,42 @@ import React from 'react';
 import {
   ComboBox as AriaComboBox,
   ComboBoxProps as AriaComboBoxProps,
+  ComboBoxValue,
   ListBox,
   ListBoxItemProps,
   ValidationResult
 } from 'react-aria-components';
-import { Button } from './Button';
 import { Description, FieldError, FieldGroup, Input, Label } from './Field';
 import { DropdownItem, DropdownSection, DropdownSectionProps } from './ListBox';
 import { Popover } from './Popover';
 import { composeTailwindRenderProps } from './utils';
+import { FieldButton } from './FieldButton';
 
-export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children'> {
+export interface ComboBoxProps<T extends object, M extends 'single' | 'multiple'> extends Omit<AriaComboBoxProps<T, M>, 'children'> {
   label?: string;
   description?: string | null;
   errorMessage?: string | ((validation: ValidationResult) => string);
+  placeholder?: string;
   children: React.ReactNode | ((item: T) => React.ReactNode);
 }
 
-export function ComboBox<T extends object>(
-  { label, description, errorMessage, children, items, ...props }: ComboBoxProps<T>
+export function ComboBox<T extends object, M extends 'single' | 'multiple' = 'single'>(
+  { label, description, errorMessage, children, items, ...props }: ComboBoxProps<T, M>
 ) {
   return (
-    <AriaComboBox {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1')}>
+    <AriaComboBox {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1 font-sans')}>
       <Label>{label}</Label>
       <FieldGroup>
-        <Input />
-        <Button variant="icon" className="w-6 mr-1 rounded-xs outline-offset-0 ">
+        <Input className="ps-3 pe-1" />
+        <FieldButton className="w-6 mr-1 outline-offset-0">
           <ChevronDown aria-hidden className="w-4 h-4" />
-        </Button>
+        </FieldButton>
       </FieldGroup>
+      {props.selectionMode === 'multiple' && <ComboBoxValue placeholder="No items selected" className="text-xs text-neutral-600 dark:text-neutral-300" />}
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
       <Popover className="w-(--trigger-width)">
-        <ListBox items={items} className="outline-0 p-1 max-h-[inherit] overflow-auto [clip-path:inset(0_0_0_0_round_.75rem)]">
+        <ListBox items={items} className="outline-0 p-1 box-border max-h-[inherit] overflow-auto [clip-path:inset(0_0_0_0_round_.75rem)]">
           {children}
         </ListBox>
       </Popover>

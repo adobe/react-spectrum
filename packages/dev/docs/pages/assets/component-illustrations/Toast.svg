@@ -8,7 +8,7 @@
   <rect width="12" height="12" transform="translate(184 18)" fill="none" />
   <rect width="1" height="32" transform="translate(165 8)" fill="red" opacity="0" />
   <rect width="1" height="32" rx="0.5" transform="translate(165 8)" fill="white" fill-opacity="0.25" />
-  <text transform="translate(42 14)" fill="white" font-size="14" font-family="Adobe-Clean">
+  <text transform="translate(42 14)" fill="white" font-size="14" font-family="var(--anatomy-font)">
     <tspan x="0" y="14">Analysis complete!</tspan>
   </text>
   <path

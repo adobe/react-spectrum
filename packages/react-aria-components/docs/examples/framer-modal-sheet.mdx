@@ -57,8 +57,9 @@ import {
   useMotionTemplate,
   useMotionValue,
   useTransform,
-  useMotionValueEvent
-} from 'framer-motion';
+  useMotionValueEvent,
+  cubicBezier
+} from 'motion/react';
 import {
   Dialog,
   ModalOverlay,
@@ -68,7 +69,7 @@ import {
 } from 'react-aria-components';
 import { useState } from 'react';
 
-// Wrap React Aria modal components so they support framer-motion values.
+// Wrap React Aria modal components so they support motion values.
 const MotionModal = motion(Modal);
 const MotionModalOverlay = motion(ModalOverlay);
 
@@ -81,7 +82,7 @@ const inertiaTransition = {
 
 const staticTransition = {
   duration: 0.5,
-  ease: [0.32, 0.72, 0, 1]
+  ease: cubicBezier(0.32, 0.72, 0, 1)
 };
 
 const SHEET_MARGIN = 34;

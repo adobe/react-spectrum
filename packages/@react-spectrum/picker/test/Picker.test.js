@@ -1508,8 +1508,7 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(items[1]);
 
       await selectTester.selectOption({option: 'Two'});
-      expect(onSelectionChange).toHaveBeenCalledTimes(1);
-      expect(onSelectionChange).toHaveBeenCalledWith('two');
+      expect(onSelectionChange).not.toHaveBeenCalled();
 
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Two');

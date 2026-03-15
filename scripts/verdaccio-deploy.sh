@@ -7,6 +7,8 @@ registry="http://localhost:$port"
 output="output.out"
 touch $output
 
+set -e
+
 echo "Build and deploy to verdaccio"
 
 # Wait for verdaccio to start

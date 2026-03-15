@@ -4,16 +4,12 @@ import * as t from '@babel/types';
 
 /**
  * Transforms SearchField:
- * - Remove placeholder (it has been removed due to accessibility issues).
  * - Comment out icon (it has not been implemented yet).
  * - Remove isQuiet (it is no longer supported in Spectrum 2).
  * - Change validationState="invalid" to isInvalid.
  * - Remove validationState="valid" (it is no longer supported in Spectrum 2).
  */
 export default function transformSearchField(path: NodePath<t.JSXElement>): void {
-  // Remove placeholder
-  removeProp(path, {propName: 'placeholder'});
-
   // Comment out icon
   commentOutProp(path, {propName: 'icon'});
 

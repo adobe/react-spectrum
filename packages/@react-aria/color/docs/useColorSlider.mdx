@@ -45,7 +45,7 @@ of a complete color picker rather than a single color channel slider. `useColorS
 touch-friendly color sliders that can be styled as needed.
 
 * Support for adjusting a single channel of RGBA, HSLA, and HSBA colors
-* Support for mouse, touch, and keyboard via the [useMove](useMove.html) hook
+* Support for mouse, touch, and keyboard via the [useMove](../useMove) hook
 * Multi-touch support for dragging multiple sliders at once
 * Pressing on the track moves the thumb to that position
 * Supports using the arrow keys, as well as page up/down, home, and end keys
@@ -93,7 +93,7 @@ to display the current channel value as text. This is formatted using the Color 
 formats the value according to the channel type and locale settings.
 
 The visually hidden `<input>` element inside the thumb is used to represent the color slider to assistive technology. 
-The thumb also uses the [useFocusRing](useFocusRing.html) hook to grow in size when it is keyboard focused (try tabbing to it).
+The thumb also uses the [useFocusRing](../useFocusRing) hook to grow in size when it is keyboard focused (try tabbing to it).
 
 ```tsx example export=true
 import {useColorSlider} from '@react-aria/color';

@@ -30,7 +30,7 @@ import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 category: Pickers
 keywords: [autocomplete, search, menu, command palette, aria]
 type: component
-preRelease: beta
+preRelease: rc
 ---
 
 # Autocomplete
@@ -217,7 +217,7 @@ import type {AutocompleteProps, Key} from 'react-aria-components';
 import {Menu, MenuItem} from 'react-aria-components';
 import {MySearchField} from './SearchField';
 
-interface MyAutocompleteProps<T extends object> extends Omit<AutocompleteProps, 'children'> {
+interface MyAutocompleteProps<T extends object> extends Omit<AutocompleteProps<T>, 'children'> {
   label?: string,
   placeholder?: string,
   items?: Iterable<T>;

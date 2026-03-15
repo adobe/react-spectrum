@@ -41,14 +41,13 @@ export interface DisclosureAria {
  * @param state - State for the disclosure, as returned by `useDisclosureState`.
  * @param ref - A ref for the disclosure panel.
  */
-export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState, ref: RefObject<Element | null>): DisclosureAria {
+export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState, ref: RefObject<HTMLElement | null>): DisclosureAria {
   let {
     isDisabled
   } = props;
   let triggerId = useId();
   let panelId = useId();
   let isSSR = useIsSSR();
-  let supportsBeforeMatch = !isSSR && 'onbeforematch' in document.body;
 
   let raf = useRef<number | null>(null);
 
@@ -66,22 +65,64 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
   }, [ref, state]);
 
   // @ts-ignore https://github.com/facebook/react/pull/24741
-  useEvent(ref, 'beforematch', supportsBeforeMatch ? handleBeforeMatch : null);
+  useEvent(ref, 'beforematch', handleBeforeMatch);
 
+  let isExpandedRef = useRef<boolean | null>(null);
   useLayoutEffect(() => {
     // Cancel any pending RAF to prevent stale updates
     if (raf.current) {
       cancelAnimationFrame(raf.current);
     }
-    // Until React supports hidden="until-found": https://github.com/facebook/react/pull/24741
-    if (supportsBeforeMatch && ref.current && !isDisabled) {
-      if (state.isExpanded) {
-        ref.current.removeAttribute('hidden');
-      } else {
-        ref.current.setAttribute('hidden', 'until-found');
+    if (ref.current && !isSSR) {
+      let panel = ref.current;
+
+      if (isExpandedRef.current == null || typeof panel.getAnimations !== 'function') {
+        // On initial render (and in tests), set attributes without animation.
+        if (state.isExpanded) {
+          panel.removeAttribute('hidden');
+          panel.style.setProperty('--disclosure-panel-width', 'auto');
+          panel.style.setProperty('--disclosure-panel-height', 'auto');
+        } else {
+          panel.setAttribute('hidden', 'until-found');
+          panel.style.setProperty('--disclosure-panel-width', '0px');
+          panel.style.setProperty('--disclosure-panel-height', '0px');
+        }
+      } else if (state.isExpanded !== isExpandedRef.current) {
+        if (state.isExpanded) {
+          panel.removeAttribute('hidden');
+
+          // Set the width and height as pixels so they can be animated.
+          panel.style.setProperty('--disclosure-panel-width', panel.scrollWidth + 'px');
+          panel.style.setProperty('--disclosure-panel-height', panel.scrollHeight + 'px');
+
+          Promise.all(panel.getAnimations().map(a => a.finished))
+            .then(() => {
+              // After the animations complete, switch back to auto so the content can resize.
+              panel.style.setProperty('--disclosure-panel-width', 'auto');
+              panel.style.setProperty('--disclosure-panel-height', 'auto');
+            })
+            .catch(() => {});
+        } else {
+          panel.style.setProperty('--disclosure-panel-width', panel.scrollWidth + 'px');
+          panel.style.setProperty('--disclosure-panel-height', panel.scrollHeight + 'px');
+
+          // Force style re-calculation to trigger animations.
+          window.getComputedStyle(panel).height;
+
+          // Animate to zero size.
+          panel.style.setProperty('--disclosure-panel-width', '0px');
+          panel.style.setProperty('--disclosure-panel-height', '0px');
+
+          // Wait for animations to apply the hidden attribute.
+          Promise.all(panel.getAnimations().map(a => a.finished))
+            .then(() => panel.setAttribute('hidden', 'until-found'))
+            .catch(() => {});
+        }
       }
+
+      isExpandedRef.current = state.isExpanded;
     }
-  }, [isDisabled, ref, state.isExpanded, supportsBeforeMatch]);
+  }, [isDisabled, ref, state.isExpanded, isSSR]);
 
   useEffect(() => {
     return () => {
@@ -114,7 +155,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
       role: 'group',
       'aria-labelledby': triggerId,
       'aria-hidden': !state.isExpanded,
-      hidden: supportsBeforeMatch ? true : !state.isExpanded
+      hidden: isSSR ? !state.isExpanded : undefined
     }
   };
 }

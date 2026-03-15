@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Button, Content, ContextualHelp, Flex, Heading} from '@adobe/react-spectrum';
 import {Meta, StoryFn} from '@storybook/react';
 import {Provider} from '@react-spectrum/provider';
@@ -29,33 +29,24 @@ export default {
     necessityIndicator: 'icon',
     labelPosition: 'top',
     labelAlign: 'start',
-    isInvalid: false,
-    orientation: 'vertical'
+    isInvalid: false
   },
   argTypes: {
     labelPosition: {
-      control: {
-        type: 'radio',
-        options: ['top', 'side']
-      }
+      control: 'radio',
+      options: ['top', 'side']
     },
     necessityIndicator: {
-      control: {
-        type: 'radio',
-        options: ['icon', 'label']
-      }
+      control: 'radio',
+      options: ['icon', 'label']
     },
     labelAlign: {
-      control: {
-        type: 'radio',
-        options: ['start', 'end']
-      }
+      control: 'radio',
+      options: ['start', 'end']
     },
     orientation: {
-      control: {
-        type: 'radio',
-        options: ['horizontal', 'vertical']
-      }
+      control: 'radio',
+      options: ['horizontal', 'vertical']
     }
   }
 } as Meta<typeof RadioGroup>;

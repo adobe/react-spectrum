@@ -10,24 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes, StaticColorDecorator} from './utils';
+import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
 import {Link} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
+
+const events = ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'];
 
 const meta: Meta<typeof Link> = {
   component: Link,
   parameters: {
     layout: 'centered'
   },
-  args: {
-    href: 'https://www.imdb.com/title/tt6348138/',
-    target: '_blank'
-  },
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
+    ...categorizeArgTypes('Events', events)
+  },
+  args: {
+    ...getActionArgs(events),
+    href: 'https://www.imdb.com/title/tt6348138/',
+    target: '_blank'
   },
   title: 'Link'
 };

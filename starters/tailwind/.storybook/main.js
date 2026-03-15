@@ -1,28 +1,10 @@
-const excludedProps = new Set([
-  'id',
-  'slot',
-  'onCopy',
-  'onCut',
-  'onPaste',
-  'onCompositionStart',
-  'onCompositionEnd',
-  'onCompositionUpdate',
-  'onSelect',
-  'onBeforeInput',
-  'onInput'
-]);
-
 /** @type { import('@storybook/react-vite').StorybookConfig } */
 const config = {
   stories: [
     "../stories/**/*.mdx",
     "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)",
   ],
-  addons: [
-    "@storybook/addon-essentials",
-    "@storybook/addon-links",
-    "@storybook/addon-interactions"
-  ],
+  addons: [],
   framework: {
     name: "@storybook/react-vite",
     options: {},
@@ -38,7 +20,7 @@ const config = {
         allowSyntheticDefaultImports: false,
         esModuleInterop: false,
       },
-      propFilter: (prop) => !prop.name.startsWith('aria-') && !excludedProps.has(prop.name),
+      propFilter: (prop) => !/^aria-|on[A-Z]/.test(prop.name)
     },
   }
 };

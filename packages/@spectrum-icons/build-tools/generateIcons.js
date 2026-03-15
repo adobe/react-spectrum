@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import fs from 'fs-extra';
+import fs from 'fs';
 import path from 'path';
 
 function writeToFile(filepath, data) {
   let buffer = Buffer.from(data);
-  fs.writeFile(filepath, buffer);
+  fs.writeFileSync(filepath, buffer);
 }
 
 /**
@@ -26,7 +26,7 @@ function writeToFile(filepath, data) {
  * @param template Template for output file, should take a name from the regex.
  */
 export function generateIcons(iconDir, outputDir, nameRegex, template) {
-  fs.ensureDirSync(outputDir);
+  fs.mkdirSync(outputDir, {recursive: true});
   fs.readdir(iconDir, (err, items) => {
     let ignoreList = ['index.js', 'util.js'];
     // get all icon files

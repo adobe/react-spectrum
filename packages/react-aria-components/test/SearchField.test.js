@@ -82,6 +82,12 @@ describe('SearchField', () => {
     expect(description).toHaveTextContent('You are looking for "test"');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} =  render(<TestSearchField render={props => <div {...props} data-custom="true" />} />);
+    let field = getByRole('searchbox').closest('.react-aria-SearchField');
+    expect(field).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should render data- attributes only on the outer element', () => {
     let {getAllByTestId} = render(
       <SearchField data-testid="search-field">
@@ -118,6 +124,9 @@ describe('SearchField', () => {
     expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
     expect(document.activeElement).toBe(input);
 
+    expect(input.parentElement).toHaveAttribute('data-invalid');
+    expect(input.parentElement).toHaveAttribute('data-required');
+
     await user.keyboard('Devon');
 
     expect(input).toHaveAttribute('aria-describedby');
@@ -125,6 +134,22 @@ describe('SearchField', () => {
 
     await user.tab();
     expect(input).not.toHaveAttribute('aria-describedby');
+  });
+
+  it('supports readonly', async () => {
+    let {getByRole} = render(
+      <form data-testid="form">
+        <SearchField isReadOnly>
+          <Label>Test</Label>
+          <Input />
+          <FieldError />
+        </SearchField>
+      </form>
+    );
+
+    let input = getByRole('searchbox');
+
+    expect(input.parentElement).toHaveAttribute('data-readonly');
   });
 
   it('should support form prop', () => {

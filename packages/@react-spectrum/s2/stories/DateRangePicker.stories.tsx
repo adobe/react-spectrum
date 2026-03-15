@@ -11,11 +11,12 @@
  */
 
 import {Button, Content, ContextualHelp, DateRangePicker, Footer, Form, Heading, Link, Text} from '../src';
-import {CalendarSwitcher, categorizeArgTypes} from './utils';
-import {fn} from '@storybook/test';
+import {CalendarSwitcher, categorizeArgTypes, getActionArgs} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import {parseDate, toZoned} from '@internationalized/date';
 import {style} from '../style' with {type: 'macro'};
+
+const events = ['onChange', 'onOpenChange'];
 
 const meta: Meta<typeof DateRangePicker> = {
   component: DateRangePicker,
@@ -24,7 +25,7 @@ const meta: Meta<typeof DateRangePicker> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onChange', 'onOpenChange']),
+    ...categorizeArgTypes('Events', events),
     label: {control: {type: 'text'}},
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
@@ -36,10 +37,7 @@ const meta: Meta<typeof DateRangePicker> = {
       options: [1, 2, 3]
     }
   },
-  args: {
-    onOpenChange: fn(),
-    onChange: fn()
-  },
+  args: {...getActionArgs(events)},
   title: 'DateRangePicker',
   decorators: [
     (Story) => (
