@@ -10015,13 +10015,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/github-slugger@npm:^1.0.0":
-  version: 1.3.0
-  resolution: "@types/github-slugger@npm:1.3.0"
-  checksum: 10c0/9360ab0bb4fa02d4dd1ebeb193debc71ae862dc104e7ae16259efc0e215cfe1219c1f9db85017d2da7123e191afe68c8825299f773441aff9f076e0cf442f9a5
-  languageName: node
-  linkType: hard
-
 "@types/glob@npm:^7.1.1":
   version: 7.1.3
   resolution: "@types/glob@npm:7.1.3"
@@ -14499,13 +14492,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"emoji-regex@npm:>=6.0.0 <=6.1.1":
-  version: 6.1.1
-  resolution: "emoji-regex@npm:6.1.1"
-  checksum: 10c0/e1df621b1fa7248975b56d1354a34d6ace26f4e2ee39b5f19b15fa005b60f774385dc6fe6987099b1280ab840f08bf38b2b0ad229a8148f8d74919f8a84c5061
-  languageName: node
-  linkType: hard
-
 "emoji-regex@npm:^7.0.1":
   version: 7.0.3
   resolution: "emoji-regex@npm:7.0.3"
@@ -16630,15 +16616,6 @@ __metadata:
   dependencies:
     ini: "npm:^1.3.2"
   checksum: 10c0/cfcb16344834113199f209f2758ced778dc30e075ddb49b5dde659b4dd2deadee824db0a1b77e1303cb594d9e8b2240da18c67705f657aa76affb444aa349005
-  languageName: node
-  linkType: hard
-
-"github-slugger@npm:^1.0.0":
-  version: 1.2.1
-  resolution: "github-slugger@npm:1.2.1"
-  dependencies:
-    emoji-regex: "npm:>=6.0.0 <=6.1.1"
-  checksum: 10c0/188988b51c33f91c18761c45f27471d6f74769ef891a5c1fbbb552264f8afa6cf7ddf1749dbb4f27f56f0c37c97cc13fab7e0945c97fbfce1a1ea31570e3faa9
   languageName: node
   linkType: hard
 
@@ -20772,19 +20749,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mdast-util-toc@npm:^6.1.0":
-  version: 6.1.0
-  resolution: "mdast-util-toc@npm:6.1.0"
+"mdast-util-toc@npm:^6.1.1":
+  version: 6.1.1
+  resolution: "mdast-util-toc@npm:6.1.1"
   dependencies:
     "@types/extend": "npm:^3.0.0"
-    "@types/github-slugger": "npm:^1.0.0"
     "@types/mdast": "npm:^3.0.0"
     extend: "npm:^3.0.0"
-    github-slugger: "npm:^1.0.0"
+    github-slugger: "npm:^2.0.0"
     mdast-util-to-string: "npm:^3.1.0"
     unist-util-is: "npm:^5.0.0"
-    unist-util-visit: "npm:^3.0.0"
-  checksum: 10c0/90a788e62d47f9e29c1861008f97379a2864bdc43b6aafdf9dd6a735af92954df4e2564be4416ca0f3f36780590d72058ade857fe9dc780baad3f344a66943a6
+    unist-util-visit: "npm:^4.0.0"
+  checksum: 10c0/cb2855e2887625e0a4da11ba71fc9f80560498c4f073ec5edc16123766a7c418a42d913a64e8b7588b1b3833fa93ea5c8e2f78d24f2fd1df8fe57d1ae3b00b18
   languageName: node
   linkType: hard
 
@@ -23052,7 +23028,7 @@ __metadata:
     "@parcel/plugin": "npm:^2.16.3"
     dprint-node: "npm:^1.0.7"
     js-yaml: "npm:^3.13.1"
-    mdast-util-toc: "npm:^6.1.0"
+    mdast-util-toc: "npm:^6.1.1"
     rehype-slug: "npm:^6.0.0"
     remark-frontmatter: "npm:^5.0.0"
     tree-sitter-highlight: "npm:^1.0.1"
@@ -28017,16 +27993,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unist-util-visit-parents@npm:^4.0.0":
-  version: 4.1.1
-  resolution: "unist-util-visit-parents@npm:4.1.1"
-  dependencies:
-    "@types/unist": "npm:^2.0.0"
-    unist-util-is: "npm:^5.0.0"
-  checksum: 10c0/f84b544a111af5a17f2b80c462da9f7fdcb46a69f85ab317d2d9ddca766c00e2ceea6c76c0960e58ef4607aad89661c99eccf290973b453e15dd1621c57079d4
-  languageName: node
-  linkType: hard
-
 "unist-util-visit-parents@npm:^5.0.0":
   version: 5.1.0
   resolution: "unist-util-visit-parents@npm:5.1.0"
@@ -28044,17 +28010,6 @@ __metadata:
     "@types/unist": "npm:^3.0.0"
     unist-util-is: "npm:^6.0.0"
   checksum: 10c0/51b1a5b0aa23c97d3e03e7288f0cdf136974df2217d0999d3de573c05001ef04cccd246f51d2ebdfb9e8b0ed2704451ad90ba85ae3f3177cf9772cef67f56206
-  languageName: node
-  linkType: hard
-
-"unist-util-visit@npm:^3.0.0":
-  version: 3.1.0
-  resolution: "unist-util-visit@npm:3.1.0"
-  dependencies:
-    "@types/unist": "npm:^2.0.0"
-    unist-util-is: "npm:^5.0.0"
-    unist-util-visit-parents: "npm:^4.0.0"
-  checksum: 10c0/9b92ea4e6debadbb77f2c7a0ab8c8b7c63781b2f2050563c971687df368f6f6fe932d864442347a685f0dc56b570a55e5d7ffeb87a452489100640cf280dc8da
   languageName: node
   linkType: hard
 

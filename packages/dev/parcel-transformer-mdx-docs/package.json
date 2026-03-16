@@ -13,7 +13,7 @@
     "@parcel/plugin": "^2.16.3",
     "dprint-node": "^1.0.7",
     "js-yaml": "^3.13.1",
-    "mdast-util-toc": "^6.1.0",
+    "mdast-util-toc": "^6.1.1",
     "rehype-slug": "^6.0.0",
     "remark-frontmatter": "^5.0.0",
     "tree-sitter-highlight": "^1.0.1",
