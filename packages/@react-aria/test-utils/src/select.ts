@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, waitFor, within} from '@testing-library/react';
+import {act} from './act';
 import {SelectTesterOpts, UserOpts} from './types';
+import {waitFor, within} from '@testing-library/dom';
 
 interface SelectOpenOpts {
   /**

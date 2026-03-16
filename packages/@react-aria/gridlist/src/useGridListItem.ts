@@ -100,12 +100,16 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
     let isExpanded = hasChildRows ? state.expandedKeys.has(node.key) : undefined;
     let setSize = 1;
+    let index = node.index;
     if (node.level >= 0 && node?.parentKey != null) {
       let parent = state.collection.getItem(node.parentKey);
       if (parent) {
         // siblings must exist because our original node exists
         let siblings = getDirectChildren(parent, state.collection);
         setSize = [...siblings].filter(row => row.type === 'item').length;
+        if (index > 0 && siblings[0].type !== 'item') {
+          index -= 1; // subtract one for the parent item's content node
+        }
       }
     } else {
       setSize = [...state.collection].filter(row => row.level === 0 && row.type === 'item').length;
@@ -114,7 +118,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     treeGridRowProps = {
       'aria-expanded': isExpanded,
       'aria-level': node.level + 1,
-      'aria-posinset': node?.index + 1,
+      'aria-posinset': index + 1,
       'aria-setsize': setSize
     };
   }
@@ -144,10 +148,21 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         state.toggleKey(node.key);
         e.stopPropagation();
         return;
-      } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys.has(node.key)) {
-        state.toggleKey(node.key);
-        e.stopPropagation();
-        return;
+      } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === node.key) {
+        // If item is collapsible, collapse it; else move to parent
+        if (hasChildRows && state.expandedKeys.has(node.key)) {
+          state.toggleKey(node.key);
+          e.stopPropagation();
+          return;
+        } else if (
+          !state.expandedKeys.has(node.key) &&
+          node.parentKey
+        ) {
+          // Item is a leaf or already collapsed, move focus to parent
+          state.selectionManager.setFocusedKey(node.parentKey);
+          e.stopPropagation();
+          return;
+        }
       }
     }
 
