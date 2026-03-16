@@ -24,7 +24,7 @@ import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps {
+export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps {
   /**
    * The Radios contained within the RadioGroup.
    */

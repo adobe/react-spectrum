@@ -40,22 +40,26 @@ describe('style-macro', () => {
 "@layer _.a, _.b, _.c;
 
 @layer _.b {
-  .Jbs1:first-child {
+  .Jbs12:first-child {
     margin-top: 0.25rem;
   }
 }
 
 @layer _.c.p {
   @media (min-width: 64rem) {
-    .Jbpv1:first-child {
+    .Jbpv12:first-child {
       margin-top: 0.5rem;
     }
   }
 }
 
+.-macro-static-a9a4ic {
+        --macro-data-a9a4ic: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
+      }
+
 "
 `);
-    expect(js).toMatchInlineSnapshot('" Jbs1 Jbpv1"');
+    expect(js).toMatchInlineSnapshot('" Jbs12 Jbpv12 -macro-static-a9a4ic"');
   });
 
   it('should support self references', () => {
@@ -69,55 +73,59 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  ._kc1 {
+  ._kc12 {
     border-top-width: 2px;
   }
 
 
-  .hc1 {
+  .hc12 {
     border-bottom-width: 2px;
   }
 
 
-  .mCPFGYc1 {
+  .mCPFGYc12 {
     border-inline-start-width: var(--m);
   }
 
 
-  .lc1 {
+  .lc12 {
     border-inline-end-width: 2px;
   }
 
 
-  .SMBFGYc1 {
+  .SMBFGYc12 {
     padding-inline-start: var(--S);
   }
 
 
-  .Rv1 {
+  .Rv12 {
     padding-inline-end: calc(var(--F, var(--M)) * 3 / 8);
   }
 
 
-  .ZjUQgKd1 {
+  .ZjUQgKd12 {
     width: calc(200px - var(--m) - var(--S));
   }
 
 
-  .-m_-mc1 {
+  .-m_-mc12 {
     --m: 2px;
   }
 
 
-  .-S_-Sv1 {
+  .-S_-Sv12 {
     --S: calc(var(--F, var(--M)) * 3 / 8);
   }
 }
 
+.-macro-static-K2u2od {
+        --macro-data-K2u2od: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
+      }
+
 "
 `);
 
-    expect(js).toMatchInlineSnapshot('" _kc1 hc1 mCPFGYc1 lc1 SMBFGYc1 Rv1 ZjUQgKd1 -m_-mc1 -S_-Sv1"');
+    expect(js).toMatchInlineSnapshot('" _kc12 hc12 mCPFGYc12 lc12 SMBFGYc12 Rv12 ZjUQgKd12 -m_-mc12 -S_-Sv12 -macro-static-K2u2od"');
   });
 
   it('should support allowed overrides', () => {
@@ -134,9 +142,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gw1 pg1"');
-    expect(overrides).toMatchInlineSnapshot('" g8tmWqb1 pHJ3AUd1"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb1 pg1"');
+    expect(js()).toMatchInlineSnapshot('"  gw12 pg12 -macro-dynamic-4ucsx6"');
+    expect(overrides).toMatchInlineSnapshot('" g8tmWqb12 pHJ3AUd12 -macro-static-kcgSLc"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb12 pg12 -macro-dynamic-tuhvna"');
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -151,9 +159,9 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B1 __Ya1"');
-    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D1 __Ya1"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D1 __Ya1"');
+    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B12 __Ya12 -macro-dynamic-czb8u3"');
+    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D12 __Ya12 -macro-static-3ZdUX"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D12 __Ya12 -macro-dynamic-1dkyr5p"');
   });
 
   it('should support allowed overrides for shorthands', () => {
@@ -168,9 +176,9 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  Tk1 Qk1 Sk1 Rk1"');
-    expect(overrides).toMatchInlineSnapshot('" Tm1 Qm1 Sm1 Rm1"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm1 Qm1 Sm1 Rm1"');
+    expect(js()).toMatchInlineSnapshot('"  Tk12 Qk12 Sk12 Rk12 -macro-dynamic-wnhub5"');
+    expect(overrides).toMatchInlineSnapshot('" Tm12 Qm12 Sm12 Rm12 -macro-static-VnXYtc"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm12 Qm12 Sm12 Rm12 -macro-dynamic-1jhfsp"');
   });
 
   it('should support allowed overrides for fontSize', () => {
@@ -185,9 +193,9 @@ describe('style-macro', () => {
       fontSize: 'ui-xs'
     });
 
-    expect(js()).toMatchInlineSnapshot('"  -_6BNtrc-woabcc1 vx1"');
-    expect(overrides).toMatchInlineSnapshot('" -_6BNtrc-a1 vx1"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_6BNtrc-a1 vx1"');
+    expect(js()).toMatchInlineSnapshot('"  -_6BNtrc-woabcc12 vx12 -macro-dynamic-y6spui"');
+    expect(overrides).toMatchInlineSnapshot('" -_6BNtrc-a12 vx12 -macro-static-uYVOMc"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_6BNtrc-a12 vx12 -macro-dynamic-ls4ioc"');
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -202,9 +210,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gE1"');
-    expect(overrides).toMatchInlineSnapshot('" Nk1"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk1 gE1"');
+    expect(js()).toMatchInlineSnapshot('"  gE12 -macro-dynamic-1fo9npa"');
+    expect(overrides).toMatchInlineSnapshot('" Nk12 -macro-static-zdsIUb"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk12 gE12 -macro-dynamic-384ibe"');
   });
 
   it('should support runtime conditions', () => {
@@ -225,32 +233,32 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gH1 {
+  .gH12 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF1 {
+  .gF12 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .gE1 {
+  .gE12 {
     background-color: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 
 
-  .pt1 {
+  .pt12 {
     color: light-dark(rgb(41, 41, 41), rgb(219, 219, 219));
   }
 
 
-  .po1 {
+  .po12 {
     color: light-dark(rgb(19, 19, 19), rgb(242, 242, 242));
   }
 
 
-  .pm1 {
+  .pm12 {
     color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
   }
 }
@@ -258,9 +266,9 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  gH1 pt1"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF1 po1"');
-    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE1 pm1"');
+    expect(js({})).toMatchInlineSnapshot('"  gH12 pt12 -macro-dynamic-1y322w8"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF12 po12 -macro-dynamic-194mta9"');
+    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE12 pm12 -macro-dynamic-b757r2"');
   });
 
   it('should support nested runtime conditions', () => {
@@ -279,32 +287,32 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gH1 {
+  .gH12 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF1 {
+  .gF12 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .g_h1 {
+  .g_h12 {
     background-color: light-dark(rgb(75, 117, 255), rgb(64, 105, 253));
   }
 
 
-  .g31 {
+  .g312 {
     background-color: light-dark(rgb(59, 99, 251), rgb(86, 129, 255));
   }
 }
 
 "
 `);
-    expect(js({})).toMatchInlineSnapshot('"  gH1"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF1"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h1"');
-    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot('"  g31"');
+    expect(js({})).toMatchInlineSnapshot('"  gH12 -macro-dynamic-1t0tza9"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF12 -macro-dynamic-8rpq8v"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h12 -macro-dynamic-r8ty3k"');
+    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot('"  g312 -macro-dynamic-16lzs6k"');
   });
 
   it('should support variant runtime conditions', () => {
@@ -318,9 +326,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY1"');
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe1"');
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw1"');
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY12 -macro-dynamic-19yjqaa"');
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe12 -macro-dynamic-19kakuk"');
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw12 -macro-dynamic-11dyu5s"');
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -338,14 +346,14 @@ describe('style-macro', () => {
 
 @layer _.b.l {
   @media (forced-colors: active) {
-    .plb1 {
+    .plb12 {
       color: ButtonText;
     }
   }
 
 
   @media (forced-colors: active) {
-    .ple1 {
+    .ple12 {
       color: HighlightText;
     }
   }
@@ -354,8 +362,25 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  plb1"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple1"');
+    expect(js({})).toMatchInlineSnapshot('"  plb12 -macro-dynamic-1owjb9s"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple12 -macro-dynamic-37zkvn"');
+  });
+
+  it('inherits parent default when nested branch has no default key', () => {
+    let {css, js} = testStyle({
+      color: {
+        forcedColors: {
+          default: 'ButtonText',
+          variant: {
+            highlight: {isSelected: 'HighlightText'}
+          }
+        }
+      }
+    });
+    // forcedColors.default should apply when variant=highlight but !isSelected
+    expect(css).toContain('ButtonText');
+    expect(js({variant: 'highlight'})).toMatchInlineSnapshot('"  plb12 -macro-dynamic-1owjb9s"');
+    expect(js({variant: 'highlight', isSelected: true})).toMatchInlineSnapshot('"  ple12 -macro-dynamic-37zkvn"');
   });
 
   it('should expand shorthand properties to longhands', () => {
@@ -363,30 +388,34 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot('" Th1 Qh1 Sh1 Rh1"');
+    expect(js).toMatchInlineSnapshot('" Th12 Qh12 Sh12 Rh12 -macro-static-1ohgA"');
     expect(css).toMatchInlineSnapshot(`
 "@layer _.a;
 
 @layer _.a {
-  .Th1 {
+  .Th12 {
     padding-top: 24px;
   }
 
 
-  .Qh1 {
+  .Qh12 {
     padding-bottom: 24px;
   }
 
 
-  .Sh1 {
+  .Sh12 {
     padding-inline-start: 24px;
   }
 
 
-  .Rh1 {
+  .Rh12 {
     padding-inline-end: 24px;
   }
 }
+
+.-macro-static-1ohgA {
+        --macro-data-1ohgA: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
+      }
 
 "
 `);
@@ -401,10 +430,14 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gpQzfVb1 {
+  .gpQzfVb12 {
     background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
   }
 }
+
+.-macro-static-Ukgglb {
+        --macro-data-Ukgglb: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
+      }
 
 "
 `);
@@ -422,10 +455,14 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .-FUeYm-gE1 {
+  .-FUeYm-gE12 {
     --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 }
+
+.-macro-static-mL70N {
+        --macro-data-mL70N: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
+      }
 
 "
 `);

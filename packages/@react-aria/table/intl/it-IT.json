@@ -7,5 +7,7 @@
   "resizerDescription": "Premi Invio per iniziare a ridimensionare",
   "select": "Seleziona",
   "selectAll": "Seleziona tutto",
-  "sortable": "colonna ordinabile"
+  "sortable": "colonna ordinabile",
+  "collapse": "Comprimi",
+  "expand": "Espandi"
 }

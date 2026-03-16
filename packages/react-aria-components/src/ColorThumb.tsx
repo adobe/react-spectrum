@@ -1,4 +1,4 @@
-import {ClassNameOrFunction, RenderProps, useRenderProps} from './utils';
+import {ClassNameOrFunction, dom, RenderProps, useRenderProps} from './utils';
 import {Color} from 'react-stately';
 import {filterDOMProps} from '@react-aria/utils';
 import {GlobalDOMAttributes, HoverEvents, RefObject} from '@react-types/shared';
@@ -91,7 +91,7 @@ export const ColorThumb = forwardRef(function ColorThumb(props: ColorThumbProps,
   delete DOMProps.id;
 
   return (
-    <div
+    <dom.div
       {...mergeProps(thumbProps, hoverProps, DOMProps)}
       {...renderProps}
       ref={ref}
@@ -103,6 +103,6 @@ export const ColorThumb = forwardRef(function ColorThumb(props: ColorThumbProps,
       <input ref={inputXRef} {...xInputProps} {...focusProps} />
       {yInputProps && <input ref={inputYRef} {...yInputProps} {...focusProps} />}
       {renderProps.children}
-    </div>
+    </dom.div>
   );
 });

@@ -12,7 +12,7 @@
 
 import {AriaTextFieldProps} from '@react-types/textfield';
 import {DOMAttributes, ValidationResult} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
+import {filterDOMProps, getEventTarget, mergeProps, useFormReset} from '@react-aria/utils';
 import React, {
   ChangeEvent,
   HTMLAttributes,
@@ -163,7 +163,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         'aria-haspopup': props['aria-haspopup'],
         'aria-controls': props['aria-controls'],
         value,
-        onChange: (e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value),
+        onChange: (e: ChangeEvent<HTMLInputElement>) => setValue(getEventTarget(e).value),
         autoComplete: props.autoComplete,
         autoCapitalize: props.autoCapitalize,
         maxLength: props.maxLength,

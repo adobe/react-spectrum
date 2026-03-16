@@ -34,7 +34,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface RangeCalendarProps<T extends DateValue>
-  extends Omit<AriaRangeCalendarProps<T>, 'visibleDuration' | 'style' | 'className' | 'children' | 'styles' | keyof GlobalDOMAttributes>,
+  extends Omit<AriaRangeCalendarProps<T>, 'visibleDuration' | 'style' | 'className' | 'render' | 'children' | 'styles' | keyof GlobalDOMAttributes>,
   StyleProps {
   /**
    * The error message to display when the calendar is invalid.

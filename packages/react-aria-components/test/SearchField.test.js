@@ -82,6 +82,12 @@ describe('SearchField', () => {
     expect(description).toHaveTextContent('You are looking for "test"');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} =  render(<TestSearchField render={props => <div {...props} data-custom="true" />} />);
+    let field = getByRole('searchbox').closest('.react-aria-SearchField');
+    expect(field).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should render data- attributes only on the outer element', () => {
     let {getAllByTestId} = render(
       <SearchField data-testid="search-field">

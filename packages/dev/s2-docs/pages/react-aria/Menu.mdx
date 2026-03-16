@@ -285,7 +285,7 @@ import {Button} from 'vanilla-starter/Button';
 
 ### Links
 
-Use the `href` prop on a `<MenuItem>` to create a link. See the [framework setup guide](frameworks) to learn how to integrate with your framework.
+Use the `href` prop on a `<MenuItem>` to create a link.
 
 ```tsx render hideImports
 "use client";
@@ -303,6 +303,18 @@ import {Button} from 'vanilla-starter/Button';
     <MenuItem href="https://microsoft.com/" target="_blank">Microsoft</MenuItem>
   </Menu>
 </MenuTrigger>
+```
+
+By default, links are rendered as an `<a>` element. Use the `render` prop to integrate your framework's link component. An `href` should still be passed to `MenuItem` so React Aria knows it is a link.
+
+```tsx
+<MenuItem
+  {...props}
+  render={domProps =>
+    'href' in domProps
+      ? <RouterLink {...domProps} />
+      : <div {...domProps} />
+  } />
 ```
 
 ### Autocomplete

@@ -138,7 +138,7 @@ export const WithActionButton: Story = {
               <AccordionItemTitle>
                 Files
               </AccordionItemTitle>
-              <ActionButton><NewIcon aria-label="new icon" /></ActionButton>
+              <ActionButton aria-label="Add new file"><NewIcon /></ActionButton>
             </AccordionItemHeader>
             <AccordionItemPanel>
               Files content
@@ -149,7 +149,7 @@ export const WithActionButton: Story = {
               <AccordionItemTitle>
                 People
               </AccordionItemTitle>
-              <ActionButton><NewIcon aria-label="new icon" /></ActionButton>
+              <ActionButton aria-label="Add new person"><NewIcon /></ActionButton>
             </AccordionItemHeader>
             <AccordionItemPanel>
               <TextField label="Name" styles={style({maxWidth: 176})} placeholder="Enter your name" />

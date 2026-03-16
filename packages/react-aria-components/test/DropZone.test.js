@@ -69,6 +69,18 @@ describe('DropZone', () => {
     expect(dropzone).toHaveAttribute('slot', 'test');
   });
 
+  it('should support custom render function', () => {
+    let {getByTestId} = render(
+      <DropZone data-testid="foo" render={props => <div {...props} data-custom="true" />}>
+        <Text slot="label">
+          Test
+        </Text>
+      </DropZone>
+    );
+    let dropzone = getByTestId('foo');
+    expect(dropzone).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support hover', async () => {
     let hoverStartSpy = jest.fn();
     let hoverChangeSpy = jest.fn();

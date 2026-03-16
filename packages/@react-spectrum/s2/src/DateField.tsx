@@ -30,7 +30,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface DateFieldProps<T extends DateValue> extends
-  Omit<AriaDateFieldProps<T>, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
+  Omit<AriaDateFieldProps<T>, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps {

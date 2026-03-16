@@ -105,7 +105,8 @@ export interface VisualExampleProps {
   align?: 'center' | 'start' | 'end',
   acceptOrientation?: boolean,
   propsObject?: string,
-  showCoachMark?: boolean
+  showCoachMark?: boolean,
+  hideShadcn?: boolean
 }
 
 export interface PropControl extends Omit<TProperty, 'description'> {
@@ -119,7 +120,7 @@ export interface PropControl extends Omit<TProperty, 'description'> {
 /**
  * Displays a component example with controls for changing the props.
  */
-export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, downloadFiles, code, wide, slots, align, acceptOrientation, type, propsObject, showCoachMark}: VisualExampleProps) {
+export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, downloadFiles, code, wide, slots, align, acceptOrientation, type, propsObject, showCoachMark, hideShadcn}: VisualExampleProps) {
   let componentProps = docs.type === 'interface' ? docs : docs.props;
   if (componentProps?.type !== 'interface') {
     return null;
@@ -188,7 +189,7 @@ export function VisualExample({component, docs, links, importSource, props, init
   return (
     <VisualExampleClient component={component} name={docs.name} importSource={importSource} controls={controls} initialProps={initialProps} propsObject={propsObject}>
       <FileProvider value={downloadFiles}>
-        <ShadcnProvider value={!type || type === 's2' || docs.type !== 'component' ? null : {type, component: docs.name}}>
+        <ShadcnProvider value={!type || type === 's2' || docs.type !== 'component' || hideShadcn ? null : {type, component: docs.name}}>
           <div role="group" aria-label="Example" className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
             <Output align={align} acceptOrientation={acceptOrientation} />
             {props.length > 0 && <div role="group" aria-label="Controls" className={controlsStyle}>

@@ -24,7 +24,7 @@ import {StyleProps} from './style-utils';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ColorWheelProps extends Omit<AriaColorWheelProps, 'children' | 'className' | 'style' | 'outerRadius' | 'innerRadius' | keyof GlobalDOMAttributes>, StyleProps {
+export interface ColorWheelProps extends Omit<AriaColorWheelProps, 'children' | 'className' | 'style' | 'render' | 'outerRadius' | 'innerRadius' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * @default 192
    */
@@ -51,7 +51,7 @@ export const ColorWheel = forwardRef(function ColorWheel(props: ColorWheelProps,
       outerRadius={outerRadius}
       innerRadius={innerRadius}
       ref={containerRef}
-      style={UNSAFE_style}
+      style={{...UNSAFE_style, width: outerRadius * 2, height: outerRadius * 2}}
       className={UNSAFE_className + styles}>
       {({isDisabled, state}) => (<>
         <ColorWheelTrack

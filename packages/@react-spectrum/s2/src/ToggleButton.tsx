@@ -26,7 +26,7 @@ import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ToggleButtonProps extends Omit<RACToggleButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ActionButtonStyleProps {
+export interface ToggleButtonProps extends Omit<RACToggleButtonProps, 'className' | 'style' | 'render' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ActionButtonStyleProps {
   /** The content to display in the button. */
   children: ReactNode,
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */

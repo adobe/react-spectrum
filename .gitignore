@@ -8,6 +8,7 @@ coverage
 dist
 junit.xml
 .yarn/install-state.gz
+yarn-error.log
 node_modules
 npm-debug.log
 public

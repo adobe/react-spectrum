@@ -122,6 +122,34 @@ describe('Menu', () => {
     }
   });
 
+  it('should support custom render function', () => {
+    let {getAllByRole, getByRole} = renderMenu(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let menu = getByRole('menu');
+    expect(menu).toHaveAttribute('data-custom', 'true');
+
+    for (let menuitem of getAllByRole('menuitem')) {
+      expect(menuitem).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
+  it('should support custom render function as a link', () => {
+    let {getAllByRole, getByRole} = renderMenu(
+      {render: props => <div {...props} data-custom="true" />},
+      // eslint-disable-next-line jsx-a11y/anchor-has-content
+      {href: '#foo', render: props => <a {...props} data-custom="true" />}
+    );
+    let menu = getByRole('menu');
+    expect(menu).toHaveAttribute('data-custom', 'true');
+
+    for (let menuitem of getAllByRole('menuitem')) {
+      expect(menuitem).toHaveAttribute('href');
+      expect(menuitem).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
   it('should support the slot prop', () => {
     let {getByRole} = render(
       <MenuContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
@@ -334,13 +362,16 @@ describe('Menu', () => {
   });
 
   it('should support section-level selection', async () => {
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+    let onBlur = jest.fn();
     function Example() {
       let [veggies, setVeggies] = useState<Selection>(new Set(['lettuce']));
       let [protein, setProtein] = useState<Selection>(new Set(['ham']));
       return (
         <Menu aria-label="Sandwich contents" selectionMode="multiple">
           <MenuSection selectionMode="multiple" selectedKeys={veggies} onSelectionChange={setVeggies}>
-            <MenuItem id="lettuce">Lettuce</MenuItem>
+            <MenuItem onFocus={onFocus} onFocusChange={onFocusChange} onBlur={onBlur} id="lettuce">Lettuce</MenuItem>
             <MenuItem id="tomato">Tomato</MenuItem>
             <MenuItem id="onion">Onion</MenuItem>
           </MenuSection>
@@ -378,12 +409,28 @@ describe('Menu', () => {
     expect(radios[1]).toHaveAttribute('aria-checked', 'true');
     expect(radios[2]).toHaveAttribute('aria-checked', 'false');
 
-    act(() => checkboxes[0].focus());
+    onFocus.mockClear();
+    onFocusChange.mockClear();
+    onBlur.mockClear();
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    expect(document.activeElement).toBe(checkboxes[0]);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onBlur).toHaveBeenCalledTimes(0);
+    onFocus.mockClear();
+    onFocusChange.mockClear();
+    onBlur.mockClear();
     let sequence = checkboxes.slice(1).concat(radios);
     for (let item of sequence) {
       await user.keyboard('{ArrowDown}');
       expect(document.activeElement).toBe(item);
     }
+    expect(onFocus).toHaveBeenCalledTimes(0);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onBlur).toHaveBeenCalledTimes(1);
   });
 
   it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
@@ -508,6 +555,119 @@ describe('Menu', () => {
 
     let menuitem = getByRole('menuitem');
     expect(menuitem).toHaveTextContent('No results');
+  });
+
+  it('should not close the menu when shouldCloseOnSelect is false', async () => {
+    let {queryByRole, getByRole, getAllByRole} = render(
+      <MenuTrigger>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu shouldCloseOnSelect={false}>
+            <MenuItem id="open">Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+            <MenuItem id="share">Share…</MenuItem>
+            <MenuItem id="delete">Delete…</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeInTheDocument();
+
+    let items = getAllByRole('menuitem');
+    expect(items).toHaveLength(5);
+
+    let item = items[0];
+    expect(item).toHaveTextContent('Open');
+    await user.click(item);
+    expect(menu).toBeInTheDocument();
+  });
+
+  it('should not close individual menu item when shouldCloseOnSelect=false', async () => {
+    let {queryByRole, getByRole, getAllByRole} = render(
+      <MenuTrigger>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu>
+            <MenuItem id="open" shouldCloseOnSelect={false}>Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+            <MenuItem id="share">Share…</MenuItem>
+            <MenuItem id="delete">Delete…</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeInTheDocument();
+
+    let items = getAllByRole('menuitem');
+    expect(items).toHaveLength(5);
+
+    let item = items[0];
+    expect(item).toHaveTextContent('Open');
+    await user.click(item);
+    expect(menu).toBeInTheDocument();
+
+    item = items[1];
+    expect(item).toHaveTextContent('Rename');
+    await user.click(item);
+    expect(menu).not.toBeInTheDocument();
+  });
+
+  it('should not close menu items within a section when shouldCloseOnSelect=false', async () => {
+    let {queryByRole, getByRole, getAllByRole} = render(
+      <MenuTrigger>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu>
+            <MenuSection shouldCloseOnSelect={false}>
+              <MenuItem id="open">Open</MenuItem>
+              <MenuItem id="rename">Rename…</MenuItem>
+              <MenuItem id="duplicate">Duplicate</MenuItem>
+            </MenuSection>
+            <MenuSection>
+              <MenuItem id="share">Share…</MenuItem>
+              <MenuItem id="delete">Delete…</MenuItem>
+            </MenuSection>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeInTheDocument();
+
+    let items = getAllByRole('menuitem');
+    expect(items).toHaveLength(5);
+
+    let item = items[0];
+    expect(item).toHaveTextContent('Open');
+    await user.click(item);
+    expect(menu).toBeInTheDocument();
+
+    item = items[3];
+    expect(item).toHaveTextContent('Share');
+    await user.click(item);
+    expect(menu).not.toBeInTheDocument();
   });
 
   describe('supports links', function () {
@@ -1576,6 +1736,72 @@ describe('Menu', () => {
     expect(onPressEnd).toHaveBeenCalledTimes(1);
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  describe('submenutrigger non menu content', () => {
+    it('opens popover and does not call onAction', async () => {
+      let onAction = jest.fn();
+      let {getByRole, getAllByRole, findByRole, findByText} = render(
+        <MenuTrigger>
+          <Button>Menu Button</Button>
+          <Popover>
+            <Menu onAction={onAction}>
+              <SubmenuTrigger>
+                <MenuItem id="delete">Delete</MenuItem>
+                <Popover>
+                  <div>Contact your administrator for permissions to delete.</div>
+                </Popover>
+              </SubmenuTrigger>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      await user.click(getByRole('button'));
+      await findByRole('menu');
+      let menuItems = getAllByRole('menuitem');
+      await user.click(menuItems[0]);
+      expect(await findByText('Contact your administrator for permissions to delete.')).toBeInTheDocument();
+      expect(onAction).not.toHaveBeenCalled();
+      let dialogs = getAllByRole('dialog');
+      expect(dialogs).toHaveLength(2);
+      expect(document.activeElement).toBe(menuItems[0]);
+      await user.keyboard('{Escape}');
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(getByRole('button'));
+    });
+
+    it('should auto focus the Popover if in keyboard modality', async () => {
+      let onAction = jest.fn();
+      let {getByRole, getAllByRole, findByRole, findByText} = render(
+        <MenuTrigger>
+          <Button>Menu Button</Button>
+          <Popover>
+            <Menu onAction={onAction}>
+              <SubmenuTrigger>
+                <MenuItem id="delete">Delete</MenuItem>
+                <Popover>
+                  <div>Contact your administrator for permissions to delete.</div>
+                </Popover>
+              </SubmenuTrigger>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button'), interactionType: 'keyboard'});
+      await menuTester.open();
+      await findByRole('menu');
+      await menuTester.selectOption({option: 0});
+      expect(await findByText('Contact your administrator for permissions to delete.')).toBeInTheDocument();
+      expect(onAction).not.toHaveBeenCalled();
+      let dialogs = getAllByRole('dialog');
+      expect(dialogs).toHaveLength(2);
+      expect(document.activeElement).toBe(dialogs[1]);
+      await user.keyboard('{Escape}');
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(menuTester.options()[0]);
+    });
   });
 });
 

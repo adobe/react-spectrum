@@ -99,6 +99,25 @@ describe('DateField', () => {
     expect(group).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole, getAllByRole} =  render(
+      <DateField render={props => <div {...props} data-custom="true" />}>
+        <Label render={props => <span {...props} data-custom="true" />}>Birth date</Label>
+        <DateInput className="date-input" render={props => <div {...props} data-custom="true" />}>
+          {segment => <DateSegment segment={segment} render={props => <span {...props} data-custom="true" />} />}
+        </DateInput>
+      </DateField>
+    );
+    let input = getByRole('group');
+    expect(input).toHaveAttribute('data-custom', 'true');
+    expect(input.closest('.react-aria-DateField')).toHaveAttribute('data-custom', 'true');
+    expect(input.previousElementSibling).toHaveAttribute('data-custom', 'true');
+
+    for (let segment of getAllByRole('spinbutton')) {
+      expect(segment).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
   it('should support hover state', async () => {
     let hoverStartSpy = jest.fn();
     let hoverChangeSpy = jest.fn();
@@ -277,6 +296,46 @@ describe('DateField', () => {
     );
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-disabled-state', 'disabled');
+  });
+
+  it('should support required render prop', () => {
+    let {getByRole} = render(
+      <DateField isRequired>
+        {({isRequired}) => (
+          <>
+            <Label>Birth date</Label>
+            <DateInput
+              data-required-state={isRequired ? 'required' : null}>
+              {segment => <DateSegment segment={segment} />}
+            </DateInput>
+          </>
+        )}
+      </DateField>
+    );
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-required-state', 'required');
+  });
+
+  it('should support required state', () => {
+    let {getByRole, rerender} = render(
+      <DateField>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+    let group = getByRole('group');
+    expect(group.closest('.react-aria-DateField')).not.toHaveAttribute('data-required');
+    rerender(
+      <DateField isRequired>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+    expect(group.closest('.react-aria-DateField')).toHaveAttribute('data-required');
   });
 
   it('should support form value', () => {

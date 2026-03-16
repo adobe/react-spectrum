@@ -19,16 +19,16 @@ import {composeRenderProps, FieldError, FieldErrorProps, Group, GroupProps, Labe
 import {ContextualHelpContext} from './ContextualHelp';
 import {control, controlFont, fieldInput, fieldLabel, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ForwardedRef, forwardRef, ReactNode} from 'react';
+import {getEventTarget, useId} from '@react-aria/utils';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
 import {StyleString} from '../style/types';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'children'>, StyleProps {
+interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'render' | 'children'>, StyleProps {
   isDisabled?: boolean,
   isRequired?: boolean,
   size?: 'S' | 'M' | 'L' | 'XL',
@@ -150,7 +150,7 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
   );
 });
 
-interface FieldGroupProps extends Omit<GroupProps, 'className' | 'style' | 'children'>, UnsafeStyles {
+interface FieldGroupProps extends Omit<GroupProps, 'className' | 'style' | 'render' | 'children'>, UnsafeStyles {
   size?: 'S' | 'M' | 'L' | 'XL',
   children: ReactNode,
   styles?: StyleString,
@@ -207,13 +207,13 @@ export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps,
       {...otherProps}
       onPointerDown={(e) => {
         // Forward focus to input element when clicking on a non-interactive child (e.g. icon or padding)
-        if (e.pointerType === 'mouse' && !(e.target as Element).closest('button,input,textarea,[role="button"]')) {
+        if (e.pointerType === 'mouse' && !(getEventTarget(e) as Element).closest('button,input,textarea,[role="button"]')) {
           e.preventDefault();
           (e.currentTarget.querySelector('input, textarea') as HTMLElement)?.focus();
         }
       }}
       onTouchEnd={e => {
-        let target = e.target as HTMLElement;
+        let target = getEventTarget(e) as HTMLElement;
         if (!target.isContentEditable && !target.closest('button,input,textarea,[role="button"]')) {
           e.preventDefault();
           (e.currentTarget.querySelector('input, textarea') as HTMLElement)?.focus();
@@ -232,7 +232,7 @@ export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps,
   );
 });
 
-export interface InputProps extends Omit<RACInputProps, 'className' | 'style'>, StyleProps {}
+export interface InputProps extends Omit<RACInputProps, 'className' | 'style' | 'render'>, StyleProps {}
 
 export const Input = forwardRef(function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
   let {UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
