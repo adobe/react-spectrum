@@ -12,8 +12,8 @@
 
 import {disableTextSelection, restoreTextSelection}  from './textSelection';
 import {DOMAttributes, MoveEvents, PointerType} from '@react-types/shared';
-import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {useEffectEvent, useGlobalListeners, useLayoutEffect} from '@react-aria/utils';
+import React, {useCallback, useMemo, useRef} from 'react';
+import {useEffectEvent, useGlobalListeners} from '@react-aria/utils';
 
 export interface MoveResult {
   /** Props to spread on the target element. */
