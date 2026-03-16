@@ -18,7 +18,6 @@ import intlMessages from '../intl/*.json';
 import {Key, LayoutDelegate, Rect, RefObject, Size} from '@react-types/shared';
 import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
-import {tableNestedRows} from '@react-stately/flags';
 import {TableState, TreeGridState} from '@react-stately/table';
 import {useCollator, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMemo} from 'react';
@@ -76,7 +75,7 @@ export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGr
     layout
   }), [keyboardDelegate, state.collection, state.disabledKeys, disabledBehavior, ref, direction, collator, layoutDelegate, layout]);
   let id = useId(props.id);
-  gridIds.set(state, id);
+  gridIds.set(state as TableState<T>, id);
 
   let {gridProps} = useGrid({
     ...props,
@@ -89,7 +88,7 @@ export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGr
     gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
   }
 
-  if (tableNestedRows() && 'expandedKeys' in state) {
+  if (state.treeColumn != null) {
     gridProps.role = 'treegrid';
   }
 

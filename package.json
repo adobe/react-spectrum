@@ -65,7 +65,8 @@
     "test:parcel": "jest --testMatch '**/*.parceltest.{ts,tsx}'",
     "blc:local": "npx git+ssh://git@github.com:ktabors/rsp-blc.git -u http://localhost:1234/",
     "blc:prod": "npx git+ssh://git@github.com:ktabors/rsp-blc.git -u https://react-spectrum.adobe.com/",
-    "createRssFeed": "node scripts/createFeed.mjs"
+    "createRssFeed": "node scripts/createFeed.mjs",
+    "releaseNotes": "node scripts/changelog.js"
   },
   "workspaces": [
     "packages/react-stately",
