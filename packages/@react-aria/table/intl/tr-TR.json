@@ -7,5 +7,7 @@
   "resizerDescription": "Yeniden boyutlandırmak için Enter'a basın",
   "select": "Seç",
   "selectAll": "Tümünü Seç",
-  "sortable": "Sıralanabilir sütun"
+  "sortable": "Sıralanabilir sütun",
+  "collapse": "Daralt",
+  "expand": "Genişlet"
 }

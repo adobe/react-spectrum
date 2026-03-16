@@ -111,6 +111,8 @@ import LinkButtonDark from 'url:../assets/component-illustrations/dark/LinkButto
 import LinkButtonLight from 'url:../assets/component-illustrations/light/LinkButton.avif';
 import LinkDark from 'url:../assets/component-illustrations/dark/Link.avif';
 import LinkLight from 'url:../assets/component-illustrations/light/Link.avif';
+import ListViewDark from 'url:../assets/component-illustrations/dark/ListView.avif';
+import ListViewLight from 'url:../assets/component-illustrations/light/ListView.avif';
 import McpServerDark from 'url:../assets/component-illustrations/dark/McpServer.avif';
 import McpServerLight from 'url:../assets/component-illustrations/light/McpServer.avif';
 import MenuDark from 'url:../assets/component-illustrations/dark/Menu.avif';
@@ -191,6 +193,8 @@ import TreeDark from 'url:../assets/component-illustrations/dark/Tree.avif';
 import TreeLight from 'url:../assets/component-illustrations/light/Tree.avif';
 import UtilityDark from 'url:../assets/component-illustrations/dark/Utility.avif';
 import UtilityLight from 'url:../assets/component-illustrations/light/Utility.avif';
+import WorkingWithAIDark from 'url:../assets/component-illustrations/dark/WorkingWithAI.avif';
+import WorkingWithAILight from 'url:../assets/component-illustrations/light/WorkingWithAI.avif';
 
 export interface ComponentCardItem {
   id: string,
@@ -249,6 +253,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'Link': [LinkLight, LinkDark],
   'LinkButton': [LinkButtonLight, LinkButtonDark],
   'ListBox': [SelectionLight, SelectionDark],
+  'ListView': [ListViewLight, ListViewDark],
   'Menu': [MenuLight, MenuDark],
   'Meter': [MeterLight, MeterDark],
   'Migrating to Spectrum 2': [MigratingLight, MigratingDark],
@@ -296,6 +301,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'Getting started': [GettingStartedLight, GettingStartedDark],
   'MCP Server': [McpServerLight, McpServerDark],
   'Quality': [AccessibilityLight, AccessibilityDark],
+  'Working with AI': [WorkingWithAILight, WorkingWithAIDark],
   'Selection': [SelectionLight, SelectionDark],
   'Style Macro': [StyleMacroLight, StyleMacroDark],
   'Styling': [StyleLight, StyleDark],

@@ -23,6 +23,7 @@
   "label.(optional)": "(nepovinné)",
   "label.(required)": "(povinné)",
   "menu.moreActions": "Ďalšie akcie",
+  "menu.unavailable": "Nedostupné, rozbaľte podrobnosti",
   "notificationbadge.indicatorOnly": "Nová aktivita",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Vybrať…",

@@ -14,7 +14,7 @@ import AlignLeft from '../s2wf-icons/S2_Icon_TextAlignLeft_20_N.svg';
 import AlignMiddle from '../s2wf-icons/S2_Icon_TextAlignCenter_20_N.svg';
 import AlignRight from '../s2wf-icons/S2_Icon_TextAlignRight_20_N.svg';
 import Bold from '../s2wf-icons/S2_Icon_TextBold_20_N.svg';
-import {Button, Header, Heading, Image, Keyboard, Menu, MenuItem, MenuProps, MenuSection, MenuTrigger, SubmenuTrigger, Text} from '../src';
+import {Button, Content, ContextualHelpPopover, Footer, Header, Heading, Image, Keyboard, Link, Menu, MenuItem, MenuProps, MenuSection, MenuTrigger,  SubmenuTrigger, Text, UnavailableMenuItemTrigger} from '../src';
 import {categorizeArgTypes, getActionArgs} from './utils';
 import ClockPendingIcon from '../s2wf-icons/S2_Icon_ClockPending_20_N.svg';
 import {CombinedMenu} from '../src/Menu';
@@ -313,5 +313,53 @@ export const SelectionGroups: StoryObj<typeof SelectionGroupsRender> = {
   render: (args) => <SelectionGroupsRender {...args} />,
   parameters: {
     layout: 'padded'
+  }
+};
+
+export const UnavailableMenuItem: Story = {
+  render: (args) => {
+    return (
+      <MenuTrigger {...args}>
+        <Button aria-label="Actions for selected resource"><NewIcon /></Button>
+        <Menu {...args}>
+          <MenuItem>Favorite</MenuItem>
+          <UnavailableMenuItemTrigger>
+            <MenuItem>Edit</MenuItem>
+            <ContextualHelpPopover>
+              <Heading slot="title">Permission Denied</Heading>
+              <Content>
+                <Text>
+                  Contact your administrator for permissions to edit this item.
+                </Text>
+              </Content>
+              <Footer>
+                <Link isStandalone href="https://google.com" target="_blank">Learn more</Link>
+              </Footer>
+            </ContextualHelpPopover>
+          </UnavailableMenuItemTrigger>
+          <UnavailableMenuItemTrigger isUnavailable>
+            <MenuItem>Delete</MenuItem>
+            <ContextualHelpPopover>
+              <Heading slot="title">Permission Denied</Heading>
+              <Content>
+                <Text>
+                  Contact your administrator for permissions to delete this item.
+                </Text>
+              </Content>
+              <Footer>
+                <Link isStandalone href="https://google.com" target="_blank">Learn more</Link>
+              </Footer>
+            </ContextualHelpPopover>
+          </UnavailableMenuItemTrigger>
+          <SubmenuTrigger>
+            <MenuItem>Share</MenuItem>
+            <Menu>
+              <MenuItem>SMS</MenuItem>
+              <MenuItem>Email</MenuItem>
+            </Menu>
+          </SubmenuTrigger>
+        </Menu>
+      </MenuTrigger>
+    );
   }
 };

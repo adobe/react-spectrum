@@ -37,7 +37,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   private direction?: Direction;
   private layoutDelegate: LayoutDelegate;
 
-  constructor(collection: Collection<Node<T>>, disabledKeys: Set<Key>, ref: RefObject<HTMLElement | null>, collator?: Intl.Collator);
+  constructor(collection: Collection<Node<T>>, disabledKeys: Set<Key>, ref: RefObject<HTMLElement | null>, collator?: Intl.Collator, expandedKeys?: Set<Key>);
   constructor(options: ListKeyboardDelegateOptions<T>);
   constructor(...args: any[]) {
     if (args.length === 1) {

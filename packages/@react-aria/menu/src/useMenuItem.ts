@@ -11,9 +11,9 @@
  */
 
 import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents, RefObject} from '@react-types/shared';
-import {filterDOMProps, handleLinkClick, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, getEventTarget, handleLinkClick, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
 import {getItemCount} from '@react-stately/collections';
-import {isFocusVisible, useFocusable, useHover, useKeyboard, usePress} from '@react-aria/interactions';
+import {isFocusVisible, setInteractionModality, useFocusable, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {menuData} from './utils';
 import {MouseEvent, useRef} from 'react';
 import {SelectionManager} from '@react-stately/selection';
@@ -97,6 +97,9 @@ export interface AriaMenuItemProps extends DOMProps, PressEvents, HoverEvents, K
   /** Identifies the menu item's popup element whose contents or presence is controlled by the menu item. */
   'aria-controls'?: string,
 
+  /** Identifies the element(s) that describe the menu item. */
+  'aria-describedby'?: string,
+
   /** Override of the selection manager. By default, `state.selectionManager` is used. */
   selectionManager?: SelectionManager
 }
@@ -177,7 +180,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     role,
     'aria-label': props['aria-label'],
     'aria-labelledby': labelId,
-    'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ') || undefined,
+    'aria-describedby': [props['aria-describedby'], descriptionId, keyboardId].filter(Boolean).join(' ') || undefined,
     'aria-controls': props['aria-controls'],
     'aria-haspopup': hasPopup,
     'aria-expanded': props['aria-expanded']
@@ -286,15 +289,23 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       switch (e.key) {
         case ' ':
           interaction.current = {pointerType: 'keyboard', key: ' '};
-          (e.target as HTMLElement).click();
+          (getEventTarget(e) as HTMLElement).click();
+
+          // click above sets modality to "virtual", need to set interaction modality back to 'keyboard' so focusSafely calls properly move focus
+          // to the newly opened submenu's first item.
+          setInteractionModality('keyboard');
           break;
         case 'Enter':
           interaction.current = {pointerType: 'keyboard', key: 'Enter'};
 
           // Trigger click unless this is a link. Links trigger click natively.
-          if ((e.target as HTMLElement).tagName !== 'A') {
-            (e.target as HTMLElement).click();
+          if ((getEventTarget(e) as HTMLElement).tagName !== 'A') {
+            (getEventTarget(e) as HTMLElement).click();
           }
+
+          // click above sets modality to "virtual", need to set interaction modality back to 'keyboard' so focusSafely calls properly move focus
+          // to the newly opened submenu's first item.
+          setInteractionModality('keyboard');
           break;
         default:
           if (!isTrigger) {

@@ -34,6 +34,7 @@ let stringsToAllow = new Set([
   'inlinealert.negative',
   'inlinealert.notice',
   'inlinealert.positive',
+  'menu.unavailable',
   'picker.placeholder',
   'slider.minimum',
   'slider.maximum',

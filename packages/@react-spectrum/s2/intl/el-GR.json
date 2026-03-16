@@ -23,6 +23,7 @@
   "label.(optional)": "(προαιρετικό)",
   "label.(required)": "(απαιτείται)",
   "menu.moreActions": "Περισσότερες ενέργειες",
+  "menu.unavailable": "Μη διαθέσιμο, ανάπτυξη για λεπτομέρειες",
   "notificationbadge.indicatorOnly": "Νέα δραστηριότητα",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Επιλογή…",
