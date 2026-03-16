@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ActionBar} from '../src/ActionBar';
 import {ActionButton} from '../src/ActionButton';
 import {ExampleRender as CardViewExample} from './CardView.stories';

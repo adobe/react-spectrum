@@ -55,8 +55,9 @@ export const hookData: WeakMap<DateFieldState, HookData> = new WeakMap<DateField
 
 // Private props that we pass from useDatePicker/useDateRangePicker.
 // Ideally we'd use a Symbol for this, but React doesn't support them: https://github.com/facebook/react/issues/7552
-export const roleSymbol: string = '__role_' + Date.now();
-export const focusManagerSymbol: string = '__focusManager_' + Date.now();
+// These need to be stable across server and client module evaluation for SSR hydration.
+export const roleSymbol: string = '__reactAriaDateFieldRole';
+export const focusManagerSymbol: string = '__reactAriaDateFieldFocusManager';
 
 /**
  * Provides the behavior and accessibility implementation for a date field component.

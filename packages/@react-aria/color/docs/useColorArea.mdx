@@ -45,7 +45,7 @@ of a complete color picker rather than a color area. `useColorArea` helps achiev
 touch-friendly color areas that can be styled as needed.
 
 * Support for adjusting two-channel values of an HSL, HSB or RGB color value
-* Support for mouse, touch, and keyboard via the [useMove](useMove.html) hook
+* Support for mouse, touch, and keyboard via the [useMove](../useMove) hook
 * Multi-touch support
 * Pressing on the color area background moves the thumb to that position
 * Supports using the arrow keys, for changing value by step, as well as shift + arrow key, page up/down, home, and end keys, for changing the value by page step.
@@ -90,7 +90,7 @@ This example shows how to build a color area with a draggable thumb to adjust tw
 the background gradient and positioning of the thumb are provided by `useColorArea` in the returned props for each element.
 The two `<input>` elements inside the thumb represent the color channel values to assistive technologies, and are hidden
 from view. The thumb also uses the
-[useFocusRing](useFocusRing.html) hook to grow in size when it is keyboard focused (try tabbing to it).
+[useFocusRing](../useFocusRing) hook to grow in size when it is keyboard focused (try tabbing to it).
 
 ```tsx example export=true
 import {useColorArea} from '@react-aria/color';
@@ -181,8 +181,8 @@ function is used to parse the initial color from an RGB, HSL or HSB string, stor
 
 The `onChange` prop is used to update the value in the state when the user drags the thumb.
 This is the more common usage because it allows to adjust the third color channel using a separate control,
-like a color slider using the [useColorSlider](useColorSlider.html) hook or a color wheel using the
-[useColorWheel](useColorWheel.html) hook, or to display the color value stored in a state using a preview swatch.
+like a color slider using the [useColorSlider](../ColorSlider/useColorSlider) hook or a color wheel using the
+[useColorWheel](../ColorWheel/useColorWheel) hook, or to display the color value stored in a state using a preview swatch.
 
 The `onChangeEnd` prop can be used to handle when a user stops dragging the color area.
 
@@ -278,7 +278,7 @@ function Example() {
 ### ColorSlider
 
 The `ColorSlider` component used in the example above controls the channel value not controlled by the `ColorArea`, in this case, the `brightness` channel, or the `alpha` channel.
-It is built using the [useColorSlider](useColorSlider.html) hook, and can be shared with other color components.
+It is built using the [useColorSlider](../ColorSlider/useColorSlider.html) hook, and can be shared with other color components.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -424,7 +424,7 @@ It is built using the [useColorSlider](useColorSlider.html) hook, and can be sha
 
 ### ColorSwatch
 
-The `ColorSwatch` component used in the example above implements an image preview of the color with the [useColorSwatch](useColorSwatch.html) hook.
+The `ColorSwatch` component used in the example above implements an image preview of the color with the [useColorSwatch](../ColorSwatch/useColorSwatch.html) hook.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>

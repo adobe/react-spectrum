@@ -13,6 +13,8 @@
 import type {ColorScheme, Router} from '@react-types/provider';
 import {colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, JSX, ReactNode, useContext} from 'react';
+import {DOMProps} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import {Fonts} from './Fonts';
 import {generateDefaultColorSchemeStyles} from './page.macro' with {type: 'macro'};
 import {I18nProvider, RouterProvider, useLocale} from 'react-aria-components';
@@ -20,7 +22,7 @@ import {mergeStyles} from '../style/runtime';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 
-export interface ProviderProps extends UnsafeStyles {
+export interface ProviderProps extends UnsafeStyles, DOMProps {
   /** The content of the Provider. */
   children: ReactNode,
   /**
@@ -59,9 +61,7 @@ export function Provider(props: ProviderProps): JSX.Element {
   let result = <ProviderInner {...props} />;
   let parentColorScheme = useContext(ColorSchemeContext);
   let colorScheme = props.colorScheme || parentColorScheme;
-  if (colorScheme !== parentColorScheme) {
-    result = <ColorSchemeContext.Provider value={colorScheme}>{result}</ColorSchemeContext.Provider>;
-  }
+  result = <ColorSchemeContext.Provider value={colorScheme}>{result}</ColorSchemeContext.Provider>;
 
   if (props.locale) {
     result = <I18nProvider locale={props.locale}>{result}</I18nProvider>;
@@ -113,6 +113,7 @@ function ProviderInner(props: ProviderProps) {
   let {locale, direction} = useLocale();
   return (
     <Element
+      {...filterDOMProps(props)}
       lang={locale}
       dir={direction}
       style={UNSAFE_style}

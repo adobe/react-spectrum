@@ -13,48 +13,22 @@ import {InterfaceType} from '../../src/types';
 import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/interactions';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+
 export const section = 'Interactions';
+export const description = 'Handles hover interactions with proper support for touch devices.';
 
 # useHover
 
 <PageDescription>{docs.exports.useHover.description}</PageDescription>
 
-## Features
-
-* Uses pointer events where available, with fallbacks to mouse and touch events
-* Ignores emulated mouse events in mobile browsers
-
-`useHover` is similar to the [:hover](https://developer.mozilla.org/en-US/docs/Web/CSS/:hover) pseudo class in CSS,
-but `:hover` is problematic on touch devices due to mouse emulation in mobile browsers. Depending on the browser
-and device, `:hover` may never apply, or may apply continuously until the user touches another element.
-`useHover` only applies when the pointer is truly capable of hovering, and emulated mouse events are ignored.
-
-{/* TODO: uncomment once we transfer over the blogs to new docs  */}
-{/* Read our [blog post](/blog/building-a-button-part-2.html) about the complexities of hover event handling to learn more. */}
-
-## Accessibility
-
-Hover interactions should never be the only way to interact with an element because they are not
-supported across all devices. Alternative interactions should be provided on touch devices, for
-example a long press or an explicit button to tap.
-
-In addition, even on devices with hover support, users may be using a keyboard or screen reader
-to navigate your app, which also do not trigger hover events. Hover interactions should be paired
-with focus events in order to expose the content to keyboard users.
-
-## Example
-
-This example shows a simple target that handles hover events with `useHover` and logs them to a
-list below. It also uses the `isHovered` state to adjust the background
-color when the target is hovered.
-
 ```tsx render
 "use client";
 import React from 'react';
-import {useHover} from '@react-aria/interactions';
+import {useHover} from 'react-aria';
 
 function Example() {
-  let [events, setEvents] = React.useState([]);
+  let [events, setEvents] = React.useState<string[]>([]);
   let {hoverProps, isHovered} = useHover({
     onHoverStart: e => setEvents(
       events => [...events, `hover start with ${e.pointerType}`]
@@ -72,7 +46,8 @@ function Example() {
           background: isHovered ? 'darkgreen' : 'green',
           color: 'white',
           display: 'inline-block',
-          padding: 4,
+          padding: '8px 12px',
+          borderRadius: 8,
           cursor: 'pointer'
         }}
         role="button"
@@ -91,10 +66,20 @@ function Example() {
 }
 ```
 
+## Features
+
+`useHover` is similar to the [:hover](https://developer.mozilla.org/en-US/docs/Web/CSS/:hover) CSS pseudo class, but only applies on mouse interactions. `:hover` is sticky on touch devices, applying continuously until the user interacts with another element, and on devices with both mouse and touch support there is no CSS-only way to apply hover states only when interacting with a pointer. Read our [blog post](blog/building-a-button-part-2) to learn more.
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>Hover interactions should never be the only way to interact with an element because they are not
+supported across all devices. Alternative interactions should be provided on touch devices, for
+example a long press or an explicit button to tap.</Content>
+</InlineAlert>
+
 ## API
 
 <FunctionAPI function={docs.exports.useHover} links={docs.links} />
-
 
 ### HoverProps
 
@@ -105,8 +90,5 @@ function Example() {
 <InterfaceType {...docs.exports.HoverResult} />
 
 ### HoverEvent
-
-Each of these handlers is fired with a `HoverEvent`, which exposes information about the target and the
-type of event that triggered the interaction.
 
 <InterfaceType {...typesDocs.exports.HoverEvent} />

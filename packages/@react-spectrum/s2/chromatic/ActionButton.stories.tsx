@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, ActionButtonProps, Avatar, Text} from '../src';
+import {ActionButton, ActionButtonProps, Avatar, NotificationBadge, Text} from '../src';
+import BellIcon from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
+import CommentIcon from '../s2wf-icons/S2_Icon_Comment_20_N.svg';
 import {Fonts, NotificationBadges, UnsafeClassName} from '../stories/ActionButton.stories';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -100,3 +102,13 @@ export const AvatarOnly: ActionButtonStory = {
 };
 
 export {Fonts, UnsafeClassName, NotificationBadges};
+
+export const NotificationBadgesCustomWidth: ActionButtonStory = {
+  render: (args) => (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
+      <ActionButton aria-label="Messages has new activity" styles={style({width: 200})} {...args}><CommentIcon /><NotificationBadge /></ActionButton>
+      <ActionButton styles={style({width: 200})} {...args}><BellIcon /><NotificationBadge value={10} /></ActionButton>
+      <ActionButton styles={style({width: 200})} {...args}><CommentIcon /><Text>Messages</Text><NotificationBadge value={5} /></ActionButton>
+      <ActionButton styles={style({width: 200})} {...args}><Text>Notifications</Text><NotificationBadge value={105} /></ActionButton>
+    </div>)
+};

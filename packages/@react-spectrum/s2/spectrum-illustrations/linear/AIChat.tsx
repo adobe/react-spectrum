@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import AIChat_L from 'illustration:./S2_lin_AIChat_160.svg';
 import AIChat_M from 'illustration:./S2_lin_AIChat_96.svg';
 import AIChat_S from 'illustration:./S2_lin_AIChat_48.svg';

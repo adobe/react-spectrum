@@ -3,6 +3,7 @@
 .command-palette-dialog {
   width: min(90vw, 500px);
   height: min(90vh, 356px);
+  max-height: inherit;
   padding: var(--spacing-2);
   box-sizing: border-box;
   display: flex;

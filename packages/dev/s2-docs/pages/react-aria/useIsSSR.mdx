@@ -13,6 +13,7 @@ import docs from 'docs:@react-aria/ssr';
 import {FunctionAPI} from '../../src/FunctionAPI';
 
 export const section = 'Utilities';
+export const description = 'Returns whether the app is currently in server-side rendering or hydration.';
 
 # useIsSSR
 
@@ -26,13 +27,13 @@ and initially hydrated DOM match, but trigger an additional render after hydrati
 run browser-specific code. For example, it could be used to run media queries or feature
 detection for browser-specific APIs that affect rendering but cannot be run server side.
 
-In React 16 and 17, this hook must be used in combination with the [SSRProvider](SSRProvider.html) component
-wrapping your application. See the [server side rendering](ssr.html) docs for more information.
+In React 16 and 17, this hook must be used in combination with the [SSRProvider](SSRProvider) component
+wrapping your application.
 
 ## Example
 
 ```tsx
-import {useIsSSR} from '@react-aria/ssr';
+import {useIsSSR} from 'react-aria';
 
 function MyComponent() {
   let isSSR = useIsSSR();

@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {
   ActionButton,
   Cell,
+  Collection,
   Column,
   ColumnProps,
   Content,
@@ -26,6 +27,7 @@ import {
   Picker,
   PickerItem,
   Row,
+  SortDescriptor,
   StatusLight,
   TableBody,
   TableHeader,
@@ -41,9 +43,8 @@ import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {Key} from '@react-types/shared';
 import type {Meta, StoryObj} from '@storybook/react';
 import React, {ReactElement, useCallback, useEffect, useRef, useState} from 'react';
-import {SortDescriptor} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {useAsyncList, useListData} from '@react-stately/data';
+import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 import {useEffectEvent} from '@react-aria/utils';
 import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
 
@@ -439,11 +440,28 @@ let alignColumns = [
 ];
 
 const TextAlign = (args: TableViewProps): ReactElement => {
+  let [items, setItems] = useState(sortItems);
+  let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor | undefined>(undefined);
+  let onSortChange = (sortDescriptor: SortDescriptor) => {
+    let {direction = 'ascending', column = 'name'} = sortDescriptor;
+
+    let sorted = items.slice().sort((a, b) => {
+      let cmp = a[column] < b[column] ? -1 : 1;
+      if (direction === 'descending') {
+        cmp *= -1;
+      }
+      return cmp;
+    });
+
+    setItems(sorted);
+    setSortDescriptor(sortDescriptor);
+  };
+
   return (
-    <TableView aria-label="Show Dividers table" {...args} styles={style({width: 320, height: 208})}>
+    <TableView aria-label="Show Dividers table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({width: 320, height: 208})}>
       <TableHeader columns={alignColumns}>
         {(column) => (
-          <Column width={150} minWidth={150} isRowHeader={column.isRowHeader} align={column?.align as 'start' | 'center' | 'end'}>{column.name}</Column>
+          <Column allowsSorting width={150} minWidth={150} isRowHeader={column.isRowHeader} align={column?.align as 'start' | 'center' | 'end'}>{column.name}</Column>
         )}
       </TableHeader>
       <TableBody items={items}>
@@ -1696,4 +1714,137 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
       </div>
     );
   }
+};
+
+export const TableWithNestedRows: StoryObj<typeof TableView> = {
+  render: (args) => (
+    <TableView aria-label="Files" treeColumn="name" {...args} styles={style({width: 700, height: 320})}>
+      <TableHeader>
+        <Column id="name" isRowHeader>Name</Column>
+        <Column id="type">Type</Column>
+        <Column id="date">Date Modified</Column>
+      </TableHeader>
+      <TableBody>
+        <Row id="games">
+          <Cell>Games</Cell>
+          <Cell>Folder</Cell>
+          <Cell>6/7/2023</Cell>
+          <Row id="mario">
+            <Cell>Mario Kart</Cell>
+            <Cell>Game</Cell>
+            <Cell>8/27/1992</Cell>
+          </Row>
+          <Row id="tetris">
+            <Cell>Tetris</Cell>
+            <Cell>Game</Cell>
+            <Cell>1/27/1988</Cell>
+          </Row>
+          <Row id="pacman">
+            <Cell>Pac-Man</Cell>
+            <Cell>Game</Cell>
+            <Cell>5/22/1980</Cell>
+          </Row>
+        </Row>
+        <Row id="apps">
+          <Cell>Applications</Cell>
+          <Cell>Folder</Cell>
+          <Cell>4/7/2025</Cell>
+          <Row id="ps">
+            <Cell>Photoshop</Cell>
+            <Cell>Application</Cell>
+            <Cell>2/19/1990</Cell>
+          </Row>
+          <Row id="premiere">
+            <Cell>Premiere</Cell>
+            <Cell>Application</Cell>
+            <Cell>9/24/2003</Cell>
+          </Row>
+          <Row id="lightroom">
+            <Cell>Lightroom</Cell>
+            <Cell>Application</Cell>
+            <Cell>10/18/2017</Cell>
+          </Row>
+        </Row>
+        <Row id="report">
+          <Cell>2024 Financial Report</Cell>
+          <Cell>PDF Document</Cell>
+          <Cell>12/30/2024</Cell>
+        </Row>
+        <Row id="job">
+          <Cell>Job Posting</Cell>
+          <Cell>Text Document</Cell>
+          <Cell>1/18/2025</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  )
+};
+
+function NestedInlineEditExample(args) {
+  let tree = useTreeData({
+    initialItems: [
+      {id: '1', title: 'Documents', type: 'Directory', date: '10/20/2025', children: [
+        {id: '2', title: 'Project', type: 'Directory', date: '8/2/2025', children: [
+          {id: '3', title: 'Weekly Report', type: 'File', date: '7/10/2025', children: []},
+          {id: '4', title: 'Budget', type: 'File', date: '8/20/2025', children: []}
+        ]}
+      ]},
+      {id: '5', title: 'Photos', type: 'Directory', date: '2/3/2026', children: [
+        {id: '6', title: 'Image 1', type: 'File', date: '1/23/2026', children: []},
+        {id: '7', title: 'Image 2', type: 'File', date: '2/3/2026', children: []}
+      ]}
+    ]
+  });
+
+  return (
+    <TableView aria-label="Files" treeColumn="name" {...args} styles={style({width: 700, height: 320})}>
+      <TableHeader>
+        <Column id="name" isRowHeader>Name</Column>
+        <Column id="type">Type</Column>
+        <Column id="date">Date Modified</Column>
+      </TableHeader>
+      <TableBody items={tree.items}>
+        {function renderItem(item) {
+          return (
+            <Row id={item.key}>
+              <EditableCell
+                aria-label={`Edit ${item.value.title}`}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  let formData = new FormData(e.target as HTMLFormElement);
+                  let title = formData.get('name') as string;
+                  tree.update(item.key, {
+                    ...item.value,
+                    title
+                  });
+                }}
+                renderEditing={() => (
+                  <TextField
+                    name="name"
+                    aria-label="Edit name"
+                    autoFocus
+                    isRequired
+                    styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
+                    defaultValue={item.value.title} />
+                )}>
+                <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>
+                  {item.value.title}
+                  <ActionButton slot="edit" aria-label="Edit fruit"><Edit /></ActionButton>
+                </div>
+              </EditableCell>
+              <Cell>{item.value.type}</Cell>
+              <Cell>{item.value.date}</Cell>
+              <Collection items={item.children || []}>
+                {renderItem}
+              </Collection>
+            </Row>
+          );
+        }}
+      </TableBody>
+    </TableView>
+  );
+}
+
+export const TableWithNestedRowsAndInlineEditing: StoryObj<typeof TableView> = {
+  render: (args) => <NestedInlineEditExample {...args} />
 };

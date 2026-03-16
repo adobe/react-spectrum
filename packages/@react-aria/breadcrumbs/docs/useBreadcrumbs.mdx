@@ -180,8 +180,8 @@ function BreadcrumbItem(props) {
 }
 
 <Breadcrumbs>
-  <BreadcrumbItem href="/">Home</BreadcrumbItem>
-  <BreadcrumbItem href="/react-aria/">React Aria</BreadcrumbItem>
+  <BreadcrumbItem href="#">Home</BreadcrumbItem>
+  <BreadcrumbItem href="#">React Aria</BreadcrumbItem>
   <BreadcrumbItem>useBreadcrumbs</BreadcrumbItem>
 </Breadcrumbs>
 ```
@@ -196,8 +196,8 @@ Breadcrumbs can be disabled using the `isDisabled` prop, passed to each disabled
 
 ```tsx example
 <Breadcrumbs>
-  <BreadcrumbItem href="/" isDisabled>Home</BreadcrumbItem>
-  <BreadcrumbItem href="/react-aria/">React Aria</BreadcrumbItem>
+  <BreadcrumbItem href="#" isDisabled>Home</BreadcrumbItem>
+  <BreadcrumbItem href="#">React Aria</BreadcrumbItem>
   <BreadcrumbItem>useBreadcrumbs</BreadcrumbItem>
 </Breadcrumbs>
 ```

@@ -101,6 +101,11 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
     // Can see https://github.com/adobe/react-spectrum/pull/4210/files#diff-21e555e0c597a28215e36137f5be076a65a1e1456c92cd0fdd60f866929aae2a for additional logic
     // that may need to happen then
     let items = [...this.collection].filter(item => item.type === 'item');
+
+    if (items.length < 1) {
+      return {type: 'root'};
+    }
+
     let low = 0;
     let high = items.length;
     while (low < high) {

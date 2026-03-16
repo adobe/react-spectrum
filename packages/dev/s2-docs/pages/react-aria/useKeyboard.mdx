@@ -13,33 +13,19 @@ import {InterfaceType} from '../../src/types';
 import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/interactions';
 export const section = 'Interactions';
+export const description = 'Handles keyboard interactions with improved event propagation behavior.';
 
 # useKeyboard
 
 <PageDescription>{docs.exports.useKeyboard.description}</PageDescription>
 
-## Features
-
-`useKeyboard` handles keyboard interactions. The only difference from DOM events is that propagation
-is stopped by default if there is an event handler, unless `event.continuePropagation()` is called.
-This provides better modularity by default, so that a parent component doesn't respond to an event
-that a child already handled. If the child doesn't handle the event (e.g. it was for an unknown key),
-it can call `event.continuePropagation()` to allow parents to handle the event.
-
-## Example
-
-This example shows a simple input element that handles keyboard events with `useKeyboard` and logs them to a list below.
-
-{/* TODO: Components hooks have not been written yet */}
-{/* **NOTE: for more advanced text field functionality, see [useTextField](useTextField.html).** */}
-
 ```tsx render
 "use client"
 import React from 'react';
-import {useKeyboard} from '@react-aria/interactions';
+import {useKeyboard} from 'react-aria';
 
 function Example() {
-  let [events, setEvents] = React.useState([]);
+  let [events, setEvents] = React.useState<string[]>([]);
   let {keyboardProps} = useKeyboard({
     onKeyDown: e => setEvents(
       events => [`key down: ${e.key}`, ...events]
@@ -67,6 +53,14 @@ function Example() {
   );
 }
 ```
+
+## Features
+
+`useKeyboard` handles keyboard interactions. The only difference from DOM events is that propagation
+is stopped by default if there is an event handler, unless `event.continuePropagation()` is called.
+This provides better modularity by default, so that a parent component doesn't respond to an event
+that a child already handled. If the child doesn't handle the event (e.g. it was for an unknown key),
+it can call `event.continuePropagation()` to allow parents to handle the event.
 
 ## API
 

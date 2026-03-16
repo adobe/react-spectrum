@@ -15,7 +15,7 @@ import {Inset, fontRelative as internalFontRelative, space as internalSpace, Spa
 import type {MacroContext} from '@parcel/macros';
 import {StyleString} from './types';
 
-export {baseColor, color, edgeToText, lightDark, linearGradient, colorMix, size, style} from './spectrum-theme';
+export {baseColor, color, lightDark, colorMix, size, style} from './spectrum-theme';
 export type {StyleString} from './types';
 
 // Wrap these functions in arbitrary value syntax when called from the outside.
@@ -32,7 +32,10 @@ export const focusRing = () => ({
     default: 'none',
     isFocusVisible: 'solid'
   },
-  outlineColor: 'focus-ring',
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  },
   outlineWidth: 2,
   outlineOffset: 2
 } as const);

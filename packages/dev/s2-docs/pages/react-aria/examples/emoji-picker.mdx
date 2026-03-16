@@ -22,7 +22,8 @@ import {SearchField} from 'vanilla-starter/SearchField';
 import _emojis from 'emojibase-data/en/compact.json';
 import './EmojiPicker.css';
 
-const emojis = _emojis.filter((e) => !e.label.startsWith('regional indicator'));
+type Emoji = (typeof _emojis)[0];
+const emojis: Emoji[] = _emojis.filter((e) => typeof e.label === 'string' && !e.label.startsWith('regional indicator'));
 
 export default function EmojiPicker() {
   let {contains} = useFilter({ sensitivity: 'base' });
@@ -44,7 +45,7 @@ export default function EmojiPicker() {
               preserveAspectRatio: true,
             }}>
             <ListBox className="emoji-list" items={emojis} aria-label="Emoji list" layout="grid">
-              {(item) => <EmojiItem id={item.unicode} item={item} />}
+              {(item) => <EmojiItem id={String(item.unicode)} item={item} />}
             </ListBox>
           </Virtualizer>
         </Autocomplete>
@@ -53,12 +54,12 @@ export default function EmojiPicker() {
   );
 }
 
-function EmojiItem({ id, item }: { id: string; item: (typeof emojis)[0] }) {
+function EmojiItem({ id, item }: { id: string; item: Emoji }) {
   return (
     <ListBoxItem
       id={id}
       value={item}
-      textValue={item.label + (item.tags || []).join(' ')}
+      textValue={(item.label || '') + (Array.isArray(item.tags) ? item.tags.join(' ') : '')}
       className="emoji-item">
       {item.unicode}
     </ListBoxItem>
@@ -71,9 +72,9 @@ function EmojiItem({ id, item }: { id: string; item: (typeof emojis)[0] }) {
 <ComponentList
   pages={props.pages}
   components={[
-    'react-aria/ListBox.html',
-    'react-aria/Popover.html',
-    'react-aria/SearchField.html',
-    'react-aria/Select.html',
-    'react-aria/Virtualizer.html'
+    'react-aria/ListBox',
+    'react-aria/Popover',
+    'react-aria/SearchField',
+    'react-aria/Select',
+    'react-aria/Virtualizer'
   ]} />

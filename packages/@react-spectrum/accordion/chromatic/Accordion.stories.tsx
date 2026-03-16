@@ -22,9 +22,9 @@ const meta: Meta = {
 
 export default meta;
 
-export type AccordionStory = StoryObj<SpectrumAccordionProps>;
+export type AccordionStory = StoryObj<Partial<SpectrumAccordionProps>>;
 
-export const Template = (args: SpectrumAccordionProps): JSX.Element => (
+export const Template = (args: Partial<SpectrumAccordionProps>): JSX.Element => (
   <Accordion {...args}>
     <Disclosure id="files">
       <DisclosureTitle>

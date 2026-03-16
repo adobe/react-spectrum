@@ -1,11 +1,15 @@
 {
   "extends": "@parcel/config-default",
-  "resolvers": ["@react-aria/parcel-resolver-optimize-locales", "@parcel/resolver-glob", "parcel-resolver-docs", "..."],
+  "resolvers": ["@react-aria/parcel-resolver-optimize-locales", "@parcel/resolver-glob", "./S2DocsResolver", "parcel-resolver-docs", "..."],
+  "optimizers": {
+    "*.html": []
+  },
   "transformers": {
     "docs:*.{js,ts,tsx,json}": ["parcel-transformer-docs", "@parcel/transformer-inline"],
     "docs-json:*.{js,ts,tsx,json}": ["parcel-transformer-docs"],
     "illustration:*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
-    "url:*.svg": ["@parcel/transformer-raw"],
+    "url:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-raw"],
+    "data-url:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-inline-string"],
     "packages/@react-spectrum/s2/s2wf-icons/**/*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
     "packages/*/*/intl/*.json": ["parcel-transformer-intl"],
     "starters/tailwind/**/*.css": ["@parcel/transformer-postcss", "..."],

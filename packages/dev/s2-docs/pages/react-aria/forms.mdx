@@ -75,12 +75,13 @@ import {Button} from 'vanilla-starter/Button';
     event.preventDefault();
 
     // Get data from form.
-    let formData = new FormData(event.target);
+    let form = event.target as HTMLFormElement;
+    let formData = new FormData(form);
     let name = formData.get('name');
     alert(`Hello, ${name}!`);
 
     // Reset form after submission.
-    event.target.reset();
+    form.reset();
   }}>
   {/*- end highlight -*/}
   <TextField name="name" label="Name" placeholder="Enter your full name" />
@@ -160,7 +161,7 @@ Supported constraints include:
 
 * `isRequired` indicates that a field must have a value before the form can be submitted.
 * `minValue` and `maxValue` specify the minimum and maximum value in a date picker or number field.
-* `minLength` and `maxLength` specify the minimum and length of text input.
+* `minLength` and `maxLength` specify the minimum and maximum length of text input.
 * `pattern` provides a custom [regular expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions) that a text input must conform to.
 * `type="email"` and `type="url"` provide builtin validation for email addresses and URLs.
 
@@ -194,7 +195,7 @@ import {Button} from 'vanilla-starter/Button';
 
 <InlineAlert variant="informative">
   <Heading>Localization</Heading>
-  <Content>The default error messages are localized by the browser using the browser/operating system language setting. React Aria's [I18nProvider](I18nProvider.html) has no effect on validation errors.</Content>
+  <Content>The default error messages are localized by the browser using the browser/operating system language setting. React Aria's [I18nProvider](I18nProvider) has no effect on validation errors.</Content>
 </InlineAlert>
 
 ### Custom validation
@@ -226,9 +227,7 @@ In some cases, validating in realtime can be helpful, such as when meeting passw
 
 ```tsx render
 'use client';
-import {Form} from 'vanilla-starter/Form';
 import {TextField} from 'vanilla-starter/TextField';
-import {Button} from 'vanilla-starter/Button';
 import {useState} from 'react';
 
 function Example() {
@@ -262,7 +261,7 @@ By default, invalid fields block forms from being submitted. To avoid this, use 
 
 Client side validation is useful to give the user immediate feedback, but data should always be validated on the backend for security and reliability. Your business logic may also include rules which cannot be validated on the frontend.
 
-To display server validation errors, set the the `validationErrors` prop on the [Form](Form.html) component. This accepts an object that maps each field's `name` prop to one or more error messages. These are displayed as soon as the `validationErrors` prop is set, and cleared after the user modifies each field's value.
+To display server validation errors, set the `validationErrors` prop on the [Form](Form) component. This accepts an object that maps each field's `name` prop to one or more error messages. These are displayed as soon as the `validationErrors` prop is set, and cleared after the user modifies each field's value.
 
 ```tsx render
 'use client';
@@ -273,7 +272,7 @@ import {useActionState} from 'react';
 
 function action(prevState, formData: FormData) {
   return {
-    values: Object.fromEntries(formData),
+    values: Object.fromEntries(formData) as Record<string, string>,
     errors: {
       username: 'Sorry, this username is taken.'
     }
@@ -281,7 +280,7 @@ function action(prevState, formData: FormData) {
 }
 
 function Example() {
-  let [{values, errors}, formAction] = useActionState(action, {});
+  let [{values, errors}, formAction] = useActionState<{values?: Record<string, string>, errors?: Record<string, string>}, FormData>(action, {});
 
   return (
     <Form

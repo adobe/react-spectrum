@@ -19,7 +19,8 @@ const trigger = style({
   whiteSpace: 'inherit',
   fontFamily: 'inherit',
   fontSize: 'inherit',
-  color: 'inherit'
+  color: 'inherit',
+  disableTapHighlight: true
 });
 
 const chevronStyles = style({
@@ -92,6 +93,7 @@ export function CodeFold({tokens}) {
         }
         let index = c.lastIndexOf('\n');
         if (index === 0) {
+          lastLine.unshift(c);
           break;
         } else if (index > 0) {
           lastLine.unshift(c.slice(index));
@@ -123,7 +125,7 @@ export function CodeFold({tokens}) {
             <Chevron size="S" aria-hidden className={chevronStyles({isExpanded, isHovered, isPressed, isFocusVisible})} />
             <CodeClient tokens={firstLine} />
             {!isExpanded 
-              ? <><span ref={ref} style={pressScale(ref)({isPressed})} className={more({isHovered, isPressed, isFocusVisible})}><More UNSAFE_style={{width: 14}} /></span><CodeClient tokens={lastLine} /></> 
+              ? <><span ref={ref} style={pressScale(ref)({isPressed})} className={more({isHovered, isPressed, isFocusVisible})}><More UNSAFE_style={{width: 14}} /></span><span data-no-copy><CodeClient tokens={lastLine} /></span></> 
               : null}
           </>)}
         </Button>

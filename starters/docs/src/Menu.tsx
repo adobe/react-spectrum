@@ -1,5 +1,4 @@
 'use client';
-import {Button} from './Button';
 import {Check, ChevronRight, Dot} from 'lucide-react';
 import {
   Menu as AriaMenu,

@@ -1,6 +1,7 @@
 import {AriaColorSliderProps, Orientation, useColorSlider, useLocale} from 'react-aria';
 import {
   ClassNameOrFunction,
+  dom,
   Provider,
   RenderProps,
   SlotProps,
@@ -97,7 +98,7 @@ export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderPro
         }],
         [InternalColorThumbContext, {state, thumbProps, inputXRef: inputRef, xInputProps: inputProps, isDisabled: props.isDisabled}]
       ]}>
-      <div
+      <dom.div
         {...DOMProps}
         {...renderProps}
         ref={ref}

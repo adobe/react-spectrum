@@ -87,13 +87,13 @@ function useAnimation(ref: RefObject<HTMLElement | null>, isActive: boolean, onE
       }
 
       let canceled = false;
-      Promise.all(animations.map(a => a.finished)).then(() => {
+      Promise.allSettled(animations.map(a => a.finished)).then(() => {
         if (!canceled) {
           flushSync(() => {
             onEnd();
           });
         }
-      }).catch(() => {});
+      });
 
       return () => {
         canceled = true;

@@ -12,11 +12,11 @@ import { composeTailwindRenderProps } from './utils';
 import { ColorThumb } from './ColorThumb';
 
 const trackStyles = tv({
-  base: 'group col-span-2 orientation-horizontal:h-6 rounded-md',
+  base: 'group col-span-2 rounded-md',
   variants: {
     orientation: {
       horizontal: 'w-full h-6',
-      vertical: 'w-6 h-56 ml-[50%] -translate-x-[50%]'
+      vertical: 'w-6 h-50'
     },
     isDisabled: {
       true: 'bg-neutral-300 dark:bg-neutral-800 forced-colors:bg-[GrayText]'

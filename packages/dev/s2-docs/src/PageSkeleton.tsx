@@ -1,50 +1,11 @@
 'use client';
 
-import {getTextWidth} from './textWidth';
+import {H1, H2, P, PageDescription, SubpageHeader} from './typography';
 import {Image, Skeleton, Text} from '@react-spectrum/s2';
 import React from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-const h1 = style({
-  font: 'heading-3xl',
-  fontSize: {
-    default: {
-      // On mobile, adjust heading to fit in the viewport, and clamp between a min and max font size.
-      default: 'clamp(35px, (100vw - 32px) / var(--width-per-em), 55px)',
-      isLongForm: 'heading-xl'
-    },
-    lg: {
-      default: 'heading-3xl',
-      isLongForm: 'heading-2xl'
-    }
-  },
-  textWrap: 'balance',
-  marginY: 0,
-  maxWidth: '--text-width',
-  marginX: 'auto'
-});
-
-const skeletonPageDescription = style({
-  font: {default: 'body-lg', lg: 'body-xl'},
-  marginY: 24,
-  maxWidth: '--text-width',
-  marginX: 'auto'
-});
-
-const skeletonParagraph = style({
-  font: {default: 'body', lg: 'body-lg'},
-  marginY: '[1lh]',
-  maxWidth: '--text-width',
-  marginX: 'auto'
-});
-
-const skeletonH2 = style({
-  font: 'heading-xl',
-  marginTop: 48,
-  marginBottom: 24,
-  maxWidth: '--text-width',
-  marginX: 'auto'
-});
+import {useRouter} from './Router';
+import {VersionBadge} from './VersionBadge';
 
 function SkeletonVisualExample() {
   return (
@@ -89,27 +50,30 @@ const skeletonArticle = style({
   }
 });
 
-export function PageSkeleton({title, section, hasToC, isLongForm, isWide}: {title?: string, section?: string, hasToC?: boolean, isLongForm?: boolean, isWide?: boolean}) {
-  const isComponents = section === 'Components';
+export function PageSkeleton() {
+  let {currentPage, pages} = useRouter();
+  let isSubpage = currentPage.exports?.isSubpage;
+  let section = currentPage.exports?.section || 'Components';;
+  let isLongForm = isSubpage && section === 'Blog';
+  let hasToC = (!currentPage.exports?.hideNav || section === 'Blog' || section === 'Releases') && currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents?.[0]?.children?.length > 0;
+  let isWide = !hasToC && !isLongForm && section !== 'Blog' && section !== 'Releases';
+  let parentUrl = new URL('./', currentPage.url);
+  let parentIndex = parentUrl.href;
+  let parentPageUrl = parentUrl.href.slice(0, -1);
+  let parentPage = pages.find(p => p.url === parentIndex || p.url === parentPageUrl);
+  let isComponents = section === 'Components';
   
   return (
-    <article className={skeletonArticle({isWithToC: hasToC, isLongForm, isWide})}>
-      {title && (
-        <h1 id="top" style={{'--width-per-em': getTextWidth(title)} as any} className={h1({isLongForm})}>
-          {title}
-        </h1>
-      )}
+    <article className={skeletonArticle({isLongForm, isWide})}>
+      {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
+      {currentPage.exports?.isSubpage
+        ? <SubpageHeader currentPage={currentPage} parentPage={parentPage} isLongForm={isLongForm} />
+        : currentPage.tableOfContents?.[0]?.level === 1 && <H1 isLongForm={isLongForm}>{currentPage.tableOfContents?.[0].title}</H1>
+      }
       <Skeleton isLoading>
-        {!title && (
-          <h1 style={{'--width-per-em': getTextWidth('Page Title')} as any} className={h1({isLongForm})}>
-            <Text>Page Title</Text>
-          </h1>
-        )}
-        
-        {/* PageDescription */}
-        <p className={skeletonPageDescription}>
+        <PageDescription>
           <Text>This is placeholder content for the page description that approximates the typical length of component descriptions.</Text>
-        </p>
+        </PageDescription>
         
         {isComponents ? (
           <>
@@ -119,12 +83,12 @@ export function PageSkeleton({title, section, hasToC, isLongForm, isWide}: {titl
             {/* A few sections with visual examples */}
             {[1, 2, 3].map(i => (
               <React.Fragment key={i}>
-                <h2 className={skeletonH2}>
+                <H2>
                   <Text>Section Heading</Text>
-                </h2>
-                <p className={skeletonParagraph}>
+                </H2>
+                <P>
                   <Text>Placeholder content for a section that describes various aspects of the component or feature being documented.</Text>
-                </p>
+                </P>
                 <SkeletonVisualExample />
               </React.Fragment>
             ))}
@@ -134,12 +98,12 @@ export function PageSkeleton({title, section, hasToC, isLongForm, isWide}: {titl
             {/* A few sections */}
             {[1, 2, 3, 4].map(i => (
               <React.Fragment key={i}>
-                <h2 className={skeletonH2}>
+                <H2>
                   <Text>Section Heading</Text>
-                </h2>
-                <p className={skeletonParagraph}>
+                </H2>
+                <P>
                   <Text>Placeholder content for a section that describes various aspects of the topic being documented.</Text>
-                </p>
+                </P>
               </React.Fragment>
             ))}
           </>

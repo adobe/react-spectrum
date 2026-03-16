@@ -4,7 +4,7 @@ import { Toolbar as RACToolbar, ToggleButtonGroupContext, ToolbarProps, composeR
 import { tv } from 'tailwind-variants';
 
 const styles = tv({
-  base: 'flex gap-2',
+  base: 'flex flex-wrap gap-2',
   variants: {
     orientation: {
       horizontal: 'flex-row items-center',

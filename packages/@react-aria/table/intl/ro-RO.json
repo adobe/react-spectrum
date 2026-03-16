@@ -7,5 +7,7 @@
   "resizerDescription": "Apăsați pe Enter pentru a începe redimensionarea",
   "select": "Selectare",
   "selectAll": "Selectare totală",
-  "sortable": "coloană sortabilă"
+  "sortable": "coloană sortabilă",
+  "collapse": "Restrângeți",
+  "expand": "Extindeți"
 }

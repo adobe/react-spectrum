@@ -504,7 +504,7 @@ function moveItems<T extends object>(
     // decrement the index if the child being removed is in the target parent and before the target index
     // the root node is special, it is null, and will not have a key, however, a parentKey can still point to it
     if ((child.parentKey === toParent
-       || child.parentKey === toParent?.key)
+      || child.parentKey === toParent?.key)
       && keyArray.includes(child.key)
       && (toParent?.children ? toParent.children.indexOf(child) : items.indexOf(child)) < originalToIndex) {
       toIndex--;

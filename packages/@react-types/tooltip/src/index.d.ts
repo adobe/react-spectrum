@@ -42,7 +42,7 @@ export interface TooltipTriggerProps extends OverlayTriggerProps {
    * Whether the tooltip should close when the trigger is pressed.
    * @default true
    */
-  closeOnPress?: boolean
+  shouldCloseOnPress?: boolean
 }
 
 export interface SpectrumTooltipTriggerProps extends Omit<TooltipTriggerProps, 'closeDelay'>, PositionProps {

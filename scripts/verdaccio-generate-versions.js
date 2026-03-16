@@ -26,7 +26,7 @@ process.stdin.on('end', () => {
         if (location.startsWith('packages/dev/')) {
           const packageName = location.split('/').pop();
           // Only include specific dev tools
-          if (['optimize-locales-plugin', 'parcel-resolver-optimize-locales', 'codemods', 'mcp',
+          if (location.includes('mcp') || ['optimize-locales-plugin', 'parcel-resolver-optimize-locales', 'codemods',
             'parcel-transformer-s2-icon', 's2-icon-builder', 'ts-plugin', 'parcel-namer-s2'].includes(packageName)) {
             acc[workspace.name] = 'patch';
           }

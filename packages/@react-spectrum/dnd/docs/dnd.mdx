@@ -116,9 +116,9 @@ import {Flex} from '@react-spectrum/layout';
 ### Creating the draggable list
 
 For the first ListView in the example above, we want to make the rows draggable and have the dragged rows removed from the list upon a successful drop. To accomplish this,
-we first want to set up the initial list of items for our draggable ListView via [useListData](../react-stately/useListData.html) so that we have access to some helper methods
+we first want to set up the initial list of items for our draggable ListView via [useListData](react-aria:useListData.html) so that we have access to some helper methods
 to modify the list of items on the fly. Note that this is completely optional and is not required to enable drag and drop in React Spectrum. You may substitute `useListData` with
-[useAsyncList](../react-stately/useAsyncList.html) or with any other state management solution.
+[useAsyncList](react-aria:useAsyncList.html) or with any other state management solution.
 
 ```tsx
 let list = useListData({
@@ -157,7 +157,7 @@ let onDragEnd = (e) => {
 
 Finally, we provide our `getItems` and `onDragEnd` functions as options to `useDragAndDrop`, providing us with a set of `dragAndDropHooks` that we can pass to our ListView directly.
 Below is what our draggable ListView would look like after combining everything together. For more info on `getItems` and `onDragEnd`, see the [props section](#props) below and the
-[React Aria docs](../react-aria/useDraggableCollection.html#drag-data).
+[React Aria docs](react-aria:useDraggableCollection.html#drag-data).
 
 ```tsx example export=true render=false
 import {Item, ListView, useListData} from '@adobe/react-spectrum';
@@ -209,7 +209,7 @@ function DraggableList() {
 ### Creating the droppable list
 
 We want to make the second ListView droppable, accepting drops between items and onto folders but not at the root of the list. Similar to the draggable ListView, we'll start by initializing the default item list
-via [useListData](../react-stately/useListData.html). As a reminder, `useListData` is completely optional here and can be replaced by [useAsyncList](../react-stately/useAsyncList.html) or any other state management solution.
+via [useListData](react-aria:useListData.html). As a reminder, `useListData` is completely optional here and can be replaced by [useAsyncList](react-aria:useAsyncList.html) or any other state management solution.
 
 ```tsx
 let list = useListData({
@@ -352,7 +352,7 @@ function DroppableList() {
 The above example makes use of several high-level events and options supported by `useDragAndDrop` to define the droppable ListView's behavior. However, you may have complex operations
 that would be difficult or impossible to implement using the high-level options alone. For situations like this, you can use `getDropOperation` and `onDrop` instead, granting you
 complete control over what drop operations should be returned and how any drop on your collection should be handled. For a more general explanation of these low-level options and how they work,
-see the [API section](#low-level-drop-handlers-and-options) below and the `useDroppableCollection` [React Aria docs](../react-aria/useDroppableCollection.html#low-level-api).
+see the [API section](#low-level-drop-handlers-and-options) below and the `useDroppableCollection` [React Aria docs](react-aria:useDroppableCollection.html#low-level-api).
 
 The ListView below allows external directories to be dropped at its root level or between existing items. Files of a specific type can be dropped on certain pre-existing directories only.
 

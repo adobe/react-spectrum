@@ -4,7 +4,7 @@ import {ColorThumb as AriaColorThumb, ColorThumbProps} from 'react-aria-componen
 import { tv } from 'tailwind-variants';
 
 const thumbStyles = tv({
-  base: 'w-6 h-6 top-[50%] left-[50%] rounded-full border-2 border-white',
+  base: 'w-4.5 h-4.5 top-[50%] left-[50%] rounded-full border-2 border-white box-border',
   variants: {
     isFocusVisible: {
       true: 'w-8 h-8'

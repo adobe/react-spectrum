@@ -1,5 +1,5 @@
 'use client';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, ChevronRight } from 'lucide-react';
 import React from 'react';
 import {
   Cell as AriaCell,
@@ -106,7 +106,7 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
 
 const rowStyles = tv({
   extend: focusRing,
-  base: 'group/row relative cursor-default select-none -outline-offset-2 text-neutral-900 disabled:text-neutral-300 dark:text-neutral-200 dark:disabled:text-neutral-600 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 selected:bg-blue-100 selected:hover:bg-blue-200 dark:selected:bg-blue-700/30 dark:selected:hover:bg-blue-700/40'
+  base: 'group/row relative cursor-default select-none -outline-offset-2 text-neutral-900 disabled:text-neutral-300 dark:text-neutral-200 dark:disabled:text-neutral-600 text-sm hover:bg-neutral-100 pressed:bg-neutral-100 dark:hover:bg-neutral-800 dark:pressed:bg-neutral-800 selected:bg-blue-100 selected:hover:bg-blue-200 selected:pressed:bg-blue-200 dark:selected:bg-blue-700/30 dark:selected:hover:bg-blue-700/40 dark:selected:pressed:bg-blue-700/40 last:rounded-b-lg'
 });
 
 export function Row<T extends object>(
@@ -135,11 +135,47 @@ export function Row<T extends object>(
 
 const cellStyles = tv({
   extend: focusRing,
-  base: 'box-border border-b border-b-neutral-200 dark:border-b-neutral-700 group-last/row:border-b-0 [--selected-border:var(--color-blue-200)] dark:[--selected-border:var(--color-blue-900)] group-selected/row:border-(--selected-border) in-[:has(+[data-selected])]:border-(--selected-border) p-2 truncate -outline-offset-2'
+  base: 'box-border [-webkit-tap-highlight-color:transparent] border-b border-b-neutral-200 dark:border-b-neutral-700 group-last/row:border-b-0 [--selected-border:var(--color-blue-200)] dark:[--selected-border:var(--color-blue-900)] group-selected/row:border-(--selected-border) [:is(:has(+[data-selected])_*)]:border-(--selected-border) p-2 truncate -outline-offset-2 group-last/row:first:rounded-bl-lg group-last/row:last:rounded-br-lg'
+});
+
+const expandButton = tv({
+  extend: focusRing,
+  base: "border-0 p-0 pr-1 bg-transparent shrink-0 align-middle cursor-default [-webkit-tap-highlight-color:transparent]",
+  variants: {
+    isDisabled: {
+      true: 'text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText]'
+    }
+  }
+});
+
+const chevron = tv({
+  base: "w-4.5 h-4.5 text-neutral-500 dark:text-neutral-400 transition-transform duration-200 ease-in-out",
+  variants: {
+    isExpanded: {
+      true: "transform rotate-90",
+    },
+    isDisabled: {
+      true: 'text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText]'
+    }
+  }
 });
 
 export function Cell(props: CellProps) {
   return (
-    <AriaCell {...props} className={cellStyles} />
-  );
+    <AriaCell
+      {...props}
+      className={cellStyles}
+      style={({hasChildItems, isTreeColumn, level}) => ({
+        paddingInlineStart: isTreeColumn ? 4 + (hasChildItems ? 0 : 20) + (level - 1) * 16 : undefined
+      })}>
+      {composeRenderProps(props.children, (children, {hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (<>
+        {hasChildItems && isTreeColumn && 
+          <Button slot="chevron" className={expandButton({ isDisabled })}>
+            <ChevronRight aria-hidden className={chevron({ isExpanded, isDisabled })} />
+          </Button>
+        }
+        {children}
+      </>))}
+    </AriaCell>
+  )
 }

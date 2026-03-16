@@ -56,13 +56,21 @@ type Links = {[name: string]: string};
 export interface ICodeProps {
   children: string,
   lang?: string,
+  isFencedBlock?: boolean,
   hideImports?: boolean,
   links?: Links,
   styles?: StyleString
 }
 
-export function Code({children, lang, hideImports = true, links, styles}: ICodeProps) {
-  if (lang) {
+// Check if a language is supported by tree-sitter for syntax highlighting
+function isSupportedLanguage(lang: string): boolean {
+  const supported = ['js', 'jsx', 'ts', 'tsx', 'css', 'json'];
+  return supported.includes(lang.toLowerCase());
+}
+
+export function Code({children, lang, isFencedBlock, hideImports = true, links, styles}: ICodeProps) {
+  // If language is provided and is a supported syntax highlighting language
+  if (lang && isSupportedLanguage(lang)) {
     return (
       <code className={styles} style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}}>
         <CodeClient tokens={highlightCode(children, lang, hideImports, links)} />
@@ -70,6 +78,17 @@ export function Code({children, lang, hideImports = true, links, styles}: ICodeP
     );
   }
 
+  // If inside a fenced code block (pre element) or has an unsupported language,
+  // render as plain text block without syntax highlighting
+  if (isFencedBlock || lang) {
+    return (
+      <code className={styles} style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}}>
+        {children}
+      </code>
+    );
+  }
+
+  // Inline code style
   return (
     <code
       className={style({
@@ -244,7 +263,11 @@ function renderHast(node: HastNode | HastTextNode, key: string, links?: Links, i
 
     // CodeProps includes the indent and newlines in case there are no props to show.
     if (node.tagName === 'div' && typeof childArray[0] === 'string' && /^\s+$/.test(childArray[0]) && React.isValidElement(childArray[1]) && childArray[1].type === CodeProps) {
-      childArray = childArray.slice(1);
+      // If the only thing after CodeProps is the newline from div processing, exclude it (CodeProps handles its own newlines).
+      // Otherwise, include all trailing content.
+      childArray = childArray.length === 3 && childArray[2] === '\n'
+      ? childArray.slice(1, 2)
+      : childArray.slice(1);
     }
 
     let children = childArray.length === 1 ? childArray[0] : childArray;

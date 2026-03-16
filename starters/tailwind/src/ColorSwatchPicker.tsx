@@ -33,7 +33,7 @@ export function ColorSwatchPicker(
 
 const itemStyles = tv({
   extend: focusRing,
-  base: 'relative rounded-xs'
+  base: 'relative rounded-xs [-webkit-tap-highlight-color:transparent]'
 });
 
 export function ColorSwatchPickerItem(props: ColorSwatchPickerItemProps) {

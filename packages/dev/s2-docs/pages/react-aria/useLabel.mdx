@@ -14,6 +14,7 @@ import {FunctionAPI} from '../../src/FunctionAPI';
 import {InterfaceType} from '../../src/types';
 
 export const section = 'Utilities';
+export const description = 'Associates a label with a form field for accessibility.';
 
 # useLabel
 
@@ -26,7 +27,7 @@ creating an id for the field and associates the label with it.
 
 ```tsx render
 'use client';
-import {useLabel} from '@react-aria/label';
+import {useLabel} from 'react-aria';
 
 function ColorField(props) {
   let {labelProps, fieldProps} = useLabel(props);
@@ -50,9 +51,8 @@ By default, `useLabel` assumes that the label is a native HTML label element.
 However, if you are labeling a non-native form element, be sure to use an
 element other than a `<label>` and set the `labelElementType` prop appropriately.
 
-{/* not implemented yet */}
-{/* See [useRadioGroup](useRadioGroup.html#example) and [useTextField](useTextField.html#example)
-for examples of how `useLabel` is used by components. */}
+See [useRadioGroup](RadioGroup/useRadioGroup.html#example) and [useTextField](TextField/useTextField.html#example)
+for examples of how `useLabel` is used by components.
 
 ## API
 

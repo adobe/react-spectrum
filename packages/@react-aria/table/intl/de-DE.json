@@ -7,5 +7,7 @@
   "resizerDescription": "Eingabetaste zum Starten der Größenänderung drücken",
   "select": "Auswählen",
   "selectAll": "Alles auswählen",
-  "sortable": "sortierbare Spalte"
+  "sortable": "sortierbare Spalte",
+  "collapse": "Reduzieren",
+  "expand": "Erweitern"
 }

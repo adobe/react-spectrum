@@ -5,6 +5,7 @@ import {ProgressCircle} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['spinner', 'circular', 'loading'];
+export const description = 'Shows progress of an operation over time with a circular representation.';
 
 # ProgressCircle
 
@@ -29,7 +30,7 @@ By default, the `value` prop is a percentage between 0 and 100. Use the `minValu
   links={docs.links}
   props={['minValue', 'maxValue']}
   initialProps={{
-    label: 'Progress',
+    'aria-label': 'Progress',
     minValue: 0,
     maxValue: 150,
     value: 50

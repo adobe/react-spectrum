@@ -4,12 +4,14 @@ export default Layout;
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['profile', 'user'];
+export const description = 'A grouping of avatars that are related to each other.';
 
 # AvatarGroup
 
 <PageDescription>{docs.exports.AvatarGroup.description}</PageDescription>
 
 ```tsx render docs={docs.exports.AvatarGroup} links={docs.links} props={['label', 'size']} initialProps={{'aria-label': 'Collaborators', label: '123 members'}} controlOptions={{size: {control: 'picker'}}} type="s2"
+"use client";
 import {AvatarGroup, Avatar} from '@react-spectrum/s2';
 
 <AvatarGroup/* PROPS */>
@@ -30,7 +32,7 @@ import {AvatarGroup, Avatar} from '@react-spectrum/s2';
 
 ## API
 
-```tsx links={{AvatarGroup: '#avatargroup', Avatar: 'Avatar.html'}}
+```tsx links={{AvatarGroup: '#avatargroup', Avatar: 'Avatar'}}
 <AvatarGroup>
   <Avatar />
 </AvatarGroup>

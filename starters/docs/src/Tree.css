@@ -16,6 +16,17 @@
   --drag-button-width: 0px;
   --checkbox-width: 0px;
 
+  .react-aria-TreeSection:not(:first-child) {
+    margin-top: var(--spacing-4);
+  }
+
+  .react-aria-TreeHeader {
+    font-size: var(--font-size-lg);
+    font-weight: 500;
+    padding: var(--spacing-1) var(--spacing-2);
+    color: var(--text-color);
+  }
+
   &[data-focus-visible] {
     outline: 2px solid var(--focus-ring-color);
     outline-offset: -1px;
@@ -54,8 +65,9 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-  min-height: 28px;
-  padding: 0.25025rem 0.25025rem 0.25025rem 0.499625rem;
+  min-height: var(--spacing-8);
+  padding: var(--spacing-1) var(--spacing-1) var(--spacing-1) var(--spacing-2);
+  box-sizing: border-box;
   --padding: var(--spacing-4);
   border-radius: var(--radius);
   outline: none;

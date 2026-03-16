@@ -1,10 +1,14 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {Dialog, FullscreenDialog, CustomDialog, DialogTrigger, DialogContainer, Button, ButtonGroup, Heading, Header, Content, Footer, Image, TextField, Checkbox, CloseButton, ActionButton, IllustratedMessage} from '@react-spectrum/s2';
+import {Dialog, FullscreenDialog, CustomDialog, DialogTrigger, DialogContainer, Button, ButtonGroup, Heading, Header, Content, Footer, Image, TextField, Checkbox, CloseButton, ActionButton, IllustratedMessage, InlineAlert} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['modal', 'popup', 'overlay'];
+export const relatedPages = [
+  {title: 'Testing Dialog', url: './Dialog/testing'}
+];
+export const description = 'An overlay shown above other content in an application.';
 
 # Dialog
 
@@ -58,7 +62,7 @@ Use `Dialog` for standard dialog layouts. It supports `Image`, `Heading`, `Heade
 
 ```tsx render docs={docs.exports.Dialog} links={docs.links} props={['size', 'isDismissible']} type="s2"
 "use client";
-import {Dialog, DialogTrigger, Button, ButtonGroup, Heading, Header, Content, Footer, Checkbox, Image, Form, TextField} from '@react-spectrum/s2';
+import {Dialog, DialogTrigger, Button, ButtonGroup, Heading, Header, Content, Footer, Checkbox, Image} from '@react-spectrum/s2';
 import heroImage from 'url:./assets/preview.png';
 
 function Example(props) {
@@ -187,11 +191,11 @@ Use `DialogContainer` to show a dialog programmatically or mount in a different 
 
 ```tsx render
 "use client";
-import {DialogContainer, Dialog, Button, ButtonGroup, Heading, Content, ActionMenu, MenuItem} from '@react-spectrum/s2';
+import {DialogContainer, Dialog, Button, ButtonGroup, Heading, Content, ActionMenu, MenuItem, type Key} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function DialogContainerExample() {
-  let [dialogType, setDialogType] = useState(null);
+  let [dialogType, setDialogType] = useState<Key | null>(null);
 
   return (
     <>
@@ -200,7 +204,7 @@ function DialogContainerExample() {
         <MenuItem id="delete">Delete Item</MenuItem>
         <MenuItem id="share">Share Item</MenuItem>
       </ActionMenu>
-      
+
       {/*- begin highlight -*/}
       <DialogContainer onDismiss={() => setDialogType(null)}>
       {/*- end highlight -*/}
@@ -256,7 +260,7 @@ function DialogContainerExample() {
 
 ### Dialog
 
-```tsx links={{ButtonGroup: 'ButtonGroup.html'}}
+```tsx links={{ButtonGroup: 'ButtonGroup', Image:' Image', Heading: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements', Header: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/header', Content: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/div', Footer: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/footer'}}
 <Dialog>
   <Image slot="hero">
   <Heading slot="title" />
@@ -267,7 +271,7 @@ function DialogContainerExample() {
 </Dialog>
 ```
 
-<PropTable component={docs.exports.Dialog} links={docs.links} />
+<PropTable component={docs.exports.Dialog} links={docs.links} hideRenderProps />
 
 ### AlertDialog
 
@@ -275,7 +279,7 @@ function DialogContainerExample() {
 
 ### FullscreenDialog
 
-```tsx links={{ButtonGroup: 'ButtonGroup.html'}}
+```tsx links={{ButtonGroup: 'ButtonGroup', Heading: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements', Header: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/header', Content: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/div'}}
 <FullscreenDialog>
   <Heading slot="title" />
   <Header />
@@ -284,15 +288,15 @@ function DialogContainerExample() {
 </FullscreenDialog>
 ```
 
-<PropTable component={docs.exports.FullscreenDialog} links={docs.links} />
+<PropTable component={docs.exports.FullscreenDialog} links={docs.links} hideRenderProps />
 
 ### CustomDialog
 
-<PropTable component={docs.exports.CustomDialog} links={docs.links} />
+<PropTable component={docs.exports.CustomDialog} links={docs.links} hideRenderProps />
 
 ### DialogTrigger
 
-```tsx links={{Dialog: '#dialog', Button: 'Button.html'}}
+```tsx links={{Dialog: '#dialog', Button: 'Button'}}
 <DialogTrigger>
   <Button />
   <Dialog />

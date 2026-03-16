@@ -2,15 +2,22 @@
 
 import {Divider, PickerItem} from '@react-spectrum/s2';
 import {MarkdownMenu} from './MarkdownMenu';
-import {MobileOnPageNav, OnPageNav, SideNav, SideNavItem, SideNavLink, usePendingPage} from './Nav';
-import type {Page, TocNode} from '@parcel/rsc';
+import {MobileOnPageNav, OnPageNav, SideNav, SideNavItem, SideNavLink} from './Nav';
 import React from 'react';
 import {ScrollableToc} from './ScrollableToc';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import type {TocNode} from '@parcel/rsc';
+import {useRouter} from './Router';
 
 function anchorId(children) {
   return children.replace(/\s/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
 }
+
+let tocLinkTextStyle = style({
+  overflowWrap: 'break-word',
+  wordBreak: 'break-word',
+  minWidth: 0
+});
 
 function Toc({toc, isNested = false}: {toc: TocNode[], isNested?: boolean}) {
   return (
@@ -18,7 +25,9 @@ function Toc({toc, isNested = false}: {toc: TocNode[], isNested?: boolean}) {
       <SideNav isNested={isNested}>
         {toc.map((c, i) => (
           <SideNavItem key={i}>
-            <SideNavLink href={'#' + anchorId(c.title)}>{c.title}</SideNavLink>
+            <SideNavLink href={'#' + anchorId(c.title)} title={c.title}>
+              <span className={tocLinkTextStyle}>{c.title}</span>
+            </SideNavLink>
             {c.children.length > 0 && <Toc toc={c.children} isNested />}
           </SideNavItem>
         ))}
@@ -43,25 +52,47 @@ function renderMobileToc(toc: TocNode[], seen = new Map()) {
   });
 }
 
-export function OptimisticToc({currentPage, pages}: {currentPage: Page, pages: Page[]}) {
-  let pendingPage = usePendingPage(pages);
-  let displayPage = pendingPage ?? currentPage;
+export function OptimisticToc() {
+  let {currentPage} = useRouter();
+  let section = currentPage.exports?.section;
+  let hasToC = (!currentPage.exports?.hideNav || section === 'Blog' || section === 'Releases') && currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents?.[0]?.children?.length > 0;
+  if (!hasToC) {
+    return null;
+  }
 
   return (
-    <>
+    <aside
+      className={style({
+        position: 'sticky',
+        top: 0,
+        paddingTop: 32,
+        marginBottom: -40,
+        boxSizing: 'border-box',
+        width: 180,
+        flexShrink: 0,
+        display: {
+          default: 'none',
+          lg: 'flex'
+        },
+        flexDirection: 'column'
+      })}>
       <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center', marginBottom: 4, flexShrink: 0})}>On this page</div>
       <ScrollableToc>
-        <Toc toc={displayPage.tableOfContents?.[0]?.children ?? []} key={displayPage.url} />
+        <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} key={currentPage.url} />
         {currentPage.exports?.relatedPages && (
           <RelatedPages pages={currentPage.exports.relatedPages} />
         )}
       </ScrollableToc>
       <div className={style({flexShrink: 0})}>
         <Divider size="S" styles={style({marginY: 12})} />
-        <MarkdownMenu url={currentPage.url} />
+        <MarkdownMenu name={currentPage.name} url={currentPage.url} />
       </div>
-    </>
+    </aside>
   );
+}
+
+function isExternalUrl(url: string): boolean {
+  return url.startsWith('http://') || url.startsWith('https://');
 }
 
 function RelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
@@ -72,7 +103,7 @@ function RelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
         <SideNav>
           {pages.map((page, i) => (
             <SideNavItem key={i}>
-              <SideNavLink href={page.url}>{page.title}</SideNavLink>
+              <SideNavLink href={page.url} isExternal={isExternalUrl(page.url)}>{page.title}</SideNavLink>
             </SideNavItem>
           ))}
         </SideNav>
@@ -81,24 +112,23 @@ function RelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
   );
 }
 
-export function OptimisticMobileToc({currentPage, pages}: {currentPage: Page, pages: Page[]}) {
-  let pendingPage = usePendingPage(pages);
-  let displayPage = pendingPage ?? currentPage;
+export function OptimisticMobileToc() {
+  let {currentPage} = useRouter();
 
-  if ((displayPage.tableOfContents?.[0]?.children?.length ?? 0) <= 1) {
+  if ((currentPage.tableOfContents?.[0]?.children?.length ?? 0) <= 1) {
     return null;
   }
 
-  let withRelatedPages = displayPage.exports?.relatedPages ? [
-    ...(displayPage.tableOfContents ?? []),
+  let withRelatedPages = currentPage.exports?.relatedPages ? [
+    ...(currentPage.tableOfContents ?? []),
     {
       level: 2,
       title: 'Related pages',
       children: []
-    }] : displayPage.tableOfContents!;
+    }] : currentPage.tableOfContents!;
 
   return (
-    <MobileOnPageNav currentPage={currentPage}>
+    <MobileOnPageNav>
       {renderMobileToc(withRelatedPages)}
     </MobileOnPageNav>
   );

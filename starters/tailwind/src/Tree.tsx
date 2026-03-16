@@ -6,7 +6,6 @@ import {
   TreeItemContent as AriaTreeItemContent,
   Button,
   TreeItemProps as AriaTreeItemProps,
-  TreeItemContentProps as AriaTreeItemContentProps,
   TreeProps
 } from 'react-aria-components';
 import { ChevronRight } from "lucide-react";
@@ -16,11 +15,11 @@ import { composeTailwindRenderProps, focusRing } from './utils';
 
 const itemStyles = tv({
   extend: focusRing,
-  base: 'relative font-sans w-48 flex group gap-3 cursor-default select-none py-1 px-3 text-sm text-neutral-900 dark:text-neutral-200 bg-white dark:bg-neutral-900 border-y dark:border-y-neutral-700 border-transparent first:border-t-0 last:border-b-0 -mb-px last:mb-0 -outline-offset-2',
+  base: 'relative font-sans flex group gap-3 cursor-default select-none py-1 px-3 text-sm text-neutral-900 dark:text-neutral-200 bg-white dark:bg-neutral-900 border-t dark:border-t-neutral-700 border-transparent first:border-t-0 -outline-offset-2 first:rounded-t-lg last:rounded-b-lg',
   variants: {
     isSelected: {
-      false: 'hover:bg-neutral-100 dark:hover:bg-neutral-800',
-      true: 'bg-blue-100 dark:bg-blue-700/30 hover:bg-blue-200 dark:hover:bg-blue-700/40 border-y-blue-200 dark:border-y-blue-900 z-20'
+      false: 'hover:bg-neutral-100 pressed:bg-neutral-100 dark:hover:bg-neutral-800 dark:pressed:bg-neutral-800',
+      true: 'bg-blue-100 dark:bg-blue-700/30 hover:bg-blue-200 pressed:bg-blue-200 dark:hover:bg-blue-700/40 dark:pressed:bg-blue-700/40 border-y-blue-200 dark:border-y-blue-900 z-20'
     },
     isDisabled: {
       true: 'text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText] z-10'
@@ -32,7 +31,7 @@ export function Tree<T extends object>(
   { children, ...props }: TreeProps<T>
 ) {
   return (
-    <AriaTree {...props} className={composeTailwindRenderProps(props.className, 'overflow-auto relative border border-neutral-200 dark:border-neutral-700 rounded-lg')}>
+    <AriaTree {...props} className={composeTailwindRenderProps(props.className, 'w-48 max-w-full overflow-auto relative border border-neutral-200 dark:border-neutral-700 rounded-lg')}>
       {children}
     </AriaTree>
   );
@@ -40,7 +39,7 @@ export function Tree<T extends object>(
 
 const expandButton = tv({
   extend: focusRing,
-  base: "border-0 p-0 bg-transparent shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-start cursor-default",
+  base: "border-0 p-0 bg-transparent shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-start cursor-default [-webkit-tap-highlight-color:transparent]",
   variants: {
     isDisabled: {
       true: 'text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText]'

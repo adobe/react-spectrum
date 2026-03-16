@@ -1,7 +1,7 @@
 {
   "packageManager": "yarn@4.2.2",
   "devDependencies": {
-    "parcel": "^2.16.1",
+    "parcel": "^2.16.3",
     "process": "^0.11.10"
   },
   "dependencies": {

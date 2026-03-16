@@ -17,10 +17,11 @@
 }
 
 .react-aria-Toast {
+  width: 230px;
   display: flex;
   align-items: center;
   gap: var(--spacing-4);
-  background: var(--tint-1000);
+  background: var(--highlight-background);
   padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--radius-lg);
   outline: none;
@@ -75,6 +76,7 @@
 
     &[data-pressed] {
       background: var(--highlight-pressed);
+      box-shadow: none;
     }
   }
 }
