@@ -32,6 +32,7 @@
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
+    "@testing-library/dom": "^10.1.0",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.0.0",
     "jest": "^29.5.0",
