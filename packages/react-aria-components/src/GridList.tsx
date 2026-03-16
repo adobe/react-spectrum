@@ -96,7 +96,12 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
    * Whether the items are arranged in a stack or grid.
    * @default 'stack'
    */
-  layout?: 'stack' | 'grid'
+  layout?: 'stack' | 'grid',
+  /**
+   * The primary orientation of the items. Usually this is the direction that the collection scrolls.
+   * @default 'vertical'
+   */
+  orientation?: 'horizontal' | 'vertical'
 }
 
 
@@ -127,7 +132,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {shouldUseVirtualFocus, filter, disallowTypeAhead, ...DOMCollectionProps} = props;
-  let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;
+  let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack', orientation = 'vertical'} = props;
   let {CollectionRoot, isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate} = useContext(CollectionRendererContext);
   let gridlistState = useListState({
     ...DOMCollectionProps,
@@ -149,9 +154,10 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       disabledBehavior,
       layoutDelegate,
       layout,
+      orientation,
       direction
     })
-  ), [filteredState.collection, ref, layout, disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
+  ), [filteredState.collection, ref, layout, orientation, disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
 
   let {gridProps} = useGridList({
     ...DOMCollectionProps,
@@ -211,9 +217,11 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       collection: filteredState.collection,
       disabledKeys: selectionManager.disabledKeys,
       disabledBehavior: selectionManager.disabledBehavior,
-      ref
+      ref,
+      orientation,
+      direction
     });
-    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, ref, {layout, direction});
+    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, ref, {layout, direction, orientation});
     droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate,
       dropTargetDelegate
@@ -289,7 +297,14 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   );
 }
 
-export interface GridListItemRenderProps extends ItemRenderProps {}
+export interface GridListItemRenderProps extends ItemRenderProps {
+  /** The unique id of the item. */
+  id?: Key,
+  /**
+   * State of the grid list.
+   */
+  state: ListState<unknown>
+}
 
 export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
@@ -373,7 +388,9 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
       selectionBehavior: state.selectionManager.selectionBehavior,
       allowsDragging: !!dragState,
       isDragging,
-      isDropTarget: dropIndicator?.isDropTarget
+      isDropTarget: dropIndicator?.isDropTarget,
+      id: item.key,
+      state
     }
   });
 
@@ -653,7 +670,7 @@ export const GridListSection = /*#__PURE__*/ createBranchComponent(SectionNode, 
 export interface GridListHeaderProps extends DOMRenderProps<'div', undefined>, DOMProps, GlobalDOMAttributes<HTMLElement> {}
 
 export const GridListHeaderContext = createContext<ContextValue<GridListHeaderProps, HTMLDivElement>>({});
-const GridListHeaderInnerContext = createContext<HTMLAttributes<HTMLElement> | null>(null);
+export const GridListHeaderInnerContext = createContext<HTMLAttributes<HTMLElement> | null>(null);
 
 export const GridListHeader = /*#__PURE__*/ createLeafComponent(HeaderNode, function Header(props: GridListHeaderProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, GridListHeaderContext);

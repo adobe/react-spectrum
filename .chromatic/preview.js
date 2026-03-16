@@ -1,4 +1,4 @@
-import {configureActions} from '@storybook/addon-actions';
+import {configureActions} from 'storybook/actions';
 import React from 'react';
 import {VerticalCenter} from './layout';
 import {withChromaticProvider} from './custom-addons/chromatic';

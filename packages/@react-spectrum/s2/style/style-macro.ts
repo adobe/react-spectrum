@@ -223,7 +223,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     // We also check if this is globalThis, which happens in non-strict mode bundles.
     // Also allow style to be called as a normal function in tests.
     // @ts-ignore
-     
+
     if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
       throw new Error('The style macro must be imported with {type: "macro"}.');
     }
@@ -478,7 +478,14 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
           priority = Math.max(priority, subPriority);
         } else if (val && typeof val === 'object' && !Array.isArray(val)) {
           for (let key in val) {
-            let [subPriority, subRules] = conditionalToRules(val[key], rulePriority, currentConditions, subSkipConditions, fn);
+            let branchValue = val[key];
+            // If this branch has no default, inherit the parent's default so e.g. forcedColors.default
+            // applies when selectionStyle.highlight doesn't define its own default.
+            // eslint-disable-next-line max-depth
+            if (value.default !== undefined && branchValue && typeof branchValue === 'object' && !Array.isArray(branchValue) && !('default' in branchValue)) {
+              branchValue = {default: value.default, ...branchValue};
+            }
+            let [subPriority, subRules] = conditionalToRules(branchValue, rulePriority, currentConditions, subSkipConditions, fn);
             rules.push(...compileCondition(currentConditions, `${condition} === ${JSON.stringify(key)}`, priority, subRules));
             priority = Math.max(priority, subPriority);
           }
@@ -868,7 +875,7 @@ export function raw(this: MacroContext | void, css: string, layer = '_.a'): stri
   // We also check if this is globalThis, which happens in non-strict mode bundles.
   // Also allow style to be called as a normal function in tests.
   // @ts-ignore
-   
+
   if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
     throw new Error('The raw macro must be imported with {type: "macro"}.');
   }
@@ -898,7 +905,7 @@ export function keyframes(this: MacroContext | void, css: string): string {
   // We also check if this is globalThis, which happens in non-strict mode bundles.
   // Also allow style to be called as a normal function in tests.
   // @ts-ignore
-   
+
   if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
     throw new Error('The keyframes macro must be imported with {type: "macro"}.');
   }

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {BackgroundColorValue} from '@react-types/shared';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';

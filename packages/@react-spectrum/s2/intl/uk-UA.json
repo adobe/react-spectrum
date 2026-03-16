@@ -23,6 +23,7 @@
   "label.(optional)": "(необов’язково)",
   "label.(required)": "(обов’язково)",
   "menu.moreActions": "Більше дій",
+  "menu.unavailable": "Недоступно, розгорніть для докладнішої інформації",
   "notificationbadge.indicatorOnly": "Нова активність",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Вибрати…",

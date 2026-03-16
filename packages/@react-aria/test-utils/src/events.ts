@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent} from '@testing-library/react';
+import {act} from './act';
+import {fireEvent} from '@testing-library/dom';
 import {UserOpts} from './types';
 
 export const DEFAULT_LONG_PRESS_TIME = 500;

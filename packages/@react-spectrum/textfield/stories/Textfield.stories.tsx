@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ActionButton, Content, ContextualHelp, Heading, useLocale} from '@adobe/react-spectrum';
 import Info from '@spectrum-icons/workflow/Info';
 import {Meta, StoryObj} from '@storybook/react';

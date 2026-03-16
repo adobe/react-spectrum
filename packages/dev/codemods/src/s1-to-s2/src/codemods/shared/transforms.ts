@@ -441,9 +441,9 @@ export function updateComponentWithinCollection(
 ): void {
   const {parentComponentName, newComponentName} = options;
 
-  // Collections currently implemented
-  // TODO: Add 'ActionGroup', 'ListBox', 'ListView' once implemented
-  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'TabList', 'TabPanels', 'Collection']);
+  // Collections currently implemented.
+  // TODO: Add 'ActionGroup', 'ListBox' once implemented
+  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'ListView', 'TabList', 'TabPanels', 'Collection', 'ContextualHelpTrigger']);
 
   if (
     t.isJSXElement(path.node) &&
@@ -489,7 +489,7 @@ export function updateComponentWithinCollection(
 export function commentIfParentCollectionNotDetected(
   path: NodePath<t.JSXElement>
 ): void {
-  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'TabList', 'TabPanels', 'ActionGroup', 'ActionButtonGroup', 'ToggleButtonGroup', 'ListBox', 'ListView', 'Collection', 'SearchAutocomplete', 'Accordion', 'ActionBar', 'StepList']);
+  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'TabList', 'TabPanels', 'ActionGroup', 'ActionButtonGroup', 'ToggleButtonGroup', 'ListBox', 'ListView', 'Collection', 'SearchAutocomplete', 'Accordion', 'ActionBar', 'StepList', 'ContextualHelpTrigger']);
   if (
     t.isJSXElement(path.node)
   ) {

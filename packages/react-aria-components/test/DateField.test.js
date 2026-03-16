@@ -298,6 +298,46 @@ describe('DateField', () => {
     expect(group).toHaveAttribute('data-disabled-state', 'disabled');
   });
 
+  it('should support required render prop', () => {
+    let {getByRole} = render(
+      <DateField isRequired>
+        {({isRequired}) => (
+          <>
+            <Label>Birth date</Label>
+            <DateInput
+              data-required-state={isRequired ? 'required' : null}>
+              {segment => <DateSegment segment={segment} />}
+            </DateInput>
+          </>
+        )}
+      </DateField>
+    );
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-required-state', 'required');
+  });
+
+  it('should support required state', () => {
+    let {getByRole, rerender} = render(
+      <DateField>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+    let group = getByRole('group');
+    expect(group.closest('.react-aria-DateField')).not.toHaveAttribute('data-required');
+    rerender(
+      <DateField isRequired>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+    expect(group.closest('.react-aria-DateField')).toHaveAttribute('data-required');
+  });
+
   it('should support form value', () => {
     render(
       <DateField name="birthday" form="test" value={new CalendarDate(2020, 2, 3)}>

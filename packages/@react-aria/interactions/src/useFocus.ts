@@ -43,7 +43,7 @@ export function useFocus<Target extends FocusableElement = FocusableElement>(pro
   } = props;
 
   const onBlur: FocusProps<Target>['onBlur'] = useCallback((e: FocusEvent<Target>) => {
-    if (e.target === e.currentTarget) {
+    if (getEventTarget(e) === e.currentTarget) {
       if (onBlurProp) {
         onBlurProp(e);
       }
@@ -63,9 +63,10 @@ export function useFocus<Target extends FocusableElement = FocusableElement>(pro
     // Double check that document.activeElement actually matches e.target in case a previously chained
     // focus handler already moved focus somewhere else.
 
-    const ownerDocument = getOwnerDocument(e.target);
+    let eventTarget = getEventTarget(e);
+    const ownerDocument = getOwnerDocument(eventTarget);
     const activeElement = ownerDocument ? getActiveElement(ownerDocument) : getActiveElement();
-    if (e.target === e.currentTarget && activeElement === getEventTarget(e.nativeEvent)) {
+    if (eventTarget === e.currentTarget && eventTarget === activeElement) {
       if (onFocusProp) {
         onFocusProp(e);
       }
