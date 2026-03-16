@@ -37,7 +37,7 @@ export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 export type SelectionMode = 'single' | 'multiple';
 export type ValueType<M extends SelectionMode> = M extends 'single' ? Key | null : readonly Key[];
 export type ChangeValueType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
-type ValidationType<M extends SelectionMode> = M extends 'single' ? Key : Key[];
+type ValidationType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
 
 export interface ComboBoxValidationValue<M extends SelectionMode = 'single'> {
   /**
