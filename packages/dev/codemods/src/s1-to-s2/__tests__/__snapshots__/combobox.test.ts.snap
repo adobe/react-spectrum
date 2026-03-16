@@ -42,6 +42,20 @@ const items = [
 </div>"
 `;
 
+exports[`Keeps loadingState and onLoadMore 1`] = `
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
+  <>
+    <ComboBox loadingState="loading" onLoadMore={() => {}}>
+      <ComboBoxItem>Red Panda</ComboBoxItem>
+      <ComboBoxItem>Cat</ComboBoxItem>
+    </ComboBox>
+    <ComboBox loadingState={true ? 'loading' : 'idle'} onLoadMore={() => {}}>
+      <ComboBoxItem>Red Panda</ComboBoxItem>
+      <ComboBoxItem>Cat</ComboBoxItem>
+    </ComboBox>
+  </>"
+`;
+
 exports[`Removes isQuiet 1`] = `
 "import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
 let isQuiet = true;
@@ -55,31 +69,6 @@ let props = {isQuiet: true};
     <ComboBoxItem>Red Panda</ComboBoxItem>
     <ComboBoxItem>Cat</ComboBoxItem>
   </ComboBox>
-  <ComboBox>
-    <ComboBoxItem>Red Panda</ComboBoxItem>
-    <ComboBoxItem>Cat</ComboBoxItem>
-  </ComboBox>
-  <ComboBox>
-    <ComboBoxItem>Red Panda</ComboBoxItem>
-    <ComboBoxItem>Cat</ComboBoxItem>
-  </ComboBox>
-  <ComboBox>
-    <ComboBoxItem>Red Panda</ComboBoxItem>
-    <ComboBoxItem>Cat</ComboBoxItem>
-  </ComboBox>
-  <ComboBox // TODO(S2-upgrade): check this spread for style props
-  {...props}>
-    <ComboBoxItem>Red Panda</ComboBoxItem>
-    <ComboBoxItem>Cat</ComboBoxItem>
-  </ComboBox>
-</div>"
-`;
-
-exports[`Removes placeholder 1`] = `
-"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
-let placeholder = 'is this actually removed?';
-let props = {placeholder: 'is this actually removed?'};
-<div>
   <ComboBox>
     <ComboBoxItem>Red Panda</ComboBoxItem>
     <ComboBoxItem>Cat</ComboBoxItem>

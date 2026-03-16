@@ -20,20 +20,26 @@ interface PressableProps extends PressProps {
   children: ReactElement<DOMAttributes, string>
 }
 
-export const Pressable = React.forwardRef(({children, ...props}: PressableProps, ref: ForwardedRef<FocusableElement>) => {
+export const Pressable:
+  React.ForwardRefExoticComponent<PressableProps & React.RefAttributes<FocusableElement>> =
+React.forwardRef(({children, ...props}: PressableProps, ref: ForwardedRef<FocusableElement>) => {
   ref = useObjectRef(ref);
   let {pressProps} = usePress({...props, ref});
   let {focusableProps} = useFocusable(props, ref);
   let child = React.Children.only(children);
 
   useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      return;
+    }
+
     let el = ref.current;
     if (!el || !(el instanceof getOwnerWindow(el).Element)) {
       console.error('<Pressable> child must forward its ref to a DOM element.');
       return;
     }
 
-    if (!isFocusable(el)) {
+    if (!props.isDisabled && !isFocusable(el)) {
       console.warn('<Pressable> child must be focusable. Please ensure the tabIndex prop is passed through.');
       return;
     }
@@ -75,7 +81,7 @@ export const Pressable = React.forwardRef(({children, ...props}: PressableProps,
         console.warn(`<Pressable> child must have an interactive ARIA role. Got "${role}".`);
       }
     }
-  }, [ref]);
+  }, [ref, props.isDisabled]);
 
   // @ts-ignore
   let childRef = parseInt(React.version, 10) < 19 ? child.ref : child.props.ref;

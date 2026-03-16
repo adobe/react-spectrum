@@ -13,13 +13,13 @@
 import {ActionGroup} from '../';
 import {AriaLabelingProps, Orientation} from '@react-types/shared';
 import {classNames, SlotProvider, useSlotProps} from '@react-spectrum/utils';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import CopyIcon from '@spectrum-icons/workflow/Copy';
 import DeleteIcon from '@spectrum-icons/workflow/Delete';
 import {Divider} from '@react-spectrum/divider';
 import DrawIcon from '@spectrum-icons/workflow/Draw';
 import InfoIcon from '@spectrum-icons/workflow/Info';
 import {Item} from '@react-stately/collections';
+import {Meta, StoryObj} from '@storybook/react';
 import PropertiesIcon from '@spectrum-icons/workflow/Properties';
 import {Toolbar as RACToolbar} from 'react-aria-components';
 import React, {ForwardedRef, forwardRef, ReactElement, ReactNode, useMemo} from 'react';
@@ -41,7 +41,9 @@ export interface SpectrumToolbarProps extends AriaLabelingProps {
   orientation?: Orientation
 }
 
-export const Toolbar = forwardRef((props: SpectrumToolbarProps, ref: ForwardedRef<HTMLDivElement>) => {
+export const Toolbar:
+  React.ForwardRefExoticComponent<SpectrumToolbarProps & React.RefAttributes<HTMLDivElement>> =
+forwardRef((props: SpectrumToolbarProps, ref: ForwardedRef<HTMLDivElement>) => {
   props = useProviderProps(props);
   props = useSlotProps(props, 'toolbar');
   let {
@@ -83,9 +85,9 @@ export default {
     }
   },
   excludeStories: ['Toolbar']
-} as ComponentMeta<typeof Toolbar>;
+} as Meta<typeof Toolbar>;
 
-export type ToolbarStory = ComponentStoryObj<typeof Toolbar>;
+export type ToolbarStory = StoryObj<typeof Toolbar>;
 
 let items1 = [
   {id: 'edit', textValue: 'Edit', icon: DrawIcon},

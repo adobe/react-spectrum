@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBranchProps, CollectionRenderer, CollectionRendererContext, CollectionRootProps} from './Collection';
-import {DropPosition, DropTarget, DropTargetDelegate, ItemDropTarget, Node} from '@react-types/shared';
+import {CollectionBranchProps, CollectionRenderer, CollectionRendererContext, CollectionRootProps, renderAfterDropIndicators} from './Collection';
+import {DropTargetDelegate, ItemDropTarget, Node} from '@react-types/shared';
 import {Layout, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
-import React, {createContext, ReactElement, ReactNode, useContext, useMemo} from 'react';
+import React, {createContext, JSX, ReactNode, useContext, useMemo} from 'react';
 import {useScrollView, VirtualizerItem} from '@react-aria/virtualizer';
 
 type View = ReusableView<Node<unknown>, ReactNode>;
@@ -50,7 +50,7 @@ const LayoutContext = createContext<LayoutContextValue | null>(null);
  * It supports very large collections by only rendering visible items to the DOM, reusing
  * them as the user scrolls.
  */
-export function Virtualizer<O>(props: VirtualizerProps<O>) {
+export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
   let {children, layout: layoutProp, layoutOptions} = props;
   let layout = useMemo(() => typeof layoutProp === 'function' ? new layoutProp() : layoutProp, [layoutProp]);
   let renderer: CollectionRenderer = useMemo(() => ({
@@ -102,10 +102,6 @@ function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicat
     onScrollEnd: state.endScrolling
   }, scrollRef!);
 
-  if (state.contentSize.area === 0) {
-    return null;
-  }
-
   return (
     <div {...contentProps}>
       <VirtualizerContext.Provider value={state}>
@@ -129,7 +125,7 @@ function renderWrapper(
   parent: View | null,
   reusableView: View,
   renderDropIndicator?: (target: ItemDropTarget) => ReactNode
-): ReactElement {
+): ReactNode {
   let rendered = (
     <VirtualizerItem
       key={reusableView.key}
@@ -141,13 +137,13 @@ function renderWrapper(
   );
 
   let {collection, layout} = reusableView.virtualizer;
-  let {key, type} = reusableView.content!;
-  if (type === 'item' && renderDropIndicator && layout.getDropTargetLayoutInfo) {
+  let node = reusableView.content;
+  if (node?.type === 'item' && renderDropIndicator && layout.getDropTargetLayoutInfo) {
     rendered = (
       <React.Fragment key={reusableView.key}>
-        {renderDropIndicatorWrapper(parent, reusableView, 'before', renderDropIndicator)}
+        {renderDropIndicatorWrapper(parent, reusableView, {type: 'item', key: reusableView.content!.key, dropPosition: 'before'}, renderDropIndicator)}
         {rendered}
-        {collection.getKeyAfter(key) == null && renderDropIndicatorWrapper(parent, reusableView, 'after', renderDropIndicator)}
+        {renderAfterDropIndicators(collection, node, target => renderDropIndicatorWrapper(parent, reusableView, target, renderDropIndicator))}
       </React.Fragment>
     );
   }
@@ -158,10 +154,9 @@ function renderWrapper(
 function renderDropIndicatorWrapper(
   parent: View | null,
   reusableView: View,
-  dropPosition: DropPosition,
+  target: ItemDropTarget,
   renderDropIndicator: (target: ItemDropTarget) => ReactNode
 ) {
-  let target: DropTarget = {type: 'item', key: reusableView.content!.key, dropPosition};
   let indicator = renderDropIndicator(target);
   if (indicator) {
     let layoutInfo = reusableView.virtualizer.layout.getDropTargetLayoutInfo!(target);

@@ -265,3 +265,24 @@ let items = [
   </TableBody>
 </TableView>
 `);
+
+test('Move loadingState and onLoadMore from TableBody to TableView', `
+import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
+
+<TableView>
+  <TableHeader>
+    <Column key="test">Test</Column>
+    <Column key="blah">Blah</Column>
+  </TableHeader>
+  <TableBody loadingState="loading" onLoadMore={() => {}}>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+`);

@@ -10,19 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
-import {ComponentMeta} from '@storybook/react';
+import {action} from 'storybook/actions';
 import defaultConfig, {TableStory} from './Table.stories';
 import {DragBetweenTablesComplex, DragBetweenTablesOverride, DragExampleUtilHandlers, FinderDropUtilHandlers, InsertExampleUtilHandlers, ItemDropExampleUtilHandlers, ReorderExampleUtilHandlers, RootDropExampleUtilHandlers} from './TableDnDUtilExamples';
 import {Droppable} from '../../../@react-aria/dnd/stories/dnd.stories';
 import {Flex} from '@react-spectrum/layout';
+import {Meta} from '@storybook/react';
 import React from 'react';
 import {TableView} from '..';
 
 export default {
   ...defaultConfig,
   title: 'TableView/Drag and Drop/Util Handlers'
-} as ComponentMeta<typeof TableView>;
+} as Meta<typeof TableView>;
 
 // Known accessibility issue that will be caught by aXe: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#tableview
 export const DragOutOfTable: TableStory = {

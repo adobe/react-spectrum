@@ -12,6 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {AriaButtonProps} from '@react-types/button';
+import {CalendarDate} from '@internationalized/date';
 import {CalendarMonth} from './CalendarMonth';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
@@ -37,7 +38,7 @@ interface CalendarBaseProps<T extends CalendarState | RangeCalendarState> extend
   calendarRef: RefObject<HTMLDivElement | null>
 }
 
-export function CalendarBase<T extends CalendarState | RangeCalendarState>(props: CalendarBaseProps<T>) {
+export function CalendarBase<T extends CalendarState | RangeCalendarState>(props: CalendarBaseProps<T>): JSX.Element {
   let {
     state,
     calendarProps,
@@ -80,7 +81,7 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
           // so we don't need to repeat that here for screen reader users.
           aria-hidden
           className={classNames(styles, 'spectrum-Calendar-title')}>
-          {monthDateFormatter.format(d.toDate(state.timeZone))}
+          {getCurrentMonthName(d, state.timeZone, monthDateFormatter)}
         </h2>
         {i === visibleMonths - 1 &&
           <ActionButton
@@ -149,4 +150,11 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
       }
     </div>
   );
+}
+
+function getCurrentMonthName(date: CalendarDate, timezone: string, monthDateFormatter: ReturnType<typeof useDateFormatter>): string {
+  if (date.calendar.getFormattableMonth) {
+    date = date.calendar.getFormattableMonth(date);
+  }
+  return monthDateFormatter.format(date.toDate(timezone));
 }

@@ -218,9 +218,17 @@ export interface DroppableCollectionUtilityOptions {
    */
   onItemDrop?: (e: DroppableCollectionOnItemDropEvent) => void,
   /**
-   * Handler that is called when items are reordered via drag in the source collection.
+   * Handler that is called when items are reordered within the collection.
+   * This handler only allows dropping between items, not on items.
+   * It does not allow moving items to a different parent item within a tree.
    */
   onReorder?: (e: DroppableCollectionReorderEvent) => void,
+  /**
+   * Handler that is called when items are moved within the source collection.
+   * This handler allows dropping both on or between items, and items may be
+   * moved to a different parent item within a tree.
+   */
+  onMove?: (e: DroppableCollectionReorderEvent) => void,
   /**
    * A function returning whether a given target in the droppable collection is a valid "on" drop target for the current drag types.
    */
@@ -232,7 +240,6 @@ export interface DroppableCollectionBaseProps {
   onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
   /**
    * Handler that is called after a valid drag is held over a drop target for a period of time.
-   * @private
    */
   onDropActivate?: (e: DroppableCollectionActivateEvent) => void,
   /** Handler that is called when a valid drag exits a drop target. */
@@ -268,9 +275,9 @@ export interface DraggableCollectionEndEvent extends DragEndEvent {
   isInternal: boolean
 }
 
-export type DragPreviewRenderer = (items: DragItem[], callback: (node: HTMLElement | null) => void) => void;
+export type DragPreviewRenderer = (items: DragItem[], callback: (node: HTMLElement | null, x?: number, y?: number) => void) => void;
 
-export interface DraggableCollectionProps {
+export interface DraggableCollectionProps<T = object> {
   /** Handler that is called when a drag operation is started. */
   onDragStart?: (e: DraggableCollectionStartEvent) => void,
   /** Handler that is called when the drag is moved. */
@@ -278,7 +285,7 @@ export interface DraggableCollectionProps {
   /** Handler that is called when the drag operation is ended, either as a result of a drop or a cancellation. */
   onDragEnd?: (e: DraggableCollectionEndEvent) => void,
   /** A function that returns the items being dragged. */
-  getItems: (keys: Set<Key>) => DragItem[],
+  getItems: (keys: Set<Key>, items: T[]) => DragItem[],
   /** The ref of the element that will be rendered as the drag preview while dragging. */
   preview?: RefObject<DragPreviewRenderer | null>,
   /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */

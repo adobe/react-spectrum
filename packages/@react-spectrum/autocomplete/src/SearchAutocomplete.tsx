@@ -50,9 +50,13 @@ function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteP
   props = useProviderProps(props);
   props = useFormProps(props);
 
-  if (props.placeholder) {
-    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead.');
-  }
+  let hasWarned = useRef(false);
+  useEffect(() => {
+    if (props.placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
+      console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead.');
+      hasWarned.current = true;
+    }
+  }, [props.placeholder]);
 
   let isMobile = useIsMobileDevice();
   if (isMobile) {
@@ -284,7 +288,6 @@ function ForwardSearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T
       }
     } else if (!isLoading) {
       // If loading is no longer happening, clear any timers and hide the loading circle
-      setShowLoading(false);
       if (timeout.current != null) {
         clearTimeout(timeout.current);
         timeout.current = null;
@@ -293,6 +296,11 @@ function ForwardSearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T
 
     lastInputValue.current = inputValue;
   }, [isLoading, showLoading, inputValue]);
+  let [prevIsLoading, setPrevIsLoading] = useState(isLoading);
+  if (prevIsLoading !== isLoading && !isLoading) {
+    setShowLoading(false);
+    setPrevIsLoading(isLoading);
+  }
 
   return (
     (<FocusRing

@@ -11,19 +11,29 @@
  */
 
 const tempy = require('tempy');
-const fs = require('fs-extra');
+const fs = require('fs');
 const packageJSON = require('../package.json');
 const path = require('path');
 const glob = require('fast-glob');
 const spawn = require('cross-spawn');
-let yargs = require('yargs');
+const {parseArgs} = require('util');
 
 
-let argv = yargs
-  .option('verbose', {alias: 'v', type: 'boolean'})
-  .option('output', {alias: 'o', type: 'string'})
-  .option('githash', {type: 'string'})
-  .argv;
+const args = parseArgs({
+  options: {
+    verbose: {
+      short: 'v',
+      type: 'boolean'
+    },
+    output: {
+      short: 'o',
+      type: 'string'
+    },
+    githash: {
+      type: 'string'
+    }
+  }
+});
 
 build().catch(err => {
   console.error(err.stack);
@@ -36,16 +46,19 @@ build().catch(err => {
  * This is run against the current branch by copying the current branch into a temporary directory and building there
  */
 async function build() {
+  let backupDir = tempy.directory();
   let archiveDir;
-  if (argv.githash) {
+  if (args.values.githash) {
     archiveDir = tempy.directory();
-    console.log('checking out archive of', argv.githash, 'into', archiveDir);
-    await run('sh', ['-c', `git archive ${argv.githash} | tar -x -C ${archiveDir}`], {stdio: 'inherit'});
+    console.log('checking out archive of', args.values.githash, 'into', archiveDir);
+    await run('sh', ['-c', `git archive ${args.values.githash} | tar -x -C ${archiveDir}`], {stdio: 'inherit'});
+
+    await run('sh', ['-c', `git archive HEAD | tar -x -C ${backupDir}`], {stdio: 'inherit'});
   }
   let srcDir = archiveDir ?? path.join(__dirname, '..');
-  let distDir = path.join(__dirname, '..', 'dist', argv.output ?? 'branch-api');
+  let distDir = path.join(__dirname, '..', 'dist', args.values.output ?? 'branch-api');
   // if we already have a directory with a built dist, remove it so we can write cleanly into it at the end
-  fs.removeSync(distDir);
+  fs.rmSync(distDir, {recursive: true, force: true});
   // Create a temp directory to build the site in
   let dir = tempy.directory();
   console.log(`Building branch api into ${dir}...`);
@@ -53,6 +66,7 @@ async function build() {
   // Generate a package.json containing just what we need to build the website
   let pkg = {
     name: 'rsp-website',
+    packageManager: "yarn@4.2.2",
     version: '0.0.0',
     private: true,
     workspaces: [
@@ -82,6 +96,9 @@ async function build() {
     scripts: {
       build: 'yarn parcel build packages/@react-spectrum/actiongroup',
       postinstall: 'patch-package'
+    },
+    '@parcel/resolver-default': {
+      packageExports: true
     }
   };
 
@@ -101,24 +118,29 @@ async function build() {
   }`);
 
   // Copy necessary code and configuration over
-  fs.copySync(path.join(srcDir, 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
-  fs.copySync(path.join(srcDir, 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
-  fs.copySync(path.join(srcDir, 'lib'), path.join(dir, 'lib'));
-  fs.copySync(path.join(srcDir, 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
+  fs.cpSync(path.join(srcDir, 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'), {recursive: true});
+  try {
+    fs.cpSync(path.join(srcDir, 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'), {recursive: true});
+  } catch (e) {
+    fs.cpSync(path.join(backupDir, 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'), {recursive: true});
+  }
+  fs.cpSync(path.join(srcDir, 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
+  fs.cpSync(path.join(srcDir, 'lib'), path.join(dir, 'lib'), {recursive: true});
+  fs.cpSync(path.join(srcDir, 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
   // need dev from latest on branch since it will generate the API for diffing, and in older commits it may not be able to do this or
   // does it in a different format
-  fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
-  fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
+  fs.cpSync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
   // Delete test-utils from copied packages since we don't expose anything from there
-  fs.removeSync(path.join(dir, 'packages', 'dev', 'test-utils'));
+  fs.rmSync(path.join(dir, 'packages', 'dev', 'test-utils'), {recursive: true, force: true});
 
-  fs.copySync(path.join(__dirname, '..', '.yarn'), path.join(dir, '.yarn'));
-  fs.copySync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
+  fs.cpSync(path.join(__dirname, '..', '.yarn'), path.join(dir, '.yarn'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
 
   // Only copy babel patch over
   let patches = fs.readdirSync(path.join(srcDir, 'patches'));
   let babelPatch = patches.find(name => name.startsWith('@babel'));
-  fs.copySync(path.join(srcDir, 'patches', babelPatch), path.join(dir, 'patches', babelPatch));
+  fs.cpSync(path.join(srcDir, 'patches', babelPatch), path.join(dir, 'patches', babelPatch), {recursive: true});
 
   let excludeList = ['@react-spectrum/story-utils'];
   // Copy packages over to temp dir
@@ -131,7 +153,7 @@ async function build() {
         continue;
       }
 
-      fs.copySync(path.join(srcDir, 'packages', path.dirname(p)), path.join(dir, 'packages', path.dirname(p)), {dereference: true});
+      fs.cpSync(path.join(srcDir, 'packages', path.dirname(p)), path.join(dir, 'packages', path.dirname(p)), {dereference: true, recursive: true});
 
       if (!p.includes('@react-types')) {
         delete json.types;
@@ -147,7 +169,7 @@ async function build() {
     }
   }
   // Install dependencies from npm
-  fs.copySync(path.join(srcDir, 'yarn.lock'), path.join(dir, 'yarn.lock'));
+  fs.cpSync(path.join(srcDir, 'yarn.lock'), path.join(dir, 'yarn.lock'));
   await run('yarn', ['--no-immutable'], {cwd: dir, stdio: 'inherit'});
 
   // Build the website
@@ -155,10 +177,10 @@ async function build() {
   await run('yarn', ['parcel', 'build', 'packages/react-aria-components', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}', '--target', 'apiCheck'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
-  fs.copySync(path.join(dir, 'packages'), distDir, {dereference: true});
-  fs.removeSync(dir);
+  fs.cpSync(path.join(dir, 'packages'), distDir, {dereference: true, recursive: true});
+  fs.rmSync(dir, {recursive: true, force: true});
   if (archiveDir) {
-    fs.removeSync(archiveDir);
+    fs.rmSync(archiveDir, {recursive: true, force: true});
   }
 }
 

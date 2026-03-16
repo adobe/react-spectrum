@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {FocusableElement} from './dom';
 import {
   FocusEvent,
+  MouseEvent,
   KeyboardEvent as ReactKeyboardEvent,
   SyntheticEvent
 } from 'react';
@@ -49,6 +51,11 @@ export interface PressEvent {
   x: number,
   /** Y position relative to the target. */
   y: number,
+  /**
+   * The key that triggered the press event, if it was triggered by a keyboard interaction.
+   * This is useful for differentiating between Space and Enter key presses.
+   */
+  key?: string,
   /**
    * By default, press events stop propagation to parent elements.
    * In cases where a handler decides not to handle a specific event,
@@ -112,7 +119,13 @@ export interface PressEvents {
    * Handler that is called when a press is released over the target, regardless of
    * whether it started on the target or not.
    */
-  onPressUp?: (e: PressEvent) => void
+  onPressUp?: (e: PressEvent) => void,
+  /**
+   * **Not recommended – use `onPress` instead.** `onClick` is an alias for `onPress`
+   * provided for compatibility with other libraries. `onPress` provides 
+   * additional event details for non-mouse interactions.
+   */
+  onClick?: (e: MouseEvent<FocusableElement>) => void
 }
 
 export interface FocusableProps<Target = Element> extends FocusEvents<Target>, KeyboardEvents {

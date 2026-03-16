@@ -16,7 +16,8 @@ const path = require('path');
 module.exports = new Namer({
   name({bundle}) {
     let mainAsset = bundle.getMainEntry();
-    if (mainAsset?.filePath.includes('@react-spectrum/s2')) {
+
+    if (mainAsset?.filePath.includes('@react-spectrum/s2') || !mainAsset?.filePath.includes('react-spectrum/packages')) {
       if (bundle.needsStableName && bundle.target.distEntry) {
         return bundle.target.distEntry;
       }
@@ -39,6 +40,7 @@ module.exports = new Namer({
           name = name[0].toUpperCase() + name.slice(1).replace(/_/g, '');
           return 'gradient/' + style + '/' + name;
         })
+        .replace(/\.module$/, '_module')
         + ext;
     }
   }

@@ -134,14 +134,14 @@ interface TagProps<T> extends AriaTagProps<T> {
 function Tag<T>(props: TagProps<T>) {
   let {item, state} = props;
   let ref = React.useRef(null);
-  let {focusProps, isFocusVisible} = useFocusRing({within: true});
+  let {focusProps, isFocusVisible} = useFocusRing({within: false});
   let {rowProps, gridCellProps, removeButtonProps, allowsRemoving} = useTag(props, state, ref);
 
   return (
     <div ref={ref} {...rowProps} {...focusProps} data-focus-visible={isFocusVisible}>
       <div {...gridCellProps}>
         {item.rendered}
-        {allowsRemoving && <Button {...removeButtonProps}>❎</Button>}
+        {allowsRemoving && <Button {...removeButtonProps}>ⓧ</Button>}
       </div>
     </div>
   );
@@ -172,13 +172,16 @@ function Tag<T>(props: TagProps<T>) {
 }
 
 .tag-group [role="row"] {
+  border: 1px solid gray;
+  forced-color-adjust: none;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.929rem;
+  outline: none;
+  cursor: default;
   display: flex;
   align-items: center;
-  border: 1px solid gray;
-  border-radius: 4px;
-  padding: 2px 5px;
-  cursor: default;
-  outline: none;
+  transition: border-color 200ms;
 
   &[data-focus-visible=true] {
     outline: 2px solid slateblue;
@@ -197,13 +200,24 @@ function Tag<T>(props: TagProps<T>) {
 }
 
 .tag-group [role="gridcell"] {
-  margin: 0 5px;
+  display: contents;
 }
 
 .tag-group [role="row"] button {
   background: none;
   border: none;
-  padding-right: 0;
+  padding: 0;
+  margin-left: 4px;
+  outline: none;
+  font-size: 0.95em;
+  border-radius: 100%;
+  aspect-ratio: 1/1;
+  height: 100%;
+
+  &[data-focus-visible=true] {
+    outline: 2px solid slateblue;
+    outline-offset: -1px;
+  }
 }
 
 .tag-group .description {
@@ -220,18 +234,20 @@ function Tag<T>(props: TagProps<T>) {
 
 ### Button
 
-The `Button` component is used in the above example to remove a tag. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+The `Button` component is used in the above example to remove a tag. It is built using the [useButton](../Button/useButton.html) hook, and can be shared with many other components.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
 import {useButton} from '@react-aria/button';
+import {mergeProps} from '@react-aria/utils';
 
 function Button(props) {
   let ref = React.useRef(null);
   let {buttonProps} = useButton(props, ref);
-  return <button {...buttonProps} ref={ref}>{props.children}</button>;
+  let {focusProps, isFocusVisible} = useFocusRing({within: false});
+  return <button {...mergeProps(buttonProps, focusProps)} ref={ref} data-focus-visible={isFocusVisible}>{props.children}</button>;
 }
 ```
 
@@ -280,7 +296,7 @@ function Example() {
 
 TagGroup supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
 Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `key` prop of the items.
-See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
+See the `react-stately` [Selection docs](v3:selection.html) for more details.
 
 ```tsx example
 import type {Selection} from 'react-stately';
@@ -324,14 +340,14 @@ Tags may be links to another page or website. This can be achieved by passing th
 
 #### Client side routing
 
-The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [framework setup guide](../frameworks) to learn how to set this up.
 
 ### Disabled tags
 
 TagGroup supports marking items as disabled using the `disabledKeys` prop. Each key in this list
 corresponds with the `key` prop passed to the `Item` component, or automatically derived from the values passed
 to the `items` prop. Disabled items are not focusable, selectable, or keyboard navigable.
-See [Collections](../react-stately/collections.html) for more details.
+See [Collections](v3:collections.html) for more details.
 
 ```tsx example
 <TagGroup label="Sandwich contents" selectionMode="multiple" disabledKeys={['tuna']}>

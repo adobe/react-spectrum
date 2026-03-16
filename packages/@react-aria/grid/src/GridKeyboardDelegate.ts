@@ -35,7 +35,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   protected direction: Direction;
   protected collator: Intl.Collator | undefined;
   protected layoutDelegate: LayoutDelegate;
-  protected focusMode;
+  protected focusMode: 'row' | 'cell';
 
   constructor(options: GridKeyboardDelegateOptions<C>) {
     this.collection = options.collection;
@@ -47,14 +47,14 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       throw new Error('Either a layout or a ref must be specified.');
     }
     this.layoutDelegate = options.layoutDelegate || (options.layout ? new DeprecatedLayoutDelegate(options.layout) : new DOMLayoutDelegate(options.ref!));
-    this.focusMode = options.focusMode || 'row';
+    this.focusMode = options.focusMode ?? 'row';
   }
 
-  protected isCell(node: Node<T>) {
+  protected isCell(node: Node<T>): boolean {
     return node.type === 'cell';
   }
 
-  protected isRow(node: Node<T>) {
+  protected isRow(node: Node<T>): boolean {
     return node.type === 'row' || node.type === 'item';
   }
 
@@ -62,7 +62,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return this.disabledBehavior === 'all' && (item.props?.isDisabled || this.disabledKeys.has(item.key));
   }
 
-  protected findPreviousKey(fromKey?: Key, pred?: (item: Node<T>) => boolean) {
+  protected findPreviousKey(fromKey?: Key, pred?: (item: Node<T>) => boolean): Key | null {
     let key = fromKey != null
       ? this.collection.getKeyBefore(fromKey)
       : this.collection.getLastKey();
@@ -81,7 +81,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return null;
   }
 
-  protected findNextKey(fromKey?: Key, pred?: (item: Node<T>) => boolean) {
+  protected findNextKey(fromKey?: Key, pred?: (item: Node<T>) => boolean): Key | null {
     let key = fromKey != null
       ? this.collection.getKeyAfter(fromKey)
       : this.collection.getFirstKey();
@@ -132,7 +132,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return null;
   }
 
-  getKeyBelow(fromKey: Key) {
+  getKeyBelow(fromKey: Key): Key | null {
     let key: Key | null = fromKey;
     let startItem = this.collection.getItem(key);
     if (!startItem) {
@@ -164,7 +164,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return null;
   }
 
-  getKeyAbove(fromKey: Key) {
+  getKeyAbove(fromKey: Key): Key | null {
     let key: Key | null = fromKey;
     let startItem = this.collection.getItem(key);
     if (!startItem) {
@@ -196,7 +196,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return null;
   }
 
-  getKeyRightOf(key: Key) {
+  getKeyRightOf(key: Key): Key | null {
     let item = this.collection.getItem(key);
     if (!item) {
       return null;
@@ -236,7 +236,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return null;
   }
 
-  getKeyLeftOf(key: Key) {
+  getKeyLeftOf(key: Key): Key | null {
     let item = this.collection.getItem(key);
     if (!item) {
       return null;
@@ -276,7 +276,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return null;
   }
 
-  getFirstKey(fromKey?: Key, global?: boolean) {
+  getFirstKey(fromKey?: Key, global?: boolean): Key | null {
     let key: Key | null = fromKey ?? null;
     let item: Node<T> | undefined | null;
     if (key != null) {
@@ -312,7 +312,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return key;
   }
 
-  getLastKey(fromKey?: Key, global?: boolean) {
+  getLastKey(fromKey?: Key, global?: boolean): Key | null {
     let key: Key | null = fromKey ?? null;
     let item: Node<T> | undefined | null;
     if (key != null) {
@@ -350,7 +350,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return key;
   }
 
-  getKeyPageAbove(fromKey: Key) {
+  getKeyPageAbove(fromKey: Key): Key | null {
     let key: Key | null = fromKey;
     let itemRect = this.layoutDelegate.getItemRect(key);
     if (!itemRect) {
@@ -370,7 +370,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return key;
   }
 
-  getKeyPageBelow(fromKey: Key) {
+  getKeyPageBelow(fromKey: Key): Key | null {
     let key: Key | null = fromKey;
     let itemRect = this.layoutDelegate.getItemRect(key);
 
@@ -395,7 +395,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return key;
   }
 
-  getKeyForSearch(search: string, fromKey?: Key) {
+  getKeyForSearch(search: string, fromKey?: Key): Key | null {
     let key: Key | null = fromKey ?? null;
     if (!this.collator) {
       return null;

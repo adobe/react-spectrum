@@ -13,6 +13,7 @@
 import {ActionButton} from './ActionButton';
 import {
   Breadcrumb as AriaBreadcrumb,
+  BreadcrumbProps as AriaBreadcrumbItemProps,
   BreadcrumbsProps as AriaBreadcrumbsProps,
   CollectionRenderer,
   CollectionRendererContext,
@@ -20,23 +21,25 @@ import {
   DefaultCollectionRenderer,
   HeadingContext,
   Link,
+  LinkRenderProps,
   Provider,
   Breadcrumbs as RACBreadcrumbs
 } from 'react-aria-components';
-import {AriaBreadcrumbItemProps, useLocale} from 'react-aria';
+import {baseColor, focusRing, size, style} from '../style' with { type: 'macro' };
 import ChevronIcon from '../ui-icons/Chevron';
-import {Collection, DOMRef, DOMRefValue, LinkDOMProps, Node} from '@react-types/shared';
+import {Collection, DOMRef, DOMRefValue, GlobalDOMAttributes, LinkDOMProps, Node} from '@react-types/shared';
+import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, Fragment, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {focusRing, size, style} from '../style' with { type: 'macro' };
+// @ts-ignore
 import FolderIcon from '../s2wf-icons/S2_Icon_FolderBreadcrumb_20_N.svg';
 import {forwardRefType} from './types';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {inertValue, useLayoutEffect} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
 import {Text} from './Content';
 import {useDOMRef, useResizeObserver} from '@react-spectrum/utils';
+import {useLocale} from 'react-aria';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -60,9 +63,9 @@ interface BreadcrumbsStyleProps {
   // TODO: showRoot?: boolean,
 }
 
-export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'children' | 'items' | 'style' | 'className'>, BreadcrumbsStyleProps, StyleProps {
+export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'children' | 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, BreadcrumbsStyleProps, StyleProps {
   /** The children of the Breadcrumbs. */
-  children: ReactNode
+  children: ReactNode | ((item: T) => ReactNode)
 }
 
 export const BreadcrumbsContext = createContext<ContextValue<Partial<BreadcrumbsProps<any>>, DOMRefValue<HTMLOListElement>>>(null);
@@ -97,7 +100,7 @@ const wrapper = style<BreadcrumbsStyleProps>({
 
 const InternalBreadcrumbsContext = createContext<Partial<BreadcrumbsProps<any>>>({});
 
-/** Breadcrumbs show hierarchy and navigational context for a user’s location within an application. */
+/** Breadcrumbs show hierarchy and navigational context for a user's location within an application. */
 export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<HTMLOListElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, BreadcrumbsContext);
   let domRef = useDOMRef(ref);
@@ -171,9 +174,9 @@ let HiddenBreadcrumbs = function (props: {listRef: RefObject<HTMLDivElement | nu
       inert={inertValue(true)}
       ref={listRef}
       className={style({
-        display: '[inherit]',
-        gap: '[inherit]',
-        flexWrap: '[inherit]',
+        display: 'inherit',
+        gap: 'inherit',
+        flexWrap: 'inherit',
         position: 'absolute',
         top: 0,
         bottom: 0,
@@ -200,11 +203,11 @@ let HiddenBreadcrumbs = function (props: {listRef: RefObject<HTMLDivElement | nu
   );
 };
 
-const breadcrumbStyles = style({
+const breadcrumbStyles = style<BreadcrumbsStyleProps & {isMenu?: boolean, isCurrent?: boolean}>({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'start',
-  height: 'control',
+  height: controlSize(),
   transition: 'default',
   position: 'relative',
   flexShrink: 0,
@@ -245,17 +248,18 @@ const chevronStyles = style({
   }
 });
 
-const linkStyles = style({
+const linkStyles = style<LinkRenderProps & {size?: 'M' | 'L', isCurrent?: boolean}>({
   ...focusRing(),
   borderRadius: 'sm',
-  font: 'control',
+  font: controlFont(),
   color: {
-    default: 'neutral-subdued',
+    default: baseColor('neutral-subdued'),
     isDisabled: 'disabled',
-    isCurrent: 'neutral',
+    isCurrent: baseColor('neutral'),
     forcedColors: {
       default: 'LinkText',
-      isDisabled: 'GrayText'
+      isDisabled: 'GrayText',
+      isCurrent: 'GrayText'
     }
   },
   transition: 'default',
@@ -277,8 +281,12 @@ const linkStyles = style({
 });
 
 const currentStyles = style<{size: string}>({
-  font: 'control',
-  fontWeight: 'bold'
+  font: controlFont(),
+  fontWeight: 'bold',
+  color: {
+    default: 'neutral',
+    forcedColors: 'ButtonText'
+  }
 });
 
 // TODO: support user heading size customization, for now just set it to large
@@ -288,7 +296,7 @@ const heading = style({
   fontWeight: 'extra-bold'
 });
 
-export interface BreadcrumbProps extends Omit<AriaBreadcrumbItemProps, 'children' | 'style' | 'className' | 'autoFocus'>, LinkDOMProps {
+export interface BreadcrumbProps extends Omit<AriaBreadcrumbItemProps, 'children' | 'style' | 'className' | 'render' | 'autoFocus' | 'onClick' | keyof GlobalDOMAttributes>, LinkDOMProps {
   /** The children of the breadcrumb item. */
   children: ReactNode
 }
@@ -337,7 +345,7 @@ export const Breadcrumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
                   ping={ping}
                   referrerPolicy={referrerPolicy}
                   isDisabled={isDisabled || isCurrent}
-                  className={({isFocused, isFocusVisible, isHovered, isDisabled, isPressed}) => linkStyles({isFocused, isFocusVisible, isHovered, isDisabled, size, isPressed})}>
+                  className={({isFocused, isFocusVisible, isHovered, isDisabled, isPressed}) => linkStyles({isFocused, isFocusVisible, isHovered, isDisabled, size, isPressed, isCurrent})}>
                   {children}
                 </Link>
                 <ChevronIcon

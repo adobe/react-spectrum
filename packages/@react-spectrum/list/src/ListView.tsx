@@ -59,14 +59,14 @@ export interface SpectrumListViewProps<T> extends Omit<AriaGridListProps<T>, 'ke
   /**
    * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListView.
    */
-  dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks']
+  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>['dragAndDropHooks']
 }
 
 interface ListViewContextValue<T> {
   state: ListState<T>,
   dragState: DraggableCollectionState | null,
   dropState: DroppableCollectionState | null,
-  dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks'],
+  dragAndDropHooks?: DragAndDropHooks<T>['dragAndDropHooks'],
   onAction?: (key: Key) => void,
   isListDraggable: boolean,
   isListDroppable: boolean,
@@ -124,10 +124,10 @@ export const ListView = React.forwardRef(function ListView<T extends object>(pro
   let dragHooksProvided = useRef(isListDraggable);
   let dropHooksProvided = useRef(isListDroppable);
   useEffect(() => {
-    if (dragHooksProvided.current !== isListDraggable) {
+    if (dragHooksProvided.current !== isListDraggable && process.env.NODE_ENV !== 'production') {
       console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
     }
-    if (dropHooksProvided.current !== isListDroppable) {
+    if (dropHooksProvided.current !== isListDroppable && process.env.NODE_ENV !== 'production') {
       console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
     }
   }, [isListDraggable, isListDroppable]);

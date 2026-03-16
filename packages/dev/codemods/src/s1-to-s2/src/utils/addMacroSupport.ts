@@ -2,7 +2,7 @@ const path = require('path');
 import installPackage from './installPackage';
 import logger from './logger';
 
-export async function addMacroSupport() {
+export async function addMacroSupport(): Promise<{isMacroPluginInstalled: boolean, isMacroSupportEnabled: boolean}> {
   const packageJson = require(path.join(process.cwd(), 'package.json'));
   const parcelVersion = packageJson && (packageJson.dependencies?.parcel || packageJson.devDependencies?.parcel);
   if (parcelVersion) {

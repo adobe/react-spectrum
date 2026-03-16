@@ -11,12 +11,14 @@
  */
 
 import {ActionButton, ActionButtonGroup, Text} from '../src';
-import {categorizeArgTypes, StaticColorDecorator} from '../stories/utils';
+import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from '../stories/utils';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
-import type {Meta, StoryFn} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
 import {style} from '../style' with { type: 'macro' };
+
+const events = ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange'];
 
 const meta: Meta<typeof ActionButtonGroup> = {
   component: ActionButtonGroup,
@@ -25,8 +27,9 @@ const meta: Meta<typeof ActionButtonGroup> = {
   },
   decorators: [StaticColorDecorator],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange'])
+    ...categorizeArgTypes('Events', events)
   },
+  args: {...getActionArgs(events)},
   title: 'S2 Chromatic/ActionButtonGroup'
 };
 
@@ -46,26 +49,32 @@ let justifiedStyle = style({
   }
 });
 
-export const Example: StoryFn<typeof ActionButtonGroup> = (args) => (
-  <ActionButtonGroup {...args} styles={args.isJustified ? justifiedStyle(args) : undefined}>
-    <ActionButton><Cut /><Text slot="label">Cut</Text></ActionButton>
-    <ActionButton><Copy /><Text slot="label">Copy</Text></ActionButton>
-    <ActionButton><Paste /><Text slot="label">Paste</Text></ActionButton>
-  </ActionButtonGroup>
-);
+export const Example: StoryObj<typeof ActionButtonGroup> = {
+  render: (args) => (
+    <ActionButtonGroup {...args} styles={args.isJustified ? justifiedStyle(args) : undefined}>
+      <ActionButton><Cut /><Text slot="label">Cut</Text></ActionButton>
+      <ActionButton><Copy /><Text slot="label">Copy</Text></ActionButton>
+      <ActionButton><Paste /><Text slot="label">Paste</Text></ActionButton>
+    </ActionButtonGroup>
+  )
+};
 
-export const IconOnly: StoryFn<typeof ActionButtonGroup> = (args) => (
-  <ActionButtonGroup {...args} styles={args.isJustified ? justifiedStyle(args) : undefined}>
-    <ActionButton aria-label="Cut"><Cut /></ActionButton>
-    <ActionButton aria-label="Copy"><Copy /></ActionButton>
-    <ActionButton aria-label="Paste"><Paste /></ActionButton>
-  </ActionButtonGroup>
-);
+export const IconOnly: StoryObj<typeof ActionButtonGroup> = {
+  render: (args) => (
+    <ActionButtonGroup {...args} styles={args.isJustified ? justifiedStyle(args) : undefined}>
+      <ActionButton aria-label="Cut"><Cut /></ActionButton>
+      <ActionButton aria-label="Copy"><Copy /></ActionButton>
+      <ActionButton aria-label="Paste"><Paste /></ActionButton>
+    </ActionButtonGroup>
+  )
+};
 
-export const Justified: StoryFn<typeof ActionButtonGroup> = (args) => (
-  <ActionButtonGroup {...args} isJustified styles={justifiedStyle(args)}>
-    <ActionButton><Cut /><Text slot="label">Cut</Text></ActionButton>
-    <ActionButton><Copy /><Text slot="label">Copy</Text></ActionButton>
-    <ActionButton><Paste /><Text slot="label">Paste</Text></ActionButton>
-  </ActionButtonGroup>
-);
+export const Justified: StoryObj<typeof ActionButtonGroup> = {
+  render: (args) => (
+    <ActionButtonGroup {...args} isJustified styles={justifiedStyle(args)}>
+      <ActionButton><Cut /><Text slot="label">Cut</Text></ActionButton>
+      <ActionButton><Copy /><Text slot="label">Copy</Text></ActionButton>
+      <ActionButton><Paste /><Text slot="label">Paste</Text></ActionButton>
+    </ActionButtonGroup>
+  )
+};

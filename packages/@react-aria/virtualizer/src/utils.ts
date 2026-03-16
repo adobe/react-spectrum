@@ -87,7 +87,7 @@ export function getScrollLeft(node: Element, direction: Direction): number {
   return scrollLeft;
 }
 
-export function setScrollLeft(node: Element, direction: Direction, scrollLeft: number) {
+export function setScrollLeft(node: Element, direction: Direction, scrollLeft: number): void {
   if (direction === 'rtl') {
     switch (getRTLOffsetType()) {
       case 'negative':

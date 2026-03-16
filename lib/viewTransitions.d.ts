@@ -11,9 +11,5 @@
  */
 
 interface Document {
-  startViewTransition(fn: () => void): ViewTransition;
-}
-  
-interface ViewTransition {
-  ready: Promise<void>;
+  startViewTransition(update: (() => void) | {update: () => void, types: string[]}): ViewTransition;
 }

@@ -25,7 +25,7 @@ let isOldReact = parseInt(React.version, 10) <= 18;
  * Links allow users to navigate to a different location.
  * They can be presented inline inside a paragraph or as standalone text.
  */
-export function Link(props: SpectrumLinkProps) {
+export function Link(props: SpectrumLinkProps): JSX.Element {
   props = useProviderProps(props);
   props = useSlotProps(props, 'link');
   let {

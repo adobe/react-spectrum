@@ -15,7 +15,7 @@ import {classNames, ClearSlots, SlotProvider, useStyleProps} from '@react-spectr
 import {ClearButton} from '@react-spectrum/button';
 import type {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
-import React, {useRef} from 'react';
+import React, {ReactNode, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useFocusRing} from '@react-aria/focus';
@@ -25,7 +25,7 @@ export interface SpectrumTagProps<T> extends AriaTagProps<T> {
   state: ListState<T>
 }
 
-export function Tag<T>(props: SpectrumTagProps<T>) {
+export function Tag<T>(props: SpectrumTagProps<T>): ReactNode {
   const {
     item,
     state,
@@ -35,7 +35,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
   // @ts-ignore
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({});
-  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: false});
   let ref = useRef(null);
   let {removeButtonProps, gridCellProps, rowProps, allowsRemoving} = useTag({
     ...props,
@@ -81,7 +81,7 @@ function TagRemoveButton(props) {
 
   return (
     <span {...styleProps}>
-      <ClearButton {...props} />
+      <ClearButton {...props} inset />
     </span>
   );
 }

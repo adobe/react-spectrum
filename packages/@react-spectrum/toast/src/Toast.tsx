@@ -118,14 +118,15 @@ export const Toast = React.forwardRef(function Toast(props: SpectrumToastProps, 
               onPress={handleAction}
               UNSAFE_className={classNames(styles, 'spectrum-Button')}
               variant="secondary"
-              staticColor="white">
+              staticColor="white"
+              data-testid="rsp-Toast-secondaryButton">
               {actionLabel}
             </Button>
           }
         </div>
       </div>
       <div className={classNames(styles, 'spectrum-Toast-buttons')}>
-        <ClearButton {...closeButtonProps} variant="overBackground">
+        <ClearButton {...closeButtonProps} variant="overBackground" data-testid="rsp-Toast-closeButton">
           <CrossMedium />
         </ClearButton>
       </div>

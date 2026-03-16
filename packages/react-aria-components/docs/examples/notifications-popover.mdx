@@ -40,15 +40,14 @@ import './tailwind.global.css';
 ```tsx example standalone
 import {DialogTrigger, Button, Popover, OverlayArrow, Dialog, Link} from 'react-aria-components';
 import type {PopoverProps} from 'react-aria-components';
-import BellIcon from '@spectrum-icons/workflow/Bell';
-import ChatIcon from '@spectrum-icons/workflow/Chat';
+import {Bell, MessageSquare} from 'lucide-react';
 
 function PopoverExample() {
   return (
     <div className="bg-linear-to-r from-orange-400 to-pink-600 p-8 rounded-lg sm:h-[300px] flex items-start justify-center">
       <DialogTrigger>
         <Button aria-label="Notifications" className="inline-flex items-center justify-center rounded-md bg-black/20 bg-clip-padding border border-white/20 px-3.5 py-2 font-medium text-white hover:bg-black/30 pressed:bg-black/40 transition-colors cursor-default outline-hidden focus-visible:ring-2 focus-visible:ring-white/75">
-          <BellIcon size="S" />
+          <Bell className="w-6 h-6" />
         </Button>
         <MyPopover>
           <OverlayArrow>
@@ -86,7 +85,7 @@ function Notification({avatar, name, time, text}) {
     <Link href="#" className="p-2 rounded-lg hover:bg-gray-100 grid grid-cols-[theme(width.5)_1fr_theme(width.4)] gap-x-2 text-[inherit] no-underline outline-hidden focus-visible:ring-2 ring-pink-800">
       <img src={avatar} className="rounded-full w-5 h-5 row-span-3" />
       <div className="text-gray-800 font-semibold leading-5">{name}</div>
-      <div className="text-gray-400"><ChatIcon size="XS" /></div>
+      <div className="text-gray-400"><MessageSquare className="w-4 h-4" /></div>
       <div className="text-sm text-gray-500 col-span-2">Commented {time} ago</div>
       <p className="text-sm overflow-hidden text-ellipsis line-clamp-2 mt-1 mb-0 col-span-2">{text}</p>
     </Link>

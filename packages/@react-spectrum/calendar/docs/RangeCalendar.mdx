@@ -46,7 +46,7 @@ keywords: [date]
 
 A `RangeCalendar` has no selection by default. An initial, uncontrolled value can be provided to the `RangeCalendar` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
 
-Date ranges are objects with `start` and `end` properties containing date values, which are provided using objects in the [@internationalized/date](../internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns.
+Date ranges are objects with `start` and `end` properties containing date values, which are provided using objects in the [@internationalized/date](react-aria:internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns.
 
 `RangeCalendar` supports values with both date and time components, but only allows users to modify the dates. By default, `RangeCalendar` will emit <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDate} /> objects in the `onChange` event, but if a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> or <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is passed as the `value` or `defaultValue`, values of that type will be emitted, changing only the date and preserving the time components.
 
@@ -96,6 +96,71 @@ function Example() {
       <p>End date: {range?.end.toString()}</p>
     </Provider>
   );
+}
+```
+
+### Custom calendar systems
+
+`RangeCalendar` also supports custom calendar systems that implement custom business rules. An example would be a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar.
+
+The `createCalendar` prop accepts a function that returns an instance of the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.Calendar} /> interface. See the [@internationalized/date docs](react-aria:internationalized/date/Calendar#custom-calendars) for an example implementation.
+
+```tsx import
+import type {AnyCalendarDate} from '@internationalized/date';
+import {CalendarDate, startOfWeek, toCalendar} from '@internationalized/date';
+```
+
+```tsx example
+import {GregorianCalendar} from '@internationalized/date';
+
+function Example() {
+  return <RangeCalendar firstDayOfWeek="sun" createCalendar={() => new Custom454()} />;
+}
+
+class Custom454 extends GregorianCalendar {
+  // See @internationalized/date docs linked above...
+  ///- begin collapse -///
+  weekPattern = [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, 4];
+  getDaysInMonth(date) {
+    return this.weekPattern[date.month - 1] * 7;
+  }
+
+  fromJulianDay(jd: number): CalendarDate {
+    let gregorian = super.fromJulianDay(jd);
+
+    let monthStart = startOfWeek(new CalendarDate(gregorian.year, 1, 1), 'en');
+    for (let months = 0; months < this.weekPattern.length; months++) {
+      let weeksInMonth = this.weekPattern[months];
+      let monthEnd = monthStart.add({weeks: weeksInMonth});
+      if (monthEnd.compare(gregorian) > 0) {
+        let days = gregorian.compare(monthStart);
+        return new CalendarDate(this, monthStart.year, months + 1, days + 1);
+      }
+      monthStart = monthEnd;
+    }
+
+    throw Error('Date is not in any month somehow!');
+  }
+
+  toJulianDay(date: AnyCalendarDate): number {
+    let monthStart = startOfWeek(new CalendarDate(date.year, 1, 1), 'en');
+    for (let month = 1; month < date.month; month++) {
+      monthStart = monthStart.add({weeks: this.weekPattern[month - 1]});
+    }
+
+    let gregorian = monthStart.add({days: date.day - 1});
+    return super.toJulianDay(gregorian);
+  }
+
+  getFormattableMonth(date) {
+    let gregorian = toCalendar(date, new GregorianCalendar());
+    return gregorian.set({month: date.month, day: 1});
+  }
+
+  isEqual(other) {
+    return other instanceof Custom454;
+  }
+ ///- end collapse -///
 }
 ```
 

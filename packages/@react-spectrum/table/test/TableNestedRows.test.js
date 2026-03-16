@@ -17,7 +17,7 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {tableTests} from './Table.test';
+import {tableTests} from './TableTests';
 import {theme} from '@react-spectrum/theme-default';
 
 describe('TableView with expandable rows flag on', function () {

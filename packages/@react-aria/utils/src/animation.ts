@@ -14,10 +14,10 @@ import {flushSync} from 'react-dom';
 import {RefObject, useCallback, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 
-export function useEnterAnimation(ref: RefObject<HTMLElement | null>, isReady: boolean = true) {
+export function useEnterAnimation(ref: RefObject<HTMLElement | null>, isReady: boolean = true): boolean {
   let [isEntering, setEntering] = useState(true);
   let isAnimationReady = isEntering && isReady;
-  
+
   // There are two cases for entry animations:
   // 1. CSS @keyframes. The `animation` property is set during the isEntering state, and it is removed after the animation finishes.
   // 2. CSS transitions. The initial styles are applied during the isEntering state, and removed immediately, causing the transition to occur.
@@ -38,7 +38,7 @@ export function useEnterAnimation(ref: RefObject<HTMLElement | null>, isReady: b
   return isAnimationReady;
 }
 
-export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boolean) {
+export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boolean): boolean {
   let [exitState, setExitState] = useState<'closed' | 'open' | 'exiting'>(isOpen ? 'open' : 'closed');
 
   switch (exitState) {
@@ -71,7 +71,7 @@ export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boo
   return isExiting;
 }
 
-function useAnimation(ref: RefObject<HTMLElement | null>, isActive: boolean, onEnd: () => void) {
+function useAnimation(ref: RefObject<HTMLElement | null>, isActive: boolean, onEnd: () => void): void {
   useLayoutEffect(() => {
     if (isActive && ref.current) {
       if (!('getAnimations' in ref.current)) {
@@ -79,7 +79,7 @@ function useAnimation(ref: RefObject<HTMLElement | null>, isActive: boolean, onE
         onEnd();
         return;
       }
-      
+
       let animations = ref.current.getAnimations();
       if (animations.length === 0) {
         onEnd();
@@ -94,7 +94,7 @@ function useAnimation(ref: RefObject<HTMLElement | null>, isActive: boolean, onE
           });
         }
       }).catch(() => {});
-      
+
       return () => {
         canceled = true;
       };

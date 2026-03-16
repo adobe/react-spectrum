@@ -1,0 +1,48 @@
+@import "./theme.css";
+@import "./utilities.css";
+
+.input-group {
+  .react-aria-Group {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    padding: 0 var(--spacing-2);
+    border-radius: var(--radius);
+    font-size: var(--font-size);
+    color: var(--field-text-color);
+    overflow: hidden;
+    height: 32px;
+
+    &[data-focus-within] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -1px;
+    }
+
+    &[data-disabled] {
+      color: var(--text-color-disabled);
+    }
+  }
+
+  .react-aria-Input {
+    padding: var(--spacing-1);
+    margin: 0;
+    font: var(--font-size) system-ui;
+    color: var(--text-color);
+    outline: none;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+
+    &:disabled {
+      color: var(--text-color-disabled);
+      &::placeholder {
+        color: var(--text-color-disabled);
+      }
+    }
+
+    &::placeholder {
+      color: var(--text-color-placeholder);
+      opacity: 1;
+    }
+  }
+}

@@ -11,12 +11,16 @@
  */
 
 import {Avatar} from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with { type: 'macro' };
 
 const meta: Meta<typeof Avatar> = {
   component: Avatar,
-  argTypes: {},
+  argTypes: {
+    size: {
+      control: 'number'
+    }
+  },
   parameters: {
     layout: 'centered'
   },
@@ -33,6 +37,9 @@ const meta: Meta<typeof Avatar> = {
 
 export default meta;
 
-export const Example = (args: any) => (
-  <Avatar alt="design provided" src="https://i.imgur.com/xIe7Wlb.png" {...args} />
-);
+type Story = StoryObj<typeof Avatar>;
+export const Example: Story = {
+  render: (args) => (
+    <Avatar alt="design provided" src="https://i.imgur.com/xIe7Wlb.png" {...args} />
+  )
+};

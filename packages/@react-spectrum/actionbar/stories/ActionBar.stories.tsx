@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ActionBar} from '../src';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Example} from './Example';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {useViewportSize} from '@react-aria/utils';
 
@@ -37,9 +37,9 @@ export default {
       options: ['show', 'hide', 'collapse']
     }
   }
-} as ComponentMeta<typeof ActionBar>;
+} as Meta<typeof ActionBar>;
 
-export type ActionBarStory = ComponentStoryObj<any>;
+export type ActionBarStory = StoryObj<any>;
 
 export const Default: ActionBarStory = {
   render: (args) => <Example {...args} />,

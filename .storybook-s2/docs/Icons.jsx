@@ -1,8 +1,11 @@
-import icons from '@react-spectrum/s2/s2wf-icons/*.svg';
+import icons from '../../packages/@react-spectrum/s2/s2wf-icons/*.svg';
 import { style } from '../../packages/@react-spectrum/s2/style/spectrum-theme' with {type: 'macro'};
 import {ActionButton, Text} from '@react-spectrum/s2';
 import {H2, H3, P, Code, Pre, Link} from './typography';
 import {highlight} from './highlight' with {type: 'macro'};
+import {IconColors} from './Colors';
+import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
+import {iconStyle} from '../../packages/@react-spectrum/s2/style' with {type: 'macro'};
 
 export function Icons() {
   return (
@@ -28,6 +31,37 @@ export function Icons() {
               </ActionButton>
             );
           })}
+        </div>
+        <H2>Styling</H2>
+        <P>The <Code>iconStyle</Code> macro can be used to set the size and color of a workflow icon. Icons support five t-shirt sizes, and a subset of the Spectrum colors. <Link href="?path=/docs/intro--docs#supported-css-properties-on-spectrum-components">Other style properties</Link> available across components are also supported on icons.</P>
+        <Pre>{highlight(`import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
+import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
+
+<CheckmarkCircle styles={iconStyle({size: 'L', color: 'positive'})} />`)}</Pre>
+        <H3>Icon colors</H3>
+        <IconColors />
+        <H3>Icon sizes</H3>
+        <div className={style({display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'end'})}>
+          <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4})}>
+            <CheckmarkCircle styles={iconStyle({size: 'XS'})} />
+            <span className={style({font: 'ui-sm'})}>XS (14px)</span>
+          </div>
+          <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4})}>
+            <CheckmarkCircle styles={iconStyle({size: 'S'})} />
+            <span className={style({font: 'ui-sm'})}>S (16px)</span>
+          </div>
+          <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4})}>
+            <CheckmarkCircle styles={iconStyle({size: 'M'})} />
+            <span className={style({font: 'ui-sm', fontWeight: 'bold'})}>M (20px)</span>
+          </div>
+          <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4})}>
+            <CheckmarkCircle styles={iconStyle({size: 'L'})} />
+            <span className={style({font: 'ui-sm'})}>L (22px)</span>
+          </div>
+          <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4})}>
+            <CheckmarkCircle styles={iconStyle({size: 'XL'})} />
+            <span className={style({font: 'ui-sm'})}>XL (26px)</span>
+          </div>
         </div>
         <H2>Custom icons</H2>
         <P>To use custom icons, you first need to convert your SVGs into compatible icon components. This depends on your bundler.</P>

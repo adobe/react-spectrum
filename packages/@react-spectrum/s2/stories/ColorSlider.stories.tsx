@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes} from './utils';
+import {categorizeArgTypes, getActionArgs} from './utils';
 
 import {ColorSlider} from '../src/ColorSlider';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
+
+const events = ['onChange', 'onChangeEnd'];
 
 const meta: Meta<typeof ColorSlider> = {
   component: ColorSlider,
@@ -22,17 +24,21 @@ const meta: Meta<typeof ColorSlider> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd'])
+    ...categorizeArgTypes('Events', events),
+    contextualHelp: {table: {disable: true}}
   },
+  args: {...getActionArgs(events)},
   title: 'ColorSlider'
 };
 
 export default meta;
+type Story = StoryObj<typeof ColorSlider>;
 
-export const Example = (args: any) => <ColorSlider {...args} onChange={undefined} />;
-
-Example.args = {
-  label: 'Red Opacity',
-  defaultValue: '#f00',
-  channel: 'alpha'
+export const Example: Story = {
+  render: (args) => <ColorSlider {...args} onChange={undefined} />,
+  args: {
+    label: 'Red Opacity',
+    defaultValue: '#f00',
+    channel: 'alpha'
+  }
 };

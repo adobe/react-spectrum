@@ -1,0 +1,30 @@
+{
+  "extends": "@parcel/config-default",
+  "resolvers": ["@react-aria/parcel-resolver-optimize-locales", "@parcel/resolver-glob", "./S2DocsResolver", "parcel-resolver-docs", "..."],
+  "optimizers": {
+    "*.html": []
+  },
+  "transformers": {
+    "docs:*.{js,ts,tsx,json}": ["parcel-transformer-docs", "@parcel/transformer-inline"],
+    "docs-json:*.{js,ts,tsx,json}": ["parcel-transformer-docs"],
+    "illustration:*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
+    "url:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-raw"],
+    "data-url:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-inline-string"],
+    "packages/@react-spectrum/s2/s2wf-icons/**/*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
+    "packages/*/*/intl/*.json": ["parcel-transformer-intl"],
+    "starters/tailwind/**/*.css": ["@parcel/transformer-postcss", "..."],
+    "packages/dev/s2-docs/tailwind/*.css": ["@parcel/transformer-postcss", "..."],
+    "*.mdx": ["./MDXTransformer.mjs", "..."],
+    // Disable PostCSS from running over style macro output
+    "*.css": ["@parcel/transformer-css"],
+    "*.svg": ["@parcel/transformer-svg-react"],
+    "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
+      "@parcel/transformer-js",
+      "@parcel/transformer-react-refresh-wrap"
+    ]
+  },
+  "packagers": {
+    "*.json": "parcel-packager-docs"
+  },
+  "namers": ["./S2DocsNamer.js", "..."]
+}

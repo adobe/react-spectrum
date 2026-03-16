@@ -1,6 +1,6 @@
 # [React Aria Components](https://react-spectrum.adobe.com/react-aria/index.html)
 
-Over 40 components with built-in behavior, adaptive interactions, top-tier accessibility, and internationalization out of the box, ready for your styles.
+Over 50 components with built-in behavior, adaptive interactions, top-tier accessibility, and internationalization out of the box, ready for your styles.
 
 ## Features
 

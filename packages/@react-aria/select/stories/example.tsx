@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaSelectProps, HiddenSelect, useSelect} from '@react-aria/select';
 import {DismissButton, useOverlay} from '@react-aria/overlays';
 import {FocusScope} from '@react-aria/focus';
-import {HiddenSelect, useSelect} from '@react-aria/select';
-import React from 'react';
+import React, {JSX} from 'react';
 import {useButton} from '@react-aria/button';
 import {useListBox, useOption} from '@react-aria/listbox';
 import {useSelectState} from '@react-stately/select';
 
-export function Select(props) {
+export function Select<T extends object>(props: AriaSelectProps<T>): JSX.Element {
   // Create state based on the incoming props
   let state = useSelectState(props);
 
@@ -28,7 +28,8 @@ export function Select(props) {
     labelProps,
     triggerProps,
     valueProps,
-    menuProps
+    menuProps,
+    hiddenSelectProps
   } = useSelect(props, state, ref);
 
   // Get props for the button based on the trigger props from useSelect
@@ -37,11 +38,7 @@ export function Select(props) {
   return (
     <div style={{position: 'relative', display: 'inline-block'}}>
       <div {...labelProps}>{props.label}</div>
-      <HiddenSelect
-        state={state}
-        triggerRef={ref}
-        label={props.label}
-        name={props.name} />
+      <HiddenSelect {...hiddenSelectProps} />
       <button
         {...buttonProps}
         ref={ref}

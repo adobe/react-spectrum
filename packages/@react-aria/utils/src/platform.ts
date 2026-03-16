@@ -14,10 +14,9 @@ function testUserAgent(re: RegExp) {
   if (typeof window === 'undefined' || window.navigator == null) {
     return false;
   }
-  return (
-    window.navigator['userAgentData']?.brands.some((brand: {brand: string, version: string}) => re.test(brand.brand))
-  ) ||
-  re.test(window.navigator.userAgent);
+  let brands = window.navigator['userAgentData']?.brands;
+  return Array.isArray(brands) && brands.some((brand: {brand: string, version: string}) => re.test(brand.brand)) ||
+    re.test(window.navigator.userAgent);
 }
 
 function testPlatform(re: RegExp) {
@@ -30,7 +29,7 @@ function cached(fn: () => boolean) {
   if (process.env.NODE_ENV === 'test') {
     return fn;
   }
-  
+
   let res: boolean | null = null;
   return () => {
     if (res == null) {
@@ -40,40 +39,40 @@ function cached(fn: () => boolean) {
   };
 }
 
-export const isMac = cached(function () {
+export const isMac: () => boolean = cached(function () {
   return testPlatform(/^Mac/i);
 });
 
-export const isIPhone = cached(function () {
+export const isIPhone: () => boolean = cached(function () {
   return testPlatform(/^iPhone/i);
 });
 
-export const isIPad = cached(function () {
+export const isIPad: () => boolean = cached(function () {
   return testPlatform(/^iPad/i) ||
     // iPadOS 13 lies and says it's a Mac, but we can distinguish by detecting touch support.
     (isMac() && navigator.maxTouchPoints > 1);
 });
 
-export const isIOS = cached(function () {
+export const isIOS: () => boolean = cached(function () {
   return isIPhone() || isIPad();
 });
 
-export const isAppleDevice = cached(function () {
+export const isAppleDevice: () => boolean = cached(function () {
   return isMac() || isIOS();
 });
 
-export const isWebKit = cached(function () {
+export const isWebKit: () => boolean = cached(function () {
   return testUserAgent(/AppleWebKit/i) && !isChrome();
 });
 
-export const isChrome = cached(function () {
+export const isChrome: () => boolean = cached(function () {
   return testUserAgent(/Chrome/i);
 });
 
-export const isAndroid = cached(function () {
+export const isAndroid: () => boolean = cached(function () {
   return testUserAgent(/Android/i);
 });
 
-export const isFirefox = cached(function () {
+export const isFirefox: () => boolean = cached(function () {
   return testUserAgent(/Firefox/i);
 });

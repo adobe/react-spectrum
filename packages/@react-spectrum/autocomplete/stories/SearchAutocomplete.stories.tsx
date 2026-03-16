@@ -11,19 +11,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Avatar} from '@react-spectrum/avatar';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import Filter from '@spectrum-icons/workflow/Filter';
 import {Flex} from '@react-spectrum/layout';
 import {Item, SearchAutocomplete} from '@react-spectrum/autocomplete';
 import {mergeProps} from '@react-aria/utils';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {useAsyncList} from '@react-stately/data';
 
 
-type SearchAutocompleteStory = ComponentStoryObj<typeof SearchAutocomplete>;
+type SearchAutocompleteStory = StoryObj<typeof SearchAutocomplete>;
 
 export default {
   title: 'SearchAutocomplete',
@@ -184,7 +184,7 @@ export default {
       }
     }
   }
-} as ComponentMeta<typeof SearchAutocomplete>;
+} as Meta<typeof SearchAutocomplete>;
 
 let items = [
   {id: 1, name: 'Aerospace'},

@@ -125,6 +125,14 @@ export class DataTransfer {
   getData(type) {
     return this.items._items.find(item => item.kind === 'string' && item.type === type)?._data;
   }
+
+  clearData(type) {
+    if (type) {
+      this.items._items = this.items._items.filter(item => item.type !== type);
+    } else {
+      this.items._items = [];
+    }
+  }
 }
 
 export class DragEvent extends MouseEvent {

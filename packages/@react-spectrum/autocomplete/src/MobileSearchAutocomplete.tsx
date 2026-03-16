@@ -21,11 +21,11 @@ import {Field} from '@react-spectrum/label';
 import {FocusableRef, ValidationState} from '@react-types/shared';
 import {focusSafely, setInteractionModality, useHover} from '@react-aria/interactions';
 import {FocusScope, useFocusRing} from '@react-aria/focus';
+import {getActiveElement, mergeProps, useFormReset, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
-import {mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {
   HTMLAttributes,
@@ -126,7 +126,7 @@ function ForwardMobileSearchAutocomplete<T extends object>(props: SpectrumSearch
     inputProps.onChange = () => {};
   }
 
-  useFormReset(inputRef, state.inputValue, state.setInputValue);
+  useFormReset(inputRef, state.defaultInputValue, state.setInputValue);
 
   return (
     <>
@@ -482,7 +482,7 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
   };
 
   let onScroll = useCallback(() => {
-    if (!inputRef.current || document.activeElement !== inputRef.current || !isTouchDown.current) {
+    if (!inputRef.current || getActiveElement() !== inputRef.current || !isTouchDown.current) {
       return;
     }
 

@@ -1,11 +1,11 @@
-import '@react-spectrum/s2/src/page';
-import { themes } from '@storybook/theming';
-import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode';
-import { store } from 'storybook-dark-mode/dist/esm/Tool';
-import { addons } from '@storybook/preview-api';
-import { DocsContainer } from '@storybook/addon-docs';
+import '@react-spectrum/s2/page.css';
+import { themes } from 'storybook/theming';
+import { DARK_MODE_EVENT_NAME } from '@vueless/storybook-dark-mode';
+import { store } from '@vueless/storybook-dark-mode/dist/esm/Tool';
+import { addons } from 'storybook/preview-api';
 import React, { useEffect, useState } from 'react';
 import {withProviderSwitcher} from './custom-addons/provider';
+import {DocsContainer, Controls, Description, Primary, Stories, Subtitle, Title} from '@storybook/addon-docs/blocks';
 import './global.css';
 
 const channel = addons.getChannel();
@@ -15,7 +15,6 @@ channel.on(DARK_MODE_EVENT_NAME, isDark => document.documentElement.dataset.colo
 /** @type { import('@storybook/react').Preview } */
 const preview = {
   parameters: {
-    actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
       matchers: {},
       exclude: ['key', 'ref']
@@ -30,6 +29,7 @@ const preview = {
         var style = getComputedStyle(document.body)
         return <DocsContainer {...props} theme={{...(dark ? themes.dark : themes.light), appContentBg: style.getPropertyValue('--s2-container-bg').trim()}} />;
       },
+      codePanel: true,
       source: {
         // code: null, // Will disable code button, and show "No code available"
         transform: (code: string, ctx) => {
@@ -42,7 +42,18 @@ const preview = {
           }
           return code;
         }
-      }
+      },
+      page: () => {
+        return (
+        <>
+          <Title />
+          <Subtitle />
+          <Description />
+          <Primary />
+          <Controls />
+          <Stories includePrimary={false} />
+        </>
+      )}
     },
     darkMode: {
       light: {

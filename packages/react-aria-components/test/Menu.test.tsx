@@ -12,11 +12,10 @@
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaMenuTests} from './AriaMenu.test-util';
-import {Button, Collection, Dialog, Header, Heading, Input, Keyboard, Label, Menu, MenuContext, MenuItem, MenuSection, MenuTrigger, Popover, Pressable, Separator, SubmenuTrigger, Text, TextField} from '..';
+import {Button, Collection, Header, Heading, Input, Keyboard, Label, Menu, MenuContext, MenuItem, MenuSection, MenuTrigger, Popover, Pressable, Separator, SubmenuTrigger, Text, TextField} from '..';
 import React, {useState} from 'react';
 import {Selection, SelectionMode} from '@react-types/shared';
-import {SubDialogTrigger} from '../src/Menu';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -56,7 +55,7 @@ let renderMenu = (menuProps = {}, itemProps = {}) => render(<TestMenu {...{menuP
 
 describe('Menu', () => {
   let user;
-  let testUtilUser = new User();
+  let testUtilUser = new User({advanceTimer: jest.advanceTimersByTime});
 
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -120,6 +119,34 @@ describe('Menu', () => {
 
     for (let menuitem of getAllByRole('menuitem')) {
       expect(menuitem).toHaveAttribute('data-bar', 'foo');
+    }
+  });
+
+  it('should support custom render function', () => {
+    let {getAllByRole, getByRole} = renderMenu(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let menu = getByRole('menu');
+    expect(menu).toHaveAttribute('data-custom', 'true');
+
+    for (let menuitem of getAllByRole('menuitem')) {
+      expect(menuitem).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
+  it('should support custom render function as a link', () => {
+    let {getAllByRole, getByRole} = renderMenu(
+      {render: props => <div {...props} data-custom="true" />},
+      // eslint-disable-next-line jsx-a11y/anchor-has-content
+      {href: '#foo', render: props => <a {...props} data-custom="true" />}
+    );
+    let menu = getByRole('menu');
+    expect(menu).toHaveAttribute('data-custom', 'true');
+
+    for (let menuitem of getAllByRole('menuitem')) {
+      expect(menuitem).toHaveAttribute('href');
+      expect(menuitem).toHaveAttribute('data-custom', 'true');
     }
   });
 
@@ -335,13 +362,16 @@ describe('Menu', () => {
   });
 
   it('should support section-level selection', async () => {
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+    let onBlur = jest.fn();
     function Example() {
       let [veggies, setVeggies] = useState<Selection>(new Set(['lettuce']));
       let [protein, setProtein] = useState<Selection>(new Set(['ham']));
       return (
         <Menu aria-label="Sandwich contents" selectionMode="multiple">
           <MenuSection selectionMode="multiple" selectedKeys={veggies} onSelectionChange={setVeggies}>
-            <MenuItem id="lettuce">Lettuce</MenuItem>
+            <MenuItem onFocus={onFocus} onFocusChange={onFocusChange} onBlur={onBlur} id="lettuce">Lettuce</MenuItem>
             <MenuItem id="tomato">Tomato</MenuItem>
             <MenuItem id="onion">Onion</MenuItem>
           </MenuSection>
@@ -379,12 +409,41 @@ describe('Menu', () => {
     expect(radios[1]).toHaveAttribute('aria-checked', 'true');
     expect(radios[2]).toHaveAttribute('aria-checked', 'false');
 
-    act(() => checkboxes[0].focus());
+    onFocus.mockClear();
+    onFocusChange.mockClear();
+    onBlur.mockClear();
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    expect(document.activeElement).toBe(checkboxes[0]);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onBlur).toHaveBeenCalledTimes(0);
+    onFocus.mockClear();
+    onFocusChange.mockClear();
+    onBlur.mockClear();
     let sequence = checkboxes.slice(1).concat(radios);
     for (let item of sequence) {
       await user.keyboard('{ArrowDown}');
       expect(document.activeElement).toBe(item);
     }
+    expect(onFocus).toHaveBeenCalledTimes(0);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onBlur).toHaveBeenCalledTimes(1);
+  });
+
+  it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
+    let {getAllByRole} = renderMenu({selectionMode: 'multiple', escapeKeyBehavior: 'none'});
+    let menuitem = getAllByRole('menuitemcheckbox')[0];
+
+    expect(menuitem).not.toHaveAttribute('aria-checked', 'true');
+
+    await user.click(menuitem);
+    expect(menuitem).toHaveAttribute('aria-checked', 'true');
+
+    await user.keyboard('{Escape}');
+    expect(menuitem).toHaveAttribute('aria-checked', 'true');
   });
 
   it('should support disabled state', () => {
@@ -485,6 +544,132 @@ describe('Menu', () => {
     expect(onScroll).toHaveBeenCalled();
   });
 
+  it('should support empty state', () => {
+    let {getByRole} = render(
+      <Menu aria-label="Test" renderEmptyState={() => 'No results'}>
+        {[]}
+      </Menu>
+    );
+    let menu = getByRole('menu');
+    expect(menu).toHaveAttribute('data-empty', 'true');
+
+    let menuitem = getByRole('menuitem');
+    expect(menuitem).toHaveTextContent('No results');
+  });
+
+  it('should not close the menu when shouldCloseOnSelect is false', async () => {
+    let {queryByRole, getByRole, getAllByRole} = render(
+      <MenuTrigger>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu shouldCloseOnSelect={false}>
+            <MenuItem id="open">Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+            <MenuItem id="share">Share…</MenuItem>
+            <MenuItem id="delete">Delete…</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeInTheDocument();
+
+    let items = getAllByRole('menuitem');
+    expect(items).toHaveLength(5);
+
+    let item = items[0];
+    expect(item).toHaveTextContent('Open');
+    await user.click(item);
+    expect(menu).toBeInTheDocument();
+  });
+
+  it('should not close individual menu item when shouldCloseOnSelect=false', async () => {
+    let {queryByRole, getByRole, getAllByRole} = render(
+      <MenuTrigger>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu>
+            <MenuItem id="open" shouldCloseOnSelect={false}>Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+            <MenuItem id="share">Share…</MenuItem>
+            <MenuItem id="delete">Delete…</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeInTheDocument();
+
+    let items = getAllByRole('menuitem');
+    expect(items).toHaveLength(5);
+
+    let item = items[0];
+    expect(item).toHaveTextContent('Open');
+    await user.click(item);
+    expect(menu).toBeInTheDocument();
+
+    item = items[1];
+    expect(item).toHaveTextContent('Rename');
+    await user.click(item);
+    expect(menu).not.toBeInTheDocument();
+  });
+
+  it('should not close menu items within a section when shouldCloseOnSelect=false', async () => {
+    let {queryByRole, getByRole, getAllByRole} = render(
+      <MenuTrigger>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu>
+            <MenuSection shouldCloseOnSelect={false}>
+              <MenuItem id="open">Open</MenuItem>
+              <MenuItem id="rename">Rename…</MenuItem>
+              <MenuItem id="duplicate">Duplicate</MenuItem>
+            </MenuSection>
+            <MenuSection>
+              <MenuItem id="share">Share…</MenuItem>
+              <MenuItem id="delete">Delete…</MenuItem>
+            </MenuSection>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeInTheDocument();
+
+    let items = getAllByRole('menuitem');
+    expect(items).toHaveLength(5);
+
+    let item = items[0];
+    expect(item).toHaveTextContent('Open');
+    await user.click(item);
+    expect(menu).toBeInTheDocument();
+
+    item = items[3];
+    expect(item).toHaveTextContent('Share');
+    await user.click(item);
+    expect(menu).not.toBeInTheDocument();
+  });
+
   describe('supports links', function () {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
       it.each(['none', 'single', 'multiple'] as unknown as SelectionMode[])('with selectionMode = %s', async function (selectionMode) {
@@ -509,11 +694,12 @@ describe('Menu', () => {
         expect(items[1].tagName).toBe('A');
         expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
 
-        let onClick = mockClickDefault();
+        let onClick = mockClickDefault({capture: true});
         if (type === 'mouse') {
           await user.click(items[1]);
         } else {
           fireEvent.keyDown(items[1], {key: 'Enter'});
+          fireEvent.click(items[1]);
           fireEvent.keyUp(items[1], {key: 'Enter'});
         }
         expect(onAction).toHaveBeenCalledTimes(1);
@@ -1107,29 +1293,22 @@ describe('Menu', () => {
               <MenuItem id="open">Open</MenuItem>
               <MenuItem id="rename">Rename…</MenuItem>
               <MenuItem id="duplicate">Duplicate</MenuItem>
-              <SubDialogTrigger>
+              <SubmenuTrigger>
                 <MenuItem id="share">Share…</MenuItem>
                 <Popover>
-                  <Dialog>
-                    {({close}) => (
-                      <form style={{display: 'flex', flexDirection: 'column'}}>
-                        <Heading slot="title">Sign up</Heading>
-                        <TextField>
-                          <Label>First Name: </Label>
-                          <Input />
-                        </TextField>
-                        <TextField>
-                          <Label>Last Name: </Label>
-                          <Input />
-                        </TextField>
-                        <Button onPress={close}>
-                          Submit
-                        </Button>
-                      </form>
-                    )}
-                  </Dialog>
+                  <form style={{display: 'flex', flexDirection: 'column'}}>
+                    <Heading slot="title">Sign up</Heading>
+                    <TextField>
+                      <Label>First Name: </Label>
+                      <Input />
+                    </TextField>
+                    <TextField>
+                      <Label>Last Name: </Label>
+                      <Input />
+                    </TextField>
+                  </form>
                 </Popover>
-              </SubDialogTrigger>
+              </SubmenuTrigger>
               <MenuItem id="delete">Delete…</MenuItem>
             </Menu>
           </Popover>
@@ -1149,9 +1328,8 @@ describe('Menu', () => {
 
       let triggerItem = menuTester.submenuTriggers[0];
       expect(triggerItem).toHaveTextContent('Share…');
-      expect(triggerItem).toHaveAttribute('aria-haspopup', 'dialog');
+      expect(triggerItem).toHaveAttribute('aria-haspopup', 'menu');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'false');
-      // TODO: should this have a different data attribute aka has-subdialog?
       expect(triggerItem).toHaveAttribute('data-has-submenu', 'true');
       expect(triggerItem).not.toHaveAttribute('data-open');
 
@@ -1161,21 +1339,18 @@ describe('Menu', () => {
       expect(triggerItem).toHaveAttribute('data-hovered', 'true');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
       expect(triggerItem).toHaveAttribute('data-open', 'true');
-      let subdialog = getAllByRole('dialog')[0];
+      let subdialog = getAllByRole('dialog')[1];
       expect(subdialog).toBeInTheDocument();
 
       let subdialogPopover = subdialog.closest('.react-aria-Popover') as HTMLElement;
       expect(subdialogPopover).toBeInTheDocument();
-      expect(subdialogPopover).toHaveAttribute('data-trigger', 'SubDialogTrigger');
+      expect(subdialogPopover).toHaveAttribute('data-trigger', 'SubmenuTrigger');
 
       let inputs = within(subdialogPopover).getAllByRole('textbox');
-      let buttons = within(subdialogPopover).getAllByRole('button');
       await user.click(inputs[0]);
       expect(document.activeElement).toBe(inputs[0]);
       await user.tab();
       expect(document.activeElement).toBe(inputs[1]);
-      await user.tab();
-      expect(document.activeElement).toBe(buttons[0]);
       await user.tab();
       expect(document.activeElement).toBe(inputs[0]);
     });
@@ -1190,47 +1365,35 @@ describe('Menu', () => {
               <MenuItem id="open">Open</MenuItem>
               <MenuItem id="rename">Rename…</MenuItem>
               <MenuItem id="duplicate">Duplicate</MenuItem>
-              <SubDialogTrigger>
+              <SubmenuTrigger>
                 <MenuItem id="share">Share…</MenuItem>
                 <Popover>
-                  <Dialog>
-                    {({close}) => (
-                      <>
-                        <Menu>
-                          <SubDialogTrigger>
-                            <MenuItem>Nested Subdialog</MenuItem>
-                            <Popover>
-                              <Dialog>
-                                {({close}) => (
-                                  <form>
-                                    <Heading slot="title">Contact</Heading>
-                                    <TextField autoFocus>
-                                      <Label>Email: </Label>
-                                      <Input />
-                                    </TextField>
-                                    <TextField>
-                                      <Label>Contact number: </Label>
-                                      <Input />
-                                    </TextField>
-                                    <Button onPress={close}>
-                                      Submit
-                                    </Button>
-                                  </form>
-                                )}
-                              </Dialog>
-                            </Popover>
-                          </SubDialogTrigger>
-                          <MenuItem>B</MenuItem>
-                          <MenuItem>C</MenuItem>
-                        </Menu>
-                        <Button onPress={close}>
-                          Close
-                        </Button>
-                      </>
-                    )}
-                  </Dialog>
+                  <Menu>
+                    <SubmenuTrigger>
+                      <MenuItem>Nested Subdialog</MenuItem>
+                      <Popover>
+                        <form>
+                          <Heading slot="title">Contact</Heading>
+                          <TextField autoFocus>
+                            <Label>Email: </Label>
+                            <Input />
+                          </TextField>
+                          <TextField>
+                            <Label>Contact number: </Label>
+                            <Input />
+                          </TextField>
+                          <Button>
+                            Submit
+                          </Button>
+                        </form>
+                      </Popover>
+                    </SubmenuTrigger>
+                    <MenuItem>B</MenuItem>
+                    <MenuItem>C</MenuItem>
+                  </Menu>
+                  <Button>Test</Button>
                 </Popover>
-              </SubDialogTrigger>
+              </SubmenuTrigger>
               <MenuItem id="delete">Delete…</MenuItem>
             </Menu>
           </Popover>
@@ -1242,7 +1405,7 @@ describe('Menu', () => {
 
       let triggerItem = menuTester.submenuTriggers[0];
       expect(triggerItem).toHaveTextContent('Share…');
-      expect(triggerItem).toHaveAttribute('aria-haspopup', 'dialog');
+      expect(triggerItem).toHaveAttribute('aria-haspopup', 'menu');
 
       // Open the subdialog
       let subDialogTester = await menuTester.openSubmenu({submenuTrigger: triggerItem});
@@ -1251,24 +1414,24 @@ describe('Menu', () => {
 
       let subDialogTriggerItem = subDialogTester?.submenuTriggers[0];
       expect(subDialogTriggerItem).toHaveTextContent('Nested Subdialog');
-      expect(subDialogTriggerItem).toHaveAttribute('aria-haspopup', 'dialog');
+      expect(subDialogTriggerItem).toHaveAttribute('aria-haspopup', 'menu');
 
       // Open the nested subdialog
       await subDialogTester?.openSubmenu({submenuTrigger: subDialogTriggerItem!});
       act(() => {jest.runAllTimers();});
       let subdialogs = getAllByRole('dialog');
-      expect(subdialogs).toHaveLength(2);
+      expect(subdialogs).toHaveLength(3);
 
       await user.keyboard('{Escape}');
       act(() => {jest.runAllTimers();});
       subdialogs = getAllByRole('dialog');
-      expect(subdialogs).toHaveLength(1);
+      expect(subdialogs).toHaveLength(2);
       expect(document.activeElement).toBe(subDialogTriggerItem);
 
       await user.keyboard('{Escape}');
       act(() => {jest.runAllTimers();});
       subdialogs = queryAllByRole('dialog');
-      expect(subdialogs).toHaveLength(0);
+      expect(subdialogs).toHaveLength(1);
       expect(document.activeElement).toBe(triggerItem);
     });
 
@@ -1282,47 +1445,35 @@ describe('Menu', () => {
               <MenuItem id="open">Open</MenuItem>
               <MenuItem id="rename">Rename…</MenuItem>
               <MenuItem id="duplicate">Duplicate</MenuItem>
-              <SubDialogTrigger>
+              <SubmenuTrigger>
                 <MenuItem id="share">Share…</MenuItem>
                 <Popover>
-                  <Dialog>
-                    {({close}) => (
-                      <>
-                        <Menu>
-                          <SubDialogTrigger>
-                            <MenuItem>Nested Subdialog</MenuItem>
-                            <Popover>
-                              <Dialog>
-                                {({close}) => (
-                                  <form>
-                                    <Heading slot="title">Contact</Heading>
-                                    <TextField autoFocus>
-                                      <Label>Email: </Label>
-                                      <Input />
-                                    </TextField>
-                                    <TextField>
-                                      <Label>Contact number: </Label>
-                                      <Input />
-                                    </TextField>
-                                    <Button onPress={close}>
-                                      Submit
-                                    </Button>
-                                  </form>
-                                )}
-                              </Dialog>
-                            </Popover>
-                          </SubDialogTrigger>
-                          <MenuItem>B</MenuItem>
-                          <MenuItem>C</MenuItem>
-                        </Menu>
-                        <Button onPress={close}>
-                          Close
-                        </Button>
-                      </>
-                    )}
-                  </Dialog>
+                  <Menu>
+                    <SubmenuTrigger>
+                      <MenuItem>Nested Subdialog</MenuItem>
+                      <Popover>
+                        <form>
+                          <Heading slot="title">Contact</Heading>
+                          <TextField autoFocus>
+                            <Label>Email: </Label>
+                            <Input />
+                          </TextField>
+                          <TextField>
+                            <Label>Contact number: </Label>
+                            <Input />
+                          </TextField>
+                          <Button>
+                            Submit
+                          </Button>
+                        </form>
+                      </Popover>
+                    </SubmenuTrigger>
+                    <MenuItem>B</MenuItem>
+                    <MenuItem>C</MenuItem>
+                  </Menu>
+                  <Button>Test </Button>
                 </Popover>
-              </SubDialogTrigger>
+              </SubmenuTrigger>
               <MenuItem id="delete">Delete…</MenuItem>
             </Menu>
           </Popover>
@@ -1344,7 +1495,7 @@ describe('Menu', () => {
       await subDialogTester?.openSubmenu({submenuTrigger: subDialogTriggerItem!});
       act(() => {jest.runAllTimers();});
       let subdialogs = getAllByRole('dialog');
-      expect(subdialogs).toHaveLength(2);
+      expect(subdialogs).toHaveLength(3);
 
       await user.click(document.body);
       act(() => {jest.runAllTimers();});
@@ -1359,7 +1510,7 @@ describe('Menu', () => {
   describe('portalContainer', () => {
     function InfoMenu(props) {
       return (
-        <UNSTABLE_PortalProvider getContainer={() => props.container.current}>
+        <UNSAFE_PortalProvider getContainer={() => props.container.current}>
           <MenuTrigger>
             <Button aria-label="trigger" />
             <Popover>
@@ -1370,7 +1521,7 @@ describe('Menu', () => {
               </Menu>
             </Popover>
           </MenuTrigger>
-        </UNSTABLE_PortalProvider>
+        </UNSAFE_PortalProvider>
       );
     }
 
@@ -1418,6 +1569,239 @@ describe('Menu', () => {
 
     let menu = getByRole('menu');
     expect(menu).toBeInTheDocument();
+  });
+
+  it('contains focus within the menu', async function () {
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <Menu aria-label="Test">
+            <MenuSection>
+              <Header>Heading 1</Header>
+              <MenuItem>Foo</MenuItem>
+              <MenuItem>Bar</MenuItem>
+              <MenuItem>Baz</MenuItem>
+            </MenuSection>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    menuTester.setInteractionType('keyboard');
+
+    await menuTester.open();
+    act(() => {jest.runAllTimers();});
+
+    let menu = menuTester.menu;
+    let activeElement = document.activeElement;
+
+    await user.tab();
+    act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
+    expect(menu).toBeInTheDocument();
+    expect(document.activeElement).toBe(activeElement);
+  });
+
+  it('should support press events on menu items', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let onClickCapture = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, onClickCapture}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await menuTester.open();
+    await menuTester.selectOption({option: 'Cat'});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).toHaveBeenCalledTimes(1);
+    expect(onPressEnd).toHaveBeenCalledTimes(1);
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press events on menu items with closeOnSelect: false', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, closeOnSelect: false}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await menuTester.open();
+    await menuTester.selectOption({option: 'Cat', closesOnSelect: false});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).toHaveBeenCalledTimes(1);
+    expect(onPressEnd).toHaveBeenCalledTimes(1);
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press events on menu items when dragging and releasing', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await user.pointer({target: menuTester.trigger, keys: '[MouseLeft>]'});
+    await user.pointer({target: menuTester.findOption({optionIndexOrText: 'Cat'}), keys: '[/MouseLeft]'});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).not.toHaveBeenCalled();
+    expect(onPressEnd).not.toHaveBeenCalled();
+    expect(onPress).not.toHaveBeenCalled();
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press events on menu items when using keyboard', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await menuTester.open();
+    await menuTester.selectOption({option: 'Cat', interactionType: 'keyboard'});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).toHaveBeenCalledTimes(1);
+    // React 17 has different batching in tests? This doesn't happen in the browser.
+    if (!React.version.startsWith('17')) {
+      expect(onPressEnd).not.toHaveBeenCalled();
+      expect(onPress).not.toHaveBeenCalled();
+    }
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press events on menu items when using keyboard and closeOnSelect: false', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, closeOnSelect: false}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await menuTester.open();
+    await menuTester.selectOption({option: 'Cat', interactionType: 'keyboard', closesOnSelect: false});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).toHaveBeenCalledTimes(1);
+    expect(onPressEnd).toHaveBeenCalledTimes(1);
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  describe('submenutrigger non menu content', () => {
+    it('opens popover and does not call onAction', async () => {
+      let onAction = jest.fn();
+      let {getByRole, getAllByRole, findByRole, findByText} = render(
+        <MenuTrigger>
+          <Button>Menu Button</Button>
+          <Popover>
+            <Menu onAction={onAction}>
+              <SubmenuTrigger>
+                <MenuItem id="delete">Delete</MenuItem>
+                <Popover>
+                  <div>Contact your administrator for permissions to delete.</div>
+                </Popover>
+              </SubmenuTrigger>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      await user.click(getByRole('button'));
+      await findByRole('menu');
+      let menuItems = getAllByRole('menuitem');
+      await user.click(menuItems[0]);
+      expect(await findByText('Contact your administrator for permissions to delete.')).toBeInTheDocument();
+      expect(onAction).not.toHaveBeenCalled();
+      let dialogs = getAllByRole('dialog');
+      expect(dialogs).toHaveLength(2);
+      expect(document.activeElement).toBe(menuItems[0]);
+      await user.keyboard('{Escape}');
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(getByRole('button'));
+    });
+
+    it('should auto focus the Popover if in keyboard modality', async () => {
+      let onAction = jest.fn();
+      let {getByRole, getAllByRole, findByRole, findByText} = render(
+        <MenuTrigger>
+          <Button>Menu Button</Button>
+          <Popover>
+            <Menu onAction={onAction}>
+              <SubmenuTrigger>
+                <MenuItem id="delete">Delete</MenuItem>
+                <Popover>
+                  <div>Contact your administrator for permissions to delete.</div>
+                </Popover>
+              </SubmenuTrigger>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button'), interactionType: 'keyboard'});
+      await menuTester.open();
+      await findByRole('menu');
+      await menuTester.selectOption({option: 0});
+      expect(await findByText('Contact your administrator for permissions to delete.')).toBeInTheDocument();
+      expect(onAction).not.toHaveBeenCalled();
+      let dialogs = getAllByRole('dialog');
+      expect(dialogs).toHaveLength(2);
+      expect(document.activeElement).toBe(dialogs[1]);
+      await user.keyboard('{Escape}');
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(menuTester.options()[0]);
+    });
   });
 });
 
@@ -1523,25 +1907,6 @@ AriaMenuTests({
     ),
     multipleSelection: () => render(
       <SelectionStatic selectionMode="multiple" />
-    ),
-    siblingFocusableElement: () => render(
-      <>
-        <input aria-label="before" />
-        <MenuTrigger>
-          <Button>Menu Button</Button>
-          <Popover>
-            <Menu aria-label="Test">
-              <MenuSection>
-                <Header>Heading 1</Header>
-                <MenuItem>Foo</MenuItem>
-                <MenuItem>Bar</MenuItem>
-                <MenuItem>Baz</MenuItem>
-              </MenuSection>
-            </Menu>
-          </Popover>
-        </MenuTrigger>
-        <input aria-label="after" />
-      </>
     ),
     multipleMenus: () => render(
       <>

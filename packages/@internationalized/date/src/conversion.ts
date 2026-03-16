@@ -17,16 +17,16 @@ import {AnyCalendarDate, AnyDateTime, AnyTime, Calendar, DateFields, Disambiguat
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {constrain} from './manipulation';
 import {getExtendedYear, GregorianCalendar} from './calendars/GregorianCalendar';
-import {getLocalTimeZone} from './queries';
+import {getLocalTimeZone, isEqualCalendar, isLocalTimeZoneOverridden} from './queries';
 import {Mutable} from './utils';
 
-export function epochFromDate(date: AnyDateTime) {
+export function epochFromDate(date: AnyDateTime): number {
   date = toCalendar(date, new GregorianCalendar());
   let year = getExtendedYear(date.era, date.year);
   return epochFromParts(year, date.month, date.day, date.hour, date.minute, date.second, date.millisecond);
 }
 
-function epochFromParts(year: number, month: number, day: number, hour: number, minute: number, second: number, millisecond: number) {
+function epochFromParts(year: number, month: number, day: number, hour: number, minute: number, second: number, millisecond: number): number {
   // Note: Date.UTC() interprets one and two-digit years as being in the
   // 20th century, so don't use it
   let date = new Date();
@@ -35,14 +35,16 @@ function epochFromParts(year: number, month: number, day: number, hour: number, 
   return date.getTime();
 }
 
-export function getTimeZoneOffset(ms: number, timeZone: string) {
+export function getTimeZoneOffset(ms: number, timeZone: string): number {
   // Fast path for UTC.
   if (timeZone === 'UTC') {
     return 0;
   }
 
   // Fast path: for local timezone after 1970, use native Date.
-  if (ms > 0 && timeZone === getLocalTimeZone()) {
+  // Skip this fast path if the local timezone was explicitly overridden via setLocalTimeZone,
+  // since native Date always uses the browser's timezone, not the overridden one.
+  if (ms > 0 && timeZone === getLocalTimeZone() && !isLocalTimeZoneOverridden()) {
     return new Date(ms).getTimezoneOffset() * -60 * 1000;
   }
 
@@ -124,7 +126,9 @@ export function toAbsolute(date: CalendarDate | CalendarDateTime, timeZone: stri
   }
 
   // Fast path: if the time zone is the local timezone and disambiguation is compatible, use native Date.
-  if (timeZone === getLocalTimeZone() && disambiguation === 'compatible') {
+  // Skip this fast path if the local timezone was explicitly overridden via setLocalTimeZone,
+  // since native Date always uses the browser's timezone, not the overridden one.
+  if (timeZone === getLocalTimeZone() && disambiguation === 'compatible' && !isLocalTimeZoneOverridden()) {
     dateTime = toCalendar(dateTime, new GregorianCalendar());
 
     // Don't use Date constructor here because two-digit years are interpreted in the 20th century.
@@ -197,6 +201,9 @@ export function fromDate(date: Date, timeZone: string): ZonedDateTime {
   return fromAbsolute(date.getTime(), timeZone);
 }
 
+/**
+ * Takes a `Date` object and converts it to the time zone identifier for the current user.
+ */
 export function fromDateToLocal(date: Date): ZonedDateTime {
   return fromDate(date, getLocalTimeZone());
 }
@@ -260,7 +267,7 @@ export function toTime(dateTime: CalendarDateTime | ZonedDateTime): Time {
 
 /** Converts a date from one calendar system to another. */
 export function toCalendar<T extends AnyCalendarDate>(date: T, calendar: Calendar): T {
-  if (date.calendar.identifier === calendar.identifier) {
+  if (isEqualCalendar(date.calendar, calendar)) {
     return date;
   }
 
@@ -292,7 +299,7 @@ export function toZoned(date: CalendarDate | CalendarDateTime | ZonedDateTime, t
   return fromAbsolute(ms, timeZone);
 }
 
-export function zonedToDate(date: ZonedDateTime) {
+export function zonedToDate(date: ZonedDateTime): Date {
   let ms = epochFromDate(date) - date.offset;
   return new Date(ms);
 }

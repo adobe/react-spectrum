@@ -107,7 +107,8 @@ export const Slider = React.forwardRef(function Slider(props: SpectrumSliderProp
               trackRef={trackRef}
               inputRef={inputRef}
               state={state}
-              name={props.name} />
+              name={props.name}
+              form={props.form} />
             {filledTrack}
             {upperTrack}
           </>

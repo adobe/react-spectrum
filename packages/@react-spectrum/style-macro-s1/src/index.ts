@@ -10,5 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-export {style, baseColor, lightDark} from './spectrum-theme';
+export {style, baseColor, lightDark, focusRing} from './spectrum-theme';
 export {raw, keyframes} from './style-macro';

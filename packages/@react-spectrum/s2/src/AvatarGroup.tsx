@@ -39,7 +39,7 @@ export const AvatarGroupContext = createContext<ContextValue<Partial<AvatarGroup
 
 const avatar = style({
   marginStart: {
-    default: '[calc(var(--size) / -4)]',
+    default: 'calc(var(--size) / -4)',
     ':first-child': 0
   }
 });

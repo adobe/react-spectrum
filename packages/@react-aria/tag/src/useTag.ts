@@ -24,7 +24,7 @@ import {useGridListItem} from '@react-aria/gridlist';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
-export interface TagAria extends Omit<SelectableItemStates, 'hasAction'> {
+export interface TagAria extends SelectableItemStates {
   /** Props for the tag row element. */
   rowProps: DOMAttributes,
   /** Props for the tag cell element. */
@@ -56,8 +56,6 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
     node: item
   }, state, ref);
 
-  // We want the group to handle keyboard navigation between tags.
-  delete rowProps.onKeyDownCapture;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {descriptionProps: _, ...stateWithoutDescription} = states;
 
@@ -94,6 +92,7 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
   let domProps = filterDOMProps(item.props);
   let linkProps = useSyntheticLinkProps(item.props);
   let {focusableProps} = useFocusable({
+    ...item.props,
     isDisabled
   }, ref);
 
@@ -103,8 +102,7 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
       'aria-labelledby': `${buttonId} ${rowProps.id}`,
       isDisabled,
       id: buttonId,
-      onPress: () => onRemove ? onRemove(new Set([item.key])) : null,
-      excludeFromTabOrder: true
+      onPress: () => onRemove ? onRemove(new Set([item.key])) : null
     },
     rowProps: mergeProps(focusableProps, rowProps, domProps, linkProps, {
       tabIndex,

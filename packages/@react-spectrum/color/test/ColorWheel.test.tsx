@@ -12,7 +12,7 @@
 
 import {act, fireEvent, installMouseEvent, installPointerEvent, pointerMap, renderv3 as render} from '@react-spectrum/test-utils-internal';
 import {ColorWheel} from '../';
-import {ControlledHSL} from '../stories/ColorWheel.stories';
+import {ControlledHSLRender} from '../stories/ColorWheel.stories';
 import {parseColor} from '@react-stately/color';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -125,6 +125,29 @@ describe('ColorWheel', () => {
     await user.click(button);
     expect(input).toHaveValue('15');
   });
+
+  if (parseInt(React.version, 10) >= 19) {
+    it('resets to defaultValue when submitting form action', async () => {
+      function Test() {        
+        const [value, formAction] = React.useActionState(() => 'hsl(15, 100%, 50%)', 'hsl(0, 0%, 0%)');
+        
+        return (
+          <form action={formAction}>
+            <ColorWheel defaultValue={value} />
+            <input type="submit" data-testid="submit" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getByRole} = render(<Test />);
+      let input = getByRole('slider');
+      expect(input).toHaveValue('0');
+
+      let button = getByTestId('submit');
+      await user.click(button);
+      expect(input).toHaveValue('15');
+    });
+  }
 
   describe('labelling', () => {
     it('should support a custom aria-label', () => {
@@ -339,7 +362,7 @@ describe('ColorWheel', () => {
 
     it('clicking on the track works', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {container: _container, getByRole} = render(<ControlledHSL defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
+      let {container: _container, getByRole} = render(<ControlledHSLRender defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
       let slider = getByRole('slider');
       let container = _container?.firstChild?.firstChild?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;

@@ -16,7 +16,16 @@ function pressKeyOnButton(key, button) {
   fireEvent.keyDown(button, {key});
   fireEvent.keyUp(button, {key});
 }
-export const press = {
+export const press: {
+  ArrowRight: (button: HTMLElement) => void,
+  ArrowLeft: (button: HTMLElement) => void,
+  ArrowUp: (button: HTMLElement) => void,
+  ArrowDown: (button: HTMLElement) => void,
+  Home: (button: HTMLElement) => void,
+  End: (button: HTMLElement) => void,
+  PageUp: (button: HTMLElement) => void,
+  PageDown: (button: HTMLElement) => void
+} = {
   ArrowRight: (button: HTMLElement) => pressKeyOnButton('ArrowRight', button),
   ArrowLeft: (button: HTMLElement) => pressKeyOnButton('ArrowLeft', button),
   ArrowUp: (button: HTMLElement) => pressKeyOnButton('ArrowUp', button),
@@ -25,9 +34,9 @@ export const press = {
   End: (button: HTMLElement) => pressKeyOnButton('End', button),
   PageUp: (button: HTMLElement) => pressKeyOnButton('PageUp', button),
   PageDown: (button: HTMLElement) => pressKeyOnButton('PageDown', button)
-};
+} as const;
 
-export function testKeypresses([sliderLeft, sliderRight], commands: any[]) {
+export function testKeypresses([sliderLeft, sliderRight]: [HTMLInputElement, HTMLInputElement], commands: any[]): void {
   for (let command of commands) {
     let c = command.left ?? command.right;
     let result = command.result;

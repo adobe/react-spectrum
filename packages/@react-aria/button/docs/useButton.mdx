@@ -48,7 +48,7 @@ cross browser inconsistencies in interactions and accessibility features to cons
 * Keyboard focus management and cross browser normalization
 * Keyboard event support for <Keyboard>Space</Keyboard> and <Keyboard>Enter</Keyboard> keys
 
-Read our [blog post](/blog/building-a-button-part-1.html) about the complexities of building buttons that work well across devices and interaction methods.
+Read our [blog post](../blog/building-a-button-part-1) about the complexities of building buttons that work well across devices and interaction methods.
 
 ## Anatomy
 
@@ -131,7 +131,7 @@ The following examples show how to use the `Button` component created in the abo
 
 `useButton` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress` prop. This is similar to the standard `onClick` event, but normalized to support all interaction methods equally. In addition, the `onPressStart`, `onPressEnd`, and `onPressChange` events are fired as the user interacts with the button.
 
-Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which exposes information about the target and the type of event that triggered the interaction. See [usePress](usePress.html) for more details.
+Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which exposes information about the target and the type of event that triggered the interaction. See [usePress](../usePress) for more details.
 
 ```tsx example
 function Example() {

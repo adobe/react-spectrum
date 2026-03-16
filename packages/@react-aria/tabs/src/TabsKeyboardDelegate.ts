@@ -25,14 +25,14 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
     this.tabDirection = orientation === 'horizontal';
   }
 
-  getKeyLeftOf(key: Key) {
+  getKeyLeftOf(key: Key): Key | null {
     if (this.flipDirection) {
       return this.getNextKey(key);
     }
     return this.getPreviousKey(key);
   }
 
-  getKeyRightOf(key: Key) {
+  getKeyRightOf(key: Key): Key | null {
     if (this.flipDirection) {
       return this.getPreviousKey(key);
     }
@@ -44,7 +44,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
     return this.disabledKeys.has(key) || !!this.collection.getItem(key)?.props?.isDisabled;
   }
 
-  getFirstKey() {
+  getFirstKey(): Key | null {
     let key = this.collection.getFirstKey();
     if (key != null && this.isDisabled(key)) {
       key = this.getNextKey(key);
@@ -52,45 +52,47 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
     return key;
   }
 
-  getLastKey() {
+  getLastKey(): Key | null {
     let key = this.collection.getLastKey();
     if (key != null && this.isDisabled(key)) {
       key = this.getPreviousKey(key);
     }
     return key;
   }
-  
-  getKeyAbove(key: Key) {
+
+  getKeyAbove(key: Key): Key | null {
     if (this.tabDirection) {
       return null;
     }
     return this.getPreviousKey(key);
   }
 
-  getKeyBelow(key: Key) {
+  getKeyBelow(key: Key): Key | null {
     if (this.tabDirection) {
       return null;
     }
     return this.getNextKey(key);
   }
 
-  getNextKey(key) {
+  getNextKey(startKey: Key): Key | null {
+    let key: Key | null = startKey;
     do {
       key = this.collection.getKeyAfter(key);
       if (key == null) {
         key = this.collection.getFirstKey();
       }
-    } while (this.isDisabled(key));
+    } while (key != null && this.isDisabled(key));
     return key;
   }
 
-  getPreviousKey(key) {
+  getPreviousKey(startKey: Key): Key | null {
+    let key: Key | null = startKey;
     do {
       key = this.collection.getKeyBefore(key);
       if (key == null) {
         key = this.collection.getLastKey();
       }
-    } while (this.isDisabled(key));
+    } while (key != null && this.isDisabled(key));
     return key;
   }
 }

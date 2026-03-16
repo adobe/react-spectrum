@@ -35,7 +35,9 @@ import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
 import userEvent from '@testing-library/user-event';
 
-let isReact18 = parseInt(React.version, 10) >= 18;
+// getComputedStyle is very slow in our version of jsdom.
+// These tests only care about direct inline styles. We can avoid parsing other stylesheets.
+window.getComputedStyle = (el) => el.style;
 
 describe('TableView', function () {
   let offsetWidth, offsetHeight, scrollHeight;
@@ -64,8 +66,8 @@ describe('TableView', function () {
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 400);
+    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 300);
     scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 40);
     jest.useFakeTimers();
   });
@@ -1965,6 +1967,49 @@ describe('TableView', function () {
         });
       });
 
+      it('support drop target keyboard navigation', async () => {
+        render(<ReorderExample />);
+        await user.tab();
+        await user.keyboard('{ArrowRight}');
+        await user.keyboard('{Enter}');
+        act(() => jest.runAllTimers());
+      
+        const labels = ['Vin Charlet', 'Lexy Maddison', 'Robbi Persence', 'Dodie Hurworth', 'Audrye Hember', 'Beau Oller', 'Roarke Gration', 'Cathy Lishman', 'Enrika Soitoux', 'Aloise Tuxsell'];
+      
+        for (let i = 0; i < labels.length; i++) {
+          if (i === labels.length - 1) {
+            expect(document.activeElement).toHaveAttribute('aria-label', `Insert after ${labels[i]}`);
+          } else {
+            expect(document.activeElement).toHaveAttribute('aria-label', `Insert between ${labels[i]} and ${labels[i + 1]}`);
+          }
+      
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        }
+      
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Vin Charlet');
+        await user.keyboard('{End}');
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Aloise Tuxsell');
+      
+        for (let i = labels.length - 1; i >= 0; i--) {
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+      
+          if (i === 0) {
+            expect(document.activeElement).toHaveAttribute('aria-label', `Insert before ${labels[i]}`);
+          } else {
+            expect(document.activeElement).toHaveAttribute('aria-label', `Insert between ${labels[i - 1]} and ${labels[i]}`);
+          }
+        }
+      
+        await user.keyboard('{ArrowUp}');
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Aloise Tuxsell');
+        await user.keyboard('{Home}');
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Vin Charlet');
+        await user.keyboard('{Escape}');
+        act(() => jest.runAllTimers());
+      });
+      
       describe('using util handlers', function () {
         async function beginDrag(tree) {
           let grids = tree.getAllByRole('grid');
@@ -2143,7 +2188,6 @@ describe('TableView', function () {
           });
           act(() => jest.runAllTimers());
           await user.tab({shift: true});
-          await user.tab({shift: true});
           await user.keyboard('{ArrowLeft}');
 
           // Drop on folder in same table
@@ -2299,10 +2343,6 @@ describe('TableView', function () {
           await user.keyboard('{Escape}');
 
           tree.rerender(<DragBetweenTablesComplex secondTableDnDOptions={{...mockUtilityOptions, onRootDrop: null, onInsert: null}} />);
-          await user.tab({shift: true});
-          await user.tab({shift: true});
-          await user.keyboard('{ArrowLeft}');
-          await user.keyboard('{ArrowRight}');
 
           let grids = tree.getAllByRole('grid');
           let rowgroup = within(grids[0]).getAllByRole('rowgroup')[1];

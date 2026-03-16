@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {centerPadding, fieldInput, staticColor} from './style-utils' with {type: 'macro'};
+import {centerPadding, controlSize, fieldInput, staticColor} from './style-utils' with {type: 'macro'};
 
 export const bar = () => ({
   ...staticColor(),
@@ -39,7 +39,7 @@ export const bar = () => ({
   maxWidth: 768, // progress-bar-maximum-width
   '--field-height': {
     type: 'height',
-    value: 'control'
+    value: controlSize()
   },
   '--track-to-label': {
     type: 'height',

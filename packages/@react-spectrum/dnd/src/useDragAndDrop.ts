@@ -39,10 +39,10 @@ import {
 } from '@react-stately/dnd';
 import {JSX, useMemo} from 'react';
 
-interface DraggableCollectionStateOpts extends Omit<DraggableCollectionStateOptions, 'getItems'> {}
+interface DraggableCollectionStateOpts<T> extends Omit<DraggableCollectionStateOptions<T>, 'getItems'> {}
 
-interface DragHooks {
-  useDraggableCollectionState?: (props: DraggableCollectionStateOpts) => DraggableCollectionState,
+interface DragHooks<T = object> {
+  useDraggableCollectionState?: (props: DraggableCollectionStateOpts<T>) => DraggableCollectionState,
   useDraggableCollection?: (props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement | null>) => void,
   useDraggableItem?: (props: DraggableItemProps, state: DraggableCollectionState) => DraggableItemResult,
   DragPreview?: typeof DragPreview
@@ -55,17 +55,17 @@ interface DropHooks {
   useDropIndicator?: (props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) => DropIndicatorAria
 }
 
-export interface DragAndDropHooks {
+export interface DragAndDropHooks<T = object> {
   /** Drag and drop hooks for the collection element.  */
-  dragAndDropHooks: DragHooks & DropHooks & {isVirtualDragging?: () => boolean, renderPreview?: (keys: Set<Key>, draggedKey: Key) => JSX.Element}
+  dragAndDropHooks: DragHooks<T> & DropHooks & {isVirtualDragging?: () => boolean, renderPreview?: (keys: Set<Key>, draggedKey: Key) => JSX.Element}
 }
 
-export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, DroppableCollectionProps {
+export interface DragAndDropOptions<T = object> extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, Omit<DroppableCollectionProps, 'onMove'> {
   /**
    * A function that returns the items being dragged. If not specified, we assume that the collection is not draggable.
    * @default () => []
    */
-  getItems?: (keys: Set<Key>) => DragItem[],
+  getItems?: (keys: Set<Key>, items: T[]) => DragItem[],
   /** Provide a custom drag preview. `draggedKey` represents the key of the item the user actually dragged. */
   renderPreview?: (keys: Set<Key>, draggedKey: Key) => JSX.Element
 }
@@ -73,7 +73,7 @@ export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'prev
 /**
  * Provides the hooks required to enable drag and drop behavior for a drag and drop compatible React Spectrum component.
  */
-export function useDragAndDrop(options: DragAndDropOptions): DragAndDropHooks {
+export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): DragAndDropHooks {
   let dragAndDropHooks = useMemo(() => {
     let {
       onDrop,
@@ -90,7 +90,7 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDropHooks {
 
     let hooks = {} as DragHooks & DropHooks & {isVirtualDragging?: () => boolean, renderPreview?: (keys: Set<Key>, draggedKey: Key) => JSX.Element};
     if (isDraggable) {
-      hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(props: DraggableCollectionStateOpts) {
+      hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(props: DraggableCollectionStateOpts<T>) {
         return useDraggableCollectionState({...props, ...options, getItems: options.getItems!});
       };
       hooks.useDraggableCollection = useDraggableCollection;

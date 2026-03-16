@@ -7,7 +7,7 @@ import {transform} from './transform.js';
 import {waitForKeypress} from './utils/waitForKeypress.js';
 const boxen = require('boxen');
 
-export async function s1_to_s2(options: S1ToS2CodemodOptions) {
+export async function s1_to_s2(options: S1ToS2CodemodOptions): Promise<void> {
   console.log(boxen(
     'Welcome to the React Spectrum v3 to Spectrum 2 upgrade assistant!\n\n' +
     'This tool will:\n\n' +

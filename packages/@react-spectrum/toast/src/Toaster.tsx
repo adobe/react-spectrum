@@ -20,7 +20,7 @@ import ReactDOM from 'react-dom';
 import toastContainerStyles from './toastContainer.css';
 import type {ToastPlacement} from './ToastContainer';
 import {ToastState} from '@react-stately/toast';
-import {useUNSTABLE_PortalContext} from '@react-aria/overlays';
+import {useUNSAFE_PortalContext} from '@react-aria/overlays';
 
 interface ToastContainerProps extends AriaToastRegionProps {
   children: ReactNode,
@@ -39,7 +39,7 @@ export function Toaster(props: ToastContainerProps): ReactElement {
   let ref = useRef(null);
   let {regionProps} = useToastRegion(props, state, ref);
   let {focusProps, isFocusVisible} = useFocusRing();
-  let {getContainer} = useUNSTABLE_PortalContext();
+  let {getContainer} = useUNSAFE_PortalContext();
 
   let [position, placement] = useMemo(() => {
     let [pos = 'bottom', place = 'center'] = props.placement?.split(' ') || [];

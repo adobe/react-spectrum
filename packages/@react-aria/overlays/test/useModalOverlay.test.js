@@ -40,6 +40,7 @@ describe('useModalOverlay', function () {
         render(<Example isOpen onOpenChange={onOpenChange} isDismissable shouldCloseOnInteractOutside={target => target === document.body} />);
         pressStart(document.body);
         pressEnd(document.body);
+        fireEvent.click(document.body);
         expect(onOpenChange).toHaveBeenCalledWith(false);
       });
 
@@ -48,6 +49,7 @@ describe('useModalOverlay', function () {
         render(<Example isOpen onOpenChange={onOpenChange} isDismissable shouldCloseOnInteractOutside={target => target !== document.body} />);
         pressStart(document.body);
         pressEnd(document.body);
+        fireEvent.click(document.body);
         expect(onOpenChange).not.toHaveBeenCalled();
       });
     });

@@ -1,7 +1,7 @@
 
+import {nodeContains, useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {RefObject} from '@react-types/shared';
 import {useEffect, useRef, useState} from 'react';
-import {useEffectEvent, useResizeObserver} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
 
 interface SafelyMouseToSubmenuOptions {
@@ -24,7 +24,7 @@ const ANGLE_PADDING = Math.PI / 12; // 15°
  * Allows the user to move their pointer to the submenu without it closing when their mouse leaves the trigger element.
  * Prevents pointer events from going to the underlying menu if the user is moving their pointer towards the sub-menu.
  */
-export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
+export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): void {
   let {menuRef, submenuRef, isOpen, isDisabled} = options;
   let prevPointerPos = useRef<{x: number, y: number} | undefined>(undefined);
   let submenuRect = useRef<DOMRect | undefined>(undefined);
@@ -41,7 +41,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
       submenuSide.current = undefined;
     }
   };
-  useResizeObserver({ref: submenuRef, onResize: updateSubmenuRect});
+  useResizeObserver({ref: isOpen ? submenuRef : undefined, onResize: updateSubmenuRect});
 
   let reset = () => {
     setPreventPointerEvents(false);
@@ -67,7 +67,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
     }
   }, [menuRef, preventPointerEvents]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let submenu = submenuRef.current;
     let menu = menuRef.current;
 
@@ -148,7 +148,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
             // Fire a pointerover event to trigger the menu to close.
             // Wait until pointer-events:none is no longer applied
             let target = document.elementFromPoint(mouseX, mouseY);
-            if (target && menu.contains(target)) {
+            if (target && nodeContains(menu, target)) {
               target.dispatchEvent(new PointerEvent('pointerover', {bubbles: true, cancelable: true}));
             }
           }, 100);
@@ -174,5 +174,5 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
       movementsTowardsSubmenuCount.current = ALLOWED_INVALID_MOVEMENTS;
     };
 
-  }, [isDisabled, isOpen, menuRef, modality, setPreventPointerEvents, onPointerDown, submenuRef]);
+  }, [isDisabled, isOpen, menuRef, modality, setPreventPointerEvents, submenuRef]);
 }

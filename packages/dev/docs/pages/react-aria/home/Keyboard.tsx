@@ -9,9 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import React from 'react';
+import React, {ReactNode} from 'react';
 
-export function Keyboard() {
+export function Keyboard(): ReactNode {
   return (
     <svg className="flex-1 stroke-slate-400 dark:stroke-slate-500 forced-colors:stroke-[ButtonBorder]! [--press-fill:var(--color-slate-300)] dark:[--press-fill:var(--color-slate-700)] forced-colors:[--press-fill:Highlight]!" viewBox="0 0 192 81" fill="none" aria-hidden="true" id="keyboard">
       <g>

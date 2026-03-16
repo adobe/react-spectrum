@@ -49,6 +49,7 @@ type: component
 
 ```tsx example
 import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, CalendarCell, Button, Heading, DateInput, DateSegment} from 'react-aria-components';
+import {ChevronDown, ChevronLeft, ChevronRight} from 'lucide-react';
 
 <DatePicker>
   <Label>Date</Label>
@@ -56,15 +57,15 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     <DateInput>
       {segment => <DateSegment segment={segment} />}
     </DateInput>
-    <Button>▼</Button>
+    <Button><ChevronDown size={20} /></Button>
   </Group>
   <Popover>
     <Dialog>
       <Calendar>
         <header>
-          <Button slot="previous">◀</Button>
+          <Button slot="previous"><ChevronLeft size={20} /></Button>
           <Heading />
-          <Button slot="next">▶</Button>
+          <Button slot="next"><ChevronRight size={20} /></Button>
         </header>
         <CalendarGrid>
           {date => <CalendarCell date={date} />}
@@ -197,7 +198,7 @@ Note that most of this anatomy is shared with [DateRangePicker](DateRangePicker.
 
 ### Internationalization
 
-To ensure the proper date and time format in RTL locales, `DateInput` must have `display` set to either `inline`, `inline-block`, or `block`. 
+To ensure the proper date and time format in RTL locales, `DateInput` must have `display` set to either `inline`, `inline-block`, or `block`.
 
 ### Concepts
 
@@ -305,7 +306,7 @@ function MyDatePicker<T extends DateValue>({label, description, errorMessage, fi
         <DateInput>
           {segment => <DateSegment segment={segment} />}
         </DateInput>
-        <Button>▼</Button>
+        <Button><ChevronDown size={20} /></Button>
       </Group>
       {description && <Text slot="description">{description}</Text>}
       <FieldError>{errorMessage}</FieldError>
@@ -313,9 +314,9 @@ function MyDatePicker<T extends DateValue>({label, description, errorMessage, fi
         <Dialog>
           <Calendar firstDayOfWeek={firstDayOfWeek}>
             <header>
-              <Button slot="previous">◀</Button>
+              <Button slot="previous"><ChevronLeft size={20} /></Button>
               <Heading />
-              <Button slot="next">▶</Button>
+              <Button slot="next"><ChevronRight size={20} /></Button>
             </header>
             <CalendarGrid>
               {date => <CalendarCell date={date} />}
@@ -507,7 +508,7 @@ import {Form, FieldError} from 'react-aria-components';
       <DateInput>
         {segment => <DateSegment segment={segment} />}
       </DateInput>
-      <Button>▼</Button>
+      <Button><ChevronDown size={20} /></Button>
     </Group>
     {/*- begin highlight -*/}
     <FieldError />
@@ -516,9 +517,9 @@ import {Form, FieldError} from 'react-aria-components';
       <Dialog>
         <Calendar>
           <header>
-            <Button slot="previous">◀</Button>
+            <Button slot="previous"><ChevronLeft size={20} /></Button>
             <Heading />
-            <Button slot="next">▶</Button>
+            <Button slot="next"><ChevronRight size={20} /></Button>
           </header>
           <CalendarGrid>
             {date => <CalendarCell date={date} />}
@@ -646,7 +647,7 @@ The `description` slot can be used to associate additional help text with a date
     <DateInput>
       {segment => <DateSegment segment={segment} />}
     </DateInput>
-    <Button>▼</Button>
+    <Button><ChevronDown size={20} /></Button>
   </Group>
   {/*- begin highlight -*/}
   <Text slot="description">Please select a weekday between 9 AM and 5 PM.</Text>
@@ -655,9 +656,9 @@ The `description` slot can be used to associate additional help text with a date
     <Dialog>
       <Calendar>
         <header>
-          <Button slot="previous">◀</Button>
+          <Button slot="previous"><ChevronLeft size={20} /></Button>
           <Heading />
-          <Button slot="next">▶</Button>
+          <Button slot="next"><ChevronRight size={20} /></Button>
         </header>
         <CalendarGrid>
           {date => <CalendarCell date={date} />}
@@ -1148,15 +1149,15 @@ function DatePickerClearButton() {
     {/*- begin highlight -*/}
     <DatePickerClearButton />
     {/*- end highlight -*/}
-    <Button>▼</Button>
+    <Button><ChevronDown size={20} /></Button>
   </Group>
   <Popover>
     <Dialog>
       <Calendar>
         <header>
-          <Button slot="previous">◀</Button>
+          <Button slot="previous"><ChevronLeft size={20} /></Button>
           <Heading />
-          <Button slot="next">▶</Button>
+          <Button slot="next"><ChevronRight size={20} /></Button>
         </header>
         <CalendarGrid>
           {date => <CalendarCell date={date} />}

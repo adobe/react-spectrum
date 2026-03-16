@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import Add from '@spectrum-icons/workflow/Add';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex, Text, View} from '@adobe/react-spectrum';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 import {ToggleButton} from '../';
 
-export type ToggleButtonStory = ComponentStoryObj<typeof ToggleButton>;
+export type ToggleButtonStory = StoryObj<typeof ToggleButton>;
 
 export default {
   title: 'Button/ToggleButton',
@@ -62,7 +62,7 @@ export default {
       control: 'boolean'
     }
   }
-} as ComponentMeta<typeof ToggleButton>;
+} as Meta<typeof ToggleButton>;
 
 export const Default: ToggleButtonStory = {
   render: (args) => render(args)

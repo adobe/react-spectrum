@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, screen, within} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
@@ -70,7 +70,7 @@ describe('NumberField', function () {
       incrementButton,
       decrementButton,
       debug,
-      rerender: (props = {}, locale) => rerender(<Provider theme={theme} locale={locale}><NumberField aria-label="labelled" {...props} /></Provider>)
+      rerender: (props = {}, locale) => rerender(<Provider theme={theme} scale={scale} locale={locale}><NumberField aria-label="labelled" {...props} /></Provider>)
     };
   }
 
@@ -871,7 +871,7 @@ describe('NumberField', function () {
 
     expect(textField).toHaveAttribute('value', '€10.00');
     rerender({defaultValue: 10, formatOptions: {style: 'currency', currency: 'USD'}});
-    expect(textField).toHaveAttribute('value', '$10.00');
+    expect(screen.getByRole('textbox')).toHaveAttribute('value', '$10.00');
   });
 
   it.each`
@@ -925,17 +925,21 @@ describe('NumberField', function () {
     expect(announce).toHaveBeenCalledTimes(5);
     expect(announce).toHaveBeenLastCalledWith('$18.00', 'assertive');
     act(() => {textField.blur();});
+    expect(announce).toHaveBeenCalledTimes(6);
+    expect(announce).toHaveBeenLastCalledWith('$18.00', 'assertive');
     expect(textField).toHaveAttribute('value', '$18.00');
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(18);
 
     act(() => {textField.focus();});
     await user.clear(textField);
-    expect(announce).toHaveBeenCalledTimes(6);
+    expect(announce).toHaveBeenCalledTimes(7);
     expect(announce).toHaveBeenLastCalledWith('Empty', 'assertive');
     await user.keyboard('($32)');
     expect(textField).toHaveAttribute('value', '($32)');
-    expect(announce).toHaveBeenCalledTimes(9);
+    expect(announce).toHaveBeenNthCalledWith(8, '$3.00', 'assertive');
+    expect(announce).toHaveBeenNthCalledWith(9, '$32.00', 'assertive');
+    expect(announce).toHaveBeenCalledTimes(10);
     expect(announce).toHaveBeenLastCalledWith('−$32.00', 'assertive');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '($32.00)');
@@ -2272,14 +2276,15 @@ describe('NumberField', function () {
   });
 
   it('supports form value', () => {
-    let {textField, rerender} = renderNumberField({name: 'age', value: 30});
+    let {textField, rerender} = renderNumberField({name: 'age', form: 'test', value: 30});
     expect(textField).not.toHaveAttribute('name');
     let hiddenInput = document.querySelector('input[type=hidden]');
     expect(hiddenInput).toHaveAttribute('name', 'age');
+    expect(hiddenInput).toHaveAttribute('form', 'test');
     expect(hiddenInput).toHaveValue('30');
 
     rerender({name: 'age', value: null});
-    expect(hiddenInput).toHaveValue('');
+    expect(document.querySelector('input[type=hidden]')).toHaveValue('');
   });
 
   it('supports form reset', async () => {
@@ -2308,6 +2313,31 @@ describe('NumberField', function () {
     await user.click(button);
     expect(input).toHaveValue('10');
   });
+
+  if (parseInt(React.version, 10) >= 19) {
+    it('resets to defaultValue when submitting form action', async () => {
+      function Test() {
+        const [value, formAction] = React.useActionState(() => 33, 22);
+
+        return (
+          <Provider theme={theme}>
+            <form action={formAction}>
+              <NumberField label="Value" defaultValue={value} />
+              <input type="submit" data-testid="submit" />
+            </form>
+          </Provider>
+        );
+      }
+
+      let {getByTestId, getByRole} = render(<Test />);
+      let input = getByRole('textbox');
+      expect(input).toHaveValue('22');
+
+      let button = getByTestId('submit');
+      await user.click(button);
+      expect(input).toHaveValue('33');
+    });
+  }
 
   describe('validation', () => {
     describe('validationBehavior=native', () => {

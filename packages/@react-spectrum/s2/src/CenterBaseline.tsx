@@ -28,7 +28,7 @@ const styles = style({
   alignItems: 'center'
 });
 
-export function CenterBaseline(props: CenterBaselineProps) {
+export function CenterBaseline(props: CenterBaselineProps): ReactNode {
   return (
     <div
       slot={props.slot}

@@ -11,11 +11,12 @@
  */
 
 import Bell from '@spectrum-icons/workflow/Bell';
-import {Button} from '../';
+import {Button, SpectrumButtonProps} from '../';
 import {classNames} from '@react-spectrum/utils';
 import {Flex, Grid, repeat} from '@react-spectrum/layout';
 import {generatePowerset} from '@react-spectrum/story-utils';
-import React from 'react';
+import {Meta, StoryFn} from '@storybook/react';
+import React, {ElementType, JSX} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
 import {View} from '@react-spectrum/view';
@@ -37,40 +38,43 @@ export default {
   title: 'Button',
   parameters: {
     chromaticProvider: {locales: ['en-US']}
-  }
-};
+  },
+  excludeStories: ['Render']
+} as Meta<typeof Button>;
 
-export const VariantAccent = () => render({variant: 'accent'});
+export type ButtonStory = StoryFn<typeof Button>;
+
+export const VariantAccent: ButtonStory = () => <Render variant="accent" />;
 
 VariantAccent.story = {
   name: 'variant: accent'
 };
 
-export const VariantPrimary = () => render({variant: 'primary'});
+export const VariantPrimary: ButtonStory = () => <Render variant="primary" />;
 
 VariantPrimary.story = {
   name: 'variant: primary'
 };
 
-export const VariantSecondary = () => render({variant: 'secondary'});
+export const VariantSecondary: ButtonStory = () => <Render variant="secondary" />;
 
 VariantSecondary.story = {
   name: 'variant: secondary'
 };
 
-export const VariantNegative = () => render({variant: 'negative'});
+export const VariantNegative: ButtonStory = () => <Render variant="negative" />;
 
 VariantNegative.story = {
   name: 'variant: negative'
 };
 
-export const ElementA = () => render({elementType: 'a', variant: 'primary'});
+export const ElementA: ButtonStory = () => <Render elementType="a" variant="primary" />;
 
 ElementA.story = {
   name: 'element: a'
 };
 
-export const WithIcon = () => (
+export const WithIcon: ButtonStory = () => (
   <Flex gap="size-200">
     <Button variant="primary">
       <Bell />
@@ -90,7 +94,7 @@ WithIcon.story = {
   parameters: {chromaticProvider: {locales: ['en-US', 'ar-AE']}}
 };
 
-export const IconOnly = () => (
+export const IconOnly: ButtonStory = () => (
   <Flex gap="size-200">
     <Button variant="primary" aria-label="Notifications">
       <Bell />
@@ -109,7 +113,7 @@ IconOnly.story = {
   parameters: {chromaticProvider: {locales: ['en-US', 'ar-AE']}}
 };
 
-export const DoubleTextNode = () => (
+export const DoubleTextNode: ButtonStory = () => (
   <Flex gap="size-200">
     <Button
       variant="primary">
@@ -127,7 +131,7 @@ DoubleTextNode.story = {
   name: 'double text node'
 };
 
-function render(props: any = {}) {
+export function Render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'accent'}): JSX.Element {
   return (
     <Grid columns={repeat(4, '1fr')} autoFlow="row" justifyItems="start" gap="size-300">
       {combinations.map(c => {

@@ -111,13 +111,13 @@ keywords: [tree, grid]
 ```
 
 ## Content
-TreeView is a [collection component](../react-aria/collections.html) that provides users with a way to navigate nested hierarchical information.
+TreeView is a [collection component](collections.html) that provides users with a way to navigate nested hierarchical information.
 
 Basic usage of TreeView, seen in the example above, shows the use of a static collection where the contents of the TreeView are hard coded. Dynamic collections, as shown below, can be used when the options come from an external data source, such as an API, or update over time. Providing the data in this way allows TreeView to automatically cache the rendering of each item, which dramatically improves performance.
 
 Items can be statically defined as children, or generated dynamically using a function based on the data passed to the `items` prop.
 
-Each item has a unique key defined by the data. The `key` of each item element is implicitly defined by the id property of the item object. See [collections](../react-aria/collections.html#unique-ids) to learn more about keys in dynamic collections.
+Each item has a unique key defined by the data. The `key` of each item element is implicitly defined by the id property of the item object. See [collections](collections.html#unique-keys) to learn more about keys in dynamic collections.
 
 <strong>Note: Asynchronous tree loading (i.e, loading by level or infinite scrolling) is not yet supported in TreeView.</strong>
 
@@ -145,7 +145,7 @@ let items: MyItem[] = [
 const DynamicTreeItem = (props) => {
   return (
     <>
-      <TreeViewItem id={props.id} childItems={props.childItems} textValue={props.name}>
+      <TreeViewItem id={props.id} textValue={props.name}>
         <TreeViewItemContent>
           <Text>{props.name}</Text>
           {props.icon}
@@ -419,49 +419,61 @@ The `<TreeViewItem>` component works with frameworks and client side routers lik
 
 ```tsx example
 <TreeView aria-label="Example tree with action groups" height="size-3000" maxWidth="size-6000" items={items}>
-  {(item: MyItem) => (
-    <TreeViewItem childItems={item.childItems} textValue={item.name}>
-      <TreeViewItemContent>
-        <Text>{item.name}</Text>
-        {item.icon}
-        <ActionGroup onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}>
-          <Item key="edit" textValue="Edit">
-            <Edit />
-            <Text>Edit</Text>
-          </Item>
-          <Item key="delete" textValue="Delete">
-            <Delete />
-            <Text>Delete</Text>
-          </Item>
-        </ActionGroup>
-      </TreeViewItemContent>
-    </TreeViewItem>
-  )}
+  {function renderItem(item: MyItem) {
+    return (
+      <TreeViewItem textValue={item.name}>
+        <TreeViewItemContent>
+          <Text>{item.name}</Text>
+          {item.icon}
+          <ActionGroup onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}>
+            <Item key="edit" textValue="Edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete" textValue="Delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionGroup>
+        </TreeViewItemContent>
+        <Collection items={item.childItems}>
+          {renderItem}
+        </Collection>
+      </TreeViewItem>
+    )
+  }}
 </TreeView>
 ```
 
 ### With action menus
 
 ```tsx example
+import {Collection} from '@adobe/react-spectrum';
+
 <TreeView aria-label="Example tree with action menus" height="size-3000" maxWidth="size-6000" items={items}>
-  {(item: MyItem) => (
-    <TreeViewItem childItems={item.childItems} textValue={item.name}>
-      <TreeViewItemContent>
-        <Text>{item.name}</Text>
-        {item.icon}
-        <ActionMenu onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}>
-          <Item key="edit" textValue="Edit">
-            <Edit />
-            <Text>Edit</Text>
-          </Item>
-          <Item key="delete" textValue="Delete">
-            <Delete />
-            <Text>Delete</Text>
-          </Item>
-        </ActionMenu>
-      </TreeViewItemContent>
-    </TreeViewItem>
-  )}
+  {function renderItem(item: MyItem) {
+    return (
+      <TreeViewItem textValue={item.name}>
+        <TreeViewItemContent>
+          <Text>{item.name}</Text>
+          {item.icon}
+          <ActionMenu onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}>
+            <Item key="edit" textValue="Edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete" textValue="Delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionMenu>
+        </TreeViewItemContent>
+        <Collection items={item.childItems}>
+          {renderItem}
+        </Collection>
+      </TreeViewItem>
+    )
+  }}
 </TreeView>
 ```
 
@@ -519,9 +531,9 @@ behaviors in your test suite.
 Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/tree/test/TreeView.test.tsx) if you find that the above
 isn't sufficient when resolving issues in your own test cases.
 
-### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-`@react-spectrum/test-utils` offers common tree interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-spectrum/test-utils` offers common tree interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-spectrum-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the tree tester and a sample of how you could use it in your test suite.
 
 ```ts
@@ -531,7 +543,7 @@ import {theme} from '@react-spectrum/theme-default';
 import {User} from '@react-spectrum/test-utils';
 
 let testUtilUser = new User({interactionType: 'mouse'});
-// ...
+// Other setup, be sure to check out the suggested mocks mentioned above in https://react-spectrum.adobe.com/react-spectrum/TreeView.html#testing
 
 it('TreeView can select a row via keyboard', async function () {
   // Render your test component/app and initialize the Tree tester

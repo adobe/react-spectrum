@@ -63,6 +63,12 @@ describe('CheckboxGroup', () => {
     expect(group).toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} = renderGroup({render: props => <div {...props} data-custom="true" />});
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <CheckboxGroupContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
@@ -280,5 +286,12 @@ describe('CheckboxGroup', () => {
     expect(onFocus).toHaveBeenCalledTimes(1);
     expect(onFocusChange).toHaveBeenCalledTimes(2);  // triggered by onBlur
     expect(onFocusChange).toHaveBeenLastCalledWith(false);
+  });
+
+  it('should support form prop', () => {
+    let {getAllByRole} = renderGroup({form: 'test'});
+    for (let checkbox of getAllByRole('checkbox')) {
+      expect(checkbox).toHaveAttribute('form', 'test');
+    }
   });
 });

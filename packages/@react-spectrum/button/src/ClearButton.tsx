@@ -25,7 +25,8 @@ interface ClearButtonProps<T extends ElementType = 'button'> extends ButtonProps
   focusClassName?: string,
   variant?: 'overBackground',
   excludeFromTabOrder?: boolean,
-  preventFocus?: boolean
+  preventFocus?: boolean,
+  inset?: boolean
 }
 
 export const ClearButton = React.forwardRef(function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
@@ -37,6 +38,7 @@ export const ClearButton = React.forwardRef(function ClearButton(props: ClearBut
     isDisabled,
     preventFocus,
     elementType = preventFocus ? 'div' : 'button' as ElementType,
+    inset = false,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
@@ -66,7 +68,8 @@ export const ClearButton = React.forwardRef(function ClearButton(props: ClearBut
               [`spectrum-ClearButton--${variant}`]: variant,
               'is-disabled': isDisabled,
               'is-active': isPressed,
-              'is-hovered': isHovered
+              'is-hovered': isHovered,
+              'spectrum-ClearButton--inset': inset
             },
             styleProps.className
           )

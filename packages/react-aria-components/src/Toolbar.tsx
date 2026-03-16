@@ -11,9 +11,17 @@
  */
 
 import {AriaToolbarProps, useToolbar} from '@react-aria/toolbar';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {forwardRefType, Orientation} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, Orientation} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
 export interface ToolbarRenderProps {
@@ -24,7 +32,12 @@ export interface ToolbarRenderProps {
   orientation: Orientation
 }
 
-export interface ToolbarProps extends AriaToolbarProps, SlotProps, RenderProps<ToolbarRenderProps> {
+export interface ToolbarProps extends AriaToolbarProps, SlotProps, RenderProps<ToolbarRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Toolbar'
+   */
+  className?: ClassNameOrFunction<ToolbarRenderProps>
 }
 
 export const ToolbarContext = createContext<ContextValue<ToolbarProps, HTMLDivElement>>({});
@@ -41,17 +54,16 @@ export const Toolbar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Too
     values: {orientation: props.orientation || 'horizontal'},
     defaultClassName: 'react-aria-Toolbar'
   });
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (
-    <div
-      {...mergeProps(toolbarProps, DOMProps)}
-      {...renderProps}
+    <dom.div
+      {...mergeProps(DOMProps, renderProps, toolbarProps)}
       ref={ref}
       slot={props.slot || undefined}
       data-orientation={props.orientation || 'horizontal'}>
       {renderProps.children}
-    </div>
+    </dom.div>
   );
 });

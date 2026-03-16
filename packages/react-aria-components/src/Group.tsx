@@ -11,7 +11,15 @@
  */
 
 import {AriaLabelingProps, DOMProps, forwardRefType} from '@react-types/shared';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
 import {HoverProps, mergeProps, useFocusRing, useHover} from 'react-aria';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
@@ -43,19 +51,26 @@ export interface GroupRenderProps {
   isInvalid: boolean
 }
 
-export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style' | 'role' | 'slot'>, DOMProps, HoverProps, RenderProps<GroupRenderProps>, SlotProps {
-  /** Whether the group is disabled. */
-  isDisabled?: boolean,
-  /** Whether the group is invalid. */
-  isInvalid?: boolean,
-  /**
-   * An accessibility role for the group. By default, this is set to `'group'`.
-   * Use `'region'` when the contents of the group is important enough to be
-   * included in the page table of contents. Use `'presentation'` if the group
-   * is visual only and does not represent a semantic grouping of controls.
-   * @default 'group'
-   */
-  role?: 'group' | 'region' | 'presentation'
+export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style' | 'render' | 'role' | 'slot'>, DOMProps, HoverProps, RenderProps<GroupRenderProps>, SlotProps {
+ /**
+  * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+  * @default 'react-aria-Group'
+  */
+ className?: ClassNameOrFunction<GroupRenderProps>,
+ /** Whether the group is disabled. */
+ isDisabled?: boolean,
+ /** Whether the group is invalid. */
+ isInvalid?: boolean,
+ /** Whether the group is read only. */
+ isReadOnly?: boolean,
+ /**
+  * An accessibility role for the group. By default, this is set to `'group'`.
+  * Use `'region'` when the contents of the group is important enough to be
+  * included in the page table of contents. Use `'presentation'` if the group
+  * is visual only and does not represent a semantic grouping of controls.
+  * @default 'group'
+  */
+ role?: 'group' | 'region' | 'presentation'
 }
 
 export const GroupContext = createContext<ContextValue<GroupProps, HTMLDivElement>>({});
@@ -65,15 +80,14 @@ export const GroupContext = createContext<ContextValue<GroupProps, HTMLDivElemen
  */
 export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, GroupContext);
-  let {isDisabled, isInvalid, onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
+  let {isDisabled, isInvalid, isReadOnly, onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
+  isDisabled ??= !!props['aria-disabled'] && props['aria-disabled'] !== 'false';
+  isInvalid ??= !!props['aria-invalid'] && props['aria-invalid'] !== 'false';
 
   let {hoverProps, isHovered} = useHover({onHoverStart, onHoverChange, onHoverEnd, isDisabled});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
     within: true
   });
-
-  isDisabled ??= !!props['aria-disabled'] && props['aria-disabled'] !== 'false';
-  isInvalid ??= !!props['aria-invalid'] && props['aria-invalid'] !== 'false';
 
   let renderProps = useRenderProps({
     ...props,
@@ -82,7 +96,7 @@ export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group
   });
 
   return (
-    <div
+    <dom.div
       {...mergeProps(otherProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
@@ -92,8 +106,9 @@ export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group
       data-hovered={isHovered || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
-      data-invalid={isInvalid || undefined}>
+      data-invalid={isInvalid || undefined}
+      data-readonly={isReadOnly || undefined}>
       {renderProps.children}
-    </div>
+    </dom.div>
   );
 });

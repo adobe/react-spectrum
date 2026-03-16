@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, DOMProps, Key, LinkDOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, DOMProps, Expandable, Key, LinkDOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {JSX, ReactElement, ReactNode} from 'react';
 
@@ -25,11 +25,24 @@ export type ColumnDynamicSize = `${number}fr`; // match regex: /^(\d+)(?=fr$)/
 /** All possible sizes a column can be assigned. */
 export type ColumnSize = ColumnStaticSize | ColumnDynamicSize;
 
-export interface TableProps<T> extends MultipleSelection, Sortable {
+export interface TableProps<T> extends MultipleSelection, Sortable, Expandable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
   /** A list of row keys to disable. */
-  disabledKeys?: Iterable<Key>
+  disabledKeys?: Iterable<Key>,
+  /**
+   * Whether pressing the escape key should clear selection in the table or not.
+   *
+   * Most experiences should not modify this option as it eliminates a keyboard user's ability to
+   * easily clear selection. Only use if the escape key is being handled externally or should not
+   * trigger selection clearing contextually.
+   * @default 'clearSelection'
+   */
+  escapeKeyBehavior?: 'clearSelection' | 'none',
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean,
+  /** The id of the column that displays hierarchical data. */
+  treeColumn?: Key
 }
 
 /**
@@ -71,7 +84,7 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
 
 export interface TableHeaderProps<T> {
   /** A list of table columns. */
-  columns?: T[],
+  columns?: readonly T[],
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
   children: ColumnElement<T> | ColumnElement<T>[] | ColumnRenderer<T>
 }

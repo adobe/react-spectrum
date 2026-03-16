@@ -16,7 +16,7 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Heading} from '@react-spectrum/text';
 import {LabeledValue} from '..';
 import {Link} from '@react-spectrum/link';
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
 const meta: Meta<typeof LabeledValue> = {
@@ -43,86 +43,88 @@ const meta: Meta<typeof LabeledValue> = {
     }
   }
 };
- 
+
 export default meta;
 
-export let Default = {
+export type LabeledValueStory = StoryObj<typeof LabeledValue>;
+
+export const Default: LabeledValueStory = {
   args: {label: 'Test', value: 'foo '.repeat(20)},
   name: 'String'
 };
 
-export let StringArray = {
+export const StringArray: LabeledValueStory = {
   args: {label: 'Test', value: ['wow', 'cool', 'awesome']},
   name: 'String array'
 };
 
-export let CalendarDateType = {
+export const CalendarDateType: LabeledValueStory = {
   args: {label: 'Test', value: new CalendarDate(2019, 6, 5)},
   name: 'CalendarDate'
 };
 
-export let CalendarDateTimeType = {
+export const CalendarDateTimeType: LabeledValueStory = {
   args: {label: 'Test', value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120)},
   name: 'CalendarDateTime'
 };
 
-export let CalendarDateTimeTypeFormatOptions = {
+export const CalendarDateTimeTypeFormatOptions: LabeledValueStory = {
   args: {label: 'Test', value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), formatOptions: {dateStyle: 'short', timeStyle: 'short'}},
   name: 'CalendarDateTime with formatOptions'
 };
 
-export let ZonedDateTimeType = {
+export const ZonedDateTimeType: LabeledValueStory = {
   args: {label: 'Test', value: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000)},
   name: 'ZonedDateTime'
 };
 
-export let DateType = {
+export const DateType: LabeledValueStory = {
   args: {label: 'Test', value: new Date(2000, 5, 5)},
   name: 'Date'
 };
 
-export let TimeType = {
+export const TimeType: LabeledValueStory = {
   args: {label: 'Test', value: new Time(9, 45)},
   name: 'Time'
 };
 
-export let CalendarDateRange = {
+export const CalendarDateRange: LabeledValueStory = {
   args: {label: 'Test', value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}},
   name: 'RangeValue<CalendarDate>'
 };
 
-export let CalendarDateTimeRange = {
+export const CalendarDateTimeRange: LabeledValueStory = {
   args: {label: 'Test', value: {start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)}},
   name: 'RangeValue<CalendarDateTime>'
 };
 
-export let ZonedDateTimeRange = {
+export const ZonedDateTimeRange: LabeledValueStory = {
   args: {label: 'Test', value: {start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}},
   name: 'RangeValue<ZonedDateTime>'
 };
 
-export let DateRange = {
+export const DateRange: LabeledValueStory = {
   args: {label: 'Test', value: {start: new Date(2019, 6, 5), end: new Date(2019, 6, 10)}},
   name: 'RangeValue<Date>'
 };
 
-export let TimeRange = {
+export const TimeRange: LabeledValueStory = {
   args: {label: 'Test', value: {start: new Time(9, 45), end: new Time(10, 50)}},
   name: 'RangeValue<Time>'
 };
 
-export let Number = {
+export const Number: LabeledValueStory = {
   args: {label: 'Test', value: 10},
   name: 'Number'
 };
 
-export let NumberRange = {
+export const NumberRange: LabeledValueStory = {
   args: {label: 'Test', value: {start: 10, end: 20}},
   name: 'RangeValue<Number>'
 };
 
 
-export let CustomComponent = {
+export const CustomComponent: LabeledValueStory = {
   args: {
     label: 'Test',
     value: <Link href="https://www.adobe.com">Adobe</Link>
@@ -130,7 +132,7 @@ export let CustomComponent = {
   name: 'Custom component'
 };
 
-export let WithContextualHelp = {
+export const WithContextualHelp: LabeledValueStory = {
   args: {
     label: 'Test',
     value: 25,

@@ -1,0 +1,29 @@
+{
+  "name": "mcp-shared",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Shared code for MCP servers",
+  "type": "module",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.3",
+    "@swc/helpers": "^0.5.0",
+    "fast-glob": "^3.3.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": false
+}

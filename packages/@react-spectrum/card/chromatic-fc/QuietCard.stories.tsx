@@ -17,7 +17,7 @@ import {
   Default,
   Selected
 } from '../chromatic/Card.stories';
-import {ComponentMeta} from '@storybook/react';
+import {Meta} from '@storybook/react';
 
 export default {
   title: 'Card/quiet',
@@ -25,13 +25,13 @@ export default {
   args: {
     isQuiet: true
   }
-} as ComponentMeta<typeof Card>;
+} as Meta<typeof Card>;
 
 export const Quiet: CardStory = {
   ...Default
 };
 
-export const QuietSelected = {
+export const QuietSelected: CardStory = {
   ...Selected,
   name: 'Selected'
 };

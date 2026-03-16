@@ -21,6 +21,10 @@ export interface SliderState {
    */
   readonly values: number[],
   /**
+   * The default values for each thumb.
+   */
+  readonly defaultValues: number[],
+  /**
    * Get the value for the specified thumb.
    * @param index
    */
@@ -182,8 +186,8 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
     return snapValueToStep(val, min, max, step);
   }), [minValue, maxValue, step]);
 
-  let value = useMemo(() => restrictValues(convertValue(props.value)), [props.value]);
-  let defaultValue = useMemo(() => restrictValues(convertValue(props.defaultValue) ?? [minValue])!, [props.defaultValue, minValue]);
+  let value = useMemo(() => restrictValues(convertValue(props.value)), [props.value, restrictValues]);
+  let defaultValue = useMemo(() => restrictValues(convertValue(props.defaultValue) ?? [minValue])!, [props.defaultValue, minValue, restrictValues]);
   let onChange = createOnChange(props.value, props.defaultValue, props.onChange);
   let onChangeEnd = createOnChange(props.value, props.defaultValue, props.onChangeEnd);
 
@@ -192,6 +196,7 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
     defaultValue,
     onChange
   );
+  let [initialValues] = useState(values);
   const [isDraggings, setDraggingsState] = useState<boolean[]>(new Array(values.length).fill(false));
   const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
   const [focusedIndex, setFocusedIndex] = useState<number | undefined>(undefined);
@@ -288,6 +293,7 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
 
   return {
     values: values,
+    defaultValues: props.defaultValue !== undefined ? defaultValue : initialValues,
     getThumbValue: (index: number) => values[index],
     setThumbValue: updateValue,
     setThumbPercent,

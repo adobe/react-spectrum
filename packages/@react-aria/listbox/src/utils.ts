@@ -23,7 +23,7 @@ interface ListData {
   linkBehavior?: 'action' | 'selection' | 'override'
 }
 
-export const listData = new WeakMap<ListState<unknown>, ListData>();
+export const listData: WeakMap<ListState<unknown>, ListData> = new WeakMap<ListState<unknown>, ListData>();
 
 function normalizeKey(key: Key): string {
   if (typeof key === 'string') {

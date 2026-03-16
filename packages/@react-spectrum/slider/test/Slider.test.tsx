@@ -193,9 +193,10 @@ describe('Slider', function () {
   });
 
   it('supports form name', () => {
-    let {getByRole} = render(<Slider label="Value" value={10} name="cookies" />);
+    let {getByRole} = render(<Slider label="Value" value={10} name="cookies" form="test" />);
     let input = getByRole('slider');
     expect(input).toHaveAttribute('name', 'cookies');
+    expect(input).toHaveAttribute('form', 'test');
     expect(input).toHaveValue('10');
   });
 
@@ -223,6 +224,29 @@ describe('Slider', function () {
     await user.click(button);
     expect(input).toHaveValue('10');
   });
+
+  if (parseInt(React.version, 10) >= 19) {
+    it('resets to defaultValue when submitting form action', async () => {
+      function Test() {        
+        const [value, formAction] = React.useActionState(() => 50, 10);
+        
+        return (
+          <form action={formAction}>
+            <Slider label="Value" defaultValue={value} />
+            <input type="submit" data-testid="submit" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getByRole} = render(<Test />);
+      let input = getByRole('slider');
+      expect(input).toHaveValue('10');
+
+      let button = getByTestId('submit');
+      await user.click(button);
+      expect(input).toHaveValue('50');
+    });
+  }
 
   describe('formatOptions', () => {
     it('prefixes the value with a plus sign if needed', function () {
@@ -284,7 +308,7 @@ describe('Slider', function () {
           <Slider label="Label" defaultValue={50} minValue={0} maxValue={100} />
         </Provider>
       );
-      let slider = tree.getByRole('slider');
+      let slider = tree.getByRole('slider') as HTMLInputElement;
       testKeypresses([slider, slider], commands);
     });
 
@@ -305,7 +329,7 @@ describe('Slider', function () {
           <Slider label="Label" defaultValue={50} minValue={0} maxValue={100} orientation="vertical" />
         </Provider>
       );
-      let slider = tree.getByRole('slider');
+      let slider = tree.getByRole('slider') as HTMLInputElement;
       testKeypresses([slider, slider], commands);
     });
 
@@ -321,7 +345,7 @@ describe('Slider', function () {
           <Slider label="Label" step={20} defaultValue={40} />
         </Provider>
       );
-      let slider = tree.getByRole('slider');
+      let slider = tree.getByRole('slider') as HTMLInputElement;
       testKeypresses([slider, slider], commands);
     });
 
@@ -338,7 +362,7 @@ describe('Slider', function () {
         </Provider>
       );
       // The slider page size should be initially calulated as 230/10 = 23 and then snapped to 20 so it is a multiple of the step
-      let slider = tree.getByRole('slider');
+      let slider = tree.getByRole('slider') as HTMLInputElement;
       testKeypresses([slider, slider], commands);
     });
 
@@ -355,7 +379,7 @@ describe('Slider', function () {
         </Provider>
       );
       // The slider page size should be initially calulated as 25/10 = 2.5, snaps to 2
-      let slider = tree.getByRole('slider');
+      let slider = tree.getByRole('slider') as HTMLInputElement;
       testKeypresses([slider, slider], commands);
     });
 
@@ -372,7 +396,7 @@ describe('Slider', function () {
         </Provider>
       );
       // The slider page size should be initially calulated as 35/10 = 3.5, snaps to 4
-      let slider = tree.getByRole('slider');
+      let slider = tree.getByRole('slider') as HTMLInputElement;
       testKeypresses([slider, slider], commands);
     });
 
@@ -386,7 +410,7 @@ describe('Slider', function () {
           <Slider label="Label" minValue={-1} defaultValue={0} maxValue={1} />
         </Provider>
       );
-      let slider = tree.getByRole('slider');
+      let slider = tree.getByRole('slider') as HTMLInputElement;
       testKeypresses([slider, slider], commands);
     });
   });

@@ -10,24 +10,38 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {
   Button,
   Dialog,
   DialogTrigger,
   Heading,
+  Input,
+  Label,
+  Menu,
+  MenuItem,
+  MenuTrigger,
   Modal,
   ModalOverlay,
   OverlayArrow,
-  Popover
+  Popover,
+  TextField
 } from '../';
-import {pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import React from 'react';
+import {composeStories} from '@storybook/react';
+import React, {useRef} from 'react';
+import * as stories from '../stories/Modal.stories';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
+
+let {DateRangePickerInsideModalStory: DateRangePickerInsideModal} = composeStories(stories);
 
 describe('Dialog', () => {
   let user;
+  let testUtilUser = new User({advanceTimer: jest.advanceTimersByTime});
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
   });
 
   it('should have a base default set of attributes', () => {
@@ -60,9 +74,10 @@ describe('Dialog', () => {
     );
 
     let button = getByRole('button');
-    await user.click(button);
-
-    let dialog = getByRole('alertdialog');
+    let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'modal'});
+    await dialogTester.open();
+    let dialog = dialogTester.dialog;
+    expect(dialog).toHaveAttribute('role', 'alertdialog');
     let heading = getByRole('heading');
     expect(dialog).toHaveAttribute('aria-labelledby', heading.id);
     expect(dialog).toHaveAttribute('data-test', 'dialog');
@@ -159,11 +174,11 @@ describe('Dialog', () => {
     let button = getByRole('button');
     expect(button).not.toHaveAttribute('data-pressed');
 
-    await user.click(button);
-
+    let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'popover'});
+    await dialogTester.open();
     expect(button).toHaveAttribute('data-pressed');
 
-    let dialog = getByRole('dialog');
+    let dialog = dialogTester.dialog;
     let heading = getByRole('heading');
     expect(dialog).toHaveAttribute('aria-labelledby', heading.id);
     expect(dialog).toHaveAttribute('data-test', 'dialog');
@@ -302,6 +317,46 @@ describe('Dialog', () => {
     expect(modal).not.toBeInTheDocument();
   });
 
+  describe('portalProvider', () => {
+    function InfoDialog() {
+      return (
+        <DialogTrigger>
+          <Button>Delete…</Button>
+          <Modal data-test="modal">
+            <Dialog role="alertdialog" data-test="dialog">
+              {({close}) => (
+                <>
+                  <Heading slot="title">Alert</Heading>
+                  <Button onPress={close}>Close</Button>
+                </>
+              )}
+            </Dialog>
+          </Modal>
+        </DialogTrigger>
+      );
+    }
+    function App() {
+      let container = useRef(null);
+      return (
+        <>
+          <UNSAFE_PortalProvider getContainer={() => container.current}>
+            <InfoDialog container={container} />
+          </UNSAFE_PortalProvider>
+          <div ref={container} data-testid="custom-container" />
+        </>
+      );
+    }
+    it('should render the dialog in the portal container provided by the PortalProvider', async () => {
+      let {getByRole, getByTestId} = render(<App />);
+      let button = getByRole('button');
+      await user.click(button);
+
+      expect(getByRole('alertdialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      await user.click(document.body);
+    });
+  });
+
+  // TODO: delete this test when we get rid of the deprecated prop
   describe('portalContainer', () => {
     function InfoDialog(props) {
       return (
@@ -329,7 +384,7 @@ describe('Dialog', () => {
         </>
       );
     }
-    it('should render the tooltip in the portal container', async () => {
+    it('should render the dialog in the portal container', async () => {
       let {getByRole, getByTestId} = render(<App />);
       let button = getByRole('button');
       await user.click(button);
@@ -337,5 +392,82 @@ describe('Dialog', () => {
       expect(getByRole('alertdialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
       await user.click(document.body);
     });
+  });
+
+  it('ensure Input autoFocus works when opening Modal from MenuItem via keyboard', async () => {
+    function App() {
+      const [isOpen, setOpen] = React.useState(false);
+      return (
+        <>
+          <MenuTrigger>
+            <Button>Open menu</Button>
+            <Popover>
+              <Menu>
+                <MenuItem onAction={() => setOpen(true)}>Add account</MenuItem>
+                <MenuItem>Sign out</MenuItem>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+          <ModalOverlay isDismissable isOpen={isOpen} onOpenChange={setOpen}>
+            <Modal>
+              <Dialog>
+                <form>
+                  <Heading slot="title">Sign up</Heading>
+                  <TextField autoFocus>
+                    <Label>Email</Label>
+                    <Input data-testid="email" />
+                  </TextField>
+                  <TextField>
+                    <Label>Password</Label>
+                    <Input />
+                  </TextField>
+                </form>
+              </Dialog>
+            </Modal>
+          </ModalOverlay>
+        </>
+      );
+    }
+
+    const {getAllByRole, getByRole, getByTestId} = render(<App />);
+    const button = getByRole('button');
+    await user.tab();
+    expect(document.activeElement).toBe(button);
+    await user.keyboard('{Enter}');
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    const menuitem = getAllByRole('menuitem')[0];
+    expect(document.activeElement).toBe(menuitem);
+    await user.keyboard('{Enter}');
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    const input = getByTestId('email');
+    expect(document.activeElement).toBe(input);
+  });
+
+  it('should not close Modal when DateRangePicker is dismissed by outside click', async () => {
+    let {getAllByRole, getByRole} = render(<DateRangePickerInsideModal />);
+    await user.click(getByRole('button'));
+
+    let modal = getByRole('dialog').closest('.react-aria-ModalOverlay');
+    expect(modal).toBeInTheDocument();
+
+    let button = getByRole('group').querySelector('.react-aria-Button');
+    expect(button).toHaveAttribute('aria-label', 'Calendar');
+    await user.click(button);
+
+    let popover = getByRole('dialog').closest('.react-aria-Popover');
+    expect(popover).toBeInTheDocument();
+    expect(popover).toHaveAttribute('data-trigger', 'DateRangePicker');
+
+    let cells = getAllByRole('gridcell');
+    await user.click(cells[5].children[0]);
+    await user.click(document.body);
+    expect(popover).not.toBeInTheDocument();
+    expect(modal).toBeInTheDocument();
   });
 });

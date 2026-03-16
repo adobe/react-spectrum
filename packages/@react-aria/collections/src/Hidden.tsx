@@ -11,32 +11,53 @@
  */
 
 import {forwardRefType} from '@react-types/shared';
-import React, {createContext, forwardRef, ReactElement, ReactNode, useContext} from 'react';
+import React, {Context, createContext, forwardRef, JSX, ReactElement, ReactNode, useContext} from 'react';
 
 // React doesn't understand the <template> element, which doesn't have children like a normal element.
 // It will throw an error during hydration when it expects the firstChild to contain content rendered
 // on the server, when in reality, the browser will have placed this inside the `content` document fragment.
 // This monkey patches the firstChild property for our special hidden template elements to work around this error.
+// does the same for appendChild/removeChild/insertBefore as per the issue below
 // See https://github.com/facebook/react/issues/19932
 if (typeof HTMLTemplateElement !== 'undefined') {
-  const getFirstChild = Object.getOwnPropertyDescriptor(Node.prototype, 'firstChild')!.get!;
   Object.defineProperty(HTMLTemplateElement.prototype, 'firstChild', {
     configurable: true,
     enumerable: true,
     get: function () {
-      if (this.dataset.reactAriaHidden) {
-        return this.content.firstChild;
-      } else {
-        return getFirstChild.call(this);
-      }
+      return this.content.firstChild;
+    }
+  });
+
+  Object.defineProperty(HTMLTemplateElement.prototype, 'appendChild', {
+    configurable: true,
+    enumerable: true,
+    value: function (node) {
+      return this.content.appendChild(node);
+    }
+  });
+
+  Object.defineProperty(HTMLTemplateElement.prototype, 'removeChild', {
+    configurable: true,
+    enumerable: true,
+    value: function (node) {
+      return this.content.removeChild(node);
+    }
+  });
+
+  Object.defineProperty(HTMLTemplateElement.prototype, 'insertBefore', {
+    configurable: true,
+    enumerable: true,
+    value: function (node, child) {
+      return this.content.insertBefore(node, child);
     }
   });
 }
 
-export const HiddenContext = createContext<boolean>(false);
+export const HiddenContext: Context<boolean> = createContext<boolean>(false);
 
-export function Hidden(props: {children: ReactNode}) {
+export function Hidden(props: {children: ReactNode}): JSX.Element {
   let isHidden = useContext(HiddenContext);
+
   if (isHidden) {
     // Don't hide again if we are already hidden.
     return <>{props.children}</>;
@@ -51,7 +72,7 @@ export function Hidden(props: {children: ReactNode}) {
   // In SSR, portals are not supported by React. Instead, always render into a <template>
   // element, which the browser will never display to the user. In addition, the
   // content is not part of the accessible DOM tree, so it won't affect ids or other accessibility attributes.
-  return <template data-react-aria-hidden>{children}</template>;
+  return <template>{children}</template>;
 }
 
 /** Creates a component that forwards its ref and returns null if it is in a hidden subtree. */

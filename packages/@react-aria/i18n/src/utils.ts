@@ -17,7 +17,7 @@ const RTL_LANGS = new Set(['ae', 'ar', 'arc', 'bcc', 'bqi', 'ckb', 'dv', 'fa', '
 /**
  * Determines if a locale is read right to left using [Intl.Locale]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale}.
  */
-export function isRTL(localeString: string) {
+export function isRTL(localeString: string): boolean {
   // If the Intl.Locale API is available, use it to get the locale's text direction.
   if (Intl.Locale) {
     let locale = new Intl.Locale(localeString).maximize();

@@ -18,7 +18,7 @@ export {useColorChannelField} from './useColorChannelField';
 export type {AriaColorAreaOptions, ColorAreaAria} from './useColorArea';
 export type {AriaColorSliderOptions, ColorSliderAria} from './useColorSlider';
 export type {AriaColorWheelOptions, ColorWheelAria} from './useColorWheel';
-export type {AriaColorFieldProps} from '@react-types/color';
+export type {AriaColorAreaProps, AriaColorFieldProps, AriaColorSliderProps} from '@react-types/color';
 export type {ColorFieldAria} from './useColorField';
 export type {AriaColorSwatchProps, ColorSwatchAria} from './useColorSwatch';
 export type {AriaColorChannelFieldProps, ColorChannelFieldAria} from './useColorChannelField';

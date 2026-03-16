@@ -67,6 +67,8 @@ governing permissions and limitations under the License.
   opacity: .0001;
   z-index: 1;
 
+  /* prevent double click event due to browser waiting to fire double tap */
+  touch-action: manipulation;
   cursor: default;
 
   &:disabled {

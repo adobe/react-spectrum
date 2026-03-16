@@ -11,6 +11,7 @@
  */
 
 import {CSSProperties} from 'react';
+import {fontRelative} from '../style';
 import {StyleString} from '../style/types';
 
 export function centerPadding(minHeight: string = 'self(minHeight)'): `[${string}]` {
@@ -57,12 +58,12 @@ export const field = () => ({
       ]
     }
   },
-  fontSize: 'control',
+  fontSize: controlFont(),
   alignItems: 'baseline',
   lineHeight: 'ui',
   '--field-height': {
     type: 'height',
-    value: 'control'
+    value: controlSize()
   },
   // Spectrum defines the field label/help text with a (minimum) height, with text centered inside.
   // Calculate what the gap should be based on the height and line height.
@@ -78,7 +79,7 @@ export const field = () => ({
 } as const);
 
 export const fieldLabel = () => ({
-  font: 'control',
+  font: controlFont(),
   cursor: 'default',
   color: {
     default: 'neutral-subdued',
@@ -90,7 +91,7 @@ export const fieldLabel = () => ({
 
 export const fieldInput = () => ({
   gridArea: 'input',
-  minWidth: 'control',
+  minWidth: controlSize(),
   contain: {
     // Only apply size containment if contain-intrinsic-width is supported.
     // In older browsers, this will fall back to the default browser intrinsic width.
@@ -109,7 +110,7 @@ export const fieldInput = () => ({
     }
   },
   // contain-intrinsic-width only includes the width of children, not the padding or borders.
-  containIntrinsicWidth: '[calc(var(--defaultWidth) - self(paddingStart, 0px) - self(paddingEnd, 0px) - self(borderStartWidth, 0px) - self(borderEndWidth, 0px))]'
+  containIntrinsicWidth: 'calc(var(--defaultWidth) - self(paddingStart, 0px) - self(paddingEnd, 0px) - self(borderStartWidth, 0px) - self(borderEndWidth, 0px))'
 } as const);
 
 export const colorScheme = () => ({
@@ -124,7 +125,7 @@ export const colorScheme = () => ({
   }
 } as const);
 
-export function staticColor() {
+export function staticColor(): Record<string, any> {
   return {
     '--s2-container-bg': {
       type: 'backgroundColor',
@@ -136,6 +137,142 @@ export function staticColor() {
       }
     }
   } as const;
+}
+
+export const controlFont = () => ({
+  default: 'ui',
+  size: {
+    XS: 'ui-xs',
+    S: 'ui-sm',
+    L: 'ui-lg',
+    XL: 'ui-xl'
+  }
+} as const);
+
+export const controlSize = (size: 'sm' | 'md' = 'md'): typeof controlSizeM | typeof controlSizeS => (
+  size === 'sm' ? controlSizeS : controlSizeM
+);
+
+const controlSizeM = {
+  default: 32,
+  size: {
+    XS: 20,
+    S: 24,
+    L: 40,
+    XL: 48
+  }
+} as const;
+
+const controlSizeS = {
+  default: 16,
+  size: {
+    S: 14,
+    L: 18,
+    XL: 20
+  }
+} as const;
+
+// This generates the border radius for t-shirt sizes using the
+// Major Second logarithmic scale.
+export const controlBorderRadius = (size: 'default' | 'sm' = 'default') => ({
+  '--size': {
+    type: 'order',
+    value: {
+      default: 1,
+      size: {
+        XS: Math.pow(1.125, -2),
+        S: Math.pow(1.125, -1),
+        L: Math.pow(1.125, 1),
+        XL: Math.pow(1.125, 2)
+      }
+    }
+  },
+  '--radius': {
+    type: 'borderTopStartRadius',
+    value: size
+  },
+  borderRadius: 'round(var(--radius) * var(--size), 1px)'
+} as const);
+
+interface ControlOptions {
+  shape?: 'default' | 'pill',
+  wrap?: boolean,
+  icon?: boolean
+}
+
+interface ControlResult {
+  font: ReturnType<typeof controlFont>,
+  boxSizing?: 'border-box',
+  borderRadius?: 'pill' | `[${string}]`,
+  minWidth?: ReturnType<typeof controlSize>,
+  minHeight?: ReturnType<typeof controlSize>,
+  height?: ReturnType<typeof controlSize>,
+  display?: 'flex',
+  alignItems?: 'center' | {default: 'baseline', [iconOnly]: 'center'},
+  columnGap?: 'text-to-visual',
+  paddingX?: 'pill' | 'edge-to-text' | {default: 'pill' | 'edge-to-text', [iconOnly]: 0},
+  paddingY?: 0 | `[${string}]`
+}
+
+const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
+
+/**
+ * Common styles for a pill or round rect shaped container with text and icon slots.
+ * The text can optionally wrap, aligning the icon with the first line of text.
+ */
+export function control(options: ControlOptions): ControlResult {
+  let paddingX = options.shape === 'pill' ? 'pill' as const : 'edge-to-text' as const;
+  let result: ControlResult = {
+    font: controlFont(),
+    display: 'flex',
+    alignItems: 'center',
+    boxSizing: 'border-box',
+    paddingX: paddingX,
+    minWidth: controlSize()
+  };
+
+  if (options.shape === 'pill') {
+    result.borderRadius = 'pill';
+  } else {
+    Object.assign(result, controlBorderRadius());
+  }
+
+  if (options.icon) {
+    result.columnGap = 'text-to-visual';
+    result.paddingX = {
+      default: paddingX,
+      [iconOnly]: 0
+    };
+    result['--iconMargin'] = {
+      type: 'marginStart',
+      value: {
+        default: fontRelative(-2),
+        [iconOnly]: 0
+      }
+    };
+  }
+
+  if (options.wrap) {
+    result.minHeight = controlSize();
+
+    if (options.icon) {
+      result.paddingY = 0;
+      result['--labelPadding'] = {
+        type: 'paddingTop',
+        value: centerPadding()
+      };
+      result.alignItems = {
+        default: 'baseline',
+        [iconOnly]: 'center'
+      };
+    } else {
+      result.paddingY = centerPadding();
+    }
+  } else {
+    result.height = controlSize();
+  }
+
+  return result;
 }
 
 const allowedOverrides = [
@@ -153,10 +290,8 @@ const allowedOverrides = [
   'alignSelf',
   'order',
   'gridArea',
-  'gridRow',
   'gridRowStart',
   'gridRowEnd',
-  'gridColumn',
   'gridColumnStart',
   'gridColumnEnd',
   'position',
@@ -167,16 +302,17 @@ const allowedOverrides = [
   'insetX',
   'insetY',
   'insetStart',
-  'insetEnd'
+  'insetEnd',
+  'visibility'
 ] as const;
 
-const widthProperties = [
+export const widthProperties = [
   'width',
   'minWidth',
   'maxWidth'
 ] as const;
 
-const heightProperties = [
+export const heightProperties = [
   'size',
   'height',
   'minHeight',
@@ -186,9 +322,10 @@ const heightProperties = [
 export type StylesProp = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number]>;
 export type StylesPropWithHeight = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number] | (typeof heightProperties)[number]>;
 export type StylesPropWithoutWidth = StyleString<(typeof allowedOverrides)[number]>;
+export type UnsafeClassName = string & {properties?: never};
 export interface UnsafeStyles {
   /** Sets the CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. Only use as a **last resort**. Use the `style` macro via the `styles` prop instead. */
-  UNSAFE_className?: string,
+  UNSAFE_className?: UnsafeClassName,
   /** Sets inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. Only use as a **last resort**. Use the `style` macro via the `styles` prop instead. */
   UNSAFE_style?: CSSProperties
 }
@@ -198,6 +335,6 @@ export interface StyleProps extends UnsafeStyles {
   styles?: StylesProp
 }
 
-export function getAllowedOverrides({width = true, height = false} = {}) {
+export function getAllowedOverrides({width = true, height = false} = {}): string[] {
   return (allowedOverrides as unknown as string[]).concat(width ? widthProperties : []).concat(height ? heightProperties : []);
 }

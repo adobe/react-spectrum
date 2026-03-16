@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Dispatch, MutableRefObject, useRef, useState} from 'react';
-import {useEffectEvent, useLayoutEffect} from './';
+import {Dispatch, RefObject, useCallback, useRef, useState} from 'react';
+import {useLayoutEffect} from './';
 
 type SetValueAction<S> = (prev: S) => Generator<any, void, unknown>;
 
@@ -21,11 +21,14 @@ type SetValueAction<S> = (prev: S) => Generator<any, void, unknown>;
 // written linearly.
 export function useValueEffect<S>(defaultValue: S | (() => S)): [S, Dispatch<SetValueAction<S>>] {
   let [value, setValue] = useState(defaultValue);
-  let effect: MutableRefObject<Generator<S> | null> = useRef<Generator<S> | null>(null);
+  // Keep an up to date copy of value in a ref so we can access the current value in the generator.
+  // This allows us to maintain a stable queue function.
+  let currValue = useRef(value);
+  let effect: RefObject<Generator<S> | null> = useRef<Generator<S> | null>(null);
 
   // Store the function in a ref so we can always access the current version
   // which has the proper `value` in scope.
-  let nextRef = useEffectEvent(() => {
+  let nextRef = useRef(() => {
     if (!effect.current) {
       return;
     }
@@ -41,24 +44,25 @@ export function useValueEffect<S>(defaultValue: S | (() => S)): [S, Dispatch<Set
     // If the value is the same as the current value,
     // then continue to the next yield. Otherwise,
     // set the value in state and wait for the next layout effect.
-    if (value === newValue.value) {
-      nextRef();
+    if (currValue.current === newValue.value) {
+      nextRef.current();
     } else {
       setValue(newValue.value);
     }
   });
 
   useLayoutEffect(() => {
+    currValue.current = value;
     // If there is an effect currently running, continue to the next yield.
     if (effect.current) {
-      nextRef();
+      nextRef.current();
     }
   });
 
-  let queue = useEffectEvent(fn => {
-    effect.current = fn(value);
-    nextRef();
-  });
+  let queue = useCallback(fn => {
+    effect.current = fn(currValue.current);
+    nextRef.current();
+  }, [nextRef]);
 
   return [value, queue];
 }

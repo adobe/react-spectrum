@@ -11,7 +11,7 @@
  */
 
 import {DropTarget, ItemDropTarget, Key} from '@react-types/shared';
-import {getChildNodes} from '@react-stately/collections';
+import {getChildNodes, getLastItem} from '@react-stately/collections';
 import {GridNode} from '@react-types/grid';
 import {InvalidationContext, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
@@ -68,9 +68,12 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     // If columnWidths were provided via layoutOptions, update those.
     // Otherwise, calculate column widths ourselves.
     if (invalidationContext.layoutOptions?.columnWidths) {
-      if (invalidationContext.layoutOptions.columnWidths !== this.columnWidths) {
-        this.columnWidths = invalidationContext.layoutOptions.columnWidths;
-        invalidationContext.sizeChanged = true;
+      for (const [key, val] of invalidationContext.layoutOptions.columnWidths) {
+        if (this.columnWidths.get(key) !== val) {
+          this.columnWidths = invalidationContext.layoutOptions.columnWidths;
+          invalidationContext.sizeChanged = true;
+          break;
+        }
       }
     } else if (invalidationContext.sizeChanged || this.columnsChanged(newCollection, this.lastCollection)) {
       let columnLayout = new TableColumnLayout({});
@@ -85,6 +88,10 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     this.stickyColumnIndices = [];
 
     let collection = this.virtualizer!.collection as TableCollection<T>;
+    if (collection.head?.key === -1) {
+      return [];
+    }
+
     for (let column of collection.columns) {
       // The selection cell and any other sticky columns always need to be visible.
       // In addition, row headers need to be in the DOM for accessibility labeling.
@@ -251,7 +258,8 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     let width = 0;
     let children: LayoutNode[] = [];
     let rowHeight = this.getEstimatedRowHeight() + this.gap;
-    for (let node of getChildNodes(collection.body, collection)) {
+    let childNodes = getChildNodes(collection.body, collection);
+    for (let node of childNodes) {
       // Skip rows before the valid rectangle unless they are already cached.
       if (y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
         y += rowHeight;
@@ -267,13 +275,29 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       children.push(layoutNode);
 
       if (y > this.requestedRect.maxY) {
+        let rowsAfterRect = collection.size - (children.length + skipped);
+        let lastNode = getLastItem(childNodes);
+
         // Estimate the remaining height for rows that we don't need to layout right now.
-        y += (collection.size - (skipped + children.length)) * rowHeight;
+        y += rowsAfterRect * rowHeight;
+
+        // Always add the loader sentinel if present. This assumes the loader is the last row in the body,
+        // will need to refactor when handling multi section loading
+        if (lastNode?.type === 'loader' && children.at(-1)?.layoutInfo.type !== 'loader') {
+          let loader = this.buildChild(lastNode, this.padding, y, layoutInfo.key);
+          loader.layoutInfo.parentKey = layoutInfo.key;
+          loader.index = collection.size;
+          width = Math.max(width, loader.layoutInfo.rect.width);
+          children.push(loader);
+          y = loader.layoutInfo.rect.maxY;
+        }
         break;
       }
     }
 
-    if (children.length === 0) {
+    // Make sure that the table body gets a height if empty or performing initial load
+    let isEmptyOrLoading = collection?.size === 0;
+    if (isEmptyOrLoading) {
       y = this.virtualizer!.visibleRect.maxY;
     } else {
       y -= this.gap;
@@ -367,7 +391,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     };
   }
 
-  getVisibleLayoutInfos(rect: Rect) {
+  getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
     // Adjust rect to keep number of visible rows consistent.
     // (only if height > 1 for getDropTargetFromPoint)
     if (rect.height > 1) {
@@ -441,6 +465,12 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
             res.push(node.children[idx].layoutInfo);
             this.addVisibleLayoutInfos(res, node.children[idx], rect);
           }
+        }
+
+        // Always include loading sentinel even when virtualized, we assume it is always the last child for now
+        let lastRow = node.children.at(-1);
+        if (lastRow?.layoutInfo.type === 'loader') {
+          res.push(lastRow.layoutInfo);
         }
         break;
       }
@@ -542,17 +572,23 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     x += this.virtualizer!.visibleRect.x;
     y += this.virtualizer!.visibleRect.y;
 
-    // Custom variation of this.virtualizer.keyAtPoint that ignores body
+    // Find the closest item within on either side of the point using the gap width.
+    let searchRect = new Rect(x, Math.max(0, y - this.gap), 1, Math.max(1, this.gap * 2));
+    let candidates = this.getVisibleLayoutInfos(searchRect);
     let key: Key | null = null;
-    let point = new Point(x, y);
-    let rectAtPoint = new Rect(point.x, point.y, 1, 1);
-    let layoutInfos = this.virtualizer!.layout.getVisibleLayoutInfos(rectAtPoint).filter(info => info.type === 'row');
+    let minDistance = Infinity;
+    for (let candidate of candidates) {
+      // Ignore items outside the search rect, e.g. persisted keys.
+      if (candidate.type !== 'row' || !candidate.rect.intersects(searchRect)) {
+        continue;
+      }
 
-    // Layout may return multiple layout infos in the case of
-    // persisted keys, so find the first one that actually intersects.
-    for (let layoutInfo of layoutInfos) {
-      if (layoutInfo.rect.intersects(rectAtPoint)) {
-        key = layoutInfo.key;
+      let yDist = Math.abs(candidate.rect.y - y);
+      let maxYDist = Math.abs(candidate.rect.maxY - y);
+      let dist = Math.min(yDist, maxYDist);
+      if (dist < minDistance) {
+        minDistance = dist;
+        key = candidate.key;
       }
     }
 

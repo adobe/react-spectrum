@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, within} from '@testing-library/react';
+import {act} from './act';
 import {Direction, Orientation, TabsTesterOpts, UserOpts} from './types';
 import {pressElement} from './events';
+import {within} from '@testing-library/dom';
 
 interface TriggerTabOptions {
   /**
@@ -51,7 +52,7 @@ export class TabsTester {
   /**
    * Set the interaction type used by the tabs tester.
    */
-  setInteractionType(type: UserOpts['interactionType']) {
+  setInteractionType(type: UserOpts['interactionType']): void {
     this._interactionType = type;
   }
 
@@ -79,6 +80,11 @@ export class TabsTester {
   private async keyboardNavigateToTab(opts: {tab: HTMLElement, orientation?: Orientation}) {
     let {tab, orientation = 'vertical'} = opts;
     let tabs = this.tabs;
+    tabs = tabs.filter(tab => !(tab.hasAttribute('disabled') || tab.getAttribute('aria-disabled') === 'true'));
+    if (tabs.length === 0) {
+      throw new Error('Tablist doesnt have any non-disabled tabs. Please double check your tabs implementation.');
+    }
+
     let targetIndex = tabs.indexOf(tab);
     if (targetIndex === -1) {
       throw new Error('Tab provided is not in the tablist');
@@ -89,11 +95,11 @@ export class TabsTester {
       if (selectedTab != null) {
         act(() => selectedTab.focus());
       } else {
-        act(() => tabs.find(tab => !(tab.hasAttribute('disabled') || tab.getAttribute('aria-disabled') === 'true'))?.focus());
+        act(() => tabs[0]?.focus());
       }
     }
 
-    let currIndex = this.tabs.indexOf(document.activeElement as HTMLElement);
+    let currIndex = tabs.indexOf(document.activeElement as HTMLElement);
     if (currIndex === -1) {
       throw new Error('ActiveElement is not in the tablist');
     }
@@ -119,7 +125,7 @@ export class TabsTester {
   /**
    * Triggers the specified tab. Defaults to using the interaction type set on the tabs tester.
    */
-  async triggerTab(opts: TriggerTabOptions) {
+  async triggerTab(opts: TriggerTabOptions): Promise<void> {
     let {
       tab,
       interactionType = this._interactionType,
@@ -137,7 +143,7 @@ export class TabsTester {
     }
 
     if (interactionType === 'keyboard') {
-      if (document.activeElement !== this._tablist || !this._tablist.contains(document.activeElement)) {
+      if (document.activeElement !== this._tablist && !this._tablist.contains(document.activeElement)) {
         act(() => this._tablist.focus());
       }
 

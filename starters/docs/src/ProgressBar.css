@@ -1,0 +1,94 @@
+@import "./theme.css";
+@import "./utilities.css";
+
+.react-aria-ProgressBar {
+  display: grid;
+  grid-template-areas: "label value"
+                       "bar bar";
+  grid-template-columns: 1fr auto;
+  width: 250px;
+  color: var(--text-color);
+  font: var(--font-size) system-ui;
+
+  .value {
+    grid-area: value;
+  }
+
+  .track {
+    grid-area: bar;
+    forced-color-adjust: none;
+    height: calc(var(--spacing-2) + 2px);
+    border-radius: 9999px;
+    overflow: clip;
+    will-change: transform;
+  }
+
+  .fill {
+    background: linear-gradient(
+      to right,
+      oklch(from var(--tint) 58% c h) 0px,
+      oklch(from var(--tint) 72% c h) 20px,
+      oklch(from var(--tint) 58% c h) 40px
+    );
+    background-size: 40px 100%;
+    height: calc(100% - 2px);
+    width: calc(var(--percent) - 2px);
+    margin: 1px 0 0 1px;
+    border-radius: inherit;
+    animation: progress-fill 1s infinite linear;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.3), /* top specular highlight */
+      inset 0 2px 2px rgb(255 255 255 / 0.2), /* 3d effect */
+      0 1px 0 lch(from var(--tint) 42% c h), /* bottom shadow */
+      0 0 0 1px var(--tint-900); /* border */
+
+    @media (prefers-color-scheme: dark) {
+      box-shadow:
+        0 -1px 0 rgb(255 255 255 / 0.6), /* top specular highlight */
+        inset 0 2px 2px rgb(255 255 255 / 0.2), /* 3d effect */
+        0 1px 0 lch(from var(--tint) 42% c h), /* bottom shadow */
+        0 0 0 1px var(--tint-900); /* border */
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      background: var(--highlight-background);
+      animation: none;
+    }
+
+    @media (forced-colors: active) {
+      background-image: none;
+      background-color: Highlight;
+      box-shadow: none;
+    }
+  }
+
+  /* indeterminate */
+  &:not([aria-valuenow]) {
+    .fill {
+      --fill-dark: oklch(from var(--tint) 58% c h);
+      --fill-light: var(--tint-200);
+      background-image: linear-gradient(
+        45deg,
+        var(--fill-dark) 0px 12px,
+        var(--fill-light) 15px 25px,
+        var(--fill-dark) 28px
+      );
+      animation-duration: 0.5s;
+
+      @media (forced-colors: active) {
+        --fill-dark: Highlight;
+        --fill-light: HighlightText;
+      }
+    }
+  }
+}
+
+@keyframes progress-fill {
+  from {
+    background-position-x: 0;
+  }
+
+  to {
+    background-position-x: -40px;
+  }
+}

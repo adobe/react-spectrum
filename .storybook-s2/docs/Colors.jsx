@@ -9,7 +9,7 @@ export function Colors() {
       <Disclosure isQuiet>
         <DisclosureTitle>Background colors</DisclosureTitle>
         <DisclosurePanel>
-          <P>The <Code>backgroundColor</Code> property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as backgrounds, so prefer them over global colors where possible. Some background colors also automatically update according to states such as <Code>isHovered</Code> (see <Link href="#runtime-conditions" target="_self">runtime conditions</Link> below).</P>
+          <P>The <Code>backgroundColor</Code> property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as backgrounds, so prefer them over global colors where possible.</P>
           <div className="sb-unstyled" style={{columnWidth: 120}}>
             <Color name="base" className={colorSwatch('base')} />
             <Color name="layer-1" className={colorSwatch('layer-1')} />
@@ -74,7 +74,7 @@ export function Colors() {
       <Disclosure isQuiet>
         <DisclosureTitle>Text colors</DisclosureTitle>
         <DisclosurePanel>
-          <P>The <Code>color</Code> property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as text colors, so prefer them over global colors where possible. Some text colors also automatically update according to states such as <Code>isHovered</Code> (see <Link href="#runtime-conditions" target="_self">runtime conditions</Link> below).</P>
+          <P>The <Code>color</Code> property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as text colors, so prefer them over global colors where possible.</P>
           <div className="sb-unstyled" style={{columnWidth: 120}}>
             <Color name="accent" className={colorSwatch('accent', 'color')} />
             <Color name="neutral" className={colorSwatch('neutral', 'color')} />
@@ -146,4 +146,37 @@ function Color({name, className}) {
       <div className="sb-unstyled">{name}</div>
     </div>
   );
+}
+
+export function IconColors() {
+  return (
+    <div className="sb-unstyled" style={{columnWidth: 100}}>
+      <Color name="white" className={colorSwatch('white', 'fill')} />
+      <Color name="black" className={colorSwatch('black', 'fill')} />
+      <Color name="accent" className={colorSwatch('accent', 'fill')} />
+      <Color name="neutral" className={colorSwatch('neutral', 'fill')} />
+      <Color name="negative" className={colorSwatch('negative', 'fill')} />
+      <Color name="informative" className={colorSwatch('informative', 'fill')} />
+      <Color name="positive" className={colorSwatch('positive', 'fill')} />
+      <Color name="notice" className={colorSwatch('notice', 'fill')} />
+      <Color name="gray" className={colorSwatch('gray', 'fill')} />
+      <Color name="red" className={colorSwatch('red', 'fill')} />
+      <Color name="orange" className={colorSwatch('orange', 'fill')} />
+      <Color name="yellow" className={colorSwatch('yellow', 'fill')} />
+      <Color name="chartreuse" className={colorSwatch('chartreuse', 'fill')} />
+      <Color name="celery" className={colorSwatch('celery', 'fill')} />
+      <Color name="seafoam" className={colorSwatch('seafoam', 'fill')} />
+      <Color name="cyan" className={colorSwatch('cyan', 'fill')} />
+      <Color name="blue" className={colorSwatch('blue', 'fill')} />
+      <Color name="indigo" className={colorSwatch('indigo', 'fill')} />
+      <Color name="purple" className={colorSwatch('purple', 'fill')} />
+      <Color name="fuchsia" className={colorSwatch('fuchsia', 'fill')} />
+      <Color name="magenta" className={colorSwatch('magenta', 'fill')} />
+      <Color name="pink" className={colorSwatch('pink', 'fill')} />
+      <Color name="turquoise" className={colorSwatch('turquoise', 'fill')} />
+      <Color name="cinnamon" className={colorSwatch('cinnamon', 'fill')} />
+      <Color name="brown" className={colorSwatch('brown', 'fill')} />
+      <Color name="silver" className={colorSwatch('silver', 'fill')} />
+    </div>
+  )
 }

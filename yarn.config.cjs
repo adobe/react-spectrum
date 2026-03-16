@@ -18,9 +18,14 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
   for (const dependency of Yarn.dependencies()) {
     if (dependency.type === 'peerDependencies') {
       if (dependency.ident === 'react' || dependency.ident === 'react-dom') {
+        if (dependency.workspace.ident === 'storybook-react-parcel') {
+          continue;
+        }
         if (dependency.workspace.ident === 'storybook-builder-parcel') {
           dependency.update('*');
-        } else if (dependency.workspace.ident === '@react-spectrum/s2' || dependency.workspace.ident === '@react-spectrum/codemods') {
+        } else if (dependency.workspace.ident === '@react-spectrum/s2' || dependency.workspace.ident === '@react-spectrum/s2-icon-builder') {
+          dependency.update('^19.0.0-rc.1');
+        } else if (dependency.workspace.ident === '@react-spectrum/codemods') {
           dependency.update('^18.0.0 || ^19.0.0-rc.1');
         } else {
           dependency.update('^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1');
@@ -52,7 +57,7 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
 
       workspace.set('dependencies.@swc/helpers', '^0.5.0');
       workspace.set('dependencies.@adobe/spectrum-css-temp');
-      if (workspace.ident.startsWith('@react-spectrum') && !workspace.ident.endsWith('/utils')) {
+      if (workspace.ident.startsWith('@react-spectrum') && !workspace.ident.endsWith('/utils') && !workspace.ident.endsWith('/mcp')) {
         workspace.set('devDependencies.@adobe/spectrum-css-temp', '3.0.0-alpha.1');
       }
       // these should not be in dependencies, but should be in dev or peer
@@ -133,12 +138,46 @@ function enforceWorkspaceDependencies({Yarn}) {
     if (dependency.type === 'peerDependencies') {continue;}
 
     for (const otherDependency of Yarn.dependencies({ident: dependency.ident})) {
-      if (otherDependency.type === 'peerDependencies') {continue;}
+      if (otherDependency.type === 'peerDependencies') {
+        continue;
+      }
 
       if (isOurPackage(dependency)) {
         // change back to workspaces:^ when we're ready for yarn to handle versioning
         // don't check for consistency on our own packages because they can individually version and we don't bump EVERY package because of one change
         // dependency.update(otherDependency.range);
+      }
+    }
+  }
+
+  // This finds all the peer dependencies and checks that everything up the
+  // workspace tree has the same peer dependency.
+  let seen = new Map();
+  for (const dependency of Yarn.dependencies()) {
+    if (dependency.type === 'peerDependencies') {
+      for (const workspace of Yarn.workspaces()) {
+        if (
+          // must check in manifest because yarn is reporting all peer in workspace.pkg.dependencies
+          // and doesn't differentiate between peer and dependencies
+          workspace.manifest.dependencies?.[dependency.workspace?.ident]
+          && !workspace.manifest.peerDependencies?.[dependency.ident]
+          && !workspace.manifest.dependencies?.[dependency.ident]
+        ) {
+          // eslint-disable-next-line max-depth
+          if (seen.has(workspace.ident) && !seen.get(workspace.ident).includes(dependency.ident)) {
+            seen.get(workspace.ident).push(dependency.ident);
+            workspace.set('peerDependencies', {
+              ...workspace.manifest.peerDependencies,
+              [dependency.ident]: dependency.range
+            });
+          } else if (!seen.has(workspace.ident)) {
+            seen.set(workspace.ident, [dependency.ident]);
+            workspace.set('peerDependencies', {
+              ...workspace.manifest.peerDependencies,
+              [dependency.ident]: dependency.range
+            });
+          }
+        }
       }
     }
   }
@@ -148,7 +187,13 @@ function enforceWorkspaceDependencies({Yarn}) {
 function enforceCSS({Yarn}) {
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
-    if (!name.startsWith('@react-spectrum/docs') && !name.startsWith('@react-spectrum/test-utils') && name.startsWith('@react-spectrum') && workspace.pkg.dependencies?.has('@adobe/spectrum-css-temp')) {
+    if (!name.startsWith('@react-spectrum/docs')
+      && !name.startsWith('@react-spectrum/s2-docs')
+      && !name.startsWith('@react-spectrum/test-utils')
+      && name.startsWith('@react-spectrum')
+      && !name.startsWith('@react-spectrum/mcp')
+      && workspace.pkg.dependencies?.has('@adobe/spectrum-css-temp')) {
+
       workspace.set('targets', {
         main: {includeNodeModules: ['@adobe/spectrum-css-temp']},
         module: {includeNodeModules: ['@adobe/spectrum-css-temp']}
@@ -166,6 +211,7 @@ function isPublishing(workspace) {
     && !name.includes('@react-aria/example-theme')
     && !name.includes('@react-spectrum/style-macro-s1')
     && !name.includes('@react-spectrum/docs')
+    && !name.includes('@react-spectrum/s2-docs')
     && !name.includes('parcel')
     && !name.includes('@adobe/spectrum-css-temp')
     && !name.includes('css-module-types')

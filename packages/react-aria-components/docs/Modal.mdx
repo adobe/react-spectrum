@@ -80,15 +80,12 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
 @import "@react-aria/example-theme";
 
 .react-aria-ModalOverlay {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
-  height: var(--visual-viewport-height);
+  height: var(--page-height);
   background: rgba(0 0 0 / .5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 100;
 
   &[data-entering] {
@@ -101,12 +98,18 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
 }
 
 .react-aria-Modal {
+  position: fixed;
+  max-height: var(--visual-viewport-height);
+  top: calc(var(--visual-viewport-height) / 2);
+  left: 50%;
+  translate: -50% -50%;
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
   border-radius: 6px;
   background: var(--overlay-background);
   color: var(--text-color);
   border: 1px solid var(--gray-400);
   outline: none;
+  width: max-content;
   max-width: 300px;
 
   &[data-entering] {
@@ -241,8 +244,11 @@ import {ModalOverlay} from 'react-aria-components';
 
 ```css
 .my-overlay {
-  position: fixed;
-  inset: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--page-height);
   background: rgba(45 0 0 / .3);
   backdrop-filter: blur(10px);
 
@@ -256,11 +262,14 @@ import {ModalOverlay} from 'react-aria-components';
 }
 
 .my-modal {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  right: 0;
+  position: sticky;
+  left: 0;
   width: 300px;
+  /* Extra padding to account for iOS floating browser UI. */
+  top: -100px;
+  height: calc(100dvh + 200px);
+  padding: 100px 0;
+  margin-left: auto;
   background: var(--overlay-background);
   outline: none;
   border-left: 1px solid var(--border-color);
@@ -413,12 +422,21 @@ A `Modal` can be targeted with the `.react-aria-Modal` CSS selector, or by overr
 
 By default, `Modal` includes a builtin `ModalOverlay`, which renders a backdrop over the page when a modal is open. This can be targeted using the `.react-aria-ModalOverlay` CSS selector. To customize the `ModalOverlay` with a different class name or other attributes, render a `ModalOverlay` and place a `Modal` inside.
 
-The `--visual-viewport-height` CSS custom property will be set on the `ModalOverlay`, which you can use to set the height to account for the virtual keyboard on mobile.
+The `--page-height` and `--visual-viewport-height` CSS custom property will be set on the `ModalOverlay`, the latter of which you can use to set the height of the Modal to account for the virtual keyboard on mobile.
 
 ```css render=false
 .react-aria-ModalOverlay {
+  position: absolute;
+  height: var(--page-height);
+}
+
+.react-aria-Modal {
+  /* Center modal without adding a extra wrapping div. */
   position: fixed;
-  height: var(--visual-viewport-height);
+  max-height: var(--visual-viewport-height);
+  top: calc(var(--visual-viewport-height) / 2);
+  left: 50%;
+  translate: -50% -50%;
 }
 ```
 

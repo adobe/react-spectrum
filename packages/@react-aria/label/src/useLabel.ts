@@ -52,7 +52,7 @@ export function useLabel(props: LabelAriaProps): LabelAria {
       id: labelId,
       htmlFor: labelElementType === 'label' ? id : undefined
     };
-  } else if (!ariaLabelledby && !ariaLabel) {
+  } else if (!ariaLabelledby && !ariaLabel && process.env.NODE_ENV !== 'production') {
     console.warn('If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility');
   }
 

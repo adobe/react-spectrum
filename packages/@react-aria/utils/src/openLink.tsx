@@ -13,7 +13,7 @@
 import {focusWithoutScrolling, isMac, isWebKit} from './index';
 import {Href, LinkDOMProps, RouterOptions} from '@react-types/shared';
 import {isFirefox, isIPad} from './platform';
-import React, {createContext, ReactNode, useContext, useMemo} from 'react';
+import React, {createContext, DOMAttributes, JSX, MouseEvent as ReactMouseEvent, ReactNode, useContext, useMemo} from 'react';
 
 interface Router {
   isNative: boolean,
@@ -37,7 +37,7 @@ interface RouterProviderProps {
  * A RouterProvider accepts a `navigate` function from a framework or client side router,
  * and provides it to all nested React Aria links to enable client side navigation.
  */
-export function RouterProvider(props: RouterProviderProps) {
+export function RouterProvider(props: RouterProviderProps): JSX.Element {
   let {children, navigate, useHref} = props;
 
   let ctx = useMemo(() => ({
@@ -72,7 +72,7 @@ interface Modifiers {
   shiftKey?: boolean
 }
 
-export function shouldClientNavigate(link: HTMLAnchorElement, modifiers: Modifiers) {
+export function shouldClientNavigate(link: HTMLAnchorElement, modifiers: Modifiers): boolean {
   // Use getAttribute here instead of link.target. Firefox will default link.target to "_parent" when inside an iframe.
   let target = link.getAttribute('target');
   return (
@@ -86,7 +86,7 @@ export function shouldClientNavigate(link: HTMLAnchorElement, modifiers: Modifie
   );
 }
 
-export function openLink(target: HTMLAnchorElement, modifiers: Modifiers, setOpening = true) {
+export function openLink(target: HTMLAnchorElement, modifiers: Modifiers, setOpening = true): void {
   let {metaKey, ctrlKey, altKey, shiftKey} = modifiers;
 
   // Firefox does not recognize keyboard events as a user action by default, and the popup blocker
@@ -106,7 +106,7 @@ export function openLink(target: HTMLAnchorElement, modifiers: Modifiers, setOpe
   let event = isWebKit() && isMac() && !isIPad() && process.env.NODE_ENV !== 'test'
     // @ts-ignore - keyIdentifier is a non-standard property, but it's what webkit expects
     ? new KeyboardEvent('keydown', {keyIdentifier: 'Enter', metaKey, ctrlKey, altKey, shiftKey})
-    : new MouseEvent('click', {metaKey, ctrlKey, altKey, shiftKey, bubbles: true, cancelable: true});
+    : new MouseEvent('click', {metaKey, ctrlKey, altKey, shiftKey, detail: 1, bubbles: true, cancelable: true});
   (openLink as any).isOpening = setOpening;
   focusWithoutScrolling(target);
   target.dispatchEvent(event);
@@ -146,7 +146,7 @@ function openSyntheticLink(target: Element, modifiers: Modifiers) {
   getSyntheticLink(target, link => openLink(link, modifiers));
 }
 
-export function useSyntheticLinkProps(props: LinkDOMProps) {
+export function useSyntheticLinkProps(props: LinkDOMProps): DOMAttributes<HTMLElement> {
   let router = useRouter();
   const href = router.useHref(props.href ?? '');
   return {
@@ -156,11 +156,11 @@ export function useSyntheticLinkProps(props: LinkDOMProps) {
     'data-download': props.download,
     'data-ping': props.ping,
     'data-referrer-policy': props.referrerPolicy
-  };
+  } as DOMAttributes<HTMLElement>;
 }
 
 /** @deprecated - For backward compatibility. */
-export function getSyntheticLinkProps(props: LinkDOMProps) {
+export function getSyntheticLinkProps(props: LinkDOMProps): DOMAttributes<HTMLElement> {
   return {
     'data-href': props.href,
     'data-target': props.target,
@@ -168,10 +168,10 @@ export function getSyntheticLinkProps(props: LinkDOMProps) {
     'data-download': props.download,
     'data-ping': props.ping,
     'data-referrer-policy': props.referrerPolicy
-  };
+  } as DOMAttributes<HTMLElement>;
 }
 
-export function useLinkProps(props?: LinkDOMProps) {
+export function useLinkProps(props?: LinkDOMProps): LinkDOMProps {
   let router = useRouter();
   const href = router.useHref(props?.href ?? '');
   return {
@@ -182,4 +182,20 @@ export function useLinkProps(props?: LinkDOMProps) {
     ping: props?.ping,
     referrerPolicy: props?.referrerPolicy
   };
+}
+
+export function handleLinkClick(e: ReactMouseEvent, router: Router, href: Href | undefined, routerOptions: RouterOptions | undefined): void {
+  // If a custom router is provided, prevent default and forward if this link should client navigate.
+  if (
+    !router.isNative &&
+    e.currentTarget instanceof HTMLAnchorElement &&
+    e.currentTarget.href &&
+    // If props are applied to a router Link component, it may have already prevented default.
+    !e.isDefaultPrevented() &&
+    shouldClientNavigate(e.currentTarget, e) &&
+    href
+  ) {
+    e.preventDefault();
+    router.open(e.currentTarget, e, href, routerOptions);
+  }
 }

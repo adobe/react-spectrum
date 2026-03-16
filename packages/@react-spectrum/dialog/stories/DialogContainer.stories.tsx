@@ -10,52 +10,56 @@
  * governing permissions and limitations under the License.
  */
 
+import {DialogContainer} from '../';
 import {
   DialogContainerExample,
   MenuExample,
   NestedDialogContainerExample
 } from './DialogContainerExamples';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 
 export default {
   title: 'DialogContainer',
   providerSwitcher: {status: 'notice'}
-};
+} as Meta<typeof DialogContainer>;
 
-export const Default = () => <DialogContainerExample />;
+export type DialogContainerStory = StoryFn<typeof DialogContainer>;
+
+export const Default: DialogContainerStory = () => <DialogContainerExample />;
 
 Default.story = {
   name: 'default'
 };
 
-export const InAMenu = () => <MenuExample />;
+export const InAMenu: DialogContainerStory = () => <MenuExample />;
 
 InAMenu.story = {
   name: 'in a menu'
 };
 
-export const TypeFullscreen = () => <MenuExample type="fullscreen" />;
+export const TypeFullscreen: DialogContainerStory = () => <MenuExample type="fullscreen" />;
 
 TypeFullscreen.story = {
   name: 'type: fullscreen'
 };
 
-export const TypeFullscreenTakeover = () => <MenuExample type="fullscreenTakeover" />;
+export const TypeFullscreenTakeover: DialogContainerStory = () => <MenuExample type="fullscreenTakeover" />;
 
 TypeFullscreenTakeover.story = {
   name: 'type: fullscreenTakeover'
 };
 
-export const IsDismissable = () => <MenuExample isDismissable />;
+export const IsDismissable: DialogContainerStory = () => <MenuExample isDismissable />;
 
 IsDismissable.story = {
   name: 'isDismissable'
 };
 
-export const IsKeyboardDismissDisabled = () => <MenuExample isKeyboardDismissDisabled />;
+export const IsKeyboardDismissDisabled: DialogContainerStory = () => <MenuExample isKeyboardDismissDisabled />;
 
 IsKeyboardDismissDisabled.story = {
   name: 'isKeyboardDismissDisabled'
 };
 
-export const NestedDialogContainers = () => <NestedDialogContainerExample />;
+export const NestedDialogContainers: DialogContainerStory = () => <NestedDialogContainerExample />;

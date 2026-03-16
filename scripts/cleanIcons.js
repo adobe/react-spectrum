@@ -12,7 +12,7 @@
 
 import path from 'path';
 import recursive from 'recursive-readdir';
-import rimraf from 'rimraf';
+import {rimraf} from 'rimraf';
 
 let topPaths = ['ui', 'workflow', 'color', 'express', 'illustrations'].map(name => path.resolve(path.join(__dirname, '..', 'packages', '@spectrum-icons', name)));
 topPaths.forEach((rootPath) => {

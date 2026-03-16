@@ -11,12 +11,12 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DragEvent, HTMLAttributes, useRef, useState} from 'react';
+import {DOMAttributes, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, FocusableElement, DragTypes as IDragTypes, RefObject} from '@react-types/shared';
+import {DragEvent, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DragTypes, globalAllowedDropOperations, globalDndState, readFromDataTransfer, setGlobalDnDState, setGlobalDropEffect} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
-import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, FocusableElement, DragTypes as IDragTypes, RefObject} from '@react-types/shared';
-import {isIPad, isMac, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
+import {getEventTarget, isIPad, isMac, nodeContains, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
 export interface DropOptions {
@@ -36,7 +36,6 @@ export interface DropOptions {
   /**
    * Handler that is called after a valid drag is held over the drop target for a period of time.
    * This typically opens the item so that the user can drop within it.
-   * @private
    */
   onDropActivate?: (e: DropActivateEvent) => void,
   /** Handler that is called when a valid drag exits the drop target. */
@@ -56,7 +55,7 @@ export interface DropOptions {
 
 export interface DropResult {
   /** Props for the droppable element. */
-  dropProps: HTMLAttributes<HTMLElement>,
+  dropProps: DOMAttributes,
   /** Whether the drop target is currently focused or hovered. */
   isDropTarget: boolean,
   /** Props for the explicit drop button affordance, if any. */
@@ -187,7 +186,7 @@ export function useDrop(options: DropOptions): DropResult {
   let onDragEnter = (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    state.dragOverElements.add(e.target as Element);
+    state.dragOverElements.add(getEventTarget(e));
     if (state.dragOverElements.size > 1) {
       return;
     }
@@ -233,9 +232,9 @@ export function useDrop(options: DropOptions): DropResult {
     // events will never be fired for these. This can happen, for example, with drop
     // indicators between items, which disappear when the drop target changes.
 
-    state.dragOverElements.delete(e.target as Element);
+    state.dragOverElements.delete(getEventTarget(e));
     for (let element of state.dragOverElements) {
-      if (!e.currentTarget.contains(element)) {
+      if (!nodeContains(e.currentTarget, element)) {
         state.dragOverElements.delete(element);
       }
     }
@@ -340,7 +339,7 @@ export function useDrop(options: DropOptions): DropResult {
       onDrop: onKeyboardDrop,
       onDropActivate
     });
-  }, [isDisabled, ref, getDropOperationKeyboard, onDropEnter, onDropExit, onKeyboardDrop, onDropActivate]);
+  }, [isDisabled, ref]);
 
   let {dropProps} = useVirtualDrop();
   if (isDisabled) {

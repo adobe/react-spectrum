@@ -47,11 +47,12 @@ type: component
 
 ```tsx example
 import {SearchField, Label, Input, Button} from 'react-aria-components';
+import {X} from 'lucide-react';
 
 <SearchField>
   <Label>Search</Label>
   <Input />
-  <Button>✕</Button>
+  <Button><X size={14} /></Button>
 </SearchField>
 ```
 
@@ -78,6 +79,7 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
 
   .react-aria-Input {
     grid-area: input;
+    width: 100%;
     padding: 0.286rem 1.714rem 0.286rem 0.286rem;
     margin: 0;
     border: 1px solid var(--border-color);
@@ -241,7 +243,7 @@ export function MySearchField({label, description, errorMessage, placeholder, ..
     <SearchField {...props}>
       {label && <Label>{label}</Label>}
       <Input placeholder={placeholder} />
-      <Button>✕</Button>
+      <Button><X size={14} /></Button>
       {description && <Text slot="description">{description}</Text>}
       <FieldError>{errorMessage}</FieldError>
     </SearchField>
@@ -333,7 +335,7 @@ import {Form, FieldError} from 'react-aria-components';
   {/*- end highlight -*/}
     <Label>Search</Label>
     <Input />
-    <Button>✕</Button>
+    <Button><X size={14} /></Button>
     {/*- begin highlight -*/}
     <FieldError />
     {/*- end highlight -*/}
@@ -373,7 +375,7 @@ The `description` slot can be used to associate additional help text with a sear
 <SearchField>
   <Label>Email</Label>
   <Input />
-  <Button>✕</Button>
+  <Button><X size={14} /></Button>
   {/*- begin highlight -*/}
   <Text slot="description">Enter an email for us to contact you about your order.</Text>
   {/*- end highlight -*/}
@@ -512,7 +514,7 @@ Render props may also be used as children to alter what elements are rendered ba
     <>
       <Label>Search</Label>
       <Input />
-      {state.value !== '' && <Button>✕</Button>}
+      {state.value !== '' && <Button><X size={14} /></Button>}
     </>
   )}
 </SearchField>

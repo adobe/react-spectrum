@@ -12,7 +12,8 @@
 import {AriaButtonProps} from '@react-types/button';
 import {classNames} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
-import React, {useRef, useState} from 'react';
+import React, {JSX, useRef, useState} from 'react';
+import {StoryObj} from '@storybook/react';
 import {useButton} from '@react-aria/button';
 import {useHover} from '../';
 
@@ -20,7 +21,9 @@ export default {
   title: 'useHover'
 };
 
-export const HoverDisabling = {
+export type HoverDisablingStory = StoryObj<typeof App>;
+
+export const HoverDisabling: HoverDisablingStory = {
   render: () => <App />,
   name: 'hover disabling'
 };
@@ -46,7 +49,7 @@ function Button(props: AriaButtonProps) {
   );
 }
 
-function App() {
+function App(): JSX.Element {
   let [isDisabled, setIsDisabled] = useState(false);
   return (
     <>

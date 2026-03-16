@@ -11,8 +11,8 @@
  */
 
 import {AriaToggleProps} from '@react-types/checkbox';
-import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
-import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
+import {ChangeEventHandler, InputHTMLAttributes, LabelHTMLAttributes} from 'react';
+import {filterDOMProps, getEventTarget, mergeProps, useFormReset} from '@react-aria/utils';
 import {RefObject} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
 import {useFocusable, usePress} from '@react-aria/interactions';
@@ -43,33 +43,56 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
     isReadOnly = false,
     value,
     name,
+    form,
     children,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
     validationState = 'valid',
-    isInvalid
+    isInvalid,
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPress,
+    onPressUp,
+    onClick
   } = props;
 
-  let onChange = (e) => {
+  let onChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     // since we spread props on label, onChange will end up there as well as in here.
     // so we have to stop propagation at the lowest level that we care about
     e.stopPropagation();
-    state.setSelected(e.target.checked);
+    state.setSelected(getEventTarget(e).checked);
   };
 
   let hasChildren = children != null;
   let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
-  if (!hasChildren && !hasAriaLabel) {
+  if (!hasChildren && !hasAriaLabel && process.env.NODE_ENV !== 'production') {
     console.warn('If you do not provide children, you must specify an aria-label for accessibility');
   }
 
   // Handle press state for keyboard interactions and cases where labelProps is not used.
   let {pressProps, isPressed} = usePress({
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPress,
+    onPressUp,
+    onClick,
     isDisabled
   });
 
   // Handle press state on the label.
   let {pressProps: labelProps, isPressed: isLabelPressed} = usePress({
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPressUp,
+    onClick,
+    onPress(e) {
+      onPress?.(e);
+      state.toggle();
+      ref.current?.focus();
+    },
     isDisabled: isDisabled || isReadOnly
   });
 
@@ -77,10 +100,10 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
   let interactions = mergeProps(pressProps, focusableProps);
   let domProps = filterDOMProps(props, {labelable: true});
 
-  useFormReset(ref, state.isSelected, state.setSelected);
+  useFormReset(ref, state.defaultSelected, state.setSelected);
 
   return {
-    labelProps,
+    labelProps: mergeProps(labelProps, {onClick: e => e.preventDefault()}),
     inputProps: mergeProps(domProps, {
       'aria-invalid': isInvalid || validationState === 'invalid' || undefined,
       'aria-errormessage': props['aria-errormessage'],
@@ -90,6 +113,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
       disabled: isDisabled,
       ...(value == null ? {} : {value}),
       name,
+      form,
       type: 'checkbox',
       ...interactions
     }),

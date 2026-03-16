@@ -10,12 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {useCallback, useRef} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
+
+// Use the earliest effect type possible. useInsertionEffect runs during the mutation phase,
+// before all layout effects, but is available only in React 18 and later.
+const useEarlyEffect = React['useInsertionEffect'] ?? useLayoutEffect;
 
 export function useEffectEvent<T extends Function>(fn?: T): T {
   const ref = useRef<T | null | undefined>(null);
-  useLayoutEffect(() => {
+  useEarlyEffect(() => {
     ref.current = fn;
   }, [fn]);
   // @ts-ignore

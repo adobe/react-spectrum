@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Content, Heading, InlineAlert} from '../src';
-import type {Meta} from '@storybook/react';
-import {useState} from 'react';
+import {Button, Content, Heading, InlineAlert, InlineAlertProps} from '../src';
+import type {Meta, StoryObj} from '@storybook/react';
+import {ReactElement, useState} from 'react';
 
 const meta: Meta<typeof InlineAlert> = {
   component: InlineAlert,
@@ -23,9 +23,10 @@ const meta: Meta<typeof InlineAlert> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof InlineAlert>;
 
-export const Example = {
-  render: (args: any) => (
+export const Example: Story = {
+  render: (args) => (
     <InlineAlert {...args}>
       <Heading>Payment Information</Heading>
       <Content>
@@ -35,7 +36,7 @@ export const Example = {
   )
 };
 
-const DynamicExampleRender = (args: any) => {
+const DynamicExampleRender = (args: InlineAlertProps): ReactElement => {
   let [shown, setShown] = useState(false);
 
   return (
@@ -53,6 +54,16 @@ const DynamicExampleRender = (args: any) => {
   );
 };
 
-export const DynamicExample = {
-  render: (args: any) => <DynamicExampleRender {...args} />
+export const DynamicExample: StoryObj<typeof DynamicExampleRender> = {
+  render: (args) => <DynamicExampleRender {...args} />
+};
+
+export const NoHeading: Story = {
+  render: () => (
+    <InlineAlert variant="informative">
+      <Content>
+        There was an error processing your payment. Please check that your card information is correct, then try again.
+      </Content>
+    </InlineAlert>
+  )
 };

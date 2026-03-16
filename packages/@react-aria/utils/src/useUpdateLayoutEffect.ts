@@ -14,7 +14,7 @@ import {EffectCallback, useRef} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 
 // Like useLayoutEffect, but only called for updates after the initial render.
-export function useUpdateLayoutEffect(effect: EffectCallback, dependencies: any[]) {
+export function useUpdateLayoutEffect(effect: EffectCallback, dependencies: any[]): void {
   const isInitialMount = useRef(true);
   const lastDeps = useRef<any[] | null>(null);
 
