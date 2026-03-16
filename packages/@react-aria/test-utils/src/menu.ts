@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, waitFor, within} from '@testing-library/react';
+import {act} from './act';
 import {MenuTesterOpts, UserOpts} from './types';
 import {triggerLongPress} from './events';
+import {waitFor, within} from '@testing-library/dom';
 
 interface MenuOpenOpts {
   /**

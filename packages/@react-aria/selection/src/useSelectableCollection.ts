@@ -201,7 +201,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       }
       case 'ArrowLeft': {
         if (delegate.getKeyLeftOf) {
-          let nextKey: Key | undefined | null = manager.focusedKey != null ? delegate.getKeyLeftOf?.(manager.focusedKey) : null;
+          let nextKey: Key | undefined | null = manager.focusedKey != null ? delegate.getKeyLeftOf?.(manager.focusedKey) : delegate.getFirstKey?.();
           if (nextKey == null && shouldFocusWrap) {
             nextKey = direction === 'rtl' ? delegate.getFirstKey?.(manager.focusedKey) : delegate.getLastKey?.(manager.focusedKey);
           }
@@ -214,7 +214,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       }
       case 'ArrowRight': {
         if (delegate.getKeyRightOf) {
-          let nextKey: Key | undefined | null = manager.focusedKey != null ? delegate.getKeyRightOf?.(manager.focusedKey) : null;
+          let nextKey: Key | undefined | null = manager.focusedKey != null ? delegate.getKeyRightOf?.(manager.focusedKey) : delegate.getFirstKey?.();
           if (nextKey == null && shouldFocusWrap) {
             nextKey = direction === 'rtl' ? delegate.getLastKey?.(manager.focusedKey) : delegate.getFirstKey?.(manager.focusedKey);
           }

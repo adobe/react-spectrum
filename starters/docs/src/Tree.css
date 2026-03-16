@@ -16,6 +16,17 @@
   --drag-button-width: 0px;
   --checkbox-width: 0px;
 
+  .react-aria-TreeSection:not(:first-child) {
+    margin-top: var(--spacing-4);
+  }
+
+  .react-aria-TreeHeader {
+    font-size: var(--font-size-lg);
+    font-weight: 500;
+    padding: var(--spacing-1) var(--spacing-2);
+    color: var(--text-color);
+  }
+
   &[data-focus-visible] {
     outline: 2px solid var(--focus-ring-color);
     outline-offset: -1px;
