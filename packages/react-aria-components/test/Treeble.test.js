@@ -20,7 +20,7 @@ export function Cell(props) {
   return (
     <AriaCell {...props}>
       {composeRenderProps(props.children, (children, {hasChildItems, isTreeColumn}) => (<>
-        {isTreeColumn && hasChildItems && 
+        {isTreeColumn && hasChildItems &&
           <Button slot="chevron">&gt;</Button>
         }
         {children}
@@ -93,6 +93,76 @@ function Example(props) {
   );
 }
 
+function ReorderableTreeble(props) {
+  let tree = useTreeData({
+    initialItems: [
+      {id: '1', title: 'Documents', type: 'Directory', date: '10/20/2025', children: [
+        {id: '2', title: 'Project', type: 'Directory', date: '8/2/2025', children: [
+          {id: '3', title: 'Weekly Report', type: 'File', date: '7/10/2025', children: []},
+          {id: '4', title: 'Budget', type: 'File', date: '8/20/2025', children: []}
+        ]}
+      ]},
+      {id: '5', title: 'Photos', type: 'Directory', date: '2/3/2026', children: [
+        {id: '6', title: 'Image 1', type: 'File', date: '1/23/2026', children: []},
+        {id: '7', title: 'Image 2', type: 'File', date: '2/3/2026', children: []}
+      ]}
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys, items) => items.map(item => ({'text/plain': item.value.title})),
+    onMove(e) {
+      if (e.target.dropPosition === 'before') {
+        tree.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        tree.moveAfter(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'on') {
+        // Move items to become children of the target
+        let targetNode = tree.getItem(e.target.key);
+        if (targetNode) {
+          let targetIndex = targetNode.children ? targetNode.children.length : 0;
+          let keyArray = Array.from(e.keys);
+          for (let i = 0; i < keyArray.length; i++) {
+            tree.move(keyArray[i], e.target.key, targetIndex + i);
+          }
+        }
+      }
+    }
+  });
+
+  return (
+    <Table
+      aria-label="Files"
+      selectionMode="multiple"
+      treeColumn="name"
+      defaultExpandedKeys={['5']}
+      dragAndDropHooks={dragAndDropHooks}
+      {...props}>
+      <TableHeader>
+        <Column />
+        <Column id="name" isRowHeader>Name</Column>
+        <Column id="type">Type</Column>
+        <Column id="date">Date Modified</Column>
+      </TableHeader>
+      <TableBody items={tree.items}>
+        {function renderItem(item) {
+          return (
+            <Row id={item.key} textValue={item.value.title}>
+              <Cell><Button slot="drag" /></Cell>
+              <Cell>{item.value.title}</Cell>
+              <Cell>{item.value.type}</Cell>
+              <Cell>{item.value.date}</Cell>
+              {item.children && <Collection items={item.children}>
+                {renderItem}
+              </Collection>}
+            </Row>
+          );
+        }}
+      </TableBody>
+    </Table>
+  );
+}
+
 describe('Treeble', () => {
   let utils = new User();
   let user;
@@ -105,7 +175,7 @@ describe('Treeble', () => {
   it('renders a treegrid', () => {
     let tree = render(<Example />);
     let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
-    
+
     expect(tester.table).toHaveAttribute('role', 'treegrid');
 
     expect(tester.rows).toHaveLength(4);
@@ -413,7 +483,7 @@ describe('Treeble', () => {
     await user.tab();
     expect(document.activeElement).toBe(tester.rows[0]);
     expect(tester.rows[0]).toHaveAttribute('aria-expanded', 'false');
-    
+
     await user.keyboard('{ArrowRight}');
     expect(document.activeElement).toBe(tester.rows[0]);
     expect(tester.rows[0]).toHaveAttribute('aria-expanded', 'true');
@@ -455,75 +525,6 @@ describe('Treeble', () => {
   });
 
   it('should support drag and drop', async () => {
-    function ReorderableTreeble() {
-      let tree = useTreeData({
-        initialItems: [
-          {id: '1', title: 'Documents', type: 'Directory', date: '10/20/2025', children: [
-            {id: '2', title: 'Project', type: 'Directory', date: '8/2/2025', children: [
-              {id: '3', title: 'Weekly Report', type: 'File', date: '7/10/2025', children: []},
-              {id: '4', title: 'Budget', type: 'File', date: '8/20/2025', children: []}
-            ]}
-          ]},
-          {id: '5', title: 'Photos', type: 'Directory', date: '2/3/2026', children: [
-            {id: '6', title: 'Image 1', type: 'File', date: '1/23/2026', children: []},
-            {id: '7', title: 'Image 2', type: 'File', date: '2/3/2026', children: []}
-          ]}
-        ]
-      });
-
-      let {dragAndDropHooks} = useDragAndDrop({
-        getItems: (keys, items) => items.map(item => ({'text/plain': item.value.title})),
-        onMove(e) {
-          if (e.target.dropPosition === 'before') {
-            tree.moveBefore(e.target.key, e.keys);
-          } else if (e.target.dropPosition === 'after') {
-            tree.moveAfter(e.target.key, e.keys);
-          } else if (e.target.dropPosition === 'on') {
-            // Move items to become children of the target
-            let targetNode = tree.getItem(e.target.key);
-            if (targetNode) {
-              let targetIndex = targetNode.children ? targetNode.children.length : 0;
-              let keyArray = Array.from(e.keys);
-              for (let i = 0; i < keyArray.length; i++) {
-                tree.move(keyArray[i], e.target.key, targetIndex + i);
-              }
-            }
-          }
-        }
-      });
-
-      return (
-        <Table
-          aria-label="Files"
-          selectionMode="multiple"
-          treeColumn="name"
-          defaultExpandedKeys={['5']}
-          dragAndDropHooks={dragAndDropHooks}>
-          <TableHeader>
-            <Column />
-            <Column id="name" isRowHeader>Name</Column>
-            <Column id="type">Type</Column>
-            <Column id="date">Date Modified</Column>
-          </TableHeader>
-          <TableBody items={tree.items}>
-            {function renderItem(item) {
-              return (
-                <Row id={item.key} textValue={item.value.title}>
-                  <Cell><Button slot="drag" /></Cell>
-                  <Cell>{item.value.title}</Cell>
-                  <Cell>{item.value.type}</Cell>
-                  <Cell>{item.value.date}</Cell>
-                  {item.children && <Collection items={item.children}>
-                    {renderItem}
-                  </Collection>}
-                </Row>
-              );
-            }}
-          </TableBody>
-        </Table>
-      );
-    }
-
     let tree = render(<ReorderableTreeble />);
     let tester = utils.createTester('Table', {root: tree.getByRole('treegrid')});
 
@@ -572,7 +573,7 @@ describe('Treeble', () => {
       'Insert after Image 2',
       'Insert after Photos'
     ]);
-    
+
     await user.keyboard('{Enter}');
     act(() => jest.runAllTimers());
 
@@ -583,5 +584,69 @@ describe('Treeble', () => {
       '>Photos',
       'Image 1'
     ]);
+  });
+
+  it('should properly walk through nested levels of drop positioning', async () => {
+    render(<ReorderableTreeble defaultExpandedKeys={['1', '2']} />);
+    await user.tab();
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowRight}');
+    await user.keyboard('{Enter}');
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Budget');
+
+    await user.keyboard('{ArrowDown}');
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Project');
+
+    await user.keyboard('{ArrowDown}');
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Documents and Photos');
+
+    await user.keyboard('{ArrowDown}');
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Photos');
+
+    await user.keyboard('{ArrowUp}');
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Documents and Photos');
+
+    await user.keyboard('{ArrowUp}');
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Project');
+
+    await user.keyboard('{ArrowUp}');
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Budget');
+
+    await user.keyboard('{ArrowUp}');
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Weekly Report and Budget');
+
+    await user.keyboard('{ArrowUp}');
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Weekly Report');
+
+    await user.keyboard('{ArrowUp}');
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Weekly Report');
+
+    await user.keyboard('{ArrowUp}');
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Project');
+
+    await user.keyboard('{ArrowUp}');
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Project');
+
+    await user.keyboard('{ArrowUp}');
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Documents');
+
+    await user.keyboard('{ArrowUp}');
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Documents');
   });
 });
