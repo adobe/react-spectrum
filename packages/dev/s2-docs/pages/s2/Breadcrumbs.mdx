@@ -12,6 +12,7 @@ export const description = 'Display a hierarchy of links to the current page or 
 <PageDescription>{docs.exports.Breadcrumbs.description}</PageDescription>
 
 ```tsx render docs={docs.exports.Breadcrumbs} links={docs.links} props={['size', 'isDisabled']} initialProps={{}} type="s2"
+"use client";
 import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
 
 <Breadcrumbs/* PROPS */>
@@ -74,7 +75,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
     padding: 16,
     boxSizing: 'border-box',
     borderWidth: 1,
-    borderStyle: 'solid', 
+    borderStyle: 'solid',
     borderColor: 'gray-300',
     borderRadius: 'default',
     resize: 'horizontal',

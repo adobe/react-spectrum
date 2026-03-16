@@ -20,11 +20,11 @@ interface SlottedValue<T> {
   slots?: Record<string | symbol, T>
 }
 
-export type SlottedContextValue<T> = (SlottedValue<T> & T) | null | undefined;
+export type SlottedContextValue<T> = SlottedValue<T> | T | null | undefined;
 export type ContextValue<T, E> = SlottedContextValue<WithRef<T, E>>;
 
 type ProviderValue<T> = [Context<T>, T];
-type ProviderValues<A, B, C, D, E, F, G, H, I, J, K> =
+type ProviderValues<A, B, C, D, E, F, G, H, I, J, K, L> =
   | [ProviderValue<A>]
   | [ProviderValue<A>, ProviderValue<B>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>]
@@ -35,14 +35,15 @@ type ProviderValues<A, B, C, D, E, F, G, H, I, J, K> =
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>, ProviderValue<J>]
-  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>, ProviderValue<J>, ProviderValue<K>];
+  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>, ProviderValue<J>, ProviderValue<K>]
+  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>, ProviderValue<J>, ProviderValue<K>, ProviderValue<L>];
 
-interface ProviderProps<A, B, C, D, E, F, G, H, I, J, K> {
-  values: ProviderValues<A, B, C, D, E, F, G, H, I, J, K>,
+interface ProviderProps<A, B, C, D, E, F, G, H, I, J, K, L> {
+  values: ProviderValues<A, B, C, D, E, F, G, H, I, J, K, L>,
   children: ReactNode
 }
 
-export function Provider<A, B, C, D, E, F, G, H, I, J, K>({values, children}: ProviderProps<A, B, C, D, E, F, G, H, I, J, K>): JSX.Element {
+export function Provider<A, B, C, D, E, F, G, H, I, J, K, L>({values, children}: ProviderProps<A, B, C, D, E, F, G, H, I, J, K, L>): JSX.Element {
   for (let [Context, value] of values) {
     // @ts-ignore
     children = <Context.Provider value={value}>{children}</Context.Provider>;
@@ -274,9 +275,10 @@ export interface DOMRenderProps<E extends keyof React.JSX.IntrinsicElements, T> 
    * such as router links, animation libraries, and pre-styled components.
    * 
    * Requirements:
-   * - You must render the expected element type (e.g. if `<button>` is expected, you cannot render an `<a>`).
-   * - Only a single root DOM element can be rendered (no fragments).
-   * - You must pass through props and ref to the underlying DOM element, merging with your own prop as appropriate.
+   * 
+   * * You must render the expected element type (e.g. if `<button>` is expected, you cannot render an `<a>`).
+   * * Only a single root DOM element can be rendered (no fragments).
+   * * You must pass through props and ref to the underlying DOM element, merging with your own prop as appropriate.
    */
   render?: DOMRenderFunction<E, T>
 }
@@ -294,9 +296,10 @@ export interface PossibleLinkDOMRenderProps<Fallback extends keyof React.JSX.Int
    * Note: You can check if `'href' in props` in order to tell whether to render an `<a>` element.
    * 
    * Requirements:
-   * - You must render the expected element type (e.g. if `<a>` is expected, you cannot render a `<button>`).
-   * - Only a single root DOM element can be rendered (no fragments).
-   * - You must pass through props and ref to the underlying DOM element, merging with your own prop as appropriate.
+   * 
+   * * You must render the expected element type (e.g. if `<a>` is expected, you cannot render a `<button>`).
+   * * Only a single root DOM element can be rendered (no fragments).
+   * * You must pass through props and ref to the underlying DOM element, merging with your own prop as appropriate.
    */
   render?: (props: DetailedHTMLProps<LinkWithRequiredHref, HTMLAnchorElement> | React.JSX.IntrinsicElements[Fallback], renderProps: T) => ReactElement
 }

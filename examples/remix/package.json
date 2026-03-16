@@ -30,7 +30,7 @@
     "vite-tsconfig-paths": "^4.2.1"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24.0.0"
   },
   "workspaces": [
     "../../packages/react-aria-components",

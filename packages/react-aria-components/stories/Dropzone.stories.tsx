@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Button, DropZone, FileTrigger, Link, Text, useDrag} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing, mergeProps, useButton, useClipboard} from 'react-aria';

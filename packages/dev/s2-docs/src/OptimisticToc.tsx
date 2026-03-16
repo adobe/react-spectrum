@@ -13,13 +13,21 @@ function anchorId(children) {
   return children.replace(/\s/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
 }
 
+let tocLinkTextStyle = style({
+  overflowWrap: 'break-word',
+  wordBreak: 'break-word',
+  minWidth: 0
+});
+
 function Toc({toc, isNested = false}: {toc: TocNode[], isNested?: boolean}) {
   return (
     <OnPageNav>
       <SideNav isNested={isNested}>
         {toc.map((c, i) => (
           <SideNavItem key={i}>
-            <SideNavLink href={'#' + anchorId(c.title)}>{c.title}</SideNavLink>
+            <SideNavLink href={'#' + anchorId(c.title)} title={c.title}>
+              <span className={tocLinkTextStyle}>{c.title}</span>
+            </SideNavLink>
             {c.children.length > 0 && <Toc toc={c.children} isNested />}
           </SideNavItem>
         ))}

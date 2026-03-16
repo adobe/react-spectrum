@@ -13,7 +13,6 @@ import Parcel from '../../src/icons/Parcel';
 import Webpack from '../../src/icons/Webpack';
 import Rollup from '../../src/icons/Rollup';
 import ESBuild from '../../src/icons/Esbuild';
-import Routers from '../../src/routers.mdx';
 
 export const section = 'Guides';
 export const tags = ['framework', 'setup', 'routing', 'ssr'];
@@ -26,7 +25,7 @@ export const description = 'How to integrate with your framework.';
 <Tabs aria-label="Frameworks" density="compact">
   <TabList><Tab id="next"><Nextjs /><Text>Next.js</Text></Tab><Tab id="react-router"><ReactRouter /><Text>React Router</Text></Tab><Tab id="parcel"><Parcel /><Text>Parcel</Text></Tab><Tab id="vite"><Vite /><Text>Vite</Text></Tab><Tab id="webpack"><Webpack /><Text>webpack</Text></Tab><Tab id="rollup"><Rollup /><Text>Rollup</Text></Tab><Tab id="esbuild"><ESBuild /><Text>ESBuild</Text></Tab></TabList>
   <TabPanel id="next">
-    To integrate with Next.js (app router), ensure the locale on the server matches the client, and configure React Aria links to use the Next.js router.
+    To integrate with Next.js (app router), ensure the locale on the server matches the client.
 
     <StepList>
       <Step>
@@ -57,30 +56,18 @@ export const description = 'How to integrate with your framework.';
         ```
       </Step>
       <Step>
-        <Counter />Create `app/provider.tsx`. This should render an `I18nProvider` to set the locale used by React Aria, and a `RouterProvider` to integrate with the Next.js router.
+        <Counter />Create `app/provider.tsx`. This should render an `I18nProvider` to set the locale used by React Aria.
 
         ```tsx
         // app/provider.tsx
         "use client";
 
-        import {useRouter} from 'next/navigation';
-        import {RouterProvider, I18nProvider} from 'react-aria-components';
-
-        // Configure the type of the `routerOptions` prop on all React Aria components.
-        declare module 'react-aria-components' {
-          interface RouterConfig {
-            routerOptions: NonNullable<Parameters<ReturnType<typeof useRouter>['push']>[1]>
-          }
-        }
+        import {I18nProvider} from 'react-aria-components';
 
         export function ClientProviders({lang, children}) {
-          let router = useRouter();
-
           return (
             <I18nProvider locale={lang}>
-              <RouterProvider navigate={router.push}>
-                {children}
-              </RouterProvider>
+              {children}
             </I18nProvider>
           );
         }
@@ -89,7 +76,7 @@ export const description = 'How to integrate with your framework.';
     </StepList>
   </TabPanel>
   <TabPanel id="react-router">
-    To integrate with React Router (framework mode), ensure the locale on the server matches the client, configure React Aria links to use client side routing, and exclude localized strings from the client bundle. If you're using declarative mode, choose your bundler above.
+    To integrate with React Router (framework mode), ensure the locale on the server matches the client, and exclude localized strings from the client bundle. If you're using declarative mode, choose your bundler above.
 
     <StepList>
       <Step>
@@ -149,21 +136,10 @@ export const description = 'How to integrate with your framework.';
         ```tsx
         // app/root.tsx
         import {useLocale} from 'react-aria-components';
-        import {useNavigate, useHref, type NavigateOptions} from 'react-router';
-
-        /*- begin highlight -*/
-        // Configure the type of the `routerOptions` prop on all React Aria components.
-        declare module 'react-aria-components' {
-          interface RouterConfig {
-            routerOptions: NavigateOptions
-          }
-        }
-        /*- end highlight -*/
 
         export function Layout({children}) {
           /*- begin highlight -*/
           let {locale, direction} = useLocale();
-          let navigate = useNavigate();
           /*- end highlight -*/
 
           return (
@@ -174,11 +150,7 @@ export const description = 'How to integrate with your framework.';
                 {/* ... */}
               </head>
               <body>
-                {/*- begin highlight -*/}
-                <RouterProvider navigate={navigate} useHref={useHref}>
-                {/*- end highlight -*/}
-                  {children}
-                </RouterProvider>
+                {children}
                 {/* ... */}
               </body>
             </html>
@@ -215,12 +187,9 @@ export const description = 'How to integrate with your framework.';
     </StepList>
   </TabPanel>
   <TabPanel id="parcel">
-    To integrate with a client-only Parcel SPA, configure React Aria links to use your client side router, and optimize the client bundle to include localized strings for your supported languages.
+    To integrate with a client-only Parcel SPA, and optimize the client bundle to include localized strings for your supported languages.
 
     <StepList>
-      <Step>
-        <Routers components={props.components} />
-      </Step>
       <Step>
         <Counter />By default, React Aria includes localized strings for 30+ languages. To optimize the JavaScript bundle to include only your supported languages, install our bundler plugin.
         <InstallCommand pkg="@react-aria/parcel-resolver-optimize-locales" />
@@ -247,12 +216,9 @@ export const description = 'How to integrate with your framework.';
     </StepList>
   </TabPanel>
   <TabPanel id="vite">
-    To integrate with a client-only Vite SPA, configure React Aria links to use your client side router, and optimize the client bundle to include localized strings for your supported languages.
+    To integrate with a client-only Vite SPA, and optimize the client bundle to include localized strings for your supported languages.
 
     <StepList>
-      <Step>
-        <Routers components={props.components} />
-      </Step>
       <Step>
         <Counter />By default, React Aria includes localized strings for 30+ languages. To optimize the JavaScript bundle to include only your supported languages, install our bundler plugin.
         <InstallCommand pkg="@react-aria/optimize-locales-plugin" />
@@ -280,12 +246,9 @@ export const description = 'How to integrate with your framework.';
     </StepList>
   </TabPanel>
   <TabPanel id="webpack">
-    To integrate with a client-only webpack SPA, configure React Aria links to use your client side router, and optimize the client bundle to include localized strings for your supported languages.
+    To integrate with a client-only webpack SPA, and optimize the client bundle to include localized strings for your supported languages.
 
     <StepList>
-      <Step>
-        <Routers components={props.components} />
-      </Step>
       <Step>
         <Counter />By default, React Aria includes localized strings for 30+ languages. To optimize the JavaScript bundle to include only your supported languages, install our bundler plugin.
         <InstallCommand pkg="@react-aria/optimize-locales-plugin" />
@@ -310,12 +273,9 @@ export const description = 'How to integrate with your framework.';
     </StepList>
   </TabPanel>
   <TabPanel id="rollup">
-    To integrate with a client-only Rollup SPA, configure React Aria links to use your client side router, and optimize the client bundle to include localized strings for your supported languages.
+    To integrate with a client-only Rollup SPA, and optimize the client bundle to include localized strings for your supported languages.
 
     <StepList>
-      <Step>
-        <Routers components={props.components} />
-      </Step>
       <Step>
         <Counter />By default, React Aria includes localized strings for 30+ languages. To optimize the JavaScript bundle to include only your supported languages, install our bundler plugin.
         <InstallCommand pkg="@react-aria/optimize-locales-plugin" />
@@ -340,12 +300,9 @@ export const description = 'How to integrate with your framework.';
     </StepList>
   </TabPanel>
   <TabPanel id="esbuild">
-    To integrate with a client-only ESBuild SPA, configure React Aria links to use your client side router, and optimize the client bundle to include localized strings for your supported languages.
+    To integrate with a client-only ESBuild SPA, and optimize the client bundle to include localized strings for your supported languages.
 
     <StepList>
-      <Step>
-        <Routers components={props.components} />
-      </Step>
       <Step>
         <Counter />By default, React Aria includes localized strings for 30+ languages. To optimize the JavaScript bundle to include only your supported languages, install our bundler plugin.
         <InstallCommand pkg="@react-aria/optimize-locales-plugin" />

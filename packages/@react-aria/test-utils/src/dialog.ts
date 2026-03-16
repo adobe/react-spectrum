@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, waitFor, within} from '@testing-library/react';
+import {act} from './act';
 import {DialogTesterOpts, UserOpts} from './types';
-import {nodeContains} from '@react-aria/utils';
+import {waitFor, within} from '@testing-library/dom';
 
 interface DialogOpenOpts {
   /**
@@ -97,7 +97,7 @@ export class DialogTester {
           }
         });
 
-        if (dialog && document.activeElement !== this._trigger && nodeContains(dialog, document.activeElement)) {
+        if (dialog && document.activeElement !== this._trigger && dialog.contains(document.activeElement)) {
           this._dialog = dialog;
         } else {
           throw new Error('New modal dialog doesnt contain the active element OR the active element is still the trigger. Uncertain if the proper modal dialog was found');
@@ -114,7 +114,7 @@ export class DialogTester {
     if (dialog) {
       await this.user.keyboard('[Escape]');
       await waitFor(() => {
-        if (nodeContains(document, dialog)) {
+        if (document.contains(dialog)) {
           throw new Error('Expected the dialog to not be in the document after closing it.');
         } else {
           this._dialog = undefined;
@@ -139,6 +139,6 @@ export class DialogTester {
    * Returns the dialog if present.
    */
   get dialog(): HTMLElement | null {
-    return this._dialog && nodeContains(document, this._dialog) ? this._dialog : null;
+    return this._dialog && document.contains(this._dialog) ? this._dialog : null;
   }
 }

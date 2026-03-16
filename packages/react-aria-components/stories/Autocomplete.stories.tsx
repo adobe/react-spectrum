@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Autocomplete, Button, Cell, Collection, Column, DialogTrigger, GridList, GridListHeader, GridListSection, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, OverlayArrow, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Table, TableBody, TableHeader, TableLayout, TagGroup, TagList, Text, TextArea, TextField, Tooltip, TooltipTrigger, Virtualizer} from 'react-aria-components';
 import {LoadingSpinner, MyListBoxItem, MyMenuItem} from './utils';
 import {Meta, StoryObj} from '@storybook/react';
@@ -1207,4 +1207,40 @@ export const AutocompleteUserCustomFiltering: AutocompleteStory = {
       data: 'It should only filter if you type @, using the remainder of the string after the @ symbol as the filter text'
     }
   }
+};
+
+export function AutocompleteGrid() {
+  return (
+    <AutocompleteWrapper>
+      <div>
+        <TextField autoFocus data-testid="autocomplete-example">
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+        </TextField>
+        <ListBox
+          className={styles.menu}
+          aria-label="test listbox"
+          layout="grid"
+          orientation="vertical"
+          style={{
+            width: 300,
+            height: 300,
+            display: 'grid',
+            gridTemplate: 'repeat(3, 1fr) / repeat(3, 1fr)',
+            gridAutoFlow: 'row'
+          }}>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,1</MyListBoxItem>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,2</MyListBoxItem>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,3</MyListBoxItem>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,1</MyListBoxItem>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,2</MyListBoxItem>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,3</MyListBoxItem>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,1</MyListBoxItem>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,2</MyListBoxItem>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,3</MyListBoxItem>
+        </ListBox>
+      </div>
+    </AutocompleteWrapper>
+  );
 };

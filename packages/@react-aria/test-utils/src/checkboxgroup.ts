@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, within} from '@testing-library/react';
+import {act} from './act';
 import {CheckboxGroupTesterOpts, UserOpts} from './types';
-import {nodeContains} from '@react-aria/utils';
 import {pressElement} from './events';
+import {within} from '@testing-library/dom';
 
 interface TriggerCheckboxOptions {
   /**
@@ -95,7 +95,7 @@ export class CheckboxGroupTester {
       throw new Error('Checkbox provided is not in the checkbox group.');
     }
 
-    if (!nodeContains(this.checkboxgroup, document.activeElement)) {
+    if (!this.checkboxgroup.contains(document.activeElement)) {
       act(() => checkboxes[0].focus());
     }
 

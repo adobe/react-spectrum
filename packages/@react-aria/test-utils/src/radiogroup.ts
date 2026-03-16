@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, within} from '@testing-library/react';
+import {act} from './act';
 import {Direction, Orientation, RadioGroupTesterOpts, UserOpts} from './types';
-import {nodeContains} from '@react-aria/utils';
 import {pressElement} from './events';
+import {within} from '@testing-library/dom';
 
 interface TriggerRadioOptions {
   /**
@@ -95,7 +95,7 @@ export class RadioGroupTester {
       throw new Error('Radio provided is not in the radio group.');
     }
 
-    if (!nodeContains(this.radiogroup, document.activeElement)) {
+    if (!this.radiogroup.contains(document.activeElement)) {
       let selectedRadio = this.selectedRadio;
       if (selectedRadio != null) {
         act(() => selectedRadio.focus());

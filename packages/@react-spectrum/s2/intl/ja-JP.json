@@ -23,6 +23,7 @@
   "label.(optional)": "（オプション）",
   "label.(required)": "（必須）",
   "menu.moreActions": "その他のアクション",
+  "menu.unavailable": "利用できません。詳しくは、展開して確認してください",
   "notificationbadge.indicatorOnly": "新規アクティビティ",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "選択…",

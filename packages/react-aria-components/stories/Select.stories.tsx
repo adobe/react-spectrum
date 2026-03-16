@@ -31,9 +31,6 @@ export default {
     selectionMode: {
       control: 'radio',
       options: ['single', 'multiple']
-    },
-    isTriggerUpWhenOpen: {
-      control: 'boolean'
     }
   }
 } as Meta<typeof Select>;

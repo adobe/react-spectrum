@@ -13,6 +13,7 @@
 import {chain} from './chain';
 import clsx from 'clsx';
 import {mergeIds} from './useId';
+import {mergeRefs} from './mergeRefs';
 
 interface Props {
   [key: string]: any
@@ -28,7 +29,7 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
 
 /**
  * Merges multiple props objects together. Event handlers are chained,
- * classNames are combined, and ids are deduplicated.
+ * classNames are combined, ids are deduplicated, and refs are merged.
  * For all other props, the last prop object overrides all previous ones.
  * @param args - Multiple sets of props to merge together.
  */
@@ -63,6 +64,8 @@ export function mergeProps<T extends PropsArg[]>(...args: T): UnionToIntersectio
         result[key] = clsx(a, b);
       } else if (key === 'id' && a && b) {
         result.id = mergeIds(a, b);
+      } else if (key === 'ref' && a && b) {
+        result.ref = mergeRefs(a, b);
         // Override others
       } else {
         result[key] = b !== undefined ? b : a;

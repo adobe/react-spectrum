@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, waitFor, within} from '@testing-library/react';
+import {act} from './act';
 import {ComboBoxTesterOpts, UserOpts} from './types';
-import {nodeContains} from '@react-aria/utils';
+import {waitFor, within} from '@testing-library/dom';
 
 interface ComboBoxOpenOpts {
   /**
@@ -177,7 +177,7 @@ export class ComboBoxTester {
 
       if (option.getAttribute('href') == null) {
         await waitFor(() => {
-          if (nodeContains(document, listbox)) {
+          if (document.contains(listbox)) {
             throw new Error('Expected listbox element to not be in the document after selecting an option');
           } else {
             return true;
@@ -199,7 +199,7 @@ export class ComboBoxTester {
       await this.user.keyboard('[Escape]');
 
       await waitFor(() => {
-        if (nodeContains(document, listbox)) {
+        if (document.contains(listbox)) {
           throw new Error('Expected listbox element to not be in the document after selecting an option');
         } else {
           return true;

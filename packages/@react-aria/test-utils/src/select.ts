@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, waitFor, within} from '@testing-library/react';
-import {nodeContains} from '@react-aria/utils';
+import {act} from './act';
 import {SelectTesterOpts, UserOpts} from './types';
+import {waitFor, within} from '@testing-library/dom';
 
 interface SelectOpenOpts {
   /**
@@ -111,7 +111,7 @@ export class SelectTester {
       }
     });
 
-    if (listbox && nodeContains(document, listbox)) {
+    if (listbox && document.contains(listbox)) {
       throw new Error('Expected the select element listbox to not be in the document after closing the dropdown.');
     }
   }
@@ -192,7 +192,7 @@ export class SelectTester {
           return;
         }
 
-        if (document.activeElement !== listbox && !nodeContains(listbox, document.activeElement)) {
+        if (document.activeElement !== listbox && !listbox.contains(document.activeElement)) {
           act(() => listbox.focus());
         }
         await this.keyboardNavigateToOption({option});
@@ -215,7 +215,7 @@ export class SelectTester {
           }
         });
 
-        if (nodeContains(document, listbox)) {
+        if (document.contains(listbox)) {
           throw new Error('Expected select element listbox to not be in the document after selecting an option');
         }
       }

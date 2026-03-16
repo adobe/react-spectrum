@@ -64,14 +64,14 @@ let TestGridListSections = ({listBoxProps, itemProps}) => (
 );
 
 
-let DraggableGridList = (props) => {
+let DraggableGridList = ({orientation, ...props}) => {
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
     ...props
   });
 
   return (
-    <GridList aria-label="Test" dragAndDropHooks={dragAndDropHooks}>
+    <GridList aria-label="Test" orientation={orientation} dragAndDropHooks={dragAndDropHooks}>
       <GridListItem id="cat" textValue="Cat"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Cat</GridListItem>
       <GridListItem id="dog" textValue="Dog"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Dog</GridListItem>
       <GridListItem id="kangaroo" textValue="Kangaroo"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Kangaroo</GridListItem>
@@ -418,6 +418,64 @@ describe('GridList', () => {
     expect(document.activeElement).toBe(items[2]);
 
     await user.keyboard('{ArrowLeft}');
+    expect(document.activeElement).toBe(items[1]);
+
+    await user.tab();
+    expect(document.activeElement).toBe(buttonRef.current);
+
+    await user.tab();
+    expect(document.activeElement).toBe(document.body);
+  });
+
+  it('should support horizontal orientation', async () => {
+    let {getAllByRole} = render(
+      <GridList aria-label="Test" orientation="horizontal">
+        <GridListItem id="cat">Cat</GridListItem>
+        <GridListItem id="dog">Dog</GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+
+    let items = getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[1]);
+
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[2]);
+
+    await user.keyboard('{ArrowUp}');
+    expect(document.activeElement).toBe(items[1]);
+
+    await user.keyboard('{ArrowUp}');
+    expect(document.activeElement).toBe(items[0]);
+  });
+
+  it('should support horizontal orientation with grid layout', async () => {
+    let buttonRef = React.createRef();
+    let {getAllByRole} = render(
+      <GridList aria-label="Test" orientation="horizontal" layout="grid">
+        <GridListItem id="cat">Cat</GridListItem>
+        <GridListItem id="dog" textValue="Dog">Dog <Button aria-label="Info" ref={buttonRef}>ⓘ</Button></GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+
+    let items = getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[1]);
+
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[2]);
+
+    await user.keyboard('{ArrowUp}');
     expect(document.activeElement).toBe(items[1]);
 
     await user.tab();
@@ -995,6 +1053,32 @@ describe('GridList', () => {
       act(() => jest.runAllTimers());
 
       expect(onRootDrop).toHaveBeenCalledTimes(1);
+    });
+
+    it('should support dropping with horizontal arrow keys when orientation is horizontal', async () => {
+      let onReorder = jest.fn();
+      let {getAllByRole} = render(<DraggableGridList orientation="horizontal" onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
+
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      let rows = getAllByRole('row');
+      expect(rows[2]).toHaveAttribute('data-drop-target');
+      expect(within(rows[2]).getByRole('button')).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
+
+      await user.keyboard('{ArrowRight}');
+      expect(rows[3]).toHaveAttribute('data-drop-target', 'true');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Dog and Kangaroo');
+
+      await user.keyboard('{ArrowLeft}');
+      expect(rows[2]).toHaveAttribute('data-drop-target', 'true');
+
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      expect(onReorder).toHaveBeenCalledTimes(1);
     });
   });
 

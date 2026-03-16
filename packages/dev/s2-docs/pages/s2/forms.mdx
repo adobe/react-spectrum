@@ -17,6 +17,7 @@ export const description = 'How to build accessible forms with validation.';
 Accessible forms start with clear, descriptive labels for each field. Use the `label` prop to add a visible label to any field. Additional help text can also be added via the `description` prop. The label and help text are announced by screen readers when the field is focused.
 
 ```tsx render
+"use client";
 import {TextField} from '@react-spectrum/s2';
 
 <TextField
@@ -131,6 +132,7 @@ Well-designed form validation assists the user with specific, helpful error mess
 All React Spectrum form components integrate with native HTML [constraint validation](https://developer.mozilla.org/en-US/docs/Web/HTML/Constraint_validation). This allows you to define constraints on each field such as required, minimum and maximum values, text formats such as email addresses, and even custom regular expression patterns. These constraints are checked by the browser when the user commits changes to the value (e.g. on blur) or submits the form.
 
 ```tsx render
+'use client';
 import {Form, TextField, ButtonGroup, Button} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 

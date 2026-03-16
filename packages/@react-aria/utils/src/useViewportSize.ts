@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {getActiveElement, getEventTarget} from './shadowdom/DOMFunctions';
+import {isIOS} from './platform';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 import {willOpenKeyboard} from './keyboard';
@@ -53,11 +55,12 @@ export function useViewportSize(): ViewportSize {
         return;
       }
 
-      if (willOpenKeyboard(e.target as Element)) {
+      if (willOpenKeyboard(getEventTarget(e) as Element)) {
         // Wait one frame to see if a new element gets focused.
         frame = requestAnimationFrame(() => {
-          if (!document.activeElement || !willOpenKeyboard(document.activeElement)) {
-            updateSize({width: window.innerWidth, height: window.innerHeight});
+          let activeElement = getActiveElement();
+          if (!activeElement || !willOpenKeyboard(activeElement)) {
+            updateSize({width: document.documentElement.clientWidth, height: document.documentElement.clientHeight});
           }
         });
       }
@@ -65,7 +68,9 @@ export function useViewportSize(): ViewportSize {
 
     updateSize(getViewportSize());
 
-    window.addEventListener('blur', onBlur, true);
+    if (isIOS()) {
+      window.addEventListener('blur', onBlur, true);
+    }
 
     if (!visualViewport) {
       window.addEventListener('resize', onResize);
@@ -75,7 +80,9 @@ export function useViewportSize(): ViewportSize {
 
     return () => {
       cancelAnimationFrame(frame);
-      window.removeEventListener('blur', onBlur, true);
+      if (isIOS()) {
+        window.removeEventListener('blur', onBlur, true);
+      }
       if (!visualViewport) {
         window.removeEventListener('resize', onResize);
       } else {
@@ -90,7 +97,7 @@ export function useViewportSize(): ViewportSize {
 function getViewportSize(): ViewportSize {
   return {
     // Multiply by the visualViewport scale to get the "natural" size, unaffected by pinch zooming.
-    width: visualViewport ? visualViewport.width * visualViewport.scale : window.innerWidth,
-    height: visualViewport ? visualViewport.height * visualViewport.scale : window.innerHeight
+    width: visualViewport ? visualViewport.width * visualViewport.scale : document.documentElement.clientWidth,
+    height: visualViewport ? visualViewport.height * visualViewport.scale : document.documentElement.clientHeight
   };
 }

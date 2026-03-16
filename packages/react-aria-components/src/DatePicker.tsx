@@ -67,6 +67,11 @@ export interface DatePickerRenderProps {
    */
   isInvalid: boolean,
   /**
+   * Whether the date picker is required.
+   * @selector [data-required]
+   */
+  isRequired: boolean,
+  /**
    * Whether the date picker's popover is currently open.
    * @selector [data-open]
    */
@@ -88,18 +93,14 @@ export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePicke
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-DatePicker'
    */
-  className?: ClassNameOrFunction<DatePickerRenderProps>,
-  /** Whether the trigger is up when the overlay is open. */
-  isTriggerUpWhenOpen?: boolean
+  className?: ClassNameOrFunction<DatePickerRenderProps>
 }
 export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, Pick<DateRangePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DateRangePickerRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-DateRangePicker'
    */
-  className?: ClassNameOrFunction<DateRangePickerRenderProps>,
-  /** Whether the trigger is up when the overlay is open. */
-  isTriggerUpWhenOpen?: boolean
+  className?: ClassNameOrFunction<DateRangePickerRenderProps>
 }
 
 export const DatePickerContext = createContext<ContextValue<DatePickerProps<any>, HTMLDivElement>>(null);
@@ -165,7 +166,8 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
       isDisabled: props.isDisabled || false,
       isInvalid: state.isInvalid,
       isOpen: state.isOpen,
-      isReadOnly: props.isReadOnly || false
+      isReadOnly: props.isReadOnly || false,
+      isRequired: props.isRequired || false
     },
     defaultClassName: 'react-aria-DatePicker'
   });
@@ -179,7 +181,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         [DatePickerStateContext, state],
         [GroupContext, {...groupProps, ref: groupRef, isInvalid: state.isInvalid}],
         [DateFieldContext, fieldProps],
-        [ButtonContext, {...buttonProps, isPressed: !props.isTriggerUpWhenOpen && state.isOpen}],
+        [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [CalendarContext, calendarProps],
         [OverlayTriggerStateContext, state],
@@ -208,6 +210,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined}
         data-readonly={props.isReadOnly || undefined}
+        data-required={props.isRequired || undefined}
         data-open={state.isOpen || undefined} />
       <HiddenDateInput
         autoComplete={props.autoComplete}
@@ -275,7 +278,8 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
       isDisabled: props.isDisabled || false,
       isInvalid: state.isInvalid,
       isOpen: state.isOpen,
-      isReadOnly: props.isReadOnly || false
+      isReadOnly: props.isReadOnly || false,
+      isRequired: props.isRequired || false
     },
     defaultClassName: 'react-aria-DateRangePicker'
   });
@@ -288,7 +292,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
       values={[
         [DateRangePickerStateContext, state],
         [GroupContext, {...groupProps, ref: groupRef, isInvalid: state.isInvalid}],
-        [ButtonContext, {...buttonProps, isPressed: !props.isTriggerUpWhenOpen && state.isOpen}],
+        [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [RangeCalendarContext, calendarProps],
         [OverlayTriggerStateContext, state],
@@ -323,6 +327,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined}
         data-readonly={props.isReadOnly || undefined}
+        data-required={props.isRequired || undefined}
         data-open={state.isOpen || undefined} />
     </Provider>
   );

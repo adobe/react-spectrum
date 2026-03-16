@@ -134,15 +134,6 @@ describe('DateRangePicker', () => {
     await user.click(button);
     expect(button).toHaveAttribute('data-pressed');
   });
-    
-  it('should not apply isPressed state to button when expanded and isTriggerUpWhenOpen is true', async () => {
-    let {getByRole} = render(<TestDateRangePicker isTriggerUpWhenOpen />);
-    let button = getByRole('button');
-
-    expect(button).not.toHaveAttribute('data-pressed');
-    await user.click(button);
-    expect(button).not.toHaveAttribute('data-pressed');
-  });
 
   it('should support data-open state', async () => {
     let {getByRole} = render(<TestDateRangePicker />);
@@ -191,6 +182,53 @@ describe('DateRangePicker', () => {
 
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
+  });
+
+  it('should support required render prop', () => {
+    let {getByRole} = render(
+      <DateRangePicker isRequired>
+        {({isRequired}) => (
+          <>
+            <Label>Trip dates</Label>
+            <Group data-required-state={isRequired ? 'required' : null}>
+              <DateInput slot="start">
+                {(segment) => <DateSegment segment={segment} />}
+              </DateInput>
+              <span aria-hidden="true">–</span>
+              <DateInput slot="end">
+                {(segment) => <DateSegment segment={segment} />}
+              </DateInput>
+              <Button>▼</Button>
+            </Group>
+            <Popover>
+              <Dialog>
+                <RangeCalendar>
+                  <header>
+                    <Button slot="previous">◀</Button>
+                    <Heading />
+                    <Button slot="next">▶</Button>
+                  </header>
+                  <CalendarGrid>
+                    {(date) => <CalendarCell date={date} />}
+                  </CalendarGrid>
+                </RangeCalendar>
+              </Dialog>
+            </Popover>
+          </>
+        )}
+      </DateRangePicker>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-required-state', 'required');
+  });
+
+  it('should support required state', () => {
+    let {getByRole, rerender} = render(<TestDateRangePicker />);
+    let group = getByRole('group');
+    expect(group.closest('.react-aria-DateRangePicker')).not.toHaveAttribute('data-required');
+    rerender(<TestDateRangePicker isRequired />);
+    expect(group.closest('.react-aria-DateRangePicker')).toHaveAttribute('data-required');
   });
 
   it('should support form value', () => {

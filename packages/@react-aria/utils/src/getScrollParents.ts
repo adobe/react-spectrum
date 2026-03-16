@@ -13,14 +13,15 @@
 import {isScrollable} from './isScrollable';
 
 export function getScrollParents(node: Element, checkForOverflow?: boolean): Element[] {
-  const scrollParents: Element[] = [];
+  let parentElements: Element[] = [];
+  let root = document.scrollingElement || document.documentElement;
 
-  while (node && node !== document.documentElement) {
+  do {
     if (isScrollable(node, checkForOverflow)) {
-      scrollParents.push(node);
+      parentElements.push(node);
     }
     node = node.parentElement as Element;
-  }
+  } while (node && node !== root);
 
-  return scrollParents;
+  return parentElements;
 }

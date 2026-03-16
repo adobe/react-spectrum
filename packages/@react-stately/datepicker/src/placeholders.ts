@@ -56,6 +56,7 @@ const placeholders = new LocalizedStringDictionary({
   hu: {year: 'éééé', month: 'hh', day: 'nn'},
   ia: {year: 'aaaa', month: 'mm', day: 'dd'},
   id: {year: 'tttt', month: 'bb', day: 'hh'},
+  is: {year: 'áááá', month: 'mm', day: 'dd'},
   it: {year: 'aaaa', month: 'mm', day: 'gg'},
   ja: {year: '年', month: '月', day: '日'},
   ka: {year: 'წწწწ', month: 'თთ', day: 'რრ'},
