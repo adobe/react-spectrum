@@ -51,7 +51,7 @@ export interface ComboBoxValidationValue<M extends SelectionMode = 'single'> {
   inputValue: string
 }
 
-export interface ComboBoxProps<T, M extends SelectionMode = 'single'> extends CollectionBase<T>, InputBase, ValueBase<ValueType<M>, ChangeValueType<M>>, TextInputBase, Validation<ComboBoxValidationValue>, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
+export interface ComboBoxProps<T, M extends SelectionMode = 'single'> extends CollectionBase<T>, InputBase, ValueBase<ValueType<M>, ChangeValueType<M>>, TextInputBase, Validation<ComboBoxValidationValue<M>>, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
   /** The list of ComboBox items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of ComboBox items (controlled). */
