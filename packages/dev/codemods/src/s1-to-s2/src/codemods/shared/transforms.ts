@@ -441,9 +441,9 @@ export function updateComponentWithinCollection(
 ): void {
   const {parentComponentName, newComponentName} = options;
 
-  // Collections currently implemented
-  // TODO: Add 'ActionGroup', 'ListBox', 'ListView' once implemented
-  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'TabList', 'TabPanels', 'Collection', 'ContextualHelpTrigger']);
+  // Collections currently implemented.
+  // TODO: Add 'ActionGroup', 'ListBox' once implemented
+  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'ListView', 'TabList', 'TabPanels', 'Collection', 'ContextualHelpTrigger']);
 
   if (
     t.isJSXElement(path.node) &&

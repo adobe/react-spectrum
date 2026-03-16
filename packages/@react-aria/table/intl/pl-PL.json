@@ -7,5 +7,7 @@
   "resizerDescription": "Naciśnij Enter, aby rozpocząć zmienianie rozmiaru",
   "select": "Zaznacz",
   "selectAll": "Zaznacz wszystko",
-  "sortable": "kolumna z możliwością sortowania"
+  "sortable": "kolumna z możliwością sortowania",
+  "collapse": "Zwiń",
+  "expand": "Rozwiń"
 }

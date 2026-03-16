@@ -246,6 +246,7 @@ No updates needed.
 - If within `Breadcrumbs`: Update `Item` to be a `Breadcrumb`
 - If within `Picker`: Update `Item` to be a `PickerItem`
 - If within `ComboBox`: Update `Item` to be a `ComboBoxItem`
+- If within `ListView`: Update `Item` to be a `ListViewItem`
 - If within `TabList`: Update `Item` to be a `Tab`
 - If within `TabPanels`: Update `Item` to be a `TabPanel` and remove surrounding `TabPanels`
 - Update `key` to be `id` (and keep `key` if rendered inside `array.map`)
@@ -254,6 +255,11 @@ No updates needed.
 
 - Change `variant="overBackground"` to `staticColor="white"`
 - If `a` was used inside `Link` (legacy API), remove the `a` and apply props (i.e `href`) directly to `Link`
+
+### ListView
+
+- <PendingBadge /> Comment out `density` (it has not been implemented yet)
+- <PendingBadge /> Comment out `dragAndDropHooks` (it has not been implemented yet)
 
 ### Menu
 

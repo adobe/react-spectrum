@@ -25,7 +25,6 @@ import {getChildNodes, getItemCount} from '@react-stately/collections';
 import intlMessages from '../intl/*.json';
 import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
 import {privateValidationStateProp} from '@react-stately/form';
-import {useInteractOutside} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useTextField} from '@react-aria/textfield';
@@ -209,7 +208,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
     state.setFocused(true);
   };
 
-  let valueId = useValueId([state.selectedItems, state.selectionManager.selectionMode]);
+  let valueId = useValueId([state.selectionManager.selectedKeys, state.selectionManager.selectionMode]);
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,
@@ -365,20 +364,6 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
   useEvent(listBoxRef, 'react-aria-item-action', state.isOpen ? () => {
     state.close();
   } : undefined);
-
-  // usePopover -> useOverlay calls useInteractOutside, but ComboBox is non-modal, so `isDismissable` is false
-  // Because of this, onInteractOutside is not passed to useInteractOutside, so we need to call it here.
-  useInteractOutside({
-    ref: popoverRef,
-    onInteractOutside: (e) => {
-      let target = getEventTarget(e) as Element;
-      if (nodeContains(buttonRef?.current, target) || nodeContains(inputRef.current, target)) {
-        return;
-      }
-      state.close();
-    },
-    isDisabled: !state.isOpen
-  });
 
   return {
     labelProps,
