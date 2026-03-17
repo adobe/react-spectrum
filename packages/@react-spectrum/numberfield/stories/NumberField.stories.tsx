@@ -207,10 +207,10 @@ Step3WithMin2Max21.story = {
   name: 'step = 3 with min = 2, max = 21'
 };
 
-export const InteractOutsideBehaviorNone: NumberFieldStory = () => render({step: 3, minValue: 2, maxValue: 21, interactOutsideBehavior: 'none'});
+export const InteractOutsideBehaviorNone: NumberFieldStory = () => render({step: 3, minValue: 2, maxValue: 21, commitBehavior: 'validate'});
 
 InteractOutsideBehaviorNone.story = {
-  name: 'interactOutsideBehavior = none'
+  name: 'commitBehavior = validate'
 };
 
 export const AutoFocus: NumberFieldStory = () => render({autoFocus: true});
