@@ -41,6 +41,8 @@ As mentioned earlier, there are proposed parts to this initiative:
 
 1. Custom React Testing Library Renderer
 
+**Resolution** I tried to do this, but it won't work for our current tests. User event doesn't have shadow dom support, we could use `shadow-dom-testing-library` but it has a different API (though similar) and is a fork, so could diverge more. In addition, many of our tests make assumptions, accidentally, about how they are rendered. It would amount to rewriting most tests. As such, I think we create net-new ones, and don't try to shoe horn our current tests into this.
+
 Much like our custom renderer to test React.StrictMode, we should create a custom React Testing Library renderer for our unit tests which can wrap each test's rendered dom in a shadow root.
 
 This will give us a baseline to develop against and it will also hold us accountable in any future changes without needing to write many specific tests. In the worst case, should we pull the plug on this, it will also make it easy to remove the tests.
@@ -52,13 +54,24 @@ It unfortunately appears that we cannot just keep our existing tests, there's ju
 
 2. Avoid DOM Traversal/Manipulation
 
+**UPDATE** We have a PR to hopefully remove at least the need for focus marshalling in a containing focus scope, this would solve many issues as we could let the browser handle tab navigation in the default manner. That work is here: https://github.com/adobe/react-spectrum/pull/8796
+
 This is most prominent in Focus Scope where we traverse the DOM in order to assign focus, such as in Collections, and contain focus such as in Dialogs.
 
 One proposal to avoid this traversal is to create focusable sentinels in order to trap focus.
 
 This will have the side benefit of theoretically working with closed root shadow doms as well, such as the aforementioned native video players inside a Dialog.
 
-3. In-team Education
+3. Avoid global listeners
+
+Many of our hooks and components attach global listeners or global observers. These cannot see inside a shadow root. As a result, they may miss events or respond to an event incorrectly. For example, focus and blur events do not bubble past a shadow root unless focus is leaving or entering the boundary entirely. Observers watching child lists cannot see when children are added within a shadow root.
+
+We can extend observers to each shadow root if we are watching children and we've done so in ariaHideOutside. We've also added event listeners to shadow roots such as in FocusScope. There are likely other places this happens, but they require unique fixes, not a one size fits all.
+
+
+4. In-team Education
+
+**UPDATE** We've merged a number of PRs with eslint rules that either outright fix the usage or recommend a best approach. All the rules outlined below are done plus some extras.
 
 Writing code that can handle the prescence of Shadow DOM can be tricky. As a result, there will be a learning curve for the team.
 
@@ -82,7 +95,7 @@ e.currentTarget.contains(e.target)
 nodeContains(e.currentTarget, getEventTarget(e.nativeEvent))
 ```
 
-4. Communication
+5. Communication
 
 We have our current Shadow DOM support gated behind a feature flag to both signal that it is experimental as well as to protect users who are not using any Shadow DOM from possible performance hits.
 
@@ -107,24 +120,25 @@ This is a backwards compatible change, we should just be extending functionality
 
 ## Alternatives
 
-Unknown, haven't done research here yet.
+Not applicable.
 
 ## Open Questions
 
 * How to actually define the limitations of our support? See Introduction, it's missing a final sentence with this information.
-* User Event and JSDOM do not have good shadow DOM support, and user event has not been accepting PRs, can we count of them when testing? https://github.com/testing-library/user-event/issues/1026
+* User Event and JSDOM do not have good shadow DOM support, and user event has not been accepting PRs, can we count on them when testing? https://github.com/testing-library/user-event/issues/1026
 * Will we apply any changes to V3? or only RAC and S2 moving forward?
 
 ## Help Needed
 
 The biggest help we can receive is tests, either in the form of unit tests or in the form of examples of real life applications/setups that we can turn into unit tests. The more tests we have, the less likely we will break anything moving forward after the initial effort is complete.
 
-"shadow-dom-testing-library" can be used in place of functions from test-library.
+`shadow-dom-testing-library` can be used in place of functions from test-library.
 
 ## Frequently Asked Questions
 
 * How much can we count on contributor support? will the code just rot after the initial push?
   * We should expect that we'll take ownership of any code that comes in, we should not count on external support.
+  * eslint is a good way to counteract this
 * Is there any benefit to our selves or other people not using Shadow DOM?
   * Yes, see some of the issues listed above, specifically native video players breaking FocusScopes in Dialogs.
   * Users may be unaware that they are using Shadow DOM as it may be an implementation detail of a 3rd party component.
@@ -133,3 +147,5 @@ The biggest help we can receive is tests, either in the form of unit tests or in
 ## Related Discussions
 
 Original issue: [feat: Focus Management within ShadowDOM](https://github.com/adobe/react-spectrum/pull/6046). Many of the ideas discussed in this RFC are from conversations around this PR.
+
+Known remaining issues after large push https://github.com/orgs/adobe/projects/19/views/32?pane=issue&itemId=157309187
