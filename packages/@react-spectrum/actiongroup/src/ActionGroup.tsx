@@ -24,6 +24,8 @@ import {
 } from '@react-spectrum/utils';
 import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
 import {FocusScope} from '@react-aria/focus';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {ListState, useListState} from '@react-stately/list';
 import More from '@spectrum-icons/workflow/More';
@@ -35,6 +37,7 @@ import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
 import {Text} from '@react-spectrum/text';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useActionGroup, useActionGroupItem} from '@react-aria/actiongroup';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
 /**
@@ -375,6 +378,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
   // The key must actually exist in the collection for focus to work correctly.
   let key = items[0].key;
   let {buttonProps} = useActionGroupItem({key}, state);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/actiongroup');
 
   // The menu button shouldn't act like an actual action group item.
   delete buttonProps.onPress;
@@ -384,7 +388,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
   let {hoverProps, isHovered} = useHover({isDisabled});
 
   // If no aria-label or aria-labelledby is given, provide a default one.
-  let ariaLabel = otherProps['aria-label'] || (otherProps['aria-labelledby'] ? undefined : '…');
+  let ariaLabel = otherProps['aria-label'] || (otherProps['aria-labelledby'] ? undefined : stringFormatter.format('more'));
   let ariaLabelledby = otherProps['aria-labelledby'];
   let textId = useId();
   let id = useId();

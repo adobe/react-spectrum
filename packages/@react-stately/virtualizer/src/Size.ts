@@ -15,8 +15,8 @@ export class Size {
   height: number;
 
   constructor(width = 0, height = 0) {
-    this.width = width;
-    this.height = height;
+    this.width = Math.max(width, 0);
+    this.height = Math.max(height, 0);
   }
 
   /**
@@ -37,7 +37,7 @@ export class Size {
   /**
    * The total area of the Size.
    */
-  get area() {
+  get area(): number {
     return this.width * this.height;
   }
 }

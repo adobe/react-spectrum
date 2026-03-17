@@ -7,15 +7,14 @@ module.exports = {
   ],
 
   addons: [
-    "@storybook/addon-actions",
-    "@storybook/addon-a11y",
-    "@storybook/addon-controls",
-    "storybook-dark-mode",
-    './custom-addons/provider/register',
-    './custom-addons/descriptions/register',
-    './custom-addons/theme/register',
-    './custom-addons/strictmode/register',
-    './custom-addons/scrolling/register'
+    'storybook/actions',
+    '@storybook/addon-a11y',
+    '@vueless/storybook-dark-mode',
+    './custom-addons/provider/register.js',
+    './custom-addons/descriptions/register.js',
+    './custom-addons/theme/register.js',
+    './custom-addons/strictmode/register.js',
+    './custom-addons/scrolling/register.js'
   ],
 
   typescript: {
@@ -24,7 +23,11 @@ module.exports = {
   },
 
   framework: {
-    name: "storybook-react-parcel",
-    options: {},
+    name: 'storybook-react-parcel',
+    options: {}
+  },
+
+  core: {
+    disableWhatsNewNotifications: true
   }
 };

@@ -14,6 +14,7 @@ import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import Refresh from '@spectrum-icons/workflow/Refresh';
 import {SearchField} from '../';
@@ -23,36 +24,38 @@ const info =
 
 export default {
   title: 'SearchField'
-};
+} as Meta<typeof SearchField>;
 
-export const Default = () => renderSearchLandmark(render());
+export type SearchFieldStory = StoryFn<typeof SearchField>;
+
+export const Default: SearchFieldStory = () => renderSearchLandmark(render());
 
 Default.story = {
   parameters: {info}
 };
 
-export const Value = () => renderSearchLandmark(render({value: 'React'}));
+export const Value: SearchFieldStory = () => renderSearchLandmark(render({value: 'React'}));
 
 Value.story = {
   name: 'value',
   parameters: {info}
 };
 
-export const IsDisabled = () => renderSearchLandmark(render({value: 'React', isDisabled: true}));
+export const IsDisabled: SearchFieldStory = () => renderSearchLandmark(render({value: 'React', isDisabled: true}));
 
 IsDisabled.story = {
   name: 'isDisabled',
   parameters: {info}
 };
 
-export const IsReadOnly = () => renderSearchLandmark(render({value: 'React', isReadOnly: true}));
+export const IsReadOnly: SearchFieldStory = () => renderSearchLandmark(render({value: 'React', isReadOnly: true}));
 
 IsReadOnly.story = {
   name: 'isReadOnly',
   parameters: {info}
 };
 
-export const IconRefresh = () =>
+export const IconRefresh: SearchFieldStory = () =>
   renderSearchLandmark(render({defaultValue: 'React', icon: <Refresh />}));
 
 IconRefresh.story = {
@@ -60,20 +63,20 @@ IconRefresh.story = {
   parameters: {info}
 };
 
-export const IconNull = () => renderSearchLandmark(render({defaultValue: 'React', icon: null}));
+export const IconNull: SearchFieldStory = () => renderSearchLandmark(render({defaultValue: 'React', icon: null}));
 
 IconNull.story = {
   name: 'icon: null',
   parameters: {info}
 };
 
-export const CustomWidth = () => render({defaultValue: 'React', width: 275});
+export const CustomWidth: SearchFieldStory = () => render({defaultValue: 'React', width: 275});
 
 CustomWidth.story = {
   name: 'custom width'
 };
 
-export const _ContextualHelp = (args) =>
+export const _ContextualHelp: SearchFieldStory = (args) =>
   render({
     ...args,
     contextualHelp: (

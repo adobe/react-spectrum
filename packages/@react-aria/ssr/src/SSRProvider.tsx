@@ -84,7 +84,7 @@ let warnedAboutSSRProvider = false;
  */
 export function SSRProvider(props: SSRProviderProps): JSX.Element {
   if (typeof React['useId'] === 'function') {
-    if (process.env.NODE_ENV !== 'test' && !warnedAboutSSRProvider) {
+    if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'production' && !warnedAboutSSRProvider) {
       console.warn('In React 18, SSRProvider is not necessary and is a noop. You can remove it from your app.');
       warnedAboutSSRProvider = true;
     }
@@ -147,7 +147,7 @@ function useLegacySSRSafeId(defaultId?: string): string {
 
   // If we are rendering in a non-DOM environment, and there's no SSRProvider,
   // provide a warning to hint to the developer to add one.
-  if (ctx === defaultContext && !canUseDOM) {
+  if (ctx === defaultContext && !canUseDOM && process.env.NODE_ENV !== 'production') {
     console.warn('When server rendering, you must wrap your application in an <SSRProvider> to ensure consistent ids are generated between the client and server.');
   }
 
@@ -165,7 +165,7 @@ function useModernSSRSafeId(defaultId?: string): string {
 
 // Use React.useId in React 18 if available, otherwise fall back to our old implementation.
 /** @private */
-export const useSSRSafeId = typeof React['useId'] === 'function' ? useModernSSRSafeId : useLegacySSRSafeId;
+export const useSSRSafeId: typeof useModernSSRSafeId | typeof useLegacySSRSafeId = typeof React['useId'] === 'function' ? useModernSSRSafeId : useLegacySSRSafeId;
 
 function getSnapshot() {
   return false;

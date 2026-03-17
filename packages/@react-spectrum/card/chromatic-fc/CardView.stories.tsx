@@ -11,8 +11,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {CardView} from '../';
 import {DefaultGrid as DefaultGridStory} from '../chromatic/CardView.stories';
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {SpectrumCardViewProps} from '@react-types/card';
 
 const meta: Meta<SpectrumCardViewProps<object>> = {
@@ -21,4 +22,6 @@ const meta: Meta<SpectrumCardViewProps<object>> = {
 
 export default meta;
 
-export const DefaultGrid = DefaultGridStory;
+export type CardViewStory = StoryObj<typeof CardView>;
+
+export const DefaultGrid: CardViewStory = DefaultGridStory;

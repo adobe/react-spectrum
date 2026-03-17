@@ -12,7 +12,7 @@
 
 import {disableTextSelection, restoreTextSelection}  from './textSelection';
 import {DOMAttributes, MoveEvents, PointerType} from '@react-types/shared';
-import React, {useMemo, useRef} from 'react';
+import React, {useCallback, useMemo, useRef} from 'react';
 import {useEffectEvent, useGlobalListeners} from '@react-aria/utils';
 
 export interface MoveResult {
@@ -43,7 +43,7 @@ export function useMove(props: MoveEvents): MoveResult {
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
-  let move = useEffectEvent((originalEvent: EventBase, pointerType: PointerType, deltaX: number, deltaY: number) => {
+  let move = useCallback((originalEvent: EventBase, pointerType: PointerType, deltaX: number, deltaY: number) => {
     if (deltaX === 0 && deltaY === 0) {
       return;
     }
@@ -69,9 +69,10 @@ export function useMove(props: MoveEvents): MoveResult {
       ctrlKey: originalEvent.ctrlKey,
       altKey: originalEvent.altKey
     });
-  });
+  }, [onMoveStart, onMove, state]);
+  let moveEvent = useEffectEvent(move);
 
-  let end = useEffectEvent((originalEvent: EventBase, pointerType: PointerType) => {
+  let end = useCallback((originalEvent: EventBase, pointerType: PointerType) => {
     restoreTextSelection();
     if (state.current.didMove) {
       onMoveEnd?.({
@@ -83,7 +84,8 @@ export function useMove(props: MoveEvents): MoveResult {
         altKey: originalEvent.altKey
       });
     }
-  });
+  }, [onMoveEnd, state]);
+  let endEvent = useEffectEvent(end);
 
   let moveProps = useMemo(() => {
     let moveProps: DOMAttributes = {};
@@ -93,16 +95,21 @@ export function useMove(props: MoveEvents): MoveResult {
       state.current.didMove = false;
     };
 
-    if (typeof PointerEvent === 'undefined') {
+    if (typeof PointerEvent === 'undefined' && process.env.NODE_ENV === 'test') {
       let onMouseMove = (e: MouseEvent) => {
         if (e.button === 0) {
-          move(e, 'mouse', e.pageX - (state.current.lastPosition?.pageX ?? 0), e.pageY - (state.current.lastPosition?.pageY ?? 0));
+          // Should be safe to use the useEffectEvent because these are equivalent https://github.com/reactjs/react.dev/issues/8075#issuecomment-3400179389
+          // However, the compiler is not smart enough to know that. As such, this whole file must be manually optimised as the compiler will bail.
+          //
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          moveEvent(e, 'mouse', e.pageX - (state.current.lastPosition?.pageX ?? 0), e.pageY - (state.current.lastPosition?.pageY ?? 0));
           state.current.lastPosition = {pageX: e.pageX, pageY: e.pageY};
         }
       };
       let onMouseUp = (e: MouseEvent) => {
         if (e.button === 0) {
-          end(e, 'mouse');
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          endEvent(e, 'mouse');
           removeGlobalListener(window, 'mousemove', onMouseMove, false);
           removeGlobalListener(window, 'mouseup', onMouseUp, false);
         }
@@ -122,14 +129,16 @@ export function useMove(props: MoveEvents): MoveResult {
         let touch = [...e.changedTouches].findIndex(({identifier}) => identifier === state.current.id);
         if (touch >= 0) {
           let {pageX, pageY} = e.changedTouches[touch];
-          move(e, 'touch', pageX - (state.current.lastPosition?.pageX ?? 0), pageY - (state.current.lastPosition?.pageY ?? 0));
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          moveEvent(e, 'touch', pageX - (state.current.lastPosition?.pageX ?? 0), pageY - (state.current.lastPosition?.pageY ?? 0));
           state.current.lastPosition = {pageX, pageY};
         }
       };
       let onTouchEnd = (e: TouchEvent) => {
         let touch = [...e.changedTouches].findIndex(({identifier}) => identifier === state.current.id);
         if (touch >= 0) {
-          end(e, 'touch');
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          endEvent(e, 'touch');
           state.current.id = null;
           removeGlobalListener(window, 'touchmove', onTouchMove);
           removeGlobalListener(window, 'touchend', onTouchEnd);
@@ -159,7 +168,8 @@ export function useMove(props: MoveEvents): MoveResult {
           // Problems with PointerEvent#movementX/movementY:
           // 1. it is always 0 on macOS Safari.
           // 2. On Chrome Android, it's scaled by devicePixelRatio, but not on Chrome macOS
-          move(e, pointerType, e.pageX - (state.current.lastPosition?.pageX ?? 0), e.pageY - (state.current.lastPosition?.pageY ?? 0));
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          moveEvent(e, pointerType, e.pageX - (state.current.lastPosition?.pageX ?? 0), e.pageY - (state.current.lastPosition?.pageY ?? 0));
           state.current.lastPosition = {pageX: e.pageX, pageY: e.pageY};
         }
       };
@@ -167,7 +177,8 @@ export function useMove(props: MoveEvents): MoveResult {
       let onPointerUp = (e: PointerEvent) => {
         if (e.pointerId === state.current.id) {
           let pointerType = (e.pointerType || 'mouse') as PointerType;
-          end(e, pointerType);
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          endEvent(e, pointerType);
           state.current.id = null;
           removeGlobalListener(window, 'pointermove', onPointerMove, false);
           removeGlobalListener(window, 'pointerup', onPointerUp, false);
@@ -191,8 +202,10 @@ export function useMove(props: MoveEvents): MoveResult {
 
     let triggerKeyboardMove = (e: EventBase, deltaX: number, deltaY: number) => {
       start();
-      move(e, 'keyboard', deltaX, deltaY);
-      end(e, 'keyboard');
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      moveEvent(e, 'keyboard', deltaX, deltaY);
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      endEvent(e, 'keyboard');
     };
 
     moveProps.onKeyDown = (e) => {
@@ -225,7 +238,7 @@ export function useMove(props: MoveEvents): MoveResult {
     };
 
     return moveProps;
-  }, [state, addGlobalListener, removeGlobalListener, move, end]);
+  }, [addGlobalListener, removeGlobalListener, state]);
 
   return {moveProps};
 }

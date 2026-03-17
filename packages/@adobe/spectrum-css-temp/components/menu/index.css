@@ -249,6 +249,7 @@ governing permissions and limitations under the License.
   /* keyboard shortcuts are always ASCII, so use base font */
   font-family: var(--spectrum-font-family-base);
   unicode-bidi: plaintext;
+  text-align: end;
 }
 
 .spectrum-Menu-chevron {

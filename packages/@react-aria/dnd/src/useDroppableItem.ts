@@ -12,14 +12,16 @@
 
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
-import {DropTarget, RefObject} from '@react-types/shared';
+import {DropTarget, FocusableElement, RefObject} from '@react-types/shared';
 import {getDroppableCollectionRef, getTypes, globalDndState, isInternalDropOperation} from './utils';
 import {HTMLAttributes, useEffect} from 'react';
 import {useVirtualDrop} from './useVirtualDrop';
 
 export interface DroppableItemOptions {
   /** The drop target represented by the item. */
-  target: DropTarget
+  target: DropTarget,
+  /** The ref to the activate button. */
+  activateButtonRef?: RefObject<FocusableElement | null>
 }
 
 export interface DroppableItemResult {
@@ -50,10 +52,11 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
             isInternal,
             draggingKeys
           });
-        }
+        },
+        activateButtonRef: options.activateButtonRef
       });
     }
-  }, [ref, options.target, state, droppableCollectionRef]);
+  }, [ref, options.target, state, droppableCollectionRef, options.activateButtonRef]);
 
   let dragSession = DragManager.useDragSession();
   let {draggingKeys} = globalDndState;

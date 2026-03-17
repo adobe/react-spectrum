@@ -12,8 +12,8 @@
 
 import {AriaDialogProps} from '@react-types/dialog';
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {filterDOMProps, useSlotId} from '@react-aria/utils';
-import {focusSafely} from '@react-aria/focus';
+import {filterDOMProps, getActiveElement, isFocusWithin, useSlotId} from '@react-aria/utils';
+import {focusSafely} from '@react-aria/interactions';
 import {useEffect, useRef} from 'react';
 import {useOverlayFocusContain} from '@react-aria/overlays';
 
@@ -30,7 +30,9 @@ export interface DialogAria {
  * A dialog is an overlay shown above other content in an application.
  */
 export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElement | null>): DialogAria {
-  let {role = 'dialog'} = props;
+  let {
+    role = 'dialog'
+  } = props;
   let titleId: string | undefined = useSlotId();
   titleId = props['aria-label'] ? undefined : titleId;
 
@@ -38,14 +40,15 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
 
   // Focus the dialog itself on mount, unless a child element is already focused.
   useEffect(() => {
-    if (ref.current && !ref.current.contains(document.activeElement)) {
+    if (ref.current && !isFocusWithin(ref.current)) {
       focusSafely(ref.current);
 
       // Safari on iOS does not move the VoiceOver cursor to the dialog
       // or announce that it has opened until it has rendered. A workaround
       // is to wait for half a second, then blur and re-focus the dialog.
       let timeout = setTimeout(() => {
-        if (document.activeElement === ref.current) {
+        // Check that the dialog is still focused, or focused was lost to the body.
+        if (getActiveElement() === ref.current || getActiveElement() === document.body) {
           isRefocusing.current = true;
           if (ref.current) {
             ref.current.blur();

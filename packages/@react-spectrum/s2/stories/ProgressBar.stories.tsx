@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {ProgressBar} from '../src';
 import {StaticColorDecorator} from './utils';
 import {style} from '../style' with {type: 'macro'};
@@ -20,21 +20,25 @@ const meta: Meta<typeof ProgressBar> = {
   parameters: {
     layout: 'centered'
   },
+  argTypes: {
+    label: {control: {type: 'text'}}
+  },
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   title: 'ProgressBar'
 };
 
 export default meta;
+type Story = StoryObj<typeof ProgressBar>;
 
-export const Example = {
+export const Example: Story = {
   args: {
     label: 'Loading…',
     value: 80
   }
 };
 
-export const CustomWidth = {
+export const CustomWidth: Story = {
   args: {
     label: 'Loading…',
     value: 80,

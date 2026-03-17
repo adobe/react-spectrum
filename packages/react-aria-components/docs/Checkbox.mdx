@@ -66,6 +66,8 @@ import {Checkbox} from 'react-aria-components';
   --checkmark-color: var(--highlight-foreground);
 
   display: flex;
+  /* This is needed so the HiddenInput is positioned correctly */
+  position: relative;
   align-items: center;
   gap: 0.571rem;
   font-size: 1.143rem;
@@ -81,6 +83,7 @@ import {Checkbox} from 'react-aria-components';
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
   }
 
   svg {
@@ -166,7 +169,7 @@ This example wraps `Checkbox` and all of its children together into a single com
 ```tsx example export=true
 import type {CheckboxProps} from 'react-aria-components';
 
-export function MyCheckbox({children, ...props}: CheckboxProps) {
+export function MyCheckbox({children, ...props}: Omit<CheckboxProps, 'children'> & {children?: React.ReactNode}) {
   return (
     <Checkbox {...props}>
       {({isIndeterminate}) => <>

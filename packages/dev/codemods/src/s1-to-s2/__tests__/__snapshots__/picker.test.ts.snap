@@ -7,17 +7,17 @@ let options = [
   {id: 2, name: 'Vanilla'}
 ];
 <div>
-  <Picker 
+  <Picker
     label="Ice Cream"
     items={options}>
     {(item) => <PickerItem id={item.id}>{item.name}</PickerItem>}
   </Picker>
-  <Picker 
+  <Picker
     label="Ice Cream"
     items={options}>
     {(item) => <PickerItem id={item.id}>{item.name}</PickerItem>}
   </Picker>
-  <Picker 
+  <Picker
     label="Ice Cream"
     items={options}>
     {(item) => <PickerItem>{item.name}</PickerItem>}
@@ -140,11 +140,27 @@ let props = {validationState: 'invalid'};
 `;
 
 exports[`handles sections 1`] = `
-"import { PickerSection, PickerItem, Picker } from "@react-spectrum/s2";
+"import { PickerSection, Header, PickerItem, Picker } from "@react-spectrum/s2";
 <Picker>
   <PickerSection><Header>Section title</Header>
     <PickerItem>Item one</PickerItem>
     <PickerItem>Item two</PickerItem>
   </PickerSection>
 </Picker>"
+`;
+
+exports[`replaces isLoading with loadingState and keeps onLoadMore 1`] = `
+"import { PickerItem, Picker } from "@react-spectrum/s2";
+    <>
+      // TODO(S2-upgrade): Replace boolean passed to isLoading with appropriate loadingState.
+      <Picker label="Ice Cream" loadingState onLoadMore={() => {}}>
+        <PickerItem>Red Panda</PickerItem>
+        <PickerItem>Cat</PickerItem>
+      </Picker>
+      // TODO(S2-upgrade): Replace boolean passed to isLoading with appropriate loadingState.
+      <Picker label="Ice Cream" loadingState={false} onLoadMore={() => {}}>
+        <PickerItem>Red Panda</PickerItem>
+        <PickerItem>Cat</PickerItem>
+      </Picker>
+    </>"
 `;

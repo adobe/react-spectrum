@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-const {Optimizer} = require('@parcel/plugin');
+import {Optimizer} from '@parcel/plugin';
 
-export default new Optimizer({
+let optimizer: Optimizer<unknown, unknown> = new Optimizer({
   async optimize({bundle, contents, map}) {
     if (bundle.target.env.outputFormat !== 'commonjs') {
       return {contents, map};
@@ -30,3 +30,5 @@ export default new Optimizer({
     };
   }
 });
+
+export default optimizer;

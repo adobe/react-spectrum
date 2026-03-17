@@ -43,12 +43,13 @@ type: component
 
 ```tsx example
 import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-components';
+import {ChevronLeft, ChevronRight} from 'lucide-react';
 
 <Calendar aria-label="Appointment date">
   <header>
-    <Button slot="previous">◀</Button>
+    <Button slot="previous"><ChevronLeft size={20} /></Button>
     <Heading />
-    <Button slot="next">▶</Button>
+    <Button slot="next"><ChevronRight size={20} /></Button>
   </header>
   <CalendarGrid>
     {date => <CalendarCell date={date} />}
@@ -218,9 +219,9 @@ function MyCalendar<T extends DateValue>({errorMessage, ...props}: MyCalendarPro
   return (
     <Calendar {...props}>
       <header>
-        <Button slot="previous">◀</Button>
+        <Button slot="previous"><ChevronLeft size={20} /></Button>
         <Heading />
-        <Button slot="next">▶</Button>
+        <Button slot="next"><ChevronRight size={20} /></Button>
       </header>
       <CalendarGrid>
         {date => <CalendarCell date={date} />}
@@ -283,6 +284,71 @@ function Example() {
 }
 ```
 
+### Custom calendar systems
+
+`Calendar` also supports custom calendar systems that implement custom business rules. An example would be a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar.
+
+The `createCalendar` prop accepts a function that returns an instance of the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.Calendar} /> interface. See the [@internationalized/date docs](../internationalized/date/Calendar.html#custom-calendars) for an example implementation.
+
+```tsx import
+import type {AnyCalendarDate} from '@internationalized/date';
+import {CalendarDate, startOfWeek, toCalendar} from '@internationalized/date';
+```
+
+```tsx example
+import {GregorianCalendar} from '@internationalized/date';
+
+function Example() {
+  return <MyCalendar firstDayOfWeek="sun" createCalendar={() => new Custom454()} />;
+}
+
+class Custom454 extends GregorianCalendar {
+  // See @internationalized/date docs linked above...
+  ///- begin collapse -///
+  weekPattern = [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, 4];
+  getDaysInMonth(date) {
+    return this.weekPattern[date.month - 1] * 7;
+  }
+
+  fromJulianDay(jd: number): CalendarDate {
+    let gregorian = super.fromJulianDay(jd);
+
+    let monthStart = startOfWeek(new CalendarDate(gregorian.year, 1, 1), 'en');
+    for (let months = 0; months < this.weekPattern.length; months++) {
+      let weeksInMonth = this.weekPattern[months];
+      let monthEnd = monthStart.add({weeks: weeksInMonth});
+      if (monthEnd.compare(gregorian) > 0) {
+        let days = gregorian.compare(monthStart);
+        return new CalendarDate(this, monthStart.year, months + 1, days + 1);
+      }
+      monthStart = monthEnd;
+    }
+
+    throw Error('Date is not in any month somehow!');
+  }
+
+  toJulianDay(date: AnyCalendarDate): number {
+    let monthStart = startOfWeek(new CalendarDate(date.year, 1, 1), 'en');
+    for (let month = 1; month < date.month; month++) {
+      monthStart = monthStart.add({weeks: this.weekPattern[month - 1]});
+    }
+
+    let gregorian = monthStart.add({days: date.day - 1});
+    return super.toJulianDay(gregorian);
+  }
+
+  getFormattableMonth(date) {
+    let gregorian = toCalendar(date, new GregorianCalendar());
+    return gregorian.set({month: date.month, day: 1});
+  }
+
+  isEqual(other) {
+    return other instanceof Custom454;
+  }
+ ///- end collapse -///
+}
+```
+
 ## Events
 
 `Calendar` accepts an `onChange` prop which is triggered whenever a date is selected by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
@@ -311,9 +377,9 @@ Multiple `CalendarGrid` elements can be rendered to show multiple months at once
 ```tsx example
 <Calendar aria-label="Appointment date" visibleDuration={{months: 3}}>
   <header>
-    <Button slot="previous">◀</Button>
+    <Button slot="previous"><ChevronLeft size={20} /></Button>
     <Heading />
-    <Button slot="next">▶</Button>
+    <Button slot="next"><ChevronRight size={20} /></Button>
   </header>
   <div style={{display: 'flex', gap: 30, overflow: 'auto'}}>
     <CalendarGrid>
@@ -336,9 +402,9 @@ The `pageBehavior` prop allows you to control how the calendar navigates between
 ```tsx example
 <Calendar aria-label="Appointment date" visibleDuration={{months: 3}} pageBehavior="single">
   <header>
-    <Button slot="previous">◀</Button>
+    <Button slot="previous"><ChevronLeft size={20} /></Button>
     <Heading />
-    <Button slot="next">▶</Button>
+    <Button slot="next"><ChevronRight size={20} /></Button>
   </header>
   <div style={{display: 'flex', gap: 30, overflow: 'auto'}}>
     <CalendarGrid>
@@ -670,9 +736,9 @@ import {CalendarGridHeader, CalendarHeaderCell, CalendarGridBody} from 'react-ar
 
 <Calendar aria-label="Appointment date">
   <header>
-    <Button slot="previous">◀</Button>
+    <Button slot="previous"><ChevronLeft size={20} /></Button>
     <Heading />
-    <Button slot="next">▶</Button>
+    <Button slot="next"><ChevronRight size={20} /></Button>
   </header>
   <CalendarGrid>
     <CalendarGridHeader>
@@ -848,16 +914,16 @@ function CalendarValue() {
   let state = React.useContext(CalendarStateContext)!;
   /*- end highlight -*/
   let date = state.value?.toDate(getLocalTimeZone());
-  let {format} = useDateFormatter();
-  let formatted = date ? format(date) : 'None';
+  let formatter = useDateFormatter();
+  let formatted = date ? formatter.format(date) : 'None';
   return <small>Selected date: {formatted}</small>;
 }
 
 <Calendar>
   <header>
-    <Button slot="previous">◀</Button>
+    <Button slot="previous"><ChevronLeft size={20} /></Button>
     <Heading />
-    <Button slot="next">▶</Button>
+    <Button slot="next"><ChevronRight size={20} /></Button>
   </header>
   <CalendarGrid>
     {date => <CalendarCell date={date} />}
@@ -901,9 +967,9 @@ function WeekCalendarGrid(props: CalendarGridProps) {
 <Calendar visibleDuration={{weeks: 1}} defaultValue={today(getLocalTimeZone())}>
   <div className="week">
     <Heading />
-    <Button slot="previous">◀</Button>
+    <Button slot="previous"><ChevronLeft size={20} /></Button>
     <WeekCalendarGrid />
-    <Button slot="next">▶</Button>
+    <Button slot="next"><ChevronRight size={20} /></Button>
   </div>
 </Calendar>
 ```

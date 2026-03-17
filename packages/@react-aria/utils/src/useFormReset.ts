@@ -11,26 +11,27 @@
  */
 
 import {RefObject} from '@react-types/shared';
-import {useEffect, useRef} from 'react';
+import {useEffect} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 
 export function useFormReset<T>(
   ref: RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null> | undefined,
   initialValue: T,
   onReset: (value: T) => void
-) {
-  let resetValue = useRef(initialValue);
-  let handleReset = useEffectEvent(() => {
-    if (onReset) {
-      onReset(resetValue.current);
+): void {
+
+  let handleReset = useEffectEvent((e: Event) => {
+    if (onReset && !e.defaultPrevented) {
+      onReset(initialValue);
     }
   });
 
   useEffect(() => {
     let form = ref?.current?.form;
+
     form?.addEventListener('reset', handleReset);
     return () => {
       form?.removeEventListener('reset', handleReset);
     };
-  }, [ref, handleReset]);
+  }, [ref]);
 }

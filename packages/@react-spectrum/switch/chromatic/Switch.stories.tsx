@@ -10,47 +10,50 @@
  * governing permissions and limitations under the License.
  */
 
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
-import {Switch} from '../';
+import {SpectrumSwitchProps, Switch} from '../';
 import {View} from '@react-spectrum/view';
 
 export default {
   title: 'Switch'
-};
+} as Meta<SpectrumSwitchProps>;
 
-export const Default = () => render();
-export const IsDisabledTrue = () => render({isDisabled: true});
+export type SwitchStory = StoryFn<typeof Switch>;
+
+export const Default: SwitchStory = () => render();
+export const IsDisabledTrue: SwitchStory = () => render({isDisabled: true});
 
 IsDisabledTrue.story = {
   name: 'isDisabled: true'
 };
 
-export const IsEmphasizedTrue = () => render({isEmphasized: true});
+export const IsEmphasizedTrue: SwitchStory = () => render({isEmphasized: true});
 
 IsEmphasizedTrue.story = {
   name: 'isEmphasized: true'
 };
 
-export const IsEmphasizedTrueIsDisabledTrue = () =>
+export const IsEmphasizedTrueIsDisabledTrue: SwitchStory = () =>
   render({isEmphasized: true, isDisabled: true});
 
 IsEmphasizedTrueIsDisabledTrue.story = {
   name: 'isEmphasized: true, isDisabled: true'
 };
 
-export const IsReadOnlyTrue = () => render({isReadOnly: true});
+export const IsReadOnlyTrue: SwitchStory = () => render({isReadOnly: true});
 
 IsReadOnlyTrue.story = {
   name: 'isReadOnly: true'
 };
 
-export const CustomLabel = () => renderCustomLabel();
+export const CustomLabel: SwitchStory = () => renderCustomLabel();
 
 CustomLabel.story = {
   name: 'custom label'
 };
 
-export const LongLabel = () => (
+export const LongLabel: SwitchStory = () => (
   <View width="size-2000">
     <Switch>
       Super long switch label. Sample text. Arma virumque cano, Troiae qui primus ab oris.
@@ -62,7 +65,7 @@ LongLabel.story = {
   name: 'long label'
 };
 
-export const NoLabel = () => renderNoLabel({'aria-label': 'This checkbox has no visible label'});
+export const NoLabel: SwitchStory = () => renderNoLabel({'aria-label': 'This checkbox has no visible label'});
 
 NoLabel.story = {
   name: 'no label'

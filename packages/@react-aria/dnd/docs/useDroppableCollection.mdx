@@ -42,17 +42,17 @@ type: interaction
 
 ## Introduction
 
-Collection components built with hooks such as [useListBox](useListBox.html), [useTable](useTable.html), and [useGridList](useGridList.html) can support drag and drop interactions. Users can drop data on the collection as a whole, on individual items, insert new items between existing ones, or reorder items.
+Collection components built with hooks such as [useListBox](ListBox/useListBox.html), [useTable](Table/useTable.html), and [useGridList](GridList/useGridList.html) can support drag and drop interactions. Users can drop data on the collection as a whole, on individual items, insert new items between existing ones, or reorder items.
 
 React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets. A droppable collection is treated as a single drop target, so that users can easily tab past it to get to the next drop target. Within a droppable collection, keys such as <Keyboard>ArrowDown</Keyboard> and <Keyboard>ArrowUp</Keyboard> can be used to select a _drop position_, such as on an item, or between items. These are represented using <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DropTarget.id]} /> objects.
 
 The keyboard interactions used within a collection may differ depending on the type or layout. For example, in a grid the <Keyboard>ArrowLeft</Keyboard> and <Keyboard>ArrowRight</Keyboard> may also be used, whereas they may not within a list. In general, the keyboard interactions used during drag and drop match those used when navigating the collection normally.
 
-See the [drag and drop introduction](dnd.html) to learn more.
+See the [drag and drop introduction](dnd) to learn more.
 
 ### Implementation
 
-The <TypeLink links={docs.links} type={docs.exports.useDroppableCollection} /> hook implements drop interactions within any [collection component](../react-stately/collections.html), using state managed by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useDroppableCollectionState} />. The props it returns should be combined with those from the collection component you're using, such as `useListBox`. The <TypeLink links={docs.links} type={docs.exports.useDroppableItem} /> hook should be added to each individual item within the collection, combining props from the relevant hook (e.g. `useOption`).
+The <TypeLink links={docs.links} type={docs.exports.useDroppableCollection} /> hook implements drop interactions within any [collection component](v3:collections.html), using state managed by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useDroppableCollectionState} />. The props it returns should be combined with those from the collection component you're using, such as `useListBox`. The <TypeLink links={docs.links} type={docs.exports.useDroppableItem} /> hook should be added to each individual item within the collection, combining props from the relevant hook (e.g. `useOption`).
 
 To support dropping between items, the <TypeLink links={docs.links} type={docs.exports.useDropIndicator} /> hook can be used to add additional elements between each item, for example, rendering a line when a user drags between two items. These elements must be implemented according to the relevant ARIA pattern. For example, within a listbox, drop indicators must be implemented using `role="option"`, and within a grid, they must use `role="row"` and `role="gridcell"` to ensure the accessibility tree is valid.
 
@@ -60,7 +60,7 @@ Interactions like keyboard navigation, and drop target positioning may differ de
 
 ## Dropping on items
 
-This example renders a ListBox using the [useListBox](useListBox.html) hook, and adds support for dropping data onto items. The highlighted code sections below show the main additions for drag and drop compared with a normal listbox.
+This example renders a ListBox using the [useListBox](ListBox/useListBox.html) hook, and adds support for dropping data onto items. The highlighted code sections below show the main additions for drag and drop compared with a normal listbox.
 
 ```tsx example
 import {useListBox, useOption} from '@react-aria/listbox';
@@ -196,7 +196,7 @@ function Option({ item, state, dropState }) {
 
 ### Draggable
 
-The `Draggable` component used above is defined below. See [useDrag](useDrag.html) for more details and documentation.
+The `Draggable` component used above is defined below. See [useDrag](useDrag) for more details and documentation.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -307,7 +307,7 @@ function Option({ item, state, dropState }) {
 }
 ```
 
-Now, we can render an example ListBox, which inserts a new item on drop. This uses the [useListData](../react-stately/useListData.html) hook to manage the list of items, which is updated in the `onInsert` event. Note that `useListData` is a convenience hook, not a requirement. You can manage your state however you wish.
+Now, we can render an example ListBox, which inserts a new item on drop. This uses the [useListData](./useListData.html) hook to manage the list of items, which is updated in the `onInsert` event. Note that `useListData` is a convenience hook, not a requirement. You can manage your state however you wish.
 
 ```tsx example
 import {useListData} from '@react-stately/data';
@@ -488,7 +488,7 @@ function Option({ item, state, dropState }) {
 
 ## Reordering
 
-Drag and drop can be combined in the same collection component to allow reordering items. This example builds on the [dropping between items](#dropping-between-items) example above to add support for dragging items as well. This is done using the `useDraggableCollection` and `useDraggableItem` hooks. See the [docs](useDraggableCollection.html) for more details on these hooks.
+Drag and drop can be combined in the same collection component to allow reordering items. This example builds on the [dropping between items](#dropping-between-items) example above to add support for dragging items as well. This is done using the `useDraggableCollection` and `useDraggableItem` hooks. See the [docs](./useDraggableCollection.html) for more details on these hooks.
 
 ```tsx example export=true render=false
 import {useDraggableCollectionState} from '@react-stately/dnd';
@@ -599,7 +599,7 @@ function ReorderableOption({ item, state, dragState, dropState }) {
 }
 ```
 
-Now, we can render an example ListBox, which allows the user to reorder items. The `onReorder` event is triggered when the user drops dragged items which originated within the same collection. As above, [useListData](../react-stately/useListData.html) is used to manage the list items in this example, but it is not a requirement.
+Now, we can render an example ListBox, which allows the user to reorder items. The `onReorder` event is triggered when the user drops dragged items which originated within the same collection. As above, [useListData](./useListData.html) is used to manage the list items in this example, but it is not a requirement.
 
 ```tsx example
 import {useListData} from '@react-stately/data';
@@ -860,7 +860,7 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.D
 
 Many operating systems display these in the form of a cursor change, e.g. a plus sign to indicate a copy operation. The user may also be able to use a modifier key to choose which drop operation to perform, such as <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> to switch from move to copy.
 
-The drag source can specify which drop operations are allowed for the dragged data (see the [useDrag docs](useDrag.html) for how to customize this). By default, the first allowed operation is allowed by drop targets, meaning that the drop target accepts data of any type and operation.
+The drag source can specify which drop operations are allowed for the dragged data (see the [useDrag docs](useDrag) for how to customize this). By default, the first allowed operation is allowed by drop targets, meaning that the drop target accepts data of any type and operation.
 
 ### getDropOperation
 

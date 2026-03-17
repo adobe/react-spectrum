@@ -11,8 +11,9 @@
  */
 
 import {Flex} from '@react-spectrum/layout';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
-import {StatusLight} from '../';
+import {SpectrumStatusLightProps, StatusLight} from '../';
 
 export default {
   title: 'Languages/StatusLight',
@@ -24,9 +25,11 @@ export default {
       scales: ['large', 'medium']
     }
   }
-};
+} as Meta<SpectrumStatusLightProps>;
 
-export const NeutralNoItalicInCcjk = () => (
+export type StatusLightLanguagesStory = StoryObj<typeof StatusLight>;
+
+export const NeutralNoItalicInCcjk: StatusLightLanguagesStory = () => (
   <Flex gap="size-200" direction="row" wrap>
     <StatusLight variant="neutral">Help</StatusLight>
     <StatusLight variant="neutral">مساعدة</StatusLight>

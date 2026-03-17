@@ -9,14 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 import Video_L from 'illustration:./S2_fill_video_generic2_160.svg';
 import Video_M from 'illustration:./S2_fill_video_generic2_96.svg';
 import Video_S from 'illustration:./S2_fill_video_generic2_48.svg';
 
-export default function Video(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Video(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

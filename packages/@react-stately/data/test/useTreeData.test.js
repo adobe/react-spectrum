@@ -490,7 +490,7 @@ describe('useTreeData', function () {
     expect(result.current.items).not.toBe(initialResult.items);
     expect(result.current.items).toHaveLength(1);
     expect(result.current.items[0].value).toEqual({expanded: true, name: 'Danny'});
-    expect(result.current.items[0].parentKey).toBeUndefined();
+    expect(result.current.items[0].parentKey).toBeNull();
   });
 
   it('should update an item', function () {
@@ -567,6 +567,19 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
   });
 
+  it('should move all children of the moved target into the new map', function () {
+    let {result} = renderHook(() =>
+      useTreeData({initialItems: initial, getChildren, getKey})
+    );
+    expect(result.current.getItem('Stacy')).toBe(result.current.items[0].children[1].children[0]);
+
+    act(() => {
+      result.current.move('Sam', null, 0);
+    });
+
+    expect(result.current.getItem('Stacy')).toBe(result.current.items[0].children[0]);
+  });
+
   it('should move an item to the root', function () {
     let {result} = renderHook(() =>
       useTreeData({initialItems: initial, getChildren, getKey})
@@ -597,6 +610,43 @@ describe('useTreeData', function () {
     expect(result.current.items[1].children[2]).toBe(
       initialResult.items[0].children[2]
     );
+
+    /*
+      Expected tree structure after moving 'Stacy' to root:
+      - Stacy
+      - David
+        |-- John
+        |   -- Suzie
+        |-- Sam
+        |   -- Brad
+        |-- Jane
+    */
+    let stacyNode = result.current.getItem('Stacy');
+    expect(stacyNode.parentKey).toBeNull();
+    expect(stacyNode.children).toHaveLength(0);
+    expect(stacyNode).toBe(result.current.items[0]);
+
+    let davidNode = result.current.getItem('David');
+    expect(davidNode.parentKey).toBeNull();
+    expect(davidNode.children.map(c => c.key)).toEqual(['John', 'Sam', 'Jane']);
+    expect(davidNode).toBe(result.current.items[1]);
+
+    let samNode = result.current.getItem('Sam');
+    expect(samNode.parentKey).toBe('David');
+    expect(samNode.children.map(c => c.key)).toEqual(['Brad']);
+    expect(samNode).toBe(result.current.items[1].children[1]);
+
+    let bradNode = result.current.getItem('Brad');
+    expect(bradNode.parentKey).toBe('Sam');
+    expect(bradNode).toBe(result.current.items[1].children[1].children[0]);
+
+    let johnNode = result.current.getItem('John');
+    expect(johnNode.parentKey).toBe('David');
+    expect(johnNode).toBe(result.current.items[1].children[0]);
+
+    let janeNode = result.current.getItem('Jane');
+    expect(janeNode.parentKey).toBe('David');
+    expect(janeNode).toBe(result.current.items[1].children[2]);
   });
 
   it('should move an item to a new index within its current parent', function () {
@@ -685,12 +735,172 @@ describe('useTreeData', function () {
       useTreeData({initialItems, getChildren, getKey})
     );
     act(() => {
-      result.current.moveBefore('Eli', null, 0);
+      result.current.move('Eli', null, 0);
     });
     expect(result.current.items[0].key).toEqual('Eli');
     expect(result.current.items[1].key).toEqual('David');
     expect(result.current.items[2].key).toEqual('Emily');
     expect(result.current.items.length).toEqual(initialItems.length);
+  });
+
+  it('should move an item within its same level before the target by key', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    act(() => {
+      result.current.moveBefore('David', ['Suzie']);
+    });
+    expect(result.current.items[0].key).toEqual('Suzie');
+    expect(result.current.items[1].key).toEqual('David');
+    expect(result.current.items[2].key).toEqual('Emily');
+    expect(result.current.items[3].key).toEqual('Eli');
+    expect(result.current.items.length).toEqual(4);
+    expect(result.current.items[1].children[0].key).toEqual('John');
+    expect(result.current.items[1].children[0].children.length).toEqual(0);
+  });
+
+  it('should move an item within its same level before the target by keys', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    act(() => {
+      result.current.moveBefore('David', ['John', 'Eli']);
+    });
+    expect(result.current.items[0].key).toEqual('John');
+    expect(result.current.items[1].key).toEqual('Eli');
+    expect(result.current.items[2].key).toEqual('David');
+    expect(result.current.items[3].key).toEqual('Emily');
+    expect(result.current.items.length).toEqual(4);
+    expect(result.current.items[0].children[0].key).toEqual('Suzie');
+    expect(result.current.items[1].children.length).toEqual(0);
+    expect(result.current.items[2].children[0].key).toEqual('Sam');
+  });
+
+  it('should move an item within its same level before the target by keys with nested items and keep tree order', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    act(() => {
+      result.current.moveBefore('David', ['John', 'Eli', 'Suzie']);
+    });
+    expect(result.current.items[0].key).toEqual('John');
+    expect(result.current.items[1].key).toEqual('Suzie');
+    expect(result.current.items[2].key).toEqual('Eli');
+    expect(result.current.items[3].key).toEqual('David');
+    expect(result.current.items[4].key).toEqual('Emily');
+    expect(result.current.items.length).toEqual(5);
+    expect(result.current.items[0].children.length).toEqual(0);
+    expect(result.current.items[1].children.length).toEqual(0);
+    expect(result.current.items[2].children.length).toEqual(0);
+    expect(result.current.items[3].children[0].key).toEqual('Sam');
+  });
+
+  it('should move items down the tree', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    act(() => {
+      result.current.moveBefore('Suzie', ['Sam', 'Eli']);
+    });
+    expect(result.current.items[0].key).toEqual('David');
+    expect(result.current.items[1].key).toEqual('Emily');
+    expect(result.current.items.length).toEqual(2);
+    expect(result.current.items[0].children.length).toEqual(2);
+    expect(result.current.items[1].children.length).toEqual(0);
+    expect(result.current.items[0].children[0].children[0].key).toEqual('Sam');
+    expect(result.current.items[0].children[0].children[1].key).toEqual('Eli');
+    expect(result.current.items[0].children[0].children[2].key).toEqual('Suzie');
+    expect(result.current.items[0].children[0].children.length).toEqual(3);
+  });
+
+  describe('moveBefore error', function () {
+    const consoleError = console.error;
+    beforeEach(() => {
+      console.error = jest.fn();
+    });
+
+    afterEach(() => {
+      console.error = consoleError;
+    });
+
+    it('cannot move an item within itself', function () {
+      const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+
+      let {result} = renderHook(() =>
+        useTreeData({initialItems, getChildren, getKey})
+      );
+      try {
+        act(() => result.current.moveBefore('Suzie', ['John', 'Sam', 'Eli']));
+      } catch (e) {
+        expect(e.toString()).toContain('Cannot move an item to be a child of itself.');
+      }
+    });
+  });
+
+  it('should move an item within its same level after the target by key', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    act(() => {
+      result.current.moveAfter('David', ['Suzie']);
+    });
+    expect(result.current.items[0].key).toEqual('David');
+    expect(result.current.items[1].key).toEqual('Suzie');
+    expect(result.current.items[2].key).toEqual('Emily');
+    expect(result.current.items[3].key).toEqual('Eli');
+    expect(result.current.items.length).toEqual(4);
+    expect(result.current.items[0].children[0].key).toEqual('John');
+    expect(result.current.items[0].children[0].children.length).toEqual(0);
+  });
+
+  it('should move an item within its same level after the target by keys', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    act(() => {
+      result.current.moveAfter('David', ['John', 'Eli']);
+    });
+    expect(result.current.items[0].key).toEqual('David');
+    expect(result.current.items[1].key).toEqual('John');
+    expect(result.current.items[2].key).toEqual('Eli');
+    expect(result.current.items[3].key).toEqual('Emily');
+    expect(result.current.items.length).toEqual(4);
+    expect(result.current.items[0].children[0].key).toEqual('Sam');
+    expect(result.current.items[1].children[0].key).toEqual('Suzie');
+    expect(result.current.items[2].children.length).toEqual(0);
+  });
+
+  it('should move an item within its same level after the target by keys with nested items and keep tree order', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    act(() => {
+      result.current.moveAfter('David', ['John', 'Eli', 'Suzie']);
+    });
+    expect(result.current.items[0].key).toEqual('David');
+    expect(result.current.items[1].key).toEqual('John');
+    expect(result.current.items[2].key).toEqual('Suzie');
+    expect(result.current.items[3].key).toEqual('Eli');
+    expect(result.current.items[4].key).toEqual('Emily');
+    expect(result.current.items.length).toEqual(5);
+    expect(result.current.items[0].children[0].key).toEqual('Sam');
+    expect(result.current.items[1].children.length).toEqual(0);
+    expect(result.current.items[2].children.length).toEqual(0);
+    expect(result.current.items[3].children.length).toEqual(0);
   });
 
   it('should move an item to a different level before the target', function () {
@@ -700,13 +910,173 @@ describe('useTreeData', function () {
       useTreeData({initialItems, getChildren, getKey})
     );
     act(() => {
-      result.current.moveBefore('Eli', 'David', 1);
+      result.current.move('Eli', 'David', 1);
     });
     expect(result.current.items[0].key).toEqual('David');
+
     expect(result.current.items[0].children[0].key).toEqual('John');
     expect(result.current.items[0].children[1].key).toEqual('Eli');
     expect(result.current.items[1].key).toEqual('Emily');
     expect(result.current.items.length).toEqual(2);
+  });
+
+  it('can move an item multiple times', function () {
+    const initialItems = [...initial, {name: 'Eli'}];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    act(() => {
+      result.current.moveAfter('Eli', ['David']);
+    });
+    expect(result.current.items[0].key).toEqual('Eli');
+    expect(result.current.items[1].key).toEqual('David');
+    act(() => {
+      result.current.moveAfter('David', ['Eli']);
+    });
+    expect(result.current.items[0].key).toEqual('David');
+    expect(result.current.items[1].key).toEqual('Eli');
+    act(() => {
+      result.current.moveAfter('Eli', ['David']);
+    });
+    expect(result.current.items[0].key).toEqual('Eli');
+    expect(result.current.items[1].key).toEqual('David');
+    act(() => {
+      result.current.moveAfter('David', ['Eli']);
+    });
+    expect(result.current.items[0].key).toEqual('David');
+    expect(result.current.items[1].key).toEqual('Eli');
+
+    // do the same with moveBefore
+    act(() => {
+      result.current.moveBefore('David', ['Eli']);
+    });
+    expect(result.current.items[0].key).toEqual('Eli');
+    expect(result.current.items[1].key).toEqual('David');
+    act(() => {
+      result.current.moveBefore('Eli', ['David']);
+    });
+    expect(result.current.items[0].key).toEqual('David');
+    expect(result.current.items[1].key).toEqual('Eli');
+    act(() => {
+      result.current.moveBefore('David', ['Eli']);
+    });
+    expect(result.current.items[0].key).toEqual('Eli');
+    expect(result.current.items[1].key).toEqual('David');
+    act(() => {
+      result.current.moveBefore('Eli', ['David']);
+    });
+    expect(result.current.items[0].key).toEqual('David');
+    expect(result.current.items[1].key).toEqual('Eli');
+  });
+
+  it('can move an item within its same level', function () {
+    const initialItems = [
+      {id: 'projects', name: 'Projects', childItems: [
+        {id: 'project-1', name: 'Project 1'},
+        {id: 'project-2', name: 'Project 2', childItems: [
+          {id: 'project-2A', name: 'Project 2A'},
+          {id: 'project-2B', name: 'Project 2B'},
+          {id: 'project-2C', name: 'Project 2C'}
+        ]},
+        {id: 'project-3', name: 'Project 3'},
+        {id: 'project-4', name: 'Project 4'},
+        {id: 'project-5', name: 'Project 5', childItems: [
+          {id: 'project-5A', name: 'Project 5A'},
+          {id: 'project-5B', name: 'Project 5B'},
+          {id: 'project-5C', name: 'Project 5C'}
+        ]}
+      ]},
+      {id: 'reports', name: 'Reports', childItems: [
+        {id: 'reports-1', name: 'Reports 1', childItems: [
+          {id: 'reports-1A', name: 'Reports 1A', childItems: [
+            {id: 'reports-1AB', name: 'Reports 1AB', childItems: [
+              {id: 'reports-1ABC', name: 'Reports 1ABC'}
+            ]}
+          ]},
+          {id: 'reports-1B', name: 'Reports 1B'},
+          {id: 'reports-1C', name: 'Reports 1C'}
+        ]},
+        {id: 'reports-2', name: 'Reports 2'}
+      ]}
+    ];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren: (item) => item.childItems, getKey: (item) => item.id})
+    );
+    act(() => {
+      result.current.moveAfter('project-3', ['project-2']);
+    });
+    expect(result.current.items[0].key).toEqual('projects');
+    expect(result.current.items[0].children[0].key).toEqual('project-1');
+    expect(result.current.items[0].children[1].key).toEqual('project-3');
+    expect(result.current.items[0].children[2].key).toEqual('project-2');
+
+    // move again to the same place
+    act(() => {
+      result.current.moveAfter('project-3', ['project-2']);
+    });
+    expect(result.current.items[0].key).toEqual('projects');
+    expect(result.current.items[0].children[0].key).toEqual('project-1');
+    expect(result.current.items[0].children[1].key).toEqual('project-3');
+    expect(result.current.items[0].children[2].key).toEqual('project-2');
+
+    // move to a different place
+    act(() => {
+      result.current.moveAfter('project-4', ['project-2']);
+    });
+    expect(result.current.items[0].key).toEqual('projects');
+    expect(result.current.items[0].children[0].key).toEqual('project-1');
+    expect(result.current.items[0].children[1].key).toEqual('project-3');
+    expect(result.current.items[0].children[2].key).toEqual('project-4');
+    expect(result.current.items[0].children[3].key).toEqual('project-2');
+  });
+
+
+  it('can move an item to a different level', function () {
+    const initialItems = [
+      {id: 'projects', name: 'Projects', childItems: [
+        {id: 'project-1', name: 'Project 1'},
+        {id: 'project-2', name: 'Project 2', childItems: [
+          {id: 'project-2A', name: 'Project 2A'},
+          {id: 'project-2B', name: 'Project 2B'},
+          {id: 'project-2C', name: 'Project 2C'}
+        ]},
+        {id: 'project-3', name: 'Project 3'},
+        {id: 'project-4', name: 'Project 4'},
+        {id: 'project-5', name: 'Project 5', childItems: [
+          {id: 'project-5A', name: 'Project 5A'},
+          {id: 'project-5B', name: 'Project 5B'},
+          {id: 'project-5C', name: 'Project 5C'}
+        ]}
+      ]},
+      {id: 'reports', name: 'Reports', childItems: [
+        {id: 'reports-1', name: 'Reports 1', childItems: [
+          {id: 'reports-1A', name: 'Reports 1A', childItems: [
+            {id: 'reports-1AB', name: 'Reports 1AB', childItems: [
+              {id: 'reports-1ABC', name: 'Reports 1ABC'}
+            ]}
+          ]},
+          {id: 'reports-1B', name: 'Reports 1B'},
+          {id: 'reports-1C', name: 'Reports 1C'}
+        ]},
+        {id: 'reports-2', name: 'Reports 2'}
+      ]}
+    ];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren: (item) => item.childItems, getKey: (item) => item.id})
+    );
+    act(() => {
+      result.current.moveBefore('project-2B', ['project-3']);
+    });
+    expect(result.current.items[0].key).toEqual('projects');
+    expect(result.current.items[0].children[0].key).toEqual('project-1');
+    expect(result.current.items[0].children[1].key).toEqual('project-2');
+
+    expect(result.current.items[0].children[1].children[0].key).toEqual('project-2A');
+    expect(result.current.items[0].children[1].children[1].key).toEqual('project-3');
+    expect(result.current.items[0].children[1].children[2].key).toEqual('project-2B');
   });
 
   it('should move an item to a different level after the target', function () {
@@ -716,7 +1086,7 @@ describe('useTreeData', function () {
     );
 
     act(() => {
-      result.current.moveAfter('Eli', 'David', 1);
+      result.current.move('Eli', 'David', 2);
     });
     expect(result.current.items[0].key).toEqual('David');
 
@@ -729,13 +1099,12 @@ describe('useTreeData', function () {
 
   it('should move an item to a different level at the end when the index is greater than the node list length', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
-    console.log('initialItems', initialItems[0]);
     let {result} = renderHook(() =>
       useTreeData({initialItems, getChildren, getKey})
     );
 
     act(() => {
-      result.current.moveAfter('Eli', 'David', 100);
+      result.current.move('Eli', 'David', 101);
     });
     expect(result.current.items[0].key).toEqual('David');
 
@@ -745,5 +1114,75 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[3].key).toEqual('Eli');
     expect(result.current.items[1].key).toEqual('Emily');
     expect(result.current.items.length).toEqual(2);
+  });
+
+  it('should not move the item when moving it before itself', () => {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+  
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
+    let initialResult = result.current;
+  
+    act(() => {
+      result.current.moveBefore('David', ['David']);
+    });
+    expect(result.current.items).toEqual(initialResult.items);
+  
+    act(() => {
+      result.current.moveBefore('David', ['David', 'Eli']);
+    });
+    expect(result.current.items[0]).toEqual(initialResult.items[0]);
+    expect(result.current.items[1]).toEqual(initialResult.items[2]);
+    expect(result.current.items[2]).toEqual(initialResult.items[1]);
+  
+    act(() => {
+      result.current.moveBefore('John', ['John']);
+    });
+    expect(result.current.items[0]).toEqual(initialResult.items[0]);
+    expect(result.current.items[1]).toEqual(initialResult.items[2]);
+    expect(result.current.items[2]).toEqual(initialResult.items[1]);
+    expect(result.current.items[0].children).toEqual(initialResult.items[0].children);
+  
+    act(() => {
+      result.current.moveBefore('Jane', ['Sam', 'Jane']);
+    });
+    expect(result.current.items[0]).toEqual(initialResult.items[0]);
+    expect(result.current.items[1]).toEqual(initialResult.items[2]);
+    expect(result.current.items[2]).toEqual(initialResult.items[1]);
+    expect(result.current.items[0].children).toEqual(initialResult.items[0].children);
+  });
+  
+  it('should not move the item when moving it after itself', () => {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+  
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
+    let initialResult = result.current;
+  
+    act(() => {
+      result.current.moveAfter('David', ['David']);
+    });
+    expect(result.current.items).toEqual(initialResult.items);
+  
+    act(() => {
+      result.current.moveAfter('David', ['David', 'Eli']);
+    });
+    expect(result.current.items[0]).toEqual(initialResult.items[0]);
+    expect(result.current.items[1]).toEqual(initialResult.items[2]);
+    expect(result.current.items[2]).toEqual(initialResult.items[1]);
+  
+    act(() => {
+      result.current.moveAfter('John', ['John']);
+    });
+    expect(result.current.items[0]).toEqual(initialResult.items[0]);
+    expect(result.current.items[1]).toEqual(initialResult.items[2]);
+    expect(result.current.items[2]).toEqual(initialResult.items[1]);
+    expect(result.current.items[0].children).toEqual(initialResult.items[0].children);
+  
+    act(() => {
+      result.current.moveAfter('Jane', ['Sam', 'Jane']);
+    });
+    expect(result.current.items[0]).toEqual(initialResult.items[0]);
+    expect(result.current.items[1]).toEqual(initialResult.items[2]);
+    expect(result.current.items[2]).toEqual(initialResult.items[1]);
+    expect(result.current.items[0].children).toEqual(initialResult.items[0].children);
   });
 });

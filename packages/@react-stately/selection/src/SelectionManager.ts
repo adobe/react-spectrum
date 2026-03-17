@@ -28,7 +28,8 @@ import {Selection} from './Selection';
 
 interface SelectionManagerOptions {
   allowsCellSelection?: boolean,
-  layoutDelegate?: LayoutDelegate
+  layoutDelegate?: LayoutDelegate,
+  fullCollection?: Collection<Node<unknown>>
 }
 
 /**
@@ -40,6 +41,7 @@ export class SelectionManager implements MultipleSelectionManager {
   private allowsCellSelection: boolean;
   private _isSelectAll: boolean | null;
   private layoutDelegate: LayoutDelegate | null;
+  private fullCollection: Collection<Node<unknown>> | null;
 
   constructor(collection: Collection<Node<unknown>>, state: MultipleSelectionState, options?: SelectionManagerOptions) {
     this.collection = collection;
@@ -47,6 +49,7 @@ export class SelectionManager implements MultipleSelectionManager {
     this.allowsCellSelection = options?.allowsCellSelection ?? false;
     this._isSelectAll = null;
     this.layoutDelegate = options?.layoutDelegate || null;
+    this.fullCollection = options?.fullCollection || null;
   }
 
   /**
@@ -73,7 +76,7 @@ export class SelectionManager implements MultipleSelectionManager {
   /**
    * Sets the selection behavior for the collection.
    */
-  setSelectionBehavior(selectionBehavior: SelectionBehavior) {
+  setSelectionBehavior(selectionBehavior: SelectionBehavior): void {
     this.state.setSelectionBehavior(selectionBehavior);
   }
 
@@ -87,7 +90,7 @@ export class SelectionManager implements MultipleSelectionManager {
   /**
    * Sets whether the collection is focused.
    */
-  setFocused(isFocused: boolean) {
+  setFocused(isFocused: boolean): void {
     this.state.setFocused(isFocused);
   }
 
@@ -106,7 +109,7 @@ export class SelectionManager implements MultipleSelectionManager {
   /**
    * Sets the focused key.
    */
-  setFocusedKey(key: Key | null, childFocusStrategy?: FocusStrategy) {
+  setFocusedKey(key: Key | null, childFocusStrategy?: FocusStrategy): void {
     if (key == null || this.collection.getItem(key)) {
       this.state.setFocusedKey(key, childFocusStrategy);
     }
@@ -132,7 +135,7 @@ export class SelectionManager implements MultipleSelectionManager {
   /**
    * Returns whether a key is selected.
    */
-  isSelected(key: Key) {
+  isSelected(key: Key): boolean {
     if (this.state.selectionMode === 'none') {
       return false;
     }
@@ -210,7 +213,7 @@ export class SelectionManager implements MultipleSelectionManager {
   /**
    * Extends the selection to the given key.
    */
-  extendSelection(toKey: Key) {
+  extendSelection(toKey: Key): void {
     if (this.selectionMode === 'none') {
       return;
     }
@@ -312,7 +315,7 @@ export class SelectionManager implements MultipleSelectionManager {
   /**
    * Toggles whether the given key is selected.
    */
-  toggleSelection(key: Key) {
+  toggleSelection(key: Key): void {
     if (this.selectionMode === 'none') {
       return;
     }
@@ -348,7 +351,7 @@ export class SelectionManager implements MultipleSelectionManager {
   /**
    * Replaces the selection with only the given key.
    */
-  replaceSelection(key: Key) {
+  replaceSelection(key: Key): void {
     if (this.selectionMode === 'none') {
       return;
     }
@@ -368,7 +371,7 @@ export class SelectionManager implements MultipleSelectionManager {
   /**
    * Replaces the selection with the given keys.
    */
-  setSelectedKeys(keys: Iterable<Key>) {
+  setSelectedKeys(keys: Iterable<Key>): void {
     if (this.selectionMode === 'none') {
       return;
     }
@@ -388,33 +391,36 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   private getSelectAllKeys() {
+    // Use the full (unfiltered) collection when available so that materializing
+    // the 'all' selection includes items that are currently filtered out (e.g. by Autocomplete).
+    let collection = this.fullCollection ?? this.collection;
     let keys: Key[] = [];
     let addKeys = (key: Key | null) => {
       while (key != null) {
-        if (this.canSelectItem(key)) {
-          let item = this.collection.getItem(key);
+        if (this.canSelectItemIn(key, collection)) {
+          let item = collection.getItem(key);
           if (item?.type === 'item') {
             keys.push(key);
           }
 
           // Add child keys. If cell selection is allowed, then include item children too.
           if (item?.hasChildNodes && (this.allowsCellSelection || item.type !== 'item')) {
-            addKeys(getFirstItem(getChildNodes(item, this.collection))?.key ?? null);
+            addKeys(getFirstItem(getChildNodes(item, collection))?.key ?? null);
           }
         }
 
-        key = this.collection.getKeyAfter(key);
+        key = collection.getKeyAfter(key);
       }
     };
 
-    addKeys(this.collection.getFirstKey());
+    addKeys(collection.getFirstKey());
     return keys;
   }
 
   /**
    * Selects all items in the collection.
    */
-  selectAll() {
+  selectAll(): void {
     if (!this.isSelectAll && this.selectionMode === 'multiple') {
       this.state.setSelectedKeys('all');
     }
@@ -423,7 +429,7 @@ export class SelectionManager implements MultipleSelectionManager {
   /**
    * Removes all keys from the selection.
    */
-  clearSelection() {
+  clearSelection(): void {
     if (!this.disallowEmptySelection && (this.state.selectedKeys === 'all' || this.state.selectedKeys.size > 0)) {
       this.state.setSelectedKeys(new Selection());
     }
@@ -432,7 +438,7 @@ export class SelectionManager implements MultipleSelectionManager {
   /**
    * Toggles between select all and an empty selection.
    */
-  toggleSelectAll() {
+  toggleSelectAll(): void {
     if (this.isSelectAll) {
       this.clearSelection();
     } else {
@@ -440,7 +446,7 @@ export class SelectionManager implements MultipleSelectionManager {
     }
   }
 
-  select(key: Key, e?: PressEvent | LongPressEvent | PointerEvent) {
+  select(key: Key, e?: PressEvent | LongPressEvent | PointerEvent): void {
     if (this.selectionMode === 'none') {
       return;
     }
@@ -462,7 +468,7 @@ export class SelectionManager implements MultipleSelectionManager {
   /**
    * Returns whether the current selection is equal to the given selection.
    */
-  isSelectionEqual(selection: Set<Key>) {
+  isSelectionEqual(selection: Set<Key>): boolean {
     if (selection === this.state.selectedKeys) {
       return true;
     }
@@ -488,12 +494,16 @@ export class SelectionManager implements MultipleSelectionManager {
     return true;
   }
 
-  canSelectItem(key: Key) {
+  canSelectItem(key: Key): boolean {
+    return this.canSelectItemIn(key, this.collection);
+  }
+
+  private canSelectItemIn(key: Key, collection: Collection<Node<unknown>>): boolean {
     if (this.state.selectionMode === 'none' || this.state.disabledKeys.has(key)) {
       return false;
     }
 
-    let item = this.collection.getItem(key);
+    let item = collection.getItem(key);
     if (!item || item?.props?.isDisabled || (item.type === 'cell' && !this.allowsCellSelection)) {
       return false;
     }
@@ -501,15 +511,23 @@ export class SelectionManager implements MultipleSelectionManager {
     return true;
   }
 
-  isDisabled(key: Key) {
+  isDisabled(key: Key): boolean {
     return this.state.disabledBehavior === 'all' && (this.state.disabledKeys.has(key) || !!this.collection.getItem(key)?.props?.isDisabled);
   }
 
-  isLink(key: Key) {
+  isLink(key: Key): boolean {
     return !!this.collection.getItem(key)?.props?.href;
   }
 
-  getItemProps(key: Key) {
+  getItemProps(key: Key): any {
     return this.collection.getItem(key)?.props;
+  }
+
+  withCollection(collection: Collection<Node<unknown>>): SelectionManager {
+    return new SelectionManager(collection, this.state, {
+      allowsCellSelection: this.allowsCellSelection,
+      layoutDelegate: this.layoutDelegate || undefined,
+      fullCollection: this.fullCollection ?? this.collection
+    });
   }
 }

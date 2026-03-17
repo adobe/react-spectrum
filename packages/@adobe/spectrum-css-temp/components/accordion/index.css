@@ -33,6 +33,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Accordion-itemIndicator {
   display: block;
+  flex-shrink: 0;
 
   padding-inline-start: var(--spectrum-accordion-icon-gap);
   padding-inline-end: var(--spectrum-accordion-icon-gap);

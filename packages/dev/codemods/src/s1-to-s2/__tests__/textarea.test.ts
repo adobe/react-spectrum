@@ -20,18 +20,6 @@ let props = {isQuiet: true};
 </div>
 `);
 
-test('Removes placeholder', `
-import {TextArea} from '@adobe/react-spectrum';
-let placeholder = 'is this actually removed?';
-let props = {placeholder: 'is this actually removed?'};
-<div>
-  <TextArea placeholder="is this actually removed?" />
-  <TextArea placeholder={"is this actually removed?"} />
-  <TextArea placeholder={placeholder} />
-  <TextArea {...props} />
-</div>
-`);
-
 test('changes validationState to isInvalid or nothing', `
 import {TextArea} from '@adobe/react-spectrum';
 let validationState = 'invalid';

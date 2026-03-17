@@ -11,8 +11,9 @@
  */
 
 import {DOMAttributes, RefObject} from '@react-types/shared';
+import {getEventTarget} from '@react-aria/utils';
 import {isElementInChildOfActiveScope} from '@react-aria/focus';
-import {useEffect} from 'react';
+import {useEffect, useRef} from 'react';
 import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
 
 export interface AriaOverlayProps {
@@ -70,18 +71,19 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
     shouldCloseOnInteractOutside
   } = props;
 
+  let lastVisibleOverlay = useRef<RefObject<Element | null>>(undefined);
+
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !visibleOverlays.includes(ref)) {
       visibleOverlays.push(ref);
+      return () => {
+        let index = visibleOverlays.indexOf(ref);
+        if (index >= 0) {
+          visibleOverlays.splice(index, 1);
+        }
+      };
     }
-
-    return () => {
-      let index = visibleOverlays.indexOf(ref);
-      if (index >= 0) {
-        visibleOverlays.splice(index, 1);
-      }
-    };
   }, [isOpen, ref]);
 
   // Only hide the overlay when it is the topmost visible overlay in the stack
@@ -92,22 +94,25 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
   };
 
   let onInteractOutsideStart = (e: PointerEvent) => {
-    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
-      if (visibleOverlays[visibleOverlays.length - 1] === ref) {
+    const topMostOverlay = visibleOverlays[visibleOverlays.length - 1];
+    lastVisibleOverlay.current = topMostOverlay;
+    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(getEventTarget(e) as Element)) {
+      if (topMostOverlay === ref) {
         e.stopPropagation();
-        e.preventDefault();
       }
     }
   };
 
   let onInteractOutside = (e: PointerEvent) => {
-    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
+    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(getEventTarget(e) as Element)) {
       if (visibleOverlays[visibleOverlays.length - 1] === ref) {
         e.stopPropagation();
-        e.preventDefault();
       }
-      onHide();
+      if (lastVisibleOverlay.current === ref) {
+        onHide();
+      }
     }
+    lastVisibleOverlay.current = undefined;
   };
 
   // Handle the escape key
@@ -144,20 +149,11 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
     }
   });
 
-  let onPointerDownUnderlay = e => {
-    // fixes a firefox issue that starts text selection https://bugzilla.mozilla.org/show_bug.cgi?id=1675846
-    if (e.target === e.currentTarget) {
-      e.preventDefault();
-    }
-  };
-
   return {
     overlayProps: {
       onKeyDown,
       ...focusWithinProps
     },
-    underlayProps: {
-      onPointerDown: onPointerDownUnderlay
-    }
+    underlayProps: {}
   };
 }

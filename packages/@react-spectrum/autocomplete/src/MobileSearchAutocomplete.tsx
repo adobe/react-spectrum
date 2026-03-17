@@ -19,12 +19,13 @@ import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
 import {DismissButton, useOverlayTrigger} from '@react-aria/overlays';
 import {Field} from '@react-spectrum/label';
 import {FocusableRef, ValidationState} from '@react-types/shared';
-import {focusSafely, FocusScope, useFocusRing} from '@react-aria/focus';
+import {focusSafely, setInteractionModality, useHover} from '@react-aria/interactions';
+import {FocusScope, useFocusRing} from '@react-aria/focus';
+import {getActiveElement, mergeProps, useFormReset, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
-import {mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {
   HTMLAttributes,
@@ -38,7 +39,6 @@ import React, {
 } from 'react';
 import searchAutocompleteStyles from './searchautocomplete.css';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
-import {setInteractionModality, useHover} from '@react-aria/interactions';
 import {SpectrumSearchAutocompleteProps} from '@react-types/autocomplete';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
@@ -126,7 +126,7 @@ function ForwardMobileSearchAutocomplete<T extends object>(props: SpectrumSearch
     inputProps.onChange = () => {};
   }
 
-  useFormReset(inputRef, state.inputValue, state.setInputValue);
+  useFormReset(inputRef, state.defaultInputValue, state.setInputValue);
 
   return (
     <>
@@ -482,7 +482,7 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
   };
 
   let onScroll = useCallback(() => {
-    if (!inputRef.current || document.activeElement !== inputRef.current || !isTouchDown.current) {
+    if (!inputRef.current || getActiveElement() !== inputRef.current || !isTouchDown.current) {
       return;
     }
 

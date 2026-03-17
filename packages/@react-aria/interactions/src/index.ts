@@ -17,6 +17,7 @@ export {
   isFocusVisible,
   getInteractionModality,
   setInteractionModality,
+  getPointerType,
   addWindowFocusTracking,
   useInteractionModality,
   useFocusVisible,
@@ -30,6 +31,8 @@ export {useMove} from './useMove';
 export {usePress} from './usePress';
 export {useScrollWheel} from './useScrollWheel';
 export {useLongPress} from './useLongPress';
+export {useFocusable, FocusableProvider, Focusable, FocusableContext} from './useFocusable';
+export {focusSafely} from './focusSafely';
 
 export type {FocusProps, FocusResult} from './useFocus';
 export type {FocusVisibleHandler, FocusVisibleProps, FocusVisibleResult, Modality} from './useFocusVisible';
@@ -38,7 +41,8 @@ export type {HoverProps, HoverResult} from './useHover';
 export type {InteractOutsideProps} from './useInteractOutside';
 export type {KeyboardProps, KeyboardResult} from './useKeyboard';
 export type {PressProps, PressHookProps, PressResult} from './usePress';
-export type {PressEvent, PressEvents, MoveStartEvent, MoveMoveEvent, MoveEndEvent, MoveEvents, HoverEvent, HoverEvents, FocusEvents, KeyboardEvents} from '@react-types/shared';
+export type {PressEvent, PressEvents, LongPressEvent, MoveStartEvent, MoveMoveEvent, MoveEndEvent, MoveEvent, MoveEvents, HoverEvent, HoverEvents, FocusEvents, KeyboardEvents} from '@react-types/shared';
 export type {MoveResult} from './useMove';
 export type {LongPressProps, LongPressResult} from './useLongPress';
 export type {ScrollWheelProps} from './useScrollWheel';
+export type {FocusableAria, FocusableOptions, FocusableProviderProps} from './useFocusable';

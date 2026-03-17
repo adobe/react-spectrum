@@ -34,7 +34,7 @@ function getColumnWidths(tree) {
   return Array.from(rows[0].children).map(cell => Number((cell as HTMLElement).style.width.replace('px', '')));
 }
 
-export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol, resizeTable) => {
+export let resizingTests = (render: any, rerender: any, Table: any, ControlledTable: any, resizeCol: any, resizeTable: any): void => {
 // assumption with all these tests
 // 1. the controlling values we pass in aren't actually controlling
 // the sizes, they are instead more like the default values that the controlling logic uses

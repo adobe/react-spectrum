@@ -226,3 +226,69 @@ function createCalendar(identifier) {
 ## Interface
 
 <ClassAPI links={docs.links} class={docs.exports.Calendar} />
+
+## Custom calendars
+
+You can create your own custom calendar system by implementing the `Calendar` interface shown above. This enables calendars that follow custom business rules. An example would be a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar.
+
+To implement a calendar, either extend an existing implementation (e.g. `GregorianCalendar`) or implement the `Calendar` interface from scratch. The most important methods are `fromJulianDay` and `toJulianDay`, which convert between the calendar's year/month/day numbering system and a [Julian Day Number](https://en.wikipedia.org/wiki/Julian_day). This allows converting dates between calendar systems. Other methods such as `getDaysInMonth` and `getMonthsInYear` can be implemented to define how dates are organized in your calendar system.
+
+The following code is an example of how you might implement a custom 4-5-4 calendar (though implementing a true 4-5-4 calendar would be more nuanced than this).
+
+```tsx
+import type {AnyCalendarDate, Calendar} from '@internationalized/date';
+import {CalendarDate, GregorianCalendar, startOfWeek} from '@internationalized/date';
+
+const weekPattern = [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, 4];
+
+class Custom454 extends GregorianCalendar {
+  // Months always have either 4 or 5 full weeks.
+  getDaysInMonth(date) {
+    return weekPattern[date.month - 1] * 7;
+  }
+
+  // Enable conversion between calendar systems.
+  fromJulianDay(jd: number): CalendarDate {
+    let gregorian = super.fromJulianDay(jd);
+
+    // Start from the beginning of the first week of the gregorian year
+    // and add weeks until we find the month.
+    let monthStart = startOfWeek(new CalendarDate(gregorian.year, 1, 1), 'en');
+    for (let months = 0; months < weekPattern.length; months++) {
+      let weeksInMonth = weekPattern[months];
+      let monthEnd = monthStart.add({weeks: weeksInMonth});
+      if (monthEnd.compare(gregorian) > 0) {
+        let days = gregorian.compare(monthStart);
+        return new CalendarDate(this, monthStart.year, months + 1, days + 1);
+      }
+      monthStart = monthEnd;
+    }
+
+    throw Error('Date is not in any month somehow!');
+  }
+
+  toJulianDay(date: AnyCalendarDate): number {
+    let monthStart = startOfWeek(new CalendarDate(date.year, 1, 1), 'en');
+    for (let month = 1; month < date.month; month++) {
+      monthStart = monthStart.add({weeks: weekPattern[month - 1]});
+    }
+
+    let gregorian = monthStart.add({days: date.day - 1});
+    return super.toJulianDay(gregorian);
+  }
+
+  isEqual(other: Calendar) {
+    return other instanceof Custom454;
+  }
+}
+```
+
+This enables dates to be converted between calendar systems.
+
+```tsx
+import {GregorianCalendar, toCalendar} from '@internationalized/date';
+
+let date = new CalendarDate(new Custom454(), 2024, 2, 1);
+let gregorianDate = toCalendar(date, new GregorianCalendar());
+// => new CalendarDate(new GregorianCalendar(), 2024, 1, 29);
+```

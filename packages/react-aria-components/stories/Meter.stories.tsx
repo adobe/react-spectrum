@@ -11,10 +11,12 @@
  */
 
 import {Label, Meter} from 'react-aria-components';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
+import './styles.css';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/Meter',
   component: Meter,
   args: {
     value: 50
@@ -24,9 +26,11 @@ export default {
     minValue: {control: 'number'},
     maxValue: {control: 'number'}
   }
-};
+} as Meta<typeof Meter>;
 
-export const MeterExample = (args) => {
+export type MeterStory = StoryFn<typeof Meter>;
+
+export const MeterExample: MeterStory = (args) => {
   return (
     <Meter {...args}>
       {({percentage, valueText}) => (

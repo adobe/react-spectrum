@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {getItemElement} from './utils';
 import {Key, LayoutDelegate, Rect, RefObject, Size} from '@react-types/shared';
 
 export class DOMLayoutDelegate implements LayoutDelegate {
@@ -24,7 +25,7 @@ export class DOMLayoutDelegate implements LayoutDelegate {
     if (!container) {
       return null;
     }
-    let item = key != null ? container.querySelector(`[data-key="${CSS.escape(key.toString())}"]`) : null;
+    let item = key != null ? getItemElement(this.ref, key) : null;
     if (!item) {
       return null;
     }
@@ -33,8 +34,8 @@ export class DOMLayoutDelegate implements LayoutDelegate {
     let itemRect = item.getBoundingClientRect();
 
     return {
-      x: itemRect.left - containerRect.left + container.scrollLeft,
-      y: itemRect.top - containerRect.top + container.scrollTop,
+      x: itemRect.left - containerRect.left - container.clientLeft + container.scrollLeft,
+      y: itemRect.top - containerRect.top - container.clientTop + container.scrollTop,
       width: itemRect.width,
       height: itemRect.height
     };
@@ -53,8 +54,8 @@ export class DOMLayoutDelegate implements LayoutDelegate {
     return {
       x: container?.scrollLeft ?? 0,
       y: container?.scrollTop ?? 0,
-      width: container?.offsetWidth ?? 0,
-      height: container?.offsetHeight ?? 0
+      width: container?.clientWidth ?? 0,
+      height: container?.clientHeight ?? 0
     };
   }
 }

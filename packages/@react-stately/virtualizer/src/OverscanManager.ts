@@ -18,7 +18,7 @@ export class OverscanManager {
   private velocity = new Point(0, 0);
   private visibleRect = new Rect();
 
-  setVisibleRect(rect: Rect) {
+  setVisibleRect(rect: Rect): void {
     let time = performance.now() - this.startTime;
     if (time < 500) {
       if (rect.x !== this.visibleRect.x && time > 0) {
@@ -34,7 +34,7 @@ export class OverscanManager {
     this.visibleRect = rect;
   }
 
-  getOverscannedRect() {
+  getOverscannedRect(): Rect {
     let overscanned = this.visibleRect.copy();
 
     let overscanY = this.visibleRect.height / 3;
@@ -43,12 +43,10 @@ export class OverscanManager {
       overscanned.y -= overscanY;
     }
 
-    if (this.velocity.x !== 0) {
-      let overscanX = this.visibleRect.width / 3;
-      overscanned.width += overscanX;
-      if (this.velocity.x < 0) {
-        overscanned.x -= overscanX;
-      }
+    let overscanX = this.visibleRect.width / 3;
+    overscanned.width += overscanX;
+    if (this.velocity.x < 0) {
+      overscanned.x -= overscanX;
     }
 
     return overscanned;

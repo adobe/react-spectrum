@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSwatchPicker as AriaColorSwatchPicker, ColorSwatchPickerItem as AriaColorSwatchPickerItem, ContextValue, SlotProps} from 'react-aria-components';
-import {Color} from '@react-types/color';
+import {ColorSwatchPicker as AriaColorSwatchPicker, ColorSwatchPickerItem as AriaColorSwatchPickerItem, Color, ContextValue, SlotProps} from 'react-aria-components';
 import {ColorSwatchProps, InternalColorSwatchContext} from './ColorSwatch';
 import {createContext, forwardRef, ReactElement, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, ValueBase} from '@react-types/shared';
@@ -51,6 +50,7 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: Co
     density = 'regular',
     size = 'M',
     rounding = 'none',
+    UNSAFE_className = '',
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -59,7 +59,7 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: Co
     <AriaColorSwatchPicker
       {...otherProps}
       ref={domRef}
-      className={props.UNSAFE_className + style({
+      className={UNSAFE_className + style({
         display: 'flex',
         flexWrap: 'wrap',
         gap: {
@@ -90,7 +90,8 @@ function useWrapper(swatch: ReactElement, color: Color, rounding: ColorSwatchPro
             default: 'sm',
             full: 'full'
           }
-        }
+        },
+        disableTapHighlight: true
       })({...renderProps, rounding})}>
       {({isSelected}) => (<>
         {swatch}
@@ -110,7 +111,7 @@ function useWrapper(swatch: ReactElement, color: Color, rounding: ColorSwatchPro
               outlineWidth: 2,
               outlineOffset: -4,
               forcedColorAdjust: 'none',
-              borderRadius: '[inherit]'
+              borderRadius: 'inherit'
             })} />
         )}
       </>)}

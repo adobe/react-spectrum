@@ -27,6 +27,8 @@ export interface NumberFieldState extends FormValidationState {
    * Updated based on the `inputValue` as the user types.
    */
   numberValue: number,
+  /** The default value of the input. */
+  defaultNumberValue: number,
   /** The minimum value of the number field. */
   minValue?: number,
   /** The maximum value of the number field. */
@@ -50,8 +52,9 @@ export interface NumberFieldState extends FormValidationState {
    * to the minimum and maximum values of the field, and snapped to the nearest step value.
    * This will fire the `onChange` prop with the new value, and if uncontrolled, update the `numberValue`.
    * Typically this is called when the field is blurred.
+   * @param value - The value to commit. If not provided, the current input value is used.
    */
-  commit(): void,
+  commit(value?: string): void,
   /** Increments the current input value to the next step boundary, and fires `onChange`. */
   increment(): void,
   /** Decrements the current input value to the next step boundary, and fires `onChange`. */
@@ -87,30 +90,30 @@ export function useNumberFieldState(
     onChange,
     locale,
     isDisabled,
-    isReadOnly
+    isReadOnly,
+    commitBehavior = 'snap'
   } = props;
 
   if (value === null) {
     value = NaN;
   }
 
-  if (value !== undefined && !isNaN(value)) {
-    if (step !== undefined && !isNaN(step)) {
-      value = snapValueToStep(value, minValue, maxValue, step);
-    } else {
-      value = clamp(value, minValue, maxValue);
-    }
+  let snapValue = useCallback(value => {
+    return step === undefined || isNaN(step)
+      ? clamp(value, minValue, maxValue)
+      : snapValueToStep(value, minValue, maxValue, step);
+  }, [step, minValue, maxValue]);
+
+  if (value !== undefined && !isNaN(value) && commitBehavior === 'snap') {
+    value = snapValue(value);
   }
 
-  if (!isNaN(defaultValue)) {
-    if (step !== undefined && !isNaN(step)) {
-      defaultValue = snapValueToStep(defaultValue, minValue, maxValue, step);
-    } else {
-      defaultValue = clamp(defaultValue, minValue, maxValue);
-    }
+  if (!isNaN(defaultValue) && commitBehavior === 'snap') {
+    defaultValue = snapValue(defaultValue);
   }
 
   let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, onChange);
+  let [initialValue] = useState(numberValue);
   let [inputValue, setInputValue] = useState(() => isNaN(numberValue) ? '' : new NumberFormatter(locale, formatOptions).format(numberValue));
 
   let numberParser = useMemo(() => new NumberParser(locale, formatOptions), [locale, formatOptions]);
@@ -143,33 +146,36 @@ export function useNumberFieldState(
   }
 
   let parsedValue = useMemo(() => numberParser.parse(inputValue), [numberParser, inputValue]);
-  let commit = () => {
+  let commit = (overrideValue?: string) => {
+    let newInputValue = overrideValue === undefined ? inputValue : overrideValue;
+    let newParsedValue = parsedValue;
+    if (overrideValue !== undefined) {
+      newParsedValue = numberParser.parse(newInputValue);
+    }
     // Set to empty state if input value is empty
-    if (!inputValue.length) {
+    if (!newInputValue.length) {
       setNumberValue(NaN);
       setInputValue(value === undefined ? '' : format(numberValue));
       return;
     }
 
     // if it failed to parse, then reset input to formatted version of current number
-    if (isNaN(parsedValue)) {
+    if (isNaN(newParsedValue)) {
       setInputValue(format(numberValue));
       return;
     }
 
     // Clamp to min and max, round to the nearest step, and round to specified number of digits
-    let clampedValue: number;
-    if (step === undefined || isNaN(step)) {
-      clampedValue = clamp(parsedValue, minValue, maxValue);
-    } else {
-      clampedValue = snapValueToStep(parsedValue, minValue, maxValue, step);
-    }
-
+    let clampedValue = commitBehavior === 'snap' ? snapValue(newParsedValue) : newParsedValue;
     clampedValue = numberParser.parse(format(clampedValue));
+    let shouldValidate = clampedValue !== numberValue;
     setNumberValue(clampedValue);
 
     // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
     setInputValue(format(value === undefined ? clampedValue : numberValue));
+    if (shouldValidate) {
+      validation.commitValidation();
+    }
   };
 
   let safeNextStep = (operation: '+' | '-', minMax: number = 0) => {
@@ -273,6 +279,7 @@ export function useNumberFieldState(
     minValue,
     maxValue,
     numberValue: parsedValue,
+    defaultNumberValue: isNaN(defaultValue) ? initialValue : defaultValue,
     setNumberValue,
     setInputValue,
     inputValue,

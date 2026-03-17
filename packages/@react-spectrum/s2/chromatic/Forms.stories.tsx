@@ -23,6 +23,7 @@ import {
   ContextualHelp,
   Divider,
   Form,
+  FormProps,
   Heading,
   Meter,
   NumberField,
@@ -41,11 +42,11 @@ import {
   TextField,
   ToggleButton
 } from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
+import {ReactElement, useState} from 'react';
 import SortDown from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUp from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {useState} from 'react';
 
 const meta: Meta<typeof Form> = {
   component: Form,
@@ -56,13 +57,14 @@ const meta: Meta<typeof Form> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof Form>;
 
-export const Example = {
-  render: (args: any) => (
+export const Example: Story = {
+  render: (args) => (
     <Form {...args}>
-      <TextField label="First Name" name="firstName" />
-      <TextField label="Last Name" name="firstName" />
-      <TextField label="Email" name="email" type="email" description="Enter an email" />
+      <TextField label="First Name" name="firstName" placeholder="John" />
+      <TextField label="Last Name" name="lastName" placeholder="Doe" />
+      <TextField label="Email" name="email" type="email" description="Enter an email" placeholder="abc@123.com" />
       <CheckboxGroup label="Favorite sports">
         <Checkbox value="soccer">Soccer</Checkbox>
         <Checkbox value="baseball">Baseball</Checkbox>
@@ -73,10 +75,10 @@ export const Example = {
         <Radio value="dog">Dog</Radio>
         <Radio value="plant" isDisabled>Plant</Radio>
       </RadioGroup>
-      <TextField label="City" name="city" description="A long description to test help text wrapping." />
-      <TextField label="A long label to test wrapping behavior" name="long" />
+      <TextField label="City" name="city" description="A long description to test help text wrapping." placeholder="Some city" />
+      <TextField label="A long label to test wrapping behavior" name="long" placeholder="looooooooooong" />
       <SearchField label="Search" name="search" />
-      <TextArea label="Comment" name="comment" />
+      <TextArea label="Comment" name="comment" placeholder="Enter your comment here" />
       <Switch>Wi-Fi</Switch>
       <Checkbox>I agree to the terms</Checkbox>
       <Slider label="Cookies"  defaultValue={30} />
@@ -86,12 +88,12 @@ export const Example = {
   )
 };
 
-export const MixedForm = {
-  render: (args: any) => (
+export const MixedForm: Story = {
+  render: (args) => (
     <Form {...args}>
-      <TextField label="First Name" name="firstName" />
-      <TextField label="Last Name" name="firstName" />
-      <TextField label="Email" name="email" type="email" description="Enter an email" />
+      <TextField label="First Name" name="firstName" placeholder="John" />
+      <TextField label="Last Name" name="lastName" placeholder="Doe" />
+      <TextField label="Email" name="email" type="email" description="Enter an email" placeholder="abc@123.com" />
       <CheckboxGroup aria-label="Favorite sports">
         <Checkbox value="soccer">Soccer</Checkbox>
         <Checkbox value="baseball">Baseball</Checkbox>
@@ -112,7 +114,7 @@ export const MixedForm = {
   }
 };
 
-const CustomLabelsExampleRender = (args: any) => {
+const CustomLabelsExampleRender = (args: FormProps): ReactElement => {
   const [isSortAscending, setIsSortAscending] = useState(true);
   return (
     <Form {...args}>
@@ -141,7 +143,7 @@ const CustomLabelsExampleRender = (args: any) => {
         <ToggleButton>
           Enable color
         </ToggleButton>
-        <ColorField aria-label="Fill color" styles={style({width: 144})} />
+        <ColorField aria-label="Fill color" styles={style({width: 144})} placeholder="######" />
         <ColorSlider channel="alpha" defaultValue="#000" />
       </div>
       <Divider size="S" />
@@ -150,7 +152,7 @@ const CustomLabelsExampleRender = (args: any) => {
         <ToggleButton>
           Enable search
         </ToggleButton>
-        <TextField aria-label="Query" styles={style({width: 144})} />
+        <TextField aria-label="Query" styles={style({width: 144})} placeholder="Search here" />
         <ComboBox aria-label="Search terms" styles={style({width: 144})}>
           <ComboBoxItem>search term 1</ComboBoxItem>
           <ComboBoxItem>search term 2</ComboBoxItem>
@@ -205,8 +207,8 @@ const CustomLabelsExampleRender = (args: any) => {
   );
 };
 
-export const CustomLabelsExample = {
-  render: (args: any) => <CustomLabelsExampleRender {...args} />,
+export const CustomLabelsExample: StoryObj<typeof CustomLabelsExampleRender> = {
+  render: (args) => <CustomLabelsExampleRender {...args} />,
   parameters: {
     docs: {
       disable: true

@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import {Button, ColorPicker as AriaColorPicker, ColorPickerProps as AriaColorPickerProps, DialogTrigger} from 'react-aria-components';
 import {ColorSwatch} from './ColorSwatch';
@@ -11,10 +12,10 @@ import { focusRing } from './utils';
 
 const buttonStyles = tv({
   extend: focusRing,
-  base: 'flex gap-2 items-center cursor-default rounded-xs text-sm text-gray-800 dark:text-gray-200'
+  base: 'border-0 bg-transparent flex gap-2 items-center cursor-default rounded-xs font-sans text-sm text-neutral-800 dark:text-neutral-200 [-webkit-tap-highlight-color:transparent]'
 });
 
-export interface ColorPickerProps extends AriaColorPickerProps {
+export interface ColorPickerProps extends Omit<AriaColorPickerProps, 'children'> {
   label?: string;
   children?: React.ReactNode;
 }

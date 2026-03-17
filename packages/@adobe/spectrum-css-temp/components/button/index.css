@@ -372,6 +372,28 @@ a.spectrum-ActionButton {
     margin-block: 0;
     margin-inline: auto;
   }
+
+  &.spectrum-ClearButton--inset.spectrum-ClearButton--inset {
+    transition: unset;
+    box-sizing: border-box;
+    &:after {
+      transition: unset;
+      height: calc(100% - 2px);
+      aspect-ratio: 1;
+      top: 50%;
+      left: 50%;
+      right: unset;
+      bottom: unset;
+      margin: 0;
+      transform: translate(-50%, -50%);
+    }
+
+    &:focus-visible {
+      &:after {
+        box-shadow: inset 0 0 0 var(--spectrum-focus-ring-size) var(--spectrum-focus-ring-color);
+      }
+    }
+  }
 }
 
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {

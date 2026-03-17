@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, Dialog, DialogTrigger, OverlayArrow, Popover} from '../';
-import React from 'react';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {Button, Dialog, DialogTrigger, OverlayArrow, Popover, Pressable} from '../';
+import React, {useRef} from 'react';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 let TestPopover = (props) => (
@@ -93,7 +94,15 @@ describe('Popover', () => {
     expect(dialog).toHaveTextContent('Popover at bottom');
   });
 
-  it('should support being used standalone', async () => {
+  it('should support custom render function', async () => {
+    let {getByRole} =  render(<TestPopover render={props => <div {...props} data-custom="true" />} />);
+    let button = getByRole('button');
+    await user.click(button);
+    let dialog = getByRole('dialog').parentElement;
+    expect(dialog).toHaveAttribute('data-custom', 'true');
+  });
+
+  it('should support being used standalone', () => {
     let triggerRef = React.createRef();
     let onOpenChange = jest.fn();
     let {getByRole} = render(<>
@@ -106,12 +115,14 @@ describe('Popover', () => {
     let dialog = getByRole('dialog');
     expect(dialog).toHaveTextContent('A popover');
 
-    await user.click(document.body);
+    // userEvent seems to trigger a double close event
+    fireEvent.mouseDown(document.body, {button: 0});
+    fireEvent.mouseUp(document.body, {button: 0});
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
-  it('isOpen and defaultOpen should override state from context', async () => {
+  it('isOpen and defaultOpen should override state from context', () => {
     let onOpenChange = jest.fn();
     let {getByRole} = render(<>
       <DialogTrigger>
@@ -125,7 +136,9 @@ describe('Popover', () => {
     let dialog = getByRole('dialog');
     expect(dialog).toHaveTextContent('A popover');
 
-    await user.click(document.body);
+    // userEvent seems to trigger a double close event
+    fireEvent.mouseDown(document.body, {button: 0});
+    fireEvent.mouseUp(document.body, {button: 0});
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
@@ -176,6 +189,46 @@ describe('Popover', () => {
     expect(arrow).toHaveAttribute('style', expect.stringContaining('top: 5px'));
   });
 
+  describe('portalProvider', () => {
+    function InfoPopover() {
+      return (
+        <DialogTrigger>
+          <Button />
+          <Popover>
+            <OverlayArrow>
+              <svg width={12} height={12}>
+                <path d="M0 0,L6 6,L12 0" />
+              </svg>
+            </OverlayArrow>
+            <Dialog>Popover</Dialog>
+          </Popover>
+        </DialogTrigger>
+      );
+    }
+    function App() {
+      let container = useRef(null);
+      return (
+        <>
+          <UNSAFE_PortalProvider getContainer={() => container.current}>
+            <InfoPopover container={container} />
+          </UNSAFE_PortalProvider>
+          <div ref={container} data-testid="custom-container" />
+        </>
+      );
+    }
+    it('should render the dialog in the portal container set by the PortalProvider', async () => {
+      let {getByRole, getByTestId} = render(
+        <App />
+      );
+
+      let button = getByRole('button');
+      await user.click(button);
+
+      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+    });
+  });
+
+  // TODO: delete this test when we get rid of the deprecated prop
   describe('portalContainer', () => {
     function InfoPopover(props) {
       return (
@@ -211,5 +264,25 @@ describe('Popover', () => {
 
       expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
     });
+  });
+
+  it('should support custom Pressable trigger', async () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Pressable>
+          <span role="button">Trigger</span>
+        </Pressable>
+        <Popover>
+          <Dialog>Popover</Dialog>
+        </Popover>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+
+    await user.click(button);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toBeInTheDocument();
   });
 });

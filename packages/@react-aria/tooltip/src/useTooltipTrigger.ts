@@ -11,12 +11,11 @@
  */
 
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {getInteractionModality, isFocusVisible, useHover} from '@react-aria/interactions';
+import {getInteractionModality, isFocusVisible, useFocusable, useHover} from '@react-aria/interactions';
 import {mergeProps, useId} from '@react-aria/utils';
 import {TooltipTriggerProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';
 import {useEffect, useRef} from 'react';
-import {useFocusable} from '@react-aria/focus';
 
 export interface TooltipTriggerAria {
   /**
@@ -37,7 +36,8 @@ export interface TooltipTriggerAria {
 export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTriggerState, ref: RefObject<FocusableElement | null>) : TooltipTriggerAria {
   let {
     isDisabled,
-    trigger
+    trigger,
+    shouldCloseOnPress = true
   } = props;
 
   let tooltipId = useId();
@@ -103,6 +103,10 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
   };
 
   let onPressStart = () => {
+    // if shouldCloseOnPress is false, we should not close the tooltip
+    if (!shouldCloseOnPress) {
+      return;
+    }
     // no matter how the trigger is pressed, we should close the tooltip
     isFocused.current = false;
     isHovered.current = false;
@@ -140,9 +144,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
       'aria-describedby': state.isOpen ? tooltipId : undefined,
       ...mergeProps(focusableProps, hoverProps, {
         onPointerDown: onPressStart,
-        onKeyDown: onPressStart,
-        tabIndex: undefined
-      })
+        onKeyDown: onPressStart
+      }),
+      tabIndex: undefined
     },
     tooltipProps: {
       id: tooltipId

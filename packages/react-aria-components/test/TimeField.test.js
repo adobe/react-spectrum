@@ -78,6 +78,25 @@ describe('TimeField', () => {
     }
   });
 
+  it('should support custom render function', () => {
+    let {getByRole, getAllByRole} =  render(
+      <TimeField render={props => <div {...props} data-custom="true" />}>
+        <Label render={props => <span {...props} data-custom="true" />}>Birth date</Label>
+        <DateInput className="date-input" render={props => <div {...props} data-custom="true" />}>
+          {segment => <DateSegment segment={segment} render={props => <span {...props} data-custom="true" />} />}
+        </DateInput>
+      </TimeField>
+    );
+    let input = getByRole('group');
+    expect(input).toHaveAttribute('data-custom', 'true');
+    expect(input.closest('.react-aria-TimeField')).toHaveAttribute('data-custom', 'true');
+    expect(input.previousElementSibling).toHaveAttribute('data-custom', 'true');
+
+    for (let segment of getAllByRole('spinbutton')) {
+      expect(segment).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <TimeFieldContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
@@ -112,9 +131,68 @@ describe('TimeField', () => {
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
   });
 
+  it('should support disabled render prop', () => {
+    let {getByRole} = render(
+      <TimeField isDisabled>
+        {({isDisabled}) => (
+          <>
+            <Label>Birth date</Label>
+            <DateInput 
+              data-disabled-state={isDisabled ? 'disabled' : null}>
+              {segment => <DateSegment segment={segment} />}
+            </DateInput>
+          </>
+        )}
+      </TimeField>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-disabled-state', 'disabled');
+  });
+
+  it('should support required render prop', () => {
+    let {getByRole} = render(
+      <TimeField isRequired>
+        {({isRequired}) => (
+          <>
+            <Label>Time</Label>
+            <DateInput
+              data-required-state={isRequired ? 'required' : null}>
+              {segment => <DateSegment segment={segment} />}
+            </DateInput>
+          </>
+        )}
+      </TimeField>
+    );
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-required-state', 'required');
+  });
+
+  it('should support required state', () => {
+    let {getByRole, rerender} = render(
+      <TimeField>
+        <Label>Time</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </TimeField>
+    );
+    let group = getByRole('group');
+    expect(group.closest('.react-aria-TimeField')).not.toHaveAttribute('data-required');
+    rerender(
+      <TimeField isRequired>
+        <Label>Time</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </TimeField>
+    );
+    expect(group.closest('.react-aria-TimeField')).toHaveAttribute('data-required');
+  });
+
   it('should support form value', () => {
     render(
-      <TimeField name="time" value={new Time(8, 30)}>
+      <TimeField name="time" form="test" value={new Time(8, 30)}>
         <Label>Time</Label>
         <DateInput>
           {segment => <DateSegment segment={segment} />}
@@ -123,6 +201,7 @@ describe('TimeField', () => {
     );
     let input = document.querySelector('input[name=time]');
     expect(input).toHaveValue('08:30:00');
+    expect(input).toHaveAttribute('form', 'test');
   });
 
   it('supports validation errors', async () => {

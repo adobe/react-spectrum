@@ -13,7 +13,7 @@
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Heading} from '@react-spectrum/text';
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {RangeSlider} from '../';
 import React from 'react';
 import {SpectrumRangeSliderProps} from '@react-types/slider';
@@ -21,24 +21,22 @@ import {SpectrumRangeSliderProps} from '@react-types/slider';
 const meta: Meta<SpectrumRangeSliderProps> = {
   title: 'RangeSlider',
   component: RangeSlider
-};
+} as Meta<SpectrumRangeSliderProps>;
 
 export default meta;
 
-export const Default = {
+export type RangeSliderStory = StoryObj<typeof RangeSlider>;
+
+export const Default: RangeSliderStory = {
   args: {label: 'RangeSlider label'}
 };
 
-export const Disabled = {
+export const Disabled: RangeSliderStory = {
   args: {...Default.args, isDisabled: true}
 };
 
-export const SmallerRange = {
+export const SmallerRange: RangeSliderStory = {
   args: {...Default.args, defaultValue: {start: 30, end: 70}}
-};
-
-export const LabelAlignEnd = {
-  args: {...Default.args, labelAlign: 'end'}
 };
 
 let contextualHelp = (
@@ -48,10 +46,10 @@ let contextualHelp = (
   </ContextualHelp>
 );
 
-export const _ContextualHelp = {
+export const _ContextualHelp: RangeSliderStory = {
   args: {label: 'Slider label', contextualHelp}
 };
 
-export const ContextualHelpSideLabel = {
+export const ContextualHelpSideLabel: RangeSliderStory = {
   args: {label: 'Slider label', contextualHelp, labelPosition: 'side'}
 };

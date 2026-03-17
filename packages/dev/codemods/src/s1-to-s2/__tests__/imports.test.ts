@@ -18,6 +18,9 @@ import {Button} from '@react-spectrum/button';
 <Button>Test</Button>
 `);
 
+test('should handle empty files safely', `
+`);
+
 test('should leave unimplemented components untouched', `
 import {Button, Fake} from '@adobe/react-spectrum';
 
@@ -64,8 +67,12 @@ test('leaves a comment on dynamic imports', `
 const LazyButton = React.lazy(() => import('@react-spectrum/button'))
 `);
 
+test('does not leave a comment on dynamic s2 imports', `
+const LazyButton = React.lazy(() => import('@react-spectrum/s2'))
+`);
+
 test('should not import Item from S2', `
-import {Menu, ListView, Item} from '@adobe/react-spectrum';
+import {Menu, ListBox, Item} from '@adobe/react-spectrum';
 
 <div>
   <Menu aria-label="Alignment">
@@ -73,11 +80,11 @@ import {Menu, ListView, Item} from '@adobe/react-spectrum';
     <Item>Middle</Item>
     <Item>Right</Item>
   </Menu>
-  <ListView aria-label="Alignment">
+  <ListBox aria-label="Alignment">
     <Item>Left</Item>
     <Item>Middle</Item>
     <Item>Right</Item>
-  </ListView>
+  </ListBox>
 </div>
 `);
 

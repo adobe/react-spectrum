@@ -27,7 +27,7 @@ export function getItemCount<T>(collection: Collection<Node<T>>): number {
     for (let item of items) {
       if (item.type === 'section') {
         countItems(getChildNodes(item, collection));
-      } else {
+      } else if (item.type === 'item') {
         counter++;
       }
     }

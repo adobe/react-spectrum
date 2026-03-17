@@ -10,25 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {classNames} from '@react-spectrum/utils';
+import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
 import {ToggleButton} from 'react-aria-components';
+import './styles.css';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components/ToggleButton',
+  component: ToggleButton
+} as Meta<typeof ToggleButton>;
 
-export const ToggleButtonExample = () => {
+export type ToggleButtonStory = StoryFn<typeof ToggleButton>;
+
+export const ToggleButtonExample: ToggleButtonStory = () => {
 
   const [textColor, setTextColor] = useState('black');
 
   return (
     <ToggleButton
-      className={classNames(styles, 'toggleButtonExample')} 
-      data-testid="toggle-button-example" 
-      onKeyUp={action('keyup')} 
+      className={classNames(styles, 'toggleButtonExample')}
+      data-testid="toggle-button-example"
+      onKeyUp={action('keyup')}
       onPress={action('press')}
       onHoverStart={() => setTextColor('red')}
       onHoverEnd={() => setTextColor('black')}

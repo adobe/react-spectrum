@@ -11,11 +11,27 @@
  */
 
 import {AriaLinkOptions, HoverEvents, mergeProps, useFocusRing, useHover, useLink} from 'react-aria';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {forwardRefType} from '@react-types/shared';
-import React, {createContext, ElementType, ForwardedRef, forwardRef} from 'react';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  PossibleLinkDOMRenderProps,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
+import {DOMProps, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
+import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
-export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, HoverEvents, RenderProps<LinkRenderProps>, SlotProps {}
+export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, HoverEvents, Omit<RenderProps<LinkRenderProps>, 'render'>, PossibleLinkDOMRenderProps<'span', LinkRenderProps>, SlotProps, DOMProps, Omit<GlobalDOMAttributes<HTMLAnchorElement>, 'onClick'> {
+ /**
+  * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+  * @default 'react-aria-Link'
+  */
+ className?: ClassNameOrFunction<LinkRenderProps>
+}
 
 export interface LinkRenderProps {
   /**
@@ -59,13 +75,14 @@ export const LinkContext = createContext<ContextValue<LinkProps, HTMLAnchorEleme
 export const Link = /*#__PURE__*/ (forwardRef as forwardRefType)(function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
   [props, ref] = useContextProps(props, ref, LinkContext);
 
-  let ElementType: ElementType = props.href && !props.isDisabled ? 'a' : 'span';
-  let {linkProps, isPressed} = useLink({...props, elementType: ElementType}, ref);
+  let elementType = props.href && !props.isDisabled ? 'a' : 'span';
+  let {linkProps, isPressed} = useLink({...props, elementType}, ref);
+  let ElementType = dom[elementType];
 
   let {hoverProps, isHovered} = useHover(props);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
 
-  let renderProps = useRenderProps({
+  let renderProps = useRenderProps<LinkRenderProps, 'span' | 'a'>({
     ...props,
     defaultClassName: 'react-aria-Link',
     values: {
@@ -78,11 +95,14 @@ export const Link = /*#__PURE__*/ (forwardRef as forwardRefType)(function Link(p
     }
   });
 
+  let DOMProps = filterDOMProps(props, {global: true});
+  delete DOMProps.onClick;
+
   return (
     <ElementType
       ref={ref}
       slot={props.slot || undefined}
-      {...mergeProps(renderProps, linkProps, hoverProps, focusProps)}
+      {...mergeProps(DOMProps, renderProps, linkProps, hoverProps, focusProps)}
       data-focused={isFocused || undefined}
       data-hovered={isHovered || undefined}
       data-pressed={isPressed || undefined}

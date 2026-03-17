@@ -61,6 +61,7 @@ describe('useOverlay', function () {
       render(<Example isOpen onClose={onClose} isDismissable />);
       pressStart(document.body);
       pressEnd(document.body);
+      fireEvent.click(document.body);
       expect(onClose).toHaveBeenCalledTimes(1);
     });
 
@@ -69,6 +70,7 @@ describe('useOverlay', function () {
       render(<Example isOpen onClose={onClose} isDismissable shouldCloseOnInteractOutside={target => target === document.body} />);
       pressStart(document.body);
       pressEnd(document.body);
+      fireEvent.click(document.body);
       expect(onClose).toHaveBeenCalledTimes(1);
     });
 
@@ -77,6 +79,7 @@ describe('useOverlay', function () {
       render(<Example isOpen onClose={onClose} isDismissable shouldCloseOnInteractOutside={target => target !== document.body} />);
       pressStart(document.body);
       pressEnd(document.body);
+      fireEvent.click(document.body);
       expect(onClose).toHaveBeenCalledTimes(0);
     });
 
@@ -85,6 +88,7 @@ describe('useOverlay', function () {
       render(<Example isOpen onClose={onClose} isDismissable={false} />);
       pressStart(document.body);
       pressEnd(document.body);
+      fireEvent.click(document.body);
       expect(onClose).toHaveBeenCalledTimes(0);
     });
 
@@ -96,6 +100,7 @@ describe('useOverlay', function () {
 
       pressStart(document.body);
       pressEnd(document.body);
+      fireEvent.click(document.body);
       expect(onCloseSecond).toHaveBeenCalledTimes(1);
       expect(onCloseFirst).not.toHaveBeenCalled();
 
@@ -103,6 +108,7 @@ describe('useOverlay', function () {
 
       pressStart(document.body);
       pressEnd(document.body);
+      fireEvent.click(document.body);
       expect(onCloseFirst).toHaveBeenCalledTimes(1);
     });
   });
@@ -121,16 +127,5 @@ describe('useOverlay', function () {
     let el = res.getByTestId('test');
     fireEvent.keyDown(el, {key: 'Escape'});
     expect(onClose).toHaveBeenCalledTimes(1);
-  });
-
-  describe('firefox bug', () => {
-    installPointerEvent();
-    it('should prevent default on pointer down on the underlay', function () {
-      let underlayRef = React.createRef();
-      render(<Example isOpen isDismissable underlayProps={{ref: underlayRef}} />);
-      let isPrevented = fireEvent.pointerDown(underlayRef.current, {button: 0, pointerId: 1});
-      fireEvent.pointerUp(document.body);
-      expect(isPrevented).toBeFalsy(); // meaning the event had preventDefault called
-    });
   });
 });

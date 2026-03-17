@@ -10,14 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSwatch} from '../src/ColorSwatch';
-import React from 'react';
+import {ColorSwatch, ColorSwatchProps} from '../src/ColorSwatch';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
+import './styles.css';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components/ColorSwatch',
+  component: ColorSwatch
+} as Meta<typeof ColorSwatch>;
 
-export const ColorSwatchExample = (args) => (
+export type ColorSwatchStory = StoryObj<typeof ColorSwatch>;
+
+export const ColorSwatchExampleRender = (args: ColorSwatchProps): JSX.Element => (
   <ColorSwatch
     {...args}
     style={({color}) => ({
@@ -31,12 +36,14 @@ export const ColorSwatchExample = (args) => (
     })} />
 );
 
-ColorSwatchExample.args = {
-  color: 'rgb(255, 0, 0)'
-};
-
-ColorSwatchExample.argTypes = {
-  color: {
-    control: 'color'
+export const ColorSwatchExample: ColorSwatchStory = {
+  render: (args) => <ColorSwatchExampleRender {...args} />,
+  args: {
+    color: 'rgb(255, 0, 0)'
+  },
+  argTypes: {
+    color: {
+      control: 'color'
+    }
   }
 };

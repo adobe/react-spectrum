@@ -54,7 +54,7 @@ export function useActionGroupItem<T>(props: AriaActionGroupItemProps, state: Li
     return () => {
       onRemovedWithFocus();
     };
-  }, [onRemovedWithFocus]);
+  }, []);
 
   return {
     buttonProps: mergeProps(buttonProps, {

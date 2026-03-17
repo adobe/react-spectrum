@@ -61,7 +61,9 @@ export {TextArea, TextField} from '@react-spectrum/textfield';
 export {theme as darkTheme} from '@react-spectrum/theme-dark';
 export {theme as defaultTheme} from '@react-spectrum/theme-default';
 export {theme as lightTheme} from '@react-spectrum/theme-light';
+export {ToastContainer, ToastQueue} from '@react-spectrum/toast';
 export {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
+export {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/tree';
 export {Content, Footer, Header, View} from '@react-spectrum/view';
 export {Well} from '@react-spectrum/well';
 export {Item, Section} from '@react-stately/collections';
@@ -70,6 +72,7 @@ export {VisuallyHidden} from '@react-aria/visually-hidden';
 export {useCollator, useDateFormatter, useFilter, useLocale, useLocalizedStringFormatter, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
 export {SSRProvider} from '@react-aria/ssr';
 export {useDragAndDrop, DIRECTORY_DRAG_TYPE} from '@react-spectrum/dnd';
+export {Collection} from '@react-aria/collections';
 
 export type {SpectrumActionBarContainerProps, SpectrumActionBarProps} from '@react-spectrum/actionbar';
 export type {SpectrumActionGroupProps} from '@react-spectrum/actiongroup';
@@ -114,7 +117,9 @@ export type {SpectrumTableProps, SpectrumColumnProps, TableHeaderProps, TableBod
 export type {SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} from '@react-spectrum/tabs';
 export type {SpectrumTagGroupProps} from '@react-spectrum/tag';
 export type {SpectrumTextFieldProps, SpectrumTextAreaProps} from '@react-spectrum/textfield';
+export type {SpectrumToastContainerProps, SpectrumToastOptions} from '@react-spectrum/toast';
 export type {SpectrumTooltipProps, SpectrumTooltipTriggerProps} from '@react-spectrum/tooltip';
+export type {SpectrumTreeViewProps, SpectrumTreeViewItemProps, SpectrumTreeViewItemContentProps} from '@react-spectrum/tree';
 export type {ContentProps, FooterProps, HeaderProps, ViewProps} from '@react-spectrum/view';
 export type {SpectrumWellProps} from '@react-spectrum/well';
 export type {AsyncListData, AsyncListOptions, ListData, ListOptions, TreeData, TreeOptions} from '@react-stately/data';

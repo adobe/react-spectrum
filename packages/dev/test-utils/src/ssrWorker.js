@@ -22,7 +22,10 @@ ignoreStyles.default(undefined, (module) => {
 });
 
 require('@babel/register')({
-  extensions: ['.js', '.ts', '.tsx']
+  extensions: ['.js', '.ts', '.tsx'],
+  plugins: [
+    '@babel/plugin-syntax-import-attributes'
+  ]
 });
 
 let {evaluate} = require('./ssrUtils');

@@ -23,6 +23,7 @@ import {
   Provider,
   SelectValue
 } from 'react-aria-components';
+import {baseColor, focusRing, size, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
@@ -35,8 +36,9 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {edgeToText, focusRing, size, style} from '../style' with {type: 'macro'};
-import {fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
+import {controlFont, fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
+import {css} from '../style/style-macro' with {type: 'macro'};
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   FieldLabel
 } from './Field';
@@ -44,10 +46,9 @@ import {FocusableRef, FocusableRefValue, SpectrumLabelableProps} from '@react-ty
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
-import {Placement} from 'react-aria';
-import {PopoverBase} from './Popover';
+import {Placement, useLocale} from 'react-aria';
+import {Popover} from './Popover';
 import {pressScale} from './pressScale';
-import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
@@ -55,7 +56,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface PickerStyleProps {
 }
 export interface PickerProps<T extends object> extends
-  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | 'placeholder'>,
+  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | 'render' | 'placeholder'>,
   PickerStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -107,7 +108,7 @@ const inputButton = style({
   paddingX: 0,
   backgroundColor: 'transparent',
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: 'disabled'
   },
   maxWidth: {
@@ -127,11 +128,12 @@ export let menu = style({
   display: 'grid',
   gridTemplateColumns: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
   boxSizing: 'border-box',
-  maxHeight: '[inherit]',
+  width: 'full',
+  maxHeight: 'inherit',
   overflow: 'auto',
   padding: 8,
   fontFamily: 'sans',
-  fontSize: 'control'
+  fontSize: controlFont()
 });
 const valueStyles = style({
   flexGrow: 0,
@@ -177,10 +179,14 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
   const menuOffset: number = 6;
   const size = 'M';
   let ariaLabelledby = props['aria-labelledby'] ?? '';
+  let {direction: dir} = useLocale();
+  let RTLFlipOffset = dir === 'rtl' ? -1 : 1;
+
   return (
     <div>
       <AriaSelect
         {...pickerProps}
+        className=""
         aria-labelledby={`${labelBehavior === 'hide' ? valueId : ''} ${ariaLabelledby}`}>
         {({isOpen}) => (
           <>
@@ -198,7 +204,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                 isQuiet,
                 density
               })}>
-              <SelectValue className={valueStyles + ' ' + raw('&> * {display: none;}')}>
+              <SelectValue className={valueStyles + ' ' + css('&> * {display: none;}')}>
                 {({defaultChildren}) => {
                   return (
                     <Provider
@@ -240,33 +246,43 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                 size={size}
                 className={iconStyles} />
             </Button>
-            <PopoverBase
+            <Popover
               hideArrow
               offset={menuOffset}
+              crossOffset={RTLFlipOffset * -12}
               placement={`${direction} ${align}` as Placement}
               shouldFlip={shouldFlip}
               styles={style({
-                marginStart: -12,
                 minWidth: 192,
-                width: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
+                width: 'calc(var(--trigger-width) - 24)'
               })}>
-              <Provider
-                values={[
-                  [HeaderContext, {styles: sectionHeader({size})}],
-                  [HeadingContext, {styles: sectionHeading}],
-                  [TextContext, {
-                    slots: {
-                      description: {styles: description({size})}
-                    }
-                  }]
-                ]}>
-                <ListBox
-                  items={items}
-                  className={menu}>
-                  {children}
-                </ListBox>
-              </Provider>
-            </PopoverBase>
+              <div
+                className={style({
+                  display: 'flex',
+                  size: 'full'
+                })}>
+                <Provider
+                  values={[
+                    [HeaderContext, {styles: sectionHeader({size})}],
+                    [HeadingContext, {
+                      // @ts-ignore
+                      role: 'presentation',
+                      styles: sectionHeading
+                    }],
+                    [TextContext, {
+                      slots: {
+                        'description': {styles: description({size, isFocused: false, isDisabled: false})}
+                      }
+                    }]
+                  ]}>
+                  <ListBox
+                    items={items}
+                    className={menu}>
+                    {children}
+                  </ListBox>
+                </Provider>
+              </div>
+            </Popover>
           </>
         )}
       </AriaSelect>
@@ -281,7 +297,7 @@ let _Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(Picker);
 export {_Picker as Picker};
 
 
-const selectedIndicator = style({
+const selectedIndicator = style<{isDisabled?: boolean}>({
   backgroundColor: {
     default: 'neutral',
     isDisabled: 'disabled',
@@ -297,15 +313,15 @@ const selectedIndicator = style({
   transitionDuration: 130,
   transitionTimingFunction: 'in-out'
 });
-function TabLine(props) {
+function TabLine(props: {isDisabled?: boolean}) {
   return <div className={selectedIndicator(props)} />;
 }
 
 
-export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
+export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'render'>, StyleProps {
   children: ReactNode
 }
-export function PickerItem(props: PickerItemProps) {
+export function PickerItem(props: PickerItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   const size = 'M';

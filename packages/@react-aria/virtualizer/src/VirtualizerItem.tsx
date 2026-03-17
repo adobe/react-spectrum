@@ -12,7 +12,7 @@
 
 import {Direction} from '@react-types/shared';
 import {LayoutInfo} from '@react-stately/virtualizer';
-import React, {CSSProperties, ReactNode, useRef} from 'react';
+import React, {CSSProperties, JSX, ReactNode, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useVirtualizerItem, VirtualizerItemOptions} from './useVirtualizerItem';
 
@@ -24,7 +24,7 @@ interface VirtualizerItemProps extends Omit<VirtualizerItemOptions, 'ref'> {
   children: ReactNode
 }
 
-export function VirtualizerItem(props: VirtualizerItemProps) {
+export function VirtualizerItem(props: VirtualizerItemProps): JSX.Element {
   let {style, className, layoutInfo, virtualizer, parent, children} = props;
   let {direction} = useLocale();
   let ref = useRef<HTMLDivElement | null>(null);

@@ -1,7 +1,7 @@
 import {Illustration, IllustrationPropsWithoutChildren} from '@react-spectrum/icon';
-import React from 'react';
+import React, {JSX} from 'react';
 
-export default function Error500(props: IllustrationPropsWithoutChildren) {
+export default function Error500(props: IllustrationPropsWithoutChildren): JSX.Element {
   return (
     <Illustration {...props}>
       <svg width="146.569" height="94">

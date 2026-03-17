@@ -24,16 +24,24 @@ import {
   useTableSelectionCheckbox
 } from '@react-aria/table';
 import {classNames} from '@react-spectrum/utils';
+import {ColumnSize, TableProps} from '@react-types/table';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
+import {Key} from '@react-types/shared';
 import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {JSX, ReactNode, useCallback, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useCheckbox} from '@react-aria/checkbox';
 import {useTableColumnResizeState, useTableState} from '@react-stately/table';
 import {useToggleState} from '@react-stately/toggle';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-export function Table(props) {
+export function Table<T extends object>(props: TableProps<T> & {
+  selectionStyle?: 'highlight' | 'checkbox' | 'none',
+  onAction?: (key: Key) => void,
+  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
+  onResize?: (widths: Map<Key, ColumnSize>) => void,
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
+}): JSX.Element {
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
   let state = useTableState({
     ...props,
@@ -105,7 +113,9 @@ export function Table(props) {
   );
 }
 
-export const TableRowGroup = React.forwardRef((props: any, ref) => {
+export const TableRowGroup:
+  React.ForwardRefExoticComponent<Omit<any, 'ref'> & React.RefAttributes<unknown>> =
+React.forwardRef((props: any, ref) => {
   let {type: Element, style, children, className} = props;
   let {rowGroupProps} = useTableRowGroup();
   return (
@@ -115,7 +125,7 @@ export const TableRowGroup = React.forwardRef((props: any, ref) => {
   );
 });
 
-export function TableHeaderRow({item, state, children, className}) {
+export function TableHeaderRow({item, state, children, className}: {item: any, state: any, children: ReactNode, className: string}): JSX.Element {
   let ref = useRef<HTMLTableRowElement | null>(null);
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
 
@@ -125,7 +135,7 @@ export function TableHeaderRow({item, state, children, className}) {
     </tr>
   );
 }
-function Resizer({column, layout, onResizeStart, onResize, onResizeEnd}) {
+function Resizer({column, layout, onResizeStart, onResize, onResizeEnd}: {column: any, layout: any, onResizeStart: any, onResize: any, onResizeEnd: any}): JSX.Element {
   let ref = useRef(null);
   let {resizerProps, inputProps} = useTableColumnResize({
     column,
@@ -162,7 +172,7 @@ function Resizer({column, layout, onResizeStart, onResize, onResizeEnd}) {
     </>
   );
 }
-export function TableColumnHeader({column, state, layout, onResizeStart, onResize, onResizeEnd}) {
+export function TableColumnHeader({column, state, layout, onResizeStart, onResize, onResizeEnd}: {column: any, state: any, layout: any, onResizeStart: any, onResize: any, onResizeEnd: any}): JSX.Element {
   let ref = useRef<HTMLTableHeaderCellElement | null>(null);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -171,10 +181,9 @@ export function TableColumnHeader({column, state, layout, onResizeStart, onResiz
   return (
     <th
       {...mergeProps(columnHeaderProps, focusProps)}
-      colSpan={column.colspan}
       style={{
         width: layout.getColumnWidth(column.key),
-        textAlign: column.colspan > 1 ? 'center' : 'left',
+        textAlign: column.colSpan > 1 ? 'center' : 'left',
         padding: '5px 10px',
         outline: isFocusVisible ? '2px solid orange' : 'none',
         cursor: 'default',
@@ -203,7 +212,7 @@ export function TableColumnHeader({column, state, layout, onResizeStart, onResiz
   );
 }
 
-export function TableRow({item, children, state, className}) {
+export function TableRow({item, children, state, className}: {item: any, children: ReactNode, state: any, className: string}): JSX.Element {
   let ref = useRef<HTMLTableRowElement | null>(null);
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps} = useTableRow({node: item}, state, ref);
@@ -223,7 +232,7 @@ export function TableRow({item, children, state, className}) {
   );
 }
 
-export function TableCell({cell, state, layout}) {
+export function TableCell({cell, state, layout}: {cell: any, state: any, layout: any}): JSX.Element {
   let ref = useRef<HTMLTableCellElement | null>(null);
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -256,7 +265,7 @@ export function TableCell({cell, state, layout}) {
   );
 }
 
-export function TableCheckboxCell({cell, state, layout}) {
+export function TableCheckboxCell({cell, state, layout}: {cell: any, state: any, layout: any}): JSX.Element {
   let ref = useRef<HTMLTableCellElement | null>(null);
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {checkboxProps} = useTableSelectionCheckbox({key: cell.parentKey}, state);
@@ -277,7 +286,7 @@ export function TableCheckboxCell({cell, state, layout}) {
   );
 }
 
-export function TableSelectAllCell({column, state, layout}) {
+export function TableSelectAllCell({column, state, layout}: {column: any, state: any, layout: any}): JSX.Element {
   let ref = useRef<HTMLTableCellElement | null>(null);
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);

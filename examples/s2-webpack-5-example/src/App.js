@@ -13,6 +13,7 @@
 import React, { useState } from "react";
 import "@react-spectrum/s2/page.css";
 import {
+  ActionBar,
   ActionButton,
   ActionButtonGroup,
   ActionMenu,
@@ -20,14 +21,20 @@ import {
   ButtonGroup,
   Cell,
   Column,
+  Content,
+  ContextualHelpPopover,
   Divider,
   Heading,
   LinkButton,
+  ListView,
+  ListViewItem,
   Menu,
   MenuItem,
   MenuTrigger,
+  NotificationBadge,
   Picker,
   PickerItem,
+  Provider,
   Row,
   SubmenuTrigger,
   TableBody,
@@ -35,9 +42,15 @@ import {
   TableView,
   Text,
   ToggleButton,
-  ToggleButtonGroup
+  ToggleButtonGroup,
+  TreeView,
+  TreeViewItem,
+  TreeViewItemContent,
+  UnavailableMenuItemTrigger
 } from "@react-spectrum/s2";
 import Edit from "@react-spectrum/s2/icons/Edit";
+import FileTxt from "@react-spectrum/s2/icons/FileText";
+import Folder from "@react-spectrum/s2/icons/Folder";
 import Section from "./components/Section";
 import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 import { CardViewExample } from "./components/CardViewExample";
@@ -63,7 +76,7 @@ function App() {
     {id: 'waterfall', label: 'Waterfall'}
   ];
   return (
-    <main>
+    <Provider elementType="main">
       <Heading
         styles={style({ font: "heading-xl", textAlign: "center" })}
         level={1}
@@ -89,10 +102,11 @@ function App() {
         <Section title="Buttons">
           <ButtonGroup align="center" styles={style({maxWidth: '[100vw]'})}>
             <Button variant="primary">Primary</Button>
-            <Button variant="secondary">Secondary</Button>
+            <Button variant="secondary"><Text>Secondary</Text></Button>
             <ActionButton>
               <Edit />
               <Text>Action Button</Text>
+              <NotificationBadge value={2} />
             </ActionButton>
             <ToggleButton>Toggle Button</ToggleButton>
             <LinkButton
@@ -159,7 +173,13 @@ function App() {
                   <MenuItem id="sms">SMS</MenuItem>
                 </Menu>
               </SubmenuTrigger>
-              <MenuItem id="delete">Delete</MenuItem>
+              <UnavailableMenuItemTrigger isUnavailable>
+                <MenuItem id="delete">Delete</MenuItem>
+                <ContextualHelpPopover>
+                  <Heading slot="title">Permission required</Heading>
+                  <Content>Contact your administrator for permissions to delete.</Content>
+                </ContextualHelpPopover>
+              </UnavailableMenuItemTrigger>
             </Menu>
           </MenuTrigger>
           <MenuTrigger>
@@ -173,7 +193,34 @@ function App() {
               <MenuItem>Paste</MenuItem>
             </Menu>
           </MenuTrigger>
-          <TableView aria-label="Files" styles={style({width: 320, height: 320})}>
+          <ListView
+            aria-label="Files"
+            selectionMode="multiple"
+            styles={style({width: 320, height: 320})}>
+            <ListViewItem id="adobe-photoshop" textValue="Adobe Photoshop">
+              <Text>Adobe Photoshop</Text>
+              <Text slot="description">Image editing software</Text>
+            </ListViewItem>
+            <ListViewItem id="adobe-xd" textValue="Adobe XD">
+              <Text>Adobe XD</Text>
+              <Text slot="description">UI/UX design tool</Text>
+            </ListViewItem>
+            <ListViewItem id="adobe-indesign" textValue="Adobe InDesign">
+              <Text>Adobe InDesign</Text>
+              <Text slot="description">Desktop publishing</Text>
+            </ListViewItem>
+          </ListView>
+          <TableView
+            aria-label="Files"
+            styles={style({width: 320, height: 320})}
+            selectionMode="multiple"
+            renderActionBar={selectedKeys => (
+              <ActionBar>
+                <ActionButton onPress={() => console.log('edit', selectedKeys)}>Edit</ActionButton>
+                <ActionButton onPress={() => console.log('copy', selectedKeys)}>Copy</ActionButton>
+                <ActionButton onPress={() => console.log('delete', selectedKeys)}>Delete</ActionButton>
+              </ActionBar>
+            )}>
             <TableHeader>
               <Column isRowHeader>Name</Column>
               <Column>Type</Column>
@@ -205,6 +252,44 @@ function App() {
               </Row>
             </TableBody>
           </TableView>
+          <TreeView disabledKeys={['projects-1']} aria-label="test static tree">
+            <TreeViewItem id="Photos" textValue="Photos">
+              <TreeViewItemContent>
+                <Text>Photos</Text>
+                <Folder />
+              </TreeViewItemContent>
+            </TreeViewItem>
+            <TreeViewItem id="projects" textValue="Projects">
+              <TreeViewItemContent>
+                <Text>Projects</Text>
+                <Folder />
+              </TreeViewItemContent>
+              <TreeViewItem id="projects-1" textValue="Projects-1">
+                <TreeViewItemContent>
+                  <Text>Projects-1</Text>
+                  <Folder />
+                </TreeViewItemContent>
+                <TreeViewItem id="projects-1A" textValue="Projects-1A">
+                  <TreeViewItemContent>
+                    <Text>Projects-1A</Text>
+                    <FileTxt />
+                  </TreeViewItemContent>
+                </TreeViewItem>
+              </TreeViewItem>
+              <TreeViewItem id="projects-2" textValue="Projects-2">
+                <TreeViewItemContent>
+                  <Text>Projects-2</Text>
+                  <FileTxt />
+                </TreeViewItemContent>
+              </TreeViewItem>
+              <TreeViewItem id="projects-3" textValue="Projects-3">
+                <TreeViewItemContent>
+                  <Text>Projects-3</Text>
+                  <FileTxt />
+                </TreeViewItemContent>
+              </TreeViewItem>
+            </TreeViewItem>
+          </TreeView>
         </Section>
 
         {!isLazyLoaded && <ActionButton onPress={() => setLazyLoaded(true)}>Load more</ActionButton>}
@@ -212,7 +297,7 @@ function App() {
           <Lazy />
         </React.Suspense>}
       </div>
-    </main>
+    </Provider>
   );
 }
 

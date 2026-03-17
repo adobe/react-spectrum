@@ -1,3 +1,4 @@
+// @ts-ignore
 import {DateTime, LabeledValueBaseProps} from '@react-spectrum/labeledvalue/src/LabeledValue';
 import {RangeValue} from '@react-types/shared';
 import {ReactElement} from 'react';

@@ -14,7 +14,7 @@ import {Button, Form, TextArea, TextField} from '../src';
 import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof TextField> = {
@@ -24,125 +24,150 @@ const meta: Meta<typeof TextField> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    onChange: {table: {category: 'Events'}}
+    onChange: {table: {category: 'Events'}},
+    label: {control: {type: 'text'}},
+    description: {control: {type: 'text'}},
+    errorMessage: {control: {type: 'text'}},
+    contextualHelp: {table: {disable: true}}
+  },
+  args: {
+    placeholder: 'Enter your name'
   },
   title: 'TextField'
 };
 
 export default meta;
 
-export const Example = (args: any) => <TextField {...args} />;
+type StoryTextField = StoryObj<typeof TextField>;
+type StoryTextArea = StoryObj<typeof TextArea>;
+
+export const Example: StoryTextField = {
+  args: {
+    label: 'Name'
+  }
+};
 
 Example.args = {
   label: 'Name'
 };
 
-export const Validation = (args: any) => (
-  <Form>
-    <TextField {...args} />
-    <Button type="submit" variant="primary">Submit</Button>
-  </Form>
-);
-
-Validation.args = {
-  ...Example.args,
-  isRequired: true
-};
-
-export const ContextualHelpExample = (args: any) => (
-  <TextField 
-    {...args}
-    contextualHelp={
-      <ContextualHelp>
-        <Heading>What is a segment?</Heading>
-        <Content>
-          <Text>
-            Segments identify who your visitors are, what devices and services they
-            use, where they navigated from, and much more.
-          </Text>
-        </Content>
-        <Footer>
-          <Link
-            isStandalone
-            href="https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/personalization/campaign-segmentation"
-            target="_blank">Learn more about segments</Link>
-        </Footer>
-      </ContextualHelp>
-    } />
-);
-
-ContextualHelpExample.args = {
-  label: 'Segment'
-};
-
-export const TextAreaExample = (args: any) => <TextArea {...args} />;
-TextAreaExample.args = {
-  label: 'Comment'
-};
-
-export const CustomWidth = (args: any) => <TextField {...args} styles={style({width: 384})} />;
-
-CustomWidth.args = {
-  label: 'Name'
-};
-CustomWidth.parameters = {
-  docs: {
-    disable: true
+export const Validation: StoryTextField = {
+  render: (args) => (
+    <Form>
+      <TextField {...args} />
+      <Button type="submit" variant="primary">Submit</Button>
+    </Form>
+  ),
+  args: {
+    ...Example.args,
+    isRequired: true
   }
 };
 
-export const SmallWidth = (args: any) => <TextField {...args} styles={style({width: 48})} />;
-
-SmallWidth.args = {
-  label: 'Name'
-};
-SmallWidth.parameters = {
-  docs: {
-    disable: true
+export const ContextualHelpExample: StoryTextField = {
+  render: (args) => (
+    <TextField
+      {...args}
+      contextualHelp={
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>
+            <Text>
+              Segments identify who your visitors are, what devices and services they
+              use, where they navigated from, and much more.
+            </Text>
+          </Content>
+          <Footer>
+            <Link
+              isStandalone
+              href="https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/personalization/campaign-segmentation"
+              target="_blank">Learn more about segments</Link>
+          </Footer>
+        </ContextualHelp>
+      } />
+  ),
+  args: {
+    label: 'Segment',
+    placeholder: 'Enter a segment name'
   }
 };
 
-export const UNSAFEWidth = (args: any) => <TextField {...args} UNSAFE_style={{width: 384}} />;
-
-UNSAFEWidth.args = {
-  label: 'Name'
-};
-UNSAFEWidth.parameters = {
-  docs: {
-    disable: true
+export const TextAreaExample: StoryTextArea = {
+  render: (args) => <TextArea {...args} />,
+  args: {
+    label: 'Comment',
+    placeholder: 'Enter a comment'
   }
 };
 
-export const InForm = (args: any) => (
-  <Form>
-    <TextField {...args} />
-    <Button type="submit" variant="primary">Submit</Button>
-  </Form>
-);
-
-InForm.args = {
-  ...Example.args,
-  isRequired: true
-};
-InForm.parameters = {
-  docs: {
-    disable: true
+export const CustomWidth: StoryTextField = {
+  render: (args) => <TextField {...args} styles={style({width: 384})} />,
+  args: {
+    label: 'Name'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
-export const FormCustomWidth = (args: any) => (
-  <Form styles={style({width: 384})} labelPosition={args.labelPosition}>
-    <TextField {...args} />
-    <Button type="submit" variant="primary">Submit</Button>
-  </Form>
-);
-
-FormCustomWidth.args = {
-  ...Example.args,
-  isRequired: true
+export const SmallWidth: StoryTextField = {
+  render: (args) => <TextField {...args} styles={style({width: 48})} />,
+  args: {
+    label: 'Name'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
 };
-FormCustomWidth.parameters = {
-  docs: {
-    disable: true
+
+export const UNSAFEWidth: StoryTextField = {
+  render: (args) => <TextField {...args} UNSAFE_style={{width: 384}} />,
+  args: {
+    label: 'Name'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
+
+export const InForm: StoryTextField = {
+  render: (args) => (
+    <Form>
+      <TextField {...args} />
+      <Button type="submit" variant="primary">Submit</Button>
+    </Form>
+  ),
+  args: {
+    ...Example.args,
+    isRequired: true
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
+
+export const FormCustomWidth: StoryTextField = {
+  render: (args) => (
+    <Form styles={style({width: 384})} labelPosition={args.labelPosition}>
+      <TextField {...args} />
+      <Button type="submit" variant="primary">Submit</Button>
+    </Form>
+  ),
+  args: {
+    ...Example.args,
+    isRequired: true
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };

@@ -12,7 +12,7 @@
 
 export type {CalendarState, CalendarStateOptions, RangeCalendarState, RangeCalendarStateOptions} from '@react-stately/calendar';
 export type {CheckboxGroupProps, CheckboxGroupState} from '@react-stately/checkbox';
-export type {Color, ColorAreaProps, ColorAreaState, ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions, ColorFieldProps, ColorFieldState, ColorPickerProps, ColorPickerState, ColorSliderState, ColorSliderStateOptions, ColorWheelProps, ColorWheelState} from '@react-stately/color';
+export type {Color, ColorChannel, ColorFormat, ColorSpace, ColorAreaProps, ColorAreaState, ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions, ColorFieldProps, ColorFieldState, ColorPickerProps, ColorPickerState, ColorSliderState, ColorSliderStateOptions, ColorWheelProps, ColorWheelState} from '@react-stately/color';
 export type {ComboBoxState, ComboBoxStateOptions} from '@react-stately/combobox';
 export type {DateFieldState, DateFieldStateOptions, DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, DateSegment, SegmentType as DateSegmentType, TimeFieldStateOptions, TimeFieldState} from '@react-stately/datepicker';
 export type {DisclosureState, DisclosureProps, DisclosureGroupState, DisclosureGroupProps} from '@react-stately/disclosure';
@@ -29,6 +29,7 @@ export type {MultipleSelectionManager, MultipleSelectionState, SingleSelectionSt
 export type {NumberFieldState, NumberFieldStateOptions} from '@react-stately/numberfield';
 export type {TableState, TableStateProps, TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps, TableColumnResizeState, TableColumnResizeStateProps} from '@react-stately/table';
 export type {TabListProps, TabListState} from '@react-stately/tabs';
+export type {ToastState, QueuedToast, ToastStateProps, ToastOptions} from '@react-stately/toast';
 export type {ToggleProps, ToggleState, ToggleGroupProps, ToggleGroupState} from '@react-stately/toggle';
 export type {TooltipTriggerProps, TooltipTriggerState} from '@react-stately/tooltip';
 export type {TreeProps, TreeState} from '@react-stately/tree';
@@ -43,7 +44,7 @@ export {useDisclosureState, useDisclosureGroupState} from '@react-stately/disclo
 export {useDraggableCollectionState, useDroppableCollectionState} from '@react-stately/dnd';
 export {Item, Section, useCollection} from '@react-stately/collections';
 export {useAsyncList, useListData, useTreeData} from '@react-stately/data';
-export {useListState, useSingleSelectListState} from '@react-stately/list';
+export {useListState, useSingleSelectListState, UNSTABLE_useFilteredListState} from '@react-stately/list';
 export {useMenuTriggerState, useSubmenuTriggerState} from '@react-stately/menu';
 export {useNumberFieldState} from '@react-stately/numberfield';
 export {useOverlayTriggerState} from '@react-stately/overlays';
@@ -52,8 +53,9 @@ export {useSearchFieldState} from '@react-stately/searchfield';
 export {useSelectState} from '@react-stately/select';
 export {useSliderState} from '@react-stately/slider';
 export {useMultipleSelectionState} from '@react-stately/selection';
-export {useTableState, TableHeader, TableBody, Column, Row, Cell, useTableColumnResizeState} from '@react-stately/table';
+export {useTableState, TableHeader, TableBody, Column, Row, Cell, useTableColumnResizeState, UNSTABLE_useFilteredTableState} from '@react-stately/table';
 export {useTabListState} from '@react-stately/tabs';
+export {useToastState, ToastQueue, useToastQueue} from '@react-stately/toast';
 export {useToggleState, useToggleGroupState} from '@react-stately/toggle';
 export {useTooltipTriggerState} from '@react-stately/tooltip';
 export {useTreeState} from '@react-stately/tree';

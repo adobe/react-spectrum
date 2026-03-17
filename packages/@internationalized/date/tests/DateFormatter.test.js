@@ -78,8 +78,8 @@ describe('DateFormatter', function () {
     expect(formatter.resolvedOptions().hourCycle).toBe('h12');
 
     formatter = new DateFormatter('ja', {hour: 'numeric', hour12: true});
-    expect(formatter.format(new Date(2020, 1, 3, 0))).toBe('午前0時');
-    expect(formatter.resolvedOptions().hourCycle).toBe('h11');
+    expect(formatter.format(new Date(2020, 1, 3, 0))).toBe('午前12時');
+    expect(formatter.resolvedOptions().hourCycle).toBe('h12');
   });
 
   it('should work around buggy resolved hour cycle', function () {

@@ -14,24 +14,25 @@ import {
   SearchField as AriaSearchField,
   SearchFieldProps as AriaSearchFieldProps,
   ContextValue,
+  InputProps,
   Provider
 } from 'react-aria-components';
+import {baseColor, fontRelative, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
 import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
+import {css} from '../style/style-macro' with {type: 'macro'};
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {fontRelative, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
-import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {IconContext} from './Icon';
-import {raw} from '../style/style-macro' with {type: 'macro'};
 import SearchIcon from '../s2wf-icons/S2_Icon_Search_20_N.svg';
 import {TextFieldRef} from '@react-types/textfield';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style' | 'children'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
+export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
   /**
    * The size of the SearchField.
    *
@@ -40,7 +41,7 @@ export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className'
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, TextFieldRef>>(null);
+export const SearchFieldContext = createContext<ContextValue<Partial<SearchFieldProps>, TextFieldRef>>(null);
 
 /**
  * A SearchField is a text field designed for searches.
@@ -89,7 +90,7 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
           value: fontRelative(-2)
         },
         color: {
-          default: 'neutral',
+          default: baseColor('neutral'),
           isDisabled: {
             default: 'disabled',
             forcedColors: 'GrayText'
@@ -141,7 +142,7 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
             ]}>
             <SearchIcon />
           </Provider>
-          <Input ref={inputRef} UNSAFE_className={raw('&::-webkit-search-cancel-button { display: none }')} />
+          <Input ref={inputRef} UNSAFE_className={css('&::-webkit-search-cancel-button { display: none }')} />
           {!isEmpty && !searchFieldProps.isReadOnly && <ClearButton size={props.size} />}
         </FieldGroup>
         <HelpText

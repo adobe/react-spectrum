@@ -26,7 +26,7 @@ export class CollectionBuilder<T extends object> {
   private context?: unknown;
   private cache: WeakMap<T, Node<T>> = new WeakMap();
 
-  build(props: Partial<CollectionBase<T>>, context?: unknown) {
+  build(props: Partial<CollectionBase<T>>, context?: unknown): Iterable<Node<T>> {
     this.context = context;
     return iterable(() => this.iterateCollection(props));
   }
@@ -204,7 +204,7 @@ export class CollectionBuilder<T extends object> {
       key: partialNode.key,
       parentKey: parentNode ? parentNode.key : null,
       value: partialNode.value ?? null,
-      level: parentNode ? parentNode.level + 1 : 0,
+      level: (parentNode?.level ?? 0) + (parentNode?.type === 'item' ? 1 : 0),
       index: partialNode.index,
       rendered: partialNode.rendered,
       textValue: partialNode.textValue ?? '',

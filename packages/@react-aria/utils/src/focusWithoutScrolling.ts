@@ -28,7 +28,7 @@ interface ScrollableElement {
   scrollLeft: number
 }
 
-export function focusWithoutScrolling(element: FocusableElement) {
+export function focusWithoutScrolling(element: FocusableElement): void {
   if (supportsPreventScroll()) {
     element.focus({preventScroll: true});
   } else {

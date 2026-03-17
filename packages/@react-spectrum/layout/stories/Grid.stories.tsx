@@ -12,6 +12,7 @@
 
 import {BackgroundColorValue, Responsive as TResponsive} from '@react-types/shared';
 import {Grid, repeat} from '@react-spectrum/layout';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import {View} from '@react-spectrum/view';
 
@@ -38,9 +39,11 @@ for (let color of baseColors) {
 
 export default {
   title: 'Grid'
-};
+} as Meta<typeof Grid>;
 
-export const ExplicitGrid = () => (
+export type GridStory = StoryFn<typeof Grid>;
+
+export const ExplicitGrid: GridStory = () => (
   <Grid
     areas={['header  header', 'sidebar content', 'footer  footer']}
     columns={['size-3000', 'auto']}
@@ -67,7 +70,7 @@ ExplicitGrid.story = {
   name: 'Explicit grid'
 };
 
-export const ImplicitGrid = () => (
+export const ImplicitGrid: GridStory = () => (
   <Grid
     columns={repeat('auto-fit', 'size-800')}
     autoRows="size-800"
@@ -84,7 +87,7 @@ ImplicitGrid.story = {
   name: 'Implicit grid'
 };
 
-export const Responsive = () => (
+export const Responsive: GridStory = () => (
   <Grid
     columns={{
       base: repeat('auto-fit', 'size-800'),

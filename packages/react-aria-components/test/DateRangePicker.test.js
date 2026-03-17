@@ -11,7 +11,23 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, CalendarCell, CalendarGrid, DateInput, DateRangePicker, DateRangePickerContext, DateSegment, Dialog, FieldError, Group, Heading, Label, Popover, RangeCalendar, Text} from 'react-aria-components';
+import {
+  Button,
+  CalendarCell,
+  CalendarGrid,
+  DateInput,
+  DateRangePicker,
+  DateRangePickerContext,
+  DateSegment,
+  Dialog,
+  FieldError,
+  Group,
+  Heading,
+  Label,
+  Popover,
+  RangeCalendar,
+  Text
+} from 'react-aria-components';
 import {CalendarDate} from '@internationalized/date';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -33,7 +49,7 @@ let TestDateRangePicker = (props) => (
     <Text slot="errorMessage">Error</Text>
     <Popover>
       <Dialog>
-        <RangeCalendar>
+        <RangeCalendar focusedValue={props.focusedValue}>
           <header>
             <Button slot="previous">◀</Button>
             <Heading />
@@ -104,6 +120,12 @@ describe('DateRangePicker', () => {
     expect(group).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} =  render(<TestDateRangePicker render={props => <div {...props} data-custom="true" />} />);
+    let group = getByRole('group').closest('.react-aria-DateRangePicker');
+    expect(group).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should apply isPressed state to button when expanded', async () => {
     let {getByRole} = render(<TestDateRangePicker />);
     let button = getByRole('button');
@@ -162,12 +184,61 @@ describe('DateRangePicker', () => {
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
   });
 
+  it('should support required render prop', () => {
+    let {getByRole} = render(
+      <DateRangePicker isRequired>
+        {({isRequired}) => (
+          <>
+            <Label>Trip dates</Label>
+            <Group data-required-state={isRequired ? 'required' : null}>
+              <DateInput slot="start">
+                {(segment) => <DateSegment segment={segment} />}
+              </DateInput>
+              <span aria-hidden="true">–</span>
+              <DateInput slot="end">
+                {(segment) => <DateSegment segment={segment} />}
+              </DateInput>
+              <Button>▼</Button>
+            </Group>
+            <Popover>
+              <Dialog>
+                <RangeCalendar>
+                  <header>
+                    <Button slot="previous">◀</Button>
+                    <Heading />
+                    <Button slot="next">▶</Button>
+                  </header>
+                  <CalendarGrid>
+                    {(date) => <CalendarCell date={date} />}
+                  </CalendarGrid>
+                </RangeCalendar>
+              </Dialog>
+            </Popover>
+          </>
+        )}
+      </DateRangePicker>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-required-state', 'required');
+  });
+
+  it('should support required state', () => {
+    let {getByRole, rerender} = render(<TestDateRangePicker />);
+    let group = getByRole('group');
+    expect(group.closest('.react-aria-DateRangePicker')).not.toHaveAttribute('data-required');
+    rerender(<TestDateRangePicker isRequired />);
+    expect(group.closest('.react-aria-DateRangePicker')).toHaveAttribute('data-required');
+  });
+
   it('should support form value', () => {
-    render(<TestDateRangePicker startName="start" endName="end" value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}} />);
+    render(<TestDateRangePicker startName="start" endName="end" form="test" value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}} />);
     let start = document.querySelector('input[name=start]');
     expect(start).toHaveValue('2023-01-10');
+    expect(start).toHaveAttribute('form', 'test');
     let end = document.querySelector('input[name=end]');
     expect(end).toHaveValue('2023-01-20');
+    expect(end).toHaveAttribute('form', 'test');
   });
 
   it('should render data- attributes only on the outer element', () => {
@@ -280,6 +351,26 @@ describe('DateRangePicker', () => {
     expect(dialog).toBeInTheDocument();
   });
 
+  it('should set a placeholder time when closing', async () => {
+    let {getByRole, getAllByRole} = render(<TestDateRangePicker granularity="second" focusedValue={new CalendarDate(2023, 1, 10)} />);
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let dialog = getByRole('dialog');
+    let cells = getAllByRole('gridcell');
+
+    await user.click(cells[5].children[0]);
+    await user.click(cells[10].children[0]);
+    expect(dialog).not.toBeInTheDocument();
+
+    let group = getByRole('group');
+    let inputs = group.querySelectorAll('.react-aria-DateInput');
+    let normalize = (s) => s.replace(/\s/g, ' ').replace(/[\u2066\u2069]/g, '');
+    expect(normalize(inputs[0].textContent)).toBe(normalize(new Date(2023, 0, 6).toLocaleString('en-US')));
+    expect(normalize(inputs[1].textContent)).toBe(normalize(new Date(2023, 0, 11).toLocaleString('en-US')));
+  });
+
   it('should disable button and date input when DatePicker is disabled', () => {
     let {getByRole} = render(<TestDateRangePicker isDisabled />);
 
@@ -293,5 +384,58 @@ describe('DateRangePicker', () => {
     for (let spinbutton of spinbuttons) {
       expect(spinbutton).toHaveAttribute('aria-disabled', 'true');
     }
+  });
+
+  it('should clear contexts inside popover', async () => {
+    let {getByRole, getByTestId} = render(
+      <DateRangePicker data-foo="bar">
+        <Label>Birth date</Label>
+        <Group>
+          <DateInput slot="start">
+            {(segment) => <DateSegment segment={segment} />}
+          </DateInput>
+          <span aria-hidden="true">–</span>
+          <DateInput slot="end">
+            {(segment) => <DateSegment segment={segment} />}
+          </DateInput>
+          <Button>▼</Button>
+        </Group>
+        <Text slot="description">Description</Text>
+        <Text slot="errorMessage">Error</Text>
+        <Popover data-testid="popover">
+          <Dialog>
+            <Label>Hi</Label>
+            <Group>Yo</Group>
+            <Button>Hi</Button>
+            <Text>test</Text>
+            <RangeCalendar>
+              <header>
+                <Button slot="previous">◀</Button>
+                <Heading />
+                <Button slot="next">▶</Button>
+              </header>
+              <CalendarGrid>
+                {(date) => <CalendarCell date={date} />}
+              </CalendarGrid>
+            </RangeCalendar>
+          </Dialog>
+        </Popover>
+      </DateRangePicker>
+    );
+
+    await user.click(getByRole('button'));
+
+    let popover = await getByTestId('popover');
+    let label = popover.querySelector('.react-aria-Label');
+    expect(label).not.toHaveAttribute('id');
+
+    let button = popover.querySelector('.react-aria-Button');
+    expect(button).not.toHaveAttribute('aria-expanded');
+
+    let group = popover.querySelector('.react-aria-Group');
+    expect(group).not.toHaveAttribute('id');
+
+    let text = popover.querySelector('.react-aria-Text');
+    expect(text).not.toHaveAttribute('id');
   });
 });

@@ -25,7 +25,7 @@ export interface SearchAutocompleteAria<T> extends ValidationResult {
   labelProps: DOMAttributes,
   /** Props for the search input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  /** Props for the list box, to be passed to [useListBox](useListBox.html). */
+  /** Props for the list box, to be passed to `useListBox`. */
   listBoxProps: AriaListBoxOptions<T>,
   /** Props for the search input's clear button. */
   clearButtonProps: AriaButtonProps,

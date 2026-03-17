@@ -56,6 +56,11 @@ describe('NumberParser', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).parse('1abc')).toBe(NaN);
     });
 
+    it('should return NaN for invalid grouping', function () {
+      expect(new NumberParser('en-US', {useGrouping: false}).parse('1234,7')).toBeNaN();
+      expect(new NumberParser('de-DE', {useGrouping: false}).parse('1234.7')).toBeNaN();
+    });
+
     describe('currency', function () {
       it('should parse without the currency symbol', function () {
         expect(new NumberParser('en-US', {currency: 'USD', style: 'currency'}).parse('10.50')).toBe(10.5);
@@ -165,6 +170,21 @@ describe('NumberParser', function () {
       });
     });
 
+    it('should parse a percent with signs', function () {
+      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('+10%')).toBe(0.1);
+      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('+0%')).toBe(0);
+      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('-10%')).toBe(-0.1);
+      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('-0%')).toBe(-0);
+      expect(new NumberParser('en-US', {style: 'percent', signDisplay: 'exceptZero', minimumFractionDigits: 2}).parse('+0.50%')).toBe(0.005);
+    });
+
+    it('should parse a percent with decimals and exceptZero', function () {
+      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'exceptZero'}).parse('+0.532%')).toBe(0.01);
+      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'exceptZero'}).parse('+0%')).toBe(0);
+      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'exceptZero'}).parse('0.532%')).toBe(0.01);
+      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'exceptZero'}).parse('-0.532%')).toBe(-0.01);
+    });
+
     describe('NumberFormat options', function () {
       it('supports roundingIncrement', function () {
         expect(new NumberParser('en-US', {roundingIncrement: 2}).parse('10')).toBe(10);
@@ -173,8 +193,19 @@ describe('NumberParser', function () {
       });
     });
 
+    it('should parse a swiss currency number', () => {
+      expect(new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse('CHF 1’000.00')).toBe(1000);
+      expect(new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse("CHF 1'000.00")).toBe(1000);
+      expect(new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse("CHF 1'000.00")).toBe(1000);
+    });
+
+    it('should parse arabic singular and dual counts', () => {
+      expect(new NumberParser('ar-AE', {style: 'unit', unit: 'day', unitDisplay: 'long'}).parse('يومان')).toBe(2);
+      expect(new NumberParser('ar-AE', {style: 'unit', unit: 'day', unitDisplay: 'long'}).parse('يوم')).toBe(1);
+    });
+
     describe('round trips', function () {
-      fc.configureGlobal({numRuns: 200});
+      fc.configureGlobal({numRuns: 2000});
       // Locales have to include: 'de-DE', 'ar-EG', 'fr-FR' and possibly others
       // But for the moment they are not properly supported
       const localesArb = fc.constantFrom(...locales);
@@ -280,6 +311,78 @@ describe('NumberParser', function () {
         const formattedOnce = formatter.format(1);
         expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
       });
+      it('should handle small numbers', () => {
+        let locale = 'ar-AE';
+        let options = {
+          style: 'decimal',
+          minimumIntegerDigits: 4,
+          maximumSignificantDigits: 1
+        };
+        const formatter = new Intl.NumberFormat(locale, options);
+        const parser = new NumberParser(locale, options);
+        const formattedOnce = formatter.format(2.220446049250313e-16);
+        expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
+      });
+      it('should handle currency small numbers', () => {
+        let locale = 'ar-AE-u-nu-latn';
+        let options = {
+          style: 'currency',
+          currency: 'USD'
+        };
+        const formatter = new Intl.NumberFormat(locale, options);
+        const parser = new NumberParser(locale, options);
+        const formattedOnce = formatter.format(2.220446049250313e-16);
+        expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
+      });
+      it('should handle hanidec small numbers', () => {
+        let locale = 'ar-AE-u-nu-hanidec';
+        let options = {
+          style: 'decimal'
+        };
+        const formatter = new Intl.NumberFormat(locale, options);
+        const parser = new NumberParser(locale, options);
+        const formattedOnce = formatter.format(2.220446049250313e-16);
+        expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
+      });
+      it('should handle beng with minimum integer digits', () => {
+        let locale = 'ar-AE-u-nu-beng';
+        let options = {
+          style: 'decimal',
+          minimumIntegerDigits: 4,
+          maximumFractionDigits: 0
+        };
+        const formatter = new Intl.NumberFormat(locale, options);
+        const parser = new NumberParser(locale, options);
+        const formattedOnce = formatter.format(2.220446049250313e-16);
+        expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
+      });
+      it('should handle percent with minimum integer digits', () => {
+        let locale = 'ar-AE-u-nu-latn';
+        let options = {
+          style: 'percent',
+          minimumIntegerDigits: 4,
+          minimumFractionDigits: 9,
+          maximumSignificantDigits: 1,
+          maximumFractionDigits: undefined
+        };
+        const formatter = new Intl.NumberFormat(locale, options);
+        const parser = new NumberParser(locale, options);
+        const formattedOnce = formatter.format(0.0095);
+        expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
+      });
+      it('should handle non-grouping in russian locale', () => {
+        let locale = 'ru-RU';
+        let options = {
+          style: 'percent',
+          useGrouping: false,
+          minimumFractionDigits: undefined,
+          maximumFractionDigits: undefined
+        };
+        const formatter = new Intl.NumberFormat(locale, options);
+        const parser = new NumberParser(locale, options);
+        const formattedOnce = formatter.format(2.220446049250313e-16);
+        expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
+      });
     });
   });
 
@@ -306,12 +409,19 @@ describe('NumberParser', function () {
     });
 
     it('should support group characters', function () {
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber(',')).toBe(true); // en-US-u-nu-arab uses commas as the decimal point character
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber(',000')).toBe(false); // latin numerals cannot follow arab decimal point
+      // starting with arabic decimal point
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber(',')).toBe(true);
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber(',000')).toBe(true);
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('000,000')).toBe(true);
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('1,000')).toBe(true);
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-1,000')).toBe(true);
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('1,000,000')).toBe(true);
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-1,000,000')).toBe(true);
+    });
+
+    it('should return false for invalid grouping', function () {
+      expect(new NumberParser('en-US', {useGrouping: false}).isValidPartialNumber('1234,7')).toBe(false);
+      expect(new NumberParser('de-DE', {useGrouping: false}).isValidPartialNumber('1234.7')).toBe(false);
     });
 
     it('should reject random characters', function () {

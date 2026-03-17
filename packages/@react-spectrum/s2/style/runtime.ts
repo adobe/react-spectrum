@@ -36,23 +36,50 @@ import {StyleString} from './types';
 //   };
 // }
 
+/**
+ * Merges multiple style strings together, combining the CSS properties from each.
+ * Later styles take precedence over earlier ones for the same property.
+ * Useful for composing styles from multiple `style()` macro calls.
+ *
+ * @example
+ * ```tsx
+ * import {mergeStyles} from '@react-spectrum/s2';
+ * import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
+ * const baseStyles = style({padding: 8});
+ * const overrideStyles = style({padding: 16, color: 'heading'});
+ * const merged = mergeStyles(baseStyles, overrideStyles);
+ * // merged has `padding: 16` and `color: heading`.
+ * ```
+ */
 export function mergeStyles(...styles: (StyleString | null | undefined)[]): StyleString {
   let definedStyles = styles.filter(Boolean) as StyleString[];
   if (definedStyles.length === 1) {
-    return definedStyles[0];
+    let first = definedStyles[0];
+    if (typeof first !== 'string') {
+      // static macro has a toString method so that we generate the style macro map for the entry
+      // it's automatically called in other places, but for our merging, we have to call it ourselves
+      return (first as StyleString).toString() as StyleString;
+    }
+    return first;
   }
 
-  let map = new Map();
+  let map = new Map<string, string>();
+
   for (let style of definedStyles) {
-    for (let [k, v] of parse(style)) {
+    // must call toString here for the static macro
+    let str = style.toString();
+
+    for (let [k, v] of parse(str)) {
       map.set(k, v);
     }
   }
-  
+
   let res = '';
   for (let value of map.values()) {
     res += value;
   }
+
   return res as StyleString;
 }
 
@@ -74,7 +101,12 @@ function parse(s: string) {
     }
 
     let property = s.slice(start, condition);
-    properties.set(property, (properties.get(property) || '') + ' ' + s.slice(start, i));
+    if (process.env.NODE_ENV !== 'production' && property.startsWith('-macro-')) {
+      let value = s.slice(start, i);
+      properties.set(value, ' ' + value);
+    } else {
+      properties.set(property, (properties.get(property) || '') + ' ' + s.slice(start, i));
+    }
   }
 
   function readValue() {

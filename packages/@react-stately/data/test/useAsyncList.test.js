@@ -45,6 +45,15 @@ describe('useAsyncList', () => {
     let {result} = renderHook(() => useAsyncList({load}));
 
     expect(load).toHaveBeenCalledTimes(1);
+    expect(load).toHaveBeenCalledWith({
+      cursor: undefined,
+      filterText: '',
+      items: [],
+      loadingState: 'idle',
+      selectedKeys: new Set(),
+      signal: expect.any(AbortSignal),
+      sortDescriptor: undefined
+    });
     let args = load.mock.calls[0][0];
     expect(args.items).toEqual([]);
     expect(args.selectedKeys).toEqual(new Set());
@@ -324,6 +333,56 @@ describe('useAsyncList', () => {
     expect(result.current.isLoading).toBe(false);
     expect(result.current.items).toEqual(ITEMS);
   });
+
+  it('should prevent loadMore from firing if in the middle of a load', async () => {
+    let load = jest.fn().mockImplementation(getItems);
+    let {result} = renderHook(
+      () => useAsyncList({load})
+    );
+
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.items).toEqual([]);
+
+    await act(async () => {
+      result.current.loadMore();
+    });
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.items).toEqual([]);
+    expect(load).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      jest.runAllTimers();
+    });
+
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.items).toEqual(ITEMS);
+
+    await act(async () => {
+      result.current.reload();
+    });
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.items).toEqual([]);
+    expect(load).toHaveBeenCalledTimes(2);
+
+    await act(async () => {
+      result.current.loadMore();
+    });
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.items).toEqual([]);
+    expect(load).toHaveBeenCalledTimes(2);
+
+    await act(async () => {
+      jest.runAllTimers();
+    });
+
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.items).toEqual(ITEMS);
+  });
+
 
   it('should ignore duplicate loads where first resolves first', async () => {
     let load = jest.fn().mockImplementation(getItems2);

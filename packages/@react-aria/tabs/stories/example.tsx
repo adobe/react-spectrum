@@ -11,14 +11,14 @@
  */
 
 import {AriaTabListProps, useTab, useTabList, useTabPanel} from '@react-aria/tabs';
-import React from 'react';
+import React, {JSX} from 'react';
 import {useTabListState} from '@react-stately/tabs';
 
-interface TabProps extends AriaTabListProps<any> {
+export interface TabProps extends AriaTabListProps<any> {
   shouldSelectOnPressUp?: boolean
 }
 
-export function Tabs({shouldSelectOnPressUp, ...props}: TabProps) {
+export function Tabs({shouldSelectOnPressUp, ...props}: TabProps): JSX.Element {
   let state = useTabListState(props);
   let ref = React.useRef(null);
   let {tabListProps} = useTabList(props, state, ref);

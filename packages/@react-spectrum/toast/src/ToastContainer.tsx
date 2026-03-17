@@ -28,7 +28,7 @@ export interface SpectrumToastContainerProps extends AriaToastRegionProps {
   placement?: ToastPlacement
 }
 
-export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'>, DOMProps {
+export interface SpectrumToastOptions extends ToastOptions, DOMProps {
   /** A label for the action button within the toast. */
   actionLabel?: string,
   /** Handler that is called when the action button is pressed. */
@@ -39,19 +39,13 @@ export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'>, DO
 
 type CloseFunction = () => void;
 
-function wrapInViewTransition<R>(fn: () => R): R {
+function wrapInViewTransition(fn: () => void): void {
   if ('startViewTransition' in document) {
-    let result: R;
-    // @ts-expect-error
     document.startViewTransition(() => {
-      flushSync(() => {
-        result = fn();
-      });
-    });
-    // @ts-ignore
-    return result;
+      flushSync(fn);
+    }).ready.catch(() => {});
   } else {
-    return fn();
+    fn();
   }
 }
 
@@ -69,7 +63,7 @@ function getGlobalToastQueue() {
 }
 
 // For testing. Not exported from the package index.
-export function clearToastQueue() {
+export function clearToastQueue(): void {
   globalToastQueue = null;
 }
 
@@ -134,15 +128,14 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
     return (
       <Toaster state={state} {...props}>
         <ol className={classNames(toastContainerStyles, 'spectrum-ToastContainer-list')}>
-          {state.visibleToasts.slice().reverse().map((toast, index) => {
+          {state.visibleToasts.map((toast, index) => {
             let shouldFade = isCentered && index !== 0;
             return (
               <li
                 key={toast.key}
                 className={classNames(toastContainerStyles, 'spectrum-ToastContainer-listitem')}
                 style={{
-                  // @ts-expect-error
-                  viewTransitionName: `_${toast.key.slice(2)}`,
+                  viewTransitionName: toast.key,
                   viewTransitionClass: classNames(
                     toastContainerStyles,
                     'toast',
@@ -155,7 +148,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
                   state={state} />
               </li>
             );
-          })} 
+          })}
         </ol>
       </Toaster>
     );

@@ -59,6 +59,20 @@ describe('Slider', () => {
     expect(group.querySelector('.react-aria-SliderOutput')).toHaveAttribute('data-output', 'output');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} = renderSlider(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <output {...props} data-custom="true" />}
+    );
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-custom', 'true');
+    expect(group.querySelector('.react-aria-SliderThumb')).toHaveAttribute('data-custom', 'true');
+    expect(group.querySelector('.react-aria-SliderTrack')).toHaveAttribute('data-custom', 'true');
+    expect(group.querySelector('.react-aria-SliderOutput')).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support render props', () => {
     let {getByTestId} = render(
       <Slider orientation="vertical">
@@ -274,22 +288,29 @@ describe('Slider', () => {
     await user.pointer([{target: track, keys: '[MouseLeft]', coords: {x: 20}}]);
     expect(onChange).toHaveBeenCalled();
   });
+
+  it('should support input ref', () => {
+    let inputRef = React.createRef();
+  
+    let {getByRole} = render(
+      <Slider>
+        <Label>Test</Label>
+        <SliderOutput />
+        <SliderTrack>
+          <SliderThumb inputRef={inputRef} />
+        </SliderTrack>
+      </Slider>
+    );
+  
+    let group = getByRole('group');
+    let thumbInput = group.querySelector('input');
+    expect(inputRef.current).toBe(thumbInput);
+  });
+
+  it('should support form prop', () => {
+    let {getByRole} = renderSlider({}, {form: 'test'});
+    let input = getByRole('slider');
+    expect(input).toHaveAttribute('form', 'test');
+  });
 });
 
-it('should support input ref', () => {
-  let inputRef = React.createRef();
-
-  let {getByRole} = render(
-    <Slider>
-      <Label>Test</Label>
-      <SliderOutput />
-      <SliderTrack>
-        <SliderThumb inputRef={inputRef} />
-      </SliderTrack>
-    </Slider>
-  );
-
-  let group = getByRole('group');
-  let thumbInput = group.querySelector('input');
-  expect(inputRef.current).toBe(thumbInput);
-});

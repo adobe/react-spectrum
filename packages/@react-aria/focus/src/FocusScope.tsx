@@ -15,18 +15,18 @@ import {
   getActiveElement,
   getEventTarget,
   getOwnerDocument,
+  getOwnerWindow,
   isAndroid,
   isChrome,
   isFocusable,
   isTabbable,
+  nodeContains,
   ShadowTreeWalker,
   useLayoutEffect
 } from '@react-aria/utils';
 import {FocusableElement, RefObject} from '@react-types/shared';
-import {focusSafely} from './focusSafely';
-import {getInteractionModality} from '@react-aria/interactions';
-import {isElementVisible} from './isElementVisible';
-import React, {ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import {focusSafely, getInteractionModality} from '@react-aria/interactions';
+import React, {JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 
 export interface FocusScopeProps {
   /** The contents of the focus scope. */
@@ -91,7 +91,7 @@ let activeScope: ScopeRef = null;
  * management interface that can be used to move focus forward and back in response
  * to user events.
  */
-export function FocusScope(props: FocusScopeProps) {
+export function FocusScope(props: FocusScopeProps): JSX.Element {
   let {children, contain, restoreFocus, autoFocus} = props;
   let startRef = useRef<HTMLSpanElement>(null);
   let endRef = useRef<HTMLSpanElement>(null);
@@ -296,6 +296,39 @@ function shouldContainFocus(scopeRef: ScopeRef) {
   return true;
 }
 
+function getRadiosInGroup(element: HTMLInputElement): HTMLInputElement[] {
+  if (!element.form) {
+    // Radio buttons outside a form - query the document
+    return Array.from(
+      getOwnerDocument(element).querySelectorAll<HTMLInputElement>(
+        `input[type="radio"][name="${CSS.escape(element.name)}"]`
+      )
+    ).filter(radio => !radio.form);
+  }
+
+  // namedItem returns RadioNodeList (iterable) for 2+ elements, but a single Element for exactly 1.
+  // https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormControlsCollection/namedItem
+  const radioList = element.form.elements.namedItem(element.name);
+  let ownerWindow = getOwnerWindow(element);
+  if (radioList instanceof ownerWindow.RadioNodeList) {
+    return Array.from(radioList).filter(
+      (el): el is HTMLInputElement => el instanceof ownerWindow.HTMLInputElement
+    );
+  }
+  if (radioList instanceof ownerWindow.HTMLInputElement) {
+    return [radioList];
+  }
+  return [];
+}
+
+function isTabbableRadio(element: HTMLInputElement): boolean {
+  if (element.checked) {
+    return true;
+  }
+  const radios = getRadiosInGroup(element);
+  return radios.length > 0 && !radios.some(radio => radio.checked);
+}
+
 function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: boolean) {
   let focusedNode = useRef<FocusableElement>(undefined);
 
@@ -340,6 +373,9 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
       e.preventDefault();
       if (nextElement) {
         focusElement(nextElement, true);
+        if (nextElement instanceof getOwnerWindow(nextElement).HTMLInputElement) {
+          nextElement.select();
+        }
       }
     };
 
@@ -423,7 +459,7 @@ function isElementInScope(element?: Element | null, scope?: Element[] | null) {
   if (!scope) {
     return false;
   }
-  return scope.some(node => node.contains(element));
+  return scope.some(node => nodeContains(node, element));
 }
 
 function isElementInChildScope(element: Element, scope: ScopeRef = null) {
@@ -444,7 +480,7 @@ function isElementInChildScope(element: Element, scope: ScopeRef = null) {
 }
 
 /** @private */
-export function isElementInChildOfActiveScope(element: Element) {
+export function isElementInChildOfActiveScope(element: Element): boolean {
   return isElementInChildScope(element, activeScope);
 }
 
@@ -754,12 +790,26 @@ export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions
     {
       acceptNode(node) {
         // Skip nodes inside the starting node.
-        if (opts?.from?.contains(node)) {
+        if (nodeContains(opts?.from, node)) {
           return NodeFilter.FILTER_REJECT;
         }
 
+        if (opts?.tabbable
+          && (node as Element).tagName === 'INPUT'
+          && (node as HTMLInputElement).getAttribute('type') === 'radio') {
+          // If the radio is in a form, we can get all the other radios by name
+          if (!isTabbableRadio(node as HTMLInputElement)) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          // If the radio is in the same group as the current node and none are selected, we can skip it
+          if ((walker.currentNode as Element).tagName === 'INPUT'
+            && (walker.currentNode as HTMLInputElement).type === 'radio'
+            && (walker.currentNode as HTMLInputElement).name === (node as HTMLInputElement).name) {
+            return NodeFilter.FILTER_REJECT;
+          }
+        }
+
         if (filter(node as Element)
-          && isElementVisible(node as Element)
           && (!scope || isElementInScope(node as Element, scope))
           && (!opts?.accept || opts.accept(node as Element))
         ) {
@@ -791,7 +841,7 @@ export function createFocusManager(ref: RefObject<Element | null>, defaultOption
       let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept} = opts;
       let node = from || getActiveElement(getOwnerDocument(root));
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
-      if (root.contains(node)) {
+      if (nodeContains(root, node)) {
         walker.currentNode = node!;
       }
       let nextNode = walker.nextNode() as FocusableElement;
@@ -812,7 +862,7 @@ export function createFocusManager(ref: RefObject<Element | null>, defaultOption
       let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept} = opts;
       let node = from || getActiveElement(getOwnerDocument(root));
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
-      if (root.contains(node)) {
+      if (nodeContains(root, node)) {
         walker.currentNode = node!;
       } else {
         let next = last(walker);
@@ -887,15 +937,15 @@ class Tree {
     this.fastMap.set(null, this.root);
   }
 
-  get size() {
+  get size(): number {
     return this.fastMap.size;
   }
 
-  getTreeNode(data: ScopeRef) {
+  getTreeNode(data: ScopeRef): TreeNode | undefined {
     return this.fastMap.get(data);
   }
 
-  addTreeNode(scopeRef: ScopeRef, parent: ScopeRef, nodeToRestore?: FocusableElement) {
+  addTreeNode(scopeRef: ScopeRef, parent: ScopeRef, nodeToRestore?: FocusableElement): void {
     let parentNode = this.fastMap.get(parent ?? null);
     if (!parentNode) {
       return;
@@ -909,11 +959,11 @@ class Tree {
     }
   }
 
-  addNode(node: TreeNode) {
+  addNode(node: TreeNode): void {
     this.fastMap.set(node.scopeRef, node);
   }
 
-  removeTreeNode(scopeRef: ScopeRef) {
+  removeTreeNode(scopeRef: ScopeRef): void {
     // never remove the root
     if (scopeRef === null) {
       return;
@@ -979,14 +1029,14 @@ class TreeNode {
   constructor(props: {scopeRef: ScopeRef}) {
     this.scopeRef = props.scopeRef;
   }
-  addChild(node: TreeNode) {
+  addChild(node: TreeNode): void {
     this.children.add(node);
     node.parent = this;
   }
-  removeChild(node: TreeNode) {
+  removeChild(node: TreeNode): void {
     this.children.delete(node);
     node.parent = undefined;
   }
 }
 
-export let focusScopeTree = new Tree();
+export let focusScopeTree: Tree = new Tree();

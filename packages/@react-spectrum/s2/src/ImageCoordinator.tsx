@@ -44,7 +44,7 @@ interface State {
   loaded: Map<string, boolean>
 }
 
-type Action = 
+type Action =
   | {type: 'register', url: string}
   | {type: 'unregister', url: string}
   | {type: 'load', url: string}
@@ -120,7 +120,7 @@ function isAllLoaded(loaded: Map<string, boolean>) {
  * An ImageCoordinator coordinates loading behavior for a group of images.
  * Images within an ImageCoordinator are revealed together once all of them have loaded.
  */
-export function ImageCoordinator(props: ImageCoordinatorProps) {
+export function ImageCoordinator(props: ImageCoordinatorProps): ReactNode {
   // If we are already inside another ImageCoordinator, just pass
   // through children and coordinate loading at the root.
   let ctx = useContext(props.group || DefaultImageGroup);
@@ -139,7 +139,7 @@ function ImageCoordinatorRoot(props: ImageCoordinatorProps) {
     loadStartTime: 0,
     loaded: new Map()
   });
-  
+
   let register = useCallback((url: string) => dispatch({type: 'register', url}), []);
   let unregister = useCallback((url: string) => dispatch({type: 'unregister', url}), []);
   let load = useCallback((url: string) => dispatch({type: 'load', url}), []);

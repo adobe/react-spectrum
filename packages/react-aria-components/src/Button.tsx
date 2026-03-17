@@ -21,7 +21,9 @@ import {
   useId
 } from 'react-aria';
 import {
+  ClassNameOrFunction,
   ContextValue,
+  dom,
   RenderProps,
   SlotProps,
   useContextProps,
@@ -29,6 +31,7 @@ import {
 } from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {filterDOMProps} from '@react-aria/utils';
+import {GlobalDOMAttributes} from '@react-types/shared';
 import {ProgressBarContext} from './ProgressBar';
 import React, {createContext, ForwardedRef, useEffect, useRef} from 'react';
 
@@ -65,29 +68,12 @@ export interface ButtonRenderProps {
   isPending: boolean
 }
 
-export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps> {
+export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps, 'button'>, Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'> {
   /**
-   * The `<form>` element to associate the button with.
-   * The value of this attribute must be the id of a `<form>` in the same document.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Button'
    */
-  form?: string,
-  /**
-   * The URL that processes the information submitted by the button.
-   * Overrides the action attribute of the button's form owner.
-   */
-  formAction?: string,
-  /** Indicates how to encode the form data that is submitted. */
-  formEncType?: string,
-  /** Indicates the HTTP method used to submit the form. */
-  formMethod?: string,
-  /** Indicates that the form is not to be validated when it is submitted. */
-  formNoValidate?: boolean,
-  /** Overrides the target attribute of the button's form owner. */
-  formTarget?: string,
-  /** Submitted as a pair with the button's value as part of the form data. */
-  name?: string,
-  /** The value associated with the button's name when it's submitted with the form data. */
-  value?: string,
+  className?: ClassNameOrFunction<ButtonRenderProps>,
   /**
    * Whether the button is in a pending state. This disables press and hover events
    * while retaining focusability, and announces the pending state to screen readers.
@@ -99,8 +85,6 @@ interface ButtonContextValue extends ButtonProps {
   isPressed?: boolean
 }
 
-const additionalButtonHTMLAttributes = new Set(['form', 'formAction', 'formEncType', 'formMethod', 'formNoValidate', 'formTarget', 'name', 'value']);
-
 export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
 
 /**
@@ -108,10 +92,10 @@ export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTML
  */
 export const Button = /*#__PURE__*/ createHideableComponent(function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
-  props = disablePendingProps(props);
   let ctx = props as ButtonContextValue;
   let {isPending} = ctx;
   let {buttonProps, isPressed} = useButton(props, ref);
+  buttonProps = useDisableInteractions(buttonProps, isPending);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover({
     ...props,
@@ -157,13 +141,14 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
     wasPending.current = isPending;
   }, [isPending, isFocused, ariaLabelledby, buttonId]);
 
-  // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
-  // We do this by changing the button's type to button.
+  let DOMProps = filterDOMProps(props, {global: true});
+  delete DOMProps.onClick;
+
   return (
-    <button
-      {...filterDOMProps(props, {propNames: additionalButtonHTMLAttributes})}
-      {...mergeProps(buttonProps, focusProps, hoverProps)}
-      {...renderProps}
+    <dom.button
+      {...mergeProps(DOMProps, renderProps, buttonProps, focusProps, hoverProps)}
+      // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
+      // We do this by changing the button's type to button.
       type={buttonProps.type === 'submit' && isPending ? 'button' : buttonProps.type}
       id={buttonId}
       ref={ref}
@@ -179,22 +164,22 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
       <ProgressBarContext.Provider value={{id: progressId}}>
         {renderProps.children}
       </ProgressBarContext.Provider>
-    </button>
+    </dom.button>
   );
 });
 
-function disablePendingProps(props) {
-  // Don't allow interaction while isPending is true
-  if (props.isPending) {
-    props.onPress = undefined;
-    props.onPressStart = undefined;
-    props.onPressEnd = undefined;
-    props.onPressChange = undefined;
-    props.onPressUp = undefined;
-    props.onKeyDown = undefined;
-    props.onKeyUp = undefined;
-    props.onClick = undefined;
+// Events to preserve when isPending is true (for tooltips and other overlays)
+const PRESERVED_EVENT_PATTERN = /Focus|Blur|Hover|Pointer(Enter|Leave|Over|Out)|Mouse(Enter|Leave|Over|Out)/;
+
+function useDisableInteractions(props, isPending) {
+  if (isPending) {
+    for (const key in props) {
+      if (key.startsWith('on') && !PRESERVED_EVENT_PATTERN.test(key)) {
+        props[key] = undefined;
+      }
+    }
     props.href = undefined;
+    props.target = undefined;
   }
   return props;
 }

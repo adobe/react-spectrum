@@ -11,7 +11,9 @@
  */
 
 import {mergeProps} from '@react-aria/utils';
-import React, {ReactNode, useRef, useState} from 'react';
+import React, {JSX, ReactNode, useRef, useState} from 'react';
+import {SelectionBehavior} from '@react-types/shared';
+import {TableProps} from '@react-types/table';
 import {useCheckbox} from '@react-aria/checkbox';
 import {useFocusRing} from '@react-aria/focus';
 import {
@@ -27,7 +29,7 @@ import {useTableState} from '@react-stately/table';
 import {useToggleState} from '@react-stately/toggle';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-export function Table(props) {
+export function Table<T extends object>(props: TableProps<T> & {onAction?: (key: string) => void, selectionStyle?: 'highlight' | 'checkbox', selectionBehavior?: SelectionBehavior}): JSX.Element {
   let {onAction} = props;
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
   let state = useTableState({
@@ -41,7 +43,7 @@ export function Table(props) {
     setShowSelectionCheckboxes(shouldShowCheckboxes);
   }
   let ref = useRef<HTMLTableElement | null>(null);
-  let bodyRef = useRef(undefined);
+  let bodyRef = useRef<HTMLTableElement | null>(null);
   let {collection} = state;
   let {gridProps} = useTable({...props, scrollRef: bodyRef}, state, ref);
 
@@ -73,7 +75,9 @@ export function Table(props) {
   );
 }
 
-export const TableRowGroup = React.forwardRef((props: any, ref) => {
+export const TableRowGroup:
+  React.ForwardRefExoticComponent<Omit<any, 'ref'> & React.RefAttributes<unknown>> =
+React.forwardRef((props: any, ref) => {
   let {type: Element, style, children} = props;
   let {rowGroupProps} = useTableRowGroup();
   return (
@@ -83,7 +87,7 @@ export const TableRowGroup = React.forwardRef((props: any, ref) => {
   );
 });
 
-export function TableHeaderRow({item, state, children}) {
+export function TableHeaderRow({item, state, children}: {item: any, state: any, children: ReactNode}): JSX.Element {
   let ref = useRef<HTMLTableRowElement | null>(null);
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
 
@@ -94,7 +98,7 @@ export function TableHeaderRow({item, state, children}) {
   );
 }
 
-export function TableColumnHeader({column, state}) {
+export function TableColumnHeader({column, state}: {column: any, state: any}): JSX.Element {
   let ref = useRef<HTMLTableHeaderCellElement | null>(null);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -103,9 +107,8 @@ export function TableColumnHeader({column, state}) {
   return (
     <th
       {...mergeProps(columnHeaderProps, focusProps)}
-      colSpan={column.colspan}
       style={{
-        textAlign: column.colspan > 1 ? 'center' : 'left',
+        textAlign: column.colSpan > 1 ? 'center' : 'left',
         padding: '5px 10px',
         outline: isFocusVisible ? '2px solid orange' : 'none',
         cursor: 'default'
@@ -121,7 +124,7 @@ export function TableColumnHeader({column, state}) {
   );
 }
 
-export function TableRow({item, children, state, onAction}: {item: any, children: ReactNode, state: any, onAction?: (key: string) => void}) {
+export function TableRow({item, children, state, onAction}: {item: any, children: ReactNode, state: any, onAction?: (key: string) => void}): JSX.Element {
   let ref = useRef<HTMLTableRowElement | null>(null);
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps} = useTableRow({node: item, onAction: onAction ? () => onAction(item.key) : undefined}, state, ref);
@@ -146,7 +149,7 @@ export function TableRow({item, children, state, onAction}: {item: any, children
   );
 }
 
-export function TableCell({cell, state}) {
+export function TableCell({cell, state}: {cell: any, state: any}): JSX.Element {
   let ref = useRef<HTMLTableCellElement | null>(null);
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -165,7 +168,7 @@ export function TableCell({cell, state}) {
   );
 }
 
-export function TableCheckboxCell({cell, state}) {
+export function TableCheckboxCell({cell, state}: {cell: any, state: any}): JSX.Element {
   let ref = useRef<HTMLTableCellElement | null>(null);
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {checkboxProps} = useTableSelectionCheckbox({key: cell.parentKey}, state);
@@ -182,7 +185,7 @@ export function TableCheckboxCell({cell, state}) {
   );
 }
 
-export function TableSelectAllCell({column, state}) {
+export function TableSelectAllCell({column, state}: {column: any, state: any}): JSX.Element {
   let ref = useRef<HTMLTableCellElement | null>(null);
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);

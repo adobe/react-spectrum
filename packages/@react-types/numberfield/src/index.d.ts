@@ -29,7 +29,14 @@ export interface NumberFieldProps extends InputBase, Validation<number>, Focusab
    * Formatting options for the value displayed in the number field.
    * This also affects what characters are allowed to be typed by the user.
    */
-  formatOptions?: Intl.NumberFormatOptions
+  formatOptions?: Intl.NumberFormatOptions,
+  /**
+   * Controls the behavior of the number field when the user blurs the field after editing.
+   * 'snap' will clamp the value to the min/max values, and snap to the nearest step value.
+   * 'validate' will not clamp the value, and will validate that the value is within the min/max range and on a valid step.
+   * @default 'snap'
+   */
+  commitBehavior?: 'snap' | 'validate'
 }
 
 export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps, TextInputDOMEvents {
@@ -46,6 +53,9 @@ export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLa
 export interface SpectrumNumberFieldProps extends Omit<AriaNumberFieldProps, 'placeholder' | 'isInvalid' | 'validationState'>, SpectrumFieldValidation<number>, InputDOMProps, StyleProps, SpectrumLabelableProps {
   /** Whether the numberfield should be displayed with a quiet style. */
   isQuiet?: boolean,
-  /** Whether to hide the increment and decrement buttons. */
+  /**
+   * Whether to hide the increment and decrement buttons.
+   * @default false
+   */
   hideStepper?: boolean
 }

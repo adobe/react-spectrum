@@ -21,7 +21,7 @@ import intlMessages from '../intl/*.json';
 import {ListCollection, useListState} from '@react-stately/list';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {Provider, useProvider, useProviderProps} from '@react-spectrum/provider';
-import React, {JSX, ReactElement, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {JSX, ReactNode, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
 import {useFormProps} from '@react-spectrum/form';
@@ -77,11 +77,11 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(pro
       : new ListCollection([...state.collection])) as Collection<Node<T>>;
     return new ListKeyboardDelegate({
       collection,
-      ref: domRef,
+      ref: tagsRef,
       direction,
       orientation: 'horizontal'
     });
-  }, [direction, isCollapsed, state.collection, tagState.visibleTagCount, domRef]) as ListKeyboardDelegate<T>;
+  }, [direction, isCollapsed, state.collection, tagState.visibleTagCount, tagsRef]) as ListKeyboardDelegate<T>;
   // Remove onAction from props so it doesn't make it into useGridList.
   delete props.onAction;
   let {gridProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup({...props, keyboardDelegate}, state, tagsRef);
@@ -275,4 +275,4 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(pro
       </Field>
     </FocusScope>
   );
-}) as <T>(props: SpectrumTagGroupProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+}) as <T>(props: SpectrumTagGroupProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactNode;

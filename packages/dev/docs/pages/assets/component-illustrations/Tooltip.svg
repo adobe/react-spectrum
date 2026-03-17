@@ -4,7 +4,7 @@
       <rect id="Placement_Area" data-name="Placement Area" width="39" height="24" fill="red" opacity="0"/>
       <rect id="Background" width="39" height="24" rx="4" fill="var(--anatomy-gray-700)"/>
       <path id="Tip" d="M-4,0H4L0,4Z" transform="translate(20 24)" fill="var(--anatomy-gray-700)"/>
-      <text id="Text" transform="translate(10 4)" fill="var(--anatomy-gray-50)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="12">Edit</tspan></text>
+      <text id="Text" transform="translate(10 4)" fill="var(--anatomy-gray-50)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="12">Edit</tspan></text>
     </g>
     <g id="Action_button" data-name="Action button" transform="translate(1507 310)">
       <rect id="Placement_Area-2" data-name="Placement Area" width="32" height="32" fill="red" opacity="0"/>

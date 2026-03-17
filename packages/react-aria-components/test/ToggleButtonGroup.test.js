@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {ToggleButton, ToggleButtonGroup} from '../';
 import userEvent from '@testing-library/user-event';
@@ -25,6 +25,7 @@ function renderGroup(props) {
 }
 
 describe('ToggleButtonGroup', () => {
+  installPointerEvent();
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -48,6 +49,12 @@ describe('ToggleButtonGroup', () => {
     expect(group).toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} = renderGroup({render: props => <div {...props} data-custom="true" />});
+    let group = getByRole('radiogroup');
+    expect(group).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support disabled state', () => {
     let {getByRole, getAllByRole} = renderGroup({isDisabled: true, className: ({isDisabled}) => isDisabled ? 'disabled' : 'enabled'});
     let group = getByRole('radiogroup');
@@ -57,6 +64,17 @@ describe('ToggleButtonGroup', () => {
     for (let radio of getAllByRole('radio')) {
       expect(radio).toBeDisabled();
     }
+  });
+
+  it('should not show hover state when disabled', async () => {
+    let {getAllByRole} = renderGroup({isDisabled: true, className: ({isHovered}) => (isHovered ? 'hover' : '')});
+    let radios = getAllByRole('radio');
+    await user.hover(radios[0]);
+    expect(radios[0]).not.toHaveAttribute('data-hovered');
+    expect(radios[0]).not.toHaveClass('hover');
+    await user.hover(radios[1]);
+    expect(radios[1]).not.toHaveAttribute('data-hovered');
+    expect(radios[1]).not.toHaveClass('hover');
   });
 
   it('should support uncontrolled single selection', async () => {
@@ -142,7 +160,8 @@ describe('ToggleButtonGroup', () => {
   });
 
   it('should support horizontal keyboard navigation', async () => {
-    let {getAllByRole} = renderGroup();
+    let {getAllByRole, getByRole} = renderGroup();
+    expect(getByRole('radiogroup')).toHaveAttribute('aria-orientation', 'horizontal');
     let radios = getAllByRole('radio');
     await user.tab();
     expect(document.activeElement).toBe(radios[0]);
@@ -155,7 +174,8 @@ describe('ToggleButtonGroup', () => {
   });
 
   it('should support vertical keyboard navigation', async () => {
-    let {getAllByRole} = renderGroup({orientation: 'vertical'});
+    let {getAllByRole, getByRole} = renderGroup({orientation: 'vertical'});
+    expect(getByRole('radiogroup')).toHaveAttribute('aria-orientation', 'vertical');
     let radios = getAllByRole('radio');
     await user.tab();
     expect(document.activeElement).toBe(radios[0]);

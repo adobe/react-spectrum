@@ -236,7 +236,9 @@ module.exports = new Transformer({
           type: value.type === 'function' ? 'method' : 'property',
           name,
           value,
-          access: path.node.accessibility
+          access: path.node.accessibility,
+          static: path.node.static,
+          abstract: path.node.abstract
         }, docs));
       }
 
@@ -374,7 +376,7 @@ module.exports = new Transformer({
         let exts = path.node.extends ? path.get('extends').map(e => processExport(e)) : [];
         let docs = getJSDocs(path);
 
-        return Object.assign(node, addDocs({
+        let res = Object.assign(node, addDocs({
           type: 'interface',
           id: `${asset.filePath}:${path.node.id.name}`,
           name: path.node.id.name,
@@ -382,6 +384,12 @@ module.exports = new Transformer({
           properties,
           typeParameters: path.node.typeParameters ? path.get('typeParameters.params').map(p => processExport(p)) : []
         }, docs));
+        if (res.access === 'private') {
+          for (let prop in res.properties) {
+            res.properties[prop].access = 'private';
+          }
+        }
+        return res;
       }
 
       if (path.isTSTypeLiteral()) {
@@ -646,7 +654,7 @@ module.exports = new Transformer({
         });
       }
 
-      console.log('UNKNOWN TYPE', path.node.type);
+      // console.log('UNKNOWN TYPE', path.node.type);
       return Object.assign(node, {type: 'any'});
     }
 
@@ -759,6 +767,10 @@ module.exports = new Transformer({
         let result = {
           description: parsed.description
         };
+        let extractedExamples = extractExamples(comments);
+        if (extractedExamples.length > 0) {
+          result.examples = extractedExamples;
+        }
 
         for (let tag of parsed.tags) {
           if (tag.title === 'default') {
@@ -781,13 +793,72 @@ module.exports = new Transformer({
             result.params[tag.name] = tag.description;
           } else if (tag.title === 'selector') {
             result.selector = tag.description;
+          } else if (tag.title === 'example') {
+            if (!result.examples) {
+              result.examples = [];
+            }
+
+            if (tag.description) {
+              result.examples.push(tag.description);
+            }
           }
+        }
+
+        if (result.examples) {
+          result.examples = [...new Set(result.examples.map(example => example.trim()).filter(Boolean))];
         }
 
         return result;
       }
 
       return {};
+    }
+
+    function extractExamples(comments) {
+      let lines = comments.split('\n')
+        .map(line => line.replace(/^\s*\*?\s?/, ''));
+      let examples = [];
+      let current = null;
+
+      for (let line of lines) {
+        if (/^@example\b/.test(line)) {
+          if (current) {
+            let prev = current.join('\n').trim();
+            if (prev) {
+              examples.push(prev);
+            }
+          }
+
+          current = [];
+          let inlineExample = line.replace(/^@example\b\s*/, '');
+          if (inlineExample) {
+            current.push(inlineExample);
+          }
+          continue;
+        }
+
+        if (current) {
+          if (/^@\w+/.test(line)) {
+            let example = current.join('\n').trim();
+            if (example) {
+              examples.push(example);
+            }
+            current = null;
+            continue;
+          }
+
+          current.push(line);
+        }
+      }
+
+      if (current) {
+        let example = current.join('\n').trim();
+        if (example) {
+          examples.push(example);
+        }
+      }
+
+      return examples;
     }
 
     function getDocComments(path) {
@@ -848,6 +919,10 @@ module.exports = new Transformer({
 
       if (value.return) {
         value.return.description = docs.return || value.return.description || null;
+      }
+
+      if (docs.examples) {
+        value.examples = docs.examples;
       }
     }
 

@@ -20,7 +20,17 @@ const devDependencies = new Set([
   '@adobe/spectrum-css-temp',
   '@react-spectrum/style-macro-s1',
   '@parcel/macros',
-  '@adobe/spectrum-tokens'
+  '@adobe/spectrum-tokens',
+  'playwright',
+  'axe-playwright',
+  'vitest',
+  '@vitejs/plugin-react',
+  '@vitest/browser',
+  '@vitest/browser-playwright',
+  '@vitest/ui',
+  'unplugin-parcel-macros',
+  'vite',
+  'vite-plugin-svgr'
 ]);
 
 module.exports = {
@@ -53,6 +63,10 @@ module.exports = {
 
       // The only dev dependency should be spectrum-css.
       if (exists(pkg.devDependencies, pkgName) && devDependencies.has(pkgName)) {
+        return;
+      }
+
+      if (pkgName === 'vanilla-starter' || pkgName === 'tailwind-starter') {
         return;
       }
 

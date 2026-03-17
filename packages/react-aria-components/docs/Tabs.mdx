@@ -46,13 +46,22 @@ type: component
 ## Example
 
 ```tsx example
-import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
+import {Tabs, TabList, Tab, TabPanel, SelectionIndicator} from 'react-aria-components';
 
 <Tabs>
   <TabList aria-label="History of Ancient Rome">
-    <Tab id="FoR">Founding of Rome</Tab>
-    <Tab id="MaR">Monarchy and Republic</Tab>
-    <Tab id="Emp">Empire</Tab>
+    <Tab id="FoR">
+      <span>Founding of Rome</span>
+      <SelectionIndicator />
+    </Tab>
+    <Tab id="MaR">
+      <span>Monarchy and Republic</span>
+      <SelectionIndicator />
+    </Tab>
+    <Tab id="Emp">
+      <span>Empire</span>
+      <SelectionIndicator />
+    </Tab>
   </TabList>
   <TabPanel id="FoR">
     Arma virumque cano, Troiae qui primus ab oris.
@@ -91,7 +100,10 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
   &[data-orientation=horizontal] {
     border-bottom: 1px solid var(--border-color);
 
-    .react-aria-Tab {
+    .react-aria-SelectionIndicator {
+      left: 0;
+      bottom: 0;
+      width: 100%;
       border-bottom: 3px solid var(--border-color);
     }
   }
@@ -106,6 +118,16 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
   transition: color 200ms;
   --border-color: transparent;
   forced-color-adjust: none;
+
+  .react-aria-SelectionIndicator {
+    position: absolute;
+    transition-property: translate, width, height;
+    transition-duration: 200ms;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
 
   &[data-hovered],
   &[data-focused] {
@@ -164,11 +186,13 @@ Tabs consist of a tab list with one or more visually separated tabs. Each tab ha
 Each tab can be clicked, tapped, or navigated to via arrow keys. Depending on the `keyboardActivation` prop, the tab can be selected by receiving keyboard focus, or it can be selected with the <Keyboard>Enter</Keyboard> key.
 
 ```tsx
-import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
+import {Tabs, TabList, Tab, TabPanel, SelectionIndicator} from 'react-aria-components';
 
 <Tabs>
   <TabList>
-    <Tab />
+    <Tab>
+      <SelectionIndicator />
+    </Tab>
   </TabList>
   <TabPanel />
 </Tabs>
@@ -206,6 +230,36 @@ To help kick-start your project, we offer starter kits that include example impl
 
 <StarterKits component="tabs" />
 
+## Reusable wrappers
+
+This example wraps the `Tab` component to include a `SelectionIndicator`, which enables animating the tab selection state.
+
+```tsx example export=true
+import {Tabs, TabList, Tab, TabProps, TabPanel, SelectionIndicator, composeRenderProps} from 'react-aria-components';
+
+function MyTab(props: TabProps) {
+  return (
+    <Tab {...props}>
+      {composeRenderProps(props.children, children => (<>
+        {children}
+        <SelectionIndicator />
+      </>))}
+    </Tab>
+  );
+}
+
+<Tabs>
+  <TabList aria-label="History of Ancient Rome">
+    <MyTab id="home">Home</MyTab>
+    <MyTab id="search">Search</MyTab>
+    <MyTab id="notifications">Notifications</MyTab>
+  </TabList>
+  <TabPanel id="home">Home content</TabPanel>
+  <TabPanel id="search">Search content</TabPanel>
+  <TabPanel id="notifications">Notifications content</TabPanel>
+</Tabs>
+```
+
 ## Selection
 
 ### Default selection
@@ -217,9 +271,9 @@ See the [Selection](selection.html) guide for more details.
 ```tsx example
 <Tabs defaultSelectedKey="keyboard">
   <TabList aria-label="Input settings">
-    <Tab id="mouse">Mouse Settings</Tab>
-    <Tab id="keyboard">Keyboard Settings</Tab>
-    <Tab id="gamepad">Gamepad Settings</Tab>
+    <MyTab id="mouse">Mouse Settings</MyTab>
+    <MyTab id="keyboard">Keyboard Settings</MyTab>
+    <MyTab id="gamepad">Gamepad Settings</MyTab>
   </TabList>
   <TabPanel id="mouse">Mouse Settings</TabPanel>
   <TabPanel id="keyboard">Keyboard Settings</TabPanel>
@@ -242,9 +296,9 @@ function Example() {
       <p>Selected time period: {timePeriod}</p>
       <Tabs selectedKey={timePeriod} onSelectionChange={setTimePeriod}>
         <TabList aria-label="Mesozoic time periods">
-          <Tab id="triassic">Triassic</Tab>
-          <Tab id="jurassic">Jurassic</Tab>
-          <Tab id="cretaceous">Cretaceous</Tab>
+          <MyTab id="triassic">Triassic</MyTab>
+          <MyTab id="jurassic">Jurassic</MyTab>
+          <MyTab id="cretaceous">Cretaceous</MyTab>
         </TabList>
         <TabPanel id="triassic">
           The Triassic ranges roughly from 252 million to 201 million years ago, preceding the Jurassic Period.
@@ -270,9 +324,9 @@ tab selection.
 ```tsx example
 <Tabs keyboardActivation="manual">
   <TabList aria-label="Input settings">
-    <Tab id="mouse">Mouse Settings</Tab>
-    <Tab id="keyboard">Keyboard Settings</Tab>
-    <Tab id="gamepad">Gamepad Settings</Tab>
+    <MyTab id="mouse">Mouse Settings</MyTab>
+    <MyTab id="keyboard">Keyboard Settings</MyTab>
+    <MyTab id="gamepad">Gamepad Settings</MyTab>
   </TabList>
   <TabPanel id="mouse">Mouse Settings</TabPanel>
   <TabPanel id="keyboard">Keyboard Settings</TabPanel>
@@ -291,9 +345,9 @@ This example uses the same `Tabs` component from above. Try navigating from the 
 ```tsx example
 <Tabs>
   <TabList aria-label="Notes app">
-    <Tab id="1">Jane Doe</Tab>
-    <Tab id="2">John Doe</Tab>
-    <Tab id="3">Joe Bloggs</Tab>
+    <MyTab id="1">Jane Doe</MyTab>
+    <MyTab id="2">John Doe</MyTab>
+    <MyTab id="3">Joe Bloggs</MyTab>
   </TabList>
   <TabPanel id="1">
     <label>Leave a note for Jane: <input type="text" /></label>
@@ -340,7 +394,7 @@ function Example() {
     <Tabs>
       <div style={{display: 'flex'}}>
         <TabList aria-label="Dynamic tabs" items={tabs} style={{flex: 1}}>
-          {item => <Tab>{item.title}</Tab>}
+          {item => <MyTab>{item.title}</MyTab>}
         </TabList>
         <div className="button-group">
           <Button onPress={addTab}>Add tab</Button>
@@ -376,9 +430,9 @@ By default, tabs are horizontally oriented. The `orientation` prop can be set to
 ```tsx example
 <Tabs orientation="vertical">
   <TabList aria-label="Chat log orientation example">
-    <Tab id="1">John Doe</Tab>
-    <Tab id="2">Jane Doe</Tab>
-    <Tab id="3">Joe Bloggs</Tab>
+    <MyTab id="1">John Doe</MyTab>
+    <MyTab id="2">Jane Doe</MyTab>
+    <MyTab id="3">Joe Bloggs</MyTab>
   </TabList>
   <TabPanel id="1">There is no prior chat history with John Doe.</TabPanel>
   <TabPanel id="2">There is no prior chat history with Jane Doe.</TabPanel>
@@ -402,7 +456,10 @@ By default, tabs are horizontally oriented. The `orientation` prop can be set to
     flex-direction: column;
     border-inline-end: 1px solid gray;
 
-    .react-aria-Tab {
+    .react-aria-SelectionIndicator {
+      top: 0;
+      right: 0;
+      height: 100%;
       border-inline-end: 3px solid var(--border-color, transparent);
     }
   }
@@ -418,9 +475,9 @@ All tabs can be disabled using the `isDisabled` prop.
 ```tsx example
 <Tabs isDisabled>
   <TabList aria-label="Input settings">
-    <Tab id="mouse">Mouse Settings</Tab>
-    <Tab id="keyboard">Keyboard Settings</Tab>
-    <Tab id="gamepad">Gamepad Settings</Tab>
+    <MyTab id="mouse">Mouse Settings</MyTab>
+    <MyTab id="keyboard">Keyboard Settings</MyTab>
+    <MyTab id="gamepad">Gamepad Settings</MyTab>
   </TabList>
   <TabPanel id="mouse">Mouse Settings</TabPanel>
   <TabPanel id="keyboard">Keyboard Settings</TabPanel>
@@ -451,10 +508,10 @@ An individual `Tab` can be disabled with the `isDisabled` prop. Disabled tabs ar
 ```tsx example
 <Tabs>
   <TabList aria-label="Input settings">
-    <Tab id="mouse">Mouse Settings</Tab>
-    <Tab id="keyboard">Keyboard Settings</Tab>
+    <MyTab id="mouse">Mouse Settings</MyTab>
+    <MyTab id="keyboard">Keyboard Settings</MyTab>
     {/*- begin highlight -*/}
-    <Tab id="gamepad" isDisabled>Gamepad Settings</Tab>
+    <MyTab id="gamepad" isDisabled>Gamepad Settings</MyTab>
     {/*- end highlight -*/}
   </TabList>
   <TabPanel id="mouse">Mouse Settings</TabPanel>
@@ -478,7 +535,7 @@ function Example() {
   return (
     <Tabs disabledKeys={[2]}>
       <TabList aria-label="Input settings" items={tabs}>
-        {item => <Tab>{item.title}</Tab>}
+        {item => <MyTab>{item.title}</MyTab>}
       </TabList>
       <Collection items={tabs}>
         {item => <TabPanel>{item.title}</TabPanel>}
@@ -507,9 +564,9 @@ function AppTabs() {
   return (
     <Tabs selectedKey={pathname}>
       <TabList aria-label="Tabs">
-        <Tab id="/" href="/">Home</Tab>
-        <Tab id="/shared" href="/shared">Shared</Tab>
-        <Tab id="/deleted" href="/deleted">Deleted</Tab>
+        <MyTab id="/" href="/">Home</MyTab>
+        <MyTab id="/shared" href="/shared">Shared</MyTab>
+        <MyTab id="/deleted" href="/deleted">Deleted</MyTab>
       </TabList>
       <TabPanel id={pathname}>
         <Routes>
@@ -707,6 +764,7 @@ This example shows a `TabNavigation` component that can be placed within `Tabs` 
 
 ```tsx example
 import {TabListStateContext, Button} from 'react-aria-components';
+import {ArrowLeft, ArrowRight} from 'lucide-react';
 
 function TabNavigation() {
   /*- begin highlight -*/
@@ -718,8 +776,8 @@ function TabNavigation() {
   let onNext = nextKey != null ? () => state.setSelectedKey(nextKey) : null;
   return (
     <div className="button-group">
-      <Button aria-label="Previous tab" onPress={onPrev}>←</Button>
-      <Button aria-label="Next tab" onPress={onNext}>→</Button>
+      <Button aria-label="Previous tab" onPress={onPrev}><ArrowLeft size={16} /></Button>
+      <Button aria-label="Next tab" onPress={onNext}><ArrowRight size={16} /></Button>
     </div>
   );
 }
@@ -755,9 +813,9 @@ If you need to customize things even further, such as accessing internal state o
 
 ## Testing
 
-### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-`@react-aria/test-utils` offers common tabs interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-aria/test-utils` offers common tabs interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the tabs tester and a sample of how you could use it in your test suite.
 
 ```ts

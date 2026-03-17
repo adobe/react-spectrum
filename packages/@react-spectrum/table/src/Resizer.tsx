@@ -1,4 +1,4 @@
- 
+
 import {classNames} from '@react-spectrum/utils';
 import {ColumnSize} from '@react-types/table';
 import eCursor from 'bundle-text:./cursors/Cur_MoveToRight_9_9.svg';
@@ -16,7 +16,7 @@ import {TableColumnResizeState} from '@react-stately/table';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
 import {useTableContext, useVirtualizerContext} from './TableViewBase';
-import {useUNSTABLE_PortalContext} from '@react-aria/overlays';
+import {useUNSAFE_PortalContext} from '@react-aria/overlays';
 // @ts-ignore
 import wCursor from 'bundle-text:./cursors/Cur_MoveToLeft_9_9.svg';
 
@@ -132,6 +132,6 @@ export const Resizer = React.forwardRef(function Resizer<T>(props: ResizerProps<
 
 function CursorOverlay(props) {
   let {show, children} = props;
-  let {getContainer} = useUNSTABLE_PortalContext();
+  let {getContainer} = useUNSAFE_PortalContext();
   return show ? ReactDOM.createPortal(children, getContainer?.() ?? document.body) : null;
 }

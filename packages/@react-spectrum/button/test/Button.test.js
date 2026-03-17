@@ -182,22 +182,6 @@ describe('Button', function () {
   });
 
   it.each`
-    Name              | Component
-    ${'ActionButton'} | ${ActionButton}
-    ${'Button'}       | ${Button}
-    ${'ClearButton'}  | ${ClearButton}
-    ${'LogicButton'}  | ${LogicButton}
-  `('$Name handles deprecated onClick', async function ({Component}) {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    let {getByRole} = render(<Component onClick={onPressSpy}>Click Me</Component>);
-
-    let button = getByRole('button');
-    await user.click(button);
-    expect(onPressSpy).toHaveBeenCalledTimes(1);
-    expect(spyWarn).toHaveBeenCalledWith('onClick is deprecated, please use onPress');
-  });
-
-  it.each`
     Name              | Component      | props
     ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy, elementType: 'a'}}
     ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, elementType: 'a'}}

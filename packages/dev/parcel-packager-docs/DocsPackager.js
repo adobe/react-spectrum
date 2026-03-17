@@ -13,17 +13,21 @@
 const {Packager} = require('@parcel/plugin');
 const v8 = require('v8');
 
+let cache = new Map();
+let nodes = {};
+
 module.exports = new Packager({
+  async loadBundleConfig() {
+    cache = new Map();
+    nodes = {};
+  },
   async package({bundle, bundleGraph, options}) {
     let promises = [];
     bundle.traverseAssets(asset => {
       promises.push(parse(asset));
     });
 
-    let nodes = {};
-
     let code = new Map(await Promise.all(promises));
-    let cache = new Map();
     try {
       var result = processAsset(bundle.getEntryAssets()[0]);
     } catch (err) {
@@ -342,7 +346,9 @@ function visitChildren(obj, fn) {
         optional: obj.optional,
         access: obj.access,
         description: obj.description,
-        default: obj.default
+        default: obj.default,
+        static: obj.static,
+        abstract: obj.abstract
       };
     case 'alias':
       return {
@@ -363,6 +369,7 @@ function visitChildren(obj, fn) {
         return: fn(obj.return, 'return'),
         typeParameters: obj.typeParameters.map(i => fn(i, 'typeParameters')),
         description: obj.description,
+        examples: obj.examples,
         access: obj.access
       };
     case 'interface':
@@ -442,7 +449,7 @@ function visitChildren(obj, fn) {
         keyof: fn(obj.keyof, 'keyof')
       };
     default:
-      console.log('Unknown type in DocsPackager: ' + obj.type, obj);
+      // console.log('Unknown type in DocsPackager: ' + obj.type, obj);
       return obj;
   }
 }

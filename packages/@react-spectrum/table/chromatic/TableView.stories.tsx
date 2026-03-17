@@ -18,8 +18,8 @@ import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
-import {Meta} from '@storybook/react';
-import React from 'react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
 
 let states = [
   {isQuiet: true},
@@ -111,7 +111,7 @@ let items = [
   {foo: 'Foo 5', bar: 'Baaaaaaaaaar 5', baz: 'Baz 1'}
 ];
 
-const Template = ({columns, items, ...args}) => (
+const Template = ({columns, items, ...args}: SpectrumTableProps<object> & {columns: any[], items: any[]}): JSX.Element => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -175,43 +175,45 @@ const EmptyTemplate = (args) =>
     </TableView>
   );
 
-export const Default = {
-  render: Template,
+export type TableViewStory = StoryObj<typeof Template>;
+
+export const Default: TableViewStory = {
+  render: (args) => <Template {...args} />,
   name: 'default items and columns',
   args: {columns, items}
 };
 
-export const ColumnAlign = {
-  render: Template,
+export const ColumnAlign: TableViewStory = {
+  render: (args) => <Template {...args} />,
   name: 'column alignment',
   args: {columns: alignColumns, items}
 };
 
-export const ColumnDividers = {
-  render: Template,
+export const ColumnDividers: TableViewStory = {
+  render: (args) => <Template {...args} />,
   name: 'columns dividers',
   args: {columns: dividerColumns, items}
 };
 
-export const ColumnWidth = {
-  render: Template,
+export const ColumnWidth: TableViewStory = {
+  render: (args) => <Template {...args} />,
   name: 'columns widths',
   args: {columns: customWidth, items}
 };
 
-export const HiddenColumns = {
-  render: Template,
+export const HiddenColumns: TableViewStory = {
+  render: (args) => <Template {...args} />,
   name: 'hidden columns',
   args: {columns: hiddenColumns, items}
 };
 
-export const NestedColumns = {
-  render: Template,
+export const NestedColumns: TableViewStory = {
+  render: (args) => <Template {...args} />,
   name: 'nested columns',
   args: {columns: nestedColumns, items}
 };
 
-export const MaxHeight = () => (
+export const MaxHeight: StoryFn<SpectrumTableProps<object>> = () => (
   <TableView maxHeight="size-1200">
     <TableHeader columns={columns}>
       {(column: any) => <Column key={column.key}>{column.name}</Column>}
@@ -222,8 +224,8 @@ export const MaxHeight = () => (
   </TableView>
 );
 
-export const Empty = {
-  render: EmptyTemplate,
+export const Empty: TableViewStory = {
+  render: (args) => <EmptyTemplate {...args} />,
   name: 'empty table',
   args: {}
 };

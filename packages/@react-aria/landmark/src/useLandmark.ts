@@ -11,8 +11,8 @@
  */
 
 import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
+import {getEventTarget, nodeContains, useLayoutEffect} from '@react-aria/utils';
 import {useCallback, useEffect, useState} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 export type AriaLandmarkRole = 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary';
@@ -164,7 +164,7 @@ class LandmarkManager implements LandmarkManagerApi {
       return;
     }
 
-    if (this.landmarks.filter(landmark => landmark.role === 'main').length > 1) {
+    if (this.landmarks.filter(landmark => landmark.role === 'main').length > 1 && process.env.NODE_ENV !== 'production') {
       console.error('Page can contain no more than one landmark with the role "main".');
     }
 
@@ -218,12 +218,12 @@ class LandmarkManager implements LandmarkManagerApi {
     let landmarksWithRole = this.getLandmarksByRole(role);
     if (landmarksWithRole.size > 1) {
       let duplicatesWithoutLabel = [...landmarksWithRole].filter(landmark => !landmark.label);
-      if (duplicatesWithoutLabel.length > 0) {
+      if (duplicatesWithoutLabel.length > 0 && process.env.NODE_ENV !== 'production') {
         console.warn(
           `Page contains more than one landmark with the '${role}' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute: `,
           duplicatesWithoutLabel.map(landmark => landmark.ref.current)
         );
-      } else {
+      } else if (process.env.NODE_ENV !== 'production') {
         let labels = [...landmarksWithRole].map(landmark => landmark.label);
         let duplicateLabels = labels.filter((item, index) => labels.indexOf(item) !== index);
 
@@ -315,7 +315,7 @@ class LandmarkManager implements LandmarkManagerApi {
   private f6Handler(e: KeyboardEvent) {
     if (e.key === 'F6') {
       // If alt key pressed, focus main landmark, otherwise navigate forward or backward based on shift key.
-      let handled = e.altKey ? this.focusMain() : this.navigate(e.target as FocusableElement, e.shiftKey);
+      let handled = e.altKey ? this.focusMain() : this.navigate(getEventTarget(e) as FocusableElement, e.shiftKey);
       if (handled) {
         e.preventDefault();
         e.stopPropagation();
@@ -325,7 +325,7 @@ class LandmarkManager implements LandmarkManagerApi {
 
   private focusMain() {
     let main = this.getLandmarkByRole('main');
-    if (main && main.ref.current && document.contains(main.ref.current)) {
+    if (main && main.ref.current && main.ref.current.isConnected) {
       this.focusLandmark(main.ref.current, 'forward');
       return true;
     }
@@ -345,14 +345,14 @@ class LandmarkManager implements LandmarkManagerApi {
     // If something was previously focused in the next landmark, then return focus to it
     if (nextLandmark.lastFocused) {
       let lastFocused = nextLandmark.lastFocused;
-      if (document.body.contains(lastFocused)) {
+      if (nodeContains(document.body, lastFocused)) {
         lastFocused.focus();
         return true;
       }
     }
 
     // Otherwise, focus the landmark itself
-    if (nextLandmark.ref.current && document.contains(nextLandmark.ref.current)) {
+    if (nextLandmark.ref.current && nextLandmark.ref.current.isConnected) {
       this.focusLandmark(nextLandmark.ref.current, backward ? 'backward' : 'forward');
       return true;
     }
@@ -365,9 +365,9 @@ class LandmarkManager implements LandmarkManagerApi {
    * Lets the last focused landmark know it was blurred if something else is focused.
    */
   private focusinHandler(e: FocusEvent) {
-    let currentLandmark = this.closestLandmark(e.target as FocusableElement);
-    if (currentLandmark && currentLandmark.ref.current !== e.target) {
-      this.updateLandmark({ref: currentLandmark.ref, lastFocused: e.target as FocusableElement});
+    let currentLandmark = this.closestLandmark(getEventTarget(e) as FocusableElement);
+    if (currentLandmark && currentLandmark.ref.current !== getEventTarget(e)) {
+      this.updateLandmark({ref: currentLandmark.ref, lastFocused: getEventTarget(e) as FocusableElement});
     }
     let previousFocusedElement = e.relatedTarget as FocusableElement;
     if (previousFocusedElement) {
@@ -382,7 +382,7 @@ class LandmarkManager implements LandmarkManagerApi {
    * Track if the focus is lost to the body. If it is, do cleanup on the landmark that last had focus.
    */
   private focusoutHandler(e: FocusEvent) {
-    let previousFocusedElement = e.target as FocusableElement;
+    let previousFocusedElement = getEventTarget(e) as FocusableElement;
     let nextFocusedElement = e.relatedTarget;
     // the === document seems to be a jest thing for focus to go there on generic blur event such as landmark.blur();
     // browsers appear to send focus instead to document.body and the relatedTarget is null when that happens
@@ -436,7 +436,7 @@ class LandmarkManager implements LandmarkManagerApi {
 }
 
 /** Creates a LandmarkController, which allows programmatic navigation of landmarks. */
-export function createLandmarkController(): LandmarkController {
+export function UNSTABLE_createLandmarkController(): LandmarkController {
   // Get the current landmark manager and create a controller using it.
   let instance: LandmarkManagerApi | null = getLandmarkManager();
   let controller = instance?.createLandmarkController();

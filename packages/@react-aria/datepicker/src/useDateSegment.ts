@@ -12,7 +12,7 @@
 
 import {CalendarDate, toCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment} from '@react-stately/datepicker';
-import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoViewport, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
+import {getActiveElement, getScrollParent, isIOS, isMac, mergeProps, nodeContains, scrollIntoViewport, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {hookData} from './useDateField';
 import {NumberParser} from '@internationalized/number';
 import React, {CSSProperties, useMemo, useRef} from 'react';
@@ -57,7 +57,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     // The ARIA spec says aria-valuenow is optional if there's no value, but aXe seems to require it.
     // This doesn't seem to have any negative effects with real AT since we also use aria-valuetext.
     // https://github.com/dequelabs/axe-core/issues/3505
-    value: segment.value,
+    value: segment.value ?? undefined,
     textValue,
     minValue: segment.minValue,
     maxValue: segment.maxValue,
@@ -82,15 +82,11 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     },
     onIncrementToMax: () => {
       enteredKeys.current = '';
-      if (segment.maxValue !== undefined) {
-        state.setSegment(segment.type, segment.maxValue);
-      }
+      state.incrementToMax(segment.type);
     },
     onDecrementToMin: () => {
       enteredKeys.current = '';
-      if (segment.minValue !== undefined) {
-        state.setSegment(segment.type, segment.minValue);
-      }
+      state.decrementToMin(segment.type);
     }
   });
 
@@ -110,7 +106,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
         state.setSegment(segment.type, parsed);
       }
       enteredKeys.current = newValue;
-    } else if (segment.type === 'dayPeriod') {
+    } else if (segment.type === 'dayPeriod' || segment.type === 'era') {
       state.clearSegment(segment.type);
     }
   };
@@ -193,7 +189,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
         if (startsWith(am, key)) {
           state.setSegment('dayPeriod', 0);
         } else if (startsWith(pm, key)) {
-          state.setSegment('dayPeriod', 12);
+          state.setSegment('dayPeriod', 1);
         } else {
           break;
         }
@@ -219,26 +215,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
 
         let numberValue = parser.parse(newValue);
         let segmentValue = numberValue;
-        let allowsZero = segment.minValue === 0;
-        if (segment.type === 'hour' && state.dateFormatter.resolvedOptions().hour12) {
-          switch (state.dateFormatter.resolvedOptions().hourCycle) {
-            case 'h11':
-              if (numberValue > 11) {
-                segmentValue = parser.parse(key);
-              }
-              break;
-            case 'h12':
-              allowsZero = false;
-              if (numberValue > 12) {
-                segmentValue = parser.parse(key);
-              }
-              break;
-          }
-
-          if (segment.value !== undefined && segment.value >= 12 && numberValue > 1) {
-            numberValue += 12;
-          }
-        } else if (segment.maxValue !== undefined && numberValue > segment.maxValue) {
+        if (segment.maxValue !== undefined && numberValue > segment.maxValue) {
           segmentValue = parser.parse(key);
         }
 
@@ -246,16 +223,11 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
           return;
         }
 
-        let shouldSetValue = segmentValue !== 0 || allowsZero;
-        if (shouldSetValue) {
-          state.setSegment(segment.type, segmentValue);
-        }
+        state.setSegment(segment.type, segmentValue);
 
         if (segment.maxValue !== undefined && (Number(numberValue + '0') > segment.maxValue || newValue.length >= String(segment.maxValue).length)) {
           enteredKeys.current = '';
-          if (shouldSetValue) {
-            focusManager.focusNext();
-          }
+          focusManager.focusNext();
         } else {
           enteredKeys.current = newValue;
         }
@@ -281,7 +253,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     // Otherwise, when tapping on a segment in Android Chrome and then entering text,
     // composition events will be fired that break the DOM structure and crash the page.
     let selection = window.getSelection();
-    if (selection?.anchorNode && ref.current?.contains(selection?.anchorNode)) {
+    if (selection?.anchorNode && nodeContains(ref.current, selection?.anchorNode)) {
       selection.collapse(ref.current);
     }
   });
@@ -339,7 +311,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     let element = ref.current;
     return () => {
       // If the focused segment is removed, focus the previous one, or the next one if there was no previous one.
-      if (document.activeElement === element) {
+      if (getActiveElement() === element) {
         let prev = focusManager.focusPrevious();
         if (!prev) {
           focusManager.focusNext();
@@ -385,18 +357,15 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     };
   }
 
-  let dateSegments = ['day', 'month', 'year'];
-  let segmentStyle : CSSProperties = {caretColor: 'transparent'};
+  let segmentStyle: CSSProperties = {caretColor: 'transparent'};
   if (direction === 'rtl') {
     // While the bidirectional algorithm seems to work properly on inline elements with actual values, it returns different results for placeholder strings. 
     // To ensure placeholder render in correct format, we apply the CSS equivalent of LRE (left-to-right embedding). See https://www.unicode.org/reports/tr9/#Explicit_Directional_Embeddings.
     // However, we apply this to both placeholders and date segments with an actual value because the date segments will shift around when deleting otherwise. 
-    if (dateSegments.includes(segment.type)) {
-      segmentStyle = {caretColor: 'transparent', direction: 'ltr', unicodeBidi: 'embed'};
-    } else if (segment.type === 'timeZoneName') {
-      // This is needed so that the time zone renders on the left side of the time segments (hour:minute).
-      // Otherwise, it will render on the right side which is incorrect. 
-      segmentStyle = {caretColor: 'transparent', unicodeBidi: 'embed'};
+    segmentStyle.unicodeBidi = 'embed';
+    let format = options[segment.type];
+    if (format === 'numeric' || format === '2-digit') {
+      segmentStyle.direction = 'ltr';
     }
   }
 

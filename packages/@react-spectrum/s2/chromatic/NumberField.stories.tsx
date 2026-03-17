@@ -20,7 +20,9 @@ import {
   Text
 } from '../src';
 import {generatePowerset} from '@react-spectrum/story-utils';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
+import {NumberFieldProps} from '../src/NumberField';
+import {ReactElement} from 'react';
 import {shortName} from './utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
@@ -33,6 +35,7 @@ const meta: Meta<typeof NumberField> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof NumberField>;
 
 let states = [
   {hideStepper: true},
@@ -45,9 +48,9 @@ let states = [
 
 let combinations = generatePowerset(states);
 
-const Template = ({...args}) => {
+const Template = (args: NumberFieldProps): ReactElement => {
   return (
-    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
+    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'})}>
       {combinations.map(c => {
         let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
         let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -61,27 +64,27 @@ const Template = ({...args}) => {
   );
 };
 
-export const Default = {
-  render: Template
+export const Default: Story = {
+  render: (args) => <Template {...args} />
 };
 
-export const DefaultValue = {
-  render: Template,
+export const DefaultValue: Story = {
+  render: (args) => <Template {...args} />,
   args: {
     defaultValue: 10
   }
 };
 
-export const LabelPositionSide = {
-  render: Template,
+export const LabelPositionSide: Story = {
+  render: (args) => <Template {...args} />,
   args: {
     labelPosition: 'side',
     value: 10
   }
 };
 
-export const ContextualHelpExample = {
-  render: (args: any) => <NumberField {...args} />,
+export const ContextualHelpExample: Story = {
+  render: (args) => <NumberField {...args} />,
   args: {
     label: 'Quantity',
     contextualHelp: (

@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react';
 import React, { useMemo, useState } from 'react';
 import { TableBody } from 'react-aria-components';
 import { Cell, Column, Row, Table, TableHeader } from '../src/Table';
@@ -41,7 +41,7 @@ export const Example = (args: any) => {
   }, [sortDescriptor]);
 
   return (
-    <Table aria-label="Files" {...args} sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
+    <Table aria-label="Files" {...args} sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor} className="w-100 max-w-full">
       <TableHeader>
         <Column id="name" isRowHeader allowsSorting>Name</Column>
         <Column id="type" allowsSorting>Type</Column>

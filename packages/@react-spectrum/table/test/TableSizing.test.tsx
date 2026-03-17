@@ -22,11 +22,11 @@ import {HidingColumns} from '../stories/HidingColumns';
 import {Key} from '@react-types/shared';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
-import {resizingTests} from '@react-aria/table/test/tableResizingTests';
+import {resizingTests} from '../../../@react-aria/table/test/tableResizingTests';
 import {Scale} from '@react-types/provider';
 import {setInteractionModality} from '@react-aria/interactions';
 import {theme} from '@react-spectrum/theme-default';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 let columns = [
@@ -984,7 +984,8 @@ describe('TableViewSizing', function () {
         let resizeMenuItem = tree.getAllByRole('menuitem')[0];
 
         triggerTouch(resizeMenuItem);
-        act(() => {jest.runAllTimers();});
+        act(() => {jest.advanceTimersToNextTimer();});
+        act(() => {jest.advanceTimersToNextTimer();});
 
         let resizer = tree.getByRole('slider');
         expect(resizer).toBeVisible();
@@ -1047,7 +1048,7 @@ describe('TableViewSizing', function () {
       let Example = (props) => {
         let container = useRef(null);
         return (
-          <UNSTABLE_PortalProvider getContainer={() => container.current}>
+          <UNSAFE_PortalProvider getContainer={() => container.current}>
             <TableView aria-label="Table" onResizeEnd={props.onResizeEnd}>
               <TableHeader>
                 <Column allowsResizing key="foo">Foo</Column>
@@ -1063,7 +1064,7 @@ describe('TableViewSizing', function () {
               </TableBody>
             </TableView>
             <div id="custom-portal-container" ref={container} />
-          </UNSTABLE_PortalProvider>
+          </UNSAFE_PortalProvider>
         );
       };
       let customPortalRender = (props) => render(<Example {...props} />);

@@ -1,6 +1,7 @@
 
 import {RefObject} from '@react-types/shared';
 import {useEffect} from 'react';
+import {useEffectEvent} from './useEffectEvent';
 
 function hasResizeObserver() {
   return typeof window.ResizeObserver !== 'undefined';
@@ -12,8 +13,11 @@ type useResizeObserverOptionsType<T> = {
   onResize: () => void
 }
 
-export function useResizeObserver<T extends Element>(options: useResizeObserverOptionsType<T>) {
+export function useResizeObserver<T extends Element>(options: useResizeObserverOptionsType<T>): void {
+  // Only call onResize from inside the effect, otherwise we'll void our assumption that
+  // useEffectEvents are safe to pass in.
   const {ref, box, onResize} = options;
+  let onResizeEvent = useEffectEvent(onResize);
 
   useEffect(() => {
     let element = ref?.current;
@@ -22,9 +26,9 @@ export function useResizeObserver<T extends Element>(options: useResizeObserverO
     }
 
     if (!hasResizeObserver()) {
-      window.addEventListener('resize', onResize, false);
+      window.addEventListener('resize', onResizeEvent, false);
       return () => {
-        window.removeEventListener('resize', onResize, false);
+        window.removeEventListener('resize', onResizeEvent, false);
       };
     } else {
 
@@ -33,7 +37,7 @@ export function useResizeObserver<T extends Element>(options: useResizeObserverO
           return;
         }
 
-        onResize();
+        onResizeEvent();
       });
       resizeObserverInstance.observe(element, {box});
 
@@ -44,5 +48,5 @@ export function useResizeObserver<T extends Element>(options: useResizeObserverO
       };
     }
 
-  }, [onResize, ref, box]);
+  }, [ref, box]);
 }

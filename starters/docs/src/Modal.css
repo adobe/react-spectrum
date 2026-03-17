@@ -1,0 +1,64 @@
+@import "./theme.css";
+
+.react-aria-ModalOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: var(--page-height);
+  background: rgba(0 0 0 / .5);
+  z-index: 100;
+  font-family: system-ui;
+  font-size: var(--font-size);
+
+  &[data-entering] {
+    animation: modal-fade 200ms;
+  }
+
+  &[data-exiting] {
+    animation: modal-fade 150ms reverse ease-in;
+  }
+}
+
+.react-aria-Modal {
+  position: sticky;
+  max-height: calc(var(--visual-viewport-height) * 0.9);
+  top: calc(var(--visual-viewport-height) / 2);
+  margin-left: 50vw;
+  translate: -50% -50%;
+  box-shadow: 0 8px 32px rgba(0 0 0 / 0.2);
+  border-radius: var(--radius-xl);
+  background: var(--overlay-background);
+  color: var(--text-color);
+  outline: 1px solid var(--overlay-border);
+  width: max-content;
+  max-width: min(500px, 90vw);
+
+  &[data-entering] {
+    animation: modal-zoom 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .react-aria-TextField {
+    margin-bottom: 8px;
+  }
+}
+
+@keyframes modal-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-zoom {
+  from {
+    transform: scale(0.8);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}

@@ -1,4 +1,29 @@
-import {ActionMenu, Flex, Divider, Item, ListBox, ListView, MenuTrigger, Menu, SubmenuTrigger, ActionButton, TableBody, TableView, Row, Cell, TableHeader, Column, TagGroup} from '@adobe/react-spectrum';
+import {
+  ActionMenu,
+  Flex,
+  Divider,
+  Item,
+  ListBox,
+  ListView,
+  MenuTrigger,
+  Menu,
+  SubmenuTrigger,
+  ActionButton,
+  TableBody,
+  TableView,
+  Row,
+  Cell,
+  TableHeader,
+  Column,
+  TagGroup,
+  Text,
+  TreeView,
+  TreeViewItem,
+  TreeViewItemContent
+} from '@adobe/react-spectrum';
+
+import FileTxt from '@spectrum-icons/workflow/FileTxt';
+import Folder from '@spectrum-icons/workflow/Folder';
 
 export default function CollectionExamples(){
     return (
@@ -92,6 +117,46 @@ export default function CollectionExamples(){
             <Item>Gaming</Item>
             <Item>Shopping</Item>
           </TagGroup>
+          <div style={{width: '300px', height: '150px', overflow: 'auto'}}>
+            <TreeView disabledKeys={['projects-1']} aria-label="test static tree">
+              <TreeViewItem id="Photos" textValue="Photos">
+                <TreeViewItemContent>
+                  <Text>Photos</Text>
+                  <Folder />
+                </TreeViewItemContent>
+              </TreeViewItem>
+              <TreeViewItem id="projects" textValue="Projects">
+                <TreeViewItemContent>
+                  <Text>Projects</Text>
+                  <Folder />
+                </TreeViewItemContent>
+                <TreeViewItem id="projects-1" textValue="Projects-1">
+                  <TreeViewItemContent>
+                    <Text>Projects-1</Text>
+                    <Folder />
+                  </TreeViewItemContent>
+                  <TreeViewItem id="projects-1A" textValue="Projects-1A">
+                    <TreeViewItemContent>
+                      <Text>Projects-1A</Text>
+                      <FileTxt />
+                    </TreeViewItemContent>
+                  </TreeViewItem>
+                </TreeViewItem>
+                <TreeViewItem id="projects-2" textValue="Projects-2">
+                  <TreeViewItemContent>
+                    <Text>Projects-2</Text>
+                    <FileTxt />
+                  </TreeViewItemContent>
+                </TreeViewItem>
+                <TreeViewItem id="projects-3" textValue="Projects-3">
+                  <TreeViewItemContent>
+                    <Text>Projects-3</Text>
+                    <FileTxt />
+                  </TreeViewItemContent>
+                </TreeViewItem>
+              </TreeViewItem>
+            </TreeView>
+          </div>
         </Flex>
       </>
     )

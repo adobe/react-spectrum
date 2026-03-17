@@ -21,7 +21,7 @@ import {Item} from '@react-stately/collections';
 import {ListDropTargetDelegate} from '@react-aria/dnd';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {mergeProps} from '@react-aria/utils';
-import React from 'react';
+import React, {JSX} from 'react';
 import {useClipboard, useDropIndicator, useDroppableCollection} from '..';
 import {useDroppableCollectionState} from '@react-stately/dnd';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
@@ -35,7 +35,7 @@ interface ListItem {
   text: string
 }
 
-export function DroppableGridExample(props) {
+export function DroppableGridExample(props: any): JSX.Element {
   let id = React.useRef(props.items?.length || 3);
   let list = useListData<ListItem>({
     initialItems: props.items || [

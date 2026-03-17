@@ -5,7 +5,6 @@ import reactHooks from "eslint-plugin-react-hooks";
 import jest from "eslint-plugin-jest";
 import monorepo from "@jdb8/eslint-plugin-monorepo";
 import * as rspRules from "eslint-plugin-rsp-rules";
-import { fixupPluginRules } from "@eslint/compat";
 import globals from "globals";
 import babelParser from "@babel/eslint-parser";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
@@ -52,15 +51,24 @@ export default [{
         "packages/dev/optimize-locales-plugin/LocalesPlugin.d.ts",
         "examples/**/*",
         "starters/**/*",
+        "scripts/icon-builder-fixture/**/*",
         "packages/@react-spectrum/s2/icon.d.ts",
-        "packages/@react-spectrum/s2/spectrum-illustrations"
+        "packages/@react-spectrum/s2/spectrum-illustrations",
+        "packages/dev/parcel-config-storybook/*",
+        "packages/dev/parcel-resolver-storybook/*",
+        "packages/dev/parcel-transformer-storybook/*",
+        "packages/dev/storybook-builder-parcel/*",
+        "packages/dev/storybook-react-parcel/*",
+        "packages/dev/s2-docs/pages/**",
+        "packages/dev/mcp/*/dist",
+        "packages/dev/codemods/src/s1-to-s2/__testfixtures__/cli/**"
     ],
 }, ...compat.extends("eslint:recommended"), {
     plugins: {
         react,
         rulesdir,
         "jsx-a11y": jsxA11Y,
-        "react-hooks": fixupPluginRules(reactHooks),
+        "react-hooks": reactHooks,
         jest,
         monorepo,
         "rsp-rules": rspRules,
@@ -218,10 +226,34 @@ export default [{
         "react/jsx-boolean-value": ERROR,
         "react/jsx-first-prop-new-line": [ERROR, "multiline"],
         "react/self-closing-comp": ERROR,
+
+        // Core hooks rules
         "react-hooks/rules-of-hooks": ERROR, // https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/CHANGELOG.md
         "react-hooks/exhaustive-deps": WARN,
+
+        // React Compiler rules
+        'react-hooks/config': ERROR,
+        'react-hooks/error-boundaries': ERROR,
+        'react-hooks/component-hook-factories': ERROR,
+        'react-hooks/gating': ERROR,
+        'react-hooks/globals': ERROR,
+        // 'react-hooks/immutability': ERROR,
+        // 'react-hooks/preserve-manual-memoization': ERROR, // No idea how to turn this one on yet
+        'react-hooks/purity': ERROR,
+        // 'react-hooks/refs': ERROR, // can't turn on until https://github.com/facebook/react/issues/34775 is fixed
+        'react-hooks/set-state-in-effect': ERROR,
+        'react-hooks/set-state-in-render': ERROR,
+        'react-hooks/static-components': ERROR,
+        'react-hooks/unsupported-syntax': WARN,
+        'react-hooks/use-memo': ERROR,
+        'react-hooks/incompatible-library': WARN,
+
         "rsp-rules/no-react-key": [ERROR],
         "rsp-rules/sort-imports": [ERROR],
+        "rsp-rules/no-non-shadow-contains": [ERROR],
+        "rsp-rules/safe-event-target": [ERROR],
+        "rsp-rules/shadow-safe-active-element": [ERROR],
+        "rsp-rules/faster-node-contains": [ERROR],
         "rulesdir/imports": [ERROR],
         "rulesdir/useLayoutEffectRule": [ERROR],
         "rulesdir/pure-render": [ERROR],
@@ -312,6 +344,7 @@ export default [{
                 "@spectrum-icons/ui",
                 "@spectrum-icons/workflow",
                 "@spectrum-icons/illustrations",
+                "@react-spectrum/s2/icons"
             ],
         }],
 
@@ -324,7 +357,7 @@ export default [{
         react,
         rulesdir,
         "jsx-a11y": jsxA11Y,
-        "react-hooks": fixupPluginRules(reactHooks),
+        "react-hooks": reactHooks,
         jest,
         "@typescript-eslint": typescriptEslint,
         monorepo,
@@ -333,6 +366,10 @@ export default [{
     },
 
     languageOptions: {
+        globals: {
+          globalThis: "readonly",
+        },
+
         parser: tseslint.parser,
         ecmaVersion: 6,
         sourceType: "module",
@@ -396,9 +433,13 @@ export default [{
         "rsp-rules/no-react-key": [ERROR],
         "rsp-rules/act-events-test": ERROR,
         "rsp-rules/no-getByRole-toThrow": ERROR,
+        "rsp-rules/no-non-shadow-contains": OFF,
+        "rsp-rules/safe-event-target": OFF,
+        "rsp-rules/shadow-safe-active-element": OFF,
+        "rsp-rules/faster-node-contains": OFF,
         "rulesdir/imports": OFF,
         "monorepo/no-internal-import": OFF,
-        "jsdoc/require-jsdoc": OFF,
+        "jsdoc/require-jsdoc": OFF
     },
 
     languageOptions: {
@@ -417,6 +458,7 @@ export default [{
             FileSystemDirectoryEntry: "readonly",
             FileSystemEntry: "readonly",
             IS_REACT_ACT_ENVIRONMENT: "readonly",
+            globalThis: "readonly",
         },
 
         parser: tseslint.parser,
@@ -436,6 +478,7 @@ export default [{
     rules: {
         "jsdoc/require-jsdoc": OFF,
         "jsdoc/require-description": OFF,
+        "rsp-rules/safe-event-target": OFF,
     },
 }, {
     files: [
@@ -468,9 +511,28 @@ export default [{
         }],
     },
 }, {
-    files: ["packages/@react-spectrum/s2/**"],
+    files: [
+        "packages/@react-aria/test-utils/src/**/*.ts",
+        "packages/@react-aria/test-utils/src/**/*.tsx",
+    ],
+
+    rules: {
+        "rsp-rules/faster-node-contains": OFF,
+        "rsp-rules/no-non-shadow-contains": OFF,
+        "rsp-rules/shadow-safe-active-element": OFF,
+    },
+}, {
+    files: ["packages/@react-spectrum/s2/**", "packages/dev/s2-docs/**"],
 
     rules: {
         "react/react-in-jsx-scope": OFF,
     },
+}, {
+    files: ["packages/dev/style-macro-chrome-plugin/**"],
+    languageOptions: {
+        globals: {
+            ...globals.webextensions,
+            ...globals.browser
+        }
+    }
 }];

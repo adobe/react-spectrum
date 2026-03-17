@@ -1,4 +1,4 @@
-export async function waitForKeypress() {
+export async function waitForKeypress(): Promise<void> {
   await new Promise<void>((resolve) => {
     process.stdin.once('data', () => {
       resolve();

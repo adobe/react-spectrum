@@ -1,0 +1,194 @@
+---
+description: Using React Spectrum (v3) components from `@adobe/react-spectrum`
+globs: 
+alwaysApply: false
+---
+# React Spectrum
+
+When implementing UI components in React, use the React Spectrum library to ensure that your components are accessible and follow Adobe's Spectrum design system. Components should be imported from the `@adobe/react-spectrum` package. This library might also be referred to as "React Spectrum v3".
+
+If you are able to browse the web, the entire documentation for React Spectrum is available at [react-spectrum.adobe.com/react-spectrum](mdc:https:/react-spectrum.adobe.com/react-spectrum/index.html).
+
+## App setup
+
+If initializing a new app, ensure a React Spectrum Provider is used. The Provider specifies the theme to use, along with application level settings like the locale. Inside the Provider, you should render your application, including all React Spectrum components.
+
+```jsx
+import {Button, defaultTheme, Provider} from '@adobe/react-spectrum';
+function App() {
+  return (
+    <Provider theme={defaultTheme}>
+      <Button
+        variant="accent"
+        onPress={() => alert('Hey there!')}
+      >
+        Hello React Spectrum!
+      </Button>
+    </Provider>
+  );
+}
+```
+
+When using server side rendering, the locale prop should be set explicitly on the Provider rather than relying on automatic locale selection. 
+
+[Read more here](mdc:https:/react-spectrum.adobe.com/react-spectrum/getting-started.html)
+
+## Collection components
+
+For dynamic collections, instead of using `Array.map`, use the following JSX-based interface, which maps over your data and applies a function for each item to render it.
+
+```jsx
+<ListBox items={list.items}>
+  {(item) => <Item key={item.name}>{item.name}</Item>}
+</ListBox>
+```
+
+[Read more here](mdc:https:/react-spectrum.adobe.com/react-stately/collections.html)
+
+## Pressable components
+
+For pressable components such as Button, use `onPress` instead of `onClick`. Likewise use `onPressStart`, `onPressEnd`, `onPressChange`, and `onPressUp` where appropriate.
+
+Press event handlers are type `(e: PressEvent) => void` where `PressEvent` is defined as:
+
+```ts
+interface PressEvent {
+  type: 'pressstart' | 'pressend' | 'pressup' | 'press';
+  pointerType: 'mouse' | 'pen' | 'touch' | 'keyboard' | 'virtual';
+  target: Element;
+  shiftKey: boolean;
+  ctrlKey: boolean;
+  metaKey: boolean;
+  altKey: boolean;
+  x: number;
+  y: number;
+}
+```
+
+## Input components
+
+For input field components such as TextField, the `onChange` event handler is type `(value: string) => void`.
+
+## Styling
+
+All React Spectrum components support a limited set of styling options, including layout, spacing, sizing, and positioning options. While internal component styles such as padding, colors, borders and text styles are included in Spectrum and not available to override, external styles like margins and sizes can be set on all components.
+
+Supported styling options are available as props on every React Spectrum component. The following example shows a text field and a button. The text field has a custom width set on it, and the button has a margin before it.
+
+```jsx
+<TextField label="Name" labelPosition="side" width="size-2000" />
+<ActionButton marginStart="size-150">Submit</ActionButton>
+```
+
+All of the available style props are listed below.
+
+The `Responsive` interface is defined as `T | ResponsiveProp<T>` and `ResponsiveProp<T>` is defined as `{base?: T, S?: T, M?: T, L?: T, [custom: string]: T | undefined}`:
+
+### Layout
+
+`flex` has the type `Responsive<string | number | boolean>`.
+
+`flexBasis` has the type `Responsive<number | string>`.
+
+`alignSelf` has the type `Responsive<'auto' | 'normal' | 'start' | 'end' | 'center' | 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'stretch'>`.
+
+`justifySelf` has the type `Responsive<'auto' | 'normal' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'center' | 'left' | 'right' | 'stretch'>`.
+
+`order`, `flexShrink`, `flexGrow` all have the type `Responsive<number>`.
+
+`gridArea`, `gridColumn`, `gridRow`, `gridColumnStart`, `gridColumnEnd`, `gridRowStart`, `gridRowEnd` all have the type `Responsive<string>`.
+
+### Spacing
+
+`margin`, `marginTop`, `marginBottom`, `marginStart`, `marginEnd`, `marginX`, `marginY` all have the type `Responsive<DimensionValue>`.
+
+### Sizing
+
+`width`, `minWidth`, `maxWidth`, `height`, `minHeight`, `maxHeight` have the type `Responsive<DimensionValue>`.
+
+### Positioning
+
+`top`, `bottom`, `left`, `right`, `start`, `end` all have the type `Responsive<DimensionValue>`.
+
+`zIndex` has type `Responsive<number>`.
+
+`isHidden` has type `Responsive<boolean>`.
+
+### Dimension values
+
+Where applicable, each style property accepts Spectrum defined variables, which conform to Spectrum design defined sizing and spacing requirements, and also automatically adapt to different devices.
+
+The following tokens values are available for sizing. Medium scale is used automatically for Desktop and Large scale is used for mobile.
+
+```
+| Token | Medium Scale (px) | Large Scale (px) |
+|-------|------------------|-----------------|
+| size-0 | 0 | 0 |
+| size-10 | 1 | 1 |
+| size-25 | 2 | 2 |
+| size-40 | 3 | 4 |
+| size-50 | 4 | 5 |
+| size-65 | 5 | 6 |
+| size-75 | 6 | 8 |
+| size-85 | 7 | 9 |
+| size-100 | 8 | 10 |
+| size-115 | 9 | 11 |
+| size-125 | 10 | 13 |
+| size-130 | 11 | 14 |
+| size-150 | 12 | 15 |
+| size-160 | 13 | 16 |
+| size-175 | 14 | 18 |
+| size-200 | 16 | 20 |
+| size-225 | 18 | 22 |
+| size-250 | 20 | 25 |
+| size-275 | 22 | 28 |
+| size-300 | 24 | 30 |
+| size-325 | 26 | 32 |
+| size-350 | 28 | 35 |
+| size-400 | 32 | 40 |
+| size-450 | 36 | 45 |
+| size-500 | 40 | 50 |
+| size-550 | 44 | 56 |
+| size-600 | 48 | 60 |
+| size-675 | 54 | 68 |
+| size-700 | 56 | 70 |
+| size-800 | 64 | 80 |
+| size-900 | 72 | 90 |
+| size-1000 | 80 | 100 |
+| size-1200 | 96 | 120 |
+| size-1250 | 100 | 125 |
+| size-1600 | 128 | 160 |
+| size-1700 | 136 | 170 |
+| size-2000 | 160 | 200 |
+| size-2400 | 192 | 240 |
+| size-3000 | 240 | 300 |
+| size-3400 | 272 | 340 |
+| size-3600 | 288 | 360 |
+| size-4600 | 368 | 460 |
+| size-5000 | 400 | 500 |
+| size-6000 | 480 | 600 |
+| single-line-height | 32 | 40 |
+| single-line-width | 192 | 240 |
+```
+
+[Read more](mdc:https:/react-spectrum.adobe.com/react-spectrum/styling.html)
+
+### UNSAFE Style Overrides
+
+We highly discourage overriding the styles of React Spectrum components because it may break at any time when we change our implementation, making it difficult for you to update in the future. That said, the `UNSAFE_className` and `UNSAFE_style` props are supported as last-resort escape hatches.
+
+## Other tips
+
+### Virtualized collections
+
+When using virtualized collection components such as `TableView`, `ListBox`, and `ListView`, ensure the height is constrained.
+
+### Tooltips on elements
+
+Tooltips need to be accessible to keyboard and screen reader users, so we want to ensure that they are only placed on focusable and hoverable elements. For example, plain text on a page isn't focusable, so keyboard and screen reader users would be unable to access the information in that tooltip.
+
+If you need to display some additional context, consider using the `ContextualHelp` component.
+
+### Typography
+
+Note that the Text and Heading components are not general typography components, but instead are meant to be used WITHIN other component so default styles can be inherited (i.e. a Heading inside a Dialog or Item). These components should not be used standalone. React Spectrum does not include specific components for typography.
