@@ -4,6 +4,9 @@ export default Layout;
 import {ColorField} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = [];
+export const description = 'Allows users to edit a hex color or individual color channel value.';
+
 # ColorField
 
 <PageDescription>{docs.exports.ColorField.description}</PageDescription>
@@ -12,8 +15,8 @@ import docs from 'docs:@react-spectrum/s2';
   component={ColorField}
   docs={docs.exports.ColorField}
   links={docs.links}
-  props={['label', 'colorSpace', 'channel', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
-  initialProps={{label: 'Color', defaultValue: '#ff0000'}}
+  props={['label', 'placeholder', 'colorSpace', 'channel', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
+  initialProps={{label: 'Color', defaultValue: '#ff0000', placeholder: 'Enter a color'}}
   importSource="@react-spectrum/s2"
   type="s2" />
 
@@ -23,20 +26,22 @@ Use the `value` or `defaultValue` prop to set the color value, and `onChange` to
 
 ```tsx render
 "use client";
-import {ColorField} from '@react-spectrum/s2';
+import {ColorField, type Color} from '@react-spectrum/s2';
 import {useState} from 'react';
 import {parseColor} from '@react-stately/color';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function Example() {
-  let [value, setValue] = useState(parseColor('#e73623'));
+  let [value, setValue] = useState<Color | null>(parseColor('#e73623'));
 
   return (
     <div>
       <ColorField
         label="Primary color"
+        placeholder="Enter a color"
         value={value}
         onChange={setValue} />
-      <pre style={{fontSize: 12}}>Current value: {value.toString('hex')}</pre>
+      <pre className={style({font: 'body'})}>Current value: {value?.toString('hex')}</pre>
     </div>
   );
 }
@@ -48,16 +53,18 @@ By default, ColorField displays a hex value. Set the `colorSpace` and `channel` 
 
 ```tsx render
 "use client";
-import {ColorField, parseColor} from '@react-spectrum/s2';
+import {ColorField, parseColor, type Color} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 function Example() {
-  let [color, setColor] = useState(parseColor('#7f007f'));
+  let [color, setColor] = useState<Color | null>(parseColor('#7f007f'));
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+    <div className={style({ display: 'flex', flexDirection: 'column', gap: 8 })}>
       <ColorField
         label="Hue"
+        placeholder="Select a hue"
         value={color}
         onChange={setColor}
         /*- begin highlight -*/
@@ -66,17 +73,19 @@ function Example() {
         {/*- end highlight -*/}
       <ColorField
         label="Saturation"
+        placeholder="Select a saturation"
         value={color}
         onChange={setColor}
         colorSpace="hsl"
         channel="saturation" />
       <ColorField
         label="Lightness"
+        placeholder="Select a lightness"
         value={color}
         onChange={setColor}
         colorSpace="hsl"
         channel="lightness" />
-      <pre style={{fontSize: 12}}>Current value: {color?.toString('hex')}</pre>
+      <pre className={style({font: 'body'})}>Current value: {color?.toString('hex')}</pre>
     </div>
   );
 }
@@ -84,9 +93,9 @@ function Example() {
 
 ## Forms
 
-Use the `name` prop to submit the text value to the server. Set the `isRequired` prop to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
+Use the `name` prop to submit the text value to the server. Set the `isRequired` prop to validate the value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
-```tsx render docs={docs.exports.ColorField} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}}
+```tsx render docs={docs.exports.ColorField} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} wide
 "use client";
 import {ColorField, Button, Form} from '@react-spectrum/s2';
 
@@ -96,6 +105,7 @@ function Example(props) {
       <ColorField
         {...props}
         label="Brand color"
+        placeholder="Enter a color"
         ///- begin highlight -///
         name="brandColor"
         /* PROPS */

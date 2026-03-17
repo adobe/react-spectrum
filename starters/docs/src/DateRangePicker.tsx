@@ -7,10 +7,9 @@ import {
   ValidationResult
 } from 'react-aria-components';
 import {DateInput, DateSegment} from './DateField';
-import {FieldButton} from './Form';
+import {Description, FieldButton} from './Form';
 import {Popover} from './Popover';
 import {Label, FieldError} from './Form';
-import {Text} from './Content';
 import {RangeCalendar} from './RangeCalendar';
 import {ChevronDown} from 'lucide-react';
 import './DateRangePicker.css';
@@ -23,14 +22,13 @@ export interface DateRangePickerProps<T extends DateValue>
 }
 
 export function DateRangePicker<T extends DateValue>(
-  { label, description, errorMessage, ...props }:
-    DateRangePickerProps<T>
+  { label, description, errorMessage, ...props }: DateRangePickerProps<T>
 ) {
   return (
-    (
-      <AriaDateRangePicker {...props}>
-        <Label>{label}</Label>
-        <Group>
+    <AriaDateRangePicker {...props}>
+      <Label>{label}</Label>
+      <Group className="react-aria-Group inset">
+        <div className="date-fields">
           <DateInput slot="start">
             {(segment) => <DateSegment segment={segment} />}
           </DateInput>
@@ -38,14 +36,14 @@ export function DateRangePicker<T extends DateValue>(
           <DateInput slot="end">
             {(segment) => <DateSegment segment={segment} />}
           </DateInput>
-          <FieldButton><ChevronDown size={16} /></FieldButton>
-        </Group>
-        {description && <Text slot="description">{description}</Text>}
-        <FieldError>{errorMessage}</FieldError>
-        <Popover hideArrow>
-          <RangeCalendar />
-        </Popover>
-      </AriaDateRangePicker>
-    )
+        </div>
+        <FieldButton><ChevronDown /></FieldButton>
+      </Group>
+      {description && <Description>{description}</Description>}
+      <FieldError>{errorMessage}</FieldError>
+      <Popover hideArrow>
+        <RangeCalendar />
+      </Popover>
+    </AriaDateRangePicker>
   );
 }

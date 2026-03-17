@@ -34,7 +34,7 @@ interface LinkStyleProps {
   isQuiet?: boolean
 }
 
-export interface LinkProps extends Omit<RACLinkProps, 'isDisabled' | 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, LinkStyleProps {
+export interface LinkProps extends Omit<RACLinkProps, 'isDisabled' | 'className' | 'style' | 'render' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, LinkStyleProps {
   children: ReactNode
 }
 

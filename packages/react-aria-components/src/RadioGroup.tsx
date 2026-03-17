@@ -11,7 +11,20 @@
  */
 
 import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusRing, useHover, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
-import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  Provider,
+  RACValidation,
+  removeDataAttributes,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot,
+  useSlottedContext
+} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
@@ -23,8 +36,19 @@ import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
 
-export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
-export interface RadioProps extends Omit<AriaRadioProps, 'children'>, HoverEvents, RenderProps<RadioRenderProps>, SlotProps, Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
+export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-RadioGroup'
+   */
+  className?: ClassNameOrFunction<RadioGroupRenderProps>
+}
+export interface RadioProps extends Omit<AriaRadioProps, 'children'>, HoverEvents, RenderProps<RadioRenderProps, 'label'>, SlotProps, Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Radio'
+   */
+  className?: ClassNameOrFunction<RadioRenderProps>,
   /**
    * A ref for the HTML input element.
    */
@@ -152,7 +176,7 @@ export const RadioGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <div
+    <dom.div
       {...mergeProps(DOMProps, renderProps, radioGroupProps)}
       ref={ref}
       slot={props.slot || undefined}
@@ -177,7 +201,7 @@ export const RadioGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
           {renderProps.children}
         </SharedElementTransition>
       </Provider>
-    </div>
+    </dom.div>
   );
 });
 
@@ -226,7 +250,7 @@ export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio
   delete DOMProps.onClick;
 
   return (
-    <label
+    <dom.label
       {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
       ref={ref}
       data-selected={isSelected || undefined}
@@ -244,6 +268,6 @@ export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio
       <SelectionIndicatorContext.Provider value={{isSelected}}>
         {renderProps.children}
       </SelectionIndicatorContext.Provider>
-    </label>
+    </dom.label>
   );
 });

@@ -28,7 +28,7 @@
   margin-left: auto;
   background: var(--overlay-background);
   outline: none;
-  border-left: 1px solid var(--border-color);
+  border-left: 1px solid var(--overlay-border);
   box-shadow: -8px 0 20px rgba(0 0 0 / 0.1);
   font-family: system-ui;
   font-size: 0.875rem;

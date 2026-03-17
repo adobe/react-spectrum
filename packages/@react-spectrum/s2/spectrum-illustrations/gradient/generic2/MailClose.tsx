@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import MailClose_L from 'illustration:./S2_fill_mailClose_generic2_160.svg';
 import MailClose_M from 'illustration:./S2_fill_mailClose_generic2_96.svg';
 import MailClose_S from 'illustration:./S2_fill_mailClose_generic2_48.svg';

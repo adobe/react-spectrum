@@ -11,9 +11,9 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
+import {act, pointerMap, render, setupIntersectionObserverMock, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
-import {ComboBox, ComboBoxItem, Content, ContextualHelp, Heading, Text} from '../src';
+import {Button, ComboBox, ComboBoxItem, Content, ContextualHelp, Dialog, DialogTrigger, Heading, Text} from '../src';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -21,6 +21,7 @@ import userEvent from '@testing-library/user-event';
 describe('Combobox', () => {
   let user;
   let testUtilUser = new User();
+
   function DynamicCombobox(props) {
     let {items, loadingState, onLoadMore, ...otherProps} = props;
     return (
@@ -207,9 +208,50 @@ describe('Combobox', () => {
     let dialog = tree.getByRole('dialog');
     expect(dialog).toBeVisible();
 
-    // Because of the fake DOM we'll see this twice
-    expect(tree.getAllByText('Title here')[1]).toBeVisible();
-    expect(tree.getAllByText('Contents')[1]).toBeVisible();
+    expect(tree.getAllByText('Title here')[0]).toBeVisible();
+    expect(tree.getAllByText('Contents')[0]).toBeVisible();
     warn.mockRestore();
+  });
+
+  it('should close the combobox when clicking outside the combobox on a dialog backdrop', async () => {
+    let user = userEvent.setup({delay: null, pointerMap});
+    let tree = render(
+      <DialogTrigger>
+        <Button>Open</Button>
+        <Dialog isDismissible>
+          <Heading>Combo Box in a Dialog</Heading>
+          <Content>
+            <ComboBox label="test">
+              <ComboBoxItem>Aardvark</ComboBoxItem>
+              <ComboBoxItem>Cat</ComboBoxItem>
+              <ComboBoxItem>Dog</ComboBoxItem>
+              <ComboBoxItem>Kangaroo</ComboBoxItem>
+              <ComboBoxItem>Panda</ComboBoxItem>
+              <ComboBoxItem>Snake</ComboBoxItem>
+            </ComboBox>
+          </Content>
+        </Dialog>
+      </DialogTrigger>
+    );
+
+    let dialogTester = testUtilUser.createTester('Dialog', {root: tree.container, interactionType: 'mouse'});
+    await dialogTester.open();
+    expect(dialogTester.dialog).toBeVisible();
+    act(() => {
+      jest.runAllTimers();
+    });
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: dialogTester.dialog!, interactionType: 'mouse'});
+    await comboboxTester.open();
+
+    expect(comboboxTester.listbox).toBeVisible();
+    act(() => {
+      jest.runAllTimers();
+    });
+    let backdrop = document.querySelector('[style*="--visual-viewport-height"]');
+    await user.click(backdrop!);
+
+    await waitFor(() => expect(comboboxTester.listbox).toBeNull());
+    await user.click(backdrop!);
+    expect(dialogTester.dialog).toBeNull();
   });
 });

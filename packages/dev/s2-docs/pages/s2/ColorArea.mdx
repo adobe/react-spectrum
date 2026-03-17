@@ -5,6 +5,9 @@ import {ColorArea} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 import racDocs from 'docs:react-aria-components';
 
+export const tags = [];
+export const description = 'Allows users to adjust two channels of a color value.';
+
 # ColorArea
 
 <PageDescription>{docs.exports.ColorArea.description}</PageDescription>
@@ -27,6 +30,7 @@ The `onChange` event is called as the user drags, and `onChangeEnd` is called wh
 ```tsx render
 "use client";
 import {ColorArea, parseColor} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 function Example() {
@@ -43,7 +47,7 @@ function Example() {
         onChange={setCurrentValue}
         onChangeEnd={setFinalValue} />
         {/*- end highlight -*/}
-      <pre style={{fontSize: 12}}>
+      <pre className={style({font: 'body'})}>
         onChange value: {currentValue.toString('hex')}{'\n'}
         onChangeEnd value: {finalValue.toString('hex')}
       </pre>

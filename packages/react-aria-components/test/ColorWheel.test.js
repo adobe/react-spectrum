@@ -49,6 +49,14 @@ describe('ColorWheel', () => {
     expect(wrapper).toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} = renderColorWheel(
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let wrapper = getByRole('slider').parentElement.parentElement;
+    expect(wrapper).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support render props', () => {
     let {getByTestId} = render(
       <ColorWheel isDisabled defaultValue="hsl(0, 100%, 50%)" outerRadius={100} innerRadius={80}>

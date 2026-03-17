@@ -1,0 +1,9 @@
+<svg style="background:var(--anatomy-gray-100); padding: 50px 10px" height="90" viewBox="0 0 120 90">
+  <rect id="Placement_Area" data-name="Placement Area" width="120" height="90" fill="red" opacity="0"/>
+  <g id="Image">
+    <rect id="Background" width="120" height="90" rx="4" fill="var(--anatomy-gray-300)" stroke="var(--anatomy-gray-400)" stroke-width="1"/>
+    <rect id="Icon_Frame" x="50" y="35" width="20" height="20" fill="var(--anatomy-gray-500)" opacity="0"/>
+    <path id="Image_Icon" d="M2,0H18a2,2,0,0,1,2,2V18a2,2,0,0,1-2,2H2a2,2,0,0,1-2-2V2A2,2,0,0,1,2,0ZM5,8a3,3,0,1,0-3-3A3,3,0,0,0,5,8ZM19,17l-5-5-3,3-4-4L1,17Z" transform="translate(50 35)" fill="var(--anatomy-gray-600)"/>
+  </g>
+</svg>
+

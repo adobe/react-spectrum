@@ -8,6 +8,10 @@ import {RangeCalendar as TailwindRangeCalendar} from 'tailwind-starter/RangeCale
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/calendar/docs/rangecalendar-anatomy.svg';
 
+export const tags = ['calendar'];
+export const relatedPages = [{'title': 'useRangeCalendar', 'url': 'RangeCalendar/useRangeCalendar.html'}];
+export const description = 'Displays one or more date grids and allows users to select a contiguous range of dates.';
+
 # RangeCalendar
 
 <PageDescription>{docs.exports.RangeCalendar.description}</PageDescription>
@@ -26,12 +30,12 @@ import Anatomy from '@react-aria/calendar/docs/rangecalendar-anatomy.svg';
     links={vanillaDocs.links}
     props={['isDisabled']}
     type="tailwind"
-    files={["starters/tailwind/src/RangeCalendar.tsx", "starters/tailwind/src/index.css"]} />
+    files={["starters/tailwind/src/RangeCalendar.tsx"]} />
 </ExampleSwitcher>
 
 ## Value
 
-Use the `value` or `defaultValue` prop to set the selected date range, using objects in the [@internationalized/date](../internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+Use the `value` or `defaultValue` prop to set the selected date range, using objects in the [@internationalized/date](internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
 
 ```tsx render
 "use client";
@@ -46,7 +50,7 @@ function Example() {
     end: parseDate('2025-02-12')
   });
   let formatter = useDateFormatter({ dateStyle: 'long' });
-  
+
   return (
     <>
       <RangeCalendar
@@ -85,64 +89,87 @@ import {RangeCalendar} from 'vanilla-starter/RangeCalendar';
 
 ### Custom calendar systems
 
-`RangeCalendar` also supports custom calendar systems that implement custom business rules, for example a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar. See the [@internationalized/date docs](../internationalized/date/Calendar.html#custom-calendars) for an example implementation.
+`RangeCalendar` also supports custom calendar systems that implement custom business rules, for example a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar. See the [@internationalized/date docs](internationalized/date/Calendar#custom-calendars) for an example implementation.
 
 ```tsx render
 "use client";
-import type {AnyCalendarDate} from '@internationalized/date';
-import {CalendarDate, startOfWeek, toCalendar, GregorianCalendar} from '@internationalized/date';
+import type {AnyCalendarDate, Calendar} from '@internationalized/date';
+import {CalendarDate, startOfWeek, GregorianCalendar} from '@internationalized/date';
 import {RangeCalendar} from 'vanilla-starter/RangeCalendar';
 
-export default (
-  <RangeCalendar
-    firstDayOfWeek="sun"
-    ///- begin highlight -///
-    createCalendar={() => new Custom454()} />
-    ///- end highlight -///
-);
+export default function Example() {
+  return (
+    <RangeCalendar
+      firstDayOfWeek="sun"
+      ///- begin highlight -///
+      createCalendar={() => new Custom454()} />
+      ///- end highlight -///
+  );
+}
 
 // See @internationalized/date docs linked above.
 ///- begin collapse -///
 class Custom454 extends GregorianCalendar {
-  weekPattern = [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, 4];
-  getDaysInMonth(date) {
-    return this.weekPattern[date.month - 1] * 7;
+  // The anchor date, in Gregorian calendar.
+  // The anchor date is a date that occurs in the first week of the first month of every fiscal year.
+  anchorDate = new CalendarDate(2001, 2, 4);
+
+  private getYear(year: number): [CalendarDate, number[]] {
+    let anchor = this.anchorDate.set({year});
+    let startOfYear = startOfWeek(anchor, 'en', 'sun');
+    let isBigYear = !startOfYear.add({weeks: 53}).compare(anchor.add({years: 1}));
+    let weekPattern = [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, isBigYear ? 5 : 4];
+    return [startOfYear, weekPattern];
+  }
+
+  getDaysInMonth(date: AnyCalendarDate): number {
+    let [, weekPattern] = this.getYear(date.year);
+    return weekPattern[date.month - 1] * 7;
   }
 
   fromJulianDay(jd: number): CalendarDate {
     let gregorian = super.fromJulianDay(jd);
+    let year = gregorian.year;
 
-    let monthStart = startOfWeek(new CalendarDate(gregorian.year, 1, 1), 'en');
-    for (let months = 0; months < this.weekPattern.length; months++) {
-      let weeksInMonth = this.weekPattern[months];
-      let monthEnd = monthStart.add({weeks: weeksInMonth});
-      if (monthEnd.compare(gregorian) > 0) {
-        let days = gregorian.compare(monthStart);
-        return new CalendarDate(this, monthStart.year, months + 1, days + 1);
-      }
-      monthStart = monthEnd;
+    let [monthStart, weekPattern] = this.getYear(year);
+    if (gregorian.compare(monthStart) < 0) {
+      year--;
+      [monthStart, weekPattern] = this.getYear(year);
     }
 
-    throw Error('Date is not in any month somehow!');
+    for (let month = 1; month <= 12; month++) {
+      let weeks = weekPattern[month - 1];
+      let nextMonth = monthStart.add({weeks});
+      if (nextMonth.compare(gregorian) > 0) {
+        let days = gregorian.compare(monthStart);
+        return new CalendarDate(this, year, month, days + 1);
+      }
+      monthStart = nextMonth;
+    }
+
+    throw new Error('date not found');
   }
 
   toJulianDay(date: AnyCalendarDate): number {
-    let monthStart = startOfWeek(new CalendarDate(date.year, 1, 1), 'en');
+    let [monthStart, weekPattern] = this.getYear(date.year);
     for (let month = 1; month < date.month; month++) {
-      monthStart = monthStart.add({weeks: this.weekPattern[month - 1]});
+      monthStart = monthStart.add({weeks: weekPattern[month - 1]});
     }
 
     let gregorian = monthStart.add({days: date.day - 1});
     return super.toJulianDay(gregorian);
   }
 
-  getFormattableMonth(date) {
-    let gregorian = toCalendar(date, new GregorianCalendar());
-    return gregorian.set({month: date.month, day: 1});
+  getFormattableMonth(date: AnyCalendarDate): CalendarDate {
+    let anchorMonth = this.anchorDate.month - 1;
+    let dateMonth = date.month - 1;
+    let month = ((anchorMonth + dateMonth) % 12) + 1;
+    let year = anchorMonth + dateMonth >= 12 ? date.year + 1 : date.year;
+    return new CalendarDate(year, month, 1);
   }
 
-  isEqual(other) {
-    return other instanceof Custom454;
+  isEqual(other: Calendar): boolean {
+    return other instanceof Custom454 && other.anchorDate.compare(this.anchorDate) === 0;
   }
 }
 ///- end collapse -///
@@ -155,12 +182,10 @@ Use the `minValue` and `maxValue` props to set the valid date range. The `isDate
 ```tsx render docs={vanillaDocs.exports.RangeCalendar} links={docs.links} props={['allowsNonContiguousRanges']} wide
 "use client";
 import {today, getLocalTimeZone} from '@internationalized/date';
-import {useLocale} from 'react-aria';
 import {RangeCalendar} from 'vanilla-starter/RangeCalendar';
 import {useState} from 'react';
 
 function Example(props) {
-  let {locale} = useLocale();
   let now = today(getLocalTimeZone());
   let [range, setRange] = useState({
     start: now.add({days: 6}),
@@ -200,8 +225,11 @@ Set the `visibleDuration` prop and render multiple `CalendarGrid` elements to di
 
 ```tsx render docs={docs.exports.RangeCalendar} links={docs.links} props={['visibleDuration', 'pageBehavior', 'firstDayOfWeek']} initialProps={{visibleDuration: {months: 2}}} wide
 "use client";
-import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-components';
+import {RangeCalendar, Heading} from 'react-aria-components';
+import {CalendarGrid, CalendarCell} from 'vanilla-starter/RangeCalendar';
+import {Button} from 'vanilla-starter/Button';
 import {useDateFormatter} from 'react-aria';
+import {ChevronLeft, ChevronRight} from 'lucide-react';
 
 // TODO: move this into the starter example.
 function Example(props) {
@@ -217,18 +245,22 @@ function Example(props) {
       ///- begin highlight -///
       /* PROPS */
       ///- end highlight -///
-      style={{display: 'flex', gap: 30, overflow: 'auto'}}
+      style={{display: 'flex', gap: 12, overflow: 'auto'}}
     >
       {({state}) => (
         [...Array(props.visibleDuration.months).keys()].map(i => (
           <div key={i} style={{flex: 1}}>
-            <header>
-              {i === 0 && 
-                <Button slot="previous">◀</Button>
+            <header style={{minHeight: 32}}>
+              {i === 0 &&
+                <Button slot="previous" variant="quiet">
+                  <ChevronLeft />
+                </Button>
               }
-              <h2 style={{flex: 1, textAlign: 'center'}}>{monthFormatter.format(state.visibleRange.start.add({months: i}).toDate(state.timeZone))}</h2>
-              {i === props.visibleDuration.months - 1 && 
-                <Button slot="next">▶</Button>
+              <Heading>{monthFormatter.format(state.visibleRange.start.add({months: i}).toDate(state.timeZone))}</Heading>
+              {i === props.visibleDuration.months - 1 &&
+                <Button slot="next" variant="quiet">
+                  <ChevronRight />
+                </Button>
               }
             </header>
             <CalendarGrid offset={{months: i}}>
@@ -281,19 +313,25 @@ You can also control the focused date via `CalendarStateContext`. This example s
 
 ```tsx render files={['packages/dev/s2-docs/pages/react-aria/MonthDropdown.tsx', 'packages/dev/s2-docs/pages/react-aria/YearDropdown.tsx']}
 "use client";
-import {RangeCalendar, CalendarGrid, CalendarCell} from 'react-aria-components';
+import {RangeCalendar} from 'react-aria-components';
+import {CalendarGrid, CalendarCell} from 'vanilla-starter/RangeCalendar';
 import {MonthDropdown} from './MonthDropdown';
 import {YearDropdown} from './YearDropdown';
 import {Button} from 'vanilla-starter/Button';
+import {ChevronLeft, ChevronRight} from 'lucide-react';
 
 <RangeCalendar>
   <header style={{display: 'flex', gap: 4}}>
-    <Button slot="previous">◀</Button>
+    <Button slot="previous" variant="quiet">
+      <ChevronLeft />
+    </Button>
     {/*- begin highlight -*/}
     <MonthDropdown />
     <YearDropdown />
     {/*- end highlight -*/}
-    <Button slot="next">▶</Button>
+    <Button slot="next" variant="quiet">
+      <ChevronRight />
+    </Button>
   </header>
   <CalendarGrid>
     {(date) => <CalendarCell date={date} />}
@@ -307,7 +345,7 @@ import {Button} from 'vanilla-starter/Button';
   role="img"
   aria-label="Anatomy diagram of a range calendar component, which consists of a heading, grid of cells, previous, and next buttons." />
 
-```tsx links={{RangeCalendar: '#rangecalendar', Button: 'Button.html', CalendarGrid: '#calendargrid', CalendarGridHeader: '#calendargridheader', CalendarHeaderCell: '#calendarheadercell', CalendarGridBody: '#calendargridbody', CalendarCell: '#calendarcell'}}
+```tsx links={{RangeCalendar: '#rangecalendar', Button: 'Button', CalendarGrid: '#calendargrid', CalendarGridHeader: '#calendargridheader', CalendarHeaderCell: '#calendarheadercell', CalendarGridBody: '#calendargridbody', CalendarCell: '#calendarcell'}}
 <RangeCalendar>
   <Button slot="previous" />
   <Heading />
@@ -328,34 +366,22 @@ import {Button} from 'vanilla-starter/Button';
 
 <PropTable component={docs.exports.RangeCalendar} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-RangeCalendar" properties={docs.exports.RangeCalendarRenderProps.properties} />
-
 ### CalendarGrid
 
 <PropTable component={docs.exports.CalendarGrid} links={docs.links} showDescription />
-
-{/* <StateTable defaultClassName="react-aria-CalendarGrid" properties={docs.exports.CalendarGridRenderProps.properties} /> */}
 
 ### CalendarGridHeader
 
 <PropTable component={docs.exports.CalendarGridHeader} links={docs.links} showDescription />
 
-{/* <StateTable defaultClassName="react-aria-CalendarGridHeader" properties={docs.exports.CalendarGridHeaderRenderProps.properties} /> */}
-
 ### CalendarHeaderCell
 
 <PropTable component={docs.exports.CalendarHeaderCell} links={docs.links} showDescription />
-
-{/* <StateTable defaultClassName="react-aria-CalendarHeaderCell" properties={docs.exports.CalendarHeaderCellRenderProps.properties} /> */}
 
 ### CalendarGridBody
 
 <PropTable component={docs.exports.CalendarGridBody} links={docs.links} showDescription />
 
-{/* <StateTable defaultClassName="react-aria-CalendarGridBody" properties={docs.exports.CalendarGridBodyRenderProps.properties} /> */}
-
 ### CalendarCell
 
 <PropTable component={docs.exports.CalendarCell} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-CalendarCell" properties={docs.exports.CalendarCellRenderProps.properties} />

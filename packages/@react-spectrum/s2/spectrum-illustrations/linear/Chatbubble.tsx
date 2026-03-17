@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import Chatbubble_L from 'illustration:./S2_lin_chatbubble_160.svg';
 import Chatbubble_M from 'illustration:./S2_lin_chatbubble_96.svg';
 import Chatbubble_S from 'illustration:./S2_lin_chatbubble_48.svg';

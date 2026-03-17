@@ -6,10 +6,12 @@ import {
   TabProps,
   Tab as RACTab,
   TabsProps,
+  TabPanels as RACTabPanels,
   TabPanelProps,
   TabPanel as RACTabPanel,
   composeRenderProps,
-  SelectionIndicator
+  SelectionIndicator,
+  TabPanelsProps
 } from 'react-aria-components';
 import './Tabs.css';
 
@@ -30,6 +32,10 @@ export function Tab(props: TabProps) {
       </>))}
     </RACTab>
   );
+}
+
+export function TabPanels<T extends object>(props: TabPanelsProps<T>) {
+  return <RACTabPanels {...props} />;
 }
 
 export function TabPanel(props: TabPanelProps) {

@@ -12,19 +12,19 @@
 
 import {colorScheme} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
 import {ModalOverlay, ModalOverlayProps, Modal as RACModal, useLocale} from 'react-aria-components';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
-interface ModalProps extends ModalOverlayProps {
+interface ModalProps extends Omit<ModalOverlayProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes> {
   /**
    * The size of the Modal.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover'
+  size?: 'S' | 'M' | 'L' | 'XL' | 'fullscreen' | 'fullscreenTakeover'
 }
 
 const modalOverlayStyles = style({
@@ -103,6 +103,7 @@ export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HT
                 S: 400,
                 M: 480,
                 L: 640,
+                XL: 960,
                 fullscreen: 'calc(100% - 40px)',
                 fullscreenTakeover: 'full'
               }

@@ -14,7 +14,7 @@ import {act, pointerMap, render, within} from '@react-spectrum/test-utils-intern
 import {Breadcrumbs} from '../';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
-import React, {useRef} from 'react';
+import React, {createRef, forwardRef} from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
@@ -93,16 +93,15 @@ describe('Breadcrumbs', function () {
   });
 
   it('Should handle forward ref', function () {
-    let ref;
-    let Component = () => {
-      ref = useRef();
+    let ref = createRef();
+    let Component = forwardRef((props, forwardedRef) => {
       return (
-        <Breadcrumbs ref={ref} aria-label="breadcrumbs-test">
+        <Breadcrumbs ref={forwardedRef} aria-label="breadcrumbs-test">
           <Item>Folder 1</Item>
         </Breadcrumbs>
       );
-    };
-    let {getByLabelText} = render(<Component />);
+    });
+    let {getByLabelText} = render(<Component ref={ref} />);
     let breadcrumb = getByLabelText('breadcrumbs-test');
     expect(breadcrumb).toBe(ref.current.UNSAFE_getDOMNode());
   });

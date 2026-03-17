@@ -1,7 +1,9 @@
 @import "./theme.css";
+@import "./utilities.css";
 
 .react-aria-DateRangePicker {
   color: var(--text-color);
+  max-width: 100%;
 
   .react-aria-Group {
     display: flex;
@@ -9,31 +11,42 @@
     width: fit-content;
     min-width: 220px;
     max-width: 100%;
+    height: var(--spacing-8);
     box-sizing: border-box;
     overflow: clip;
     position: relative;
-    padding: 4px 4px 4px 8px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    background: var(--field-background);
+    padding: 0 var(--spacing-1) 0 var(--spacing-3);
+    border-radius: var(--radius);
+    font-size: var(--font-size);
+    color: var(--field-text-color);
     white-space: nowrap;
-
-    &[data-pressed] {
-      box-shadow: none;
-      background: var(--highlight-background);
-    }
+    cursor: text;
 
     &[data-focus-within] {
       outline: 2px solid var(--focus-ring-color);
       outline-offset: -1px;
     }
+
+    &[data-disabled] {
+      color: var(--text-color-disabled);
+    }
+  }
+
+  .date-fields {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    overflow-x: auto;
+    overflow-y: clip;
+    scrollbar-width: none;
   }
 
   .field-Button {
     margin-left: auto;
   }
 
-  [slot=start] + span {
+  [slot=start] ~ span {
     padding: 0 4px;
   }
 
@@ -47,29 +60,12 @@
     min-width: unset;
     padding: unset;
     border: unset;
+    box-shadow: none;
+    background: none;
+    height: auto;
+    line-height: normal;
     &[data-focus-within] {
       outline: unset;
     }
   }
-
-  &[data-invalid] {
-    [slot=end]:after {
-      content: '🚫' / '';
-      content: '🚫';
-      alt: ' ';
-      flex: 1;
-      text-align: end;
-      margin-left: 1.3125rem;
-      margin-right: -1.3125rem;
-    }
-  }
-
-  [slot=description] {
-    font-size: 12px;
-  }
-}
-
-.react-aria-Popover[data-trigger=DateRangePicker] {
-  max-width: unset;
-  padding: 15px;
 }

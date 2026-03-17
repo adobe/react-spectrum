@@ -13,10 +13,11 @@ import {PokemonListBox} from './PokemonListBox';
 import {PokemonGridList} from './PokemonGridList';
 
 export const section = 'Guides';
+export const description = 'How to implement drag and drop.';
 
 # Drag and Drop
 
-<PageDescription>Drag and drop is an intuitive way for users to transfer data between locations. React Aria implements drag and drop for mouse and touch interactions, and provides full keyboard and screen reader accessibility.</PageDescription>
+<PageDescription>React Aria collection components support drag and drop with mouse and touch interactions, and full keyboard and screen reader accessibility. Learn how to provide drag data and handle drop events to move, insert, or reorder items.</PageDescription>
 
 ## Introduction
 
@@ -24,7 +25,7 @@ Drag and drop allows a user to move data between two locations. The initial loca
 
 <Anatomy role="img" aria-label="Drag and drop anatomy diagram, showing drag source, drag preview, and drop target." />
 
-Drag and drop is implemented using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. The result of this function is passed into components that support drag and drop, such as [ListBox](ListBox.html), [GridList](GridList.html), [Tree](Tree.html), and [Table](Table.html).
+Drag and drop is implemented using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. The result of this function is passed into components that support drag and drop, such as [ListBox](ListBox), [GridList](GridList), [Tree](Tree), and [Table](Table).
 
 ## Drag source
 
@@ -58,7 +59,7 @@ function DraggableCOMPONENT() {
   return <PokemonCOMPONENT dragAndDropHooks={dragAndDropHooks} />;
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DraggableCOMPONENT />
   <DroppableCOMPONENT />
 </div>
@@ -74,16 +75,15 @@ This example renders a custom drag preview which shows the number of items being
 
 <ExampleSwitcher type="component" examples={['ListBox', 'GridList', 'Tree', 'Table']}>
 
-```tsx render files={['packages/dev/s2-docs/pages/react-aria/PokemonCOMPONENT.tsx', 'packages/dev/s2-docs/pages/react-aria/DroppableCOMPONENT.tsx']}
+```tsx render files={['packages/dev/s2-docs/pages/react-aria/PokemonCOMPONENT.tsx']}
 "use client";
 import {useDragAndDrop} from 'react-aria-components';
 import {PokemonCOMPONENT, Pokemon} from './PokemonCOMPONENT';
-import {DroppableCOMPONENT} from './DroppableCOMPONENT';
 
 function DraggableCOMPONENT() {
-  let {dragAndDropHooks} = useDragAndDrop<Pokemon>({
+  let {dragAndDropHooks} = useDragAndDrop({
     ///- begin collapse -///
-    getItems(keys, items) {
+    getItems(keys, items: Pokemon[]) {
       return items.map(item => ({
         'text/plain': item.name
       }));
@@ -111,20 +111,21 @@ function DraggableCOMPONENT() {
 /* TODO: move into starter */
 .drag-preview {
   width: 150px;
-  padding: 4px 8px;
+  padding: var(--spacing-2);
+  padding-inline-start: var(--spacing-3);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 4px;
+  gap: var(--spacing-1);
   background: var(--highlight-background);
   color: var(--highlight-foreground);
-  border-radius: 4px;
+  border-radius: var(--radius);
 
   .badge {
     background: var(--highlight-foreground);
     color: var(--highlight-background);
-    padding: 0 8px;
-    border-radius: 4px;
+    padding: 0 var(--spacing-2);
+    border-radius: var(--radius-sm);
   }
 }
 ```
@@ -172,7 +173,7 @@ function DroppableCOMPONENT() {
   return <PokemonCOMPONENT items={items} dragAndDropHooks={dragAndDropHooks} />;
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DraggableCOMPONENT />
   <DroppableCOMPONENT />
 </div>
@@ -187,7 +188,7 @@ A <TypeLink links={docs.links} type={docs.links[docs.exports.FileDropItem.id]} /
 ```tsx render
 "use client";
 import {GridList, GridListItem} from 'vanilla-starter/GridList';
-import {useDragAndDrop, isFileDropItem} from 'react-aria-components';
+import {useDragAndDrop, isFileDropItem, Text} from 'react-aria-components';
 import {useState} from 'react';
 
 interface ImageItem {
@@ -221,13 +222,12 @@ function DroppableGridList() {
       items={items}
       dragAndDropHooks={dragAndDropHooks}
       renderEmptyState={() => "Drop images here"}
-      style={{height: 250}}>
+      style={{height: 250}}
+      data-size="small">
       {item => (
         <GridListItem textValue={item.name}>
-          <div style={{display: 'flex', height: 50, gap: 8, alignItems: 'center', width: '100%'}}>
-            <img src={item.url} style={{height: '100%', aspectRatio: '1/1', objectFit: 'contain'}} />
-            <span style={{flex: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{item.name}</span>
-          </div>
+          <img src={item.url} />
+          <Text>{item.name}</Text>
         </GridListItem>
       )}
     </GridList>
@@ -242,7 +242,7 @@ A <TypeLink links={docs.links} type={docs.links[docs.exports.DirectoryDropItem.i
 ```tsx render
 "use client";
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
-import {useDragAndDrop, DIRECTORY_DRAG_TYPE, isDirectoryDropItem, Collection} from 'react-aria-components';
+import {useDragAndDrop, DIRECTORY_DRAG_TYPE, type DirectoryDropItem, isDirectoryDropItem, Collection} from 'react-aria-components';
 import {useState} from 'react';
 import File from '@react-spectrum/s2/icons/File';
 import Folder from '@react-spectrum/s2/icons/Folder';
@@ -251,8 +251,7 @@ interface DirItem {
   id: number,
   name: string,
   kind: string,
-  type: string,
-  children?: DirItem[]
+  children: DirItem[]
 }
 
 function DroppableTree() {
@@ -263,8 +262,8 @@ function DroppableTree() {
     acceptedDragTypes: [DIRECTORY_DRAG_TYPE],
     async onRootDrop(e) {
       // Read entries in directory and update state with relevant info.
-      let getFiles = async (dir) => {
-        let files = [];
+      let getFiles = async (dir: DirectoryDropItem): Promise<DirItem[]> => {
+        let files: DirItem[] = [];
         for await (let entry of dir.getEntries()) {
           files.push({
             id: Math.random(),
@@ -311,7 +310,7 @@ function DroppableTree() {
 
 ## Drop positions
 
-Collection components such as [ListBox](ListBox.html), [Table](Table.html), [Tree](Tree.html), and [GridList](GridList.html) support multiple **drop positions**.
+Collection components such as [ListBox](ListBox), [Table](Table), [Tree](Tree), and [GridList](GridList) support multiple **drop positions**.
 
 * The `"root"` drop position allows dropping on the collection as a whole. 
 * The `"on"` drop position allows dropping on individual collection items, such as a folder within a list.
@@ -359,7 +358,7 @@ function DroppableCOMPONENT() {
   return <PokemonCOMPONENT items={items} dragAndDropHooks={dragAndDropHooks} />;
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DraggableCOMPONENT />
   <DroppableCOMPONENT />
 </div>
@@ -376,7 +375,7 @@ Use the `onItemDrop` event to enable dropping on items. When a valid drag hovers
 ```tsx render files={['packages/dev/s2-docs/pages/react-aria/PokemonCOMPONENT.tsx', 'packages/dev/s2-docs/pages/react-aria/DraggableCOMPONENT.tsx']}
 "use client";
 import {useDragAndDrop} from 'react-aria-components';
-import {PokemonCOMPONENT, Pokemon} from './PokemonCOMPONENT';
+import {PokemonCOMPONENT} from './PokemonCOMPONENT';
 import {DraggableCOMPONENT} from './DraggableCOMPONENT';
 
 function DroppableCOMPONENT() {
@@ -400,7 +399,7 @@ function DroppableCOMPONENT() {
   );
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DraggableCOMPONENT />
   <DroppableCOMPONENT />
 </div>
@@ -416,9 +415,8 @@ Use the `onInsert` event to enable dropping between items. React Aria renders a 
 
 ```tsx render files={['packages/dev/s2-docs/pages/react-aria/PokemonCOMPONENT.tsx', 'packages/dev/s2-docs/pages/react-aria/DraggableCOMPONENT.tsx']}
 "use client";
-import {useListData} from 'react-stately';
-import {useDragAndDrop, isTextDropItem, DropIndicator} from 'react-aria-components';
-import {PokemonCOMPONENT, Pokemon} from './PokemonCOMPONENT';
+import {useDragAndDrop, isTextDropItem, DropIndicator, useListData} from 'react-aria-components';
+import {PokemonCOMPONENT} from './PokemonCOMPONENT';
 import {DraggableCOMPONENT} from './DraggableCOMPONENT';
 
 function DroppableCOMPONENT() {
@@ -455,11 +453,7 @@ function DroppableCOMPONENT() {
       }
     },
     renderDropIndicator(target) {
-      return (
-        <DropIndicator
-          target={target}
-          className="drop-indicator" />
-      );
+      return <DropIndicator target={target} />;
     }
     ///- end highlight -///
   });
@@ -467,7 +461,7 @@ function DroppableCOMPONENT() {
   return <PokemonCOMPONENT items={list.items} dragAndDropHooks={dragAndDropHooks} />;
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DraggableCOMPONENT />
   <DroppableCOMPONENT />
 </div>
@@ -475,30 +469,16 @@ function DroppableCOMPONENT() {
 
 </ExampleSwitcher>
 
-```css render hidden
-.drop-indicator {
-  &[data-drop-target] {
-    outline: 1px solid var(--highlight-background);;
-  }
-
-  @supports not selector(:has(.foo)) {
-    /* Undo gap in browsers that don't support :has */
-    margin-bottom: -2px;
-  }
-}
-```
-
 ### Reordering items
 
-Use the `onReorder` event to enable reordering items. For components with hierarchy like [Tree](Tree.html), this only allows reordering within the same level. Use `onMove` to allow moving items between levels.
+Use the `onReorder` event to enable reordering items. For components with hierarchy like [Tree](Tree), this only allows reordering within the same level. Use `onMove` to allow moving items between levels.
 
 <ExampleSwitcher type="component" examples={['ListBox', 'GridList', 'Tree', 'Table']}>
 
 ```tsx render files={['packages/dev/s2-docs/pages/react-aria/PokemonCOMPONENT.tsx']}
 "use client";
-import {useListData} from 'react-stately';
-import {useDragAndDrop} from 'react-aria-components';
-import {PokemonCOMPONENT, defaultItems} from './PokemonCOMPONENT';
+import {useDragAndDrop, useListData} from 'react-aria-components';
+import {PokemonCOMPONENT, Pokemon, defaultItems} from './PokemonCOMPONENT';
 
 function ReorderableCOMPONENT() {
   let list = useListData({
@@ -507,7 +487,7 @@ function ReorderableCOMPONENT() {
 
   let {dragAndDropHooks} = useDragAndDrop({
     ///- begin collapse -///
-    getItems(keys, items) {
+    getItems(keys, items: Pokemon[]) {
       return items.map(item => {
         return {
           'text/plain': `${item.name} – ${item.type}`,
@@ -542,9 +522,8 @@ Use the `onMove` event to enable moving items within a collection. This allows r
 
 ```tsx render files={['packages/dev/s2-docs/pages/react-aria/PokemonCOMPONENT.tsx']}
 "use client";
-import {useTreeData} from 'react-stately';
-import {useDragAndDrop} from 'react-aria-components';
-import {PokemonCOMPONENT, defaultItems} from './PokemonCOMPONENT';
+import {useDragAndDrop, useTreeData} from 'react-aria-components';
+import {PokemonCOMPONENT, Pokemon, defaultItems} from './PokemonCOMPONENT';
 
 function ReorderableCOMPONENT() {
   let tree = useTreeData({
@@ -553,7 +532,7 @@ function ReorderableCOMPONENT() {
 
   let {dragAndDropHooks} = useDragAndDrop({
     ///- begin collapse -///
-    getItems(keys, items) {
+    getItems(keys, items: Pokemon[]) {
       return items.map(item => {
         return {
           'text/plain': `${item.name} – ${item.type}`,
@@ -606,8 +585,7 @@ This example puts together many of the examples described above, allowing users 
 
 ```tsx render
 "use client";
-import {useDragAndDrop, isTextDropItem} from 'react-aria-components';
-import {useListData} from 'react-stately';
+import {useDragAndDrop, isTextDropItem, useListData} from 'react-aria-components';
 import {PokemonCOMPONENT, Pokemon, defaultItems} from './PokemonCOMPONENT';
 
 interface DndCOMPONENTProps {
@@ -630,14 +608,11 @@ function DndCOMPONENT(props: DndCOMPONENTProps) {
       );
     },
     // Provide drag data in a custom format as well as plain text.
-    getItems(keys) {
-      return [...keys].map((key) => {
-        let item = list.getItem(key);
-        return {
-          'pokemon': JSON.stringify(item),
-          'text/plain': item.name
-        };
-      });
+    getItems(keys, items: Pokemon[]) {
+      return items.map(item => ({
+        'pokemon': JSON.stringify(item),
+        'text/plain': item.name
+      }));
     },
 
     // Accept drops with the custom format.
@@ -693,7 +668,7 @@ function DndCOMPONENT(props: DndCOMPONENTProps) {
   return <PokemonCOMPONENT items={list.items} dragAndDropHooks={dragAndDropHooks} />
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DndCOMPONENT
     initialItems={defaultItems}
     aria-label="Drag and drop COMPONENT" />
@@ -756,7 +731,7 @@ function DroppableCOMPONENT() {
   return <PokemonCOMPONENT items={items} dragAndDropHooks={dragAndDropHooks} />;
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DraggableCOMPONENT />
   <DroppableCOMPONENT />
 </div>
@@ -772,8 +747,7 @@ The drag source can also control which drop operations are allowed. In the examp
 
 ```tsx render files={['packages/dev/s2-docs/pages/react-aria/PokemonCOMPONENT.tsx', 'packages/dev/s2-docs/pages/react-aria/DroppableCOMPONENT.tsx']}
 "use client";
-import {useDragAndDrop} from 'react-aria-components';
-import {useListData} from 'react-stately';
+import {useDragAndDrop, useListData} from 'react-aria-components';
 import {PokemonCOMPONENT, Pokemon, defaultItems} from './PokemonCOMPONENT';
 import {DroppableCOMPONENT} from './DroppableCOMPONENT';
 
@@ -786,7 +760,7 @@ function DraggableCOMPONENT() {
 
   let {dragAndDropHooks} = useDragAndDrop<Pokemon>({
     ///- begin collapse -///
-    getItems(keys, items) {
+    getItems(keys, items: Pokemon[]) {
       return items.map(item => {
         return {
           'text/plain': `${item.name} – ${item.type}`,
@@ -804,7 +778,7 @@ function DraggableCOMPONENT() {
   return <PokemonCOMPONENT items={list.items} dragAndDropHooks={dragAndDropHooks} />
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DraggableCOMPONENT />
   <DroppableCOMPONENT />
 </div>
@@ -822,8 +796,7 @@ This example removes the dragged items from the UI when a move operation is comp
 
 ```tsx render files={['packages/dev/s2-docs/pages/react-aria/PokemonCOMPONENT.tsx', 'packages/dev/s2-docs/pages/react-aria/DroppableCOMPONENT.tsx']}
 "use client";
-import {useDragAndDrop} from 'react-aria-components';
-import {useListData} from 'react-stately';
+import {useDragAndDrop, useListData} from 'react-aria-components';
 import {PokemonCOMPONENT, Pokemon, defaultItems} from './PokemonCOMPONENT';
 import {DroppableCOMPONENT} from './DroppableCOMPONENT';
 
@@ -836,7 +809,7 @@ function DraggableCOMPONENT() {
 
   let {dragAndDropHooks} = useDragAndDrop<Pokemon>({
     ///- begin collapse -///
-    getItems(keys, items) {
+    getItems(keys, items: Pokemon[]) {
       return items.map(item => {
         return {
           'text/plain': `${item.name} – ${item.type}`,
@@ -858,7 +831,7 @@ function DraggableCOMPONENT() {
   return <PokemonCOMPONENT items={list.items} dragAndDropHooks={dragAndDropHooks} />
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DraggableCOMPONENT />
   <DroppableCOMPONENT />
 </div>
@@ -893,7 +866,7 @@ While drag and drop has historically been mostly limited to mouse and touchscree
 
 Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to cycle between the drop targets that accept the dragged data, and <Keyboard>Enter</Keyboard> to drop. <Keyboard>Escape</Keyboard> cancels a drag. Touch screen reader users can also drag by double tapping to activate drag and drop mode, swiping between drop targets, and double tapping again to drop. Screen reader announcements are included to help guide the user through this process.
 
-Collection components such as [GridList](GridList.html) and [Table](Table.html) are treated as a single drop target, so that users can easily tab past them to get to the next drop target. Within a droppable collection, keys such as <Keyboard>ArrowDown</Keyboard> and <Keyboard>ArrowUp</Keyboard> can be used to select a **drop position**, such as on an item, or between items.
+Collection components such as [GridList](GridList) and [Table](Table) are treated as a single drop target, so that users can easily tab past them to get to the next drop target. Within a droppable collection, keys such as <Keyboard>ArrowDown</Keyboard> and <Keyboard>ArrowUp</Keyboard> can be used to select a **drop position**, such as on an item, or between items.
 
 Draggable elements can sometimes have conflicting keyboard interactions, such as selection. These are handled by adding an explicit **drag affordance**. Keyboard and screen reader users can focus this element, and use it to initiate drag and drop for the parent item. In addition, this has the added benefit of making drag and drop more discoverable.
 
@@ -903,6 +876,10 @@ Draggable elements can sometimes have conflicting keyboard interactions, such as
 </Figure>
 
 Note that because mouse and touch drag and drop interactions utilize the native browser APIs, they work both within the browser window and with external applications on the user's device. Keyboard and screen reader drag and drop is implemented from scratch, and therefore can only be supported within the browser window. Alternative interactions for operations involving external applications, such as file uploading or copy and paste, should be implemented in addition to drag and drop.
+
+## Examples
+
+<ExampleList tag="drag and drop" pages={props.pages} />
 
 ## API
 
@@ -942,5 +919,3 @@ Note that because mouse and touch drag and drop interactions utilize the native 
 ### DropIndicator
 
 <PropTable component={docs.exports.DropIndicator} links={docs.links} />
-
-<StateTable defaultClassName="react-aria-DropIndicator" properties={docs.exports.DropIndicatorRenderProps.properties} />

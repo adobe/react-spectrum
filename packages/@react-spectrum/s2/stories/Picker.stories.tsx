@@ -11,6 +11,7 @@
  */
 
 import {
+  Avatar,
   Button,
   Content,
   ContextualHelp,
@@ -48,7 +49,9 @@ const meta: Meta<typeof Picker<any>> = {
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
     children: {table: {disable: true}},
-    contextualHelp: {table: {disable: true}}
+    contextualHelp: {table: {disable: true}},
+    defaultSelectedKey: {table: {disable: true}},
+    selectedKey: {table: {disable: true}}
   },
   args: {...getActionArgs(events)},
   title: 'Picker'
@@ -139,6 +142,33 @@ export const WithIcons: Story = {
   ),
   args: {
     label: 'Where to share'
+  }
+};
+
+const SRC_URL_1 = 'https://i.imgur.com/xIe7Wlb.png';
+const SRC_URL_2 = 'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
+
+export const WithAvatars: Story = {
+  render: (args) => (
+    <Picker {...args}>
+      <PickerItem textValue="User One">
+        <Avatar slot="avatar" src={SRC_URL_1} />
+        <Text>User One</Text>
+        <Text slot="description">user.one@example.com</Text>
+      </PickerItem>
+      <PickerItem textValue="User Two">
+        <Avatar slot="avatar" src={SRC_URL_2} />
+        <Text>User Two</Text>
+        <Text slot="description">user.two@example.com<br />123-456-7890</Text>
+      </PickerItem>
+      <PickerItem textValue="User Three">
+        <Avatar slot="avatar" src={SRC_URL_2} />
+        <Text>User Three</Text>
+      </PickerItem>
+    </Picker>
+  ),
+  args: {
+    label: 'Share'
   }
 };
 
@@ -299,5 +329,41 @@ return (
         }
       }
     }
+  }
+};
+
+
+type ExampleIconItem = IExampleItem & { icon: string };
+const exampleIconItems: ExampleIconItem[] = Array.from({length: 5}, (_, i) => ({
+  id: `user${i + 1}`,
+  label: `User ${i + 1}`,
+  icon: 'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png'
+}));
+
+const CustomRenderValuePicker = (args: PickerProps<ExampleIconItem, 'multiple'>): ReactElement => (
+  <Picker {...args}>
+    {(item: ExampleIconItem) => (
+      <PickerItem id={item.id} textValue={item.label}>
+        <Avatar slot="avatar" src={item.icon} />
+        <Text slot="label">{item.label}</Text>
+      </PickerItem>
+    )}
+  </Picker>
+);
+
+export type CustomRenderValuePickerStoryType = typeof CustomRenderValuePicker;
+export const CustomRenderValue: StoryObj<CustomRenderValuePickerStoryType> = {
+  render: CustomRenderValuePicker,
+  args: {
+    label: 'Pick users',
+    selectionMode: 'multiple',
+    items: exampleIconItems,
+    renderValue: (selectedItems) => (
+      <div style={{display: 'flex', gap: 4, height: '80%'}}>
+        {selectedItems.map(item => (
+          <img key={item.id} src={item.icon} alt={item.label} />
+        ))}
+      </div>
+    )
   }
 };

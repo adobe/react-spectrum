@@ -288,7 +288,6 @@ function ForwardSearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T
       }
     } else if (!isLoading) {
       // If loading is no longer happening, clear any timers and hide the loading circle
-      setShowLoading(false);
       if (timeout.current != null) {
         clearTimeout(timeout.current);
         timeout.current = null;
@@ -297,6 +296,11 @@ function ForwardSearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T
 
     lastInputValue.current = inputValue;
   }, [isLoading, showLoading, inputValue]);
+  let [prevIsLoading, setPrevIsLoading] = useState(isLoading);
+  if (prevIsLoading !== isLoading && !isLoading) {
+    setShowLoading(false);
+    setPrevIsLoading(isLoading);
+  }
 
   return (
     (<FocusRing

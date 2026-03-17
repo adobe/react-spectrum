@@ -249,6 +249,7 @@ import {ActionButton} from '@react-spectrum/s2';
           <li><Code>insetY</Code></li>
           <li><Code>insetStart</Code></li>
           <li><Code>insetEnd</Code></li>
+          <li><Code>visibility</Code></li>
         </ul>
         <H3>UNSAFE Style Overrides</H3>
         <P>We highly discourage overriding the styles of React Spectrum components because it may break at any time when we change our implementation, making it difficult for you to update in the future. Consider using <Link href="https://react-spectrum.adobe.com/react-aria/" target="_blank">React Aria Components</Link> with our <Link href="?path=/docs/style-macro--docs" target="_top">style macro</Link> to build a custom component with Spectrum styles instead.</P>

@@ -167,7 +167,7 @@
       <rect id="Rectangle_140611" data-name="Rectangle 140611" width="85" height="1" transform="translate(417 272) rotate(180)" fill="var(--anatomy-gray-500)"/>
     </g>
     <g id="Group_151085" data-name="Group 151085" transform="translate(29 -2)">
-      <text id="Dialog" transform="translate(708 189)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="0" y="0">Dialog</tspan></text>
+      <text id="Dialog" transform="translate(708 189)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="0" y="0">Popover</tspan></text>
       <path id="Union_58" data-name="Union 58" d="M-8872-124.5a2.5,2.5,0,0,1,2.5-2.5,2.5,2.5,0,0,1,2.45,2h27.568v1h-27.568a2.5,2.5,0,0,1-2.45,2A2.5,2.5,0,0,1-8872-124.5Z" transform="translate(9543 309)" fill="var(--anatomy-gray-500)"/>
     </g>
   </g>

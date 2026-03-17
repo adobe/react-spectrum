@@ -30,7 +30,7 @@ export function ProgressCircle(props: ProgressCircleProps) {
                 cx="50%"
                 cy="50%"
                 r={radius}
-                stroke="var(--gray-100)"
+                stroke="var(--highlight-pressed)"
                 strokeWidth={strokeWidth} />
               <circle
                 cx="50%"

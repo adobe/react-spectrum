@@ -12,7 +12,7 @@
 
 import {ArbitraryProperty, Color, createTheme, ExpandedProperty, MappedProperty, parseArbitraryValue, PercentageProperty, SizingProperty} from './style-macro';
 import {ArbitraryValue, CSSProperties, CSSValue, PropertyValueDefinition, PropertyValueMap, Value} from './types';
-import {autoStaticColor, ColorRef, colorScale, ColorToken, colorToken, fontSizeToken, generateOverlayColorScale, getToken, rawColorToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
+import {autoStaticColor, ColorRef, colorScale, ColorToken, colorToken, fontSizeToken, generateOverlayColorScale, getToken, shadowToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
 import type * as CSS from 'csstype';
 
 interface MacroContext {
@@ -23,7 +23,22 @@ function pxToRem(px: string | number) {
   if (typeof px === 'string') {
     px = parseFloat(px);
   }
+
+  // In the docs, we need to be able to simulate font size adjustment.
+  if (process.env.DOCS_ENV) {
+    return `calc(${px / 16} * var(--rem, 1rem))`;
+  }
+
   return px / 16 + 'rem';
+}
+
+function hcmColor(color: string) {
+  // In the docs, HCM colors can be simulated.
+  if (process.env.DOCS_ENV) {
+    return `var(--hcm-${color.toLowerCase()}, ${color})`;
+  }
+
+  return color;
 }
 
 const baseColors = {
@@ -62,16 +77,17 @@ const baseColors = {
   ...generateOverlayColorScale(),
 
   // High contrast mode.
-  Background: 'Background',
-  ButtonBorder: 'ButtonBorder',
-  ButtonFace: 'ButtonFace',
-  ButtonText: 'ButtonText',
-  Field: 'Field',
-  Highlight: 'Highlight',
-  HighlightText: 'HighlightText',
-  GrayText: 'GrayText',
-  Mark: 'Mark',
-  LinkText: 'LinkText'
+  // In the docs these can be simulated via variables.
+  Background: hcmColor('Background'),
+  ButtonBorder: hcmColor('ButtonBorder'),
+  ButtonFace: hcmColor('ButtonFace'),
+  ButtonText: hcmColor('ButtonText'),
+  Field: hcmColor('Field'),
+  Highlight: hcmColor('Highlight'),
+  HighlightText: hcmColor('HighlightText'),
+  GrayText: hcmColor('GrayText'),
+  Mark: hcmColor('Mark'),
+  LinkText: hcmColor('LinkText')
 };
 
 // Resolves a color to its most basic form, following all aliases.
@@ -330,7 +346,7 @@ const padding = {
   ...relativeSpacing
 };
 
-export function size(this: MacroContext | void, px: number): string {
+export function size(this: MacroContext | void, px: number): `calc(${string})` {
   return `calc(${pxToRem(px)} * var(--s2-scale))`;
 }
 
@@ -395,7 +411,7 @@ const radius = {
 };
 
 type GridTrack = 'none' | 'subgrid' | (string & {}) | readonly GridTrackSize[];
-type GridTrackSize = 'auto' | 'min-content' | 'max-content' | `${number}fr` | `minmax(${string}, ${string})` | keyof typeof baseSpacing | (string & {});
+type GridTrackSize = 'auto' | 'min-content' | 'max-content' | `${number}fr` | `minmax(${string}, ${string})` | number | (string & {});
 
 let gridTrack = (value: GridTrack) => {
   if (typeof value === 'string') {
@@ -405,7 +421,7 @@ let gridTrack = (value: GridTrack) => {
 };
 
 let gridTrackSize = (value: GridTrackSize) => {
-  return value in baseSpacing ? baseSpacing[value] : value;
+  return typeof value === 'number' ? size(value) : value;
 };
 
 const transitionProperty = {
@@ -434,8 +450,7 @@ let durationValue = (value: number | string) => typeof value === 'number' ? valu
 const fontWeightBase = {
   normal: '400',
   medium: {
-    default: '500',
-    ':lang(ar, he)': '600' // Myriad does not have a 500 weight
+    default: '500'
   },
   bold: {
     default: '700',
@@ -443,8 +458,7 @@ const fontWeightBase = {
   },
   'extra-bold': {
     default: '800',
-    ':lang(ja, ko, zh)': '700', // Adobe Clean Han uses 700 as the extra bold weight.
-    ':lang(ar, he)': '700' // Myriad does not have a 800 weight
+    ':lang(ja, ko, zh)': '700' // Adobe Clean Han uses 700 as the extra bold weight.
   },
   black: '900'
 } as const;
@@ -466,8 +480,8 @@ const fontWeight = {
 } as const;
 
 const i18nFonts = {
-  ':lang(ar)': 'myriad-arabic, ui-sans-serif, system-ui, sans-serif',
-  ':lang(he)': 'myriad-hebrew, ui-sans-serif, system-ui, sans-serif',
+  ':lang(ar)': 'adobe-clean-arabic, myriad-arabic, ui-sans-serif, system-ui, sans-serif',
+  ':lang(he)': 'adobe-clean-hebrew, myriad-hebrew, ui-sans-serif, system-ui, sans-serif',
   ':lang(ja)': "adobe-clean-han-japanese, 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Osaka, YuGothic, 'Yu Gothic', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif",
   ':lang(ko)': "adobe-clean-han-korean, source-han-korean, 'Malgun Gothic', 'Apple Gothic', sans-serif",
   ':lang(zh)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Heiti TC Light', sans-serif",
@@ -673,15 +687,19 @@ export const style = createTheme({
     containIntrinsicWidth: createSpectrumSizingProperty('containIntrinsicWidth', width),
     containIntrinsicHeight: createSpectrumSizingProperty('containIntrinsicHeight', height),
     minHeight: createSpectrumSizingProperty('minHeight', height),
-    maxHeight: createSpectrumSizingProperty('maxHeight', {
-      ...height,
-      none: 'none'
-    }),
+    maxHeight: createSpectrumSizingProperty('maxHeight', (() => {
+      // auto is not a valid value for maxHeight
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const {auto, ...rest} = height;
+      return {...rest, none: 'none'};
+    })()),
     minWidth: createSpectrumSizingProperty('minWidth', width),
-    maxWidth: createSpectrumSizingProperty('maxWidth', {
-      ...width,
-      none: 'none'
-    }),
+    maxWidth: createSpectrumSizingProperty('maxWidth', (() => {
+      // auto is not a valid value for maxWidth
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const {auto, ...rest} = width;
+      return {...rest, none: 'none'};
+    })()),
     borderStartWidth: new MappedProperty('borderInlineStartWidth', borderWidth),
     borderEndWidth: new MappedProperty('borderInlineEndWidth', borderWidth),
     borderTopWidth: borderWidth,
@@ -759,17 +777,18 @@ export const style = createTheme({
       },
       code: 'source-code-pro, "Source Code Pro", Monaco, monospace'
     },
-    fontSize: new ExpandedProperty<keyof typeof fontSize>(['fontSize', 'lineHeight'], (value) => {
-      return {
-        '--fs': `pow(1.125, ${value})`,
-        fontSize: `round(${fontSizeCalc} / 16 * 1rem, 1px)`
-      };
+    fontSize: new ExpandedProperty<keyof typeof fontSize>(['--fs', 'fontSize'], (value) => {
+      if (typeof value === 'number') {
+        return {
+          '--fs': `pow(1.125, ${value})`,
+          fontSize: `round(${fontSizeCalc} / 16 * ${process.env.DOCS_ENV ? 'var(--rem, 1rem)' : '1rem'}, 1px)`
+        } as CSSProperties;
+      }
+
+      return {fontSize: value};
     }, fontSize),
     fontWeight: new ExpandedProperty<keyof typeof fontWeight>(['fontWeight', 'fontVariationSettings', 'fontSynthesisWeight'], (value) => {
       return {
-        // Set font-variation-settings in addition to font-weight to work around typekit issue.
-        // (This was fixed, but leaving for backward compatibility for now.)
-        fontVariationSettings: value === 'inherit' ? 'inherit' : `"wght" ${value}`,
         fontWeight: value as any,
         fontSynthesisWeight: 'none'
       };
@@ -779,19 +798,15 @@ export const style = createTheme({
       ui: {
         // Calculate line-height based on font size.
         default: lineHeightCalc,
-        // Arabic and hebrew use the old line-height for now since they are on Myriad instead of Adobe Clean.
-        ':lang(ar, he)': getToken('line-height-100'),
         // CJK fonts use a larger line-height.
         ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('line-height-200')
       },
       heading: {
         default: lineHeightCalc,
-        ':lang(ar, he)': getToken('line-height-100'),
         ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('heading-cjk-line-height')
       },
       title: {
         default: lineHeightCalc,
-        ':lang(ar, he)': getToken('line-height-100'),
         ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('title-cjk-line-height')
       },
       body: {
@@ -801,7 +816,6 @@ export const style = createTheme({
       },
       detail: {
         default: lineHeightCalc,
-        ':lang(ar, he)': getToken('line-height-100'),
         ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('detail-cjk-line-height')
       },
       code: {
@@ -828,21 +842,22 @@ export const style = createTheme({
     hyphens: ['none', 'manual', 'auto'] as const,
     whiteSpace: ['normal', 'nowrap', 'pre', 'pre-line', 'pre-wrap', 'break-spaces'] as const,
     textWrap: ['wrap', 'nowrap', 'balance', 'pretty'] as const,
-    wordBreak: ['normal', 'break-all', 'keep-all'] as const,
+    wordBreak: ['normal', 'break-all', 'keep-all', 'break-word'] as const,
     overflowWrap: ['normal', 'anywhere', 'break-word'] as const,
     boxDecorationBreak: ['slice', 'clone'] as const,
 
     // effects
     boxShadow: {
-      emphasized: `${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${rawColorToken('drop-shadow-emphasized-default-color')}`,
-      elevated: `${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${rawColorToken('drop-shadow-elevated-color')}`,
-      dragged: `${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${rawColorToken('drop-shadow-dragged-color')}`,
+      emphasized: shadowToken('drop-shadow-emphasized').join(', '),
+      elevated: shadowToken('drop-shadow-elevated').join(', '),
+      dragged: shadowToken('drop-shadow-dragged').join(', '),
       none: 'none'
     },
     filter: {
-      emphasized: `drop-shadow(${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${rawColorToken('drop-shadow-emphasized-default-color')})`,
-      elevated: `drop-shadow(${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${rawColorToken('drop-shadow-elevated-color')})`,
-      dragged: `drop-shadow${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${rawColorToken('drop-shadow-dragged-color')}`,
+      // layer order is reversed for filter property. filters are applied in the order they are specified.
+      emphasized: shadowToken('drop-shadow-emphasized').reverse().map(s => `drop-shadow(${s})`).join(' '),
+      elevated: shadowToken('drop-shadow-elevated').reverse().map(s => `drop-shadow(${s})`).join(' '),
+      dragged: shadowToken('drop-shadow-dragged').reverse().map(s => `drop-shadow(${s})`).join(' '),
       none: 'none'
     },
     borderTopStartRadius: new MappedProperty('borderStartStartRadius', radius),
@@ -927,6 +942,8 @@ export const style = createTheme({
     float: ['inline-start', 'inline-end', 'right', 'left', 'none'] as const,
     clear: ['inline-start', 'inline-end', 'left', 'right', 'both', 'none'] as const,
     contain: ['none', 'strict', 'content', 'size', 'inline-size', 'layout', 'style', 'paint'] as const,
+    containerType: ['normal', 'size', 'inline-size', 'scroll-state'] as const,
+    containerName: new ArbitraryProperty<string>('containerName'),
     boxSizing: ['border-box', 'content-box'] as const,
     tableLayout: ['auto', 'fixed'] as const,
     captionSide: ['top', 'bottom'] as const,
@@ -939,6 +956,7 @@ export const style = createTheme({
     overscrollBehaviorX: ['auto', 'contain', 'none'] as const,
     overscrollBehaviorY: ['auto', 'contain', 'none'] as const,
     scrollBehavior: ['auto', 'smooth'] as const,
+    scrollbarWidth: ['none', 'auto', 'thin'] as const,
     order: new ArbitraryProperty<number>('order'),
 
     pointerEvents: ['none', 'auto'] as const,
@@ -1027,7 +1045,8 @@ export const style = createTheme({
     }
   },
   conditions: {
-    forcedColors: '@media (forced-colors: active)',
+    // In the docs we need to be able to simulate HCM.
+    forcedColors: process.env.DOCS_ENV ? ['@media (forced-colors: active)', ':is([data-hcm], [data-hcm] *)'] : '@media (forced-colors: active)',
     // This detects touch primary devices as best as we can.
     // Ideally we'd use (pointer: course) but browser/device support is inconsistent.
     // Samsung Android devices claim to be mice at the hardware/OS level: (any-pointer: fine), (any-hover: hover), (hover: hover), and nothing for pointer.
@@ -1037,10 +1056,11 @@ export const style = createTheme({
     // Windows tablet matches the same as iPhone. No difference when a mouse is connected.
     // Windows touch laptop matches same as macOS: (any-pointer: fine), (pointer: fine), (any-hover: hover), (hover: hover).
     touch: '@media not ((hover: hover) and (pointer: fine))',
-    sm: `@media (min-width: ${pxToRem(640)})`,
-    md: `@media (min-width: ${pxToRem(768)})`,
-    lg: `@media (min-width: ${pxToRem(1024)})`,
-    xl: `@media (min-width: ${pxToRem(1280)})`,
-    '2xl': `@media (min-width: ${pxToRem(1536)})`
+    xs: `@media (min-width: ${(480 / 16)}rem)`,
+    sm: `@media (min-width: ${(640 / 16)}rem)`,
+    md: `@media (min-width: ${(768 / 16)}rem)`,
+    lg: `@media (min-width: ${(1024 / 16)}rem)`,
+    xl: `@media (min-width: ${(1280 / 16)}rem)`,
+    '2xl': `@media (min-width: ${(1536 / 16)}rem)`
   }
 });

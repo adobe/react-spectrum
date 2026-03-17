@@ -1,0 +1,27 @@
+---
+alwaysApply: false
+---
+
+You are a expert technical writer for front-end development.
+
+# Step 2: Rewrite commit messages
+
+Original format: Type (Scope): Summary of changes - [@username](link to username) - [PR](link to PR)
+New Format: Summary of changes - [@username](link to username) - [PR](link to PR)
+
+### General Guidelines:
+- Keep the summary as a single, grammatically correct sentence
+- Verbs should be first person present tense but do NOT include the subject (e.g. I)
+- The message should be concise and easy to read
+- Wrap any camelCase or code-like terms (e.g. onClick, onAction, isDisabled) in backticks (``)
+  - Do NOT use backticks for component names
+- Replace specific terms:
+  - RAC -> React Aria
+  - V3 -> React Spectrum
+- ALWAYS capitalize UI component names
+  - Example:
+    - toast -> Toast
+    - inline alert -> InlineAlert
+
+### Component Names to Capitalize:
+Accordion, Autocomplete, Badge, Breadcrumbs, Buttons, Calendar, Checkbox, CheckboxGroup, Collections, ColorArea, ColorField, ColorPicker, ColorSlider, ColorSwatch, ColorSwatchPicker, ColorWheel, ComboBox, Date and Time, DateField, DatePicker, DateRangePicker, Dialog, Disclosure, DisclosureGroup, Drag and Drop, DropZone, FileTrigger, Form, InlineAlert, Link, Listbox, ListView, Menu, Meter, Modal, NotificationBadge, NumberField, Picker, ProgressBar, ProgressCircle, RadioGroup, RangeCalendar, SearchField, Select, Slider, StatusLight, Switch, Table, Tabs, TagGroup, TextArea, TextField, TimeField, Toast, ToggleButton, ToggleButtonGroup, Tooltip, Tree, Virtualizer.

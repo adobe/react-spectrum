@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 import type {DropIndicatorProps as AriaDropIndicatorProps, ItemDropTarget, Key} from 'react-aria';
+import type {ClassNameOrFunction, RenderProps} from './utils';
 import type {DragAndDropHooks} from './useDragAndDrop';
 import type {DraggableCollectionState, DroppableCollectionState, MultipleSelectionManager} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallback, useContext, useMemo} from 'react';
-import type {RenderProps} from './utils';
 
 export interface DragAndDropContextValue {
   dragAndDropHooks?: DragAndDropHooks,
@@ -32,7 +32,13 @@ export interface DropIndicatorRenderProps {
   isDropTarget: boolean
 }
 
-export interface DropIndicatorProps extends Omit<AriaDropIndicatorProps, 'activateButtonRef'>, RenderProps<DropIndicatorRenderProps> { }
+export interface DropIndicatorProps extends Omit<AriaDropIndicatorProps, 'activateButtonRef'>, RenderProps<DropIndicatorRenderProps> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-DropIndicator'
+   */
+  className?: ClassNameOrFunction<DropIndicatorRenderProps>
+}
 interface DropIndicatorContextValue {
   render: (props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) => ReactNode
 }

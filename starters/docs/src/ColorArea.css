@@ -1,8 +1,9 @@
 
 .react-aria-ColorArea {
-  width: 192px;
-  height: 192px;
-  border-radius: 4px;
+  width: 100%;
+  max-width: calc(var(--spacing) * 56);
+  aspect-ratio: 1/1;
+  border-radius: var(--radius);
   flex-shrink: 0;
 }
 

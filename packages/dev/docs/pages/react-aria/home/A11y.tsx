@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+'use client';
 import {animate, useIntersectionObserver} from './utils';
 import {Button} from 'tailwind-starter/Button';
 import {ChevronDown, WifiIcon} from 'lucide-react';
@@ -196,7 +197,7 @@ export function A11y(): ReactNode {
         {fingerPos && createPortal(<Finger ref={fingerRef} style={{...fingerPos, zIndex: 100000000}} />, document.body)}
         {cursorRect && createPortal((
           <div
-            className="rounded-md border-2 border-black absolute forced-color-adjust-none"
+            className="rounded-md border-2 box-border border-black absolute forced-color-adjust-none"
             style={{
               ...cursorRect,
               zIndex: 100000000,
@@ -207,7 +208,7 @@ export function A11y(): ReactNode {
         ), document.body)}
         <Select className="group flex flex-col gap-1" selectedKey={selectedKey} onSelectionChange={cursorRect ? undefined : setSelectedKey} isOpen={isOpen} onOpenChange={cursorRect ? undefined : setOpen}>
           <Label>Permissions</Label>
-          <Button className="flex items-center text-start gap-4 w-full cursor-default border border-black/10 dark:border-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)] dark:shadow-none rounded-lg pl-3 pr-2 py-2 min-w-[150px] transition bg-gray-50 hover:bg-gray-100 pressed:bg-gray-200 dark:bg-zinc-700 dark:hover:bg-zinc-600 dark:pressed:bg-zinc-500 group-invalid:border-red-600 disabled:text-gray-200 dark:disabled:text-zinc-600 outline-hidden focus-visible:outline-blue-600 dark:focus-visible:outline-blue-500 outline-offset-2">
+          <Button className="flex items-center text-start gap-4 w-full cursor-default border border-black/10 dark:border-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)] dark:shadow-none rounded-lg box-border pl-3 pr-2 py-2 min-w-[150px] transition bg-gray-50 hover:bg-gray-100 pressed:bg-gray-200 dark:bg-zinc-700 dark:hover:bg-zinc-600 dark:pressed:bg-zinc-500 group-invalid:border-red-600 disabled:text-gray-200 dark:disabled:text-zinc-600 outline-hidden focus-visible:outline-blue-600 dark:focus-visible:outline-blue-500 outline-offset-2">
             <SelectValue className="flex-1 text-sm text-gray-800 dark:text-zinc-300 placeholder-shown:italic" />
             <ChevronDown className="w-4 h-4 text-gray-600 dark:text-zinc-400" />
           </Button>

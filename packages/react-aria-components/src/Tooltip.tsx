@@ -12,7 +12,15 @@
 
 import {AriaLabelingProps, FocusableElement, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {AriaPositionProps, mergeProps, OverlayContainer, Placement, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
-import {ContextValue, Provider, RenderProps, useContextProps, useRenderProps} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  Provider,
+  RenderProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
 import {filterDOMProps, useEnterAnimation, useExitAnimation} from '@react-aria/utils';
 import {FocusableProvider} from '@react-aria/focus';
 import {OverlayArrowContext} from './OverlayArrow';
@@ -24,6 +32,11 @@ export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
 }
 
 export interface TooltipProps extends PositionProps, Pick<AriaPositionProps, 'arrowBoundaryOffset'>, OverlayTriggerProps, AriaLabelingProps, RenderProps<TooltipRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Tooltip'
+   */
+  className?: ClassNameOrFunction<TooltipRenderProps>,
   /**
    * The ref for the element which the tooltip positions itself with respect to.
    *
@@ -155,7 +168,7 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <div
+    <dom.div
       {...mergeProps(DOMProps, renderProps, tooltipProps)}
       ref={props.tooltipRef}
       style={{
@@ -169,6 +182,6 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
       <OverlayArrowContext.Provider value={{...arrowProps, placement, ref: arrowRef}}>
         {renderProps.children}
       </OverlayArrowContext.Provider>
-    </div>
+    </dom.div>
   );
 }

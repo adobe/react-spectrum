@@ -278,7 +278,7 @@ export class ElementNode<T> extends BaseNode<T> {
 
   get level(): number {
     if (this.parentNode instanceof ElementNode) {
-      return this.parentNode.level + (this.node?.type === 'item' ? 1 : 0);
+      return this.parentNode.level + (this.parentNode.node?.type === 'item' ? 1 : 0);
     }
 
     return 0;
@@ -344,6 +344,9 @@ export class ElementNode<T> extends BaseNode<T> {
     node.rendered = rendered;
     node.render = render;
     node.value = value;
+    if (obj['aria-label']) {
+      node['aria-label'] = obj['aria-label'];
+    }
     node.textValue = textValue || (typeof props.children === 'string' ? props.children : '') || obj['aria-label'] || '';
     if (id != null && id !== node.key) {
       throw new Error('Cannot change the id of an item');
@@ -472,12 +475,10 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
   getCollection(): C {
-    // If in a subscription update, return a clone of the existing collection.
-    // This ensures React will queue a render. React will call getCollection again
-    // during render, at which point all the updates will be complete and we can return
-    // the new collection.
+    // If in a subscription update, return return the existing collection.
+    // React will call getCollection again during render, at which point all the updates will be complete.
     if (this.inSubscription) {
-      return this.collection.clone();
+      return this.collection;
     }
 
     // Reset queuedRender to false when getCollection is called during render.
@@ -537,9 +538,18 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     // we reset queuedRender back to false.
     this.queuedRender = true;
     this.inSubscription = true;
+
+    // Clone the collection to ensure that React queues a render. It will call getCollection again
+    // during render, at which point all the updates will be complete and we can return
+    // the new collection.
+    if (!this.isSSR) {
+      this.collection = this.collection.clone();
+    }
+
     for (let fn of this.subscriptions) {
       fn();
     }
+
     this.inSubscription = false;
   }
 

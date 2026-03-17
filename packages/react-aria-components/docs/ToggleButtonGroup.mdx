@@ -242,6 +242,10 @@ import {ToggleButtonGroup, ToggleButton, SelectionIndicator} from 'react-aria-co
     border-radius: 8px;
     background: var(--gray-50);
     outline: 2px solid var(--gray-600);
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
   }
 
   .react-aria-ToggleButton {
@@ -336,7 +340,7 @@ By default, toggle button groups are horizontally oriented. The orientation prop
 
 </details>
 
-## Accessiblity
+## Accessibility
 
 A `ToggleButtonGroup` can be labeled using the `aria-label` or `aria-labelledby` props.
 

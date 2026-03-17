@@ -21,9 +21,13 @@ import {
   ButtonGroup,
   Cell,
   Column,
+  Content,
+  ContextualHelpPopover,
   Divider,
   Heading,
   LinkButton,
+  ListView,
+  ListViewItem,
   Menu,
   MenuItem,
   MenuTrigger,
@@ -41,7 +45,8 @@ import {
   ToggleButtonGroup,
   TreeView,
   TreeViewItem,
-  TreeViewItemContent
+  TreeViewItemContent,
+  UnavailableMenuItemTrigger
 } from "@react-spectrum/s2";
 import Edit from "@react-spectrum/s2/icons/Edit";
 import FileTxt from "@react-spectrum/s2/icons/FileText";
@@ -168,7 +173,13 @@ function App() {
                   <MenuItem id="sms">SMS</MenuItem>
                 </Menu>
               </SubmenuTrigger>
-              <MenuItem id="delete">Delete</MenuItem>
+              <UnavailableMenuItemTrigger isUnavailable>
+                <MenuItem id="delete">Delete</MenuItem>
+                <ContextualHelpPopover>
+                  <Heading slot="title">Permission required</Heading>
+                  <Content>Contact your administrator for permissions to delete.</Content>
+                </ContextualHelpPopover>
+              </UnavailableMenuItemTrigger>
             </Menu>
           </MenuTrigger>
           <MenuTrigger>
@@ -182,6 +193,23 @@ function App() {
               <MenuItem>Paste</MenuItem>
             </Menu>
           </MenuTrigger>
+          <ListView
+            aria-label="Files"
+            selectionMode="multiple"
+            styles={style({width: 320, height: 320})}>
+            <ListViewItem id="adobe-photoshop" textValue="Adobe Photoshop">
+              <Text>Adobe Photoshop</Text>
+              <Text slot="description">Image editing software</Text>
+            </ListViewItem>
+            <ListViewItem id="adobe-xd" textValue="Adobe XD">
+              <Text>Adobe XD</Text>
+              <Text slot="description">UI/UX design tool</Text>
+            </ListViewItem>
+            <ListViewItem id="adobe-indesign" textValue="Adobe InDesign">
+              <Text>Adobe InDesign</Text>
+              <Text slot="description">Desktop publishing</Text>
+            </ListViewItem>
+          </ListView>
           <TableView
             aria-label="Files"
             styles={style({width: 320, height: 320})}

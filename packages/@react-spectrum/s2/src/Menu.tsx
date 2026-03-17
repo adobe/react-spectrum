@@ -28,26 +28,31 @@ import {
   Separator,
   SeparatorProps
 } from 'react-aria-components';
-import {baseColor, edgeToText, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
-import {createContext, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
+import {createContext, forwardRef, JSX, ReactElement, ReactNode, useContext, useRef, useState} from 'react';
 import {divider} from './Divider';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, PressEvent} from '@react-types/shared';
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
-import {IconContext} from './Icon'; // chevron right removed??
-import {ImageContext} from './Image';
-import {InPopoverContext, PopoverBase, PopoverContext} from './Popover';
+import {IconContext} from './Icon';
+import {ImageContext} from './Image'; // chevron right removed??
+import InfoCircleIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
+import {InPopoverContext, Popover, PopoverContext} from './Popover';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
 import {Placement, useLocale} from 'react-aria';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
-import {useGlobalListeners} from '@react-aria/utils';
+import {useGlobalListeners, useId} from '@react-aria/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
 // need to strip id's from icons
@@ -73,7 +78,7 @@ export interface MenuTriggerProps extends AriaMenuTriggerProps {
   shouldFlip?: boolean
 }
 
-export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className' | 'dependencies' | 'renderEmptyState' | keyof GlobalDOMAttributes>, StyleProps {
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className' | 'render' | 'dependencies' | 'renderEmptyState' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The size of the Menu.
    *
@@ -156,14 +161,19 @@ export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> &
   backgroundColor: { // TODO: revisit color when I have access to dev mode again
     default: {
       default: 'transparent',
-      isFocused: baseColor('gray-100').isFocusVisible
+      isFocused: {
+        default: baseColor('gray-100').isFocusVisible,
+        forcedColors: 'Highlight'
+      }
     }
   },
   color: {
     default: baseColor('neutral'),
-    isDisabled: {
-      default: 'disabled',
-      forcedColors: 'GrayText'
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonText',
+      isFocused: 'HighlightText',
+      isDisabled: 'GrayText'
     }
   },
   position: 'relative',
@@ -190,10 +200,11 @@ export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> &
     default: 'default',
     isLink: 'pointer'
   },
-  transition: 'default'
+  transition: 'default',
+  forcedColorAdjust: 'none'
 }, getAllowedOverrides());
 
-export let checkmark = style({
+export let checkmark = style<{isSelected: boolean, isFocused: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
   visibility: {
     default: 'hidden',
     isSelected: 'visible'
@@ -204,7 +215,10 @@ export let checkmark = style({
     type: 'fill',
     value: {
       default: 'currentColor',
-      forcedColors: 'Highlight'
+      forcedColors: {
+        default: 'Highlight',
+        isFocused: 'HighlightText'
+      }
     }
   },
   marginEnd: 'text-to-control',
@@ -262,7 +276,7 @@ export let label = style<{size: string}>({
   marginTop: '--labelPadding'
 });
 
-export let description = style({
+export let description = style<{size: 'S' | 'M' | 'L' | 'XL', isFocused: boolean, isDisabled: boolean}>({
   gridArea: 'description',
   font: {
     default: 'ui-sm',
@@ -278,7 +292,10 @@ export let description = style({
     // Ideally this would use the same token as hover, but we don't have access to that here.
     // TODO: should we always consider isHovered and isFocused to be the same thing?
     isFocused: 'gray-800',
-    isDisabled: 'disabled'
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'inherit'
+    }
   },
   transition: 'default'
 });
@@ -288,7 +305,7 @@ let value = style({
   marginStart: 8
 });
 
-let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean}>({
+let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean, isFocused: boolean}>({
   gridArea: 'keyboard',
   marginStart: 8,
   font: 'ui',
@@ -297,7 +314,7 @@ let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean}>({
     default: 'gray-600',
     isDisabled: 'disabled',
     forcedColors: {
-      isDisabled: 'GrayText'
+      default: 'inherit'
     }
   },
   unicodeBidi: 'plaintext'
@@ -305,10 +322,24 @@ let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean}>({
 
 let descriptor = style({
   gridArea: 'descriptor',
+  placeSelf: 'end',
   marginStart: 8,
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
+  }
+});
+
+let descriptorIcon = style<{size: 'S' | 'M' | 'L' | 'XL'}>({
+  marginEnd: 0,
+  display: 'block',
+  size: {
+    size: {
+      S: 16,
+      M: 20,
+      L: 24,
+      XL: 26
+    }
   }
 });
 
@@ -319,6 +350,12 @@ let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu
 });
 
 let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'> | null>(null);
+let UnavailableContext = createContext(false);
+
+let wrappingDiv = style({
+  display: 'flex',
+  size: 'full'
+});
 
 /**
  * Menus display a list of actions or options that a user can choose.
@@ -350,7 +387,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
           }],
           [TextContext, {
             slots: {
-              'description': {styles: description({size})}
+              'description': {styles: description({size, isFocused: false, isDisabled: false})}
             }
           }],
           [InPopoverContext, false]
@@ -366,14 +403,16 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
 
   if (isPopover) {
     return (
-      <PopoverBase
+      <Popover
         ref={ref}
-        hideArrow
-        UNSAFE_style={UNSAFE_style}
-        UNSAFE_className={UNSAFE_className}
-        styles={styles}>
-        {content}
-      </PopoverBase>
+        padding="none"
+        hideArrow>
+        <div
+          style={UNSAFE_style}
+          className={(UNSAFE_className || '') + wrappingDiv}>
+          {content}
+        </div>
+      </Popover>
     );
   }
 
@@ -402,7 +441,8 @@ export function Divider(props: SeparatorProps): ReactNode {
   );
 }
 
-export interface MenuSectionProps<T extends object> extends Omit<AriaMenuSectionProps<T>, keyof GlobalDOMAttributes> {}
+export interface MenuSectionProps<T extends object> extends Omit<AriaMenuSectionProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes> {}
+
 export function MenuSection<T extends object>(props: MenuSectionProps<T>): ReactNode {
   // remember, context doesn't work if it's around Section nor inside
   let {size} = useContext(InternalMenuContext);
@@ -418,7 +458,7 @@ export function MenuSection<T extends object>(props: MenuSectionProps<T>): React
   );
 }
 
-export interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
+export interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className' | 'render' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The contents of the item.
    */
@@ -439,6 +479,33 @@ const linkIconSize = {
   XL: 'XL'
 } as const;
 
+interface UnavailableIconWrapperProps {
+  direction: 'ltr' | 'rtl',
+  size: 'S' | 'M' | 'L' | 'XL',
+  id?: string
+}
+
+function UnavailableIconWrapper(props: UnavailableIconWrapperProps) {
+  let {direction, size, id} = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+
+  return (
+    <div slot="descriptor" className={mergeStyles(descriptor, style({marginBottom: fontRelative(-1)}))} id={id}>
+      <Provider values={[[IconContext, {slots: {icon: {styles: descriptorIcon({size})}}}]]}>
+        <InfoCircleIcon
+          aria-label={stringFormatter.format('menu.unavailable')}
+          className={style({
+            scaleX: {
+              direction: {
+                rtl: -1
+              }
+            }
+          })({direction})} />
+      </Provider>
+    </div>
+  );
+}
+
 export function MenuItem(props: MenuItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
@@ -446,9 +513,13 @@ export function MenuItem(props: MenuItemProps): ReactNode {
   let {size, hideLinkOutIcon} = useContext(InternalMenuContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
+  let isUnavailable = useContext(UnavailableContext);
+  let infoIconId = useId();
+
   return (
     <AriaMenuItem
       {...props}
+      aria-describedby={isUnavailable ? infoIconId : undefined}
       textValue={textValue}
       ref={ref}
       style={pressScale(ref, props.UNSAFE_style)}
@@ -456,6 +527,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
       {(renderProps) => {
         let {children} = props;
         let checkboxRenderProps = {...renderProps, size, isFocused: false, isFocusVisible: false, isIndeterminate: false, isReadOnly: false, isInvalid: false, isRequired: false};
+        let isFocused = (renderProps.hasSubmenu && renderProps.isOpen) || renderProps.isFocused;
         return (
           <>
             <Provider
@@ -470,11 +542,11 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                   slots: {
                     [DEFAULT_SLOT]: {styles: label({size})},
                     label: {styles: label({size})},
-                    description: {styles: description({...renderProps, size})},
+                    description: {styles: description({...renderProps, size, isFocused})},
                     value: {styles: value}
                   }
                 }],
-                [KeyboardContext, {styles: keyboard({size, isDisabled: renderProps.isDisabled})}],
+                [KeyboardContext, {styles: keyboard({...renderProps, size, isFocused})}],
                 [ImageContext, {styles: image({size})}]
               ]}>
               {renderProps.selectionMode === 'single' && !renderProps.hasSubmenu && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
@@ -498,17 +570,21 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                 </div>
               )}
               {renderProps.hasSubmenu && (
-                <div slot="descriptor" className={descriptor}>
-                  <ChevronRightIcon
-                    size={size}
-                    className={style({
-                      scaleX: {
-                        direction: {
-                          rtl: -1
-                        }
-                      }
-                    })({direction})} />
-                </div>
+                isUnavailable
+                  ? <UnavailableIconWrapper direction={direction} size={size} id={infoIconId} />
+                  : (
+                    <div slot="descriptor" className={descriptor}>
+                      <ChevronRightIcon
+                        size={size}
+                        className={style({
+                          scaleX: {
+                            direction: {
+                              rtl: -1
+                            }
+                          }
+                        })({direction})} />
+                    </div>
+                  )
               )}
             </Provider>
           </>
@@ -563,11 +639,13 @@ function MenuTrigger(props: MenuTriggerProps): ReactNode {
         shouldFlip: props.shouldFlip
       }}>
       <PopoverContext.Provider value={{hideArrow: true, offset: 8, crossOffset: 0, placement, shouldFlip}}>
-        <AriaMenuTrigger {...props}>
-          <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
-            {props.children}
-          </PressResponder>
-        </AriaMenuTrigger>
+        <InPopoverContext.Provider value={false}>
+          <AriaMenuTrigger {...props}>
+            <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
+              {props.children}
+            </PressResponder>
+          </AriaMenuTrigger>
+        </InPopoverContext.Provider>
       </PopoverContext.Provider>
     </InternalMenuTriggerContext.Provider>
   );
@@ -582,14 +660,44 @@ function SubmenuTrigger(props: SubmenuTriggerProps): JSX.Element {
   return (
     <AriaSubmenuTrigger {...props}>
       {props.children[0]}
-      <PopoverContext.Provider value={{hideArrow: true, offset: -2, crossOffset: -9, placement: 'end top'}}>
+      <PopoverContext.Provider value={{hideArrow: true, offset: -2, crossOffset: -8, placement: 'end top'}}>
         {props.children[1]}
       </PopoverContext.Provider>
     </AriaSubmenuTrigger>
   );
 }
 
-export {MenuTrigger, SubmenuTrigger};
+export interface UnavailableMenuItemTriggerProps {
+  /**
+   * The contents of the UnavailableMenuItemTrigger. The first child should be a MenuItem and the second child be a ContextualHelpPopover.
+   */
+  children: ReactElement[],
+  /**
+   * Whether the menu item is currently unavailable.
+   * @default false
+   */
+  isUnavailable?: boolean
+}
+
+function UnavailableMenuItemTrigger(props: UnavailableMenuItemTriggerProps): JSX.Element {
+  let {isUnavailable = false, children} = props;
+  if (isUnavailable) {
+    return (
+      <UnavailableContext.Provider value={isUnavailable}>
+        <AriaSubmenuTrigger>
+          {children[0]}
+          <PopoverContext.Provider value={{hideArrow: true, offset: -2, crossOffset: -8, placement: 'end top'}}>
+            {children[1]}
+          </PopoverContext.Provider>
+        </AriaSubmenuTrigger>
+      </UnavailableContext.Provider>
+    );
+  }
+
+  return children[0] as JSX.Element;
+}
+
+export {MenuTrigger, SubmenuTrigger, UnavailableMenuItemTrigger};
 
 // This is purely so that storybook generates the types for both Menu and MenuTrigger
 interface ICombined<T extends object> extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {}

@@ -12,9 +12,22 @@
 
 import {AriaSelectProps, HiddenSelect, useFocusRing, useListFormatter, useLocalizedStringFormatter, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  Provider,
+  RACValidation,
+  removeDataAttributes,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot,
+  useSlottedContext
+} from './utils';
 import {Collection, Node, SelectState, useSelectState} from 'react-stately';
 import {CollectionBuilder, createHideableComponent} from '@react-aria/collections';
-import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
@@ -65,6 +78,11 @@ export interface SelectRenderProps {
 }
 
 export interface SelectProps<T extends object = {}, M extends SelectionMode = 'single'> extends Omit<AriaSelectProps<T, M>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Select'
+   */
+  className?: ClassNameOrFunction<SelectRenderProps>,
   /**
    * Temporary text that occupies the select when it is empty.
    * @default 'Select an item' (localized)
@@ -205,7 +223,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         }],
         [FieldErrorContext, validation]
       ]}>
-      <div
+      <dom.div
         {...mergeProps(DOMProps, renderProps, focusProps)}
         ref={ref}
         slot={props.slot || undefined}
@@ -219,7 +237,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         <HiddenSelect
           {...hiddenSelectProps}
           autoComplete={props.autoComplete} />
-      </div>
+      </dom.div>
     </Provider>
   );
 }
@@ -243,7 +261,13 @@ export interface SelectValueRenderProps<T> {
   state: SelectState<T, 'single' | 'multiple'>
 }
 
-export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps<T>> {}
+export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps<T>, 'span'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-SelectValue'
+   */
+  className?: ClassNameOrFunction<SelectValueRenderProps<T>>
+}
 
 export const SelectValueContext = createContext<ContextValue<SelectValueProps<any>, HTMLSpanElement>>(null);
 
@@ -322,11 +346,11 @@ export const SelectValue = /*#__PURE__*/ createHideableComponent(function Select
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <span ref={ref} {...DOMProps} {...renderProps} data-placeholder={state.selectedItems.length === 0 || undefined}>
+    <dom.span ref={ref} {...DOMProps} {...renderProps} data-placeholder={state.selectedItems.length === 0 || undefined}>
       {/* clear description and error message slots */}
       <TextContext.Provider value={undefined}>
         {renderProps.children}
       </TextContext.Provider>
-    </span>
+    </dom.span>
   );
 });

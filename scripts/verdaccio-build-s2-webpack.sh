@@ -34,6 +34,7 @@ echo 'build Spectrum 2 + Webpack test app'
 cd examples/s2-webpack-5-example
 yarn config set npmRegistryServer $registry
 yarn install --no-immutable
+yarn up @react-spectrum/s2
 yarn build
 mv dist ../../$verdaccio_path/s2-webpack-5-example
 

@@ -21,6 +21,7 @@ import {
   ComboBoxStateContext,
   ContextValue,
   InputContext,
+  InputProps,
   ListBox,
   ListBoxItem,
   ListBoxItemProps,
@@ -32,9 +33,10 @@ import {
   SectionProps,
   Virtualizer
 } from 'react-aria-components';
-import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
+import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SingleSelection, SpectrumLabelableProps} from '@react-types/shared';
+import {AvatarContext} from './Avatar';
 import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
-import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
@@ -49,6 +51,7 @@ import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
@@ -59,7 +62,7 @@ import intlMessages from '../intl/*.json';
 import {mergeRefs, useResizeObserver, useSlotId} from '@react-aria/utils';
 import {Node} from 'react-stately';
 import {Placement} from 'react-aria';
-import {PopoverBase} from './Popover';
+import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {TextFieldRef} from '@react-types/textfield';
@@ -76,14 +79,16 @@ export interface ComboboxStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 export interface ComboBoxProps<T extends object> extends
-  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'defaultFilter' | 'allowsEmptyCollection' | keyof GlobalDOMAttributes>,
+  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'render' | 'defaultFilter' | 'allowsEmptyCollection' | 'selectionMode' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange' | 'value' | 'defaultValue' | 'onChange' | keyof GlobalDOMAttributes>,
+  Omit<SingleSelection, 'disallowEmptySelection'>,
   ComboboxStyleProps,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps,
   Pick<ListBoxProps<T>, 'items' | 'dependencies'>,
   Pick<AriaPopoverProps, 'shouldFlip'>,
-  Pick<AsyncLoadable, 'onLoadMore'>  {
+  Pick<AsyncLoadable, 'onLoadMore'>,
+  Pick<InputProps, 'placeholder'>  {
     /** The contents of the collection. */
     children: ReactNode | ((item: T) => ReactNode),
     /**
@@ -304,6 +309,11 @@ const dividerStyle = style({
   width: 'full'
 });
 
+const avatar = style({
+  gridArea: 'icon',
+  marginEnd: 'text-to-visual'
+});
+
 // Not from any design, just following the sizing of the existing rows
 export const LOADER_ROW_HEIGHTS = {
   S: {
@@ -359,9 +369,16 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
   );
 });
 
-export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
+export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'render' | 'onClick' | 'onKeyDown' | 'onKeyUp' | keyof GlobalDOMAttributes>, StyleProps {
   children: ReactNode
 }
+
+const avatarSize = {
+  S: 16,
+  M: 20,
+  L: 22,
+  XL: 26
+} as const;
 
 const checkmarkIconSize = {
   S: 'XS',
@@ -392,6 +409,11 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
                     icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
                   }
                 }],
+                [AvatarContext, {
+                  slots: {
+                    avatar: {size: avatarSize[size], styles: avatar}
+                  }
+                }],
                 [TextContext, {
                   slots: {
                     label: {styles: label({size})},
@@ -399,7 +421,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
                   }
                 }]
               ]}>
-              {!isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
+              {!isLink && !props.onAction && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
             </Provider>
           </>
@@ -478,7 +500,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
   }
 
   let triggerRef = useRef<HTMLDivElement>(null);
-    // Make menu width match input + button
+  // Make menu width match input + button
   let [triggerWidth, setTriggerWidth] = useState<string | null>(null);
   let onResize = useCallback(() => {
     if (triggerRef.current) {
@@ -643,57 +665,62 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           description={descriptionMessage}>
           {errorMessage}
         </HelpText>
-        <PopoverBase
+        <Popover
           hideArrow
           triggerRef={triggerRef}
           offset={menuOffset}
           placement={`${direction} ${align}` as Placement}
           shouldFlip={shouldFlip}
           UNSAFE_style={{
-            width: menuWidth ? `${menuWidth}px` : undefined,
-            // manually subtract border as we can't set Popover to border-box, it causes the contents to spill out
-            '--trigger-width': `calc(${triggerWidth} - 2px)`
+            '--trigger-width': (menuWidth ? menuWidth + 'px' : triggerWidth)
           } as CSSProperties}
+          padding="none"
           styles={style({
             minWidth: '--trigger-width',
             width: '--trigger-width'
           })}>
-          <Provider
-            values={[
-              [HeaderContext, {styles: listboxHeader({size})}],
-              [HeadingContext, {
-                // @ts-ignore
-                role: 'presentation',
-                styles: sectionHeading
-              }],
-              [TextContext, {
-                slots: {
-                  'description': {styles: description({size})}
-                }
-              }]
-            ]}>
-            <Virtualizer
-              layout={ListLayout}
-              layoutOptions={{
-                estimatedRowHeight: 32,
-                padding: 8,
-                estimatedHeadingHeight: 50,
-                loaderHeight: LOADER_ROW_HEIGHTS[size][scale]
-              }}>
-              <ListBox
-                dependencies={props.dependencies}
-                renderEmptyState={() => (
-                  <span className={emptyStateText({size})}>
-                    {loadingState === 'loading' ? stringFormatter.format('table.loading') : stringFormatter.format('combobox.noResults')}
-                  </span>
-                )}
-                items={items}
-                className={listbox({size})}>
-                {renderer}
-              </ListBox>
-            </Virtualizer>
-          </Provider>
-        </PopoverBase>
+          <div
+            className={style({
+              display: 'flex',
+              size: 'full'
+            })}>
+            <Provider
+              values={[
+                [HeaderContext, {styles: listboxHeader({size})}],
+                [HeadingContext, {
+                  // @ts-ignore
+                  role: 'presentation',
+                  styles: sectionHeading
+                }],
+                [TextContext, {
+                  slots: {
+                    'description': {styles: description({size, isFocused: false, isDisabled: false})}
+                  }
+                }]
+              ]}>
+              <Virtualizer
+                layout={ListLayout}
+                layoutOptions={{
+                  estimatedRowHeight: 32,
+                  padding: 8,
+                  estimatedHeadingHeight: 50,
+                  loaderHeight: LOADER_ROW_HEIGHTS[size][scale]
+                }}>
+                <ListBox
+                  dependencies={props.dependencies}
+                  renderEmptyState={() => (
+                    <span className={emptyStateText({size})}>
+                      {loadingState === 'loading' ? stringFormatter.format('table.loading') : stringFormatter.format('combobox.noResults')}
+                    </span>
+                  )}
+                  items={items}
+                  className={listbox({size})}>
+                  {renderer}
+                </ListBox>
+              </Virtualizer>
+            </Provider>
+          </div>
+        </Popover>
       </InternalComboboxContext.Provider>
     </>
   );

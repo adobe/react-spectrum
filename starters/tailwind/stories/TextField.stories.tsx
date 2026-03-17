@@ -11,7 +11,8 @@ const meta: Meta<typeof TextField> = {
   },
   tags: ['autodocs'],
   args: {
-    label: 'Name'
+    label: 'Name',
+    placeholder: 'Enter your full name'
   }
 };
 

@@ -43,15 +43,23 @@ export interface WaterfallLayoutOptions {
    * The thickness of the drop indicator.
    * @default 2
    */
-  dropIndicatorThickness?: number
+  dropIndicatorThickness?: number,
+  /**
+   * The fixed height of a loader element in px. This loader is specifically for
+   * "load more" elements rendered when loading more rows at the root level or inside nested row/sections.
+   * @default 48
+   */
+  loaderHeight?: number
 }
 
 class WaterfallLayoutInfo extends LayoutInfo {
   column = 0;
+  index = 0;
 
   copy(): WaterfallLayoutInfo {
     let res = super.copy() as WaterfallLayoutInfo;
     res.column = this.column;
+    res.index = this.index;
     return res;
   }
 }
@@ -62,7 +70,8 @@ const DEFAULT_OPTIONS = {
   minSpace: new Size(18, 18),
   maxSpace: Infinity,
   maxColumns: Infinity,
-  dropIndicatorThickness: 2
+  dropIndicatorThickness: 2,
+  loaderHeight: 48
 };
 
 export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions = WaterfallLayoutOptions> extends Layout<Node<T>, O> implements LayoutDelegate, DropTargetDelegate {
@@ -78,7 +87,8 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
       || (!(newOptions.minItemSize || DEFAULT_OPTIONS.minItemSize).equals(oldOptions.minItemSize || DEFAULT_OPTIONS.minItemSize))
       || (!(newOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize).equals(oldOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize))
       || (!(newOptions.minSpace || DEFAULT_OPTIONS.minSpace).equals(oldOptions.minSpace || DEFAULT_OPTIONS.minSpace))
-      || (newOptions.maxHorizontalSpace !== oldOptions.maxHorizontalSpace);
+      || (newOptions.maxHorizontalSpace !== oldOptions.maxHorizontalSpace)
+      || newOptions.loaderHeight !== oldOptions.loaderHeight;
   }
 
   update(invalidationContext: InvalidationContext<O>): void {
@@ -88,7 +98,8 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
       minSpace = DEFAULT_OPTIONS.minSpace,
       maxHorizontalSpace = DEFAULT_OPTIONS.maxSpace,
       maxColumns = DEFAULT_OPTIONS.maxColumns,
-      dropIndicatorThickness = DEFAULT_OPTIONS.dropIndicatorThickness
+      dropIndicatorThickness = DEFAULT_OPTIONS.dropIndicatorThickness,
+      loaderHeight = DEFAULT_OPTIONS.loaderHeight
     } = invalidationContext.layoutOptions || {};
     this.dropIndicatorThickness = dropIndicatorThickness;
     let visibleWidth = this.virtualizer!.visibleRect.width;
@@ -123,18 +134,19 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
     // Setup an array of column heights
     let columnHeights = Array(numColumns).fill(minSpace.height);
     let newLayoutInfos = new Map();
+    let index = 0;
     let addNode = (key: Key, node: Node<T>) => {
       let oldLayoutInfo = this.layoutInfos.get(key);
       let height = itemHeight;
       let estimatedSize = true;
       if (oldLayoutInfo) {
-        height = oldLayoutInfo.rect.height;
+        height = oldLayoutInfo.rect.height / oldLayoutInfo.rect.width * itemWidth;
         estimatedSize = invalidationContext.sizeChanged || oldLayoutInfo.estimatedSize || oldLayoutInfo.content !== node;
       }
 
       // Figure out which column to place the item in, and compute its position.
       // Preserve the previous column index so items don't jump around during resizing unless the number of columns changed.
-      let prevColumn = numColumns === this.numColumns && oldLayoutInfo && oldLayoutInfo.rect.y < this.virtualizer!.visibleRect.maxY ? oldLayoutInfo.column : undefined;
+      let prevColumn = numColumns === this.numColumns && oldLayoutInfo && oldLayoutInfo.index === index && oldLayoutInfo.rect.y < this.virtualizer!.visibleRect.maxY ? oldLayoutInfo.column : undefined;
       let column = prevColumn ?? columnHeights.reduce((minIndex, h, i) => h < columnHeights[minIndex] ? i : minIndex, 0);
       let x = horizontalSpacing + column * (itemWidth + horizontalSpacing) + this.margin;
       let y = columnHeights[column];
@@ -145,6 +157,7 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
       layoutInfo.allowOverflow = true;
       layoutInfo.content = node;
       layoutInfo.column = column;
+      layoutInfo.index = index++;
       newLayoutInfos.set(key, layoutInfo);
 
       columnHeights[column] += layoutInfo.rect.height + minSpace.height;
@@ -170,19 +183,27 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
       }
     }
 
-    // Always add the loader sentinel if present in the collection so we can make sure it is never virtualized out.
-    // Add it under the first column for simplicity
-    let lastNode = collection.getItem(collection.getLastKey()!);
-    if (lastNode?.type === 'loader') {
-      let rect = new Rect(horizontalSpacing, columnHeights[0], itemWidth, 0);
-      let layoutInfo = new LayoutInfo('loader', lastNode.key, rect);
-      newLayoutInfos.set(lastNode.key, layoutInfo);
-    }
-
     // Reset all columns to the maximum for the next section. If loading, set to 0 so virtualizer doesn't render its body since there aren't items to render,
     // except if we are performing skeleton loading
     let isEmptyOrLoading = collection?.size === 0 && collection.getItem(collection.getFirstKey()!)?.type !== 'skeleton';
     let maxHeight = isEmptyOrLoading ? 0 : Math.max(...columnHeights);
+
+    // Always add the loader sentinel if present in the collection so we can make sure it is never virtualized out.
+    // Add it under the first column for simplicity
+    let lastNode = collection.getItem(collection.getLastKey()!);
+    if (lastNode?.type === 'loader') {
+      if (skeletonCount > 0 || !lastNode.props.isLoading) {
+        loaderHeight = 0;
+      }
+      const loaderWidth = visibleWidth - horizontalSpacing * 2;
+      // Note that if the user provides isLoading to their sentinel during a case where they only want to render the emptyState, this will reserve
+      // room for the loader alongside rendering the emptyState
+      let rect = new Rect(horizontalSpacing, maxHeight, loaderWidth, loaderHeight);
+      let layoutInfo = new LayoutInfo('loader', lastNode.key, rect);
+      newLayoutInfos.set(lastNode.key, layoutInfo);
+      maxHeight = layoutInfo.rect.maxY;
+    }
+
     this.contentSize = new Size(this.virtualizer!.visibleRect.width, maxHeight);
     this.layoutInfos = newLayoutInfos;
     this.numColumns = numColumns;

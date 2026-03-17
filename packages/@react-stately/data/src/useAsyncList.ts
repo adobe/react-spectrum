@@ -181,7 +181,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
         case 'filtering':
           // We're already loading, and another load was triggered at the same time.
           // We need to abort the previous load and start a new one.
-          data.abortController?.abort();
+          data.abortController?.abort('aborting current load and starting new one');
           return {
             ...data,
             filterText: action.filterText ?? data.filterText,

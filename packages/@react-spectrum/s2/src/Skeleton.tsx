@@ -22,7 +22,7 @@ export function useLoadingAnimation(isAnimating: boolean): (element: HTMLElement
   let animationRef = useRef<Animation | null>(null);
   let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   return useCallback((element: HTMLElement | null) => {
-    if (isAnimating && !animationRef.current && element && !reduceMotion) {
+    if (isAnimating && !animationRef.current && element && !reduceMotion && typeof element.animate === 'function') {
       // Use web animation API instead of CSS animations so that we can
       // synchronize it between all loading elements on the page (via startTime).
       animationRef.current = element.animate(
@@ -41,7 +41,7 @@ export function useLoadingAnimation(isAnimating: boolean): (element: HTMLElement
       animationRef.current.cancel();
       animationRef.current = null;
     }
-  }, [isAnimating]);
+  }, [isAnimating, reduceMotion]);
 }
 
 export type SkeletonElement = ReactElement<{

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ActionGroup, Flex, Heading, Text} from '@adobe/react-spectrum';
 import Bookmark from '@spectrum-icons/workflow/Bookmark';
 import {Button} from '@react-spectrum/button';
@@ -374,10 +374,10 @@ ChangingTabTitles.story = {
   name: 'changing tab titles'
 };
 
-export const ChangingSelectionProgramatically: TabsStory = () => <ControlledSelection />;
+export const ChangingSelectionProgrammatically: TabsStory = () => <ControlledSelection />;
 
-ChangingSelectionProgramatically.story = {
-  name: 'changing selection programatically'
+ChangingSelectionProgrammatically.story = {
+  name: 'changing selection programmatically'
 };
 
 export const Links: StoryFn<SpectrumTabsProps<unknown> & {collapsed?: boolean}> = (args) => {

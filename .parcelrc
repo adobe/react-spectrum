@@ -11,6 +11,7 @@
     "*.{md,mdx}": ["parcel-transformer-mdx-docs"],
     "*.svg": ["@parcel/transformer-svg-react"],
     "packages/@react-aria/example-theme/**/*.css": ["@parcel/transformer-css"],
+    "starters/docs/src/*.css": ["@parcel/transformer-css"],
     "*.css": ["...", "parcel-transformer-css-env"],
     "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
       "@parcel/transformer-js",

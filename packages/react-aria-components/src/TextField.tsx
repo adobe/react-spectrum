@@ -11,10 +11,24 @@
  */
 
 import {AriaTextFieldProps, useTextField} from 'react-aria';
-import {ContextValue, DOMProps, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  DOMProps,
+  Provider,
+  RACValidation,
+  removeDataAttributes,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot,
+  useSlottedContext
+} from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
-import {FieldInputContext} from './context';
+import {FieldInputContext} from './RSPContexts';
 import {filterDOMProps} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {GlobalDOMAttributes} from '@react-types/shared';
@@ -48,7 +62,12 @@ export interface TextFieldRenderProps {
   isRequired: boolean
 }
 
-export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, Omit<DOMProps, 'style' | 'className' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, Omit<DOMProps, 'style' | 'className' | 'render' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-TextField'
+   */
+  className?: ClassNameOrFunction<TextFieldRenderProps>,
   /** Whether the value is invalid. */
   isInvalid?: boolean
 }
@@ -99,7 +118,7 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
   delete DOMProps.id;
 
   return (
-    <div
+    <dom.div
       {...DOMProps}
       {...renderProps}
       ref={ref}
@@ -124,6 +143,6 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
         ]}>
         {renderProps.children}
       </Provider>
-    </div>
+    </dom.div>
   );
 });

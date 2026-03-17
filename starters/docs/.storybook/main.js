@@ -8,27 +8,10 @@ function getAbsolutePath(value) {
   return dirname(require.resolve(join(value, "package.json")));
 }
 
-const excludedProps = new Set([
-  'id',
-  'slot',
-  'onCopy',
-  'onCut',
-  'onPaste',
-  'onCompositionStart',
-  'onCompositionEnd',
-  'onCompositionUpdate',
-  'onSelect',
-  'onBeforeInput',
-  'onInput'
-]);
-
 /** @type { import('@storybook/react-webpack5').StorybookConfig } */
 const config = {
   stories: ["../stories/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: [
-    getAbsolutePath("@storybook/addon-essentials"),
-    getAbsolutePath("@storybook/addon-links"),
-    getAbsolutePath("@storybook/addon-interactions"),
     getAbsolutePath("@storybook/addon-webpack5-compiler-babel"),
   ],
   framework: {
@@ -46,7 +29,7 @@ const config = {
         allowSyntheticDefaultImports: false,
         esModuleInterop: false,
       },
-      propFilter: (prop) => !prop.name.startsWith('aria-') && !excludedProps.has(prop.name),
+      propFilter: (prop) => !/^aria-|on[A-Z]/.test(prop.name)
     },
   },
   async webpackFinal(config) {

@@ -86,7 +86,7 @@ import {ChevronRight} from 'lucide-react';
   }
 
   .react-aria-Heading {
-    margin-bottom: 0;
+    margin: 0;
   }
 
   &[data-expanded] .react-aria-Button[slot=trigger] svg {
@@ -99,6 +99,10 @@ import {ChevronRight} from 'lucide-react';
   height: var(--disclosure-panel-height);
   transition: height 250ms;
   overflow: clip;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }
 ```
 
@@ -211,7 +215,7 @@ In some use cases, you may want to add an interactive element, like a button, ad
 
 ```tsx example
 <Disclosure>
-  <div style={{display: 'flex', alignItems: 'center'}}>
+  <div style={{display: 'flex', alignItems: 'center', gap: 16}}>
     <Heading>
       <Button slot="trigger">
         <ChevronRight size={18} />

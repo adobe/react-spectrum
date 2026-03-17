@@ -42,7 +42,7 @@ import {useHasTabbableChild} from '@react-aria/focus';
 import {useLocale} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, UnsafeStyles {
+export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the tabs. */
@@ -60,17 +60,17 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
   labelBehavior?: 'show' | 'hide'
 }
 
-export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
+export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className' | 'render' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /** The content to display in the tab. */
   children: ReactNode
 }
 
-export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className' | 'aria-label' | 'aria-labelledby' | keyof GlobalDOMAttributes>, StyleProps {
+export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className' | 'render' | 'aria-label' | 'aria-labelledby' | keyof GlobalDOMAttributes>, StyleProps {
   /** The content to display in the tablist. */
   children: ReactNode | ((item: T) => ReactNode)
 }
 
-export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>, UnsafeStyles {
+export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the tab panels. */
@@ -216,7 +216,7 @@ export function TabList<T extends object>(props: TabListProps<T>): ReactNode | n
   if (showTabs) {
     return <TabListInner {...props} />;
   }
-  
+
   return (
     <div className={tablistWrapper(null, props.styles)}>
       {listRef && <div className={tablist({orientation, labelBehavior, density})}>
@@ -448,7 +448,11 @@ const tabPanel = style({
   marginTop: 4,
   color: 'gray-800',
   flexGrow: 1,
-  minHeight: 0
+  minHeight: 0,
+  display: {
+    default: 'block',
+    isInert: 'none'
+  }
 }, getAllowedOverrides({height: true}));
 
 export function TabPanel(props: TabPanelProps): ReactNode | null {
@@ -472,7 +476,7 @@ export function TabPanel(props: TabPanelProps): ReactNode | null {
 
 function CollapsedTabPanel(props: TabPanelProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {UNSAFE_style, UNSAFE_className = '', id, ...otherProps} = props;
+  let {UNSAFE_style, UNSAFE_className = '', id, shouldForceMount, ...otherProps} = props;
   let {menuId, valueId} = useContext(CollapseContext);
   let ref = useRef(null);
   let tabIndex = useHasTabbableChild(ref) ? undefined : 0;
@@ -628,7 +632,8 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
   let children = useMemo(() => [...collection], [collection]);
 
   let listRef = useRef<HTMLDivElement | null>(null);
-  let updateOverflow = useEffectEvent(() => {
+
+  let updateOverflow = () => {
     if (orientation === 'vertical' || !listRef.current || !containerRef?.current) {
       return;
     }
@@ -642,29 +647,30 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
     } else {
       setShowItems?.(lastTabRect.left >= containerRect.left);
     }
-  });
+  };
+
+  let updateOverflowEffect = useEffectEvent(updateOverflow);
 
   useResizeObserver({ref: containerRef, onResize: updateOverflow});
 
   useLayoutEffect(() => {
     if (collection.size > 0) {
-      queueMicrotask(updateOverflow);
+      queueMicrotask(updateOverflowEffect);
     }
-  }, [collection.size, updateOverflow]);
+  }, [collection.size]);
 
   // start with null so that the first render won't have a flicker
   let prevOrientation = useRef<Orientation | null>(null);
   useLayoutEffect(() => {
     if (collection.size > 0 && prevOrientation.current !== orientation) {
-      updateOverflow();
+      updateOverflowEffect();
     }
     prevOrientation.current = orientation;
-  }, [collection.size, updateOverflow, orientation]);
+  }, [collection.size, orientation]);
 
   useEffect(() => {
     // Recalculate visible tags when fonts are loaded.
-    document.fonts?.ready.then(() => updateOverflow());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    document.fonts?.ready.then(() => updateOverflowEffect());
   }, []);
 
   let menuId = useId();
@@ -675,6 +681,7 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
     contents = (
       <RACTabs
         {...props}
+        className=""
         style={{display: 'contents'}}>
         {props.children}
       </RACTabs>

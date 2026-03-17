@@ -166,30 +166,6 @@ let props = {isQuiet: true};
 </div>
 `);
 
-test('Removes placeholder', `
-import {ComboBox, Item} from '@adobe/react-spectrum';
-let placeholder = 'is this actually removed?';
-let props = {placeholder: 'is this actually removed?'};
-<div>
-  <ComboBox placeholder="is this actually removed?">
-    <Item>Red Panda</Item>
-    <Item>Cat</Item>
-  </ComboBox>
-  <ComboBox placeholder={"is this actually removed?"}>
-    <Item>Red Panda</Item>
-    <Item>Cat</Item>
-  </ComboBox>
-  <ComboBox placeholder={placeholder}>
-    <Item>Red Panda</Item>
-    <Item>Cat</Item>
-  </ComboBox>
-  <ComboBox {...props}>
-    <Item>Red Panda</Item>
-    <Item>Cat</Item>
-  </ComboBox>
-</div>
-`);
-
 test('changes validationState to isInvalid or nothing', `
 import {ComboBox, Item} from '@adobe/react-spectrum';
 let validationState = 'invalid';

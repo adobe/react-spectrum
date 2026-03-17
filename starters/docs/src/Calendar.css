@@ -1,65 +1,69 @@
 @import "./theme.css";
+@import "./utilities.css";
 
 .react-aria-Calendar {
-  width: fit-content;
+  width: calc(var(--spacing-9) * 7);
   max-width: 100%;
+  container-type: inline-size;
   color: var(--text-color);
+  font: var(--font-size) system-ui;
 
   header {
     display: flex;
     align-items: center;
-    margin: 0 4px 0.4375rem 4px;
+    margin: 0 var(--spacing-1) var(--spacing-4) var(--spacing-1);
 
     .react-aria-Heading {
       flex: 1;
       margin: 0;
       text-align: center;
-      font-size: 1.203125rem;
+      font-size: var(--font-size-lg);
     }
   }
 
-  .react-aria-Button[slot=previous],
-  .react-aria-Button[slot=next] {
-    width: 1.75rem;
-    height: 1.75rem;
-    padding: 0;
+  .react-aria-CalendarGrid {
+    border-spacing: 0;
   }
 
   [slot=errorMessage] {
-    font-size: 12px;
+    font: var(--font-size-sm) system-ui;
     color: var(--invalid-color);
   }
 }
 
+
+.react-aria-CalendarHeaderCell {
+  font-size: var(--font-size-sm);
+}
+
 .react-aria-CalendarCell {
-  width: 2.00025rem;
-  line-height: 2.00025rem;
+  --gap: var(--spacing-1);
+  width: calc((100cqw / 7) - var(--gap));
+  aspect-ratio: 1;
+  margin: calc(var(--gap) / 2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size);
   text-align: center;
-  border-radius: 6px;
+  border-radius: 9999px;
   cursor: default;
-  outline: none;
   forced-color-adjust: none;
+  transition: scale 200ms;
+  -webkit-tap-highlight-color: transparent;
+
+  @media (min-resolution: 200dpi) {
+    @container (width < 300px) {
+      --gap: 0px;
+    }
+  }
 
   &[data-outside-month] {
     display: none;
   }
 
   &[data-pressed] {
-    background: var(--gray-100);
-  }
-
-  &[data-focus-visible] {
-    outline: 2px solid var(--focus-ring-color);
-    outline-offset: 2px;
-  }
-
-  &[data-selected] {
-    background: var(--highlight-background);
-    color: var(--highlight-foreground);
-  }
-
-  &[data-disabled] {
-    color: var(--text-color-disabled);
+    scale: 0.9;
   }
 
   &[data-unavailable] {
@@ -68,7 +72,6 @@
   }
 
   &[data-invalid] {
-    background: var(--invalid-color);
-    color: var(--highlight-foreground);
+    --button-color: var(--invalid-color);
   }
 }

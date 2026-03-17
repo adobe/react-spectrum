@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@react-spectrum/s2": "latest",
-    "next": "15.1.7",
+    "next": "15.4.7",
     "react": "19.0.0",
     "react-dom": "19.0.0"
   },
@@ -20,7 +20,7 @@
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
     "eslint": "^8",
-    "eslint-config-next": "15.1.7",
+    "eslint-config-next": "15.4.7",
     "typescript": "^5",
     "unplugin-parcel-macros": "0.1.1"
   },

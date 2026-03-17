@@ -53,6 +53,23 @@ describe('<HiddenSelect />', () => {
     );
   });
 
+  it('should have form value after initial render', async () => {
+    let formRef = React.createRef<HTMLFormElement>();
+    render(
+      <form ref={formRef}>
+        <HiddenSelectExample
+          value="value"
+          hiddenProps={{
+            name: 'select'
+          }}
+          items={[]} />
+      </form>
+    );
+
+    let formData = new FormData(formRef.current!);
+    expect(formData.get('select')).toEqual('value');
+  });
+
   it('should trigger on onSelectionChange when select onchange is triggered (autofill)', async () => {
     const onSelectionChange = jest.fn();
     render(
@@ -65,6 +82,36 @@ describe('<HiddenSelect />', () => {
     const select = screen.getByLabelText('select');
     await user.selectOptions(select, '5');
     expect(onSelectionChange).toBeCalledWith('5');
+  });
+
+  it('should include a non-empty placeholder option for native select markup', () => {
+    render(
+      <HiddenSelectExample
+        label="select"
+        items={makeItems(5)} />
+    );
+
+    let select = screen.getByLabelText('select');
+    let firstOption = select.querySelector('option')!;
+
+    expect(firstOption).toHaveAttribute('value', '');
+    expect(firstOption).toHaveAttribute('label', '\u00A0');
+  });
+
+  it('should submit an empty string when no value is selected', () => {
+    let formRef = React.createRef<HTMLFormElement>();
+    render(
+      <form ref={formRef}>
+        <HiddenSelectExample
+          hiddenProps={{
+            name: 'select'
+          }}
+          items={makeItems(5)} />
+      </form>
+    );
+
+    let formData = new FormData(formRef.current!);
+    expect(formData.get('select')).toEqual('');
   });
 
   it('should always add a data attribute data-a11y-ignore="aria-hidden-focus"', () => {

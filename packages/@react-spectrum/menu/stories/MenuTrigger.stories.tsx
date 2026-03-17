@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {ActionButton} from '@react-spectrum/button';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
@@ -771,6 +771,41 @@ export let MenuItemUnavailable: StoryObj<typeof Menu> = {
       </ContextualHelpTrigger>
       <Item key="3">Three</Item>
       <ContextualHelpTrigger isUnavailable>
+        <Item key="bar" textValue="Four">
+          <Text>Four</Text>
+          <Text slot={'description'}>Shut the door</Text>
+        </Item>
+        <Dialog>
+          <Heading>hello</Heading>
+          <Content>Is it me you're looking for?</Content>
+          <Footer><Link>Learn more</Link></Footer>
+        </Dialog>
+      </ContextualHelpTrigger>
+      <Item key="5">Five</Item>
+    </Menu>
+  )
+};
+
+export let MenuItemUnavailableWithSelection: StoryObj<typeof Menu> = {
+  render: () => render(
+    <Menu selectionMode="multiple">
+      <Item key="1">One</Item>
+      <ContextualHelpTrigger isUnavailable>
+        <Item key="foo">Two</Item>
+        <Dialog>
+          <Heading>hello</Heading>
+          <Content>Is it me you're looking for?</Content>
+        </Dialog>
+      </ContextualHelpTrigger>
+      <ContextualHelpTrigger isUnavailable={false}>
+        <Item key="baz">Two point five</Item>
+        <Dialog>
+          <Heading>hello</Heading>
+          <Content>Is it me you're looking for?</Content>
+        </Dialog>
+      </ContextualHelpTrigger>
+      <Item key="3">Three</Item>
+      <ContextualHelpTrigger isUnavailable={false}>
         <Item key="bar" textValue="Four">
           <Text>Four</Text>
           <Text slot={'description'}>Shut the door</Text>

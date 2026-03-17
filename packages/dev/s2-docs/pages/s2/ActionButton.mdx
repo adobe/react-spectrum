@@ -4,6 +4,9 @@ export default Layout;
 import {ActionButton} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = [];
+export const description = 'Allows a user to perform an action.';
+
 # ActionButton
 
 <PageDescription>{docs.exports.ActionButton.description}</PageDescription>
@@ -11,7 +14,7 @@ import docs from 'docs:@react-spectrum/s2';
 <VisualExample
   component={ActionButton}
   docs={docs.exports.ActionButton}
-  props={['children', 'size', 'staticColor', 'isQuiet', 'isDisabled']}
+  props={['children', 'size', 'staticColor', 'isQuiet', 'isDisabled', 'isPending']}
   initialProps={{children: 'Action'}}
   slots={{icon: true, avatar: true, badge: true}}
   importSource="@react-spectrum/s2"
@@ -39,9 +42,38 @@ function Example() {
 }
 ```
 
+## Pending
+
+Use the `isPending` prop to display a pending state. Pending buttons remain focusable, but are otherwise disabled. After a 1 second delay, an indeterminate spinner will be displayed in place of the button label and icon.
+
+```tsx render
+"use client";
+import {ActionButton} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function PendingButton() {
+  let [isPending, setPending] = useState(false);
+
+  return (
+    <ActionButton
+      ///- begin highlight -///
+      isPending={isPending}
+      ///- end highlight -///
+      onPress={() => {
+        setPending(true);
+        setTimeout(() => {
+          setPending(false);
+        }, 5000);
+      }}>
+      Save
+    </ActionButton>
+  );
+}
+```
+
 ## API
 
-```tsx links={{ActionButton: '#actionbutton', Avatar: 'Avatar.html'}}
+```tsx links={{ActionButton: '#actionbutton', Avatar: 'Avatar', Icon: 'icons', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span'}}
 <ActionButton>
   <Icon /> or <Avatar />
   <Text />

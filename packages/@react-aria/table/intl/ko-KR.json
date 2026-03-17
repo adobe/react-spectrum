@@ -7,5 +7,7 @@
   "resizerDescription": "크기 조정을 시작하려면 Enter를 누르세요.",
   "select": "선택",
   "selectAll": "모두 선택",
-  "sortable": "정렬 가능한 열"
+  "sortable": "정렬 가능한 열",
+  "collapse": "접기",
+  "expand": "펼치기"
 }
