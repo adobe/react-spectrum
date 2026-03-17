@@ -11,7 +11,7 @@
  */
 
 import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
-import {useDescription, useDynamicDescription} from '../src/useDescription';
+import {useDescription} from '../src/useDescription';
 
 describe('useDescription', () => {
   it('should return an id if description is provided', () => {
@@ -56,32 +56,32 @@ describe('useDescription', () => {
   });
 });
 
-describe('useDynamicDescription', () => {
+describe('useDescription with a description key', () => {
   it('should return an id if description is provided', () => {
-    let {result} = renderHook(() => useDynamicDescription('Test description', 'dynamic-1'));
+    let {result} = renderHook(() => useDescription('Test description', 'dynamic-1'));
     expect(result.current['aria-describedby']).toMatch(/^react-aria-description-\d+$/);
   });
 
   it('should return undefined if no description is provided', () => {
-    let {result} = renderHook(() => useDynamicDescription(undefined, 'dynamic-2'));
+    let {result} = renderHook(() => useDescription(undefined, 'dynamic-2'));
     expect(result.current['aria-describedby']).toBeUndefined();
   });
 
   it('should reuse the same id for the same description key', () => {
-    let {result: result1} = renderHook(() => useDynamicDescription('Test description', 'shared-key'));
-    let {result: result2} = renderHook(() => useDynamicDescription('Test description', 'shared-key'));
+    let {result: result1} = renderHook(() => useDescription('Test description', 'shared-key'));
+    let {result: result2} = renderHook(() => useDescription('Test description', 'shared-key'));
     expect(result1.current['aria-describedby']).toBe(result2.current['aria-describedby']);
   });
 
   it('should create a new id for a different description key', () => {
-    let {result: result1} = renderHook(() => useDynamicDescription('Test description', 'dynamic-3'));
-    let {result: result2} = renderHook(() => useDynamicDescription('Test description', 'dynamic-4'));
+    let {result: result1} = renderHook(() => useDescription('Test description', 'dynamic-3'));
+    let {result: result2} = renderHook(() => useDescription('Test description', 'dynamic-4'));
     expect(result1.current['aria-describedby']).not.toBe(result2.current['aria-describedby']);
   });
 
   it('should keep the same id and update text content when description changes for the same key', () => {
     let {result, rerender} = renderHook(
-      ({description}: {description?: string}) => useDynamicDescription(description, 'dynamic-5'),
+      ({description}: {description?: string}) => useDescription(description, 'dynamic-5'),
       {initialProps: {description: 'Test description 1'}}
     );
 
@@ -100,7 +100,7 @@ describe('useDynamicDescription', () => {
 
   it('should keep the same id for the lifetime of the component', () => {
     let {result, rerender} = renderHook(
-      ({description}: {description?: string}) => useDynamicDescription(description, 'dynamic-6'),
+      ({description}: {description?: string}) => useDescription(description, 'dynamic-6'),
       {initialProps: {description: 'Test description'}}
     );
 
@@ -125,8 +125,8 @@ describe('useDynamicDescription', () => {
   });
 
   it('should not clean up if other components are using the same description key', () => {
-    let {result: result1, unmount: unmount1} = renderHook(() => useDynamicDescription('Test description', 'shared-cleanup'));
-    let {unmount: unmount2} = renderHook(() => useDynamicDescription('Test description', 'shared-cleanup'));
+    let {result: result1, unmount: unmount1} = renderHook(() => useDescription('Test description', 'shared-cleanup'));
+    let {unmount: unmount2} = renderHook(() => useDescription('Test description', 'shared-cleanup'));
     let id = result1.current['aria-describedby'];
     expect(document.getElementById(id!)).not.toBeNull();
     unmount1();
@@ -136,7 +136,7 @@ describe('useDynamicDescription', () => {
   });
 
   it('should clean up description node on unmount', () => {
-    let {result, unmount} = renderHook(() => useDynamicDescription('Test description', 'dynamic-7'));
+    let {result, unmount} = renderHook(() => useDescription('Test description', 'dynamic-7'));
     let id = result.current['aria-describedby'];
     expect(document.getElementById(id!)).not.toBeNull();
     unmount();

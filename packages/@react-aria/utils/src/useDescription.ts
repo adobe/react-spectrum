@@ -15,8 +15,20 @@ import {useLayoutEffect} from './useLayoutEffect';
 import {useRef, useState} from 'react';
 
 let descriptionId = 0;
-const descriptionNodes = new Map<string, {refCount: number, element: HTMLElement}>();
-const dynamicDescriptionNodes = new Map<string, {refCount: number, element: HTMLElement}>();
+
+interface DescriptionNode {
+  refCount: number,
+  element: HTMLElement
+}
+
+interface DescriptionSubscription {
+  key: string,
+  node: DescriptionNode,
+  nodes: Map<string, DescriptionNode>
+}
+
+const descriptionNodes = new Map<string, DescriptionNode>();
+const dynamicDescriptionNodes = new Map<string, DescriptionNode>();
 
 function createDescriptionNode(id: string, description: string): HTMLElement {
   let node = document.createElement('div');
@@ -27,106 +39,71 @@ function createDescriptionNode(id: string, description: string): HTMLElement {
   return node;
 }
 
-function getOrCreateDynamicDescriptionNode(descriptionKey: string) {
-  let desc = dynamicDescriptionNodes.get(descriptionKey);
+function getOrCreateDescriptionNode(nodes: Map<string, DescriptionNode>, descriptionKey: string, description: string) {
+  let desc = nodes.get(descriptionKey);
   if (!desc) {
     let id = `react-aria-description-${descriptionId++}`;
-    let node = createDescriptionNode(id, '');
+    let node = createDescriptionNode(id, description);
     desc = {refCount: 0, element: node};
-    dynamicDescriptionNodes.set(descriptionKey, desc);
+    nodes.set(descriptionKey, desc);
   }
 
   return desc;
 }
 
-export function useDescription(description?: string): AriaLabelingProps {
-  let [id, setId] = useState<string | undefined>();
+function cleanupDescriptionSubscription(subscription: DescriptionSubscription, nodeRef: {current: HTMLElement | null}) {
+  if (--subscription.node.refCount === 0) {
+    subscription.node.element.remove();
+    subscription.nodes.delete(subscription.key);
+  }
 
-  useLayoutEffect(() => {
-    if (!description) {
-      return;
-    }
-
-    let desc = descriptionNodes.get(description);
-    if (!desc) {
-      let id = `react-aria-description-${descriptionId++}`;
-      setId(id);
-
-      let node = createDescriptionNode(id, description);
-      desc = {refCount: 0, element: node};
-      descriptionNodes.set(description, desc);
-    } else {
-      setId(desc.element.id);
-    }
-
-    desc.refCount++;
-    return () => {
-      if (desc && --desc.refCount === 0) {
-        desc.element.remove();
-        descriptionNodes.delete(description);
-      }
-    };
-  }, [description]);
-
-  return {
-    'aria-describedby': description ? id : undefined
-  };
+  if (nodeRef.current === subscription.node.element) {
+    nodeRef.current = null;
+  }
 }
 
 /**
- * Provides a stable `aria-describedby` id for descriptions that change over time.
- * Unlike `useDescription`, this shares a hidden element by `descriptionKey`
- * and updates its text content in place so many consumers can reuse one id.
+ * Provides an `aria-describedby` reference to a shared hidden description node.
+ * By default, descriptions are shared by exact text. If `descriptionKey` is provided,
+ * a stable node is shared by key and its text content updates in place as the
+ * description changes.
  */
-export function useDynamicDescription(description: string | undefined, descriptionKey: string): AriaLabelingProps {
+export function useDescription(description: string | undefined, descriptionKey?: string): AriaLabelingProps {
   let [id, setId] = useState<string | undefined>();
-  let subscriptionRef = useRef<{key: string, desc: {refCount: number, element: HTMLElement}} | null>(null);
+  let subscriptionRef = useRef<DescriptionSubscription | null>(null);
   let nodeRef = useRef<HTMLElement | null>(null);
+  let isDynamic = descriptionKey != null;
 
   useLayoutEffect(() => {
     let subscription = subscriptionRef.current;
-    if (subscription && subscription.key !== descriptionKey) {
-      if (--subscription.desc.refCount === 0) {
-        subscription.desc.element.remove();
-        dynamicDescriptionNodes.delete(subscription.key);
-      }
-
+    let key = descriptionKey ?? description;
+    let nodes = isDynamic ? dynamicDescriptionNodes : descriptionNodes;
+    if (subscription && (subscription.key !== key || subscription.nodes !== nodes)) {
+      cleanupDescriptionSubscription(subscription, nodeRef);
       subscriptionRef.current = null;
-      if (nodeRef.current === subscription.desc.element) {
-        nodeRef.current = null;
-      }
       subscription = null;
     }
 
-    if (!subscription && description) {
-      let desc = getOrCreateDynamicDescriptionNode(descriptionKey);
-      desc.refCount++;
-      subscriptionRef.current = {key: descriptionKey, desc};
-      nodeRef.current = desc.element;
-      setId(desc.element.id);
-      desc.element.textContent = description;
+    if (!subscription && description && key) {
+      let node = getOrCreateDescriptionNode(nodes, key, isDynamic ? '' : description);
+      node.refCount++;
+      subscription = {key, node, nodes};
+      subscriptionRef.current = subscription;
+      nodeRef.current = node.element;
+      setId(node.element.id);
     }
-  }, [descriptionKey, description]);
 
-  useLayoutEffect(() => {
-    if (description && nodeRef.current) {
+    if (isDynamic && description && nodeRef.current) {
       nodeRef.current.textContent = description;
     }
-  }, [description]);
+  }, [description, descriptionKey, isDynamic]);
 
   useLayoutEffect(() => {
     return () => {
       let subscription = subscriptionRef.current;
       if (subscription) {
-        if (--subscription.desc.refCount === 0) {
-          subscription.desc.element.remove();
-          dynamicDescriptionNodes.delete(subscription.key);
-        }
-
+        cleanupDescriptionSubscription(subscription, nodeRef);
         subscriptionRef.current = null;
-        if (nodeRef.current === subscription.desc.element) {
-          nodeRef.current = null;
-        }
       }
     };
   }, []);

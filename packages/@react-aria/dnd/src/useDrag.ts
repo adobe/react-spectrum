@@ -15,7 +15,7 @@ import {DragEndEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEve
 import {DragEvent, HTMLAttributes, version as ReactVersion, useEffect, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
-import {getEventTarget, isVirtualClick, isVirtualPointerEvent, useDynamicDescription, useGlobalListeners} from '@react-aria/utils';
+import {getEventTarget, isVirtualClick, isVirtualPointerEvent, useDescription, useGlobalListeners} from '@react-aria/utils';
 import {globalDropEffect, setGlobalAllowedDropOperations, setGlobalDropEffect, useDragModality, writeToDataTransfer} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -310,7 +310,7 @@ export function useDrag(options: DragOptions): DragResult {
   let messageType: 'start' | 'end' = !isDragging ? 'start' : 'end';
   let message = MESSAGES[modality][messageType];
 
-  let descriptionProps = useDynamicDescription(stringFormatter.format(message), DESCRIPTION_KEYS[messageType]);
+  let descriptionProps = useDescription(stringFormatter.format(message), DESCRIPTION_KEYS[messageType]);
 
   let interactions: HTMLAttributes<HTMLElement> = {};
   if (!hasDragButton) {
