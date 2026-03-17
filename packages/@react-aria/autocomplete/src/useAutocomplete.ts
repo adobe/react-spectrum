@@ -110,9 +110,6 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     // don't trigger on touch so that mobile keyboard doesnt appear when tapping on options
     if (!e.isTrusted && shouldUseVirtualFocus && inputRef.current && getActiveElement(getOwnerDocument(inputRef.current)) !== inputRef.current && getPointerType() !== 'touch') {
       inputRef.current.focus();
-      if (inputRef.current instanceof getOwnerWindow(inputRef.current).HTMLInputElement) {
-        inputRef.current.select();
-      }
     }
 
     let target = getEventTarget(e) as Element | null;

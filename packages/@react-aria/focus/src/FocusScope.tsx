@@ -373,6 +373,9 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
       e.preventDefault();
       if (nextElement) {
         focusElement(nextElement, true);
+        if (nextElement instanceof getOwnerWindow(nextElement).HTMLInputElement) {
+          nextElement.select();
+        }
       }
     };
 
