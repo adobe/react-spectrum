@@ -75,7 +75,15 @@ const calendarStyles = style({
   flexDirection: 'column',
   gap: 24,
   width: 'fit',
-  disableTapHighlight: true
+  disableTapHighlight: true,
+  '--cell-gap': {
+    type: 'paddingStart',
+    value: 4
+  },
+  '--cell-min-width': {
+    type: 'width',
+    value: 32
+  }
 }, getAllowedOverrides());
 
 const headerStyles = style({
@@ -119,10 +127,7 @@ const headerCellStyles = style({
 
 const cellStyles = style({
   outlineStyle: 'none',
-  '--cell-gap': {
-    type: 'paddingStart',
-    value: 4
-  },
+  boxSizing: 'content-box',
   paddingStart: {
     default: 4,
     isFirstChild: 0
@@ -140,15 +145,20 @@ const cellStyles = style({
     isLastWeek: 0
   },
   position: 'relative',
-  width: 32,
-  height: 32,
   display: {
     default: 'flex',
     isOutsideMonth: 'none'
   },
   alignItems: 'center',
   justifyContent: 'center',
-  disableTapHighlight: true
+  disableTapHighlight: true,
+  '--cell-min-width': {
+    type: 'width',
+    value: 32
+  },
+  width: '[min(var(--cell-min-width), calc((100cqw / 7) - var(--cell-gap)))]',
+  aspectRatio: 'square',
+  height: 'auto'
 });
 
 const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single' | 'range'}>({
@@ -172,7 +182,7 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
   font: 'body-sm',
   cursor: 'default',
   width: 'full',
-  height: 32,
+  height: 'full',
   borderRadius: 'full',
   display: 'flex',
   alignItems: 'center',
@@ -448,7 +458,20 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                 alignItems: 'start'
               })}>
               {Array.from({length: visibleMonths}).map((_, i) => (
-                <CalendarGrid months={i} key={i} />
+                <div
+                  key={i}
+                  style={{'--visible-months': visibleMonths} as React.CSSProperties}
+                  className={style({
+                    containerType: 'inline-size',
+                    flexGrow: 1,
+                    flexShrink: 0,
+                    flexBasis: '0%',
+                    minWidth: 0,
+                    width: 'calc(7 * var(--cell-min-width) + var(--cell-gap) * 12)',
+                    maxWidth: 'calc(100% / var(--visible-months))'
+                  })}>
+                  <CalendarGrid months={i} />
+                </div>
               ))}
             </div>
             {isInvalid && (
@@ -474,7 +497,8 @@ export const CalendarGrid = (props: Omit<AriaCalendarGridProps, 'children'> & Pr
       className={style({
         borderCollapse: 'collapse',
         borderSpacing: 0,
-        isolation: 'isolate'
+        isolation: 'isolate',
+        width: 'full'
       })}
       offset={{months: props.months}}>
       <CalendarGridHeader className="">
@@ -646,11 +670,8 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRange
     <div
       className={style({
         position: 'relative',
-        width: 32,
-        '--cell-width': {
-          type: 'width',
-          value: '[self(width)]'
-        }
+        width: 'full',
+        height: 'full'
       })}>
       <div
         ref={ref}
