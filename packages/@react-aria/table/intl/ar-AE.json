@@ -7,5 +7,7 @@
   "resizerDescription": "اضغط على مفتاح Enter لبدء تغيير الحجم",
   "select": "تحديد",
   "selectAll": "تحديد الكل",
-  "sortable": "عمود قابل للترتيب"
+  "sortable": "عمود قابل للترتيب",
+  "collapse": "طي",
+  "expand": "تمديد"
 }

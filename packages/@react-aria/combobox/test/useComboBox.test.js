@@ -52,6 +52,22 @@ describe('useComboBox', function () {
     jest.clearAllMocks();
   });
 
+  it('should not infinite loop when children is an inline function', function () {
+    let {result} = renderHook(() => {
+      let inlineProps = {
+        items: [{id: 'a', name: 'Option A'}, {id: 'b', name: 'Option B'}],
+        children: (item) => <Item key={item.id} textValue={item.name}>{item.name}</Item>,
+        placeholder: 'Select...',
+        allowsCustomValue: true,
+        menuTrigger: 'focus'
+      };
+      let state = useComboBoxState(inlineProps);
+      return useComboBox({...inlineProps, ...props}, state);
+    });
+    expect(result.current.inputProps).toBeDefined();
+    expect(result.current.inputProps.role).toBe('combobox');
+  });
+
   it('should return default props for all the button group elements', function () {
     let {result} = renderHook(() => useComboBox(props, useComboBoxState(defaultProps)));
     let {buttonProps, inputProps, listBoxProps, labelProps} = result.current;

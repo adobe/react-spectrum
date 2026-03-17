@@ -79,7 +79,10 @@ export interface SelectState<T, M extends SelectionMode = 'single'> extends List
  * multiple selection state.
  */
 export function useSelectState<T extends object, M extends SelectionMode = 'single'>(props: SelectStateOptions<T, M>): SelectState<T, M>  {
-  let {selectionMode = 'single' as M} = props;
+  let {
+    selectionMode = 'single' as M,
+    shouldCloseOnSelect = selectionMode === 'single'
+  } = props;
   let triggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
   let defaultValue = useMemo(() => {
@@ -125,9 +128,11 @@ export function useSelectState<T extends object, M extends SelectionMode = 'sing
       if (selectionMode === 'single') {
         let key = keys.values().next().value ?? null;
         setValue(key);
-        triggerState.close();
       } else {
         setValue([...keys]);
+      }
+      if (shouldCloseOnSelect) {
+        triggerState.close();
       }
 
       validationState.commitValidation();

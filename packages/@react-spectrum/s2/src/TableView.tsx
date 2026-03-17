@@ -11,7 +11,7 @@
  */
 
 import {ActionButton, ActionButtonContext} from './ActionButton';
-import {baseColor, colorMix, focusRing, fontRelative, lightDark, space, style} from '../style' with {type: 'macro'};
+import {baseColor, centerPadding, colorMix, focusRing, fontRelative, lightDark, setColorScheme, space, style} from '../style' with {type: 'macro'};
 import {
   Button,
   ButtonContext,
@@ -53,12 +53,13 @@ import {
   Virtualizer
 } from 'react-aria-components';
 import {ButtonGroup} from './ButtonGroup';
-import {centerPadding, colorScheme, controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
 import Chevron from '../ui-icons/Chevron';
 import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {ColumnSize} from '@react-types/table';
+import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {css} from '../style/style-macro' with {type: 'macro'};
 import {CustomDialog, DialogContainer} from '..';
 import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
 import {getActiveElement, getOwnerDocument, isFocusWithin, nodeContains, useLayoutEffect, useObjectRef} from '@react-aria/utils';
@@ -70,14 +71,13 @@ import {LayoutNode} from '@react-stately/layout';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {ProgressCircle} from './ProgressCircle';
-import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, CSSProperties, FormEvent, FormHTMLAttributes, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {Button as SpectrumButton} from './Button';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {VisuallyHidden} from 'react-aria';
@@ -476,7 +476,10 @@ const cellFocus = {
   },
   outlineOffset: -2,
   outlineWidth: 2,
-  outlineColor: 'focus-ring',
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  },
   borderRadius: '[6px]'
 } as const;
 
@@ -952,9 +955,27 @@ const commonCellStyles = {
   paddingX: 16 // table-edge-to-content
 } as const;
 
-const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
+const treeColumnStyles = {
+  '--indent': {
+    type: 'width',
+    value: 16
+  },
+  '--treeColumnPadding': {
+    type: 'width',
+    value: {
+      default: 16,
+      isTreeColumnWithNoChildren: 36
+    }
+  },
+  paddingStart: {
+    default: 16,
+    isTreeColumn: 'calc(var(--treeColumnPadding) + (var(--table-row-level, 1) - 1) * var(--indent))'
+  }
+} as const;
+
+const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean, isTreeColumnWithNoChildren: boolean}>({
   ...commonCellStyles,
-  paddingY: centerPadding(),
+  ...treeColumnStyles,
   minHeight: {
     default: 40,
     density: {
@@ -1052,12 +1073,16 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       className={renderProps => cell({
         ...renderProps,
         ...tableVisualOptions,
-        isDivider: showDivider
+        isDivider: showDivider,
+        isTreeColumnWithNoChildren: renderProps.isTreeColumn && !renderProps.hasChildItems
       })}
       textValue={textValue}
       {...otherProps}>
-      {({isFocusVisible}) => (
+      {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
+          {hasChildItems && isTreeColumn && 
+            <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
+          }
           <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
           {isFocusVisible && <CellFocusRing />}
         </>
@@ -1066,9 +1091,78 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
   );
 });
 
+interface ExpandableRowChevronProps {
+  isExpanded?: boolean,
+  isDisabled?: boolean,
+  isRTL?: boolean,
+  isHidden?: boolean
+}
 
-const editableCell = style<CellRenderProps & S2TableProps & {isDivider: boolean, selectionMode?: 'none' | 'single' | 'multiple', isSaving?: boolean}>({
+const expandButton = style<ExpandableRowChevronProps>({
+  gridArea: 'expand-button',
+  color: {
+    default: 'inherit',
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
+  },
+  height: 'full',
+  width: 40,
+  marginStart: -12,
+  display: 'flex',
+  flexWrap: 'wrap',
+  alignContent: 'center',
+  justifyContent: 'center',
+  outlineStyle: 'none',
+  cursor: 'default',
+  transform: {
+    isExpanded: {
+      default: 'rotate(90deg)',
+      isRTL: 'rotate(-90deg)'
+    }
+  },
+  padding: 0,
+  transition: 'default',
+  backgroundColor: 'transparent',
+  borderStyle: 'none',
+  disableTapHighlight: true,
+  visibility: {
+    isHidden: 'hidden'
+  }
+});
+
+function ExpandableRowChevron(props: ExpandableRowChevronProps) {
+  let ref = useRef<HTMLButtonElement>(null);
+  let {isExpanded, isHidden} = props;
+  let {direction} = useLocale();
+
+  return (
+    <Button
+      {...props}
+      ref={ref}
+      slot="chevron"
+      className={renderProps => expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl', isHidden})}>
+      <Chevron
+        className={style({
+          scale: {
+            direction: {
+              ltr: '1',
+              rtl: '-1'
+            }
+          },
+          '--iconPrimary': {
+            type: 'fill',
+            value: 'currentColor'
+          }
+        })({direction})} />
+    </Button>
+  );
+}
+
+const editableCell = style<CellRenderProps & S2TableProps & {isDivider: boolean, selectionMode?: 'none' | 'single' | 'multiple', isSaving?: boolean, isTreeColumnWithNoChildren: boolean}>({
   ...commonCellStyles,
+  ...treeColumnStyles,
   color: {
     default: baseColor('neutral'),
     isSaving: baseColor('neutral-subdued')
@@ -1095,7 +1189,7 @@ const editableCell = style<CellRenderProps & S2TableProps & {isDivider: boolean,
 });
 
 let editPopover = style({
-  ...colorScheme(),
+  ...setColorScheme(),
   '--s2-container-bg': {
     type: 'backgroundColor',
     value: 'layer-2'
@@ -1152,12 +1246,18 @@ export const EditableCell = forwardRef(function EditableCell(props: EditableCell
         ...renderProps,
         ...tableVisualOptions,
         isDivider: showDivider,
-        isSaving
+        isSaving,
+        isTreeColumnWithNoChildren: renderProps.isTreeColumn && !renderProps.hasChildItems
       })}
       textValue={textValue}
       {...otherProps}>
-      {({isFocusVisible}) => (
-        <EditableCellInner {...props} isFocusVisible={isFocusVisible} cellRef={domRef as RefObject<HTMLDivElement>} />
+      {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
+        <>
+          {hasChildItems && isTreeColumn && 
+            <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
+          }
+          <EditableCellInner {...props} isFocusVisible={isFocusVisible} cellRef={domRef as RefObject<HTMLDivElement>} />
+        </>
       )}
     </RACCell>
   );
@@ -1205,7 +1305,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
     let boundingRect = cell?.parentElement?.getBoundingClientRect();
     let verticalOffset = (boundingRect?.top ?? 0) - (boundingRect?.bottom ?? 0);
 
-    let tableWidth = cellRef.current?.closest('[role="grid"]')?.clientWidth || 0;
+    let tableWidth = cellRef.current?.closest('[role="grid"],[role="treegrid"]')?.clientWidth || 0;
     setTriggerWidth(width);
     setVerticalOffset(verticalOffset);
     setTableWidth(tableWidth);
@@ -1483,7 +1583,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       className={renderProps => row({
         ...renderProps,
         ...tableVisualOptions
-      }) + (renderProps.isFocusVisible ? ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')}
+      }) + (renderProps.isFocusVisible ? ' ' + css('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')}
       {...otherProps}>
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
         // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.

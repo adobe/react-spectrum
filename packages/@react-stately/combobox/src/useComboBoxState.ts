@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {ChangeValueType, ComboBoxProps, MenuTriggerAction, SelectionMode, ValueType} from '@react-types/combobox';
 import {Collection, CollectionStateBase, FocusStrategy, Key, Node, Selection} from '@react-types/shared';
-import {ComboBoxProps, MenuTriggerAction, SelectionMode, ValueType} from '@react-types/combobox';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getChildNodes} from '@react-stately/collections';
 import {ListCollection, ListState, useListState} from '@react-stately/list';
@@ -89,7 +89,7 @@ const EMPTY_VALUE: Key[] = [];
  * of items from props and manages the option selection state of the combo box. In addition, it tracks the input value,
  * focus state, and other properties of the combo box.
  */
-export function useComboBoxState<T extends object, M extends SelectionMode = 'single'>(props: ComboBoxStateOptions<T, M>): ComboBoxState<T> {
+export function useComboBoxState<T extends object, M extends SelectionMode = 'single'>(props: ComboBoxStateOptions<T, M>): ComboBoxState<T, M> {
   let {
     defaultFilter,
     menuTrigger = 'input',
@@ -380,7 +380,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
         inputValue !== itemText
       ) {
         props.onSelectionChange?.(selectedKey);
-        props.onChange?.(displayValue);
+        props.onChange?.(displayValue as ChangeValueType<M>);
       }
 
       // Stop menu from reopening from useEffect
@@ -511,7 +511,7 @@ function getDefaultInputValue(defaultInputValue: string | null | undefined, sele
   return defaultInputValue;
 }
 
-function convertValue(value: Key | Key[] | null | undefined) {
+function convertValue(value: Key | readonly Key[] | null | undefined) {
   if (value === undefined) {
     return undefined;
   }

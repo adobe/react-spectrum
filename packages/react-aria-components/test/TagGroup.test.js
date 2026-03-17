@@ -176,6 +176,29 @@ describe('TagGroup', () => {
     expect(onHoverEnd).not.toHaveBeenCalled();
   });
 
+  it('should show hover state when tag has an href even without selectionMode', async () => {
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderTagGroup({}, {}, {href: '/', className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
+    let row = getAllByRole('row')[0];
+
+    expect(row).not.toHaveAttribute('data-hovered');
+    expect(row).not.toHaveClass('hover');
+
+    await user.hover(row);
+    expect(row).toHaveAttribute('data-hovered', 'true');
+    expect(row).toHaveClass('hover');
+    expect(onHoverStart).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(1);
+
+    await user.unhover(row);
+    expect(row).not.toHaveAttribute('data-hovered');
+    expect(row).not.toHaveClass('hover');
+    expect(onHoverEnd).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(2);
+  });
+
   it('should support focus ring', async () => {
     let onFocus = jest.fn();
     let onFocusChange = jest.fn();
@@ -549,6 +572,70 @@ describe('TagGroup', () => {
     expect(onRemove).toHaveBeenLastCalledWith(new Set(['dog']));
   });
 
+  it('should support onAction', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = renderTagGroup({onAction, selectionMode: 'none'});
+    let items = getAllByRole('row');
+
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalledTimes(1);
+    onAction.mockReset();
+
+    await user.keyboard('{Enter}');
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support onAction with selectionMode = single, behaviour = replace', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = renderTagGroup({onAction, selectionMode: 'single', selectionBehavior: 'replace'});
+    let items = getAllByRole('row');
+
+    await user.dblClick(items[0]);
+    expect(onAction).toHaveBeenCalledTimes(1);
+    onAction.mockReset();
+
+    await user.click(items[1]);
+    expect(onAction).not.toHaveBeenCalled();
+    expect(items[1]).toHaveAttribute('aria-selected', 'true');
+
+    await user.dblClick(items[0]);
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(items[0]).toHaveAttribute('aria-selected', 'false');
+    expect(items[1]).toHaveAttribute('aria-selected', 'false');
+    onAction.mockReset();
+
+    await user.keyboard('{Enter}');
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(items[0]).toHaveAttribute('aria-selected', 'false');
+    expect(items[1]).toHaveAttribute('aria-selected', 'false');
+  });
+
+  it('should support onAction with selectionMode = multiple, behaviour = replace', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = renderTagGroup({onAction, selectionMode: 'multiple', selectionBehavior: 'replace'});
+    let items = getAllByRole('row');
+
+    await user.dblClick(items[0]);
+    expect(onAction).toHaveBeenCalledTimes(1);
+    onAction.mockReset();
+
+    await user.click(items[1]);
+    expect(onAction).not.toHaveBeenCalled();
+    onAction.mockReset();
+    expect(items[1]).toHaveAttribute('aria-selected', 'true');
+
+    await user.dblClick(items[0]);
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(items[0]).toHaveAttribute('aria-selected', 'true');
+    expect(items[1]).toHaveAttribute('aria-selected', 'false');
+    onAction.mockReset();
+
+    await user.keyboard('{Enter}');
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(items[0]).toHaveAttribute('aria-selected', 'true');
+    expect(items[1]).toHaveAttribute('aria-selected', 'false');
+  });
+
   describe('shouldSelectOnPressUp', () => {
     it('should select an item on pressing down when shouldSelectOnPressUp is not provided', async () => {
       let onSelectionChange = jest.fn();
@@ -588,7 +675,7 @@ describe('TagGroup', () => {
   });
 
   describe('press events', () => {
-    it.only.each`
+    it.each`
       interactionType
       ${'mouse'}
       ${'keyboard'}

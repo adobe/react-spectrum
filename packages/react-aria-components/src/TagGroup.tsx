@@ -249,7 +249,7 @@ export const Tag = /*#__PURE__*/ createLeafComponent(ItemNode, (props: TagProps,
   let {rowProps, gridCellProps, removeButtonProps, ...states} = useTag({item}, state, ref);
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection,
+    isDisabled: !states.allowsSelection && !states.hasAction,
     onHoverStart: item.props.onHoverStart,
     onHoverChange: item.props.onHoverChange,
     onHoverEnd: item.props.onHoverEnd

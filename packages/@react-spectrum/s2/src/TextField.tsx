@@ -21,14 +21,14 @@ import {
   InputProps,
   useSlottedContext
 } from 'react-aria-components';
-import {centerPadding, controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, style} from '../style' with {type: 'macro'};
+import {controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {GlobalDOMAttributes, HelpTextProps, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {mergeRefs} from '@react-aria/utils';
-import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 import {TextFieldRef} from '@react-types/textfield';
 import {useSpectrumContextProps} from './useSpectrumContextProps';

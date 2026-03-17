@@ -7,5 +7,7 @@
   "resizerDescription": "Aloita koon muutos painamalla Enter-näppäintä",
   "select": "Valitse",
   "selectAll": "Valitse kaikki",
-  "sortable": "lajiteltava sarake"
+  "sortable": "lajiteltava sarake",
+  "collapse": "Pienennä",
+  "expand": "Laajenna"
 }

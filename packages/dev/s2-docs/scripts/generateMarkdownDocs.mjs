@@ -42,6 +42,7 @@ function getBaseUrl(library) {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '../../../../');
 const S2_SRC_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/src');
+const S2_STYLE_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/style');
 const RAC_SRC_ROOT = path.join(REPO_ROOT, 'packages/react-aria-components/src');
 const INTL_SRC_ROOT = path.join(REPO_ROOT, 'packages/@internationalized');
 const COMPONENT_SRC_ROOTS = [S2_SRC_ROOT, RAC_SRC_ROOT, INTL_SRC_ROOT];
@@ -65,6 +66,7 @@ const interfaceTableCache = new Map();
 const classTableCache = new Map();
 const propTableCache = new Map();
 const descriptionCache = new Map();
+const functionExamplesCache = new Map();
 let tsFileIndex = null;
 let styleMacroDataCache = null;
 const styleMacroTableCache = new Map();
@@ -885,17 +887,6 @@ function extractJSXText(node, file) {
   return '';
 }
 
-function getRootsForFile(file) {
-  if (file?.path) {
-    if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
-      return [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
-    } else if (file.path.includes(path.join('pages', 'react-aria'))) {
-      return [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-    }
-  }
-  return COMPONENT_SRC_ROOTS;
-}
-
 function getCacheKey(name, file) {
   if (file?.path) {
     if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
@@ -909,14 +900,88 @@ function getCacheKey(name, file) {
   return `default:${name}`;
 }
 
-function resolveComponentPath(componentName, file) {
+function getDocsImportSource(identifier, file) {
+  return file?.data?.docsImports?.[identifier] || null;
+}
+
+function getExistingRoots(roots) {
+  return [...new Set(roots.filter(root => root && fs.existsSync(root)))];
+}
+
+function getRootsForDocsSource(docsSource, file) {
+  if (!docsSource) {
+    return null;
+  }
+
+  if (docsSource === '@react-spectrum/s2') {
+    return getExistingRoots([S2_SRC_ROOT, S2_STYLE_ROOT]);
+  }
+
+  if (docsSource === '@react-spectrum/s2/style') {
+    return getExistingRoots([S2_STYLE_ROOT]);
+  }
+
+  if (docsSource.startsWith('./') || docsSource.startsWith('../')) {
+    if (!file?.path) {
+      return null;
+    }
+
+    const resolved = path.resolve(path.dirname(file.path), docsSource);
+    const candidates = [
+      resolved,
+      `${resolved}.ts`,
+      `${resolved}.tsx`,
+      `${resolved}.d.ts`,
+      path.join(resolved, 'index.ts'),
+      path.join(resolved, 'index.tsx'),
+      path.join(resolved, 'index.d.ts')
+    ];
+
+    return getExistingRoots(candidates.map(candidate => {
+      if (!fs.existsSync(candidate)) {
+        return null;
+      }
+
+      return fs.statSync(candidate).isDirectory() ? candidate : path.dirname(candidate);
+    }));
+  }
+
+  const packagePath = path.join(REPO_ROOT, 'packages', docsSource);
+  if (fs.existsSync(packagePath)) {
+    if (fs.statSync(packagePath).isDirectory()) {
+      return getExistingRoots([path.join(packagePath, 'src'), packagePath]);
+    }
+
+    return getExistingRoots([path.dirname(packagePath)]);
+  }
+
+  return null;
+}
+
+function getRootsForFile(file, docsSource) {
+  const docsRoots = getRootsForDocsSource(docsSource, file);
+  if (docsRoots?.length) {
+    return docsRoots;
+  }
+
+  if (file?.path) {
+    if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
+      return [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+    } else if (file.path.includes(path.join('pages', 'react-aria'))) {
+      return [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
+    }
+  }
+  return COMPONENT_SRC_ROOTS;
+}
+
+function resolveComponentPath(componentName, file, docsSource) {
   // Check unified cache first
-  const cacheKey = getCacheKey(componentName, file);
+  const cacheKey = getCacheKey(`${docsSource || 'default'}:${componentName}:path`, file);
   if (interfacePathCache.has(cacheKey)) {
     return interfacePathCache.get(cacheKey);
   }
-  
-  let roots = getRootsForFile(file);
+
+  let roots = getRootsForFile(file, docsSource);
 
   // Fast path: check direct file paths first
   for (let root of roots) {
@@ -969,14 +1034,14 @@ function resolveComponentPath(componentName, file) {
 /**
  * Extract the leading JSDoc description comment placed immediately above the export for a component.
  */
-function getComponentDescription(componentName, file) {
+function getComponentDescription(componentName, file, docsSource) {
   // Check cache first
-  const cacheKey = getCacheKey(componentName, file);
+  const cacheKey = getCacheKey(`${docsSource || 'default'}:${componentName}:description`, file);
   if (descriptionCache.has(cacheKey)) {
     return descriptionCache.get(cacheKey);
   }
 
-  const componentPath = resolveComponentPath(componentName, file);
+  const componentPath = resolveComponentPath(componentName, file, docsSource);
   if (!componentPath) {
     descriptionCache.set(cacheKey, null);
     return null;
@@ -1049,6 +1114,176 @@ function getComponentDescription(componentName, file) {
   return null;
 }
 
+function getJsDocData(node) {
+  const docs = typeof node?.getJsDocs === 'function' ? node.getJsDocs() : [];
+  const tags = docs.flatMap(doc => doc.getTags());
+
+  return {
+    description: docs
+      .map(doc => doc.getDescription().replace(/\n+/g, ' ').trim())
+      .find(Boolean) || '',
+    defaultValue: tags.find(tag => tag.getTagName() === 'default')?.getCommentText() || '',
+    selector: tags.find(tag => tag.getTagName() === 'selector')?.getCommentText() || '',
+    deprecated: tags.some(tag => tag.getTagName() === 'deprecated'),
+    private: tags.some(tag => tag.getTagName() === 'private')
+  };
+}
+
+function shouldOmitSymbol(sym) {
+  return (sym.getDeclarations?.() || []).some(decl => {
+    const docData = getJsDocData(decl);
+    return docData.deprecated || docData.private;
+  });
+}
+
+/**
+ * Extracts one or more `@example` tag contents from JSDoc comments.
+ * @param {string} text - The text to extract examples from.
+ * @returns {string[]} An array of examples.
+ */
+function extractExamplesFromText(text) {
+  if (!text || typeof text !== 'string') {
+    return [];
+  }
+
+  let lines = text.split('\n').map(line => line.replace(/^\s*\*?\s?/, ''));
+  let examples = [];
+  let current = null;
+
+  for (let line of lines) {
+    if (/^@example\b/.test(line)) {
+      if (current) {
+        let prev = current.join('\n').trim();
+        if (prev) {
+          examples.push(prev);
+        }
+      }
+
+      current = [];
+      let inlineExample = line.replace(/^@example\b\s*/, '');
+      if (inlineExample) {
+        current.push(inlineExample);
+      }
+      continue;
+    }
+
+    if (current) {
+      if (/^@\w+/.test(line)) {
+        let example = current.join('\n').trim();
+        if (example) {
+          examples.push(example);
+        }
+        current = null;
+        continue;
+      }
+
+      current.push(line);
+    }
+  }
+
+  if (current) {
+    let example = current.join('\n').trim();
+    if (example) {
+      examples.push(example);
+    }
+  }
+
+  return examples;
+}
+
+function parseFencedCodeBlock(example) {
+  if (!example || typeof example !== 'string') {
+    return null;
+  }
+
+  let trimmed = example.trim();
+  let match = trimmed.match(/^```([^\n`]*)\n([\s\S]*?)\n```$/);
+  if (!match) {
+    return null;
+  }
+
+  let [, lang, code] = match;
+  return {
+    lang: lang?.trim() || undefined,
+    code
+  };
+}
+
+function getFunctionExamples(functionName, file, docsSource) {
+  const cacheKey = getCacheKey(`${docsSource || 'default'}:${functionName}:examples`, file);
+  if (functionExamplesCache.has(cacheKey)) {
+    return functionExamplesCache.get(cacheKey);
+  }
+
+  const functionPath = resolveComponentPath(functionName, file, docsSource);
+  if (!functionPath) {
+    functionExamplesCache.set(cacheKey, []);
+    return [];
+  }
+
+  const source = project.addSourceFileAtPathIfExists(functionPath);
+  if (!source) {
+    functionExamplesCache.set(cacheKey, []);
+    return [];
+  }
+
+  const exportedDecl = source.getExportedDeclarations().get(functionName)?.[0];
+  const possibleNodes = [exportedDecl, source.getVariableDeclaration(functionName), source.getFunction(functionName)];
+
+  let firstNodeExamples = [];
+  for (let node of possibleNodes.filter(Boolean)) {
+    let current = node;
+    let isDirectNode = true;
+
+    while (current) {
+      let docs = typeof current.getJsDocs === 'function' ? current.getJsDocs() : [];
+      if (!docs?.length) {
+        isDirectNode = false;
+        current = current.getParent?.();
+        continue;
+      }
+
+      let directExamples = [];
+      for (let doc of docs) {
+        let tags = doc.getTags?.() || [];
+        let tagExamples = tags
+          .filter(tag => tag.getTagName?.() === 'example')
+          .map(tag => tag.getCommentText?.())
+          .filter(Boolean)
+          .map(value => value.trim());
+        directExamples.push(...tagExamples);
+
+        if (tagExamples.length === 0) {
+          let docText = doc.getInnerText?.() || doc.getText?.() || '';
+          directExamples.push(...extractExamplesFromText(docText));
+        }
+      }
+
+      directExamples = [...new Set(directExamples.filter(Boolean))];
+      if (!directExamples.length) {
+        isDirectNode = false;
+        current = current.getParent?.();
+        continue;
+      }
+
+      if (isDirectNode) {
+        functionExamplesCache.set(cacheKey, directExamples);
+        return directExamples;
+      }
+
+      if (!firstNodeExamples.length) {
+        firstNodeExamples = directExamples;
+      }
+
+      isDirectNode = false;
+      current = current.getParent?.();
+    }
+  }
+
+  functionExamplesCache.set(cacheKey, firstNodeExamples);
+  return firstNodeExamples;
+}
+
 /**
  * Build a markdown table of props for the given component by analyzing its interface.
  */
@@ -1086,25 +1321,17 @@ function generatePropTable(componentName, file) {
 
   const propSymbols = iface.getType().getProperties();
 
-  const rows = propSymbols.map((sym) => {
+  const rows = propSymbols.flatMap((sym) => {
+    if (shouldOmitSymbol(sym)) {
+      return [];
+    }
+
     const name = sym.getName();
     const decl = sym.getDeclarations()?.[0];
     const type = cleanTypeText(sym.getTypeAtLocation(iface).getText(iface));
+    const docData = getJsDocData(decl);
 
-    let description = '';
-    let defVal = '';
-    if (decl && typeof decl.getJsDocs === 'function') {
-      const docsArr = decl.getJsDocs();
-      if (docsArr.length) {
-        description = docsArr[0].getDescription().replace(/\n+/g, ' ').trim();
-        const defaultTag = docsArr[0].getTags().find((t) => t.getTagName() === 'default');
-        if (defaultTag) {
-          defVal = defaultTag.getCommentText();
-        }
-      }
-    }
-
-    return {name, type, defVal, description};
+    return [{name, type, defVal: docData.defaultValue, description: docData.description}];
   });
 
   if (!rows.length) {
@@ -1164,6 +1391,10 @@ function generateInterfaceTable(interfaceName, file) {
   const methods = [];
 
   for (const sym of propSymbols) {
+    if (shouldOmitSymbol(sym)) {
+      continue;
+    }
+
     const name = sym.getName();
     const decl = sym.getDeclarations()?.[0];
     
@@ -1184,15 +1415,10 @@ function generateInterfaceTable(interfaceName, file) {
     let defVal = '';
     let optional = false;
 
-    if (decl && typeof decl.getJsDocs === 'function') {
-      const docsArr = decl.getJsDocs();
-      if (docsArr.length) {
-        description = docsArr[0].getDescription().replace(/\n+/g, ' ').trim();
-        const defaultTag = docsArr[0].getTags().find((t) => t.getTagName() === 'default');
-        if (defaultTag) {
-          defVal = defaultTag.getCommentText();
-        }
-      }
+    if (decl) {
+      const docData = getJsDocData(decl);
+      description = docData.description;
+      defVal = docData.defaultValue;
     }
 
     if (decl && decl.hasQuestionToken?.()) {
@@ -1289,11 +1515,38 @@ function generateInterfaceTable(interfaceName, file) {
  * Custom remark plugin that removes MDX import/export statements.
  */
 function remarkRemoveImportsExports() {
-  return (tree) => {
+  return (tree, file) => {
+    let docsImports = {};
     visit(tree, 'mdxjsEsm', (node, index, parent) => {
+      if (node.value) {
+        try {
+          const ast = babel.parse(node.value, {
+            sourceType: 'module',
+            plugins: ['jsx', 'typescript']
+          });
+
+          for (const statement of ast.program.body) {
+            if (statement.type !== 'ImportDeclaration' || typeof statement.source.value !== 'string' || !statement.source.value.startsWith('docs:')) {
+              continue;
+            }
+
+            const docsSource = statement.source.value.slice(5);
+            for (const specifier of statement.specifiers) {
+              if (specifier.local?.name) {
+                docsImports[specifier.local.name] = docsSource;
+              }
+            }
+          }
+        } catch {
+          // Ignore non-import ESM blocks.
+        }
+      }
+
       parent.children.splice(index, 1);
       return index;
     });
+
+    file.data.docsImports = docsImports;
   };
 }
 
@@ -1500,6 +1753,63 @@ function remarkDocsComponentsToMarkdown() {
         // If failed, wipe element.
         parent.children.splice(index, 1);
         return index;
+      }
+
+      // Render function description + examples from JSDoc.
+      if (name === 'FunctionJSDoc') {
+        const functionAttr = node.attributes?.find((a) => a.name === 'function');
+        let functionName = null;
+        let docsSource = null;
+        if (functionAttr && functionAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          const m = functionAttr.value.value.match(/^([\w$]+)\.exports\.([\w$]+)$/);
+          if (m) {
+            docsSource = getDocsImportSource(m[1], file);
+            functionName = m[2];
+          } else {
+            const fallback = functionAttr.value.value.match(/\.exports\.([\w$]+)/);
+            if (fallback) {
+              functionName = fallback[1];
+            }
+          }
+        }
+
+        if (!functionName) {
+          parent.children.splice(index, 1);
+          return index;
+        }
+
+        const newNodes = [];
+        const description = getComponentDescription(functionName, file, docsSource);
+        if (description) {
+          const descTree = unified().use(remarkParse).parse(description);
+          newNodes.push(...descTree.children);
+        }
+
+        const examples = getFunctionExamples(functionName, file, docsSource);
+        for (let [exampleIndex, example] of examples.entries()) {
+          if (examples.length > 1) {
+            newNodes.push({
+              type: 'paragraph',
+              children: [{type: 'strong', children: [{type: 'text', value: `Example ${exampleIndex + 1}:`}]}]
+            });
+          }
+
+          const fenced = parseFencedCodeBlock(example);
+          if (fenced) {
+            newNodes.push({
+              type: 'code',
+              lang: fenced.lang || 'tsx',
+              meta: '',
+              value: fenced.code
+            });
+          } else {
+            const exampleTree = unified().use(remarkParse).parse(example);
+            newNodes.push(...exampleTree.children);
+          }
+        }
+
+        parent.children.splice(index, 1, ...newNodes);
+        return index + newNodes.length;
       }
 
       // Render a table of props.
@@ -2617,7 +2927,8 @@ function generateClassAPITable(className, file) {
   // Generate properties documentation
   const properties = classDecl.getProperties().filter(p => {
     const scope = p.getScope();
-    return scope === undefined || scope === 1; // public properties only
+    const docData = getJsDocData(p);
+    return (scope === undefined || scope === 1) && !docData.deprecated && !docData.private; // public, non-deprecated, non-private properties only
   });
 
   if (properties.length > 0) {
@@ -2678,29 +2989,22 @@ function generateStateTable(renderPropsName, {showOptional = false, hideSelector
 
   // Build rows
   const rows = propSymbols.map(sym => {
+    if (shouldOmitSymbol(sym)) {
+      return null;
+    }
+
     const name = sym.getName();
 
     const decl = sym.getDeclarations()?.[0];
-    let description = '';
-    let selector = '';
     let optional = false;
 
     if (decl) {
       optional = decl.hasQuestionToken?.() || false;
-      if (typeof decl.getJsDocs === 'function') {
-        const docsArr = decl.getJsDocs();
-        if (docsArr.length) {
-          description = docsArr[0].getDescription().replace(/\n+/g, ' ').trim();
-          const selTag = docsArr[0].getTags().find(t => t.getTagName() === 'selector');
-          if (selTag) {
-            selector = selTag.getCommentText();
-          }
-        }
-      }
     }
 
-    return {name, selector: selector || '—', description, optional};
-  });
+    const docData = getJsDocData(decl);
+    return {name, selector: docData.selector || '—', description: docData.description, optional};
+  }).filter(Boolean);
 
   // Filter optional props if showOptional is false
   const filteredRows = showOptional ? rows : rows.filter(r => !r.optional);

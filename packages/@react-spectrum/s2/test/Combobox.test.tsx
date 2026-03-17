@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
+import {act, pointerMap, render, setupIntersectionObserverMock, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
 import {Button, ComboBox, ComboBoxItem, Content, ContextualHelp, Dialog, DialogTrigger, Heading, Text} from '../src';
 import React from 'react';
@@ -214,6 +214,7 @@ describe('Combobox', () => {
   });
 
   it('should close the combobox when clicking outside the combobox on a dialog backdrop', async () => {
+    let user = userEvent.setup({delay: null, pointerMap});
     let tree = render(
       <DialogTrigger>
         <Button>Open</Button>
@@ -247,20 +248,10 @@ describe('Combobox', () => {
       jest.runAllTimers();
     });
     let backdrop = document.querySelector('[style*="--visual-viewport-height"]');
-    // can't use userEvent here for some reason
-    fireEvent.mouseDown(backdrop!, {button: 0});
-    fireEvent.mouseUp(backdrop!, {button: 0});
-    act(() => {
-      jest.runAllTimers();
-    });
-    expect(comboboxTester.listbox).toBeNull();
+    await user.click(backdrop!);
 
-
-    fireEvent.mouseDown(backdrop!, {button: 0});
-    fireEvent.mouseUp(backdrop!, {button: 0});
-    act(() => {
-      jest.runAllTimers();
-    });
+    await waitFor(() => expect(comboboxTester.listbox).toBeNull());
+    await user.click(backdrop!);
     expect(dialogTester.dialog).toBeNull();
   });
 });
