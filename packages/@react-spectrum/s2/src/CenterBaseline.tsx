@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {css} from '../style/style-macro' with {type: 'macro'};
 import {CSSProperties, ReactNode} from 'react';
 import {mergeStyles} from '../style/runtime';
-import {raw} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 
@@ -39,7 +39,7 @@ export function CenterBaseline(props: CenterBaselineProps): ReactNode {
   );
 }
 
-export const centerBaselineBefore = raw('&::before { content: "\u00a0"; width: 0; visibility: hidden }');
+export const centerBaselineBefore = css('&::before { content: "\u00a0"; width: 0; visibility: hidden }');
 
 export function centerBaseline(props: Omit<CenterBaselineProps, 'children'> = {}): (icon: ReactNode) => ReactNode {
   return (icon: ReactNode) => <CenterBaseline {...props}>{icon}</CenterBaseline>;

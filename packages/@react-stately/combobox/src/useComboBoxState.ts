@@ -21,7 +21,8 @@ import {useControlledState} from '@react-stately/utils';
 export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 export type SelectionMode = 'single' | 'multiple';
 export type ValueType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
-type ValidationType<M extends SelectionMode> = M extends 'single' ? Key : Key[];
+export type ChangeValueType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
+type ValidationType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
 
 export interface ComboBoxValidationValue<M extends SelectionMode = 'single'> {
   /**
@@ -35,7 +36,7 @@ export interface ComboBoxValidationValue<M extends SelectionMode = 'single'> {
   inputValue: string
 }
 
-export interface ComboBoxProps<T, M extends SelectionMode = 'single'> extends CollectionBase<T>, InputBase, ValueBase<ValueType<M>>, TextInputBase, Validation<ComboBoxValidationValue>, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
+export interface ComboBoxProps<T, M extends SelectionMode = 'single'> extends CollectionBase<T>, InputBase, ValueBase<ValueType<M>>, TextInputBase, Validation<ComboBoxValidationValue<M>>, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
   /** The list of ComboBox items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of ComboBox items (controlled). */
@@ -436,7 +437,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     // If multiple things are controlled, call onSelectionChange
     if (value !== undefined && props.inputValue !== undefined) {
       props.onSelectionChange?.(selectedKey);
-      props.onChange?.(displayValue);
+      props.onChange?.(displayValue as ChangeValueType<M>);
 
       // Stop menu from reopening from useEffect
       let itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
@@ -567,7 +568,7 @@ function getDefaultInputValue(defaultInputValue: string | null | undefined, sele
   return defaultInputValue;
 }
 
-function convertValue(value: Key | Key[] | null | undefined) {
+function convertValue(value: Key | readonly Key[] | null | undefined) {
   if (value === undefined) {
     return undefined;
   }

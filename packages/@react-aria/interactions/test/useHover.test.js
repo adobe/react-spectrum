@@ -191,7 +191,7 @@ describe('useHover', function () {
       fireEvent(el, pointerEvent('pointerout', {pointerType: 'touch'}));
       fireEvent(el, pointerEvent('pointerup', {pointerType: 'touch'}));
 
-      act(() => {jest.advanceTimersByTime(100);});
+      act(() => {jest.advanceTimersByTime(600);});
 
       // Safari on iOS has a bug that fires a pointer event with pointerType="mouse" on focus.
       // See https://bugs.webkit.org/show_bug.cgi?id=214609.
@@ -321,7 +321,7 @@ describe('useHover', function () {
       let el = res.getByTestId('test');
       fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
       expect(el).toHaveAttribute('data-hovered', 'true');
-      
+
       let button = res.getByRole('button');
       act(() => button.click());
       expect(button).not.toBeInTheDocument();
@@ -444,7 +444,7 @@ describe('useHover', function () {
       fireEvent.mouseLeave(el);
       fireEvent.touchEnd(el);
 
-      act(() => {jest.advanceTimersByTime(100);});
+      act(() => {jest.advanceTimersByTime(600);});
 
       // Safari on iOS has a bug that fires a mouse event on focus.
       // See https://bugs.webkit.org/show_bug.cgi?id=214609.

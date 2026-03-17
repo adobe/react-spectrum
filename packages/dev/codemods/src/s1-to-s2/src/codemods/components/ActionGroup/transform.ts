@@ -1,4 +1,4 @@
-import {addComponentImport} from '../../shared/utils';
+import {addComponentImport, removeComponentImportIfUnused} from '../../shared/utils';
 import {commentOutProp} from '../../shared/transforms';
 import {getComponents} from '../../../getComponents';
 import {NodePath} from '@babel/traverse';
@@ -18,6 +18,8 @@ let availableComponents = getComponents();
  * - Convert dynamic collections render function to items.map.
  */
 export default function transformActionGroup(path: NodePath<t.JSXElement>): void {
+  let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
+
   // Comment out overflowMode
   commentOutProp(path, {propName: 'overflowMode'});
 
@@ -43,13 +45,11 @@ export default function transformActionGroup(path: NodePath<t.JSXElement>): void
 
   let localName = newComponentName;
   if (availableComponents.has(newComponentName)) {
-    let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
     localName = addComponentImport(program, newComponentName);
   }
 
   let localChildName = childComponentName;
   if (availableComponents.has(childComponentName)) {
-    let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
     localChildName = addComponentImport(program, childComponentName);
   }
 
@@ -185,4 +185,6 @@ export default function transformActionGroup(path: NodePath<t.JSXElement>): void
   if (path.node.closingElement) {
     path.node.closingElement.name = t.jsxIdentifier(localName);
   }
+
+  removeComponentImportIfUnused(program, 'Item');
 }

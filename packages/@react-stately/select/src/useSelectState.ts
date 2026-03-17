@@ -49,6 +49,8 @@ export interface SelectProps<T, M extends SelectionMode = 'single'> extends Coll
   defaultOpen?: boolean,
   /** Method that is called when the open state of the menu changes. */
   onOpenChange?: (isOpen: boolean) => void,
+  /** Whether the Select should close when an item is selected. Defaults to true if selectionMode is single, false otherwise. */
+  shouldCloseOnSelect?: boolean,
   /** Whether the select should be allowed to be open when the collection is empty. */
   allowsEmptyCollection?: boolean
 }
@@ -114,7 +116,10 @@ export interface SelectState<T, M extends SelectionMode = 'single'> extends List
  * multiple selection state.
  */
 export function useSelectState<T extends object, M extends SelectionMode = 'single'>(props: SelectStateOptions<T, M>): SelectState<T, M>  {
-  let {selectionMode = 'single' as M} = props;
+  let {
+    selectionMode = 'single' as M,
+    shouldCloseOnSelect = selectionMode === 'single'
+  } = props;
   let triggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
   let defaultValue = useMemo(() => {
@@ -160,9 +165,11 @@ export function useSelectState<T extends object, M extends SelectionMode = 'sing
       if (selectionMode === 'single') {
         let key = keys.values().next().value ?? null;
         setValue(key);
-        triggerState.close();
       } else {
         setValue([...keys]);
+      }
+      if (shouldCloseOnSelect) {
+        triggerState.close();
       }
 
       validationState.commitValidation();

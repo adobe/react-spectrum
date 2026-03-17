@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, CollectionBase, DOMAttributes, DOMProps, FocusEvents, FocusStrategy, Key, KeyboardDelegate, LayoutDelegate, MultipleSelection, RefObject, SelectionBehavior} from '@react-types/shared';
+import {AriaLabelingProps, CollectionBase, DOMAttributes, DOMProps, FocusEvents, FocusStrategy, Key, KeyboardDelegate, LayoutDelegate, MultipleSelection, Orientation, RefObject, SelectionBehavior} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {listData} from './utils';
 import {ListState} from '@react-stately/list';
@@ -91,7 +91,13 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
    * - 'override': links override all other interactions (link items are not selectable).
    * @default 'override'
    */
-  linkBehavior?: 'action' | 'selection' | 'override'
+  linkBehavior?: 'action' | 'selection' | 'override',
+
+  /**
+   * The primary orientation of the items. Usually this is the direction that the collection scrolls.
+   * @default 'vertical'
+   */
+  orientation?: Orientation
 }
 
 /**
@@ -104,6 +110,7 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
   let domProps = filterDOMProps(props, {labelable: true});
   // Use props instead of state here. We don't want this to change due to long press.
   let selectionBehavior = props.selectionBehavior || 'toggle';
+  let orientation = props.orientation || 'vertical';
   let linkBehavior = props.linkBehavior || (selectionBehavior === 'replace' ? 'action' : 'override');
   if (selectionBehavior === 'toggle' && linkBehavior === 'action') {
     // linkBehavior="action" does not work with selectionBehavior="toggle" because there is no way
@@ -155,6 +162,7 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
       'aria-multiselectable': 'true'
     } : {}, {
       role: 'listbox',
+      'aria-orientation': orientation,
       ...mergeProps(fieldProps, listProps)
     })
   };

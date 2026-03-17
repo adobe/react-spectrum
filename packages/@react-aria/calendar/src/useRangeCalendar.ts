@@ -16,14 +16,27 @@ import {DateValue, RangeCalendarProps, RangeCalendarState} from '@react-stately/
 import {isFocusWithin, nodeContains, useEvent} from '@react-aria/utils';
 import {useRef} from 'react';
 
-export interface AriaRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps, AriaLabelingProps {}
+export interface AriaRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps, AriaLabelingProps {
+  /**
+   * Controls the behavior when a pointer is released outside the calendar:
+   *
+   * - `clear`: clear the currently selected range of dates.
+   *
+   * - `reset`: reset the selection to the previously selected range of dates.
+   *
+   * - `select`: select the currently hovered range of dates.
+   * @default 'select'
+   */
+  interactOutsideBehavior?: 'clear' | 'reset' | 'select'
+}
 
 /**
  * Provides the behavior and accessibility implementation for a range calendar component.
  * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
  */
 export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarProps<T>, state: RangeCalendarState, ref: RefObject<FocusableElement | null>): CalendarAria {
-  let res = useCalendarBase(props, state);
+  let {interactOutsideBehavior = 'select', ...otherProps} = props;
+  let res = useCalendarBase(otherProps, state);
 
   // We need to ignore virtual pointer events from VoiceOver due to these bugs.
   // https://bugs.webkit.org/show_bug.cgi?id=222627
@@ -37,7 +50,13 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
     isVirtualClick.current = e.width === 0 && e.height === 0;
   });
 
-  // Stop range selection when pressing or releasing a pointer outside the calendar body,
+  const interactOutsideBehaviorMapping = {
+    clear: () => state.clearSelection(),
+    reset: () => state.setAnchorDate(null),
+    select: () => state.selectFocusedDate()
+  };
+
+  // Execute method corresponding to `interactOutsideBehavior` when pressing or releasing a pointer outside the calendar body,
   // except when pressing the next or previous buttons to switch months.
   let endDragging = (e: PointerEvent) => {
     if (isVirtualClick.current) {
@@ -56,19 +75,21 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
       isFocusWithin(ref.current) &&
       (!nodeContains(ref.current, target) || !target.closest('button, [role="button"]'))
     ) {
-      state.selectFocusedDate();
+      interactOutsideBehaviorMapping[interactOutsideBehavior]();
     }
   };
 
   useEvent(windowRef, 'pointerup', endDragging);
 
-  // Also stop range selection on blur, e.g. tabbing away from the calendar.
+  // Also execute method corresponding to `interactOutsideBehavior` on blur,
+  // e.g. tabbing away from the calendar.
   res.calendarProps.onBlur = e => {
     if (!ref.current) {
       return;
     }
+
     if ((!e.relatedTarget || !nodeContains(ref.current, e.relatedTarget)) && state.anchorDate) {
-      state.selectFocusedDate();
+      interactOutsideBehaviorMapping[interactOutsideBehavior]();
     }
   };
 

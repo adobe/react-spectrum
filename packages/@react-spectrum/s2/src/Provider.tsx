@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, JSX, ReactNode, useContext} from 'react';
 import {DOMProps, Href, RouterOptions} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
@@ -18,8 +17,9 @@ import {Fonts} from './Fonts';
 import {generateDefaultColorSchemeStyles} from './page.macro' with {type: 'macro'};
 import {I18nProvider, RouterProvider, useLocale} from 'react-aria-components';
 import {mergeStyles} from '../style/runtime';
-import {style} from '../style' with {type: 'macro'};
+import {setColorScheme, style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
+import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 
 export type ColorScheme = 'light' | 'dark';
 interface Router {
@@ -82,7 +82,7 @@ export function Provider(props: ProviderProps): JSX.Element {
 generateDefaultColorSchemeStyles();
 
 let providerStyles = style({
-  ...colorScheme(),
+  ...setColorScheme(),
   '--s2-container-bg': {
     type: 'backgroundColor',
     value: {

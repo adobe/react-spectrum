@@ -28,7 +28,8 @@ import {Selection} from './Selection';
 
 interface SelectionManagerOptions {
   allowsCellSelection?: boolean,
-  layoutDelegate?: LayoutDelegate
+  layoutDelegate?: LayoutDelegate,
+  fullCollection?: Collection<Node<unknown>>
 }
 
 /**
@@ -40,6 +41,7 @@ export class SelectionManager implements MultipleSelectionManager {
   private allowsCellSelection: boolean;
   private _isSelectAll: boolean | null;
   private layoutDelegate: LayoutDelegate | null;
+  private fullCollection: Collection<Node<unknown>> | null;
 
   constructor(collection: Collection<Node<unknown>>, state: MultipleSelectionState, options?: SelectionManagerOptions) {
     this.collection = collection;
@@ -47,6 +49,7 @@ export class SelectionManager implements MultipleSelectionManager {
     this.allowsCellSelection = options?.allowsCellSelection ?? false;
     this._isSelectAll = null;
     this.layoutDelegate = options?.layoutDelegate || null;
+    this.fullCollection = options?.fullCollection || null;
   }
 
   /**
@@ -388,26 +391,29 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   private getSelectAllKeys() {
+    // Use the full (unfiltered) collection when available so that materializing
+    // the 'all' selection includes items that are currently filtered out (e.g. by Autocomplete).
+    let collection = this.fullCollection ?? this.collection;
     let keys: Key[] = [];
     let addKeys = (key: Key | null) => {
       while (key != null) {
-        if (this.canSelectItem(key)) {
-          let item = this.collection.getItem(key);
+        if (this.canSelectItemIn(key, collection)) {
+          let item = collection.getItem(key);
           if (item?.type === 'item') {
             keys.push(key);
           }
 
           // Add child keys. If cell selection is allowed, then include item children too.
           if (item?.hasChildNodes && (this.allowsCellSelection || item.type !== 'item')) {
-            addKeys(getFirstItem(getChildNodes(item, this.collection))?.key ?? null);
+            addKeys(getFirstItem(getChildNodes(item, collection))?.key ?? null);
           }
         }
 
-        key = this.collection.getKeyAfter(key);
+        key = collection.getKeyAfter(key);
       }
     };
 
-    addKeys(this.collection.getFirstKey());
+    addKeys(collection.getFirstKey());
     return keys;
   }
 
@@ -489,11 +495,15 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   canSelectItem(key: Key): boolean {
+    return this.canSelectItemIn(key, this.collection);
+  }
+
+  private canSelectItemIn(key: Key, collection: Collection<Node<unknown>>): boolean {
     if (this.state.selectionMode === 'none' || this.state.disabledKeys.has(key)) {
       return false;
     }
 
-    let item = this.collection.getItem(key);
+    let item = collection.getItem(key);
     if (!item || item?.props?.isDisabled || (item.type === 'cell' && !this.allowsCellSelection)) {
       return false;
     }
@@ -516,7 +526,8 @@ export class SelectionManager implements MultipleSelectionManager {
   withCollection(collection: Collection<Node<unknown>>): SelectionManager {
     return new SelectionManager(collection, this.state, {
       allowsCellSelection: this.allowsCellSelection,
-      layoutDelegate: this.layoutDelegate || undefined
+      layoutDelegate: this.layoutDelegate || undefined,
+      fullCollection: this.fullCollection ?? this.collection
     });
   }
 }
