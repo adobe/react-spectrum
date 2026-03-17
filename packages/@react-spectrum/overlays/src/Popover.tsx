@@ -138,7 +138,8 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: ForwardedRef
             {
               'spectrum-Popover--withTip': !hideArrow,
               'is-open': isOpen,
-              [`is-open--${placement}`]: isOpen
+              [`is-open--${placement}`]: isOpen,
+              'is-exiting': !state.isOpen
             },
             classNames(
               overrideStyles,
