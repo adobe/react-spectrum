@@ -143,10 +143,19 @@ export const TreeStatic: StoryObj<typeof TreeExample> = {
   render: (args) => <TreeExample {...args} />
 };
 
-export const TreeSelection: StoryObj<typeof TreeExample> = {
+export const TreeCheckboxSelection: StoryObj<typeof TreeExample> = {
   ...TreeStatic,
   args: {
     selectionMode: 'multiple',
+    defaultSelectedKeys: ['projects-2', 'projects-3']
+  }
+};
+
+export const TreeHighlightSelection: StoryObj<typeof TreeExample> = {
+  ...TreeStatic,
+  args: {
+    selectionMode: 'multiple',
+    selectionStyle: 'highlight',
     defaultSelectedKeys: ['projects-2', 'projects-3']
   }
 };
