@@ -15,8 +15,9 @@ import {Inset, fontRelative as internalFontRelative, space as internalSpace, Spa
 import type {MacroContext} from '@parcel/macros';
 import {StyleString} from './types';
 
-export {baseColor, color, lightDark, colorMix, linearGradient, size, style} from './spectrum-theme';
-export {raw, keyframes} from './style-macro';
+export {baseColor, color, lightDark, colorMix, size, style} from './spectrum-theme';
+export {raw} from './style-macro';
+export {centerPadding, setColorScheme} from '../src/style-utils';
 export type {StyleString} from './types';
 
 /**

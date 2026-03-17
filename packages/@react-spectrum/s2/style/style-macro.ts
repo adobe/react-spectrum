@@ -920,27 +920,6 @@ export function raw(this: MacroContext | void, css: string, layer = '_.a'): stri
   return className;
 }
 
-/**
- * Defines a CSS `@keyframes` animation and returns the generated animation name.
- * Must be imported with `{type: 'macro'}`.
- *
- * @param css - The keyframe rules (e.g. `from { ... } to { ... }`).
- * @returns The generated animation name to use in CSS `animation` properties.
- *
- * @example
- * ```tsx
- * import {keyframes} from '@react-spectrum/s2/style' with {type: 'macro'};
- *
- * const fadeIn = keyframes(`
- *   from { opacity: 0; }
- *   to { opacity: 1; }
- * `);
- * 
- * const styles = style({
- *   animation: fadeIn,
- * });
- * ```
- */
 export function keyframes(this: MacroContext | void, css: string): string {
   // Check if `this` is undefined, which means style was not called as a macro but as a normal function.
   // We also check if this is globalThis, which happens in non-strict mode bundles.

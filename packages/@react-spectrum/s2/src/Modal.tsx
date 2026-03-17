@@ -14,8 +14,7 @@ import {ColorSchemeContext} from './Provider';
 import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
 import {ModalOverlay, ModalOverlayProps, Modal as RACModal, useLocale} from 'react-aria-components';
-import {setColorScheme} from './style-utils' with {type: 'macro'};
-import {style} from '../style' with {type: 'macro'};
+import {setColorScheme, style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
 interface ModalProps extends Omit<ModalOverlayProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes> {

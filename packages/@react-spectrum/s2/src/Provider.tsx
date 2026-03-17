@@ -18,9 +18,9 @@ import {Fonts} from './Fonts';
 import {generateDefaultColorSchemeStyles} from './page.macro' with {type: 'macro'};
 import {I18nProvider, RouterProvider, useLocale} from 'react-aria-components';
 import {mergeStyles} from '../style/runtime';
-import {setColorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {style} from '../style' with {type: 'macro'};
+import {setColorScheme, style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
+import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 
 export interface ProviderProps extends UnsafeStyles, DOMProps {
   /** The content of the Provider. */

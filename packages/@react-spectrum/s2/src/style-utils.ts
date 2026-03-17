@@ -11,7 +11,7 @@
  */
 
 import {CSSProperties} from 'react';
-import {fontRelative} from '../style';
+import {fontRelative as internalFontRelative} from '../style/spectrum-theme';
 import {StyleString} from '../style/types';
 
 /**
@@ -25,8 +25,7 @@ import {StyleString} from '../style/types';
  *
  * @example
  * ```tsx
- * import {centerPadding} from '@react-spectrum/s2';
- * import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ * import {centerPadding, style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
  * const styles = style({
  *   paddingY: centerPadding()
@@ -35,6 +34,10 @@ import {StyleString} from '../style/types';
  */
 export function centerPadding(minHeight: string = 'self(minHeight)'): `[${string}]` {
   return `[calc((${minHeight} - self(borderTopWidth, 0px) - self(borderBottomWidth, 0px) - 1lh) / 2)]`;
+}
+
+function fontRelative(base: number, baseFontSize = 14): `[${string}]` {
+  return `[${internalFontRelative(base, baseFontSize)}]`;
 }
 
 export const field = () => ({
@@ -140,8 +143,7 @@ export const fieldInput = () => ({
  *
  * @example
  * ```tsx
- * import {setColorScheme} from '@react-spectrum/s2';
- * import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ * import {setColorScheme, style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
  * const styles = style({
  *   ...setColorScheme(),

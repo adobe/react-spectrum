@@ -92,11 +92,6 @@ export {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem} from 
 
 export {pressScale} from './pressScale';
 
-export {
-  centerPadding,
-  setColorScheme
-} from './style-utils';
-
 export {mergeStyles} from '../style/runtime';
 
 export {Autocomplete, Collection, FileTrigger, parseColor, useLocale} from 'react-aria-components';

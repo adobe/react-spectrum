@@ -39,15 +39,15 @@ import {
 } from 'react';
 import {DividerContext} from './Divider';
 import {forwardRefType} from './types';
-import {getAllowedOverrides, setColorScheme, StyleProps} from './style-utils' with {type: 'macro'};
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
 import {keyframes, raw} from '../style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
 import {PressResponder} from '@react-aria/interactions';
+import {setColorScheme, space, style} from '../style' with {type: 'macro'};
 import {SliderContext} from './Slider';
-import {space, style} from '../style' with {type: 'macro'};
 import {useId, useObjectRef, useOverlayTrigger} from 'react-aria';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useMenuTriggerState} from 'react-stately';
