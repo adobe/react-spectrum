@@ -46,31 +46,62 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
     }
   });
 
-  // Decode macro data from CSS custom property value (base64, avoids { } ; % for CSS parsers).
-  // decodeURIComponent(escape(atob(...))) is the inverse of the encode side: atob gives bytes,
-  // escape turns them into %XX, decodeURIComponent interprets as UTF-8 so non-ASCII metadata is correct.
-  function decodeMacroDataFromCSS(encoded) {
-    if (!encoded) {
-      return null;
+  // Get all static macro data in one eval (from CSS custom properties on $0).
+  // Uses the element's window so iframes work correctly. Value is plain JSON.
+  function getMacroDataStaticBatch(hashes) {
+    if (hashes.length === 0) {
+      return Promise.resolve([]);
     }
+    return new Promise((resolve) => {
+      const hashesJson = JSON.stringify(hashes);
+      const staticEval = `
+(function () {
+  var el = $0;
+  if (!el) return [];
+  var w = (el.ownerDocument && el.ownerDocument.defaultView) || window;
+  var s = w.getComputedStyle(el);
+  var hashes = ${hashesJson};
+  return hashes.map(function (h) {
+    var raw = s.getPropertyValue("--macro-data-" + h).trim();
+    if (!raw) return null;
     try {
-      const json = decodeURIComponent(escape(atob(encoded)));
-      return JSON.parse(json);
-    } catch {
+      return JSON.parse(raw);
+    } catch (e) {
       return null;
     }
-  }
-
-  // Get macro data from the CSS custom property (works for both static and dynamic)
-  function getMacroData(className) {
-    let promise = new Promise((resolve) => {
-      debugLog('Getting macro data for:', className);
-      chrome.devtools.inspectedWindow.eval(`window.getComputedStyle($0).getPropertyValue("--macro-data-${className}")`, (style) => {
-        debugLog('Got style:', style);
-        resolve(style ? decodeMacroDataFromCSS(style) : null);
+  });
+})();
+      `.trim();
+      chrome.devtools.inspectedWindow.eval(staticEval, (results) => {
+        resolve(Array.isArray(results) ? results : []);
       });
     });
-    return promise;
+  }
+
+  // Get all dynamic macro data in one eval. Uses $0's window (correct for iframes).
+  // Reads from (element's document defaultView).__styleMacroDynamic__.map.
+  function getMacroDataDynamicBatch(hashes) {
+    if (hashes.length === 0) {
+      return Promise.resolve([]);
+    }
+    return new Promise((resolve) => {
+      const hashesJson = JSON.stringify(hashes);
+      const dynamicEval = `
+(function () {
+  var el = $0;
+  var w = (el && el.ownerDocument && el.ownerDocument.defaultView) || window;
+  var g = w && w.__styleMacroDynamic__;
+  if (!g || !g.map) return [];
+  var hashes = ${hashesJson};
+  return hashes.map(function (h) {
+    return g.map["-macro-dynamic-" + h] || null;
+  });
+})();
+      `.trim();
+      chrome.devtools.inspectedWindow.eval(dynamicEval, (results) => {
+        resolve(Array.isArray(results) ? results : []);
+      });
+    });
   }
 
   // Function to disconnect the current observer
@@ -162,11 +193,13 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
         debugLog('Static macro hashes:', staticMacroHashes);
         debugLog('Dynamic macro hashes:', dynamicMacroHashes);
 
-        // Get macro data for both static and dynamic (both read from inspected element)
-        let allMacros = [...staticMacroHashes, ...dynamicMacroHashes].map(hash => getMacroData(hash));
-
-        debugLog('Waiting for', allMacros.length, 'macros...');
-        let results = await Promise.all(allMacros);
+        // Get macro data: static from CSS custom properties on $0, dynamic from element's window.__styleMacroDynamic__.map
+        debugLog('Waiting for', staticMacroHashes.length, 'static +', dynamicMacroHashes.length, 'dynamic macros...');
+        let [staticResults, dynamicResults] = await Promise.all([
+          getMacroDataStaticBatch(staticMacroHashes),
+          getMacroDataDynamicBatch(dynamicMacroHashes)
+        ]);
+        let results = [...staticResults, ...dynamicResults];
         debugLog('Results:', results);
 
         // Filter out null results (missing data)
@@ -209,65 +242,4 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
 
   // Initial observation when the panel is first opened
   startObserving();
-
-  // Cleanup stale macro data every 5 minutes
-  const CLEANUP_INTERVAL = 1000 * 60 * 5;
-  setInterval(() => {
-    debugLog('Running macro data cleanup...');
-
-    // Remove unused dynamic macro CSS rules from the style tag
-    const cleanupScript = `
-      (function() {
-        const styleTag = document.getElementById('__style-macro-data__');
-        if (!styleTag || !styleTag.sheet) {
-          return { found: false, removed: 0 };
-        }
-
-        const sheet = styleTag.sheet;
-        let removedCount = 0;
-        const rulesToRemove = [];
-
-        // Collect rules that need to be removed
-        for (let i = 0; i < sheet.cssRules.length; i++) {
-          const rule = sheet.cssRules[i];
-          if (rule.selectorText && rule.selectorText.startsWith('.-macro-dynamic-')) {
-            // Check if this class is used anywhere in the DOM
-            const className = rule.selectorText.substring(1); // Remove leading dot
-            const isUsed = document.querySelector('.' + CSS.escape(className)) !== null;
-
-            if (!isUsed) {
-              rulesToRemove.push(i);
-            }
-          }
-        }
-
-        // Remove rules in reverse order to maintain correct indices
-        for (let i = rulesToRemove.length - 1; i >= 0; i--) {
-          sheet.deleteRule(rulesToRemove[i]);
-          removedCount++;
-        }
-
-        return {
-          found: true,
-          removed: removedCount,
-          remaining: sheet.cssRules.length
-        };
-      })();
-    `;
-
-    chrome.devtools.inspectedWindow.eval(cleanupScript, (result, isException) => {
-      if (isException) {
-        debugLog('Error during cleanup:', result);
-        return;
-      }
-
-      if (!result.found) {
-        debugLog('No macro data style tag found.');
-      } else if (result.removed > 0) {
-        debugLog(`Cleaned up ${result.removed} stale macro(s). Remaining: ${result.remaining}`);
-      } else {
-        debugLog('No stale macros found.');
-      }
-    });
-  }, CLEANUP_INTERVAL);
 });

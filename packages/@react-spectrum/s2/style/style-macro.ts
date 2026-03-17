@@ -18,13 +18,6 @@ import * as propertyInfo from './properties.json';
 const json = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
 const POSTFIX = json.version.includes('nightly') ? json.version.match(/-nightly-(.*)/)[1] : json.version.replace(/[0.]/g, '');
 
-/** Encodes macro metadata for safe use in a CSS custom property value (base64 avoids { } ; % which break CSS parsers).
- * Runs in Node at build time; Buffer handles UTF-8 natively so we don't need the unescape(encodeURIComponent(...))
- * workaround that the runtime (browser) path uses for btoa(). Both produce the same base64 for the same input. */
-function encodeMacroDataForCSS(data: {style: unknown, loc: string}): string {
-  return Buffer.from(JSON.stringify(data), 'utf8').toString('base64');
-}
-
 export class ArbitraryProperty<T extends Value> implements Property<T> {
   property: string;
   toCSS: (value: T) => CSSValue;
@@ -395,7 +388,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     if (isStatic && process.env.NODE_ENV !== 'production') {
       let id = toBase62(hash(className + loc));
       css += `.-macro-static-${id} {
-        --macro-data-${id}: ${encodeMacroDataForCSS({style, loc})};
+        --macro-data-${id}: ${JSON.stringify({style, loc})};
       }\n\n`;
       className += ` -macro-static-${id}`;
     }
@@ -416,35 +409,21 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       js += 'let hash = 5381;for (let i = 0; i < targetRules.length; i++) { hash = ((hash << 5) + hash) + targetRules.charCodeAt(i) >>> 0; }\n';
       js += 'let hashStr = hash.toString(36);\n';
       js += 'rules += " -macro-dynamic-" + hashStr;\n';
-      js += 'if (typeof window !== "undefined") {\n';
-      js += '  let styleTag = document.getElementById("__style-macro-data__");\n';
-      js += '  if (!styleTag) {\n';
-      js += '    styleTag = document.createElement("style");\n';
-      js += '    styleTag.id = "__style-macro-data__";\n';
-      js += '    document.head.appendChild(styleTag);\n';
-      js += '  }\n';
-      js += '  let sheet = styleTag.sheet;\n';
-      js += '  if (sheet) {\n';
-      js += '    let ruleIndex = -1;\n';
-      js += '    for (let i = 0; i < sheet.cssRules.length; i++) {\n';
-      js += '      if (sheet.cssRules[i].selectorText === ".-macro-dynamic-" + hashStr) {\n';
-      js += '        ruleIndex = i;\n';
-      js += '        break;\n';
-      js += '      }\n';
-      js += '    }\n';
-      js += `    let macroMetadata = {style: currentRules, loc: ${JSON.stringify(loc)}};\n`;
-      // btoa() only accepts Latin1 (code points 0–255). unescape(encodeURIComponent(...)) turns UTF-8
-      // into a byte string so metadata with non-ASCII (e.g. file paths) encodes correctly.
-      js += '    let macroEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(macroMetadata))));\n';
-      js += '    let cssRule = ".-macro-dynamic-" + hashStr + " { --macro-data-" + hashStr + ": " + macroEncoded + "; }";\n';
-      js += '    if (ruleIndex >= 0) {\n';
-      js += '      sheet.deleteRule(ruleIndex);\n';
-      js += '      sheet.insertRule(cssRule, ruleIndex);\n';
-      js += '    } else {\n';
-      js += '      sheet.insertRule(cssRule, sheet.cssRules.length);\n';
-      js += '    }\n';
-      js += '  }\n';
-      js += '}\n';
+      // Skip global __styleMacroDynamic__ in Jest so we dont' pollute the test environment and don't cause issues with timer advancement.
+      if (!process.env.JEST_WORKER_ID) {
+        js += 'if (typeof window !== "undefined") {\n';
+        js += '  let g = window.__styleMacroDynamic__;\n';
+        js += '  if (!g) {\n';
+        js += '    g = window.__styleMacroDynamic__ = { map: {}, _timer: null };\n';
+        js += '    g._timer = setInterval(function() {\n';
+        js += '      for (let k in g.map) {\n';
+        js += '        try { if (!document.querySelector("." + CSS.escape(k))) delete g.map[k]; } catch (e) {}\n';
+        js += '      }\n';
+        js += '    }, 300000);\n';
+        js += '  }\n';
+        js += `  g.map["-macro-dynamic-" + hashStr] = { style: currentRules, loc: ${JSON.stringify(loc)} };\n`;
+        js += '}\n';
+      }
     }
     js += 'return rules;';
     if (allowedOverrides) {

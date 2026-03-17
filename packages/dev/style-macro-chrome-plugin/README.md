@@ -61,20 +61,16 @@ This extension uses Chrome's standard extension architecture with three main com
 - **Location**: Runs in the actual page's JavaScript context
 - **Responsibility**:
   - Generates macro metadata (hash, location, styles) when style macro is evaluated
-  - Hosts MutationObserver that watches selected element for className changes
+  - Hosts MutationObserver (created by dev tool panel) that watches selected element for className changes
 - **Storage**:
   - Static macros: Data embedded in CSS rules with custom property `--macro-data-{hash}`
-  - Dynamic macros: Data injected into a `<style id="__style-macro-data__">` tag as CSS rules with custom properties `--macro-data-{hash}`
-- **Communication**:
-  - For static macros: Embeds data in CSS custom property `--macro-data-{hash}` (unique per macro)
-  - For dynamic macros: Injects CSS rule into `<style id="__style-macro-data__">` tag: `.-macro-dynamic-{hash} { --macro-data-{hash}: '...'; }`
-  - For className changes: Sends `window.postMessage({ action: 'stylemacro-class-changed', elementId })` to content script
+  - Dynamic macros: Data stored in global `window.__styleMacroDynamic__` (object with `map` of class name → `{ style, loc }` and an internal interval timer for cleanup)
 
 #### 2. **Content Script** (`content-script.js`)
 - **Location**: Isolated sandboxed environment injected into the page
 - **Scope**: Acts as a message forwarder between page and extension
 - **Responsibility**:
-  - Forwards `window.postMessage({ action: 'stylemacro-class-changed' })` from page to background script
+  - Forwards `window.postMessage({ action: 'stylemacro-class-changed' })` from Mutation Observer on page to background script
 - **Storage**: None - all macro data is stored in the DOM via CSS custom properties
 - **Communication**:
   - Receives:
@@ -99,10 +95,9 @@ This extension uses Chrome's standard extension architecture with three main com
 - **Responsibility**:
   - Extracts macro class names from selected element:
     - Static macros: `-macro-static-{hash}` → reads `--macro-data-{hash}` custom property via `getComputedStyle()` on the element
-    - Dynamic macros: `-macro-dynamic-{hash}` → reads `--macro-data-{hash}` custom property via `getComputedStyle()` on the element (applied by CSS rule)
+    - Dynamic macros: `-macro-dynamic-{hash}` → reads from `window.__styleMacroDynamic__.map["-macro-dynamic-{hash}"]` (plain JSON)
   - Displays style information in sidebar
   - **Automatic Updates**: Sets up a MutationObserver on the selected element to detect className changes and automatically refreshes the panel
-  - **Cleanup**: Every 5 minutes, checks the `<style id="__style-macro-data__">` tag and removes CSS rules for macros that are no longer in use on the page
 - **Storage**: None - all data is read from CSS custom properties on demand
 - **Mutation Observer**:
   - Created when an element is selected via `chrome.devtools.panels.elements.onSelectionChanged`
@@ -144,29 +139,27 @@ Static macros are generated when style macro conditions don't change at runtime.
 
 **Key Design**: Each static macro has its own uniquely-named custom property (`--macro-data-{hash}`), which avoids CSS cascade issues when reading multiple macro data from the same element.
 
-#### Flow 1b: Dynamic Macro Updates (Page → Style Tag)
+#### Flow 1b: Dynamic Macro Updates (Page → Global Variable)
 
-Dynamic macros are generated when style macro conditions can change at runtime. Data is injected into a `<style>` tag as CSS rules.
+Dynamic macros are generated when style macro conditions can change at runtime. Data is written to a global JavaScript variable; a timer on the same object cleans up entries whose class is no longer present in the DOM.
 
 ```
 ┌─────────────────┐
 │ Page Context    │
 │ (style-macro)   │ Runtime evaluation with dynamic conditions
 └────────┬────────┘
-         │ 1. Get/create <style id="__style-macro-data__"> tag
-         │ 2. Insert/update CSS rule: .-macro-dynamic-{hash} { --macro-data-{hash}: '...'; }
+         │ 1. Ensure window.__styleMacroDynamic__ exists ({ map: {}, _timer })
+         │ 2. Set map["-macro-dynamic-{hash}"] = { style, loc } (plain JSON)
+         │ 3. Timer (e.g. every 5 min) removes entries with no matching element in DOM
          ↓
 ┌─────────────────┐
-│ Page DOM        │ Style tag contains CSS rules for all dynamic macros
-│ (<style>)       │ <style id="__style-macro-data__">
-│                 │   .-macro-dynamic-{hash} { --macro-data-{hash}: '{"loc": "...", "style": {...}}'; }
-│                 │ </style>
+│ Page (global)    │ window.__styleMacroDynamic__.map["-macro-dynamic-{hash}"] = { style, loc }
 └─────────────────┘
 ```
 
 #### Flow 2: Display Macro Data (Synchronous CSS Lookup)
 
-When the user selects an element or the panel refreshes, DevTools reads macro data from CSS custom properties on the inspected element.
+When the user selects an element or the panel refreshes, DevTools reads macro data as follows.
 
 ```
 ┌─────────────────┐
@@ -175,15 +168,8 @@ When the user selects an element or the panel refreshes, DevTools reads macro da
          │ Extract hash from className
          ↓
 ┌─────────────────┐
-│ DevTools Panel  │ For both static and dynamic:
-│                 │   getComputedStyle($0).getPropertyValue('--macro-data-{hash}')
-└────────┬────────┘
-         │ getPropertyValue('--macro-data-{hash}')
-         │ { loc: "...", style: {...} }
-         ↓
-┌─────────────────┐
-│ Page DOM/CSS    │ Returns custom property value for specific hash
-│                 │ (applied by either CSS rule or style tag rule)
+│ DevTools Panel  │ Static: getComputedStyle($0).getPropertyValue('--macro-data-{hash}') → JSON.parse
+│                 │ Dynamic: window.__styleMacroDynamic__.map["-macro-dynamic-{hash}"] → already { style, loc }
 └────────┬────────┘
          │
          ↓
@@ -192,106 +178,11 @@ When the user selects an element or the panel refreshes, DevTools reads macro da
 └─────────────────┘
 ```
 
-**Note**: Both static and dynamic macros use the exact same CSS custom property mechanism. Static macros have rules in the main CSS, while dynamic macros have rules injected into a `<style>` tag. Both are read from the inspected element using `getComputedStyle()`.
+**Note**: Static macros are read from CSS custom properties on the inspected element. Dynamic macros are read from the page’s global `window.__styleMacroDynamic__.map` (no CSS involved).
 
-#### Flow 3: Macro Data Cleanup (Automated)
-
-Every 5 minutes, DevTools checks the `<style id="__style-macro-data__">` tag and removes unused CSS rules.
-
-```
-┌─────────────────┐
-│ DevTools Panel  │ Every 5 minutes
-└────────┬────────┘
-         │ chrome.devtools.inspectedWindow.eval(
-         │   For each CSS rule in #__style-macro-data__ style tag:
-         │     If rule selector is .-macro-dynamic-{hash}:
-         │       Check if document.querySelector('.-macro-dynamic-{hash}') exists
-         │       If not found:
-         │         - Delete the CSS rule from the sheet
-         │ )
-         ↓
-┌─────────────────┐
-│ Page DOM        │ Cleans up style tag
-│ (<style>)       │ Removes unused CSS rules
-└─────────────────┘
-```
-
-#### Flow 4: Automatic Updates on className Changes (MutationObserver)
+#### Flow 3: Automatic Updates on className Changes (MutationObserver)
 
 When you select an element, the DevTools panel automatically watches for className changes and refreshes the panel.
-
-```
-┌─────────────────┐
-│ DevTools Panel  │ User selects element in Elements panel
-└────────┬────────┘
-         │ chrome.devtools.panels.elements.onSelectionChanged
-         │
-         │ chrome.devtools.inspectedWindow.eval(`
-         │   // Disconnect old observer (if any)
-         │   if (window.__styleMacroObserver) {
-         │     window.__styleMacroObserver.disconnect();
-         │   }
-         │
-         │   // Create new MutationObserver on $0
-         │   window.__styleMacroObserver = new MutationObserver(() => {
-         │     window.postMessage({
-         │       action: 'stylemacro-class-changed',
-         │       elementId: $0.__devtoolsId
-         │     }, '*');
-         │   });
-         │
-         │   window.__styleMacroObserver.observe($0, {
-         │     attributes: true,
-         │     attributeFilter: ['class']
-         │   });
-         │ `)
-         ↓
-┌─────────────────┐
-│ Page DOM        │ MutationObserver active on selected element
-└────────┬────────┘
-         │
-         │ ... User interacts with page, element's className changes ...
-         │
-         │ MutationObserver detects class attribute change
-         │ window.postMessage({ action: 'stylemacro-class-changed', elementId }, '*')
-         ↓
-┌─────────────────┐
-│ Content Script  │ Receives window message, forwards to extension
-└────────┬────────┘
-         │ chrome.runtime.sendMessage({ action: 'stylemacro-class-changed', elementId })
-         ↓
-┌─────────────────┐
-│ Background      │ Looks up DevTools connection for tabId
-└────────┬────────┘
-         │ port.postMessage({ action: 'stylemacro-class-changed', elementId })
-         ↓
-┌─────────────────┐
-│ DevTools Panel  │ Verifies elementId matches currently selected element
-│                 │ Triggers full panel refresh (re-reads classes, re-queries macros)
-└─────────────────┘
-
-When selection changes or panel closes:
-  ↓
-┌─────────────────┐
-│ DevTools Panel  │ Calls disconnectObserver()
-└────────┬────────┘
-         │ chrome.devtools.inspectedWindow.eval(`
-         │   if (window.__styleMacroObserver) {
-         │     window.__styleMacroObserver.disconnect();
-         │     window.__styleMacroObserver = null;
-         │   }
-         │ `)
-         ↓
-┌─────────────────┐
-│ Page DOM        │ Old observer disconnected, new observer created for new selection
-└─────────────────┘
-```
-
-**Key Benefits:**
-- Panel automatically refreshes when element classes change (e.g., hover states, conditional styles)
-- No manual refresh needed
-- Observer is cleaned up properly to prevent memory leaks
-- Each element has its own unique tracking ID to prevent cross-contamination
 
 ### Key Technical Details
 
@@ -306,27 +197,13 @@ The style macro generates different class name patterns based on whether the sty
 - Used when all style conditions are static (e.g., `style({ color: 'red' })`)
 - Macro data is embedded in CSS rules as a uniquely-named custom property: `--macro-data-{hash}: '{...JSON...}'`
 - DevTools reads the specific custom property via `getComputedStyle($0).getPropertyValue('--macro-data-{hash}')`
-- Unique naming avoids CSS cascade issues when multiple macros are applied to the same element
 
 **Dynamic Macros** (`-macro-dynamic-{hash}`):
 - Used when style conditions can change (e.g., `style({color: {default: 'blue', isActive: 'red'}})`)
-- Macro data is injected into a `<style id="__style-macro-data__">` tag as CSS rules
-- Each evaluation inserts/updates a CSS rule: `.-macro-dynamic-{hash} { --macro-data-{hash}: '...'; }`
-- DevTools reads the custom property via `getComputedStyle($0).getPropertyValue('--macro-data-{hash}')` on the inspected element (same as static macros)
-- Enables real-time updates when props/state change, with data immediately available via CSS cascade
-
-#### Data Storage
-- **Static Macros**: Data embedded in CSS rules as uniquely-named custom properties `--macro-data-{hash}`, read via `getComputedStyle($0).getPropertyValue('--macro-data-{hash}')`
-  - Each macro has its own custom property name to prevent cascade conflicts
-  - Example: `.-macro-static-abc123 { --macro-data-abc123: '{"style": {...}, "loc": "..."}'; }`
-- **Dynamic Macros**: Data injected as CSS rules into a `<style id="__style-macro-data__">` tag
-  - Style tag is created on first dynamic macro evaluation: `<style id="__style-macro-data__"></style>`
-  - Each dynamic macro inserts/updates a CSS rule in the style tag
-  - Example: `<style id="__style-macro-data__">.-macro-dynamic-abc123 { --macro-data-abc123: '{"style": {...}, "loc": "..."}'; }</style>`
-  - DevTools reads via `getComputedStyle($0).getPropertyValue('--macro-data-{hash}')` on the inspected element (same as static macros)
-- **No Extension Storage**: Both static and dynamic macros store data in the DOM only
-- **Lifetime**: Macro data persists in the DOM for the lifetime of the page
-- **Cleanup**: Every 5 minutes, DevTools removes unused CSS rules from the style tag
+- Macro data is stored in `window.__styleMacroDynamic__.map["-macro-dynamic-{hash}"]` as plain JSON `{ style, loc }`
+- A timer on `window.__styleMacroDynamic__` periodically removes map entries whose class is no longer used in the DOM
+- DevTools reads via `window.__styleMacroDynamic__.map["-macro-dynamic-{hash}"]`
+- Enables real-time updates when props/state change
 
 #### Connection Management
 - **DevTools → Background**: Uses persistent `chrome.runtime.connect()` with port-based messaging
@@ -342,23 +219,16 @@ The style macro generates different class name patterns based on whether the sty
 }
 ```
 
-**Dynamic Macros (in style tag):**
-```html
-<style id="__style-macro-data__">
-.-macro-dynamic-zsZ9Dc {
-  --macro-data-zsZ9Dc: '{"style":{"paddingX":"4"},"loc":"packages/@react-spectrum/s2/src/Button.tsx:67"}';
-}
-.-macro-dynamic-abc123 {
-  --macro-data-abc123: '{"style":{...},"loc":"..."}';
-}
-</style>
+**Dynamic Macros (in page global):**
+```javascript
+window.__styleMacroDynamic__ = {
+  map: {
+    "-macro-dynamic-zsZ9Dc": { style: { paddingX: "4" }, loc: "packages/@react-spectrum/s2/src/Button.tsx:67" },
+    "-macro-dynamic-abc123": { style: {...}, loc: "..." }
+  },
+  _timer: 123  // setInterval for cleanup of unused entries
+};
 ```
-
-**Note**:
-- Both static and dynamic macro data are stored as CSS rules with uniquely-named custom properties
-- Static macros are in the main CSS, dynamic macros are in a dedicated `<style>` tag
-- Both are read the same way: `getComputedStyle($0).getPropertyValue('--macro-data-{hash}')` on the inspected element
-- The content script acts purely as a message forwarder for className changes and doesn't store any data
 
 #### Message Types
 
