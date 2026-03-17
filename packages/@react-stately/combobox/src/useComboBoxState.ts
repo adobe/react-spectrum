@@ -369,14 +369,21 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     closeMenu();
   };
 
-  let commitSelection = () => {
-    // If multiple things are controlled, call onSelectionChange
+  let commitSelection = (shouldForceSelectionChange = false) => {
+    // If multiple things are controlled, call onSelectionChange only when selecting the focused item,
+    // or when inputValue needs to be synced back to the selected item on commit/blur.
     if (value !== undefined && props.inputValue !== undefined) {
-      props.onSelectionChange?.(selectedKey);
-      props.onChange?.(displayValue as ChangeValueType<M>);
+      let itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
+      if (
+        shouldForceSelectionChange ||
+        selectionMode === 'multiple' ||
+        inputValue !== itemText
+      ) {
+        props.onSelectionChange?.(selectedKey);
+        props.onChange?.(displayValue as ChangeValueType<M>);
+      }
 
       // Stop menu from reopening from useEffect
-      let itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
       setLastValue(itemText);
       closeMenu();
     } else {
@@ -401,7 +408,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
       // Reset inputValue and close menu here if the selected key is already the focused key. Otherwise
       // fire onSelectionChange to allow the application to control the closing.
       if (selectionManager.isSelected(selectionManager.focusedKey) && selectionMode === 'single') {
-        commitSelection();
+        commitSelection(true);
       } else {
         selectionManager.select(selectionManager.focusedKey);
       }

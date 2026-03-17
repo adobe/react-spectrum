@@ -88,7 +88,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adobe/react-spectrum@workspace:packages/@adobe/react-spectrum":
+"@adobe/react-spectrum@npm:^3.46.2, @adobe/react-spectrum@workspace:packages/@adobe/react-spectrum":
   version: 0.0.0-use.local
   resolution: "@adobe/react-spectrum@workspace:packages/@adobe/react-spectrum"
   dependencies:
@@ -7179,6 +7179,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/codemods@workspace:packages/dev/codemods"
   dependencies:
+    "@adobe/react-spectrum": "npm:^3.46.2"
     "@babel/parser": "npm:^7.24.5"
     "@babel/traverse": "npm:^7.24.5"
     "@babel/types": "npm:^7.24.5"

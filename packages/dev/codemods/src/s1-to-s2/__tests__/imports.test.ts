@@ -18,6 +18,9 @@ import {Button} from '@react-spectrum/button';
 <Button>Test</Button>
 `);
 
+test('should handle empty files safely', `
+`);
+
 test('should leave unimplemented components untouched', `
 import {Button, Fake} from '@adobe/react-spectrum';
 
@@ -62,6 +65,10 @@ import * as RSP from '@adobe/react-spectrum';
 
 test('leaves a comment on dynamic imports', `
 const LazyButton = React.lazy(() => import('@react-spectrum/button'))
+`);
+
+test('does not leave a comment on dynamic s2 imports', `
+const LazyButton = React.lazy(() => import('@react-spectrum/s2'))
 `);
 
 test('should not import Item from S2', `
