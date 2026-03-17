@@ -24,7 +24,7 @@
     color: var(--text-color-placeholder);
   }
 
-  &[data-focus-visible] {
+  &[data-focused] {
     outline: 2px solid var(--focus-ring-color);
     outline-offset: -1px;
   }
