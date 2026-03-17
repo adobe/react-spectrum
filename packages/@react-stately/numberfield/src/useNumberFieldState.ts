@@ -175,11 +175,14 @@ export function useNumberFieldState(
     }
 
     clampedValue = numberParser.parse(format(clampedValue));
+    let shouldValidate = clampedValue !== numberValue;
     setNumberValue(clampedValue);
 
     // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
     setInputValue(format(value === undefined ? clampedValue : numberValue));
-    validation.commitValidation();
+    if (shouldValidate) {
+      validation.commitValidation();
+    }
   };
 
   let safeNextStep = (operation: '+' | '-', minMax: number = 0) => {
