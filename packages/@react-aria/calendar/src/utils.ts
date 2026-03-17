@@ -25,7 +25,7 @@ interface HookData {
   selectedDateDescription: string
 }
 
-export const hookData = new WeakMap<CalendarState | RangeCalendarState, HookData>();
+export const hookData: WeakMap<CalendarState | RangeCalendarState, HookData> = new WeakMap<CalendarState | RangeCalendarState, HookData>();
 
 export function getEraFormat(date: CalendarDate | undefined): 'short' | undefined {
   return date?.calendar.identifier === 'gregory' && date.era === 'BC' ? 'short' : undefined;

@@ -4,6 +4,72 @@ export default MDXLayout;
 
 # Release Notes
 
+## v0.12.0
+
+### Updates
+* [ActionButton](?path=/docs/actionbutton--docs): Add pending state
+* [ColorSlider](?path=/docs/colorslider--docs): Fix `ColorLoupe` position in RTL locales
+* [ComboBox](?path=/docs/combobox--docs): Support avatars and onAction
+* [CustomDialog](?path=/docs/customdialog--docs): Support custom widths
+* [Dialog](?path=/docs/dialog--docs): Add XL size
+* [Disclosure](?path=/docs/disclosure--docs): Add animation to disclosure
+* [InlineAlert](?path=/docs/inlinealert--docs): Support heading-less Inline Alerts
+* [Picker](?path=/docs/picker--docs): Support multiple selection and avatars
+* [Tags](?path=/docs/taggroup--docs): Fix Tag collapse calculation for removeable tags
+* [Tooltip](?path=/docs/tooltip--docs): Prevent text overflow by default
+* Allow placeholders in supported S2 components (e.g. ColorArea, ComboBox, NumberField, SearchField, TextArea, TextField)
+* Apply `page.css` styles to the Shadow DOM
+
+### Popover Styling Updates
+
+The Popover component has been updated to better support custom styling. To 
+remove the preset padding, use the new `padding` prop and wrap your Popover content
+in a custom div with your desired styling.
+
+## v0.11.0
+
+### New Components
+* [SelectBoxGroup](?path=/docs/selectboxgroup-alpha--docs)
+
+### Updates
+* [ComboBox](?path=/docs/combobox--docs): Fix empty state rendering when no items match the current query
+* [Picker](?path=/docs/picker--docs): Fix erroneous dropdown outline when opening the Picker via click  
+* [Tabs](?path=/docs/tabs--docs): Support collapse behavior on Tabs when customizing the layout
+
+## v0.10.0
+
+### Font update
+
+This release introduces a new font for Spectrum 2: Adobe Clean Spectrum VF. This is an evolution of the previous Adobe Clean, with slightly updated metrics allowing for better vertical centering. Along with this update, the S2 Provider component now automatically handles loading the fonts needed for the user's language. The new font does not affect previous versions of React Spectrum.
+
+If you previously used `page.css` without a `Provider`, you'll need to add a `Provider` around your app to load the fonts. See the [updated docs](?path=/docs/intro--docs#setting-up-your-app) for details.
+
+### New Components
+
+* [Calendar](?path=/docs/calendar--docs)
+* [RangeCalendar](?path=/docs/rangecalendar--docs)
+* [DateField](?path=/docs/datefield--docs)
+* [DatePicker](?path=/docs/datepicker--docs)
+* [DateRangePicker](?path=/docs/daterangepicker--docs)
+* [TimeField](?path=/docs/timefield--docs)
+
+### Updates
+
+* [CardView](?path=/docs/cardview--docs): Fix ActionBar from not scrolling
+* [ActionButton](?path=/docs/actionbutton--docs): Fix avatar-only ActionButtons to have square dimensions
+* [Tabs](?path=/docs/tabs--docs): Improve selection indicator animation, fix collasped tabs
+* [ProgressCircle](?path=/docs/progresscircle--docs): Add track outline in High Contrast Mode
+* [Switch](?path=/docs/switch--docs): Fix the toggle in RTL locales
+* [TreeView](?path=/docs/treeview--docs): Support async loading
+
+## v0.9.1
+
+### Updates
+* [Button](?path=/docs/button--docs): Fix focus visible styles from being applied on standard focus
+* [ContextualHelp](?path=/docs/contextualhelp--docs): Update width to match Spectrum designs
+* [Tabs](?path=/docs/tabs--docs): Update selection indicator when tab text changes
+* [TagGroup](?path=/docs/taggroup--docs): Fix focus visible styles from being applied on standard focus
+
 ## v0.9.0
 
 ### Updates
@@ -24,7 +90,7 @@ We strongly discourage using `UNSAFE_className` because it results in inconsiste
 
 ### Style macro updates
 
-We have made significant changes to the way our Style Macro generates class names in an effort to make them stable between version. While we work to stabilize the style macro class names, we have added a postfix based on the version number so that class names don't conflict with any prior or future version. 
+We have made significant changes to the way our Style Macro generates class names in an effort to make them stable between versions. While we work to stabilize the style macro class names, we have added a postfix based on the version number so that class names don't conflict with any prior or future version.
 
 We also made some changes to the available style macro values.
 

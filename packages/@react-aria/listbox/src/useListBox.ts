@@ -100,7 +100,9 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
     shouldFocusOnHover: props.shouldFocusOnHover,
     isVirtualized: props.isVirtualized,
     onAction: props.onAction,
-    linkBehavior
+    linkBehavior,
+    // @ts-ignore
+    UNSTABLE_itemBehavior: props['UNSTABLE_itemBehavior']
   });
 
   let {labelProps, fieldProps} = useLabel({

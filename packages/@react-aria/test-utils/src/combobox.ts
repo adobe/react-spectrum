@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, waitFor, within} from '@testing-library/react';
+import {act} from './act';
 import {ComboBoxTesterOpts, UserOpts} from './types';
+import {waitFor, within} from '@testing-library/dom';
 
 interface ComboBoxOpenOpts {
   /**
@@ -55,14 +56,17 @@ export class ComboBoxTester {
     if (trigger) {
       this._trigger = trigger;
     } else {
-      let trigger = within(root).queryByRole('button', {hidden: true});
-      if (trigger) {
-        this._trigger = trigger;
-      } else {
-        // For cases like https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-select-only/ where the combobox
-        // is also the trigger button
-        this._trigger = this._combobox;
+      let buttons = within(root).queryAllByRole('button', {hidden: true});
+
+      if (buttons.length === 1) {
+        trigger = buttons[0];
+      } else if (buttons.length > 1) {
+        trigger = buttons.find(button => button.hasAttribute('aria-haspopup'));
       }
+
+      // For cases like https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-select-only/ where the combobox
+      // is also the trigger button
+      this._trigger = trigger || this._combobox;
     }
   }
 

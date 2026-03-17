@@ -17,7 +17,7 @@ import {CalendarProps} from '@react-types/calendar';
 import {createFocusManager} from '@react-aria/focus';
 import {DatePickerState} from '@react-stately/datepicker';
 import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, nodeContains, useDescription, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {privateValidationStateProp} from '@react-stately/form';
@@ -84,7 +84,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
     onBlurWithin: e => {
       // Ignore when focus moves into the popover.
       let dialog = document.getElementById(dialogId);
-      if (!dialog?.contains(e.relatedTarget)) {
+      if (!nodeContains(dialog, e.relatedTarget)) {
         isFocused.current = false;
         props.onBlur?.(e);
         props.onFocusChange?.(false);
@@ -136,6 +136,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       [roleSymbol]: 'presentation',
       'aria-describedby': ariaDescribedBy,
       value: state.value,
+      defaultValue: state.defaultValue,
       onChange: state.setValue,
       placeholderValue: props.placeholderValue,
       hideTimeZone: props.hideTimeZone,
@@ -149,7 +150,8 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       // DatePicker owns the validation state for the date field.
       [privateValidationStateProp]: state,
       autoFocus: props.autoFocus,
-      name: props.name
+      name: props.name,
+      form: props.form
     },
     descriptionProps,
     errorMessageProps,
@@ -179,7 +181,9 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       isDateUnavailable: props.isDateUnavailable,
       defaultFocusedValue: state.dateValue ? undefined : props.placeholderValue,
       isInvalid: state.isInvalid,
-      errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : (props.errorMessage || state.displayValidation.validationErrors.join(' '))
+      errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : (props.errorMessage || state.displayValidation.validationErrors.join(' ')),
+      firstDayOfWeek: props.firstDayOfWeek,
+      pageBehavior: props.pageBehavior
     },
     isInvalid,
     validationErrors,

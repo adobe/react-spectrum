@@ -51,11 +51,11 @@ function transformTabPanels(tabPanelsPath: NodePath<t.JSXElement>, itemsProp: t.
  * - Remove isEmphasized (it is no longer supported in Spectrum 2).
  * - Remove isQuiet (it is no longer supported in Spectrum 2).
  */
-export default function transformTabs(path: NodePath<t.JSXElement>) {
+export default function transformTabs(path: NodePath<t.JSXElement>): void {
 
   let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
   removeComponentImport(program, 'TabPanels');
-  
+
   let tabListNode: t.JSXElement | null = null;
   let tabPanelsNodes: t.JSXElement[] = [];
   let itemsProp: t.JSXAttribute | null = null;
@@ -90,10 +90,10 @@ export default function transformTabs(path: NodePath<t.JSXElement>) {
   if (tabListNode) {
     path.node.children = [tabListNode, ...tabPanelsNodes];
   }
-  
+
   // Remove isEmphasized
   removeProp(path, {propName: 'isEmphasized'});
 
   // Remove isQuiet
   removeProp(path, {propName: 'isQuiet'});
-} 
+}

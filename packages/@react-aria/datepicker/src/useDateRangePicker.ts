@@ -18,7 +18,7 @@ import {DateRange, RangeCalendarProps} from '@react-types/calendar';
 import {DateRangePickerState} from '@react-stately/datepicker';
 import {DEFAULT_VALIDATION_RESULT, mergeValidation, privateValidationStateProp} from '@react-stately/form';
 import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, nodeContains, useDescription, useId} from '@react-aria/utils';
 import {focusManagerSymbol, roleSymbol} from './useDateField';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -116,7 +116,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     onBlurWithin: e => {
       // Ignore when focus moves into the popover.
       let dialog = document.getElementById(dialogId);
-      if (!dialog?.contains(e.relatedTarget)) {
+      if (!nodeContains(dialog, e.relatedTarget)) {
         isFocused.current = false;
         props.onBlur?.(e);
         props.onFocusChange?.(false);
@@ -183,9 +183,11 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       ...startFieldProps,
       ...commonFieldProps,
       value: state.value?.start ?? null,
+      defaultValue: state.defaultValue?.start,
       onChange: start => state.setDateTime('start', start),
       autoFocus: props.autoFocus,
       name: props.startName,
+      form: props.form,
       [privateValidationStateProp]: {
         realtimeValidation: state.realtimeValidation,
         displayValidation: state.displayValidation,
@@ -201,8 +203,10 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       ...endFieldProps,
       ...commonFieldProps,
       value: state.value?.end ?? null,
+      defaultValue: state.defaultValue?.end,
       onChange: end => state.setDateTime('end', end),
       name: props.endName,
+      form: props.form,
       [privateValidationStateProp]: {
         realtimeValidation: state.realtimeValidation,
         displayValidation: state.displayValidation,
@@ -228,7 +232,9 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       allowsNonContiguousRanges: props.allowsNonContiguousRanges,
       defaultFocusedValue: state.dateRange ? undefined : props.placeholderValue,
       isInvalid: state.isInvalid,
-      errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : (props.errorMessage || state.displayValidation.validationErrors.join(' '))
+      errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : (props.errorMessage || state.displayValidation.validationErrors.join(' ')),
+      firstDayOfWeek: props.firstDayOfWeek,
+      pageBehavior: props.pageBehavior
     },
     isInvalid,
     validationErrors,

@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import './installPointerEvent';
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Autocomplete, Button, Dialog, DialogTrigger, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Text, TextField} from '..';
-import React, {ReactNode} from 'react';
+import {Autocomplete, Breadcrumb, Breadcrumbs, Button, Cell, Collection, Column, Dialog, DialogTrigger, GridList, GridListItem, Header, Input, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Tag, TagGroup, TagList, Text, TextField, Tree, TreeItem, TreeItemContent} from '..';
+import React, {ReactNode, useState} from 'react';
 import {useAsyncList} from 'react-stately';
 import {useFilter} from '@react-aria/i18n';
 import userEvent from '@testing-library/user-event';
@@ -67,7 +68,6 @@ let MenuWithSections = (props) => (
   </Menu>
 );
 
-// TODO: add tests for nested submenus and subdialogs
 let SubMenus = (props) => (
   <Menu {...props}>
     <MenuItem>Foo</MenuItem>
@@ -197,6 +197,93 @@ let ListBoxWithSections = (props) => (
   </ListBox>
 );
 
+let StaticGridList = (props) => (
+  <GridList aria-label="test gridlist" {...props}>
+    <GridListItem id="1">Foo</GridListItem>
+    <GridListItem id="2">Bar</GridListItem>
+    <GridListItem id="3">Baz</GridListItem>
+  </GridList>
+);
+
+let StaticTable = (props) => (
+  <Table aria-label="test table" {...props}>
+    <TableHeader>
+      <Column isRowHeader>Column 1</Column>
+      <Column>Column 2</Column>
+      <Column>Column 3</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>Foo</Cell>
+        <Cell>Row 1 Cell 2</Cell>
+        <Cell>Row 1 Cell 3</Cell>
+      </Row>
+      <Row>
+        <Cell>Bar</Cell>
+        <Cell>Row 2 Cell 2</Cell>
+        <Cell>Row 2 Cell 3</Cell>
+      </Row>
+      <Row>
+        <Cell>Baz</Cell>
+        <Cell>Row 3 Cell 2</Cell>
+        <Cell>Row 3 Cell 3</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+);
+
+let StaticTagGroup = (props) => (
+  <TagGroup {...props}>
+    <Label>Test tag group</Label>
+    <TagList>
+      <Tag>Foo</Tag>
+      <Tag>Bar</Tag>
+      <Tag>Baz</Tag>
+    </TagList>
+  </TagGroup>
+);
+
+let StaticTabs = (props) => (
+  <Tabs {...props}>
+    <TabList aria-label="Test tabs">
+      <Tab id="1">Foo</Tab>
+      <Tab id="2">Bar</Tab>
+      <Tab id="3">Baz</Tab>
+    </TabList>
+    <TabPanel id="1">Foo content</TabPanel>
+    <TabPanel id="2">Bar content</TabPanel>
+    <TabPanel id="3">Baz content</TabPanel>
+  </Tabs>
+);
+
+let StaticTree = (props) => (
+  <Tree aria-label="test tree" {...props}>
+    <TreeItem textValue="Foo">
+      <TreeItemContent>
+        Foo
+      </TreeItemContent>
+    </TreeItem>
+    <TreeItem textValue="Bar">
+      <TreeItemContent>
+        Bar
+      </TreeItemContent>
+    </TreeItem>
+    <TreeItem textValue="Baz">
+      <TreeItemContent>
+        Baz
+      </TreeItemContent>
+    </TreeItem>
+  </Tree>
+);
+
+let StaticBreadcrumbs = (props) => (
+  <Breadcrumbs {...props}>
+    <Breadcrumb>Foo</Breadcrumb>
+    <Breadcrumb>Bar</Breadcrumb>
+    <Breadcrumb>Baz</Breadcrumb>
+  </Breadcrumbs>
+);
+
 let AutocompleteWrapper = ({autocompleteProps = {}, inputProps = {}, children}: {autocompleteProps?: any, inputProps?: any, children?: ReactNode}) => {
   let {contains} = useFilter({sensitivity: 'base'});
   let filter = (textValue, inputValue) => contains(textValue, inputValue);
@@ -268,6 +355,28 @@ let AsyncFiltering = ({autocompleteProps = {}, inputProps = {}}: {autocompletePr
         onSelectionChange={onSelectionChange}>
         {item => <MenuItem id={item.id}>{item.name}</MenuItem>}
       </Menu>
+    </Autocomplete>
+  );
+};
+
+let CustomFiltering = ({autocompleteProps = {}, inputProps = {}, children}: {autocompleteProps?: any, inputProps?: any, children?: ReactNode}) => {
+  let [inputValue, setInputValue] = React.useState('');
+  let {contains} = useFilter({sensitivity: 'base'});
+  let filter = (textValue, inputValue, node) => {
+    if (node.parentKey === 'sec1') {
+      return true;
+    }
+    return contains(textValue, inputValue);
+  };
+
+  return (
+    <Autocomplete inputValue={inputValue} onInputChange={setInputValue} filter={filter} {...autocompleteProps}>
+      <SearchField {...inputProps}>
+        <Label style={{display: 'block'}}>Test</Label>
+        <Input />
+        <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+      </SearchField>
+      {children}
     </Autocomplete>
   );
 };
@@ -425,6 +534,129 @@ describe('Autocomplete', () => {
     expect(options[0]).toHaveAttribute('data-focus-visible');
     expect(input).not.toHaveAttribute('data-focus-visible');
     expect(input).not.toHaveAttribute('data-focused');
+  });
+
+  it('should restore focus visible styles back to the input when typing forward results in only disabled items', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu disabledKeys={['2']} />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('Ba');
+    act(() => jest.runAllTimers());
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    let baz = options[1];
+    expect(baz).toHaveTextContent('Baz');
+    expect(input).toHaveAttribute('aria-activedescendant', baz.id);
+    expect(baz).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('r');
+    act(() => jest.runAllTimers());
+    options = within(menu).getAllByRole('menuitem');
+    let bar = options[0];
+    expect(bar).toHaveTextContent('Bar');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(bar).not.toHaveAttribute('data-focus-visible');
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+  });
+
+  it('should maintain focus styles on the input if typing forward results in an completely empty collection', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('Q');
+    act(() => jest.runAllTimers());
+    let menu = getByRole('menu');
+    let options = within(menu).queryAllByRole('menuitem');
+    expect(options).toHaveLength(0);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+  });
+
+  it('should restore focus visible styles back to the input if the user types forward and backspaces in quick succession', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('F');
+    // If 500ms hasn't elapsed the aria-activedecendant hasn't been updated
+    act(() => jest.advanceTimersByTime(300));
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    let foo = options[0];
+    expect(foo).toHaveTextContent('Foo');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(foo).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+
+    await user.keyboard('{Backspace}');
+    act(() => jest.runAllTimers());
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(foo).not.toHaveAttribute('data-focus-visible');
+  });
+
+  it('should not move focus to the input field if tapping on a menu item via touch', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    let foo = options[0];
+
+    await user.pointer({target: foo, keys: '[TouchA]'});
+    expect(document.activeElement).not.toBe(input);
+  });
+
+  it('should move focus to the input field if clicking on a menu item via mouse', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    let foo = options[0];
+
+    await user.pointer({target: foo, keys: '[MouseLeft]'});
+    expect(document.activeElement).toBe(input);
   });
 
   it('should work inside a Select', async function () {
@@ -701,6 +933,500 @@ describe('Autocomplete', () => {
     dialogs = queryAllByRole('dialog');
     expect(dialogs).toHaveLength(0);
   });
+
+  it.each`
+    Name              | Component
+    ${'Tabs'}         | ${StaticTabs}
+    ${'Tree'}         | ${StaticTree}
+    ${'Breadcrumbs'}  | ${StaticBreadcrumbs}
+  `('$Name doesnt get filtered by Autocomplete', async function ({Component}) {
+    let {getByRole, getByTestId} = render(
+      <AutocompleteWrapper>
+        <Component data-testid="wrapped" />
+      </AutocompleteWrapper>
+    );
+
+    let wrappedComponent = getByTestId('wrapped');
+    expect(await within(wrappedComponent).findByText('Foo')).toBeTruthy();
+    expect(await within(wrappedComponent).findByText('Bar')).toBeTruthy();
+    expect(await within(wrappedComponent).findByText('Baz')).toBeTruthy();
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('Foo');
+    expect(input).toHaveValue('Foo');
+    expect(input).not.toHaveAttribute('aria-controls');
+    expect(input).not.toHaveAttribute('aria-autocomplete');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+
+    expect(await within(wrappedComponent).findByText('Foo')).toBeTruthy();
+    expect(await within(wrappedComponent).findByText('Bar')).toBeTruthy();
+    expect(await within(wrappedComponent).findByText('Baz')).toBeTruthy();
+  });
+
+  it('should allow user to filter by node information', async () => {
+    let {getByRole} = render(
+      <CustomFiltering>
+        <MenuWithSections />
+      </CustomFiltering>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    let menu = getByRole('menu');
+    let sections = within(menu).getAllByRole('group');
+    expect(sections.length).toBe(2);
+    let options = within(menu).getAllByRole('menuitem');
+    expect(options).toHaveLength(6);
+
+    await user.keyboard('Copy');
+    sections = within(menu).getAllByRole('group');
+    options = within(menu).getAllByRole('menuitem');
+    expect(options).toHaveLength(4);
+    expect(within(sections[0]).getByText('Foo')).toBeTruthy();
+    expect(within(sections[0]).getByText('Bar')).toBeTruthy();
+    expect(within(sections[0]).getByText('Baz')).toBeTruthy();
+    expect(within(sections[1]).getByText('Copy')).toBeTruthy();
+  });
+
+
+  it('shouldnt prevent default on keyboard interactions if somehow the active descendant doesnt exist in the DOM', async () => {
+    let defaultOptions = [
+      {value: 'one'},
+      {value: 'two'},
+      {value: 'three'},
+      {value: 'four'},
+      {value: 'five'}
+    ];
+    function ControlledItemsFilter() {
+      const [options, setOptions] = useState(defaultOptions);
+      const [inputValue, onInputChange] = useState('');
+
+      let [prevInputValue, setPrevInputValue] = useState(inputValue);
+      if (prevInputValue !== inputValue) {
+        setOptions(
+          defaultOptions.filter(({value}) => value.includes(inputValue))
+        );
+        setPrevInputValue(inputValue);
+      }
+
+      return (
+        <Autocomplete inputValue={inputValue} onInputChange={onInputChange}>
+          <SearchField aria-label="Search">
+            <Input aria-label="Search" placeholder="Search..." />
+            <Button>X</Button>
+          </SearchField>
+          <ListBox selectionMode="multiple">
+            <Collection items={options} dependencies={[inputValue]}>
+              {(option) => (
+                <ListBoxItem id={option.value}>{option.value}</ListBoxItem>
+              )}
+            </Collection>
+            <ListBoxLoadMoreItem onLoadMore={() => {}} isLoading={false}>
+              <div>Loading...</div>
+            </ListBoxLoadMoreItem>
+          </ListBox>
+        </Autocomplete>
+      );
+    }
+    let {getByRole} = render(
+      <ControlledItemsFilter />
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('o');
+    act(() => jest.runAllTimers());
+    let listbox = getByRole('listbox');
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+
+    await user.keyboard('o');
+    act(() => jest.runAllTimers());
+    options = within(listbox).queryAllByRole('option');
+    expect(options).toHaveLength(0);
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+
+    await user.keyboard('{Backspace}');
+    act(() => jest.runAllTimers());
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+  });
+
+  it('should preserve select all selection when toggling an item in a filtered collection', async function () {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticListbox selectionMode="multiple" defaultSelectedKeys="all" onSelectionChange={onSelectionChange} />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    let listbox = getByRole('listbox');
+
+    // All 3 items should be selected initially (Foo, Bar, Baz)
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+    expect(options[2]).toHaveAttribute('aria-selected', 'true');
+
+    // Filter to show only "Ba" items (Bar, Baz)
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('Ba');
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(2);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+
+    // Move down and deselect Baz
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{Enter}');
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    // Should contain Foo and Bar
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1', '2']));
+
+    // Clear the filter
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    // All items should be visible, with Foo and Bar still selected
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+    expect(options[2]).toHaveAttribute('aria-selected', 'false');
+  });
+
+  it('should keep filtered-out items selected when all are selected and filter is applied', async function () {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticListbox selectionMode="multiple" defaultSelectedKeys="all" onSelectionChange={onSelectionChange} />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    let listbox = getByRole('listbox');
+
+    // All 3 visible and selected
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    for (let opt of options) {
+      expect(opt).toHaveAttribute('aria-selected', 'true');
+    }
+
+    // Filter to "Foo" - only Foo should be visible
+    await user.tab();
+    await user.keyboard('Foo');
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(1);
+    expect(options[0]).toHaveTextContent('Foo');
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+
+    // Clear the filter - all 3 should still be selected because no toggle happened
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+    expect(options[2]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('should deselect the only visible item during filter and preserve other selections', async function () {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticListbox selectionMode="multiple" defaultSelectedKeys="all" onSelectionChange={onSelectionChange} />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    let listbox = getByRole('listbox');
+
+    // Filter to "Foo"
+    await user.tab();
+    await user.keyboard('Foo');
+    act(() => jest.runAllTimers());
+
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(1);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+
+    // Deselect Foo
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{Enter}');
+
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    // Foo (id=1) should be deselected, Bar and Baz still selected
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['2', '3']));
+
+    // Clear filter
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+
+    // Foo deselected, Bar and Baz still selected
+    expect(options[0]).toHaveAttribute('aria-selected', 'false');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+    expect(options[2]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('should preserve select all selection with sections when toggling an item in a filtered collection', async function () {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <ListBoxWithSections selectionMode="multiple" defaultSelectedKeys="all" onSelectionChange={onSelectionChange} />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    let listbox = getByRole('listbox');
+
+    // All 6 items across 2 sections should be selected
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(6);
+    for (let opt of options) {
+      expect(opt).toHaveAttribute('aria-selected', 'true');
+    }
+
+    // Filter to "Ba" — should match Bar and Baz in section 1
+    await user.tab();
+    await user.keyboard('Ba');
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(2);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+
+    await user.keyboard('{ArrowDown}'); // Move focus to Baz
+    await user.keyboard('{Enter}'); // Deselect Baz
+
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    // Baz (id=3) should be deselected; Foo, Bar, Copy, Cut, Paste still selected
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1', '2', '4', '5', '6']));
+
+    // Clear filter
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(6);
+    // Foo selected, Bar selected, Baz deselected, Copy/Cut/Paste selected
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');  // Foo
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');  // Bar
+    expect(options[2]).toHaveAttribute('aria-selected', 'false'); // Baz
+    expect(options[3]).toHaveAttribute('aria-selected', 'true');  // Copy
+    expect(options[4]).toHaveAttribute('aria-selected', 'true');  // Cut
+    expect(options[5]).toHaveAttribute('aria-selected', 'true');  // Paste
+  });
+
+  it('should handle multiple filter-toggle-clear cycles correctly', async function () {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticListbox selectionMode="multiple" defaultSelectedKeys="all" onSelectionChange={onSelectionChange} />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    let listbox = getByRole('listbox');
+
+    // Cycle 1: Filter to "Ba", deselect Baz, clear filter
+    await user.tab();
+    await user.keyboard('Ba');
+    act(() => jest.runAllTimers());
+
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(2);
+
+    await user.keyboard('{ArrowDown}'); // Move focus to Baz
+    await user.keyboard('{Enter}'); // Deselect Baz
+    
+    // Baz (id=3) deselected, Foo and Bar remain
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1', '2']));
+
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');  // Foo
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');  // Bar
+    expect(options[2]).toHaveAttribute('aria-selected', 'false'); // Baz
+
+    // Cycle 2: Filter to "Foo", deselect Foo, clear filter
+    onSelectionChange.mockClear();
+    await user.keyboard('Foo');
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(1);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true'); // Foo
+
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{Enter}');
+    // Foo deselected, only Bar remains selected
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['2']));
+
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveAttribute('aria-selected', 'false'); // Foo
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');  // Bar
+    expect(options[2]).toHaveAttribute('aria-selected', 'false'); // Baz
+  });
+
+  it('should lose track of filtered-out items when filtering is handled externally via controlled items', async function () {
+    // When filtering is handled externally (i.e. items prop changes rather than using Autocomplete's filter),
+    // the fullCollection only knows about the items currently in the collection. This means
+    // defaultSelectedKeys="all" will only materialize against the current items, and toggling
+    // an item while filtered will lose the filtered-out items from the selection.
+    // For this use case, consumers should use controlled selectedKeys instead.
+    let onSelectionChange = jest.fn();
+    function ExternallyFilteredList() {
+      const [filteredItems, setFilteredItems] = useState(items);
+      const [inputValue, onInputChange] = useState('');
+
+      let [prevInputValue, setPrevInputValue] = useState(inputValue);
+      if (prevInputValue !== inputValue) {
+        setFilteredItems(
+          items.filter((item) => item.name.toLowerCase().includes(inputValue.toLowerCase()))
+        );
+        setPrevInputValue(inputValue);
+      }
+
+      return (
+        <Autocomplete inputValue={inputValue} onInputChange={onInputChange}>
+          <SearchField aria-label="Search">
+            <Input aria-label="Search" placeholder="Search..." />
+            <Button>X</Button>
+          </SearchField>
+          <ListBox
+            selectionMode="multiple"
+            defaultSelectedKeys="all"
+            onSelectionChange={onSelectionChange}>
+            <Collection items={filteredItems} dependencies={[inputValue]}>
+              {(item: AutocompleteItem) => (
+                <ListBoxItem id={item.id}>{item.name}</ListBoxItem>
+              )}
+            </Collection>
+          </ListBox>
+        </Autocomplete>
+      );
+    }
+
+    let {getByRole} = render(<ExternallyFilteredList />);
+
+    let input = getByRole('searchbox');
+    let listbox = getByRole('listbox');
+
+    // All 3 items visible and selected
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    for (let opt of options) {
+      expect(opt).toHaveAttribute('aria-selected', 'true');
+    }
+
+    // Type "Ba" to externally filter — items prop changes to [Bar, Baz]
+    await user.tab();
+    await user.keyboard('Ba');
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(2);
+    // Both visible items should still show as selected (state is still 'all')
+    expect(options[0]).toHaveAttribute('aria-selected', 'true'); // Bar
+    expect(options[1]).toHaveAttribute('aria-selected', 'true'); // Baz
+
+    // Deselect Baz (ArrowDown from auto-focused Bar to Baz, then Enter)
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{Enter}');
+
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    // Since fullCollection only contains [Bar, Baz] (the externally filtered items),
+    // materializing 'all' only produces those two. Toggling Baz off leaves only Bar.
+    // Foo is lost because it wasn't in any collection the SelectionManager knew about.
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['2']));
+
+    // Clear filter — all items come back
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    // Only Bar is selected — Foo was lost when 'all' was materialized against the filtered collection
+    expect(options[0]).toHaveAttribute('aria-selected', 'false'); // Foo (lost)
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');  // Bar
+    expect(options[2]).toHaveAttribute('aria-selected', 'false'); // Baz (deselected)
+  });
+
+  it('should handle select all with disabled keys in filtered collection', async function () {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticListbox
+          selectionMode="multiple"
+          defaultSelectedKeys="all"
+          disabledKeys={['2']}
+          onSelectionChange={onSelectionChange} />
+      </AutocompleteWrapper>
+    );
+
+    let listbox = getByRole('listbox');
+    let input = getByRole('searchbox');
+
+    // Bar (id=2) is disabled, so only Foo and Baz should be selected
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');  // Foo
+    expect(options[1]).toHaveAttribute('aria-selected', 'false'); // Bar (disabled)
+    expect(options[2]).toHaveAttribute('aria-selected', 'true');  // Baz
+
+    // Filter to "Ba" — Bar (disabled) and Baz visible
+    await user.tab();
+    await user.keyboard('Ba');
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(2);
+    expect(options[0]).toHaveAttribute('aria-selected', 'false'); // Bar (disabled)
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');  // Baz
+
+    // Deselect Baz
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{Enter}');
+
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    // Only Foo should remain selected (Bar is disabled, Baz was deselected)
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1']));
+
+    // Clear filter
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');  // Foo
+    expect(options[1]).toHaveAttribute('aria-selected', 'false'); // Bar (disabled)
+    expect(options[2]).toHaveAttribute('aria-selected', 'false'); // Baz
+  });
 });
 
 AriaAutocompleteTests({
@@ -760,6 +1486,11 @@ AriaAutocompleteTests({
       <AutocompleteWrapper>
         <SubDialogAndMenu />
       </AutocompleteWrapper>
+    ),
+    noVirtualFocus: () => render(
+      <AutocompleteWrapper autocompleteProps={{disableVirtualFocus: true}}>
+        <StaticMenu />
+      </AutocompleteWrapper>
     )
   },
   actionListener: onAction,
@@ -817,9 +1548,50 @@ AriaAutocompleteTests({
       <AutocompleteWrapper autocompleteProps={{defaultInputValue: 'Ba'}}>
         <StaticListbox />
       </AutocompleteWrapper>
+    ),
+    noVirtualFocus: () => render(
+      <AutocompleteWrapper autocompleteProps={{disableVirtualFocus: true}}>
+        <StaticListbox />
+      </AutocompleteWrapper>
     )
   },
   ariaPattern: 'listbox',
   actionListener: onAction,
   selectionListener: onSelectionChange
+});
+
+AriaAutocompleteTests({
+  prefix: 'rac-static-table',
+  renderers: {
+    noVirtualFocus: () => render(
+      <AutocompleteWrapper>
+        <StaticTable />
+      </AutocompleteWrapper>
+    )
+  },
+  ariaPattern: 'grid'
+});
+
+AriaAutocompleteTests({
+  prefix: 'rac-static-gridlist',
+  renderers: {
+    noVirtualFocus: () => render(
+      <AutocompleteWrapper>
+        <StaticGridList />
+      </AutocompleteWrapper>
+    )
+  },
+  ariaPattern: 'grid'
+});
+
+AriaAutocompleteTests({
+  prefix: 'rac-static-taggroup',
+  renderers: {
+    noVirtualFocus: () => render(
+      <AutocompleteWrapper>
+        <StaticTagGroup />
+      </AutocompleteWrapper>
+    )
+  },
+  ariaPattern: 'grid'
 });

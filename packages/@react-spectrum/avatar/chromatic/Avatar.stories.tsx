@@ -11,7 +11,7 @@
  */
 
 import {Avatar} from '../';
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {SpectrumAvatarProps} from '@react-types/avatar';
 
 const SRC_URL_1 =
@@ -25,17 +25,19 @@ const meta: Meta<SpectrumAvatarProps> = {
 
 export default meta;
 
-export const Default = {
+export type AvatarStory = StoryObj<typeof Avatar>;
+
+export const Default: AvatarStory = {
   args: {src: SRC_URL_1},
   name: 'default'
 };
 
-export const Disabled = {
+export const Disabled: AvatarStory = {
   args: {isDisabled: true, src: SRC_URL_1},
   name: 'isDisabled'
 };
 
-export const CustomSize = {
+export const CustomSize: AvatarStory = {
   args: {size: 'avatar-size-700', src: SRC_URL_2},
   name: 'with custom size'
 };

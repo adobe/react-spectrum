@@ -31,7 +31,6 @@ describe('useDisclosure', () => {
     let {buttonProps, panelProps} = result.current;
 
     expect(buttonProps['aria-expanded']).toBe(false);
-    expect(panelProps.hidden).toBe(true);
     expect(panelProps['aria-hidden']).toBe(true);
   });
 
@@ -44,7 +43,7 @@ describe('useDisclosure', () => {
     let {buttonProps, panelProps} = result.current;
 
     expect(buttonProps['aria-expanded']).toBe(true);
-    expect(panelProps.hidden).toBe(false);
+    expect(panelProps['aria-hidden']).toBe(false);
   });
 
   it('should handle expanding on press event (with mouse)', () => {
@@ -91,6 +90,25 @@ describe('useDisclosure', () => {
     expect(result.current.state.isExpanded).toBe(false);
   });
 
+  it('should keep panel hidden when toggling disabled state', () => {
+    let {rerender} = renderHook(({isDisabled}: {isDisabled: boolean}) => {
+      let state = useDisclosureState({});
+      return useDisclosure({isDisabled}, state, ref);
+    }, {initialProps: {isDisabled: false}});
+
+    act(() => {
+      rerender({isDisabled: true});
+    });
+
+    expect(ref.current.hidden).toBe(true);
+
+    act(() => {
+      rerender({isDisabled: false});
+    });
+
+    expect(ref.current.hidden).toBe(true);
+  });
+
   it('should set correct IDs for accessibility', () => {
     let {result} = renderHook(() => {
       let state = useDisclosureState({});
@@ -112,27 +130,27 @@ describe('useDisclosure', () => {
       writable: true,
       configurable: true
     });
-  
+
     const ref = {current: document.createElement('div')};
-  
+
     const {result} = renderHook(() => {
       const state = useDisclosureState({});
       const disclosure = useDisclosure({}, state, ref);
       return {state, disclosure};
     });
-  
+
     expect(result.current.state.isExpanded).toBe(false);
     expect(ref.current.getAttribute('hidden')).toBe('until-found');
-  
+
     // Simulate the 'beforematch' event
     act(() => {
       const event = new Event('beforematch', {bubbles: true});
       ref.current.dispatchEvent(event);
     });
-  
+
     expect(result.current.state.isExpanded).toBe(true);
     expect(ref.current.hasAttribute('hidden')).toBe(false);
-  
+
     Object.defineProperty(document.body, 'onbeforematch', {
       value: originalOnBeforeMatch,
       writable: true,
@@ -149,31 +167,31 @@ describe('useDisclosure', () => {
       writable: true,
       configurable: true
     });
-  
+
     const ref = {current: document.createElement('div')};
-  
+
     const onExpandedChange = jest.fn();
-  
+
     const {result} = renderHook(() => {
       const state = useDisclosureState({isExpanded: false, onExpandedChange});
       const disclosure = useDisclosure({isExpanded: false}, state, ref);
       return {state, disclosure};
     });
-  
+
     expect(result.current.state.isExpanded).toBe(false);
     expect(ref.current.getAttribute('hidden')).toBe('until-found');
-  
+
     // Simulate the 'beforematch' event
     act(() => {
       const event = new Event('beforematch', {bubbles: true});
       ref.current.dispatchEvent(event);
     });
-  
+
     expect(result.current.state.isExpanded).toBe(false);
     expect(ref.current.getAttribute('hidden')).toBe('until-found');
     expect(onExpandedChange).toHaveBeenCalledTimes(1);
     expect(onExpandedChange).toHaveBeenCalledWith(true);
-  
+
     Object.defineProperty(document.body, 'onbeforematch', {
       value: originalOnBeforeMatch,
       writable: true,

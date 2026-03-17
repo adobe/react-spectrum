@@ -8,7 +8,7 @@ import * as t from '@babel/types';
  * - Remove validationState="valid" (it is no longer supported in Spectrum 2).
  * - Remove showErrorIcon (it has been removed due to accessibility issues).
  */
-export default function transformRadioGroup(path: NodePath<t.JSXElement>) {
+export default function transformRadioGroup(path: NodePath<t.JSXElement>): void {
   // Change validationState="invalid" to isInvalid
   updatePropNameAndValue(path, {
     oldPropName: 'validationState',
@@ -22,4 +22,4 @@ export default function transformRadioGroup(path: NodePath<t.JSXElement>) {
 
   // Remove showErrorIcon
   removeProp(path, {propName: 'showErrorIcon'});
-} 
+}

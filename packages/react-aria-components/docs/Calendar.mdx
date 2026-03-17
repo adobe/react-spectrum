@@ -43,12 +43,13 @@ type: component
 
 ```tsx example
 import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-components';
+import {ChevronLeft, ChevronRight} from 'lucide-react';
 
 <Calendar aria-label="Appointment date">
   <header>
-    <Button slot="previous">◀</Button>
+    <Button slot="previous"><ChevronLeft size={20} /></Button>
     <Heading />
-    <Button slot="next">▶</Button>
+    <Button slot="next"><ChevronRight size={20} /></Button>
   </header>
   <CalendarGrid>
     {date => <CalendarCell date={date} />}
@@ -218,9 +219,9 @@ function MyCalendar<T extends DateValue>({errorMessage, ...props}: MyCalendarPro
   return (
     <Calendar {...props}>
       <header>
-        <Button slot="previous">◀</Button>
+        <Button slot="previous"><ChevronLeft size={20} /></Button>
         <Heading />
-        <Button slot="next">▶</Button>
+        <Button slot="next"><ChevronRight size={20} /></Button>
       </header>
       <CalendarGrid>
         {date => <CalendarCell date={date} />}
@@ -376,9 +377,9 @@ Multiple `CalendarGrid` elements can be rendered to show multiple months at once
 ```tsx example
 <Calendar aria-label="Appointment date" visibleDuration={{months: 3}}>
   <header>
-    <Button slot="previous">◀</Button>
+    <Button slot="previous"><ChevronLeft size={20} /></Button>
     <Heading />
-    <Button slot="next">▶</Button>
+    <Button slot="next"><ChevronRight size={20} /></Button>
   </header>
   <div style={{display: 'flex', gap: 30, overflow: 'auto'}}>
     <CalendarGrid>
@@ -401,9 +402,9 @@ The `pageBehavior` prop allows you to control how the calendar navigates between
 ```tsx example
 <Calendar aria-label="Appointment date" visibleDuration={{months: 3}} pageBehavior="single">
   <header>
-    <Button slot="previous">◀</Button>
+    <Button slot="previous"><ChevronLeft size={20} /></Button>
     <Heading />
-    <Button slot="next">▶</Button>
+    <Button slot="next"><ChevronRight size={20} /></Button>
   </header>
   <div style={{display: 'flex', gap: 30, overflow: 'auto'}}>
     <CalendarGrid>
@@ -735,9 +736,9 @@ import {CalendarGridHeader, CalendarHeaderCell, CalendarGridBody} from 'react-ar
 
 <Calendar aria-label="Appointment date">
   <header>
-    <Button slot="previous">◀</Button>
+    <Button slot="previous"><ChevronLeft size={20} /></Button>
     <Heading />
-    <Button slot="next">▶</Button>
+    <Button slot="next"><ChevronRight size={20} /></Button>
   </header>
   <CalendarGrid>
     <CalendarGridHeader>
@@ -913,16 +914,16 @@ function CalendarValue() {
   let state = React.useContext(CalendarStateContext)!;
   /*- end highlight -*/
   let date = state.value?.toDate(getLocalTimeZone());
-  let {format} = useDateFormatter();
-  let formatted = date ? format(date) : 'None';
+  let formatter = useDateFormatter();
+  let formatted = date ? formatter.format(date) : 'None';
   return <small>Selected date: {formatted}</small>;
 }
 
 <Calendar>
   <header>
-    <Button slot="previous">◀</Button>
+    <Button slot="previous"><ChevronLeft size={20} /></Button>
     <Heading />
-    <Button slot="next">▶</Button>
+    <Button slot="next"><ChevronRight size={20} /></Button>
   </header>
   <CalendarGrid>
     {date => <CalendarCell date={date} />}
@@ -966,9 +967,9 @@ function WeekCalendarGrid(props: CalendarGridProps) {
 <Calendar visibleDuration={{weeks: 1}} defaultValue={today(getLocalTimeZone())}>
   <div className="week">
     <Heading />
-    <Button slot="previous">◀</Button>
+    <Button slot="previous"><ChevronLeft size={20} /></Button>
     <WeekCalendarGrid />
-    <Button slot="next">▶</Button>
+    <Button slot="next"><ChevronRight size={20} /></Button>
   </div>
 </Calendar>
 ```

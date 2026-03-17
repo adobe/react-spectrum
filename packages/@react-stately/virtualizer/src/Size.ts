@@ -15,8 +15,8 @@ export class Size {
   height: number;
 
   constructor(width = 0, height = 0) {
-    this.width = width;
-    this.height = height;
+    this.width = Math.max(width, 0);
+    this.height = Math.max(height, 0);
   }
 
   /**

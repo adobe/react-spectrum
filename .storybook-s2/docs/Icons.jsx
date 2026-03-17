@@ -1,4 +1,4 @@
-import icons from '@react-spectrum/s2/s2wf-icons/*.svg';
+import icons from '../../packages/@react-spectrum/s2/s2wf-icons/*.svg';
 import { style } from '../../packages/@react-spectrum/s2/style/spectrum-theme' with {type: 'macro'};
 import {ActionButton, Text} from '@react-spectrum/s2';
 import {H2, H3, P, Code, Pre, Link} from './typography';

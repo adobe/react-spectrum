@@ -24,7 +24,8 @@ const meta: Meta<typeof CombinedTooltip> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    onOpenChange: {table: {category: 'Events'}}
+    onOpenChange: {table: {category: 'Events'}},
+    children: {table: {disable: true}}
   },
   decorators: [(Story) => <div style={{height: '100px', width: '200px', display: 'flex', alignItems: 'end', justifyContent: 'center', paddingBottom: 10}}><Story /></div>],
   title: 'Tooltip'

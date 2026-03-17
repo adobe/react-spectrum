@@ -7,7 +7,7 @@ import * as t from '@babel/types';
  * - Remove isDisabled (it is no longer supported in Spectrum 2).
  * - Change variant="info" to variant="informative".
  */
-export default function transformStatusLight(path: NodePath<t.JSXElement>) {
+export default function transformStatusLight(path: NodePath<t.JSXElement>): void {
   // Remove isDisabled
   removeProp(path, {propName: 'isDisabled'});
 
@@ -18,4 +18,4 @@ export default function transformStatusLight(path: NodePath<t.JSXElement>) {
     newPropName: 'variant',
     newPropValue: 'informative'
   });
-} 
+}

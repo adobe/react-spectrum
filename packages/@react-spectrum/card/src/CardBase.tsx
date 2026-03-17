@@ -15,7 +15,7 @@ import {AriaCardProps, SpectrumCardProps} from '@react-types/card';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, Node} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useLayoutEffect, useResizeObserver, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, nodeContains, useLayoutEffect, useResizeObserver, useSlotId} from '@react-aria/utils';
 import {FocusRing, getFocusableTreeWalker} from '@react-aria/focus';
 import React, {HTMLAttributes, useCallback, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
@@ -39,7 +39,7 @@ export const CardBase = React.forwardRef(function CardBase<T extends object>(pro
   let {
     isQuiet,
     orientation = 'vertical',
-    articleProps = {},
+    articleProps = {role: 'article'},
     item,
     layout,
     children
@@ -104,7 +104,7 @@ export const CardBase = React.forwardRef(function CardBase<T extends object>(pro
       let walker = getFocusableTreeWalker(gridRef.current);
       let nextNode = walker.nextNode();
       while (nextNode != null) {
-        if (checkboxRef.current && !checkboxRef.current.UNSAFE_getDOMNode().contains(nextNode)) {
+        if (checkboxRef.current && !nodeContains(checkboxRef.current.UNSAFE_getDOMNode(), nextNode)) {
           console.warn('Card does not support focusable elements, please contact the team regarding your use case.');
           break;
         }
@@ -115,7 +115,7 @@ export const CardBase = React.forwardRef(function CardBase<T extends object>(pro
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <article
+      <div
         {...styleProps}
         {...mergeProps(cardProps, focusWithinProps, hoverProps, filterDOMProps(props), articleProps)}
         ref={domRef}
@@ -151,7 +151,7 @@ export const CardBase = React.forwardRef(function CardBase<T extends object>(pro
           </SlotProvider>
           <div className={classNames(styles, 'spectrum-Card-decoration')} />
         </div>
-      </article>
+      </div>
     </FocusRing>
   );
 });

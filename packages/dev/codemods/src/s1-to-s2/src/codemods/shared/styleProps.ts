@@ -591,7 +591,7 @@ function expandSpaceShorthand(
   }
 }
 
-export default function transformStyleProps(path: NodePath<t.JSXElement>, element: string) {
+export default function transformStyleProps(path: NodePath<t.JSXElement>, element: string): {hasMacros: boolean, usedLightDark: boolean} {
   let macroValues = new Map<string, object | string | number | boolean>;
   let dynamicValues = new Map<string, t.ObjectProperty['value']>;
   let conditions = new Map<string, t.ObjectProperty['value']>;
@@ -677,7 +677,7 @@ export default function transformStyleProps(path: NodePath<t.JSXElement>, elemen
     if (isDOMElement) {
       let index = path.node.openingElement.attributes?.findIndex(a => a.type === 'JSXAttribute' && a.name.name === 'className');
       if (index != null && index >= 0) {
-        classNameAttribute = path.get('openingElement').get('attributes').at(index);
+        classNameAttribute = path.get('openingElement').get('attributes')[index];
       }
     }
 

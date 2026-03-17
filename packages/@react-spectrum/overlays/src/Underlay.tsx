@@ -11,6 +11,7 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {isScrollable} from '@react-aria/utils';
 import React, {JSX} from 'react';
 import underlayStyles from '@adobe/spectrum-css-temp/components/underlay/vars.css';
 
@@ -20,7 +21,23 @@ interface UnderlayProps {
 }
 
 export function Underlay({isOpen, isTransparent, ...otherProps}: UnderlayProps): JSX.Element {
+  let pageHeight: number | undefined = undefined;
+  if (typeof document !== 'undefined') {
+    let scrollingElement = isScrollable(document.body) ? document.body : document.scrollingElement || document.documentElement;
+    // Prevent Firefox from adding scrollbars when the page has a fractional height.
+    let fractionalHeightDifference = scrollingElement.getBoundingClientRect().height % 1;
+    pageHeight = scrollingElement.scrollHeight - fractionalHeightDifference;
+  }
+
   return (
-    <div data-testid="underlay" {...otherProps} className={classNames(underlayStyles, 'spectrum-Underlay', {'is-open': isOpen, 'spectrum-Underlay--transparent': isTransparent})} />
+    <div
+      data-testid="underlay"
+      {...otherProps}
+      // Cover the entire document so iOS 26 Safari doesn't clip the underlay to the inner viewport.
+      style={{height: pageHeight}}
+      className={classNames(underlayStyles, 'spectrum-Underlay', {
+        'is-open': isOpen,
+        'spectrum-Underlay--transparent': isTransparent
+      })} />
   );
 }

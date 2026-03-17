@@ -40,18 +40,17 @@ type: component
 
 ```tsx example
 import {Disclosure, Button, DisclosurePanel, Heading} from 'react-aria-components';
+import {ChevronRight} from 'lucide-react';
 
 <Disclosure>
   <Heading>
     <Button slot="trigger">
-      <svg viewBox="0 0 24 24">
-        <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-      </svg>
+      <ChevronRight size={18} />
       System Requirements
     </Button>
   </Heading>
   <DisclosurePanel>
-    <p>Details about system requirements here.</p>
+    Details about system requirements here.
   </DisclosurePanel>
 </Disclosure>
 ```
@@ -75,16 +74,19 @@ import {Disclosure, Button, DisclosurePanel, Heading} from 'react-aria-component
     display: flex;
     align-items: center;
     gap: 8px;
+    padding: 8px 0;
 
     svg {
       rotate: 0deg;
       transition: rotate 200ms;
-      width: 12px;
-      height: 12px;
       fill: none;
       stroke: currentColor;
       stroke-width: 3px;
     }
+  }
+
+  .react-aria-Heading {
+    margin: 0;
   }
 
   &[data-expanded] .react-aria-Button[slot=trigger] svg {
@@ -93,7 +95,14 @@ import {Disclosure, Button, DisclosurePanel, Heading} from 'react-aria-component
 }
 
 .react-aria-DisclosurePanel {
-  margin-left: 32px;
+  margin-left: 26px;
+  height: var(--disclosure-panel-height);
+  transition: height 250ms;
+  overflow: clip;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }
 ```
 
@@ -102,7 +111,7 @@ import {Disclosure, Button, DisclosurePanel, Heading} from 'react-aria-component
 
 ## Features
 
-Disclosures can be built with the [&lt;details&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and [&lt;summary&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary) HTML elements, but this can be difficult to style, especially when adding adjacent interactive elements, like buttons, to the disclosure's heading. `Disclosure` helps achieve accessible disclosures implemented with the correct ARIA pattern while making custom styling easy. 
+Disclosures can be built with the [&lt;details&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and [&lt;summary&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary) HTML elements, but this can be difficult to style, especially when adding adjacent interactive elements, like buttons, to the disclosure's heading. `Disclosure` helps achieve accessible disclosures implemented with the correct ARIA pattern while making custom styling easy.
 
 * **Flexible** - Structured such that it can be used standalone or combined with other disclosures to form a `DisclosureGroup`
 * **Keyboard Interaction** - When focused, a disclosure's visibility can be toggled with either the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key, and the appropriate ARIA attributes are automatically applied.
@@ -147,14 +156,12 @@ function MyDisclosure({title, children, ...props}: MyDisclosureProps) {
     <Disclosure {...props}>
       <Heading>
         <Button slot="trigger">
-          <svg viewBox="0 0 24 24">
-            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-          </svg>
+          <ChevronRight size={18} />
           {title}
         </Button>
       </Heading>
       <DisclosurePanel>
-        <p>{children}</p>
+        {children}
       </DisclosurePanel>
     </Disclosure>
   )
@@ -194,7 +201,7 @@ function ControlledExpanded() {
 
 ## Disabled
 
-A Disclosure can be disabled using the `isDisabled` prop. 
+A Disclosure can be disabled using the `isDisabled` prop.
 
 ```tsx example
 <MyDisclosure title="Introduction to Knitting" isDisabled>
@@ -208,19 +215,17 @@ In some use cases, you may want to add an interactive element, like a button, ad
 
 ```tsx example
 <Disclosure>
-  <div style={{display: 'flex', alignItems: 'center'}}>
+  <div style={{display: 'flex', alignItems: 'center', gap: 16}}>
     <Heading>
       <Button slot="trigger">
-        <svg viewBox="0 0 24 24">
-          <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-        </svg>
+        <ChevronRight size={18} />
         System Requirements
       </Button>
     </Heading>
     <Button>Click me</Button>
   </div>
   <DisclosurePanel>
-    <p>Details about system requirements here.</p>
+    Details about system requirements here.
   </DisclosurePanel>
 </Disclosure>
 ```
@@ -288,6 +293,8 @@ The states, selectors, and render props for each component used in a `Disclosure
 A `Disclosure` can be targeted with the `.react-aria-Disclosure` CSS selector, or by overriding with a custom `className`. It supports the following states:
 
 <StateTable properties={docs.exports.DisclosureRenderProps.properties} />
+
+Use the `--disclosure-panel-width` and `--disclosure-panel-height` CSS variables to implement animations.
 
 ### Button
 

@@ -22,11 +22,6 @@
         ]
       ]
     },
-    "cover": {
-      "plugins": [
-        "istanbul"
-      ]
-    },
     "production": {
       "plugins": [
         [

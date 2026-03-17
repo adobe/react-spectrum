@@ -11,11 +11,11 @@
  */
 
 import {ColorThumb} from '../src/ColorThumb';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import {parseColor} from '@react-stately/color';
 import React from 'react';
 
-export type ColorThumbStory = ComponentStoryObj<typeof ColorThumb>;
+export type ColorThumbStory = StoryObj<typeof ColorThumb>;
 
 export default {
   title: 'ColorThumb',
@@ -36,7 +36,7 @@ export default {
       control: 'boolean'
     }
   }
-} as ComponentMeta<typeof ColorThumb>;
+} as Meta<typeof ColorThumb>;
 
 export const Default: ColorThumbStory = {
   args: {value: parseColor('#f00')},

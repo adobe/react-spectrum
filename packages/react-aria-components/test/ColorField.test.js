@@ -75,6 +75,12 @@ describe('ColorField', () => {
     expect(label).toHaveTextContent('Color (disabled)');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} =  render(<TestColorField render={props => <div {...props} data-custom="true" />} />);
+    let field = getByRole('textbox').closest('.react-aria-ColorField');
+    expect(field).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support form value', () => {
     let {rerender} = render(<TestColorField name="test" value="#f00" />);
     let input = document.querySelector('input[name=test]');
@@ -82,6 +88,30 @@ describe('ColorField', () => {
 
     rerender(<TestColorField name="test" value={null} />);
     expect(input).toHaveValue('');
+  });
+
+  it('should support read-only state', async () => {
+    let {getByRole, rerender} = render(
+      <TestColorField />
+    );
+
+    let input = getByRole('textbox');
+
+    expect(input.closest('.react-aria-ColorField')).not.toHaveAttribute('data-readonly');
+    rerender(<TestColorField isReadOnly />);
+    expect(input.closest('.react-aria-ColorField')).toHaveAttribute('data-readonly');
+  });
+
+  it('should support required state', async () => {
+    let {getByRole, rerender} = render(
+      <TestColorField />
+    );
+
+    let input = getByRole('textbox');
+
+    expect(input.closest('.react-aria-ColorField')).not.toHaveAttribute('data-required');
+    rerender(<TestColorField isRequired />);
+    expect(input.closest('.react-aria-ColorField')).toHaveAttribute('data-required');
   });
 
   it('should render data- attributes only on the outer element', () => {
@@ -144,5 +174,14 @@ describe('ColorField', () => {
     await user.keyboard('100');
     await user.tab();
     expect(onChange).toHaveBeenCalledWith(parseColor('hsl(100, 25%, 73.33%)'));
+  });
+
+  it('should support form prop', () => {
+    let {getByRole} = render(
+      <TestColorField form="test" />
+    );
+
+    let input = getByRole('textbox');
+    expect(input).toHaveAttribute('form', 'test');
   });
 });

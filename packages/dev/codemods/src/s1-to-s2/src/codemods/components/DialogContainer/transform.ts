@@ -9,9 +9,9 @@ import {updatePropName} from '../../shared/transforms';
  * - Move isDismissable (as isDismissible) to the dialog level component.
  * - Move isKeyboardDismissDisabled to the dialog level component.
  */
-export default function transformDialogContainer(path: NodePath<t.JSXElement>) {
+export default function transformDialogContainer(path: NodePath<t.JSXElement>): void {
   // Move isDismissable (as isDismissible) to the dialog level component
   updatePropName(path, {oldPropName: 'isDismissable', newPropName: 'isDismissible'});
 
   updateDialogChild(path);
-} 
+}

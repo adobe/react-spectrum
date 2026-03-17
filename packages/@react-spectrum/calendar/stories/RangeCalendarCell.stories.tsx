@@ -1,7 +1,8 @@
 import {classNames} from '@react-spectrum/utils';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
-import React from 'react';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 
 let states = [
@@ -20,10 +21,36 @@ let states = [
 
 export default {
   title: 'Date and Time/RangeCalendar/cell'
-};
+} as Meta<typeof Cell>;
+
+export type CellStory = StoryObj<typeof Cell>;
 
 // Fake cell for testing css
-function Cell({isToday, isSelected, isFocused, isHovered, isPressed, isDisabled, isRangeStart, isRangeEnd, isRangeSelection, isSelectionStart, isSelectionEnd}) {
+function Cell({
+  isToday,
+  isSelected,
+  isFocused,
+  isHovered,
+  isPressed,
+  isDisabled,
+  isRangeStart,
+  isRangeEnd,
+  isRangeSelection,
+  isSelectionStart,
+  isSelectionEnd
+}: {
+  isToday: boolean,
+  isSelected: boolean,
+  isFocused: boolean,
+  isHovered: boolean,
+  isPressed: boolean,
+  isDisabled: boolean,
+  isRangeStart: boolean,
+  isRangeEnd: boolean,
+  isRangeSelection: boolean,
+  isSelectionStart: boolean,
+  isSelectionEnd: boolean
+}): JSX.Element {
   return (
     <span
       className={classNames(styles, 'spectrum-Calendar-date', {
@@ -44,7 +71,7 @@ function Cell({isToday, isSelected, isFocused, isHovered, isPressed, isDisabled,
   );
 }
 
-export const Default = {
+export const Default: CellStory = {
   render: () => (
     <Grid columns={repeat(10, 100)}>
       {generatePowerset(states, (merged) =>

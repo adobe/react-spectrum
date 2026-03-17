@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, waitFor, within} from '@testing-library/react';
+import {act} from './act';
 import {SelectTesterOpts, UserOpts} from './types';
+import {waitFor, within} from '@testing-library/dom';
 
 interface SelectOpenOpts {
   /**
@@ -24,7 +25,12 @@ interface SelectTriggerOptionOpts extends SelectOpenOpts {
   /**
    * The index, text, or node of the option to select. Option nodes can be sourced via `options()`.
    */
-  option: number | string | HTMLElement
+  option: number | string | HTMLElement,
+  /**
+   * Whether or not the select closes on selection. Depends on select implementation and configuration.
+   * @default true
+   */
+  closesOnSelect?: boolean
 }
 
 export class SelectTester {
@@ -37,11 +43,17 @@ export class SelectTester {
     this.user = user;
     this._interactionType = interactionType || 'mouse';
     // Handle case where the wrapper element is provided rather than the Select's button (aka RAC)
-    let triggerButton = within(root).queryByRole('button');
-    if (triggerButton == null) {
+    let buttons = within(root).queryAllByRole('button');
+    let triggerButton;
+    if (buttons.length === 0) {
       triggerButton = root;
+    } else if (buttons.length === 1) {
+      triggerButton = buttons[0];
+    } else {
+      triggerButton = buttons.find(button => button.hasAttribute('aria-haspopup'));
     }
-    this._trigger = triggerButton;
+
+    this._trigger = triggerButton ?? root;
   }
   /**
    * Set the interaction type used by the select tester.
@@ -158,6 +170,7 @@ export class SelectTester {
   async selectOption(opts: SelectTriggerOptionOpts): Promise<void> {
     let {
       option,
+      closesOnSelect,
       interactionType = this._interactionType
     } = opts || {};
     let trigger = this.trigger;
@@ -178,12 +191,16 @@ export class SelectTester {
         throw new Error('Target option not found in the listbox.');
       }
 
+      let isMultiSelect = listbox.getAttribute('aria-multiselectable') === 'true';
+      let isSingleSelect = !isMultiSelect;
+      closesOnSelect = closesOnSelect ?? isSingleSelect;
+
       if (interactionType === 'keyboard') {
         if (option?.getAttribute('aria-disabled') === 'true') {
           return;
         }
 
-        if (document.activeElement !== listbox || !listbox.contains(document.activeElement)) {
+        if (document.activeElement !== listbox && !listbox.contains(document.activeElement)) {
           act(() => listbox.focus());
         }
         await this.keyboardNavigateToOption({option});
@@ -197,7 +214,7 @@ export class SelectTester {
         }
       }
 
-      if (option?.getAttribute('href') == null) {
+      if (closesOnSelect && option?.getAttribute('href') == null) {
         await waitFor(() => {
           if (document.activeElement !== this._trigger) {
             throw new Error(`Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`);

@@ -58,7 +58,7 @@ export function useModalOverlay(props: AriaModalOverlayProps, state: OverlayTrig
 
   useEffect(() => {
     if (state.isOpen && ref.current) {
-      return ariaHideOutside([ref.current]);
+      return ariaHideOutside([ref.current], {shouldUseInert: true});
     }
   }, [state.isOpen, ref]);
 

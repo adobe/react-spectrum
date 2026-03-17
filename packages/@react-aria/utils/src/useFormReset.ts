@@ -11,7 +11,7 @@
  */
 
 import {RefObject} from '@react-types/shared';
-import {useEffect, useRef} from 'react';
+import {useEffect} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 
 export function useFormReset<T>(
@@ -19,16 +19,16 @@ export function useFormReset<T>(
   initialValue: T,
   onReset: (value: T) => void
 ): void {
-  let resetValue = useRef(initialValue);
 
   let handleReset = useEffectEvent((e: Event) => {
     if (onReset && !e.defaultPrevented) {
-      onReset(resetValue.current);
+      onReset(initialValue);
     }
   });
 
   useEffect(() => {
     let form = ref?.current?.form;
+
     form?.addEventListener('reset', handleReset);
     return () => {
       form?.removeEventListener('reset', handleReset);

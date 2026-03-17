@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, useContextProps} from './utils';
+import {ContextValue, dom, DOMRenderProps, useContextProps} from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import React, {createContext, ForwardedRef, LabelHTMLAttributes} from 'react';
 
-export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
+export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement>, DOMRenderProps<'label', undefined> {
   elementType?: string
 }
 
@@ -22,7 +22,8 @@ export const LabelContext = createContext<ContextValue<LabelProps, HTMLLabelElem
 
 export const Label = /*#__PURE__*/ createHideableComponent(function Label(props: LabelProps, ref: ForwardedRef<HTMLLabelElement>) {
   [props, ref] = useContextProps(props, ref, LabelContext);
-  let {elementType: ElementType = 'label', ...labelProps} = props;
+  let {elementType = 'label', ...labelProps} = props;
+  let ElementType = dom[elementType];
   // @ts-ignore
   return <ElementType className="react-aria-Label" {...labelProps} ref={ref} />;
 });

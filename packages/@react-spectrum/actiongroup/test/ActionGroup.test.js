@@ -717,7 +717,7 @@ describe('ActionGroup', function () {
       let buttons = within(actiongroup).getAllByRole('button');
       expect(buttons.length).toBe(2);
       expect(buttons[0]).toHaveTextContent('One');
-      expect(buttons[1]).toHaveAttribute('aria-label', '…');
+      expect(buttons[1]).toHaveAttribute('aria-label', 'More items');
       expect(buttons[1]).toHaveAttribute('aria-haspopup', 'true');
       expect(buttons[1]).not.toHaveAttribute('aria-checked');
 
@@ -877,7 +877,7 @@ describe('ActionGroup', function () {
       expect(tree.queryByRole('radiogroup')).toBeNull();
 
       let button = tree.getByRole('button');
-      expect(button).toHaveAttribute('aria-label', '…');
+      expect(button).toHaveAttribute('aria-label', 'More items');
       expect(button).toHaveAttribute('aria-haspopup', 'true');
       expect(button).not.toHaveAttribute('aria-checked');
 
@@ -920,7 +920,7 @@ describe('ActionGroup', function () {
       expect(tree.queryByRole('radiogroup')).toBeNull();
 
       let button = tree.getByRole('button');
-      expect(button).toHaveAttribute('aria-label', '…');
+      expect(button).toHaveAttribute('aria-label', 'More items');
       expect(button).toHaveAttribute('aria-haspopup', 'true');
       expect(button).not.toHaveAttribute('aria-checked');
 
@@ -965,7 +965,7 @@ describe('ActionGroup', function () {
       expect(buttons.length).toBe(2);
       expect(buttons[0]).toHaveTextContent('One');
       expect(buttons[0]).toBeDisabled();
-      expect(buttons[1]).toHaveAttribute('aria-label', '…');
+      expect(buttons[1]).toHaveAttribute('aria-label', 'More items');
       expect(buttons[1]).toHaveAttribute('aria-haspopup', 'true');
       expect(buttons[1]).not.toHaveAttribute('aria-checked');
       expect(buttons[1]).toBeDisabled();
@@ -989,7 +989,7 @@ describe('ActionGroup', function () {
       expect(within(actionGroup).getAllByRole('button')).toHaveLength(2);
       expect(within(actionGroup).getByRole('button', {name: 'One'})).toBeVisible();
 
-      const moreButton = within(actionGroup).getByRole('button', {name: '…'});
+      const moreButton = within(actionGroup).getByRole('button', {name: 'More items'});
       expect(moreButton).not.toHaveAttribute('aria-checked');
       expect(moreButton).toBeVisible();
 

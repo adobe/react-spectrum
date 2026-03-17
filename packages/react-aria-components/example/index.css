@@ -13,7 +13,11 @@ html {
   overflow: auto;
 
   :global(.react-aria-DropIndicator) {
-    margin-left: calc(var(--tree-item-level) * 15px);
+    margin-inline-start: calc(var(--tree-item-level) * 15px);
+  }
+
+  :global(.react-aria-DropIndicator[data-drop-target]) {
+    outline: 1px solid slateblue;
   }
 
   &[data-drop-target] {
@@ -149,7 +153,7 @@ html {
   color: white;
 }
 
-.item[data-has-submenu]::after {
+.item[data-has-submenu]:not(.unavailable)::after {
   content: '›';
   content: '›' / '';
   justify-self: end;
@@ -161,6 +165,18 @@ html {
 
 .popover[data-trigger=SubmenuTrigger][data-placement="left"] {
   margin-right: -8px;
+}
+
+.unavailable-popover {
+  background: lightgray;
+  border: 1px solid gray;
+  &[data-placement="right"] {
+     margin-left: -8px;
+  }
+
+  &[data-placement="left"] {
+    margin-right: -8px;
+  }
 }
 
 .wrapper {

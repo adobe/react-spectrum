@@ -10,16 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, getEventTarget, useObjectRef} from '@react-aria/utils';
+import {GlobalDOMAttributes} from '@react-types/shared';
 import {Input} from './Input';
 import {PressResponder} from '@react-aria/interactions';
 import React, {ForwardedRef, forwardRef, ReactNode} from 'react';
 
-export interface FileTriggerProps {
+export interface FileTriggerProps extends GlobalDOMAttributes<HTMLInputElement> {
   /**
    * Specifies what mime type of files are allowed.
    */
-  acceptedFileTypes?: Array<string>,
+  acceptedFileTypes?: ReadonlyArray<string>,
   /**
    * Whether multiple files can be selected.
    */
@@ -48,7 +49,7 @@ export interface FileTriggerProps {
 export const FileTrigger = forwardRef(function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement>) {
   let {onSelect, acceptedFileTypes, allowsMultiple, defaultCamera, children, acceptDirectory, ...rest} = props;
   let inputRef = useObjectRef(ref);
-  let domProps = filterDOMProps(rest);
+  let domProps = filterDOMProps(rest, {global: true});
 
   return (
     <>
@@ -63,11 +64,12 @@ export const FileTrigger = forwardRef(function FileTrigger(props: FileTriggerPro
       </PressResponder>
       <Input
         {...domProps}
+        className=""
         type="file"
         ref={inputRef}
         style={{display: 'none'}}
         accept={acceptedFileTypes?.toString()}
-        onChange={(e) => onSelect?.(e.target.files)}
+        onChange={(e) => onSelect?.(getEventTarget(e).files)}
         capture={defaultCamera}
         multiple={allowsMultiple}
         // @ts-expect-error

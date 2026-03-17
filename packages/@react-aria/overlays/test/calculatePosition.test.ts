@@ -66,6 +66,9 @@ function createElementWithDimensions(elemName, dimensions, margins = {}) {
     bottom: dimensions.bottom || 0
   });
 
+  jest.spyOn(elem, 'offsetWidth', 'get').mockImplementation(() => dimensions.width || 0);
+  jest.spyOn(elem, 'offsetHeight', 'get').mockImplementation(() => dimensions.height || 0);
+
   jest.spyOn(elem, 'scrollWidth', 'get').mockImplementation(() => dimensions.width || 0);
   jest.spyOn(elem, 'scrollHeight', 'get').mockImplementation(() => dimensions.height || 0);
 
@@ -106,36 +109,45 @@ describe('calculatePosition', function () {
     // The tests are all based on top/left positioning. Convert to bottom/right positioning if needed.
     let pos: {right?: number, top?: number, left?: number, bottom?: number} = {};
     if ((placementAxis === 'left' && !flip) || (placementAxis === 'right' && flip)) {
-      pos.right = boundaryDimensions.width - (expected[0] + overlaySize.width);
+      pos.right = containerDimensions.width - (expected[0] + overlaySize.width);
       pos.top = expected[1];
     } else if ((placementAxis === 'right' && !flip) || (placementAxis === 'left' && flip)) {
       pos.left = expected[0];
       pos.top = expected[1];
     } else if (placementAxis === 'top') {
       pos.left = expected[0];
-      pos.bottom = boundaryDimensions.height - providerOffset - (expected[1] + overlaySize.height);
+      pos.bottom = containerDimensions.height - (expected[1] + overlaySize.height);
     } else if (placementAxis === 'bottom') {
       pos.left = expected[0];
       pos.top = expected[1];
     }
 
+    let calculatedPlacement = flip ? FLIPPED_DIRECTION[placementAxis] : placementAxis;
+    // Note that a crossAxis of 'bottom' indicates that the overlay grows towards the top since the bottom of the overlay aligns with the bottom of the trigger
+    let maxHeight = expected[4] - (placementAxis !== 'top' && placementCrossAxis !== 'bottom' ? providerOffset : 0);
     const expectedPosition = {
       position: pos,
       arrowOffsetLeft: expected[2],
       arrowOffsetTop: expected[3],
-      // Note that a crossAxis of 'bottom' indicates that the overlay grows towards the top since the bottom of the overlay aligns with the bottom of the trigger
-      maxHeight: expected[4] - (placementAxis !== 'top' && placementCrossAxis !== 'bottom' ? providerOffset : 0),
-      placement: flip ? FLIPPED_DIRECTION[placementAxis] : placementAxis
+      maxHeight,
+      placement: calculatedPlacement,
+      triggerAnchorPoint: {
+        x: expected[2] ?? (calculatedPlacement === 'left' ? overlaySize.width : 0),
+        y: expected[3] ?? (calculatedPlacement === 'top' ? Math.min(overlaySize.height, maxHeight) : 0)
+      }
     };
 
     const container = createElementWithDimensions('div', containerDimensions);
+    Object.assign(container.style, {
+      position: 'relative'
+    });
     const target = createElementWithDimensions('div', targetDimension);
     const overlay = createElementWithDimensions('div', overlaySize, margins);
 
     const parentElement = document.createElement('div');
     parentElement.appendChild(container);
     parentElement.appendChild(target);
-    parentElement.appendChild(overlay);
+    container.appendChild(overlay);
 
     document.documentElement.appendChild(parentElement);
 
@@ -321,6 +333,22 @@ describe('calculatePosition', function () {
 
   testCases.forEach(function (testCase) {
     const {placement} = testCase;
+    beforeEach(() => {
+      window.visualViewport = {
+        offsetTop: 0,
+        height: 600,
+        offsetLeft: 0,
+        scale: 1,
+        width: 0,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => true,
+        onresize: () => {},
+        onscroll: () => {},
+        pageLeft: 0,
+        pageTop: 0
+      } as VisualViewport;
+    });
 
     describe(`placement = ${placement}`, function () {
       describe('no viewport offset', function () {

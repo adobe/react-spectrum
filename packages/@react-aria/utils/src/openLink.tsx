@@ -13,7 +13,7 @@
 import {focusWithoutScrolling, isMac, isWebKit} from './index';
 import {Href, LinkDOMProps, RouterOptions} from '@react-types/shared';
 import {isFirefox, isIPad} from './platform';
-import React, {createContext, DOMAttributes, JSX, ReactNode, useContext, useMemo} from 'react';
+import React, {createContext, DOMAttributes, JSX, MouseEvent as ReactMouseEvent, ReactNode, useContext, useMemo} from 'react';
 
 interface Router {
   isNative: boolean,
@@ -106,7 +106,7 @@ export function openLink(target: HTMLAnchorElement, modifiers: Modifiers, setOpe
   let event = isWebKit() && isMac() && !isIPad() && process.env.NODE_ENV !== 'test'
     // @ts-ignore - keyIdentifier is a non-standard property, but it's what webkit expects
     ? new KeyboardEvent('keydown', {keyIdentifier: 'Enter', metaKey, ctrlKey, altKey, shiftKey})
-    : new MouseEvent('click', {metaKey, ctrlKey, altKey, shiftKey, bubbles: true, cancelable: true});
+    : new MouseEvent('click', {metaKey, ctrlKey, altKey, shiftKey, detail: 1, bubbles: true, cancelable: true});
   (openLink as any).isOpening = setOpening;
   focusWithoutScrolling(target);
   target.dispatchEvent(event);
@@ -182,4 +182,20 @@ export function useLinkProps(props?: LinkDOMProps): LinkDOMProps {
     ping: props?.ping,
     referrerPolicy: props?.referrerPolicy
   };
+}
+
+export function handleLinkClick(e: ReactMouseEvent, router: Router, href: Href | undefined, routerOptions: RouterOptions | undefined): void {
+  // If a custom router is provided, prevent default and forward if this link should client navigate.
+  if (
+    !router.isNative &&
+    e.currentTarget instanceof HTMLAnchorElement &&
+    e.currentTarget.href &&
+    // If props are applied to a router Link component, it may have already prevented default.
+    !e.isDefaultPrevented() &&
+    shouldClientNavigate(e.currentTarget, e) &&
+    href
+  ) {
+    e.preventDefault();
+    router.open(e.currentTarget, e, href, routerOptions);
+  }
 }

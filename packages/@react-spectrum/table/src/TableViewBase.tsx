@@ -28,12 +28,12 @@ import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult} from '@react-aria/dnd';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
+import {getActiveElement, isAndroid, isFocusWithin, mergeProps, scrollIntoView, scrollIntoViewport, useLoadMore} from '@react-aria/utils';
 import {getInteractionModality, HoverProps, isFocusVisible, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
 import {InsertionIndicator} from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAndroid, mergeProps, scrollIntoView, scrollIntoViewport, useLoadMore} from '@react-aria/utils';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {LayoutInfo, Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, VirtualizerItem} from '@react-aria/virtualizer';
@@ -107,10 +107,10 @@ const LEVEL_OFFSET_WIDTH = {
 };
 
 export interface TableContextValue<T> {
-  state: TableState<T> | TreeGridState<T>,
+  state: TableState<T>,
   dragState: DraggableCollectionState | null,
   dropState: DroppableCollectionState | null,
-  dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks'],
+  dragAndDropHooks?: DragAndDropHooks<T>['dragAndDropHooks'],
   isTableDraggable: boolean,
   isTableDroppable: boolean,
   layout: TableViewLayout<T>,
@@ -170,7 +170,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
     if (dropHooksProvided.current !== isTableDroppable) {
       console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
     }
-    if ('expandedKeys' in state && (isTableDraggable || isTableDroppable)) {
+    if ('keyMap' in state && (isTableDraggable || isTableDroppable)) {
       console.warn('Drag and drop is not yet fully supported with expandable rows and may produce unexpected results.');
     }
   }, [isTableDraggable, isTableDroppable, state]);
@@ -440,7 +440,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   return (
     <TableContext.Provider
       value={{
-        state,
+        state: state as TableState<unknown>,
         dragState,
         dropState,
         dragAndDropHooks,
@@ -481,7 +481,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
             styleProps.className
           )
         }
-        tableState={state}
+        tableState={state as TableState<T>}
         layout={layout}
         collection={state.collection}
         persistedKeys={persistedKeys}
@@ -606,9 +606,10 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
   // only that it changes in a resize, and when that happens, we want to sync the body to the
   // header scroll position
   useEffect(() => {
-    if (getInteractionModality() === 'keyboard' && headerRef.current?.contains(document.activeElement) && bodyRef.current) {
-      scrollIntoView(headerRef.current, document.activeElement as HTMLElement);
-      scrollIntoViewport(document.activeElement, {containingElement: domRef.current});
+    if (getInteractionModality() === 'keyboard' && headerRef.current && isFocusWithin(headerRef.current) && bodyRef.current) {
+      let activeElement = getActiveElement() as HTMLElement;
+      scrollIntoView(headerRef.current, activeElement);
+      scrollIntoViewport(activeElement, {containingElement: domRef.current});
       bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
     }
   }, [state.contentSize, headerRef, bodyRef, domRef]);
@@ -1161,7 +1162,7 @@ function TableRow({item, children, layoutInfo, parent, ...otherProps}: {item: Gr
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({isDisabled: !isInteractive});
-  let isFirstRow = state.collection.rows.find(row => row.level === 1)?.key === item.key;
+  let isFirstRow = state.collection.rows.find(row => row.type === 'item' && row.level === 0)?.key === item.key;
   let isLastRow = item.nextKey == null;
   // Figure out if the TableView content is equal or greater in height to the container. If so, we'll need to round the bottom
   // border corners of the last row when selected.
@@ -1363,26 +1364,26 @@ function TableCheckboxCell({cell}) {
 
 function TableCell({cell}) {
   let {scale} = useProvider();
-  let {state} = useTableContext();
-  let isExpandableTable = 'expandedKeys' in state;
+  let state = useTableContext().state as TableState<unknown> | TreeGridState<unknown>;
+  let isExpandableTable = 'keyMap' in state;
   let ref = useRef<HTMLDivElement | null>(null);
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.selectionManager.isDisabled(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
     isVirtualized: true
-  }, state, ref);
+  }, state as TableState<unknown>, ref);
   let {id, ...otherGridCellProps} = gridCellProps;
   let isFirstRowHeaderCell = state.collection.rowHeaderColumnKeys.keys().next().value === cell.column.key;
   let isRowExpandable = false;
   let showExpandCollapseButton = false;
   let levelOffset = 0;
 
-  if ('expandedKeys' in state) {
+  if ('keyMap' in state) {
     isRowExpandable = state.keyMap.get(cell.parentKey)?.props.UNSTABLE_childItems?.length > 0 || state.keyMap.get(cell.parentKey)?.props?.children?.length > state.userColumnCount;
     showExpandCollapseButton = isFirstRowHeaderCell && isRowExpandable;
     // Offset based on level, and add additional offset if there is no expand/collapse button on a row
-    levelOffset = (cell.level - 2) * LEVEL_OFFSET_WIDTH[scale] + (!showExpandCollapseButton ? LEVEL_OFFSET_WIDTH[scale] * 2 : 0);
+    levelOffset = (cell.level - 1) * LEVEL_OFFSET_WIDTH[scale] + (!showExpandCollapseButton ? LEVEL_OFFSET_WIDTH[scale] * 2 : 0);
   }
 
   return (
@@ -1466,12 +1467,12 @@ function TableCellWrapper({layoutInfo, virtualizer, parent, children}: {layoutIn
 function ExpandableRowChevron({cell}) {
    // TODO: move some/all of the chevron button setup into a separate hook?
   let {direction} = useLocale();
-  let {state} = useTableContext();
+  let state = useTableContext().state as TableState<unknown> | TreeGridState<unknown>;
   let expandButtonRef = useRef<HTMLSpanElement | null>(null);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
   let isExpanded;
 
-  if ('expandedKeys' in state) {
+  if ('keyMap' in state) {
     isExpanded = state.expandedKeys === 'all' || state.expandedKeys.has(cell.parentKey);
   }
 
@@ -1536,10 +1537,10 @@ function EmptyState() {
 }
 
 function CenteredWrapper({children}) {
-  let {state} = useTableContext();
+  let state = useTableContext().state as TableState<unknown> | TreeGridState<unknown>;
   let rowProps;
 
-  if ('expandedKeys' in state) {
+  if ('keyMap' in state) {
     let topLevelRowCount = [...state.collection.body.childNodes].length;
     rowProps = {
       'aria-level': 1,

@@ -44,7 +44,7 @@ export interface ColorSliderAria {
  * Color sliders allow users to adjust an individual channel of a color value.
  */
 export function useColorSlider(props: AriaColorSliderOptions, state: ColorSliderState): ColorSliderAria {
-  let {trackRef, inputRef, orientation, channel, 'aria-label': ariaLabel, name} = props;
+  let {trackRef, inputRef, orientation, channel, 'aria-label': ariaLabel, name, form} = props;
 
   let {locale, direction} = useLocale();
 
@@ -60,6 +60,7 @@ export function useColorSlider(props: AriaColorSliderOptions, state: ColorSlider
     orientation,
     isDisabled: props.isDisabled,
     name,
+    form,
     trackRef,
     inputRef
   }, state);

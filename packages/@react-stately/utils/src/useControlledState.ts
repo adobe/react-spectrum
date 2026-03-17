@@ -10,12 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {useCallback, useEffect, useRef, useState} from 'react';
+import React, {SetStateAction, useCallback, useEffect, useReducer, useRef, useState} from 'react';
 
-export function useControlledState<T, C = T>(value: Exclude<T, undefined>, defaultValue: Exclude<T, undefined> | undefined, onChange?: (v: C, ...args: any[]) => void): [T, (value: T, ...args: any[]) => void];
-export function useControlledState<T, C = T>(value: Exclude<T, undefined> | undefined, defaultValue: Exclude<T, undefined>, onChange?: (v: C, ...args: any[]) => void): [T, (value: T, ...args: any[]) => void];
-export function useControlledState<T, C = T>(value: T, defaultValue: T, onChange?: (v: C, ...args: any[]) => void): [T, (value: T, ...args: any[]) => void] {
+// Use the earliest effect possible to reset the ref below.
+const useEarlyEffect: typeof React.useLayoutEffect = typeof document !== 'undefined'
+  ? React['useInsertionEffect'] ?? React.useLayoutEffect
+  : () => {};
+
+export function useControlledState<T, C = T>(value: Exclude<T, undefined>, defaultValue: Exclude<T, undefined> | undefined, onChange?: (v: C, ...args: any[]) => void): [T, (value: SetStateAction<T>, ...args: any[]) => void];
+export function useControlledState<T, C = T>(value: Exclude<T, undefined> | undefined, defaultValue: Exclude<T, undefined>, onChange?: (v: C, ...args: any[]) => void): [T, (value: SetStateAction<T>, ...args: any[]) => void];
+export function useControlledState<T, C = T>(value: T, defaultValue: T, onChange?: (v: C, ...args: any[]) => void): [T, (value: SetStateAction<T>, ...args: any[]) => void] {
+  // Store the value in both state and a ref. The state value will only be used when uncontrolled.
+  // The ref is used to track the most current value, which is passed to the function setState callback.
   let [stateValue, setStateValue] = useState(value || defaultValue);
+  let valueRef = useRef(stateValue);
 
   let isControlledRef = useRef(value !== undefined);
   let isControlled = value !== undefined;
@@ -27,49 +35,32 @@ export function useControlledState<T, C = T>(value: T, defaultValue: T, onChange
     isControlledRef.current = isControlled;
   }, [isControlled]);
 
+  // After each render, update the ref to the current value.
+  // This ensures that the setState callback argument is reset.
+  // Note: the effect should not have any dependencies so that controlled values always reset.
   let currentValue = isControlled ? value : stateValue;
-  let setValue = useCallback((value, ...args) => {
-    let onChangeCaller = (value, ...onChangeArgs) => {
-      if (onChange) {
-        if (!Object.is(currentValue, value)) {
-          onChange(value, ...onChangeArgs);
-        }
-      }
-      if (!isControlled) {
-        // If uncontrolled, mutate the currentValue local variable so that
-        // calling setState multiple times with the same value only emits onChange once.
-        // We do not use a ref for this because we specifically _do_ want the value to
-        // reset every render, and assigning to a ref in render breaks aborted suspended renders.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        currentValue = value;
-      }
-    };
+  useEarlyEffect(() => {
+    valueRef.current = currentValue;
+  });
 
-    if (typeof value === 'function') {
-      if (process.env.NODE_ENV !== 'production') {
-        console.warn('We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320');
-      }
-      // this supports functional updates https://reactjs.org/docs/hooks-reference.html#functional-updates
-      // when someone using useControlledState calls setControlledState(myFunc)
-      // this will call our useState setState with a function as well which invokes myFunc and calls onChange with the value from myFunc
-      // if we're in an uncontrolled state, then we also return the value of myFunc which to setState looks as though it was just called with myFunc from the beginning
-      // otherwise we just return the controlled value, which won't cause a rerender because React knows to bail out when the value is the same
-      let updateFunction = (oldValue, ...functionArgs) => {
-        let interceptedValue = value(isControlled ? currentValue : oldValue, ...functionArgs);
-        onChangeCaller(interceptedValue, ...args);
-        if (!isControlled) {
-          return interceptedValue;
-        }
-        return oldValue;
-      };
-      setStateValue(updateFunction);
-    } else {
-      if (!isControlled) {
-        setStateValue(value);
-      }
-      onChangeCaller(value, ...args);
+  let [, forceUpdate] = useReducer(() => ({}), {});
+  let setValue = useCallback((value: SetStateAction<T>, ...args: any[]) => {
+    // @ts-ignore - TS doesn't know that T cannot be a function.
+    let newValue = typeof value === 'function' ? value(valueRef.current) : value;
+    if (!Object.is(valueRef.current, newValue)) {
+      // Update the ref so that the next setState callback has the most recent value.
+      valueRef.current = newValue;
+
+      setStateValue(newValue);
+
+      // Always trigger a re-render, even when controlled, so that the layout effect above runs to reset the value.
+      forceUpdate();
+
+      // Trigger onChange. Note that if setState is called multiple times in a single event,
+      // onChange will be called for each one instead of only once.
+      onChange?.(newValue, ...args);
     }
-  }, [isControlled, currentValue, onChange]);
+  }, [onChange]);
 
   return [currentValue, setValue];
 }

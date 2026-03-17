@@ -88,7 +88,7 @@ const stocks = [{"id":1,"symbol":"PAACR","name":"Pacific Special Acquisition Cor
 ```tsx example standalone
 import {Table, TableHeader, TableBody, Column, Row, Cell, ResizableTableContainer, ColumnResizer, Group} from 'react-aria-components';
 import type {ColumnProps, RowProps, CellProps, SortDescriptor} from 'react-aria-components';
-import ArrowUpIcon from '@spectrum-icons/ui/ArrowUpSmall';
+import {ArrowUp} from 'lucide-react';
 import {useState, useMemo} from 'react';
 
 function StockTableExample() {
@@ -142,7 +142,7 @@ function StockColumn(props: ColumnProps & {children: React.ReactNode}) {
             <span className="flex-1 truncate">{props.children}</span>
             {allowsSorting && (
               <span className={`ml-1 w-4 h-4 flex items-center justify-center transition ${sortDirection === 'descending' ? 'rotate-180' : ''}`}>
-                {sortDirection && <ArrowUpIcon width={8} height={10} />}
+                {sortDirection && <ArrowUp className="w-4 h-4" />}
               </span>
             )}
           </Group>

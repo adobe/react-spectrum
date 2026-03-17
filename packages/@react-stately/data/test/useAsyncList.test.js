@@ -334,6 +334,56 @@ describe('useAsyncList', () => {
     expect(result.current.items).toEqual(ITEMS);
   });
 
+  it('should prevent loadMore from firing if in the middle of a load', async () => {
+    let load = jest.fn().mockImplementation(getItems);
+    let {result} = renderHook(
+      () => useAsyncList({load})
+    );
+
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.items).toEqual([]);
+
+    await act(async () => {
+      result.current.loadMore();
+    });
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.items).toEqual([]);
+    expect(load).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      jest.runAllTimers();
+    });
+
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.items).toEqual(ITEMS);
+
+    await act(async () => {
+      result.current.reload();
+    });
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.items).toEqual([]);
+    expect(load).toHaveBeenCalledTimes(2);
+
+    await act(async () => {
+      result.current.loadMore();
+    });
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.items).toEqual([]);
+    expect(load).toHaveBeenCalledTimes(2);
+
+    await act(async () => {
+      jest.runAllTimers();
+    });
+
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.items).toEqual(ITEMS);
+  });
+
+
   it('should ignore duplicate loads where first resolves first', async () => {
     let load = jest.fn().mockImplementation(getItems2);
     let sort = jest.fn().mockImplementation(() => new Promise(resolve => setTimeout(() => resolve({items: ITEMS2}), 100)));

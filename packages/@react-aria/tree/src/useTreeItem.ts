@@ -15,8 +15,8 @@ import {AriaGridListItemOptions, GridListItemAria, useGridListItem} from '@react
 import {DOMAttributes, FocusableElement, Node, RefObject} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAndroid, useLabels} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
+import {useLabels} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaTreeItemOptions extends Omit<AriaGridListItemOptions, 'isVirtualized'> {
@@ -59,7 +59,8 @@ export function useTreeItem<T>(props: AriaTreeItemOptions, state: TreeState<T>, 
         state.selectionManager.setFocusedKey(node.key);
       }
     },
-    tabIndex: isAndroid() ? -1 : null,
+    excludeFromTabOrder: true,
+    preventFocusOnPress: true,
     'data-react-aria-prevent-focus': true,
     ...labelProps
   };

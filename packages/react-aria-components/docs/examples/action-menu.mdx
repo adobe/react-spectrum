@@ -39,13 +39,13 @@ import './tailwind.global.css';
 ```tsx example standalone
 import {MenuTrigger, Button, Popover, Menu, MenuItem, Separator} from 'react-aria-components';
 import type {MenuItemProps} from 'react-aria-components';
-import RailIcon from '@spectrum-icons/workflow/Rail';
+import {Menu as MenuIcon} from 'lucide-react';
 
 function MenuExample() {
   return (
     <div className="bg-linear-to-r to-blue-500 from-violet-500 p-8 h-[250px] rounded-lg">
       <MenuTrigger>
-        <Button aria-label="Menu" className="inline-flex items-center justify-center rounded-md bg-black/20 bg-clip-padding border border-white/20 px-3 py-2 text-white hover:bg-black/30 pressed:bg-black/40 transition-colors cursor-default outline-hidden focus-visible:ring-2 focus-visible:ring-white/75"><RailIcon size="S" /></Button>
+        <Button aria-label="Menu" className="inline-flex items-center justify-center rounded-md bg-black/20 bg-clip-padding border border-white/20 px-3 py-2 text-white hover:bg-black/30 pressed:bg-black/40 transition-colors cursor-default outline-hidden focus-visible:ring-2 focus-visible:ring-white/75"><MenuIcon className="w-4 h-4" /></Button>
         <Popover className="p-1 w-56 overflow-auto rounded-md bg-white shadow-lg ring-1 ring-black/5 entering:animate-in entering:fade-in entering:zoom-in-95 exiting:animate-out exiting:fade-out exiting:zoom-out-95 fill-mode-forwards origin-top-left">
           <Menu className="outline-hidden">
             <ActionItem id="new">New…</ActionItem>

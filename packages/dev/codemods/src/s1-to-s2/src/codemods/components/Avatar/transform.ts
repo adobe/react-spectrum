@@ -40,10 +40,10 @@ function updateAvatarSize(
  * - Comment out isDisabled (it has not been implemented yet).
  * - Update size to be a pixel value if it currently matches 'avatar-size-*'.
  */
-export default function transformAvatar(path: NodePath<t.JSXElement>) {
+export default function transformAvatar(path: NodePath<t.JSXElement>): void {
   // Comment out isDisabled
   commentOutProp(path, {propName: 'isDisabled'});
 
   // Update size to be a pixel value if it currently matches 'avatar-size-*'
   updateAvatarSize(path);
-} 
+}

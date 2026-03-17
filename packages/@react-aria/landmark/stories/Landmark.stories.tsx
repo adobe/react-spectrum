@@ -11,17 +11,18 @@
  */
 
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
+import {AriaLandmarkProps, UNSTABLE_createLandmarkController, useLandmark} from '../';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {Flex} from '@react-spectrum/layout';
 import {Link} from '@react-spectrum/link';
-import {Meta} from '@storybook/react';
-import React, {SyntheticEvent, useEffect, useMemo, useRef} from 'react';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX, SyntheticEvent, useEffect, useMemo, useRef} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
+import {StyleProps} from '@react-types/shared';
 import styles from './index.css';
 import {TextField} from '@react-spectrum/textfield';
-import {UNSTABLE_createLandmarkController, useLandmark} from '../';
 
 interface StoryProps {}
 
@@ -32,15 +33,10 @@ const meta: Meta<StoryProps> = {
 
 export default meta;
 
-const Template = (props) => <Example {...props} />;
-const NestedTemplate = (props) => <NestedExample {...props} />;
-const TableTemplate = (props) => <TableExample {...props} />;
-const ApplicationTemplate = (props) => <ApplicationExample {...props} />;
-const DuplicateRolesWithLabelsTemplate = (props) => <DuplicateRolesWithLabelsExample {...props} />;
-const DuplicateRolesWithNoLabelsTemplate = (props) => <DuplicateRolesNoLabelExample {...props} />;
-const DuplicateRolesWithSameLabelsTemplate = (props) => <DuplicateRolesWithSameLabelsExample {...props} />;
-const OneWithNoFocusableChildrenExampleTemplate = (props) => <OneWithNoFocusableChildrenExample {...props} />;
-const AllWithNoFocusableChildrenExampleTemplate = (props) => <AllWithNoFocusableChildrenExample {...props} />;
+const Template = (props: AriaLandmarkProps & StyleProps): JSX.Element => <Example {...props} />;
+const NestedTemplate = (props: AriaLandmarkProps & StyleProps): JSX.Element => <NestedExample {...props} />;
+const TableTemplate = (props: AriaLandmarkProps & StyleProps): JSX.Element => <TableExample {...props} />;
+const ApplicationTemplate = (props: AriaLandmarkProps & StyleProps): JSX.Element => <ApplicationExample {...props} />;
 
 function Main(props) {
   let ref = useFocusableRef(null);
@@ -313,7 +309,7 @@ function ApplicationExample() {
   );
 }
 
-function IframeExample() {
+function IframeExample(): JSX.Element {
   let controller = useMemo(() => UNSTABLE_createLandmarkController(), []);
   useEffect(() => () => controller.dispose(), [controller]);
   let onLoad = (e: SyntheticEvent) => {
@@ -420,16 +416,18 @@ function IframeExample() {
   );
 }
 
-export const FlatLandmarks = {
-  render: Template
+export type TemplateStory = StoryObj<typeof Template>;
+
+export const FlatLandmarks: TemplateStory = {
+  render: (args) => <Template {...args} />
 };
 
-export const NestedLandmarks = {
-  render: NestedTemplate
+export const NestedLandmarks: TemplateStory = {
+  render: (args) => <NestedTemplate {...args} />
 };
 
-export const TableLandmark = {
-  render: TableTemplate,
+export const TableLandmark: TemplateStory = {
+  render: (args) => <TableTemplate {...args} />,
   parameters: {
     a11y: {
       config: {
@@ -440,8 +438,8 @@ export const TableLandmark = {
   }
 };
 
-export const ApplicationWithLandmarks = {
-  render: ApplicationTemplate,
+export const ApplicationWithLandmarks: TemplateStory = {
+  render: (args) => <ApplicationTemplate {...args} />,
   parameters: {
     a11y: {
       config: {
@@ -452,12 +450,12 @@ export const ApplicationWithLandmarks = {
   }
 };
 
-export const DuplicateRolesWithLabels = {
-  render: DuplicateRolesWithLabelsTemplate
+export const DuplicateRolesWithLabels: TemplateStory = {
+  render: (args) => <DuplicateRolesWithLabelsExample {...args} />
 };
 
-export const DuplicateRolesWithNoLabels = {
-  render: DuplicateRolesWithNoLabelsTemplate,
+export const DuplicateRolesWithNoLabels: TemplateStory = {
+  render: (args) => <DuplicateRolesNoLabelExample {...args} />,
   parameters: {
     a11y: {
       config: {
@@ -467,8 +465,8 @@ export const DuplicateRolesWithNoLabels = {
   }
 };
 
-export const DuplicateRolesWithSameLabels = {
-  render: DuplicateRolesWithSameLabelsTemplate,
+export const DuplicateRolesWithSameLabels: TemplateStory = {
+  render: (args) => <DuplicateRolesWithSameLabelsExample {...args} />,
   parameters: {
     a11y: {
       config: {
@@ -478,16 +476,16 @@ export const DuplicateRolesWithSameLabels = {
   }
 };
 
-export const OneWithNoFocusableChildren = {
-  render: OneWithNoFocusableChildrenExampleTemplate
+export const OneWithNoFocusableChildren: TemplateStory = {
+  render: (args) => <OneWithNoFocusableChildrenExample {...args} />
 };
 
-export const AllWithNoFocusableChildren = {
-  render: AllWithNoFocusableChildrenExampleTemplate
+export const AllWithNoFocusableChildren: TemplateStory = {
+  render: (args) => <AllWithNoFocusableChildrenExample {...args} />
 };
 
-export const IframeExampleStory = {
-  render: IframeExample,
+export const IframeExampleStory: TemplateStory = {
+  render: (args) => <IframeExample {...args} />,
   parameters: {
     a11y: {
       config: {

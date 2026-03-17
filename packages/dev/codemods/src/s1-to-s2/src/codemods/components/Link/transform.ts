@@ -8,7 +8,7 @@ import {updatePropNameAndValue} from '../../shared/transforms';
  */
 function updateLegacyLink(
   path: NodePath<t.JSXElement>
-) {
+): void {
   let missingOuterHref = t.isJSXElement(path.node) && !path.node.openingElement.attributes.some((attr) => t.isJSXAttribute(attr) && attr.name.name === 'href');
   if (missingOuterHref) {
     let innerLink = path.node.children.find((child) => t.isJSXElement(child) && t.isJSXIdentifier(child.openingElement.name));
@@ -35,7 +35,7 @@ function updateLegacyLink(
  * - Change variant="overBackground" to staticColor="white".
  * - If <a> was used inside Link (legacy API), remove the <a> and apply props directly to Link.
  */
-export default function transformLink(path: NodePath<t.JSXElement>) {
+export default function transformLink(path: NodePath<t.JSXElement>): void {
   // Change variant="overBackground" to staticColor="white"
   updatePropNameAndValue(path, {
     oldPropName: 'variant',
@@ -46,4 +46,4 @@ export default function transformLink(path: NodePath<t.JSXElement>) {
 
   // Update legacy Link
   updateLegacyLink(path);
-} 
+}

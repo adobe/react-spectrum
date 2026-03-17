@@ -103,7 +103,7 @@ describe('DateRangePicker', function () {
       expect(segments[1].getAttribute('aria-valuenow')).toBe('3');
       expect(segments[1].getAttribute('aria-valuetext')).toBe('3');
       expect(segments[1].getAttribute('aria-valuemin')).toBe('1');
-      expect(segments[1].getAttribute('aria-valuemax')).toBe('28');
+      expect(segments[1].getAttribute('aria-valuemax')).toBe('31');
 
       expect(getTextValue(segments[2])).toBe('2019');
       expect(segments[2].getAttribute('aria-label')).toBe('year, Start Date, ');
@@ -157,7 +157,7 @@ describe('DateRangePicker', function () {
       expect(segments[1].getAttribute('aria-valuenow')).toBe('3');
       expect(segments[1].getAttribute('aria-valuetext')).toBe('3');
       expect(segments[1].getAttribute('aria-valuemin')).toBe('1');
-      expect(segments[1].getAttribute('aria-valuemax')).toBe('28');
+      expect(segments[1].getAttribute('aria-valuemax')).toBe('31');
 
       expect(getTextValue(segments[2])).toBe('2019');
       expect(segments[2].getAttribute('aria-label')).toBe('year, Start Date, ');
@@ -168,10 +168,10 @@ describe('DateRangePicker', function () {
 
       expect(getTextValue(segments[3])).toBe('12');
       expect(segments[3].getAttribute('aria-label')).toBe('hour, Start Date, ');
-      expect(segments[3].getAttribute('aria-valuenow')).toBe('0');
+      expect(segments[3].getAttribute('aria-valuenow')).toBe('12');
       expect(segments[3].getAttribute('aria-valuetext')).toBe('12 AM');
-      expect(segments[3].getAttribute('aria-valuemin')).toBe('0');
-      expect(segments[3].getAttribute('aria-valuemax')).toBe('11');
+      expect(segments[3].getAttribute('aria-valuemin')).toBe('1');
+      expect(segments[3].getAttribute('aria-valuemax')).toBe('12');
 
       expect(getTextValue(segments[4])).toBe('00');
       expect(segments[4].getAttribute('aria-label')).toBe('minute, Start Date, ');
@@ -214,10 +214,10 @@ describe('DateRangePicker', function () {
 
       expect(getTextValue(segments[10])).toBe('12');
       expect(segments[10].getAttribute('aria-label')).toBe('hour, End Date, ');
-      expect(segments[10].getAttribute('aria-valuenow')).toBe('0');
+      expect(segments[10].getAttribute('aria-valuenow')).toBe('12');
       expect(segments[10].getAttribute('aria-valuetext')).toBe('12 AM');
-      expect(segments[10].getAttribute('aria-valuemin')).toBe('0');
-      expect(segments[10].getAttribute('aria-valuemax')).toBe('11');
+      expect(segments[10].getAttribute('aria-valuemin')).toBe('1');
+      expect(segments[10].getAttribute('aria-valuemax')).toBe('12');
 
       expect(getTextValue(segments[11])).toBe('00');
       expect(segments[11].getAttribute('aria-label')).toBe('minute, End Date, ');
@@ -1433,8 +1433,8 @@ describe('DateRangePicker', function () {
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
-      beforeInput(document.activeElement, '3');
-      expectPlaceholder(startDate, '2/3/yyyy');
+      beforeInput(document.activeElement, '4');
+      expectPlaceholder(startDate, '2/4/yyyy');
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
@@ -1442,7 +1442,7 @@ describe('DateRangePicker', function () {
       beforeInput(document.activeElement, '0');
       beforeInput(document.activeElement, '2');
       beforeInput(document.activeElement, '0');
-      expectPlaceholder(startDate, '2/3/2020');
+      expectPlaceholder(startDate, '2/4/2020');
       expect(segments[3]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
@@ -1465,7 +1465,7 @@ describe('DateRangePicker', function () {
       beforeInput(document.activeElement, '2');
       expect(onChange).toHaveBeenCalledTimes(4);
 
-      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2022, 4, 8)});
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2020, 2, 4), end: new CalendarDate(2022, 4, 8)});
     });
 
     it('should reset to the placeholder if controlled value is set to null', function () {
@@ -1523,6 +1523,32 @@ describe('DateRangePicker', function () {
       expect(start).toHaveValue('2020-02-03');
       expect(end).toHaveValue('2022-04-08');
     });
+
+    if (parseInt(React.version, 10) >= 19) {
+      it('resets to defaultValue when submitting form action', async () => {
+        function Test() {
+          const [value, formAction] = React.useActionState(() => ({start: new CalendarDate(2025, 2, 3), end: new CalendarDate(2025, 4, 8)}), {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2022, 4, 8)});
+          
+          return (
+            <form action={formAction}>
+              <DateRangePicker startName="start" endName="end" label="Value" defaultValue={value} />
+              <input type="submit" data-testid="submit" />
+            </form>
+          );
+        }
+  
+        let {getByTestId} = render(<Test />);
+        let start = document.querySelector('input[name=start]');
+        let end = document.querySelector('input[name=end]');
+        expect(start).toHaveValue('2020-02-03');
+        expect(end).toHaveValue('2022-04-08');
+  
+        let button = getByTestId('submit');
+        await user.click(button);
+        expect(start).toHaveValue('2025-02-03');
+        expect(end).toHaveValue('2025-04-08');
+      });
+    }
 
     describe('validation', () => {
       describe('validationBehavior=native', () => {

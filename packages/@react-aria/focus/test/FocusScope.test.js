@@ -1280,6 +1280,290 @@ describe('FocusScope', function () {
     });
   });
 
+  it('skips radio buttons that are in the same group and are not the selectable one forwards', async function () {
+    function Test() {
+      return (
+        <FocusScope contain>
+          <button data-testid="button1">button</button>
+          <form>
+            <fieldset>
+              <legend>Select a maintenance drone:</legend>
+
+              <div>
+                <input type="radio" id="huey" name="drone" value="huey" defaultChecked />
+                <label htmlFor="huey">Huey</label>
+              </div>
+
+              <div>
+                <input type="radio" id="dewey" name="drone" value="dewey" />
+                <label htmlFor="dewey">Dewey</label>
+              </div>
+              <button data-testid="button2">button</button>
+              <div>
+                <input type="radio" id="louie" name="drone" value="louie" />
+                <label htmlFor="louie">Louie</label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Select a ship:</legend>
+
+              <div>
+                <input type="radio" id="larry" name="ship" value="larry" />
+                <label htmlFor="larry">Larry</label>
+              </div>
+
+              <div>
+                <input type="radio" id="moe" name="ship" value="moe" />
+                <label htmlFor="moe">Moe</label>
+              </div>
+              <button data-testid="button3">button</button>
+              <div>
+                <input type="radio" id="curly" name="ship" value="curly" />
+                <label htmlFor="curly">Curly</label>
+              </div>
+            </fieldset>
+          </form>
+          <button data-testid="button4">button</button>
+        </FocusScope>
+      );
+    }
+
+    let {getByTestId, getAllByRole} = render(<Test />);
+    let radios = getAllByRole('radio');
+    await user.tab();
+    expect(document.activeElement).toBe(getByTestId('button1'));
+    await user.tab();
+    expect(document.activeElement).toBe(radios[0]);
+    await user.tab();
+    expect(document.activeElement).toBe(getByTestId('button2'));
+    await user.tab();
+    expect(document.activeElement).toBe(radios[3]);
+    await user.tab();
+    expect(document.activeElement).toBe(getByTestId('button3'));
+    await user.tab();
+    expect(document.activeElement).toBe(radios[5]);
+    await user.tab();
+    expect(document.activeElement).toBe(getByTestId('button4'));
+  });
+
+  it('skips radio buttons that are in the same group and are not the selectable one forwards outside of a form', async function () {
+    function Test() {
+      return (
+        <FocusScope contain>
+          <button data-testid="button1">button</button>
+          <fieldset>
+            <legend>Select a maintenance drone:</legend>
+
+            <div>
+              <input type="radio" id="huey" name="drone" value="huey" defaultChecked />
+              <label htmlFor="huey">Huey</label>
+            </div>
+
+            <div>
+              <input type="radio" id="dewey" name="drone" value="dewey" />
+              <label htmlFor="dewey">Dewey</label>
+            </div>
+            <button data-testid="button2">button</button>
+            <div>
+              <input type="radio" id="louie" name="drone" value="louie" />
+              <label htmlFor="louie">Louie</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Select a ship:</legend>
+
+            <div>
+              <input type="radio" id="larry" name="ship" value="larry" />
+              <label htmlFor="larry">Larry</label>
+            </div>
+
+            <div>
+              <input type="radio" id="moe" name="ship" value="moe" />
+              <label htmlFor="moe">Moe</label>
+            </div>
+            <button data-testid="button3">button</button>
+            <div>
+              <input type="radio" id="curly" name="ship" value="curly" />
+              <label htmlFor="curly">Curly</label>
+            </div>
+          </fieldset>
+          <button data-testid="button4">button</button>
+        </FocusScope>
+      );
+    }
+
+    let {getByTestId, getAllByRole} = render(<Test />);
+    let radios = getAllByRole('radio');
+    await user.tab();
+    expect(document.activeElement).toBe(getByTestId('button1'));
+    await user.tab();
+    expect(document.activeElement).toBe(radios[0]);
+    await user.tab();
+    expect(document.activeElement).toBe(getByTestId('button2'));
+    await user.tab();
+    expect(document.activeElement).toBe(radios[3]);
+    await user.tab();
+    expect(document.activeElement).toBe(getByTestId('button3'));
+    await user.tab();
+    expect(document.activeElement).toBe(radios[5]);
+    await user.tab();
+    expect(document.activeElement).toBe(getByTestId('button4'));
+  });
+
+  it('skips radio buttons that are in the same group and are not the selectable one backwards', async function () {
+    function Test() {
+      return (
+        <FocusScope contain>
+          <button data-testid="button1">button</button>
+          <form>
+            <fieldset>
+              <legend>Select a maintenance drone:</legend>
+
+              <div>
+                <input type="radio" id="huey" name="drone" value="huey" defaultChecked />
+                <label htmlFor="huey">Huey</label>
+              </div>
+
+              <div>
+                <input type="radio" id="dewey" name="drone" value="dewey" />
+                <label htmlFor="dewey">Dewey</label>
+              </div>
+              <button data-testid="button2">button</button>
+              <div>
+                <input type="radio" id="louie" name="drone" value="louie" />
+                <label htmlFor="louie">Louie</label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Select a ship:</legend>
+
+              <div>
+                <input type="radio" id="larry" name="ship" value="larry" />
+                <label htmlFor="larry">Larry</label>
+              </div>
+
+              <div>
+                <input type="radio" id="moe" name="ship" value="moe" />
+                <label htmlFor="moe">Moe</label>
+              </div>
+              <button data-testid="button3">button</button>
+              <div>
+                <input type="radio" id="curly" name="ship" value="curly" />
+                <label htmlFor="curly">Curly</label>
+              </div>
+            </fieldset>
+          </form>
+          <button data-testid="button4">button</button>
+        </FocusScope>
+      );
+    }
+
+    let {getByTestId, getAllByRole} = render(<Test />);
+    let radios = getAllByRole('radio');
+    await user.click(getByTestId('button4'));
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(radios[5]);
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(getByTestId('button3'));
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(radios[4]);
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(getByTestId('button2'));
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(radios[0]);
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(getByTestId('button1'));
+  });
+
+  it('skips radio buttons that are in the same group and are not the selectable one backwards outside of a form', async function () {
+    function Test() {
+      return (
+        <FocusScope contain>
+          <button data-testid="button1">button</button>
+          <fieldset>
+            <legend>Select a maintenance drone:</legend>
+
+            <div>
+              <input type="radio" id="huey" name="drone" value="huey" defaultChecked />
+              <label htmlFor="huey">Huey</label>
+            </div>
+
+            <div>
+              <input type="radio" id="dewey" name="drone" value="dewey" />
+              <label htmlFor="dewey">Dewey</label>
+            </div>
+            <button data-testid="button2">button</button>
+            <div>
+              <input type="radio" id="louie" name="drone" value="louie" />
+              <label htmlFor="louie">Louie</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Select a ship:</legend>
+
+            <div>
+              <input type="radio" id="larry" name="ship" value="larry" />
+              <label htmlFor="larry">Larry</label>
+            </div>
+
+            <div>
+              <input type="radio" id="moe" name="ship" value="moe" />
+              <label htmlFor="moe">Moe</label>
+            </div>
+            <button data-testid="button3">button</button>
+            <div>
+              <input type="radio" id="curly" name="ship" value="curly" />
+              <label htmlFor="curly">Curly</label>
+            </div>
+          </fieldset>
+          <button data-testid="button4">button</button>
+        </FocusScope>
+      );
+    }
+
+    let {getByTestId, getAllByRole} = render(<Test />);
+    let radios = getAllByRole('radio');
+    await user.click(getByTestId('button4'));
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(radios[5]);
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(getByTestId('button3'));
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(radios[4]);
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(getByTestId('button2'));
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(radios[0]);
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(getByTestId('button1'));
+  });
+
+  it('handles forms with a single radio button without crashing', async function () {
+    // Regression test for https://github.com/adobe/react-spectrum/issues/9569
+    // form.elements.namedItem() returns Element (not RadioNodeList) for single elements
+    function Test() {
+      return (
+        <FocusScope contain>
+          <button data-testid="button1">First button</button>
+          <form>
+            <input type="radio" id="only" name="option" value="only" />
+            <label htmlFor="only">Only Option</label>
+          </form>
+          <button data-testid="button2">Second button</button>
+        </FocusScope>
+      );
+    }
+
+    let {getByTestId, getByRole} = render(<Test />);
+    let radio = getByRole('radio');
+    await user.tab();
+    expect(document.activeElement).toBe(getByTestId('button1'));
+    await user.tab();
+    expect(document.activeElement).toBe(radio);
+    await user.tab();
+    expect(document.activeElement).toBe(getByTestId('button2'));
+  });
+
   describe('nested focus scopes', function () {
     it('should make child FocusScopes the active scope regardless of DOM structure', function () {
       function ChildComponent(props) {

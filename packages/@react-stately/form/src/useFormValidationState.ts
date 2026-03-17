@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {createContext, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {Context, createContext, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Validation, ValidationErrors, ValidationFunction, ValidationResult} from '@react-types/shared';
 
 export const VALID_VALIDITY_STATE: ValidityState = {
@@ -39,9 +39,12 @@ export const DEFAULT_VALIDATION_RESULT: ValidationResult = {
   validationErrors: []
 };
 
-export const FormValidationContext = createContext<ValidationErrors>({});
+export const FormValidationContext: Context<ValidationErrors> = createContext<ValidationErrors>({});
 
-export const privateValidationStateProp = '__formValidationState' + Date.now();
+// Private props that we pass from useFormValidationState to children.
+// Ideally we'd use a Symbol for this, but React doesn't support them: https://github.com/facebook/react/issues/7552
+// This needs to be stable across server and client module evaluation for SSR hydration.
+export const privateValidationStateProp: string = '__reactAriaFormValidationState';
 
 interface FormValidationProps<T> extends Validation<T> {
   builtinValidation?: ValidationResult,

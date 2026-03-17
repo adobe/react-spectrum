@@ -35,7 +35,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   protected direction: Direction;
   protected collator: Intl.Collator | undefined;
   protected layoutDelegate: LayoutDelegate;
-  protected focusMode;
+  protected focusMode: 'row' | 'cell';
 
   constructor(options: GridKeyboardDelegateOptions<C>) {
     this.collection = options.collection;
@@ -47,7 +47,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       throw new Error('Either a layout or a ref must be specified.');
     }
     this.layoutDelegate = options.layoutDelegate || (options.layout ? new DeprecatedLayoutDelegate(options.layout) : new DOMLayoutDelegate(options.ref!));
-    this.focusMode = options.focusMode || 'row';
+    this.focusMode = options.focusMode ?? 'row';
   }
 
   protected isCell(node: Node<T>): boolean {

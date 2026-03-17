@@ -11,12 +11,12 @@
  */
 
 import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
+import {focusWithoutScrolling, getEventTarget, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {getInteractionModality, useFocusWithin, useHover} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ToastState} from '@react-stately/toast';
-import {useEffect, useRef} from 'react';
+import {useCallback, useEffect, useRef} from 'react';
 import {useLandmark} from '@react-aria/landmark';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -46,13 +46,13 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
 
   let isHovered = useRef(false);
   let isFocused = useRef(false);
-  let updateTimers = useEffectEvent(() => {
+  let updateTimers = useCallback(() => {
     if (isHovered.current || isFocused.current) {
       state.pauseAll();
     } else {
       state.resumeAll();
     }
-  });
+  }, [state]);
 
   let {hoverProps} = useHover({
     onHoverStart: () => {
@@ -133,7 +133,7 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
     }
 
     prevVisibleToasts.current = state.visibleToasts;
-  }, [state.visibleToasts, ref, updateTimers]);
+  }, [state.visibleToasts, ref]);
 
   let lastFocused = useRef<FocusableElement | null>(null);
   let {focusWithinProps} = useFocusWithin({
@@ -190,7 +190,7 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
       // listen to focus events separate from focuswithin because that will only fire once
       // and we need to follow all focus changes
       onFocus: (e) => {
-        let target = e.target.closest('[role="alertdialog"]');
+        let target = (getEventTarget(e) as Element).closest('[role="alertdialog"]');
         focusedToast.current = toasts.current.findIndex(t => t === target);
       },
       onBlur: () => {

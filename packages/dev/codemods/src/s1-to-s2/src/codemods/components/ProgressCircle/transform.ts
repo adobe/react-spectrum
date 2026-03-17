@@ -6,7 +6,7 @@ import {updatePropNameAndValue} from '../../shared/transforms';
  * Transforms ProgressCircle:
  * - Change variant="overBackground" to staticColor="white".
  */
-export default function transformProgressCircle(path: NodePath<t.JSXElement>) {
+export default function transformProgressCircle(path: NodePath<t.JSXElement>): void {
   // Change variant="overBackground" to staticColor="white"
   updatePropNameAndValue(path, {
     oldPropName: 'variant',
@@ -14,4 +14,4 @@ export default function transformProgressCircle(path: NodePath<t.JSXElement>) {
     newPropName: 'staticColor',
     newPropValue: 'white'
   });
-} 
+}

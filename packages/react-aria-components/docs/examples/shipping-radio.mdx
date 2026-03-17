@@ -36,7 +36,7 @@ import './tailwind.global.css';
 
 ```tsx example standalone
 import {RadioGroup, Radio, Label} from 'react-aria-components';
-import CheckCircleIcon from '@spectrum-icons/workflow/CheckmarkCircle';
+import {CheckCircle, Circle} from 'lucide-react';
 
 function RadioGroupExample() {
   return (
@@ -60,18 +60,20 @@ function ShippingOption({name, time, price}) {
       ${isPressed && !isSelected ? 'bg-blue-50' : ''}
       ${!isSelected && !isPressed ? 'bg-white' : ''}
     `}>
-      <div className="flex w-full items-center justify-between gap-3">
-        <div className="flex items-center shrink-0 text-blue-100 group-selected:text-white">
-          <CheckCircleIcon size="M" />
-        </div>
-        <div className="flex flex-1 flex-col">
-          <div className="text-lg font-serif font-semibold text-gray-900 group-selected:text-white">{name}</div>
-          <div className="inline text-gray-500 group-selected:text-sky-100">
-            {time}
+      {({isSelected}) => (
+        <div className="flex w-full items-center justify-between gap-3">
+          <div className="flex items-center shrink-0 text-blue-400 group-selected:text-white">
+            {isSelected ? <CheckCircle className="w-6 h-6" /> : <Circle className="w-6 h-6" />}
           </div>
+          <div className="flex flex-1 flex-col">
+            <div className="text-lg font-serif font-semibold text-gray-900 group-selected:text-white">{name}</div>
+            <div className="inline text-gray-500 group-selected:text-sky-100">
+              {time}
+            </div>
+          </div>
+          <div className="font-medium font-mono text-gray-900 group-selected:text-white">{price}</div>
         </div>
-        <div className="font-medium font-mono text-gray-900 group-selected:text-white">{price}</div>
-      </div>
+      )}
     </Radio>
   );
 }

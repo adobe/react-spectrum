@@ -49,6 +49,16 @@ describe('ColorArea', () => {
     expect(group.querySelector('.react-aria-ColorThumb')).toHaveAttribute('data-bar', 'foo');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} = renderColorArea(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-custom', 'true');
+    expect(group.querySelector('.react-aria-ColorThumb')).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support render props', () => {
     let {getByTestId} = render(
       <ColorArea isDisabled defaultValue="rgb(255, 0, 0)" xChannel="red" yChannel="green">
@@ -143,5 +153,11 @@ describe('ColorArea', () => {
 
     expect(wrapper).toHaveAttribute('data-disabled', 'true');
     expect(wrapper).toHaveClass('disabled');
+  });
+
+  it('should support form prop', () => {
+    let {getByRole} = renderColorArea({form: 'test'});
+    let input = getByRole('slider');
+    expect(input).toHaveAttribute('form', 'test');
   });
 });

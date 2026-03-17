@@ -21,7 +21,7 @@ let availableComponents = getComponents();
  */
 export function updateDialogChild(
   path: NodePath<t.JSXElement>
-) {
+): void {
   let typePath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'type') as NodePath<t.JSXAttribute> | undefined;
   let type = typePath?.node.value?.type === 'StringLiteral' ? typePath.node.value?.value : 'modal';
   let newComponentName = 'Dialog';
@@ -74,7 +74,7 @@ export function updateDialogChild(
  * - Remove targetRef (it is no longer supported).
  * - Move render props to the child component (updated API).
  */
-export default function transformDialogTrigger(path: NodePath<t.JSXElement>) {
+export default function transformDialogTrigger(path: NodePath<t.JSXElement>): void {
   // Comment out type="tray"
   commentOutProp(path, {propName: 'type', propValue: 'tray'});
 

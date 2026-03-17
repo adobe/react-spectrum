@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Text} from '../src';
+import {Button, ButtonProps, Text} from '../src';
 import {generatePowerset} from '@react-spectrum/story-utils';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
+import {ReactNode} from 'react';
 import {shortName} from './utils';
 import {StaticColorProvider} from '../stories/utils';
 import {style} from '../style' with { type: 'macro' };
@@ -39,18 +40,34 @@ let states = [
 
 let combinations = generatePowerset(states);
 
-const Template = (args) => {
-  let {children, ...otherArgs} = args;
+let premiumStates = [
+  {isDisabled: true},
+  {size: ['S', 'M', 'L', 'XL']}
+];
+
+let premiumCombinations = generatePowerset(premiumStates);
+
+let genaiStates = [
+  {isDisabled: true},
+  {size: ['S', 'M', 'L', 'XL']}
+];
+
+let genaiCombinations = generatePowerset(genaiStates);
+
+const Template = (args: ButtonProps & {combos?: any[]}): ReactNode => {
+  let {children, combos = combinations, variant, ...otherArgs} = args;
   return (
     <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'})}>
-      {combinations.map(c => {
+      {combos.map(c => {
         let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
         let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
         if (!key) {
           key = 'default';
         }
 
-        let button = <Button data-testid={fullComboName} key={key} {...otherArgs} {...c}>{children ? children : key}</Button>;
+        let finalVariant = c.variant ?? variant;
+        let buttonProps = {...otherArgs, ...c, ...(finalVariant && {variant: finalVariant})};
+        let button = <Button data-testid={fullComboName} key={key} {...buttonProps}>{children ? children : key}</Button>;
         if (c.staticColor != null) {
           return (
             <StaticColorProvider staticColor={c.staticColor}>
@@ -65,21 +82,69 @@ const Template = (args) => {
   );
 };
 
-export const Default = {
-  render: Template
+export const Default: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} />
 };
 
-export const WithIcon = {
-  render: Template,
+export const WithIcon: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} />,
   args: {
     children: <><NewIcon /><Text>Press me</Text></>
   }
 };
 
-export const IconOnly = {
-  render: Template,
+export const IconOnly: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} />,
   args: {
     children: <NewIcon />
+  }
+};
+
+export const Premium: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} combos={premiumCombinations} />,
+  args: {
+    children: 'Press me',
+    variant: 'premium'
+  }
+};
+
+export const PremiumWithIcon: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} combos={premiumCombinations} />,
+  args: {
+    children: <><NewIcon /><Text>Press me</Text></>,
+    variant: 'premium'
+  }
+};
+
+export const PremiumIconOnly: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} combos={premiumCombinations} />,
+  args: {
+    children: <NewIcon />,
+    variant: 'premium'
+  }
+};
+
+export const GenAI: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} combos={genaiCombinations} />,
+  args: {
+    children: 'Press me',
+    variant: 'genai'
+  }
+};
+
+export const GenAIWithIcon: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} combos={genaiCombinations} />,
+  args: {
+    children: <><NewIcon /><Text>Press me</Text></>,
+    variant: 'genai'
+  }
+};
+
+export const GenAIIconOnly: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} combos={genaiCombinations} />,
+  args: {
+    children: <NewIcon />,
+    variant: 'genai'
   }
 };
 

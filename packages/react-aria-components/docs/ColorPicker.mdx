@@ -213,7 +213,7 @@ import {MyColorArea} from './ColorArea';
 import {MyColorSlider} from './ColorSlider';
 import {MyColorField} from './ColorField';
 
-interface MyColorPickerProps extends ColorPickerProps {
+interface MyColorPickerProps extends Omit<ColorPickerProps, 'children'> {
   label?: string,
   children?: React.ReactNode
 }

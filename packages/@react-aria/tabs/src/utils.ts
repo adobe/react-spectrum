@@ -13,7 +13,7 @@
 import {Key} from '@react-types/shared';
 import {TabListState} from '@react-stately/tabs';
 
-export const tabsIds = new WeakMap<TabListState<unknown>, string>();
+export const tabsIds: WeakMap<TabListState<unknown>, string> = new WeakMap<TabListState<unknown>, string>();
 
 export function generateId<T>(state: TabListState<T> | null, key: Key | null | undefined, role: string): string {
   if (!state) {
@@ -25,6 +25,9 @@ export function generateId<T>(state: TabListState<T> | null, key: Key | null | u
   }
 
   let baseId = tabsIds.get(state);
+  if (process.env.NODE_ENV !== 'production' && !baseId) {
+    console.error('There is no tab id, please check if you have rendered the tab panel before the tab list.');
+  }
   return `${baseId}-${role}-${key}`;
 }
 

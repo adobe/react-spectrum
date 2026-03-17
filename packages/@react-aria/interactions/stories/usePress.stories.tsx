@@ -19,7 +19,8 @@ import {
   Modal,
   ModalOverlay
 } from 'react-aria-components';
-import React, {useState} from 'react';
+import React, {JSX, useState} from 'react';
+import {StoryObj} from '@storybook/react';
 import styles from './usePress-stories.css';
 import {usePress} from '@react-aria/interactions';
 
@@ -27,7 +28,14 @@ export default {
   title: 'usePress'
 };
 
-export function TouchIssue() {
+export type TouchIssueStory = StoryObj<typeof TouchIssueRender>;
+
+export const TouchIssue: TouchIssueStory = {
+  render: () => <TouchIssueRender />,
+  name: 'Touch Issue'
+};
+
+function TouchIssueRender(): JSX.Element {
   const [opened, setOpened] = React.useState(false);
   const handleOpen = React.useCallback(() => {
     console.log('opening');
@@ -94,7 +102,7 @@ function OnPress(props) {
   );
 }
 
-export const linkOnPress = {
+export const linkOnPress: TouchIssueStory = {
   render: () => (
     <div className={styles['outer-div']}>
       {/* Note that the svg needs to not have pointer-events: none */}
@@ -121,7 +129,14 @@ export const linkOnPress = {
   }
 };
 
-export function ClickOutsideIssue() {
+export type ClickOutsideIssueStory = StoryObj<typeof ClickOutsideIssueRender>;
+
+export const ClickOutsideIssue: ClickOutsideIssueStory = {
+  render: () => <ClickOutsideIssueRender />,
+  name: 'Click Outside Issue'
+};
+
+function ClickOutsideIssueRender(): JSX.Element {
   const handleClick = () => {
     alert('Clicked!');
   };
@@ -188,7 +203,14 @@ export function ClickOutsideIssue() {
   );
 }
 
-export function SoftwareKeyboardIssue() {
+export type SoftwareKeyboardIssueStory = StoryObj<typeof SoftwareKeyboardIssueRender>;
+
+export const SoftwareKeyboardIssue: SoftwareKeyboardIssueStory = {
+  render: () => <SoftwareKeyboardIssueRender />,
+  name: 'Software Keyboard Issue'
+};
+
+function SoftwareKeyboardIssueRender(): JSX.Element {
   return (
     <div
       style={{
@@ -235,7 +257,14 @@ export function SoftwareKeyboardIssue() {
   );
 }
 
-export function AndroidUnmountIssue() {
+export type AndroidUnmountIssueStory = StoryObj<typeof AndroidUnmountIssueRender>;
+
+export const AndroidUnmountIssue: AndroidUnmountIssueStory = {
+  render: () => <AndroidUnmountIssueRender />,
+  name: 'Android Unmount Issue'
+};
+
+function AndroidUnmountIssueRender(): JSX.Element {
   let [showButton, setShowButton] = useState(true);
 
   return (
@@ -266,7 +295,14 @@ export function AndroidUnmountIssue() {
   );
 }
 
-export function IOSScrollIssue() {
+export type IOSScrollIssueStory = StoryObj<typeof IOSScrollIssueRender>;
+
+export const IOSScrollIssue: IOSScrollIssueStory = {
+  render: () => <IOSScrollIssueRender />,
+  name: 'iOS Scroll Issue'
+};
+
+function IOSScrollIssueRender(): JSX.Element {
   return (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
       <p>This story tests an iOS Safari issue that causes onPointerCancel not to be fired with touch-action: manipulation. Scrolling the list should not trigger onPress.</p>

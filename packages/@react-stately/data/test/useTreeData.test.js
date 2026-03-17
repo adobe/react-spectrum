@@ -1115,4 +1115,74 @@ describe('useTreeData', function () {
     expect(result.current.items[1].key).toEqual('Emily');
     expect(result.current.items.length).toEqual(2);
   });
+
+  it('should not move the item when moving it before itself', () => {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+  
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
+    let initialResult = result.current;
+  
+    act(() => {
+      result.current.moveBefore('David', ['David']);
+    });
+    expect(result.current.items).toEqual(initialResult.items);
+  
+    act(() => {
+      result.current.moveBefore('David', ['David', 'Eli']);
+    });
+    expect(result.current.items[0]).toEqual(initialResult.items[0]);
+    expect(result.current.items[1]).toEqual(initialResult.items[2]);
+    expect(result.current.items[2]).toEqual(initialResult.items[1]);
+  
+    act(() => {
+      result.current.moveBefore('John', ['John']);
+    });
+    expect(result.current.items[0]).toEqual(initialResult.items[0]);
+    expect(result.current.items[1]).toEqual(initialResult.items[2]);
+    expect(result.current.items[2]).toEqual(initialResult.items[1]);
+    expect(result.current.items[0].children).toEqual(initialResult.items[0].children);
+  
+    act(() => {
+      result.current.moveBefore('Jane', ['Sam', 'Jane']);
+    });
+    expect(result.current.items[0]).toEqual(initialResult.items[0]);
+    expect(result.current.items[1]).toEqual(initialResult.items[2]);
+    expect(result.current.items[2]).toEqual(initialResult.items[1]);
+    expect(result.current.items[0].children).toEqual(initialResult.items[0].children);
+  });
+  
+  it('should not move the item when moving it after itself', () => {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+  
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
+    let initialResult = result.current;
+  
+    act(() => {
+      result.current.moveAfter('David', ['David']);
+    });
+    expect(result.current.items).toEqual(initialResult.items);
+  
+    act(() => {
+      result.current.moveAfter('David', ['David', 'Eli']);
+    });
+    expect(result.current.items[0]).toEqual(initialResult.items[0]);
+    expect(result.current.items[1]).toEqual(initialResult.items[2]);
+    expect(result.current.items[2]).toEqual(initialResult.items[1]);
+  
+    act(() => {
+      result.current.moveAfter('John', ['John']);
+    });
+    expect(result.current.items[0]).toEqual(initialResult.items[0]);
+    expect(result.current.items[1]).toEqual(initialResult.items[2]);
+    expect(result.current.items[2]).toEqual(initialResult.items[1]);
+    expect(result.current.items[0].children).toEqual(initialResult.items[0].children);
+  
+    act(() => {
+      result.current.moveAfter('Jane', ['Sam', 'Jane']);
+    });
+    expect(result.current.items[0]).toEqual(initialResult.items[0]);
+    expect(result.current.items[1]).toEqual(initialResult.items[2]);
+    expect(result.current.items[2]).toEqual(initialResult.items[1]);
+    expect(result.current.items[0].children).toEqual(initialResult.items[0].children);
+  });
 });

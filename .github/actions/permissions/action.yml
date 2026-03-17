@@ -1,5 +1,5 @@
 name: 'Check permissions'
 description: 'Checks if commentor has write access or above'
 runs:
-  using: 'node22'
+  using: 'node24'
   main: 'index.js'

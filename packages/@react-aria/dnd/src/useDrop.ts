@@ -16,7 +16,7 @@ import {DragEvent, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DragTypes, globalAllowedDropOperations, globalDndState, readFromDataTransfer, setGlobalDnDState, setGlobalDropEffect} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
-import {isIPad, isMac, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
+import {getEventTarget, isIPad, isMac, nodeContains, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
 export interface DropOptions {
@@ -186,7 +186,7 @@ export function useDrop(options: DropOptions): DropResult {
   let onDragEnter = (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    state.dragOverElements.add(e.target as Element);
+    state.dragOverElements.add(getEventTarget(e));
     if (state.dragOverElements.size > 1) {
       return;
     }
@@ -232,9 +232,9 @@ export function useDrop(options: DropOptions): DropResult {
     // events will never be fired for these. This can happen, for example, with drop
     // indicators between items, which disappear when the drop target changes.
 
-    state.dragOverElements.delete(e.target as Element);
+    state.dragOverElements.delete(getEventTarget(e));
     for (let element of state.dragOverElements) {
-      if (!e.currentTarget.contains(element)) {
+      if (!nodeContains(e.currentTarget, element)) {
         state.dragOverElements.delete(element);
       }
     }
@@ -339,7 +339,7 @@ export function useDrop(options: DropOptions): DropResult {
       onDrop: onKeyboardDrop,
       onDropActivate
     });
-  }, [isDisabled, ref, getDropOperationKeyboard, onDropEnter, onDropExit, onKeyboardDrop, onDropActivate]);
+  }, [isDisabled, ref]);
 
   let {dropProps} = useVirtualDrop();
   if (isDisabled) {

@@ -189,7 +189,7 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
           <StepButton direction="down" isQuiet={isQuiet} {...decrementProps} />
         </>
         }
-        {name && <input type="hidden" name={name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
+        {name && <input type="hidden" name={name} form={props.form} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
       </div>
     </FocusRing>
   );

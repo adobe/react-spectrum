@@ -17,7 +17,7 @@ import {CUSTOM_DRAG_TYPE} from '../src/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from './mocks';
 import {Draggable, Droppable} from './examples';
 import {DragTypes} from '../src/utils';
-import React from 'react';
+import React, {useEffect} from 'react';
 import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {
@@ -195,13 +195,13 @@ describe('useDrag and useDrop', function () {
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
       expect(droppable).toHaveAttribute('data-droptarget', 'false');
-      
+
       let dataTransfer = new DataTransfer();
       fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
       act(() => jest.runAllTimers());
       expect(draggable).toHaveAttribute('data-dragging', 'true');
       expect(droppable).toHaveAttribute('data-droptarget', 'false');
-      
+
       expect(onDragStart).toHaveBeenCalledTimes(1);
       expect(onDragMove).not.toHaveBeenCalled();
       expect(onDragEnd).not.toHaveBeenCalled();
@@ -1337,8 +1337,8 @@ describe('useDrag and useDrop', function () {
             top: 0,
             x: 0,
             y: 0,
-            width: this.style.position === 'absolute' ? 20 : 100,
-            height: this.style.position === 'absolute' ? 20 : 50
+            width: this.style.position === 'fixed' ? 20 : 100,
+            height: this.style.position === 'fixed' ? 20 : 50
           };
         });
 
@@ -1349,6 +1349,59 @@ describe('useDrag and useDrop', function () {
         expect(dataTransfer._dragImage.node.textContent).toBe('Drag preview');
         expect(dataTransfer._dragImage.x).toBe(10);
         expect(dataTransfer._dragImage.y).toBe(10);
+      });
+
+      it('should use the offset returned from renderPreview', () => {
+        let renderPreview = jest.fn().mockImplementation(() => ({element: <div>Drag preview</div>, x: 12, y: 15}));
+        let tree = render(<Draggable renderPreview={renderPreview} />);
+
+        let draggable = tree.getByText('Drag me');
+
+        // Ensure consistent element sizes between draggable source and preview.
+        jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+          return {
+            left: 0,
+            top: 0,
+            x: 0,
+            y: 0,
+            width: this.style.position === 'fixed' ? 20 : 100,
+            height: this.style.position === 'fixed' ? 20 : 50
+          };
+        });
+
+        let dataTransfer = new DataTransfer();
+        fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 10, clientY: 10}));
+
+        // renderPreview should have been called and its offset returned used without modification.
+        expect(renderPreview).toHaveBeenCalledTimes(1);
+        expect(dataTransfer._dragImage.x).toBe(12);
+        expect(dataTransfer._dragImage.y).toBe(15);
+      });
+
+      it('should clamp the offset returned from renderPreview to the preview bounds', () => {
+        let renderPreview = jest.fn().mockImplementation(() => ({element: <div>Drag preview</div>, x: 50, y: -10}));
+        // Return values outside of the preview bounds to verify clamping logic.
+        let tree = render(<Draggable renderPreview={renderPreview} />);
+
+        let draggable = tree.getByText('Drag me');
+
+        jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+          return {
+            left: 0,
+            top: 0,
+            x: 0,
+            y: 0,
+            width: this.style.position === 'fixed' ? 20 : 100,
+            height: this.style.position === 'fixed' ? 20 : 50
+          };
+        });
+
+        let dataTransfer = new DataTransfer();
+        fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+        // Offsets should be clamped to 0 <= offset <= width/height (20 in this mock).
+        expect(dataTransfer._dragImage.x).toBe(20);
+        expect(dataTransfer._dragImage.y).toBe(0);
       });
     });
   });
@@ -2521,7 +2574,9 @@ describe('useDrag and useDrop', function () {
       let setShowTarget2;
       let Test = () => {
         let [showTarget2, _setShowTarget2] = React.useState(false);
-        setShowTarget2 = _setShowTarget2;
+        useEffect(() => {
+          setShowTarget2 = _setShowTarget2;
+        }, [_setShowTarget2]);
         return (<>
           <Draggable />
           <Droppable />
@@ -2582,7 +2637,9 @@ describe('useDrag and useDrop', function () {
       let setShowTarget2;
       let Test = () => {
         let [showTarget2, _setShowTarget2] = React.useState(true);
-        setShowTarget2 = _setShowTarget2;
+        useEffect(() => {
+          setShowTarget2 = _setShowTarget2;
+        }, [_setShowTarget2]);
         return (<>
           <Draggable />
           <Droppable />

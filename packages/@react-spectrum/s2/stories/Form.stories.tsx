@@ -23,6 +23,7 @@ import {
   ContextualHelp,
   Divider,
   Form,
+  FormProps,
   Heading,
   Meter,
   NumberField,
@@ -41,12 +42,14 @@ import {
   TextField,
   ToggleButton
 } from '../src';
-import {categorizeArgTypes} from './utils';
-import type {Meta} from '@storybook/react';
+import {categorizeArgTypes, getActionArgs} from './utils';
+import type {Meta, StoryObj} from '@storybook/react';
+import {ReactElement, useState} from 'react';
 import SortDown from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUp from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {style} from '../style' with {type: 'macro'};
-import {useState} from 'react';
+
+const events = ['onInvalid', 'onReset', 'onSubmit'];
 
 const meta: Meta<typeof Form> = {
   component: Form,
@@ -55,73 +58,78 @@ const meta: Meta<typeof Form> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onInvalid', 'onReset', 'onSubmit'])
+    ...categorizeArgTypes('Events', events)
   },
+  args: {...getActionArgs(events)},
   title: 'Form'
 };
 
 export default meta;
+type Story = StoryObj<typeof Form>;
 
-export const Example = (args: any) => (
-  <Form {...args}>
-    <TextField label="First Name" name="firstName" />
-    <TextField label="Last Name" name="firstName" />
-    <TextField label="Email" name="email" type="email" description="Enter an email" />
-    <Picker label="Country" name="country">
-      <PickerItem id="canada">Canada</PickerItem>
-      <PickerItem id="united-states">United States</PickerItem>
-      <PickerItem id="mexico">Mexico</PickerItem>
-      <PickerItem id="argentina">Argentina</PickerItem>
-    </Picker>
-    <CheckboxGroup label="Favorite sports">
-      <Checkbox value="soccer">Soccer</Checkbox>
-      <Checkbox value="baseball">Baseball</Checkbox>
-      <Checkbox value="basketball">Basketball</Checkbox>
-    </CheckboxGroup>
-    <RadioGroup label="Favorite pet">
-      <Radio value="cat">Cat</Radio>
-      <Radio value="dog">Dog</Radio>
-      <Radio value="plant" isDisabled>Plant</Radio>
-    </RadioGroup>
-    <TextField label="City" name="city" description="A long description to test help text wrapping." />
-    <TextField label="A long label to test wrapping behavior" name="long" />
-    <SearchField label="Search" name="search" />
-    <TextArea label="Comment" name="comment" />
-    <Switch>Wi-Fi</Switch>
-    <Checkbox>I agree to the terms</Checkbox>
-    <Slider label="Cookies"  defaultValue={30} />
-    <RangeSlider label="Range"  defaultValue={{start: 30, end: 60}} />
-    <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
-  </Form>
-);
+export const Example: Story = {
+  render: (args) => (
+    <Form {...args}>
+      <TextField label="First Name" name="firstName" placeholder="Enter your first name" />
+      <TextField label="Last Name" name="lastName" placeholder="Enter your last name" />
+      <TextField label="Email" name="email" type="email" placeholder="Enter your email" />
+      <Picker label="Country" name="country">
+        <PickerItem id="canada">Canada</PickerItem>
+        <PickerItem id="united-states">United States</PickerItem>
+        <PickerItem id="mexico">Mexico</PickerItem>
+        <PickerItem id="argentina">Argentina</PickerItem>
+      </Picker>
+      <CheckboxGroup label="Favorite sports">
+        <Checkbox value="soccer">Soccer</Checkbox>
+        <Checkbox value="baseball">Baseball</Checkbox>
+        <Checkbox value="basketball">Basketball</Checkbox>
+      </CheckboxGroup>
+      <RadioGroup label="Favorite pet">
+        <Radio value="cat">Cat</Radio>
+        <Radio value="dog">Dog</Radio>
+        <Radio value="plant" isDisabled>Plant</Radio>
+      </RadioGroup>
+      <TextField label="City" name="city" description="A long description to test help text wrapping." placeholder="Enter a city" />
+      <TextField label="A long label to test wrapping behavior" name="long" placeholder="Enter text" />
+      <SearchField label="Search" name="search" />
+      <TextArea label="Comment" name="comment" placeholder="Enter a comment" />
+      <Switch>Wi-Fi</Switch>
+      <Checkbox>I agree to the terms</Checkbox>
+      <Slider label="Cookies"  defaultValue={30} />
+      <RangeSlider label="Range"  defaultValue={{start: 30, end: 60}} />
+      <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
+    </Form>
+  )
+};
 
-export const MixedForm = (args: any) => (
-  <Form {...args}>
-    <TextField label="First Name" name="firstName" />
-    <TextField label="Last Name" name="firstName" />
-    <TextField label="Email" name="email" type="email" description="Enter an email" />
-    <CheckboxGroup aria-label="Favorite sports">
-      <Checkbox value="soccer">Soccer</Checkbox>
-      <Checkbox value="baseball">Baseball</Checkbox>
-      <Checkbox value="basketball">Basketball</Checkbox>
-    </CheckboxGroup>
-    <RadioGroup aria-label="Favorite pet">
-      <Radio value="cat">Cat</Radio>
-      <Radio value="dog">Dog</Radio>
-      <Radio value="plant" isDisabled>Plant</Radio>
-    </RadioGroup>
-    <SearchField label="Search" name="search" />
-  </Form>
-);
-
-MixedForm.parameters = {
-  docs: {
-    disable: true
+export const MixedForm: Story = {
+  render: (args) => (
+    <Form {...args}>
+      <TextField label="First Name" name="firstName" placeholder="Enter your first name" />
+      <TextField label="Last Name" name="lastName" placeholder="Enter your last name" />
+      <TextField label="Email" name="email" type="email" placeholder="Enter an email" />
+      <CheckboxGroup aria-label="Favorite sports">
+        <Checkbox value="soccer">Soccer</Checkbox>
+        <Checkbox value="baseball">Baseball</Checkbox>
+        <Checkbox value="basketball">Basketball</Checkbox>
+      </CheckboxGroup>
+      <RadioGroup aria-label="Favorite pet">
+        <Radio value="cat">Cat</Radio>
+        <Radio value="dog">Dog</Radio>
+        <Radio value="plant" isDisabled>Plant</Radio>
+      </RadioGroup>
+      <SearchField label="Search" name="search" />
+    </Form>
+  ),
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
 
-export const CustomLabelsExample = (args: any) => {
+const CustomLabelsExampleRender = (args: FormProps): ReactElement => {
   const [isSortAscending, setIsSortAscending] = useState(true);
   return (
     <Form {...args}>
@@ -150,7 +158,7 @@ export const CustomLabelsExample = (args: any) => {
         <ToggleButton>
           Enable color
         </ToggleButton>
-        <ColorField aria-label="Fill color" styles={style({width: 144})} />
+        <ColorField aria-label="Fill color" styles={style({width: 144})} placeholder="######" />
         <ColorSlider channel="alpha" defaultValue="#000" />
       </div>
       <Divider size="S" />
@@ -159,12 +167,12 @@ export const CustomLabelsExample = (args: any) => {
         <ToggleButton>
           Enable search
         </ToggleButton>
-        <TextField aria-label="Query" styles={style({width: 144})} />
+        <TextField aria-label="Query" styles={style({width: 144})} placeholder="Enter your name" />
         <ComboBox aria-label="Search terms" styles={style({width: 144})}>
           <ComboBoxItem>search term 1</ComboBoxItem>
           <ComboBoxItem>search term 2</ComboBoxItem>
         </ComboBox>
-        <NumberField aria-label="Number of results" defaultValue={50} styles={style({width: 96})} />
+        <NumberField aria-label="Number of results" placeholder="–" defaultValue={50} styles={style({width: 96})} />
       </div>
       <div role="group" aria-labelledby="searchParameters" className={style({display: 'flex', alignItems: 'center', gap: 16, font: 'ui'})}>
         <span id="searchParameters">Search parameters</span>
@@ -214,8 +222,11 @@ export const CustomLabelsExample = (args: any) => {
   );
 };
 
-CustomLabelsExample.parameters = {
-  docs: {
-    disable: true
+export const CustomLabelsExample: StoryObj<typeof CustomLabelsExampleRender> = {
+  render: (args) => <CustomLabelsExampleRender {...args} />,
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };

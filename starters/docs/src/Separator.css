@@ -1,0 +1,15 @@
+@import "./theme.css";
+
+.react-aria-Separator {
+  background-color: var(--gray-500);
+  border-style: none;
+  border-radius: 1px;
+  height: 2px;
+  width: 100%;
+  
+  &[aria-orientation="vertical"] {
+    width: 2px;
+    min-height: 32px;
+    height: 100%;
+  }
+}

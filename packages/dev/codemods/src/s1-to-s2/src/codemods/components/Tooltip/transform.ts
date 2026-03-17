@@ -9,7 +9,7 @@ import * as t from '@babel/types';
  * - Remove showIcon (it is no longer supported in Spectrum 2).
  * - Move isOpen prop to the parent TooltipTrigger.
  */
-export default function transformTooltip(path: NodePath<t.JSXElement>) {
+export default function transformTooltip(path: NodePath<t.JSXElement>): void {
   // Remove variant
   removeProp(path, {propName: 'variant'});
 
@@ -29,4 +29,4 @@ export default function transformTooltip(path: NodePath<t.JSXElement>) {
     childComponentName: 'Tooltip',
     propName: 'isOpen'
   });
-} 
+}

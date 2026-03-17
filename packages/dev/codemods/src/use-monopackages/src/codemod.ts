@@ -10,6 +10,11 @@ function areSpecifiersAlphabetized(specifiers: ImportSpecifier[]) {
   return specifierNames.join() === sortedNames.join();
 }
 
+interface Transformer {
+  (file: FileInfo, api: API, options: Options): string,
+  parser: 'tsx'
+}
+
 /**
  * Replaces individual package imports with monopackage imports, where possible.
  *
@@ -22,7 +27,7 @@ function areSpecifiersAlphabetized(specifiers: ImportSpecifier[]) {
  *
  * Run this from a directory where the relevant packages are installed in node_modules so it knows which monopackage exports are available to use (since exports may vary by version).
  */
-export default function transformer(file: FileInfo, api: API, options: Options) {
+const transformer: Transformer = function transformer(file: FileInfo, api: API, options: Options): string {
   const j = api.jscodeshift;
   const root = j(file.source);
 
@@ -174,6 +179,8 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
   });
 
   return root.toSource();
-}
+};
 
 transformer.parser = 'tsx';
+
+export default transformer;

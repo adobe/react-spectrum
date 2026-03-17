@@ -60,9 +60,13 @@ export const ComboBox = React.forwardRef(function ComboBox<T extends object>(pro
   props = useProviderProps(props);
   props = useFormProps(props);
 
-  if (props.placeholder && process.env.NODE_ENV !== 'production') {
-    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ComboBox.html#help-text');
-  }
+  let hasWarned = useRef(false);
+  useEffect(() => {
+    if (props.placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
+      console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ComboBox.html#help-text');
+      hasWarned.current = true;
+    }
+  }, [props.placeholder]);
 
   let isMobile = useIsMobileDevice();
   if (isMobile) {
@@ -175,7 +179,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase(props: SpectrumCombo
           validationState={props.validationState || (isInvalid ? 'invalid' : undefined)}
           ref={inputGroupRef} />
       </Field>
-      {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey ?? ''} />}
+      {name && formValue === 'key' && <input type="hidden" name={name} form={props.form} value={state.selectedKey ?? ''} />}
       <Popover
         state={state}
         UNSAFE_style={style}
@@ -274,8 +278,6 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
         }, 500);
       }
     } else if (!isLoading) {
-      // If loading is no longer happening, clear any timers and hide the loading circle
-      setShowLoading(false);
       if (timeout.current) {
         clearTimeout(timeout.current);
       }
@@ -284,6 +286,12 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
 
     lastInputValue.current = inputValue;
   }, [isLoading, showLoading, inputValue]);
+
+  let [prevIsLoading, setPrevIsLoading] = useState(isLoading);
+  if (prevIsLoading !== isLoading && !isLoading) {
+    setShowLoading(false);
+    setPrevIsLoading(isLoading);
+  }
 
   useEffect(() => {
     return () => {

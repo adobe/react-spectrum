@@ -14,6 +14,7 @@ import {act, fireEvent, mockClickDefault, pointerMap, render} from '@react-spect
 import {Button, Label, RouterProvider, Tag, TagGroup, TagList, Text, Tooltip, TooltipTrigger} from '../';
 import React from 'react';
 import {useListData} from '@react-stately/data';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestTagGroup = ({tagGroupProps, tagListProps, itemProps}) => (
@@ -44,6 +45,7 @@ let renderTagGroup = (tagGroupProps, tagListProps, itemProps) => render(<TestTag
 
 describe('TagGroup', () => {
   let user;
+  let testUtilUser = new User();
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
@@ -82,6 +84,22 @@ describe('TagGroup', () => {
 
     for (let row of getAllByRole('row')) {
       expect(row).toHaveAttribute('data-bar', 'foo');
+    }
+  });
+
+  it('should support custom render function', () => {
+    let {getByTestId, getByRole, getAllByRole} = renderTagGroup(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let group = getByTestId('group');
+    let grid = getByRole('grid');
+    expect(group).toHaveAttribute('data-custom', 'true');
+    expect(grid).toHaveAttribute('data-custom', 'true');
+
+    for (let row of getAllByRole('row')) {
+      expect(row).toHaveAttribute('data-custom', 'true');
     }
   });
 
@@ -158,8 +176,34 @@ describe('TagGroup', () => {
     expect(onHoverEnd).not.toHaveBeenCalled();
   });
 
+  it('should show hover state when tag has an href even without selectionMode', async () => {
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderTagGroup({}, {}, {href: '/', className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
+    let row = getAllByRole('row')[0];
+
+    expect(row).not.toHaveAttribute('data-hovered');
+    expect(row).not.toHaveClass('hover');
+
+    await user.hover(row);
+    expect(row).toHaveAttribute('data-hovered', 'true');
+    expect(row).toHaveClass('hover');
+    expect(onHoverStart).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(1);
+
+    await user.unhover(row);
+    expect(row).not.toHaveAttribute('data-hovered');
+    expect(row).not.toHaveClass('hover');
+    expect(onHoverEnd).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(2);
+  });
+
   it('should support focus ring', async () => {
-    let {getAllByRole} = renderTagGroup({selectionMode: 'multiple'}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+    let onBlur = jest.fn();
+    let {getAllByRole} = renderTagGroup({selectionMode: 'multiple'}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : '', onFocus, onFocusChange, onBlur});
     let row = getAllByRole('row')[0];
 
     expect(row).not.toHaveAttribute('data-focus-visible');
@@ -169,11 +213,20 @@ describe('TagGroup', () => {
     expect(document.activeElement).toBe(row);
     expect(row).toHaveAttribute('data-focus-visible', 'true');
     expect(row).toHaveClass('focus');
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onBlur).not.toHaveBeenCalled();
+    onFocus.mockClear();
+    onFocusChange.mockClear();
+    onBlur.mockClear();
 
     fireEvent.keyDown(row, {key: 'ArrowDown'});
     fireEvent.keyUp(row, {key: 'ArrowDown'});
     expect(row).not.toHaveAttribute('data-focus-visible');
     expect(row).not.toHaveClass('focus');
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(2); // once for each tag
+    expect(onBlur).toHaveBeenCalledTimes(1);
   });
 
   it('should support press state', async () => {
@@ -304,6 +357,7 @@ describe('TagGroup', () => {
     let grid = getByTestId('list');
     expect(grid).toHaveAttribute('data-empty', 'true');
     expect(grid).toHaveTextContent('No results');
+    expect(grid).toHaveAttribute('role', 'group');
   });
 
   it('supports tooltips', async function () {
@@ -524,9 +578,9 @@ describe('TagGroup', () => {
       let {getAllByRole} = renderTagGroup({selectionMode: 'single', onSelectionChange});
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(1);
-  
+
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
@@ -536,9 +590,9 @@ describe('TagGroup', () => {
       let {getAllByRole} = renderTagGroup({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false});
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(1);
-  
+
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
@@ -548,11 +602,32 @@ describe('TagGroup', () => {
       let {getAllByRole} = renderTagGroup({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true});
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(0);
-  
+
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
+    });
+  });
+
+  describe('press events', () => {
+    it.each`
+      interactionType
+      ${'mouse'}
+      ${'keyboard'}
+    `('should support press events on items when using $interactionType', async function ({interactionType}) {
+      let onPressStart = jest.fn();
+      let onPressEnd = jest.fn();
+      let onPress = jest.fn();
+      let onClick = jest.fn();
+      let {getByRole} = renderTagGroup({selectionMode: 'multiple'}, {}, {onPressStart, onPressEnd, onPress, onClick});
+      let tester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+      await tester.triggerRowAction({row: 1, interactionType});
+
+      expect(onPressStart).toHaveBeenCalledTimes(1);
+      expect(onPressEnd).toHaveBeenCalledTimes(1);
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
 });

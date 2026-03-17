@@ -205,7 +205,7 @@ function MyComponent({variant}) {
   display: 'flex',
   alignItems: 'center',
   columnGap: 8
-};
+} as const;
 
 const styles = style({
   ...horizontalStack,
@@ -218,7 +218,7 @@ export function horizontalStack(gap: number) {
     display: 'flex',
     alignItems: 'center',
     columnGap: gap
-  };
+  } as const;
 }`)}</Pre>
         <P>Then, import your macro and use it in a component.</P>
         <Pre>{highlight(`// component.tsx

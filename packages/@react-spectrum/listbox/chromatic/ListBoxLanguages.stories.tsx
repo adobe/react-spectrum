@@ -18,8 +18,9 @@ import Draw from '@spectrum-icons/workflow/Draw';
 import intlMessages from './intlMessages.json';
 import {Item, ListBox, Section} from '..';
 import {Label} from '@react-spectrum/label';
+import {Meta, StoryFn} from '@storybook/react';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {JSX} from 'react';
 import {Text} from '@react-spectrum/text';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -34,9 +35,11 @@ export default {
     }
   },
   excludeStories: ['TranslateListBox']
-};
+} as Meta<typeof ListBox>;
 
-export let TranslateListBox = () => {
+type ListBoxStory = StoryFn<typeof ListBox>;
+
+export const TranslateListBox = (): JSX.Element => {
   let strings = useLocalizedStringFormatter(intlMessages);
 
   return (
@@ -85,37 +88,37 @@ export let TranslateListBox = () => {
   );
 };
 
-export const ArabicComplex = () => (
+export const ArabicComplex: ListBoxStory = () => (
   <Provider locale="ar-AE">
     <TranslateListBox />
   </Provider>
 );
 
-export const HebrewComplex = () => (
+export const HebrewComplex: ListBoxStory = () => (
   <Provider locale="he-IL">
     <TranslateListBox />
   </Provider>
 );
 
-export const JapaneseComplex = () => (
+export const JapaneseComplex: ListBoxStory = () => (
   <Provider locale="ja-JP">
     <TranslateListBox />
   </Provider>
 );
 
-export const KoreanComplex = () => (
+export const KoreanComplex: ListBoxStory = () => (
   <Provider locale="ko-KR">
     <TranslateListBox />
   </Provider>
 );
 
-export const ChineseSimplfiedComplex = () => (
+export const ChineseSimplfiedComplex: ListBoxStory = () => (
   <Provider locale="zh-CN">
     <TranslateListBox />
   </Provider>
 );
 
-export const ChineseTraditionalComplex = () => (
+export const ChineseTraditionalComplex: ListBoxStory = () => (
   <Provider locale="zh-TW">
     <TranslateListBox />
   </Provider>

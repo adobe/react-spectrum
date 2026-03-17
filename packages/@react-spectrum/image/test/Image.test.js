@@ -37,4 +37,41 @@ describe('Image', () => {
 
     expect(mockOnErrorCallback).toBeCalled();
   });
+
+  describe('crossorigin attribute', () => {
+    test('anonymous', () => {
+      const {container} = render(
+        <Image
+          src="https://i.imgur.com/Z7AzH2c.png"
+          alt="Sky and roof"
+          crossOrigin="anonymous" />
+      );
+
+      const img = container.querySelector('img');
+      expect(img).toHaveAttribute('crossorigin', 'anonymous');
+    });
+
+    test('use-credentials', () => {
+      const {container} = render(
+        <Image
+          src="https://i.imgur.com/Z7AzH2c.png"
+          alt="Sky and roof"
+          crossOrigin="use-credentials" />
+      );
+
+      const img = container.querySelector('img');
+      expect(img).toHaveAttribute('crossorigin', 'use-credentials');
+    });
+    
+    test('unset', () => {
+      const {container} = render(
+        <Image
+          src="https://i.imgur.com/Z7AzH2c.png"
+          alt="Sky and roof" />
+      );
+
+      const img = container.querySelector('img');
+      expect(img).not.toHaveAttribute('crossorigin');
+    });
+  });
 });

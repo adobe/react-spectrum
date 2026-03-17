@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="440" height="300" style="max-height: 496px; background: var(--anatomy-gray-100); padding: 32px; margin-top: 16px; margin-bottom: 32px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 451 356">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="440" height="300" style="max-height: 496px; background: var(--anatomy-gray-100); padding: 32px; margin-top: 16px; margin-bottom: 32px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 451 356">
   <defs>
     <clipPath id="clip-atan2_2">
       <rect width="440" height="351"/>
@@ -20,9 +20,9 @@
    <line id="Line_2" data-name="Line 2" x1="0.341" y2="321.244" transform="translate(208.159 20.5)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="6"/>
     <line id="Line_3" data-name="Line 3" y2="324.02" transform="translate(370.802 179.734) rotate(90)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="6"/>
     <rect id="Rectangle_1" data-name="Rectangle 1" width="30" height="132" transform="translate(338.822 44.276)" fill="var(--anatomy-gray-100)"/>
-    <text id="Θ_atan2_y_x_" data-name="Θ = atan2(y,x)" transform="translate(284 150.276)" fill="var(--anatomy-gray-800)" font-size="26" font-family="Adobe-Clean"><tspan x="0" y="0">Θ = </tspan><tspan y="0">atan2(y,x)</tspan></text>
+    <text id="Θ_atan2_y_x_" data-name="Θ = atan2(y,x)" transform="translate(284 150.276)" fill="var(--anatomy-gray-800)" font-size="26" font-family="var(--anatomy-font)"><tspan x="0" y="0">Θ = </tspan><tspan y="0">atan2(y,x)</tspan></text>
     <rect id="Rectangle_6" data-name="Rectangle 6" width="4.951" height="18" transform="translate(333.871 48.276)" fill="var(--anatomy-gray-100)"/>
-    <text id="_x_y_" data-name="(x,y)" transform="translate(338.321 67.776)" fill="var(--anatomy-gray-800)" font-size="28" font-family="Adobe-Clean"><tspan x="0" y="0">(x,y)</tspan></text>
+    <text id="_x_y_" data-name="(x,y)" transform="translate(338.321 67.776)" fill="var(--anatomy-gray-800)" font-size="28" font-family="var(--anatomy-font)"><tspan x="0" y="0">(x,y)</tspan></text>
     <path id="Union_3" data-name="Union 3" d="M-1687.429-238.809-1703-227l15.571-11.809L-1689-240l1.571,1.192,1.571-1.192-1.571,1.192L-1671.857-227Z" transform="translate(1896.588 260.5)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="6"/>
     <path id="Union_4" data-name="Union 4" d="M-1687.429-238.809-1703-227l15.571-11.809L-1689-240l1.571,1.192,1.571-1.192-1.571,1.192L-1671.857-227Z" transform="translate(287.282 -1507.694) rotate(-90)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="6"/>
     <path id="Union_6" data-name="Union 6" d="M-1687.429-238.809-1703-227l15.571-11.809L-1689-240l1.571,1.192,1.571-1.192-1.571,1.192L-1671.857-227Z" transform="translate(131.321 1868.428) rotate(90)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="6"/>

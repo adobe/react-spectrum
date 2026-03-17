@@ -26,4 +26,4 @@ interface GridMapShared {
 // Used to share:
 // keyboard delegate between useGrid and useGridCell
 // onRowAction/onCellAction across hooks
-export const gridMap = new WeakMap<GridState<unknown, GridCollection<unknown>>, GridMapShared>();
+export const gridMap: WeakMap<GridState<unknown, GridCollection<unknown>>, GridMapShared> = new WeakMap<GridState<unknown, GridCollection<unknown>>, GridMapShared>();

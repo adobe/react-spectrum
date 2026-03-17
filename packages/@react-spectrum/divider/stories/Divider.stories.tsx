@@ -12,6 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {Divider} from '../';
+import {Meta, StoryFn} from '@storybook/react';
 import Properties from '@spectrum-icons/workflow/Properties';
 import React from 'react';
 import Select from '@spectrum-icons/workflow/Select';
@@ -19,9 +20,11 @@ import Select from '@spectrum-icons/workflow/Select';
 export default {
   title: 'Divider',
   providerSwitcher: {status: 'positive'}
-};
+} as Meta<typeof Divider>;
 
-export const LargeDefault = () => (
+export type DividerStory = StoryFn<typeof Divider>;
+
+export const LargeDefault: DividerStory = () => (
   <section>
     <h1>Large</h1>
     <Divider />
@@ -33,7 +36,7 @@ LargeDefault.story = {
   name: 'Large (Default)'
 };
 
-export const Medium = () => (
+export const Medium: DividerStory = () => (
   <section>
     <h1>Medium</h1>
     <Divider size="M" />
@@ -41,7 +44,7 @@ export const Medium = () => (
   </section>
 );
 
-export const Small = () => (
+export const Small: DividerStory = () => (
   <section>
     <h1>Small</h1>
     <Divider size="S" />
@@ -49,19 +52,19 @@ export const Small = () => (
   </section>
 );
 
-export const VerticalLargeDefault = () => renderVertical();
+export const VerticalLargeDefault: DividerStory = () => renderVertical();
 
 VerticalLargeDefault.story = {
   name: 'Vertical, Large (Default)'
 };
 
-export const VerticalMedium = () => renderVertical({size: 'M'});
+export const VerticalMedium: DividerStory = () => renderVertical({size: 'M'});
 
 VerticalMedium.story = {
   name: 'Vertical, Medium'
 };
 
-export const VerticalSmall = () => renderVertical({size: 'S'});
+export const VerticalSmall: DividerStory = () => renderVertical({size: 'S'});
 
 VerticalSmall.story = {
   name: 'Vertical, Small'

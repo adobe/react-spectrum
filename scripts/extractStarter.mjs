@@ -14,7 +14,7 @@
 import {unified} from 'unified';
 import remarkParse from 'remark-parse';
 import remarkMdx from 'remark-mdx';
-import glob from 'glob';
+import {globSync} from 'glob';
 import fs from 'fs';
 import {basename, resolve, dirname} from 'path';
 import {visit} from 'unist-util-visit';
@@ -28,7 +28,7 @@ import dprint from 'dprint-node';
 fs.mkdirSync(`starters/docs/src`, {recursive: true});
 fs.mkdirSync(`starters/docs/stories`, {recursive: true});
 
-for (let file of glob.sync('packages/react-aria-components/docs/*.mdx')) {
+for (let file of globSync('packages/react-aria-components/docs/*.mdx')) {
   if (!/^[A-Z]/.test(basename(file)) || /^Virtualizer|^Toast/.test(basename(file))) {
     continue;
   }
@@ -93,7 +93,7 @@ function MyTreeItemContent`);
 
   let usedClasses = new Set();
   if (reusableWrapper) {
-    fs.writeFileSync(`starters/docs/src/${name}.tsx`, processJS(file, imports + reusableWrapper, usedClasses));
+    fs.writeFileSync(`starters/docs/src/${name}.tsx`, processJS(file, "'use client';\n" + imports + reusableWrapper, usedClasses));
     fs.writeFileSync(`starters/docs/stories/${name}.stories.tsx`, generateStory(file, imports, reusableWrapper));
   } else {
     console.log('No reusable wrapper section in ' + file);
@@ -110,19 +110,9 @@ function MyTreeItemContent`);
 }
 
 let theme = fs.readFileSync('packages/@react-aria/example-theme/src/index.css', 'utf8');
-theme = `/* Base styles */
-:root {
-  font-family: system-ui;
-  font-size: 14px;
-  line-height: 1.5;
-  background: var(--background-color);
-}
-
-${theme}
-`;
 fs.writeFileSync('starters/docs/src/theme.css', theme);
 
-for (let file of glob.sync('starters/docs/src/*.css')) {
+for (let file of globSync('starters/docs/src/*.css')) {
   removeCircularDeps(file);
 }
 
@@ -261,6 +251,16 @@ function processCSS(css, usedClasses) {
       } else if (rule.selectors.every(s => !s.startsWith('.react-aria-') && s[0] === '.' && !usedClasses.has(s.slice(1).split(' ')[0]))) {
         console.log('Removing unused rule ' + rule.selector);
         rule.remove();
+      } else {
+        // Convert rems to use the standard 16px base font size instead of Spectrum's 14px
+        rule.walkDecls((decl) => {
+          if (decl.updated) return;
+          decl.value = decl.value.replace(/([\d+.]+)rem/g, (_, v) => {
+            let px = Number(v) * 14;
+            return (px / 16) + 'rem';
+          });
+          decl.updated = true;
+        });
       }
     }
   });
@@ -497,7 +497,8 @@ function generateWrapper(name) {
     generic = '<T>';
   }
 
-  return `import {${name} as RAC${name}, ${typeName}} from 'react-aria-components';
+  return `'use client';
+import {${name} as RAC${name}, ${typeName}} from 'react-aria-components';
 import './${name}.css';
 
 export function ${name}${typeParams}(props: ${typeName}${generic}) {

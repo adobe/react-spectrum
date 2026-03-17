@@ -6,7 +6,7 @@ import {updateKeyToId} from '../../shared/transforms';
  * Transforms Column:
  * - Update key to id.
  */
-export default function transformColumn(path: NodePath<t.JSXElement>) {
+export default function transformColumn(path: NodePath<t.JSXElement>): void {
   // Update key to id
   updateKeyToId(path);
-} 
+}

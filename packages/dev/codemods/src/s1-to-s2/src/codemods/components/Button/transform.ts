@@ -17,7 +17,7 @@ import * as t from '@babel/types';
  * - If href is present, the Button should be converted to a LinkButton
  * - Remove elementType (it is no longer supported in Spectrum 2).
  */
-export default function transformButton(path: NodePath<t.JSXElement>) {
+export default function transformButton(path: NodePath<t.JSXElement>): void {
   // Change variant="cta" to variant="accent"
   updatePropNameAndValue(path, {
     oldPropName: 'variant',

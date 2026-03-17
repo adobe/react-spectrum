@@ -33,7 +33,7 @@ interface FocusableContextValue extends FocusableProviderProps {
 
 // Exported for @react-aria/collections, which forwards this context.
 /** @private */
-export let FocusableContext = React.createContext<FocusableContextValue | null>(null);
+export let FocusableContext: React.Context<FocusableContextValue | null> = React.createContext<FocusableContextValue | null>(null);
 
 function useFocusableContext(ref: RefObject<FocusableElement | null>): FocusableContextValue {
   let context = useContext(FocusableContext) || {};
@@ -47,7 +47,9 @@ function useFocusableContext(ref: RefObject<FocusableElement | null>): Focusable
 /**
  * Provides DOM props to the nearest focusable child.
  */
-export const FocusableProvider = React.forwardRef(function FocusableProvider(props: FocusableProviderProps, ref: ForwardedRef<FocusableElement>) {
+export const FocusableProvider:
+  React.ForwardRefExoticComponent<FocusableProviderProps & React.RefAttributes<FocusableElement>> =
+React.forwardRef(function FocusableProvider(props: FocusableProviderProps, ref: ForwardedRef<FocusableElement>) {
   let {children, ...otherProps} = props;
   let objRef = useObjectRef(ref);
   let context = {
@@ -106,7 +108,9 @@ export interface FocusableComponentProps extends FocusableOptions {
   children: ReactElement<DOMAttributes, string>
 }
 
-export const Focusable = forwardRef(({children, ...props}: FocusableComponentProps, ref: ForwardedRef<FocusableElement>) => {
+export const Focusable:
+  React.ForwardRefExoticComponent<FocusableComponentProps & React.RefAttributes<FocusableElement>> =
+forwardRef(({children, ...props}: FocusableComponentProps, ref: ForwardedRef<FocusableElement>) => {
   ref = useObjectRef(ref);
   let {focusableProps} = useFocusable(props, ref);
   let child = React.Children.only(children);

@@ -11,6 +11,7 @@
  */
 
 import {
+  AnimationEventHandler,
   AriaAttributes,
   AriaRole,
   ClipboardEventHandler,
@@ -19,8 +20,14 @@ import {
   FormEventHandler,
   HTMLAttributeAnchorTarget,
   HTMLAttributeReferrerPolicy,
+  MouseEventHandler,
+  PointerEventHandler,
   DOMAttributes as ReactDOMAttributes,
-  ReactEventHandler
+  ReactEventHandler,
+  TouchEventHandler,
+  TransitionEventHandler,
+  UIEventHandler,
+  WheelEventHandler
 } from 'react';
 
 export interface AriaLabelingProps {
@@ -127,7 +134,13 @@ export interface InputDOMProps {
   /**
    * The name of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
-  name?: string
+  name?: string,
+  /**
+   * The `<form>` element to associate the input with.
+   * The value of this attribute must be the id of a `<form>` in the same document.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#form).
+   */
+  form?: string
 }
 
 // DOM props that apply to all text inputs
@@ -160,6 +173,7 @@ export interface TextInputDOMProps extends DOMProps, InputDOMProps, TextInputDOM
 
   /**
    * The type of input to render. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdeftype).
+   * @default 'text'
    */
   type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | (string & {}),
 
@@ -222,4 +236,108 @@ export interface DOMAttributes<T = FocusableElement> extends AriaAttributes, Rea
 
 export interface GroupDOMAttributes extends Omit<DOMAttributes<HTMLElement>, 'role'> {
   role?: 'group' | 'region' | 'presentation'
+}
+
+/**
+ * Global attributes that can be applied to any DOM element.
+ * @private
+ */
+// NOTE: id is handled elsewhere (DOMProps).
+export interface GlobalDOMAttributes<T = Element> extends GlobalDOMEvents<T> {
+  dir?: string | undefined,
+  lang?: string | undefined,
+  hidden?: boolean | undefined,
+  inert?: boolean | undefined,
+  translate?: 'yes' | 'no' | undefined
+}
+
+/**
+ * Global DOM events that are supported on all DOM elements.
+ * @private
+ */
+// NOTES:
+//   - Drag and drop events are omitted for now.
+//   - Keyboard and focus events are supported directly on focusable elements (FocusableProps).
+//   - Text input events (e.g. onInput, onCompositionStart, onCopy) are 
+//     supported only directly on input elements (TextInputDOMProps).
+//     We don't support contentEditable on our components.
+//   - Media events should be handled directly on the <video>/<audio><img> element.
+export interface GlobalDOMEvents<T = Element> {
+  // MouseEvents
+  onClick?: MouseEventHandler<T> | undefined,
+  onClickCapture?: MouseEventHandler<T> | undefined,
+  onAuxClick?: MouseEventHandler<T> | undefined,
+  onAuxClickCapture?: MouseEventHandler<T> | undefined,
+  onContextMenu?: MouseEventHandler<T> | undefined,
+  onContextMenuCapture?: MouseEventHandler<T> | undefined,
+  onDoubleClick?: MouseEventHandler<T> | undefined,
+  onDoubleClickCapture?: MouseEventHandler<T> | undefined,
+  onMouseDown?: MouseEventHandler<T> | undefined,
+  onMouseDownCapture?: MouseEventHandler<T> | undefined,
+  onMouseEnter?: MouseEventHandler<T> | undefined,
+  onMouseLeave?: MouseEventHandler<T> | undefined,
+  onMouseMove?: MouseEventHandler<T> | undefined,
+  onMouseMoveCapture?: MouseEventHandler<T> | undefined,
+  onMouseOut?: MouseEventHandler<T> | undefined,
+  onMouseOutCapture?: MouseEventHandler<T> | undefined,
+  onMouseOver?: MouseEventHandler<T> | undefined,
+  onMouseOverCapture?: MouseEventHandler<T> | undefined,
+  onMouseUp?: MouseEventHandler<T> | undefined,
+  onMouseUpCapture?: MouseEventHandler<T> | undefined,
+
+  // Touch Events
+  onTouchCancel?: TouchEventHandler<T> | undefined,
+  onTouchCancelCapture?: TouchEventHandler<T> | undefined,
+  onTouchEnd?: TouchEventHandler<T> | undefined,
+  onTouchEndCapture?: TouchEventHandler<T> | undefined,
+  onTouchMove?: TouchEventHandler<T> | undefined,
+  onTouchMoveCapture?: TouchEventHandler<T> | undefined,
+  onTouchStart?: TouchEventHandler<T> | undefined,
+  onTouchStartCapture?: TouchEventHandler<T> | undefined,
+
+  // Pointer Events
+  onPointerDown?: PointerEventHandler<T> | undefined,
+  onPointerDownCapture?: PointerEventHandler<T> | undefined,
+  onPointerMove?: PointerEventHandler<T> | undefined,
+  onPointerMoveCapture?: PointerEventHandler<T> | undefined,
+  onPointerUp?: PointerEventHandler<T> | undefined,
+  onPointerUpCapture?: PointerEventHandler<T> | undefined,
+  onPointerCancel?: PointerEventHandler<T> | undefined,
+  onPointerCancelCapture?: PointerEventHandler<T> | undefined,
+  onPointerEnter?: PointerEventHandler<T> | undefined,
+  onPointerLeave?: PointerEventHandler<T> | undefined,
+  onPointerOver?: PointerEventHandler<T> | undefined,
+  onPointerOverCapture?: PointerEventHandler<T> | undefined,
+  onPointerOut?: PointerEventHandler<T> | undefined,
+  onPointerOutCapture?: PointerEventHandler<T> | undefined,
+  onGotPointerCapture?: PointerEventHandler<T> | undefined,
+  onGotPointerCaptureCapture?: PointerEventHandler<T> | undefined,
+  onLostPointerCapture?: PointerEventHandler<T> | undefined,
+  onLostPointerCaptureCapture?: PointerEventHandler<T> | undefined,
+
+  // UI Events
+  onScroll?: UIEventHandler<T> | undefined,
+  onScrollCapture?: UIEventHandler<T> | undefined,
+
+  // Wheel Events
+  onWheel?: WheelEventHandler<T> | undefined,
+  onWheelCapture?: WheelEventHandler<T> | undefined,
+
+  // Animation Events
+  onAnimationStart?: AnimationEventHandler<T> | undefined,
+  onAnimationStartCapture?: AnimationEventHandler<T> | undefined,
+  onAnimationEnd?: AnimationEventHandler<T> | undefined,
+  onAnimationEndCapture?: AnimationEventHandler<T> | undefined,
+  onAnimationIteration?: AnimationEventHandler<T> | undefined,
+  onAnimationIterationCapture?: AnimationEventHandler<T> | undefined,
+
+  // Transition Events
+  onTransitionCancel?: TransitionEventHandler<T> | undefined,
+  onTransitionCancelCapture?: TransitionEventHandler<T> | undefined,
+  onTransitionEnd?: TransitionEventHandler<T> | undefined,
+  onTransitionEndCapture?: TransitionEventHandler<T> | undefined,
+  onTransitionRun?: TransitionEventHandler<T> | undefined,
+  onTransitionRunCapture?: TransitionEventHandler<T> | undefined,
+  onTransitionStart?: TransitionEventHandler<T> | undefined,
+  onTransitionStartCapture?: TransitionEventHandler<T> | undefined
 }

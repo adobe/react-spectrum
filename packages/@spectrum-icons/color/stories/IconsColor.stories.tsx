@@ -12,12 +12,13 @@
 
 import CalendarCheckColor from '../CalendarCheckColor';
 import React from 'react';
+import { Meta, StoryFn } from '@storybook/react';
 
 export default {
   title: 'Icons/Color'
-};
+} as Meta<typeof CalendarCheckColor>;
 
-export const ColorIconWithSizes = () => renderIconSizes(CalendarCheckColor, {'aria-label': 'Adobe Analytics Color'});
+export const ColorIconWithSizes: StoryFn<typeof CalendarCheckColor> = () => renderIconSizes(CalendarCheckColor, {'aria-label': 'Adobe Analytics Color'});
 
 ColorIconWithSizes.story = {
   name: 'Color icon with sizes'

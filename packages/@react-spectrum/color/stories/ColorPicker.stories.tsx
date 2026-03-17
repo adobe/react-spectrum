@@ -11,8 +11,9 @@
  */
 
 import {ColorArea, ColorEditor, ColorSwatch, ColorSwatchPicker, ColorWheel} from '../src';
-import {ColorPicker} from '../src/ColorPicker';
+import {ColorPicker, SpectrumColorPickerProps} from '../src/ColorPicker';
 import {Flex} from '@react-spectrum/layout';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 
 export default {
@@ -34,18 +35,20 @@ export default {
       options: ['XS', 'S', 'M', 'L']
     }
   }
-};
+} as Meta<SpectrumColorPickerProps>;
 
-export const Default = (args) => (
+export type ColorPickerStory = StoryFn<typeof ColorPicker>;
+
+export const Default: ColorPickerStory = (args) => (
   <ColorPicker defaultValue="#f00" {...args}>
     <ColorEditor />
   </ColorPicker>
 );
 
-export const Custom = (args) => (
+export const Custom: ColorPickerStory = (args) => (
   <ColorPicker defaultValue="#f00" {...args}>
     <ColorWheel />
-    <ColorArea 
+    <ColorArea
       colorSpace="hsb"
       xChannel="saturation"
       yChannel="brightness"
@@ -56,7 +59,7 @@ export const Custom = (args) => (
   </ColorPicker>
 );
 
-export const Swatches = (args) => (
+export const Swatches: ColorPickerStory = (args) => (
   <ColorPicker defaultValue="#A00" {...args}>
     <Flex direction="column" gap="size-300">
       <ColorEditor />

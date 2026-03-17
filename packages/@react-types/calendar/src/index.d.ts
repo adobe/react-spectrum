@@ -45,7 +45,7 @@ export interface CalendarPropsBase {
   autoFocus?: boolean,
   /** Controls the currently focused date within the calendar. */
   focusedValue?: DateValue | null,
-  /** The date that is focused when the calendar first mounts (uncountrolled). */
+  /** The date that is focused when the calendar first mounts (uncontrolled). */
   defaultFocusedValue?: DateValue | null,
   /** Handler that is called when the focused date changes. */
   onFocusChange?: (date: CalendarDate) => void,
@@ -66,7 +66,12 @@ export interface CalendarPropsBase {
   /**
    * The day that starts the week.
    */
-  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
+  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat',
+  /**
+   * Determines the alignment of the visible months on initial render based on the current selection or current date if there is no selection.
+   * @default 'center'
+   */
+  selectionAlignment?: 'start' | 'center' | 'end'
 }
 
 export type DateRange = RangeValue<DateValue> | null;
@@ -81,7 +86,19 @@ export interface RangeCalendarProps<T extends DateValue> extends CalendarPropsBa
 
 export interface AriaCalendarProps<T extends DateValue> extends CalendarProps<T>, DOMProps, AriaLabelingProps {}
 
-export interface AriaRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps, AriaLabelingProps {}
+export interface AriaRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps, AriaLabelingProps {
+  /**
+   * Controls the behavior when a pointer is released outside the calendar:
+   *
+   * - `clear`: clear the currently selected range of dates.
+   *
+   * - `reset`: reset the selection to the previously selected range of dates.
+   *
+   * - `select`: select the currently hovered range of dates.
+   * @default 'select'
+   */
+  interactOutsideBehavior?: 'clear' | 'reset' | 'select'
+}
 
 export type PageBehavior = 'single' | 'visible';
 

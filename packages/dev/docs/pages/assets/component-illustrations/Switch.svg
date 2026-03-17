@@ -5,5 +5,5 @@
     <circle cx="7" cy="7" r="7" stroke="none"/>
     <circle cx="7" cy="7" r="6" fill="none"/>
   </g>
-  <text id="Text" transform="translate(36 20)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Low power mode</tspan></text>
+  <text id="Text" transform="translate(36 20)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Low power mode</tspan></text>
 </svg>

@@ -20,13 +20,13 @@ interface PressResponderProps extends PressProps {
   children: ReactNode
 }
 
-export const PressResponder = React.forwardRef(({children, ...props}: PressResponderProps, ref: ForwardedRef<FocusableElement>) => {
+export const PressResponder:
+  React.ForwardRefExoticComponent<PressResponderProps & React.RefAttributes<FocusableElement>> =
+React.forwardRef(({children, ...props}: PressResponderProps, ref: ForwardedRef<FocusableElement>) => {
   let isRegistered = useRef(false);
   let prevContext = useContext(PressResponderContext);
-  ref = useObjectRef(ref || prevContext?.ref);
-  let context = mergeProps(prevContext || {}, {
+  let context: any = mergeProps(prevContext || {}, {
     ...props,
-    ref,
     register() {
       isRegistered.current = true;
       if (prevContext) {
@@ -35,7 +35,8 @@ export const PressResponder = React.forwardRef(({children, ...props}: PressRespo
     }
   });
 
-  useSyncRef(prevContext, ref);
+  context.ref = useObjectRef(ref || prevContext?.ref);
+  useSyncRef(prevContext, context.ref);
 
   useEffect(() => {
     if (!isRegistered.current) {

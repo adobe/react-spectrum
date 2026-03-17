@@ -35,6 +35,7 @@ echo 'build Spectrum 2 + Parcel test app'
 cd examples/s2-parcel-example
 yarn config set npmRegistryServer $registry
 yarn install --no-immutable
+yarn up @react-spectrum/s2
 yarn build --public-url ./
 mv dist ../../$verdaccio_path/s2-parcel-example
 

@@ -9,14 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import Bolt_L from 'illustration:./S2_lin_bolt_160.svg';
 import Bolt_M from 'illustration:./S2_lin_bolt_96.svg';
 import Bolt_S from 'illustration:./S2_lin_bolt_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function Bolt(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Bolt(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

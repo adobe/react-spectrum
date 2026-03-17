@@ -10,11 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, waitFor, within} from '@testing-library/react';
-import {GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
-import {pressElement, triggerLongPress} from './events';
+import {act} from './act';
+import {BaseGridRowInteractionOpts, GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
+import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
+import {waitFor, within} from '@testing-library/dom';
 
 interface TableToggleRowOpts extends ToggleGridRowOpts {}
+interface TableToggleExpansionOpts extends BaseGridRowInteractionOpts {}
 interface TableToggleSortOpts {
   /**
    * The index, text, or node of the column to toggle selection for.
@@ -54,6 +56,55 @@ export class TableTester {
     this._interactionType = type;
   }
 
+  // TODO: RTL
+  private async keyboardNavigateToRow(opts: {row: HTMLElement, selectionOnNav?: 'default' | 'none'}) {
+    let {row, selectionOnNav = 'default'} = opts;
+    let altKey = getAltKey();
+    let rows = this.rows;
+    let targetIndex = rows.indexOf(row);
+    if (targetIndex === -1) {
+      throw new Error('Row provided is not in the table');
+    }
+
+    // Move focus into the table
+    if (document.activeElement !== this._table && !this._table.contains(document.activeElement)) {
+      act(() => this._table.focus());
+    }
+
+    if (document.activeElement === this._table) {
+      await this.user.keyboard('[ArrowDown]');
+    }
+
+    // If focus is currently somewhere in the first row group (aka on a column), we want to keyboard navigate downwards till we reach the rows
+    if (this.rowGroups[0].contains(document.activeElement)) {
+      do {
+        await this.user.keyboard('[ArrowDown]');
+      } while (!this.rowGroups[1].contains(document.activeElement));
+    }
+
+    // Move focus onto the row itself
+    if (this.rowGroups[1].contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
+      do {
+        await this.user.keyboard('[ArrowLeft]');
+      } while (document.activeElement!.getAttribute('role') !== 'row');
+    }
+    let currIndex = rows.indexOf(document.activeElement as HTMLElement);
+    if (currIndex === -1) {
+      throw new Error('Current active element is not on any of the table rows');
+    }
+    let direction = targetIndex > currIndex ? 'down' : 'up';
+
+    if (selectionOnNav === 'none') {
+      await this.user.keyboard(`[${altKey}>]`);
+    }
+    for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
+      await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+    }
+    if (selectionOnNav === 'none') {
+      await this.user.keyboard(`[/${altKey}]`);
+    }
+  };
+
   /**
    * Toggles the selection for the specified table row. Defaults to using the interaction type set on the table tester.
    */
@@ -62,8 +113,12 @@ export class TableTester {
       row,
       needsLongPress,
       checkboxSelection = true,
-      interactionType = this._interactionType
+      interactionType = this._interactionType,
+      selectionBehavior = 'toggle'
     } = opts;
+
+    let altKey = getMetaKey();
+    let metaKey = getMetaKey();
 
     if (typeof row === 'string' || typeof row === 'number') {
       row = this.findRow({rowIndexOrText: row});
@@ -75,12 +130,15 @@ export class TableTester {
 
     let rowCheckbox = within(row).queryByRole('checkbox');
 
-    if (interactionType === 'keyboard' && !checkboxSelection) {
-      // TODO: for now focus the row directly until I add keyboard navigation
-      await act(async () => {
-        row.focus();
-      });
-      await this.user.keyboard('{Space}');
+    if (interactionType === 'keyboard' && (!checkboxSelection || !rowCheckbox)) {
+      await this.keyboardNavigateToRow({row, selectionOnNav: selectionBehavior === 'replace' ? 'none' : 'default'});
+      if (selectionBehavior === 'replace') {
+        await this.user.keyboard(`[${altKey}>]`);
+      }
+      await this.user.keyboard('[Space]');
+      if (selectionBehavior === 'replace') {
+        await this.user.keyboard(`[/${altKey}]`);
+      }
       return;
     }
     if (rowCheckbox && checkboxSelection) {
@@ -95,7 +153,57 @@ export class TableTester {
         // Note that long press interactions with rows is strictly touch only for grid rows
         await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
       } else {
+        if (selectionBehavior === 'replace' && interactionType !== 'touch') {
+          await this.user.keyboard(`[${metaKey}>]`);
+        }
         await pressElement(this.user, cell, interactionType);
+        if (selectionBehavior === 'replace' && interactionType !== 'touch') {
+          await this.user.keyboard(`[/${metaKey}]`);
+        }
+      }
+    }
+  };
+
+  /**
+   * Toggles the expansion for the specified tree row. Defaults to using the interaction type set on the tree tester.
+   */
+  async toggleRowExpansion(opts: TableToggleExpansionOpts): Promise<void> {
+    let {
+      row,
+      interactionType = this._interactionType
+    } = opts;
+    if (!this.table.contains(document.activeElement)) {
+      await act(async () => {
+        this.table.focus();
+      });
+    }
+
+    if (typeof row === 'string' || typeof row === 'number') {
+      row = this.findRow({rowIndexOrText: row});
+    }
+
+    if (!row) {
+      throw new Error('Target row not found in the table.');
+    } else if (row.getAttribute('aria-expanded') == null) {
+      throw new Error('Target row is not expandable.');
+    }
+
+    if (interactionType === 'mouse' || interactionType === 'touch') {
+      let rowExpander = within(row).getAllByRole('button')[0]; // what happens if the button is not first? how can we differentiate?
+      await pressElement(this.user, rowExpander, interactionType);
+    } else if (interactionType === 'keyboard') {
+      if (row?.getAttribute('aria-disabled') === 'true') {
+        return;
+      }
+
+      // TODO: We always Use Option/Ctrl when keyboard navigating so selection isn't changed
+      // in selectionmode="replace"/highlight selection when navigating to the row that the user wants
+      // to expand. Discuss if this is useful or not
+      await this.keyboardNavigateToRow({row});
+      if (row.getAttribute('aria-expanded') === 'true') {
+        await this.user.keyboard('[ArrowLeft]');
+      } else {
+        await this.user.keyboard('[ArrowRight]');
       }
     }
   };
@@ -297,8 +405,7 @@ export class TableTester {
     if (needsDoubleClick) {
       await this.user.dblClick(row);
     } else if (interactionType === 'keyboard') {
-      // TODO: add keyboard navigation instead of focusing the row directly. Will need to consider if the focus in in the columns
-      act(() => row.focus());
+      await this.keyboardNavigateToRow({row, selectionOnNav: 'none'});
       await this.user.keyboard('[Enter]');
     } else {
       await pressElement(this.user, row, interactionType);

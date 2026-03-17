@@ -16,7 +16,7 @@
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
 import {DOMAttributes, HoverEvents} from '@react-types/shared';
-import {getOwnerDocument, nodeContains, useGlobalListeners} from '@react-aria/utils';
+import {getEventTarget, getOwnerDocument, nodeContains, useGlobalListeners} from '@react-aria/utils';
 import {useEffect, useMemo, useRef, useState} from 'react';
 
 export interface HoverProps extends HoverEvents {
@@ -45,10 +45,10 @@ function setGlobalIgnoreEmulatedMouseEvents() {
   // the distant future because a user previously touched the element.
   setTimeout(() => {
     globalIgnoreEmulatedMouseEvents = false;
-  }, 50);
+  }, 500);
 }
 
-function handleGlobalPointerEvent(e) {
+function handleGlobalPointerEvent(e: PointerEvent) {
   if (e.pointerType === 'touch') {
     setGlobalIgnoreEmulatedMouseEvents();
   }
@@ -59,10 +59,12 @@ function setupGlobalTouchEvents() {
     return;
   }
 
-  if (typeof PointerEvent !== 'undefined') {
-    document.addEventListener('pointerup', handleGlobalPointerEvent);
-  } else if (process.env.NODE_ENV === 'test') {
-    document.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
+  if (hoverCount === 0) {
+    if (typeof PointerEvent !== 'undefined') {
+      document.addEventListener('pointerup', handleGlobalPointerEvent);
+    } else if (process.env.NODE_ENV === 'test') {
+      document.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
+    }
   }
 
   hoverCount++;
@@ -106,7 +108,7 @@ export function useHover(props: HoverProps): HoverResult {
   let {hoverProps, triggerHoverEnd} = useMemo(() => {
     let triggerHoverStart = (event, pointerType) => {
       state.pointerType = pointerType;
-      if (isDisabled || pointerType === 'touch' || state.isHovered || !event.currentTarget.contains(event.target)) {
+      if (isDisabled || pointerType === 'touch' || state.isHovered || !nodeContains(event.currentTarget, getEventTarget(event) as Element)) {
         return;
       }
 
@@ -118,8 +120,8 @@ export function useHover(props: HoverProps): HoverResult {
       // even though the originally hovered target may have shrunk in size so it is no longer hovered.
       // However, a pointerover event will be fired on the new target the mouse is over.
       // In Chrome this happens immediately. In Safari and Firefox, it happens upon moving the mouse one pixel.
-      addGlobalListener(getOwnerDocument(event.target), 'pointerover', e => {
-        if (state.isHovered && state.target && !nodeContains(state.target, e.target as Element)) {
+      addGlobalListener(getOwnerDocument(getEventTarget(event) as Element), 'pointerover', e => {
+        if (state.isHovered && state.target && !nodeContains(state.target, getEventTarget(e) as Element)) {
           triggerHoverEnd(e, e.pointerType);
         }
       }, {capture: true});
@@ -178,7 +180,7 @@ export function useHover(props: HoverProps): HoverResult {
       };
 
       hoverProps.onPointerLeave = (e) => {
-        if (!isDisabled && e.currentTarget.contains(e.target as Element)) {
+        if (!isDisabled && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
           triggerHoverEnd(e, e.pointerType);
         }
       };
@@ -196,7 +198,7 @@ export function useHover(props: HoverProps): HoverResult {
       };
 
       hoverProps.onMouseLeave = (e) => {
-        if (!isDisabled && e.currentTarget.contains(e.target as Element)) {
+        if (!isDisabled && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
           triggerHoverEnd(e, 'mouse');
         }
       };

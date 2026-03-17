@@ -72,14 +72,14 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
 
   let getOppositeTarget = (target: ItemDropTarget): ItemDropTarget | null => {
     if (target.dropPosition === 'before') {
-      let key = collection.getKeyBefore(target.key);
-      return key != null && collection.getItem(key)?.level === collection.getItem(target.key)?.level 
-        ? {type: 'item', key, dropPosition: 'after'} 
+      let node = collection.getItem(target.key);
+      return node && node.prevKey != null
+        ? {type: 'item', key: node.prevKey, dropPosition: 'after'} 
         : null;
     } else if (target.dropPosition === 'after') {
-      let key = collection.getKeyAfter(target.key);
-      return key != null && collection.getItem(key)?.level === collection.getItem(target.key)?.level
-        ? {type: 'item', key, dropPosition: 'before'} 
+      let node = collection.getItem(target.key);
+      return node && node.nextKey != null
+        ? {type: 'item', key: node.nextKey, dropPosition: 'before'} 
         : null;
     }
     return null;
@@ -194,6 +194,25 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
       return false;
     },
     getDropOperation(e) {
+      let {target, isInternal, draggingKeys} = e;
+
+      // Prevent dropping items onto themselves or their descendants
+      if (isInternal && target.type === 'item' && draggingKeys.size > 0) {
+        if (draggingKeys.has(target.key) && target.dropPosition === 'on') {
+          return 'cancel';
+        }
+
+        let currentKey: Key | null = target.key;
+        while (currentKey != null) {
+          let item = collection.getItem(currentKey);
+          let parentKey = item?.parentKey;
+          if (parentKey != null && draggingKeys.has(parentKey)) {
+            return 'cancel';
+          }
+          currentKey = parentKey ?? null;
+        }
+      }
+
       return defaultGetDropOperation(e);
     }
   };

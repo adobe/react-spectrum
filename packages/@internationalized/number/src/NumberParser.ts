@@ -23,7 +23,7 @@ interface Symbols {
 }
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
-const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec', 'deva', 'beng'];
+const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec', 'deva', 'beng', 'fullwide'];
 
 /**
  * A NumberParser can be used to perform locale-aware parsing of numbers from Unicode strings,
@@ -213,6 +213,12 @@ class NumberParserImpl {
       if (this.symbols.group) {
         value = replaceAll(value, '.', this.symbols.group);
       }
+    }
+
+    // In some locale styles, such as swiss currency, the group character can be a special single quote
+    // that keyboards don't typically have. This expands the character to include the easier to type single quote.
+    if (this.symbols.group === '’' && value.includes("'")) {
+      value = replaceAll(value, "'", this.symbols.group);
     }
 
     // fr-FR group character is narrow non-breaking space, char code 8239 (U+202F), but that's not a key on the french keyboard,

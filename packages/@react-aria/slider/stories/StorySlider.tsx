@@ -12,7 +12,7 @@
 
 import {AriaSliderProps} from '@react-types/slider';
 import {FocusRing} from '@react-aria/focus';
-import React from 'react';
+import React, {JSX} from 'react';
 import styles from './story-slider.css';
 import {useNumberFormatter} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
@@ -25,7 +25,7 @@ interface StorySliderProps extends AriaSliderProps<number> {
   formatOptions?: Intl.NumberFormatOptions
 }
 
-export function StorySlider(props: StorySliderProps) {
+export function StorySlider(props: StorySliderProps): JSX.Element {
   const trackRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const origin = props.origin ?? props.minValue ?? 0;

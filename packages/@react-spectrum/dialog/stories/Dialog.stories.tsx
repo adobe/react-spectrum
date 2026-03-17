@@ -21,113 +21,116 @@ import {Form} from '@react-spectrum/form';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Item, Picker} from '@react-spectrum/picker';
+import {Meta, StoryFn} from '@storybook/react';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React, {useState} from 'react';
+import React, {JSX, useState} from 'react';
 import {TextField} from '@react-spectrum/textfield';
 
 export default {
   title: 'Dialog',
   providerSwitcher: {status: 'notice'},
   excludeStories: ['singleParagraph']
-};
+} as Meta<typeof Dialog>;
 
-export const Default = () => render({});
+export type DialogStory = StoryFn<typeof Dialog>;
+
+export const Default: DialogStory = () => render({});
 
 Default.story = {
   name: 'default'
 };
 
-export const IsDismissable = () => render({isDismissable: true});
+export const IsDismissable: DialogStory = () => render({isDismissable: true});
 
 IsDismissable.story = {
   name: 'isDismissable'
 };
 
-export const LongContent = () => renderLongContent({});
+export const LongContent: DialogStory = () => renderLongContent({});
 
 LongContent.story = {
   name: 'long content'
 };
 
-export const WithHero = () => renderHero({});
+export const WithHero: DialogStory = () => renderHero({});
 
 WithHero.story = {
   name: 'with hero'
 };
 
-export const WithHeroIsDimissable = () => renderHero({isDismissable: true});
+export const WithHeroIsDimissable: DialogStory = () => renderHero({isDismissable: true});
 
 WithHeroIsDimissable.story = {
   name: 'with hero, isDimissable'
 };
 
-export const WithFooter = () => renderFooter({});
+export const WithFooter: DialogStory = () => renderFooter({});
 
 WithFooter.story = {
   name: 'with footer'
 };
 
-export const Small = () => render({size: 'S'});
+export const Small: DialogStory = () => render({size: 'S'});
 
 Small.story = {
   name: 'small'
 };
 
-export const Medium = () => render({size: 'M'});
+export const Medium: DialogStory = () => render({size: 'M'});
 
 Medium.story = {
   name: 'medium'
 };
 
-export const Large = () => render({size: 'L'});
+export const Large: DialogStory = () => render({size: 'L'});
 
 Large.story = {
   name: 'large'
 };
 
-export const _Form = () => renderWithForm({});
+export const _Form: DialogStory = () => renderWithForm({});
 
 _Form.story = {
   name: 'form'
 };
 
-export const FullscreenTakeoverForm = () => renderWithForm({type: 'fullscreenTakeover'});
+export const FullscreenTakeoverForm: DialogStory = () => renderWithForm({type: 'fullscreenTakeover'});
 
 FullscreenTakeoverForm.story = {
   name: 'fullscreenTakeover form'
 };
 
-export const ThreeButtons = () => renderWithThreeButtons({});
+export const ThreeButtons: DialogStory = () => renderWithThreeButtons({});
 
 ThreeButtons.story = {
   name: 'three buttons'
 };
 
-export const ThreeButtonsVerticalOrientation = () => renderWithThreeButtonsVertical({});
+export const ThreeButtonsVerticalOrientation: DialogStory = () => renderWithThreeButtonsVertical({});
 
 ThreeButtonsVerticalOrientation.story = {
   name: 'three buttons, vertical orientation'
 };
 
-export const ThreeButtonsFooter = () => <RenderWithThreeButtonsAndFooter />;
+export const ThreeButtonsFooter: DialogStory = () => <RenderWithThreeButtonsAndFooter />;
 
 ThreeButtonsFooter.story = {
   name: 'three buttons, footer'
 };
 
-export const ClearedContent = () => renderWithDividerInContent({});
+export const ClearedContent: DialogStory = () => renderWithDividerInContent({});
 
 ClearedContent.story = {
   name: 'cleared content'
 };
 
-export const WithIframe = () => renderIframe({});
+export const WithIframe: DialogStory = () => renderIframe({});
 
 WithIframe.story = {
   name: 'with iframe'
 };
 
-export const HorizontalScrolling = () => renderHorizontalScrolling({});
+export const HorizontalScrolling: DialogStory = () => renderHorizontalScrolling({});
 
 
 type RenderProps = Omit<SpectrumDialogProps & {isDismissable?: boolean, width?: string}, 'children'>;
@@ -282,7 +285,7 @@ function renderWithForm({width = 'auto', ...props}) {
     </div>
   );
 }
-export let singleParagraph = () => <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text>;
+export let singleParagraph = (): JSX.Element => <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text>;
 let fiveParagraphs = () => (
   <React.Fragment>
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mi proin sed libero enim. Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Sed enim ut sem viverra aliquet eget sit amet tellus. Diam quis enim lobortis scelerisque fermentum dui faucibus in ornare. Diam quam nulla porttitor massa id. Eleifend mi in nulla posuere sollicitudin. Turpis nunc eget lorem dolor sed viverra ipsum nunc. Faucibus in ornare quam viverra. Risus commodo viverra maecenas accumsan lacus vel facilisis volutpat est. Nam libero justo laoreet sit amet cursus sit. Netus et malesuada fames ac. Dictum fusce ut placerat orci nulla pellentesque dignissim enim sit. Eros donec ac odio tempor orci. Ut etiam sit amet nisl purus in mollis nunc. Nisl rhoncus mattis rhoncus urna neque viverra. Convallis aenean et tortor at risus. Diam phasellus vestibulum lorem sed risus ultricies.</p>

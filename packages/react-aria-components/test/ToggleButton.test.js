@@ -48,6 +48,12 @@ describe('ToggleButton', () => {
     expect(button).toHaveTextContent('On');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} = render(<ToggleButton render={props => <button {...props} data-custom="bar" />}>Test</ToggleButton>);
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('data-custom', 'bar');
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <ToggleButtonContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
@@ -95,7 +101,9 @@ describe('ToggleButton', () => {
 
   it('should support press state', async () => {
     let onPress = jest.fn();
-    let {getByRole} = render(<ToggleButton className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress}>Test</ToggleButton>);
+    let onClick = jest.fn();
+    let onClickCapture = jest.fn();
+    let {getByRole} = render(<ToggleButton className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</ToggleButton>);
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-pressed');
@@ -110,6 +118,8 @@ describe('ToggleButton', () => {
     expect(button).not.toHaveClass('pressed');
 
     expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
   });
 
   it('should support disabled state', () => {

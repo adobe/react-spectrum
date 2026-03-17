@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 import {animate} from '../react-aria/home/utils';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {JSX, useEffect, useRef, useState} from 'react';
 import {useResizeObserver} from '@react-aria/utils';
 
-export function SubmenuAnimation() {
+export function SubmenuAnimation(): JSX.Element {
   let ref = useRef<HTMLDivElement>(null);
   let [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
   let [hovered, setHovered] = useState('Option 1');

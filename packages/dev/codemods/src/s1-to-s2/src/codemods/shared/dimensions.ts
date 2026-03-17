@@ -142,7 +142,7 @@ const FUNC_RE = /^\s*\w+\(/;
 // const SPECTRUM_VARIABLE_RE = /(static-)?size-\d+|single-line-(height|width)/g;
 const SIZING_RE = /auto|100vh|min-content|max-content|fit-content/;
 
-export function convertDimension(value: DimensionValue, type: 'size' | 'space' | 'px') {
+export function convertDimension(value: DimensionValue, type: 'size' | 'space' | 'px'): string | number | null {
   let pixelValue;
   if (typeof value === 'number') {
     pixelValue = value;
@@ -180,7 +180,7 @@ export function convertDimension(value: DimensionValue, type: 'size' | 'space' |
   return `[${pixelValue}px]`;
 }
 
-export function convertGridTrack(value: DimensionValue, toPixels = false) {
+export function convertGridTrack(value: DimensionValue, toPixels = false): string | number | null {
   if (typeof value === 'string' && /^max-content|min-content|minmax|auto|fit-content|repeat|\d+fr/.test(value)) {
     return value;
   } else {
@@ -188,7 +188,7 @@ export function convertGridTrack(value: DimensionValue, toPixels = false) {
   }
 }
 
-export function convertUnsafeDimension(value: string | number, type: 'size' | 'space') {
+export function convertUnsafeDimension(value: string | number, type: 'size' | 'space'): string | number | null {
   if (typeof value === 'number') {
     return convertDimension(value, type);
   }

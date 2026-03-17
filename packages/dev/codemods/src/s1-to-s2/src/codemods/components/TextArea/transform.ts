@@ -6,19 +6,15 @@ import * as t from '@babel/types';
  * Transforms TextArea:
  * - Comment out icon (it has not been implemented yet).
  * - Remove isQuiet (it is no longer supported in Spectrum 2).
- * - Remove placeholder (it has been removed due to accessibility issues).
  * - Change validationState="invalid" to isInvalid.
  * - Remove validationState="valid" (it is no longer supported in Spectrum 2).
  */
-export default function transformTextArea(path: NodePath<t.JSXElement>) {
+export default function transformTextArea(path: NodePath<t.JSXElement>): void {
   // Comment out icon
   commentOutProp(path, {propName: 'icon'});
 
   // Remove isQuiet
   removeProp(path, {propName: 'isQuiet'});
-
-  // Remove placeholder
-  removeProp(path, {propName: 'placeholder'});
 
   // Change validationState="invalid" to isInvalid
   updatePropNameAndValue(path, {
@@ -30,4 +26,4 @@ export default function transformTextArea(path: NodePath<t.JSXElement>) {
 
   // Remove validationState="valid"
   removeProp(path, {propName: 'validationState', propValue: 'valid'});
-} 
+}
