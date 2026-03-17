@@ -33,7 +33,7 @@ import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPers
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, Orientation, PressEvents, RefObject} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
@@ -66,6 +66,11 @@ export interface GridListRenderProps {
    * @selector [data-layout="stack | grid"]
    */
   layout: 'stack' | 'grid',
+  /**
+   * The primary orientation of the items.
+   * @selector [data-orientation="vertical | horizontal"]
+   */
+  orientation: Orientation,
   /**
    * State of the grid list.
    */
@@ -101,7 +106,7 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
    * The primary orientation of the items. Usually this is the direction that the collection scrolls.
    * @default 'vertical'
    */
-  orientation?: 'horizontal' | 'vertical'
+  orientation?: Orientation
 }
 
 
@@ -213,14 +218,6 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       selectionManager
     });
 
-    let keyboardDelegate = new ListKeyboardDelegate({
-      collection: filteredState.collection,
-      disabledKeys: selectionManager.disabledKeys,
-      disabledBehavior: selectionManager.disabledBehavior,
-      ref,
-      orientation,
-      direction
-    });
     let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, ref, {layout, direction, orientation});
     droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate,
@@ -234,6 +231,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   let isEmpty = filteredState.collection.size === 0;
   let renderValues = {
     isDropTarget: isRootDropTarget,
+    orientation,
     isEmpty,
     isFocused,
     isFocusVisible,
@@ -274,7 +272,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
         data-empty={isEmpty || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
-        data-layout={layout}>
+        data-layout={layout}
+        data-orientation={orientation}>
         <Provider
           values={[
             [ListStateContext, filteredState],

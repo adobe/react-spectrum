@@ -19,12 +19,12 @@ import {
   TooltipRenderProps,
   useLocale
 } from 'react-aria-components';
-import {centerPadding, colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {centerPadding, setColorScheme, style} from '../style' with {type: 'macro'};
 import {ColorScheme} from '@react-types/provider';
 import {ColorSchemeContext} from './Provider';
 import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext, useState} from 'react';
 import {DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
-import {style} from '../style' with {type: 'macro'};
+import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
 export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay' | keyof GlobalDOMAttributes>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'crossOffset'> {
@@ -44,7 +44,7 @@ export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'class
 }
 
 const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light dark' | null}>({
-  ...colorScheme(),
+  ...setColorScheme(),
   justifyContent: 'center',
   alignItems: 'center',
   maxWidth: 160,

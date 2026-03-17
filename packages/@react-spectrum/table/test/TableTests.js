@@ -1990,7 +1990,7 @@ export let tableTests = () => {
         let row = cell.closest('[role=row]');
         let cells = within(row).getAllByRole('gridcell');
         let rowHeaders = within(row).getAllByRole('rowheader');
-        expect(cells).toHaveLength(9);
+        expect(cells).toHaveLength(10);
         expect(rowHeaders).toHaveLength(1);
         expect(cells[0]).toHaveAttribute('aria-colindex', '1'); // checkbox
         expect(rowHeaders[0]).toHaveAttribute('aria-colindex', '2'); // rowheader
