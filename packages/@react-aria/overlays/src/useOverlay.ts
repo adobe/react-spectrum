@@ -99,7 +99,6 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(getEventTarget(e) as Element)) {
       if (topMostOverlay === ref) {
         e.stopPropagation();
-        e.preventDefault();
       }
     }
   };
@@ -108,7 +107,6 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(getEventTarget(e) as Element)) {
       if (visibleOverlays[visibleOverlays.length - 1] === ref) {
         e.stopPropagation();
-        e.preventDefault();
       }
       if (lastVisibleOverlay.current === ref) {
         onHide();
@@ -151,20 +149,11 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
     }
   });
 
-  let onPointerDownUnderlay = e => {
-    // fixes a firefox issue that starts text selection https://bugzilla.mozilla.org/show_bug.cgi?id=1675846
-    if (getEventTarget(e) === e.currentTarget) {
-      e.preventDefault();
-    }
-  };
-
   return {
     overlayProps: {
       onKeyDown,
       ...focusWithinProps
     },
-    underlayProps: {
-      onPointerDown: onPointerDownUnderlay
-    }
+    underlayProps: {}
   };
 }

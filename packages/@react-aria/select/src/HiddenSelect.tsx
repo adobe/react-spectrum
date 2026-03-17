@@ -157,7 +157,7 @@ export function HiddenSelect<T, M extends SelectionMode = 'single'>(props: Hidde
         <label>
           {label}
           <select {...selectProps} ref={selectRef}>
-            <option />
+            <option value="" label={'\u00A0'}>{'\u00A0'}</option>
             {[...state.collection.getKeys()].map(key => {
               let item = state.collection.getItem(key);
               if (item && item.type === 'item') {

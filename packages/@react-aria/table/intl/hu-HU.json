@@ -7,5 +7,7 @@
   "resizerDescription": "Nyomja le az Enter billentyűt az átméretezés megkezdéséhez",
   "select": "Kijelölés",
   "selectAll": "Összes kijelölése",
-  "sortable": "rendezendő oszlop"
+  "sortable": "rendezendő oszlop",
+  "collapse": "Összecsukás",
+  "expand": "Kibontás"
 }

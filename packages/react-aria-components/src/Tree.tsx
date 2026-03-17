@@ -414,31 +414,6 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
       ref
     );
 
-    // Prevent dropping items onto themselves or their descendants
-    let originalGetDropOperation = dropState.getDropOperation;
-    dropState.getDropOperation = (options) => {
-      let {target, isInternal} = options;
-      let currentDraggingKeys = dragState?.draggingKeys ?? new Set();
-
-      if (isInternal && target.type === 'item' && currentDraggingKeys.size > 0) {
-        if (currentDraggingKeys.has(target.key) && target.dropPosition === 'on') {
-          return 'cancel';
-        }
-
-        let currentKey: Key | null = target.key;
-        while (currentKey != null) {
-          let item = state.collection.getItem(currentKey);
-          let parentKey = item?.parentKey;
-          if (parentKey != null && currentDraggingKeys.has(parentKey)) {
-            return 'cancel';
-          }
-          currentKey = parentKey ?? null;
-        }
-      }
-
-      return originalGetDropOperation(options);
-    };
-
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
@@ -1003,16 +978,16 @@ function RootDropIndicator() {
   );
 }
 
-export interface GridListSectionProps<T> extends SectionProps<T>, DOMRenderProps<'section', undefined>  {}
+export interface GridListSectionProps<T> extends SectionProps<T>, DOMRenderProps<'div', undefined>  {}
 
 /**
  * A TreeSection represents a section within a Tree.
  */
-export const TreeSection = /*#__PURE__*/ createBranchComponent(SectionNode, <T extends object>(props: GridListSectionProps<T>, ref: ForwardedRef<HTMLElement>, item: Node<T>) => {
+export const TreeSection = /*#__PURE__*/ createBranchComponent(SectionNode, <T extends object>(props: GridListSectionProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
   let state = useContext(TreeStateContext)!;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let headingRef = useRef(null);
-  ref = useObjectRef<HTMLElement>(ref);
+  ref = useObjectRef<HTMLDivElement>(ref);
   let {rowHeaderProps, rowProps, rowGroupProps} = useGridListSection({
     'aria-label': props['aria-label'] ?? undefined
   }, state, ref);
@@ -1028,7 +1003,7 @@ export const TreeSection = /*#__PURE__*/ createBranchComponent(SectionNode, <T e
   delete DOMProps.id;
 
   return (
-    <dom.section
+    <dom.div
       {...mergeProps(DOMProps, renderProps, rowGroupProps)}
       ref={ref}>
       <Provider
@@ -1040,7 +1015,7 @@ export const TreeSection = /*#__PURE__*/ createBranchComponent(SectionNode, <T e
           collection={state.collection}
           parent={item} />
       </Provider>
-    </dom.section>
+    </dom.div>
   );
 });
 

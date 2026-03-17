@@ -7,5 +7,7 @@
   "resizerDescription": "Enter キーを押してサイズ変更を開始",
   "select": "選択",
   "selectAll": "すべて選択",
-  "sortable": "並べ替え可能な列"
+  "sortable": "並べ替え可能な列",
+  "collapse": "折りたたむ",
+  "expand": "展開"
 }

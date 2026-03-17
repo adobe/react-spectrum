@@ -51,7 +51,7 @@ export interface SelectProps<T, M extends SelectionMode = 'single'> extends Coll
    * The initial selected key in the collection (uncontrolled).
    * @deprecated
    */
-  defaultSelectedKey?: Key,
+  defaultSelectedKey?: Key | null,
   /**
    * Handler that is called when the selection changes.
    * @deprecated
@@ -63,6 +63,8 @@ export interface SelectProps<T, M extends SelectionMode = 'single'> extends Coll
   defaultOpen?: boolean,
   /** Method that is called when the open state of the menu changes. */
   onOpenChange?: (isOpen: boolean) => void,
+  /** Whether the Select should close when an item is selected. Defaults to true if selectionMode is single, false otherwise. */
+  shouldCloseOnSelect?: boolean,
   /** Whether the select should be allowed to be open when the collection is empty. */
   allowsEmptyCollection?: boolean
 }
