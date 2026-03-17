@@ -19,7 +19,7 @@ import {
   PopoverProps
 } from 'react-aria-components';
 import {CalendarButton, CalendarPopover, timeField} from './DatePicker';
-import {createContext, forwardRef, ReactElement, Ref, useContext, useState} from 'react';
+import {createContext, forwardRef, ReactElement, ReactNode, Ref, useContext, useState} from 'react';
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText} from './Field';
@@ -49,7 +49,11 @@ export interface DateRangePickerProps<T extends DateValue> extends
      * The maximum number of months to display at once in the calendar popover, if screen space permits.
      * @default 1
      */
-    maxVisibleMonths?: number
+    maxVisibleMonths?: number,
+    /**
+     * The error message to display when the calendar is invalid.
+     */
+    errorMessage?: ReactNode
 }
 
 export const DateRangePickerContext = createContext<ContextValue<Partial<DateRangePickerProps<any>>, HTMLDivElement>>(null);
@@ -148,7 +152,8 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
             <CalendarPopover shouldFlip={props.shouldFlip}>
               <RangeCalendar
                 visibleMonths={maxVisibleMonths}
-                createCalendar={createCalendar} />
+                createCalendar={createCalendar}
+                errorMessage={errorMessage} />
               {showTimeField && (
                 <div className={style({display: 'flex', gap: 16, contain: 'inline-size', marginTop: 24})}>
                   <TimeField

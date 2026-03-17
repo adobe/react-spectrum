@@ -513,6 +513,30 @@ export const AutocompleteWithListbox: AutocompleteStory = {
   name: 'Autocomplete with ListBox + Popover'
 };
 
+export const AutocompleteSelectAllFiltering: AutocompleteStory = {
+  render: (args) => {
+    return (
+      <AutocompleteWrapper disableVirtualFocus={args.disableVirtualFocus}>
+        <div>
+          <SearchField autoFocus>
+            <Label style={{display: 'block'}}>Test</Label>
+            <Input />
+          </SearchField>
+          <ListBox<AutocompleteItem>
+            className={styles.menu}
+            items={items}
+            selectionMode="multiple"
+            defaultSelectedKeys="all"
+            onSelectionChange={action('onSelectionChange')}>
+            {(item: AutocompleteItem) => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
+          </ListBox>
+        </div>
+      </AutocompleteWrapper>
+    );
+  },
+  name: 'Autocomplete, select all with filtering'
+};
+
 function VirtualizedListBox(props) {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {

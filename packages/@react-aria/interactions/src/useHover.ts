@@ -45,7 +45,7 @@ function setGlobalIgnoreEmulatedMouseEvents() {
   // the distant future because a user previously touched the element.
   setTimeout(() => {
     globalIgnoreEmulatedMouseEvents = false;
-  }, 50);
+  }, 500);
 }
 
 function handleGlobalPointerEvent(e: PointerEvent) {

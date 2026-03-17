@@ -366,6 +366,23 @@ describe('style-macro', () => {
     expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple12 -macro-dynamic-37zkvn"');
   });
 
+  it('inherits parent default when nested branch has no default key', () => {
+    let {css, js} = testStyle({
+      color: {
+        forcedColors: {
+          default: 'ButtonText',
+          variant: {
+            highlight: {isSelected: 'HighlightText'}
+          }
+        }
+      }
+    });
+    // forcedColors.default should apply when variant=highlight but !isSelected
+    expect(css).toContain('ButtonText');
+    expect(js({variant: 'highlight'})).toMatchInlineSnapshot('"  plb12 -macro-dynamic-1owjb9s"');
+    expect(js({variant: 'highlight', isSelected: true})).toMatchInlineSnapshot('"  ple12 -macro-dynamic-37zkvn"');
+  });
+
   it('should expand shorthand properties to longhands', () => {
     let {js, css} = testStyle({
       padding: 24
