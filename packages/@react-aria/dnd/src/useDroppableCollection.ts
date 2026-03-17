@@ -465,25 +465,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           key = item.parentKey;
         }
 
-        if (item?.type === 'content') {
-          let parentKey = item.parentKey;
-          while (parentKey) {
-            let parent = localState.state.collection.getItem(parentKey);
-            if (parent?.type !== 'item') {
-              parentKey = parent?.parentKey;
-              continue;
-            }
-            // If an item doesn't exist in the collection,
-            // it's because its parent is collapsed, and we should focus its parent instead.
-            let item = getItemElement(ref, parentKey);
-            if (item) {
-              key = parentKey;
-              break;
-            }
-            parentKey = parent.parentKey;
-          }
-        }
-
         // If the focused item is also selected, the default drop target is after the last selected item.
         // But if the focused key is the first selected item, then default to before the first selected item.
         // This is to make reordering lists slightly easier. If you select top down, we assume you want to
