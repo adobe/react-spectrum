@@ -163,13 +163,13 @@ export function SearchMenu(props: SearchMenuProps) {
             <TabPanel key={tab.id} id={tab.id}>
               <Autocomplete
                 key={selectedTagId === 'typography' ? 'typography' : 'default'}
+                inputValue={searchValue}
+                onInputChange={setSearchValue}
                 filter={isIconsSelected ? iconFilter : undefined}
                 disableVirtualFocus={selectedTagId === 'typography'}>
                 <div className={style({display: 'flex', flexDirection: 'column', height: 'full'})}>
                   <div className={style({flexShrink: 0, marginStart: 16, marginEnd: 64})}>
                     <SearchField
-                      value={searchValue}
-                      onChange={setSearchValue}
                       ref={searchRef}
                       size="L"
                       aria-label={`Search ${tab.label}`}
