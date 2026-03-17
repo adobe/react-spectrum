@@ -168,11 +168,14 @@ export function useNumberFieldState(
     // Clamp to min and max, round to the nearest step, and round to specified number of digits
     let clampedValue = commitBehavior === 'snap' ? snapValue(newParsedValue) : newParsedValue;
     clampedValue = numberParser.parse(format(clampedValue));
+    let shouldValidate = clampedValue !== numberValue;
     setNumberValue(clampedValue);
 
     // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
     setInputValue(format(value === undefined ? clampedValue : numberValue));
-    validation.commitValidation();
+    if (shouldValidate) {
+      validation.commitValidation();
+    }
   };
 
   let safeNextStep = (operation: '+' | '-', minMax: number = 0) => {
