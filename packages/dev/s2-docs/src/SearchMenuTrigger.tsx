@@ -2,11 +2,13 @@
 
 import {Button, ButtonProps, Modal, ModalOverlay} from 'react-aria-components';
 import {fontRelative, lightDark, style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {getActiveElement} from '@react-aria/utils';
 import {getLibraryFromPage, getLibraryLabel} from './library';
+import {Provider, Button as S2Button, ButtonProps as S2ButtonProps} from '@react-spectrum/s2';
 import React, {lazy, useCallback, useEffect, useRef, useState} from 'react';
-import {Button as S2Button, ButtonProps as S2ButtonProps} from '@react-spectrum/s2';
 import Search from '@react-spectrum/s2/icons/Search';
 import {useRouter} from './Router';
+import {useSettings} from './SettingsContext';
 
 let SearchMenu = lazy(() => import('./SearchMenu').then(({SearchMenu}) => ({default: SearchMenu})));
 export async function preloadSearchMenu() {
@@ -55,6 +57,7 @@ let modalStyle = style({
 
 export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overlayId, staticColor, ...props}: SearchMenuTriggerProps) {
   let {currentPage} = useRouter();
+  let {colorScheme} = useSettings();
   let [initialSearchValue, setInitialSearchValue] = useState('');
   let open = useCallback((value: string) => {
     setInitialSearchValue(value);
@@ -101,7 +104,7 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
       } else if (((e.key === 'k' && (isMac ? e.metaKey : e.ctrlKey)))) {
         e.preventDefault();
         open('');
-      } else if (e.key === '/' && !(isTextInputLike(e.target as Element | null) || isTextInputLike(document.activeElement))) {
+      } else if (e.key === '/' && !(isTextInputLike(e.target as Element | null) || isTextInputLike(getActiveElement()))) {
         e.preventDefault();
         open('');
       }
@@ -260,18 +263,20 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
           // @ts-ignore
           viewTransitionName: 'search-menu-underlay'
         }}>
-        <Modal
-          className={modalStyle}
-          style={{
-            // @ts-ignore
-            viewTransitionName: 'search-menu'
-          }}>
-          <SearchMenu
-            onClose={onClose}
-            overlayId={overlayId}
-            initialSearchValue={initialSearchValue}
-            isSearchOpen={isSearchOpen} />
-        </Modal>
+        <Provider colorScheme={colorScheme} background="layer-1">
+          <Modal
+            className={modalStyle}
+            style={{
+              // @ts-ignore
+              viewTransitionName: 'search-menu'
+            }}>
+            <SearchMenu
+              onClose={onClose}
+              overlayId={overlayId}
+              initialSearchValue={initialSearchValue}
+              isSearchOpen={isSearchOpen} />
+          </Modal>
+        </Provider>
       </ModalOverlay>
     </>
   );

@@ -1,16 +1,19 @@
 'use client';
 
-import {ActionButton, DialogTrigger, pressScale} from '@react-spectrum/s2';
-import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {ActionButton, DialogTrigger, pressScale, Provider} from '@react-spectrum/s2';
+import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Button, Link, Modal, ModalOverlay} from 'react-aria-components';
+import Contrast from '@react-spectrum/s2/icons/Contrast';
 import {getBaseUrl} from './pageUtils';
 import {getLibraryFromPage, getLibraryIcon} from './library';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
-import {Link, Modal, ModalOverlay} from 'react-aria-components';
+import Lighten from '@react-spectrum/s2/icons/Lighten';
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
 import React, {CSSProperties, lazy, useEffect, useRef, useState} from 'react';
 import {TAB_DEFS} from './constants';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useRouter} from './Router';
+import {useSettings} from './SettingsContext';
 import './SearchMenu.css';
 
 const MobileSearchMenu = lazy(() => import('./SearchMenu').then(({MobileSearchMenu}) => ({default: MobileSearchMenu})));
@@ -64,10 +67,74 @@ const animation = {
 
 const animationRange = '24px 64px';
 
+const colorSchemeToggleStyles = style({
+  ...focusRing(),
+  font: 'ui',
+  color: 'neutral',
+  textDecoration: 'none',
+  transition: 'default',
+  backgroundColor: {
+    default: {
+      ...baseColor('gray-100'),
+      default: 'transparent'
+    }
+  },
+  size: 32,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: 'lg',
+  borderWidth: 0
+});
+
+const iconContainerStyles = style({
+  position: 'relative',
+  size: 20
+});
+
+function ColorSchemeToggle() {
+  let {colorScheme, toggleColorScheme, systemColorScheme} = useSettings();
+  let isOverriding = colorScheme !== systemColorScheme;
+  let label = isOverriding
+    ? `Using ${colorScheme} mode (press to use system)`
+    : `Using system ${systemColorScheme} mode (press to switch)`;
+  let ref = useRef(null);
+  let isDark = colorScheme === 'dark';
+
+  return (
+    <Button
+      ref={ref}
+      aria-label={label}
+      onPress={toggleColorScheme}
+      className={renderProps => colorSchemeToggleStyles(renderProps)}
+      style={pressScale(ref)}>
+      <span className={iconContainerStyles}>
+        <Contrast
+          UNSAFE_style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: isDark ? 0 : 1,
+            transform: isDark ? 'rotate(-90deg) scale(0.5)' : 'rotate(0deg) scale(1)',
+            transition: 'opacity 200ms ease-out, transform 200ms ease-out'
+          }} />
+        <Lighten
+          UNSAFE_style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: isDark ? 1 : 0,
+            transform: isDark ? 'rotate(0deg) scale(1)' : 'rotate(90deg) scale(0.5)',
+            transition: 'opacity 200ms ease-out, transform 200ms ease-out'
+          }} />
+      </span>
+    </Button>
+  );
+}
+
 export function MobileHeader({toc}) {
   let ref = useRef<HTMLDivElement | null>(null);
   let linkRef = useRef<HTMLAnchorElement | null>(null);
   let labelRef = useRef<HTMLSpanElement | null>(null);
+  let {colorScheme} = useSettings();
 
   useEffect(() => {
     // Tiny polyfill for scroll driven animations.
@@ -241,6 +308,7 @@ export function MobileHeader({toc}) {
           {toc}
         </div>
       )}
+      {library !== 'react-aria' && <ColorSchemeToggle />}
       <DialogTrigger
         isOpen={isOpen}
         onOpenChange={onOpenChange}>
@@ -276,7 +344,9 @@ export function MobileHeader({toc}) {
               width: 'full',
               height: '--visual-viewport-height'
             })}>
-            <MobileSearchMenu />
+            <Provider colorScheme={colorScheme} background="layer-2" styles={style({height: 'full'})}>
+              <MobileSearchMenu />
+            </Provider>
           </Modal>
         </ModalOverlay>
       </DialogTrigger>

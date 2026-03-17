@@ -110,7 +110,7 @@ export function H3({children, ...props}) {
   let {hoverProps, isHovered} = useHover({});
   let id = anchorId(children);
   return (
-    <h3 {...props} data-anchor-link id={id} className={style({font: 'heading', marginTop: 36, marginBottom: 24, maxWidth: '--text-width', marginX: 'auto', textWrap: 'balance', position: 'relative', overflowX: 'clip'})} {...hoverProps}>
+    <h3 {...props} data-anchor-link id={id} className={style({font: 'heading', marginTop: 36, marginBottom: 24, maxWidth: '--text-width', marginX: 'auto', textWrap: 'balance', position: 'relative', overflowX: {default: 'clip', ':has([data-step])': 'visible'}})} {...hoverProps}>
       {children}
       <AnchorLink anchorId={id} isHovered={isHovered} level={3} headingText={children} />
     </h3>

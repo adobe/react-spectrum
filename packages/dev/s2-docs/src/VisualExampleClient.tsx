@@ -18,6 +18,7 @@ import {TabLink} from './FileTabs';
 import {useLocale} from 'react-aria';
 
 export const IconPicker = lazy(() => import('./IconPicker').then(({IconPicker}) => ({default: IconPicker})));
+let LazyIcon = lazy(() => import('./IconPicker').then(({Icon}) => ({default: Icon})));
 
 type Props = {[name: string]: any};
 type Controls = {[name: string]: PropControl};
@@ -73,11 +74,31 @@ export function VisualExampleClient({component, name, importSource, controls, ch
   useEffect(() => {
     // Find previous heading element.
     let node: Element | null = ref.current;
-    while (node && node.parentElement?.tagName !== 'ARTICLE') {
+    
+    // Search for the nearest heading by walking up the tree and checking previous siblings
+    while (node && node.tagName !== 'ARTICLE') {
+      // Check previous siblings
+      let sibling = node.previousElementSibling;
+      while (sibling) {
+        if (sibling instanceof HTMLHeadingElement) {
+          node = sibling;
+          break;
+        }
+        // Also check inside the sibling for headings
+        let headingInSibling = sibling.querySelector('h1, h2, h3, h4, h5, h6');
+        if (headingInSibling instanceof HTMLHeadingElement) {
+          node = headingInSibling;
+          break;
+        }
+        sibling = sibling.previousElementSibling;
+      }
+      
+      if (node instanceof HTMLHeadingElement) {
+        break;
+      }
+      
+      // Move up to parent
       node = node.parentElement;
-    }
-    while (node && !(node instanceof HTMLHeadingElement)) {
-      node = node.previousElementSibling;
     }
 
     let id = node instanceof HTMLHeadingElement ? node.id : null;
@@ -132,10 +153,17 @@ export function Output({align = 'center', acceptOrientation}: {align?: 'center' 
 
   if (!isValidElement(component)) {
     let children = props.children;
-    if (children?.iconJSX || children?.avatar || children?.badge) {
+    if (children?.icon || children?.avatar || children?.badge) {
+      let iconElement: ReactNode | null = null;
+      if (children.avatar) {
+        iconElement = <Avatar src="https://i.imgur.com/xIe7Wlb.png" />;
+      } else if (children.icon) {
+        iconElement = (<LazyIcon icon={children.icon} />);
+      }
+
       children = (
         <>
-          {children.avatar ? <Avatar src="https://i.imgur.com/xIe7Wlb.png" /> : children.iconJSX}
+          {iconElement}
           {children.text && <Text>{children.text}</Text>}
           {children.badge && <NotificationBadge value={12} />}
         </>

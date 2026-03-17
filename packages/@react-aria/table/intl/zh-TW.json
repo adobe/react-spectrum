@@ -7,5 +7,7 @@
   "resizerDescription": "按 Enter 鍵以開始調整大小",
   "select": "選取",
   "selectAll": "全選",
-  "sortable": "可排序的欄"
+  "sortable": "可排序的欄",
+  "collapse": "收合",
+  "expand": "展開"
 }

@@ -108,6 +108,8 @@ export const ColorSwatchPickerItem = forwardRef(function ColorSwatchPickerItem(p
   return (
     <ListBoxItem
       {...props}
+      // ColorSwatchPickerItem is never a link.
+      render={props.render as any}
       ref={ref}
       id={color.toString('hexa')}
       textValue={color.getColorName(locale)}

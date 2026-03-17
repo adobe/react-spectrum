@@ -24,7 +24,7 @@ import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ColorSwatchProps extends Omit<AriaColorSwatchProps, 'className' | 'style' | keyof GlobalDOMAttributes>, UnsafeStyles {
+export interface ColorSwatchProps extends Omit<AriaColorSwatchProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, UnsafeStyles {
   /**
    * The size of the ColorSwatch.
    * @default 'M'

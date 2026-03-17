@@ -20,6 +20,8 @@ import {useEffectEvent, useGlobalListeners} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
+const noop = () => {};
+
 export interface SpinButtonProps extends InputBase, Validation<number>, ValueBase<number>, RangeInputBase<number> {
   textValue?: string,
   onIncrement?: () => void,
@@ -146,39 +148,36 @@ export function useSpinButton(
     clearAsync();
   }, [clearAsync]);
 
-  const onIncrementPressStart = useEffectEvent(
-    (initialStepDelay: number) => {
-      clearAsyncEvent();
-      isSpinning.current = true;
-      onIncrement?.();
-      // Start spinning after initial delay
-      _async.current = window.setTimeout(
-        () => {
-          if ((maxValue === undefined || isNaN(maxValue)) || (value === undefined || isNaN(value)) || value < maxValue) {
-            onIncrementPressStart(60);
-          }
-        },
-        initialStepDelay
-      );
-    }
-  );
+  const onIncrementEvent = useEffectEvent(onIncrement ?? noop);
+  const onDecrementEvent = useEffectEvent(onDecrement ?? noop);
 
-  const onDecrementPressStart = useEffectEvent(
-    (initialStepDelay: number) => {
-      clearAsyncEvent();
-      isSpinning.current = true;
-      onDecrement?.();
-      // Start spinning after initial delay
-      _async.current = window.setTimeout(
-        () => {
-          if ((minValue === undefined || isNaN(minValue)) || (value === undefined || isNaN(value)) || value > minValue) {
-            onDecrementPressStart(60);
-          }
-        },
-        initialStepDelay
-      );
+  const stepUpEvent = useEffectEvent(() => {
+    if (maxValue === undefined || isNaN(maxValue) || value === undefined || isNaN(value) || value < maxValue) {
+      onIncrementEvent();
+      onIncrementPressStartEvent(60);
     }
-  );
+  });
+
+  const onIncrementPressStartEvent = useEffectEvent((initialStepDelay: number) => {
+    clearAsyncEvent();
+    isSpinning.current = true;
+    // Start spinning after initial delay
+    _async.current = window.setTimeout(stepUpEvent, initialStepDelay);
+  });
+
+  const stepDownEvent = useEffectEvent(() => {
+    if (minValue === undefined || isNaN(minValue) || value === undefined || isNaN(value) || value > minValue) {
+      onDecrementEvent();
+      onDecrementPressStartEvent(60);
+    }
+  });
+
+  const onDecrementPressStartEvent = useEffectEvent((initialStepDelay: number) => {
+    clearAsyncEvent();
+    isSpinning.current = true;
+    // Start spinning after initial delay
+    _async.current = window.setTimeout(stepDownEvent, initialStepDelay);
+  });
 
   let cancelContextMenu = (e) => {
     e.preventDefault();
@@ -195,18 +194,18 @@ export function useSpinButton(
   let [isIncrementPressed, setIsIncrementPressed] = useState<'touch' | 'mouse' | null>(null);
   useEffect(() => {
     if (isIncrementPressed === 'touch') {
-      onIncrementPressStart(60);
+      onIncrementPressStartEvent(600);
     } else if (isIncrementPressed) {
-      onIncrementPressStart(400);
+      onIncrementPressStartEvent(400);
     }
   }, [isIncrementPressed]);
 
   let [isDecrementPressed, setIsDecrementPressed] = useState<'touch' | 'mouse' | null>(null);
   useEffect(() => {
     if (isDecrementPressed === 'touch') {
-      onDecrementPressStart(60);
+      onDecrementPressStartEvent(600);
     } else if (isDecrementPressed) {
-      onDecrementPressStart(400);
+      onDecrementPressStartEvent(400);
     }
   }, [isDecrementPressed]);
 
@@ -226,38 +225,34 @@ export function useSpinButton(
     },
     incrementButtonProps: {
       onPressStart: (e) => {
+        clearAsync();
         if (e.pointerType !== 'touch') {
+          onIncrement?.();
           setIsIncrementPressed('mouse');
         } else {
-          if (_async.current) {
-            clearAsync();
-          }
-
           addGlobalListener(window, 'pointercancel', onPointerCancel, {capture: true});
           isUp.current = false;
           // For touch users, don't trigger a decrement on press start, we'll wait for the press end to trigger it if
           // the control isn't spinning.
-          _async.current = window.setTimeout(() => {
-            setIsIncrementPressed('touch');
-          }, 600);
+          setIsIncrementPressed('touch');
         }
         addGlobalListener(window, 'contextmenu', cancelContextMenu);
       },
       onPressUp: (e) => {
+        clearAsync();
         if (e.pointerType === 'touch') {
           isUp.current = true;
         }
-        clearAsync();
         removeAllGlobalListeners();
         setIsIncrementPressed(null);
       },
       onPressEnd: (e) => {
+        clearAsync();
         if (e.pointerType === 'touch') {
           if (!isSpinning.current && isUp.current) {
             onIncrement?.();
           }
         }
-        clearAsync();
         isUp.current = false;
         setIsIncrementPressed(null);
       },
@@ -266,37 +261,33 @@ export function useSpinButton(
     },
     decrementButtonProps: {
       onPressStart: (e) => {
+        clearAsync();
         if (e.pointerType !== 'touch') {
+          onDecrement?.();
           setIsDecrementPressed('mouse');
         } else {
-          if (_async.current) {
-            clearAsync();
-          }
-
           addGlobalListener(window, 'pointercancel', onPointerCancel, {capture: true});
           isUp.current = false;
           // For touch users, don't trigger a decrement on press start, we'll wait for the press end to trigger it if
           // the control isn't spinning.
-          _async.current = window.setTimeout(() => {
-            setIsDecrementPressed('touch');
-          }, 600);
+          setIsDecrementPressed('touch');
         }
       },
       onPressUp: (e) => {
+        clearAsync();
         if (e.pointerType === 'touch') {
           isUp.current = true;
         }
-        clearAsync();
         removeAllGlobalListeners();
         setIsDecrementPressed(null);
       },
       onPressEnd: (e) => {
+        clearAsync();
         if (e.pointerType === 'touch') {
           if (!isSpinning.current && isUp.current) {
             onDecrement?.();
           }
         }
-        clearAsync();
         isUp.current = false;
         setIsDecrementPressed(null);
       },

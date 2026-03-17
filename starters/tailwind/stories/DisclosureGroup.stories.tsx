@@ -3,9 +3,9 @@ import React from "react";
 import {
   Disclosure,
   DisclosureHeader,
-  DisclosurePanel,
-  DisclosureGroup,
+  DisclosurePanel
 } from "../src/Disclosure";
+import { DisclosureGroup } from "../src/DisclosureGroup";
 
 const meta: Meta<typeof DisclosureGroup> = {
   component: DisclosureGroup,

@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
+import {CellProps, TableLoadMoreItem} from '../src/Table';
 import {isTextDropItem} from 'react-aria';
 import {LoadingSpinner, MyMenuItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, startTransition, Suspense, useState} from 'react';
 import {Selection, useAsyncList, useListData} from 'react-stately';
 import styles from '../example/index.css';
-import {TableLoadMoreItem} from '../src/Table';
 import './styles.css';
 
 export default {
@@ -527,6 +527,83 @@ DndTableExample.args = {
   isDisabledFirstTable: false,
   isDisabledSecondTable: false,
   isLoading: false
+};
+
+function DndTableWithNoValidDropTargetsRender(): JSX.Element {
+  let list = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', type: 'folder', name: 'Documents'},
+      {id: '4', type: 'file', name: 'Adobe InDesign'},
+      {id: '5', type: 'folder', name: 'Utilities'},
+      {id: '6', type: 'file', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems(keys) {
+      return [...keys].filter(k => !!list.getItem(k)).map((key) => {
+        let item = list.getItem(key);
+        return {
+          'custom-app-type': JSON.stringify(item),
+          'text/plain': item!.name
+        };
+      });
+    },
+    onItemDrop() {},
+    shouldAcceptItemDrop() {
+      return false;
+    }
+  });
+
+  return (
+    <Table
+      aria-label="Table (rejects all item drops)"
+      selectionMode="multiple"
+      selectedKeys={list.selectedKeys}
+      onSelectionChange={list.setSelectedKeys}
+      dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader>
+        <Column />
+        <Column><MyCheckbox slot="selection" /></Column>
+        <Column>ID</Column>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        <Collection items={list.items}>
+          {item => (
+            <Row>
+              <Cell><Button slot="drag">≡</Button></Cell>
+              <Cell><MyCheckbox slot="selection" /></Cell>
+              <Cell>{item.id}</Cell>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.type}</Cell>
+            </Row>
+            )}
+        </Collection>
+      </TableBody>
+    </Table>
+  );
+}
+
+export const DndTableWithNoValidDropTargets: TableStoryObj = {
+  render: DndTableWithNoValidDropTargetsRender,
+  name: 'Dnd Table with no valid drop targets',
+  parameters: {
+    description: {
+      data: `Tests that arrow keys work after canceling a keyboard drag when shouldAcceptItemDrop rejects all drop targets.
+      Test Instructions:
+      1. Focus on an item's drag button
+      2. Press Enter to start keyboard drag
+      3. Notice there are no valid drop targets (shouldAcceptItemDrop rejects all item drops)
+      4. Press Escape to cancel the drag
+      5. Try pressing arrow keys
+      6. Observe that focus moves (and we've exited virtual drag mode)
+    `
+    }
+  }
 };
 
 export const MyCheckbox = ({children, ...props}: CheckboxProps) => {
@@ -1529,5 +1606,58 @@ export const TableWithReactTransition: TableStory = () => {
         </TableBody>
       </Table>
     </div>
+  );
+};
+
+function NameCell(props: CellProps) {
+  return (
+    <Cell style={({level}) => ({paddingLeft: (level - 1) * 32})}>
+      {({hasChildItems, isTreeColumn, isExpanded}) => (<>
+        {hasChildItems && isTreeColumn && (
+          <Button className={styles.chevron} slot="chevron">
+            <div style={{transform: `rotate(${isExpanded ? 90 : 0}deg)`, width: '16px', height: '16px'}}>
+              <svg viewBox="0 0 24 24" style={{width: '16px', height: '16px'}}>
+                <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+              </svg>
+            </div>
+          </Button>
+        )}
+        {props.children}
+      </>)}
+    </Cell>
+  );
+}
+
+export const TableNestedRows: TableStory = (args) => {
+  return (
+    <Table aria-label="Files" selectionMode="multiple" treeColumn="name" {...args}>
+      <TableHeader>
+        <Column id="name" isRowHeader>Name</Column>
+        <Column id="type">Type</Column>
+        <Column id="date">Date Modified</Column>
+      </TableHeader>
+      <TableBody>
+        <MyRow>
+          <NameCell>Games</NameCell>
+          <Cell>File folder</Cell>
+          <Cell>6/7/2020</Cell>
+          <MyRow>
+            <NameCell>Pokemon</NameCell>
+            <Cell>File</Cell>
+            <Cell>2/3/2025</Cell>
+          </MyRow>
+        </MyRow>
+        <MyRow>
+          <NameCell>Program Files</NameCell>
+          <Cell>File folder</Cell>
+          <Cell>4/7/2021</Cell>
+        </MyRow>
+        <MyRow>
+          <NameCell>bootmgr</NameCell>
+          <Cell>System file</Cell>
+          <Cell>11/20/2010</Cell>
+        </MyRow>
+      </TableBody>
+    </Table>
   );
 };

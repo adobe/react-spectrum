@@ -37,7 +37,6 @@ function TreeExample(props: TreeViewProps<any>): ReactElement {
         disabledKeys={['projects-1']}
         aria-label="test static tree"
         expandedKeys={['projects']}>
-
         <TreeViewItem id="Photos" textValue="Photos">
           <TreeViewItemContent>
             <Text>Photos</Text>
@@ -144,11 +143,29 @@ export const TreeStatic: StoryObj<typeof TreeExample> = {
   render: (args) => <TreeExample {...args} />
 };
 
-export const TreeSelection: StoryObj<typeof TreeExample> = {
+export const TreeCheckboxSelection: StoryObj<typeof TreeExample> = {
   ...TreeStatic,
   args: {
     selectionMode: 'multiple',
     defaultSelectedKeys: ['projects-2', 'projects-3']
+  }
+};
+
+export const TreeHighlightSelection: StoryObj<typeof TreeExample> = {
+  ...TreeStatic,
+  args: {
+    selectionMode: 'multiple',
+    selectionStyle: 'highlight',
+    defaultSelectedKeys: ['projects-2', 'projects-3']
+  }
+};
+
+export const TreeDisableSelection: StoryObj<typeof TreeExample> = {
+  ...TreeStatic,
+  args: {
+    selectionMode: 'multiple',
+    defaultSelectedKeys: ['projects-2', 'projects-3'],
+    disabledBehavior: 'selection'
   }
 };
 

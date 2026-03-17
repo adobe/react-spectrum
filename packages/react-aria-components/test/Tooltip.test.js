@@ -61,6 +61,25 @@ describe('Tooltip', () => {
     expect(arrow).toHaveStyle('position: absolute');
   });
 
+  it('shows on hover when button has isPending', async () => {
+    let {getByRole} = render(
+      <TooltipTrigger delay={0}>
+        <Button isPending>Pending Button</Button>
+        <Tooltip>Tooltip content</Tooltip>
+      </TooltipTrigger>
+    );
+
+    let button = getByRole('button');
+
+    fireEvent.mouseMove(document.body);
+    await user.hover(button);
+    act(() => jest.runAllTimers());
+
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toBeInTheDocument();
+    expect(tooltip).toHaveTextContent('Tooltip content');
+  });
+
   it('shows on focus', async () => {
     let {getByRole} = renderTooltip();
     let button = getByRole('button');
@@ -89,6 +108,14 @@ describe('Tooltip', () => {
 
     let tooltip = getByRole('tooltip');
     expect(tooltip).toHaveTextContent('Content at bottom');
+  });
+
+  it('should support custom render function', async () => {
+    let {getByRole} = renderTooltip({render: props => <div {...props} data-custom="true" />});
+    await user.tab();
+
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toHaveAttribute('data-custom', 'true');
   });
 
   it('supports isEntering and isExiting props', async () => {

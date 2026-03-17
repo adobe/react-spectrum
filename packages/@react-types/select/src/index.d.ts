@@ -32,10 +32,11 @@ import {
 } from '@react-types/shared';
 
 export type SelectionMode = 'single' | 'multiple';
-export type ValueType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
+export type ValueType<M extends SelectionMode> = M extends 'single' ? Key | null : readonly Key[];
+export type ChangeValueType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
 type ValidationType<M extends SelectionMode> = M extends 'single' ? Key : Key[];
 
-export interface SelectProps<T, M extends SelectionMode = 'single'> extends CollectionBase<T>, Omit<InputBase, 'isReadOnly'>, ValueBase<ValueType<M>>, Validation<ValidationType<M>>, HelpTextProps, LabelableProps, TextInputBase, FocusableProps {
+export interface SelectProps<T, M extends SelectionMode = 'single'> extends CollectionBase<T>, Omit<InputBase, 'isReadOnly'>, ValueBase<ValueType<M>, ChangeValueType<M>>, Validation<ValidationType<M>>, HelpTextProps, LabelableProps, TextInputBase, FocusableProps {
   /**
    * Whether single or multiple selection is enabled.
    * @default 'single'
@@ -50,7 +51,7 @@ export interface SelectProps<T, M extends SelectionMode = 'single'> extends Coll
    * The initial selected key in the collection (uncontrolled).
    * @deprecated
    */
-  defaultSelectedKey?: Key,
+  defaultSelectedKey?: Key | null,
   /**
    * Handler that is called when the selection changes.
    * @deprecated
@@ -62,6 +63,8 @@ export interface SelectProps<T, M extends SelectionMode = 'single'> extends Coll
   defaultOpen?: boolean,
   /** Method that is called when the open state of the menu changes. */
   onOpenChange?: (isOpen: boolean) => void,
+  /** Whether the Select should close when an item is selected. Defaults to true if selectionMode is single, false otherwise. */
+  shouldCloseOnSelect?: boolean,
   /** Whether the select should be allowed to be open when the collection is empty. */
   allowsEmptyCollection?: boolean
 }

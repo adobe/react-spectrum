@@ -144,7 +144,7 @@ const items = [
               <Item key={item.key}>{item.name}</Item>
               <Menu items={item.children}>
                 {(item) => renderSubmenu(item)}
-              </Menu>  
+              </Menu>
             </SubmenuTrigger>
           )
         } else {
@@ -197,4 +197,23 @@ const sections = [
     </Menu>
   </MenuTrigger>
 </div>
+`);
+
+test('Renames ContextualHelpTrigger to UnavailableMenuItemTrigger and Dialog to ContextualHelpPopover', `
+import {Menu, MenuTrigger, ContextualHelpTrigger, Item, Button, Dialog, Heading, Content} from '@adobe/react-spectrum';
+
+<MenuTrigger>
+  <Button>Edit</Button>
+  <Menu>
+    <Item id="undo">Undo</Item>
+    <Item id="redo">Redo</Item>
+    <ContextualHelpTrigger isUnavailable>
+      <Item id="cut">Cut</Item>
+      <Dialog>
+        <Heading>Cut</Heading>
+        <Content>Please select text for Cut to be enabled.</Content>
+      </Dialog>
+    </ContextualHelpTrigger>
+  </Menu>
+</MenuTrigger>
 `);
