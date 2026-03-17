@@ -388,6 +388,12 @@ export const VirtualizedListBox: StoryObj<typeof VirtualizedListBoxRender> = {
   args: {
     variableHeight: false,
     isLoading: false
+  },
+  argTypes: {
+    orientation: {
+      control: 'radio',
+      options: ['vertical', 'horizontal']
+    }
   }
 };
 
@@ -443,6 +449,7 @@ function VirtualizedListBoxDndRender(args): JSX.Element {
           gap: 8
         }}>
         <ListBox
+          orientation={orientation}
           className={styles.menu}
           selectionMode="multiple"
           selectionBehavior="replace"
@@ -768,11 +775,11 @@ export const ListBoxScrollMargin: ListBoxStory = (args) => {
     items.push({id: i, name: `Item ${i}`, description: `Description ${i}`});
   }
   return (
-    <ListBox 
-      className={styles.menu} 
+    <ListBox
+      className={styles.menu}
       {...args}
-      aria-label="test listbox" 
-      style={{height: 200, width: 100, overflow: 'scroll'}} 
+      aria-label="test listbox"
+      style={{height: 200, width: 100, overflow: 'scroll'}}
       items={items}>
       {item => (
         <MyListBoxItem style={{scrollMargin: 10, width: 150, display: 'flex', padding: '2px 20px', justifyContent: 'space-between'}}>
@@ -790,12 +797,12 @@ export const ListBoxSmoothScroll: ListBoxStory = (args) => {
     items.push({id: i, name: `Item ${i}`});
   }
   return (
-    <ListBox 
-      className={styles.menu} 
-      {...args} 
-      aria-label="test listbox" 
-      style={{height: 200, width: 200, overflow: 'scroll', display: 'grid', gridTemplateColumns: 'repeat(4, 80px)', scrollBehavior: 'smooth'}} 
-      items={items} 
+    <ListBox
+      className={styles.menu}
+      {...args}
+      aria-label="test listbox"
+      style={{height: 200, width: 200, overflow: 'scroll', display: 'grid', gridTemplateColumns: 'repeat(4, 80px)', scrollBehavior: 'smooth'}}
+      items={items}
       layout="grid">
       {item => <MyListBoxItem style={{minHeight: 32}}>{item.name}</MyListBoxItem>}
     </ListBox>
