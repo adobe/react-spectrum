@@ -407,8 +407,23 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     if (process.env.NODE_ENV !== 'production') {
       js += `let targetRules = rules + ${JSON.stringify(loc)};\n`;
       js += 'let hash = 5381;for (let i = 0; i < targetRules.length; i++) { hash = ((hash << 5) + hash) + targetRules.charCodeAt(i) >>> 0; }\n';
-      js += 'rules += " -macro-dynamic-" + hash.toString(36);\n';
-      js += `typeof window !== 'undefined' && window?.postMessage?.({action: 'stylemacro-update-macros', hash: hash.toString(36), loc: ${JSON.stringify(loc)}, style: currentRules}, "*");\n`;
+      js += 'let hashStr = hash.toString(36);\n';
+      js += 'rules += " -macro-dynamic-" + hashStr;\n';
+      // Skip global __styleMacroDynamic__ in Jest so we dont' pollute the test environment and don't cause issues with timer advancement.
+      if (!process.env.JEST_WORKER_ID) {
+        js += 'if (typeof window !== "undefined") {\n';
+        js += '  let g = window.__styleMacroDynamic__;\n';
+        js += '  if (!g) {\n';
+        js += '    g = window.__styleMacroDynamic__ = { map: {}, _timer: null };\n';
+        js += '    g._timer = setInterval(function() {\n';
+        js += '      for (let k in g.map) {\n';
+        js += '        try { if (!document.querySelector("." + CSS.escape(k))) delete g.map[k]; } catch (e) {}\n';
+        js += '      }\n';
+        js += '    }, 300000);\n';
+        js += '  }\n';
+        js += `  g.map["-macro-dynamic-" + hashStr] = { style: currentRules, loc: ${JSON.stringify(loc)} };\n`;
+        js += '}\n';
+      }
     }
     js += 'return rules;';
     if (allowedOverrides) {
