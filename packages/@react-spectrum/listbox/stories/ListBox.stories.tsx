@@ -992,6 +992,10 @@ export let FocusExample = (args: Omit<SpectrumListBoxProps<any>, 'children'> = {
               onPrimaryAction={() => {
                 tree.removeSelectedItems();
                 // wait for inert to clear before focusing
+                // It's not using an ActionBar, instead, there's an ActionGroup (its own focus scope) that is a sibling of the ListBox.
+                // Moreover, it's only rendered when there is a selection. Once the items are removed, there's no more selection, so
+                // the ActionGroup disappears immediately, before focus is restored there, and the ActionGroup doesn't restore
+                // focus, so it was just lost to the body.
                 requestAnimationFrame(() => {
                   ref.current?.UNSAFE_getDOMNode()?.focus();
                 });
