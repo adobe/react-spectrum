@@ -369,6 +369,7 @@ function visitChildren(obj, fn) {
         return: fn(obj.return, 'return'),
         typeParameters: obj.typeParameters.map(i => fn(i, 'typeParameters')),
         description: obj.description,
+        examples: obj.examples,
         access: obj.access
       };
     case 'interface':
