@@ -68,7 +68,7 @@ function cleanupDescriptionSubscription(subscription: DescriptionSubscription, n
  * a stable node is shared by key and its text content updates in place as the
  * description changes.
  */
-export function useDescription(description: string | undefined, descriptionKey?: string): AriaLabelingProps {
+export function useDescription(description?: string, descriptionKey?: string): AriaLabelingProps {
   let [id, setId] = useState<string | undefined>();
   let subscriptionRef = useRef<DescriptionSubscription | null>(null);
   let nodeRef = useRef<HTMLElement | null>(null);
