@@ -24,7 +24,7 @@ type RenderWrapper<T extends object, V> = (
   renderChildren: (views: ReusableView<T, V>[]) => ReactElement[]
 ) => ReactElement | null;
 
-interface VirtualizerProps<T extends object, V, O> extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
+interface VirtualizerProps<T extends object, V, O> extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'onScroll'> {
   children: (type: string, content: T) => V,
   renderWrapper?: RenderWrapper<T, V>,
   layout: Layout<T, O>,
@@ -33,7 +33,8 @@ interface VirtualizerProps<T extends object, V, O> extends Omit<HTMLAttributes<H
   scrollDirection?: 'horizontal' | 'vertical' | 'both',
   isLoading?: boolean,
   onLoadMore?: () => void,
-  layoutOptions?: O
+  layoutOptions?: O,
+  onScroll?: (e: Event) => void
 }
 
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
