@@ -406,4 +406,86 @@ describe('NumberField', () => {
     expect(input).toHaveAttribute('aria-describedby');
     expect(document.getElementById(input.getAttribute('aria-describedby').split(' ')[0])).toHaveTextContent('This field has an error.');
   });
+
+  it('should not change the edited input value when value snapping is disabled', async () => {
+    let {getByRole, getByTestId} = render(
+      <form data-testid="form">
+        <NumberField isRequired defaultValue={20} minValue={10} step={10} maxValue={50} commitBehavior="validate">
+          <Label>Width</Label>
+          <Group>
+            <Button slot="decrement">-</Button>
+            <Input />
+            <Button slot="increment">+</Button>
+          </Group>
+          <FieldError />
+        </NumberField>
+      </form>
+    );
+    let input = getByRole('textbox');
+    expect(input.validity.valid).toBe(true);
+
+    // Over max
+    await user.tab();
+    await user.clear(input);
+    await user.keyboard('1024');
+    await user.tab();
+    expect(input).toHaveValue('1,024');
+    expect(announce).toHaveBeenLastCalledWith('1,024', 'assertive');
+    expect(input.closest('.react-aria-NumberField')).toHaveAttribute('data-invalid', 'true');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input.validity.valid).toBe(false);
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+    act(() => {getByTestId('form').checkValidity();});
+    expect(document.activeElement).toBe(input);
+
+    // Valid
+    await user.clear(input);
+    await user.keyboard('30');
+    await user.tab();
+    expect(input).toHaveValue('30');
+    expect(announce).toHaveBeenLastCalledWith('30', 'assertive');
+    expect(input.validity.valid).toBe(true);
+    expect(input).not.toHaveAttribute('aria-describedby');
+
+    // Under min
+    await user.clear(input);
+    await user.keyboard('2');
+    await user.tab();
+    expect(input).toHaveValue('2');
+    expect(announce).toHaveBeenLastCalledWith('2', 'assertive');
+    expect(input.validity.valid).toBe(false);
+    expect(input).toHaveAttribute('aria-describedby');
+
+    act(() => {getByTestId('form').checkValidity();});
+    expect(document.activeElement).toBe(input);
+
+    // Not on step
+    await user.clear(input);
+    await user.keyboard('31');
+    await user.tab();
+    expect(input).toHaveValue('31');
+    expect(announce).toHaveBeenLastCalledWith('31', 'assertive');
+    expect(input.validity.valid).toBe(false);
+    expect(input).toHaveAttribute('aria-describedby');
+
+    act(() => {getByTestId('form').checkValidity();});
+    expect(document.activeElement).toBe(input);
+
+    // Required
+    await user.clear(input);
+    await user.tab();
+    expect(input).toHaveValue('');
+    expect(input.validity.valid).toBe(false);
+    expect(input).toHaveAttribute('aria-describedby');
+
+    // Valid
+    await user.clear(input);
+    await user.keyboard('30');
+    await user.tab();
+    expect(input).toHaveValue('30');
+    expect(input.validity.valid).toBe(true);
+    expect(input).not.toHaveAttribute('aria-describedby');
+  });
 });

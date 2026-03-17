@@ -29,10 +29,12 @@ export const NumberFieldExample: NumberFieldStory = {
     maxValue: 100,
     step: 1,
     formatOptions: {style: 'currency', currency: 'USD'},
-    isWheelDisabled: false
+    isWheelDisabled: false,
+    isRequired: false,
+    commitBehavior: 'snap'
   },
   render: (args) => (
-    <NumberField {...args} validate={(v) => (v & 1 ? 'Invalid value' : null)}>
+    <NumberField {...args}>
       <Label>Test</Label>
       <Group style={{display: 'flex'}}>
         <Button slot="decrement">-</Button>
