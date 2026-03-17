@@ -185,17 +185,22 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
   });
 
   let viewport = useViewportSize();
+  let pageWidth: number | undefined = undefined;
   let pageHeight: number | undefined = undefined;
   if (typeof document !== 'undefined') {
     let scrollingElement = isScrollable(document.body) ? document.body : document.scrollingElement || document.documentElement;
-    // Prevent Firefox from adding scrollbars when the page has a fractional height.
+    // Prevent Firefox from adding scrollbars when the page has a fractional width/height.
+    let fractionalWidthDifference = scrollingElement.getBoundingClientRect().width % 1;
     let fractionalHeightDifference = scrollingElement.getBoundingClientRect().height % 1;
+    pageWidth = scrollingElement.scrollWidth - fractionalWidthDifference;
     pageHeight = scrollingElement.scrollHeight - fractionalHeightDifference;
   }
 
   let style = {
     ...renderProps.style,
+    '--visual-viewport-width': viewport.width + 'px',
     '--visual-viewport-height': viewport.height + 'px',
+    '--page-width': pageWidth !== undefined ? pageWidth + 'px' : undefined,
     '--page-height': pageHeight !== undefined ? pageHeight + 'px' : undefined
   };
 
