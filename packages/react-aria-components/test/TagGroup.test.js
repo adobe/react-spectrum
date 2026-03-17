@@ -600,13 +600,13 @@ describe('TagGroup', () => {
 
     await user.dblClick(items[0]);
     expect(onAction).toHaveBeenCalledTimes(1);
-    expect(items[0]).toHaveAttribute('aria-selected', 'false'); // should be true?
+    expect(items[0]).toHaveAttribute('aria-selected', 'false');
     expect(items[1]).toHaveAttribute('aria-selected', 'false');
     onAction.mockReset();
 
     await user.keyboard('{Enter}');
     expect(onAction).toHaveBeenCalledTimes(1);
-    expect(items[0]).toHaveAttribute('aria-selected', 'false'); // should be true?
+    expect(items[0]).toHaveAttribute('aria-selected', 'false');
     expect(items[1]).toHaveAttribute('aria-selected', 'false');
   });
 
@@ -634,57 +634,6 @@ describe('TagGroup', () => {
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(items[0]).toHaveAttribute('aria-selected', 'true');
     expect(items[1]).toHaveAttribute('aria-selected', 'false');
-  });
-
-  // TODO: What do we want to do for this behaviour? Should we warn that it's not a valid combination? Or should it react to double click?
-  // Replace selectionBehavior works with double click, but toggle doesn't.
-  it.skip('should support onAction with selectionMode = single, behaviour = toggle', async () => {
-    let onAction = jest.fn();
-    let {getAllByRole} = renderTagGroup({onAction, selectionMode: 'single'});
-    let items = getAllByRole('row');
-
-    await user.dblClick(items[0]);
-    expect(onAction).toHaveBeenCalledTimes(1);
-    onAction.mockReset();
-
-    await user.click(items[1]);
-    expect(onAction).not.toHaveBeenCalled();
-    expect(items[1]).toHaveAttribute('aria-selected', 'true');
-
-    await user.dblClick(items[0]);
-    expect(onAction).toHaveBeenCalledTimes(1);
-    expect(items[0]).not.toHaveAttribute('aria-selected');
-    onAction.mockReset();
-
-    await user.keyboard('{Enter}');
-    expect(onAction).not.toHaveBeenCalled();
-    expect(items[0]).toHaveAttribute('aria-selected', 'true');
-    expect(items[1]).not.toHaveAttribute('aria-selected');
-  });
-
-  it.skip('should support onAction with selectionMode = multiple, behaviour = toggle', async () => {
-    let onAction = jest.fn();
-    let {getAllByRole} = renderTagGroup({onAction, selectionMode: 'multiple'});
-    let items = getAllByRole('row');
-
-    await user.dblClick(items[0]);
-    expect(onAction).toHaveBeenCalledTimes(1);
-    onAction.mockReset();
-
-    await user.click(items[1]);
-    expect(onAction).not.toHaveBeenCalled();
-    onAction.mockReset();
-    expect(items[1]).toHaveAttribute('aria-selected', 'true');
-
-    await user.dblClick(items[0]);
-    expect(onAction).toHaveBeenCalledTimes(1);
-    expect(items[0]).not.toHaveAttribute('aria-selected');
-    onAction.mockReset();
-
-    await user.keyboard('{Enter}');
-    expect(onAction).not.toHaveBeenCalled();
-    expect(items[0]).toHaveAttribute('aria-selected', 'true');
-    expect(items[1]).toHaveAttribute('aria-selected', 'true');
   });
 
   describe('shouldSelectOnPressUp', () => {
