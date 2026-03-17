@@ -252,22 +252,23 @@ describe('NumberField', () => {
   });
 
   it('should not change the edited input value when value snapping is disabled', async () => {
-    let minValue = 10;
-    let maxValue = 50;
-    // Note, we cannot rely on native validation around min/max because we use an input type="text"
-    // rather than type="number". This is so we can have a formatted value like $1,024.00 or a completely
-    // different numbering system.
-    // The native type="number" input would not allow know what to do with a formatted value.
-    let validate = (value) => {
-      if (value < minValue) {
-        return `Value must be at least ${minValue}`;
-      }
-      if (value > maxValue) {
-        return `Value must be at most ${maxValue}`;
-      }
-    };
-    let {getByRole} = render(<TestNumberField defaultValue={20} minValue={minValue} step={10} maxValue={maxValue} interactOutsideBehavior="none" validate={validate} />);
+    let {getByRole, getByTestId} = render(
+      <form data-testid="form">
+        <NumberField isRequired defaultValue={20} minValue={10} step={10} maxValue={50} commitBehavior="validate">
+          <Label>Width</Label>
+          <Group>
+            <Button slot="decrement">-</Button>
+            <Input />
+            <Button slot="increment">+</Button>
+          </Group>
+          <FieldError />
+        </NumberField>
+      </form>
+    );
     let input = getByRole('textbox');
+    expect(input.validity.valid).toBe(true);
+
+    // Over max
     await user.tab();
     await user.clear(input);
     await user.keyboard('1024');
@@ -276,5 +277,59 @@ describe('NumberField', () => {
     expect(announce).toHaveBeenLastCalledWith('1,024', 'assertive');
     expect(input.closest('.react-aria-NumberField')).toHaveAttribute('data-invalid', 'true');
     expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input.validity.valid).toBe(false);
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+    act(() => {getByTestId('form').checkValidity();});
+    expect(document.activeElement).toBe(input);
+
+    // Valid
+    await user.clear(input);
+    await user.keyboard('30');
+    await user.tab();
+    expect(input).toHaveValue('30');
+    expect(announce).toHaveBeenLastCalledWith('30', 'assertive');
+    expect(input.validity.valid).toBe(true);
+    expect(input).not.toHaveAttribute('aria-describedby');
+
+    // Under min
+    await user.clear(input);
+    await user.keyboard('2');
+    await user.tab();
+    expect(input).toHaveValue('2');
+    expect(announce).toHaveBeenLastCalledWith('2', 'assertive');
+    expect(input.validity.valid).toBe(false);
+    expect(input).toHaveAttribute('aria-describedby');
+
+    act(() => {getByTestId('form').checkValidity();});
+    expect(document.activeElement).toBe(input);
+
+    // Not on step
+    await user.clear(input);
+    await user.keyboard('31');
+    await user.tab();
+    expect(input).toHaveValue('31');
+    expect(announce).toHaveBeenLastCalledWith('31', 'assertive');
+    expect(input.validity.valid).toBe(false);
+    expect(input).toHaveAttribute('aria-describedby');
+
+    act(() => {getByTestId('form').checkValidity();});
+    expect(document.activeElement).toBe(input);
+
+    // Required
+    await user.clear(input);
+    await user.tab();
+    expect(input).toHaveValue('');
+    expect(input.validity.valid).toBe(false);
+    expect(input).toHaveAttribute('aria-describedby');
+
+    // Valid
+    await user.clear(input);
+    await user.keyboard('30');
+    await user.tab();
+    expect(input).toHaveValue('30');
+    expect(input.validity.valid).toBe(true);
+    expect(input).not.toHaveAttribute('aria-describedby');
   });
 });

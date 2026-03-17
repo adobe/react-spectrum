@@ -342,7 +342,7 @@ describe('NumberField', function () {
     let {
       container,
       textField
-    } = renderNumberField({onChange: onChangeSpy, minValue: 10, interactOutsideBehavior: 'none'});
+    } = renderNumberField({onChange: onChangeSpy, minValue: 10, commitBehavior: 'validate'});
 
     expect(container).not.toHaveAttribute('aria-invalid');
 
@@ -355,8 +355,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(5);
     expect(textField).toHaveAttribute('value', '5');
-
-    expect(container).not.toHaveAttribute('aria-invalid');
+    expect(container).toHaveAttribute('aria-invalid', 'true');
   });
 
   it.each`
@@ -414,7 +413,7 @@ describe('NumberField', function () {
     let {
       container,
       textField
-    } = renderNumberField({onChange: onChangeSpy, maxValue: 1, defaultValue: 0, interactOutsideBehavior: 'none'});
+    } = renderNumberField({onChange: onChangeSpy, maxValue: 1, defaultValue: 0, commitBehavior: 'validate'});
 
     expect(container).not.toHaveAttribute('aria-invalid');
 
@@ -426,7 +425,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(2);
     expect(textField).toHaveAttribute('value', '2');
 
-    expect(container).not.toHaveAttribute('aria-invalid');
+    expect(container).toHaveAttribute('aria-invalid', 'true');
 
     onChangeSpy.mockReset();
     act(() => {textField.focus();});
@@ -436,6 +435,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalled();
     expect(onChangeSpy).toHaveBeenCalledWith(22);
     expect(textField).toHaveAttribute('value', '22');
+    expect(container).toHaveAttribute('aria-invalid', 'true');
   });
 
   it.each`
@@ -834,11 +834,12 @@ describe('NumberField', function () {
     ${'NumberField down negative'} | ${'-8'}
     ${'NumberField up negative'}   | ${'-6'}
   `('$Name does not round to step on commit when value snapping is disabled', async ({value}) => {
-    let {textField} = renderNumberField({onChange: onChangeSpy, step: 5, interactOutsideBehavior: 'none'});
+    let {textField} = renderNumberField({onChange: onChangeSpy, step: 5, commitBehavior: 'validate'});
     act(() => {textField.focus();});
     await user.keyboard(value);
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', value);
+    expect(textField).toHaveAttribute('aria-invalid', 'true');
   });
 
   it.each`

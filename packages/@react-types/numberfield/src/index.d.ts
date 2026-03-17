@@ -31,13 +31,12 @@ export interface NumberFieldProps extends InputBase, Validation<number>, Focusab
    */
   formatOptions?: Intl.NumberFormatOptions,
   /**
-   * Controls the behavior of the number field when the user interacts outside of the field after editing.
-   * 'clamp' will clamp the value to the min/max values.
-   * 'none' will not clamp the value and will allow the value to be outside of the min/max values.
-   * No native validation around min/max. Provide your own validation function via the `validate` prop.
-   * @default 'clamp'
+   * Controls the behavior of the number field when the user blurs the field after editing.
+   * 'snap' will clamp the value to the min/max values, and snap to the nearest step value.
+   * 'validate' will not clamp the value, and will validate that the value is within the min/max range and on a valid step.
+   * @default 'snap'
    */
-  interactOutsideBehavior?: 'clamp' | 'none'
+  commitBehavior?: 'snap' | 'validate'
 }
 
 export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps, TextInputDOMEvents {
