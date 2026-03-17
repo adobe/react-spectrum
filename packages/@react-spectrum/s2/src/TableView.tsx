@@ -59,6 +59,7 @@ import Chevron from '../ui-icons/Chevron';
 import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {ColumnSize} from '@react-types/table';
 import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {css} from '../style/style-macro' with {type: 'macro'};
 import {CustomDialog, DialogContainer} from '..';
 import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
 import {getActiveElement, getOwnerDocument, isFocusWithin, nodeContains, useLayoutEffect, useObjectRef} from '@react-aria/utils';
@@ -70,7 +71,6 @@ import {LayoutNode} from '@react-stately/layout';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {ProgressCircle} from './ProgressCircle';
-import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, CSSProperties, FormEvent, FormHTMLAttributes, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
@@ -1583,7 +1583,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       className={renderProps => row({
         ...renderProps,
         ...tableVisualOptions
-      }) + (renderProps.isFocusVisible ? ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')}
+      }) + (renderProps.isFocusVisible ? ' ' + css('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')}
       {...otherProps}>
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
         // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.

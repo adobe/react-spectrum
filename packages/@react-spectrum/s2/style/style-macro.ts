@@ -877,44 +877,44 @@ class ConditionalRule extends GroupRule {
  * available in the style macro API), and should be used sparingly.
  * Must be imported with `{type: 'macro'}`.
  *
- * @param css - The raw CSS declarations to inject.
+ * @param content - The CSS declarations to inject.
  * @param layer - The CSS `@layer` to place the styles in. Defaults to `'_.a'`.
  * @returns The generated class name that applies the styles.
  *
  * @example
  * ```tsx
- * import {raw} from '@react-spectrum/s2/style' with {type: 'macro'};
+ * import {css} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
- * const styles = raw(`
+ * const styles = css(`
  *   backdrop-filter: blur(8px);
  * `);
  * ```
  */
-export function raw(this: MacroContext | void, css: string, layer = '_.a'): string {
+export function css(this: MacroContext | void, content: string, layer = '_.a'): string {
   // Check if `this` is undefined, which means style was not called as a macro but as a normal function.
   // We also check if this is globalThis, which happens in non-strict mode bundles.
   // Also allow style to be called as a normal function in tests.
   // @ts-ignore
 
   if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
-    throw new Error('The raw macro must be imported with {type: "macro"}.');
+    throw new Error('The css macro must be imported with {type: "macro"}.');
   }
-  let className = generateArbitraryValueSelector(css, true);
-  css = `@layer ${layer} {
+  let className = generateArbitraryValueSelector(content, true);
+  content = `@layer ${layer} {
   .${className} {
-  ${css}
+  ${content}
   }
 }`;
 
   // Ensure layer is always declared after the _ layer used by style macro.
   if (!layer.startsWith('_.')) {
-    css = `@layer _, ${layer};\n` + css;
+    content = `@layer _, ${layer};\n` + content;
   }
 
   if (this && typeof this.addAsset === 'function') {
     this.addAsset({
       type: 'css',
-      content: css
+      content
     });
   }
   return className;
