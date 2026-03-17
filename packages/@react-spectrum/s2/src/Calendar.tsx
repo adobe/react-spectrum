@@ -135,7 +135,10 @@ const cellStyles = style({
     default: 2,
     isFirstWeek: 0
   },
-  paddingBottom: 2,
+  paddingBottom: {
+    default: 2,
+    isLastWeek: 0
+  },
   position: 'relative',
   width: 32,
   height: 32,
@@ -579,20 +582,22 @@ const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {firstDayOfWe
   let {locale} = useLocale();
   let firstDayOfWeek = props.firstDayOfWeek;
   // Calculate the day and week index based on the date.
-  let {dayIndex, weekIndex} = useWeekAndDayIndices(props.date, locale, firstDayOfWeek);
+  let {dayIndex, weekIndex, lastWeekIndex} = useWeekAndDayIndices(props.date, locale, firstDayOfWeek);
 
   let calendarStateContext = useContext(CalendarStateContext);
   let rangeCalendarStateContext = useContext(RangeCalendarStateContext);
   let state = (calendarStateContext ?? rangeCalendarStateContext)!;
 
+
   let isFirstWeek = weekIndex === 0;
+  let isLastWeek = weekIndex === lastWeekIndex;
   let isFirstChild = dayIndex === 0;
   let isLastChild = dayIndex === 6;
 
   return (
     <AriaCalendarCell
       date={props.date}
-      className={(renderProps) => cellStyles({...renderProps, isFirstChild, isLastChild, isFirstWeek})}>
+      className={(renderProps) => cellStyles({...renderProps, isFirstChild, isLastChild, isFirstWeek, isLastWeek})}>
       {(renderProps) => <CalendarCellInner {...props} weekIndex={weekIndex} dayIndex={dayIndex} state={state} isRangeSelection={!!rangeCalendarStateContext} renderProps={renderProps} />}
     </AriaCalendarCell>
   );
@@ -677,7 +682,7 @@ function useWeekAndDayIndices(
   locale: string,
   firstDayOfWeek?: DayOfWeek
 ) {
-  let {dayIndex, weekIndex} = useMemo(() => {
+  let result = useMemo(() => {
     // Get the day index within the week (0-6)
     const dayIndex = getDayOfWeek(date, locale, firstDayOfWeek);
 
@@ -689,12 +694,15 @@ function useWeekAndDayIndices(
     const dayOfMonth = date.day;
 
     const weekIndex = Math.floor((dayOfMonth + monthStartDayOfWeek - 1) / 7);
+    const lastDayOfMonth = startOfMonth(date).add({months: 1}).subtract({days: 1});
+    const lastWeekIndex = Math.floor((lastDayOfMonth.day + monthStartDayOfWeek - 1) / 7);
 
     return {
       weekIndex,
+      lastWeekIndex,
       dayIndex
     };
   }, [date, locale, firstDayOfWeek]);
 
-  return {dayIndex, weekIndex};
+  return result;
 }
