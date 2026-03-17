@@ -7,7 +7,6 @@ import {getLibraryFromPage} from './library';
 import LinkOutIcon from '../../../@react-spectrum/s2/ui-icons/LinkOut';
 import type {Page} from '@parcel/rsc';
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
-import {scrollIntoViewport} from '@react-aria/utils';
 import {usePendingPage, useRouter} from './Router';
 
 type SectionValue = Page[] | Map<string, Page[]>;
@@ -256,16 +255,17 @@ export function SideNavItem(props) {
 }
 
 export function SideNavLink(props) {
-  let linkRef = useRef(null);
+  let linkRef = useRef<HTMLAnchorElement | null>(null);
   let selected = useContext(SideNavContext);
   let {isExternal, ...linkProps} = props;
 
   useEffect(() => {
-    if (!linkRef.current || !props.isSelected) {
+    let link = linkRef.current;
+    if (!link || !props.isSelected) {
       return;
     }
 
-    scrollIntoViewport(linkRef.current, {block: 'start'});
+    link.scrollIntoView({block: 'start', behavior: 'smooth'});
   }, [props.isSelected]);
 
   return (
