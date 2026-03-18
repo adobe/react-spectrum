@@ -205,7 +205,7 @@ let props = {validationState: 'invalid'};
 `;
 
 exports[`handles sections 1`] = `
-"import { ComboBoxSection, ComboBoxItem, ComboBox } from "@react-spectrum/s2";
+"import { ComboBoxSection, Header, ComboBoxItem, ComboBox } from "@react-spectrum/s2";
 <ComboBox>
   <ComboBoxSection><Header>Section title</Header>
     <ComboBoxItem>Item one</ComboBoxItem>

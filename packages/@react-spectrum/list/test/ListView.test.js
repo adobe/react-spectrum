@@ -62,8 +62,13 @@ describe('ListView', function () {
     manyItems.push({id: i, label: 'Foo ' + i});
   }
 
+  let innerHeight, innerWidth;
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
+    innerHeight = window.innerHeight;
+    innerWidth = window.innerWidth;
+    Object.defineProperty(window, 'innerHeight', {value: 1000, configurable: true, writable: true});
+    Object.defineProperty(window, 'innerWidth', {value: 1000, configurable: true, writable: true});
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 40);
@@ -78,6 +83,8 @@ describe('ListView', function () {
   });
 
   afterAll(function () {
+    window.innerHeight = innerHeight;
+    window.innerWidth = innerWidth;
     offsetWidth.mockReset();
     offsetHeight.mockReset();
     scrollHeight.mockReset();

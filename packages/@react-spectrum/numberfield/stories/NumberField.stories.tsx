@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {Content} from '@react-spectrum/view';
@@ -205,6 +205,12 @@ export const Step3WithMin2Max21: NumberFieldStory = () => render({step: 3, minVa
 
 Step3WithMin2Max21.story = {
   name: 'step = 3 with min = 2, max = 21'
+};
+
+export const InteractOutsideBehaviorNone: NumberFieldStory = () => render({step: 3, minValue: 2, maxValue: 21, commitBehavior: 'validate'});
+
+InteractOutsideBehaviorNone.story = {
+  name: 'commitBehavior = validate'
 };
 
 export const AutoFocus: NumberFieldStory = () => render({autoFocus: true});

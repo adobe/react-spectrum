@@ -24,7 +24,7 @@ import {useGridListItem} from '@react-aria/gridlist';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
-export interface TagAria extends Omit<SelectableItemStates, 'hasAction'> {
+export interface TagAria extends SelectableItemStates {
   /** Props for the tag row element. */
   rowProps: DOMAttributes,
   /** Props for the tag cell element. */

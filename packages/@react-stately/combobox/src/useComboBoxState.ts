@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {ChangeValueType, ComboBoxProps, MenuTriggerAction, SelectionMode, ValueType} from '@react-types/combobox';
 import {Collection, CollectionStateBase, FocusStrategy, Key, Node, Selection} from '@react-types/shared';
-import {ComboBoxProps, MenuTriggerAction, SelectionMode, ValueType} from '@react-types/combobox';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getChildNodes} from '@react-stately/collections';
 import {ListCollection, ListState, useListState} from '@react-stately/list';
@@ -89,7 +89,7 @@ const EMPTY_VALUE: Key[] = [];
  * of items from props and manages the option selection state of the combo box. In addition, it tracks the input value,
  * focus state, and other properties of the combo box.
  */
-export function useComboBoxState<T extends object, M extends SelectionMode = 'single'>(props: ComboBoxStateOptions<T, M>): ComboBoxState<T> {
+export function useComboBoxState<T extends object, M extends SelectionMode = 'single'>(props: ComboBoxStateOptions<T, M>): ComboBoxState<T, M> {
   let {
     defaultFilter,
     menuTrigger = 'input',
@@ -369,14 +369,21 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     closeMenu();
   };
 
-  let commitSelection = () => {
-    // If multiple things are controlled, call onSelectionChange
+  let commitSelection = (shouldForceSelectionChange = false) => {
+    // If multiple things are controlled, call onSelectionChange only when selecting the focused item,
+    // or when inputValue needs to be synced back to the selected item on commit/blur.
     if (value !== undefined && props.inputValue !== undefined) {
-      props.onSelectionChange?.(selectedKey);
-      props.onChange?.(displayValue);
+      let itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
+      if (
+        shouldForceSelectionChange ||
+        selectionMode === 'multiple' ||
+        inputValue !== itemText
+      ) {
+        props.onSelectionChange?.(selectedKey);
+        props.onChange?.(displayValue as ChangeValueType<M>);
+      }
 
       // Stop menu from reopening from useEffect
-      let itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
       setLastValue(itemText);
       closeMenu();
     } else {
@@ -401,7 +408,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
       // Reset inputValue and close menu here if the selected key is already the focused key. Otherwise
       // fire onSelectionChange to allow the application to control the closing.
       if (selectionManager.isSelected(selectionManager.focusedKey) && selectionMode === 'single') {
-        commitSelection();
+        commitSelection(true);
       } else {
         selectionManager.select(selectionManager.focusedKey);
       }
@@ -504,7 +511,7 @@ function getDefaultInputValue(defaultInputValue: string | null | undefined, sele
   return defaultInputValue;
 }
 
-function convertValue(value: Key | Key[] | null | undefined) {
+function convertValue(value: Key | readonly Key[] | null | undefined) {
   if (value === undefined) {
     return undefined;
   }

@@ -10,7 +10,8 @@ RAC:
 - changed-files:
   - any-glob-to-any-file: ['**/react-aria-components/**', '**/@react-aria/**']
 
-V3:
-- changed-files:
-  - any-glob-to-any-file: '**/@react-spectrum/**'
-  - all-globs-to-all-files: '!**/@react-spectrum/s2/**'
+v3:
+- all:
+  - changed-files:
+    - any-glob-to-any-file: '**/@react-spectrum/**'
+    - all-globs-to-all-files: '!**/@react-spectrum/s2/**'

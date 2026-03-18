@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getActiveElement, getEventTarget, getScrollParent, isIOS, isScrollable, useLayoutEffect, willOpenKeyboard} from '@react-aria/utils';
+import {chain, getActiveElement, getEventTarget, getNonce, getScrollParent, isIOS, isScrollable, useLayoutEffect, willOpenKeyboard} from '@react-aria/utils';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -92,6 +92,10 @@ function preventScrollStandard() {
 //    Safari from scrolling the page. After a small delay, focus the real input and scroll it into view
 //    ourselves, without scrolling the whole page.
 function preventScrollMobileSafari() {
+  // Set overflow hidden so scrollIntoViewport() (useSelectableCollection) sees isScrollPrevented and
+  // scrolls only scroll parents instead of calling native scrollIntoView() which moves the window.
+  let restoreOverflow = setStyle(document.documentElement, 'overflow', 'hidden');
+
   let scrollable: Element;
   let allowTouchMove = false;
   let onTouchStart = (e: TouchEvent) => {
@@ -130,6 +134,10 @@ function preventScrollMobileSafari() {
   // the window instead.
   // This must be applied before the touchstart event as of iOS 26, so inject it as a <style> element.
   let style = document.createElement('style');
+  let nonce = getNonce();
+  if (nonce) {
+    style.nonce = nonce;
+  }
   style.textContent = `
 @layer {
   * {
@@ -201,6 +209,7 @@ function preventScrollMobileSafari() {
   );
 
   return () => {
+    restoreOverflow();
     removeEvents();
     style.remove();
     HTMLElement.prototype.focus = focus;

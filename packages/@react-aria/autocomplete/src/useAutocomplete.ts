@@ -231,6 +231,14 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     }
 
     let focusedNodeId = queuedActiveDescendant.current;
+    if (focusedNodeId !== null && getOwnerDocument(inputRef.current).getElementById(focusedNodeId) == null) {
+      // if the focused id doesn't exist in document, then we need to clear the tracked focused node, otherwise
+      // we will be attempting to fire key events on a non-existing node instead of trying to focus the newly swapped wrapped collection.
+      // This can happen if you are swapping out the Autocomplete wrapped collection component like in the docs search.
+      queuedActiveDescendant.current = null;
+      focusedNodeId = null;
+    }
+
     switch (e.key) {
       case 'a':
         if (isCtrlKeyPressed(e)) {
@@ -260,9 +268,26 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
       case 'PageDown':
       case 'PageUp':
       case 'ArrowUp':
-      case 'ArrowDown': {
+      case 'ArrowDown':
+      case 'ArrowRight':
+      case 'ArrowLeft': {
         if ((e.key === 'Home' || e.key === 'End') && focusedNodeId == null && e.shiftKey) {
           return;
+        }
+
+        // If there is text within the input field, we'll want continue propagating events down
+        // to the wrapped collection if there is a focused node so that a user can continue moving the
+        // virtual focus. However, if the user doesn't have a focus in the collection, just move the text
+        // cursor instead. They can move focus down into the collection via down/up arrow if need be
+        if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && state.inputValue.length > 0) {
+          if (focusedNodeId == null) {
+            if (!e.isPropagationStopped()) {
+              e.stopPropagation();
+            }
+            return;
+          }
+
+          break;
         }
 
         // Prevent these keys from moving the text cursor in the input

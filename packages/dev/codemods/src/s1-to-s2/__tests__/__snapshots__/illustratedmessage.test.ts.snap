@@ -1,14 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Does nothing 1`] = `
+exports[`Rewrites illustration import to S2 with name change 1`] = `
 "import { IllustratedMessage, Heading, Content } from "@react-spectrum/s2";
-import NotFound from '@spectrum-icons/illustrations/NotFound';
+import NoSearchResults from "@react-spectrum/s2/illustrations/linear/NoSearchResults";
 
 <div>
   <IllustratedMessage>
-    <NotFound />
+    <NoSearchResults />
     <Heading>No results</Heading>
     <Content>Try another search</Content>
+  </IllustratedMessage>
+</div>"
+`;
+
+exports[`Rewrites illustration import to S2 with same name 1`] = `
+"import { IllustratedMessage, Heading, Content } from "@react-spectrum/s2";
+import Upload from "@react-spectrum/s2/illustrations/linear/Upload";
+
+<div>
+  <IllustratedMessage>
+    <Upload />
+    <Heading>Upload a file</Heading>
+    <Content>Drag and drop to upload</Content>
   </IllustratedMessage>
 </div>"
 `;

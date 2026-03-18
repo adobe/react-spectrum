@@ -1,9 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`does not leave a comment on dynamic s2 imports 1`] = `"const LazyButton = React.lazy(() => import('@react-spectrum/s2'))"`;
+
 exports[`leaves a comment on dynamic imports 1`] = `
 "const LazyButton = React.lazy(() => // TODO(S2-upgrade): check this dynamic import
 import('@react-spectrum/button'))"
 `;
+
+exports[`should handle empty files safely 1`] = `""`;
 
 exports[`should keep import aliases 1`] = `
 "import { Button as RSPButton } from "@react-spectrum/s2";
@@ -31,8 +35,6 @@ import { Button } from "@react-spectrum/s2";
 exports[`should leave unimplemented components untouched in namespace imports 1`] = `
 "import * as RSP from '@adobe/react-spectrum';
 
-import * as RSP1 from "@react-spectrum/s2";
-
 <>
   <RSP.Button>Test</RSP.Button>
   <RSP.Fake>Foo</RSP.Fake>
@@ -41,7 +43,7 @@ import * as RSP1 from "@react-spectrum/s2";
 
 exports[`should not import Item from S2 1`] = `
 "import { MenuItem, Menu } from "@react-spectrum/s2";
-import { ListView, Item } from '@adobe/react-spectrum';
+import { ListBox, Item } from '@adobe/react-spectrum';
 
 <div>
   <Menu aria-label="Alignment">
@@ -49,16 +51,16 @@ import { ListView, Item } from '@adobe/react-spectrum';
     <MenuItem>Middle</MenuItem>
     <MenuItem>Right</MenuItem>
   </Menu>
-  <ListView aria-label="Alignment">
+  <ListBox aria-label="Alignment">
     <Item>Left</Item>
     <Item>Middle</Item>
     <Item>Right</Item>
-  </ListView>
+  </ListBox>
 </div>"
 `;
 
 exports[`should not import Section from S2 1`] = `
-"import { MenuSection, MenuItem, Menu } from "@react-spectrum/s2";
+"import { MenuSection, Header, MenuItem, Menu } from "@react-spectrum/s2";
 import { Section, Item, ListBox } from '@adobe/react-spectrum';
 
 <div>
@@ -101,7 +103,7 @@ import { Button, StatusLight } from "@react-spectrum/s2";
 `;
 
 exports[`should remove unused Item/Section import even if name taken in different scope 1`] = `
-"import { MenuSection, MenuItem, Menu } from "@react-spectrum/s2";
+"import { MenuSection, Header, MenuItem, Menu } from "@react-spectrum/s2";
 
 function foo() {
   let Item = 'something else';
@@ -119,7 +121,7 @@ function foo() {
 `;
 
 exports[`should remove unused Item/Section import if aliased 1`] = `
-"import { MenuSection, MenuItem, Menu } from "@react-spectrum/s2";
+"import { MenuSection, Header, MenuItem, Menu } from "@react-spectrum/s2";
 import {Section, Item} from 'elsewhere';
 
 <div>

@@ -1199,7 +1199,7 @@ describe('ListBox', () => {
     it('should support dropping into an empty ListBox with a ListBoxLoadMoreItem', () => {
       let onRootDrop = jest.fn();
       let onLoadMore = jest.fn();
-      
+
       let EmptyListBoxWithLoader = (props) => {
         let {dragAndDropHooks} = useDragAndDrop({
           getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
@@ -1210,7 +1210,7 @@ describe('ListBox', () => {
           <ListBox aria-label="Empty ListBox" dragAndDropHooks={dragAndDropHooks} {...props}>
             <Collection items={[]}>
               {(item) => <ListBoxItem id={item.id}>{item.name}</ListBoxItem>}
-            </Collection> 
+            </Collection>
             <ListBoxLoadMoreItem isLoading onLoadMore={onLoadMore} />
           </ListBox>
         );
@@ -1235,7 +1235,7 @@ describe('ListBox', () => {
 
       let listboxes = getAllByRole('listbox');
       let options = getAllByRole('option');
-      
+
       // Start dragging from first listbox
       let dataTransfer = new DataTransfer();
       fireEvent(options[0], new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
@@ -1244,7 +1244,7 @@ describe('ListBox', () => {
       // Drag over the empty listbox (which only has a loader)
       fireEvent(listboxes[1], new DragEvent('dragenter', {dataTransfer, clientX: 50, clientY: 50}));
       fireEvent(listboxes[1], new DragEvent('dragover', {dataTransfer, clientX: 50, clientY: 50}));
-      
+
       expect(listboxes[1]).toHaveAttribute('data-drop-target', 'true');
 
       // Drop on the empty listbox
@@ -1406,7 +1406,7 @@ describe('ListBox', () => {
       act(() => jest.runAllTimers());
 
       expect(onReorder).toHaveBeenCalledTimes(1);
-      
+
       // Verify we're no longer in drag mode
       options = getAllByRole('option');
       expect(options.filter(opt => opt.classList.contains('react-aria-DropIndicator'))).toHaveLength(0);
@@ -1946,6 +1946,28 @@ describe('ListBox', () => {
       expect(onPressEnd).toHaveBeenCalledTimes(1);
       expect(onPress).toHaveBeenCalledTimes(1);
       expect(onClick).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('onKeyDown', () => {
+    it('should call key handler when key is pressed on item', async () => {
+      let onKeyDown = jest.fn((e) => e.continuePropagation());
+      let onKeyUp = jest.fn();
+      let onSelectionChange = jest.fn();
+      renderListbox({selectionMode: 'multiple', onSelectionChange}, {onKeyDown, onKeyUp});
+
+      await user.tab();
+      expect(onKeyUp).toHaveBeenCalledTimes(1);
+      onKeyUp.mockClear();
+      await user.keyboard('{Enter}');
+      expect(onKeyDown).toHaveBeenCalledTimes(1);
+      expect(onKeyUp).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+
+      await user.keyboard('{Escape}');
+      expect(onKeyDown).toHaveBeenCalledTimes(2);
+      expect(onKeyUp).toHaveBeenCalledTimes(2);
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
     });
   });
 
