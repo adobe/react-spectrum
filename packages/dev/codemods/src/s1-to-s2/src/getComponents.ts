@@ -19,7 +19,7 @@ export function getComponents(): Set<string> {
 
   try {
     const packagePath = require.resolve('@react-spectrum/s2');
-    indexPath = path.join(path.dirname(packagePath), process.env.NODE_ENV === 'test' ? 'exports/index.ts' : '../exports/index.ts');
+    indexPath = path.join(path.dirname(packagePath), process.env.NODE_ENV === 'test' ? 'index.ts' : '../../exports/index.ts');
   } catch {
     const workspaceIndexPath = path.resolve(__dirname, '../../../../../@react-spectrum/s2/exports/index.ts');
     if (!existsSync(workspaceIndexPath)) {

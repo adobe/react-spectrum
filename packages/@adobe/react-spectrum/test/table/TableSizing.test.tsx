@@ -22,8 +22,8 @@ import {HidingColumns} from '../../stories/table/HidingColumns';
 import {Key} from '@react-types/shared';
 import {Provider} from '../../src/provider/Provider';
 import React, {useRef} from 'react';
-import {resizingTests} from '/packages/react-aria/test/table/tableResizingTests.tsx';
 // @ts-ignore
+import {resizingTests} from 'react-aria/test/table/tableResizingTests.tsx';
 import {Scale} from '../../src/provider/types';
 import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import {defaultTheme as theme} from '../../src/theme-default/defaultTheme';

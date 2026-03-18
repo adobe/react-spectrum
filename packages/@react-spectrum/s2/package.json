@@ -145,6 +145,7 @@
     "icons",
     "illustrations",
     "src",
+    "exports",
     "*.js"
   ],
   "scripts": {
