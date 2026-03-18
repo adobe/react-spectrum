@@ -16,4 +16,7 @@ export {DatePicker} from './DatePicker';
 export {DateRangePicker} from './DateRangePicker';
 export {TimeField} from './TimeField';
 export {DateField} from './DateField';
-export type {SpectrumDateFieldProps, SpectrumDatePickerProps, SpectrumDateRangePickerProps, SpectrumTimeFieldProps} from '@react-types/datepicker';
+export type {SpectrumDateFieldProps} from './DateField';
+export type {SpectrumDatePickerProps} from './DatePicker';
+export type {SpectrumDateRangePickerProps} from './DateRangePicker';
+export type {SpectrumTimeFieldProps} from './TimeField';

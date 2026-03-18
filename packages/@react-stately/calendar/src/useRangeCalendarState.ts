@@ -12,12 +12,20 @@
 
 import {alignCenter, constrainValue, isInvalid, previousAvailableDate} from './utils';
 import {Calendar, CalendarDate, CalendarIdentifier, DateDuration, GregorianCalendar, isEqualDay, maxDate, minDate, toCalendar, toCalendarDate} from '@internationalized/date';
-import {CalendarState, RangeCalendarState} from './types';
-import {DateValue, MappedDateValue, RangeCalendarProps} from '@react-types/calendar';
-import {RangeValue, ValidationState} from '@react-types/shared';
+import {CalendarPropsBase, CalendarState, DateValue, MappedDateValue, RangeCalendarState} from './types';
+import {RangeValue, ValidationState, ValueBase} from '@react-types/shared';
 import {useCalendarState} from './useCalendarState';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useRef, useState} from 'react';
+
+export type DateRange = RangeValue<DateValue> | null;
+export interface RangeCalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<RangeValue<T> | null, RangeValue<MappedDateValue<T>>> {
+  /**
+   * When combined with `isDateUnavailable`, determines whether non-contiguous ranges,
+   * i.e. ranges containing unavailable dates, may be selected.
+   */
+  allowsNonContiguousRanges?: boolean
+}
 
 export interface RangeCalendarStateOptions<T extends DateValue = DateValue> extends RangeCalendarProps<T> {
   /** The locale to display and edit the value according to. */

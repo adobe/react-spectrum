@@ -11,10 +11,47 @@
  */
 
 import {CollectionBuilderContext} from './useTableState';
-import {ColumnProps} from '@react-types/table';
-import {GridNode} from '@react-types/grid';
+import {GridNode} from '@react-stately/grid';
 import {PartialNode} from '@react-stately/collections';
-import React, {JSX, ReactElement} from 'react';
+import React, {JSX, ReactElement, ReactNode} from 'react';
+
+/** Widths that result in a constant pixel value for the same Table width. */
+export type ColumnStaticSize = number | `${number}` | `${number}%`; // match regex: /^(\d+)(?=%$)/
+/**
+ * Widths that change size in relation to the remaining space and in ratio to other dynamic columns.
+ * All numbers must be integers and greater than 0.
+ * FR units take up remaining, if any, space in the table.
+ */
+export type ColumnDynamicSize = `${number}fr`; // match regex: /^(\d+)(?=fr$)/
+/** All possible sizes a column can be assigned. */
+export type ColumnSize = ColumnStaticSize | ColumnDynamicSize;
+
+export type ColumnElement<T> = ReactElement<ColumnProps<T>>;
+export type ColumnRenderer<T> = (item: T) => ColumnElement<T>;
+export interface ColumnProps<T> {
+  /** Rendered contents of the column if `children` contains child columns. */
+  title?: ReactNode,
+  /** Static child columns or content to render as the column header. */
+  children: ReactNode | ColumnElement<T> | ColumnElement<T>[],
+  /** A list of child columns used when dynamically rendering nested child columns. */
+  childColumns?: T[],
+  /** The width of the column. */
+  width?: ColumnSize | null,
+  /** The minimum width of the column. */
+  minWidth?: ColumnStaticSize | null,
+  /** The maximum width of the column. */
+  maxWidth?: ColumnStaticSize | null,
+  /** The default width of the column. */
+  defaultWidth?: ColumnSize | null,
+  /** Whether the column allows resizing. */
+  allowsResizing?: boolean,
+  /** Whether the column allows sorting. */
+  allowsSorting?: boolean,
+  /** Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation. */
+  isRowHeader?: boolean,
+  /** A string representation of the column's contents, used for accessibility announcements. */
+  textValue?: string
+}
 
 function Column<T>(props: ColumnProps<T>): ReactElement | null { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;

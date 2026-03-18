@@ -10,21 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaCheckboxProps, useCheckbox, useCheckboxGroupItem} from '@react-aria/checkbox';
 import {CheckboxContext, useContextProps} from 'react-aria-components';
 import {CheckboxGroupContext} from './context';
 import CheckmarkSmall from '@spectrum-icons/ui/CheckmarkSmall';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import DashSmall from '@spectrum-icons/ui/DashSmall';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useContext, useRef} from 'react';
-import {SpectrumCheckboxProps} from '@react-types/checkbox';
 import styles from '@adobe/spectrum-css-temp/components/checkbox/vars.css';
-import {useCheckbox, useCheckboxGroupItem} from '@react-aria/checkbox';
 import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useToggleState} from '@react-stately/toggle';
+
+export interface SpectrumCheckboxProps extends Omit<AriaCheckboxProps, 'onClick'>, StyleProps {
+  /**
+   * This prop sets the emphasized style which provides visual prominence.
+   */
+  isEmphasized?: boolean,
+  /**
+   * A slot name for the component. Slots allow the component to receive props from a parent component.
+   * An explicit `null` value indicates that the local props completely override all props received from a parent.
+   * @private
+   */
+  slot?: string | null
+}
 
 /**
  * Checkboxes allow users to select multiple items from a list of individual items,

@@ -136,9 +136,13 @@ function DynamicCardView(props) {
 }
 
 describe('CardView', function () {
-  let user;
+  let user, innerHeight, innerWidth;
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
+    innerHeight = window.innerHeight;
+    innerWidth = window.innerWidth;
+    Object.defineProperty(window, 'innerHeight', {value: 1000, configurable: true, writable: true});
+    Object.defineProperty(window, 'innerWidth', {value: 1000, configurable: true, writable: true});
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => mockWidth);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => mockHeight);
     jest.useFakeTimers();
@@ -154,6 +158,8 @@ describe('CardView', function () {
   });
 
   afterAll(function () {
+    window.innerHeight = innerHeight;
+    window.innerWidth = innerWidth;
     jest.restoreAllMocks();
   });
 

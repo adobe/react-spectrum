@@ -11,7 +11,7 @@
  */
 
 import Add from '@spectrum-icons/workflow/Add';
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps, useButton} from '@react-aria/button';
 import ChevronDownSmall from '@spectrum-icons/ui/ChevronDownSmall';
 import ChevronUpSmall from '@spectrum-icons/ui/ChevronUpSmall';
 import {classNames, useFocusableRef} from '@react-spectrum/utils';
@@ -21,7 +21,6 @@ import {mergeProps} from '@react-aria/utils';
 import React, {ReactElement} from 'react';
 import Remove from '@spectrum-icons/workflow/Remove';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
-import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 

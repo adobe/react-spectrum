@@ -11,10 +11,16 @@
  */
 
 import {ClearSlots, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {FooterProps} from '@react-types/view';
-import React, {forwardRef} from 'react';
+import React, {forwardRef, ReactNode} from 'react';
+
+export interface FooterProps extends DOMProps, StyleProps {
+  /**
+   * Footer content.
+   */
+  children: ReactNode
+}
 
 /**
  * Footer represents a footer within a Spectrum container.

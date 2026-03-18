@@ -11,13 +11,12 @@
  */
 
 import {announce} from '@react-aria/live-announcer';
-import {AriaButtonProps} from '@react-types/button';
-import {AriaComboBoxProps, SelectionMode} from '@react-types/combobox';
+import {AriaButtonProps} from '@react-aria/button';
 import {ariaHideOutside} from '@react-aria/overlays';
+import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, InputDOMProps, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
-import {BaseEvent, DOMAttributes, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
 import {chain, getActiveElement, getEventTarget, getOwnerDocument, isAppleDevice, mergeProps, nodeContains, useEvent, useFormReset, useId, useLabels, useRouter, useUpdateEffect} from '@react-aria/utils';
-import {ComboBoxState} from '@react-stately/combobox';
+import {ComboBoxProps, ComboBoxState, SelectionMode} from '@react-stately/combobox';
 import {dispatchVirtualFocus} from '@react-aria/focus';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {getChildNodes, getItemCount} from '@react-stately/collections';
@@ -28,6 +27,11 @@ import {privateValidationStateProp} from '@react-stately/form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useTextField} from '@react-aria/textfield';
+
+export interface AriaComboBoxProps<T, M extends SelectionMode = 'single'> extends ComboBoxProps<T, M>, DOMProps, InputDOMProps, AriaLabelingProps {
+  /** Whether keyboard navigation is circular. */
+  shouldFocusWrap?: boolean
+}
 
 export interface AriaComboBoxOptions<T, M extends SelectionMode = 'single'> extends Omit<AriaComboBoxProps<T, M>, 'children'> {
   /** The ref for the input element. */
@@ -156,7 +160,9 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
             break;
           }
         }
-        state.commit();
+        if (e.key === 'Enter' || state.isOpen) {
+          state.commit();
+        }
         break;
       case 'Escape':
         if (

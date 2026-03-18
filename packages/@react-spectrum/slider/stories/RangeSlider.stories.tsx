@@ -16,9 +16,8 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {ErrorBoundary} from '@react-spectrum/story-utils';
 import {Heading} from '@react-spectrum/text';
 import {Meta, StoryFn} from '@storybook/react';
-import {RangeSlider} from '../';
+import {RangeSlider, SpectrumRangeSliderProps} from '../';
 import React from 'react';
-import {SpectrumRangeSliderProps} from '@react-types/slider';
 
 let message = 'Your browser may not support this set of format options.';
 

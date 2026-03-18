@@ -10,14 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaColorSliderProps} from '@react-types/color';
-import {ColorSliderState} from '@react-stately/color';
-import {DOMAttributes, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps, InputDOMProps, RefObject} from '@react-types/shared';
+import {ColorSliderProps, ColorSliderState} from '@react-stately/color';
 import {InputHTMLAttributes} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
+
+export interface AriaColorSliderProps extends ColorSliderProps, InputDOMProps, DOMProps, AriaLabelingProps {}
 
 export interface AriaColorSliderOptions extends AriaColorSliderProps {
   /** A ref for the track element. */

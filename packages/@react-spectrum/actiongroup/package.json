@@ -52,7 +52,6 @@
     "@react-spectrum/utils": "^3.12.12",
     "@react-stately/collections": "^3.12.10",
     "@react-stately/list": "^3.13.4",
-    "@react-types/actiongroup": "^3.4.23",
     "@react-types/shared": "^3.33.1",
     "@spectrum-icons/ui": "^3.6.23",
     "@spectrum-icons/workflow": "^4.2.28",

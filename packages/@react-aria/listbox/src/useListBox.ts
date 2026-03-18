@@ -10,14 +10,50 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaListBoxProps} from '@react-types/listbox';
-import {DOMAttributes, KeyboardDelegate, LayoutDelegate, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, CollectionBase, DOMAttributes, DOMProps, FocusEvents, FocusStrategy, Key, KeyboardDelegate, LayoutDelegate, MultipleSelection, Orientation, RefObject, SelectionBehavior} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {listData} from './utils';
 import {ListState} from '@react-stately/list';
+import {ReactNode} from 'react';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
 import {useSelectableList} from '@react-aria/selection';
+
+export interface ListBoxProps<T> extends CollectionBase<T>, MultipleSelection, FocusEvents {
+  /** Whether to auto focus the listbox or an option. */
+  autoFocus?: boolean | FocusStrategy,
+  /** Whether focus should wrap around when the end/start is reached. */
+  shouldFocusWrap?: boolean
+}
+
+export interface AriaListBoxPropsBase<T> extends ListBoxProps<T>, DOMProps, AriaLabelingProps {
+  /**
+   * Whether pressing the escape key should clear selection in the listbox or not.
+   *
+   * Most experiences should not modify this option as it eliminates a keyboard user's ability to
+   * easily clear selection. Only use if the escape key is being handled externally or should not
+   * trigger selection clearing contextually.
+   * @default 'clearSelection'
+   */
+  escapeKeyBehavior?: 'clearSelection' | 'none'
+}
+export interface AriaListBoxProps<T> extends AriaListBoxPropsBase<T> {
+  /**
+   * An optional visual label for the listbox.
+   */
+  label?: ReactNode,
+  /** How multiple selection should behave in the collection. */
+  selectionBehavior?: SelectionBehavior,
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean,
+  /** Whether options should be focused when the user hovers over them. */
+  shouldFocusOnHover?: boolean,
+  /**
+   * Handler that is called when a user performs an action on an item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: (key: Key) => void
+}
 
 export interface ListBoxAria {
   /** Props for the listbox element. */
@@ -55,7 +91,13 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
    * - 'override': links override all other interactions (link items are not selectable).
    * @default 'override'
    */
-  linkBehavior?: 'action' | 'selection' | 'override'
+  linkBehavior?: 'action' | 'selection' | 'override',
+
+  /**
+   * The primary orientation of the items. Usually this is the direction that the collection scrolls.
+   * @default 'vertical'
+   */
+  orientation?: Orientation
 }
 
 /**
@@ -68,6 +110,7 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
   let domProps = filterDOMProps(props, {labelable: true});
   // Use props instead of state here. We don't want this to change due to long press.
   let selectionBehavior = props.selectionBehavior || 'toggle';
+  let orientation = props.orientation || 'vertical';
   let linkBehavior = props.linkBehavior || (selectionBehavior === 'replace' ? 'action' : 'override');
   if (selectionBehavior === 'toggle' && linkBehavior === 'action') {
     // linkBehavior="action" does not work with selectionBehavior="toggle" because there is no way
@@ -119,6 +162,7 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
       'aria-multiselectable': 'true'
     } : {}, {
       role: 'listbox',
+      'aria-orientation': orientation,
       ...mergeProps(fieldProps, listProps)
     })
   };

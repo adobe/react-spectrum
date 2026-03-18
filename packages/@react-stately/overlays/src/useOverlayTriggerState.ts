@@ -10,9 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {OverlayTriggerProps} from '@react-types/overlays';
 import {useCallback} from 'react';
 import {useControlledState} from '@react-stately/utils';
+
+export interface OverlayTriggerProps {
+  /** Whether the overlay is open by default (controlled). */
+  isOpen?: boolean,
+  /** Whether the overlay is open by default (uncontrolled). */
+  defaultOpen?: boolean,
+  /** Handler that is called when the overlay's open state changes. */
+  onOpenChange?: (isOpen: boolean) => void
+}
 
 export interface OverlayTriggerState {
   /** Whether the overlay is currently open. */

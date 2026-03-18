@@ -338,6 +338,29 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
+  `('$Name will allow typing of a number less than the min when value snapping is disabled', async () => {
+    let {
+      container,
+      textField
+    } = renderNumberField({onChange: onChangeSpy, minValue: 10, commitBehavior: 'validate'});
+
+    expect(container).not.toHaveAttribute('aria-invalid');
+
+    act(() => {textField.focus();});
+    await user.clear(textField);
+    await user.keyboard('5');
+    expect(onChangeSpy).toHaveBeenCalledTimes(0);
+    expect(textField).toHaveAttribute('value', '5');
+    act(() => {textField.blur();});
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(5);
+    expect(textField).toHaveAttribute('value', '5');
+    expect(container).toHaveAttribute('aria-invalid', 'true');
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
   `('$Name will allow typing of a number between min and max', async () => {
     let {
       textField
@@ -381,6 +404,38 @@ describe('NumberField', function () {
     act(() => {textField.blur();});
     expect(onChangeSpy).not.toHaveBeenCalled();
     expect(textField).toHaveAttribute('value', '1');
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name will allow typing of a number greater than the max when value snapping is disabled', async () => {
+    let {
+      container,
+      textField
+    } = renderNumberField({onChange: onChangeSpy, maxValue: 1, defaultValue: 0, commitBehavior: 'validate'});
+
+    expect(container).not.toHaveAttribute('aria-invalid');
+
+    act(() => {textField.focus();});
+    await user.keyboard('2');
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    act(() => {textField.blur();});
+    expect(onChangeSpy).toHaveBeenCalled();
+    expect(onChangeSpy).toHaveBeenCalledWith(2);
+    expect(textField).toHaveAttribute('value', '2');
+
+    expect(container).toHaveAttribute('aria-invalid', 'true');
+
+    onChangeSpy.mockReset();
+    act(() => {textField.focus();});
+    await user.keyboard('2');
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    act(() => {textField.blur();});
+    expect(onChangeSpy).toHaveBeenCalled();
+    expect(onChangeSpy).toHaveBeenCalledWith(22);
+    expect(textField).toHaveAttribute('value', '22');
+    expect(container).toHaveAttribute('aria-invalid', 'true');
   });
 
   it.each`
@@ -770,6 +825,21 @@ describe('NumberField', function () {
     await user.keyboard(value);
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', result);
+  });
+
+  it.each`
+    Name                           | value
+    ${'NumberField down positive'} | ${'6'}
+    ${'NumberField up positive'}   | ${'8'}
+    ${'NumberField down negative'} | ${'-8'}
+    ${'NumberField up negative'}   | ${'-6'}
+  `('$Name does not round to step on commit when value snapping is disabled', async ({value}) => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, step: 5, commitBehavior: 'validate'});
+    act(() => {textField.focus();});
+    await user.keyboard(value);
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', value);
+    expect(textField).toHaveAttribute('aria-invalid', 'true');
   });
 
   it.each`
@@ -2044,6 +2114,19 @@ describe('NumberField', function () {
 
     let formatter = new Intl.NumberFormat(locale + '-u-nu-beng', {style: 'currency', currency: 'USD'});
     expect(textField).toHaveAttribute('value', formatter.format(21));
+  });
+
+  it('should maintain original parser and formatting when restoring a previous value', async () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10});
+    expect(textField).toHaveAttribute('value', '10');
+
+    await user.tab();
+    await user.clear(textField);
+    await user.keyboard(',123');
+    act(() => {textField.blur();});
+    expect(textField).toHaveAttribute('value', '123');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(123);
   });
 
   describe('beforeinput', () => {

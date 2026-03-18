@@ -11,12 +11,16 @@
  */
 
 import {classNames, ClearSlots, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {Flex} from '@react-spectrum/layout';
-import React, {forwardRef} from 'react';
-import {SpectrumIllustratedMessageProps} from '@react-types/illustratedmessage';
+import React, {forwardRef, ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/illustratedmessage/vars.css';
+
+export interface SpectrumIllustratedMessageProps extends DOMProps, StyleProps {
+  /** The contents of the IllustratedMessage. */
+  children: ReactNode
+}
 
 /**
  * An IllustratedMessage displays an illustration and a message, usually

@@ -22,7 +22,7 @@ import {FormContext, useFormProps} from './Form';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
-import {useFocusableRef} from '@react-spectrum/utils';
+import {useFocusableRef} from './useDOMRef';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

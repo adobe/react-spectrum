@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-export type {ColorAreaState} from './useColorAreaState';
-export type {ColorSliderState} from './useColorSliderState';
-export type {ColorWheelState} from './useColorWheelState';
-export type {ColorFieldState} from './useColorFieldState';
+export type {ColorAreaProps, ColorAreaState} from './useColorAreaState';
+export type {ColorSliderProps, ColorSliderState} from './useColorSliderState';
+export type {ColorWheelProps, ColorWheelState} from './useColorWheelState';
+export type {ColorFieldProps, ColorFieldState} from './useColorFieldState';
 export type {ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions} from './useColorChannelFieldState';
 export type {ColorPickerProps, ColorPickerState} from './useColorPickerState';
 
@@ -25,5 +25,5 @@ export {useColorFieldState} from './useColorFieldState';
 export {useColorChannelFieldState} from './useColorChannelFieldState';
 export {useColorPickerState} from './useColorPickerState';
 
-export type {Color, ColorChannel, ColorFormat, ColorSpace, ColorAreaProps, ColorFieldProps, ColorWheelProps} from '@react-types/color';
+export type {Color, ColorChannel, ColorFormat, ColorSpace, ColorAxes, ColorChannelRange} from './types';
 export type {ColorSliderStateOptions} from './useColorSliderState';

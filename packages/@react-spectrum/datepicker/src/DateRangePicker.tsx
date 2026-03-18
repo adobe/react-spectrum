@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaDateRangePickerProps, useDateRangePicker} from '@react-aria/datepicker';
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
 import {classNames} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './styles.css';
-import {DateValue, SpectrumDateRangePickerProps} from '@react-types/datepicker';
+import {DateValue, useDateRangePickerState} from '@react-stately/datepicker';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
@@ -27,16 +28,17 @@ import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import {RangeCalendar} from '@react-spectrum/calendar';
 import React, {ReactElement, useRef} from 'react';
+import {SpectrumDatePickerBase} from './DatePicker';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TimeField} from './TimeField';
-import {useDateRangePicker} from '@react-aria/datepicker';
-import {useDateRangePickerState} from '@react-stately/datepicker';
 import {useFocusManagerRef, useFormatHelpText, useFormattedDateWidth, useVisibleMonths} from './utils';
 import {useFocusRing} from '@react-aria/focus';
 import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+
+export interface SpectrumDateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'isInvalid' | 'validationState'>, Omit<SpectrumDatePickerBase<T>, 'validate'> {}
 
 /**
  * DateRangePickers combine two DateFields and a RangeCalendar popover to allow users

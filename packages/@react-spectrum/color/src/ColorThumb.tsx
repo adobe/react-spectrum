@@ -11,7 +11,7 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {Color} from '@react-types/color';
+import {Color} from '@react-stately/color';
 import {DOMProps, RefObject} from '@react-types/shared';
 import {Overlay} from '@react-spectrum/overlays';
 import React, {CSSProperties, JSX, ReactElement, useRef, useState} from 'react';

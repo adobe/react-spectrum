@@ -11,10 +11,9 @@
  */
 
 import {Heading, Text} from '@react-spectrum/text';
-import {Item, TabList, TabPanels, Tabs} from '../';
+import {Item, SpectrumTabsProps, TabList, TabPanels, Tabs} from '../';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
-import {SpectrumTabsProps} from '@react-types/tabs';
 
 const meta: Meta<SpectrumTabsProps<object>> = {
   title: 'Tabs',

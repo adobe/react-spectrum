@@ -166,6 +166,29 @@ export const AutocompleteSearchfield: AutocompleteStory = {
   }
 };
 
+export const AutocompleteFocusRecovery: AutocompleteStory = {
+  render: (args) => {
+    return (
+      <AutocompleteWrapper disableVirtualFocus={args.disableVirtualFocus}>
+        <div>
+          <TextField autoFocus data-testid="autocomplete-focus-recovery">
+            <Label style={{display: 'block'}}>Test</Label>
+            <Input />
+            <Text style={{display: 'block'}} slot="description">Focus the input, move virtual focus to an option, then click the input again.</Text>
+          </TextField>
+          <StaticMenu {...args} />
+        </div>
+      </AutocompleteWrapper>
+    );
+  },
+  name: 'Autocomplete focus recovery after virtual focus',
+  parameters: {
+    description: {
+      data: 'Manual check: focus the input, hover or keyboard navigate to an option, then click the input again. The input should regain focused styling and the active descendant should clear.'
+    }
+  }
+};
+
 // Note that the trigger items in this array MUST have an id, even if the underlying MenuItem might apply its own
 // id. If it is omitted, we can't build the collection node for the trigger node and an error will throw
 let dynamicAutocompleteSubdialog: MenuNode[] = [

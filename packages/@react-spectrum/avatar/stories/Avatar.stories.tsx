@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Avatar} from '../';
+import {Avatar, SpectrumAvatarProps} from '../';
 import {Meta, StoryObj} from '@storybook/react';
-import {SpectrumAvatarProps} from '@react-types/avatar';
 
 const SRC_URL_1 =
   'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';

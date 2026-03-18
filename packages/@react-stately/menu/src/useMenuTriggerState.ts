@@ -11,9 +11,18 @@
  */
 
 import {FocusStrategy, Key} from '@react-types/shared';
-import {MenuTriggerProps} from '@react-types/menu';
-import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
+import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useState} from 'react';
+
+export type MenuTriggerType = 'press' | 'longPress';
+
+export interface MenuTriggerProps extends OverlayTriggerProps {
+  /**
+   * How the menu is triggered.
+   * @default 'press'
+   */
+  trigger?: MenuTriggerType
+}
 
 export interface MenuTriggerState extends OverlayTriggerState {
   /** Controls which item will be auto focused when the menu opens. */
