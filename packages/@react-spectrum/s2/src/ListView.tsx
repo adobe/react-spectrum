@@ -684,7 +684,7 @@ export function isPrevSelected(id: Key | undefined, state: ListState<unknown>) {
   return keyBefore != null && state.selectionManager.isSelected(keyBefore);
 }
 
-function isFirstItem(id: Key | undefined, state: ListState<unknown>) {
+export function isFirstItem(id: Key | undefined, state: ListState<unknown>) {
   if (id == null || !state) {
     return false;
   }

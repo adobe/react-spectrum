@@ -129,6 +129,19 @@ export const Example: StoryObj<typeof StaticTable> = {
   }
 };
 
+export const Highlight: StoryObj<typeof StaticTable> = {
+  render: StaticTable,
+  args: {
+    selectionMode: 'multiple',
+    selectionStyle: 'highlight',
+    onResize: undefined,
+    onResizeStart: undefined,
+    onResizeEnd: undefined,
+    onLoadMore: undefined
+  }
+};
+
+
 export const DisabledRows: StoryObj<typeof StaticTable> = {
   ...Example,
   args: {
