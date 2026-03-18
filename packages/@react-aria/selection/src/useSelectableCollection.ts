@@ -140,6 +140,11 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     // uses shiftKey if selection mode is multiple
     // if it's an apple device uses ctrlKey otherwise altKey
     const navigateToKey = (key: Key | undefined, childFocus?: FocusStrategy) => {
+      let shouldIgnoreModifierKeys = e.metaKey || (e.shiftKey && manager.selectionMode !== 'multiple') || (!isAppleDevice() ? e.altKey : e.ctrlKey);
+      if (shouldIgnoreModifierKeys) {
+        return;
+      }
+
       if (key != null) {
         if (manager.isLink(key) && linkBehavior === 'selection' && selectOnFocus && !isNonContiguousSelectionModifier(e)) {
           // Set focused key and re-render synchronously to bring item into view if needed.
@@ -150,6 +155,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
           let item = getItemElement(ref, key);
           let itemProps = manager.getItemProps(key);
           if (item) {
+            e.preventDefault();
             router.open(item, e, itemProps.href, itemProps.routerOptions);
           }
 
@@ -167,17 +173,12 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         } else if (selectOnFocus && !isNonContiguousSelectionModifier(e)) {
           manager.replaceSelection(key);
         }
+        e.preventDefault();
       }
     };
 
-    let shouldIgnoreModifierKeys = e.metaKey || (e.shiftKey && manager.selectionMode !== 'multiple') || (!isAppleDevice() ? e.altKey : e.ctrlKey);
-
     switch (e.key) {
       case 'ArrowDown': {
-        // inverse of navigateToKey's usage
-        if (shouldIgnoreModifierKeys) {
-          return;
-        }
         if (delegate.getKeyBelow) {
           let nextKey = manager.focusedKey != null
               ? delegate.getKeyBelow?.(manager.focusedKey)
@@ -186,16 +187,12 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
             nextKey = delegate.getFirstKey?.(manager.focusedKey);
           }
           if (nextKey != null) {
-            e.preventDefault();
             navigateToKey(nextKey);
           }
         }
         break;
       }
       case 'ArrowUp': {
-        if (shouldIgnoreModifierKeys) {
-          return;
-        }
         if (delegate.getKeyAbove) {
           let nextKey = manager.focusedKey != null
               ? delegate.getKeyAbove?.(manager.focusedKey)
@@ -204,39 +201,30 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
             nextKey = delegate.getLastKey?.(manager.focusedKey);
           }
           if (nextKey != null) {
-            e.preventDefault();
             navigateToKey(nextKey);
           }
         }
         break;
       }
       case 'ArrowLeft': {
-        if (shouldIgnoreModifierKeys) {
-          return;
-        }
         if (delegate.getKeyLeftOf) {
           let nextKey: Key | undefined | null = manager.focusedKey != null ? delegate.getKeyLeftOf?.(manager.focusedKey) : delegate.getFirstKey?.();
           if (nextKey == null && shouldFocusWrap) {
             nextKey = direction === 'rtl' ? delegate.getFirstKey?.(manager.focusedKey) : delegate.getLastKey?.(manager.focusedKey);
           }
           if (nextKey != null) {
-            e.preventDefault();
             navigateToKey(nextKey, direction === 'rtl' ? 'first' : 'last');
           }
         }
         break;
       }
       case 'ArrowRight': {
-        if (shouldIgnoreModifierKeys) {
-          return;
-        }
         if (delegate.getKeyRightOf) {
           let nextKey: Key | undefined | null = manager.focusedKey != null ? delegate.getKeyRightOf?.(manager.focusedKey) : delegate.getFirstKey?.();
           if (nextKey == null && shouldFocusWrap) {
             nextKey = direction === 'rtl' ? delegate.getLastKey?.(manager.focusedKey) : delegate.getFirstKey?.(manager.focusedKey);
           }
           if (nextKey != null) {
-            e.preventDefault();
             navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
           }
         }
@@ -283,25 +271,17 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         }
         break;
       case 'PageDown':
-        if (shouldIgnoreModifierKeys) {
-          return;
-        }
         if (delegate.getKeyPageBelow && manager.focusedKey != null) {
           let nextKey = delegate.getKeyPageBelow(manager.focusedKey);
           if (nextKey != null) {
-            e.preventDefault();
             navigateToKey(nextKey);
           }
         }
         break;
       case 'PageUp':
-        if (shouldIgnoreModifierKeys) {
-          return;
-        }
         if (delegate.getKeyPageAbove && manager.focusedKey != null) {
           let nextKey = delegate.getKeyPageAbove(manager.focusedKey);
           if (nextKey != null) {
-            e.preventDefault();
             navigateToKey(nextKey);
           }
         }
