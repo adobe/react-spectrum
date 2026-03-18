@@ -96,22 +96,3 @@ export const ArabicNumberFieldExample = {
     </I18nProvider>
   )
 };
-
-export function Test() {
-  const [value, setValue] = useState(4);
-
-  return (
-    <NumberField value={value} onChange={setValue}>
-      <Label>For testing</Label>
-      <Group>
-        <Input className="react-aria-Input inset" />
-        <Button slot="decrement" isDisabled={value <= 4}>
-          <Minus />
-        </Button>
-        <Button slot="increment" isDisabled={value >= 8}>
-          <Plus />
-        </Button>
-      </Group>
-    </NumberField>
-  );
-}
