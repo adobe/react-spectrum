@@ -383,12 +383,3 @@ export let globalAllowedDropOperations: DROP_OPERATION = DROP_OPERATION.none;
 export function setGlobalAllowedDropOperations(o: DROP_OPERATION): void {
   globalAllowedDropOperations = o;
 }
-
-export function getItemElement(collectionRef: RefObject<HTMLElement | null>, key: Key): Element | null | undefined {
-  let selector = `[data-key="${CSS.escape(String(key))}"]`;
-  let collection = collectionRef.current?.dataset.collection;
-  if (collection) {
-    selector = `[data-collection="${CSS.escape(collection)}"]${selector}`;
-  }
-  return collectionRef.current?.querySelector(selector);
-}

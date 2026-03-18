@@ -252,9 +252,9 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         state.selectionManager.isSelectionEqual(prevSelectedKeys)
       ) {
         let newKeys = new Set<Key>();
-        for (let key of state.collection.getKeys()) {
-          if (!prevCollection.getItem(key)) {
-            newKeys.add(key);
+        for (let item of state.collection) {
+          if (item.type === 'item' && !prevCollection.getItem(item.key)) {
+            newKeys.add(item.key);
           }
         }
 
@@ -272,25 +272,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
             // eslint-disable-next-line max-depth
             if (item?.type === 'cell') {
               first = item.parentKey;
-            }
-
-            if (item?.type === 'content') {
-              let parentKey = item.parentKey;
-              while (parentKey) {
-                let parent = state.collection.getItem(parentKey);
-                if (parent?.type !== 'item') {
-                  parentKey = parent?.parentKey;
-                  continue;
-                }
-                // If an item doesn't exist in the collection,
-                // it's because its parent is collapsed, and we should focus its parent instead.
-                let item = getItemElement(ref, parentKey);
-                if (item) {
-                  first = parentKey;
-                  break;
-                }
-                parentKey = parent.parentKey;
-              }
             }
 
             // eslint-disable-next-line max-depth
