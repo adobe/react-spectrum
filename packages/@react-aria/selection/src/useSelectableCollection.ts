@@ -238,6 +238,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
           if (manager.focusedKey === null && e.shiftKey) {
             return;
           }
+          e.stopPropagation();
           e.preventDefault();
           let firstKey: Key | null = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(firstKey);
@@ -258,6 +259,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
           if (manager.focusedKey === null && e.shiftKey) {
             return;
           }
+          e.stopPropagation();
           e.preventDefault();
           let lastKey = delegate.getLastKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(lastKey);
@@ -291,6 +293,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
           return;
         }
         if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple' && disallowSelectAll !== true) {
+          e.stopPropagation();
           e.preventDefault();
           manager.selectAll();
         }
