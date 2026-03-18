@@ -1,1 +1,1 @@
-export {DateValue, TimeValue, DateRange, type DateFieldProps, type TimePickerProps, type DatePickerProps, type DateRangePickerProps, Granularity, MappedDateValue, MappedTimeValue} from '../../../src/datepicker/types';
+export type {DateValue, TimeValue, DateRange, DateFieldProps, TimePickerProps, DatePickerProps, DateRangePickerProps, Granularity, MappedDateValue, MappedTimeValue} from '../../../src/datepicker/types';

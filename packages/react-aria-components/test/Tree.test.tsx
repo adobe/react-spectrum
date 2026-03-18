@@ -16,7 +16,7 @@ import {Button} from '../src/Button';
 import {Checkbox} from '../src/Checkbox';
 import {Collection} from 'react-aria/private/collections/CollectionBuilder';
 import {composeStories} from '@storybook/react';
-import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
+import {DataTransfer, DragEvent} from '/packages/react-aria/test/dnd/mocks';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {ListLayout} from 'react-stately/private/layout/ListLayout';
 import React from 'react';

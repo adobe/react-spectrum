@@ -190,4 +190,4 @@ export type {
   UnsafeClassName,
   UnsafeStyles,
   StyleProps
-} from './style-utils';
+} from '../src/style-utils';

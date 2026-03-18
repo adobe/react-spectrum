@@ -1,1 +1,1 @@
-export {GridNode, GridCollection, IGridCollection, GridRow} from '../../../src/grid/GridCollection';
+export {type GridNode, GridCollection, type IGridCollection, type GridRow} from '../../../src/grid/GridCollection';

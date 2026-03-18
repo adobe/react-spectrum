@@ -10,6 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export type {RowProps} from '../src/table/Row';
+export type {RowProps, RowElement} from '../src/table/Row';
 export {Row} from '../src/table/Row';
 export {Section} from '../src/collections/Section';

@@ -10,6 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export type {ColumnProps, ColumnSize, ColumnDynamicSize, ColumnStaticSize} from '../src/table/Column';
+export type {ColumnProps, ColumnSize, ColumnDynamicSize, ColumnStaticSize, ColumnElement, ColumnRenderer} from '../src/table/Column';
 export {Column} from '../src/table/Column';
 export {Section} from '../src/collections/Section';

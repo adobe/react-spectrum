@@ -1,1 +1,1 @@
-export {ProviderContext, type ProviderProps, ColorScheme, Scale, Theme, Breakpoints, CSSModule} from '../../../src/provider/types';
+export {type ProviderContext, type ProviderProps, type ColorScheme, type Scale, type Theme, type Breakpoints, type CSSModule} from '../../../src/provider/types';

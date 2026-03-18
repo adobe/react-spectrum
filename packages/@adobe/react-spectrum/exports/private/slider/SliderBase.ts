@@ -1,1 +1,1 @@
-export {SpectrumBarSliderBase} from '../../../src/slider/SliderBase';
+export type {SpectrumBarSliderBase} from '../../../src/slider/SliderBase';

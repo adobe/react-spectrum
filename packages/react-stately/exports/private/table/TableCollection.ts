@@ -1,1 +1,1 @@
-export {buildHeaderRows, ITableCollection, TableCollection} from '../../../src/table/TableCollection';
+export {buildHeaderRows, type ITableCollection, TableCollection} from '../../../src/table/TableCollection';

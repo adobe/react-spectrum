@@ -10,6 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export type {CellProps} from '../src/table/Cell';
+export type {CellProps, CellElement, CellRenderer} from '../src/table/Cell';
 export {Cell} from '../src/table/Cell';
 export {Section} from '../src/collections/Section';
