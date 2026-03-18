@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-export type {CalendarState, CalendarStateOptions, RangeCalendarState, RangeCalendarStateOptions} from '@react-stately/calendar';
+export type {CalendarState, CalendarStateOptions, RangeCalendarState, RangeCalendarStateOptions, CalendarProps, DateRange, RangeCalendarProps, DateValue} from '@react-stately/calendar';
 export type {CheckboxGroupProps, CheckboxGroupState} from '@react-stately/checkbox';
-export type {Color, ColorChannel, ColorFormat, ColorSpace, ColorAreaProps, ColorAreaState, ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions, ColorFieldProps, ColorFieldState, ColorPickerProps, ColorPickerState, ColorSliderState, ColorSliderStateOptions, ColorWheelProps, ColorWheelState} from '@react-stately/color';
-export type {ComboBoxState, ComboBoxStateOptions} from '@react-stately/combobox';
-export type {DateFieldState, DateFieldStateOptions, DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, DateSegment, DateSegmentType, DateSegmentType as SegmentType, TimeFieldStateOptions, TimeFieldState} from '@react-stately/datepicker';
+export type {Color, ColorChannel, ColorFormat, ColorSpace, ColorAreaProps, ColorAreaState, ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions, ColorFieldProps, ColorFieldState, ColorPickerProps, ColorPickerState, ColorSliderState, ColorSliderStateOptions, ColorWheelProps, ColorWheelState, ColorSliderProps, ColorAxes, ColorChannelRange} from '@react-stately/color';
+export type {ComboBoxState, ComboBoxStateOptions, ComboBoxProps, ComboBoxValidationValue} from '@react-stately/combobox';
+export type {DateFieldState, DateFieldStateOptions, DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, DateSegment, DateSegmentType, DateSegmentType as SegmentType, TimeFieldStateOptions, TimeFieldState, DateFieldProps, DatePickerProps, DateRangePickerProps, TimePickerProps, TimeValue} from '@react-stately/datepicker';
 export type {DisclosureState, DisclosureProps, DisclosureGroupState, DisclosureGroupProps} from '@react-stately/disclosure';
 export type {DraggableCollectionStateOptions, DraggableCollectionState, DroppableCollectionStateOptions, DroppableCollectionState} from '@react-stately/dnd';
 export type {AsyncListData, AsyncListOptions, ListData, ListOptions, TreeData, TreeOptions} from '@react-stately/data';
@@ -24,9 +24,9 @@ export type {OverlayTriggerProps, OverlayTriggerState} from '@react-stately/over
 export type {RadioGroupProps, RadioGroupState} from '@react-stately/radio';
 export type {SearchFieldProps, SearchFieldState} from '@react-stately/searchfield';
 export type {SelectProps, SelectState, SelectStateOptions} from '@react-stately/select';
-export type {SliderState, SliderStateOptions} from '@react-stately/slider';
+export type {SliderState, SliderStateOptions, SliderProps} from '@react-stately/slider';
 export type {MultipleSelectionManager, MultipleSelectionState, MultipleSelectionStateProps, SingleSelectionState} from '@react-stately/selection';
-export type {NumberFieldState, NumberFieldStateOptions} from '@react-stately/numberfield';
+export type {NumberFieldState, NumberFieldStateOptions, NumberFieldProps} from '@react-stately/numberfield';
 export type {TableProps, TableState, TableStateProps, TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps, TableColumnResizeState, TableColumnResizeStateProps, ColumnSize, ColumnStaticSize, ColumnDynamicSize, ITableCollection} from '@react-stately/table';
 export type {TabListProps, TabListStateOptions, TabListState} from '@react-stately/tabs';
 export type {ToastState, QueuedToast, ToastStateProps, ToastOptions} from '@react-stately/toast';
