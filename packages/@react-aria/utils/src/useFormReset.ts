@@ -19,8 +19,9 @@ export function useFormReset<T>(
   initialValue: T,
   onReset: (value: T) => void
 ): void {
-  let handleReset = useEffectEvent(() => {
-    if (onReset) {
+
+  let handleReset = useEffectEvent((e: Event) => {
+    if (onReset && !e.defaultPrevented) {
       onReset(initialValue);
     }
   });

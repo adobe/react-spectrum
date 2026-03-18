@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {CheckboxGroupProps} from '@react-types/checkbox';
 import {FormValidationState, mergeValidation, useFormValidationState} from '@react-stately/form';
+import {HelpTextProps, InputBase, InputDOMProps, LabelableProps, Validation, ValidationResult, ValidationState, ValueBase} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
 import {useRef, useState} from 'react';
-import {ValidationResult, ValidationState} from '@react-types/shared';
+
+export interface CheckboxGroupProps extends ValueBase<string[]>, Pick<InputDOMProps, 'name'>, InputBase, LabelableProps, HelpTextProps, Validation<string[]> {}
 
 export interface CheckboxGroupState extends FormValidationState {
   /** Current selected values. */

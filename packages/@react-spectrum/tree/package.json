@@ -45,7 +45,6 @@
     "@react-aria/tree": "^3.1.7",
     "@react-aria/utils": "^3.33.1",
     "@react-spectrum/checkbox": "^3.10.7",
-    "@react-spectrum/text": "^3.5.25",
     "@react-spectrum/utils": "^3.12.12",
     "@react-types/shared": "^3.33.1",
     "@spectrum-icons/ui": "^3.6.23",

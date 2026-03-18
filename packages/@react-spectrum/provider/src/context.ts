@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ProviderContext} from '@react-types/provider';
+import {ProviderContext} from './types';
 import React from 'react';
 
 // Context is placed in a separate file to avoid fast refresh issue where the old provider context values

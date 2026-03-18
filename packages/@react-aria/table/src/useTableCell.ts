@@ -12,7 +12,7 @@
 
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {getCellId} from './utils';
-import {GridNode} from '@react-types/grid';
+import {GridNode} from '@react-stately/grid';
 import {TableState} from '@react-stately/table';
 import {useGridCell} from '@react-aria/grid';
 

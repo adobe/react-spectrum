@@ -10,9 +10,39 @@
  * governing permissions and limitations under the License.
  */
 
-import {TooltipTriggerProps} from '@react-types/tooltip';
+import {OverlayTriggerProps, useOverlayTriggerState} from '@react-stately/overlays';
 import {useEffect, useMemo, useRef} from 'react';
-import {useOverlayTriggerState} from '@react-stately/overlays';
+
+export interface TooltipTriggerProps extends OverlayTriggerProps {
+  /**
+   * Whether the tooltip should be disabled, independent from the trigger.
+   */
+  isDisabled?: boolean,
+
+  /**
+   * The delay time for the tooltip to show up. [See guidelines](https://spectrum.adobe.com/page/tooltip/#Immediate-or-delayed-appearance).
+   * @default 1500
+   */
+  delay?: number,
+
+  /**
+   * The delay time for the tooltip to close. [See guidelines](https://spectrum.adobe.com/page/tooltip/#Warmup-and-cooldown).
+   * @default 500
+   */
+  closeDelay?: number,
+
+  /**
+   * By default, opens for both focus and hover. Can be made to open only for focus.
+   * @default 'hover'
+   */
+  trigger?: 'hover' | 'focus',
+
+  /**
+   * Whether the tooltip should close when the trigger is pressed.
+   * @default true
+   */
+  shouldCloseOnPress?: boolean
+}
 
 const TOOLTIP_DELAY = 1500; // this seems to be a 1.5 second delay, check with design
 const TOOLTIP_COOLDOWN = 500;

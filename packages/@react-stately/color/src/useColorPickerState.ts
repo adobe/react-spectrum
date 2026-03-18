@@ -1,4 +1,4 @@
-import {Color} from '@react-types/color';
+import {Color} from './types';
 import {parseColor} from './Color';
 import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';

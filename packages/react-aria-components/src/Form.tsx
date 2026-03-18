@@ -12,9 +12,8 @@
 
 import {ContextValue, dom, DOMProps, DOMRenderProps, useContextProps} from './utils';
 import {FormValidationContext} from 'react-stately';
-import {GlobalDOMAttributes} from '@react-types/shared';
+import {GlobalDOMAttributes, FormProps as SharedFormProps} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
-import {FormProps as SharedFormProps} from '@react-types/form';
 
 export interface FormProps extends SharedFormProps, DOMProps, DOMRenderProps<'form', undefined>, GlobalDOMAttributes<HTMLFormElement> {
   /**

@@ -10,12 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTabPanelProps} from '@react-types/tabs';
-import {DOMAttributes, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps, Key, RefObject} from '@react-types/shared';
 import {generateId} from './utils';
 import {mergeProps, useLabels} from '@react-aria/utils';
 import {TabListState} from '@react-stately/tabs';
 import {useHasTabbableChild} from '@react-aria/focus';
+
+export interface AriaTabPanelProps extends Omit<DOMProps, 'id'>, AriaLabelingProps {
+  /** The unique id of the tab. */
+  id?: Key
+}
 
 export interface TabPanelAria {
   /** Props for the tab panel element. */

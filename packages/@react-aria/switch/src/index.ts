@@ -11,5 +11,4 @@
  */
 export {useSwitch} from './useSwitch';
 
-export type {AriaSwitchProps} from '@react-types/switch';
-export type {SwitchAria} from './useSwitch';
+export type {SwitchProps, AriaSwitchProps, SwitchAria} from './useSwitch';

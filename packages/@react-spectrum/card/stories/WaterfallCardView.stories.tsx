@@ -29,11 +29,10 @@ import {
   StaticCards,
   StaticCardViewStory
 } from './GridCardView.stories';
-import {CardView, WaterfallLayout} from '../';
+import {CardView, SpectrumCardViewProps, WaterfallLayout} from '../';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {useMemo} from 'react';
 import {Size} from '@react-stately/virtualizer';
-import {SpectrumCardViewProps} from '@react-types/card';
 import {useCollator} from '@react-aria/i18n';
 import {WaterfallLayoutOptions} from '../src/WaterfallLayout';
 

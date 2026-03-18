@@ -33,7 +33,6 @@
     "@react-stately/form": "^3.2.4",
     "@react-stately/utils": "^3.11.0",
     "@react-types/shared": "^3.33.1",
-    "@react-types/textfield": "^3.12.8",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

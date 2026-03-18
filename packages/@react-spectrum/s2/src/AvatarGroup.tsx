@@ -17,7 +17,7 @@ import {createContext, CSSProperties, forwardRef, ReactNode} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useLabel} from 'react-aria';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

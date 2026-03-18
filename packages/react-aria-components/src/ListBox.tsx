@@ -69,6 +69,11 @@ export interface ListBoxRenderProps {
    */
   layout: 'stack' | 'grid',
   /**
+   * The primary orientation of the items.
+   * @selector [data-orientation="vertical | horizontal"]
+   */
+  orientation: Orientation,
+  /**
    * State of the listbox.
    */
   state: ListState<unknown>
@@ -231,6 +236,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
     isFocused,
     isFocusVisible,
     layout: props.layout || 'stack',
+    orientation,
     state
   };
   let renderProps = useRenderProps({
@@ -266,7 +272,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-layout={props.layout || 'stack'}
-        data-orientation={props.orientation || 'vertical'}>
+        data-orientation={orientation}>
         <Provider
           values={[
             [ListBoxContext, props],

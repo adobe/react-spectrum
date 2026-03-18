@@ -14,4 +14,4 @@
 
 export {ComboBox} from './ComboBox';
 export {Item, Section} from '@react-stately/collections';
-export type {SpectrumComboBoxProps} from '@react-types/combobox';
+export type {SpectrumComboBoxProps} from './ComboBox';

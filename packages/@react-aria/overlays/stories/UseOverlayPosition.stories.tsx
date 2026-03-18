@@ -11,11 +11,10 @@
  */
 
 import {mergeProps} from '@react-aria/utils';
-import {Placement} from '@react-types/overlays';
+import {Placement, useOverlayPosition, useOverlayTrigger} from '../src';
 import React, {JSX} from 'react';
 import ReactDOM from 'react-dom';
 import {StoryFn} from '@storybook/react';
-import {useOverlayPosition, useOverlayTrigger} from '../src';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
 function Trigger(props: {

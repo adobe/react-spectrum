@@ -59,29 +59,32 @@ export default {
 
 export type GridListStory = StoryFn<typeof GridList>;
 
-export const GridListExample: GridListStory = (args) => (
-  <GridList
-    {...args}
-    className={styles.menu}
-    aria-label="test gridlist"
-    style={{
-      width: 300,
-      height: 300,
-      display: 'grid',
-      gridTemplate: args.layout === 'grid' ? 'repeat(3, 1fr) / repeat(3, 1fr)' : 'auto / 1fr',
-      gridAutoFlow: 'row'
-    }}>
-    <MyGridListItem textValue="1,1">1,1 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem textValue="1,2">1,2 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem textValue="1,3">1,3 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem textValue="2,1">2,1 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem textValue="2,2">2,2 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem textValue="2,3">2,3 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem textValue="3,1">3,1 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem textValue="3,2">3,2 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem textValue="3,3">3,3 <Button>Actions</Button></MyGridListItem>
-  </GridList>
-);
+export const GridListExample: GridListStory = (args) => {
+  let isHorizontalStack = args.orientation === 'horizontal' && args.layout !== 'grid';
+  return (
+    <GridList
+      {...args}
+      className={styles.menu}
+      aria-label="test gridlist"
+      style={{
+        width: isHorizontalStack ? undefined : 300,
+        height: isHorizontalStack ? undefined : 300,
+        display: isHorizontalStack ? 'flex' : 'grid',
+        gridTemplate: args.layout === 'grid' ? 'repeat(3, 1fr) / repeat(3, 1fr)' : 'auto / 1fr',
+        gridAutoFlow: args.orientation === 'horizontal' ? 'column' : 'row'
+      }}>
+      <MyGridListItem textValue="1,1">1,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem textValue="1,2">1,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem textValue="1,3">1,3 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem textValue="2,1">2,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem textValue="2,2">2,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem textValue="2,3">2,3 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem textValue="3,1">3,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem textValue="3,2">3,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem textValue="3,3">3,3 <Button>Actions</Button></MyGridListItem>
+    </GridList>
+  );
+};
 
 export const MyGridListItem = (props: GridListItemProps) => {
   return (
@@ -105,6 +108,7 @@ export const MyGridListItem = (props: GridListItemProps) => {
 GridListExample.story = {
   args: {
     layout: 'stack',
+    orientation: 'vertical',
     escapeKeyBehavior: 'clearSelection',
     shouldSelectOnPressUp: false,
     disallowTypeAhead: false
@@ -113,6 +117,10 @@ GridListExample.story = {
     layout: {
       control: 'radio',
       options: ['stack', 'grid']
+    },
+    orientation: {
+      control: 'radio',
+      options: ['vertical', 'horizontal']
     },
     keyboardNavigationBehavior: {
       control: 'radio',
@@ -129,6 +137,61 @@ GridListExample.story = {
     escapeKeyBehavior: {
       control: 'radio',
       options: ['clearSelection', 'none']
+    }
+  }
+};
+
+const DraggableGridListRender = (args: GridListProps<any>) => {
+  let list = useListData({
+    initialItems: [
+      {id: '1', name: 'Item 1'},
+      {id: '2', name: 'Item 2'},
+      {id: '3', name: 'Item 3'},
+      {id: '4', name: 'Item 4'},
+      {id: '5', name: 'Item 5'}
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''})),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+
+  let isHorizontal = args.orientation === 'horizontal';
+
+  return (
+    <GridList
+      className={styles.menu}
+      aria-label="draggable gridlist"
+      orientation={args.orientation}
+      selectionMode="multiple"
+      dragAndDropHooks={dragAndDropHooks}
+      items={list.items}
+      style={{
+        display: 'flex',
+        flexDirection: isHorizontal ? 'row' : 'column',
+        width: isHorizontal ? undefined : 300
+      }}>
+      {item => <MyGridListItem>{item.name}</MyGridListItem>}
+    </GridList>
+  );
+};
+
+export const DraggableGridListExample: StoryObj<typeof DraggableGridListRender> = {
+  render: (args) => <DraggableGridListRender {...args} />,
+  args: {
+    orientation: 'vertical'
+  },
+  argTypes: {
+    orientation: {
+      control: 'radio',
+      options: ['vertical', 'horizontal']
     }
   }
 };

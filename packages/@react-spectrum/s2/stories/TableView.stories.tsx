@@ -812,9 +812,9 @@ for (let i = 0; i < 1000; i++) {
   manyRows.push(row);
 }
 
-export const ManyItems: StoryObj<typeof TableView> = {
-  render: (args) => (
-    <TableView aria-label="Many items table" {...args} styles={style({width: 800, height: 400})}>
+function ManyItemsTable(args) {
+  return (
+    <TableView aria-label="Many items table" {...args}>
       <TableHeader columns={manyColumns}>
         {(column) => (
           <Column width={100} minWidth={100} isRowHeader={column.name === 'Column 1'}>{column.name}</Column>
@@ -830,11 +830,50 @@ export const ManyItems: StoryObj<typeof TableView> = {
         )}
       </TableBody>
     </TableView>
-  ),
+  ); 
+}
+
+export const ManyItems: StoryObj<typeof TableView> = {
+  render: (args) => <ManyItemsTable {...args} styles={style({width: 800, height: 400})} />,
   args: {
     ...Example.args
   },
   name: 'many items table',
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
+
+export const ViewportScrolling: StoryObj<typeof TableView> = {
+  render: (args) => (
+    <>
+      <ManyItemsTable {...args} styles={style({width: 800})} />
+      <div style={{height: 900}} />
+    </>
+  ),
+  args: {
+    ...Example.args
+  },
+  name: 'viewport scrolling',
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
+
+export const ScrollableContainer: StoryObj<typeof TableView> = {
+  render: (args) => (
+    <div style={{width: 800, height: 500, overflow: 'auto'}}>
+      <ManyItemsTable {...args} styles={style({width: 'full'})} />
+    </div>
+  ),
+  args: {
+    ...Example.args
+  },
+  name: 'scrollable container',
   parameters: {
     docs: {
       disable: true

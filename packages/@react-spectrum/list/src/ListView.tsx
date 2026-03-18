@@ -223,6 +223,7 @@ export const ListView = React.forwardRef(function ListView<T extends object>(pro
             {...filterDOMProps(otherProps)}
             {...gridProps}
             {...styleProps}
+            onScroll={undefined}
             isLoading={isLoading}
             onLoadMore={onLoadMore}
             ref={domRef}

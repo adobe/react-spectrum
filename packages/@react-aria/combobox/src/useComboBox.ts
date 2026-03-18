@@ -11,13 +11,12 @@
  */
 
 import {announce} from '@react-aria/live-announcer';
-import {AriaButtonProps} from '@react-types/button';
-import {AriaComboBoxProps, SelectionMode} from '@react-types/combobox';
+import {AriaButtonProps} from '@react-aria/button';
 import {ariaHideOutside} from '@react-aria/overlays';
+import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, InputDOMProps, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
-import {BaseEvent, DOMAttributes, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
 import {chain, getActiveElement, getEventTarget, getOwnerDocument, isAppleDevice, mergeProps, nodeContains, useEvent, useFormReset, useId, useLabels, useRouter, useUpdateEffect} from '@react-aria/utils';
-import {ComboBoxState} from '@react-stately/combobox';
+import {ComboBoxProps, ComboBoxState, SelectionMode} from '@react-stately/combobox';
 import {dispatchVirtualFocus} from '@react-aria/focus';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {getChildNodes, getItemCount} from '@react-stately/collections';
@@ -25,10 +24,14 @@ import {getChildNodes, getItemCount} from '@react-stately/collections';
 import intlMessages from '../intl/*.json';
 import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
 import {privateValidationStateProp} from '@react-stately/form';
-import {useInteractOutside} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useTextField} from '@react-aria/textfield';
+
+export interface AriaComboBoxProps<T, M extends SelectionMode = 'single'> extends ComboBoxProps<T, M>, DOMProps, InputDOMProps, AriaLabelingProps {
+  /** Whether keyboard navigation is circular. */
+  shouldFocusWrap?: boolean
+}
 
 export interface AriaComboBoxOptions<T, M extends SelectionMode = 'single'> extends Omit<AriaComboBoxProps<T, M>, 'children'> {
   /** The ref for the input element. */
@@ -157,7 +160,9 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
             break;
           }
         }
-        state.commit();
+        if (e.key === 'Enter' || state.isOpen) {
+          state.commit();
+        }
         break;
       case 'Escape':
         if (
@@ -209,10 +214,12 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
     state.setFocused(true);
   };
 
-  let valueId = useValueId([state.selectedItems, state.selectionManager.selectionMode]);
+  let valueId = useValueId([state.selectionManager.selectedKeys, state.selectionManager.selectionMode]);
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,
+    // In multi-select mode, only set required if the selection is empty.
+    isRequired: props.selectionMode === 'multiple' ? props.isRequired && state.selectionManager.isEmpty : props.isRequired,
     onChange: state.setInputValue,
     onKeyDown: !isReadOnly ? chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown) : props.onKeyDown,
     onBlur,
@@ -365,20 +372,6 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
   useEvent(listBoxRef, 'react-aria-item-action', state.isOpen ? () => {
     state.close();
   } : undefined);
-
-  // usePopover -> useOverlay calls useInteractOutside, but ComboBox is non-modal, so `isDismissable` is false
-  // Because of this, onInteractOutside is not passed to useInteractOutside, so we need to call it here.
-  useInteractOutside({
-    ref: popoverRef,
-    onInteractOutside: (e) => {
-      let target = getEventTarget(e) as Element;
-      if (nodeContains(buttonRef?.current, target) || nodeContains(inputRef.current, target)) {
-        return;
-      }
-      state.close();
-    },
-    isDisabled: !state.isOpen
-  });
 
   return {
     labelProps,

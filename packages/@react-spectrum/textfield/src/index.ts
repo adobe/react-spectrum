@@ -15,4 +15,5 @@
 export {TextArea} from './TextArea';
 export {TextField} from './TextField';
 export {TextFieldBase} from './TextFieldBase';
-export type {SpectrumTextFieldProps, SpectrumTextAreaProps} from '@react-types/textfield';
+export type {SpectrumTextFieldProps, TextFieldRef} from './TextField';
+export type {SpectrumTextAreaProps} from './TextArea';

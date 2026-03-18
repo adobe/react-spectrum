@@ -11,11 +11,10 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps} from '@react-aria/button';
 import {CalendarDate} from '@internationalized/date';
 import {CalendarMonth} from './CalendarMonth';
-import {CalendarPropsBase} from '@react-types/calendar';
-import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
+import {CalendarPropsBase, CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
 import {classNames, useStyleProps} from '@react-spectrum/utils';

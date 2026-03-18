@@ -11,8 +11,7 @@
  */
 
 import {Meta, StoryObj} from '@storybook/react';
-import {Meter} from '../';
-import {SpectrumMeterProps} from '@react-types/meter';
+import {Meter, SpectrumMeterProps} from '../';
 
 const meta: Meta<SpectrumMeterProps> = {
   title: 'Meter',

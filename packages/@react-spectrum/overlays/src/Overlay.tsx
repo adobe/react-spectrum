@@ -12,10 +12,25 @@
 
 import {DOMRef} from '@react-types/shared';
 import {OpenTransition} from './OpenTransition';
-import {OverlayProps} from '@react-types/overlays';
 import {Provider} from '@react-spectrum/provider';
-import React, {useCallback, useState} from 'react';
+import React, {MutableRefObject, ReactNode, useCallback, useState} from 'react';
 import {Overlay as ReactAriaOverlay} from '@react-aria/overlays';
+
+export interface OverlayProps {
+  children: ReactNode,
+  isOpen?: boolean,
+  container?: Element,
+  isKeyboardDismissDisabled?: boolean,
+  onEnter?: () => void,
+  onEntering?: () => void,
+  onEntered?: () => void,
+  onExit?: () => void,
+  onExiting?: () => void,
+  onExited?: () => void,
+  nodeRef: MutableRefObject<HTMLElement | null>,
+  disableFocusManagement?: boolean,
+  shouldContainFocus?: boolean
+}
 
 export const Overlay = React.forwardRef(function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
   let {

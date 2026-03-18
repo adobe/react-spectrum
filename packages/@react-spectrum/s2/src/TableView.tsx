@@ -11,7 +11,7 @@
  */
 
 import {ActionButton, ActionButtonContext} from './ActionButton';
-import {baseColor, colorMix, focusRing, fontRelative, lightDark, space, style} from '../style' with {type: 'macro'};
+import {baseColor, centerPadding, colorMix, focusRing, fontRelative, lightDark, setColorScheme, space, style} from '../style' with {type: 'macro'};
 import {
   Button,
   ButtonContext,
@@ -52,16 +52,17 @@ import {
   Virtualizer
 } from 'react-aria-components';
 import {ButtonGroup} from './ButtonGroup';
-import {centerPadding, colorScheme, controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
 import Chevron from '../ui-icons/Chevron';
 import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
-import {ColumnSize} from '@react-types/table';
+import {ColumnSize} from 'react-stately';
+import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {css} from '../style/style-macro' with {type: 'macro'};
 import {CustomDialog, DialogContainer} from '..';
 import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
 import {getActiveElement, getOwnerDocument, isFocusWithin, nodeContains, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import {GridNode} from '@react-types/grid';
+import {GridNode} from '@react-stately/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -70,14 +71,14 @@ import {LayoutNode} from '@react-stately/layout';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {ProgressCircle} from './ProgressCircle';
-import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, CSSProperties, FormEvent, FormHTMLAttributes, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {Button as SpectrumButton} from './Button';
 import {useActionBarContainer} from './ActionBar';
-import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useMediaQuery} from './useMediaQuery';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {VisuallyHidden} from 'react-aria';
@@ -479,7 +480,10 @@ const cellFocus = {
   },
   outlineOffset: -2,
   outlineWidth: 2,
-  outlineColor: 'focus-ring',
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  },
   borderRadius: '[6px]'
 } as const;
 
@@ -1208,7 +1212,7 @@ const editableCell = style<CellRenderProps & S2TableProps & {isDivider: boolean,
 });
 
 let editPopover = style({
-  ...colorScheme(),
+  ...setColorScheme(),
   '--s2-container-bg': {
     type: 'backgroundColor',
     value: 'layer-2'
@@ -1640,7 +1644,7 @@ const row = style({
   forcedColorAdjust: 'none'
 });
 
-const border = raw(
+const border = css(
   `&:after {
     content: "";
     width: 100%;
@@ -1689,7 +1693,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         selectionStyle,
         isNextSelected: isNextSelected(id, renderProps.state),
         isFirstItem: isFirstItem(id, renderProps.state)
-      }) + (renderProps.isFocusVisible ? ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: var(--focusIndicatorHeight); margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')
+      }) + (renderProps.isFocusVisible ? ' ' + css('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: var(--focusIndicatorHeight); margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')
       + (isFirstItem(id, renderProps.state) && renderProps.isSelected && selectionStyle === 'highlight' ? ' ' + border : '')
       }
       {...otherProps}>

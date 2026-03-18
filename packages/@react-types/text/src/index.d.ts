@@ -10,6 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './heading';
-export * from './keyboard';
-export * from './text';
+export {HeadingProps, TextProps, KeyboardProps} from '@react-spectrum/text';

@@ -14,8 +14,7 @@ import {FocusableElement, Key, RefObject} from '@react-types/shared';
 import {getEventTarget, useFormReset} from '@react-aria/utils';
 import React, {InputHTMLAttributes, JSX, ReactNode, useCallback, useRef} from 'react';
 import {selectData} from './useSelect';
-import {SelectionMode} from '@react-types/select';
-import {SelectState} from '@react-stately/select';
+import {SelectionMode, SelectState} from '@react-stately/select';
 import {useFormValidation} from '@react-aria/form';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -157,7 +156,7 @@ export function HiddenSelect<T, M extends SelectionMode = 'single'>(props: Hidde
         <label>
           {label}
           <select {...selectProps} ref={selectRef}>
-            <option />
+            <option value="" label={'\u00A0'}>{'\u00A0'}</option>
             {[...state.collection.getKeys()].map(key => {
               let item = state.collection.getItem(key);
               if (item && item.type === 'item') {
