@@ -11,7 +11,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaCardProps, SpectrumCardProps} from '@react-types/card';
+import {AriaCardProps, SpectrumCardProps} from './types';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, Node} from '@react-types/shared';

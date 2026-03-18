@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaColorFieldProps} from '@react-types/color';
-import {ColorFieldState} from '@react-stately/color';
-import {DOMAttributes, ValidationResult} from '@react-types/shared';
+import {AriaLabelingProps, AriaValidationProps, DOMAttributes, FocusableDOMProps, TextInputDOMProps, ValidationResult} from '@react-types/shared';
+import {ColorFieldProps, ColorFieldState} from '@react-stately/color';
 import {
   InputHTMLAttributes,
   LabelHTMLAttributes,
@@ -25,6 +24,11 @@ import {privateValidationStateProp} from '@react-stately/form';
 import {useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
 import {useSpinButton} from '@react-aria/spinbutton';
+
+export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete' | 'autoCorrect' | 'spellCheck'>, AriaValidationProps {
+  /** Enables or disables changing the value with scroll. */
+  isWheelDisabled?: boolean
+}
 
 export interface ColorFieldAria extends ValidationResult {
   /** Props for the label element. */

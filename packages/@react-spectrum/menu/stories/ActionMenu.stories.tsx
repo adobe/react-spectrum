@@ -15,11 +15,10 @@ import {ActionMenu} from '..';
 import {Alignment} from '@react-types/shared';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Flex} from '@react-spectrum/layout';
-import {Item} from '../';
+import {Item, SpectrumActionMenuProps} from '../';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {Picker} from '@react-spectrum/picker';
 import React, {JSX, useState} from 'react';
-import {SpectrumActionMenuProps} from '@react-types/menu';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 
 const meta: Meta<SpectrumActionMenuProps<object>> = {

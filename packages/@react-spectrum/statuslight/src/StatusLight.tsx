@@ -10,13 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {forwardRef} from 'react';
-import {SpectrumStatusLightProps} from '@react-types/statuslight';
+import React, {forwardRef, ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/statuslight/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
+
+
+export interface SpectrumStatusLightProps extends DOMProps, StyleProps, AriaLabelingProps {
+  /** The content to display as the label. */
+  children?: ReactNode,
+  /**
+   * The variant changes the color of the status light.
+   * When status lights have a semantic meaning, they should use the variant for semantic colors.
+   */
+  variant: 'positive' | 'negative' | 'notice' | 'info' | 'neutral' | 'celery' | 'chartreuse' | 'yellow' | 'magenta' | 'fuchsia' | 'purple' | 'indigo' | 'seafoam',
+  /** Whether the status light is disabled. */
+  isDisabled?: boolean,
+  /**
+   * An accessibility role for the status light. Should be set when the status
+   * can change at runtime, and no more than one status light will update simultaneously.
+   * For cases where multiple statuses can change at the same time, use a Toast instead.
+   */
+  role?: 'status'
+}
 
 /**
  * Status lights are used to color code categories and labels commonly found in data visualization.

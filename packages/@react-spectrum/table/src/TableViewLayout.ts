@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {DropTarget} from '@react-types/shared';
-import {GridNode} from '@react-types/grid';
+import {GridNode} from '@react-stately/grid';
 import {LayoutInfo, Rect} from '@react-stately/virtualizer';
 import {LayoutNode, TableLayout} from '@react-stately/layout';
 import {TableCollection} from '@react-stately/table';

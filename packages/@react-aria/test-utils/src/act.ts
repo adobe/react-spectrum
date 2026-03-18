@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2025 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,17 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, StyleProps} from '@react-types/shared';
-import {ReactNode} from 'react';
+import * as React from 'react';
+import * as ReactDOMTestUtils from 'react-dom/test-utils';
 
-export interface KeyboardProps extends DOMProps, StyleProps {
-  /**
-   * Keyboard shortcut text.
-   */
-  children: ReactNode,
-  /**
-   * A slot to place the keyboard shortcut in.
-   * @default 'keyboard'
-   */
-  slot?: string
+let actImpl: typeof ReactDOMTestUtils.act;
+if (typeof React.act === 'function') {
+  actImpl = React.act;
+} else {
+  actImpl = ReactDOMTestUtils.act;
 }
+
+export const act = actImpl;

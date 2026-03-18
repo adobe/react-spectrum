@@ -29,11 +29,12 @@ import {
   toCalendarDate,
   today
 } from '@internationalized/date';
-import {CalendarProps, DateValue, MappedDateValue} from '@react-types/calendar';
-import {CalendarState} from './types';
+import {CalendarPropsBase, CalendarState, DateValue, MappedDateValue} from './types';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
-import {ValidationState} from '@react-types/shared';
+import {ValidationState, ValueBase} from '@react-types/shared';
+
+export interface CalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<T | null, MappedDateValue<T>> {}
 
 export interface CalendarStateOptions<T extends DateValue = DateValue> extends CalendarProps<T> {
   /** The locale to display and edit the value according to. */

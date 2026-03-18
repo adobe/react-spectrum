@@ -11,9 +11,9 @@
  */
 
 import {announce} from '@react-aria/live-announcer';
-import {AriaButtonProps} from '@react-types/button';
-import {AriaNumberFieldProps} from '@react-types/numberfield';
-import {chain, filterDOMProps, getActiveElement, getEventTarget, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
+import {AriaButtonProps} from '@react-aria/button';
+import {AriaLabelingProps, DOMAttributes, DOMProps, GroupDOMAttributes, TextInputDOMEvents, TextInputDOMProps, ValidationResult} from '@react-types/shared';
+import {chain, filterDOMProps, getActiveElement, getEventTarget, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId, useLayoutEffect} from '@react-aria/utils';
 import {
   type ClipboardEvent,
   type ClipboardEventHandler,
@@ -24,11 +24,10 @@ import {
   useMemo,
   useState
 } from 'react';
-import {DOMAttributes, GroupDOMAttributes, TextInputDOMProps, ValidationResult} from '@react-types/shared';
 import {flushSync} from 'react-dom';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {NumberFieldState} from '@react-stately/numberfield';
+import {NumberFieldProps, NumberFieldState} from '@react-stately/numberfield';
 import {privateValidationStateProp} from '@react-stately/form';
 import {useFocus, useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
@@ -37,6 +36,17 @@ import {
   useNumberFormatter
 } from '@react-aria/i18n';
 import {useSpinButton} from '@react-aria/spinbutton';
+
+export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps, TextInputDOMEvents {
+  /** A custom aria-label for the decrement button. If not provided, the localized string "Decrement" is used. */
+  decrementAriaLabel?: string,
+  /** A custom aria-label for the increment button. If not provided, the localized string "Increment" is used. */
+  incrementAriaLabel?: string,
+  /**
+   * Enables or disables changing the value with scroll.
+   */
+  isWheelDisabled?: boolean
+}
 
 export interface NumberFieldAria extends ValidationResult {
   /** Props for the label element. */
@@ -219,7 +229,9 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     }
 
     if (e.key === 'Enter') {
-      commit();
+      flushSync(() => {
+        commit();
+      });
       commitValidation();
     } else {
       e.continuePropagation();
@@ -260,6 +272,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   }, state, inputRef);
 
   useFormReset(inputRef, state.defaultNumberValue, state.setNumberValue);
+  useNativeValidation(state, props.validationBehavior, props.commitBehavior, inputRef, state.minValue, state.maxValue, props.step, state.numberValue);
 
   let inputProps: InputHTMLAttributes<HTMLInputElement> = mergeProps(
     spinButtonProps,
@@ -360,4 +373,70 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     validationErrors,
     validationDetails
   };
+}
+
+let numberInput: HTMLInputElement | null = null;
+
+function useNativeValidation(
+  state: NumberFieldState,
+  validationBehavior: 'native' | 'aria' | undefined,
+  commitBehavior: 'snap' | 'validate' | undefined,
+  inputRef: RefObject<HTMLInputElement | null>,
+  min: number | undefined,
+  max: number | undefined,
+  step: number | undefined,
+  value: number | undefined
+) {
+  useLayoutEffect(() => {
+    let input = inputRef.current;
+    if (commitBehavior !== 'validate' || state.realtimeValidation.isInvalid || !input || input.disabled) {
+      return;
+    }
+
+    // Create a native number input and use it to implement validation of min/max/step.
+    // This lets us get the native validation message provided by the browser instead of needing our own translations.
+    if (!numberInput && typeof document !== 'undefined') {
+      numberInput = document.createElement('input');
+      numberInput.type = 'number';
+    }
+
+    if (!numberInput) {
+      // For TypeScript.
+      return;
+    }
+    
+    numberInput.min = min != null && !isNaN(min) ? String(min) : '';
+    numberInput.max = max != null && !isNaN(max) ? String(max) : '';
+    numberInput.step = step != null && !isNaN(step) ? String(step) : '';
+    numberInput.value = value != null && !isNaN(value) ? String(value) : '';
+
+    // Merge validity with the visible text input (for other validations like required).
+    let valid = input.validity.valid && numberInput.validity.valid;
+    let validationMessage = input.validationMessage || numberInput.validationMessage;
+    let validity = {
+      isInvalid: !valid,
+      validationErrors: validationMessage ? [validationMessage] : [],
+      validationDetails: {
+        badInput: input.validity.badInput,
+        customError: input.validity.customError,
+        patternMismatch: input.validity.patternMismatch,
+        rangeOverflow: numberInput.validity.rangeOverflow,
+        rangeUnderflow: numberInput.validity.rangeUnderflow,
+        stepMismatch: numberInput.validity.stepMismatch,
+        tooLong: input.validity.tooLong,
+        tooShort: input.validity.tooShort,
+        typeMismatch: input.validity.typeMismatch,
+        valueMissing: input.validity.valueMissing,
+        valid
+      }
+    };
+
+    state.updateValidation(validity);
+
+    // Block form submission if validation behavior is native.
+    // This won't overwrite any user-defined validation message because we checked realtimeValidation above.
+    if (validationBehavior === 'native' && !numberInput.validity.valid) {
+      input.setCustomValidity(numberInput.validationMessage);
+    }
+  });
 }

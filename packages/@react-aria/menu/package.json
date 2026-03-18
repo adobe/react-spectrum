@@ -26,7 +26,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.21.5",
+    "@react-aria/button": "^3.14.5",
     "@react-aria/i18n": "^3.12.16",
     "@react-aria/interactions": "^3.27.1",
     "@react-aria/overlays": "^3.31.2",
@@ -36,8 +36,6 @@
     "@react-stately/menu": "^3.9.11",
     "@react-stately/selection": "^3.20.9",
     "@react-stately/tree": "^3.9.6",
-    "@react-types/button": "^3.15.1",
-    "@react-types/menu": "^3.10.7",
     "@react-types/shared": "^3.33.1",
     "@swc/helpers": "^0.5.0"
   },

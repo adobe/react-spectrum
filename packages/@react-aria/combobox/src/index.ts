@@ -10,5 +10,4 @@
  * governing permissions and limitations under the License.
  */
 export {useComboBox} from './useComboBox';
-export type {AriaComboBoxOptions, ComboBoxAria} from './useComboBox';
-export type {AriaComboBoxProps} from '@react-types/combobox';
+export type {AriaComboBoxProps, AriaComboBoxOptions, ComboBoxAria} from './useComboBox';

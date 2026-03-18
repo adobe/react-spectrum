@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, FocusStrategy, Node, RefObject, StyleProps} from '@react-types/shared';
-import {AriaListBoxOptions, useListBox} from '@react-aria/listbox';
+import {AriaLabelingProps, AsyncLoadable, DOMProps, FocusStrategy, Node, RefObject, StyleProps} from '@react-types/shared';
+import {AriaListBoxOptions, AriaListBoxPropsBase, useListBox} from '@react-aria/listbox';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
@@ -29,6 +29,8 @@ import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
+
+export interface SpectrumListBoxProps<T> extends AriaListBoxPropsBase<T>, AsyncLoadable, StyleProps {}
 
 interface ListBoxBaseProps<T> extends AriaListBoxOptions<T>, DOMProps, AriaLabelingProps, StyleProps {
   layout: ListBoxLayout<T>,

@@ -315,13 +315,13 @@ function MobileNav({initialTag}: {initialTag?: string}) {
               <MobileTabPanel key={library.id} id={library.id}>
                 <Autocomplete
                   key={isTypographySelected ? 'typography' : 'default'}
+                  inputValue={searchValue}
+                  onInputChange={handleSearchChange}
                   filter={showIcons ? iconFilter : undefined}
                   disableVirtualFocus={isTypographySelected}>
                   <div className={stickySearchContainer}>
                     <SearchField
                       aria-label="Search"
-                      value={searchValue}
-                      onChange={handleSearchChange}
                       onFocus={handleSearchFocus}
                       onBlur={handleSearchBlur}
                       placeholder={placeholderText}
@@ -403,4 +403,3 @@ function MobileNav({initialTag}: {initialTag?: string}) {
     </div>
   );
 }
-

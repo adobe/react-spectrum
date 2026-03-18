@@ -10,18 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaSearchFieldProps, useSearchField} from '@react-aria/searchfield';
 import {classNames, useSlotProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
 import React, {forwardRef, ReactElement, Ref, useEffect, useRef} from 'react';
-import {SpectrumSearchFieldProps} from '@react-types/searchfield';
+import {SpectrumTextFieldProps, TextFieldBase, TextFieldRef} from '@react-spectrum/textfield';
+import {SpectrumTextInputBase} from '@react-types/shared';
 import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
-import {TextFieldBase} from '@react-spectrum/textfield';
-import {TextFieldRef} from '@react-types/textfield';
 import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useSearchField} from '@react-aria/searchfield';
 import {useSearchFieldState} from '@react-stately/searchfield';
+
+export interface SpectrumSearchFieldProps extends SpectrumTextInputBase, Omit<AriaSearchFieldProps, 'isInvalid' | 'validationState'>, SpectrumTextFieldProps {}
 
 /**
  * A SearchField is a text field designed for searches.

@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Link} from '../';
+import {Link, SpectrumLinkProps} from '../';
 import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
-import {SpectrumLinkProps} from '@react-types/link';
 
 const meta: Meta<SpectrumLinkProps> = {
   title: 'Link',

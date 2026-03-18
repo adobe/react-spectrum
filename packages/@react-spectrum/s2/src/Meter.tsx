@@ -23,7 +23,7 @@ import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {
 import {lightDark, style} from '../style' with {type: 'macro'};
 import {SkeletonWrapper} from './Skeleton';
 import {Text} from './Content';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface MeterStyleProps {

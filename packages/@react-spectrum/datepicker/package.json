@@ -55,7 +55,6 @@
     "@react-spectrum/utils": "^3.12.12",
     "@react-spectrum/view": "^3.6.26",
     "@react-stately/datepicker": "^3.16.1",
-    "@react-types/datepicker": "^3.13.5",
     "@react-types/shared": "^3.33.1",
     "@spectrum-icons/ui": "^3.6.23",
     "@spectrum-icons/workflow": "^4.2.28",

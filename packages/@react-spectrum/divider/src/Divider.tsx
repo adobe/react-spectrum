@@ -10,12 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps, DOMProps, DOMRef, Orientation, StyleProps} from '@react-types/shared';
 import {classNames, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
 import React, {ElementType} from 'react';
-import {SpectrumDividerProps} from '@react-types/divider';
 import styles from '@adobe/spectrum-css-temp/components/rule/vars.css';
 import {useSeparator} from '@react-aria/separator';
+
+export interface SpectrumDividerProps extends DOMProps, AriaLabelingProps, StyleProps {
+  /**
+   * How thick the Divider should be.
+   * @default 'L'
+   */
+  size?: 'S' | 'M' | 'L',
+
+  /**
+   * The axis the Divider should align with.
+   * @default 'horizontal'
+   */
+  orientation?: Orientation,
+
+  /**
+   * A slot to place the divider in.
+   * @default 'divider'
+   */
+  slot?: string
+}
 
 let sizeMap = {
   S: 'small',

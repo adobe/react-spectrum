@@ -17,9 +17,8 @@ import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
 import {HTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {ITableCollection, TableState, TreeGridState} from '@react-stately/table';
 import {mergeProps, useLabels, useSyntheticLinkProps} from '@react-aria/utils';
-import {TableCollection} from '@react-types/table';
-import {TableState, TreeGridState} from '@react-stately/table';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 const EXPANSION_KEYS = {
@@ -44,7 +43,7 @@ export interface TableRowAria extends GridRowAria {
  */
 export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | TreeGridState<T>, ref: RefObject<FocusableElement | null>): TableRowAria {
   let {node, isVirtualized} = props;
-  let {rowProps, ...states} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state as TableState<T>, ref);
+  let {rowProps, ...states} = useGridRow<T, ITableCollection<T>, TableState<T>>(props, state as TableState<T>, ref);
   let {direction} = useLocale();
 
   if (isVirtualized && state.treeColumn == null) {

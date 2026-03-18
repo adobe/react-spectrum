@@ -13,4 +13,4 @@
 /// <reference types="css-module-types" />
 
 export {Image} from './Image';
-export type {SpectrumImageProps} from '@react-types/image';
+export type {ImageProps, SpectrumImageProps} from './Image';

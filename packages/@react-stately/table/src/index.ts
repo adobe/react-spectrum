@@ -11,9 +11,14 @@
  */
 
 export type {TableColumnResizeState, TableColumnResizeStateProps} from './useTableColumnResizeState';
-export type {TableState, CollectionBuilderContext, TableStateProps} from './useTableState';
-export type {TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps} from '@react-types/table';
+export type {TableProps, TableState, CollectionBuilderContext, TableStateProps} from './useTableState';
 export type {TreeGridState, TreeGridStateProps} from './useTreeGridState';
+export type {ColumnProps, ColumnSize, ColumnDynamicSize, ColumnStaticSize, ColumnElement, ColumnRenderer} from './Column';
+export type {TableHeaderProps} from './TableHeader';
+export type {TableBodyProps} from './TableBody';
+export type {RowProps, RowElement} from './Row';
+export type {CellProps, CellElement, CellRenderer} from './Cell';
+export type {ITableCollection} from './TableCollection';
 
 export {useTableColumnResizeState} from './useTableColumnResizeState';
 export {useTableState, UNSTABLE_useFilteredTableState} from './useTableState';

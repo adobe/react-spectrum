@@ -458,6 +458,7 @@ export default [{
             FileSystemDirectoryEntry: "readonly",
             FileSystemEntry: "readonly",
             IS_REACT_ACT_ENVIRONMENT: "readonly",
+            globalThis: "readonly",
         },
 
         parser: tseslint.parser,

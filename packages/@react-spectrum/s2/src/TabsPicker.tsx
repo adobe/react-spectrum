@@ -37,6 +37,7 @@ import {
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {controlFont, fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
+import {css} from '../style/style-macro' with {type: 'macro'};
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   FieldLabel
@@ -48,9 +49,8 @@ import {IconContext} from './Icon';
 import {Placement, useLocale} from 'react-aria';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
-import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
-import {useFocusableRef} from '@react-spectrum/utils';
+import {useFocusableRef} from './useDOMRef';
 import {useFormProps} from './Form';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface PickerStyleProps {
@@ -204,7 +204,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                 isQuiet,
                 density
               })}>
-              <SelectValue className={valueStyles + ' ' + raw('&> * {display: none;}')}>
+              <SelectValue className={valueStyles + ' ' + css('&> * {display: none;}')}>
                 {({defaultChildren}) => {
                   return (
                     <Provider
@@ -271,7 +271,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                     }],
                     [TextContext, {
                       slots: {
-                        description: {styles: description({size})}
+                        'description': {styles: description({size, isFocused: false, isDisabled: false})}
                       }
                     }]
                   ]}>

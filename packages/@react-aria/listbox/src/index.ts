@@ -15,7 +15,6 @@ export {useOption} from './useOption';
 export {useListBoxSection} from './useListBoxSection';
 export {listData, getItemId} from './utils';
 
-export type {AriaListBoxProps} from '@react-types/listbox';
-export type {AriaListBoxOptions, ListBoxAria} from './useListBox';
+export type {ListBoxProps, AriaListBoxPropsBase, AriaListBoxProps, AriaListBoxOptions, ListBoxAria} from './useListBox';
 export type {AriaOptionProps, OptionAria} from './useOption';
 export type {AriaListBoxSectionProps, ListBoxSectionAria} from './useListBoxSection';

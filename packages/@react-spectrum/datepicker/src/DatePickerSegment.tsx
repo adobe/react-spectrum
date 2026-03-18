@@ -10,14 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaDatePickerProps, useDateSegment} from '@react-aria/datepicker';
 import {classNames} from '@react-spectrum/utils';
 import {DateFieldState, DateSegment} from '@react-stately/datepicker';
-import {DatePickerBase, DateValue} from '@react-types/datepicker';
 import React, {JSX, useRef} from 'react';
 import styles from './styles.css';
-import {useDateSegment} from '@react-aria/datepicker';
 
-interface DatePickerSegmentProps extends DatePickerBase<DateValue> {
+interface DatePickerSegmentProps extends AriaDatePickerProps<any> {
   segment: DateSegment,
   state: DateFieldState
 }

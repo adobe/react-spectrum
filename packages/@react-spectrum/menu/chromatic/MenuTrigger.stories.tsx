@@ -18,12 +18,11 @@ import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
-import {Item, Menu, MenuTrigger, Section} from '../';
+import {Item, Menu, MenuTrigger, Section, SpectrumMenuTriggerProps} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';
 import {Meta, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {JSX} from 'react';
-import {SpectrumMenuTriggerProps} from '@react-types/menu';
 
 const meta: Meta<SpectrumMenuTriggerProps> = {
   title: 'MenuTrigger',

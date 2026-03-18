@@ -12,8 +12,7 @@
 export {useTab} from './useTab';
 export {useTabPanel} from './useTabPanel';
 export {useTabList} from './useTabList';
-export type {AriaTabListProps, AriaTabPanelProps, AriaTabProps} from '@react-types/tabs';
 export type {Orientation} from '@react-types/shared';
-export type {TabAria} from './useTab';
-export type {TabPanelAria} from './useTabPanel';
-export type {AriaTabListOptions, TabListAria} from './useTabList';
+export type {AriaTabProps, TabAria} from './useTab';
+export type {AriaTabPanelProps, TabPanelAria} from './useTabPanel';
+export type {AriaTabListProps, AriaTabListOptions, TabListAria} from './useTabList';
