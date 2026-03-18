@@ -65,7 +65,7 @@ import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isFirstItem, isNextSelected, isPrevSelected} from './ListView';
+import {isFirstItem, isNextSelected} from './ListView';
 import {LayoutNode} from '@react-stately/layout';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
@@ -371,7 +371,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
               isCheckboxSelection,
               isQuiet
             })}
-            selectionBehavior="toggle"
+            selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
             selectionMode={selectionMode}
             onRowAction={onAction}
             {...otherProps}
@@ -1003,7 +1003,7 @@ const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean, isTreeC
       // isFirstItem: '[inset -1px 0 0 var(--borderColorGray), inset 0px 1px 0px var(--borderColorBlue)]'
     }
   },
-  zIndex: -1,
+  zIndex: -1
   // borderColor: {
   //   default: 'gray-300',
   //   forcedColors: 'ButtonBorder'
@@ -1579,15 +1579,7 @@ const row = style({
   // kinda unfortunate but the border is really only needed for the first item case. the issue is related to the divider
   // essentially, the gray box shadow from the divider would appear on top of the blue box shadow but only for the first item
   // in order for it to be on the bottom, i used border...couldn't figure out why this was only happening with box shadow
-  borderTopWidth: {
-    default: 0,
-    // selectionStyle: {
-    //   highlight: {
-    //     default: 0,
-    //     isFirstItem: 1
-    //   }
-    // }
-  },
+  borderTopWidth: 0,
   borderBottomWidth: {
     selectionStyle: {
       highlight: 0,
@@ -1600,7 +1592,7 @@ const row = style({
   borderColor: {
     selectionStyle: {
       highlight: {
-        default: 'transparent',
+        default: 'transparent'
         // isFirstItem: {
         //   default: 'transparent',
         //   isSelected: 'blue-900'
@@ -1630,7 +1622,7 @@ const row = style({
           default: '[inset 0px -1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]',
           isNextSelected: '[inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue), inset 0px -1px 0px var(--borderColorGray)]',
           isFirstItem: {
-            default: '[inset 0px -1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]',
+            default: '[inset 0px 1px 0px var(--borderColorBlue), inset 0px -1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]',
             isNextSelected: '[inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px 0px var(--borderColorBlue), inset 0px -1px 0px var(--borderColorGray)]'
           }
         }
@@ -1643,6 +1635,8 @@ const row = style({
       default: 'calc(self(height) - 1px)'
     }
   },
+  isolation: 'isolate',
+  zIndex: 3,
   forcedColorAdjust: 'none'
 });
 
@@ -1652,7 +1646,7 @@ const border = raw(
     width: 100%;
     height: 100%;
     top: 0;
-    left: 0;
+    inset-inline-start: 0;
     z-index: 3;
     position: absolute;
     box-sizing: border-box;
@@ -1662,6 +1656,7 @@ const border = raw(
     border-inline-end-width: 0px;
     border-style: solid;
     border-color: var(--borderColorBlue);
+    }
   `
 );
 
@@ -1693,13 +1688,12 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         ...tableVisualOptions,
         selectionStyle,
         isNextSelected: isNextSelected(id, renderProps.state),
-        isPrevSelected: isPrevSelected(id, renderProps.state),
         isFirstItem: isFirstItem(id, renderProps.state)
       }) + (renderProps.isFocusVisible ? ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: var(--focusIndicatorHeight); margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')
       + (isFirstItem(id, renderProps.state) && renderProps.isSelected && selectionStyle === 'highlight' ? ' ' + border : '')
       }
       {...otherProps}>
-      {selectionMode !== 'none' && selectionBehavior === 'toggle' && selectionStyle === 'checkbox' && (
+      {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
       // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
       // The `spread` otherProps must be after className in Cell.
       // @ts-ignore
