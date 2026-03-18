@@ -16,12 +16,12 @@ import {Button} from '../src/Button';
 import {Checkbox} from '../src/Checkbox';
 import {Collection} from 'react-aria/private/collections/CollectionBuilder';
 import {composeStories} from '@storybook/react';
-import {DataTransfer, DragEvent} from '/packages/react-aria/test/dnd/mocks';
+// @ts-ignore
+import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {ListLayout} from 'react-stately/private/layout/ListLayout';
 import React from 'react';
 import * as stories from '../stories/Tree.stories';
-// @ts-ignore
 import {Text} from '../src/Text';
 import {Tree, TreeHeader, TreeItem, TreeItemContent, TreeLoadMoreItem, TreeSection} from '../src/Tree';
 import {User} from '@react-aria/test-utils';
