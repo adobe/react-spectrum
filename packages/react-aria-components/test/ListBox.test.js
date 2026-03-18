@@ -2007,3 +2007,40 @@ describe('ListBox', () => {
     });
   }
 });
+
+describe('keyboard modifier keys', () => {
+  let user;
+  let platformMock;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+  // selectionMode: 'none', 'single', 'multiple'
+  // selectionBehavior: 'toggle', 'replace'
+  // platform: 'mac', 'windows'
+
+  // modifier key: 'alt', 'ctrl', 'meta', 'shift'
+  // key: 'arrow-up', 'arrow-down', 'arrow-left', 'arrow-right', 'home', 'end', 'page-up', 'page-down', 'enter', 'space', 'tab'
+  // expected behavior: 'navigate', 'select', 'toggle', 'replace'
+  describe('mac', () => {
+    beforeAll(() => {
+      platformMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Mac');
+    });
+    afterAll(() => {
+      platformMock.mockRestore();
+    });
+    it('should not navigate when using unsupported modifier keys', async () => {
+      let {getByRole} = renderListbox({selectionMode: 'none'});
+      await user.tab();
+      let listbox = getByRole('listbox');
+      let options = within(listbox).getAllByRole('option');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(options[1]);
+      await user.keyboard('{Meta>}{ArrowDown}{/Meta}');
+      expect(document.activeElement).toBe(options[1]);
+      await user.keyboard('{Meta>}{ArrowUp}{/Meta}');
+      expect(document.activeElement).toBe(options[1]);
+      await user.keyboard('{Control>}{Home}{/Control}');
+      expect(document.activeElement).toBe(options[1]);
+    });
+  });
+});

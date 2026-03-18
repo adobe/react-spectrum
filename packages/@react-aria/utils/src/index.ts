@@ -49,6 +49,20 @@ export {useLoadMoreSentinel, useLoadMoreSentinel as UNSTABLE_useLoadMoreSentinel
 export {inertValue} from './inertValue';
 export {CLEAR_FOCUS_EVENT, FOCUS_EVENT} from './constants';
 export {isCtrlKeyPressed, willOpenKeyboard} from './keyboard';
+export {
+  canonicalKeyboardShortcut,
+  createKeyboardShortcutHandler,
+  keyboardEventMatchesShortcut,
+  keyboardEventToCanonicalShortcut,
+  modifierSetFromEvent,
+  modifierSetFromParsed,
+  parseKeyboardShortcut
+} from './createKeyboardShortcutHandler';
+export type {
+  KeyboardShortcutAction,
+  KeyboardShortcutBindings,
+  ParsedKeyboardShortcut
+} from './createKeyboardShortcutHandler';
 export {useEnterAnimation, useExitAnimation} from './animation';
 export {isFocusable, isTabbable} from './isFocusable';
 export {getNonce} from './getNonce';

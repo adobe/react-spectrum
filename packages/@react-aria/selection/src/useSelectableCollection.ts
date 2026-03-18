@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, getEventTarget, isCtrlKeyPressed, isFocusWithin, isTabbable, mergeProps, nodeContains, scrollIntoView, scrollIntoViewport, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, createKeyboardShortcutHandler, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, getEventTarget, isAppleDevice, isCtrlKeyPressed, isFocusWithin, isTabbable, mergeProps, nodeContains, scrollIntoView, scrollIntoViewport, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
 import {dispatchVirtualFocus, getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
@@ -137,7 +137,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       return;
     }
 
-    const navigateToKey = (key: Key | undefined, childFocus?: FocusStrategy) => {
+    const navigateToKey = (key: Key | undefined, childFocus?: FocusStrategy): boolean => {
       if (key != null) {
         if (manager.isLink(key) && linkBehavior === 'selection' && selectOnFocus && !isNonContiguousSelectionModifier(e)) {
           // Set focused key and re-render synchronously to bring item into view if needed.
@@ -149,56 +149,96 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
           let itemProps = manager.getItemProps(key);
           if (item) {
             router.open(item, e, itemProps.href, itemProps.routerOptions);
+            return true;
           }
 
-          return;
+          return false;
         }
 
         manager.setFocusedKey(key, childFocus);
 
         if (manager.isLink(key) && linkBehavior === 'override') {
-          return;
+          return false;
         }
 
         if (e.shiftKey && manager.selectionMode === 'multiple') {
           manager.extendSelection(key);
+          return true;
         } else if (selectOnFocus && !isNonContiguousSelectionModifier(e)) {
           manager.replaceSelection(key);
+          return true;
         }
       }
+      return false;
     };
 
+    let arrowDown = () => {
+      if (delegate.getKeyBelow) {
+        let nextKey = manager.focusedKey != null
+            ? delegate.getKeyBelow?.(manager.focusedKey)
+            : delegate.getFirstKey?.();
+        if (nextKey == null && shouldFocusWrap) {
+          nextKey = delegate.getFirstKey?.(manager.focusedKey);
+        }
+        if (nextKey != null) {
+          return navigateToKey(nextKey);
+        }
+      }
+      return false;
+    };
+
+    let arrowUp = () => {
+      if (delegate.getKeyAbove) {
+        let nextKey = manager.focusedKey != null
+            ? delegate.getKeyAbove?.(manager.focusedKey)
+            : delegate.getLastKey?.();
+        if (nextKey == null && shouldFocusWrap) {
+          nextKey = delegate.getLastKey?.(manager.focusedKey);
+        }
+        if (nextKey != null) {
+          return navigateToKey(nextKey);
+        }
+      }
+      return false;
+    };
+
+    let home = () => {
+      if (delegate.getFirstKey) {
+        if (manager.focusedKey === null && e.shiftKey) {
+          return false;
+        }
+        let firstKey: Key | null = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
+        manager.setFocusedKey(firstKey);
+        if (firstKey != null) {
+          if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
+            manager.extendSelection(firstKey);
+            return true;
+          } else if (selectOnFocus) {
+            manager.replaceSelection(firstKey);
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+
+    let keySwitch = createKeyboardShortcutHandler({
+      [isAppleDevice() ? 'ArrowDown+Shift+Alt' : 'ArrowDown+Shift+Ctrl']: () => arrowDown(),
+      'ArrowDown+Shift': () => arrowDown(),
+      [isAppleDevice() ? 'ArrowDown+Alt' : 'ArrowDown+Ctrl']: () => arrowDown(),
+      'ArrowDown': () => arrowDown(),
+      [isAppleDevice() ? 'ArrowUp+Shift+Alt' : 'ArrowUp+Shift+Ctrl']: () => arrowUp(),
+      'ArrowUp+Shift': () => arrowUp(),
+      [isAppleDevice() ? 'ArrowUp+Alt' : 'ArrowUp+Ctrl']: () => arrowUp(),
+      'ArrowUp': () => arrowUp(),
+      [isAppleDevice() ? 'Home+Shift+Alt' : 'Home+Shift+Ctrl']: () => home(),
+      'Home+Shift': () => home(),
+      [isAppleDevice() ? 'Home+Alt' : 'Home+Ctrl']: () => home(),
+      'Home': () => home()
+    });
+    keySwitch(e as any);
+
     switch (e.key) {
-      case 'ArrowDown': {
-        if (delegate.getKeyBelow) {
-          let nextKey = manager.focusedKey != null
-              ? delegate.getKeyBelow?.(manager.focusedKey)
-              : delegate.getFirstKey?.();
-          if (nextKey == null && shouldFocusWrap) {
-            nextKey = delegate.getFirstKey?.(manager.focusedKey);
-          }
-          if (nextKey != null) {
-            e.preventDefault();
-            navigateToKey(nextKey);
-          }
-        }
-        break;
-      }
-      case 'ArrowUp': {
-        if (delegate.getKeyAbove) {
-          let nextKey = manager.focusedKey != null
-              ? delegate.getKeyAbove?.(manager.focusedKey)
-              : delegate.getLastKey?.();
-          if (nextKey == null && shouldFocusWrap) {
-            nextKey = delegate.getLastKey?.(manager.focusedKey);
-          }
-          if (nextKey != null) {
-            e.preventDefault();
-            navigateToKey(nextKey);
-          }
-        }
-        break;
-      }
       case 'ArrowLeft': {
         if (delegate.getKeyLeftOf) {
           let nextKey: Key | undefined | null = manager.focusedKey != null ? delegate.getKeyLeftOf?.(manager.focusedKey) : delegate.getFirstKey?.();
@@ -225,23 +265,6 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         }
         break;
       }
-      case 'Home':
-        if (delegate.getFirstKey) {
-          if (manager.focusedKey === null && e.shiftKey) {
-            return;
-          }
-          e.preventDefault();
-          let firstKey: Key | null = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
-          manager.setFocusedKey(firstKey);
-          if (firstKey != null) {
-            if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
-              manager.extendSelection(firstKey);
-            } else if (selectOnFocus) {
-              manager.replaceSelection(firstKey);
-            }
-          }
-        }
-        break;
       case 'End':
         if (delegate.getLastKey) {
           if (manager.focusedKey === null && e.shiftKey) {
