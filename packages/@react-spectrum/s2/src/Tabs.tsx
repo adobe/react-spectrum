@@ -16,30 +16,35 @@ import {
   TabPanelProps as AriaTabPanelProps,
   TabProps as AriaTabProps,
   TabsProps as AriaTabsProps,
-  ContextValue,
-  Group,
-  Provider,
   Tab as RACTab,
   TabList as RACTabList,
   Tabs as RACTabs,
-  SelectionIndicator,
   TabListStateContext,
   TabRenderProps
-} from 'react-aria-components';
+} from 'react-aria-components/Tabs';
+
 import {baseColor, focusRing, size, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, GlobalDOMAttributes, Key, Node, Orientation, RefObject} from '@react-types/shared';
-import {CollectionBuilder} from '@react-aria/collections';
+import {CollectionBuilder} from 'react-aria/private/collections/CollectionBuilder';
+import {ContextValue, Provider} from 'react-aria-components/utils';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {Group} from 'react-aria-components/Group';
 import {IconContext} from './Icon';
-import {inertValue, useEffectEvent, useId, useLabels, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {inertValue} from 'react-aria/private/utils/inertValue';
 import {Picker, PickerItem} from './TabsPicker';
+import {SelectionIndicator} from 'react-aria-components/SelectionIndicator';
 import {Text, TextContext} from './Content';
-import {useControlledState} from '@react-stately/utils';
+import {useControlledState} from 'react-stately/private/utils/useControlledState';
 import {useDOMRef} from './useDOMRef';
-import {useHasTabbableChild} from '@react-aria/focus';
-import {useLocale} from '@react-aria/i18n';
+import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
+import {useHasTabbableChild} from 'react-aria/private/focus/useHasTabbableChild';
+import {useId} from 'react-aria/useId';
+import {useLabels} from 'react-aria/private/utils/useLabels';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>, UnsafeStyles {

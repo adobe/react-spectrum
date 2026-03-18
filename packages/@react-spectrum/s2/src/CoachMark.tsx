@@ -11,24 +11,20 @@
  * governing permissions and limitations under the License.
  */
 import {ActionMenuContext} from './ActionMenu';
+
 import {
   DialogTriggerProps as AriaDialogTriggerProps,
-  Popover as AriaPopover,
-  ContextValue,
-  DEFAULT_SLOT,
   DialogContext,
-  OverlayTriggerStateContext,
-  PopoverContext,
-  PopoverProps,
-  Provider,
-  RootMenuTriggerStateContext,
-  useContextProps
-} from 'react-aria-components';
+  OverlayTriggerStateContext
+} from 'react-aria-components/Dialog';
+
+import {Popover as AriaPopover, PopoverContext, PopoverProps} from 'react-aria-components/Popover';
 import {ButtonContext} from './Button';
 import {Card} from './Card';
 import {CheckboxContext} from './Checkbox';
 import {ColorSchemeContext} from './Provider';
 import {ContentContext, FooterContext, KeyboardContext, TextContext} from './Content';
+import {ContextValue, DEFAULT_SLOT, Provider, useContextProps} from 'react-aria-components/utils';
 import {
   createContext,
   ForwardedRef,
@@ -45,12 +41,15 @@ import {GlobalDOMAttributes} from '@react-types/shared';
 import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
 import {mergeStyles} from '../style/runtime';
-import {PressResponder} from '@react-aria/interactions';
+import {PressResponder} from 'react-aria/private/interactions/PressResponder';
+import {RootMenuTriggerStateContext} from 'react-aria-components/Menu';
 import {setColorScheme, space, style} from '../style' with {type: 'macro'};
 import {SliderContext} from './Slider';
-import {useId, useObjectRef, useOverlayTrigger} from 'react-aria';
-import {useLayoutEffect} from '@react-aria/utils';
-import {useMenuTriggerState} from 'react-stately';
+import {useId} from 'react-aria/useId';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useMenuTriggerState} from 'react-stately/useMenuTriggerState';
+import {useObjectRef} from 'react-aria/useObjectRef';
+import {useOverlayTrigger} from 'react-aria/useOverlayTrigger';
 
 export interface CoachMarkProps extends Omit<PopoverProps, 'children' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'isNonModal' | keyof GlobalDOMAttributes>, StyleProps {
   /** The children of the coach mark. */

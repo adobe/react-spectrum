@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextualHelp} from '../src';
+import {ContextualHelp} from '../src/ContextualHelp';
 
 import type {Meta} from '@storybook/react';
 

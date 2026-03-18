@@ -12,16 +12,11 @@
 
 /// <reference types="css-module-types" />
 
-export {
-  TableView,
-  TableHeader,
-  TableBody,
-  Column,
-  Section,
-  Row,
-  Cell
-} from './TableView';
+export {TableView, TableHeader, TableBody, Column, Section, Row, Cell} from '@adobe/react-spectrum/TableView';
 
-export type {SpectrumColumnProps} from './types';
-export type {TableHeaderProps, TableBodyProps, RowProps, CellProps} from '@react-stately/table';
-export type {SpectrumTableProps} from './TableView';
+export type {SpectrumColumnProps} from '@adobe/react-spectrum/private/table/types';
+export type {SpectrumTableProps} from '@adobe/react-spectrum/TableView';
+export type {TableHeaderProps} from 'react-stately/TableHeader';
+export type {TableBodyProps} from 'react-stately/TableBody';
+export type {RowProps} from 'react-stately/Row';
+export type {CellProps} from 'react-stately/Cell';

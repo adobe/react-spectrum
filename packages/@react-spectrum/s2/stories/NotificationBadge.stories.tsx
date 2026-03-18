@@ -11,7 +11,7 @@
  */
 
 import type {Meta, StoryObj} from '@storybook/react';
-import {NotificationBadge} from '../src';
+import {NotificationBadge} from '../src/NotificationBadge';
 
 const meta: Meta<typeof NotificationBadge> = {
   component: NotificationBadge,

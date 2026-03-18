@@ -12,36 +12,43 @@
 
 import {
   DropIndicatorProps as AriaDropIndicatorProps,
-  DraggableCollectionOptions,
-  DraggableItemProps,
-  DraggableItemResult,
-  DragItem,
-  DragPreview,
   DropIndicatorAria,
   DroppableCollectionOptions,
   DroppableCollectionResult,
   DroppableItemOptions,
   DroppableItemResult,
-  DropTarget,
-  DropTargetDelegate,
-  ListDropTargetDelegate,
-  useDraggableCollection,
-  useDraggableItem,
   useDropIndicator,
   useDroppableCollection,
   useDroppableItem
-} from 'react-aria';
+} from 'react-aria/useDroppableCollection';
+
+import {
+  DraggableCollectionOptions,
+  DraggableItemProps,
+  DraggableItemResult,
+  useDraggableCollection,
+  useDraggableItem
+} from 'react-aria/useDraggableCollection';
+
 import {DraggableCollectionProps, DroppableCollectionProps, Key, RefObject} from '@react-types/shared';
 import {
   DraggableCollectionState,
   DraggableCollectionStateOptions,
+  useDraggableCollectionState
+} from 'react-stately/useDraggableCollectionState';
+import {DragItem, DropTarget, DropTargetDelegate} from '@react-types/shared';
+import {DragPreview} from 'react-aria/DragPreview';
+
+import {
   DroppableCollectionState,
   DroppableCollectionStateOptions,
-  useDraggableCollectionState,
   useDroppableCollectionState
-} from 'react-stately';
-import {isVirtualDragging} from '@react-aria/dnd';
+} from 'react-stately/useDroppableCollectionState';
+
+import {isVirtualDragging} from 'react-aria/private/dnd/DragManager';
+
 import {JSX, useMemo} from 'react';
+import {ListDropTargetDelegate} from 'react-aria/ListDropTargetDelegate';
 
 export {DropIndicator, DropIndicatorContext, DragAndDropContext} from './DragAndDrop';
 export type {DropIndicatorProps, DropIndicatorRenderProps} from './DragAndDrop';

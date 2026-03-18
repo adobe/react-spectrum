@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaAutocompleteProps, useAutocomplete} from '@react-aria/autocomplete';
+import {AriaAutocompleteProps, useAutocomplete} from 'react-aria/private/autocomplete/useAutocomplete';
 import {AriaLabelingProps, DOMProps, FocusableElement, FocusEvents, KeyboardEvents, Node, ValueBase} from '@react-types/shared';
-import {AriaTextFieldProps} from 'react-aria';
-import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
+import {AriaTextFieldProps} from 'react-aria/useTextField';
+import {AutocompleteState, useAutocompleteState} from 'react-stately/private/autocomplete/useAutocompleteState';
 import {ContextValue, Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, JSX, useRef} from 'react';
 
 export interface AutocompleteProps<T = object> extends AriaAutocompleteProps<T>, SlotProps {}

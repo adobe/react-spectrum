@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorArea} from '../src';
+import {ColorArea} from '../src/ColorArea';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof ColorArea> = {

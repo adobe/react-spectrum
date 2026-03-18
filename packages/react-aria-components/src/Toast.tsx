@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToastProps, AriaToastRegionProps, mergeProps, useFocusRing, useHover, useLocale, useToast, useToastRegion} from 'react-aria';
+import {AriaToastProps, AriaToastRegionProps, useToast, useToastRegion} from 'react-aria/useToast';
+
 import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
@@ -25,13 +26,18 @@ import {
   useRenderProps
 } from './utils';
 import {createPortal} from 'react-dom';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
-import {QueuedToast, ToastQueue, ToastState, useToastQueue} from 'react-stately';
+import {mergeProps} from 'react-aria/mergeProps';
+import {QueuedToast, ToastQueue, ToastState, useToastQueue} from 'react-stately/useToastState';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, useContext} from 'react';
 import {TextContext} from './Text';
-import {useIsSSR} from '@react-aria/ssr';
-import {useUNSAFE_PortalContext} from '@react-aria/overlays';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {useIsSSR} from 'react-aria/SSRProvider';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useObjectRef} from 'react-aria/useObjectRef';
+import {useUNSAFE_PortalContext} from 'react-aria/PortalProvider';
 
 const ToastStateContext = createContext<ToastState<any> | null>(null);
 

@@ -11,7 +11,7 @@
  */
 
 import type {Meta, StoryObj} from '@storybook/react';
-import {StatusLight} from '../src';
+import {StatusLight} from '../src/StatusLight';
 import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof StatusLight> = {

@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorThumb, ColorWheel, ColorWheelTrack} from '../src';
+import {ColorThumb} from '../src/ColorThumb';
+
+import {ColorWheel, ColorWheelTrack} from '../src/ColorWheel';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import './styles.css';

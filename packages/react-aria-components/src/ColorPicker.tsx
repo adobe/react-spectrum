@@ -11,14 +11,21 @@
  */
 
 import {ChildrenOrFunction, Provider, SlotProps, SlottedContextValue, useRenderProps, useSlottedContext} from './utils';
-import {Color, ColorPickerState, ColorPickerProps as StatelyColorPickerProps, useColorPickerState} from 'react-stately';
+import {Color} from 'react-stately/private/color/types';
+
 import {ColorAreaContext} from './ColorArea';
+
 import {ColorFieldContext} from './ColorField';
+import {
+  ColorPickerState,
+  ColorPickerProps as StatelyColorPickerProps,
+  useColorPickerState
+} from 'react-stately/useColorPickerState';
 import {ColorSliderContext} from './ColorSlider';
 import {ColorSwatchContext} from './ColorSwatch';
 import {ColorSwatchPickerContext} from './ColorSwatchPicker';
 import {ColorWheelContext} from './ColorWheel';
-import {mergeProps} from 'react-aria';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, JSX} from 'react';
 
 export interface ColorPickerRenderProps {

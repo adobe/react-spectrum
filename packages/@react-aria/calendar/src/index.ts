@@ -10,14 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-export {useCalendar} from './useCalendar';
-export {useRangeCalendar} from './useRangeCalendar';
-export {useCalendarGrid} from './useCalendarGrid';
-export {useCalendarCell} from './useCalendarCell';
+export {useCalendar, useCalendarGrid, useCalendarCell} from 'react-aria/useCalendar';
 
-export type {AriaCalendarProps} from './useCalendar';
-export type {AriaRangeCalendarProps} from './useRangeCalendar';
-export type {CalendarProps, DateValue, RangeCalendarProps} from '@react-stately/calendar';
-export type {CalendarAria} from './useCalendarBase';
-export type {AriaCalendarGridProps, CalendarGridAria} from './useCalendarGrid';
-export type {AriaCalendarCellProps, CalendarCellAria} from './useCalendarCell';
+export {useRangeCalendar} from 'react-aria/useRangeCalendar';
+export type {AriaCalendarProps, AriaCalendarGridProps, CalendarGridAria, AriaCalendarCellProps, CalendarCellAria} from 'react-aria/useCalendar';
+export type {AriaRangeCalendarProps} from 'react-aria/useRangeCalendar';
+export type {CalendarAria} from 'react-aria/private/calendar/useCalendarBase';
+export type {CalendarProps} from 'react-stately/useCalendarState';
+export type {DateValue} from 'react-stately/private/calendar/types';
+export type {RangeCalendarProps} from 'react-stately/useRangeCalendarState';

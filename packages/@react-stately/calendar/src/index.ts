@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-export {useCalendarState} from './useCalendarState';
-export {useRangeCalendarState} from './useRangeCalendarState';
+export {useCalendarState} from 'react-stately/useCalendarState';
 
-export type {CalendarProps, CalendarStateOptions} from './useCalendarState';
-export type {DateRange, RangeCalendarProps, RangeCalendarStateOptions} from './useRangeCalendarState';
-export type {CalendarPropsBase, CalendarState, DateValue, PageBehavior, RangeCalendarState} from './types'; 
+export {useRangeCalendarState} from 'react-stately/useRangeCalendarState';
+export type {CalendarProps, CalendarStateOptions} from 'react-stately/useCalendarState';
+export type {DateRange, RangeCalendarProps, RangeCalendarStateOptions} from 'react-stately/useRangeCalendarState';
+export type {CalendarPropsBase, CalendarState, DateValue, PageBehavior, RangeCalendarState} from 'react-stately/private/calendar/types';

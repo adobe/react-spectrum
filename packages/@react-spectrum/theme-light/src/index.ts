@@ -11,4 +11,4 @@
  */
 
 /// <reference types="css-module-types" />
-export {lightTheme as theme} from './lightTheme';
+export {lightTheme as theme} from '@adobe/react-spectrum/lightTheme';

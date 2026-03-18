@@ -11,7 +11,10 @@
  */
 
 import {act, pointerMap, render, User} from '@react-spectrum/test-utils-internal';
-import {Checkbox, CheckboxGroup, Form, Provider} from '../src';
+import {Checkbox} from '../src/Checkbox';
+import {CheckboxGroup} from '../src/CheckboxGroup';
+import {Form} from '../src/Form';
+import {Provider} from '../src/Provider';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 

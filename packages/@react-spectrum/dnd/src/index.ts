@@ -12,31 +12,9 @@
 
 /// <reference types="css-module-types" />
 
-export type {DragAndDropOptions, DragAndDropHooks} from './useDragAndDrop';
-export {useDragAndDrop} from './useDragAndDrop';
-export {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
+export {useDragAndDrop} from '@adobe/react-spectrum/useDragAndDrop';
 
-export type {
-  DirectoryDropItem,
-  DraggableCollectionEndEvent,
-  DraggableCollectionMoveEvent,
-  DraggableCollectionStartEvent,
-  DragPreviewRenderer,
-  DragTypes,
-  DropItem,
-  DropOperation,
-  DroppableCollectionDropEvent,
-  DroppableCollectionEnterEvent,
-  DroppableCollectionExitEvent,
-  DroppableCollectionInsertDropEvent,
-  DroppableCollectionMoveEvent,
-  DroppableCollectionOnItemDropEvent,
-  DroppableCollectionReorderEvent,
-  DroppableCollectionRootDropEvent,
-  DropPosition,
-  DropTarget,
-  FileDropItem,
-  ItemDropTarget,
-  RootDropTarget,
-  TextDropItem
-} from '@react-types/shared';
+export type {DragAndDropOptions, DragAndDropHooks} from '@adobe/react-spectrum/useDragAndDrop';
+export {DIRECTORY_DRAG_TYPE} from 'react-aria/private/dnd/utils';
+
+export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-types/shared';

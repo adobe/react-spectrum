@@ -10,11 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, FieldError, Form, Input, Label, TextField} from 'react-aria-components';
-import {classNames} from '@react-spectrum/utils';
+import {Button} from '../src/Button';
+
+import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
+import {FieldError} from '../src/FieldError';
+import {Form} from '../src/Form';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
+import {TextField} from '../src/TextField';
 import './styles.css';
 
 export default {

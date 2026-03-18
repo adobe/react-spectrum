@@ -12,7 +12,7 @@
 'use client';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 import Wallet_L from 'illustration:./S2_fill_wallet_generic1_160.svg';
 import Wallet_M from 'illustration:./S2_fill_wallet_generic1_96.svg';
 import Wallet_S from 'illustration:./S2_fill_wallet_generic1_48.svg';

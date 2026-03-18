@@ -11,7 +11,7 @@
  */
 
 import {action} from 'storybook/actions';
-import {Breadcrumb, Breadcrumbs, BreadcrumbsProps} from '../src';
+import {Breadcrumb, Breadcrumbs, BreadcrumbsProps} from '../src/Breadcrumbs';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof Breadcrumbs> = {

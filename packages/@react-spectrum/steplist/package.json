@@ -6,13 +6,16 @@
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "source": "./src/index.ts",
-    "types": [
-      "./dist/types.d.ts",
-      "./src/index.ts"
-    ],
-    "import": "./dist/import.mjs",
-    "require": "./dist/main.js"
+    ".": {
+      "source": "./src/index.ts",
+      "types": [
+        "./dist/types.d.ts",
+        "./src/index.ts"
+      ],
+      "import": "./dist/import.mjs",
+      "require": "./dist/main.js"
+    },
+    "./package.json": "./package.json"
   },
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
@@ -24,40 +27,21 @@
     "*.css"
   ],
   "targets": {
-    "main": {
-      "includeNodeModules": [
-        "@adobe/spectrum-css-temp"
-      ]
-    },
-    "module": {
-      "includeNodeModules": [
-        "@adobe/spectrum-css-temp"
-      ]
-    }
+    "types": false
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.21.5",
-    "@react-aria/i18n": "^3.12.16",
-    "@react-aria/interactions": "^3.27.1",
-    "@react-aria/steplist": "3.0.0-alpha.25",
-    "@react-aria/utils": "^3.33.1",
-    "@react-aria/visually-hidden": "^3.8.31",
-    "@react-spectrum/utils": "^3.12.12",
-    "@react-stately/collections": "^3.12.10",
-    "@react-stately/steplist": "3.0.0-alpha.21",
-    "@react-types/shared": "^3.33.1",
-    "@spectrum-icons/ui": "^3.6.23",
-    "@swc/helpers": "^0.5.0"
+    "@swc/helpers": "^0.5.0",
+    "@adobe/react-spectrum": "^3.46.2",
+    "react-stately": "^3.45.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
   },
   "peerDependencies": {
-    "@react-spectrum/provider": "^3.0.0",
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
     "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   },

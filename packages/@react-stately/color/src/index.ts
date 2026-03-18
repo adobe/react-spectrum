@@ -10,20 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-export type {ColorAreaProps, ColorAreaState} from './useColorAreaState';
-export type {ColorSliderProps, ColorSliderState} from './useColorSliderState';
-export type {ColorWheelProps, ColorWheelState} from './useColorWheelState';
-export type {ColorFieldProps, ColorFieldState} from './useColorFieldState';
-export type {ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions} from './useColorChannelFieldState';
-export type {ColorPickerProps, ColorPickerState} from './useColorPickerState';
+export {parseColor, getColorChannels} from 'react-stately/Color';
 
-export {parseColor, getColorChannels} from './Color';
-export {useColorAreaState} from './useColorAreaState';
-export {useColorSliderState} from './useColorSliderState';
-export {useColorWheelState} from './useColorWheelState';
-export {useColorFieldState} from './useColorFieldState';
-export {useColorChannelFieldState} from './useColorChannelFieldState';
-export {useColorPickerState} from './useColorPickerState';
-
-export type {Color, ColorChannel, ColorFormat, ColorSpace, ColorAxes, ColorChannelRange} from './types';
-export type {ColorSliderStateOptions} from './useColorSliderState';
+export {useColorAreaState} from 'react-stately/useColorAreaState';
+export {useColorSliderState} from 'react-stately/useColorSliderState';
+export {useColorWheelState} from 'react-stately/useColorWheelState';
+export {useColorFieldState, useColorChannelFieldState} from 'react-stately/useColorFieldState';
+export {useColorPickerState} from 'react-stately/useColorPickerState';
+export type {ColorAreaProps, ColorAreaState} from 'react-stately/useColorAreaState';
+export type {ColorSliderProps, ColorSliderState, ColorSliderStateOptions} from 'react-stately/useColorSliderState';
+export type {ColorWheelProps, ColorWheelState} from 'react-stately/useColorWheelState';
+export type {ColorFieldProps, ColorFieldState, ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions} from 'react-stately/useColorFieldState';
+export type {ColorPickerProps, ColorPickerState} from 'react-stately/useColorPickerState';
+export type {Color, ColorChannel, ColorFormat, ColorSpace, ColorAxes, ColorChannelRange} from 'react-stately/private/color/types';

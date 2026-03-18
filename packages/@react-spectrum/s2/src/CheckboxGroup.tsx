@@ -12,10 +12,11 @@
 
 import {
   CheckboxGroup as AriaCheckboxGroup,
-  CheckboxGroupProps as AriaCheckboxGroupProps,
-  ContextValue
-} from 'react-aria-components';
+  CheckboxGroupProps as AriaCheckboxGroupProps
+} from 'react-aria-components/Checkbox';
+
 import {CheckboxContext} from './Checkbox';
+import {ContextValue} from 'react-aria-components/utils';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};

@@ -17,8 +17,9 @@ import ListBulleted from '../s2wf-icons/S2_Icon_ListBulleted_20_N.svg';
 import ListMultiSelect from '../s2wf-icons/S2_Icon_ListMultiSelect_20_N.svg';
 import ListNumbered from '../s2wf-icons/S2_Icon_ListNumbered_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
-import {SegmentedControl, SegmentedControlItem, Text} from '../src';
+import {SegmentedControl, SegmentedControlItem} from '../src/SegmentedControl';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {Text} from '../src/Content';
 
 const meta: Meta<typeof SegmentedControl> = {
   component: SegmentedControl,

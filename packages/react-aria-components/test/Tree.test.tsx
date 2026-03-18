@@ -12,15 +12,22 @@
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
 import {AriaTreeTests} from './AriaTree.test-util';
-import {Button, Checkbox, Collection, DropIndicator, ListLayout, Text, Tree, TreeHeader, TreeItem, TreeItemContent, TreeLoadMoreItem, TreeSection, useDragAndDrop, Virtualizer} from '../';
+import {Button} from '../src/Button';
+import {Checkbox} from '../src/Checkbox';
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
 import {composeStories} from '@storybook/react';
-// @ts-ignore
-import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
+import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
+import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
+import {ListLayout} from 'react-stately/private/layout/ListLayout';
 import React from 'react';
 import * as stories from '../stories/Tree.stories';
+// @ts-ignore
+import {Text} from '../src/Text';
+import {Tree, TreeHeader, TreeItem, TreeItemContent, TreeLoadMoreItem, TreeSection} from '../src/Tree';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
-import {useTreeData} from 'react-stately';
+import {useTreeData} from 'react-stately/useTreeData';
+import {Virtualizer} from '../src/Virtualizer';
 
 let {
   EmptyTreeStaticStory: EmptyLoadingTree,

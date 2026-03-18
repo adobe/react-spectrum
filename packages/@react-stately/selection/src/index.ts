@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export type {MultipleSelectionStateProps} from './useMultipleSelectionState';
-export type {FocusState, SingleSelectionState, MultipleSelectionState, MultipleSelectionManager} from './types';
-export {useMultipleSelectionState} from './useMultipleSelectionState';
-export {SelectionManager} from './SelectionManager';
+export {useMultipleSelectionState} from 'react-stately/useMultipleSelectionState';
+
+export {SelectionManager} from 'react-stately/private/selection/SelectionManager';
+export type {MultipleSelectionStateProps} from 'react-stately/useMultipleSelectionState';
+export type {FocusState, SingleSelectionState, MultipleSelectionState, MultipleSelectionManager} from 'react-stately/private/selection/types';

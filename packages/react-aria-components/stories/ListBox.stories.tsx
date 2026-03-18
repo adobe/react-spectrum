@@ -11,15 +11,26 @@
  */
 
 import {action} from 'storybook/actions';
-import {Collection, DragAndDropHooks, DropIndicator, GridLayout, Header, isTextDropItem, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
-import {ListBoxLoadMoreItem} from '../';
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {DragAndDropHooks, DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
+import {GridLayout} from 'react-stately/private/layout/GridLayout';
+import {Header} from '../src/Header';
+import {isTextDropItem} from 'react-aria/private/dnd/utils';
+import {ListBox, ListBoxItem, ListBoxProps, ListBoxSection} from '../src/ListBox';
+import {ListBoxLoadMoreItem} from '../src/ListBox';
+import {ListLayout} from 'react-stately/private/layout/ListLayout';
 import {LoadingSpinner, MyHeader, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, useState} from 'react';
-import {Size} from '@react-stately/virtualizer';
+import {Separator} from '../src/Separator';
+import {Size} from 'react-stately/private/virtualizer/Size';
 import styles from '../example/index.css';
+import {Text} from '../src/Text';
+import {useAsyncList} from 'react-stately/useAsyncList';
+import {useListData} from 'react-stately/useListData';
+import {Virtualizer} from '../src/Virtualizer';
+import {WaterfallLayout} from 'react-stately/private/layout/WaterfallLayout';
 import './styles.css';
-import {useAsyncList, useListData} from 'react-stately';
 
 export default {
   title: 'React Aria Components/ListBox',
@@ -462,7 +473,7 @@ function VirtualizedListBoxDndRender(args): JSX.Element {
       </Virtualizer>
     </div>
   );
-};
+}
 
 export const VirtualizedListBoxDnd: StoryObj<typeof VirtualizedListBoxDndRender> = {
   render: (args) => <VirtualizedListBoxDndRender {...args} />,
@@ -694,7 +705,7 @@ function AsyncListBoxRender(args: {delay: number, orientation: 'horizontal' | 'v
       <MyListBoxLoaderIndicator orientation={args.orientation} isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
     </ListBox>
   );
-};
+}
 
 export const AsyncListBox: StoryObj<typeof AsyncListBoxRender> = {
   render: (args) => <AsyncListBoxRender {...args} />,

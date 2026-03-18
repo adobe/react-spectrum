@@ -11,4 +11,4 @@
  */
 
 /// <reference types="css-module-types" />
-export {expressTheme as theme} from './expressTheme';
+export {expressTheme as theme} from '@adobe/react-spectrum/private/theme-express/expressTheme';

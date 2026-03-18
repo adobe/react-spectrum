@@ -11,7 +11,9 @@
  */
 
 import {action} from 'storybook/actions';
-import {Button, FileTrigger, Link} from 'react-aria-components';
+import {Button} from '../src/Button';
+import {FileTrigger} from '../src/FileTrigger';
+import {Link} from '../src/Link';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import './styles.css';

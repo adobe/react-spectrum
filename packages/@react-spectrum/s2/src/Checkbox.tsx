@@ -10,10 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxGroupStateContext, CheckboxRenderProps, ContextValue, useSlottedContext} from 'react-aria-components';
+import {
+  Checkbox as AriaCheckbox,
+  CheckboxProps as AriaCheckboxProps,
+  CheckboxGroupStateContext,
+  CheckboxRenderProps
+} from 'react-aria-components/Checkbox';
+
 import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
+import {ContextValue, useSlottedContext} from 'react-aria-components/utils';
 import {controlBorderRadius, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import DashIcon from '../ui-icons/Dash';

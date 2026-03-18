@@ -7,24 +7,20 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
-  "main": "dist/main.cjs",
-  "module": "dist/module.mjs",
-  "types": "dist/types.d.ts",
+  "main": "./dist/exports/index.cjs",
+  "module": "./dist/exports/index.mjs",
+  "types": "./dist/types/exports/index.ts",
   "page": "dist/page.cjs",
   "style-module": "style/dist/module.mjs",
   "style-main": "style/dist/main.cjs",
-  "style-types": "style/dist/types.d.ts",
-  "source": "src/index.ts",
+  "source": "exports/index.ts",
   "exports": {
     ".": {
-      "source": "./src/index.ts",
-      "types": [
-        "./dist/types.d.ts",
-        "./src/index.ts"
-      ],
+      "source": "./exports/index.ts",
+      "types": "./dist/types/exports/index.ts",
       "module": "./dist/module.mjs",
-      "import": "./dist/module.mjs",
-      "require": "./dist/main.cjs"
+      "import": "./dist/exports/index.mjs",
+      "require": "./dist/exports/index.cjs"
     },
     "./page.css": {
       "source": "./src/page.ts",
@@ -61,12 +57,20 @@
       "require": "./illustrations/*.cjs"
     },
     "./illustrations/linear/internal/*": null,
-    "./illustrations/gradient/*/internal/*": null
+    "./illustrations/gradient/*/internal/*": null,
+    "./package.json": "./package.json",
+    "./*": {
+      "source": "./exports/*.ts",
+      "types": "./dist/types/exports/*.d.ts",
+      "import": "./dist/exports/*.mjs",
+      "require": "./dist/exports/*.cjs"
+    },
+    "./private/*": null
   },
   "targets": {
-    "module": {},
-    "main": {},
-    "types": {},
+    "module": false,
+    "main": false,
+    "types": false,
     "page": {
       "source": "src/page.ts",
       "isLibrary": true
@@ -82,9 +86,6 @@
       "isLibrary": true,
       "outputFormat": "commonjs",
       "context": "node"
-    },
-    "style-types": {
-      "source": "style/index.ts"
     },
     "icons-module": {
       "source": "s2wf-icons/*.svg",
@@ -116,6 +117,20 @@
         "spectrum-illustrations/linear/*.tsx"
       ],
       "distDir": "illustrations",
+      "isLibrary": true,
+      "outputFormat": "commonjs",
+      "includeNodeModules": false
+    },
+    "exports-module": {
+      "source": "exports/*.ts",
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false
+    },
+    "exports-main": {
+      "source": "exports/*.ts",
+      "distDir": "dist",
       "isLibrary": true,
       "outputFormat": "commonjs",
       "includeNodeModules": false
@@ -151,18 +166,6 @@
     "@internationalized/date": "^3.12.0",
     "@internationalized/number": "^3.6.5",
     "@parcel/macros": "^2.16.3",
-    "@react-aria/calendar": "^3.9.5",
-    "@react-aria/collections": "^3.0.3",
-    "@react-aria/focus": "^3.21.5",
-    "@react-aria/i18n": "^3.12.16",
-    "@react-aria/interactions": "^3.27.1",
-    "@react-aria/live-announcer": "^3.4.4",
-    "@react-aria/ssr": "^3.9.10",
-    "@react-aria/utils": "^3.33.1",
-    "@react-spectrum/utils": "^3.12.12",
-    "@react-stately/grid": "^3.11.9",
-    "@react-stately/layout": "^4.6.0",
-    "@react-stately/utils": "^3.11.0",
     "@react-types/shared": "^3.33.1",
     "react-aria": "^3.47.0",
     "react-aria-components": "^1.16.0",

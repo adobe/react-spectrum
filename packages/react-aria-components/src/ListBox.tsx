@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocus, useFocusRing, useHover, useKeyboard, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
+import {
+  AriaListBoxOptions,
+  AriaListBoxProps,
+  useListBox,
+  useListBoxSection,
+  useOption
+} from 'react-aria/useListBox';
+
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -27,20 +34,39 @@ import {
   useRenderProps,
   useSlot
 } from './utils';
-import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent, ItemNode, LoaderNode, SectionNode} from '@react-aria/collections';
+import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
-import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
-import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
+import {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
+import {DraggableItemResult} from 'react-aria/useDraggableCollection';
+import {DragPreviewRenderer} from '@react-types/shared';
+import {DroppableCollectionResult, DroppableItemResult} from 'react-aria/useDroppableCollection';
+import {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {FocusEvents, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, KeyboardEvents, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
+import {FocusScope} from 'react-aria/FocusScope';
 import {HeaderContext} from './Header';
+import {inertValue} from 'react-aria/private/utils/inertValue';
+import {ItemNode, LoaderNode, SectionNode} from 'react-aria/private/collections/BaseCollection';
+import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
+import {ListState, UNSTABLE_useFilteredListState, useListState} from 'react-stately/useListState';
+import {LoadMoreSentinelProps, useLoadMoreSentinel} from 'react-aria/private/utils/useLoadMoreSentinel';
+import {mergeProps} from 'react-aria/mergeProps';
+import {Node, Orientation, SelectionBehavior} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SeparatorContext} from './Separator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
+import {useCollator} from 'react-aria/useCollator';
+import {useFocus} from 'react-aria/useFocus';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {useKeyboard} from 'react-aria/useKeyboard';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useObjectRef} from 'react-aria/useObjectRef';
 
 export interface ListBoxRenderProps {
   /**

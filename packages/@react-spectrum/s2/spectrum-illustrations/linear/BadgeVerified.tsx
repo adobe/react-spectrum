@@ -15,7 +15,7 @@ import BadgeVerified_M from 'illustration:./S2_lin_badgeVerified_96.svg';
 import BadgeVerified_S from 'illustration:./S2_lin_badgeVerified_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function BadgeVerified(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

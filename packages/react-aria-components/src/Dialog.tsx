@@ -9,17 +9,23 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaDialogProps, useDialog, useId, useOverlayTrigger} from 'react-aria';
+import {AriaDialogProps, useDialog} from 'react-aria/useDialog';
+
 import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, dom, DOMRenderProps, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {HeadingContext} from './Heading';
-import {OverlayTriggerProps, OverlayTriggerState, useMenuTriggerState} from 'react-stately';
+import {mergeProps} from 'react-aria/mergeProps';
+import {OverlayTriggerProps, OverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 import {PopoverContext} from './Popover';
-import {PressResponder} from '@react-aria/interactions';
+import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import {RootMenuTriggerStateContext} from './Menu';
+import {useId} from 'react-aria/useId';
+import {useMenuTriggerState} from 'react-stately/useMenuTriggerState';
+import {useOverlayTrigger} from 'react-aria/useOverlayTrigger';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 
 export interface DialogTriggerProps extends OverlayTriggerProps {
   children: ReactNode

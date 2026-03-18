@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export type {AriaFieldProps, FieldAria} from './useField';
-export type {LabelAriaProps, LabelAria} from './useLabel';
+export {useField} from 'react-aria/useField';
 
-export {useField} from './useField';
-export {useLabel} from './useLabel';
+export {useLabel} from 'react-aria/useLabel';
+export type {AriaFieldProps, FieldAria} from 'react-aria/useField';
+export type {LabelAriaProps, LabelAria} from 'react-aria/useLabel';

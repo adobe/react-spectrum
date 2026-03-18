@@ -11,33 +11,23 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
-import {
-  Button,
-  Checkbox,
-  Collection,
-  Dialog,
-  DialogTrigger,
-  DropIndicator,
-  GridList,
-  GridListContext,
-  GridListHeader,
-  GridListItem,
-  GridListSection,
-  Label,
-  ListLayout,
-  Modal,
-  RouterProvider,
-  Tag,
-  TagGroup,
-  TagList,
-  useDragAndDrop,
-  Virtualizer
-} from '../';
-import {getFocusableTreeWalker} from '@react-aria/focus';
+import {Button} from '../src/Button';
+import {Checkbox} from '../src/Checkbox';
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
+import {getFocusableTreeWalker} from 'react-aria/private/focus/FocusScope';
+import {GridList, GridListContext, GridListHeader, GridListItem, GridListSection} from '../src/GridList';
 import {GridListLoadMoreItem} from '../src/GridList';
 import {installPointerEvent, User} from '@react-aria/test-utils';
+import {Label} from '../src/Label';
+import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {Modal} from '../src/Modal';
 import React from 'react';
+import {RouterProvider} from 'react-aria/private/utils/openLink';
+import {Tag, TagGroup, TagList} from '../src/TagGroup';
 import userEvent from '@testing-library/user-event';
+import {Virtualizer} from '../src/Virtualizer';
 
 let TestGridList = ({listBoxProps, itemProps}) => (
   <GridList aria-label="Test" {...listBoxProps}>

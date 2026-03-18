@@ -10,4 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-export {watchModals} from './ariaModalPolyfill';
+export {watchModals} from 'react-aria/private/aria-modal-polyfill/ariaModalPolyfill';

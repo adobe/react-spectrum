@@ -10,8 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, ActionButtonGroup, Text} from '../src';
+import {ActionButton} from '../src/ActionButton';
+
+import {ActionButtonGroup} from '../src/ActionButtonGroup';
 import {render} from '@react-spectrum/test-utils-internal';
+import {Text} from '../src/Content';
 
 describe('ActionButtonGroup', () => {
 

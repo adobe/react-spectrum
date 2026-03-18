@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 /// <reference types="css-module-types" />
-export {ActionGroup} from './ActionGroup';
-export {Item} from '@react-stately/collections';
-export type {SpectrumActionGroupProps} from './ActionGroup';
+export {ActionGroup} from '@adobe/react-spectrum/ActionGroup';
+
+export type {SpectrumActionGroupProps} from '@adobe/react-spectrum/ActionGroup';
+export {Item} from 'react-stately/Item';

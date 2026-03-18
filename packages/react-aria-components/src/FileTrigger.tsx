@@ -10,11 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {filterDOMProps, getEventTarget, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+
+import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {Input} from './Input';
-import {PressResponder} from '@react-aria/interactions';
+import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import React, {ForwardedRef, forwardRef, ReactNode} from 'react';
+import {useObjectRef} from 'react-aria/useObjectRef';
 
 export interface FileTriggerProps extends GlobalDOMAttributes<HTMLInputElement> {
   /**

@@ -11,21 +11,20 @@
  */
 
 /// <reference types="css-module-types" />
-export {ColorArea} from './ColorArea';
-export {ColorWheel} from './ColorWheel';
-export {ColorSlider} from './ColorSlider';
-export {ColorField} from './ColorField';
-export {ColorSwatch} from './ColorSwatch';
-export {ColorPicker} from './ColorPicker';
-export {ColorEditor} from './ColorEditor';
-export {ColorSwatchPicker} from './ColorSwatchPicker';
-export {parseColor, getColorChannels} from '@react-stately/color';
-export type {SpectrumColorAreaProps} from './ColorArea';
-export type {SpectrumColorFieldProps} from './ColorField';
-export type {SpectrumColorSliderProps} from './ColorSlider';
-export type {SpectrumColorWheelProps} from './ColorWheel';
-export type {SpectrumColorSwatchProps} from './ColorSwatch';
-export type {SpectrumColorPickerProps} from './ColorPicker';
-export type {SpectrumColorEditorProps} from './ColorEditor';
-export type {SpectrumColorSwatchPickerProps} from './ColorSwatchPicker';
-export type {Color, ColorSpace, ColorFormat} from '@react-stately/color';
+export {ColorArea} from '@adobe/react-spectrum/ColorArea';
+
+export {ColorWheel} from '@adobe/react-spectrum/ColorWheel';
+export {ColorSlider} from '@adobe/react-spectrum/ColorSlider';
+export {ColorField} from '@adobe/react-spectrum/ColorField';
+export {ColorSwatch} from '@adobe/react-spectrum/ColorSwatch';
+export {ColorPicker, ColorEditor} from '@adobe/react-spectrum/ColorPicker';
+export {ColorSwatchPicker} from '@adobe/react-spectrum/ColorSwatchPicker';
+export type {SpectrumColorAreaProps} from '@adobe/react-spectrum/ColorArea';
+export type {SpectrumColorFieldProps} from '@adobe/react-spectrum/ColorField';
+export type {SpectrumColorSliderProps} from '@adobe/react-spectrum/ColorSlider';
+export type {SpectrumColorWheelProps} from '@adobe/react-spectrum/ColorWheel';
+export type {SpectrumColorSwatchProps} from '@adobe/react-spectrum/ColorSwatch';
+export type {SpectrumColorPickerProps, SpectrumColorEditorProps} from '@adobe/react-spectrum/ColorPicker';
+export type {SpectrumColorSwatchPickerProps} from '@adobe/react-spectrum/ColorSwatchPicker';
+export {parseColor, getColorChannels} from 'react-stately/Color';
+export type {Color, ColorSpace, ColorFormat} from 'react-stately/private/color/types';

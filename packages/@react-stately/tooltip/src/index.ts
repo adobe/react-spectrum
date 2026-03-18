@@ -10,6 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export {useTooltipTriggerState} from './useTooltipTriggerState';
+export {useTooltipTriggerState} from 'react-stately/useTooltipTriggerState';
 
-export type {TooltipTriggerProps, TooltipTriggerState} from './useTooltipTriggerState';
+export type {TooltipTriggerProps, TooltipTriggerState} from 'react-stately/useTooltipTriggerState';

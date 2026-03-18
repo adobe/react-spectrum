@@ -10,11 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Button,
-  ButtonProps,
-  ButtonRenderProps
-} from 'react-aria-components';
+import {Button, ButtonProps, ButtonRenderProps} from 'react-aria-components/Button';
 import {controlSize} from './style-utils' with {type: 'macro'};
 import CrossIcon from '../ui-icons/Cross';
 import {FocusableRef} from '@react-types/shared';

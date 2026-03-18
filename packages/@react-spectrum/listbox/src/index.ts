@@ -12,7 +12,9 @@
 
 /// <reference types="css-module-types" />
 
-export {ListBox} from './ListBox';
-export {useListBoxLayout, ListBoxBase} from './ListBoxBase';
-export {Item, Section} from '@react-stately/collections';
-export type {SpectrumListBoxProps} from './ListBoxBase';
+export {ListBox} from '@adobe/react-spectrum/ListBox';
+
+export {useListBoxLayout, ListBoxBase} from '@adobe/react-spectrum/private/listbox/ListBoxBase';
+export type {SpectrumListBoxProps} from '@adobe/react-spectrum/private/listbox/ListBoxBase';
+export {Item} from 'react-stately/Item';
+export {Section} from 'react-stately/Section';

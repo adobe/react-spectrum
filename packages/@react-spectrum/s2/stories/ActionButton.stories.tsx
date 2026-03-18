@@ -10,15 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Avatar, NotificationBadge, Provider, Text} from '../src';
+import {ActionButton} from '../src/ActionButton';
+
+import {Avatar} from '../src/Avatar';
 import BellIcon from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
 import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
 import CommentIcon from '../s2wf-icons/S2_Icon_Comment_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
+import {NotificationBadge} from '../src/NotificationBadge';
+import {Provider} from '../src/Provider';
 import {style} from '../style' with { type: 'macro' };
+import {Text} from '../src/Content';
 import './unsafe.css';
-import {useNumberFormatter} from 'react-aria';
+import {useNumberFormatter} from 'react-aria/useNumberFormatter';
 
 const events = ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'];
 
