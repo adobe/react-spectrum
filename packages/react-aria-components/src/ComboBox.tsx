@@ -153,9 +153,6 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     !props['aria-label'] && !props['aria-labelledby']
   );
   let comboBoxProps = removeDataAttributes(props);
-  if (props.selectionMode === 'multiple') {
-    delete comboBoxProps.isRequired;
-  }
   let {
     buttonProps,
     inputProps,
@@ -213,12 +210,20 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
   let inputs: ReactElement[] = [];
   if (name && formValue === 'key') {
     let values: (Key | null)[] = Array.isArray(state.value) ? state.value : [state.value];
-    if (values.length === 0) {
-      // For multiple mode, add required to the hidden input when no values selected
-      let required = props.selectionMode === 'multiple' && props.isRequired;
-      inputs = [<input key="empty" type="hidden" name={name} form={props.form} value="" required={required} />];
+    // For multiple mode with isRequired, we need a text input with display:none because type="hidden" doesn't support required
+    if (props.selectionMode === 'multiple' && props.isRequired) {
+      // When no values selected, show a required empty input to trigger validation
+      if (values.length === 0) {
+        inputs = [<input key="empty" type="text" name={name} form={props.form} value="" required style={{display: 'none'}} />];
+      } else {
+        // When values are selected, don't show the required input
+        inputs = values.map((value, i) => (
+          <input key={i} type="hidden" name={name} form={props.form} value={value ?? ''} />
+        ));
+      }
     } else {
-      inputs = values.map((value, i) => (
+      // Single-select mode or not required - use hidden inputs
+      inputs = values.length === 0 ? [] : values.map((value, i) => (
         <input key={i} type="hidden" name={name} form={props.form} value={value ?? ''} />
       ));
     }
