@@ -288,6 +288,30 @@ describe('Tabs', () => {
     expect(document.activeElement).toBe(items[2]);
   });
 
+  it('should not navigate when using unsupported modifier keys', async () => {
+    let platformMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Mac');
+    let {getAllByRole} = render(
+      <Tabs>
+        <TabList aria-label="Test">
+          <Tab id="a">A</Tab>
+          <Tab id="b" isDisabled>B</Tab>
+          <Tab id="c">C</Tab>
+        </TabList>
+        <TabPanel id="a">A</TabPanel>
+        <TabPanel id="b">B</TabPanel>
+        <TabPanel id="c">C</TabPanel>
+      </Tabs>
+    );
+    let items = getAllByRole('tab');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{Meta>}{ArrowRight}{/Meta}');
+    expect(document.activeElement).toBe(items[0]);
+    platformMock.mockRestore();
+  });
+
   it('finds the first non-disabled tab', async () => {
     let {getAllByRole} = render(
       <Tabs>

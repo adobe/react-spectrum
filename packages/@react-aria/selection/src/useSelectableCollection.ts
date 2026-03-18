@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, getEventTarget, isCtrlKeyPressed, isFocusWithin, isTabbable, mergeProps, nodeContains, scrollIntoView, scrollIntoViewport, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, getEventTarget, isAppleDevice, isCtrlKeyPressed, isFocusWithin, isTabbable, mergeProps, nodeContains, scrollIntoView, scrollIntoViewport, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
 import {dispatchVirtualFocus, getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
@@ -137,6 +137,8 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       return;
     }
 
+    // uses shiftKey if selection mode is multiple
+    // if it's an apple device uses ctrlKey otherwise altKey
     const navigateToKey = (key: Key | undefined, childFocus?: FocusStrategy) => {
       if (key != null) {
         if (manager.isLink(key) && linkBehavior === 'selection' && selectOnFocus && !isNonContiguousSelectionModifier(e)) {
@@ -168,12 +170,14 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       }
     };
 
-    if (manager.selectionMode === 'single' && (e.metaKey || e.altKey)) {
-      return;
-    }
+    let shouldIgnoreModifierKeys = e.metaKey || (e.shiftKey && manager.selectionMode !== 'multiple') || (!isAppleDevice() ? e.altKey : e.ctrlKey);
 
     switch (e.key) {
       case 'ArrowDown': {
+        // inverse of navigateToKey's usage
+        if (shouldIgnoreModifierKeys) {
+          return;
+        }
         if (delegate.getKeyBelow) {
           let nextKey = manager.focusedKey != null
               ? delegate.getKeyBelow?.(manager.focusedKey)
@@ -189,6 +193,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         break;
       }
       case 'ArrowUp': {
+        if (shouldIgnoreModifierKeys) {
+          return;
+        }
         if (delegate.getKeyAbove) {
           let nextKey = manager.focusedKey != null
               ? delegate.getKeyAbove?.(manager.focusedKey)
@@ -204,6 +211,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         break;
       }
       case 'ArrowLeft': {
+        if (shouldIgnoreModifierKeys) {
+          return;
+        }
         if (delegate.getKeyLeftOf) {
           let nextKey: Key | undefined | null = manager.focusedKey != null ? delegate.getKeyLeftOf?.(manager.focusedKey) : delegate.getFirstKey?.();
           if (nextKey == null && shouldFocusWrap) {
@@ -217,6 +227,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         break;
       }
       case 'ArrowRight': {
+        if (shouldIgnoreModifierKeys) {
+          return;
+        }
         if (delegate.getKeyRightOf) {
           let nextKey: Key | undefined | null = manager.focusedKey != null ? delegate.getKeyRightOf?.(manager.focusedKey) : delegate.getFirstKey?.();
           if (nextKey == null && shouldFocusWrap) {
@@ -230,6 +243,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         break;
       }
       case 'Home':
+        if (e.altKey || (e.shiftKey && manager.selectionMode !== 'multiple') || (isAppleDevice() ? e.ctrlKey : e.metaKey)) {
+          return;
+        }
         if (delegate.getFirstKey) {
           if (manager.focusedKey === null && e.shiftKey) {
             return;
@@ -247,6 +263,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         }
         break;
       case 'End':
+        if (e.altKey || (e.shiftKey && manager.selectionMode !== 'multiple') || (isAppleDevice() ? e.ctrlKey : e.metaKey)) {
+          return;
+        }
         if (delegate.getLastKey) {
           if (manager.focusedKey === null && e.shiftKey) {
             return;
@@ -264,6 +283,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         }
         break;
       case 'PageDown':
+        if (shouldIgnoreModifierKeys) {
+          return;
+        }
         if (delegate.getKeyPageBelow && manager.focusedKey != null) {
           let nextKey = delegate.getKeyPageBelow(manager.focusedKey);
           if (nextKey != null) {
@@ -273,6 +295,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         }
         break;
       case 'PageUp':
+        if (shouldIgnoreModifierKeys) {
+          return;
+        }
         if (delegate.getKeyPageAbove && manager.focusedKey != null) {
           let nextKey = delegate.getKeyPageAbove(manager.focusedKey);
           if (nextKey != null) {
@@ -282,12 +307,18 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         }
         break;
       case 'a':
+        if (e.altKey || e.shiftKey || (isAppleDevice() ? e.ctrlKey : e.metaKey)) {
+          return;
+        }
         if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple' && disallowSelectAll !== true) {
           e.preventDefault();
           manager.selectAll();
         }
         break;
       case 'Escape':
+        if (e.altKey || e.shiftKey || e.metaKey || e.ctrlKey) {
+          return;
+        }
         if (escapeKeyBehavior === 'clearSelection' && !disallowEmptySelection && manager.selectedKeys.size !== 0) {
           e.stopPropagation();
           e.preventDefault();
@@ -295,6 +326,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         }
         break;
       case 'Tab': {
+        if (e.altKey || e.metaKey || e.ctrlKey) {
+          return;
+        }
         if (!allowsTabNavigation) {
           // There may be elements that are "tabbable" inside a collection (e.g. in a grid cell).
           // However, collections should be treated as a single tab stop, with arrow key navigation internally.
