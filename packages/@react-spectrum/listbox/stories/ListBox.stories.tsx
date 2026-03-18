@@ -20,9 +20,9 @@ import Book from '@spectrum-icons/workflow/Book';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import Delete from '@spectrum-icons/workflow/Delete';
-import {DOMRefValue, Key} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {Item, ListBox, Section} from '../';
+import {Key} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
@@ -946,7 +946,7 @@ export let FocusExample = (args: Omit<SpectrumListBoxProps<any>, 'children'> = {
   });
 
   let [dialog, setDialog] = useState<{action: Key} | null>(null);
-  let ref = useRef<DOMRefValue<HTMLDivElement>>(null);
+  let ref = useRef(null);
 
   return (
     <FocusScope>
@@ -989,17 +989,7 @@ export let FocusExample = (args: Omit<SpectrumListBoxProps<any>, 'children'> = {
               title="Delete"
               variant="destructive"
               primaryActionLabel="Delete"
-              onPrimaryAction={() => {
-                tree.removeSelectedItems();
-                // wait for inert to clear before focusing
-                // It's not using an ActionBar, instead, there's an ActionGroup (its own focus scope) that is a sibling of the ListBox.
-                // Moreover, it's only rendered when there is a selection. Once the items are removed, there's no more selection, so
-                // the ActionGroup disappears immediately, before focus is restored there, and the ActionGroup doesn't restore
-                // focus, so it was just lost to the body.
-                requestAnimationFrame(() => {
-                  ref.current?.UNSAFE_getDOMNode()?.focus();
-                });
-              }}>
+              onPrimaryAction={() => tree.removeSelectedItems()}>
               Are you sure you want to delete {tree.selectedKeys.size === 1 ? '1 item' : `${tree.selectedKeys.size} items`}?
             </AlertDialog>
           }

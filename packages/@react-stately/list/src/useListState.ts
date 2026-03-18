@@ -89,57 +89,34 @@ function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager
   const cachedCollection = useRef<Collection<Node<T>> | null>(null);
   useEffect(() => {
     if (selectionManager.focusedKey != null && !collection.getItem(selectionManager.focusedKey) && cachedCollection.current) {
-      const startItem = cachedCollection.current.getItem(selectionManager.focusedKey);
-
-      // Helper to get all item nodes from a collection (flattening sections)
-      const getAllItemNodes = (coll: Collection<Node<T>>): Node<T>[] => {
-        const items: Node<T>[] = [];
-        for (let node of coll) {
-          if (node.type === 'item') {
-            items.push(node);
-          } else if (node.type === 'section' && coll.getChildren?.(node.key)) {
-            for (let child of coll.getChildren(node.key)) {
-              if (child.type === 'item') {
-                items.push(child);
-              }
-            }
-          }
-        }
-        return items;
-      };
-
-      const cachedItemNodes = getAllItemNodes(cachedCollection.current);
-      const itemNodes = getAllItemNodes(collection);
-
-      // Count how many items were removed before the focused item's original index
-      const itemNodesKeys = new Set(itemNodes.map(node => node.key));
-      const removedBeforeCount = cachedItemNodes.filter((node, idx) =>
-        idx < (startItem?.index ?? 0) && !itemNodesKeys.has(node.key)
-      ).length;
-
-      let index = Math.min(
-        Math.max((startItem?.index ?? 0) - removedBeforeCount, 0),
-        (itemNodes?.length ?? 0) - 1);
-      let newNode: Node<T> | null = null;
-      let isReverseSearching = false;
-      while (index >= 0) {
-        if (!selectionManager.isDisabled(itemNodes[index].key)) {
-          newNode = itemNodes[index];
+      // Walk forward in the old collection to find the next key that still exists in the new collection.
+      let key = cachedCollection.current.getKeyAfter(selectionManager.focusedKey);
+      let nextFocusedKey: Key | null = null;
+      while (key != null) {
+        let node = collection.getItem(key);
+        if (node && node.type === 'item' && !selectionManager.isDisabled(key)) {
+          nextFocusedKey = key;
           break;
         }
-        // Find next, not disabled item.
-        if (index < itemNodes.length - 1 && !isReverseSearching) {
-          index++;
-        // Otherwise, find previous, not disabled item.
-        } else {
-          isReverseSearching = true;
-          if (index > (startItem?.index ?? 0)) {
-            index = (startItem?.index ?? 0);
+
+        key = cachedCollection.current.getKeyAfter(key);
+      }
+
+      // If no such key exists, walk backward.
+      if (nextFocusedKey == null) {
+        key = cachedCollection.current.getKeyBefore(selectionManager.focusedKey);
+        while (key != null) {
+          let node = collection.getItem(key);
+          if (node && node.type === 'item' && !selectionManager.isDisabled(key)) {
+            nextFocusedKey = key;
+            break;
           }
-          index--;
+
+          key = cachedCollection.current.getKeyBefore(key);
         }
       }
-      selectionManager.setFocusedKey(newNode ? newNode.key : null);
+
+      selectionManager.setFocusedKey(nextFocusedKey);
     }
     cachedCollection.current = collection;
   }, [collection, selectionManager]);
