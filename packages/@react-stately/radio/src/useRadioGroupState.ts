@@ -10,11 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import {FocusEvents, HelpTextProps, InputBase, InputDOMProps, LabelableProps, Orientation, Validation, ValidationState, ValueBase} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
-import {RadioGroupProps} from '@react-types/radio';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
-import {ValidationState} from '@react-types/shared';
+
+export interface RadioGroupProps extends ValueBase<string|null, string>, InputBase, Pick<InputDOMProps, 'name'>, Validation<string>, LabelableProps, HelpTextProps, FocusEvents {
+  /**
+   * The axis the Radio Button(s) should align with.
+   * @default 'vertical'
+   */
+  orientation?: Orientation
+}
 
 export interface RadioGroupState extends FormValidationState {
   /**

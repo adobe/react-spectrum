@@ -10,12 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color, ColorFieldProps} from '@react-types/color';
+import {Color} from './types';
+import {FocusableProps, HelpTextProps, InputBase, LabelableProps, TextInputBase, Validation, ValueBase} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {parseColor} from './Color';
 import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
+
+export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation<Color | null>, FocusableProps, TextInputBase, LabelableProps, HelpTextProps {
+  /** Handler that is called when the value changes. */
+  onChange?: (color: Color | null) => void
+}
 
 export interface ColorFieldState extends FormValidationState {
   /**

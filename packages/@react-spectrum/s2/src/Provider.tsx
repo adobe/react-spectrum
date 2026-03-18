@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import type {ColorScheme, Router} from '@react-types/provider';
 import {createContext, JSX, ReactNode, useContext} from 'react';
-import {DOMProps} from '@react-types/shared';
+import {DOMProps, Href, RouterOptions} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {Fonts} from './Fonts';
 import {generateDefaultColorSchemeStyles} from './page.macro' with {type: 'macro'};
@@ -21,6 +20,12 @@ import {mergeStyles} from '../style/runtime';
 import {setColorScheme, style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
+
+export type ColorScheme = 'light' | 'dark';
+interface Router {
+  navigate: (path: string, routerOptions: RouterOptions | undefined) => void,
+  useHref?: (href: Href) => string
+}
 
 export interface ProviderProps extends UnsafeStyles, DOMProps {
   /** The content of the Provider. */

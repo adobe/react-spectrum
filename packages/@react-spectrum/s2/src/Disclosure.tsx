@@ -19,7 +19,7 @@ import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>, StyleProps {

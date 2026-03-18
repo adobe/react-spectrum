@@ -50,7 +50,7 @@ import {Placement, useLocale} from 'react-aria';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
-import {useFocusableRef} from '@react-spectrum/utils';
+import {useFocusableRef} from './useDOMRef';
 import {useFormProps} from './Form';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface PickerStyleProps {

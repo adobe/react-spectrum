@@ -50,7 +50,6 @@
     "@react-spectrum/utils": "^3.12.12",
     "@react-stately/utils": "^3.11.0",
     "@react-types/shared": "^3.33.1",
-    "@react-types/textfield": "^3.12.8",
     "@spectrum-icons/ui": "^3.6.23",
     "@swc/helpers": "^0.5.0"
   },

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorScheme, Scale, Theme} from '@react-types/provider';
+import {ColorScheme, Scale, Theme} from './types';
 import {useMediaQuery} from '@react-spectrum/utils';
 
 export function useColorScheme(theme: Theme, defaultColorScheme: ColorScheme): ColorScheme {

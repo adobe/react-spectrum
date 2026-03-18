@@ -10,14 +10,35 @@
  * governing permissions and limitations under the License.
  */
 
-import {Expandable, Key, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
+import {Expandable, Key, MultipleSelection, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {GridState, useGridState} from '@react-stately/grid';
-import {TableCollection as ITableCollection, TableBodyProps, TableHeaderProps} from '@react-types/table';
+import {ITableCollection, TableCollection} from './TableCollection';
 import {MultipleSelectionState, MultipleSelectionStateProps} from '@react-stately/selection';
 import {ReactElement, useCallback, useMemo, useState} from 'react';
-import {TableCollection} from './TableCollection';
+import {TableBodyProps} from './TableBody';
+import {TableHeaderProps} from './TableHeader';
 import {useCollection} from '@react-stately/collections';
 import {useControlledState} from '@react-stately/utils';
+
+export interface TableProps<T> extends MultipleSelection, Sortable, Expandable {
+  /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
+  children: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
+  /** A list of row keys to disable. */
+  disabledKeys?: Iterable<Key>,
+  /**
+   * Whether pressing the escape key should clear selection in the table or not.
+   *
+   * Most experiences should not modify this option as it eliminates a keyboard user's ability to
+   * easily clear selection. Only use if the escape key is being handled externally or should not
+   * trigger selection clearing contextually.
+   * @default 'clearSelection'
+   */
+  escapeKeyBehavior?: 'clearSelection' | 'none',
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean,
+  /** The id of the column that displays hierarchical data. */
+  treeColumn?: Key
+}
 
 export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** A collection of rows and columns in the table. */
@@ -50,8 +71,6 @@ export interface CollectionBuilderContext<T> {
 export interface TableStateProps<T> extends MultipleSelectionStateProps, Expandable, Sortable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children?: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
-  /** A list of row keys to disable. */
-  disabledKeys?: Iterable<Key>,
   /** A pre-constructed collection to use instead of building one from items and children. */
   collection?: ITableCollection<T>,
   /** Whether the row selection checkboxes should be displayed. */

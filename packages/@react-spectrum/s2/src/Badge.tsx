@@ -20,7 +20,7 @@ import {IconContext} from './Icon';
 import React, {createContext, forwardRef, ReactNode} from 'react';
 import {SkeletonWrapper} from './Skeleton';
 import {Text, TextContext} from './Content';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface BadgeStyleProps {

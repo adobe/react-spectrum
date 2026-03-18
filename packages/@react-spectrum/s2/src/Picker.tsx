@@ -79,7 +79,7 @@ import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import React, {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {useFocusableRef} from '@react-spectrum/utils';
+import {useFocusableRef} from './useDOMRef';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';

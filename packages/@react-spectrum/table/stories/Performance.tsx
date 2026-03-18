@@ -7,7 +7,7 @@ import {Item, TagGroup} from '@react-spectrum/tag';
 import {Link} from '@react-spectrum/link';
 import {ProgressBar} from '@react-spectrum/progress';
 import React, {JSX} from 'react';
-import {SpectrumStatusLightProps} from '@react-types/statuslight';
+import {SpectrumStatusLightProps} from '@react-spectrum/statuslight';
 import {Text} from '@react-spectrum/text';
 
 export const DATA_SIZE = 10000;

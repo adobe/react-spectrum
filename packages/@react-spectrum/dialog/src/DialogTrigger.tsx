@@ -12,12 +12,36 @@
 
 import {DialogContext} from './context';
 import {Modal, Popover, Tray} from '@react-spectrum/overlays';
-import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
+import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
+import {PositionProps, useOverlayTrigger} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, JSX, ReactElement, useEffect, useRef} from 'react';
-import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
+import React, {Fragment, JSX, ReactElement, RefObject, useEffect, useRef} from 'react';
+import {SpectrumDialogProps} from './Dialog';
 import {useIsMobileDevice} from '@react-spectrum/utils';
-import {useOverlayTrigger} from '@react-aria/overlays';
+
+export type SpectrumDialogClose = (close: () => void) => ReactElement;
+
+export interface SpectrumDialogTriggerProps extends OverlayTriggerProps, PositionProps {
+  /** The Dialog and its trigger element. See the DialogTrigger [Content section](#content) for more information on what to provide as children. */
+  children: [ReactElement, SpectrumDialogClose | ReactElement],
+  /**
+   * The type of Dialog that should be rendered. See the DialogTrigger [types section](#dialog-types) for an explanation on each.
+   * @default 'modal'
+   */
+  type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
+  /** The type of Dialog that should be rendered when on a mobile device. See DialogTrigger [types section](#dialog-types) for an explanation on each. */
+  mobileType?: 'modal' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
+  /**
+   * Whether a popover type Dialog's arrow should be hidden.
+   */
+  hideArrow?: boolean,
+  /** The ref of the element the Dialog should visually attach itself to. Defaults to the trigger button if not defined. */
+  targetRef?: RefObject<HTMLElement | null>,
+  /** Whether a modal type Dialog should be dismissable. */
+  isDismissable?: boolean,
+  /** Whether pressing the escape key to close the dialog should be disabled. */
+  isKeyboardDismissDisabled?: boolean
+}
 
 function DialogTrigger(props: SpectrumDialogTriggerProps) {
   let {

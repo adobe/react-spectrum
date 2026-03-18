@@ -11,10 +11,25 @@
  */
 
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
+import {FocusableProps, HelpTextProps, InputBase, LabelableProps, RangeInputBase, TextInputBase, Validation, ValueBase} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
-import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
 import {useCallback, useMemo, useState} from 'react';
+
+export interface NumberFieldProps extends InputBase, Validation<number>, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps, HelpTextProps {
+  /**
+   * Formatting options for the value displayed in the number field.
+   * This also affects what characters are allowed to be typed by the user.
+   */
+  formatOptions?: Intl.NumberFormatOptions,
+  /**
+   * Controls the behavior of the number field when the user blurs the field after editing.
+   * 'snap' will clamp the value to the min/max values, and snap to the nearest step value.
+   * 'validate' will not clamp the value, and will validate that the value is within the min/max range and on a valid step.
+   * @default 'snap'
+   */
+  commitBehavior?: 'snap' | 'validate'
+}
 
 export interface NumberFieldState extends FormValidationState {
   /**

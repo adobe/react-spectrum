@@ -11,17 +11,27 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
+import {AriaLabelingProps, CollectionBase, DOMProps, FocusableRef, Key, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {FocusableRef} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Menu} from './Menu';
-import {MenuTrigger} from './MenuTrigger';
+import {MenuTrigger, SpectrumMenuTriggerProps} from './MenuTrigger';
 import More from '@spectrum-icons/workflow/More';
 import React, {forwardRef, ReactElement} from 'react';
-import {SpectrumActionMenuProps} from '@react-types/menu';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSlotProps} from '@react-spectrum/utils';
+
+export interface SpectrumActionMenuProps<T> extends CollectionBase<T>, Omit<SpectrumMenuTriggerProps, 'children'>, StyleProps, DOMProps, AriaLabelingProps {
+  /** Whether the button is disabled. */
+  isDisabled?: boolean,
+  /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
+  isQuiet?: boolean,
+  /** Whether the element should receive focus on render. */
+  autoFocus?: boolean,
+  /** Handler that is called when an item is selected. */
+  onAction?: (key: Key) => void
+}
 
 /**
  * ActionMenu combines an ActionButton with a Menu for simple "more actions" use cases.

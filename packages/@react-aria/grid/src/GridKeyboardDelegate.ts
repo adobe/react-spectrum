@@ -13,7 +13,7 @@
 import {Direction, DisabledBehavior, Key, KeyboardDelegate, LayoutDelegate, Node, Rect, RefObject, Size} from '@react-types/shared';
 import {DOMLayoutDelegate} from '@react-aria/selection';
 import {getChildNodes, getFirstItem, getLastItem, getNthItem} from '@react-stately/collections';
-import {GridCollection, GridNode} from '@react-types/grid';
+import {IGridCollection as GridCollection, GridNode} from '@react-stately/grid';
 
 export interface GridKeyboardDelegateOptions<C> {
   collection: C,

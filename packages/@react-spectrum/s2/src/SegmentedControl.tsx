@@ -19,7 +19,7 @@ import {createContext, forwardRef, ReactNode, useCallback, useContext, useRef} f
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {Text, TextContext} from './Content';
-import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
+import {useDOMRef, useFocusableRef} from './useDOMRef';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

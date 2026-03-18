@@ -1,6 +1,5 @@
-import {AriaCheckboxProps} from '@react-types/checkbox';
-import {GridCollection} from '@react-types/grid';
-import {GridState} from '@react-stately/grid';
+import {AriaCheckboxProps} from '@react-aria/checkbox';
+import {IGridCollection as GridCollection, GridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';

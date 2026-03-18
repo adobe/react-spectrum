@@ -43,7 +43,6 @@
     "@react-aria/utils": "^3.33.1",
     "@react-spectrum/utils": "^3.12.12",
     "@react-types/shared": "^3.33.1",
-    "@react-types/well": "^3.3.23",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

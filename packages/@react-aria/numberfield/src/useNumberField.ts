@@ -11,8 +11,8 @@
  */
 
 import {announce} from '@react-aria/live-announcer';
-import {AriaButtonProps} from '@react-types/button';
-import {AriaNumberFieldProps} from '@react-types/numberfield';
+import {AriaButtonProps} from '@react-aria/button';
+import {AriaLabelingProps, DOMAttributes, DOMProps, GroupDOMAttributes, TextInputDOMEvents, TextInputDOMProps, ValidationResult} from '@react-types/shared';
 import {chain, filterDOMProps, getActiveElement, getEventTarget, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId, useLayoutEffect} from '@react-aria/utils';
 import {
   type ClipboardEvent,
@@ -24,11 +24,10 @@ import {
   useMemo,
   useState
 } from 'react';
-import {DOMAttributes, GroupDOMAttributes, TextInputDOMProps, ValidationResult} from '@react-types/shared';
 import {flushSync} from 'react-dom';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {NumberFieldState} from '@react-stately/numberfield';
+import {NumberFieldProps, NumberFieldState} from '@react-stately/numberfield';
 import {privateValidationStateProp} from '@react-stately/form';
 import {useFocus, useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
@@ -37,6 +36,17 @@ import {
   useNumberFormatter
 } from '@react-aria/i18n';
 import {useSpinButton} from '@react-aria/spinbutton';
+
+export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps, TextInputDOMEvents {
+  /** A custom aria-label for the decrement button. If not provided, the localized string "Decrement" is used. */
+  decrementAriaLabel?: string,
+  /** A custom aria-label for the increment button. If not provided, the localized string "Increment" is used. */
+  incrementAriaLabel?: string,
+  /**
+   * Enables or disables changing the value with scroll.
+   */
+  isWheelDisabled?: boolean
+}
 
 export interface NumberFieldAria extends ValidationResult {
   /** Props for the label element. */
