@@ -14,7 +14,7 @@ jest.mock('@react-aria/live-announcer');
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
 import {Button, FieldError, Form, Group, I18nProvider, Input, Label, NumberField, NumberFieldContext, Text} from '../';
-import React from 'react';
+import React, { useState } from 'react';
 import userEvent from '@testing-library/user-event';
 
 let TestNumberField = (props) => (
@@ -487,5 +487,44 @@ describe('NumberField', () => {
     expect(input).toHaveValue('30');
     expect(input.validity.valid).toBe(true);
     expect(input).not.toHaveAttribute('aria-describedby');
+  });
+
+  describe('auto spinning', () => {
+    beforeAll(() => {
+      jest.useFakeTimers();
+    });
+    afterEach(() => {
+      act(() => {jest.runAllTimers();});
+    });
+
+    it('stops spinning if the associated button is disabled', async () => {
+      function NumberFieldDisabledButtons({label}) {
+        const [value, setValue] = useState(4);
+
+        return (
+          <NumberField value={value} onChange={setValue}>
+            <Label>{label}</Label>
+            <Group>
+              <Input className="react-aria-Input inset" />
+              <Button slot="decrement" isDisabled={value <= 4}>
+                -
+              </Button>
+              <Button slot="increment" isDisabled={value >= 8}>
+                +
+              </Button>
+            </Group>
+          </NumberField>
+        );
+      }
+      let {getByRole} = render(<NumberFieldDisabledButtons />);
+      let input = getByRole('textbox');
+      let decrementButton = getByRole('button', {name: 'Decrease'});
+      let incrementButton = getByRole('button', {name: 'Increase'});
+      await user.click(incrementButton);
+      await user.click(decrementButton);
+      await act(async () => jest.runAllTimers());
+      expect(decrementButton).toBeDisabled();
+      expect(input).toHaveValue('4');
+    });
   });
 });

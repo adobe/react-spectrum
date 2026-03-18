@@ -12,6 +12,8 @@
 
 import {Button, FieldError, Group, I18nProvider, Input, Label, NumberField, NumberFieldProps} from 'react-aria-components';
 import {Meta, StoryObj} from '@storybook/react';
+import Minus from 'lucide-react/dist/esm/icons/minus';
+import Plus from 'lucide-react/dist/esm/icons/plus';
 import React, {useState} from 'react';
 import './styles.css';
 
@@ -94,3 +96,22 @@ export const ArabicNumberFieldExample = {
     </I18nProvider>
   )
 };
+
+export function Test() {
+  const [value, setValue] = useState(4);
+
+  return (
+    <NumberField value={value} onChange={setValue}>
+      <Label>For testing</Label>
+      <Group>
+        <Input className="react-aria-Input inset" />
+        <Button slot="decrement" isDisabled={value <= 4}>
+          <Minus />
+        </Button>
+        <Button slot="increment" isDisabled={value >= 8}>
+          <Plus />
+        </Button>
+      </Group>
+    </NumberField>
+  );
+}
