@@ -30,9 +30,8 @@ import {
   UserSetRowHeaderRender as UserSetRowHeaderTable
 } from '../stories/TreeGridTable.stories';
 import {enableTableNestedRows} from '@react-stately/flags';
-import {Provider} from '@react-spectrum/provider';
+import {Provider, Scale} from '@react-spectrum/provider';
 import React from 'react';
-import {Scale} from '@react-types/provider';
 import {scrollIntoView} from '@react-aria/utils';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -90,7 +89,12 @@ describe('TableView with expandable rows', function () {
     await user.keyboard('{/Shift}');
   };
 
+  let innerHeight, innerWidth;
   beforeAll(function () {
+    innerHeight = window.innerHeight;
+    innerWidth = window.innerWidth;
+    Object.defineProperty(window, 'innerHeight', {value: 1000, configurable: true, writable: true});
+    Object.defineProperty(window, 'innerWidth', {value: 1000, configurable: true, writable: true});
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.useFakeTimers();
@@ -104,6 +108,8 @@ describe('TableView with expandable rows', function () {
   });
 
   afterAll(function () {
+    window.innerHeight = innerHeight;
+    window.innerWidth = innerWidth;
     jest.restoreAllMocks();
   });
 

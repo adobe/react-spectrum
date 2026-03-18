@@ -10,19 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaColorSliderProps, useColorSlider} from '@react-aria/color';
 import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {ColorSliderContext, useContextProps} from 'react-aria-components';
 import {ColorThumb} from './ColorThumb';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, StyleProps} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
-import React, {useRef, useState} from 'react';
-import {SpectrumColorSliderProps} from '@react-types/color';
+import React, {ReactNode, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/colorslider/vars.css';
-import {useColorSlider} from '@react-aria/color';
 import {useColorSliderState} from '@react-stately/color';
 import {useFocus, useFocusVisible} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+
+export interface SpectrumColorSliderProps extends AriaColorSliderProps, StyleProps {
+  /** Whether the value label is displayed. True by default if there is a label, false by default if not. */
+  showValueLabel?: boolean,
+  /** A ContextualHelp element to place next to the label. */
+  contextualHelp?: ReactNode
+}
 
 /**
  * ColorSliders allow users to adjust an individual channel of a color value.

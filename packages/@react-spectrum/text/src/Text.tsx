@@ -10,11 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMRef} from '@react-types/shared';
+import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {forwardRef} from 'react';
-import {TextProps} from '@react-types/text';
+import React, {forwardRef, ReactNode} from 'react';
 import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+
+export interface TextProps extends DOMProps, StyleProps {
+  /**
+   * Text content.
+   */
+  children: ReactNode,
+  /**
+   * A slot to place the text in.
+   * @default 'text'
+   */
+  slot?: string
+}
 
 /**
  * Text represents text with no specific semantic meaning.

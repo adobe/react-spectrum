@@ -15,4 +15,5 @@
 export {ProgressBar} from './ProgressBar';
 export {ProgressCircle} from './ProgressCircle';
 export {ProgressBarBase} from './ProgressBarBase';
-export type {SpectrumProgressBarProps, SpectrumProgressCircleProps} from '@react-types/progress';
+export type {SpectrumProgressBarBaseProps, SpectrumProgressBarProps} from './ProgressBarBase';
+export type {SpectrumProgressCircleProps, ProgressCircleProps, AriaProgressCircleProps} from './ProgressCircle';

@@ -11,15 +11,31 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, RangeValue} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React from 'react';
-import {SliderBase, SliderBaseChildArguments, SliderBaseProps} from './SliderBase';
+import {SliderBase, SliderBaseChildArguments, SliderBaseProps, SpectrumBarSliderBase} from './SliderBase';
 import {SliderThumb} from './SliderThumb';
-import {SpectrumRangeSliderProps} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+
+export interface SpectrumRangeSliderProps extends SpectrumBarSliderBase<RangeValue<number>> {
+  /**
+   * The name of the start input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  startName?: string,
+  /**
+   * The name of the end input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  endName?: string,
+  /**
+   * The `<form>` element to associate the slider with.
+   * The value of this attribute must be the id of a `<form>` in the same document.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#form).
+   */
+  form?: string
+}
 
 /**
  * RangeSliders allow users to quickly select a subset range. They should be used when the upper and lower bounds to the range are invariable.

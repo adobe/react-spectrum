@@ -209,6 +209,23 @@ describe('useComboBoxState tests', function () {
       expect(onSelectionChange).toHaveBeenCalledWith('1');
     });
 
+    it('does not fire onSelectionChange on blur when fully controlled values are already synced', function () {
+      let initialProps = {...defaultProps, selectedKey: '1', inputValue: 'onomatopoeia'};
+      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+
+      act(() => {result.current.setFocused(false);});
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('fires onSelectionChange on blur when fully controlled inputValue is out of sync', function () {
+      let initialProps = {...defaultProps, selectedKey: '1', inputValue: 'onom'};
+      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+
+      act(() => {result.current.setFocused(false);});
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledWith('1');
+    });
+
     it('won\'t update the returned collection if the combobox is closed (uncontrolled items)', function () {
       let filter = renderHook((props) => useFilter(props), {sensitivity: 'base'});
       let initialProps = {...defaultProps, items: null, defaultItems: [{id: '0', name: 'one'}, {id: '1', name: 'onomatopoeia'}], defaultInputValue: '', defaultFilter: filter.result.current.contains};

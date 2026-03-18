@@ -1,4 +1,4 @@
-import {addComponentImport, getName} from '../../shared/utils';
+import {addComponentImport, getName, removeComponentImportIfUnused} from '../../shared/utils';
 import {getComponents} from '../../../getComponents';
 import {NodePath} from '@babel/traverse';
 import * as t from '@babel/types';
@@ -34,4 +34,6 @@ export default function transformContextualHelpTrigger(path: NodePath<t.JSXEleme
       }
     }
   }
+
+  removeComponentImportIfUnused(program, 'Dialog');
 }

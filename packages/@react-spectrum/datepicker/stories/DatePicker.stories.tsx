@@ -18,7 +18,7 @@ import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
 import {DatePicker} from '../';
-import {DateValue} from '@react-types/calendar';
+import {DateValue} from '@react-stately/calendar';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {Item, Picker, Section} from '@react-spectrum/picker';

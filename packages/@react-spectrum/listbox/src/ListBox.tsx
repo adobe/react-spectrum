@@ -11,9 +11,8 @@
  */
 
 import {DOMRef} from '@react-types/shared';
-import {ListBoxBase, useListBoxLayout} from './ListBoxBase';
+import {ListBoxBase, SpectrumListBoxProps, useListBoxLayout} from './ListBoxBase';
 import React, {ReactElement} from 'react';
-import {SpectrumListBoxProps} from '@react-types/listbox';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useListState} from '@react-stately/list';
 

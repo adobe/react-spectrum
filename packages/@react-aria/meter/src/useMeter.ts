@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaMeterProps} from '@react-types/meter';
+import {AriaProgressBarBaseProps, ProgressBarBaseProps, useProgressBar} from '@react-aria/progress';
 import {DOMAttributes} from '@react-types/shared';
-import {useProgressBar} from '@react-aria/progress';
+
+export type MeterProps = ProgressBarBaseProps;
+export interface AriaMeterProps extends AriaProgressBarBaseProps {}
 
 export interface MeterAria {
   /** Props for the meter container element. */

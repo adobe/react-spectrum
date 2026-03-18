@@ -17,13 +17,12 @@ import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import Calendar from '@spectrum-icons/workflow/Calendar';
 import Dashboard from '@spectrum-icons/workflow/Dashboard';
-import {Item, TabList, TabPanels, Tabs} from '..';
+import {Item, SpectrumTabsProps, TabList, TabPanels, Tabs} from '..';
 import {Key} from '@react-types/shared';
 import {Meta, StoryFn} from '@storybook/react';
 import {Picker} from '@react-spectrum/picker';
 import React, {ReactNode, useCallback, useState} from 'react';
 import {RouterProvider} from '@react-aria/utils';
-import {SpectrumTabsProps} from '@react-types/tabs';
 import {TextField} from '@react-spectrum/textfield';
 
 export default {

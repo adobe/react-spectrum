@@ -12,8 +12,7 @@
 
 import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
-import {SpectrumWellProps} from '@react-types/well';
-import {Well} from '../';
+import {SpectrumWellProps, Well} from '../';
 
 const meta: Meta<SpectrumWellProps> = {
   title: 'Well',

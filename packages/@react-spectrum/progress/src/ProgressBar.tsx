@@ -12,9 +12,8 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {ProgressBarBase} from './ProgressBarBase';
+import {ProgressBarBase, SpectrumProgressBarProps} from './ProgressBarBase';
 import React from 'react';
-import {SpectrumProgressBarProps} from '@react-types/progress';
 import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
 import {useProgressBar} from '@react-aria/progress';
 

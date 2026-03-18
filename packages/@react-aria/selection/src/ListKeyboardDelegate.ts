@@ -248,7 +248,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
     let nextKey: Key | null = key;
     if (this.orientation === 'horizontal') {
-      let pageX = Math.min(this.layoutDelegate.getContentSize().width, itemRect.y - itemRect.width + this.layoutDelegate.getVisibleRect().width);
+      let pageX = Math.min(this.layoutDelegate.getContentSize().width, itemRect.x - itemRect.width + this.layoutDelegate.getVisibleRect().width);
 
       while (itemRect && itemRect.x < pageX && nextKey != null) {
         nextKey = this.getKeyBelow(nextKey);

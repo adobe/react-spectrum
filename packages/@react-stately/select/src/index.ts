@@ -12,5 +12,4 @@
 
 export {useSelectState} from './useSelectState';
 
-export type {SelectProps} from '@react-types/select';
-export type {SelectState, SelectStateOptions} from './useSelectState';
+export type {SelectProps, SelectState, SelectStateOptions, SelectionMode, ValueType, ChangeValueType} from './useSelectState';

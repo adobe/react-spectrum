@@ -11,10 +11,25 @@
  */
 
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
+import {FocusableProps, HelpTextProps, InputBase, LabelableProps, RangeInputBase, TextInputBase, Validation, ValueBase} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
-import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
 import {useCallback, useMemo, useState} from 'react';
+
+export interface NumberFieldProps extends InputBase, Validation<number>, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps, HelpTextProps {
+  /**
+   * Formatting options for the value displayed in the number field.
+   * This also affects what characters are allowed to be typed by the user.
+   */
+  formatOptions?: Intl.NumberFormatOptions,
+  /**
+   * Controls the behavior of the number field when the user blurs the field after editing.
+   * 'snap' will clamp the value to the min/max values, and snap to the nearest step value.
+   * 'validate' will not clamp the value, and will validate that the value is within the min/max range and on a valid step.
+   * @default 'snap'
+   */
+  commitBehavior?: 'snap' | 'validate'
+}
 
 export interface NumberFieldState extends FormValidationState {
   /**
@@ -90,27 +105,26 @@ export function useNumberFieldState(
     onChange,
     locale,
     isDisabled,
-    isReadOnly
+    isReadOnly,
+    commitBehavior = 'snap'
   } = props;
 
   if (value === null) {
     value = NaN;
   }
 
-  if (value !== undefined && !isNaN(value)) {
-    if (step !== undefined && !isNaN(step)) {
-      value = snapValueToStep(value, minValue, maxValue, step);
-    } else {
-      value = clamp(value, minValue, maxValue);
-    }
+  let snapValue = useCallback(value => {
+    return step === undefined || isNaN(step)
+      ? clamp(value, minValue, maxValue)
+      : snapValueToStep(value, minValue, maxValue, step);
+  }, [step, minValue, maxValue]);
+
+  if (value !== undefined && !isNaN(value) && commitBehavior === 'snap') {
+    value = snapValue(value);
   }
 
-  if (!isNaN(defaultValue)) {
-    if (step !== undefined && !isNaN(step)) {
-      defaultValue = snapValueToStep(defaultValue, minValue, maxValue, step);
-    } else {
-      defaultValue = clamp(defaultValue, minValue, maxValue);
-    }
+  if (!isNaN(defaultValue) && commitBehavior === 'snap') {
+    defaultValue = snapValue(defaultValue);
   }
 
   let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, onChange);
@@ -167,13 +181,7 @@ export function useNumberFieldState(
     }
 
     // Clamp to min and max, round to the nearest step, and round to specified number of digits
-    let clampedValue: number;
-    if (step === undefined || isNaN(step)) {
-      clampedValue = clamp(newParsedValue, minValue, maxValue);
-    } else {
-      clampedValue = snapValueToStep(newParsedValue, minValue, maxValue, step);
-    }
-
+    let clampedValue = commitBehavior === 'snap' ? snapValue(newParsedValue) : newParsedValue;
     clampedValue = numberParser.parse(format(clampedValue));
     let shouldValidate = clampedValue !== numberValue;
     setNumberValue(clampedValue);

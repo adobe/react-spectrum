@@ -35,8 +35,7 @@ let props = {isQuiet: true};
 `;
 
 exports[`removes validationState and validationBehavior 1`] = `
-"import { TextArea } from "@react-spectrum/s2";
-let validationState = 'invalid';
+"let validationState = 'invalid';
 let validationBehavior = 'native';
 let props = {validationState: 'invalid', validationBehavior: 'native'};
 <div>

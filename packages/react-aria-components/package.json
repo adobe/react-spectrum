@@ -42,7 +42,6 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.12.0",
-    "@internationalized/string": "^3.2.7",
     "@react-aria/autocomplete": "3.0.0-rc.6",
     "@react-aria/collections": "^3.0.3",
     "@react-aria/dnd": "^3.11.6",
@@ -56,20 +55,17 @@
     "@react-aria/utils": "^3.33.1",
     "@react-aria/virtualizer": "^4.1.13",
     "@react-stately/autocomplete": "3.0.0-beta.4",
+    "@react-stately/grid": "^3.11.9",
     "@react-stately/layout": "^4.6.0",
     "@react-stately/selection": "^3.20.9",
     "@react-stately/table": "^3.15.4",
     "@react-stately/utils": "^3.11.0",
     "@react-stately/virtualizer": "^4.4.6",
-    "@react-types/form": "^3.7.18",
-    "@react-types/grid": "^3.3.8",
     "@react-types/shared": "^3.33.1",
-    "@react-types/table": "^3.13.6",
     "@swc/helpers": "^0.5.0",
     "client-only": "^0.0.1",
     "react-aria": "^3.47.0",
-    "react-stately": "^3.45.0",
-    "use-sync-external-store": "^1.6.0"
+    "react-stately": "^3.45.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",

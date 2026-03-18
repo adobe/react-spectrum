@@ -10,13 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTabProps} from '@react-types/tabs';
-import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useLinkProps} from '@react-aria/utils';
 import {generateId} from './utils';
 import {TabListState} from '@react-stately/tabs';
 import {useFocusable} from '@react-aria/focus';
 import {useSelectableItem} from '@react-aria/selection';
+
+export interface AriaTabProps extends AriaLabelingProps {
+  /** The key of the tab. */
+  key: Key,
+  /** Whether the tab should be disabled. */
+  isDisabled?: boolean,
+  /** Whether the tab selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean
+}
 
 export interface TabAria {
   /** Props for the tab element. */

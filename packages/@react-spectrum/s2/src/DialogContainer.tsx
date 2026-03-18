@@ -12,9 +12,13 @@
 
 import {ModalContext, useSlottedContext} from 'react-aria-components';
 import React, {ReactElement, ReactNode, useState} from 'react';
-import {SpectrumDialogContainerProps} from '@react-types/dialog';
 
-export interface DialogContainerProps extends Omit<SpectrumDialogContainerProps, 'type' | 'isDismissable' | 'isKeyboardDismissDisabled'> {}
+export interface DialogContainerProps {
+  /** The Dialog to display, if any. */
+  children: ReactNode,
+  /** Handler that is called when the 'x' button of a dismissable Dialog is clicked. */
+  onDismiss: () => void
+}
 
 /**
  * A DialogContainer accepts a single Dialog as a child, and manages showing and hiding

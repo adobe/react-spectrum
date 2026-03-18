@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComboBox, Item} from '../';
+import {ComboBox, Item, SpectrumComboBoxProps} from '../';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {generatePowerset} from '@react-spectrum/story-utils';
@@ -18,7 +18,6 @@ import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
-import {SpectrumComboBoxProps} from '@react-types/combobox';
 
 // Skipping focus styles because don't have a way of applying it via classnames
 // No controlled open state also means no menu

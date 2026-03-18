@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {Alignment, DOMProps, DOMRef, Orientation, StyleProps} from '@react-types/shared';
 import {
   classNames,
   SlotProvider,
@@ -18,12 +19,28 @@ import {
   useSlotProps,
   useStyleProps
 } from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
 import {filterDOMProps, useLayoutEffect, useValueEffect} from '@react-aria/utils';
 import {Provider, useProvider, useProviderProps} from '@react-spectrum/provider';
-import React, {useCallback, useRef} from 'react';
-import {SpectrumButtonGroupProps} from '@react-types/buttongroup';
+import React, {ReactNode, useCallback, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
+
+export interface SpectrumButtonGroupProps extends DOMProps, StyleProps {
+  /** Whether the Buttons in the ButtonGroup are all disabled. */
+  isDisabled?: boolean,
+  /**
+   * The axis the ButtonGroup should align with. Setting this to 'vertical' will prevent
+   * any switching behaviors between 'vertical' and 'horizontal'.
+   * @default 'horizontal'
+   */
+  orientation?: Orientation,
+  /** The Buttons contained within the ButtonGroup. */
+  children: ReactNode,
+  /**
+   * The alignment of the buttons within the ButtonGroup.
+   * @default 'start'
+   */
+  align?: Alignment | 'center'
+}
 
 /**
  * ButtonGroup handles overflow for a grouping of buttons whose actions are related to each other.

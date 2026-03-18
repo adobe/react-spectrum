@@ -11,7 +11,7 @@
  */
 
 import {Calendar, DateFormatter, getLocalTimeZone, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
-import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
+import {DatePickerProps, DateValue, Granularity, TimeValue} from './types';
 // @ts-ignore
 import i18nMessages from '../intl/*.json';
 import {LocalizedStringDictionary, LocalizedStringFormatter} from '@internationalized/string';

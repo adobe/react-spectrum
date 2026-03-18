@@ -10,11 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTooltipProps} from '@react-types/tooltip';
-import {DOMAttributes} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {TooltipTriggerState} from '@react-stately/tooltip';
 import {useHover} from '@react-aria/interactions';
+
+export interface TooltipProps {
+  isOpen?: boolean
+}
+
+export interface AriaTooltipProps extends TooltipProps, DOMProps, AriaLabelingProps {}
 
 export interface TooltipAria {
   /**

@@ -12,9 +12,24 @@
 
 import {DialogContext} from './context';
 import {Modal} from '@react-spectrum/overlays';
-import React, {JSX, ReactElement, useState} from 'react';
-import {SpectrumDialogContainerProps} from '@react-types/dialog';
+import React, {JSX, ReactElement, ReactNode, useState} from 'react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
+
+export interface SpectrumDialogContainerProps {
+  /** The Dialog to display, if any. */
+  children: ReactNode,
+  /** Handler that is called when the 'x' button of a dismissable Dialog is clicked. */
+  onDismiss: () => void,
+  /**
+   * The type of Dialog that should be rendered. See the visual options below for examples of each.
+   * @default 'modal'
+   */
+  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover',
+  /** Whether the Dialog is dismissable. See the [Dialog docs](Dialog.html#dismissable-dialogs) for more details. */
+  isDismissable?: boolean,
+  /** Whether pressing the escape key to close the dialog should be disabled. */
+  isKeyboardDismissDisabled?: boolean
+}
 
 /**
  * A DialogContainer accepts a single Dialog as a child, and manages showing and hiding

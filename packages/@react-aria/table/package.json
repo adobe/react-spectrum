@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@react-aria/button": "^3.14.5",
-    "@react-aria/focus": "^3.21.5",
+    "@react-aria/checkbox": "^3.16.5",
     "@react-aria/grid": "^3.14.8",
     "@react-aria/i18n": "^3.12.16",
     "@react-aria/interactions": "^3.27.1",
@@ -35,12 +35,9 @@
     "@react-aria/utils": "^3.33.1",
     "@react-aria/visually-hidden": "^3.8.31",
     "@react-stately/collections": "^3.12.10",
-    "@react-stately/flags": "^3.1.2",
+    "@react-stately/grid": "^3.11.9",
     "@react-stately/table": "^3.15.4",
-    "@react-types/checkbox": "^3.10.4",
-    "@react-types/grid": "^3.3.8",
     "@react-types/shared": "^3.33.1",
-    "@react-types/table": "^3.13.6",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

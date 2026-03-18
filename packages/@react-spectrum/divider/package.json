@@ -42,7 +42,6 @@
   "dependencies": {
     "@react-aria/separator": "^3.4.16",
     "@react-spectrum/utils": "^3.12.12",
-    "@react-types/divider": "^3.3.23",
     "@react-types/shared": "^3.33.1",
     "@swc/helpers": "^0.5.0"
   },

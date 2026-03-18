@@ -27,7 +27,6 @@
   },
   "dependencies": {
     "@react-aria/i18n": "^3.12.16",
-    "@react-aria/interactions": "^3.27.1",
     "@react-aria/utils": "^3.33.1",
     "@react-stately/virtualizer": "^4.4.6",
     "@react-types/shared": "^3.33.1",
