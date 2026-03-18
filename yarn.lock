@@ -24903,6 +24903,7 @@ __metadata:
     "@react-types/shared": "npm:^3.33.1"
     "@swc/helpers": "npm:^0.5.0"
     "@tailwindcss/postcss": "npm:^4.0.0"
+    client-only: "npm:^0.0.1"
     react-aria: "npm:^3.47.0"
     react-stately: "npm:^3.45.0"
   peerDependencies:
