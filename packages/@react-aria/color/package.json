@@ -36,7 +36,6 @@
     "@react-aria/visually-hidden": "^3.8.31",
     "@react-stately/color": "^3.9.5",
     "@react-stately/form": "^3.2.4",
-    "@react-types/color": "^3.1.4",
     "@react-types/shared": "^3.33.1",
     "@swc/helpers": "^0.5.0"
   },

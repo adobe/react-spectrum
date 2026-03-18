@@ -10,16 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaBaseButtonProps, ButtonProps, useButton} from '@react-aria/button';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
-import {SpectrumLogicButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
+
+export interface SpectrumLogicButtonProps extends AriaBaseButtonProps, Omit<ButtonProps, 'onClick'>, StyleProps {
+  /** The type of boolean sequence to be represented by the LogicButton. */
+  variant: 'and' | 'or'
+}
 
 /**
  * A LogicButton displays an operator within a boolean logic sequence.

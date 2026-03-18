@@ -8,5 +8,5 @@
     "moduleResolution": "node",
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.test.ts", "**/__mocks__"]
+  "exclude": ["node_modules", "**/*.test.ts", "**/__mocks__", "**/__testfixtures__"]
 }

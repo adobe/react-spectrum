@@ -36,9 +36,8 @@ import {
 import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SingleSelection, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
-import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
+import {baseColor, centerPadding, focusRing, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   checkmark,
   description,
@@ -49,6 +48,7 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
+import {control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {createFocusableRef} from './useDOMRef';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
@@ -65,7 +65,7 @@ import {Placement} from 'react-aria';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
-import {TextFieldRef} from '@react-types/textfield';
+import {TextFieldRef} from './TextField';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';

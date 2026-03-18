@@ -21,17 +21,21 @@ import {
   InputProps,
   useSlottedContext
 } from 'react-aria-components';
-import {centerPadding, controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, style} from '../style' with {type: 'macro'};
+import {controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from './useDOMRef';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
+import {FocusableRefValue, GlobalDOMAttributes, HelpTextProps, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
-import {GlobalDOMAttributes, HelpTextProps, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {mergeRefs} from '@react-aria/utils';
-import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
-import {TextFieldRef} from '@react-types/textfield';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+
+export interface TextFieldRef<T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends FocusableRefValue<T, HTMLDivElement> {
+  select(): void,
+  getInputElement(): T | null
+}
 
 export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
   /**

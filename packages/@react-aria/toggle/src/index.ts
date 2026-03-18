@@ -11,5 +11,4 @@
  */
 
 export {useToggle} from './useToggle';
-export type {AriaToggleProps} from '@react-types/checkbox';
-export type {ToggleAria} from './useToggle';
+export type {AriaToggleProps, ToggleAria} from './useToggle';

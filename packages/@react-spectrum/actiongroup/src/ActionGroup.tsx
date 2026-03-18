@@ -11,6 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
+import {AriaActionGroupProps, useActionGroup, useActionGroupItem} from '@react-aria/actiongroup';
 import {AriaLabelingProps, DOMProps, DOMRef, Key, Node, StyleProps} from '@react-types/shared';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
@@ -32,13 +33,43 @@ import More from '@spectrum-icons/workflow/More';
 import {PressResponder, useHover} from '@react-aria/interactions';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React, {forwardRef, ReactElement, ReactNode, useCallback, useMemo, useRef, useState} from 'react';
-import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
 import {Text} from '@react-spectrum/text';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-import {useActionGroup, useActionGroupItem} from '@react-aria/actiongroup';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
+export interface SpectrumActionGroupProps<T> extends AriaActionGroupProps<T>, StyleProps {
+  /** Whether the ActionButtons should be displayed with a [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
+  isEmphasized?: boolean,
+  /**
+   * Sets the amount of space between buttons.
+   * @default 'regular'
+   */
+  density?: 'compact' | 'regular',
+  /** Whether the ActionButtons should be justified in their container. */
+  isJustified?: boolean,
+  /** Whether ActionButtons should use the [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
+  isQuiet?: boolean,
+  /** The static color style to apply. Useful when the ActionGroup appears over a color background. */
+  staticColor?: 'white' | 'black',
+  /**
+   * Defines the behavior of the ActionGroup when the buttons do not fit in the available space.
+   * When set to 'wrap', the items wrap to form a new line. When set to 'collapse', the items that
+   * do not fit are collapsed into a dropdown menu.
+   * @default 'wrap'
+   */
+  overflowMode?: 'wrap' | 'collapse',
+  /**
+   * Defines when the text within the buttons should be hidden and only the icon should be shown.
+   * When set to 'hide', the text is always shown in a tooltip. When set to 'collapse', the text is visible
+   * if space is available, and hidden when space is limited. The text is always visible when the item
+   * is collapsed into a menu.
+   * @default 'show'
+   */
+  buttonLabelBehavior?: 'show' | 'collapse' | 'hide',
+  /** The icon displayed in the dropdown menu button when a selectable ActionGroup is collapsed. */
+  summaryIcon?: ReactElement
+}
 
 /**
  * An ActionGroup is a grouping of ActionButtons that are related to one another.

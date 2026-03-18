@@ -22,5 +22,6 @@ export {
   Cell
 } from './TableView';
 
-export type {SpectrumColumnProps, TableHeaderProps, TableBodyProps, RowProps, CellProps} from '@react-types/table';
+export type {SpectrumColumnProps} from './types';
+export type {TableHeaderProps, TableBodyProps, RowProps, CellProps} from '@react-stately/table';
 export type {SpectrumTableProps} from './TableView';

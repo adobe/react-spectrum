@@ -10,20 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaTimeFieldProps, useTimeField} from '@react-aria/datepicker';
 import {classNames} from '@react-spectrum/utils';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './styles.css';
 import {Field} from '@react-spectrum/label';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, InputDOMProps, SpectrumFieldValidation, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Input} from './Input';
+import {MappedTimeValue, TimeValue, useTimeFieldState} from '@react-stately/datepicker';
 import React, {ReactElement, useRef} from 'react';
-import {SpectrumTimeFieldProps, TimeValue} from '@react-types/datepicker';
 import {useFocusManagerRef, useFormattedDateWidth} from './utils';
 import {useFormProps} from '@react-spectrum/form';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useTimeField} from '@react-aria/datepicker';
-import {useTimeFieldState} from '@react-stately/datepicker';
+
+export interface SpectrumTimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<MappedTimeValue<T>>, SpectrumLabelableProps, StyleProps, InputDOMProps {
+  /**
+   * Whether the time field should be displayed with a quiet style.
+   * @default false
+   */
+  isQuiet?: boolean
+}
 
 /**
  * TimeFields allow users to enter and edit time values using a keyboard.

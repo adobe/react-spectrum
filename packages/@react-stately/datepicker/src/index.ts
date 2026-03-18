@@ -20,3 +20,4 @@ export type {DatePickerStateOptions, DatePickerState} from './useDatePickerState
 export type {DateRangePickerStateOptions, DateRangePickerState} from './useDateRangePickerState';
 export type {TimeFieldStateOptions, TimeFieldState} from './useTimeFieldState';
 export type {FormatterOptions} from './utils';
+export type {DateFieldProps, DatePickerProps, DateRange, DateRangePickerProps, DateValue, Granularity, MappedDateValue, MappedTimeValue, TimePickerProps, TimeValue} from './types';

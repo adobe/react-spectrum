@@ -263,6 +263,63 @@ describe('ComboBox', () => {
     expect(document.querySelector('input[type=hidden]')).toBeNull();
   });
 
+  it.each(['click', 'tab'])('should not fire extra onSelectionChange calls after focus moves away in fully controlled mode via %s', async (focusMove) => {
+    let onSelectionChange = jest.fn();
+    let keyToText = {
+      '1': 'Cat',
+      '2': 'Dog',
+      '3': 'Kangaroo'
+    };
+
+    function ControlledComboBox() {
+      let [selectedKey, setSelectedKey] = useState(null);
+      let [inputValue, setInputValue] = useState('');
+
+      return (
+        <>
+          <ComboBox
+            value={selectedKey}
+            inputValue={inputValue}
+            onChange={(key) => {
+              onSelectionChange(key);
+              setSelectedKey(key);
+              setInputValue(key != null ? keyToText[key] : '');
+            }}
+            onInputChange={setInputValue}>
+            <Label>Favorite Animal</Label>
+            <Input />
+            <Button />
+            <Popover>
+              <ListBox>
+                <ListBoxItem id="1">Cat</ListBoxItem>
+                <ListBoxItem id="2">Dog</ListBoxItem>
+                <ListBoxItem id="3">Kangaroo</ListBoxItem>
+              </ListBox>
+            </Popover>
+          </ComboBox>
+          <button type="button">Next</button>
+        </>
+      );
+    }
+
+    let tree = render(<ControlledComboBox />);
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
+
+    await comboboxTester.selectOption({option: 'Dog'});
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+
+    if (focusMove === 'click') {
+      await user.click(tree.getByRole('button', {name: 'Next'}));
+    } else {
+      act(() => {
+        comboboxTester.combobox.focus();
+      });
+      await user.tab();
+    }
+
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+  });
+
   it('should support form reset', async () => {
     const tree = render(
       <form>
@@ -760,6 +817,62 @@ describe('ComboBox', () => {
     await user.keyboard('{ArrowDown}{Enter}');
     expect(onChange).toHaveBeenCalledTimes(2);
     expect(onChange).toHaveBeenLastCalledWith(['1']);
+  });
+
+  it('should support isRequired with multiple selection', async () => {
+    let {container, getByTestId} = render(
+      <Form data-testid="form">
+        <ComboBox name="combobox" selectionMode="multiple" isRequired>
+          <Label>Favorite Animal</Label>
+          <Input />
+          <Button />
+          <FieldError />
+          <Popover>
+            <ListBox>
+              <ListBoxItem id="1">Cat</ListBoxItem>
+              <ListBoxItem id="2">Dog</ListBoxItem>
+              <ListBoxItem id="3">Kangaroo</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </ComboBox>
+      </Form>
+    );
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    let combobox = comboboxTester.combobox;
+
+    expect(combobox).toHaveAttribute('required');
+    expect(combobox.validity.valid).toBe(false);
+
+    act(() => {getByTestId('form').checkValidity();});
+    expect(combobox).toHaveAttribute('aria-describedby');
+    expect(container.querySelector('.react-aria-ComboBox')).toHaveAttribute('data-invalid');
+    
+    await comboboxTester.open();
+    let options = comboboxTester.options();
+    await user.click(options[0]);
+    
+    act(() => combobox.blur());
+    expect(combobox).not.toHaveAttribute('required');
+    expect(combobox.validity.valid).toBe(true);
+    expect(container.querySelector('.react-aria-ComboBox')).not.toHaveAttribute('data-invalid');
+
+    let hiddenInputs = container.querySelectorAll('input[type="hidden"]');
+    expect(hiddenInputs).toHaveLength(1);
+    expect(hiddenInputs[0]).toHaveAttribute('name', 'combobox');
+    expect(hiddenInputs[0]).toHaveAttribute('value', '1');
+
+    await comboboxTester.open();
+    options = comboboxTester.options();
+    await user.click(options[0]);
+    act(() => combobox.blur());
+    expect(combobox).toHaveAttribute('required');
+    expect(combobox.validity.valid).toBe(false);
+    expect(combobox).toHaveAttribute('aria-describedby');
+
+    hiddenInputs = container.querySelectorAll('input[type="hidden"]');
+    expect(hiddenInputs).toHaveLength(1);
+    expect(hiddenInputs[0]).toHaveAttribute('name', 'combobox');
+    expect(hiddenInputs[0]).toHaveAttribute('value', '');
   });
 
   it('should not close the combobox when clicking on the input', async () => {

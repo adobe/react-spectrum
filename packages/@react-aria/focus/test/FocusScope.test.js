@@ -354,6 +354,27 @@ describe('FocusScope', function () {
 
       expect(document.activeElement).toBe(input2);
     });
+
+    it('should select all text in input when tabbing', async function () {
+      let {getByTestId} = render(
+        <FocusScope contain>
+          <input data-testid="input1" defaultValue="Test1" />
+          <input data-testid="input2" defaultValue="Test2" />
+          <input data-testid="input3" defaultValue="Test3" />
+        </FocusScope>
+      );
+
+      let input1 = getByTestId('input1');
+      let input2 = getByTestId('input2');
+
+      act(() => {input1.focus();});
+      expect(document.activeElement).toBe(input1);
+
+      await user.tab();
+      expect(document.activeElement).toBe(input2);
+      await user.keyboard('{Delete}');
+      expect(input2.value).toBe('');
+    });
   });
 
   describe('focus restoration', function () {

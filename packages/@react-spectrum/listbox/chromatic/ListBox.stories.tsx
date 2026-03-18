@@ -18,12 +18,11 @@ import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
-import {Item, ListBox, Section} from '../';
+import {Item, ListBox, Section, SpectrumListBoxProps} from '../';
 import {Label} from '@react-spectrum/label';
 import {Meta, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {JSX} from 'react';
-import {SpectrumListBoxProps} from '@react-types/listbox';
 import {Text} from '@react-spectrum/text';
 
 let iconMap = {

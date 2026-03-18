@@ -12,10 +12,10 @@
 
 import {getChildNodes, getFirstItem} from '@react-stately/collections';
 import {GridKeyboardDelegate} from '@react-aria/grid';
+import {ITableCollection} from '@react-stately/table';
 import {Key, Node} from '@react-types/shared';
-import {TableCollection} from '@react-types/table';
 
-export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableCollection<T>> {
+export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableCollection<T>> {
 
   protected isCell(node: Node<T>): boolean {
     return node.type === 'cell' || node.type === 'rowheader' || node.type === 'column';

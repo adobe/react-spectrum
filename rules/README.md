@@ -14,7 +14,7 @@ For React Spectrum (Spectrum 2) (i.e. `@react-spectrum/s2`).
 
 ### `style-macro.mdc`
 
-For the React Spectrum S2 [style macro](https://react-spectrum.adobe.com/s2/index.html?path=/docs/style-macro--docs).
+For the React Spectrum S2 [style macro](https://react-spectrum.adobe.com/styling).
 
 ### `react-spectrum-v3-to-s2-migration.mdc`
 

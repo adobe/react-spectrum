@@ -11,12 +11,18 @@
  */
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import React from 'react';
-import {SpectrumActionBarContainerProps} from '@react-types/actionbar';
+import React, {ReactNode} from 'react';
 import styles from './actionbar.css';
 import {useProviderProps} from '@react-spectrum/provider';
+
+interface ActionBarContainerProps {
+  /** The contents of the ActionBarContainer. Should include a ActionBar and the renderable content it is associated with. */
+  children: ReactNode
+}
+
+export interface SpectrumActionBarContainerProps extends ActionBarContainerProps, DOMProps, StyleProps {}
 
 /**
  * ActionBarContainer wraps around an ActionBar and a component that supports selection. It handles

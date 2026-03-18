@@ -15,7 +15,7 @@ import {DateFormatter, useDateFormatter, useLocale} from '@react-aria/i18n';
 import {FocusableRef} from '@react-types/shared';
 import {FormatterOptions} from '@react-stately/datepicker';
 import React, {ReactNode, useImperativeHandle, useMemo, useRef, useState} from 'react';
-import {SpectrumDatePickerBase} from '@react-types/datepicker';
+import {SpectrumDatePickerBase} from './DatePicker';
 import {useDisplayNames} from '@react-aria/datepicker';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useProvider} from '@react-spectrum/provider';

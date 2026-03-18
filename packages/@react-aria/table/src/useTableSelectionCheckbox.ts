@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaCheckboxProps} from '@react-types/checkbox';
+import {AriaCheckboxProps} from '@react-aria/checkbox';
 import {getRowLabelledBy} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';

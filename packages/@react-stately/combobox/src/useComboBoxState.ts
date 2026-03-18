@@ -10,14 +10,78 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionStateBase, FocusStrategy, Key, Node, Selection} from '@react-types/shared';
-import {ComboBoxProps, MenuTriggerAction, SelectionMode, ValueType} from '@react-types/combobox';
+import {Collection, CollectionBase, CollectionStateBase, FocusableProps, FocusStrategy, HelpTextProps, InputBase, Key, LabelableProps, Node, Selection, TextInputBase, Validation, ValueBase} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getChildNodes} from '@react-stately/collections';
 import {ListCollection, ListState, useListState} from '@react-stately/list';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
+
+export type MenuTriggerAction = 'focus' | 'input' | 'manual';
+export type SelectionMode = 'single' | 'multiple';
+export type ValueType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
+export type ChangeValueType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
+type ValidationType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
+
+export interface ComboBoxValidationValue<M extends SelectionMode = 'single'> {
+  /**
+   * The selected key in the ComboBox.
+   * @deprecated
+   */
+  selectedKey: Key | null,
+  /** The keys of the currently selected items. */
+  value: ValidationType<M>,
+  /** The value of the ComboBox input. */
+  inputValue: string
+}
+
+export interface ComboBoxProps<T, M extends SelectionMode = 'single'> extends CollectionBase<T>, InputBase, ValueBase<ValueType<M>, ChangeValueType<M>>, TextInputBase, Validation<ComboBoxValidationValue<M>>, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
+  /** The list of ComboBox items (uncontrolled). */
+  defaultItems?: Iterable<T>,
+  /** The list of ComboBox items (controlled). */
+  items?: Iterable<T>,
+  /** Method that is called when the open state of the menu changes. Returns the new open state and the action that caused the opening of the menu. */
+  onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void,
+  /**
+   * Whether single or multiple selection is enabled.
+   * @default 'single'
+   */
+  selectionMode?: M,
+  /**
+   * The currently selected key in the collection (controlled).
+   * @deprecated
+   */
+  selectedKey?: Key | null,
+  /**
+   * The initial selected key in the collection (uncontrolled).
+   * @deprecated
+   */
+  defaultSelectedKey?: Key | null,
+  /**
+   * Handler that is called when the selection changes.
+   * @deprecated
+   */
+  onSelectionChange?: (key: Key | null) => void,
+  /** The value of the ComboBox input (controlled). */
+  inputValue?: string,
+  /** The default value of the ComboBox input (uncontrolled). */
+  defaultInputValue?: string,
+  /** Handler that is called when the ComboBox input value changes. */
+  onInputChange?: (value: string) => void,
+  /** Whether the ComboBox allows a non-item matching input value to be set. */
+  allowsCustomValue?: boolean,
+  // /**
+  //  * Whether the Combobox should only suggest matching options or autocomplete the field with the nearest matching option.
+  //  * @default 'suggest'
+  //  */
+  // completionMode?: 'suggest' | 'complete',
+ /**
+  * The interaction required to display the ComboBox menu.
+  * @default 'input'
+  */
+  menuTrigger?: MenuTriggerAction
+}
 
 export interface ComboBoxState<T, M extends SelectionMode = 'single'> extends ListState<T>, OverlayTriggerState, FormValidationState {
   /**
@@ -369,14 +433,21 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     closeMenu();
   };
 
-  let commitSelection = () => {
-    // If multiple things are controlled, call onSelectionChange
+  let commitSelection = (shouldForceSelectionChange = false) => {
+    // If multiple things are controlled, call onSelectionChange only when selecting the focused item,
+    // or when inputValue needs to be synced back to the selected item on commit/blur.
     if (value !== undefined && props.inputValue !== undefined) {
-      props.onSelectionChange?.(selectedKey);
-      props.onChange?.(displayValue);
+      let itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
+      if (
+        shouldForceSelectionChange ||
+        selectionMode === 'multiple' ||
+        inputValue !== itemText
+      ) {
+        props.onSelectionChange?.(selectedKey);
+        props.onChange?.(displayValue as ChangeValueType<M>);
+      }
 
       // Stop menu from reopening from useEffect
-      let itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
       setLastValue(itemText);
       closeMenu();
     } else {
@@ -401,7 +472,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
       // Reset inputValue and close menu here if the selected key is already the focused key. Otherwise
       // fire onSelectionChange to allow the application to control the closing.
       if (selectionManager.isSelected(selectionManager.focusedKey) && selectionMode === 'single') {
-        commitSelection();
+        commitSelection(true);
       } else {
         selectionManager.select(selectionManager.focusedKey);
       }
@@ -410,10 +481,10 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     }
   };
 
-  let valueOnFocus = useRef(inputValue);
+  let valueOnFocus = useRef([inputValue, displayValue]);
   let setFocused = (isFocused: boolean) => {
     if (isFocused) {
-      valueOnFocus.current = inputValue;
+      valueOnFocus.current = [inputValue, displayValue];
       if (menuTrigger === 'focus' && !props.isReadOnly) {
         open(null, 'focus');
       }
@@ -422,7 +493,8 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
         commitValue();
       }
 
-      if (inputValue !== valueOnFocus.current) {
+      // Commit validation if the input value or selected items changed.
+      if (inputValue !== valueOnFocus.current[0] || displayValue !== valueOnFocus.current[1]) {
         validation.commitValidation();
       }
     }
@@ -504,7 +576,7 @@ function getDefaultInputValue(defaultInputValue: string | null | undefined, sele
   return defaultInputValue;
 }
 
-function convertValue(value: Key | Key[] | null | undefined) {
+function convertValue(value: Key | readonly Key[] | null | undefined) {
   if (value === undefined) {
     return undefined;
   }

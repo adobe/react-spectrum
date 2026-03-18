@@ -12,9 +12,9 @@
 
 import {cloneElement, createContext, CSSProperties, ReactElement, ReactNode, Ref, useCallback, useContext, useRef} from 'react';
 import {color, style} from '../style' with {type: 'macro'};
+import {css} from '../style/style-macro' with {type: 'macro'};
 import {inertValue, mergeRefs} from '@react-aria/utils';
 import {mergeStyles} from '../style/runtime';
-import {raw} from '../style/style-macro' with {type: 'macro'};
 import {StyleString} from '../style/types';
 import {useMediaQuery} from './useMediaQuery';
 
@@ -73,7 +73,7 @@ export function Skeleton({children, isLoading}: SkeletonProps): ReactNode {
   );
 }
 
-export const loadingStyle = raw(`
+export const loadingStyle = css(`
   background-image: linear-gradient(to right, ${color('gray-100')} 33%, light-dark(${color('gray-25')}, ${color('gray-300')}), ${color('gray-100')} 66%);
   background-size: 300%;
   * {

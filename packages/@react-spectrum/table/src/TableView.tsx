@@ -14,14 +14,16 @@ import type {AriaLabelingProps, DisabledBehavior, DOMProps, DOMRef, Key, Spectru
 import {
   Cell,
   Column,
+  ColumnSize,
   Row,
   Section,
   TableBody,
-  TableHeader
+  TableHeader,
+  TableProps
 } from '@react-stately/table';
-import type {ColumnSize, SpectrumColumnProps, TableProps} from '@react-types/table';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import React, {JSX, ReactElement} from 'react';
+import {SpectrumColumnProps} from './types';
 import {tableNestedRows} from '@react-stately/flags';
 import {TableViewWithoutExpanding} from './TableViewWithoutExpanding';
 import {TreeGridTableView} from './TreeGridTableView';

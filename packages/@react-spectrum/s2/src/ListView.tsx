@@ -716,7 +716,7 @@ function isNextSelected(id: Key | undefined, state: ListState<unknown>) {
   let keyAfter = state.collection.getKeyAfter(id);
   return keyAfter != null && state.selectionManager.isSelected(keyAfter);
 }
-function isPrevSelected(id: Key | undefined, state: ListState<unknown>) {
+export function isPrevSelected(id: Key | undefined, state: ListState<unknown>) {
   if (id == null || !state) {
     return false;
   }
@@ -724,7 +724,7 @@ function isPrevSelected(id: Key | undefined, state: ListState<unknown>) {
   return keyBefore != null && state.selectionManager.isSelected(keyBefore);
 }
 
-function isFirstItem(id: Key | undefined, state: ListState<unknown>) {
+export function isFirstItem(id: Key | undefined, state: ListState<unknown>) {
   if (id == null || !state) {
     return false;
   }

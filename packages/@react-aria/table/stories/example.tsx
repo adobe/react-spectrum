@@ -13,11 +13,10 @@
 import {Key, SelectionBehavior} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import React, {JSX, ReactNode, useRef, useState} from 'react';
-import {TableProps} from '@react-types/table';
+import {TableProps, useTableState} from '@react-stately/table';
 import {useCheckbox} from '@react-aria/checkbox';
 import {useFocusRing} from '@react-aria/focus';
 import {useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
-import {useTableState} from '@react-stately/table';
 import {useToggleState} from '@react-stately/toggle';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 

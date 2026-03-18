@@ -19,7 +19,7 @@ import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
 import {PressEvents, RefObject, ValidationResult} from '@react-types/shared';
 import React, {cloneElement, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
-import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
+import {SpectrumTextFieldProps, TextFieldRef} from './TextField';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';

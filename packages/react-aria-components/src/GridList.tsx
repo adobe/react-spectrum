@@ -34,7 +34,7 @@ import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
 import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, Orientation, PressEvents, RefObject} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
@@ -68,6 +68,11 @@ export interface GridListRenderProps {
    */
   layout: 'stack' | 'grid',
   /**
+   * The primary orientation of the items.
+   * @selector [data-orientation="vertical | horizontal"]
+   */
+  orientation: Orientation,
+  /**
    * State of the grid list.
    */
   state: ListState<unknown>
@@ -97,7 +102,12 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
    * Whether the items are arranged in a stack or grid.
    * @default 'stack'
    */
-  layout?: 'stack' | 'grid'
+  layout?: 'stack' | 'grid',
+  /**
+   * The primary orientation of the items. Usually this is the direction that the collection scrolls.
+   * @default 'vertical'
+   */
+  orientation?: Orientation
 }
 
 
@@ -128,7 +138,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {shouldUseVirtualFocus, filter, disallowTypeAhead, ...DOMCollectionProps} = props;
-  let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;
+  let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack', orientation = 'vertical'} = props;
   let {CollectionRoot, isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate} = useContext(CollectionRendererContext);
   let gridlistState = useListState({
     ...DOMCollectionProps,
@@ -150,9 +160,10 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       disabledBehavior,
       layoutDelegate,
       layout,
+      orientation,
       direction
     })
-  ), [filteredState.collection, ref, layout, disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
+  ), [filteredState.collection, ref, layout, orientation, disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
 
   let {gridProps} = useGridList({
     ...DOMCollectionProps,
@@ -208,13 +219,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       selectionManager
     });
 
-    let keyboardDelegate = new ListKeyboardDelegate({
-      collection: filteredState.collection,
-      disabledKeys: selectionManager.disabledKeys,
-      disabledBehavior: selectionManager.disabledBehavior,
-      ref
-    });
-    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, ref, {layout, direction});
+    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, ref, {layout, direction, orientation});
     droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate,
       dropTargetDelegate
@@ -227,6 +232,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   let isEmpty = filteredState.collection.size === 0;
   let renderValues = {
     isDropTarget: isRootDropTarget,
+    orientation,
     isEmpty,
     isFocused,
     isFocusVisible,
@@ -267,7 +273,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
         data-empty={isEmpty || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
-        data-layout={layout}>
+        data-layout={layout}
+        data-orientation={orientation}>
         <Provider
           values={[
             [ListStateContext, filteredState],
