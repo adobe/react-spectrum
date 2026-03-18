@@ -14,7 +14,6 @@ import {
   clearGlobalDnDState,
   DIRECTORY_DRAG_TYPE,
   droppableCollectionMap,
-  getItemElement,
   getTypes,
   globalDndState,
   isInternalDropOperation,
@@ -313,7 +312,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
       state.selectionManager.setFocused(true);
     }
-  }, [localState, ref]);
+  }, [localState]);
 
   let onDrop = useCallback((e: DropEvent, target: DropTarget) => {
     let {state} = localState;

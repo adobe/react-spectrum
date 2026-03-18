@@ -481,10 +481,10 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     }
   };
 
-  let valueOnFocus = useRef(inputValue);
+  let valueOnFocus = useRef([inputValue, displayValue]);
   let setFocused = (isFocused: boolean) => {
     if (isFocused) {
-      valueOnFocus.current = inputValue;
+      valueOnFocus.current = [inputValue, displayValue];
       if (menuTrigger === 'focus' && !props.isReadOnly) {
         open(null, 'focus');
       }
@@ -493,7 +493,8 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
         commitValue();
       }
 
-      if (inputValue !== valueOnFocus.current) {
+      // Commit validation if the input value or selected items changed.
+      if (inputValue !== valueOnFocus.current[0] || displayValue !== valueOnFocus.current[1]) {
         validation.commitValidation();
       }
     }

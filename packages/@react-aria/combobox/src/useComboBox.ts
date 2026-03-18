@@ -218,6 +218,8 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,
+    // In multi-select mode, only set required if the selection is empty.
+    isRequired: props.selectionMode === 'multiple' ? props.isRequired && state.selectionManager.isEmpty : props.isRequired,
     onChange: state.setInputValue,
     onKeyDown: !isReadOnly ? chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown) : props.onKeyDown,
     onBlur,
