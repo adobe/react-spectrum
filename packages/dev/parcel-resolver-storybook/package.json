@@ -11,10 +11,10 @@
     "parcel": "^2.8.0"
   },
   "dependencies": {
-    "@parcel/core": "^2.16.3",
+    "@parcel/core": "^2.16.4",
     "@parcel/node-resolver-core": "^3.7.3",
-    "@parcel/plugin": "^2.16.3",
-    "@parcel/utils": "^2.16.3"
+    "@parcel/plugin": "^2.16.4",
+    "@parcel/utils": "^2.16.4"
   },
   "scripts": {
     "build": "rm -rf dist && swc . -d dist --config-file ../../.swcrc",
