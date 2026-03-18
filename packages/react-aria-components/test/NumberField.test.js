@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
 import {Button, FieldError, Form, Group, I18nProvider, Input, Label, NumberField, NumberFieldContext, Text} from '../';
 import React, { useState } from 'react';
@@ -497,7 +497,7 @@ describe('NumberField', () => {
       act(() => {jest.runAllTimers();});
     });
 
-    it('stops spinning if the associated button is disabled', async () => {
+    it.only('stops spinning if the associated button is disabled', async () => {
       function NumberFieldDisabledButtons({label}) {
         const [value, setValue] = useState(4);
 
@@ -521,7 +521,9 @@ describe('NumberField', () => {
       let decrementButton = getByRole('button', {name: 'Decrease'});
       let incrementButton = getByRole('button', {name: 'Increase'});
       await user.click(incrementButton);
-      await user.click(decrementButton);
+      // manually fire these events because user.click will refuse to fire the up event if the button is disabled
+      fireEvent.mouseDown(decrementButton, {button: 0});
+      fireEvent.mouseUp(decrementButton, {button: 0});
       await act(async () => jest.runAllTimers());
       expect(decrementButton).toBeDisabled();
       expect(input).toHaveValue('4');

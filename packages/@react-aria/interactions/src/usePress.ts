@@ -200,6 +200,10 @@ export function usePress(props: PressHookProps): PressResult {
     pointerType: null,
     disposables: []
   });
+  let isDisabledRef = useRef(isDisabled);
+  useEffect(() => {
+    isDisabledRef.current = isDisabled;
+  }, [isDisabled]);
 
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
@@ -577,7 +581,7 @@ export function usePress(props: PressHookProps): PressResult {
             let clicked = false;
             let timeout = setTimeout(() => {
               if (state.isPressed && state.target instanceof HTMLElement) {
-                if (clicked) {
+                if (clicked || (state.isPressed && isDisabledRef.current)) {
                   // eslint-disable-next-line react-hooks/rules-of-hooks
                   cancelEvent(e);
                 } else {
@@ -708,6 +712,11 @@ export function usePress(props: PressHookProps): PressResult {
         if (state.target && nodeContains(state.target, getEventTarget(e) as Element) && state.pointerType != null) {
           // Wait for onClick to fire onPress. This avoids browser issues when the DOM
           // is mutated between onMouseUp and onClick, and is more compatible with third party libraries.
+          if (state.isPressed && isDisabledRef.current) {
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            cancelEvent(e);
+            return;
+          }
         } else {
           // eslint-disable-next-line react-hooks/rules-of-hooks
           cancelEvent(e);

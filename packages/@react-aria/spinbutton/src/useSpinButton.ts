@@ -148,21 +148,10 @@ export function useSpinButton(
     clearAsync();
   }, [clearAsync]);
 
-  let incrementButtonRef = useRef<HTMLButtonElement>(null);
-  let decrementButtonRef = useRef<HTMLButtonElement>(null);
-
   const onIncrementEvent = useEffectEvent(onIncrement ?? noop);
   const onDecrementEvent = useEffectEvent(onDecrement ?? noop);
 
   const stepUpEvent = useEffectEvent(() => {
-    let incrementButton = incrementButtonRef.current;
-    if (incrementButton) {
-      let ariaDisabled = incrementButton.getAttribute('aria-disabled');
-      let isDisabled = incrementButton.disabled;
-      if (ariaDisabled === 'true' || isDisabled) {
-        return;
-      }
-    }
     if (maxValue === undefined || isNaN(maxValue) || value === undefined || isNaN(value) || value < maxValue) {
       onIncrementEvent();
       onIncrementPressStartEvent(60);
@@ -177,14 +166,6 @@ export function useSpinButton(
   });
 
   const stepDownEvent = useEffectEvent(() => {
-    let decrementButton = decrementButtonRef.current;
-    if (decrementButton) {
-      let ariaDisabled = decrementButton.getAttribute('aria-disabled');
-      let isDisabled = decrementButton.disabled;
-      if (ariaDisabled === 'true' || isDisabled) {
-        return;
-      }
-    }
     if (minValue === undefined || isNaN(minValue) || value === undefined || isNaN(value) || value > minValue) {
       onDecrementEvent();
       onDecrementPressStartEvent(60);
@@ -244,7 +225,6 @@ export function useSpinButton(
     },
     incrementButtonProps: {
       onPressStart: (e) => {
-        incrementButtonRef.current = e.target as HTMLButtonElement;
         clearAsync();
         if (e.pointerType !== 'touch') {
           onIncrement?.();
@@ -281,7 +261,6 @@ export function useSpinButton(
     },
     decrementButtonProps: {
       onPressStart: (e) => {
-        decrementButtonRef.current = e.target as HTMLButtonElement;
         clearAsync();
         if (e.pointerType !== 'touch') {
           onDecrement?.();
