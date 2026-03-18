@@ -10,8 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {SearchFieldProps} from '@react-types/searchfield';
+import {FocusableProps, HelpTextProps, InputBase, LabelableProps, TextInputBase, Validation, ValueBase} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
+
+// Copied here to avoid depending on @react-aria/textfield from stately.
+export interface TextFieldProps<T = HTMLInputElement> extends InputBase, Validation<string>, HelpTextProps, FocusableProps<T>, TextInputBase, ValueBase<string>, LabelableProps {}
+
+export interface SearchFieldProps extends TextFieldProps {
+  /** Handler that is called when the SearchField is submitted. */
+  onSubmit?: (value: string) => void,
+
+  /** Handler that is called when the clear button is pressed. */
+  onClear?: () => void
+}
 
 export interface SearchFieldState {
   /** The current value of the search field. */

@@ -10,12 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaMenuProps} from '@react-types/menu';
-import {DOMAttributes, KeyboardDelegate, KeyboardEvents, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, CollectionBase, DOMAttributes, DOMProps, FocusStrategy, Key, KeyboardDelegate, KeyboardEvents, MultipleSelection, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {menuData} from './utils';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
+
+export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
+  /** Where the focus should be set. */
+  autoFocus?: boolean | FocusStrategy,
+  /** Whether keyboard navigation is circular. */
+  shouldFocusWrap?: boolean,
+  /** Handler that is called when an item is selected. */
+  onAction?: (key: Key) => void,
+  /** Handler that is called when the menu should close after selecting an item. */
+  onClose?: () => void
+}
+
+export interface AriaMenuProps<T> extends MenuProps<T>, DOMProps, AriaLabelingProps {
+  /**
+   * Whether pressing the escape key should clear selection in the menu or not.
+   *
+   * Most experiences should not modify this option as it eliminates a keyboard user's ability to
+   * easily clear selection. Only use if the escape key is being handled externally or should not
+   * trigger selection clearing contextually.
+   * @default 'clearSelection'
+   */
+  escapeKeyBehavior?: 'clearSelection' | 'none'
+}
 
 export interface MenuAria {
   /** Props for the menu element. */

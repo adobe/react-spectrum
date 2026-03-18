@@ -11,6 +11,6 @@
  */
 export {useTooltip} from './useTooltip';
 export {useTooltipTrigger} from './useTooltipTrigger';
-export type {AriaTooltipProps, TooltipTriggerProps} from '@react-types/tooltip';
-export type {TooltipAria} from './useTooltip';
+export type {TooltipTriggerProps} from '@react-stately/tooltip';
+export type {TooltipProps, AriaTooltipProps, TooltipAria} from './useTooltip';
 export type {TooltipTriggerAria} from './useTooltipTrigger';

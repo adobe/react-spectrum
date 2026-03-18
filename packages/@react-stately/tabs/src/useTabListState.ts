@@ -10,10 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionStateBase, Key, Node} from '@react-types/shared';
+import {Collection, CollectionBase, CollectionStateBase, Key, Node, SingleSelection} from '@react-types/shared';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
-import {TabListProps} from '@react-types/tabs';
 import {useEffect, useRef} from 'react';
+
+export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange'> {
+  /**
+   * Whether the TabList is disabled.
+   * Shows that a selection exists, but is not available in that circumstance.
+   */
+  isDisabled?: boolean,
+  /** The currently selected key in the collection (controlled). */
+  selectedKey?: Key,
+  /** The initial selected keys in the collection (uncontrolled). */
+  defaultSelectedKey?: Key,
+  /** Handler that is called when the selection changes. */
+  onSelectionChange?: (key: Key) => void
+}
 
 export interface TabListStateOptions<T> extends Omit<TabListProps<T>, 'children'>, CollectionStateBase<T> {}
 

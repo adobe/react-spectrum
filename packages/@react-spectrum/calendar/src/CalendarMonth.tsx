@@ -12,8 +12,7 @@
 
 import {CalendarCell} from './CalendarCell';
 import {CalendarDate, endOfMonth} from '@internationalized/date';
-import {CalendarPropsBase} from '@react-types/calendar';
-import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
+import {CalendarPropsBase, CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {classNames} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import React, {JSX} from 'react';

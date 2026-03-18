@@ -13,7 +13,7 @@
 jest.mock('@react-aria/live-announcer');
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
-import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
+import {Button, FieldError, Form, Group, I18nProvider, Input, Label, NumberField, NumberFieldContext, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -198,6 +198,114 @@ describe('NumberField', () => {
     expect(numberfield).not.toHaveAttribute('data-invalid');
   });
 
+  it('supports pasting value in another numbering system', async () => {
+    let {getByRole, rerender} = render(<TestNumberField />);
+    let input = getByRole('textbox');
+    await user.tab();
+    act(() => {
+      input.setSelectionRange(0, input.value.length);
+    });
+    await user.paste('3.000.000,25');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('1,024');
+
+    act(() => {
+      input.setSelectionRange(0, input.value.length);
+    });
+    await user.paste('3 000 000,25');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('300,000,025');
+
+    rerender(<TestNumberField formatOptions={{style: 'currency', currency: 'USD'}} />);
+
+    act(() => {
+      input.setSelectionRange(0, input.value.length);
+    });
+    await user.paste('3 000 000,256789');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('$3,000,000,256,789.00');
+
+    act(() => {
+      input.setSelectionRange(0, input.value.length);
+    });
+    await user.paste('1,000');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('$1,000.00', 'Ambiguous value should be parsed using the current locale');
+
+    act(() => {
+      input.setSelectionRange(0, input.value.length);
+    });
+
+    await user.paste('1.000');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('$1.00', 'Ambiguous value should be parsed using the current locale');
+  });
+
+  it('should support arabic singular and dual counts', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = render(
+      <I18nProvider locale="ar-AE">
+        <NumberField defaultValue={0} onChange={onChange} formatOptions={{style: 'unit', unit: 'day', unitDisplay: 'long'}}>
+          <Label>Test</Label>
+          <Group style={{display: 'flex'}}>
+            <Button slot="decrement">-</Button>
+            <Input />
+            <Button slot="increment">+</Button>
+          </Group>
+          <FieldError />
+        </NumberField>
+      </I18nProvider>
+    );
+    let input = getByRole('textbox');
+    await user.tab();
+    await user.keyboard('{ArrowUp}');
+    expect(onChange).toHaveBeenLastCalledWith(1);
+    expect(input).toHaveValue('يوم');
+
+    await user.keyboard('{ArrowUp}');
+    expect(input).toHaveValue('يومان');
+    expect(onChange).toHaveBeenLastCalledWith(2);
+  });
+
+  it('should not type the grouping characters when useGrouping is false', async () => {
+    let {getByRole} = render(<TestNumberField formatOptions={{useGrouping: false}} />);
+    let input = getByRole('textbox');
+
+    await user.keyboard('102,4');
+    expect(input).toHaveAttribute('value', '1024');
+
+    await user.clear(input);
+    expect(input).toHaveAttribute('value', '');
+
+    await user.paste('102,4');
+    await user.tab();
+    expect(input).toHaveAttribute('value', '1024');
+
+    await user.paste('1,024');
+    await user.tab();
+    expect(input).toHaveAttribute('value', '1024');
+
+  });
+
+  it('should not type the grouping characters when useGrouping is false and in German locale', async () => {
+    let {getByRole} = render(<I18nProvider locale="de-DE"><TestNumberField formatOptions={{useGrouping: false}} /></I18nProvider>);
+    let input = getByRole('textbox');
+
+    await user.keyboard('102.4');
+    expect(input).toHaveAttribute('value', '1024');
+
+    await user.clear(input);
+    expect(input).toHaveAttribute('value', '');
+
+    await user.paste('102.4');
+    await user.tab();
+    expect(input).toHaveAttribute('value', '1024');
+
+    await user.paste('1.024');
+    await user.tab();
+    expect(input).toHaveAttribute('value', '1024');
+  });
+
   it('should trigger onChange via programmatic click() on stepper buttons', () => {
     const onChange = jest.fn();
     const {container} = render(
@@ -213,6 +321,18 @@ describe('NumberField', () => {
     });
     expect(onChange).toHaveBeenCalledTimes(2);
     expect(onChange).toHaveBeenCalledWith(1024);
+  });
+
+  it('should allow you to delete the first digit in a number if it is followed by a group separator', async () => {
+    let {getByRole} = render(<TestNumberField defaultValue={1024} formatOptions={{useGrouping: true}} />);
+    let input = getByRole('textbox');
+    await user.tab();
+    await user.keyboard('{ArrowLeft}');
+    await user.keyboard('{ArrowRight}');
+    await user.keyboard('{Backspace}');
+    expect(input).toHaveValue(',024');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('24');
   });
 
   it('supports onChange', async () => {
@@ -249,5 +369,123 @@ describe('NumberField', () => {
     expect(announce).toHaveBeenLastCalledWith('200', 'assertive');
     await user.keyboard('{Enter}');
     expect(input).toHaveValue('200');
+  });
+
+  it('should not reset validation errors on blur when value has not changed', async () => {
+    let {getByRole} = render(
+      <Form validationErrors={{testNumber: 'This field has an error.'}}>
+        <NumberField name="testNumber" defaultValue={5}>
+          <Label>Test Number</Label>
+          <Group>
+            <Button slot="decrement">-</Button>
+            <Input />
+            <Button slot="increment">+</Button>
+          </Group>
+          <FieldError />
+        </NumberField>
+      </Form>
+    );
+
+    let input = getByRole('textbox');
+    let numberfield = input.closest('.react-aria-NumberField');
+
+    // Validation error should be displayed
+    expect(numberfield).toHaveAttribute('data-invalid');
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby').split(' ')[0])).toHaveTextContent('This field has an error.');
+
+    // Focus the field without changing the value
+    act(() => { input.focus(); });
+    expect(numberfield).toHaveAttribute('data-invalid');
+
+    // Blur the field without changing the value
+    act(() => { input.blur(); });
+
+    // Validation error should still be displayed because the value didn't change
+    expect(numberfield).toHaveAttribute('data-invalid');
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby').split(' ')[0])).toHaveTextContent('This field has an error.');
+  });
+
+  it('should not change the edited input value when value snapping is disabled', async () => {
+    let {getByRole, getByTestId} = render(
+      <form data-testid="form">
+        <NumberField isRequired defaultValue={20} minValue={10} step={10} maxValue={50} commitBehavior="validate">
+          <Label>Width</Label>
+          <Group>
+            <Button slot="decrement">-</Button>
+            <Input />
+            <Button slot="increment">+</Button>
+          </Group>
+          <FieldError />
+        </NumberField>
+      </form>
+    );
+    let input = getByRole('textbox');
+    expect(input.validity.valid).toBe(true);
+
+    // Over max
+    await user.tab();
+    await user.clear(input);
+    await user.keyboard('1024');
+    await user.tab();
+    expect(input).toHaveValue('1,024');
+    expect(announce).toHaveBeenLastCalledWith('1,024', 'assertive');
+    expect(input.closest('.react-aria-NumberField')).toHaveAttribute('data-invalid', 'true');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input.validity.valid).toBe(false);
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+    act(() => {getByTestId('form').checkValidity();});
+    expect(document.activeElement).toBe(input);
+
+    // Valid
+    await user.clear(input);
+    await user.keyboard('30');
+    await user.tab();
+    expect(input).toHaveValue('30');
+    expect(announce).toHaveBeenLastCalledWith('30', 'assertive');
+    expect(input.validity.valid).toBe(true);
+    expect(input).not.toHaveAttribute('aria-describedby');
+
+    // Under min
+    await user.clear(input);
+    await user.keyboard('2');
+    await user.tab();
+    expect(input).toHaveValue('2');
+    expect(announce).toHaveBeenLastCalledWith('2', 'assertive');
+    expect(input.validity.valid).toBe(false);
+    expect(input).toHaveAttribute('aria-describedby');
+
+    act(() => {getByTestId('form').checkValidity();});
+    expect(document.activeElement).toBe(input);
+
+    // Not on step
+    await user.clear(input);
+    await user.keyboard('31');
+    await user.tab();
+    expect(input).toHaveValue('31');
+    expect(announce).toHaveBeenLastCalledWith('31', 'assertive');
+    expect(input.validity.valid).toBe(false);
+    expect(input).toHaveAttribute('aria-describedby');
+
+    act(() => {getByTestId('form').checkValidity();});
+    expect(document.activeElement).toBe(input);
+
+    // Required
+    await user.clear(input);
+    await user.tab();
+    expect(input).toHaveValue('');
+    expect(input.validity.valid).toBe(false);
+    expect(input).toHaveAttribute('aria-describedby');
+
+    // Valid
+    await user.clear(input);
+    await user.keyboard('30');
+    await user.tab();
+    expect(input).toHaveValue('30');
+    expect(input.validity.valid).toBe(true);
+    expect(input).not.toHaveAttribute('aria-describedby');
   });
 });

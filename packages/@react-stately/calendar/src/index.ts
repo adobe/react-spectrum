@@ -13,6 +13,6 @@
 export {useCalendarState} from './useCalendarState';
 export {useRangeCalendarState} from './useRangeCalendarState';
 
-export type {CalendarStateOptions} from './useCalendarState';
-export type {RangeCalendarStateOptions} from './useRangeCalendarState';
-export type {CalendarState, RangeCalendarState} from './types'; 
+export type {CalendarProps, CalendarStateOptions} from './useCalendarState';
+export type {DateRange, RangeCalendarProps, RangeCalendarStateOptions} from './useRangeCalendarState';
+export type {CalendarPropsBase, CalendarState, DateValue, PageBehavior, RangeCalendarState} from './types'; 

@@ -13,10 +13,9 @@
 import Filter from '@spectrum-icons/workflow/Filter';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
-import {Item, SearchAutocomplete} from '../';
+import {Item, SearchAutocomplete, SpectrumSearchAutocompleteProps} from '../';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
-import {SpectrumSearchAutocompleteProps} from '@react-types/autocomplete';
 
 // Skipping focus styles because don't have a way of applying it via classnames
 // No controlled open state also means no menu

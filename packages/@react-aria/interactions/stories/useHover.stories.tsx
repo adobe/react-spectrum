@@ -9,12 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps, useButton} from '@react-aria/button';
 import {classNames} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
 import React, {JSX, useRef, useState} from 'react';
 import {StoryObj} from '@storybook/react';
-import {useButton} from '@react-aria/button';
 import {useHover} from '../';
 
 export default {

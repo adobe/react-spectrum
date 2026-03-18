@@ -263,6 +263,63 @@ describe('ComboBox', () => {
     expect(document.querySelector('input[type=hidden]')).toBeNull();
   });
 
+  it.each(['click', 'tab'])('should not fire extra onSelectionChange calls after focus moves away in fully controlled mode via %s', async (focusMove) => {
+    let onSelectionChange = jest.fn();
+    let keyToText = {
+      '1': 'Cat',
+      '2': 'Dog',
+      '3': 'Kangaroo'
+    };
+
+    function ControlledComboBox() {
+      let [selectedKey, setSelectedKey] = useState(null);
+      let [inputValue, setInputValue] = useState('');
+
+      return (
+        <>
+          <ComboBox
+            value={selectedKey}
+            inputValue={inputValue}
+            onChange={(key) => {
+              onSelectionChange(key);
+              setSelectedKey(key);
+              setInputValue(key != null ? keyToText[key] : '');
+            }}
+            onInputChange={setInputValue}>
+            <Label>Favorite Animal</Label>
+            <Input />
+            <Button />
+            <Popover>
+              <ListBox>
+                <ListBoxItem id="1">Cat</ListBoxItem>
+                <ListBoxItem id="2">Dog</ListBoxItem>
+                <ListBoxItem id="3">Kangaroo</ListBoxItem>
+              </ListBox>
+            </Popover>
+          </ComboBox>
+          <button type="button">Next</button>
+        </>
+      );
+    }
+
+    let tree = render(<ControlledComboBox />);
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
+
+    await comboboxTester.selectOption({option: 'Dog'});
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+
+    if (focusMove === 'click') {
+      await user.click(tree.getByRole('button', {name: 'Next'}));
+    } else {
+      act(() => {
+        comboboxTester.combobox.focus();
+      });
+      await user.tab();
+    }
+
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+  });
+
   it('should support form reset', async () => {
     const tree = render(
       <form>

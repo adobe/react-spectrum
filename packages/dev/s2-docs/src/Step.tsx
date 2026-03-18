@@ -1,4 +1,4 @@
-import {raw} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
+import {css} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 export function StepList({children}) {
@@ -33,7 +33,7 @@ export function Counter() {
   return (
     <span
       data-step
-      className={raw('&::before { content: counter(step) }') + style({
+      className={css('&::before { content: counter(step) }') + style({
         fontWeight: 'normal',
         borderRadius: 'full',
         aspectRatio: 'square',

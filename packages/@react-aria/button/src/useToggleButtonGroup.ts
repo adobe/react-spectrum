@@ -17,9 +17,8 @@ import {
   HTMLAttributes,
   InputHTMLAttributes
 } from 'react';
-import {AriaLabelingProps, DOMAttributes, Orientation, RefObject} from '@react-types/shared';
-import {AriaToggleButtonGroupItemProps} from '@react-types/button';
-import {ToggleButtonAria, useToggleButton} from './useToggleButton';
+import {AriaLabelingProps, DOMAttributes, Key, Orientation, RefObject} from '@react-types/shared';
+import {AriaToggleButtonProps, ToggleButtonAria, useToggleButton} from './useToggleButton';
 import {ToggleGroupProps, ToggleGroupState, ToggleState} from '@react-stately/toggle';
 import {useToolbar} from '@react-aria/toolbar';
 
@@ -51,7 +50,11 @@ export function useToggleButtonGroup(props: AriaToggleButtonGroupProps, state: T
   };
 }
 
-export type {AriaToggleButtonGroupItemProps};
+export interface AriaToggleButtonGroupItemProps<E extends ElementType = 'button'> extends Omit<AriaToggleButtonProps<E>, 'id' | 'isSelected' | 'defaultSelected' | 'onChange'> {
+  /** An identifier for the item in the `selectedKeys` of a ToggleButtonGroup. */
+  id: Key
+}
+
 export interface AriaToggleButtonGroupItemOptions<E extends ElementType> extends Omit<AriaToggleButtonGroupItemProps<E>, 'children'> {}
 
 // Order with overrides is important: 'button' should be default

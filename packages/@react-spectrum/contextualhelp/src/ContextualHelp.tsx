@@ -11,18 +11,34 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
+import {AriaLabelingProps, DOMProps, FocusableRef, StyleProps} from '@react-types/shared';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {FocusableRef} from '@react-types/shared';
 import HelpOutline from '@spectrum-icons/workflow/HelpOutline';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useLabels} from '@react-aria/utils';
-import React from 'react';
-import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
+import {OverlayTriggerProps} from '@react-stately/overlays';
+import {Placement, PositionProps} from '@react-aria/overlays';
+import React, {ReactNode} from 'react';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+
+export interface SpectrumContextualHelpProps extends OverlayTriggerProps, PositionProps, StyleProps, DOMProps, AriaLabelingProps {
+  /** Contents of the Contextual Help popover. */
+  children: ReactNode,
+  /**
+   * Indicates whether contents are informative or provides helpful guidance.
+   * @default 'help'
+   */
+  variant?: 'help' | 'info',
+  /**
+   * The placement of the popover with respect to the action button.
+   * @default 'bottom start'
+   */
+  placement?: Placement
+}
 
 /**
  * Contextual help shows a user extra information about the state of an adjacent component, or a total view.

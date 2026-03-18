@@ -39,6 +39,15 @@ let rows: Item[] = [
   ]}
 ];
 
+function toArray(iterableCollection: Iterable<Node<Item>>, predicate) {
+  const result: Node<Item>[] = [];
+  for (const o of iterableCollection) {
+    if (predicate(o)) {
+      result.push(o);
+    }
+  }
+  return result;
+}
 // Collection implementation backed by item objects above.
 // This way we don't need to render React components to test.
 class TestCollection implements Collection<Node<Item>> {
@@ -186,7 +195,7 @@ class TestCollection implements Collection<Node<Item>> {
 
   getChildren(key: Key): Iterable<Node<Item>> {
     let item = this.map.get(key);
-    return item?.childNodes ?? [];
+    return toArray(item?.childNodes || [], (node) => node.type !== 'item');
   }
 }
 
@@ -294,7 +303,7 @@ describe('drop target keyboard navigation', () => {
       'reports-2',
       'reports-2-content'
     ];
-    
+
     expect(nextKeys).toEqual(expectedKeys);
 
     let prevKeys: Key[] = [];

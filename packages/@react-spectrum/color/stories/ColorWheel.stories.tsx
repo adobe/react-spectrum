@@ -11,12 +11,11 @@
  */
 
 import {action} from 'storybook/actions';
-import {ColorSwatch, ColorWheel} from '../';
+import {ColorSwatch, ColorWheel, SpectrumColorWheelProps} from '../';
 import {Flex, useLocale} from '@adobe/react-spectrum';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {parseColor} from '@react-stately/color';
 import React, {JSX, useState} from 'react';
-import {SpectrumColorWheelProps} from '@react-types/color';
 
 export type ColorWheelStory = StoryObj<typeof ColorWheel>;
 

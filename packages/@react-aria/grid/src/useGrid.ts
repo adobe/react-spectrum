@@ -13,10 +13,9 @@
 import {AriaLabelingProps, DOMAttributes, DOMProps, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {filterDOMProps, getEventTarget, mergeProps, nodeContains, useId} from '@react-aria/utils';
 import {FocusEventHandler, useCallback, useMemo} from 'react';
-import {GridCollection} from '@react-types/grid';
+import {IGridCollection as GridCollection, GridState} from '@react-stately/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridMap} from './utils';
-import {GridState} from '@react-stately/grid';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
 import {useHasTabbableChild} from '@react-aria/focus';

@@ -26,6 +26,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@react-aria/button": "^3.14.5",
     "@react-aria/i18n": "^3.12.16",
     "@react-aria/interactions": "^3.27.1",
     "@react-aria/live-announcer": "^3.4.4",
@@ -34,8 +35,6 @@
     "@react-aria/utils": "^3.33.1",
     "@react-stately/form": "^3.2.4",
     "@react-stately/numberfield": "^3.11.0",
-    "@react-types/button": "^3.15.1",
-    "@react-types/numberfield": "^3.8.18",
     "@react-types/shared": "^3.33.1",
     "@swc/helpers": "^0.5.0"
   },

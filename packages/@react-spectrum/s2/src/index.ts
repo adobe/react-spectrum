@@ -92,6 +92,8 @@ export {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem} from 
 
 export {pressScale} from './pressScale';
 
+export {mergeStyles} from '../style/runtime';
+
 export {Autocomplete, Collection, FileTrigger, parseColor, useLocale} from 'react-aria-components';
 export {useListData, useTreeData, useAsyncList} from 'react-stately';
 
@@ -162,7 +164,7 @@ export type {SwitchProps} from './Switch';
 export type {TableViewProps, TableHeaderProps, TableBodyProps, RowProps, CellProps, ColumnProps} from './TableView';
 export type {TabsProps, TabProps, TabListProps, TabPanelProps} from './Tabs';
 export type {TagGroupProps, TagProps} from './TagGroup';
-export type {TextFieldProps, TextAreaProps} from './TextField';
+export type {TextFieldProps, TextAreaProps, TextFieldRef} from './TextField';
 export type {TimeFieldProps} from './TimeField';
 export type {ToastOptions, ToastContainerProps} from './Toast';
 export type {ToggleButtonProps} from './ToggleButton';
@@ -171,3 +173,12 @@ export type {TooltipProps} from './Tooltip';
 export type {TreeViewProps, TreeViewItemProps, TreeViewItemContentProps, TreeViewLoadMoreItemProps} from './TreeView';
 export type {AutocompleteProps, FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps, SortDescriptor, Color, Key, Selection, RouterConfig} from 'react-aria-components';
 export type {ListData, TreeData, AsyncListData} from 'react-stately';
+
+export type {
+  StylesProp,
+  StylesPropWithHeight,
+  StylesPropWithoutWidth,
+  UnsafeClassName,
+  UnsafeStyles,
+  StyleProps
+} from './style-utils';

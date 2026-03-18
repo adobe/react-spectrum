@@ -10,5 +10,5 @@
  * governing permissions and limitations under the License.
  */
 export {useSearchField} from './useSearchField';
-export type {AriaSearchFieldProps} from '@react-types/searchfield';
+export type {AriaSearchFieldProps} from './useSearchField';
 export type {SearchFieldAria} from './useSearchField';

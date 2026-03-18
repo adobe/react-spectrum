@@ -10,12 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {forwardRef, Ref, useEffect, useRef} from 'react';
-import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
+import {AriaTextFieldProps, useTextField} from '@react-aria/textfield';
+import {FocusableRefValue, SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
+import React, {forwardRef, ReactElement, Ref, useEffect, useRef} from 'react';
 import {TextFieldBase} from './TextFieldBase';
 import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useTextField} from '@react-aria/textfield';
+
+export interface SpectrumTextFieldProps extends SpectrumTextInputBase, Omit<AriaTextFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps {
+  /** An icon to display at the start of the input. */
+  icon?: ReactElement | null,
+  /** Whether the input should be displayed with a quiet style. */
+  isQuiet?: boolean
+}
+
+export interface TextFieldRef<T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends FocusableRefValue<T, HTMLDivElement> {
+  select(): void,
+  getInputElement(): T | null
+}
 
 /**
  * TextFields are text inputs that allow users to input custom text entries

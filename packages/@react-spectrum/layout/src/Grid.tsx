@@ -18,10 +18,14 @@ import {
   useDOMRef,
   useStyleProps
 } from '@react-spectrum/utils';
-import {DimensionValue, DOMRef} from '@react-types/shared';
+import {DimensionValue, DOMProps, DOMRef, GridStyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {GridProps} from '@react-types/layout';
-import React, {forwardRef} from 'react';
+import React, {forwardRef, ReactNode} from 'react';
+
+export interface GridProps extends DOMProps, GridStyleProps {
+  /** Children of the grid container. */
+  children: ReactNode
+}
 
 const gridStyleProps: StyleHandlers = {
   ...baseStyleProps,

@@ -13,14 +13,13 @@
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ColorField} from '@react-spectrum/color';
 import {ComboBox} from '@react-spectrum/combobox';
-import {Form} from '../';
+import {Form, SpectrumFormProps} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Meta, StoryObj} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {JSX} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
-import {SpectrumFormProps} from '@react-types/form';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 
 const meta: Meta<SpectrumFormProps> = {

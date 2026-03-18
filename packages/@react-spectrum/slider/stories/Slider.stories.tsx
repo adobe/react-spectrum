@@ -18,8 +18,7 @@ import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
-import {Slider} from '../';
-import {SpectrumSliderProps} from '@react-types/slider';
+import {Slider, SpectrumSliderProps} from '../';
 
 let message = 'Your browser may not support this set of format options.';
 
