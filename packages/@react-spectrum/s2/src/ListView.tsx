@@ -188,7 +188,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   }
 
   if (dragAndDropHooks) {
-    dragAndDropHooks.renderDropIndicator = (target) => <InsertionIndicatorVisual target={target as ItemDropTarget} />;
+    dragAndDropHooks.renderDropIndicator = (target) => <InsertionIndicator target={target as ItemDropTarget} />;
   }
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
@@ -918,7 +918,7 @@ const emptyStateWrapper = style({
 
 // TODO: since I'm not using absolute positioning, the drop indicator at the very top isn't flush with the top edge of the listview
 // maybe ok?
-function InsertionIndicatorVisual({target}: {target: ItemDropTarget}) {
+export function InsertionIndicator({target}: {target: ItemDropTarget}) {
   return (
     <DropIndicator target={target}>
       {({isDropTarget}) => (

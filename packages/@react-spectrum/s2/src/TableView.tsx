@@ -60,10 +60,12 @@ import Chevron from '../ui-icons/Chevron';
 import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {ColumnSize} from '@react-types/table';
 import {CustomDialog, DialogContainer} from '..';
-import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, ItemDropTarget, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
+import DragHandle from '../ui-icons/DragHandle';
 import {getActiveElement, getOwnerDocument, isFocusWithin, nodeContains, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
+import {InsertionIndicator, ListViewDragPreview} from './ListView';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {LayoutNode} from '@react-stately/layout';
@@ -77,10 +79,10 @@ import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {Button as SpectrumButton} from './Button';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
+import {useFocusRing, useVisuallyHidden, VisuallyHidden} from 'react-aria';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import {VisuallyHidden} from 'react-aria';
 
 interface S2TableProps {
   /** Whether the Table should be displayed with a quiet style. */
@@ -122,7 +124,7 @@ interface S2TableProps {
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
-export interface TableViewProps extends Omit<RACTableProps, 'style' | 'className' | 'render' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, S2TableProps {
+export interface TableViewProps extends Omit<RACTableProps, 'style' | 'className' | 'render' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, S2TableProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
@@ -140,7 +142,7 @@ const tableWrapper = style({
   overflow: 'clip'
 }, getAllowedOverrides({height: true}));
 
-const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boolean}>({
+const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boolean, isDragAndDrop?: boolean}>({
   width: 'full',
   height: 'full',
   boxSizing: 'border-box',
@@ -162,7 +164,23 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
     isQuiet: 0
   },
   ...focusRing(),
-  outlineOffset: -1, // Cover the border
+  // TODO: check this, these don't seem to work as well as they do in listview
+  outlineOffset: {
+    default: -1, // Cover the border
+    isDropTarget: -2
+  },
+  outlineWidth: {
+    isDropTarget: 2
+  },
+  outlineStyle: {
+    isDropTarget: 'solid'
+  },
+  outlineColor: {
+    isDropTarget: {
+      default: 'blue-800',
+      forcedColors: 'Highlight'
+    }
+  },
   borderRadius: {
     default: '[6px]',
     isQuiet: 'none'
@@ -176,7 +194,11 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
   // Base reproduction: https://codepen.io/lfdanlu/pen/zYVVGPW
   scrollPaddingTop: 32,
   scrollPaddingStart: {
-    isCheckboxSelection: 40
+    isCheckboxSelection: 40,
+    isDragAndDrop: {
+      default: 16,
+      isCheckboxSelection: 56
+    }
   }
 });
 
@@ -297,8 +319,17 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     onAction,
     onLoadMore,
     selectionMode = 'none',
+    dragAndDropHooks,
     ...otherProps
   } = props;
+
+  if (dragAndDropHooks && dragAndDropHooks.renderDragPreview == null) {
+    dragAndDropHooks.renderDragPreview = (items) => <ListViewDragPreview items={items} overflowMode={overflowMode} />;
+  }
+
+  if (dragAndDropHooks) {
+    dragAndDropHooks.renderDropIndicator = (target) => <InsertionIndicator target={target as ItemDropTarget} />;
+  }
 
   let domRef = useDOMRef(ref);
   let scale = useScale();
@@ -327,6 +358,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
 
   let scrollRef = useRef<HTMLElement | null>(null);
   let isCheckboxSelection = selectionMode === 'multiple' || selectionMode === 'single';
+  let isDragAndDrop = !!dragAndDropHooks?.useDraggableCollectionState;
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
 
@@ -350,7 +382,11 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
           : undefined,
           // No need for estimated headingHeight since the headers aren't affected by overflow mode: wrap
           headingHeight: DEFAULT_HEADER_HEIGHT[scale],
-          loaderHeight: 60
+          loaderHeight: 60,
+          // TODO: figure out why this is cut off
+          // TODO: override the layout in RAC and have the dropIndicators get tabindex 1, do same for gridlist
+          // 8px circle + 2px top + 2px bottom padding
+          dropIndicatorThickness: 12
         }}>
         <InternalTableContext.Provider value={context}>
           <RACTable
@@ -366,11 +402,13 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
             className={renderProps => table({
               ...renderProps,
               isCheckboxSelection,
+              isDragAndDrop,
               isQuiet
             })}
             selectionBehavior="toggle"
             selectionMode={selectionMode}
             onRowAction={onAction}
+            dragAndDropHooks={dragAndDropHooks}
             {...otherProps}
             selectedKeys={selectedKeys}
             defaultSelectedKeys={undefined}
@@ -899,15 +937,28 @@ export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style
  */
 export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableHeader<T extends object>({columns, dependencies, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
   let scale = useScale();
-  let {selectionBehavior, selectionMode} = useTableOptions();
+  let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
   let {isQuiet} = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   return (
     <RACTableHeader
       // @ts-ignore
       ref={domRef}
       className={tableHeader}>
+      {allowsDragging && (
+        // @ts-ignore
+        <RACColumn isSticky width={scale === 'medium' ? 16 : 20} minWidth={scale === 'medium' ? 16 : 20} className={selectAllCheckboxColumn({isQuiet})}>
+          {/* TODO: intl, need to grab for other locales */}
+          {({isFocusVisible}) => (
+            <>
+              {isFocusVisible && <CellFocusRing />}
+              <VisuallyHidden>{stringFormatter.format('table.drag')}</VisuallyHidden>
+            </>
+          )}
+        </RACColumn>
+      )}
       {/* Add extra columns for selection. */}
       {selectionBehavior === 'toggle' && (
         // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
@@ -1017,6 +1068,42 @@ const checkboxCellStyle = style({
   backgroundColor: '--rowBackgroundColor'
 });
 
+// const dragCellStyle = style({
+//   ...commonCellStyles,
+//   ...stickyCell,
+//   paddingStart: 12,
+//   paddingEnd: 4,
+//   alignContent: 'center',
+//   height: 'calc(100% - 1px)',
+//   borderBottomWidth: 0,
+//   backgroundColor: '--rowBackgroundColor'
+// });
+
+const dragButton = style({
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: 22,
+  width: 16,
+  padding: 0,
+  margin: 0,
+  backgroundColor: 'transparent',
+  borderStyle: 'none',
+  borderRadius: 'sm',
+  outlineStyle: {
+    default: 'none',
+    isFocusVisible: 'solid'
+  },
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  },
+  outlineWidth: 2,
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  }
+});
+
 const cellContent = style({
   truncate: true,
   whiteSpace: {
@@ -1080,7 +1167,7 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       {...otherProps}>
       {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
-          {hasChildItems && isTreeColumn && 
+          {hasChildItems && isTreeColumn &&
             <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
           }
           <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
@@ -1253,7 +1340,7 @@ export const EditableCell = forwardRef(function EditableCell(props: EditableCell
       {...otherProps}>
       {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
-          {hasChildItems && isTreeColumn && 
+          {hasChildItems && isTreeColumn &&
             <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
           }
           <EditableCellInner {...props} isFocusVisible={isFocusVisible} cellRef={domRef as RefObject<HTMLDivElement>} />
@@ -1544,7 +1631,22 @@ const row = style<RowRenderProps & S2TableProps>({
   //     isFocusVisible: 'solid'
   //   }
   // },
-  outlineStyle: 'none',
+  outlineStyle: {
+    default: 'none',
+    isDropTarget: 'solid'
+  },
+  outlineWidth: {
+    isDropTarget: 2
+  },
+  outlineOffset: {
+    isDropTarget: -2
+  },
+  outlineColor: {
+    isDropTarget: {
+      default: 'blue-800',
+      forcedColors: 'Highlight'
+    }
+  },
   borderTopWidth: 0,
   borderBottomWidth: 1,
   borderStartWidth: 0,
@@ -1570,9 +1672,19 @@ export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'is
  * A row within a `<Table>`.
  */
 export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T extends object>({id, columns, children, dependencies = [], ...otherProps}: RowProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {selectionBehavior, selectionMode} = useTableOptions();
+  let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
   let tableVisualOptions = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
+  let {visuallyHiddenProps} = useVisuallyHidden();
+  let {
+    // TODO: can't move these props to an internal wrapper unlike listview since it expects cell children...
+    // Row doesn't have a data selector for focus visible either...
+    // TODO: options -> add data-focusvisible withing to RAC row (render prop already exists)
+    // have cell render props also have row focus within provided to it
+    // have cell also have table row render props alongside cell render props
+    isFocusVisible: isFocusVisibleWithin,
+    focusProps: focusWithinProps
+  } = useFocusRing({within: true});
 
   return (
     <RACRow
@@ -1585,6 +1697,24 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         ...tableVisualOptions
       }) + (renderProps.isFocusVisible ? ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')}
       {...otherProps}>
+      {allowsDragging  && (
+        // TODO: this isn't being sticky when selection isn't enabled
+        // @ts-ignore
+        <Cell isSticky className={checkboxCellStyle}>
+          {/* TODO: check if this isDisabled is enough, should be if selection and action is disabled */}
+          {/* can try to move this into cell perhaps but focusvisible needs to be set on the row and we'd need
+          to only render it once via something similar to isTreeCOlumn */}
+          {!otherProps.isDisabled && (
+            <Button
+              slot="drag"
+              style={!isFocusVisibleWithin ? {...visuallyHiddenProps.style} : {}}
+              className={dragButton}>
+              <DragHandle size="M" />
+            </Button>
+          )
+        }
+        </Cell>
+      )}
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
         // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
         // The `spread` otherProps must be after className in Cell.

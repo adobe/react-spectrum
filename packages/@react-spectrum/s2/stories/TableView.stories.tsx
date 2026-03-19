@@ -36,6 +36,7 @@ import {
   Text,
   TextField
 } from '../src';
+import {useDragAndDrop} from 'react-aria-components';
 import {categorizeArgTypes, getActionArgs} from './utils';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
@@ -1847,4 +1848,338 @@ function NestedInlineEditExample(args) {
 
 export const TableWithNestedRowsAndInlineEditing: StoryObj<typeof TableView> = {
   render: (args) => <NestedInlineEditExample {...args} />
+};
+
+let folderList1 = [
+  {id: '1', type: 'file', name: 'Adobe Photoshop'},
+  {id: '2', type: 'file', name: 'Adobe XD'},
+  {id: '3', type: 'folder', name: 'Documents',  childNodes: [] as any[]},
+  {id: '4', type: 'file', name: 'Adobe InDesign'},
+  {id: '5', type: 'folder', name: 'Utilities',  childNodes: [] as any[]},
+  {id: '6', type: 'file', name: 'Adobe AfterEffects'}
+];
+
+let folderList2 = [
+  {id: '7', type: 'folder', name: 'Pictures',  childNodes: [] as any[]},
+  {id: '8', type: 'file', name: 'Adobe Fresco'},
+  {id: '9', type: 'folder', name: 'Apps',  childNodes: [] as any[]},
+  {id: '10', type: 'file', name: 'Adobe Illustrator'},
+  {id: '11', type: 'file', name: 'Adobe Lightroom'},
+  {id: '12', type: 'file', name: 'Adobe Dreamweaver'},
+  {id: '13', type: 'unique_type', name: 'invalid drag item'}
+];
+
+let dragColumns = [
+  {name: 'ID', id: 'id', width: 40},
+  {name: 'Name', id: 'name', width: 300, isRowHeader: true},
+  {name: 'Type', id: 'type'}
+];
+
+function ReorderableTableExample(props) {
+  let list = useListData({initialItems: folderList1});
+
+  let acceptedDragTypes = ['file', 'folder', 'text/plain'];
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key)!;
+      return {
+        [`${item.type}`]: JSON.stringify(item),
+        'text/plain': item.name
+      };
+    }),
+    onReorder: async (e) => {
+      let {
+        keys,
+        target,
+        dropOperation
+      } = e;
+      action('onReorder')(e);
+
+      let itemsToCopy: typeof folderList1 = [];
+      if (dropOperation === 'copy') {
+        for (let key of keys) {
+          let item: typeof folderList1[0] = {...list.getItem(key)!};
+          item.id = Math.random().toString(36).slice(2);
+          itemsToCopy.push(item);
+        }
+      }
+
+      if (target.dropPosition === 'before') {
+        if (dropOperation === 'move') {
+          list.moveBefore(target.key, [...keys]);
+        } else if (dropOperation === 'copy') {
+          list.insertBefore(target.key, ...itemsToCopy);
+        }
+      } else if (target.dropPosition === 'after') {
+        if (dropOperation === 'move') {
+          list.moveAfter(target.key, [...keys]);
+        } else if (dropOperation === 'copy') {
+          list.insertAfter(target.key, ...itemsToCopy);
+        }
+      }
+    },
+    acceptedDragTypes
+  });
+
+  return (
+    <TableView
+      aria-label="Reorderable files"
+      dragAndDropHooks={dragAndDropHooks}
+      styles={style({width: 400, height: 320})}
+      {...props}>
+      <TableHeader columns={dragColumns}>
+        {column => <Column width={column?.width} isRowHeader={column.isRowHeader}>{column.name}</Column>}
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row id={item.id} columns={dragColumns}>
+            {(column) => {
+              return <Cell>{item[column.id]}</Cell>;
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+
+export const DragAndDropReorder: StoryObj<typeof TableView> = {
+  render: (args) => <ReorderableTableExample {...args} />,
+  name: 'Drag and drop reorder'
+};
+
+let itemProcessor = async (items, acceptedDragTypes) => {
+  let processedItems: any[] = [];
+  let text = '';
+  for (let item of items) {
+    for (let type of acceptedDragTypes) {
+      if (item.kind === 'text' && item.types.has(type)) {
+        text = await item.getText(type);
+        processedItems.push(JSON.parse(text));
+        break;
+      } else if (item.types.size === 1 && item.types.has('text/plain')) {
+        // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+        // Multiple drag items are contained in a single string so we need to split them out
+        text = await item.getText('text/plain');
+        processedItems = text.split('\n').map(val => JSON.parse(val));
+        break;
+      }
+    }
+  }
+  return processedItems;
+};
+
+function BetweenTables(props) {
+  let list1 = useListData({initialItems: folderList1});
+  let list2 = useListData({initialItems: folderList2});
+  let acceptedDragTypes = ['file', 'folder', 'text/plain'];
+
+    // table 1 should allow on item drops and external drops, but disallow reordering/internal drops
+  let {dragAndDropHooks: dragAndDropHooksTable1} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list1.getItem(key)!;
+      return {
+        [`${item.type}`]: JSON.stringify(item),
+        'text/plain': item.name
+      };
+    }),
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+      action('onInsertTable1')(e);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+
+      if (target.dropPosition === 'before') {
+        list1.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list1.insertAfter(target.key, ...processedItems);
+      }
+
+    },
+    onRootDrop: async (e) => {
+      action('onRootDropTable1')(e);
+      let processedItems = await itemProcessor(e.items, acceptedDragTypes);
+      list1.append(...processedItems);
+    },
+    onItemDrop: async (e) => {
+      let {
+        items,
+        target,
+        isInternal,
+        dropOperation
+      } = e;
+      action('onItemDropTable1')(e);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let targetItem = list1.getItem(target.key)!;
+      list1.update(target.key, {...targetItem, childNodes: [...(targetItem.childNodes || []), ...processedItems]});
+
+      if (isInternal && dropOperation === 'move') {
+        let keysToRemove = processedItems.map(item => item.id);
+        list1.remove(...keysToRemove);
+      }
+    },
+    acceptedDragTypes,
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        isInternal,
+        keys
+      } = e;
+      action('onDragEndTable1')(e);
+      if (dropOperation === 'move' && !isInternal) {
+        list1.remove(...keys);
+      }
+    },
+    getAllowedDropOperations: () => ['move', 'copy'],
+    shouldAcceptItemDrop: (target) => !!list1.getItem(target.key)?.childNodes,
+  });
+
+  // table 2 should allow reordering, on folder drops, and on root drops
+  let {dragAndDropHooks: dragAndDropHooksTable2} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list2.getItem(key)!;
+      let dragItem = {};
+      let itemString = JSON.stringify(item);
+      dragItem[`${item.type}`] = itemString;
+      if (item.type !== 'unique_type') {
+        dragItem['text/plain'] = itemString;
+      }
+
+      return dragItem;
+    }),
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+      action('onInsertTable2')(e);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+
+      if (target.dropPosition === 'before') {
+        list2.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list2.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onReorder: async (e) => {
+      let {
+        keys,
+        target,
+        dropOperation
+      } = e;
+      action('onReorderTable2')(e);
+
+      let itemsToCopy: typeof folderList1 = [];
+      if (dropOperation === 'copy') {
+        for (let key of keys) {
+          let item: typeof folderList1[0] = {...list2.getItem(key)!};
+          item.id = Math.random().toString(36).slice(2);
+          itemsToCopy.push(item);
+        }
+      }
+
+      if (target.dropPosition === 'before') {
+        if (dropOperation === 'move') {
+          list2.moveBefore(target.key, [...keys]);
+        } else if (dropOperation === 'copy') {
+          list2.insertBefore(target.key, ...itemsToCopy);
+        }
+      } else if (target.dropPosition === 'after') {
+        if (dropOperation === 'move') {
+          list2.moveAfter(target.key, [...keys]);
+        } else if (dropOperation === 'copy') {
+          list2.insertAfter(target.key, ...itemsToCopy);
+        }
+      }
+    },
+    onRootDrop: async (e) => {
+      action('onRootDropTable2')(e);
+      let processedItems = await itemProcessor(e.items, acceptedDragTypes);
+      list2.prepend(...processedItems);
+    },
+    onItemDrop: async (e) => {
+      let {
+        items,
+        target,
+        isInternal,
+        dropOperation
+      } = e;
+      action('onItemDropTable2')(e);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let targetItem = list2.getItem(target.key)!;
+      list2.update(target.key, {...targetItem, childNodes: [...(targetItem.childNodes || []), ...processedItems]});
+
+      if (isInternal && dropOperation === 'move') {
+        let keysToRemove = processedItems.map(item => item.id);
+        list2.remove(...keysToRemove);
+      }
+    },
+    acceptedDragTypes,
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        isInternal,
+        keys
+      } = e;
+      action('onDragEndTable2')(e);
+      if (dropOperation === 'move' && !isInternal) {
+        let keysToRemove = [...keys].filter(key => list2.getItem(key)!.type !== 'unique_type');
+        list2.remove(...keysToRemove);
+      }
+    },
+    getAllowedDropOperations: () => ['move', 'copy'],
+    shouldAcceptItemDrop: (target) => !!list2.getItem(target.key)?.childNodes
+  });
+
+
+  return (
+    <div className={style({display: 'flex', flexDirection: 'row', gap: 12})}>
+      <TableView
+        aria-label="First TableView in drag between table example"
+        selectionMode="multiple"
+        dragAndDropHooks={dragAndDropHooksTable1}
+        // TODO need separate props?
+        styles={style({width: 400, height: 320})}
+        {...props}>
+        <TableHeader columns={dragColumns}>
+          {column => <Column width={column?.width} isRowHeader={column.isRowHeader}>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={list1.items}>
+          {item => (
+            <Row id={item.id} columns={dragColumns}>
+              {(column) => {
+                return <Cell>{item[column.id]}</Cell>;
+              }}
+            </Row>
+          )}
+        </TableBody>
+      </TableView>
+      <TableView
+        aria-label="Second TableView in drag between table example"
+        selectionMode="multiple"
+        dragAndDropHooks={dragAndDropHooksTable2}
+        styles={style({width: 400, height: 320})}
+        {...props}>
+        <TableHeader columns={dragColumns}>
+          {column => <Column width={column?.width} isRowHeader={column.isRowHeader}>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={list2.items}>
+          {item => (
+            <Row id={item.id} columns={dragColumns}>
+              {(column) => {
+                return <Cell>{item[column.id]}</Cell>;
+              }}
+            </Row>
+          )}
+        </TableBody>
+      </TableView>
+    </div>
+  );
+}
+
+export const DragBetweenTables: StoryObj<typeof TableView> = {
+  render: (args) => <BetweenTables {...args} />,
+  name: 'Drag between tables'
 };
