@@ -82,7 +82,7 @@ export {Switch, SwitchContext} from './Switch';
 export {TableView, TableHeader, TableBody, Row, Cell, Column, TableContext, EditableCell} from './TableView';
 export {Tabs, TabList, Tab, TabPanel, TabsContext} from './Tabs';
 export {TagGroup, Tag, TagGroupContext} from './TagGroup';
-export {TextArea, TextField, TextAreaContext, TextFieldContext} from './TextField';
+export {TextArea, TextField, TextAreaContext, TextFieldContext, TextFieldAddon} from './TextField';
 export {TimeField, TimeFieldContext} from './TimeField';
 export {ToastContainer, ToastQueue} from './Toast';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';

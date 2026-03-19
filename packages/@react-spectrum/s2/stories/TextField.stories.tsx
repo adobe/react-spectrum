@@ -10,12 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Form, TextArea, TextField} from '../src';
+import {ActionButton, ActionButtonGroup, Button, Form, TextArea, TextField, TextFieldAddon} from '../src';
 import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
+import Magnifier from '../s2wf-icons/S2_Icon_Search_20_N.svg';
+import _3D from '../s2wf-icons/S2_Icon_3D_20_N.svg';
+import Refresh from '../s2wf-icons/S2_Icon_Refresh_20_N.svg';
+import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
+import Send from '../s2wf-icons/S2_Icon_Send_20_N.svg';
 
 const meta: Meta<typeof TextField> = {
   component: TextField,
@@ -169,5 +174,72 @@ export const FormCustomWidth: StoryTextField = {
     docs: {
       disable: true
     }
+  }
+};
+
+export const TextFieldWithAddons: StoryTextField = {
+  render: (args) => (
+    <Form>
+      <TextField {...args}>
+        <TextFieldAddon align="end">
+          <ActionButton size="XS">Add</ActionButton>
+        </TextFieldAddon>
+      </TextField>
+      <TextField {...args}>
+        <TextFieldAddon align="start">
+          <Magnifier />
+        </TextFieldAddon>
+      </TextField>
+      <TextField {...args}>
+        <TextFieldAddon align="start">
+          <Magnifier />
+        </TextFieldAddon>
+        <TextFieldAddon align="end">
+          <ActionButton size="XS">Add</ActionButton>
+        </TextFieldAddon>
+      </TextField>
+      <Button type="submit" variant="primary">Submit</Button>
+    </Form>
+  ),
+  args: {
+    ...Example.args,
+    isRequired: true
+  }
+};
+
+export const TextAreaWithAddons: StoryTextArea = {
+  render: (args) => (
+    <Form>
+      <TextArea {...args}>
+        <TextFieldAddon align="end" styles={style({justifyContent: 'space-between'})}>
+          <Magnifier />
+          <ActionButton size="S" staticColor="auto">Add</ActionButton>
+        </TextFieldAddon>
+      </TextArea>
+      <TextArea {...args}>
+        <TextFieldAddon align="end" styles={style({font: 'detail-sm'})}>
+          120 characters left
+        </TextFieldAddon>
+      </TextArea>
+      <TextArea {...args}>
+        <TextFieldAddon align="start" styles={style({font: 'detail-sm', borderTopWidth: 0, borderStartWidth: 0, borderEndWidth: 0, borderBottomWidth: 1, borderStyle: 'solid', borderColor: 'gray-300', paddingBottom: 4})}>
+          <_3D />
+          <span className={style({marginStart: 'text-to-visual', flexGrow: 1})}>script.js</span>
+          <ActionButtonGroup>
+            <ActionButton size="XS"><Refresh /></ActionButton>
+            <ActionButton size="XS"><Copy /></ActionButton>
+          </ActionButtonGroup>
+        </TextFieldAddon>
+        <TextFieldAddon align="end" styles={style({font: 'detail-sm', justifyContent: 'space-between', borderTopWidth: 1, borderStartWidth: 0, borderEndWidth: 0, borderBottomWidth: 0, borderStyle: 'solid', borderColor: 'gray-300', paddingTop: 4})}>
+          <div>Line 1, Column 1</div>
+          <ActionButton size="S" staticColor="auto"><Text>Run</Text><Send /></ActionButton>
+        </TextFieldAddon>
+      </TextArea>
+      <Button type="submit" variant="primary">Submit</Button>
+    </Form>
+  ),
+  args: {
+    ...TextAreaExample.args,
+    isRequired: true
   }
 };

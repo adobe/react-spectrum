@@ -19,6 +19,7 @@ import {
   ContextValue,
   InputContext,
   InputProps,
+  TextContext,
   useSlottedContext
 } from 'react-aria-components';
 import {centerPadding, style} from '../style' with {type: 'macro'};
@@ -31,6 +32,7 @@ import {FormContext, useFormProps} from './Form';
 import {mergeRefs} from '@react-aria/utils';
 import {StyleString} from '../style/types';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+import { mergeStyles } from '../style/runtime';
 
 export interface TextFieldRef<T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends FocusableRefValue<T, HTMLDivElement> {
   select(): void,
@@ -43,10 +45,13 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'c
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  children?: ReactNode
 }
 
 export const TextFieldContext = createContext<ContextValue<Partial<TextFieldProps>, TextFieldRef>>(null);
+
+const InternalTextFieldContext = createContext<{component: 'TextField' | 'TextArea'}>({component: 'TextField'});
 
 /**
  * TextFields are text inputs that allow users to input custom text entries
@@ -58,8 +63,18 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
   return (
     <TextFieldBase
       {...props}
+      fieldGroupCss={style({
+        paddingStart: 'edge-to-text',
+        paddingEnd: {
+          default: 'edge-to-text',
+          ':has([data-slot=addons])': 4
+        }
+      })}
       ref={ref}>
       <Input />
+      <InternalTextFieldContext.Provider value={{component: 'TextField'}}>
+        {props.children}
+      </InternalTextFieldContext.Provider>
     </TextFieldBase>
   );
 });
@@ -79,14 +94,128 @@ export const TextArea = forwardRef(function TextArea(props: TextAreaProps, ref: 
     <TextFieldBase
       {...props}
       ref={ref}
+      disableCenterBaseline
       fieldGroupCss={style({
         alignItems: 'baseline',
-        height: 'auto'
-      })}>
+        minHeight: controlSize(),
+        '--padding-y': {
+          value: 4,
+          type: 'paddingTop'
+        },
+        '--padding-x': {
+          value: 4,
+          type: 'paddingStart'
+        },
+        paddingY: 0,
+        paddingX: 0,
+        height: 'auto',
+        display: 'grid',
+        gridTemplateColumns: ['1fr', 'auto'],
+        gridTemplateRows: ['auto', 'auto', 'auto'],
+        gridTemplateAreas: [
+          'addons-top addons-top',
+          'input validation',
+          'addons-bottom addons-bottom'
+        ]
+      })({size: props.size})}>
       <TextAreaInput />
+      <InternalTextFieldContext.Provider value={{component: 'TextArea'}}>
+        {props.children}
+      </InternalTextFieldContext.Provider>
     </TextFieldBase>
   );
 });
+
+export const TextFieldAddon = (props: {children: ReactNode, align: 'start' | 'end', styles?: StyleString}) => {
+  let {component} = useContext(InternalTextFieldContext);
+  return (
+    <div
+      data-slot="addons"
+      data-align={props.align}
+      className={mergeStyles(
+        style({
+          display: 'flex',
+          gridArea: {
+            default: 'addons-bottom',
+            component: {
+              TextArea: {
+                default: 'addons-bottom',
+                align: {
+                  end: 'addons-bottom',
+                  start: 'addons-top'
+                }
+              }
+            }
+          },
+          paddingX: {
+            component: {
+              TextArea: 'var(--padding-x)'
+            }
+          },
+          paddingTop: {
+            component: {
+              TextArea: {
+                align: {
+                  end: 4,
+                  start: 'var(--padding-y)'
+                }
+              }
+            }
+          },
+          paddingBottom: {
+            component: {
+              TextArea: {
+                align: {
+                  end: 'var(--padding-y)',
+                  start: 4
+                }
+              }
+            }
+          },
+          alignSelf: 'stretch',
+          justifySelf: 'stretch',
+          alignItems: 'center',
+          minWidth: 0,
+          flexGrow: 0,
+          flexShrink: 0,
+          flexBasis: 'auto',
+          order: {
+            component: {
+              TextField: {
+                align: {
+                  start: -1,
+                  end: 1
+                }
+              }
+            }
+          },
+          marginEnd: {
+            component: {
+              TextField: {
+                align: {
+                  start: 'text-to-visual',
+                  end: 0
+                }
+              }
+            }
+          },
+          marginStart: {
+            component: {
+              TextField: {
+                align: {
+                  start: 0,
+                  end: 'text-to-visual'
+                }
+              }
+            }
+          }
+        })({align: props.align, component}),
+        props.styles
+      )}>
+      {props.children}
+    </div>
+  );
+};
 
 export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupCss?: StyleString}, ref: Ref<TextFieldRef<HTMLInputElement | HTMLTextAreaElement>>) {
   let inputRef = useRef<HTMLInputElement>(null);
@@ -140,11 +269,13 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldP
           contextualHelp={props.contextualHelp}>
           {label}
         </FieldLabel>
-        <FieldGroup size={props.size} styles={fieldGroupCss}>
+        <FieldGroup size={props.size} styles={fieldGroupCss} disableCenterBaseline={props.disableCenterBaseline}>
           <InputContext.Consumer>
             {ctx => (
               <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
-                {children}
+                <TextContext.Provider value={null}>
+                  {children}
+                </TextContext.Provider>
               </InputContext.Provider>
             )}
           </InputContext.Consumer>
@@ -194,8 +325,7 @@ function TextAreaInput() {
       // https://bugs.webkit.org/show_bug.cgi?id=142968
       placeholder={placeholder ?? ' '}
       className={style({
-        paddingX: 0,
-        paddingY: centerPadding(),
+        paddingX: 'var(--padding-x)',
         minHeight: controlSize(),
         boxSizing: 'border-box',
         backgroundColor: 'transparent',

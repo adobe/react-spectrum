@@ -200,7 +200,7 @@ const fieldGroupStyles = style({
 });
 
 export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {shouldTurnOffFocusRing, ...otherProps} = props;
+  let {shouldTurnOffFocusRing, disableCenterBaseline, ...otherProps} = props;
   return (
     <Group
       ref={ref}
@@ -220,7 +220,7 @@ export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps,
         }
       }}
       style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + ' ' + centerBaselineBefore + mergeStyles(
+      className={renderProps => (props.UNSAFE_className || '') + ' ' + (disableCenterBaseline ? '' : centerBaselineBefore) + mergeStyles(
         fieldGroupStyles({
           ...renderProps,
           isFocusWithin: shouldTurnOffFocusRing ? false : renderProps.isFocusWithin,
@@ -242,6 +242,7 @@ export const Input = forwardRef(function Input(props: InputProps, ref: Forwarded
       ref={ref}
       style={UNSAFE_style}
       className={UNSAFE_className + mergeStyles(style({
+        gridArea: 'input',
         padding: 0,
         backgroundColor: 'transparent',
         color: {
@@ -257,7 +258,6 @@ export const Input = forwardRef(function Input(props: InputProps, ref: Forwarded
         flexGrow: 1,
         flexShrink: 1,
         minWidth: 0,
-        width: 'full',
         outlineStyle: 'none',
         borderStyle: 'none',
         truncate: true
@@ -342,6 +342,7 @@ export function FieldErrorIcon(props: {isDisabled?: boolean}): ReactNode {
           render: centerBaseline({
             slot: 'icon',
             styles: style({
+              gridArea: 'validation',
               order: 0,
               flexShrink: 0,
               '--iconPrimary': {
