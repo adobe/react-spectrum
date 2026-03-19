@@ -16,3 +16,15 @@ import 'client-only';
 
 export {Virtualizer} from '../src/Virtualizer';
 export type {VirtualizerProps} from '../src/Virtualizer';
+export {ListLayout} from 'react-stately/private/layout/ListLayout';
+export {GridLayout} from 'react-stately/private/layout/GridLayout';
+export {WaterfallLayout} from 'react-stately/private/layout/WaterfallLayout';
+export {Layout} from 'react-stately/private/virtualizer/Layout';
+export {LayoutInfo} from 'react-stately/private/virtualizer/LayoutInfo';
+export {Size} from 'react-stately/private/virtualizer/Size';
+export {Rect} from 'react-stately/private/virtualizer/Rect';
+export {Point} from 'react-stately/private/virtualizer/Point';
+
+export type {ListLayoutOptions} from 'react-stately/private/layout/ListLayout';
+export type {GridLayoutOptions} from 'react-stately/private/layout/GridLayout';
+export type {WaterfallLayoutOptions} from 'react-stately/private/layout/WaterfallLayout';

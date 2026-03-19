@@ -14,7 +14,7 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {Select, SelectValue, SelectContext, SelectValueContext, SelectStateContext} from '../src/Select';
-export type {SelectProps, SelectValueProps, SelectValueRenderProps, SelectRenderProps} from '../src/Select';
-export type {Key} from '@react-types/shared';
-export type {SelectState} from 'react-stately/useSelectState';
+export {Disclosure, DisclosureGroup, DisclosureGroupStateContext, DisclosurePanel, DisclosureStateContext, DisclosureContext} from '../src/Disclosure';
+export type {DisclosureProps, DisclosureRenderProps, DisclosurePanelProps, DisclosurePanelRenderProps, DisclosureGroupProps, DisclosureGroupRenderProps} from '../src/Disclosure';
+export type {DisclosureState} from 'react-stately/useDisclosureState';
+export type {DisclosureGroupState} from 'react-stately/useDisclosureGroupState';

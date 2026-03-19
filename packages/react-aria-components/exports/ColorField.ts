@@ -18,3 +18,4 @@ export {ColorField, ColorFieldContext, ColorFieldStateContext} from '../src/Colo
 export type {ColorFieldProps, ColorFieldRenderProps} from '../src/ColorField';
 export {parseColor, getColorChannels} from 'react-stately/Color';
 export type {ColorSpace, ColorChannel, Color, ColorFormat, ColorAxes, ColorChannelRange} from 'react-stately/Color';
+export type {ColorFieldState} from 'react-stately/useColorFieldState';

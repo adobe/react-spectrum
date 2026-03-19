@@ -1,2 +1,3 @@
-export {Button, LinkButton, ButtonContext, LinkButtonContext} from '../src/Button';
-export type {ButtonProps, LinkButtonProps} from '../src/Button';
+export {Button, ButtonContext} from '../src/Button';
+export type {ButtonProps} from '../src/Button';
+export type {PressEvent} from '@react-types/shared';

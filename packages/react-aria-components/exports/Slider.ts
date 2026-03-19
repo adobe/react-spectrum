@@ -16,3 +16,4 @@ import 'client-only';
 
 export {Slider, SliderOutput, SliderTrack, SliderThumb, SliderContext, SliderOutputContext, SliderTrackContext, SliderStateContext} from '../src/Slider';
 export type {SliderOutputProps, SliderProps, SliderRenderProps, SliderThumbProps, SliderTrackProps, SliderTrackRenderProps, SliderThumbRenderProps} from '../src/Slider';
+export type {SliderState} from 'react-stately/useSliderState';

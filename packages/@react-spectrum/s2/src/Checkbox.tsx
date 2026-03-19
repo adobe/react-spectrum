@@ -13,12 +13,11 @@
 import {
   Checkbox as AriaCheckbox,
   CheckboxProps as AriaCheckboxProps,
-  CheckboxGroupStateContext,
   CheckboxRenderProps
 } from 'react-aria-components/Checkbox';
-
 import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
+import {CheckboxGroupStateContext} from 'react-aria-components/CheckboxGroup';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import {ContextValue, useSlottedContext} from 'react-aria-components/utils';
 import {controlBorderRadius, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};

@@ -16,3 +16,4 @@ import 'client-only';
 
 export {ComboBox, ComboBoxValue, ComboBoxContext, ComboBoxStateContext, ComboBoxValueContext} from '../src/ComboBox';
 export type {ComboBoxProps, ComboBoxRenderProps, ComboBoxValueProps, ComboBoxValueRenderProps} from '../src/ComboBox';
+export type {ComboBoxState} from 'react-stately/useComboBoxState';

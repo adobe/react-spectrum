@@ -14,5 +14,6 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {Checkbox, CheckboxGroup, CheckboxContext, CheckboxGroupContext, CheckboxGroupStateContext} from '../src/Checkbox';
-export type {CheckboxGroupProps, CheckboxGroupRenderProps, CheckboxRenderProps, CheckboxProps} from '../src/Checkbox';
+export {Checkbox, CheckboxContext} from '../src/Checkbox';
+export type {CheckboxRenderProps, CheckboxProps} from '../src/Checkbox';
+export type {ToggleState} from 'react-stately/useToggleState';

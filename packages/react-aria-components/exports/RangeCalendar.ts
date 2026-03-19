@@ -16,5 +16,4 @@ import 'client-only';
 
 export {CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, RangeCalendar, RangeCalendarContext, RangeCalendarStateContext} from '../src/Calendar';
 export type {CalendarCellProps, CalendarRenderProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps, RangeCalendarProps, RangeCalendarRenderProps} from '../src/Calendar';
-export type {DateValue} from 'react-stately/useCalendarState';
-export type {DateRange} from 'react-stately/useRangeCalendarState';
+export type {DateRange, DateValue, RangeCalendarState} from 'react-stately/useRangeCalendarState';

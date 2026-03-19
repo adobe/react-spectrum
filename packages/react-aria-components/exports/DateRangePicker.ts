@@ -16,5 +16,4 @@ import 'client-only';
 
 export {DateRangePicker, DateRangePickerContext, DateRangePickerStateContext} from '../src/DatePicker';
 export type {DateRangePickerProps, DateRangePickerRenderProps} from '../src/DatePicker';
-export type {DateValue} from 'react-stately/useDateFieldState';
-export type {DateRange} from 'react-stately/useDateRangePickerState';
+export type {DateRange, DateValue, DateRangePickerState} from 'react-stately/useDateRangePickerState';

@@ -16,3 +16,4 @@ import 'client-only';
 
 export {TagGroup, TagGroupContext, TagList, TagListContext, Tag} from '../src/TagGroup';
 export type {TagGroupProps, TagListProps, TagListRenderProps, TagProps, TagRenderProps} from '../src/TagGroup';
+export type {Key, Selection, SelectionMode} from '@react-types/shared';

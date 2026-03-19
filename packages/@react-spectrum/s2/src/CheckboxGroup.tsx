@@ -13,8 +13,7 @@
 import {
   CheckboxGroup as AriaCheckboxGroup,
   CheckboxGroupProps as AriaCheckboxGroupProps
-} from 'react-aria-components/Checkbox';
-
+} from 'react-aria-components/CheckboxGroup';
 import {CheckboxContext} from './Checkbox';
 import {ContextValue} from 'react-aria-components/utils';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';

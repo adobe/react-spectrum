@@ -19,7 +19,7 @@ import {
   DisclosurePanel,
   DisclosureTitle
 } from './Disclosure';
-import {DisclosureGroup} from 'react-aria-components/Disclosure';
+import {DisclosureGroup} from 'react-aria-components/DisclosureGroup';
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import React, {createContext, forwardRef, ReactNode} from 'react';
 import {style} from '../style' with { type: 'macro' };

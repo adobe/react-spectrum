@@ -16,3 +16,4 @@ import 'client-only';
 
 export {NumberField, NumberFieldContext, NumberFieldStateContext} from '../src/NumberField';
 export type {NumberFieldProps, NumberFieldRenderProps} from '../src/NumberField';
+export type {NumberFieldState} from 'react-stately/useNumberFieldState';

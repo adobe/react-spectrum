@@ -16,3 +16,4 @@ import 'client-only';
 
 export {ColorPicker, ColorPickerContext, ColorPickerStateContext} from '../src/ColorPicker';
 export type {ColorPickerProps, ColorPickerRenderProps} from '../src/ColorPicker';
+export type {ColorPickerState} from 'react-stately/useColorPickerState';

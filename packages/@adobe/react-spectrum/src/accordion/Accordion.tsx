@@ -24,7 +24,7 @@ import {
   DisclosureProps,
   Disclosure as RACDisclosure,
   DisclosurePanel as RACDisclosurePanel
-} from 'react-aria-components/Disclosure';
+} from 'react-aria-components/DisclosureGroup';
 import {Heading} from 'react-aria-components/Heading';
 import React, {createContext, forwardRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';

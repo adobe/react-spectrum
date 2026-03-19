@@ -16,4 +16,4 @@ import 'client-only';
 
 export {DateField, DateInput, DateSegment, DateFieldContext, DateFieldStateContext} from '../src/DateField';
 export type {DateFieldProps, DateFieldRenderProps, DateInputProps, DateInputRenderProps, DateSegmentProps, DateSegmentRenderProps} from '../src/DateField';
-export type {DateValue} from 'react-stately/useDateFieldState';
+export type {DateValue, DateFieldState} from 'react-stately/useDateFieldState';

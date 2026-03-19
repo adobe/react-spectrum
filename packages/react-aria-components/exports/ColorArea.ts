@@ -18,3 +18,4 @@ export {ColorArea, ColorAreaContext, ColorAreaStateContext} from '../src/ColorAr
 export type {ColorAreaProps, ColorAreaRenderProps} from '../src/ColorArea';
 export {parseColor, getColorChannels} from 'react-stately/Color';
 export type {ColorSpace, ColorChannel, Color, ColorFormat, ColorAxes, ColorChannelRange} from 'react-stately/Color';
+export type {ColorAreaState} from 'react-stately/useColorAreaState';

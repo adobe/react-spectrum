@@ -16,3 +16,4 @@ import 'client-only';
 
 export {RadioGroup, Radio, RadioGroupContext, RadioContext, RadioGroupStateContext} from '../src/RadioGroup';
 export type {RadioGroupProps, RadioGroupRenderProps, RadioProps, RadioRenderProps} from '../src/RadioGroup';
+export type {RadioGroupState} from 'react-stately/useRadioGroupState';

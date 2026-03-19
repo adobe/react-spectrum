@@ -16,3 +16,4 @@ import 'client-only';
 
 export {SearchField, SearchFieldContext} from '../src/SearchField';
 export type {SearchFieldProps, SearchFieldRenderProps} from '../src/SearchField';
+export type {SearchFieldState} from 'react-stately/useSearchFieldState';

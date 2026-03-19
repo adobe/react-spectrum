@@ -14,7 +14,6 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {Select, SelectValue, SelectContext, SelectValueContext, SelectStateContext} from '../src/Select';
-export type {SelectProps, SelectValueProps, SelectValueRenderProps, SelectRenderProps} from '../src/Select';
-export type {Key} from '@react-types/shared';
-export type {SelectState} from 'react-stately/useSelectState';
+export {Checkbox, CheckboxGroup, CheckboxContext, CheckboxGroupContext, CheckboxGroupStateContext} from '../src/Checkbox';
+export type {CheckboxGroupProps, CheckboxGroupRenderProps, CheckboxRenderProps, CheckboxProps} from '../src/Checkbox';
+export type {CheckboxGroupState} from 'react-stately/useCheckboxGroupState';

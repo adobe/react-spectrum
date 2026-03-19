@@ -16,3 +16,4 @@ import 'client-only';
 
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from '../src/Tooltip';
 export type {TooltipProps, TooltipRenderProps, TooltipTriggerComponentProps} from '../src/Tooltip';
+export type {TooltipTriggerState} from 'react-stately/useTooltipTriggerState';
