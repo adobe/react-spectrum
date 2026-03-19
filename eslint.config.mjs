@@ -411,6 +411,7 @@ export default [{
     },
 }, {
     files: ["packages/**/src/**/*.ts", "packages/**/src/**/*.tsx"],
+    ignores: ["packages/dev/**"],
     rules: {
         "rsp-rules/no-package-root-imports": ERROR,
     },
