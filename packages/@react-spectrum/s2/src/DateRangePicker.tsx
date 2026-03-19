@@ -14,7 +14,7 @@ import {
   DateRangePicker as AriaDateRangePicker,
   DateRangePickerProps as AriaDateRangePickerProps,
   DateValue
-} from 'react-aria-components/DatePicker';
+} from 'react-aria-components/DateRangePicker';
 import {CalendarButton, CalendarPopover, timeField} from './DatePicker';
 import {ContextValue} from 'react-aria-components/utils';
 import {createContext, forwardRef, ReactElement, ReactNode, Ref, useContext, useState} from 'react';
@@ -23,8 +23,8 @@ import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils'
 import {FieldGroup, FieldLabel, HelpText} from './Field';
 import {FormContext} from 'react-aria-components/Form';
 import {forwardRefType, GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
-import intlMessages from '../intl/*.json';
 // @ts-ignore
+import intlMessages from '../intl/*.json';
 import {PopoverProps} from 'react-aria-components/Popover';
 import {RangeCalendar, RangeCalendarProps} from './RangeCalendar';
 import {style} from '../style' with {type: 'macro'};

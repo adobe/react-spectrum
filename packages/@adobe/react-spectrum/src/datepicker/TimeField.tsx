@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTimeFieldProps, MappedTimeValue, TimeValue, useTimeField} from 'react-aria/useDateField';
-
+import {AriaTimeFieldProps, MappedTimeValue, TimeValue, useTimeField} from 'react-aria/useTimeField';
 import {classNames} from '../utils/classNames';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './styles.css';

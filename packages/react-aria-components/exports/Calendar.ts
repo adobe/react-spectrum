@@ -14,7 +14,6 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, RangeCalendar, CalendarContext, RangeCalendarContext, CalendarStateContext, RangeCalendarStateContext} from '../src/Calendar';
-export type {CalendarCellProps, CalendarProps, CalendarRenderProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps, RangeCalendarProps, RangeCalendarRenderProps} from '../src/Calendar';
+export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, CalendarContext, CalendarStateContext} from '../src/Calendar';
+export type {CalendarCellProps, CalendarProps, CalendarRenderProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps} from '../src/Calendar';
 export type {DateValue} from 'react-stately/useCalendarState';
-export type {DateRange} from 'react-stately/useRangeCalendarState';

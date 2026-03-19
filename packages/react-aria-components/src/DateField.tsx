@@ -11,11 +11,10 @@
  */
 import {
   AriaDateFieldProps,
-  AriaTimeFieldProps,
   useDateField,
-  useDateSegment,
-  useTimeField
+  useDateSegment
 } from 'react-aria/useDateField';
+import {AriaTimeFieldProps, useTimeField} from 'react-aria/useTimeField';
 import {
   ClassNameOrFunction,
   ContextValue,

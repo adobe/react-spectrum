@@ -24,13 +24,13 @@ import {FieldGroup, FieldLabel, HelpText} from './Field';
 import {FormContext} from 'react-aria-components/Form';
 import {forwardRefType, GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {IconContext} from './Icon';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Popover} from './Popover';
 import {PopoverProps} from 'react-aria-components/Popover';
-// @ts-ignore
 import {pressScale} from './pressScale';
 import {TimeField} from './TimeField';
-import {TimeValue} from 'react-aria-components/DateField';
+import {TimeValue} from 'react-aria-components/TimeField';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

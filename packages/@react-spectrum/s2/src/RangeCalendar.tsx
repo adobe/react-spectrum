@@ -14,7 +14,7 @@ import {
   RangeCalendar as AriaRangeCalendar,
   RangeCalendarProps as AriaRangeCalendarProps,
   DateValue
-} from 'react-aria-components/Calendar';
+} from 'react-aria-components/RangeCalendar';
 import {CalendarButton, CalendarGrid, CalendarHeading} from './Calendar';
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
@@ -24,8 +24,8 @@ import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Header, HeaderContext, HeadingContext} from './Content';
 import {helpTextStyles} from './Field';
-import intlMessages from '../intl/*.json';
 // @ts-ignore
+import intlMessages from '../intl/*.json';
 import {style} from '../style' with {type: 'macro'};
 import {Text} from 'react-aria-components/Text';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';

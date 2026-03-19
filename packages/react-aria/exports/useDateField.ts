@@ -11,8 +11,7 @@
  */
 
 export {useDateSegment} from '../src/datepicker/useDateSegment';
-export {useDateField, useTimeField} from '../src/datepicker/useDateField';
-export type {AriaDateFieldProps, AriaDateFieldOptions, DateFieldAria, AriaTimeFieldProps, AriaTimeFieldOptions} from '../src/datepicker/useDateField';
+export {useDateField} from '../src/datepicker/useDateField';
+export type {AriaDateFieldProps, AriaDateFieldOptions, DateFieldAria} from '../src/datepicker/useDateField';
 export type {DateSegmentAria} from '../src/datepicker/useDateSegment';
 export type {DateValue, MappedDateValue} from 'react-stately/useDateFieldState';
-export type {TimeValue, MappedTimeValue} from 'react-stately/useTimeFieldState';
