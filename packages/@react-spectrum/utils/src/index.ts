@@ -23,5 +23,5 @@ export {useHasChild} from '@adobe/react-spectrum/private/utils/useHasChild';
 export {useIsMobileDevice} from '@adobe/react-spectrum/private/utils/useIsMobileDevice';
 export {BreakpointProvider, useMatchedBreakpoints, useBreakpoint} from '@adobe/react-spectrum/private/utils/BreakpointProvider';
 export type {StyleHandlers} from '@adobe/react-spectrum/private/utils/styleProps';
-export {} from 'react-aria/private/utils/useValueEffect';
-export {} from 'react-aria/private/utils/useResizeObserver';
+export {useValueEffect} from 'react-aria/private/utils/useValueEffect';
+export {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';

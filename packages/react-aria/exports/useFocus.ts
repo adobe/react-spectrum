@@ -13,4 +13,4 @@
 export {useFocus} from '../src/interactions/useFocus';
 
 export type {FocusProps, FocusResult} from '../src/interactions/useFocus';
-export type {PressEvent, PressEvents, LongPressEvent, MoveStartEvent, MoveMoveEvent, MoveEndEvent, MoveEvent, MoveEvents, HoverEvent, HoverEvents, FocusEvents, KeyboardEvents} from '@react-types/shared';
+export type {FocusEvents} from '@react-types/shared';

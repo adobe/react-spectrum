@@ -10,4 +10,3 @@
  * governing permissions and limitations under the License.
  */
 export {useId} from '../src/utils/useId';
-export {} from 'react-stately/private/utils/number';

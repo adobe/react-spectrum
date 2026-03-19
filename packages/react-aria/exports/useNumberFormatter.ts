@@ -11,6 +11,3 @@
  */
 
 export {useNumberFormatter} from '../src/i18n/useNumberFormatter';
-export type {LocalizedStringFormatter} from '@internationalized/string';
-export type {LocalizedStrings} from '@internationalized/message';
-export type {DateFormatter} from '@internationalized/date';

@@ -54,4 +54,4 @@ export {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/anim
 export {isFocusable, isTabbable} from 'react-aria/private/utils/isFocusable';
 export {getNonce} from 'react-aria/private/utils/getNonce';
 export type {LoadMoreSentinelProps} from 'react-aria/private/utils/useLoadMoreSentinel';
-export {} from 'react-stately/private/utils/number';
+export {clamp, snapValueToStep} from 'react-stately/private/utils/number';

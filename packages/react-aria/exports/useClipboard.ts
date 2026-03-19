@@ -12,4 +12,4 @@
 
 export type {ClipboardProps, ClipboardResult} from '../src/dnd/useClipboard';
 export {useClipboard} from '../src/dnd/useClipboard';
-export type {DirectoryDropItem, DragEndEvent, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DragTypes, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropMoveEvent, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, DropTargetDelegate, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-types/shared';
+export type {DirectoryDropItem, DragItem, DropItem, FileDropItem, TextDropItem} from '@react-types/shared';

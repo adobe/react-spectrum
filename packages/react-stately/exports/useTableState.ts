@@ -15,4 +15,3 @@ export type {TableProps, TableState, TableStateProps} from '../src/table/useTabl
 
 export {useTableColumnResizeState} from '../src/table/useTableColumnResizeState';
 export {useTableState, UNSTABLE_useFilteredTableState} from '../src/table/useTableState';
-export {Section} from '../src/collections/Section';

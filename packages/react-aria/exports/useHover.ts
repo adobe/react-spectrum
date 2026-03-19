@@ -12,4 +12,4 @@
 
 export {useHover} from '../src/interactions/useHover';
 export type {HoverProps, HoverResult} from '../src/interactions/useHover';
-export type {PressEvent, PressEvents, LongPressEvent, MoveStartEvent, MoveMoveEvent, MoveEndEvent, MoveEvent, MoveEvents, HoverEvent, HoverEvents, FocusEvents, KeyboardEvents} from '@react-types/shared';
+export type {HoverEvent, HoverEvents} from '@react-types/shared';

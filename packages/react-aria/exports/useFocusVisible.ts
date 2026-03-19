@@ -12,4 +12,4 @@
 
 export {useFocusVisible} from '../src/interactions/useFocusVisible';
 export type {FocusVisibleProps, FocusVisibleResult} from '../src/interactions/useFocusVisible';
-export type {PressEvent, PressEvents, LongPressEvent, MoveStartEvent, MoveMoveEvent, MoveEndEvent, MoveEvent, MoveEvents, HoverEvent, HoverEvents, FocusEvents, KeyboardEvents} from '@react-types/shared';
+export type {FocusEvents} from '@react-types/shared';

@@ -12,9 +12,3 @@
 
 export {FocusRing} from '../src/focus/FocusRing';
 export type {FocusRingProps} from '../src/focus/FocusRing';
-export {} from '../src/utils/isFocusable';
-
-export {Focusable, useFocusable} from '../src/interactions/useFocusable';
-export {} from '../src/interactions/focusSafely';
-
-export type {FocusableAria, FocusableOptions} from '../src/interactions/useFocusable';

@@ -12,4 +12,4 @@
 
 export {useLongPress} from '../src/interactions/useLongPress';
 export type {LongPressProps, LongPressResult} from '../src/interactions/useLongPress';
-export type {PressEvent, PressEvents, LongPressEvent, MoveStartEvent, MoveMoveEvent, MoveEndEvent, MoveEvent, MoveEvents, HoverEvent, HoverEvents, FocusEvents, KeyboardEvents} from '@react-types/shared';
+export type {LongPressEvent} from '@react-types/shared';

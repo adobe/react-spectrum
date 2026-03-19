@@ -10,4 +10,3 @@
  * governing permissions and limitations under the License.
  */
 export {useObjectRef} from '../src/utils/useObjectRef';
-export {} from 'react-stately/private/utils/number';

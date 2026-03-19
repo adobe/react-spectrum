@@ -12,6 +12,4 @@
 
 export {useDateFormatter} from '../src/i18n/useDateFormatter';
 export type {DateFormatterOptions} from '../src/i18n/useDateFormatter';
-export type {LocalizedStringFormatter} from '@internationalized/string';
-export type {LocalizedStrings} from '@internationalized/message';
 export type {DateFormatter} from '@internationalized/date';

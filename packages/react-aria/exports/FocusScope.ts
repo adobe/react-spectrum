@@ -11,11 +11,4 @@
  */
 
 export {FocusScope, useFocusManager} from '../src/focus/FocusScope';
-
 export type {FocusScopeProps, FocusManager, FocusManagerOptions} from '../src/focus/FocusScope';
-export {} from '../src/utils/isFocusable';
-
-export {Focusable, useFocusable} from '../src/interactions/useFocusable';
-export {} from '../src/interactions/focusSafely';
-
-export type {FocusableAria, FocusableOptions} from '../src/interactions/useFocusable';

@@ -11,6 +11,3 @@
  */
 
 export {useCollator} from '../src/i18n/useCollator';
-export type {LocalizedStringFormatter} from '@internationalized/string';
-export type {LocalizedStrings} from '@internationalized/message';
-export type {DateFormatter} from '@internationalized/date';

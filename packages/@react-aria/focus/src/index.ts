@@ -11,7 +11,6 @@
  */
 
 export {FocusScope, useFocusManager} from 'react-aria/FocusScope';
-
 export {getFocusableTreeWalker, createFocusManager, isElementInChildOfActiveScope} from 'react-aria/private/focus/FocusScope';
 export {FocusRing} from 'react-aria/FocusRing';
 export {useFocusRing} from 'react-aria/useFocusRing';
@@ -20,9 +19,7 @@ export {moveVirtualFocus, dispatchVirtualBlur, dispatchVirtualFocus, getVirtuall
 export type {FocusScopeProps, FocusManager, FocusManagerOptions} from 'react-aria/FocusScope';
 export type {FocusRingProps} from 'react-aria/FocusRing';
 export type {AriaFocusRingProps, FocusRingAria} from 'react-aria/useFocusRing';
-export {} from 'react-aria/private/utils/isFocusable';
-
+export {isFocusable} from 'react-aria/private/utils/isFocusable';
 export {Focusable, useFocusable} from 'react-aria/private/interactions/useFocusable';
-export {} from 'react-aria/private/interactions/focusSafely';
-
+export {focusSafely} from 'react-aria/private/interactions/focusSafely';
 export type {FocusableAria, FocusableOptions} from 'react-aria/private/interactions/useFocusable';

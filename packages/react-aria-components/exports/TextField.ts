@@ -16,4 +16,3 @@ import 'client-only';
 
 export {TextField, TextFieldContext} from '../src/TextField';
 export type {TextFieldProps, TextFieldRenderProps} from '../src/TextField';
-export type {TimeValue, TimeFieldState} from 'react-stately/useTimeFieldState';

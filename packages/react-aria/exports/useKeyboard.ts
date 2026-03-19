@@ -12,4 +12,4 @@
 
 export {useKeyboard} from '../src/interactions/useKeyboard';
 export type {KeyboardProps, KeyboardResult} from '../src/interactions/useKeyboard';
-export type {PressEvent, PressEvents, LongPressEvent, MoveStartEvent, MoveMoveEvent, MoveEndEvent, MoveEvent, MoveEvents, HoverEvent, HoverEvents, FocusEvents, KeyboardEvents} from '@react-types/shared';
+export type {KeyboardEvents} from '@react-types/shared';

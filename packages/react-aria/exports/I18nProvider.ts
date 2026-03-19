@@ -12,6 +12,3 @@
 
 export {I18nProvider, useLocale} from '../src/i18n/I18nProvider';
 export type {I18nProviderProps, Locale} from '../src/i18n/I18nProvider';
-export type {LocalizedStringFormatter} from '@internationalized/string';
-export type {LocalizedStrings} from '@internationalized/message';
-export type {DateFormatter} from '@internationalized/date';

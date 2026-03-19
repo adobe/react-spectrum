@@ -12,6 +12,3 @@
 
 export {useFilter} from '../src/i18n/useFilter';
 export type {Filter} from '../src/i18n/useFilter';
-export type {LocalizedStringFormatter} from '@internationalized/string';
-export type {LocalizedStrings} from '@internationalized/message';
-export type {DateFormatter} from '@internationalized/date';

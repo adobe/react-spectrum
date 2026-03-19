@@ -19,4 +19,3 @@ export type {AriaCalendarGridProps, CalendarGridAria} from '../src/calendar/useC
 export type {AriaCalendarCellProps, CalendarCellAria} from '../src/calendar/useCalendarCell';
 export type {CalendarAria} from '../src/calendar/useCalendarBase';
 export type {CalendarProps, DateValue} from 'react-stately/useCalendarState';
-export type {RangeCalendarProps} from 'react-stately/useRangeCalendarState';

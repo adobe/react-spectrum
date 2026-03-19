@@ -12,4 +12,4 @@
 
 export {usePress} from '../src/interactions/usePress';
 export type {PressProps, PressHookProps, PressResult} from '../src/interactions/usePress';
-export type {PressEvent, PressEvents, LongPressEvent, MoveStartEvent, MoveMoveEvent, MoveEndEvent, MoveEvent, MoveEvents, HoverEvent, HoverEvents, FocusEvents, KeyboardEvents} from '@react-types/shared';
+export type {PressEvent, PressEvents} from '@react-types/shared';
