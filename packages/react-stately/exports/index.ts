@@ -27,7 +27,7 @@ export type {DateFieldState, DateFieldStateOptions, DateSegment, DateSegmentType
 export type {DatePickerState, DatePickerStateOptions} from '../src/datepicker/useDatePickerState';
 export type {DateRangePickerState, DateRangePickerStateOptions} from '../src/datepicker/useDateRangePickerState';
 export type {TimeFieldStateOptions, TimeFieldState} from '../src/datepicker/useTimeFieldState';
-export type {DateFieldProps, DatePickerProps, DateRangePickerProps, TimePickerProps, TimeValue} from '../src/datepicker/types';
+export type {DateFieldProps, DatePickerProps, DateRangePickerProps, TimePickerProps, TimeValue, MappedDateValue, MappedTimeValue} from '../src/datepicker/types';
 export type {DisclosureState, DisclosureProps} from '../src/disclosure/useDisclosureState';
 export type {DisclosureGroupState, DisclosureGroupProps} from '../src/disclosure/useDisclosureGroupState';
 export type {DraggableCollectionStateOptions, DraggableCollectionState} from '../src/dnd/useDraggableCollectionState';

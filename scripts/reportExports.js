@@ -84,7 +84,7 @@ function main() {
     for (let exportName of exportNames) {
       let notes = getExportNotes(entry, exportName, packageData);
       if (matchesNoteFilter(notes, noteFilters)) {
-        lines.push(`- ${exportName}${notes.length > 0 ? ` (${notes.join(', ')})` : ''}`);
+        lines.push(`- \`${exportName}\`${notes.length > 0 ? ` (${notes.join(', ')})` : ''}`);
       }
     }
 
@@ -139,7 +139,8 @@ function buildPackageData(report) {
       data = {
         rootExports: new Set(),
         subpathExports: new Set(),
-        privateExports: new Set()
+        privateExports: new Set(),
+        privateExportPaths: new Map()
       };
       packageData.set(entry.packageName, data);
     }
@@ -153,6 +154,13 @@ function buildPackageData(report) {
 
       if (entry.isPrivate) {
         data.privateExports.add(exportName);
+        let privatePaths = data.privateExportPaths.get(exportName);
+        if (!privatePaths) {
+          privatePaths = new Set();
+          data.privateExportPaths.set(exportName, privatePaths);
+        }
+
+        privatePaths.add(entry.specifier);
       }
     }
   }
@@ -166,7 +174,7 @@ function getExportNotes(entry, exportName, packageData) {
 
   if (entry.isRoot) {
     if (data.privateExports.has(exportName)) {
-      notes.push('also exported from private subpath');
+      notes.push(`also exported from private subpath: ${formatSpecifierList(data.privateExportPaths.get(exportName))}`);
     }
 
     if (!data.subpathExports.has(exportName)) {
@@ -174,7 +182,7 @@ function getExportNotes(entry, exportName, packageData) {
     }
   } else {
     if (entry.isPrivate && data.rootExports.has(exportName)) {
-      notes.push('also exported from index');
+      notes.push(`also exported from index via private subpath: ${formatSpecifierList(data.privateExportPaths.get(exportName))}`);
     }
 
     if (!entry.isPrivate && !data.rootExports.has(exportName)) {
@@ -202,5 +210,9 @@ function matchesNoteFilter(notes, noteFilters) {
     return true;
   }
 
-  return noteFilters.some(filter => notes.includes(filter));
+  return noteFilters.some(filter => notes.some(note => note.includes(filter)));
+}
+
+function formatSpecifierList(specifiers) {
+  return Array.from(specifiers).sort((a, b) => a.localeCompare(b)).join(', ');
 }

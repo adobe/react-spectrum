@@ -20,7 +20,7 @@ import {
   CalendarGridHeader,
   CalendarHeaderCell,
   RangeCalendar,
-  RangeCalendarContext,
+  RangeCalendarContext
 } from '../src/Calendar';
 
 import {CalendarDate, getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';

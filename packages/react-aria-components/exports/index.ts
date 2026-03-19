@@ -172,7 +172,7 @@ export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollection
 export type {CalendarState} from 'react-stately/useCalendarState';
 export type {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 export type {CheckboxGroupState} from 'react-stately/useCheckboxGroupState';
-export type {Color, ColorFormat, ColorSpace} from 'react-stately/Color';
+export type {ColorSpace, ColorChannel, Color, ColorFormat, ColorAxes, ColorChannelRange} from 'react-stately/Color';
 export type {ColorAreaState} from 'react-stately/useColorAreaState';
 export type {ColorFieldState} from 'react-stately/useColorFieldState';
 export type {ColorPickerState} from 'react-stately/useColorPickerState';
