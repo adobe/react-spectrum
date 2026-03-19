@@ -410,6 +410,11 @@ export default [{
         }],
     },
 }, {
+    files: ["packages/**/src/**/*.ts", "packages/**/src/**/*.tsx"],
+    rules: {
+        "rsp-rules/no-package-root-imports": ERROR,
+    },
+}, {
     files: [
         "**/test/**",
         "**/stories/**",
