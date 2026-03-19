@@ -465,6 +465,11 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   const didAutoFocusRef = useRef(false);
   useEffect(() => {
     if (autoFocusRef.current) {
+      // Don't autofocus an empty collection. Wait until items are added.
+      if (manager.collection.size === 0) {
+        return;
+      }
+
       let focusedKey: Key | null = null;
 
       // Check focus strategy to determine which item to focus
@@ -493,11 +498,8 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         focusSafely(ref.current);
       }
 
-      // Wait until the collection has items to autofocus.
-      if (manager.collection.size > 0) {
-        autoFocusRef.current = false;
-        didAutoFocusRef.current = true;
-      }
+      autoFocusRef.current = false;
+      didAutoFocusRef.current = true;
     }
   });
 
@@ -581,7 +583,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // This will be marshalled to either the first or last item depending on where focus came from.
   let tabIndex: number | undefined = undefined;
   if (!shouldUseVirtualFocus) {
-    tabIndex = manager.focusedKey == null ? 0 : -1;
+    tabIndex = manager.focusedKey == null && manager.collection.size > 0 ? 0 : -1;
   }
 
   let collectionId = useCollectionId(manager.collection);

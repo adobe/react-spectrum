@@ -192,6 +192,28 @@ describe('Select', () => {
     expect(option).toHaveTextContent('No results');
   });
 
+  it('should not allow empty listbox to steal focus from other elements in the popover', async () => {
+    let {getByTestId, getByRole} = render(
+      <Select data-testid="select" allowsEmptyCollection>
+        <Label>Favorite Animal</Label>
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover>
+          <ListBox aria-label="Test" renderEmptyState={() => 'No results'}>
+            {[]}
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+    await selectTester.open();
+
+    let listbox = getByRole('listbox');
+    expect(listbox).toHaveAttribute('tabIndex', '-1');
+  });
+
   it('should support render props', async () => {
     let {getByTestId} = render(
       <Select data-testid="select">
