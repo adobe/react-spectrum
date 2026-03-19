@@ -29,4 +29,4 @@ export type {TableBodyProps} from 'react-stately/TableBody';
 export type {RowProps, RowElement} from 'react-stately/Row';
 export type {CellProps, CellElement, CellRenderer} from 'react-stately/Cell';
 export type {ITableCollection} from 'react-stately/private/table/TableCollection';
-export {Section} from 'react-stately/private/collections/Section';
+export {Section} from 'react-stately/Section';

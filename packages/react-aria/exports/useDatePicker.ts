@@ -12,5 +12,4 @@
 
 export {useDatePicker} from '../src/datepicker/useDatePicker';
 export type {AriaDatePickerProps, DatePickerAria} from '../src/datepicker/useDatePicker';
-
-export type {DateRange, DateValue, TimeValue} from 'react-stately/private/datepicker/types';
+export type {DateValue, MappedDateValue} from 'react-stately/useDatePickerState';

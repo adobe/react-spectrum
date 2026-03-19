@@ -12,9 +12,10 @@
 
 import {AriaCalendarCellProps, useCalendarCell} from 'react-aria/useCalendar';
 import {CalendarDate, getDayOfWeek, isSameDay, isSameMonth, isToday} from '@internationalized/date';
-import {CalendarState, RangeCalendarState} from 'react-stately/private/calendar/types';
+import {CalendarState} from 'react-stately/useCalendarState';
 import {classNames} from '../utils/classNames';
 import {mergeProps} from 'react-aria/mergeProps';
+import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import React, {JSX, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useFocusRing} from 'react-aria/useFocusRing';

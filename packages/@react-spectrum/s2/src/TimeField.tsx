@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {TimeField as AriaTimeField, TimeFieldProps as AriaTimeFieldProps} from 'react-aria-components/DateField';
+import {TimeField as AriaTimeField, TimeFieldProps as AriaTimeFieldProps, TimeValue} from 'react-aria-components/DateField';
 
 import {ContextValue} from 'react-aria-components/utils';
 import {createContext, forwardRef, ReactElement, Ref, useContext} from 'react';
@@ -20,7 +20,6 @@ import {FieldGroup, FieldLabel, HelpText} from './Field';
 import {FormContext} from 'react-aria-components/Form';
 import {forwardRefType, GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
-import {TimeValue} from 'react-stately/private/datepicker/types';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 

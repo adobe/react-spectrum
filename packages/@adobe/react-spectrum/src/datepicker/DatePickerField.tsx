@@ -15,10 +15,9 @@ import {classNames} from '../utils/classNames';
 import {createCalendar} from '@internationalized/date';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './styles.css';
-import {DateValue} from 'react-stately/private/datepicker/types';
+import {DateValue, useDateField} from 'react-aria/useDateField';
 import React, {JSX, useRef} from 'react';
 import {SpectrumDatePickerProps} from './DatePicker';
-import {useDateField} from 'react-aria/useDateField';
 import {useDateFieldState} from 'react-stately/useDateFieldState';
 import {useLocale} from 'react-aria/I18nProvider';
 

@@ -16,7 +16,7 @@ import {ColorAreaExampleRender} from './ColorArea.stories';
 import {ColorField} from '../src/ColorField';
 import {ColorPicker} from '../src/ColorPicker';
 import {ColorSliderExampleRender} from './ColorSlider.stories';
-import {ColorSpace} from 'react-stately/private/color/types';
+import {ColorSpace} from 'react-stately/Color';
 import {ColorSwatchExampleRender} from './ColorSwatch.stories';
 import {ColorSwatchPicker, ColorSwatchPickerItem} from '../src/ColorSwatchPicker';
 import {Dialog, DialogTrigger} from '../src/Dialog';

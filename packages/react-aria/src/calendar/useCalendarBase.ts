@@ -14,11 +14,12 @@ import {announce} from '../live-announcer/LiveAnnouncer';
 
 import {AriaButtonProps} from '../button/useButton';
 import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
-import {CalendarPropsBase, CalendarState, RangeCalendarState} from 'react-stately/private/calendar/types';
+import {CalendarPropsBase, CalendarState} from 'react-stately/useCalendarState';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 import intlMessages from '../../intl/calendar/*.json';
 import {mergeProps} from '../utils/mergeProps';
+import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {useLabels} from '../utils/useLabels';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 // @ts-ignore

@@ -11,7 +11,7 @@
  */
 
 import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
-import {CalendarState, RangeCalendarState} from 'react-stately/private/calendar/types';
+import {CalendarState} from 'react-stately/useCalendarState';
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
@@ -20,6 +20,7 @@ import {getInteractionModality} from '../interactions/useFocusVisible';
 import {getScrollParent} from '../utils/getScrollParent';
 import intlMessages from '../../intl/calendar/*.json';
 import {mergeProps} from '../utils/mergeProps';
+import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {scrollIntoViewport} from '../utils/scrollIntoView';
 import {useDateFormatter} from '../i18n/useDateFormatter';
 import {useDeepMemo} from '../utils/useDeepMemo';

@@ -12,8 +12,7 @@
 
 import {AriaLabelingProps, DOMProps} from '@react-types/shared';
 import {CalendarAria, useCalendarBase} from './useCalendarBase';
-import {CalendarProps} from 'react-stately/useCalendarState';
-import {CalendarState, DateValue} from 'react-stately/private/calendar/types';
+import {CalendarProps, CalendarState, DateValue} from 'react-stately/useCalendarState';
 
 export interface AriaCalendarProps<T extends DateValue> extends CalendarProps<T>, DOMProps, AriaLabelingProps {}
 

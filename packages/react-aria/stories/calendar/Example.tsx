@@ -13,8 +13,8 @@ import {AriaCalendarProps, useCalendar} from '../../src/calendar/useCalendar';
 
 import {Button} from '@adobe/react-spectrum/Button';
 import {CalendarDate, createCalendar, DateDuration, startOfWeek} from '@internationalized/date';
-import {CalendarState, RangeCalendarState} from 'react-stately/private/calendar/types';
-import {DateValue} from 'react-stately/private/calendar/types';
+import {CalendarState, DateValue} from 'react-stately/useCalendarState';
+import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import React, {JSX, ReactElement, useMemo, useRef} from 'react';
 import {useCalendarCell} from '../../src/calendar/useCalendarCell';
 import {useCalendarGrid} from '../../src/calendar/useCalendarGrid';

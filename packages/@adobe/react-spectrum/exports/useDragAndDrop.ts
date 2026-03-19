@@ -14,6 +14,6 @@
 
 export type {DragAndDropOptions, DragAndDropHooks} from '../src/dnd/useDragAndDrop';
 export {useDragAndDrop} from '../src/dnd/useDragAndDrop';
-export {DIRECTORY_DRAG_TYPE} from 'react-aria/private/dnd/utils';
+export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem} from 'react-aria/useDrop';
 
 export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-types/shared';

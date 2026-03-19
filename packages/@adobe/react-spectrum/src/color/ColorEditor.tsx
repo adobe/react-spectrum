@@ -1,9 +1,8 @@
 import {ColorArea} from './ColorArea';
 import {ColorField} from './ColorField';
 import {ColorSlider} from './ColorSlider';
-import {ColorSpace} from 'react-stately/private/color/types';
+import {ColorSpace, getColorChannels} from 'react-stately/Color';
 import {DOMRef} from '@react-types/shared';
-import {getColorChannels} from 'react-stately/Color';
 // @ts-ignore
 import intlMessages from '../../intl/color/*.json';
 import {Item} from 'react-stately/Item';

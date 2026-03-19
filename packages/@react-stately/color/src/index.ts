@@ -22,4 +22,4 @@ export type {ColorSliderProps, ColorSliderState, ColorSliderStateOptions} from '
 export type {ColorWheelProps, ColorWheelState} from 'react-stately/useColorWheelState';
 export type {ColorFieldProps, ColorFieldState, ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions} from 'react-stately/useColorFieldState';
 export type {ColorPickerProps, ColorPickerState} from 'react-stately/useColorPickerState';
-export type {Color, ColorChannel, ColorFormat, ColorSpace, ColorAxes, ColorChannelRange} from 'react-stately/private/color/types';
+export type {Color, ColorChannel, ColorFormat, ColorSpace, ColorAxes, ColorChannelRange} from 'react-stately/Color';

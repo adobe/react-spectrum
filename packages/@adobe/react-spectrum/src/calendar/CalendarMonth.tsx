@@ -12,9 +12,10 @@
 
 import {CalendarCell} from './CalendarCell';
 import {CalendarDate, endOfMonth} from '@internationalized/date';
-import {CalendarPropsBase, CalendarState, RangeCalendarState} from 'react-stately/private/calendar/types';
+import {CalendarPropsBase, CalendarState} from 'react-stately/useCalendarState';
 import {classNames} from '../utils/classNames';
 import {DOMProps, StyleProps} from '@react-types/shared';
+import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import React, {JSX} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useCalendarGrid} from 'react-aria/useCalendar';

@@ -14,7 +14,7 @@ import {AriaCalendarProps, useCalendar, useCalendarCell, useCalendarGrid} from '
 import {AriaRangeCalendarProps, useRangeCalendar} from 'react-aria/useRangeCalendar';
 import {ButtonContext} from './Button';
 import {CalendarDate, CalendarIdentifier, createCalendar, DateDuration, endOfMonth, Calendar as ICalendar, isSameDay, isSameMonth, isToday} from '@internationalized/date';
-import {CalendarState, RangeCalendarState} from 'react-stately/private/calendar/types';
+import {CalendarState} from 'react-stately/useCalendarState';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -29,18 +29,18 @@ import {
   useRenderProps,
   useSlottedContext
 } from './utils';
-import {DateValue} from 'react-stately/private/datepicker/types';
+import {DateValue, useRangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {DOMAttributes, FocusableElement, forwardRefType, GlobalDOMAttributes, HoverEvents} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {HeadingContext} from './Heading';
 import {mergeProps} from 'react-aria/mergeProps';
+import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 import {useCalendarState} from 'react-stately/useCalendarState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLocale} from 'react-aria/I18nProvider';
-import {useRangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
 export interface CalendarRenderProps {

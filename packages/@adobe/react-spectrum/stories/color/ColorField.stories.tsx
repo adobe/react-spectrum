@@ -11,7 +11,7 @@
  */
 
 import {action} from 'storybook/actions';
-import {Color} from 'react-stately/private/color/types';
+import {Color} from 'react-stately/Color';
 import {ColorField, SpectrumColorFieldProps} from '../../src/color/ColorField';
 import {Content} from '../../src/view/Content';
 import {ContextualHelp} from '../../src/contextualhelp/ContextualHelp';

@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 import {AriaDatePickerProps, useDatePicker} from 'react-aria/useDatePicker';
-
 import {AriaDateRangePickerProps, useDateRangePicker} from 'react-aria/useDateRangePicker';
 import {ButtonContext} from './Button';
 import {CalendarContext, RangeCalendarContext} from './Calendar';
@@ -29,9 +28,8 @@ import {
   useSlottedContext
 } from './utils';
 import {DateFieldContext} from './DateField';
-import {DatePickerState, DatePickerStateOptions, useDatePickerState} from 'react-stately/useDatePickerState';
+import {DatePickerState, DatePickerStateOptions, DateValue, useDatePickerState} from 'react-stately/useDatePickerState';
 import {DateRangePickerState, DateRangePickerStateOptions, useDateRangePickerState} from 'react-stately/useDateRangePickerState';
-import {DateValue} from 'react-stately/private/datepicker/types';
 import {DialogContext, OverlayTriggerStateContext} from './Dialog';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';

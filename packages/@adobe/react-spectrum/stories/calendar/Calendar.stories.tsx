@@ -14,7 +14,7 @@ import {ActionButton} from '../../src/button/ActionButton';
 import {Calendar} from '../../src/calendar/Calendar';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, today, ZonedDateTime} from '@internationalized/date';
 import {Custom454Calendar} from '/packages/@internationalized/date/tests/customCalendarImpl';
-import {DateValue} from 'react-stately/private/calendar/types';
+import {DateValue} from 'react-stately/useCalendarState';
 import {Flex} from '../../src/layout/Flex';
 import {Item} from 'react-stately/Item';
 import {Key} from '@react-types/shared';

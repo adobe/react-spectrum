@@ -14,3 +14,4 @@
 
 export {DatePicker} from '../src/datepicker/DatePicker';
 export type {SpectrumDatePickerProps} from '../src/datepicker/DatePicker';
+export type {DateValue} from 'react-stately/useDatePickerState';

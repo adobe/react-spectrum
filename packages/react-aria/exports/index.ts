@@ -162,7 +162,8 @@ export type {AriaDateFieldProps, AriaDateFieldOptions, AriaTimeFieldProps, AriaT
 export type {AriaDatePickerProps, DatePickerAria} from '../src/datepicker/useDatePicker';
 export type {AriaDateRangePickerProps, DateRangePickerAria} from '../src/datepicker/useDateRangePicker';
 export type {DateSegmentAria} from '../src/datepicker/useDateSegment';
-export type {DateRange, DateValue, TimeValue} from 'react-stately/private/datepicker/types';
+export type {DateRange, DateValue} from 'react-stately/useDateRangePickerState';
+export type {TimeValue} from 'react-stately/useTimeFieldState';
 export type {AriaDialogProps, DialogAria} from '../src/dialog/useDialog';
 export type {DisclosureAria, AriaDisclosureProps} from '../src/disclosure/useDisclosure';
 export type {AriaFocusRingProps, FocusRingAria} from '../src/focus/useFocusRing';

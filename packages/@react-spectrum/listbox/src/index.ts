@@ -15,6 +15,6 @@
 export {ListBox} from '@adobe/react-spectrum/ListBox';
 
 export {useListBoxLayout, ListBoxBase} from '@adobe/react-spectrum/private/listbox/ListBoxBase';
-export type {SpectrumListBoxProps} from '@adobe/react-spectrum/private/listbox/ListBoxBase';
+export type {SpectrumListBoxProps} from '@adobe/react-spectrum/ListBox';
 export {Item} from 'react-stately/Item';
 export {Section} from 'react-stately/Section';

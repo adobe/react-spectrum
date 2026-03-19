@@ -15,7 +15,7 @@ import {AriaCalendarProps, useCalendar} from 'react-aria/useCalendar';
 import {CalendarBase} from './CalendarBase';
 import {CalendarIdentifier, createCalendar, Calendar as ICalendar} from '@internationalized/date';
 import {createDOMRef} from '../utils/useDOMRef';
-import {DateValue} from 'react-stately/private/calendar/types';
+import {DateValue} from 'react-stately/useCalendarState';
 import {FocusableRef, StyleProps} from '@react-types/shared';
 import React, {ReactElement, useImperativeHandle, useMemo, useRef} from 'react';
 import {useCalendarState} from 'react-stately/useCalendarState';

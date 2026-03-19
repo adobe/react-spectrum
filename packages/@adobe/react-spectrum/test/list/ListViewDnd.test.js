@@ -22,7 +22,7 @@ import {
 } from '@react-spectrum/test-utils-internal';
 import {CUSTOM_DRAG_TYPE} from 'react-aria/src/dnd/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from 'react-aria/test/dnd/mocks';
-import {DIRECTORY_DRAG_TYPE} from 'react-aria/private/dnd/utils';
+import {DIRECTORY_DRAG_TYPE, useDragAndDrop} from '../../exports/useDragAndDrop';
 import {DragBetweenListsComplex} from '../../stories/list/ListViewDnDUtilExamples';
 import {DragBetweenListsExample, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../../stories/list/ListViewDnDExamples';
 import {Droppable} from 'react-aria/test/dnd/examples';
@@ -34,7 +34,6 @@ import {Provider} from '../../src/provider/Provider';
 import React from 'react';
 import {Text} from '../../src/text/Text';
 import {defaultTheme as theme} from '../../src/theme-default/defaultTheme';
-import {useDragAndDrop} from '../../src/dnd/useDragAndDrop';
 import {useListData} from 'react-stately/useListData';
 import userEvent from '@testing-library/user-event';
 

@@ -13,3 +13,4 @@
 /// <reference types="css-module-types" />
 
 export {Provider, useProvider} from '../src/provider/Provider';
+export type {ProviderContext, ProviderProps, ColorScheme, Scale, Theme, Breakpoints, CSSModule} from '../src/provider/types';

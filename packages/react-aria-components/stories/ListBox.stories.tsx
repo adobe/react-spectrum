@@ -12,10 +12,9 @@
 
 import {action} from 'storybook/actions';
 import {Collection} from 'react-aria/private/collections/CollectionBuilder';
-import {DragAndDropHooks, DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
+import {DragAndDropHooks, DropIndicator, isTextDropItem, useDragAndDrop} from '../exports/useDragAndDrop';
 import {GridLayout} from 'react-stately/private/layout/GridLayout';
 import {Header} from '../src/Header';
-import {isTextDropItem} from 'react-aria/private/dnd/utils';
 import {ListBox, ListBoxItem, ListBoxProps, ListBoxSection} from '../src/ListBox';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
 import {ListLayout} from 'react-stately/private/layout/ListLayout';

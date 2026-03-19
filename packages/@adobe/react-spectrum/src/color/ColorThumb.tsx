@@ -12,7 +12,7 @@
 
 import {classNames} from '../utils/classNames';
 
-import {Color} from 'react-stately/private/color/types';
+import {Color} from 'react-stately/Color';
 import {DOMProps, RefObject} from '@react-types/shared';
 import {Overlay} from '../overlays/Overlay';
 import React, {CSSProperties, JSX, ReactElement, useRef, useState} from 'react';

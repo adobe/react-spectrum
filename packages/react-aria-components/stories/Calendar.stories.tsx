@@ -22,7 +22,7 @@ import {
 } from '../src/Calendar';
 
 import {CalendarDate, parseDate} from '@internationalized/date';
-import {DateValue} from 'react-stately/private/datepicker/types';
+import {DateValue} from 'react-stately/useCalendarState';
 import {Heading} from '../src/Heading';
 import {I18nProvider} from 'react-aria/I18nProvider';
 import {Meta, StoryObj} from '@storybook/react';

@@ -12,10 +12,10 @@
 
 import {
   ColorSwatchPicker as AriaColorSwatchPicker,
-  ColorSwatchPickerItem as AriaColorSwatchPickerItem
+  ColorSwatchPickerItem as AriaColorSwatchPickerItem,
+  Color
 } from 'react-aria-components/ColorSwatchPicker';
 
-import {Color} from 'react-stately/private/color/types';
 import {ColorSwatchProps, InternalColorSwatchContext} from './ColorSwatch';
 import {ContextValue, SlotProps} from 'react-aria-components/utils';
 import {createContext, forwardRef, ReactElement, ReactNode} from 'react';

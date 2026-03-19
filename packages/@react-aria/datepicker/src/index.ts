@@ -19,4 +19,6 @@ export type {AriaDateFieldProps, AriaDateFieldOptions, DateFieldAria, AriaTimeFi
 export type {AriaDatePickerProps, DatePickerAria} from 'react-aria/useDatePicker';
 export type {AriaDateRangePickerProps, DateRangePickerAria} from 'react-aria/useDateRangePicker';
 
-export type {DateRange, DateValue, TimeValue} from 'react-stately/private/datepicker/types';
+export type {DateValue} from 'react-stately/useDatePickerState';
+export type {DateRange} from 'react-stately/useDateRangePickerState';
+export type {TimeValue} from 'react-stately/useTimeFieldState';

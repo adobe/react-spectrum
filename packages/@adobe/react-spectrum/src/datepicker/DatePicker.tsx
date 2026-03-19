@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaDatePickerProps, useDatePicker} from 'react-aria/useDatePicker';
+import {AriaDatePickerProps, DateValue, useDatePicker} from 'react-aria/useDatePicker';
 
 import {Calendar} from '../calendar/Calendar';
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
@@ -19,7 +19,6 @@ import {classNames} from '../utils/classNames';
 import {Content} from '../view/Content';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './styles.css';
-import {DateValue} from 'react-stately/private/datepicker/types';
 import {Dialog} from '../dialog/Dialog';
 import {DialogTrigger} from '../dialog/DialogTrigger';
 import {Field} from '../label/Field';

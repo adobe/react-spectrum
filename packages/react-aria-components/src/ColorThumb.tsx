@@ -1,5 +1,5 @@
 import {ClassNameOrFunction, dom, RenderProps, useRenderProps} from './utils';
-import {Color} from 'react-stately/private/color/types';
+import {Color} from 'react-stately/Color';
 import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {GlobalDOMAttributes, HoverEvents, RefObject} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';

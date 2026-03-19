@@ -178,7 +178,7 @@ export type {AutocompleteProps} from 'react-aria-components/Autocomplete';
 export type {FileTriggerProps} from 'react-aria-components/FileTrigger';
 export type {TooltipTriggerComponentProps as TooltipTriggerProps} from 'react-aria-components/Tooltip';
 export type {SortDescriptor, Key, Selection, RouterConfig} from '@react-types/shared';
-export type {Color} from 'react-stately/private/color/types';
+export type {Color} from 'react-stately/Color';
 export type {ListData} from 'react-stately/useListData';
 export type {TreeData} from 'react-stately/useTreeData';
 export type {AsyncListData} from 'react-stately/useAsyncList';

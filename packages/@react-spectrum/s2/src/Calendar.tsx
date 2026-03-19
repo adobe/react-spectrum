@@ -25,6 +25,7 @@ import {
   CalendarGridHeader,
   CalendarHeaderCellProps,
   CalendarStateContext,
+  DateValue,
   RangeCalendarContext,
   RangeCalendarStateContext
 } from 'react-aria-components/Calendar';
@@ -37,11 +38,10 @@ import {
   getDayOfWeek,
   startOfMonth
 } from '@internationalized/date';
-import {CalendarState, RangeCalendarState} from 'react-stately/private/calendar/types';
+import {CalendarState} from 'react-stately/useCalendarState';
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
 import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/utils';
-import {DateValue} from 'react-stately/private/datepicker/types';
 import {focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -49,6 +49,7 @@ import {Header, HeaderContext, Heading, HeadingContext} from './Content';
 import {helpTextStyles} from './Field';
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
+import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 // @ts-ignore
 import React, {createContext, ForwardedRef, forwardRef, Fragment, PropsWithChildren, ReactElement, ReactNode, useContext, useMemo, useRef} from 'react';
 import {Text} from 'react-aria-components/Text';

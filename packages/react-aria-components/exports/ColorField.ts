@@ -16,3 +16,5 @@ import 'client-only';
 
 export {ColorField, ColorFieldContext, ColorFieldStateContext} from '../src/ColorField';
 export type {ColorFieldProps, ColorFieldRenderProps} from '../src/ColorField';
+export {parseColor, getColorChannels} from 'react-stately/Color';
+export type {ColorSpace, ColorChannel, Color, ColorFormat, ColorAxes, ColorChannelRange} from 'react-stately/Color';

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTimeFieldProps, useTimeField} from 'react-aria/useDateField';
+import {AriaTimeFieldProps, MappedTimeValue, TimeValue, useTimeField} from 'react-aria/useDateField';
 
 import {classNames} from '../utils/classNames';
 import {DatePickerSegment} from './DatePickerSegment';
@@ -18,7 +18,6 @@ import datepickerStyles from './styles.css';
 import {Field} from '../label/Field';
 import {FocusableRef, InputDOMProps, SpectrumFieldValidation, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Input} from './Input';
-import {MappedTimeValue, TimeValue} from 'react-stately/private/datepicker/types';
 import React, {ReactElement, useRef} from 'react';
 import {useFocusManagerRef, useFormattedDateWidth} from './utils';
 import {useFormProps} from '../form/Form';

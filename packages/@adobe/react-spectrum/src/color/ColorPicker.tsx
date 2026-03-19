@@ -14,7 +14,7 @@ import {ColorPicker as AriaColorPicker} from 'react-aria-components/ColorPicker'
 
 import {AriaLabelingProps, FocusableRef, ValueBase} from '@react-types/shared';
 import {Button} from 'react-aria-components/Button';
-import {Color} from 'react-stately/private/color/types';
+import {Color} from 'react-stately/Color';
 import {ColorSwatch} from './ColorSwatch';
 import {Content} from '../view/Content';
 import {Dialog} from '../dialog/Dialog';

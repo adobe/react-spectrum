@@ -23,6 +23,7 @@ export {
 } from '../src/table/TableView';
 
 export type {SpectrumTableProps} from '../src/table/TableView';
+export type {SpectrumColumnProps} from '../src/table/types';
 export type {TableHeaderProps} from 'react-stately/TableHeader';
 export type {TableBodyProps} from 'react-stately/TableBody';
 export type {RowProps} from 'react-stately/Row';

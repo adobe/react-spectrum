@@ -13,7 +13,7 @@
 import {AriaColorFieldProps, useColorChannelField, useColorField} from 'react-aria/useColorField';
 
 import {classNames} from '../utils/classNames';
-import {Color, ColorChannel, ColorSpace} from 'react-stately/private/color/types';
+import {Color, ColorChannel, ColorSpace} from 'react-stately/Color';
 import {ColorFieldContext} from 'react-aria-components/ColorField';
 import React, {Ref, useEffect, useRef} from 'react';
 import {SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';

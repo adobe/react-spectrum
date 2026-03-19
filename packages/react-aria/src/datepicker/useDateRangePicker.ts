@@ -16,15 +16,14 @@ import {AriaDatePickerProps} from './useDatePicker';
 import {AriaDialogProps} from '../dialog/useDialog';
 import {AriaLabelingProps, DOMAttributes, DOMProps, GroupDOMAttributes, InputDOMProps, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
 import {createFocusManager} from '../focus/FocusScope';
-import {DateRange, RangeCalendarProps} from 'react-stately/useRangeCalendarState';
-import {DateRangePickerProps, DateValue} from 'react-stately/private/datepicker/types';
-import {DateRangePickerState} from 'react-stately/useDateRangePickerState';
+import {DateRange, DateRangePickerProps, DateRangePickerState, DateValue} from 'react-stately/useDateRangePickerState';
 import {DEFAULT_VALIDATION_RESULT, mergeValidation, privateValidationStateProp} from 'react-stately/private/form/useFormValidationState';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {focusManagerSymbol, roleSymbol} from './useDateField';
 import intlMessages from '../../intl/datepicker/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {RangeCalendarProps} from 'react-stately/useRangeCalendarState';
 import {useDatePickerGroup} from './useDatePickerGroup';
 // @ts-ignore
 import {useDescription} from '../utils/useDescription';

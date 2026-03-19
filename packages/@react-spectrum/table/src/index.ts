@@ -14,8 +14,7 @@
 
 export {TableView, TableHeader, TableBody, Column, Section, Row, Cell} from '@adobe/react-spectrum/TableView';
 
-export type {SpectrumColumnProps} from '@adobe/react-spectrum/private/table/types';
-export type {SpectrumTableProps} from '@adobe/react-spectrum/TableView';
+export type {SpectrumColumnProps, SpectrumTableProps} from '@adobe/react-spectrum/TableView';
 export type {TableHeaderProps} from 'react-stately/TableHeader';
 export type {TableBodyProps} from 'react-stately/TableBody';
 export type {RowProps} from 'react-stately/Row';

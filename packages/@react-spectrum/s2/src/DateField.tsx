@@ -16,12 +16,12 @@ import {
   DateInput as AriaDateInput,
   DateSegment as AriaDateSegment,
   DateInputProps,
-  DateSegmentRenderProps
+  DateSegmentRenderProps,
+  DateValue
 } from 'react-aria-components/DateField';
 
 import {ContextValue} from 'react-aria-components/utils';
 import {createContext, forwardRef, PropsWithChildren, ReactElement, Ref, useContext} from 'react';
-import {DateValue} from 'react-stately/private/datepicker/types';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
 import {FormContext} from 'react-aria-components/Form';

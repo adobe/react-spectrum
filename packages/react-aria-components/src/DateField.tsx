@@ -16,7 +16,6 @@ import {
   useDateSegment,
   useTimeField
 } from 'react-aria/useDateField';
-
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -36,17 +35,15 @@ import {createCalendar} from '@internationalized/date';
 import {
   DateFieldState,
   DateSegmentType,
+  DateValue,
   DateSegment as IDateSegment,
   useDateFieldState
 } from 'react-stately/useDateFieldState';
-import {DateValue, TimeValue} from 'react-stately/private/datepicker/types';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
-
 import {Group, GroupContext} from './Group';
-
 import {HiddenDateInput} from './HiddenDateInput';
 import {HoverEvents} from '@react-types/shared';
 import {Input, InputContext} from './Input';
@@ -55,6 +52,7 @@ import {mergeProps} from 'react-aria/mergeProps';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, JSX, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 import {TimeFieldState, useTimeFieldState} from 'react-stately/useTimeFieldState';
+import {TimeValue} from 'react-stately/useTimeFieldState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLocale} from 'react-aria/I18nProvider';

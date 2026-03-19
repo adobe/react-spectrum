@@ -18,7 +18,7 @@ import {Content} from '../../src/view/Content';
 import {ContextualHelp} from '../../src/contextualhelp/ContextualHelp';
 import {Custom454Calendar} from '/packages/@internationalized/date/tests/customCalendarImpl';
 import {DatePicker} from '../../src/datepicker/DatePicker';
-import {DateValue} from 'react-stately/private/calendar/types';
+import {DateValue} from 'react-stately/useCalendarState';
 import {Flex} from '../../src/layout/Flex';
 import {Heading} from '../../src/text/Heading';
 import {Item} from 'react-stately/Item';

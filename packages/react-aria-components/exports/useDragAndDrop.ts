@@ -15,4 +15,5 @@
 import 'client-only';
 
 export {useDragAndDrop, DropIndicator, DropIndicatorContext, DragAndDropContext} from '../src/useDragAndDrop';
+export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem} from 'react-aria/useDrop';
 export type {DragAndDropHooks, DragAndDropOptions, DropIndicatorProps, DropIndicatorRenderProps} from '../src/useDragAndDrop';

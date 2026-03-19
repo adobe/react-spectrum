@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMAttributes, DOMProps, RefObject} from '@react-types/shared';
 import {ColorAreaProps, ColorAreaState} from 'react-stately/useColorAreaState';
-import {ColorChannel} from 'react-stately/private/color/types';
+import {ColorChannel} from 'react-stately/Color';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import intlMessages from '../../intl/color/*.json';
 import {isAndroid, isIOS} from '../utils/platform';

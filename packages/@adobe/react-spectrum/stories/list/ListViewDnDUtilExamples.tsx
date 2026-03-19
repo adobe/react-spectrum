@@ -1,6 +1,5 @@
 import {action} from 'storybook/actions';
-import {DIRECTORY_DRAG_TYPE} from 'react-aria/private/dnd/utils';
-import {DragAndDropOptions, useDragAndDrop} from '../../src/dnd/useDragAndDrop';
+import {DIRECTORY_DRAG_TYPE, DragAndDropOptions, useDragAndDrop} from '../../exports/useDragAndDrop';
 import {Flex} from '../../src/layout/Flex';
 import Folder from '@spectrum-icons/illustrations/Folder';
 import {Item} from 'react-stately/Item';

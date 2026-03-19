@@ -1,1 +1,1 @@
-export {ProgressBarBase, type SpectrumProgressBarBaseProps, type SpectrumProgressBarProps} from '../../../src/progress/ProgressBarBase';
+export {ProgressBarBase, type SpectrumProgressBarBaseProps} from '../../../src/progress/ProgressBarBase';

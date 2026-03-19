@@ -16,3 +16,5 @@ import 'client-only';
 
 export {ColorSlider, ColorSliderContext, ColorSliderStateContext} from '../src/ColorSlider';
 export type {ColorSliderProps, ColorSliderRenderProps} from '../src/ColorSlider';
+export {parseColor, getColorChannels} from 'react-stately/Color';
+export type {ColorSpace, ColorChannel, Color, ColorFormat, ColorAxes, ColorChannelRange} from 'react-stately/Color';

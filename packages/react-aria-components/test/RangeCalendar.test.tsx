@@ -20,11 +20,11 @@ import {
   CalendarGridHeader,
   CalendarHeaderCell,
   RangeCalendar,
-  RangeCalendarContext
+  RangeCalendarContext,
 } from '../src/Calendar';
 
 import {CalendarDate, getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
-import {DateValue} from 'react-stately/private/calendar/types';
+import {DateValue} from 'react-stately/useRangeCalendarState';
 import {Heading} from '../src/Heading';
 import {RangeValue} from '@react-types/shared';
 import React from 'react';

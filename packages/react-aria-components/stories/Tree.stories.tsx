@@ -16,13 +16,13 @@ import {Checkbox, CheckboxProps} from '../src/Checkbox';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import {Collection} from 'react-aria/private/collections/CollectionBuilder';
 import {DroppableCollectionReorderEvent, Key} from '@react-types/shared';
-import {isTextDropItem} from 'react-aria/private/dnd/utils';
+import {isTextDropItem, useDragAndDrop} from '../exports/useDragAndDrop';
 import {ListLayout} from 'react-stately/private/layout/ListLayout';
 import {Menu, MenuTrigger} from '../src/Menu';
+
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 
 import {MyMenuItem} from './utils';
-
 import {Popover} from '../src/Popover';
 import React, {JSX, ReactNode, useCallback, useState} from 'react';
 import styles from '../example/index.css';
@@ -38,7 +38,6 @@ import {
 } from '../src/Tree';
 import {TreeLoadMoreItem} from '../src/Tree';
 import {useAsyncList} from 'react-stately/useAsyncList';
-import {useDragAndDrop} from '../src/useDragAndDrop';
 import {useListData} from 'react-stately/useListData';
 import {useTreeData} from 'react-stately/useTreeData';
 import {Virtualizer} from '../src/Virtualizer';

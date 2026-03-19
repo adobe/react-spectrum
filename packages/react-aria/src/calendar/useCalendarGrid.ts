@@ -11,11 +11,12 @@
  */
 
 import {CalendarDate, getWeeksInMonth, startOfWeek, today} from '@internationalized/date';
-import {CalendarState, RangeCalendarState} from 'react-stately/private/calendar/types';
+import {CalendarState} from 'react-stately/useCalendarState';
 import {DOMAttributes} from '@react-types/shared';
 import {hookData, useVisibleRangeDescription} from './utils';
 import {KeyboardEvent, useMemo} from 'react';
 import {mergeProps} from '../utils/mergeProps';
+import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {useDateFormatter} from '../i18n/useDateFormatter';
 import {useLabels} from '../utils/useLabels';
 import {useLocale} from '../i18n/I18nProvider';

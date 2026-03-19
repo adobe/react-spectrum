@@ -22,7 +22,7 @@ import {
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../../src/table/TableView';
 import {CUSTOM_DRAG_TYPE} from 'react-aria/src/dnd/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from 'react-aria/test/dnd/mocks';
-import {DIRECTORY_DRAG_TYPE} from 'react-aria/private/dnd/utils';
+import {DIRECTORY_DRAG_TYPE, useDragAndDrop} from '../../exports/useDragAndDrop';
 import {DragBetweenTablesComplex} from '../../stories/table/TableDnDUtilExamples';
 import {DragBetweenTablesExample, DragBetweenTablesRootOnlyExample, DragExample, DragOntoRowExample, DragWithoutRowHeaderExample, ReorderExample} from '../../stories/table/TableDnDExamples';
 import {Droppable} from 'react-aria/test/dnd/examples';
@@ -31,7 +31,6 @@ import {globalDndState} from 'react-aria/src/dnd/utils';
 import {Provider} from '../../src/provider/Provider';
 import React from 'react';
 import {defaultTheme as theme} from '../../src/theme-default/defaultTheme';
-import {useDragAndDrop} from '../../src/dnd/useDragAndDrop';
 import {useListData} from 'react-stately/useListData';
 import userEvent from '@testing-library/user-event';
 

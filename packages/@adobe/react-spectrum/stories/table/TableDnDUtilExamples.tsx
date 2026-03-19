@@ -1,8 +1,7 @@
 
 import {action} from 'storybook/actions';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../../src/table/TableView';
-import {DIRECTORY_DRAG_TYPE} from 'react-aria/private/dnd/utils';
-import {DragAndDropOptions, useDragAndDrop} from '../../src/dnd/useDragAndDrop';
+import {DIRECTORY_DRAG_TYPE, DragAndDropOptions, useDragAndDrop} from '../../exports/useDragAndDrop';
 import {Flex} from '../../src/layout/Flex';
 import React, {JSX} from 'react';
 import {Text} from '../../src/text/Text';

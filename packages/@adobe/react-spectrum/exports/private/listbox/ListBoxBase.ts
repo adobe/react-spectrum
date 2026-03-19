@@ -1,1 +1,1 @@
-export {useListBoxLayout, ListBoxBase, type SpectrumListBoxProps} from '../../../src/listbox/ListBoxBase';
+export {useListBoxLayout, ListBoxBase} from '../../../src/listbox/ListBoxBase';

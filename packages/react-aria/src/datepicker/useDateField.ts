@@ -12,13 +12,12 @@
 
 import {AriaLabelingProps, DOMAttributes, DOMProps, GroupDOMAttributes, InputDOMProps, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
 import {createFocusManager, FocusManager} from '../focus/FocusScope';
-import {DateFieldProps, DateValue, TimePickerProps, TimeValue} from 'react-stately/private/datepicker/types';
-import {DateFieldState} from 'react-stately/useDateFieldState';
+import {DateFieldProps, DateFieldState, DateValue} from 'react-stately/useDateFieldState';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {InputHTMLAttributes, useEffect, useMemo, useRef} from 'react';
 import intlMessages from '../../intl/datepicker/*.json';
 import {mergeProps} from '../utils/mergeProps';
-import {TimeFieldState} from 'react-stately/useTimeFieldState';
+import {TimeFieldState, TimePickerProps, TimeValue} from 'react-stately/useTimeFieldState';
 import {useDatePickerGroup} from './useDatePickerGroup';
 // @ts-ignore
 import {useDescription} from '../utils/useDescription';

@@ -11,10 +11,11 @@
  */
 
 import {CalendarDate, DateFormatter, endOfMonth, isSameDay, startOfMonth} from '@internationalized/date';
-import {CalendarState, RangeCalendarState} from 'react-stately/private/calendar/types';
-// @ts-ignore
+import {CalendarState} from 'react-stately/useCalendarState';
 import intlMessages from '../../intl/calendar/*.json';
+// @ts-ignore
 import type {LocalizedStringFormatter} from '@internationalized/string';
+import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {useDateFormatter} from '../i18n/useDateFormatter';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useMemo} from 'react';

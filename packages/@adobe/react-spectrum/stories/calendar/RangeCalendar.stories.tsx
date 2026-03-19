@@ -13,7 +13,7 @@
 import {action} from 'storybook/actions';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, isWeekend, parseZonedDateTime, today} from '@internationalized/date';
 import {Custom454Calendar} from '/packages/@internationalized/date/tests/customCalendarImpl';
-import {DateValue} from 'react-stately/private/calendar/types';
+import {DateValue} from 'react-stately/useCalendarState';
 import {Flex} from '../../src/layout/Flex';
 import {Meta, StoryObj} from '@storybook/react';
 import {RangeCalendar} from '../../src/calendar/RangeCalendar';

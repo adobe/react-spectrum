@@ -11,7 +11,7 @@
  */
 
 import {ChildrenOrFunction, Provider, SlotProps, SlottedContextValue, useRenderProps, useSlottedContext} from './utils';
-import {Color} from 'react-stately/private/color/types';
+import {Color} from 'react-stately/Color';
 
 import {ColorAreaContext} from './ColorArea';
 

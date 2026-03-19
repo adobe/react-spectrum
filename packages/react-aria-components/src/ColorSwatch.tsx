@@ -8,7 +8,7 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {Color} from 'react-stately/private/color/types';
+import {Color} from 'react-stately/Color';
 import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';

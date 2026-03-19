@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DatePicker as AriaDatePicker, DatePickerProps as AriaDatePickerProps} from 'react-aria-components/DatePicker';
-
+import {DatePicker as AriaDatePicker, DatePickerProps as AriaDatePickerProps, DateValue} from 'react-aria-components/DatePicker';
 import {baseColor, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonRenderProps} from 'react-aria-components/Button';
 import {Calendar, CalendarProps} from './Calendar';
@@ -20,7 +19,6 @@ import {ContextValue, Provider} from 'react-aria-components/utils';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactElement, ReactNode, Ref, useContext, useRef, useState} from 'react';
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
-import {DateValue, TimeValue} from 'react-stately/private/datepicker/types';
 import {Dialog, OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {FieldGroup, FieldLabel, HelpText} from './Field';
 import {FormContext} from 'react-aria-components/Form';
@@ -28,10 +26,11 @@ import {forwardRefType, GlobalDOMAttributes, HelpTextProps, SpectrumLabelablePro
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {Popover} from './Popover';
-// @ts-ignore
 import {PopoverProps} from 'react-aria-components/Popover';
+// @ts-ignore
 import {pressScale} from './pressScale';
 import {TimeField} from './TimeField';
+import {TimeValue} from 'react-aria-components/DateField';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

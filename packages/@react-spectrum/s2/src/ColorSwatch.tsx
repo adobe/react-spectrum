@@ -10,14 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSwatch as AriaColorSwatch, ColorSwatchProps as AriaColorSwatchProps} from 'react-aria-components/ColorSwatch';
-
-import {Color} from 'react-stately/private/color/types';
+import {ColorSwatch as AriaColorSwatch, ColorSwatchProps as AriaColorSwatchProps, Color, parseColor} from 'react-aria-components/ColorSwatch';
 import {ContextValue} from 'react-aria-components/utils';
 import {createContext, forwardRef, JSX, ReactElement, useContext, useMemo} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {parseColor} from 'react-stately/Color';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';

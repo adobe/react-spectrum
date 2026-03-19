@@ -25,7 +25,7 @@ import {
   useRenderProps,
   useSlot
 } from './utils';
-import {ColorChannel, ColorSpace} from 'react-stately/private/color/types';
+import {ColorChannel, ColorSpace} from 'react-stately/Color';
 import {ColorFieldState, useColorChannelFieldState, useColorFieldState} from 'react-stately/useColorFieldState';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';

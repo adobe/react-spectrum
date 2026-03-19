@@ -10,10 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem} from 'react-aria/private/dnd/utils';
-
 export {useDrag} from 'react-aria/useDrag';
-export {useDrop} from 'react-aria/useDrop';
+export {useDrop, DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem} from 'react-aria/useDrop';
 export {useDroppableCollection, useDroppableItem, useDropIndicator} from 'react-aria/useDroppableCollection';
 export {useDraggableItem, useDraggableCollection} from 'react-aria/useDraggableCollection';
 export {useClipboard} from 'react-aria/useClipboard';

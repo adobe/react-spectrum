@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps} from '@react-types/shared';
-import {Color} from 'react-stately/private/color/types';
+import {Color} from 'react-stately/Color';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {HTMLAttributes, useMemo} from 'react';
 import intlMessages from '../../intl/color/*.json';

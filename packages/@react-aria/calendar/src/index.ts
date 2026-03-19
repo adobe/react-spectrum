@@ -13,9 +13,7 @@
 export {useCalendar, useCalendarGrid, useCalendarCell} from 'react-aria/useCalendar';
 
 export {useRangeCalendar} from 'react-aria/useRangeCalendar';
-export type {AriaCalendarProps, AriaCalendarGridProps, CalendarGridAria, AriaCalendarCellProps, CalendarCellAria} from 'react-aria/useCalendar';
+export type {AriaCalendarProps, AriaCalendarGridProps, CalendarGridAria, AriaCalendarCellProps, CalendarCellAria, CalendarAria} from 'react-aria/useCalendar';
 export type {AriaRangeCalendarProps} from 'react-aria/useRangeCalendar';
-export type {CalendarAria} from 'react-aria/private/calendar/useCalendarBase';
-export type {CalendarProps} from 'react-stately/useCalendarState';
-export type {DateValue} from 'react-stately/private/calendar/types';
+export type {CalendarProps, DateValue} from 'react-stately/useCalendarState';
 export type {RangeCalendarProps} from 'react-stately/useRangeCalendarState';

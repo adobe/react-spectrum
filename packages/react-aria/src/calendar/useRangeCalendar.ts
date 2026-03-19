@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMProps, FocusableElement, RefObject} from '@react-types/shared';
 import {CalendarAria, useCalendarBase} from './useCalendarBase';
-import {DateValue, RangeCalendarState} from 'react-stately/private/calendar/types';
+import {DateValue, RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {isFocusWithin, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {RangeCalendarProps} from 'react-stately/useRangeCalendarState';
 import {useEvent} from '../utils/useEvent';

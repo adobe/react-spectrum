@@ -13,6 +13,5 @@
 export {useCalendarState} from 'react-stately/useCalendarState';
 
 export {useRangeCalendarState} from 'react-stately/useRangeCalendarState';
-export type {CalendarProps, CalendarStateOptions} from 'react-stately/useCalendarState';
-export type {DateRange, RangeCalendarProps, RangeCalendarStateOptions} from 'react-stately/useRangeCalendarState';
-export type {CalendarPropsBase, CalendarState, DateValue, PageBehavior, RangeCalendarState} from 'react-stately/private/calendar/types';
+export type {CalendarProps, CalendarStateOptions, CalendarPropsBase, CalendarState, DateValue, PageBehavior} from 'react-stately/useCalendarState';
+export type {DateRange, RangeCalendarProps, RangeCalendarState, RangeCalendarStateOptions} from 'react-stately/useRangeCalendarState';

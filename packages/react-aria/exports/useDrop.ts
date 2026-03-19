@@ -12,4 +12,5 @@
 
 export type {DropOptions, DropResult} from '../src/dnd/useDrop';
 export {useDrop} from '../src/dnd/useDrop';
+export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem} from '../src/dnd/utils';
 export type {DirectoryDropItem, DragEndEvent, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DragTypes, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropMoveEvent, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, DropTargetDelegate, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-types/shared';

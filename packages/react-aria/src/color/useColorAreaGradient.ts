@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
 */
 
-import {Color, ColorChannel} from 'react-stately/private/color/types';
+import {Color, ColorChannel} from 'react-stately/Color';
 
 import {ColorAreaState} from 'react-stately/useColorAreaState';
 import {CSSProperties, useMemo} from 'react';

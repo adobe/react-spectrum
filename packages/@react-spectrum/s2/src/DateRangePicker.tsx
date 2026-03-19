@@ -12,14 +12,13 @@
 
 import {
   DateRangePicker as AriaDateRangePicker,
-  DateRangePickerProps as AriaDateRangePickerProps
+  DateRangePickerProps as AriaDateRangePickerProps,
+  DateValue
 } from 'react-aria-components/DatePicker';
-
 import {CalendarButton, CalendarPopover, timeField} from './DatePicker';
 import {ContextValue} from 'react-aria-components/utils';
 import {createContext, forwardRef, ReactElement, ReactNode, Ref, useContext, useState} from 'react';
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
-import {DateValue} from 'react-stately/private/datepicker/types';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText} from './Field';
 import {FormContext} from 'react-aria-components/Form';
