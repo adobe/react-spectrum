@@ -71,5 +71,8 @@
   "devDependencies": {
     "axe-playwright": "^2.2.2",
     "playwright": "^1.57.0"
+  },
+  "peerDependencies": {
+    "@react-spectrum/provider": "*"
   }
 }

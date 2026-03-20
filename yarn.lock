@@ -6048,7 +6048,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/dnd@npm:^3.0.0, @react-aria/dnd@npm:^3.1.0, @react-aria/dnd@workspace:packages/@react-aria/dnd":
+"@react-aria/dnd@workspace:packages/@react-aria/dnd":
   version: 0.0.0-use.local
   resolution: "@react-aria/dnd@workspace:packages/@react-aria/dnd"
   dependencies:
@@ -6660,7 +6660,6 @@ __metadata:
   resolution: "@react-spectrum/accordion@workspace:packages/@react-spectrum/accordion"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -6675,7 +6674,6 @@ __metadata:
   resolution: "@react-spectrum/actionbar@workspace:packages/@react-spectrum/actionbar"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -6691,7 +6689,6 @@ __metadata:
   resolution: "@react-spectrum/actiongroup@workspace:packages/@react-spectrum/actiongroup"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -6707,7 +6704,6 @@ __metadata:
   resolution: "@react-spectrum/autocomplete@workspace:packages/@react-spectrum/autocomplete"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -6723,7 +6719,6 @@ __metadata:
   resolution: "@react-spectrum/avatar@workspace:packages/@react-spectrum/avatar"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -6738,7 +6733,6 @@ __metadata:
   resolution: "@react-spectrum/badge@workspace:packages/@react-spectrum/badge"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -6753,7 +6747,6 @@ __metadata:
   resolution: "@react-spectrum/breadcrumbs@workspace:packages/@react-spectrum/breadcrumbs"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -6764,12 +6757,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/button@npm:^3.1.0, @react-spectrum/button@npm:^3.17.7, @react-spectrum/button@npm:^3.8.1, @react-spectrum/button@workspace:packages/@react-spectrum/button":
+"@react-spectrum/button@npm:^3.1.0, @react-spectrum/button@npm:^3.17.7, @react-spectrum/button@workspace:packages/@react-spectrum/button":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/button@workspace:packages/@react-spectrum/button"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -6784,8 +6776,6 @@ __metadata:
   resolution: "@react-spectrum/buttongroup@workspace:packages/@react-spectrum/buttongroup"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
-    "@spectrum-icons/workflow": "npm:^4.0.0"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -6800,7 +6790,6 @@ __metadata:
   resolution: "@react-spectrum/calendar@workspace:packages/@react-spectrum/calendar"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -6815,7 +6804,6 @@ __metadata:
   resolution: "@react-spectrum/card@workspace:packages/@react-spectrum/card"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -6830,7 +6818,6 @@ __metadata:
   resolution: "@react-spectrum/checkbox@workspace:packages/@react-spectrum/checkbox"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -6875,7 +6862,6 @@ __metadata:
   resolution: "@react-spectrum/color@workspace:packages/@react-spectrum/color"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-spectrum/style-macro-s1": "npm:3.0.0-alpha.5"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -6892,7 +6878,6 @@ __metadata:
   resolution: "@react-spectrum/combobox@workspace:packages/@react-spectrum/combobox"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -6908,7 +6893,6 @@ __metadata:
   resolution: "@react-spectrum/contextualhelp@workspace:packages/@react-spectrum/contextualhelp"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-spectrum/link": "npm:^3.2.0"
     "@react-spectrum/view": "npm:^3.1.3"
     "@swc/helpers": "npm:^0.5.0"
@@ -6925,7 +6909,6 @@ __metadata:
   resolution: "@react-spectrum/datepicker@workspace:packages/@react-spectrum/datepicker"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -6940,7 +6923,6 @@ __metadata:
   resolution: "@react-spectrum/dialog@workspace:packages/@react-spectrum/dialog"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -6955,7 +6937,6 @@ __metadata:
   resolution: "@react-spectrum/divider@workspace:packages/@react-spectrum/divider"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -6970,7 +6951,6 @@ __metadata:
   resolution: "@react-spectrum/dnd@workspace:packages/@react-spectrum/dnd"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-types/shared": "npm:^3.33.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7026,7 +7006,6 @@ __metadata:
   resolution: "@react-spectrum/dropzone@workspace:packages/@react-spectrum/dropzone"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7040,7 +7019,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/filetrigger@workspace:packages/@react-spectrum/filetrigger"
   dependencies:
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-aria-components: "npm:^1.16.0"
@@ -7056,7 +7034,6 @@ __metadata:
   resolution: "@react-spectrum/form@workspace:packages/@react-spectrum/form"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7071,7 +7048,6 @@ __metadata:
   resolution: "@react-spectrum/icon@workspace:packages/@react-spectrum/icon"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7086,7 +7062,6 @@ __metadata:
   resolution: "@react-spectrum/illustratedmessage@workspace:packages/@react-spectrum/illustratedmessage"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7101,7 +7076,6 @@ __metadata:
   resolution: "@react-spectrum/image@workspace:packages/@react-spectrum/image"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7116,7 +7090,6 @@ __metadata:
   resolution: "@react-spectrum/inlinealert@workspace:packages/@react-spectrum/inlinealert"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7131,7 +7104,6 @@ __metadata:
   resolution: "@react-spectrum/label@workspace:packages/@react-spectrum/label"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7146,7 +7118,6 @@ __metadata:
   resolution: "@react-spectrum/labeledvalue@workspace:packages/@react-spectrum/labeledvalue"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7161,7 +7132,6 @@ __metadata:
   resolution: "@react-spectrum/layout@workspace:packages/@react-spectrum/layout"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-types/shared": "npm:^3.33.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7177,7 +7147,6 @@ __metadata:
   resolution: "@react-spectrum/link@workspace:packages/@react-spectrum/link"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7192,10 +7161,6 @@ __metadata:
   resolution: "@react-spectrum/list@workspace:packages/@react-spectrum/list"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
-    "@react-aria/dnd": "npm:^3.0.0"
-    "@react-spectrum/button": "npm:^3.8.1"
-    "@react-stately/dnd": "npm:^3.0.0"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7211,7 +7176,6 @@ __metadata:
   resolution: "@react-spectrum/listbox@workspace:packages/@react-spectrum/listbox"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7241,7 +7205,6 @@ __metadata:
   resolution: "@react-spectrum/menu@workspace:packages/@react-spectrum/menu"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7257,7 +7220,6 @@ __metadata:
   resolution: "@react-spectrum/meter@workspace:packages/@react-spectrum/meter"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7272,7 +7234,6 @@ __metadata:
   resolution: "@react-spectrum/numberfield@workspace:packages/@react-spectrum/numberfield"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7287,7 +7248,6 @@ __metadata:
   resolution: "@react-spectrum/overlays@workspace:packages/@react-spectrum/overlays"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7323,7 +7283,6 @@ __metadata:
   resolution: "@react-spectrum/picker@workspace:packages/@react-spectrum/picker"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7339,7 +7298,6 @@ __metadata:
   resolution: "@react-spectrum/progress@workspace:packages/@react-spectrum/progress"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7354,7 +7312,6 @@ __metadata:
   resolution: "@react-spectrum/provider@workspace:packages/@react-spectrum/provider"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7369,7 +7326,6 @@ __metadata:
   resolution: "@react-spectrum/radio@workspace:packages/@react-spectrum/radio"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7417,6 +7373,8 @@ __metadata:
     ts-morph: "npm:^26.0.0"
     unified: "npm:^11.0.5"
     unist-util-visit: "npm:^5.0.0"
+  peerDependencies:
+    "@react-spectrum/provider": "*"
   languageName: unknown
   linkType: soft
 
@@ -7481,7 +7439,6 @@ __metadata:
   resolution: "@react-spectrum/searchfield@workspace:packages/@react-spectrum/searchfield"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7496,7 +7453,6 @@ __metadata:
   resolution: "@react-spectrum/slider@workspace:packages/@react-spectrum/slider"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7511,7 +7467,6 @@ __metadata:
   resolution: "@react-spectrum/statuslight@workspace:packages/@react-spectrum/statuslight"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7526,7 +7481,6 @@ __metadata:
   resolution: "@react-spectrum/steplist@workspace:packages/@react-spectrum/steplist"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7541,7 +7495,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/story-utils@workspace:packages/@react-spectrum/story-utils"
   dependencies:
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-aria/utils": "npm:^3.8.0"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7563,7 +7516,6 @@ __metadata:
   resolution: "@react-spectrum/switch@workspace:packages/@react-spectrum/switch"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7578,9 +7530,6 @@ __metadata:
   resolution: "@react-spectrum/table@workspace:packages/@react-spectrum/table"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
-    "@react-aria/dnd": "npm:^3.1.0"
-    "@react-stately/dnd": "npm:^3.1.0"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7596,7 +7545,6 @@ __metadata:
   resolution: "@react-spectrum/tabs@workspace:packages/@react-spectrum/tabs"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7612,7 +7560,6 @@ __metadata:
   resolution: "@react-spectrum/tag@workspace:packages/@react-spectrum/tag"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7627,7 +7574,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/test-utils-internal@workspace:packages/dev/test-utils"
   dependencies:
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-aria/ssr": "npm:^3.0.0"
     "@react-spectrum/test-utils": "npm:1.0.0-beta.3"
     "@react-spectrum/theme-default": "npm:^3.5.13"
@@ -7642,7 +7588,6 @@ __metadata:
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     resolve: "npm:^2.0.0-next.6"
   peerDependencies:
-    "@react-spectrum/provider": ^3.9.12
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -7652,7 +7597,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/test-utils@workspace:packages/@react-spectrum/test-utils"
   dependencies:
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-aria/test-utils": "npm:1.0.0-beta.2"
     "@swc/helpers": "npm:^0.5.0"
     "@testing-library/dom": "npm:^10.1.0"
@@ -7675,7 +7619,6 @@ __metadata:
   resolution: "@react-spectrum/text@workspace:packages/@react-spectrum/text"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7690,8 +7633,6 @@ __metadata:
   resolution: "@react-spectrum/textfield@workspace:packages/@react-spectrum/textfield"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
-    "@spectrum-icons/workflow": "npm:^4.0.0"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7706,7 +7647,6 @@ __metadata:
   resolution: "@react-spectrum/theme-dark@workspace:packages/@react-spectrum/theme-dark"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7721,7 +7661,6 @@ __metadata:
   resolution: "@react-spectrum/theme-default@workspace:packages/@react-spectrum/theme-default"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7736,7 +7675,6 @@ __metadata:
   resolution: "@react-spectrum/theme-express@workspace:packages/@react-spectrum/theme-express"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7751,7 +7689,6 @@ __metadata:
   resolution: "@react-spectrum/theme-light@workspace:packages/@react-spectrum/theme-light"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7766,7 +7703,6 @@ __metadata:
   resolution: "@react-spectrum/toast@workspace:packages/@react-spectrum/toast"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     "@types/use-sync-external-store": "npm:^0.0.3"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7782,7 +7718,6 @@ __metadata:
   resolution: "@react-spectrum/tooltip@workspace:packages/@react-spectrum/tooltip"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7797,8 +7732,6 @@ __metadata:
   resolution: "@react-spectrum/tree@workspace:packages/@react-spectrum/tree"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
-    "@react-spectrum/style-macro-s1": "npm:3.0.0-alpha.5"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-aria: "npm:^3.47.0"
@@ -7835,7 +7768,6 @@ __metadata:
   resolution: "@react-spectrum/view@workspace:packages/@react-spectrum/view"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7850,7 +7782,6 @@ __metadata:
   resolution: "@react-spectrum/well@workspace:packages/@react-spectrum/well"
   dependencies:
     "@adobe/react-spectrum": "npm:^3.46.2"
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
@@ -7986,7 +7917,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-stately/dnd@npm:^3.0.0, @react-stately/dnd@npm:^3.1.0, @react-stately/dnd@workspace:packages/@react-stately/dnd":
+"@react-stately/dnd@workspace:packages/@react-stately/dnd":
   version: 0.0.0-use.local
   resolution: "@react-stately/dnd@workspace:packages/@react-stately/dnd"
   dependencies:
