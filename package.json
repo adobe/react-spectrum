@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
-  "packageManager": "yarn@4.2.2",
+  "packageManager": "yarn@4.13.0",
   "scripts": {
     "tsgo": "tsgo",
     "check-types": "tsgo --noEmit",
@@ -245,7 +245,9 @@
     "react-server-dom-parcel": "canary",
     "react-test-renderer": "19.1.0",
     "@parcel/packager-react-static": "^2.16.3",
-    "@sinclair/typebox": "0.27.10"
+    "@sinclair/typebox": "0.27.10",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
   },
   "@parcel/transformer-css": {
     "cssModules": {
