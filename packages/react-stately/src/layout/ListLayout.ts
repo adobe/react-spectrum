@@ -441,7 +441,43 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
   }
 
   protected buildSectionHeader(node: Node<T>, x: number, y: number): LayoutNode {
-    return this.buildItem(node, x, y);
+    let widthProperty = this.orientation === 'horizontal' ? 'height' : 'width';
+    let heightProperty = this.orientation === 'horizontal' ? 'width' : 'height';
+    let width = this.virtualizer!.visibleRect[widthProperty] - this.padding - (this.orientation === 'horizontal' ? y : x);
+    let rectHeight = this.headingHeight;
+    let isEstimated = false;
+
+    // If no explicit height is available, use an estimated height.
+    if (rectHeight == null) {
+      // If a previous version of this layout info exists, reuse its height.
+      // Mark as estimated if the size of the overall virtualizer changed,
+      // or the content of the item changed.
+      let previousLayoutNode = this.layoutNodes.get(node.key);
+      let previousLayoutInfo = previousLayoutNode?.layoutInfo;
+      if (previousLayoutInfo) {
+        let curNode = this.virtualizer!.collection.getItem(node.key);
+        let lastNode = this.lastCollection ? this.lastCollection.getItem(node.key) : null;
+        rectHeight = previousLayoutNode!.layoutInfo.rect[heightProperty];
+        isEstimated = width !== previousLayoutInfo.rect[widthProperty] || curNode !== lastNode || previousLayoutInfo.estimatedSize;
+      } else {
+        rectHeight = (node.rendered ? this.estimatedHeadingHeight : 0);
+        isEstimated = true;
+      }
+    }
+
+    if (rectHeight == null) {
+      rectHeight = DEFAULT_HEIGHT;
+    }
+
+    let headerRect = this.orientation === 'horizontal' ? new Rect(x, y, rectHeight, width - y)  : new Rect(x, y, width - x, rectHeight);
+    let header = new LayoutInfo('header', node.key, headerRect);
+    header.estimatedSize = isEstimated;
+    return {
+      layoutInfo: header,
+      children: [],
+      validRect: header.rect.intersection(this.requestedRect),
+      node
+    };
   }
 
   protected buildItem(node: Node<T>, x: number, y: number): LayoutNode {
@@ -462,7 +498,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
         rectHeight = previousLayoutNode.layoutInfo.rect[heightProperty];
         isEstimated = width !== previousLayoutNode.layoutInfo.rect[widthProperty] || node !== previousLayoutNode.node || previousLayoutNode.layoutInfo.estimatedSize;
       } else {
-        rectHeight = node.type === 'item' || node.rendered ? this.estimatedRowHeight : 0;
+        rectHeight = this.estimatedRowHeight;
         isEstimated = true;
       }
     }
@@ -601,7 +637,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let layoutInfo = this.getLayoutInfo(target.key)!;
     let rect: Rect;
     if (target.dropPosition === 'before') {
-      rect = this.orientation === 'horizontal' ? 
+      rect = this.orientation === 'horizontal' ?
         new Rect(Math.max(0, layoutInfo.rect.x - this.dropIndicatorThickness / 2), layoutInfo.rect.y, this.dropIndicatorThickness, layoutInfo.rect.height)
         : new Rect(layoutInfo.rect.x, Math.max(0, layoutInfo.rect.y - this.dropIndicatorThickness / 2), layoutInfo.rect.width, this.dropIndicatorThickness);
     } else if (target.dropPosition === 'after') {
@@ -621,7 +657,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
           currentKey = this.collection.getKeyAfter(currentKey);
         }
       }
-      rect = this.orientation === 'horizontal' ? 
+      rect = this.orientation === 'horizontal' ?
         new Rect(layoutInfo.rect.maxX - this.dropIndicatorThickness / 2, layoutInfo.rect.y, this.dropIndicatorThickness, layoutInfo.rect.height)
         : new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY - this.dropIndicatorThickness / 2, layoutInfo.rect.width, this.dropIndicatorThickness);
     } else {
