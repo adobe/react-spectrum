@@ -79,12 +79,15 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
   // This catches a common mistake where useDialog and useOverlayTriggerState
   // are used in the same component, causing the title element to not be
   // in the DOM when useSlotId queries for it.
+  // Check the DOM element directly since aria-labelledby may be added by
+  // wrapper components (e.g. RAC Dialog uses trigger ID as a fallback).
   let hasWarned = useRef(false);
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'production' && !hasWarned.current) {
-      let hasAriaLabel = props['aria-label'] != null;
-      let hasAriaLabelledby = props['aria-labelledby'] != null;
-      if (!hasAriaLabel && !hasAriaLabelledby && titleId == null) {
+    if (process.env.NODE_ENV !== 'production' && !hasWarned.current && ref.current) {
+      let el = ref.current;
+      let hasAriaLabel = el.hasAttribute('aria-label');
+      let hasAriaLabelledby = el.hasAttribute('aria-labelledby');
+      if (!hasAriaLabel && !hasAriaLabelledby) {
         console.warn(
           'A dialog must have a visible title for accessibility. ' +
           'Either provide an aria-label or aria-labelledby prop, or render a heading element inside the dialog with the titleProps from useDialog.'
