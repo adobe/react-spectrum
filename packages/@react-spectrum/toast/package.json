@@ -39,7 +39,6 @@
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
-    "@react-spectrum/test-utils-internal": "3.0.0-alpha.1",
     "@types/use-sync-external-store": "^0.0.3"
   },
   "peerDependencies": {
