@@ -75,6 +75,25 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
 
   useOverlayFocusContain();
 
+  // Warn in dev mode if the dialog has no accessible title.
+  // This catches a common mistake where useDialog and useOverlayTriggerState
+  // are used in the same component, causing the title element to not be
+  // in the DOM when useSlotId queries for it.
+  let hasWarned = useRef(false);
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'production' && !hasWarned.current) {
+      let hasAriaLabel = props['aria-label'] != null;
+      let hasAriaLabelledby = props['aria-labelledby'] != null;
+      if (!hasAriaLabel && !hasAriaLabelledby && titleId == null) {
+        console.warn(
+          'A dialog must have a visible title for accessibility. ' +
+          'Either provide an aria-label or aria-labelledby prop, or render a heading element inside the dialog with the titleProps from useDialog.'
+        );
+        hasWarned.current = true;
+      }
+    }
+  });
+
   // We do not use aria-modal due to a Safari bug which forces the first focusable element to be focused
   // on mount when inside an iframe, no matter which element we programmatically focus.
   // See https://bugs.webkit.org/show_bug.cgi?id=211934.
