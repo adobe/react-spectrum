@@ -7125,7 +7125,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/provider@npm:^3.1.0, @react-spectrum/provider@workspace:packages/@react-spectrum/provider":
+"@react-spectrum/provider@npm:^3.1.0, @react-spectrum/provider@npm:^3.10.14, @react-spectrum/provider@workspace:packages/@react-spectrum/provider":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/provider@workspace:packages/@react-spectrum/provider"
   dependencies:
@@ -7367,6 +7367,7 @@ __metadata:
   resolution: "@react-spectrum/test-utils-internal@workspace:packages/dev/test-utils"
   dependencies:
     "@react-aria/ssr": "npm:^3.0.0"
+    "@react-spectrum/provider": "npm:^3.10.14"
     "@react-spectrum/test-utils": "npm:1.0.0-beta.3"
     "@react-spectrum/theme-default": "npm:^3.5.13"
     "@swc/helpers": "npm:^0.5.0"
@@ -7378,6 +7379,7 @@ __metadata:
     react-aria: "npm:^3.47.0"
     resolve: "npm:^2.0.0-next.6"
   peerDependencies:
+    "@react-spectrum/provider": ^3.10.14
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
