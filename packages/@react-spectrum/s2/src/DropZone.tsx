@@ -10,16 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, DropZoneRenderProps, DropZone as RACDropZone, DropZoneProps as RACDropZoneProps} from 'react-aria-components';
+import {ContextValue} from 'react-aria-components/utils';
+
 import {createContext, forwardRef, ReactNode} from 'react';
+
 import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
+import {
+  DropZoneRenderProps,
+  DropZone as RACDropZone,
+  DropZoneProps as RACDropZoneProps
+} from 'react-aria-components/DropZone';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustratedMessageContext} from './IllustratedMessage';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'render' | 'children' | 'isDisabled' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | keyof GlobalDOMAttributes>, UnsafeStyles, DOMProps {

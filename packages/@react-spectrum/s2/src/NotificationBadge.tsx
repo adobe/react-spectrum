@@ -11,8 +11,8 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
-import {ContextValue, SlotProps} from 'react-aria-components';
-import {filterDOMProps} from '@react-aria/utils';
+import {ContextValue, SlotProps} from 'react-aria-components/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {fontRelative, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 // @ts-ignore
@@ -20,7 +20,8 @@ import intlMessages from '../intl/*.json';
 import {NumberFormatter} from '@internationalized/number';
 import React, {createContext, forwardRef} from 'react';
 import {useDOMRef} from './useDOMRef';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface NotificationBadgeStyleProps {

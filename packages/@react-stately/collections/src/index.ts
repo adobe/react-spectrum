@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-export type {PartialNode} from './types';
-export {Item} from './Item';
-export {Section} from './Section';
-export {useCollection} from './useCollection';
-export {getItemCount} from './getItemCount';
-export {getChildNodes, getFirstItem, getLastItem, getNthItem, compareNodeOrder} from './getChildNodes';
-export {CollectionBuilder} from './CollectionBuilder';
+export {Item} from 'react-stately/Item';
+
+export {Section} from 'react-stately/Section';
+export {useCollection} from 'react-stately/private/collections/useCollection';
+export {getItemCount} from 'react-stately/private/collections/getItemCount';
+export {getChildNodes, getFirstItem, getLastItem, getNthItem, compareNodeOrder} from 'react-stately/private/collections/getChildNodes';
+export {CollectionBuilder} from 'react-stately/private/collections/CollectionBuilder';
+export type {PartialNode} from 'react-stately/private/collections/types';

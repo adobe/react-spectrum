@@ -11,9 +11,18 @@
  */
 
 import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Text, UNSTABLE_Toast as Toast, UNSTABLE_ToastContent as ToastContent, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastRegion as ToastRegion} from 'react-aria-components';
+import {Button} from '../src/Button';
 import React, {useRef} from 'react';
-import {UNSAFE_PortalProvider} from '@react-aria/overlays';
+
+import {Text} from '../src/Text';
+
+import {
+  UNSTABLE_Toast as Toast,
+  UNSTABLE_ToastContent as ToastContent,
+  UNSTABLE_ToastRegion as ToastRegion
+} from '../src/Toast';
+import {ToastQueue} from 'react-stately/useToastState';
+import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import userEvent from '@testing-library/user-event';
 
 function Example(options) {

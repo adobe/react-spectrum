@@ -1,5 +1,5 @@
 import {action} from 'storybook/actions';
-import {Checkbox} from 'react-aria-components';
+import {Checkbox} from '../src/Checkbox';
 import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import './styles.css';

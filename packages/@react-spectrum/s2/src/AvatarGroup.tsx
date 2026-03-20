@@ -12,13 +12,13 @@
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
-import {ContextValue, SlotProps} from 'react-aria-components';
+import {ContextValue, SlotProps} from 'react-aria-components/utils';
 import {createContext, CSSProperties, forwardRef, ReactNode} from 'react';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {getAllowedOverrides, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
-import {useLabel} from 'react-aria';
+import {useLabel} from 'react-aria/useLabel';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface AvatarGroupProps extends UnsafeStyles, DOMProps, AriaLabelingProps, SlotProps {

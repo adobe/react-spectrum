@@ -12,7 +12,7 @@
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import {Tag, TagGroup} from '../src';
+import {Tag, TagGroup} from '../src/TagGroup';
 import userEvent from '@testing-library/user-event';
 
 

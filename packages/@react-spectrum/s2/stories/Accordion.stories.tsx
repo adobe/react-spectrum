@@ -10,12 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, AccordionItem, AccordionItemHeader, AccordionItemPanel, AccordionItemTitle, ActionButton, TextField} from '../src';
-import {Key} from 'react-aria';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionItemHeader,
+  AccordionItemPanel,
+  AccordionItemTitle
+} from '../src/Accordion';
+
+import {ActionButton} from '../src/ActionButton';
+import {Key} from '@react-types/shared';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';
 import {style} from '../style' with { type: 'macro' };
+import {TextField} from '../src/TextField';
 
 
 const meta: Meta<typeof Accordion> = {

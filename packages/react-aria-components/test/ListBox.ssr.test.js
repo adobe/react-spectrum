@@ -15,7 +15,7 @@ import {fireEvent, screen, testSSR, within} from '@react-spectrum/test-utils-int
 describe('ListBox SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {ListBox, ListBoxItem} from '../';
+      import {ListBox, ListBoxItem} from '../exports/index.ts';
 
       function Test() {
         let [show, setShow] = React.useState(false);
@@ -54,7 +54,7 @@ describe('ListBox SSR', function () {
 
   it('should render with sections', async function () {
     await testSSR(__filename, `
-      import {ListBox, ListBoxSection, ListBoxItem, Header} from '../';
+      import {ListBox, ListBoxSection, ListBoxItem, Header} from '../exports/index.ts';
 
       <React.StrictMode>
         <ListBox aria-label="Listbox">

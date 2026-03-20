@@ -9,5 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useDialog} from './useDialog';
-export type {AriaDialogProps, DialogAria} from './useDialog';
+export {useDialog} from 'react-aria/useDialog';
+
+export type {AriaDialogProps, DialogAria} from 'react-aria/useDialog';

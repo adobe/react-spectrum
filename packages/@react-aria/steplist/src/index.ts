@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export {useStepList} from './useStepList';
-export {useStepListItem} from './useStepListItem';
+export {useStepList} from 'react-aria/private/steplist/useStepList';
 
-export type {AriaStepListProps, StepListAria} from './useStepList';
-export type {AriaStepListItemProps, StepListItemAria} from './useStepListItem';
+export {useStepListItem} from 'react-aria/private/steplist/useStepListItem';
+export type {AriaStepListProps, StepListAria} from 'react-aria/private/steplist/useStepList';
+export type {AriaStepListItemProps, StepListItemAria} from 'react-aria/private/steplist/useStepListItem';

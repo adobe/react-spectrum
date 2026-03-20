@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Image, Provider} from '../src';
+import {Image} from '../src/Image';
+
+import {Provider} from '../src/Provider';
 import {render} from '@react-spectrum/test-utils-internal';
 
 describe('Image', () => {

@@ -15,7 +15,7 @@ import Market_M from 'illustration:./S2_fill_market_generic2_96.svg';
 import Market_S from 'illustration:./S2_fill_market_generic2_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function Market(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

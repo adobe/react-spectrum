@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox, CheckboxProps} from '../src';
+import {Checkbox, CheckboxProps} from '../src/Checkbox';
 import {generateComboChunks, shortName} from './utils';
 import {LongLabel} from '../stories/Checkbox.stories';
 import type {Meta, StoryObj} from '@storybook/react';

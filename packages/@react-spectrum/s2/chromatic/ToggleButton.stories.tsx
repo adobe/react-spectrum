@@ -17,7 +17,8 @@ import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {ReactElement} from 'react';
 import {shortName} from './utils';
 import {style} from '../style' with { type: 'macro' };
-import {Text, ToggleButton, ToggleButtonProps} from '../src';
+import {Text} from '../src/Content';
+import {ToggleButton, ToggleButtonProps} from '../src/ToggleButton';
 
 const events = ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange'];
 

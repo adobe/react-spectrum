@@ -10,6 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export {useRadioGroupState} from './useRadioGroupState';
+export {useRadioGroupState} from 'react-stately/useRadioGroupState';
 
-export type {RadioGroupProps, RadioGroupState} from './useRadioGroupState';
+export type {RadioGroupProps, RadioGroupState} from 'react-stately/useRadioGroupState';

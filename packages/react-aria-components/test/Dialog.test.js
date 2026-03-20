@@ -11,26 +11,20 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {
-  Button,
-  Dialog,
-  DialogTrigger,
-  Heading,
-  Input,
-  Label,
-  Menu,
-  MenuItem,
-  MenuTrigger,
-  Modal,
-  ModalOverlay,
-  OverlayArrow,
-  Popover,
-  TextField
-} from '../';
+import {Button} from '../src/Button';
 import {composeStories} from '@storybook/react';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {Heading} from '../src/Heading';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
+import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
+import {Modal, ModalOverlay} from '../src/Modal';
+import {OverlayArrow} from '../src/OverlayArrow';
+import {Popover} from '../src/Popover';
 import React, {useRef} from 'react';
 import * as stories from '../stories/Modal.stories';
-import {UNSAFE_PortalProvider} from '@react-aria/overlays';
+import {TextField} from '../src/TextField';
+import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 

@@ -12,7 +12,7 @@
 
 import AlertIcon from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import {FunctionComponent} from 'react';
-import {IconProps} from '../src';
+import {IconProps} from '../src/Icon';
 import {iconStyle} from '../style' with {type: 'macro'};
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';

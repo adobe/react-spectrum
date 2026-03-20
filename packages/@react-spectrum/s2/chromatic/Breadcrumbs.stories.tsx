@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Breadcrumb, Breadcrumbs} from '../src';
+import {Breadcrumb, Breadcrumbs} from '../src/Breadcrumbs';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {type IMany, Many} from '../stories/Breadcrumbs.stories';
 import type {Meta, StoryObj} from '@storybook/react';

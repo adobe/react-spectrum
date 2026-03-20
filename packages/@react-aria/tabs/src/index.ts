@@ -9,10 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useTab} from './useTab';
-export {useTabPanel} from './useTabPanel';
-export {useTabList} from './useTabList';
+export {useTab, useTabPanel, useTabList} from 'react-aria/useTabList';
+
+export type {AriaTabProps, TabAria, AriaTabPanelProps, TabPanelAria, AriaTabListProps, AriaTabListOptions, TabListAria} from 'react-aria/useTabList';
 export type {Orientation} from '@react-types/shared';
-export type {AriaTabProps, TabAria} from './useTab';
-export type {AriaTabPanelProps, TabPanelAria} from './useTabPanel';
-export type {AriaTabListProps, AriaTabListOptions, TabListAria} from './useTabList';

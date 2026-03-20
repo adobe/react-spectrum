@@ -10,11 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Button, ButtonGroup, CloseButton, Content, CustomDialog, DialogTrigger, DropZone, Heading, IllustratedMessage, Image, TextField} from '../src';
+import {ActionButton} from '../src/ActionButton';
+
+import {Button} from '../src/Button';
+import {ButtonGroup} from '../src/ButtonGroup';
 import Checkmark from '../spectrum-illustrations/gradient/generic1/Checkmark';
+import {CloseButton} from '../src/CloseButton';
+import {Content, Heading} from '../src/Content';
+import {CustomDialog} from '../src/CustomDialog';
+import {DialogTrigger} from '../src/DialogTrigger';
 import DropToUpload from '../spectrum-illustrations/linear/DropToUpload';
+import {DropZone} from '../src/DropZone';
+import {IllustratedMessage} from '../src/IllustratedMessage';
+import {Image} from '../src/Image';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {TextField} from '../src/TextField';
 
 const meta: Meta<typeof CustomDialog> = {
   component: CustomDialog,

@@ -10,8 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ComboBox, Input, Label, ListBox, ListBoxItem, Popover} from 'react-aria-components';
+import {Button} from '../src/Button';
+
+import {ComboBox} from '../src/ComboBox';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
+import {ListBox, ListBoxItem} from '../src/ListBox';
 import {Meta, StoryFn} from '@storybook/react';
+import {Popover} from '../src/Popover';
 import React from 'react';
 import './combobox-reproductions.css';
 import './styles.css';

@@ -11,7 +11,7 @@
  */
 
 import {fireEvent, render} from '@react-spectrum/test-utils-internal';
-import {TextArea} from '../src';
+import {TextArea} from '../src/TextField';
 
 describe('TextField', () => {
   it('should focus textarea when tapping invalid icon', async () => {

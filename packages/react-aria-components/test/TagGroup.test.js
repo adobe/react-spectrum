@@ -11,9 +11,14 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, Label, RouterProvider, Tag, TagGroup, TagList, Text, Tooltip, TooltipTrigger} from '../';
+import {Button} from '../src/Button';
+import {Label} from '../src/Label';
 import React, {useRef} from 'react';
-import {useListData} from '@react-stately/data';
+import {RouterProvider} from 'react-aria/private/utils/openLink';
+import {Tag, TagGroup, TagList} from '../src/TagGroup';
+import {Text} from '../src/Text';
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
+import {useListData} from 'react-stately/useListData';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 

@@ -10,12 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Button, Provider, Tooltip, TooltipTrigger} from '../src';
+import {ActionButton} from '../src/ActionButton';
+
+import {Button} from '../src/Button';
 import {CombinedTooltip} from '../src/Tooltip';
 import Crop from '../s2wf-icons/S2_Icon_Crop_20_N.svg';
 import LassoSelect from '../s2wf-icons/S2_Icon_LassoSelect_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
+import {Provider} from '../src/Provider';
 import {style} from '../style' with {type: 'macro'};
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 
 const meta: Meta<typeof CombinedTooltip> = {
   component: CombinedTooltip,

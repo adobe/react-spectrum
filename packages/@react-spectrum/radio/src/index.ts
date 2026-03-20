@@ -12,7 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export {Radio} from './Radio';
-export {RadioGroup} from './RadioGroup';
-export type {SpectrumRadioProps} from './Radio';
-export type {SpectrumRadioGroupProps} from './RadioGroup';
+export {Radio, RadioGroup} from '@adobe/react-spectrum/RadioGroup';
+
+export type {SpectrumRadioProps, SpectrumRadioGroupProps} from '@adobe/react-spectrum/RadioGroup';

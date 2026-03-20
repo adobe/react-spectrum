@@ -129,6 +129,7 @@ async function extractExamples() {
       "allowSyntheticDefaultImports": true,
       "module": "esnext",
       "moduleResolution": "bundler",
+      "customConditions": ["source"],
       "resolveJsonModule": true,
       "isolatedModules": true,
       "noEmit": true,

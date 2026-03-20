@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 /// <reference types="css-module-types" />
-export {ActionBar} from './ActionBar';
-export {ActionBarContainer} from './ActionBarContainer';
-export {Item} from '@react-stately/collections';
-export type {SpectrumActionBarContainerProps} from './ActionBarContainer';
-export type {SpectrumActionBarProps} from './ActionBar';
+export {ActionBar, ActionBarContainer} from '@adobe/react-spectrum/ActionBar';
+
+export type {SpectrumActionBarContainerProps, SpectrumActionBarProps} from '@adobe/react-spectrum/ActionBar';
+export {Item} from 'react-stately/Item';

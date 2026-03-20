@@ -12,11 +12,12 @@
 
 /// <reference types="css-module-types" />
 
-export {DatePicker} from './DatePicker';
-export {DateRangePicker} from './DateRangePicker';
-export {TimeField} from './TimeField';
-export {DateField} from './DateField';
-export type {SpectrumDateFieldProps} from './DateField';
-export type {SpectrumDatePickerProps} from './DatePicker';
-export type {SpectrumDateRangePickerProps} from './DateRangePicker';
-export type {SpectrumTimeFieldProps} from './TimeField';
+export {DatePicker} from '@adobe/react-spectrum/DatePicker';
+
+export {DateRangePicker} from '@adobe/react-spectrum/DateRangePicker';
+export {TimeField} from '@adobe/react-spectrum/TimeField';
+export {DateField} from '@adobe/react-spectrum/DateField';
+export type {SpectrumDateFieldProps} from '@adobe/react-spectrum/DateField';
+export type {SpectrumDatePickerProps} from '@adobe/react-spectrum/DatePicker';
+export type {SpectrumDateRangePickerProps} from '@adobe/react-spectrum/DateRangePicker';
+export type {SpectrumTimeFieldProps} from '@adobe/react-spectrum/TimeField';

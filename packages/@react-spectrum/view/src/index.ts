@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 /// <reference types="css-module-types" />
-export {View} from './View';
-export {Content} from './Content';
-export {Footer} from './Footer';
-export {Header} from './Header';
-export type {ViewProps} from './View';
-export type {ContentProps} from './Content';
-export type {FooterProps} from './Footer';
-export type {HeaderProps} from './Header';
+export {View} from '@adobe/react-spectrum/View';
+
+export {Content} from '@adobe/react-spectrum/Content';
+export {Footer} from '@adobe/react-spectrum/Footer';
+export {Header} from '@adobe/react-spectrum/Header';
+export type {ViewProps} from '@adobe/react-spectrum/View';
+export type {ContentProps} from '@adobe/react-spectrum/Content';
+export type {FooterProps} from '@adobe/react-spectrum/Footer';
+export type {HeaderProps} from '@adobe/react-spectrum/Header';

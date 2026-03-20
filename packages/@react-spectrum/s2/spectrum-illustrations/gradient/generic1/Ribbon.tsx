@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../../src/Icon';
 import Ribbon_L from 'illustration:./S2_fill_ribbon_generic1_160.svg';
 import Ribbon_M from 'illustration:./S2_fill_ribbon_generic1_96.svg';
 import Ribbon_S from 'illustration:./S2_fill_ribbon_generic1_48.svg';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function Ribbon(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

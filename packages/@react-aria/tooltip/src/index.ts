@@ -9,8 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useTooltip} from './useTooltip';
-export {useTooltipTrigger} from './useTooltipTrigger';
-export type {TooltipTriggerProps} from '@react-stately/tooltip';
-export type {TooltipProps, AriaTooltipProps, TooltipAria} from './useTooltip';
-export type {TooltipTriggerAria} from './useTooltipTrigger';
+export {useTooltip, useTooltipTrigger} from 'react-aria/useTooltipTrigger';
+
+export type {TooltipProps, AriaTooltipProps, TooltipAria, TooltipTriggerAria} from 'react-aria/useTooltipTrigger';
+export type {TooltipTriggerProps} from 'react-stately/useTooltipTriggerState';
