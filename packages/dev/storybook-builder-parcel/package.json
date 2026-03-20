@@ -15,5 +15,8 @@
   "scripts": {
     "build": "true",
     "clean": "true"
+  },
+  "devDependencies": {
+    "react": "*"
   }
 }
