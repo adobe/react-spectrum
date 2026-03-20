@@ -10,30 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  ActionMenu,
-  Avatar,
-  Card,
-  CardPreview,
-  CardView,
-  CardViewProps,
-  Collection,
-  CollectionCardPreview,
-  Content,
-  Heading,
-  IllustratedMessage,
-  Image,
-  MenuItem,
-  SkeletonCollection,
-  Text
-} from '../src';
+import {ActionMenu} from '../src/ActionMenu';
+
+import {Avatar} from '../src/Avatar';
+import {Card, CardPreview, CollectionCardPreview} from '../src/Card';
+import {CardView, CardViewProps} from '../src/CardView';
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Content, Heading, Text} from '../src/Content';
 import EmptyIcon from '../spectrum-illustrations/gradient/generic1/Image';
 import ErrorIcon from '../spectrum-illustrations/linear/AlertNotice';
 import {fn} from 'storybook/test';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
+import {IllustratedMessage} from '../src/IllustratedMessage';
+import {Image} from '../src/Image';
+import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
+import {SkeletonCollection} from '../src/SkeletonCollection';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {useAsyncList} from 'react-stately';
+import {useAsyncList} from 'react-stately/useAsyncList';
 
 const meta: Meta<typeof CardView> = {
   component: CardView,

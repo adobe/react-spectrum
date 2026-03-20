@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox, CheckboxContext} from '../';
+import {Checkbox, CheckboxContext} from '../src/Checkbox';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';

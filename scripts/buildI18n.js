@@ -3,19 +3,26 @@ const fs = require('fs');
 const {compileStrings} = require('@internationalized/string-compiler');
 const {minifySync} = require('@swc/core');
 
-function build(scope, dist = scope.slice(1)) {
+function build(scope, dist) {
   let languages = {};
   let deps = {};
-  for (let file of glob(`packages/${scope}/intl/*.json`)) {
+  for (let file of glob([`packages/${scope}/intl/**/*.json`, `packages/${dist}/intl/**/*.json`])) {
     let parts = file.split('/');
     let lang = parts.at(-1).slice(0, -5);
-    let pkg = parts[1].startsWith('@') ? parts.slice(1, 3).join('/') : parts[1];
+    let pkg;
+    if (parts[1] === 'react-aria' || parts[1] === 'react-stately') {
+      pkg = '@' + parts[1] + '/' + parts[3];
+    } else if (parts[1] === '@adobe' && parts[2] === 'react-spectrum') {
+      pkg = '@react-spectrum/' + parts[4];
+    } else {
+      pkg = parts[1];
+    }
     if (pkg === '@react-spectrum/s2') {
       continue;
     }
   
     let compiled = compileStrings(JSON.parse(fs.readFileSync(file, 'utf8'))).replace('module.exports = ', '');
-    let pkgJson = JSON.parse(fs.readFileSync(`packages/${pkg}/package.json`, 'utf8'));
+    let pkgJson = JSON.parse(fs.readFileSync(`packages/${dist}/package.json`, 'utf8'));
 
     if (!languages[lang]) {
       languages[lang] = {};
@@ -59,7 +66,7 @@ export default PackageLocalizedStrings;
   // Generate index files.
   for (let ext of ['.js', '.mjs']) {
     let generateImport = (exports, from) => ext === '.mjs' ? `import ${exports} from '${from}'` : `let ${exports} = require('${from}')`;
-    let index = generateImport('{PackageLocalizationProvider, getPackageLocalizationScript}', '@react-aria/i18n/server') + ';\n';
+    let index = generateImport('{PackageLocalizationProvider, getPackageLocalizationScript}', 'react-aria/private/i18n/server') + ';\n';
     index += generateImport('{LocalizedStringDictionary}', '@internationalized/string') + ';\n';
     index += generateImport('{createElement}', 'react') + ';\n';
     for (let lang in languages) {
@@ -141,6 +148,6 @@ export declare function createLocalizedStringDictionary(packages: string[]): Loc
 `);
 }
 
-build('{@react-aria/*,@react-stately/*,@react-spectrum/*,react-aria-components}', '@adobe/react-spectrum');
-build('{@react-aria/*,@react-stately/*,react-aria-components}', 'react-aria-components');
-build('{@react-aria,@react-stately}/*', 'react-aria');
+build('{react-aria,react-stately,react-aria-components}', '@adobe/react-spectrum');
+build('{react-aria,react-stately}', 'react-aria-components');
+build('react-stately', 'react-aria');

@@ -10,14 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ButtonGroup, Content, DropZone, DropZoneProps, FileTrigger, Heading, IllustratedMessage} from '../src';
+import {Button} from '../src/Button';
+
+import {ButtonGroup} from '../src/ButtonGroup';
 import Cloud from '../spectrum-illustrations/linear/Cloud';
 import CloudUpload from '../spectrum-illustrations/gradient/generic1/CloudUpload';
+import {Content, Heading} from '../src/Content';
 import DropToUpload from '../spectrum-illustrations/linear/DropToUpload';
-import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
+import {DropZone, DropZoneProps} from '../src/DropZone';
+import {FileTrigger} from 'react-aria-components/FileTrigger';
+import {FocusRing} from 'react-aria/FocusRing';
+import {IllustratedMessage} from '../src/IllustratedMessage';
+import {mergeProps} from 'react-aria/mergeProps';
 import type {Meta, StoryObj} from '@storybook/react';
 import React, {ReactElement, useState} from 'react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {useButton} from 'react-aria/useButton';
+import {useClipboard} from 'react-aria/useClipboard';
+import {useDrag} from 'react-aria/useDrag';
 
 const meta: Meta<typeof DropZone> = {
   component: DropZone,

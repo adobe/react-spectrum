@@ -12,5 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export {InlineAlert} from './InlineAlert';
-export type {SpectrumInlineAlertProps} from './InlineAlert';
+export {InlineAlert} from '@adobe/react-spectrum/InlineAlert';
+
+export type {SpectrumInlineAlertProps} from '@adobe/react-spectrum/InlineAlert';

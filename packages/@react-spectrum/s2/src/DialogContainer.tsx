@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ModalContext, useSlottedContext} from 'react-aria-components';
+import {ModalContext} from 'react-aria-components/Modal';
+
 import React, {ReactElement, ReactNode, useState} from 'react';
+import {useSlottedContext} from 'react-aria-components/utils';
 
 export interface DialogContainerProps {
   /** The Dialog to display, if any. */

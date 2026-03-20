@@ -10,9 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSlider, ColorSliderProps, ColorThumb, Label, SliderOutput, SliderTrack} from '../src';
+import {ColorSlider, ColorSliderProps} from '../src/ColorSlider';
+
+import {ColorThumb} from '../src/ColorThumb';
+import {Label} from '../src/Label';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
+import {SliderOutput, SliderTrack} from '../src/Slider';
 import './styles.css';
 
 export default {

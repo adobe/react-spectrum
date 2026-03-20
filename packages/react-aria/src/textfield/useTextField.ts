@@ -1,0 +1,242 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {
+  AriaLabelingProps,
+  AriaValidationProps,
+  DOMAttributes,
+  FocusableDOMProps,
+  FocusableProps,
+  HelpTextProps,
+  InputBase,
+  LabelableProps,
+  TextInputBase,
+  TextInputDOMProps,
+  Validation,
+  ValidationResult,
+  ValueBase
+} from '@react-types/shared';
+import {filterDOMProps} from '../utils/filterDOMProps';
+import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
+import {mergeProps} from '../utils/mergeProps';
+import React, {
+  ChangeEvent,
+  HTMLAttributes,
+  type JSX,
+  LabelHTMLAttributes,
+  RefObject,
+  useState
+} from 'react';
+import {useControlledState} from 'react-stately/private/utils/useControlledState';
+import {useField} from '../label/useField';
+import {useFocusable} from '../interactions/useFocusable';
+import {useFormReset} from '../utils/useFormReset';
+import {useFormValidation} from '../form/useFormValidation';
+import {useFormValidationState} from 'react-stately/private/form/useFormValidationState';
+
+/**
+ * A map of HTML element names and their interface types.
+ * For example `'a'` -> `HTMLAnchorElement`.
+ */
+type IntrinsicHTMLElements = {
+  [K in keyof IntrinsicHTMLAttributes]: IntrinsicHTMLAttributes[K] extends HTMLAttributes<infer T> ? T : never
+};
+
+/**
+ * A map of HTML element names and their attribute interface types.
+ * For example `'a'` -> `AnchorHTMLAttributes<HTMLAnchorElement>`.
+ */
+type IntrinsicHTMLAttributes = JSX.IntrinsicElements;
+
+type DefaultElementType = 'input';
+
+/**
+ * The intrinsic HTML element names that `useTextField` supports; e.g. `input`,
+ * `textarea`.
+ */
+type TextFieldIntrinsicElements = keyof Pick<IntrinsicHTMLElements, 'input' | 'textarea'>;
+
+/**
+ * The HTML element interfaces that `useTextField` supports based on what is
+ * defined for `TextFieldIntrinsicElements`; e.g. `HTMLInputElement`,
+ * `HTMLTextAreaElement`.
+ */
+type TextFieldHTMLElementType = Pick<IntrinsicHTMLElements, TextFieldIntrinsicElements>;
+
+/**
+ * The HTML attributes interfaces that `useTextField` supports based on what
+ * is defined for `TextFieldIntrinsicElements`; e.g. `InputHTMLAttributes`,
+ * `TextareaHTMLAttributes`.
+ */
+type TextFieldHTMLAttributesType = Pick<IntrinsicHTMLAttributes, TextFieldIntrinsicElements>;
+
+/**
+ * The type of `inputProps` returned by `useTextField`; e.g. `InputHTMLAttributes`,
+ * `TextareaHTMLAttributes`.
+ */
+type TextFieldInputProps<T extends TextFieldIntrinsicElements> = TextFieldHTMLAttributesType[T];
+
+export interface TextFieldProps<T = HTMLInputElement> extends InputBase, Validation<string>, HelpTextProps, FocusableProps<T>, TextInputBase, ValueBase<string>, LabelableProps {}
+
+export interface AriaTextFieldProps<T = HTMLInputElement> extends TextFieldProps<T>, AriaLabelingProps, FocusableDOMProps, TextInputDOMProps, AriaValidationProps {
+  // https://www.w3.org/TR/wai-aria-1.2/#textbox
+  /** Identifies the currently active element when DOM focus is on a composite widget, textbox, group, or application. */
+  'aria-activedescendant'?: string,
+  /**
+   * Indicates whether inputting text could trigger display of one or more predictions of the user's intended value for an input and specifies how predictions would be
+   * presented if they are made.
+   */
+  'aria-autocomplete'?: 'none' | 'inline' | 'list' | 'both',
+  /** Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by an element. */
+  'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
+  /** Identifies the element (or elements) whose contents or presence are controlled by the current element. */
+  'aria-controls'?: string,
+  /**
+   * An enumerated attribute that defines what action label or icon to preset for the enter key on virtual keyboards. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
+   */
+  enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send'
+}
+
+export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> extends AriaTextFieldProps<TextFieldHTMLElementType[T]> {
+  /**
+   * The HTML element used to render the input, e.g. 'input', or 'textarea'.
+   * It determines whether certain HTML attributes will be included in `inputProps`.
+   * For example, [`type`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-type).
+   * @default 'input'
+   */
+  inputElementType?: T,
+  /**
+   * Controls whether inputted text is automatically capitalized and, if so, in what manner.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autocapitalize).
+   */
+  autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters',
+  /**
+   * An enumerated attribute that defines what action label or icon to preset for the enter key on virtual keyboards. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
+   */
+  enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send'
+}
+
+/**
+ * The type of `ref` object that can be passed to `useTextField` based on the given
+ * intrinsic HTML element name; e.g.`RefObject<HTMLInputElement>`,
+ * `RefObject<HTMLTextAreaElement>`.
+ */
+type TextFieldRefObject<T extends TextFieldIntrinsicElements> = RefObject<TextFieldHTMLElementType[T] | null>;
+
+export interface TextFieldAria<T extends TextFieldIntrinsicElements = DefaultElementType> extends ValidationResult {
+  /** Props for the input element. */
+  inputProps: TextFieldInputProps<T>,
+  /** Props for the text field's visible label element, if any. */
+  labelProps: DOMAttributes | LabelHTMLAttributes<HTMLLabelElement>,
+  /** Props for the text field's description element, if any. */
+  descriptionProps: DOMAttributes,
+  /** Props for the text field's error message element, if any. */
+  errorMessageProps: DOMAttributes
+}
+
+/**
+ * Provides the behavior and accessibility implementation for a text field.
+ * @param props - Props for the text field.
+ * @param ref - Ref to the HTML input or textarea element.
+ */
+export function useTextField<T extends TextFieldIntrinsicElements = DefaultElementType>(
+  props: AriaTextFieldOptions<T>,
+  ref: TextFieldRefObject<T>
+): TextFieldAria<T> {
+  let {
+    inputElementType = 'input',
+    isDisabled = false,
+    isRequired = false,
+    isReadOnly = false,
+    type = 'text',
+    validationBehavior = 'aria'
+  } = props;
+  let [value, setValue] = useControlledState<string>(props.value, props.defaultValue || '', props.onChange);
+  let {focusableProps} = useFocusable<TextFieldHTMLElementType[T]>(props, ref);
+  let validationState = useFormValidationState({
+    ...props,
+    value
+  });
+  let {isInvalid, validationErrors, validationDetails} = validationState.displayValidation;
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
+    ...props,
+    isInvalid,
+    errorMessage: props.errorMessage || validationErrors
+  });
+  let domProps = filterDOMProps(props, {labelable: true});
+
+  const inputOnlyProps = {
+    type,
+    pattern: props.pattern
+  };
+
+  let [initialValue] = useState(value);
+  useFormReset(ref, props.defaultValue ?? initialValue, setValue);
+  useFormValidation(props, validationState, ref);
+
+  return {
+    labelProps,
+    inputProps: mergeProps(
+      domProps,
+      inputElementType === 'input' ? inputOnlyProps : undefined,
+      {
+        disabled: isDisabled,
+        readOnly: isReadOnly,
+        required: isRequired && validationBehavior === 'native',
+        'aria-required': (isRequired && validationBehavior === 'aria') || undefined,
+        'aria-invalid': isInvalid || undefined,
+        'aria-errormessage': props['aria-errormessage'],
+        'aria-activedescendant': props['aria-activedescendant'],
+        'aria-autocomplete': props['aria-autocomplete'],
+        'aria-haspopup': props['aria-haspopup'],
+        'aria-controls': props['aria-controls'],
+        value,
+        onChange: (e: ChangeEvent<HTMLInputElement>) => setValue(getEventTarget(e).value),
+        autoComplete: props.autoComplete,
+        autoCapitalize: props.autoCapitalize,
+        maxLength: props.maxLength,
+        minLength: props.minLength,
+        name: props.name,
+        form: props.form,
+        placeholder: props.placeholder,
+        inputMode: props.inputMode,
+        autoCorrect: props.autoCorrect,
+        spellCheck: props.spellCheck,
+        [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: props.enterKeyHint,
+
+        // Clipboard events
+        onCopy: props.onCopy,
+        onCut: props.onCut,
+        onPaste: props.onPaste,
+
+        // Composition events
+        onCompositionEnd: props.onCompositionEnd,
+        onCompositionStart: props.onCompositionStart,
+        onCompositionUpdate: props.onCompositionUpdate,
+
+        // Selection events
+        onSelect: props.onSelect,
+
+        // Input events
+        onBeforeInput: props.onBeforeInput,
+        onInput: props.onInput,
+        ...focusableProps,
+        ...fieldProps
+      }
+    ),
+    descriptionProps,
+    errorMessageProps,
+    isInvalid,
+    validationErrors,
+    validationDetails
+  };
+}

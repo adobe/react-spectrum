@@ -12,7 +12,7 @@
 
 import type {Meta} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
-import {useLocale} from 'react-aria';
+import {useLocale} from 'react-aria/I18nProvider';
 
 const meta: Meta<any> = {
   title: 'S2 Chromatic/Fonts'

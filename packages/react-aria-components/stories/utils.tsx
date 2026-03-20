@@ -1,5 +1,8 @@
-import {classNames} from '@react-spectrum/utils';
-import {Header, ListBoxItem, ListBoxItemProps, MenuItem, MenuItemProps, ProgressBar} from 'react-aria-components';
+import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
+import {Header} from '../src/Header';
+import {ListBoxItem, ListBoxItemProps} from '../src/ListBox';
+import {MenuItem, MenuItemProps} from '../src/Menu';
+import {ProgressBar} from '../src/ProgressBar';
 import React, {HTMLAttributes, JSX} from 'react';
 import styles from '../example/index.css';
 

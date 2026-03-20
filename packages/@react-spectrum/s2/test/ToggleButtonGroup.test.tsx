@@ -11,7 +11,9 @@
  */
 
 import {render} from '@react-spectrum/test-utils-internal';
-import {Text, ToggleButton, ToggleButtonGroup} from '../src';
+import {Text} from '../src/Content';
+import {ToggleButton} from '../src/ToggleButton';
+import {ToggleButtonGroup} from '../src/ToggleButtonGroup';
 
 describe('ToggleButtonGroup', () => {
 

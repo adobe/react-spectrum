@@ -11,9 +11,11 @@
  */
 
 import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
-import {Button, Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip, TooltipTrigger} from '../';
+import {Button} from '../src/Button';
 import React, {useState} from 'react';
+import {Tab, TabList, TabPanel, TabPanels, Tabs} from '../src/Tabs';
 import {TabsExample} from '../stories/Tabs.stories';
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 

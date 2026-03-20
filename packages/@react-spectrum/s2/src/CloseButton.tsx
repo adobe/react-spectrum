@@ -11,7 +11,8 @@
  */
 
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
-import {Button, ButtonProps, ContextValue} from 'react-aria-components';
+import {Button, ButtonProps} from 'react-aria-components/Button';
+import {ContextValue} from 'react-aria-components/utils';
 import {controlSize, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef} from 'react';
 import CrossIcon from '../ui-icons/Cross';
@@ -20,7 +21,7 @@ import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {useFocusableRef} from './useDOMRef';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface CloseButtonProps extends Pick<ButtonProps, 'isDisabled' | 'onPress'>, StyleProps {

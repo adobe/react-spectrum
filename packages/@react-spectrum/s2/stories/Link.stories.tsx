@@ -11,7 +11,7 @@
  */
 
 import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
-import {Link} from '../src';
+import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 

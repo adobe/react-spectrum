@@ -11,22 +11,25 @@
  */
 
 import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
-import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
+import {ButtonRenderProps, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
+import {ContextValue, Provider} from 'react-aria-components/utils';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {linearGradient} from '../style/spectrum-theme' with {type: 'macro'};
+// @ts-ignore
+import {Link, LinkProps} from 'react-aria-components/Link';
+import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {SkeletonContext} from './Skeleton';
 import {Text, TextContext} from './Content';
 import {useFocusableRef} from './useDOMRef';
 import {useFormProps} from './Form';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ButtonStyleProps {

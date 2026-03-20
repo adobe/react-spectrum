@@ -12,7 +12,7 @@
 
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import {ToggleButton, ToggleButtonContext} from '../';
+import {ToggleButton, ToggleButtonContext} from '../src/ToggleButton';
 import userEvent from '@testing-library/user-event';
 
 describe('ToggleButton', () => {

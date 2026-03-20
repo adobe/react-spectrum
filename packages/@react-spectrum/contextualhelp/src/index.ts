@@ -10,5 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export {ContextualHelp} from './ContextualHelp';
-export type {SpectrumContextualHelpProps} from './ContextualHelp';
+export {ContextualHelp} from '@adobe/react-spectrum/ContextualHelp';
+
+export type {SpectrumContextualHelpProps} from '@adobe/react-spectrum/ContextualHelp';

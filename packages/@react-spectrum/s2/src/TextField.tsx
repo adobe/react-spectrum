@@ -10,25 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  TextArea as AriaTextArea,
-  TextAreaContext as AriaTextAreaContext,
-  TextField as AriaTextField,
-  TextFieldProps as AriaTextFieldProps,
-  composeRenderProps,
-  ContextValue,
-  InputContext,
-  InputProps,
-  useSlottedContext
-} from 'react-aria-components';
+import {TextArea as AriaTextArea, TextAreaContext as AriaTextAreaContext} from 'react-aria-components/TextArea';
+
+import {TextField as AriaTextField, TextFieldProps as AriaTextFieldProps} from 'react-aria-components/TextField';
 import {centerPadding, style} from '../style' with {type: 'macro'};
+import {composeRenderProps, ContextValue, useSlottedContext} from 'react-aria-components/utils';
 import {controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from './useDOMRef';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FocusableRefValue, GlobalDOMAttributes, HelpTextProps, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
-import {mergeRefs} from '@react-aria/utils';
+import {InputContext, InputProps} from 'react-aria-components/Input';
+import {mergeRefs} from 'react-aria/private/utils/mergeRefs';
 import {StyleString} from '../style/types';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

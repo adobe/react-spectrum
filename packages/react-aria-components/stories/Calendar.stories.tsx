@@ -10,19 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
+import {Button} from '../src/Button';
+
 import {
-  Button,
   Calendar,
   CalendarCell,
   CalendarGrid,
   CalendarProps,
   CalendarStateContext,
-  DateValue,
-  Heading,
-  I18nProvider,
   RangeCalendar
-} from 'react-aria-components';
+} from '../src/Calendar';
+
 import {CalendarDate, parseDate} from '@internationalized/date';
+import {DateValue} from 'react-stately/useCalendarState';
+import {Heading} from '../src/Heading';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {useContext} from 'react';
 import './styles.css';
@@ -116,7 +118,7 @@ function CalendarMultiMonthExample(args) {
       </Calendar>
     </>
   );
-};
+}
 
 export const CalendarMultiMonth: CalendarStory = {
   render: (args) => <CalendarMultiMonthExample {...args} />,

@@ -9,5 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useNumberField} from './useNumberField';
-export type {AriaNumberFieldProps, NumberFieldAria} from './useNumberField';
+export {useNumberField} from 'react-aria/useNumberField';
+
+export type {AriaNumberFieldProps, NumberFieldAria} from 'react-aria/useNumberField';

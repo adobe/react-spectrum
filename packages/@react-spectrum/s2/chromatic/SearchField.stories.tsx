@@ -10,16 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Content,
-  ContextualHelp,
-  Footer,
-  Heading,
-  Link,
-  SearchField,
-  Text
-} from '../src';
+import {Content, Footer, Heading, Text} from '../src/Content';
+
+import {ContextualHelp} from '../src/ContextualHelp';
+import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
+import {SearchField} from '../src/SearchField';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof SearchField> = {

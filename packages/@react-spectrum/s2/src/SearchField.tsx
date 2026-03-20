@@ -10,16 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  SearchField as AriaSearchField,
-  SearchFieldProps as AriaSearchFieldProps,
-  ContextValue,
-  InputProps,
-  Provider
-} from 'react-aria-components';
+import {SearchField as AriaSearchField, SearchFieldProps as AriaSearchFieldProps} from 'react-aria-components/SearchField';
+
 import {baseColor, fontRelative, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
+import {ContextValue, Provider} from 'react-aria-components/utils';
 import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from './useDOMRef';
 import {css} from '../style/style-macro' with {type: 'macro'};
@@ -28,6 +24,7 @@ import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {IconContext} from './Icon';
+import {InputProps} from 'react-aria-components/Input';
 import SearchIcon from '../s2wf-icons/S2_Icon_Search_20_N.svg';
 import {TextFieldRef} from './TextField';
 import {useSpectrumContextProps} from './useSpectrumContextProps';

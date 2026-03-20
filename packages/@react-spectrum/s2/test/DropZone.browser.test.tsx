@@ -5,15 +5,21 @@
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import {Button, ButtonGroup, Content, DropZone, FileTrigger, Heading, IllustratedMessage} from '../src';
+import {Button} from '../src/Button';
+
+import {ButtonGroup} from '../src/ButtonGroup';
 import CloudUpload from '@react-spectrum/s2/illustrations/gradient/generic1/CloudUpload';
+import {Content, Heading} from '../src/Content';
 import {describe, expect, it, vi} from 'vitest';
 import {dragAndDrop} from './utils/dragAndDrop';
+import {DropZone} from '../src/DropZone';
+import {FileTrigger} from 'react-aria-components/FileTrigger';
+import {IllustratedMessage} from '../src/IllustratedMessage';
 import {page} from 'vitest/browser';
 import React from 'react';
 import {render} from './utils/render';
 import {style} from '../style' with {type: 'macro'};
-import {useDrag} from '@react-aria/dnd';
+import {useDrag} from 'react-aria/useDrag';
 
 function Draggable({type}: {type: string}) {
   let {dragProps} = useDrag({

@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../../src/Icon';
 import Segmentation_L from 'illustration:./S2_fill_segmentation_generic2_160.svg';
 import Segmentation_M from 'illustration:./S2_fill_segmentation_generic2_96.svg';
 import Segmentation_S from 'illustration:./S2_fill_segmentation_generic2_48.svg';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function Segmentation(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

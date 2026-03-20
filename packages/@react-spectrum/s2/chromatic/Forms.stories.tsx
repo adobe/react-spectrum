@@ -10,43 +10,35 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  ActionButton,
-  Button,
-  Checkbox,
-  CheckboxGroup,
-  ColorField,
-  ColorSlider,
-  ComboBox,
-  ComboBoxItem,
-  Content,
-  ContextualHelp,
-  Divider,
-  Form,
-  FormProps,
-  Heading,
-  Meter,
-  NumberField,
-  Picker,
-  PickerItem,
-  ProgressBar,
-  Radio,
-  RadioGroup,
-  RangeSlider,
-  SearchField,
-  Slider,
-  Switch,
-  Tag,
-  TagGroup,
-  TextArea,
-  TextField,
-  ToggleButton
-} from '../src';
+import {ActionButton} from '../src/ActionButton';
+
+import {Button} from '../src/Button';
+import {Checkbox} from '../src/Checkbox';
+import {CheckboxGroup} from '../src/CheckboxGroup';
+import {ColorField} from '../src/ColorField';
+import {ColorSlider} from '../src/ColorSlider';
+import {ComboBox, ComboBoxItem} from '../src/ComboBox';
+import {Content, Heading} from '../src/Content';
+import {ContextualHelp} from '../src/ContextualHelp';
+import {Divider} from '../src/Divider';
+import {Form, FormProps} from '../src/Form';
 import type {Meta, StoryObj} from '@storybook/react';
+import {Meter} from '../src/Meter';
+import {NumberField} from '../src/NumberField';
+import {Picker, PickerItem} from '../src/Picker';
+import {ProgressBar} from '../src/ProgressBar';
+import {Radio, RadioGroup} from '../src/RadioGroup';
+import {RangeSlider} from '../src/RangeSlider';
 import {ReactElement, useState} from 'react';
+import {SearchField} from '../src/SearchField';
+import {Slider} from '../src/Slider';
 import SortDown from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUp from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {Switch} from '../src/Switch';
+import {Tag, TagGroup} from '../src/TagGroup';
+import {TextArea, TextField} from '../src/TextField';
+import {ToggleButton} from '../src/ToggleButton';
 
 const meta: Meta<typeof Form> = {
   component: Form,

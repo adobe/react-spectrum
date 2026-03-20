@@ -10,7 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSlider, ColorSliderProps, Content, ContextualHelp, Heading} from '../src';
+import {ColorSlider, ColorSliderProps} from '../src/ColorSlider';
+
+import {Content, Heading} from '../src/Content';
+import {ContextualHelp} from '../src/ContextualHelp';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement} from 'react';

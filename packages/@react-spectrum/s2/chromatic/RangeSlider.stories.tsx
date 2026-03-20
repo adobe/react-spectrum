@@ -14,7 +14,7 @@ import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
-import {RangeSlider} from '../src';
+import {RangeSlider} from '../src/RangeSlider';
 
 const meta: Meta<typeof RangeSlider> = {
   component: RangeSlider,

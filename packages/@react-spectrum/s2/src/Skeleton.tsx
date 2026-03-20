@@ -13,7 +13,8 @@
 import {cloneElement, createContext, CSSProperties, ReactElement, ReactNode, Ref, useCallback, useContext, useRef} from 'react';
 import {color, style} from '../style' with {type: 'macro'};
 import {css} from '../style/style-macro' with {type: 'macro'};
-import {inertValue, mergeRefs} from '@react-aria/utils';
+import {inertValue} from 'react-aria/private/utils/inertValue';
+import {mergeRefs} from 'react-aria/private/utils/mergeRefs';
 import {mergeStyles} from '../style/runtime';
 import {StyleString} from '../style/types';
 import {useMediaQuery} from './useMediaQuery';

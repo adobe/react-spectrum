@@ -11,7 +11,7 @@
  */
 
 import '../../src/page';
-import {Provider, type ProviderProps} from '../../src';
+import {Provider, type ProviderProps} from '../../src/Provider';
 import React, {ReactElement} from 'react';
 import {render as vitestBrowserRender} from 'vitest-browser-react';
 
