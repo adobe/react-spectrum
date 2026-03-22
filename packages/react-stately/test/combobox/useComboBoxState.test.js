@@ -332,11 +332,39 @@ describe('useComboBoxState tests', function () {
       // Menu should re-open because items were controlled and the close was due to empty collection
       expect(result.current.isOpen).toBe(true);
       expect(result.current.collection.size).toEqual(1);
+      expect(onOpenChange).toHaveBeenLastCalledWith(true, 'input');
+    });
+
+    it('should not re-open after user dismisses with Escape (revert)', function () {
+      let onOpenChange = jest.fn();
+      let initialProps = {
+        items: [{id: 1, name: 'Luke Skywalker'}],
+        children: (props) => <Item>{props.name}</Item>,
+        onOpenChange
+      };
+
+      let {result, rerender} = renderHook((props) => useComboBoxState(props), {initialProps});
+
+      // Focus and open
+      act(() => {result.current.setFocused(true);});
+      act(() => {result.current.open(null, 'input');});
+      expect(result.current.isOpen).toBe(true);
+
+      // Async returns empty, menu auto-closes
+      rerender({...initialProps, items: []});
+      expect(result.current.isOpen).toBe(false);
+
+      // User presses Escape (revert) while menu is closed
+      act(() => {result.current.revert();});
+
+      // Async returns items — menu should NOT re-open because user explicitly dismissed
+      rerender({...initialProps, items: [{id: 1, name: 'Luke Skywalker'}]});
+      expect(result.current.isOpen).toBe(false);
     });
 
     it('should still close the menu when uncontrolled items are empty', function () {
       let onOpenChange = jest.fn();
-      let {contains} = {contains: (a, b) => a.toLowerCase().includes(b.toLowerCase())};
+      let contains = (a, b) => a.toLowerCase().includes(b.toLowerCase());
       let initialProps = {
         defaultItems: [{id: 1, name: 'Luke Skywalker'}],
         children: (props) => <Item>{props.name}</Item>,

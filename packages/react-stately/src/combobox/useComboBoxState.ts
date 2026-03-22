@@ -435,6 +435,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
 
   // Revert input value and close menu
   let revert = () => {
+    closedDueToEmptyControlled.current = false;
     if (allowsCustomValue && selectedKey == null) {
       commitCustomValue();
     } else {
