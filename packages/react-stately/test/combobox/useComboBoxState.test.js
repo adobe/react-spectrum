@@ -305,4 +305,56 @@ describe('useComboBoxState tests', function () {
       expect(result.current.collection.size).toEqual(2);
     });
   });
+
+  describe('controlled items (async loading)', function () {
+    it('should re-open the menu when controlled items go from empty to non-empty', function () {
+      let onOpenChange = jest.fn();
+      let initialProps = {
+        items: [{id: 1, name: 'Luke Skywalker'}],
+        children: (props) => <Item>{props.name}</Item>,
+        onOpenChange
+      };
+
+      let {result, rerender} = renderHook((props) => useComboBoxState(props), {initialProps});
+
+      // Focus and open the menu by setting input value
+      act(() => {result.current.setFocused(true);});
+      act(() => {result.current.open(null, 'input');});
+      expect(result.current.isOpen).toBe(true);
+
+      // Simulate async load returning empty results (e.g. user typed "luka")
+      rerender({...initialProps, items: []});
+      // Menu closes on empty collection
+      expect(result.current.isOpen).toBe(false);
+
+      // Simulate async load returning results again (e.g. user backspaced to "luk")
+      rerender({...initialProps, items: [{id: 1, name: 'Luke Skywalker'}]});
+      // Menu should re-open because items were controlled and the close was due to empty collection
+      expect(result.current.isOpen).toBe(true);
+      expect(result.current.collection.size).toEqual(1);
+    });
+
+    it('should still close the menu when uncontrolled items are empty', function () {
+      let onOpenChange = jest.fn();
+      let {contains} = {contains: (a, b) => a.toLowerCase().includes(b.toLowerCase())};
+      let initialProps = {
+        defaultItems: [{id: 1, name: 'Luke Skywalker'}],
+        children: (props) => <Item>{props.name}</Item>,
+        onOpenChange,
+        defaultFilter: contains
+      };
+
+      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+
+      // Focus and open
+      act(() => {result.current.setFocused(true);});
+      act(() => {result.current.open(null, 'input');});
+      expect(result.current.isOpen).toBe(true);
+
+      // Type something that filters to zero results
+      act(() => {result.current.setInputValue('zzz');});
+      // Menu should close because items are uncontrolled and filtered to empty
+      expect(result.current.isOpen).toBe(false);
+    });
+  });
 });

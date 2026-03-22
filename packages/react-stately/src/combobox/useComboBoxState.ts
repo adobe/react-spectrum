@@ -167,6 +167,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
   let [showAllItems, setShowAllItems] = useState(false);
   let [isFocused, setFocusedState] = useState(false);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
+  let closedDueToEmptyControlled = useRef(false);
 
   let defaultValue = useMemo(() => {
     return props.defaultValue !== undefined ? props.defaultValue : (selectionMode === 'single' ? props.defaultSelectedKey ?? null : []) as ValueType<M>;
@@ -359,7 +360,23 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
       triggerState.isOpen &&
       filteredCollection.size === 0
     ) {
+      if (props.items != null) {
+        closedDueToEmptyControlled.current = true;
+      }
       closeMenu();
+    }
+
+    // Re-open the menu when controlled items become non-empty after being auto-closed due to
+    // an empty collection (e.g. async load completed with results after a previous empty response).
+    if (
+      isFocused &&
+      closedDueToEmptyControlled.current &&
+      filteredCollection.size > 0 &&
+      !triggerState.isOpen &&
+      menuTrigger !== 'manual'
+    ) {
+      closedDueToEmptyControlled.current = false;
+      open(null, 'input');
     }
 
     // Close when an item is selected.
@@ -457,6 +474,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
   };
 
   const commitValue = () => {
+    closedDueToEmptyControlled.current = false;
     if (allowsCustomValue) {
       const itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
       (inputValue === itemText) ? commitSelection() : commitCustomValue();
