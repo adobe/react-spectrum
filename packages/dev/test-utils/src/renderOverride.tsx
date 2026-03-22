@@ -27,7 +27,7 @@ let reactTestingLibrary = require('@testing-library/react');
 // (i.e. renderHook is only in v13+ of testing library)
 export let renderHook: typeof originalRenderHook = (render, options) => reactTestingLibrary.renderHook(render, {wrapper: StrictModeWrapper, ...options});
 export let actHook = reactTestingLibrary.act as typeof originalAct;
-if (!renderHook) {
+if (!reactTestingLibrary.renderHook) {
   let rhtl = require('@testing-library/react-hooks');
   renderHook = (render, options) => rhtl.renderHook(render, {wrapper: StrictModeWrapper, ...options});
   actHook = rhtl.act;
