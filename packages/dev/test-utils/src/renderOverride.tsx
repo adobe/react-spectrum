@@ -25,11 +25,11 @@ function customRender(ui: Parameters<typeof render>[0], options?: Parameters<typ
 let reactTestingLibrary = require('@testing-library/react');
 // export renderHook and actHook from testing-library/react-hooks library if they don't exist in @testing-library/react
 // (i.e. renderHook is only in v13+ of testing library)
-export let renderHook = reactTestingLibrary.renderHook as typeof originalRenderHook;
+export let renderHook: typeof originalRenderHook = (render, options) => reactTestingLibrary.renderHook(render, {wrapper: StrictModeWrapper, ...options});
 export let actHook = reactTestingLibrary.act as typeof originalAct;
 if (!renderHook) {
   let rhtl = require('@testing-library/react-hooks');
-  renderHook = rhtl.renderHook;
+  renderHook = (render, options) => rhtl.renderHook(render, {wrapper: StrictModeWrapper, ...options});
   actHook = rhtl.act;
 }
 
