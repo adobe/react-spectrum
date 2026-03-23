@@ -4,11 +4,12 @@ import * as babel from '@babel/parser';
 import {fileURLToPath} from 'url';
 import fs from 'fs';
 import glob from 'fast-glob';
+import {mdxToMarkdown} from 'mdast-util-mdx';
 import path from 'path';
 import {Project} from 'ts-morph';
 import remarkMdx from 'remark-mdx';
 import remarkParse from 'remark-parse';
-import remarkStringify from 'remark-stringify';
+import {toMarkdown} from 'mdast-util-to-markdown';
 import {unified} from 'unified';
 import {visit} from 'unist-util-visit';
 
@@ -3220,14 +3221,17 @@ async function main() {
       .use(remarkParse)
       .use(remarkMdx)
       .use(remarkRemoveImportsExports)
-      .use(remarkDocsComponentsToMarkdown)
-      .use(remarkStringify, {
-        fences: true,
-        bullets: '-',
-        listItemIndent: 'one'
-      });
+      .use(remarkDocsComponentsToMarkdown);
 
-    let markdown = String(await processor.process({value: mdContent, path: filePath}));
+    const file = {value: mdContent, path: filePath};
+    const tree = processor.parse(file);
+    const transformed = await processor.run(tree, file);
+    let markdown = toMarkdown(transformed, {
+      fences: true,
+      bullet: '-',
+      listItemIndent: 'one',
+      extensions: mdxToMarkdown.extensions
+    });
 
     // Convert markdown links ending in .html to .md (relative links only)
     markdown = markdown.replace(/\[([^\]]+)\]\(([^)]+\.html)\)/g, (match, text, url) => {
