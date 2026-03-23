@@ -18,9 +18,7 @@ import {I18nProvider} from 'react-aria/I18nProvider';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {Meta, StoryObj} from '@storybook/react';
-import Minus from 'lucide-react/dist/esm/icons/minus';
 import {NumberField, NumberFieldProps} from '../src/NumberField';
-import Plus from 'lucide-react/dist/esm/icons/plus';
 import React, {useState} from 'react';
 import './styles.css';
 
