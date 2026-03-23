@@ -11,10 +11,14 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, ListLayout, Menu, MenuItem, MenuTrigger, Popover, Virtualizer} from '..';
+import {Button} from '../src/Button';
+import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
+import {Popover} from '../src/Popover';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
+import {Virtualizer} from '../src/Virtualizer';
 
 let items = Array.from({length: 50}, (_, index) => {
   // Return the object structure for each element

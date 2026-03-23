@@ -10,4 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useToolbar';
+export {useToolbar} from 'react-aria/private/toolbar/useToolbar';
+
+export type {AriaToolbarProps, ToolbarAria} from 'react-aria/private/toolbar/useToolbar';

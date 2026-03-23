@@ -12,19 +12,27 @@
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
 import {AriaTreeTests} from './AriaTree.test-util';
-import {Button, Checkbox, Collection, DropIndicator, ListLayout, Text, Tree, TreeHeader, TreeItem, TreeItemContent, TreeLoadMoreItem, TreeSection, useDragAndDrop, Virtualizer} from '../';
+import {Button} from '../src/Button';
+import {Checkbox} from '../src/Checkbox';
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
 import {composeStories} from '@storybook/react';
 // @ts-ignore
-import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
+import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
+import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
+import {ListLayout} from 'react-stately/private/layout/ListLayout';
 import React from 'react';
 import * as stories from '../stories/Tree.stories';
+import {Text} from '../src/Text';
+import {Tree, TreeHeader, TreeItem, TreeItemContent, TreeLoadMoreItem, TreeSection} from '../src/Tree';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
-import {useTreeData} from 'react-stately';
+import {useTreeData} from 'react-stately/useTreeData';
+import {Virtualizer} from '../src/Virtualizer';
 
 let {
   EmptyTreeStaticStory: EmptyLoadingTree,
-  LoadingStoryDepOnTopStory: LoadingMoreTree
+  LoadingStoryDepOnTopStory: LoadingMoreTree,
+  TreeWithDragAndDrop
 } = composeStories(stories);
 
 let onSelectionChange = jest.fn();
@@ -915,6 +923,44 @@ describe('Tree', () => {
         await user.keyboard('Reports 1ABC');
         expect(document.activeElement).toBe(rows[12]);
         expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
+      });
+
+      it('should support collapse key to navigate to parent', async () => {
+        let {getAllByRole} = render(<DynamicTree />);
+        await user.tab();
+        let rows = getAllByRole('row');
+        expect(rows).toHaveLength(20);
+        expect(document.activeElement).toBe(rows[0]);
+        expect(document.activeElement).toHaveAttribute('data-expanded', 'true');
+
+        // Navigate down to Project 2B
+        await user.keyboard('{ArrowDown}');
+        await user.keyboard('{ArrowDown}');
+        await user.keyboard('{ArrowRight}');
+        await user.keyboard('{ArrowDown}');
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(rows[4]);
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Project 2B');
+
+        // Collapse key on leaf node should move focus to parent (Projects)
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(rows[2]);
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Project 2');
+        expect(document.activeElement).toHaveAttribute('data-expanded', 'true');
+
+        // Collapse key on expanded parent should collapse it
+        await user.keyboard('{ArrowLeft}');
+        // Projects should now be collapsed, so fewer rows visible
+        rows = getAllByRole('row');
+        expect(rows.length).toBeLessThan(20);
+        expect(document.activeElement).toBe(rows[2]);
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Project 2');
+        expect(document.activeElement).not.toHaveAttribute('data-expanded');
+
+        // Collapse key again on now-collapsed parent should move to its parent
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(rows[0]);
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Projects');
       });
 
       it('should navigate between visible rows when using Arrow Up/Down', async () => {
@@ -1886,6 +1932,60 @@ describe('Tree', () => {
       expect(onRootDrop).toHaveBeenCalledTimes(1);
     });
 
+    it('should automatically focus the newly added dropped item', async () => {
+      const {getAllByRole} = render(<TreeWithDragAndDrop />);
+
+      const trees = getAllByRole('treegrid');
+      const firstTreeRows = within(trees[0]).getAllByRole('row');
+      const dataTransfer = new DataTransfer();
+
+      fireEvent(firstTreeRows[1], new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
+      act(() => jest.runAllTimers());
+
+      fireEvent(trees[1], new DragEvent('dragenter', {dataTransfer, clientX: 50, clientY: 50}));
+      fireEvent(trees[1], new DragEvent('dragover', {dataTransfer, clientX: 50, clientY: 50}));
+      expect(trees[1]).toHaveAttribute('data-drop-target', 'true');
+
+      // ¯\_(ツ)_/¯
+      await act(async () => fireEvent(trees[1], new DragEvent('drop', {dataTransfer, clientX: 50, clientY: 50})));
+      act(() => jest.runAllTimers());
+
+      let secondTreeRows = within(trees[1]).getAllByRole('row');
+
+      expect(secondTreeRows).toHaveLength(1);
+      // The newly added row in the second tree should be the active element
+      expect(secondTreeRows[0]).toBe(document.activeElement);
+
+      await user.click(document.body);
+      act(() => jest.runAllTimers());
+
+      await user.tab();
+      await user.keyboard('{ArrowRight}'); // expand the projects item
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      await user.tab();
+      act(() => jest.runAllTimers());
+
+      secondTreeRows = within(trees[1]).getAllByRole('row');
+      expect(secondTreeRows).toHaveLength(4);
+      expect(within(secondTreeRows[3]).getAllByRole('button')[0]).toHaveAttribute('aria-label', 'Insert after Reports');
+      expect(document.activeElement).toBe(within(secondTreeRows[3]).getAllByRole('button')[0]);
+      expect(secondTreeRows[3]).toHaveAttribute('data-drop-target', 'true');
+
+      await user.keyboard('{ArrowUp}');
+      expect(within(secondTreeRows[2]).getAllByRole('button')[0]).toHaveAttribute('aria-label', 'Drop on Reports');
+      expect(document.activeElement).toBe(within(secondTreeRows[2]).getAllByRole('button')[0]);
+
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      secondTreeRows = within(trees[1]).getAllByRole('row');
+      expect(secondTreeRows).toHaveLength(1);
+      expect(secondTreeRows[0]).toBe(document.activeElement);
+    });
+
     it('should support disabled drag and drop', async () => {
       let {getByRole, queryAllByRole} = render(
         <DraggableTree isDisabled />
@@ -1961,7 +2061,7 @@ describe('Tree', () => {
       let {getByRole} = render(<StaticTree rowProps={{onAction, onPressStart, onPressEnd, onPress, onClick}} />);
       let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('treegrid')});
       await gridListTester.triggerRowAction({row: 1, interactionType});
-  
+
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onPressStart).toHaveBeenCalledTimes(1);
       expect(onPressEnd).toHaveBeenCalledTimes(1);

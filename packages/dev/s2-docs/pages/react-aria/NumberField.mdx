@@ -6,7 +6,7 @@ import vanillaDocs from 'docs:vanilla-starter/NumberField';
 import {NumberField as VanillaNumberField} from 'vanilla-starter/NumberField';
 import {NumberField as TailwindNumberField} from 'tailwind-starter/NumberField';
 import '../../tailwind/tailwind.css';
-import Anatomy from '@react-aria/numberfield/docs/anatomy.svg';
+import Anatomy from '/packages/react-aria/docs/numberfield/anatomy.svg';
 
 export const tags = ['input'];
 export const relatedPages = [{'title': 'useNumberField', 'url': 'NumberField/useNumberField.html'}];
@@ -87,7 +87,7 @@ Use the `minValue`, `maxValue`, and `step` props to set the allowed values. Step
   component={VanillaNumberField}
   docs={docs.exports.NumberField}
   links={docs.links}
-  props={['minValue', 'maxValue', 'step']}
+  props={['minValue', 'maxValue', 'step', 'commitBehavior']}
   initialProps={{
     label: 'Amount',
     minValue: 0,

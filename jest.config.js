@@ -156,7 +156,9 @@ module.exports = {
   testEnvironment: 'jsdom',
 
   // Options that will be passed to the testEnvironment
-  // testEnvironmentOptions: {},
+  testEnvironmentOptions: {
+    customExportConditions: ['source']
+  },
 
   // Adds a location field to test results
   // testLocationInResults: false,
@@ -170,7 +172,8 @@ module.exports = {
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   testPathIgnorePatterns: [
     '/node_modules/',
-    '\\.ssr\\.test\\.[tj]sx?$'
+    '\\.ssr\\.test\\.[tj]sx?$',
+    '\\.browser\\.test\\.[tj]sx?$'
   ],
   testTimeout: 20000,
 

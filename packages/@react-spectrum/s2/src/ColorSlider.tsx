@@ -10,21 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  ColorSlider as AriaColorSlider,
-  ColorSliderProps as AriaColorSliderProps,
-  ContextValue,
-  SliderOutput,
-  SliderTrack,
-  useLocale
-} from 'react-aria-components';
+import {ColorSlider as AriaColorSlider, ColorSliderProps as AriaColorSliderProps} from 'react-aria-components/ColorSlider';
+
 import {ColorHandle} from './ColorHandle';
+import {ContextValue} from 'react-aria-components/utils';
 import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, useRef} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, SpectrumLabelableProps} from '@react-types/shared';
 import {FieldLabel} from './Field';
+import {SliderOutput, SliderTrack} from 'react-aria-components/Slider';
 import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, Pick<SpectrumLabelableProps, 'contextualHelp'>, StyleProps {
@@ -44,7 +41,7 @@ export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderPro
   let {direction, locale} = useLocale();
 
   return (
-    <AriaColorSlider
+    (<AriaColorSlider
       {...props}
       ref={containerRef}
       style={UNSAFE_style}
@@ -80,9 +77,9 @@ export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderPro
           // default to displaying the localized channel value.
           // Specifically check if label is undefined. If label is `null` then display no visible label.
           // A default aria-label is provided by useColorSlider in that case.
-          <FieldLabel isDisabled={isDisabled} contextualHelp={props.contextualHelp}>
+          (<FieldLabel isDisabled={isDisabled} contextualHelp={props.contextualHelp}>
             {props.label || state.value.getChannelName(props.channel, locale)}
-          </FieldLabel>
+          </FieldLabel>)
         )}
         {orientation === 'horizontal' &&
           <SliderOutput
@@ -140,6 +137,6 @@ export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderPro
             }} />
         </SliderTrack>
       </>)}
-    </AriaColorSlider>
+    </AriaColorSlider>)
   );
 });

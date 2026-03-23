@@ -10,10 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
-import {announce} from '@react-aria/live-announcer';
-import {Button, ComboBox, ComboBoxItem, Content, ContextualHelp, Dialog, DialogTrigger, Heading, Text} from '../src';
+jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
+import {act, pointerMap, render, setupIntersectionObserverMock, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
+import {Button} from '../src/Button';
+import {ComboBox, ComboBoxItem} from '../src/ComboBox';
+import {Content, Heading, Text} from '../src/Content';
+import {ContextualHelp} from '../src/ContextualHelp';
+import {Dialog} from '../src/Dialog';
+import {DialogTrigger} from '../src/DialogTrigger';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -214,6 +219,7 @@ describe('Combobox', () => {
   });
 
   it('should close the combobox when clicking outside the combobox on a dialog backdrop', async () => {
+    let user = userEvent.setup({delay: null, pointerMap});
     let tree = render(
       <DialogTrigger>
         <Button>Open</Button>
@@ -247,20 +253,10 @@ describe('Combobox', () => {
       jest.runAllTimers();
     });
     let backdrop = document.querySelector('[style*="--visual-viewport-height"]');
-    // can't use userEvent here for some reason
-    fireEvent.mouseDown(backdrop!, {button: 0});
-    fireEvent.mouseUp(backdrop!, {button: 0});
-    act(() => {
-      jest.runAllTimers();
-    });
-    expect(comboboxTester.listbox).toBeNull();
+    await user.click(backdrop!);
 
-
-    fireEvent.mouseDown(backdrop!, {button: 0});
-    fireEvent.mouseUp(backdrop!, {button: 0});
-    act(() => {
-      jest.runAllTimers();
-    });
+    await waitFor(() => expect(comboboxTester.listbox).toBeNull());
+    await user.click(backdrop!);
     expect(dialogTester.dialog).toBeNull();
   });
 });

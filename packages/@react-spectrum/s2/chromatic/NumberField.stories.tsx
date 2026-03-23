@@ -10,17 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Content,
-  ContextualHelp,
-  Footer,
-  Heading,
-  Link,
-  NumberField,
-  Text
-} from '../src';
+import {Content, Footer, Heading, Text} from '../src/Content';
+
+import {ContextualHelp} from '../src/ContextualHelp';
 import {generatePowerset} from '@react-spectrum/story-utils';
+import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
+import {NumberField} from '../src/NumberField';
 import {NumberFieldProps} from '../src/NumberField';
 import {ReactElement} from 'react';
 import {shortName} from './utils';

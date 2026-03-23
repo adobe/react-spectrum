@@ -9,7 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaBreadcrumbsProps, useBreadcrumbs} from 'react-aria';
+import {AriaBreadcrumbsProps, useBreadcrumbs} from 'react-aria/useBreadcrumbs';
+
 import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import {
   ClassNameOrFunction,
@@ -23,11 +24,13 @@ import {
   useRenderProps,
   useSlottedContext
 } from './utils';
-import {Collection, CollectionBuilder, CollectionNode, createLeafComponent} from '@react-aria/collections';
+import {Collection, CollectionBuilder, createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
+import {CollectionNode} from 'react-aria/private/collections/BaseCollection';
 import {CollectionProps, CollectionRendererContext} from './Collection';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {LinkContext} from './Link';
-import {Node} from 'react-stately';
+import {mergeProps} from 'react-aria/mergeProps';
+import {Node} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 
 export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleProps, SlotProps, AriaLabelingProps, DOMRenderProps<'ol', undefined>, GlobalDOMAttributes<HTMLOListElement> {

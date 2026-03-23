@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu, MenuItem} from '../src';
+import {ActionMenu} from '../src/ActionMenu';
 
 import {categorizeArgTypes, getActionArgs} from './utils';
+
+import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const events = ['onAction', 'onOpenChange'];

@@ -11,8 +11,13 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {FieldError, Input, Label, Text, TextArea, TextField, TextFieldContext} from '../';
+import {FieldError} from '../src/FieldError';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
 import React from 'react';
+import {Text} from '../src/Text';
+import {TextArea} from '../src/TextArea';
+import {TextField, TextFieldContext} from '../src/TextField';
 import userEvent from '@testing-library/user-event';
 
 let TestTextField = (props) => (

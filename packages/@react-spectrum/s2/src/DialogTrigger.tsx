@@ -10,8 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {DialogTrigger as AriaDialogTrigger, DialogTriggerProps as AriaDialogTriggerProps} from 'react-aria-components';
-import {PressResponder} from '@react-aria/interactions';
+import {
+  DialogTrigger as AriaDialogTrigger,
+  DialogTriggerProps as AriaDialogTriggerProps
+} from 'react-aria-components/Dialog';
+import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {ReactNode} from 'react';
 
 export interface DialogTriggerProps extends AriaDialogTriggerProps {}

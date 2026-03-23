@@ -72,17 +72,6 @@ for (let pkgPath of packagePaths) {
 
 for (let pkg of packagePaths) {
   let json = packages[pkg];
-
-  if (!pkg.includes('@react-types') && !pkg.includes('@spectrum-icons') && !pkg.includes('@react-aria/example-theme') && !pkg.includes('@react-spectrum/style-macro-s1') && json.rsp?.type !== 'cli') {
-    let topIndexExists = fs.existsSync(path.join(pkg, '..', 'index.ts'));
-    if (topIndexExists) {
-      let contents = fs.readFileSync(path.join(pkg, '..', 'index.ts'));
-      softAssert(/export \* from '.\/src';/.test(contents), `contents of ${path.join(pkg, '..', 'index.ts')} are not "export * from './src';"`);
-    }
-    softAssert(topIndexExists, `${pkg} is missing an index.ts`);
-    softAssert(fs.existsSync(path.join(pkg, '..', 'src', 'index.ts')), `${pkg} is missing a src/index.ts`);
-  }
-
   let readme = path.join(path.dirname(pkg), 'README.md');
   if (!fs.existsSync(readme)) {
     fs.writeFileSync(readme, `# ${json.name}\n\nThis package is part of [react-spectrum](https://github.com/adobe/react-spectrum). See the repo for more details.`);

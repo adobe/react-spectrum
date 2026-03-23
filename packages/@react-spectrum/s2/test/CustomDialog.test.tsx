@@ -11,8 +11,11 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {ActionButton, CustomDialog, DialogTrigger, Tag, TagGroup} from '../src';
+import {ActionButton} from '../src/ActionButton';
+import {CustomDialog} from '../src/CustomDialog';
+import {DialogTrigger} from '../src/DialogTrigger';
 import React from 'react';
+import {Tag, TagGroup} from '../src/TagGroup';
 import userEvent from '@testing-library/user-event';
 
 describe('CustomDialog', () => {

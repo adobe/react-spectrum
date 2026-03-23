@@ -14,24 +14,39 @@ import AlignLeft from '../s2wf-icons/S2_Icon_TextAlignLeft_20_N.svg';
 import AlignMiddle from '../s2wf-icons/S2_Icon_TextAlignCenter_20_N.svg';
 import AlignRight from '../s2wf-icons/S2_Icon_TextAlignRight_20_N.svg';
 import Bold from '../s2wf-icons/S2_Icon_TextBold_20_N.svg';
-import {Button, Content, ContextualHelpPopover, Footer, Header, Heading, Image, Keyboard, Link, Menu, MenuItem, MenuProps, MenuSection, MenuTrigger,  SubmenuTrigger, Text, UnavailableMenuItemTrigger} from '../src';
+import {Button} from '../src/Button';
 import {categorizeArgTypes, getActionArgs} from './utils';
 import ClockPendingIcon from '../s2wf-icons/S2_Icon_ClockPending_20_N.svg';
 import {CombinedMenu} from '../src/Menu';
 import CommentTextIcon from '../s2wf-icons/S2_Icon_CommentText_20_N.svg';
+
 import CommunityIcon from '../s2wf-icons/S2_Icon_Community_20_N.svg';
+
+import {Content, Footer, Header, Heading, Keyboard, Text} from '../src/Content';
+import {ContextualHelpPopover} from '../src/ContextualHelp';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
+import {Image} from '../src/Image';
 import ImgIcon from '../s2wf-icons/S2_Icon_Image_20_N.svg';
 import Italic from '../s2wf-icons/S2_Icon_TextItalic_20_N.svg';
+import {Link} from '../src/Link';
+import {
+  Menu,
+  MenuItem,
+  MenuProps,
+  MenuSection,
+  MenuTrigger,
+  SubmenuTrigger,
+  UnavailableMenuItemTrigger
+} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import More from '../s2wf-icons/S2_Icon_More_20_N.svg';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
 import {ReactElement, useState} from 'react';
-import {Selection} from 'react-aria-components';
+import {Selection} from '@react-types/shared';
 import TextIcon from '../s2wf-icons/S2_Icon_Text_20_N.svg';
 import Underline from '../s2wf-icons/S2_Icon_TextUnderline_20_N.svg';
 

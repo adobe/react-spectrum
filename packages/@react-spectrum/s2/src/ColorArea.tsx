@@ -10,18 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  ColorArea as AriaColorArea,
-  ColorAreaProps as AriaColorAreaProps,
-  ContextValue,
-  useLocale
-} from 'react-aria-components';
+import {ColorArea as AriaColorArea, ColorAreaProps as AriaColorAreaProps} from 'react-aria-components/ColorArea';
+
 import {ColorHandle} from './ColorHandle';
+import {ContextValue} from 'react-aria-components/utils';
 import {createContext, forwardRef} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ColorAreaProps extends Omit<AriaColorAreaProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps {}

@@ -12,7 +12,8 @@
 
 import {installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import {ToggleButton, ToggleButtonGroup} from '../';
+import {ToggleButton} from '../src/ToggleButton';
+import {ToggleButtonGroup} from '../src/ToggleButtonGroup';
 import userEvent from '@testing-library/user-event';
 
 function renderGroup(props) {

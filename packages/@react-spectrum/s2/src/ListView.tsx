@@ -15,45 +15,43 @@ import {ActionMenuContext} from './ActionMenu';
 import {baseColor, colorMix, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
+import {CheckboxContext} from 'react-aria-components/Checkbox';
+import Chevron from '../ui-icons/Chevron';
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-components/Collection';
+
+import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, useSlottedContext} from 'react-aria-components/utils';
+
+import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
+import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState} from '@react-types/shared';
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
-  CheckboxContext,
-  Collection,
-  CollectionRendererContext,
-  ContextValue,
-  DEFAULT_SLOT,
-  DefaultCollectionRenderer,
   GridList,
   GridListItem,
   GridListItemProps,
   GridListItemRenderProps,
   GridListLoadMoreItem,
   GridListProps,
-  GridListRenderProps,
-  Key,
-  ListLayout,
-  ListState,
-  Provider,
-  SlotProps,
-  useSlottedContext,
-  Virtualizer
-} from 'react-aria-components';
-import Chevron from '../ui-icons/Chevron';
-import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
-import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState} from '@react-types/shared';
-import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
+  GridListRenderProps
+} from 'react-aria-components/GridList';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
+import {Key} from '@react-types/shared';
 import LinkOutIcon from '../ui-icons/LinkOut';
+import {ListLayout} from 'react-stately/private/layout/ListLayout';
+// @ts-ignore
+import {ListState} from 'react-stately/useListState';
 import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
-import {useDOMRef} from '@react-spectrum/utils';
-import {useLocale, useLocalizedStringFormatter} from 'react-aria';
+import {useDOMRef} from './useDOMRef';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | 'selectionBehavior' | 'dragAndDropHooks' | 'layout' | 'render' | 'keyboardNavigationBehavior' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, ListViewStylesProps, SlotProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
@@ -289,9 +287,15 @@ const listitem = style<GridListItemRenderProps & {
   color: {
     default: baseColor('neutral-subdued'),
     isSelected: baseColor('neutral'),
-    isDisabled: {
-      default: 'disabled',
-      forcedColors: 'GrayText'
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonText',
+      selectionStyle: {
+        highlight: {
+          isSelected: 'HighlightText'
+        }
+      },
+      isDisabled: 'GrayText'
     }
   },
   position: 'relative',
@@ -346,12 +350,14 @@ const listitem = style<GridListItemRenderProps & {
   borderColor: {
     default: '--borderColor',
     isNextSelected: 'transparent',
-    isSelected: 'transparent'
+    isSelected: 'transparent',
+    forcedColors: 'ButtonBorder'
   },
   '--radius': {
     type: 'borderTopStartRadius',
     value: 'default'
-  }
+  },
+  forcedColorAdjust: 'none'
 });
 
 const insetBorderRadius = 'calc(var(--radius) - 1px)';
@@ -373,7 +379,8 @@ const listRowBackground = style<GridListItemRenderProps & {
     isSelected: '[-1px]',
     // Don't overlap focus ring of row above.
     isPrevSelected: 0,
-    isFirstItem: 0
+    isFirstItem: 0,
+    forcedColors: 0
   },
   left: 0,
   right: 0,
@@ -412,7 +419,12 @@ const listRowBackground = style<GridListItemRenderProps & {
       }
     },
     forcedColors: {
-      default: 'Background'
+      default: 'Background',
+      selectionStyle: {
+        highlight: {
+          isSelected: 'Highlight'
+        }
+      }
     }
   },
   borderTopStartRadius: {
@@ -513,9 +525,34 @@ const listRowBackground = style<GridListItemRenderProps & {
   }
 });
 
-let listRowFocusRing = style({
+let listRowFocusRing = style<GridListItemRenderProps & {
+  selectionStyle?: 'highlight' | 'checkbox',
+  isFirstItem?: boolean,
+  isPrevSelected?: boolean,
+  isPrevNotSelected?: boolean,
+  isNextSelected?: boolean,
+  isNextNotSelected?: boolean,
+  isLastItem?: boolean,
+  isQuiet?: boolean
+}>({
   ...focusRing(),
-  outlineOffset: -2,
+  outlineOffset: {
+    default: -2,
+    forcedColors: -3
+  },
+  outlineWidth: {
+    default: 2,
+    forcedColors: '[3px]'
+  },
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: {
+      default: 'Highlight',
+      selectionStyle: {
+        highlight: 'ButtonBorder'
+      }
+    }
+  },
   position: 'absolute',
   inset: 0,
   top: {
@@ -567,7 +604,8 @@ export let description = style({
   font: 'ui-sm',
   color: {
     default: baseColor('neutral-subdued'),
-    isDisabled: 'disabled'
+    isDisabled: 'disabled',
+    forcedColors: 'inherit'
   },
   transition: 'default'
 });
@@ -676,7 +714,7 @@ function isNextSelected(id: Key | undefined, state: ListState<unknown>) {
   let keyAfter = state.collection.getKeyAfter(id);
   return keyAfter != null && state.selectionManager.isSelected(keyAfter);
 }
-function isPrevSelected(id: Key | undefined, state: ListState<unknown>) {
+export function isPrevSelected(id: Key | undefined, state: ListState<unknown>) {
   if (id == null || !state) {
     return false;
   }
@@ -684,7 +722,7 @@ function isPrevSelected(id: Key | undefined, state: ListState<unknown>) {
   return keyBefore != null && state.selectionManager.isSelected(keyBefore);
 }
 
-function isFirstItem(id: Key | undefined, state: ListState<unknown>) {
+export function isFirstItem(id: Key | undefined, state: ListState<unknown>) {
   if (id == null || !state) {
     return false;
   }
@@ -770,7 +808,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                   isLastItem: isLastItem(id, state)
                 })
               } />
-            {renderProps.isFocusVisible && 
+            {renderProps.isFocusVisible &&
               <div
                 className={listRowFocusRing({
                   ...renderProps,

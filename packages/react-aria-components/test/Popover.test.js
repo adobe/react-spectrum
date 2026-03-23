@@ -10,10 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, Dialog, DialogTrigger, OverlayArrow, Popover, Pressable} from '../';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {Button} from '../src/Button';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {OverlayArrow} from '../src/OverlayArrow';
+import {Popover} from '../src/Popover';
+import {Pressable} from 'react-aria/private/interactions/Pressable';
 import React, {useRef} from 'react';
-import {UNSAFE_PortalProvider} from '@react-aria/overlays';
+import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import userEvent from '@testing-library/user-event';
 
 let TestPopover = (props) => (
@@ -102,7 +106,7 @@ describe('Popover', () => {
     expect(dialog).toHaveAttribute('data-custom', 'true');
   });
 
-  it('should support being used standalone', async () => {
+  it('should support being used standalone', () => {
     let triggerRef = React.createRef();
     let onOpenChange = jest.fn();
     let {getByRole} = render(<>
@@ -115,12 +119,14 @@ describe('Popover', () => {
     let dialog = getByRole('dialog');
     expect(dialog).toHaveTextContent('A popover');
 
-    await user.click(document.body);
+    // userEvent seems to trigger a double close event
+    fireEvent.mouseDown(document.body, {button: 0});
+    fireEvent.mouseUp(document.body, {button: 0});
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
-  it('isOpen and defaultOpen should override state from context', async () => {
+  it('isOpen and defaultOpen should override state from context', () => {
     let onOpenChange = jest.fn();
     let {getByRole} = render(<>
       <DialogTrigger>
@@ -134,7 +140,9 @@ describe('Popover', () => {
     let dialog = getByRole('dialog');
     expect(dialog).toHaveTextContent('A popover');
 
-    await user.click(document.body);
+    // userEvent seems to trigger a double close event
+    fireEvent.mouseDown(document.body, {button: 0});
+    fireEvent.mouseUp(document.body, {button: 0});
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });

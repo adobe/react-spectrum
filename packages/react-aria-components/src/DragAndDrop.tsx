@@ -9,10 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import type {DropIndicatorProps as AriaDropIndicatorProps, ItemDropTarget, Key} from 'react-aria';
+import type {DropIndicatorProps as AriaDropIndicatorProps} from 'react-aria/useDroppableCollection';
+
 import type {ClassNameOrFunction, RenderProps} from './utils';
 import type {DragAndDropHooks} from './useDragAndDrop';
-import type {DraggableCollectionState, DroppableCollectionState, MultipleSelectionManager} from 'react-stately';
+import type {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
+import type {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
+import type {ItemDropTarget, Key} from '@react-types/shared';
+import type {MultipleSelectionManager} from 'react-stately/private/selection/types';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallback, useContext, useMemo} from 'react';
 
 export interface DragAndDropContextValue {

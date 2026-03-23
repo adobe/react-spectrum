@@ -11,42 +11,42 @@
  */
 
 import {action} from 'storybook/actions';
+import {ActionButton} from '../src/ActionButton';
+
+import {categorizeArgTypes, getActionArgs} from './utils';
+
 import {
-  ActionButton,
   Cell,
-  Collection,
   Column,
   ColumnProps,
-  Content,
   EditableCell,
-  Heading,
-  IllustratedMessage,
-  Link,
-  MenuItem,
-  MenuSection,
-  Picker,
-  PickerItem,
   Row,
-  SortDescriptor,
-  StatusLight,
   TableBody,
   TableHeader,
   TableView,
-  TableViewProps,
-  Text,
-  TextField
-} from '../src';
-import {categorizeArgTypes, getActionArgs} from './utils';
+  TableViewProps
+} from '../src/TableView';
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Content, Heading, Text} from '../src/Content';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
+import {IllustratedMessage} from '../src/IllustratedMessage';
 import {Key} from '@react-types/shared';
+import {Link} from '../src/Link';
+import {MenuItem, MenuSection} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
+import {Picker, PickerItem} from '../src/Picker';
 import React, {ReactElement, useCallback, useEffect, useRef, useState} from 'react';
+import {SortDescriptor} from '@react-types/shared';
+import {StatusLight} from '../src/StatusLight';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
-import {useEffectEvent} from '@react-aria/utils';
+import {TextField} from '../src/TextField';
+import {useAsyncList} from 'react-stately/useAsyncList';
+import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
+import {useListData} from 'react-stately/useListData';
 import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
+import {useTreeData} from 'react-stately/useTreeData';
 
 let onActionFunc = action('onAction');
 let noOnAction = null;
@@ -799,9 +799,9 @@ for (let i = 0; i < 1000; i++) {
   manyRows.push(row);
 }
 
-export const ManyItems: StoryObj<typeof TableView> = {
-  render: (args) => (
-    <TableView aria-label="Many items table" {...args} styles={style({width: 800, height: 400})}>
+function ManyItemsTable(args) {
+  return (
+    <TableView aria-label="Many items table" {...args}>
       <TableHeader columns={manyColumns}>
         {(column) => (
           <Column width={100} minWidth={100} isRowHeader={column.name === 'Column 1'}>{column.name}</Column>
@@ -817,11 +817,50 @@ export const ManyItems: StoryObj<typeof TableView> = {
         )}
       </TableBody>
     </TableView>
-  ),
+  ); 
+}
+
+export const ManyItems: StoryObj<typeof TableView> = {
+  render: (args) => <ManyItemsTable {...args} styles={style({width: 800, height: 400})} />,
   args: {
     ...Example.args
   },
   name: 'many items table',
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
+
+export const ViewportScrolling: StoryObj<typeof TableView> = {
+  render: (args) => (
+    <>
+      <ManyItemsTable {...args} styles={style({width: 800})} />
+      <div style={{height: 900}} />
+    </>
+  ),
+  args: {
+    ...Example.args
+  },
+  name: 'viewport scrolling',
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
+
+export const ScrollableContainer: StoryObj<typeof TableView> = {
+  render: (args) => (
+    <div style={{width: 800, height: 500, overflow: 'auto'}}>
+      <ManyItemsTable {...args} styles={style({width: 'full'})} />
+    </div>
+  ),
+  args: {
+    ...Example.args
+  },
+  name: 'scrollable container',
   parameters: {
     docs: {
       disable: true

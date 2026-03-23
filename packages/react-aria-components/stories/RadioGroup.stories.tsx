@@ -11,8 +11,14 @@
  */
 
 import {action} from 'storybook/actions';
-import {Button, Dialog, DialogTrigger, FieldError, Form, Label, Modal, ModalOverlay, Radio, RadioGroup} from 'react-aria-components';
+import {Button} from '../src/Button';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {FieldError} from '../src/FieldError';
+import {Form} from '../src/Form';
+import {Label} from '../src/Label';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Modal, ModalOverlay} from '../src/Modal';
+import {Radio, RadioGroup} from '../src/RadioGroup';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
 import './styles.css';

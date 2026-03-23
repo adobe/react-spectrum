@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export {useToggleState} from './useToggleState';
-export {useToggleGroupState} from './useToggleGroupState';
+export {useToggleState} from 'react-stately/useToggleState';
 
-export type {ToggleProps} from '@react-types/checkbox';
-export type {ToggleState, ToggleStateOptions} from './useToggleState';
-export type {ToggleGroupProps, ToggleGroupState} from './useToggleGroupState';
+export {useToggleGroupState} from 'react-stately/useToggleGroupState';
+export type {ToggleProps, ToggleState, ToggleStateOptions} from 'react-stately/useToggleState';
+export type {ToggleGroupProps, ToggleGroupState} from 'react-stately/useToggleGroupState';

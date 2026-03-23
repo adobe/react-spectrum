@@ -8,13 +8,13 @@ import {
   Flex,
   Grid,
   View,
+  ToastContainer,
+  ColorScheme,
 } from "@adobe/react-spectrum";
-import { ColorScheme } from "@react-types/provider";
 import { useState } from "react";
 import Moon from "@spectrum-icons/workflow/Moon";
 import Light from "@spectrum-icons/workflow/Light";
-import { ToastContainer } from "@react-spectrum/toast";
-import {enableTableNestedRows} from '@react-stately/flags';
+import {enableTableNestedRows} from 'react-stately/private/flags/flags';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [theme, setTheme] = useState<ColorScheme>("light");

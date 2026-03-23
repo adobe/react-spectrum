@@ -10,18 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Button,
-  ButtonProps,
-  ButtonRenderProps
-} from 'react-aria-components';
+import {Button, ButtonProps, ButtonRenderProps} from 'react-aria-components/Button';
 import {controlSize} from './style-utils' with {type: 'macro'};
 import CrossIcon from '../ui-icons/Cross';
 import {FocusableRef} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {forwardRef} from 'react';
 import {pressScale} from './pressScale';
-import {useFocusableRef} from '@react-spectrum/utils';
+import {useFocusableRef} from './useDOMRef';
 interface ClearButtonStyleProps {
   /**
    * The size of the ClearButton.

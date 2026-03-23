@@ -15,7 +15,7 @@ import {screen, testSSR} from '@react-spectrum/test-utils-internal';
 describe('Select SSR', function () {
   it('should render text of default selected key', async function () {
     await testSSR(__filename, `
-      import {Select, Label, Button, SelectValue, Popover, ListBox, ListBoxItem} from '../';
+      import {Select, Label, Button, SelectValue, Popover, ListBox, ListBoxItem} from '../exports/index.ts';
 
       <React.StrictMode>
         <Select defaultSelectedKey="dog">

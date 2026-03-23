@@ -12,6 +12,7 @@
 
 /// <reference types="css-module-types" />
 
-export {Provider, useProvider, useProviderProps} from './Provider';
-export type {ProviderContext} from '@react-types/provider';
-export type {ProviderProps} from '@react-types/provider';
+export {Provider, useProvider} from '@adobe/react-spectrum/Provider';
+
+export {useProviderProps} from '@adobe/react-spectrum/private/provider/Provider';
+export type {ProviderContext, ProviderProps, ColorScheme, Scale, Theme, Breakpoints, CSSModule} from '@adobe/react-spectrum/Provider';

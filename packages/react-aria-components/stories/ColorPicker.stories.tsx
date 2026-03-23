@@ -10,13 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ColorSpace, ColorSwatchPicker, ColorSwatchPickerItem, Dialog, DialogTrigger, getColorChannels, Input, Label, Popover} from '../src';
+import {Button} from '../src/Button';
+
 import {ColorAreaExampleRender} from './ColorArea.stories';
 import {ColorField} from '../src/ColorField';
 import {ColorPicker} from '../src/ColorPicker';
 import {ColorSliderExampleRender} from './ColorSlider.stories';
+import {ColorSpace} from 'react-stately/Color';
 import {ColorSwatchExampleRender} from './ColorSwatch.stories';
+import {ColorSwatchPicker, ColorSwatchPickerItem} from '../src/ColorSwatchPicker';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {getColorChannels} from 'react-stately/Color';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
 import {Meta, StoryObj} from '@storybook/react';
+import {Popover} from '../src/Popover';
 import React, {useState} from 'react';
 import './styles.css';
 
