@@ -103,7 +103,9 @@ function handleFocusEvent(e: FocusEvent) {
   // Firefox fires two extra focus events when the user first clicks into an iframe:
   // first on the window, then on the document. We ignore these events so they don't
   // cause keyboard focus rings to appear.
-  if (getEventTarget(e) === window || getEventTarget(e) === document || ignoreFocusEvent || !e.isTrusted) {
+  let ownerWindow = getOwnerWindow(getEventTarget(e) as Element);
+  let ownerDocument = getOwnerDocument(getEventTarget(e) as Element);
+  if (getEventTarget(e) === ownerWindow || getEventTarget(e) === ownerDocument || ignoreFocusEvent || !e.isTrusted) {
     return;
   }
 
@@ -134,12 +136,17 @@ function handleWindowBlur() {
  * Setup global event listeners to control when keyboard focus style should be visible.
  */
 function setupGlobalFocusEvents(element?: HTMLElement | null) {
-  if (typeof window === 'undefined' || typeof document === 'undefined' || hasSetupGlobalListeners.get(getOwnerWindow(element))) {
+  // eslint-disable-next-line no-restricted-globals
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
     return;
   }
 
   const windowObject = getOwnerWindow(element);
   const documentObject = getOwnerDocument(element);
+
+  if (hasSetupGlobalListeners.get(windowObject)) {
+    return;
+  }
 
   // Programmatic focus() calls shouldn't affect the current input modality.
   // However, we need to detect other cases when a focus event occurs without
@@ -242,7 +249,7 @@ export function addWindowFocusTracking(element?: HTMLElement | null): () => void
 }
 
 // Server-side rendering does not have the document object defined
- 
+// eslint-disable-next-line no-restricted-globals
 if (typeof document !== 'undefined') {
   addWindowFocusTracking();
 }
@@ -307,12 +314,13 @@ const nonTextInputTypes = new Set([
  * focus visible style can be properly set.
  */
 function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
-  let document = getOwnerDocument(e ? getEventTarget(e) as Element : undefined);
   let eventTarget = e ? getEventTarget(e) as Element : undefined;
-  const IHTMLInputElement = typeof window !== 'undefined' ? getOwnerWindow(eventTarget).HTMLInputElement : HTMLInputElement;
-  const IHTMLTextAreaElement = typeof window !== 'undefined' ? getOwnerWindow(eventTarget).HTMLTextAreaElement : HTMLTextAreaElement;
-  const IHTMLElement = typeof window !== 'undefined' ? getOwnerWindow(eventTarget).HTMLElement : HTMLElement;
-  const IKeyboardEvent = typeof window !== 'undefined' ? getOwnerWindow(eventTarget).KeyboardEvent : KeyboardEvent;
+  let document = getOwnerDocument(eventTarget);
+  let ownerWindow = getOwnerWindow(eventTarget);
+  const IHTMLInputElement = typeof ownerWindow !== 'undefined' ? ownerWindow.HTMLInputElement : HTMLInputElement;
+  const IHTMLTextAreaElement = typeof ownerWindow !== 'undefined' ? ownerWindow.HTMLTextAreaElement : HTMLTextAreaElement;
+  const IHTMLElement = typeof ownerWindow !== 'undefined' ? ownerWindow.HTMLElement : HTMLElement;
+  const IKeyboardEvent = typeof ownerWindow !== 'undefined' ? ownerWindow.KeyboardEvent : KeyboardEvent;
 
   // For keyboard events that occur on a non-input element that will move focus into input element (aka ArrowLeft going from Datepicker button to the main input group)
   // we need to rely on the user passing isTextInput into here. This way we can skip toggling focus visiblity for said input element

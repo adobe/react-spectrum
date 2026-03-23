@@ -29,7 +29,7 @@ const BASE_URL = {
 
 function getBaseUrl(library) {
   let env = process.env.DOCS_ENV;
-  let base = env 
+  let base = env
     ? BASE_URL[env][library]
     : `http://localhost:1234/${library}`;
   let publicUrl = process.env.PUBLIC_URL;
@@ -75,36 +75,36 @@ function getTsFileIndex() {
   if (tsFileIndex) {
     return tsFileIndex;
   }
-  
+
   console.log('Building TypeScript file index...');
   const startTime = Date.now();
-  
+
   // Index files from component roots and packages directory
   const patterns = [
     ...COMPONENT_SRC_ROOTS.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}')),
     path.posix.join(REPO_ROOT, 'packages/**/*.{ts,tsx,d.ts}')
   ];
-  
+
   const files = glob.sync(patterns, {
     absolute: true,
     suppressErrors: true,
     deep: 5,
     ignore: ['**/node_modules/**', '**/*.test.*', '**/*.stories.*', '**/dist/**']
   });
-  
+
   // Build index: for each file, extract exported names for quick lookup
   tsFileIndex = new Map();
   for (const filePath of files) {
     try {
       const content = fs.readFileSync(filePath, 'utf8');
-      
+
       // Extract interface/type/class/function/const names
       const interfaceMatches = content.matchAll(/(?:export\s+)?interface\s+(\w+)/g);
       const typeMatches = content.matchAll(/(?:export\s+)?type\s+(\w+)\s*[=<]/g);
       const classMatches = content.matchAll(/(?:export\s+)?class\s+(\w+)/g);
       const functionMatches = content.matchAll(/(?:export\s+)?function\s+(\w+)/g);
       const constMatches = content.matchAll(/(?:export\s+)?const\s+(\w+)\s*[=:]/g);
-      
+
       for (const match of [...interfaceMatches, ...typeMatches, ...classMatches, ...functionMatches, ...constMatches]) {
         const name = match[1];
         if (!tsFileIndex.has(name)) {
@@ -120,7 +120,7 @@ function getTsFileIndex() {
       // Ignore files that can't be read
     }
   }
-  
+
   console.log(`Built index with ${tsFileIndex.size} symbols in ${Date.now() - startTime}ms`);
   return tsFileIndex;
 }
@@ -139,11 +139,11 @@ function cleanTypeText(t) {
 /**
  * Recursively evaluates a Babel AST node to extract its runtime value.
  * This function statically evaluates TS/JS expressions from the AST.
- * 
+ *
  * Example: Given the AST for `const colors = ['red', ...baseColors]`,
- * this function would return ['red', 'green', 'blue'] if `baseColors` was 
+ * this function would return ['red', 'green', 'blue'] if `baseColors` was
  * defined in scope as ['green', 'blue'].
- * 
+ *
  * @param {object} node - A Babel AST node (StringLiteral, ArrayExpression, etc.)
  * @param {Map} scope - A Map of variable names to their evaluated values
  * @returns {*} The evaluated value (string, number, array, object, Set, etc.) or undefined
@@ -287,19 +287,19 @@ function evaluateStylePropertiesNode(node, scope) {
  * Loads and parses the style macro configuration from styleProperties.ts.
  * This function reads the TypeScript source file, parses it into an AST using Babel,
  * and evaluates all variable declarations to extract style property metadata.
- * 
+ *
  * The styleProperties.ts file contains definitions like:
  *   const properties = {
  *     spacing: { margin: ['0', '4', '8', '12'], padding: [...] },
  *     layout: { display: ['flex', 'grid', 'block'] }
  *   }
- * 
+ *
  * This function evaluates these declarations and returns a structured object with:
  * - properties: categorized style properties and their allowed values
  * - shorthandMapping: mappings from shorthand names to full property names
  * - mdnTypeLinks/mdnPropertyLinks: documentation URLs
  * - various Sets for property categorization (spacing, sizing, etc.)
- * 
+ *
  * @returns {object|null} Parsed style macro data or null if file doesn't exist/parse fails
  */
 function loadStyleMacroData() {
@@ -373,7 +373,7 @@ function loadStyleMacroData() {
 
 /**
  * Extracts property definitions for a specific category from the loaded style macro data.
- * 
+ *
  * Example: For category 'spacing', this returns an object like:
  * {
  *   margin: {
@@ -390,7 +390,7 @@ function loadStyleMacroData() {
  *     description: 'Sets horizontal margins'
  *   }
  * }
- * 
+ *
  * @param {string} category - The property category (e.g., 'spacing', 'layout', 'colors')
  * @returns {object|null} Property definitions or null if category doesn't exist
  */
@@ -420,7 +420,7 @@ function getStyleMacroPropertyDefinitions(category) {
   };
 
   const result = {};
-  
+
   // Process regular properties (e.g., margin, padding, display)
   for (const [name, rawValues] of Object.entries(data.properties[category])) {
     let values = Array.isArray(rawValues) ? [...rawValues] : [];
@@ -468,7 +468,7 @@ function getStyleMacroPropertyDefinitions(category) {
     }
     let values = Array.isArray(shorthandDef.values) ? [...shorthandDef.values] : [];
     const links = {};
-    
+
     // Add MDN links for shorthand values
     for (const value of values) {
       if (value === 'pill' && shorthandName.includes('border')) {
@@ -493,19 +493,19 @@ function getStyleMacroPropertyDefinitions(category) {
 
 /**
  * Generates a markdown table documenting style macro properties and their allowed values.
- * 
+ *
  * Example output for category 'spacing':
  * | Property | Values |
  * |---------|--------|
  * | margin | `0`, `4`, `8`, `12`, `baseSpacing (0, 4, 8, 12, 16, 20, 24, 28, 32)`, `number`, `lengthPercentage` |
  * | marginX | `0`, `4`, `8`, `baseSpacing (...)`, `number` |
  * | padding | `0`, `4`, `8`, `12`, `baseSpacing (...)` |
- * 
+ *
  * The table includes:
  * - Explicit allowed values (e.g., '0', '4', '8')
  * - Type categories with their full value sets (e.g., 'baseSpacing (0, 4, 8, ...)')
  * - Generic types (e.g., 'number', 'lengthPercentage')
- * 
+ *
  * @param {string} category - Property category to generate table for (e.g., 'spacing', 'layout', 'colors')
  * @param {object} options - Configuration options (e.g., {sort: true})
  * @param {boolean} options.sort - Whether to sort properties alphabetically (default: true)
@@ -529,7 +529,7 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
   }
 
   const data = loadStyleMacroData();
-  
+
   // Build a row for each property, combining explicit values and type categories
   const rows = propertyNames.map((propertyName) => {
     const def = definitions[propertyName] || {};
@@ -609,17 +609,17 @@ function getTypeText(decl, fallbackContext) {
   if (typeNode) {
     return cleanTypeText(typeNode.getText());
   }
-  
+
   // Fall back to resolved type with context
   const type = decl?.getType?.();
   if (type && fallbackContext) {
     return cleanTypeText(type.getText(fallbackContext));
   }
-  
+
   if (type) {
     return cleanTypeText(type.getText());
   }
-  
+
   return 'unknown';
 }
 
@@ -631,15 +631,15 @@ function transformRelativeUrl(href) {
   if (!href || href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:') || href.startsWith('#')) {
     return href;
   }
-  
+
   // Split href into path and query/hash parts
   const match = href.match(/^([^?#]*)(\?[^#]*)?(#.*)?$/);
   if (!match) {
     return href;
   }
-  
+
   let [, pathPart, queryPart = '', hashPart = ''] = match;
-  
+
   if (pathPart.endsWith('.html')) {
     // Replace .html with .md
     pathPart = pathPart.slice(0, -5) + '.md';
@@ -647,7 +647,7 @@ function transformRelativeUrl(href) {
     // Add .md to paths without an extension
     pathPart = pathPart + '.md';
   }
-  
+
   return pathPart + queryPart + hashPart;
 }
 
@@ -719,11 +719,11 @@ function parseExpression(expr, file) {
       sourceType: 'module',
       plugins: ['jsx', 'typescript']
     });
-    
+
     if (ast.program.body.length > 0 && ast.program.body[0].type === 'ExpressionStatement') {
       return evaluateNode(ast.program.body[0].expression, file);
     }
-    
+
     return null;
   } catch {
     return null;
@@ -738,19 +738,19 @@ function evaluateNode(node, file) {
   switch (node.type) {
     case 'StringLiteral':
       return node.value;
-    
+
     case 'NumericLiteral':
       return node.value;
-    
+
     case 'BooleanLiteral':
       return node.value;
-    
+
     case 'NullLiteral':
       return null;
-    
+
     case 'ArrayExpression':
       return node.elements.map(el => evaluateNode(el, file)).filter(v => v !== null);
-    
+
     case 'ObjectExpression': {
       const obj = {};
       for (const prop of node.properties) {
@@ -761,27 +761,27 @@ function evaluateNode(node, file) {
       }
       return obj;
     }
-    
+
     case 'Identifier':
       // For identifiers, return the name as a string
       return node.name;
-    
+
     case 'JSXElement':
     case 'JSXFragment': {
       // For JSX elements, extract text content
       return extractJSXText(node, file);
     }
-    
+
     case 'JSXText':
       return node.value;
-    
+
     case 'MemberExpression': {
       // Handle member expressions like docs.exports.GregorianCalendar.description
       const object = evaluateNode(node.object, file);
       const property = node.computed ? evaluateNode(node.property, file) : (node.property.name || node.property.value);
       return `${object}.${property}`;
     }
-    
+
     default:
       return null;
   }
@@ -794,12 +794,12 @@ function extractTypeLinkName(node) {
   if (!typeAttr || typeAttr.value?.type !== 'JSXExpressionContainer') {
     return '';
   }
-  
+
   const expr = typeAttr.value.expression;
   if (expr.type !== 'MemberExpression') {
     return '';
   }
-  
+
   // Extract the last property name (e.g., GregorianCalendar from docs.exports.GregorianCalendar)
   return expr.property?.name || '';
 }
@@ -808,27 +808,27 @@ function extractDescriptionFromExpression(node, file) {
   if (node.type !== 'MemberExpression') {
     return null;
   }
-  
+
   // Check if the outermost property is "description"
   if (node.property?.name !== 'description') {
     return null;
   }
-  
+
   // Now check if the object is a member expression with pattern: *.exports.ComponentName
   const obj = node.object;
   if (obj?.type !== 'MemberExpression') {
     return null;
   }
-  
+
   // Get the component name (the rightmost property before .description)
   const componentName = obj.property?.name;
-  
+
   // Check if the parent is .exports
   if (obj.object?.type === 'MemberExpression' && obj.object.property?.name === 'exports' && componentName && file) {
     const desc = getComponentDescription(componentName, file);
     return desc;
   }
-  
+
   return null;
 }
 
@@ -840,12 +840,12 @@ function extractJSXText(node, file) {
   // Handle JSXElement
   if (node.type === 'JSXElement') {
     const elementName = node.openingElement?.name?.name;
-    
+
     // For TypeLink, try to extract the type name
     if (elementName === 'TypeLink') {
       return extractTypeLinkName(node);
     }
-    
+
     // For other elements like <p>, extract children text
     if (node.children) {
       return node.children
@@ -854,26 +854,26 @@ function extractJSXText(node, file) {
         .join('');
     }
   }
-  
+
   // Handle JSXText
   if (node.type === 'JSXText') {
     return node.value.trim();
   }
-  
+
   // Handle JSXExpressionContainer
   if (node.type === 'JSXExpressionContainer') {
     const desc = extractDescriptionFromExpression(node.expression, file);
     if (desc) {
       return desc;
     }
-    
+
     if (node.expression.type === 'MemberExpression') {
       return '[description]';
     }
-    
+
     return evaluateNode(node.expression, file) || '';
   }
-  
+
   // Handle JSXFragment
   if (node.type === 'JSXFragment') {
     if (node.children) {
@@ -883,7 +883,7 @@ function extractJSXText(node, file) {
         .join('');
     }
   }
-  
+
   return '';
 }
 
@@ -997,7 +997,7 @@ function resolveComponentPath(componentName, file, docsSource) {
   // Use pre-built index for fast lookup
   const index = getTsFileIndex();
   const candidates = index.get(componentName);
-  
+
   if (candidates && candidates.length > 0) {
     // Prefer files in the priority roots
     for (const root of roots) {
@@ -1007,21 +1007,21 @@ function resolveComponentPath(componentName, file, docsSource) {
         return match;
       }
     }
-    
+
     // Prefer .d.ts files over implementation files
     const dtsMatch = candidates.find(p => p.endsWith('.d.ts'));
     if (dtsMatch) {
       interfacePathCache.set(cacheKey, dtsMatch);
       return dtsMatch;
     }
-    
+
     // Prefer @react-types package for type lookups
     const typesMatch = candidates.find(p => p.includes('@react-types'));
     if (typesMatch) {
       interfacePathCache.set(cacheKey, typesMatch);
       return typesMatch;
     }
-    
+
     // Fall back to first match
     interfacePathCache.set(cacheKey, candidates[0]);
     return candidates[0];
@@ -1069,27 +1069,27 @@ function getComponentDescription(componentName, file, docsSource) {
         current = current.getParent?.();
         continue;
       }
-      
+
       const desc = docs[0].getDescription().trim();
       if (!desc) {
         isDirectNode = false;
         current = current.getParent?.();
         continue;
       }
-      
+
       // If this is the direct node (not a parent), return its description immediately
       if (isDirectNode) {
         descriptionCache.set(cacheKey, desc);
         return desc;
       }
-      
+
       // Otherwise, check if the description mentions the component name
       const regex = new RegExp(`\\b${componentName}\\b`, 'i');
       if (regex.test(desc)) {
         descriptionCache.set(cacheKey, desc);
         return desc;
       }
-      
+
       firstNodeDesc = firstNodeDesc || desc;
       isDirectNode = false;
       current = current.getParent?.();
@@ -1295,7 +1295,7 @@ function generatePropTable(componentName, file) {
   }
 
   const interfaceName = `${componentName}Props`;
-  
+
   // Try to resolve via component path first, then interface path
   let componentPath = resolveComponentPath(componentName, file);
   if (!componentPath) {
@@ -1397,7 +1397,7 @@ function generateInterfaceTable(interfaceName, file) {
 
     const name = sym.getName();
     const decl = sym.getDeclarations()?.[0];
-    
+
     // Skip private and protected members
     if (decl) {
       const modifiers = decl.getModifiers?.() || [];
@@ -1410,7 +1410,7 @@ function generateInterfaceTable(interfaceName, file) {
 
     const type = sym.getTypeAtLocation(ifaceDecl);
     const callSignatures = type.getCallSignatures();
-    
+
     let description = '';
     let defVal = '';
     let optional = false;
@@ -1430,7 +1430,7 @@ function generateInterfaceTable(interfaceName, file) {
       const sig = callSignatures[0];
       const params = sig.getParameters();
       const returnType = cleanTypeText(sig.getReturnType().getText(ifaceDecl));
-      
+
       const paramStrs = params.map(p => {
         const pDecl = p.getDeclarations()?.[0];
         const pName = p.getName();
@@ -1459,7 +1459,7 @@ function generateInterfaceTable(interfaceName, file) {
 
     // Check if we need a Default column
     const hasDefaults = properties.some(p => !!p.defVal);
-    
+
     // Sort properties so required ones are shown first
     const sortedProps = properties.sort((a, b) => {
       if (!a.optional && b.optional) {
@@ -1532,6 +1532,7 @@ function remarkRemoveImportsExports() {
 
             const docsSource = statement.source.value.slice(5);
             for (const specifier of statement.specifiers) {
+              // eslint-disable-next-line max-depth
               if (specifier.local?.name) {
                 docsImports[specifier.local.name] = docsSource;
               }
@@ -1634,8 +1635,8 @@ function remarkDocsComponentsToMarkdown() {
       // Render an unordered list of icon names.
       if (name === 'IconsPageSearch') {
         const iconList = getIconNames();
-        const listMarkdown = iconList.length 
-          ? iconList.map(iconName => `- ${iconName}`).join('\n') 
+        const listMarkdown = iconList.length
+          ? iconList.map(iconName => `- ${iconName}`).join('\n')
           : '> Icon list could not be generated.';
         const iconListNode = unified().use(remarkParse).parse(listMarkdown);
         parent.children.splice(index, 1, ...iconListNode.children);
@@ -1645,8 +1646,8 @@ function remarkDocsComponentsToMarkdown() {
       // Render an unordered list of illustration names.
       if (name === 'IllustrationCards') {
         const illustrationList = getIllustrationNames();
-        const listMarkdown = illustrationList.length 
-          ? illustrationList.map(illustrationName => `- ${illustrationName}`).join('\n') 
+        const listMarkdown = illustrationList.length
+          ? illustrationList.map(illustrationName => `- ${illustrationName}`).join('\n')
           : '> Illustration list could not be generated.';
         const illustrationCardsNode = unified().use(remarkParse).parse(listMarkdown);
         parent.children.splice(index, 1, ...illustrationCardsNode.children);
@@ -1657,7 +1658,7 @@ function remarkDocsComponentsToMarkdown() {
       if (name === 'IconColors') {
         const colorsAttr = node.attributes?.find(a => a.name === 'colors');
         let colorList = [];
-        
+
         if (colorsAttr && colorsAttr.value?.type === 'mdxJsxAttributeValueExpression') {
           const expr = colorsAttr.value.value;
           const parsed = parseExpression(expr, file);
@@ -1683,7 +1684,7 @@ function remarkDocsComponentsToMarkdown() {
       if (name === 'IconSizes') {
         const sizesAttr = node.attributes?.find(a => a.name === 'sizes');
         let sizeList = [];
-        
+
         if (sizesAttr && sizesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
           const expr = sizesAttr.value.value;
           const parsed = parseExpression(expr, file);
@@ -1835,7 +1836,7 @@ function remarkDocsComponentsToMarkdown() {
         // GroupedPropTable uses spread attributes like {...docs.exports.TypeName}
         const spreadAttr = node.attributes?.find(a => a.type === 'mdxJsxExpressionAttribute');
         let typeName = null;
-        
+
         if (spreadAttr && spreadAttr.value) {
           const m = spreadAttr.value.match(/\.\.\.docs\.exports\.([\w$]+)/);
           if (m) {
@@ -1934,13 +1935,13 @@ function remarkDocsComponentsToMarkdown() {
           const parseCodeMeta = (meta) => {
             if (!meta) {return {};}
             const result = {};
-            
+
             // Extract type
             const typeMatch = meta.match(/type=["']([^"']+)["']/);
             if (typeMatch) {
               result.type = typeMatch[1];
             }
-            
+
             // Extract files={[...]}
             const filesMatch = meta.match(/files=\{(\[[^\]]+\])\}/);
             if (filesMatch) {
@@ -1953,7 +1954,7 @@ function remarkDocsComponentsToMarkdown() {
                 }
               }
             }
-            
+
             return result;
           };
 
@@ -2225,7 +2226,7 @@ function remarkDocsComponentsToMarkdown() {
       if (name === 'VersionBadge') {
         const versionAttr = node.attributes?.find(a => a.name === 'version');
         let version = '';
-        
+
         if (versionAttr) {
           if (versionAttr.value?.type === 'mdxJsxAttributeValueExpression') {
             version = versionAttr.value.value.replace(/['"`]/g, '').trim();
@@ -2248,7 +2249,7 @@ function remarkDocsComponentsToMarkdown() {
       if (name === 'Link' || name === 'LinkButton') {
         const hrefAttr = node.attributes?.find(a => a.name === 'href');
         let href = '';
-        
+
         if (hrefAttr) {
           if (hrefAttr.value?.type === 'mdxJsxAttributeValueExpression') {
             href = hrefAttr.value.value.replace(/['"`]/g, '').trim();
@@ -2270,7 +2271,7 @@ function remarkDocsComponentsToMarkdown() {
         // Check for aria-label attribute first
         const ariaLabelAttr = node.attributes?.find(a => a.name === 'aria-label');
         let ariaLabel = '';
-        
+
         if (ariaLabelAttr) {
           if (ariaLabelAttr.value?.type === 'mdxJsxAttributeValueExpression') {
             ariaLabel = ariaLabelAttr.value.value.replace(/['"`]/g, '').trim();
@@ -2307,7 +2308,7 @@ function remarkDocsComponentsToMarkdown() {
             url: href,
             children: [{type: 'text', value: linkText}]
           };
-          
+
           // If this is a flow element (block-level), wrap in paragraph to preserve spacing
           if (node.type === 'mdxJsxFlowElement') {
             parent.children[index] = {
@@ -2365,7 +2366,7 @@ function remarkDocsComponentsToMarkdown() {
       if (name === 'S2StyleProperties') {
         const propertiesAttr = node.attributes?.find(a => a.name === 'properties');
         let propertyList = [];
-        
+
         if (propertiesAttr && propertiesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
           const expr = propertiesAttr.value.value;
           const parsed = parseExpression(expr, file);
@@ -2573,7 +2574,7 @@ function remarkDocsComponentsToMarkdown() {
           // Build markdown table
           const headerRow = headers.map(h => extractCellText(h));
           const separator = headers.map(() => '------');
-          
+
           const bodyRows = rows.map(row => {
             if (!Array.isArray(row)) {return [];}
             return row.map((cell, colIdx) => {
@@ -2606,7 +2607,7 @@ function remarkDocsComponentsToMarkdown() {
         parent.children.splice(index, 1);
         return index;
       }
-      
+
       // Render a markdown table.
       if (name === 'StateTable') {
         // Extract interface name from properties attribute
@@ -2669,7 +2670,7 @@ function remarkDocsComponentsToMarkdown() {
         parent.children.splice(index, 1);
         return index;
       }
-      
+
       if (name === 'ClassAPI') {
         // Extract class name from class attribute
         const classAttr = node.attributes?.find(a => a.name === 'class');
@@ -2699,13 +2700,13 @@ function remarkDocsComponentsToMarkdown() {
         parent.children.splice(index, 1);
         return index;
       }
-      
+
       if (name === 'InterfaceType') {
         // InterfaceType uses spread attributes like {...docs.exports.TypeName}
         // We need to look for spread attributes
         const spreadAttr = node.attributes?.find(a => a.type === 'mdxJsxExpressionAttribute');
         let typeName = null;
-        
+
         if (spreadAttr && spreadAttr.value) {
           const m = spreadAttr.value.match(/\.\.\.docs\.exports\.([\w$]+)/);
           if (m) {
@@ -2812,7 +2813,7 @@ function generateClassAPITable(className, file) {
 
   // Use unified path resolver which uses the pre-built index
   let classPath = resolveComponentPath(className, file);
-  
+
   if (!classPath) {
     classTableCache.set(cacheKey, null);
     return null;
@@ -2837,14 +2838,14 @@ function generateClassAPITable(className, file) {
   if (constructors.length > 0) {
     const ctor = constructors[0];
     const params = ctor.getParameters();
-    
+
     if (params.length > 0) {
       sections.push('### Constructor\n');
       const rows = params.map(param => {
         const name = param.getName();
         const type = getTypeText(param, param);
         let description = '';
-        
+
         const ctorDocs = ctor.getJsDocs();
         if (ctorDocs.length > 0) {
           const paramTag = ctorDocs[0].getTags().find(t => t.getTagName() === 'param' && t.getName?.() === name);
@@ -2852,7 +2853,7 @@ function generateClassAPITable(className, file) {
             description = paramTag.getCommentText() || '';
           }
         }
-        
+
         return {name, type, description};
       });
 
@@ -2873,12 +2874,12 @@ function generateClassAPITable(className, file) {
 
   if (methods.length > 0) {
     sections.push('### Methods\n');
-    
+
     for (const method of methods) {
       const methodName = method.getName();
       const params = method.getParameters();
       const returnType = cleanTypeText(method.getReturnType().getText(method));
-      
+
       // Build method signature
       const paramStrs = params.map(p => {
         const pName = p.getName();
@@ -2886,10 +2887,10 @@ function generateClassAPITable(className, file) {
         const optional = p.hasQuestionToken() ? '?' : '';
         return `${pName}${optional}: ${pType}`;
       });
-      
+
       const signature = `${methodName}(${paramStrs.join(', ')}): ${returnType}`;
       sections.push(`#### \`${signature}\`\n`);
-      
+
       // Get method description
       const methodDocs = method.getJsDocs();
       if (methodDocs.length > 0) {
@@ -2897,7 +2898,7 @@ function generateClassAPITable(className, file) {
         if (desc) {
           sections.push(`${desc}\n`);
         }
-        
+
         // Document parameters
         const paramTags = methodDocs[0].getTags().filter(t => t.getTagName() === 'param');
         if (paramTags.length > 0) {
@@ -2911,11 +2912,12 @@ function generateClassAPITable(className, file) {
           });
           sections.push('');
         }
-        
+
         // Document return value
         const returnTag = methodDocs[0].getTags().find(t => t.getTagName() === 'returns' || t.getTagName() === 'return');
         if (returnTag) {
           const returnDesc = returnTag.getCommentText() || '';
+          // eslint-disable-next-line max-depth
           if (returnDesc) {
             sections.push(`**Returns:** ${returnDesc}\n`);
           }
@@ -2935,17 +2937,17 @@ function generateClassAPITable(className, file) {
     sections.push('### Properties\n');
     sections.push('| Property | Type | Description |');
     sections.push('|----------|------|-------------|');
-    
+
     properties.forEach(prop => {
       const propName = prop.getName();
       const propType = getTypeText(prop, prop);
       let description = '';
-      
+
       const propDocs = prop.getJsDocs();
       if (propDocs.length > 0) {
         description = propDocs[0].getDescription().replace(/\n+/g, ' ').trim();
       }
-      
+
       sections.push(`| \`${propName}\` | \`${propType}\` | ${description || '—'} |`);
     });
   }
@@ -2961,7 +2963,7 @@ function generateClassAPITable(className, file) {
 function generateStateTable(renderPropsName, {showOptional = false, hideSelector = false} = {}, file) {
   // Attempt to resolve source file by stripping trailing "RenderProps" to get component name.
   let componentName = renderPropsName.replace(/RenderProps$/, '');
-  
+
   // Try component path first, then render props interface path
   let componentPath = resolveComponentPath(componentName, file);
   if (!componentPath) {
@@ -3162,7 +3164,7 @@ function generateLibraryLlmsTxt(lib, files) {
     'react-aria': 'React Aria Components Documentation',
     'internationalized': 'Internationalized Documentation'
   };
-  
+
   const summaryMap = {
     's2': 'Plain-text markdown documentation for React Spectrum S2 components.',
     'react-aria': 'Plain-text markdown documentation for React Aria components.',
@@ -3262,7 +3264,7 @@ async function main() {
     const relativeOutPath = path.relative(DIST_ROOT, outPath);
     let libKey;
     let filePathForIndex;
-    
+
     if (relativePathParts.length === 1) {
       // Root-level file like index.mdx
       libKey = 'root';
@@ -3272,7 +3274,7 @@ async function main() {
       // For nested files like internationalized/date/index.md, use the .md path
       filePathForIndex = relativeOutPath.replace(new RegExp(`^${libKey}[\\\\/]`), '');
     }
-    
+
     if (docsByLibrary[libKey]) {
       docsByLibrary[libKey].push({
         path: filePathForIndex,
@@ -3290,4 +3292,4 @@ async function main() {
 main().catch((err) => {
   console.error(err);
   process.exit(1);
-}); 
+});
