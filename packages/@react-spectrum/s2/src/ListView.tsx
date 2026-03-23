@@ -781,11 +781,11 @@ let dragButton = style<{isFocusVisible?: boolean}>({
   }
 });
 
-let dragPreviewWrapper = style({
+export let dragPreviewWrapper = style({
   position: 'relative'
 });
 
-let dragPreviewCardBack = style({
+export let dragPreviewCardBack = style({
   position: 'absolute',
   zIndex: -1,
   top: 4,
@@ -799,7 +799,7 @@ let dragPreviewCardBack = style({
   backgroundColor: 'gray-25'
 });
 
-let dragPreviewCard = style<{scale?: 'medium' | 'large'}>({
+export let dragPreviewCard = style<{scale?: 'medium' | 'large'}>({
   boxSizing: 'border-box',
   paddingX: 0,
   paddingY: 8,
@@ -827,7 +827,7 @@ let dragPreviewCard = style<{scale?: 'medium' | 'large'}>({
   borderColor: 'blue-900'
 });
 
-let dragPreviewBadge = style({
+export let dragPreviewBadge = style({
   gridArea: 'badge',
   alignSelf: 'center',
   paddingX: 8,
@@ -983,11 +983,14 @@ export interface ListViewDragPreviewProps {
   items: DragItem[],
   /** The overflow mode to be applied on the drag preview. */
   overflowMode: ListViewStylesProps['overflowMode'],
-  /** The contents of the drag preview. Supports the "label", "description", and "icon" slots. */
-  children: ReactNode
+  /**
+   * The contents of the drag preview. Supports the "label", "description", and "icon" slots.
+   * If no children are provided, defaults to the first drag item's plain text content.
+   */
+  children?: ReactNode
 }
 
-export function ListViewDragPreview(props) {
+export function ListViewDragPreview(props: ListViewDragPreviewProps) {
   let {items, overflowMode} = props;
   let isDraggingMultiple = items.length > 1;
   let itemLabel = items[0]?.['text/plain'] ?? '';

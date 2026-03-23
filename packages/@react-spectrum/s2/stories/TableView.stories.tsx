@@ -22,12 +22,15 @@ import {
   TableBody,
   TableHeader,
   TableView,
+  TableViewDragPreview,
   TableViewProps
 } from '../src/TableView';
 import {Collection} from 'react-aria/private/collections/CollectionBuilder';
 import {Content, Heading, Text} from '../src/Content';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
+import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
+import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {IllustratedMessage} from '../src/IllustratedMessage';
 import {Key} from '@react-types/shared';
@@ -1887,6 +1890,17 @@ export const TableWithNestedRowsAndInlineEditing: StoryObj<typeof TableView> = {
   render: (args) => <NestedInlineEditExample {...args} />
 };
 
+function CustomDragPreview(props) {
+  let {items, parentList} = props;
+  let id = items[0].id;
+  let item = parentList.getItem(id);
+  return (
+    <TableViewDragPreview {...props}>
+      <Text>{`${item.name} (${item.type})`}</Text>
+    </TableViewDragPreview>
+  );
+}
+
 let folderList1 = [
   {id: '1', type: 'file', name: 'Adobe Photoshop'},
   {id: '2', type: 'file', name: 'Adobe XD'},
@@ -1920,6 +1934,7 @@ function ReorderableTableExample(props) {
     getItems: (keys) => [...keys].map(key => {
       let item = list.getItem(key)!;
       return {
+        id: item.id,
         [`${item.type}`]: JSON.stringify(item),
         'text/plain': item.name
       };
@@ -1955,7 +1970,8 @@ function ReorderableTableExample(props) {
         }
       }
     },
-    acceptedDragTypes
+    acceptedDragTypes,
+    renderDragPreview: (items) => <CustomDragPreview parentList={list} items={items} overflowMode={props.overflowMode} />
   });
 
   return (
@@ -2016,6 +2032,7 @@ function BetweenTables(props) {
     getItems: (keys) => [...keys].map(key => {
       let item = list1.getItem(key)!;
       return {
+        id: item.id,
         [`${item.type}`]: JSON.stringify(item),
         'text/plain': item.name
       };
@@ -2070,7 +2087,8 @@ function BetweenTables(props) {
       }
     },
     getAllowedDropOperations: () => ['move', 'copy'],
-    shouldAcceptItemDrop: (target) => !!list1.getItem(target.key)?.childNodes
+    shouldAcceptItemDrop: (target) => !!list1.getItem(target.key)?.childNodes,
+    renderDragPreview: (items) => <CustomDragPreview parentList={list1} items={items} overflowMode={props.overflowMode} />
   });
 
   // table 2 should allow reordering, on folder drops, and on root drops
@@ -2079,9 +2097,10 @@ function BetweenTables(props) {
       let item = list2.getItem(key)!;
       let dragItem = {};
       let itemString = JSON.stringify(item);
+      dragItem['id'] = item.id;
       dragItem[`${item.type}`] = itemString;
       if (item.type !== 'unique_type') {
-        dragItem['text/plain'] = itemString;
+        dragItem['text/plain'] = item.name;
       }
 
       return dragItem;
@@ -2167,7 +2186,8 @@ function BetweenTables(props) {
       }
     },
     getAllowedDropOperations: () => ['move', 'copy'],
-    shouldAcceptItemDrop: (target) => !!list2.getItem(target.key)?.childNodes
+    shouldAcceptItemDrop: (target) => !!list2.getItem(target.key)?.childNodes,
+    renderDragPreview: (items) => <CustomDragPreview parentList={list2} items={items} overflowMode={props.overflowMode} />
   });
 
 

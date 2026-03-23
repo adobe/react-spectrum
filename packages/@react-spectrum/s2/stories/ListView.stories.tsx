@@ -801,7 +801,7 @@ function BetweenLists(props) {
     renderDragPreview: (items) => <CustomDragPreview parentList={list1} items={items} overflowMode={props.overflowMode} />
   });
 
-// List 2 should allow reordering, on folder drops, and on root drops
+  // List 2 should allow reordering, on folder drops, and on root drops
   let {dragAndDropHooks: dragAndDropHooksList2} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = list2.getItem(key)!;

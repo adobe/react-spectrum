@@ -52,14 +52,15 @@ import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} fr
 import {css} from '../style/style-macro' with {type: 'macro'};
 import {CustomDialog} from './CustomDialog';
 import {DialogContainer} from './DialogContainer';
-import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, ItemDropTarget, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue, DragItem, forwardRefType, GlobalDOMAttributes, ItemDropTarget, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
 import DragHandle from '../ui-icons/DragHandle';
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {Form} from 'react-aria-components/Form';
 import {getActiveElement, isFocusWithin, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
-import {InsertionIndicator, ListViewDragPreview} from './ListView';
+import {dragPreviewBadge, dragPreviewCardBack, dragPreviewWrapper, InsertionIndicator, label} from './ListView';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
@@ -73,6 +74,7 @@ import {CheckboxContext as RACCheckboxContext} from 'react-aria-components/Check
 import {Popover as RACPopover} from 'react-aria-components/Popover';
 import React, {createContext, CSSProperties, FormEvent, FormHTMLAttributes, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Rect} from 'react-stately/private/virtualizer/Rect';
+import {Text, TextContext} from './Content';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {Button as SpectrumButton} from './Button';
@@ -87,7 +89,7 @@ import {useObjectRef} from 'react-aria/useObjectRef';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
-import {Virtualizer} from 'react-aria-components/Virtualizer';
+import {LayoutInfo, Virtualizer} from 'react-aria-components/Virtualizer';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
 interface S2TableProps {
@@ -208,6 +210,74 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
   }
 });
 
+let dragPreviewCard = style<{scale?: 'medium' | 'large'}>({
+  boxSizing: 'border-box',
+  paddingX: 0,
+  paddingY: 8,
+  backgroundColor: 'gray-25',
+  color: baseColor('neutral'),
+  position: 'relative',
+  display: 'grid',
+  gridTemplateAreas: [
+    '. label  badge .'
+  ],
+  gridTemplateColumns: [edgeToText(40), 'minmax(0, 1fr)', 'auto', edgeToText(40)],
+  gridTemplateRows: 'auto',
+  alignItems: 'baseline',
+  minHeight: {
+    default: 40,
+    scale: {
+      large: 50
+    }
+  },
+  width: 200,
+  borderRadius: 'default',
+  borderWidth: 1,
+  borderStyle: 'solid',
+  borderColor: 'blue-900'
+});
+
+export interface TableDragPreviewProps {
+  /** The currently dragged items, sourced from renderDragPreview. */
+  items: DragItem[],
+  /** The overflow mode to be applied on the drag preview. */
+  overflowMode: S2TableProps['overflowMode'],
+  /**
+   * The contents of the drag preview. Supports the default text slot.
+   * If no children are provided, defaults to the first drag item's plain text content.
+   */
+  children?: ReactNode
+}
+
+export function TableViewDragPreview(props: TableDragPreviewProps) {
+  let {items, overflowMode} = props;
+  let isDraggingMultiple = items.length > 1;
+  let itemLabel = items[0]?.['text/plain'] ?? '';
+  let scale = useScale();
+
+  return (
+    <div
+      className={dragPreviewWrapper}>
+      {isDraggingMultiple && <div className={dragPreviewCardBack} />}
+      <div className={dragPreviewCard({scale})}>
+        <Provider
+          values={[
+            [TextContext, {
+              slots: {
+                [DEFAULT_SLOT]: {styles: label({overflowMode})}
+              }
+            }]
+          ]}>
+          {props.children ?? <Text>{itemLabel}</Text>}
+          {isDraggingMultiple && (
+            <div className={dragPreviewBadge}>{items.length}</div>
+          )}
+        </Provider>
+      </div>
+    </div>
+  );
+}
+
 // component-height-100
 const DEFAULT_HEADER_HEIGHT = {
   medium: 32,
@@ -302,6 +372,12 @@ export class S2TableLayout<T> extends TableLayout<T> {
     layoutNode.layoutInfo.allowOverflow = true;
     return layoutNode;
   }
+
+  getDropTargetLayoutInfo(target: ItemDropTarget): LayoutInfo {
+    let layoutInfo = super.getDropTargetLayoutInfo(target);
+    layoutInfo.zIndex = 1;
+    return layoutInfo;
+  }
 }
 
 export const TableContext = createContext<ContextValue<Partial<TableViewProps>, DOMRefValue<HTMLDivElement>>>(null);
@@ -330,7 +406,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
   } = props;
 
   if (dragAndDropHooks && dragAndDropHooks.renderDragPreview == null) {
-    dragAndDropHooks.renderDragPreview = (items) => <ListViewDragPreview items={items} overflowMode={overflowMode} />;
+    dragAndDropHooks.renderDragPreview = (items) => <TableViewDragPreview items={items} overflowMode={overflowMode} />;
   }
 
   if (dragAndDropHooks) {
