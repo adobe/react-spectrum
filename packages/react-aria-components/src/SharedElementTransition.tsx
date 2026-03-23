@@ -13,8 +13,8 @@
 import {dom, RenderProps, useRenderProps} from './utils';
 import {flushSync} from 'react-dom';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, RefObject, useContext, useRef, useState} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
-import {useObjectRef} from 'react-aria';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useObjectRef} from 'react-aria/useObjectRef';
 
 interface Snapshot {
   rect: DOMRect,

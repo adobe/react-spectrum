@@ -1,0 +1,281 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {action} from 'storybook/actions';
+import {Button} from '../../src/button/Button';
+import {Content} from '../../src/view/Content';
+import {ContextualHelp} from '../../src/contextualhelp/ContextualHelp';
+import {Flex} from '../../src/layout/Flex';
+import {Heading} from '../../src/text/Heading';
+import {Meta, StoryFn} from '@storybook/react';
+import {Provider} from '../../src/provider/Provider';
+import {Radio} from '../../src/radio/Radio';
+import {RadioGroup} from '../../src/radio/RadioGroup';
+import React, {useState} from 'react';
+
+export default {
+  title: 'RadioGroup',
+  providerSwitcher: {status: 'positive'},
+  args: {
+    label: 'Favorite pet',
+    isEmphasized: false,
+    isDisabled: false,
+    isReadOnly: false,
+    isRequired: false,
+    necessityIndicator: 'icon',
+    labelPosition: 'top',
+    labelAlign: 'start',
+    isInvalid: false
+  },
+  argTypes: {
+    labelPosition: {
+      control: 'radio',
+      options: ['top', 'side']
+    },
+    necessityIndicator: {
+      control: 'radio',
+      options: ['icon', 'label']
+    },
+    labelAlign: {
+      control: 'radio',
+      options: ['start', 'end']
+    },
+    orientation: {
+      control: 'radio',
+      options: ['horizontal', 'vertical']
+    }
+  }
+} as Meta<typeof RadioGroup>;
+
+export type RadioGroupStory = StoryFn<typeof RadioGroup>;
+
+export const Default: RadioGroupStory = (args) => render(args);
+
+Default.story = {
+  name: 'default'
+};
+
+export const DefaultValueDragons: RadioGroupStory = (args) => render({...args, defaultValue: 'dragons'});
+
+DefaultValueDragons.story = {
+  name: 'defaultValue: dragons'
+};
+
+export const ControlledDragons: RadioGroupStory = (args) => render({...args, value: 'dragons'});
+
+ControlledDragons.story = {
+  name: 'controlled: dragons'
+};
+
+export const IsDisabledOnOneRadio: RadioGroupStory = (args) => render(args, [{}, {isDisabled: true}, {}]);
+
+IsDisabledOnOneRadio.story = {
+  name: 'isDisabled on one radio'
+};
+
+export const WithDescription: RadioGroupStory = (args) => render({...args, description: 'Please select a pet.'});
+
+WithDescription.story = {
+  name: 'with description'
+};
+
+export const WithErrorMessage: RadioGroupStory = (args) =>
+  render({...args, errorMessage: 'Please select a pet.', isInvalid: true});
+
+WithErrorMessage.story = {
+  name: 'with error message'
+};
+
+export const WithErrorMessageAndErrorIcon: RadioGroupStory = (args) =>
+  render({
+    ...args,
+    errorMessage: 'Please select a pet.',
+    isInvalid: true,
+    showErrorIcon: true
+  });
+
+WithErrorMessageAndErrorIcon.story = {
+  name: 'with error message and error icon'
+};
+
+export const WithDescriptionErrorMessageAndValidationFixedWidth: RadioGroupStory = (args) =>
+  renderWithDescriptionErrorMessageAndValidation(args);
+
+WithDescriptionErrorMessageAndValidationFixedWidth.story = {
+  name: 'with description, error message and validation, fixed width'
+};
+
+export const _ContextualHelp: RadioGroupStory = (args) =>
+  render({
+    ...args,
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
+      </ContextualHelp>
+    )
+  });
+
+_ContextualHelp.story = {
+  name: 'contextual help'
+};
+
+export const NoVisibleLabel: RadioGroupStory = (args) =>
+  render({...args, label: null, 'aria-label': 'Favorite pet'});
+
+NoVisibleLabel.story = {
+  name: 'no visible label'
+};
+
+export const LongRadioLabel: RadioGroupStory = (args) => renderLongLabel(args);
+
+LongRadioLabel.story = {
+  name: 'long radio label'
+};
+
+export const ProviderControlIsDisabled: RadioGroupStory = () => renderFormControl();
+
+ProviderControlIsDisabled.story = {
+  name: 'provider control: isDisabled'
+};
+
+export const AutoFocusOnOneRadio: RadioGroupStory = (args) => render(args, [{}, {autoFocus: true}, {}]);
+
+AutoFocusOnOneRadio.story = {
+  name: 'autoFocus on one radio'
+};
+
+function render(props, radioProps = [{}, {}, {}]) {
+  return (
+    <RadioGroup label="Favorite pet" {...props} onChange={action('onChange')} name="favorite-pet-group">
+      <Radio value="dogs" {...radioProps[0]}>
+        Dogs
+      </Radio>
+      <Radio value="cats" {...radioProps[1]}>
+        Cats
+      </Radio>
+      <Radio value="dragons" {...radioProps[2]}>
+        Dragons
+      </Radio>
+    </RadioGroup>
+  );
+}
+
+function renderLongLabel(props, radioProps = [{}, {}, {}]) {
+  return (
+    <RadioGroup aria-label="Favorite pet" {...props} onChange={action('onChange')}>
+      <Radio value="dogs" {...radioProps[0]}>
+        Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs
+      </Radio>
+      <Radio value="cats" {...radioProps[1]}>
+        Cats
+      </Radio>
+      <Radio value="dragons" {...radioProps[2]}>
+        Dragons
+      </Radio>
+    </RadioGroup>
+  );
+}
+
+function renderFormControl() {
+  return (
+    <Provider isDisabled>
+      <RadioGroup aria-label="Favorite pet" onChange={action('onChangePet')} name="favorite-pet-group">
+        <Radio value="dogs">
+          Dogs
+        </Radio>
+        <Radio value="cats">
+          Cats
+        </Radio>
+        <Radio value="dragons">
+          Dragons
+        </Radio>
+      </RadioGroup>
+      <RadioGroup aria-label="Favorite cereal" onChange={action('onChangeCereal')} name="favorite-cereal-group">
+        <Radio value="reeses">
+          Reese's Peanut Butter Puffs
+        </Radio>
+        <Radio value="honeynut">
+          HoneyNut Cheerios
+        </Radio>
+        <Radio value="cinnamon">
+          Cinnamon Toast Crunch
+        </Radio>
+      </RadioGroup>
+    </Provider>
+  );
+}
+
+function renderWithDescriptionErrorMessageAndValidation(props) {
+  function Example() {
+    let [selected, setSelected] = useState('dogs');
+    let isValid = selected === 'dogs';
+
+    return (
+      <Flex width="480px">
+        <RadioGroup
+          {...props}
+          aria-label="Favorite pet"
+          onChange={setSelected}
+          isInvalid={!isValid}
+          description="Please select a pet."
+          errorMessage={
+          selected === 'cats'
+            ? 'No cats allowed.'
+            : 'Please select dogs.'
+        }>
+          <Radio value="dogs">
+            Dogs
+          </Radio>
+          <Radio value="cats">
+            Cats
+          </Radio>
+          <Radio value="dragons">
+            Dragons
+          </Radio>
+        </RadioGroup>
+      </Flex>
+    );
+  }
+
+  return <Example />;
+}
+
+export const ControlledRovingTab: RadioGroupStory = () => {
+  const [selected, setSelected] = useState('1');
+
+  return (
+    <Flex direction="column" gap="16px" alignItems="center" margin="16px">
+      <Button variant="primary" onPress={() => setSelected('2')}>
+        Make it "Two"
+      </Button>
+      <RadioGroup
+        label="Lucky number? (controlled)"
+        value={selected}
+        onChange={setSelected}>
+        <Radio value="1">One</Radio>
+        <Radio value="2">Two</Radio>
+        <Radio value="3">Three</Radio>
+        <Radio value="4">Four</Radio>
+      </RadioGroup>
+      <Button variant="primary" onPress={() => setSelected('3')}>
+        Make it "Three"
+      </Button>
+    </Flex>
+  );
+};
+ControlledRovingTab.story = {
+  name: 'controlled roving tab'
+};

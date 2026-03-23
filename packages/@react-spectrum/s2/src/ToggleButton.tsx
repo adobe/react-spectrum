@@ -12,12 +12,13 @@
 
 import {ActionButtonStyleProps, btnStyles} from './ActionButton';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, Provider, ToggleButton as RACToggleButton, ToggleButtonProps as RACToggleButtonProps, useSlottedContext} from 'react-aria-components';
+import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/utils';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {fontRelative, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
+import {ToggleButton as RACToggleButton, ToggleButtonProps as RACToggleButtonProps} from 'react-aria-components/ToggleButton';
 import {SkeletonContext} from './Skeleton';
 import {StyleProps} from './style-utils';
 import {Text, TextContext} from './Content';

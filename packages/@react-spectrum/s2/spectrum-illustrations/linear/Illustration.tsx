@@ -15,7 +15,7 @@ import Illustration_M from 'illustration:./S2_lin_illustration_96.svg';
 import Illustration_S from 'illustration:./S2_lin_illustration_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function Illustration(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

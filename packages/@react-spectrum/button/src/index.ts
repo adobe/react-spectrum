@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 /// <reference types="css-module-types" />
-export {Button} from './Button';
-export {ActionButton} from './ActionButton';
-export {FieldButton} from './FieldButton';
-export {LogicButton} from './LogicButton';
-export {ClearButton} from './ClearButton';
-export {ToggleButton} from './ToggleButton';
-export type {SpectrumActionButtonProps} from './ActionButton';
-export type {SpectrumButtonProps} from './Button';
-export type {SpectrumLogicButtonProps} from './LogicButton';
-export type {SpectrumToggleButtonProps} from './ToggleButton';
+export {Button} from '@adobe/react-spectrum/Button';
+
+export {ActionButton} from '@adobe/react-spectrum/ActionButton';
+export {FieldButton} from '@adobe/react-spectrum/private/button/FieldButton';
+export {LogicButton} from '@adobe/react-spectrum/LogicButton';
+export {ClearButton} from '@adobe/react-spectrum/private/button/ClearButton';
+export {ToggleButton} from '@adobe/react-spectrum/ToggleButton';
+export type {SpectrumActionButtonProps} from '@adobe/react-spectrum/ActionButton';
+export type {SpectrumButtonProps} from '@adobe/react-spectrum/Button';
+export type {SpectrumLogicButtonProps} from '@adobe/react-spectrum/LogicButton';
+export type {SpectrumToggleButtonProps} from '@adobe/react-spectrum/ToggleButton';

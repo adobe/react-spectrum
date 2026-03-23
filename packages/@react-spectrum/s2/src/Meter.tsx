@@ -10,12 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Meter as AriaMeter,
-  MeterProps as AriaMeterProps,
-  ContextValue
-} from 'react-aria-components';
+import {Meter as AriaMeter, MeterProps as AriaMeterProps} from 'react-aria-components/Meter';
+
 import {bar, track} from './bar-utils'  with {type: 'macro'};
+import {ContextValue} from 'react-aria-components/utils';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';

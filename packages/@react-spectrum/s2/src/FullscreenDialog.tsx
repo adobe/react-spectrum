@@ -11,11 +11,18 @@
  */
 
 import {ButtonGroupContext} from './ButtonGroup';
-import {composeRenderProps, OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
+import {composeRenderProps, Provider} from 'react-aria-components/utils';
+
 import {ContentContext, HeaderContext, HeadingContext} from './Content';
+
 import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {forwardRef} from 'react';
 import {Modal} from './Modal';
+import {
+  OverlayTriggerStateContext,
+  Dialog as RACDialog,
+  DialogProps as RACDialogProps
+} from 'react-aria-components/Dialog';
 import {style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils';
 import {useDOMRef} from './useDOMRef';
@@ -126,7 +133,7 @@ export const FullscreenDialog = forwardRef(function FullscreenDialog(props: Full
   let domRef = useDOMRef(ref);
 
   return (
-    <Modal size={variant} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
+    (<Modal size={variant} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
       <RACDialog
         {...props}
         ref={domRef}
@@ -134,7 +141,7 @@ export const FullscreenDialog = forwardRef(function FullscreenDialog(props: Full
         className={(props.UNSAFE_className || '') + dialogInner}>
         {composeRenderProps(props.children, (children) => (
           // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
-          <OverlayTriggerStateContext.Provider value={null}>
+          (<OverlayTriggerStateContext.Provider value={null}>
             <Provider
               values={[
                 [HeadingContext, {styles: heading}],
@@ -144,10 +151,10 @@ export const FullscreenDialog = forwardRef(function FullscreenDialog(props: Full
               ]}>
               {children}
             </Provider>
-          </OverlayTriggerStateContext.Provider>
+          </OverlayTriggerStateContext.Provider>)
         ))}
       </RACDialog>
-    </Modal>
+    </Modal>)
   );
 });
 

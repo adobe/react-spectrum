@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Link, LinkContext, RouterProvider} from '../';
+import {Link, LinkContext} from '../src/Link';
+
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
+import {RouterProvider} from 'react-aria/private/utils/openLink';
 import userEvent from '@testing-library/user-event';
 
 describe('Link', () => {

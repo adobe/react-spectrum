@@ -12,7 +12,7 @@
 
 import {AccountMenu, AutocompletePopover, CustomTrigger, HelpCenter, MenuTrigger} from '../stories/Popover.stories';
 import type {Meta, StoryObj} from '@storybook/react';
-import {Popover} from '../src';
+import {Popover} from '../src/Popover';
 import {userEvent} from 'storybook/test';
 
 const meta: Meta<typeof Popover> = {

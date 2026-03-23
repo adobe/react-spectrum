@@ -29,7 +29,7 @@ require('@babel/register')({
 });
 
 let {evaluate} = require('./ssrUtils');
-let {SSRProvider} = require('@react-aria/ssr');
+let {SSRProvider} = require('react-aria/SSRProvider');
 
 http.createServer((req, res) => {
   let body = '';

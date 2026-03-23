@@ -11,8 +11,15 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {ColorArea, ColorField, ColorPicker, ColorSlider, ColorSwatch, ColorThumb, Input, SliderTrack} from '../src';
+import {ColorArea} from '../src/ColorArea';
+import {ColorField} from '../src/ColorField';
+import {ColorPicker} from '../src/ColorPicker';
+import {ColorSlider} from '../src/ColorSlider';
+import {ColorSwatch} from '../src/ColorSwatch';
+import {ColorThumb} from '../src/ColorThumb';
+import {Input} from '../src/Input';
 import React from 'react';
+import {SliderTrack} from '../src/Slider';
 import userEvent from '@testing-library/user-event';
 
 describe('ColorPicker', function () {

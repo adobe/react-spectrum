@@ -12,8 +12,10 @@
 
 /// <reference types="css-module-types" />
 
-export {ProgressBar} from './ProgressBar';
-export {ProgressCircle} from './ProgressCircle';
-export {ProgressBarBase} from './ProgressBarBase';
-export type {SpectrumProgressBarBaseProps, SpectrumProgressBarProps} from './ProgressBarBase';
-export type {SpectrumProgressCircleProps, ProgressCircleProps, AriaProgressCircleProps} from './ProgressCircle';
+export {ProgressBar} from '@adobe/react-spectrum/ProgressBar';
+
+export {ProgressCircle} from '@adobe/react-spectrum/ProgressCircle';
+export {ProgressBarBase} from '@adobe/react-spectrum/private/progress/ProgressBarBase';
+export type {SpectrumProgressBarBaseProps} from '@adobe/react-spectrum/private/progress/ProgressBarBase';
+export type {SpectrumProgressBarProps} from '@adobe/react-spectrum/ProgressBar';
+export type {SpectrumProgressCircleProps, ProgressCircleProps, AriaProgressCircleProps} from '@adobe/react-spectrum/ProgressCircle';

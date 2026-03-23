@@ -11,7 +11,7 @@
  */
 
 import {baseColor, style} from '../style' with {type: 'macro'};
-import {Divider} from '../src';
+import {Divider} from '../src/Divider';
 
 import type {Meta, StoryObj} from '@storybook/react';
 import {StaticColorDecorator} from './utils';

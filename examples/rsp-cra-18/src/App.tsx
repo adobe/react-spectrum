@@ -3,7 +3,7 @@ import {Provider, defaultTheme, Item, TagGroup, Cell, Column, Row, TableBody, Ta
 import Lighting from './Lighting';
 import {useState} from 'react'
 import BodyContent from './BodyContent';
-import {enableTableNestedRows} from '@react-stately/flags';
+import {enableTableNestedRows} from 'react-stately/private/flags/flags';
 import ButtonExamples from './sections/ButtonExamples';
 import CollectionExamples from './sections/CollectionExamples';
 import DateTimeExamples from './sections/DateTimeExamples';

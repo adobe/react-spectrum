@@ -15,7 +15,7 @@ import NoBrands_M from 'illustration:./S2_lin_noBrands_96.svg';
 import NoBrands_S from 'illustration:./S2_lin_noBrands_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function NoBrands(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

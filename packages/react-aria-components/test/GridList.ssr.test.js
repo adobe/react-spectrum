@@ -15,7 +15,7 @@ import {fireEvent, screen, testSSR} from '@react-spectrum/test-utils-internal';
 describe('GridList SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {GridList, GridListItem} from '../';
+      import {GridList, GridListItem} from '../exports/index.ts';
 
       function Test() {
         let [show, setShow] = React.useState(false);

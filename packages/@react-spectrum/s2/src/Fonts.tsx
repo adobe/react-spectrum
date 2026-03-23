@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom';
 import {ReactNode, version as ReactVersion, useEffect, useMemo, useRef} from 'react';
-import {useLocale} from 'react-aria';
+import {useLocale} from 'react-aria/I18nProvider';
 import './font-faces.css';
 
 // Typekit ids for each CJK locale. These use dynamic subsetting, so cannot be loaded as CSS.

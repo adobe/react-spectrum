@@ -1,4 +1,8 @@
-import {Button, Checkbox, CheckboxGroup, FieldError, Form, Label} from 'react-aria-components';
+import {Button} from '../src/Button';
+import {Checkbox, CheckboxGroup} from '../src/Checkbox';
+import {FieldError} from '../src/FieldError';
+import {Form} from '../src/Form';
+import {Label} from '../src/Label';
 import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import './styles.css';

@@ -10,13 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  ColorSwatch as AriaColorSwatch,
-  ColorSwatchProps as AriaColorSwatchProps,
-  Color,
-  ContextValue,
-  parseColor
-} from 'react-aria-components';
+import {ColorSwatch as AriaColorSwatch, ColorSwatchProps as AriaColorSwatchProps, Color, parseColor} from 'react-aria-components/ColorSwatch';
+import {ContextValue} from 'react-aria-components/utils';
 import {createContext, forwardRef, JSX, ReactElement, useContext, useMemo} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
