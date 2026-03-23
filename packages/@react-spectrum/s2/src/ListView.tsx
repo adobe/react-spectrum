@@ -23,7 +23,7 @@ import {CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-c
 import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, useSlottedContext} from 'react-aria-components/utils';
 import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactElement, ReactNode, useContext, useEffect, useRef, useState} from 'react';
-import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, ItemDropTarget, LoadingState} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue, DragItem, forwardRefType, GlobalDOMAttributes, ItemDropTarget, LoadingState} from '@react-types/shared';
 import DragHandle from '../ui-icons/DragHandle';
 import {DropIndicator} from 'react-aria-components/useDragAndDrop';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
@@ -361,6 +361,8 @@ const listitem = style<GridListItemRenderProps & {
   gridColumnStart: 1,
   gridColumnEnd: -1,
   display: 'grid',
+  // TODO: what do we think about the positioning of the drag button? It essentially gets placed with the same spacing from the left edge
+  // of the row as the checkbox does in a non dnd situation
   gridTemplateAreas: [
     '. dragbutton checkmark icon label       actions actionmenu trailing-icon .',
     '. .           .         .    description actions actionmenu trailing-icon .'
@@ -805,7 +807,6 @@ let dragPreviewCard = style<{scale?: 'medium' | 'large'}>({
   color: baseColor('neutral'),
   position: 'relative',
   display: 'grid',
-  // TODO get rid of description and icon if we end up not being able to grab those from the node
   gridTemplateAreas: [
     '. icon label       badge .',
     '. .    description badge .'
@@ -977,12 +978,18 @@ function isLastItem(id: Key | undefined, state: ListState<unknown>) {
   return state.collection.getLastKey() === id;
 }
 
+export interface ListViewDragPreviewProps {
+  /** The currently dragged items, sourced from renderDragPreview. */
+  items: DragItem[],
+  /** The overflow mode to be applied on the drag preview. */
+  overflowMode: ListViewStylesProps['overflowMode'],
+  /** The contents of the drag preview. Supports the "label", "description", and "icon" slots. */
+  children: ReactNode
+}
+
 export function ListViewDragPreview(props) {
   let {items, overflowMode} = props;
   let isDraggingMultiple = items.length > 1;
-  // TODO: item here doesn't have rendered, cuz unlike in v3, we don't have access to the collection nodes at this level...
-  // alternatives are to perhaps export this and allow the user to pass in label/description/etc nodes as children or allow them to render
-  // anything they way and just provide the current as a default
   let itemLabel = items[0]?.['text/plain'] ?? '';
   let scale = useScale();
 
@@ -1006,7 +1013,7 @@ export function ListViewDragPreview(props) {
               }
             }]
           ]}>
-          <Text>{itemLabel}</Text>
+          {props.children ?? <Text>{itemLabel}</Text>}
           {isDraggingMultiple && (
             <div className={dragPreviewBadge}>{items.length}</div>
           )}

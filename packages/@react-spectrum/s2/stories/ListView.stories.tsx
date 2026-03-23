@@ -28,7 +28,7 @@ import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {IllustratedMessage} from '../src/IllustratedMessage';
 import {Image} from '../src/Image';
 import {Key} from '@react-types/shared';
-import {ListView, ListViewItem} from '../src/ListView';
+import {ListView, ListViewDragPreview, ListViewItem} from '../src/ListView';
 import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactNode, useState} from 'react';
@@ -619,22 +619,45 @@ let reorderItems: Item[] = [
   {id: 'o', name: 'Really really really really really long name', type: 'file'}
 ];
 
+function CustomDragPreview(props) {
+  let {items, parentList} = props;
+  let id = items[0].id;
+  let item = parentList.getItem(id);
+  return (
+    <ListViewDragPreview {...props}>
+      <Text>{item.name}</Text>
+      {item.type === 'folder' &&
+        <>
+          <Folder />
+          {items.childNodes && <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>}
+        </>
+      }
+      {item.type === 'file' && <File />}
+    </ListViewDragPreview>
+  );
+}
+
 function ReorderExample(props) {
   let list = useListData({
     initialItems: reorderItems
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => {
-      return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
-    },
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key)!;
+      return {
+        id: item.id.toString(),
+        'text/plain': item?.name ?? ''
+      };
+    }),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys);
       } else if (e.target.dropPosition === 'after') {
         list.moveAfter(e.target.key, e.keys);
       }
-    }
+    },
+    renderDragPreview: (items) => <CustomDragPreview parentList={list} items={items} overflowMode={props.overflowMode} />
   });
 
   return (
@@ -643,7 +666,7 @@ function ReorderExample(props) {
       items={list.items}
       dragAndDropHooks={dragAndDropHooks}
       {...props}>
-      {(item: Item) => (
+      {(item: any) => (
         <ListViewItem textValue={item.name}>
           {item.type === 'folder' ? <Folder /> : <File />}
           <Text>{item.name}</Text>
@@ -713,6 +736,7 @@ function BetweenLists(props) {
     getItems: (keys) => [...keys].map(key => {
       let item = list1.getItem(key)!;
       return {
+        id: item.id,
         [`${item.type}`]: JSON.stringify(item),
         'text/plain': item.name
       };
@@ -773,7 +797,8 @@ function BetweenLists(props) {
       }
     },
     getAllowedDropOperations: () => ['move', 'copy'],
-    shouldAcceptItemDrop: (target) => !!list1.getItem(target.key)!.childNodes
+    shouldAcceptItemDrop: (target) => !!list1.getItem(target.key)!.childNodes,
+    renderDragPreview: (items) => <CustomDragPreview parentList={list1} items={items} overflowMode={props.overflowMode} />
   });
 
 // List 2 should allow reordering, on folder drops, and on root drops
@@ -782,6 +807,7 @@ function BetweenLists(props) {
       let item = list2.getItem(key)!;
       let dragItem = {};
       let itemString = JSON.stringify(item);
+      dragItem['id'] = item.id;
       dragItem[`${item.type}`] = itemString;
       if (item.type !== 'unique_type') {
         dragItem['text/plain'] = item.name;
@@ -870,7 +896,8 @@ function BetweenLists(props) {
       }
     },
     getAllowedDropOperations: () => ['move', 'copy'],
-    shouldAcceptItemDrop: (target) => !!list2.getItem(target.key)!.childNodes
+    shouldAcceptItemDrop: (target) => !!list2.getItem(target.key)!.childNodes,
+    renderDragPreview: (items) => <CustomDragPreview parentList={list2} items={items} overflowMode={props.overflowMode} />
   });
 
   return (
