@@ -10,15 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {Avatar, Button, ComboBox, ComboBoxItem, ComboBoxSection, Content, ContextualHelp, Dialog, DialogTrigger, Footer, Form, Header, Heading, Link, Text} from '../src';
+import {Avatar} from '../src/Avatar';
+
+import {Button} from '../src/Button';
 import {categorizeArgTypes, getActionArgs} from './utils';
-import {ComboBoxProps} from 'react-aria-components';
+import {ComboBox, ComboBoxItem, ComboBoxSection} from '../src/ComboBox';
+import {ComboBoxProps} from 'react-aria-components/ComboBox';
+import {Content, Footer, Header, Heading, Text} from '../src/Content';
+import {ContextualHelp} from '../src/ContextualHelp';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
+import {Dialog} from '../src/Dialog';
+import {DialogTrigger} from '../src/DialogTrigger';
+import {Form} from '../src/Form';
+import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
-import {useAsyncList} from 'react-stately';
+import {useAsyncList} from 'react-stately/useAsyncList';
 
 const events = ['onInputChange', 'onOpenChange', 'onSelectionChange', 'onLoadMore'];
 

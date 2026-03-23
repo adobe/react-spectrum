@@ -10,25 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Popover as AriaPopover,
-  PopoverProps as AriaPopoverProps,
-  composeRenderProps,
-  ContextValue,
-  DialogProps,
-  OverlayArrow,
-  OverlayTriggerStateContext,
-  useLocale
-} from 'react-aria-components';
-import {colorScheme, getAllowedOverrides, heightProperties, UnsafeStyles, widthProperties} from './style-utils' with {type: 'macro'};
+import {Popover as AriaPopover, PopoverProps as AriaPopoverProps} from 'react-aria-components/Popover';
+
 import {ColorSchemeContext} from './Provider';
+import {composeRenderProps, ContextValue} from 'react-aria-components/utils';
 import {createContext, ForwardedRef, forwardRef, ReactNode, useCallback, useContext, useMemo} from 'react';
+import {DialogProps, OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
-import {lightDark, style} from '../style' with {type: 'macro'};
-import {mergeRefs} from '@react-aria/utils';
+import {getAllowedOverrides, heightProperties, UnsafeStyles, widthProperties} from './style-utils' with {type: 'macro'};
+import {lightDark, setColorScheme, style} from '../style' with {type: 'macro'};
+import {mergeRefs} from 'react-aria/private/utils/mergeRefs';
 import {mergeStyles} from '../style/runtime';
+import {OverlayArrow} from 'react-aria-components/OverlayArrow';
 import {StyleString} from '../style/types' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps,
@@ -62,7 +58,7 @@ export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps,
 }
 
 let popover = style({
-  ...colorScheme(),
+  ...setColorScheme(),
   '--s2-container-bg': {
     type: 'backgroundColor',
     value: {

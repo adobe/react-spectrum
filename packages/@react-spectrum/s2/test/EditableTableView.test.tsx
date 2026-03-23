@@ -10,32 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/live-announcer');
-jest.mock('@react-aria/utils/src/scrollIntoView');
+jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
+jest.mock('react-aria/src/utils/scrollIntoView');
 import {act, render, within} from '@react-spectrum/test-utils-internal';
+import {ActionButton} from '../src/ActionButton';
+
 import {
-  ActionButton,
   Cell,
   Column,
   ColumnProps,
   EditableCell,
-  Picker,
-  PickerItem,
   Row,
-  StatusLight,
   TableBody,
   TableHeader,
   TableView,
-  TableViewProps,
-  Text,
-  TextField
-} from '../src';
+  TableViewProps
+} from '../src/TableView';
+
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import {installPointerEvent, pointerMap, User} from '@react-aria/test-utils';
 import {Key} from '@react-types/shared';
+import {Picker, PickerItem} from '../src/Picker';
 import React, {useCallback, useEffect, useRef} from 'react';
-import {useEffectEvent} from '@react-aria/utils';
-import {useListData} from '@react-stately/data';
+import {StatusLight} from '../src/StatusLight';
+import {Text} from '../src/Content';
+import {TextField} from '../src/TextField';
+import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
+import {useListData} from 'react-stately/useListData';
 import userEvent from '@testing-library/user-event';
 
 // @ts-ignore

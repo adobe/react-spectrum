@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Toolbar as RACToolbar, ToolbarProps} from 'react-aria-components';
+import {Toolbar as RACToolbar, ToolbarProps} from 'react-aria-components/Toolbar';
 import {ReactNode} from 'react';
 
 

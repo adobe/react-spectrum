@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ButtonProps, Text} from '../src';
+import {Button, ButtonProps} from '../src/Button';
+
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
@@ -18,6 +19,7 @@ import {ReactNode} from 'react';
 import {shortName} from './utils';
 import {StaticColorProvider} from '../stories/utils';
 import {style} from '../style' with { type: 'macro' };
+import {Text} from '../src/Content';
 import {Example as WithWrapping} from '../stories/Button.stories';
 
 const meta: Meta<typeof Button> = {

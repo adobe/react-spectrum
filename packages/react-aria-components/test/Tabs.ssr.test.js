@@ -15,7 +15,7 @@ import {screen, testSSR} from '@react-spectrum/test-utils-internal';
 describe('Tabs SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {Tabs, TabList, Tab, TabPanel, Label} from '../';
+      import {Tabs, TabList, Tab, TabPanel, Label} from '../exports/index.ts';
 
       <React.StrictMode>
         <Tabs aria-label="Tabs">

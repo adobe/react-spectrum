@@ -12,7 +12,7 @@
 'use client';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 import Video_L from 'illustration:./S2_fill_video_generic2_160.svg';
 import Video_M from 'illustration:./S2_fill_video_generic2_96.svg';
 import Video_S from 'illustration:./S2_fill_video_generic2_48.svg';

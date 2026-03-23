@@ -10,17 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, ActionButtonProps, Avatar, NotificationBadge, Text} from '../src';
+import {ActionButton, ActionButtonProps} from '../src/ActionButton';
+
+import {Avatar} from '../src/Avatar';
 import BellIcon from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
 import CommentIcon from '../s2wf-icons/S2_Icon_Comment_20_N.svg';
 import {Fonts, NotificationBadges, UnsafeClassName} from '../stories/ActionButton.stories';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
+import {NotificationBadge} from '../src/NotificationBadge';
 import {ReactElement} from 'react';
 import {shortName} from './utils';
 import {StaticColorProvider} from '../stories/utils';
 import {style} from '../style' with { type: 'macro' };
+import {Text} from '../src/Content';
 
 const meta: Meta<typeof ActionButton> = {
   component: ActionButton,

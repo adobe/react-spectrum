@@ -9,23 +9,19 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {
-  ActionButton,
-  ActionMenu,
-  Button,
-  CardPreview,
-  Checkbox,
-  Content,
-  Footer,
-  Image,
-  Keyboard,
-  MenuItem,
-  Slider,
-  Text
-} from '../src';
+import {ActionButton} from '../src/ActionButton';
+
+import {ActionMenu} from '../src/ActionMenu';
+import {Button} from '../src/Button';
+import {CardPreview} from '../src/Card';
+import {Checkbox} from '../src/Checkbox';
 import {CoachMark, CoachMarkTrigger} from '../src/CoachMark';
+import {Content, Footer, Keyboard, Text} from '../src/Content';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
+import {Image} from '../src/Image';
+import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
+import {Slider} from '../src/Slider';
 import {style} from '../style' with {type: 'macro'};
 import {useState} from 'react';
 

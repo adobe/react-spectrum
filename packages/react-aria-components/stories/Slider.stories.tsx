@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Label, Slider, SliderOutput, SliderThumb, SliderTrack} from 'react-aria-components';
+import {Label} from '../src/Label';
+
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
+import {Slider, SliderOutput, SliderThumb, SliderTrack} from '../src/Slider';
 import styles from '../example/index.css';
 import './styles.css';
 

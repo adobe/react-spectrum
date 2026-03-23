@@ -10,20 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-export {GridKeyboardDelegate} from './GridKeyboardDelegate';
-export {useGrid} from './useGrid';
-export {useGridRowGroup} from './useGridRowGroup';
-export {useGridRow} from './useGridRow';
-export {useGridCell} from './useGridCell';
-export {useGridSelectionCheckbox} from './useGridSelectionCheckbox';
-export {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
-export {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
+export {GridKeyboardDelegate} from 'react-aria/private/grid/GridKeyboardDelegate';
 
-export type {GridProps, GridAria} from './useGrid';
-export type {GridCellAria, GridCellProps} from './useGridCell';
-export type {GridRowGroupAria} from './useGridRowGroup';
-export type {GridRowProps, GridRowAria} from './useGridRow';
-export type {GridKeyboardDelegateOptions} from './GridKeyboardDelegate';
-export type {AriaGridSelectionCheckboxProps, GridSelectionCheckboxAria} from './useGridSelectionCheckbox';
-export type {HighlightSelectionDescriptionProps} from './useHighlightSelectionDescription';
-export type {GridSelectionAnnouncementProps} from './useGridSelectionAnnouncement';
+export {useGrid} from 'react-aria/private/grid/useGrid';
+export {useGridRowGroup} from 'react-aria/private/grid/useGridRowGroup';
+export {useGridRow} from 'react-aria/private/grid/useGridRow';
+export {useGridCell} from 'react-aria/private/grid/useGridCell';
+export {useGridSelectionCheckbox} from 'react-aria/private/grid/useGridSelectionCheckbox';
+export {useHighlightSelectionDescription} from 'react-aria/private/grid/useHighlightSelectionDescription';
+export {useGridSelectionAnnouncement} from 'react-aria/private/grid/useGridSelectionAnnouncement';
+export type {GridProps, GridAria} from 'react-aria/private/grid/useGrid';
+export type {GridCellAria, GridCellProps} from 'react-aria/private/grid/useGridCell';
+export type {GridRowGroupAria} from 'react-aria/private/grid/useGridRowGroup';
+export type {GridRowProps, GridRowAria} from 'react-aria/private/grid/useGridRow';
+export type {GridKeyboardDelegateOptions} from 'react-aria/private/grid/GridKeyboardDelegate';
+export type {AriaGridSelectionCheckboxProps, GridSelectionCheckboxAria} from 'react-aria/private/grid/useGridSelectionCheckbox';
+export type {HighlightSelectionDescriptionProps} from 'react-aria/private/grid/useHighlightSelectionDescription';
+export type {GridSelectionAnnouncementProps} from 'react-aria/private/grid/useGridSelectionAnnouncement';

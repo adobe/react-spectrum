@@ -15,7 +15,7 @@ import NoComment_M from 'illustration:./S2_lin_noComment_96.svg';
 import NoComment_S from 'illustration:./S2_lin_noComment_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function NoComment(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

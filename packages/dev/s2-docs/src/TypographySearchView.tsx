@@ -6,7 +6,7 @@ import Edit from '@react-spectrum/s2/icons/Edit';
 import {FieldInputContext, Header, Input, InputRenderProps, Key, ListBox, ListBoxItem, ListBoxSection, OverlayTriggerStateContext, TextField} from 'react-aria-components';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {InfoMessage} from './colorSearchData';
-// eslint-disable-next-line monorepo/no-internal-import
+ 
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import React, {useMemo, useRef, useState} from 'react';
 

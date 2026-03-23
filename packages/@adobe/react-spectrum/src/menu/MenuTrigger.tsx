@@ -1,0 +1,156 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {Alignment, DOMRef} from '@react-types/shared';
+import {classNames} from '../utils/classNames';
+import {MenuContext} from './context';
+import {MenuTriggerProps, useMenuTriggerState} from 'react-stately/useMenuTriggerState';
+import {Placement} from 'react-aria/private/overlays/useOverlayPosition';
+import {Popover} from '../overlays/Popover';
+import {PressResponder} from 'react-aria/private/interactions/PressResponder';
+import React, {forwardRef, Fragment, ReactElement, useRef} from 'react';
+import {SlotProvider} from '../utils/Slots';
+import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import {Tray} from '../overlays/Tray';
+import {unwrapDOMRef, useDOMRef} from '../utils/useDOMRef';
+import {useInteractOutside} from 'react-aria/private/interactions/useInteractOutside';
+import {useIsMobileDevice} from '../utils/useIsMobileDevice';
+import {useMenuTrigger} from 'react-aria/useMenu';
+
+export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
+  /**
+   * The contents of the MenuTrigger - a trigger and a Menu.
+   */
+  children: ReactElement[],
+  /**
+   * Alignment of the menu relative to the trigger.
+   * @default 'start'
+   */
+  align?: Alignment,
+  /**
+   * Where the Menu opens relative to its trigger.
+   * @default 'bottom'
+   */
+  direction?: 'bottom' | 'top' | 'left' | 'right' | 'start' | 'end',
+  /**
+   * Whether the menu should automatically flip direction when space is limited.
+   * @default true
+   */
+  shouldFlip?: boolean,
+  /**
+   * Whether the Menu closes when a selection is made.
+   * @default true
+   */
+  closeOnSelect?: boolean
+}
+
+/**
+ * The MenuTrigger serves as a wrapper around a Menu and its associated trigger,
+ * linking the Menu's open state with the trigger's press state.
+ */
+export const MenuTrigger = forwardRef(function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) {
+  let triggerRef = useRef<HTMLElement>(null);
+  let domRef = useDOMRef(ref);
+  let menuTriggerRef = domRef || triggerRef;
+  let menuRef = useRef<HTMLDivElement>(null);
+  let {
+    children,
+    align = 'start',
+    shouldFlip = true,
+    direction = 'bottom',
+    closeOnSelect,
+    trigger = 'press'
+  } = props;
+
+  let [menuTrigger, menu] = React.Children.toArray(children);
+  let state = useMenuTriggerState(props);
+
+  let {menuTriggerProps, menuProps} = useMenuTrigger({trigger}, state, menuTriggerRef);
+
+  let initialPlacement: Placement;
+  switch (direction) {
+    case 'left':
+    case 'right':
+    case 'start':
+    case 'end':
+      initialPlacement = `${direction} ${align === 'end' ? 'bottom' : 'top'}` as Placement;
+      break;
+    case 'bottom':
+    case 'top':
+    default:
+      initialPlacement = `${direction} ${align}` as Placement;
+  }
+
+  let isMobile = useIsMobileDevice();
+  let menuContext = {
+    ...menuProps,
+    ref: menuRef,
+    onClose: state.close,
+    closeOnSelect,
+    autoFocus: state.focusStrategy || true,
+    UNSAFE_style: isMobile ? {
+      width: '100%',
+      maxHeight: 'inherit'
+    } : undefined,
+    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
+    state
+  };
+
+  // Close when clicking outside the root menu when a submenu is open.
+  let rootOverlayRef = useRef(null);
+  let rootOverlayDomRef = unwrapDOMRef(rootOverlayRef);
+  useInteractOutside({
+    ref: rootOverlayDomRef,
+    onInteractOutside: () => {
+      state?.close();
+    },
+    isDisabled: !state.isOpen || state.expandedKeysStack.length === 0
+  });
+
+  // On small screen devices, the menu is rendered in a tray, otherwise a popover.
+  let overlay;
+  if (isMobile) {
+    overlay = (
+      <Tray state={state} isFixedHeight ref={rootOverlayRef}>
+        {menu}
+      </Tray>
+    );
+  } else {
+    overlay = (
+      <Popover
+        ref={rootOverlayRef}
+        UNSAFE_style={{clipPath: 'unset', overflow: 'visible', filter: 'unset', borderWidth: '0px'}}
+        state={state}
+        triggerRef={menuTriggerRef}
+        scrollRef={menuRef}
+        placement={initialPlacement}
+        hideArrow
+        shouldFlip={shouldFlip}
+        shouldContainFocus>
+        {menu}
+      </Popover>
+    );
+  }
+
+  return (
+    <Fragment>
+      <SlotProvider slots={{actionButton: {holdAffordance: trigger === 'longPress'}}}>
+        <PressResponder {...menuTriggerProps} ref={menuTriggerRef} isPressed={state.isOpen}>
+          {menuTrigger}
+        </PressResponder>
+      </SlotProvider>
+      <MenuContext.Provider value={menuContext}>
+        {overlay}
+      </MenuContext.Provider>
+    </Fragment>
+  );
+});

@@ -20,8 +20,10 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {HoverProps, mergeProps, useFocusRing, useHover} from 'react-aria';
+import {HoverProps, useHover} from 'react-aria/useHover';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
+import {useFocusRing} from 'react-aria/useFocusRing';
 
 export interface GroupRenderProps {
   /**

@@ -10,9 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ButtonGroup, Content, Heading, IllustratedMessage} from '../src';
+import {Button} from '../src/Button';
+
+import {ButtonGroup} from '../src/ButtonGroup';
 import Cloud from '../spectrum-illustrations/linear/Cloud';
+import {Content, Heading} from '../src/Content';
 import Folder from '../spectrum-illustrations/gradient/generic2/FolderOpen';
+import {IllustratedMessage} from '../src/IllustratedMessage';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof IllustratedMessage> = {

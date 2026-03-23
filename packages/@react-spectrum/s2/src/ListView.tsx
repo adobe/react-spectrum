@@ -13,50 +13,47 @@
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
 import {baseColor, colorMix, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
+import {Button} from 'react-aria-components/Button';
+import {centerBaseline} from './CenterBaseline';
+import {Checkbox} from './Checkbox';
+import {CheckboxContext} from 'react-aria-components/Checkbox';
+import Chevron from '../ui-icons/Chevron';
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-components/Collection';
+import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, useSlottedContext} from 'react-aria-components/utils';
+import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
+import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, ItemDropTarget, LoadingState} from '@react-types/shared';
+import {DropIndicator} from 'react-aria-components/useDragAndDrop';
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
-  Button,
-  CheckboxContext,
-  Collection,
-  CollectionRendererContext,
-  ContextValue,
-  DEFAULT_SLOT,
-  DefaultCollectionRenderer,
-  DropIndicator,
   GridList,
   GridListItem,
   GridListItemProps,
   GridListItemRenderProps,
   GridListLoadMoreItem,
   GridListProps,
-  GridListRenderProps,
-  Key,
-  ListLayout,
-  ListState,
-  Provider,
-  SlotProps,
-  useSlottedContext,
-  Virtualizer
-} from 'react-aria-components';
-import {centerBaseline} from './CenterBaseline';
-import {Checkbox} from './Checkbox';
-import Chevron from '../ui-icons/Chevron';
-import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
-import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, ItemDropTarget, LoadingState} from '@react-types/shared';
-import DragHandle from '../ui-icons/DragHandle';
-import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
+  GridListRenderProps
+} from 'react-aria-components/GridList';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {Key} from '@react-types/shared';
 import LinkOutIcon from '../ui-icons/LinkOut';
+import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListState} from 'react-stately/useListState';
 import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
-import {useDOMRef} from '@react-spectrum/utils';
-import {useFocusRing, useLocale, useLocalizedStringFormatter, useVisuallyHidden} from 'react-aria';
+import {useDOMRef} from './useDOMRef';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | 'selectionBehavior' | 'layout' | 'render' | 'keyboardNavigationBehavior' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, ListViewStylesProps, SlotProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
