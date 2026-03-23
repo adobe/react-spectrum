@@ -2070,7 +2070,7 @@ function BetweenTables(props) {
       }
     },
     getAllowedDropOperations: () => ['move', 'copy'],
-    shouldAcceptItemDrop: (target) => !!list1.getItem(target.key)?.childNodes,
+    shouldAcceptItemDrop: (target) => !!list1.getItem(target.key)?.childNodes
   });
 
   // table 2 should allow reordering, on folder drops, and on root drops

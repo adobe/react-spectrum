@@ -12,7 +12,7 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {baseColor, colorMix, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
+import {baseColor, color, colorMix, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
@@ -22,8 +22,9 @@ import {Collection} from 'react-aria/private/collections/CollectionBuilder';
 import {CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-components/Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, useSlottedContext} from 'react-aria-components/utils';
 import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
+import {createContext, forwardRef, ReactElement, ReactNode, useContext, useEffect, useRef, useState} from 'react';
 import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, ItemDropTarget, LoadingState} from '@react-types/shared';
+import DragHandle from '../ui-icons/DragHandle';
 import {DropIndicator} from 'react-aria-components/useDragAndDrop';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
@@ -50,12 +51,12 @@ import {useDOMRef} from './useDOMRef';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import {Virtualizer} from 'react-aria-components/Virtualizer';
+import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
+import {LayoutInfo, Virtualizer} from 'react-aria-components/Virtualizer';
 
-export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | 'selectionBehavior' | 'layout' | 'render' | 'keyboardNavigationBehavior' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, ListViewStylesProps, SlotProps {
+export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | 'selectionBehavior' | 'layout' | 'render' | 'keyboardNavigationBehavior' | 'orientation' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, ListViewStylesProps, SlotProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The current loading state of the ListView. */
@@ -118,7 +119,6 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean, isDropTarget?: 
   outlineOffset: {
     default: -2,
     isQuiet: -1,
-    isDropTarget: -2
   },
   userSelect: 'none',
   minHeight: 0,
@@ -140,25 +140,27 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean, isDropTarget?: 
     default: 'default',
     isQuiet: 'none'
   },
-  borderColor: 'gray-300',
-  borderWidth: {
-    default: 1,
-    isQuiet: 0
-  },
-  borderStyle: 'solid',
-  // use outline with negative offset instead of border for the drop target styling to avoid layout shifting
-  outlineWidth: {
-    isDropTarget: 2
-  },
-  outlineStyle: {
-    isDropTarget: 'solid'
-  },
-  outlineColor: {
+  borderColor: {
+    default: 'gray-300',
     isDropTarget: 'blue-800',
     forcedColors: {
       isDropTarget: 'Highlight'
     }
   },
+  borderWidth: {
+    default: 1,
+    isQuiet: 0
+  },
+  borderStyle: 'solid',
+  // TODO: cant do a external box shadow due to the clipping that is applied on the wrapper element...
+  // an inset box shadow here runs into problems with the item background clipping the box shadow...
+  // do we wanna hack it to support a 2px indicator for root drop or is 1px enough
+  // boxShadow: {
+  //   isDropTarget: `[inset 0 0 0 1px ${color('blue-800')}]`,
+  //   forcedColors: {
+  //     isDropTarget: '[inset 0 0 0 1px Highlight]'
+  //   }
+  // },
   forcedColorAdjust: 'none',
   '--trailing-icon-width': {
     type: 'width',
@@ -168,6 +170,14 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean, isDropTarget?: 
     }
   }
 });
+
+export class S2ListLayout<T> extends ListLayout<T> {
+  getDropTargetLayoutInfo(target: ItemDropTarget): LayoutInfo {
+    let layoutInfo = super.getDropTargetLayoutInfo(target);
+    layoutInfo.zIndex = 1;
+    return layoutInfo;
+  }
+}
 
 /**
  * A ListView displays a list of interactive items, and allows a user to navigate, select, or perform an action.
@@ -258,7 +268,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
       className={(props.UNSAFE_className || '') + listViewWrapper(null, props.styles)}
       style={props.UNSAFE_style}>
       <Virtualizer
-        layout={ListLayout}
+        layout={S2ListLayout}
         layoutOptions={{
           estimatedRowHeight: rowHeight,
           loaderHeight: 60,

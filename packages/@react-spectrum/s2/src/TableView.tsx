@@ -84,9 +84,9 @@ import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useMediaQuery} from './useMediaQuery';
 import {useObjectRef} from 'react-aria/useObjectRef';
-import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
