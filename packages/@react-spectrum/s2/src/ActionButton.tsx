@@ -13,23 +13,25 @@
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {AvatarContext} from './Avatar';
 import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with { type: 'macro' };
-import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, useSlottedContext} from 'react-aria-components';
+import {ButtonProps, ButtonRenderProps, Button as RACButton} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
+import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/utils';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
+// @ts-ignore
 import {NotificationBadgeContext} from './NotificationBadge';
+import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {SkeletonContext} from './Skeleton';
 import {Text, TextContext} from './Content';
-import {useFocusableRef} from '@react-spectrum/utils';
+import {useFocusableRef} from './useDOMRef';
 import {useFormProps} from './Form';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {usePendingState} from './Button';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

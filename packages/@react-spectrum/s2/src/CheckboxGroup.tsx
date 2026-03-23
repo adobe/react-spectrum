@@ -12,17 +12,17 @@
 
 import {
   CheckboxGroup as AriaCheckboxGroup,
-  CheckboxGroupProps as AriaCheckboxGroupProps,
-  ContextValue
-} from 'react-aria-components';
+  CheckboxGroupProps as AriaCheckboxGroupProps
+} from 'react-aria-components/CheckboxGroup';
 import {CheckboxContext} from './Checkbox';
+import {ContextValue} from 'react-aria-components/utils';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps {

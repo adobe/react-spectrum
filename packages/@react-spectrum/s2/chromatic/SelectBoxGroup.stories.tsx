@@ -13,8 +13,9 @@
 import type {Meta, StoryObj} from '@storybook/react';
 import PaperAirplane from '../spectrum-illustrations/linear/Paperairplane';
 import React from 'react';
-import {SelectBox, SelectBoxGroup, Text} from '../src';
+import {SelectBox, SelectBoxGroup} from '../src/SelectBoxGroup';
 import Server from '../spectrum-illustrations/linear/Server';
+import {Text} from '../src/Content';
 
 const meta: Meta<typeof SelectBoxGroup> = {
   component: SelectBoxGroup,

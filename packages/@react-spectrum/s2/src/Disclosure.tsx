@@ -13,13 +13,25 @@
 import {ActionButtonContext} from './ActionButton';
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {baseColor, centerPadding, focusRing, lightDark, space, style} from '../style' with { type: 'macro' };
-import {Button, ContextValue, DisclosureStateContext, Heading, Provider, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, useLocale, useSlottedContext} from 'react-aria-components';
+import {Button} from 'react-aria-components/Button';
 import {CenterBaseline} from './CenterBaseline';
+
 import Chevron from '../ui-icons/Chevron';
-import {filterDOMProps} from '@react-aria/utils';
+
+import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/utils';
+import {
+  DisclosureStateContext,
+  Disclosure as RACDisclosure,
+  DisclosurePanel as RACDisclosurePanel,
+  DisclosurePanelProps as RACDisclosurePanelProps,
+  DisclosureProps as RACDisclosureProps
+} from 'react-aria-components/Disclosure';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {Heading} from 'react-aria-components/Heading';
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>, StyleProps {

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Link} from 'react-aria-components';
+import {Link} from '../src/Link';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import './styles.css';

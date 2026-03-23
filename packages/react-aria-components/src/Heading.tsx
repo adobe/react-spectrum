@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {dom, DOMRenderProps, useContextProps} from './utils';
-import {HeadingContext} from './RSPContexts';
-import React, {ForwardedRef, forwardRef, HTMLAttributes} from 'react';
+import {ContextValue, dom, DOMRenderProps, useContextProps} from './utils';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
 export interface HeadingProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<'h1', undefined> {
   level?: number
 }
+
+export const HeadingContext = createContext<ContextValue<HeadingProps, HTMLHeadingElement>>({});
 
 export const Heading = forwardRef(function Heading(props: HeadingProps, ref: ForwardedRef<HTMLHeadingElement>) {
   [props, ref] = useContextProps(props, ref, HeadingContext);

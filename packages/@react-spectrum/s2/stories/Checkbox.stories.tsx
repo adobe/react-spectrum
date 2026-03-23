@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox} from '../src';
+import {Checkbox} from '../src/Checkbox';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 

@@ -10,10 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, OverlayArrow, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button} from '../src/Button';
+
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {OverlayArrow} from '../src/OverlayArrow';
 import React, {JSX} from 'react';
 import styles from './styles.css';
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 
 export default {
   title: 'React Aria Components/Tooltip',

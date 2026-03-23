@@ -11,25 +11,19 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {
-  Button,
-  CalendarCell,
-  CalendarGrid,
-  DateInput,
-  DateRangePicker,
-  DateRangePickerContext,
-  DateSegment,
-  Dialog,
-  FieldError,
-  Group,
-  Heading,
-  Label,
-  Popover,
-  RangeCalendar,
-  Text
-} from 'react-aria-components';
+import {Button} from '../src/Button';
+import {CalendarCell, CalendarGrid, RangeCalendar} from '../src/Calendar';
 import {CalendarDate} from '@internationalized/date';
+import {DateInput, DateSegment} from '../src/DateField';
+import {DateRangePicker, DateRangePickerContext} from '../src/DatePicker';
+import {Dialog} from '../src/Dialog';
+import {FieldError} from '../src/FieldError';
+import {Group} from '../src/Group';
+import {Heading} from '../src/Heading';
+import {Label} from '../src/Label';
+import {Popover} from '../src/Popover';
 import React from 'react';
+import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
 let TestDateRangePicker = (props) => (

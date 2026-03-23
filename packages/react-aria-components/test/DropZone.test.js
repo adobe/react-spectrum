@@ -11,10 +11,14 @@
  */
 
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, DropZone, DropZoneContext, FileTrigger, Link, Text} from '../';
-import {ClipboardEvent, DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
-import {Draggable} from '@react-aria/dnd/test/examples';
+import {Button} from '../src/Button';
+import {ClipboardEvent, DataTransfer, DataTransferItem, DragEvent} from 'react-aria/test/dnd/mocks';
+import {Draggable} from 'react-aria/test/dnd/examples';
+import {DropZone, DropZoneContext} from '../src/DropZone';
+import {FileTrigger} from '../src/FileTrigger';
+import {Link} from '../src/Link';
 import React from 'react';
+import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
 describe('DropZone', () => {

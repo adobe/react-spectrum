@@ -10,15 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  ColorField,
-  Content,
-  ContextualHelp,
-  Footer,
-  Heading,
-  Link,
-  Text
-} from '../src/';
+import {ColorField} from '../src/ColorField';
+
+import {Content, Footer, Heading, Text} from '../src/Content';
+import {ContextualHelp} from '../src/ContextualHelp';
+import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof ColorField> = {

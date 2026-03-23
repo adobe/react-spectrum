@@ -10,10 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/live-announcer');
+jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 import {act, pointerMap, render, setupIntersectionObserverMock, waitFor, within} from '@react-spectrum/test-utils-internal';
-import {announce} from '@react-aria/live-announcer';
-import {Button, ComboBox, ComboBoxItem, Content, ContextualHelp, Dialog, DialogTrigger, Heading, Text} from '../src';
+import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
+import {Button} from '../src/Button';
+import {ComboBox, ComboBoxItem} from '../src/ComboBox';
+import {Content, Heading, Text} from '../src/Content';
+import {ContextualHelp} from '../src/ContextualHelp';
+import {Dialog} from '../src/Dialog';
+import {DialogTrigger} from '../src/DialogTrigger';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';

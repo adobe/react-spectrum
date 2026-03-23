@@ -10,7 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ButtonGroup, Content, DialogTrigger, FullscreenDialog, FullscreenDialogProps, Header, Heading} from '../src';
+import {Button} from '../src/Button';
+
+import {ButtonGroup} from '../src/ButtonGroup';
+import {Content, Header, Heading} from '../src/Content';
+import {DialogTrigger} from '../src/DialogTrigger';
+import {FullscreenDialog, FullscreenDialogProps} from '../src/FullscreenDialog';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof FullscreenDialog> = {

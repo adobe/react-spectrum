@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../src/Icon';
 import StampClone_L from 'illustration:./S2_lin_stampClone_160.svg';
 import StampClone_M from 'illustration:./S2_lin_stampClone_96.svg';
 import StampClone_S from 'illustration:./S2_lin_stampClone_48.svg';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function StampClone(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

@@ -10,6 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export {useComboBoxState} from './useComboBoxState';
+export {useComboBoxState} from 'react-stately/useComboBoxState';
 
-export type {ComboBoxStateOptions, ComboBoxState} from './useComboBoxState';
+export type {ComboBoxProps, ComboBoxStateOptions, ComboBoxState, ComboBoxValidationValue, MenuTriggerAction, SelectionMode} from 'react-stately/useComboBoxState';

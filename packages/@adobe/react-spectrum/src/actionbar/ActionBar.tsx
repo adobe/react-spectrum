@@ -1,0 +1,172 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {ActionButton} from '../button/ActionButton';
+
+import {ActionGroup} from '../actiongroup/ActionGroup';
+import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
+import {classNames} from '../utils/classNames';
+import CrossLarge from '@spectrum-icons/ui/CrossLarge';
+import {DOMProps, DOMRef, ItemElement, ItemRenderer, Key, StyleProps} from '@react-types/shared';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {FocusScope} from 'react-aria/FocusScope';
+import intlMessages from '../../intl/actionbar/*.json';
+import {OpenTransition} from '../overlays/OpenTransition';
+// @ts-ignore
+import React, {ReactElement, Ref, useEffect, useRef, useState} from 'react';
+import styles from './actionbar.css';
+import {Text} from '../text/Text';
+import {useDOMRef} from '../utils/useDOMRef';
+import {useKeyboard} from 'react-aria/useKeyboard';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useProviderProps} from '../provider/Provider';
+import {useStyleProps} from '../utils/styleProps';
+
+interface ActionBarProps<T> {
+  /** An list of `Item` elements or a function. If the latter, a list of items must be provided using the `items` prop. */
+  children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>,
+  /** A list of items to display as children. Must be used with a function as the sole child. */
+  items?: Iterable<T>,
+  /** A list of keys to disable. */
+  disabledKeys?: Iterable<Key>,
+  /** The number of selected items that the ActionBar is currently linked to. If 0, the ActionBar is hidden. */
+  selectedItemCount: number | 'all',
+  /** Handler that is called when the ActionBar clear button is pressed. */
+  onClearSelection: () => void,
+  /** Whether the ActionBar should be displayed with a emphasized style. */
+  isEmphasized?: boolean,
+  /** Handler that is called when an ActionBar button is pressed. */
+  onAction?: (key: Key) => void,
+  /**
+   * Defines when the text within the buttons should be hidden and only the icon should be shown.
+   * When set to 'hide', the text is always shown in a tooltip. When set to 'collapse', the text is visible
+   * if space is available, and hidden when space is limited. The text is always visible when the item
+   * is collapsed into a menu.
+   * @default 'collapse'
+   */
+  buttonLabelBehavior?: 'show' | 'collapse' | 'hide'
+}
+
+export interface SpectrumActionBarProps<T> extends ActionBarProps<T>, DOMProps, StyleProps {}
+
+/**
+ * Action bars are used for single and bulk selection patterns when a user needs to perform actions on one or more items at the same time.
+ */
+export const ActionBar = React.forwardRef(function ActionBar<T extends object>(props: SpectrumActionBarProps<T>, ref: DOMRef<HTMLDivElement>) {
+  let isOpen = props.selectedItemCount !== 0;
+  let domRef = useDOMRef(ref);
+
+  return (
+    <OpenTransition
+      nodeRef={domRef}
+      in={isOpen}
+      mountOnEnter
+      unmountOnExit>
+      <ActionBarInnerWithRef {...props} ref={domRef} />
+    </OpenTransition>
+  );
+}) as <T>(props: SpectrumActionBarProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+
+interface ActionBarInnerProps<T> extends SpectrumActionBarProps<T> {
+  isOpen?: boolean
+}
+
+function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElement>) {
+  props = useProviderProps(props);
+
+  let {
+    children,
+    isEmphasized,
+    onAction,
+    onClearSelection,
+    selectedItemCount,
+    isOpen,
+    buttonLabelBehavior = 'collapse',
+    items,
+    disabledKeys
+  } = props;
+
+  let {styleProps} = useStyleProps(props);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/actionbar');
+
+  // Store the last count greater than zero in a ref so that we can retain it while rendering the fade-out animation.
+  let [lastCount, setLastCount] = useState(selectedItemCount);
+  if ((selectedItemCount === 'all' || selectedItemCount > 0) && selectedItemCount !== lastCount) {
+    setLastCount(selectedItemCount);
+  }
+
+  let {keyboardProps} = useKeyboard({
+    onKeyDown(e) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClearSelection();
+      }
+    }
+  });
+
+  // Announce "actions available" on mount.
+  let isInitial = useRef(true);
+  useEffect(() => {
+    if (isInitial.current) {
+      isInitial.current = false;
+      announce(stringFormatter.format('actionsAvailable'));
+    }
+  }, [stringFormatter]);
+
+  return (
+    <FocusScope restoreFocus>
+      <div
+        {...filterDOMProps(props)}
+        {...styleProps}
+        {...keyboardProps}
+        ref={ref}
+        className={classNames(
+          styles,
+          'react-spectrum-ActionBar', {
+            'react-spectrum-ActionBar--emphasized': isEmphasized,
+            'is-open': isOpen
+          },
+          styleProps.className
+        )}>
+        <div className={classNames(styles, 'react-spectrum-ActionBar-bar')}>
+          <ActionGroup
+            items={items}
+            aria-label={stringFormatter.format('actions')}
+            isQuiet
+            staticColor={isEmphasized ? 'white' : undefined}
+            overflowMode="collapse"
+            buttonLabelBehavior={buttonLabelBehavior}
+            onAction={onAction}
+            disabledKeys={disabledKeys}
+            UNSAFE_className={classNames(styles, 'react-spectrum-ActionBar-actionGroup')}>
+            {children}
+          </ActionGroup>
+          <ActionButton
+            gridArea={styles.clear}
+            aria-label={stringFormatter.format('clearSelection')}
+            onPress={() => onClearSelection()}
+            isQuiet
+            staticColor={isEmphasized ? 'white' : undefined}>
+            <CrossLarge />
+          </ActionButton>
+          <Text UNSAFE_className={classNames(styles, 'react-spectrum-ActionBar-selectedCount')}>
+            {lastCount === 'all'
+              ? stringFormatter.format('selectedAll')
+              : stringFormatter.format('selected', {count: lastCount})}
+          </Text>
+        </div>
+      </div>
+    </FocusScope>
+  );
+}
+
+const ActionBarInnerWithRef = React.forwardRef(ActionBarInner) as <T>(props: ActionBarInnerProps<T> & {ref?: Ref<HTMLDivElement>}) => ReactElement;

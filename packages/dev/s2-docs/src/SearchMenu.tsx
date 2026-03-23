@@ -1,6 +1,6 @@
 'use client';
 
-import {ActionButton, SearchField} from '@react-spectrum/s2';
+import {ActionButton, SearchField, TextFieldRef} from '@react-spectrum/s2';
 import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
 import {ColorSearchSkeleton} from './colorSearchData';
@@ -19,11 +19,10 @@ import React, {CSSProperties, Suspense, useCallback, useEffect, useRef, useState
 import {SearchTagGroups} from './SearchTagGroups';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
-import {TextFieldRef} from '@react-types/textfield';
 import {TypographySearchView} from './TypographySearchView';
-import {useRouter} from './Router';
 import './SearchMenu.css';
 import {preloadComponentImages} from './ComponentCard';
+import {useRouter} from './Router';
 
 export const divider = style({
   marginY: 8,

@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Label, ProgressBar} from 'react-aria-components';
+import {Label} from '../src/Label';
+
 import {Meta, StoryFn} from '@storybook/react';
+import {ProgressBar} from '../src/ProgressBar';
 import React from 'react';
 import './styles.css';
 
