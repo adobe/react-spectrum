@@ -7306,7 +7306,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/provider@npm:^3.1.0, @react-spectrum/provider@npm:^3.10.14, @react-spectrum/provider@workspace:packages/@react-spectrum/provider":
+"@react-spectrum/provider@npm:^3.1.0, @react-spectrum/provider@workspace:packages/@react-spectrum/provider":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/provider@workspace:packages/@react-spectrum/provider"
   dependencies:
@@ -7573,10 +7573,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/test-utils-internal@workspace:packages/dev/test-utils"
   dependencies:
+    "@adobe/react-spectrum": "npm:^3.46.2"
     "@react-aria/ssr": "npm:^3.0.0"
-    "@react-spectrum/provider": "npm:^3.10.14"
     "@react-spectrum/test-utils": "npm:1.0.0-beta.3"
-    "@react-spectrum/theme-default": "npm:^3.5.13"
     "@swc/helpers": "npm:^0.5.0"
     "@testing-library/dom": "npm:^10.1.0"
     "@testing-library/jest-dom": "npm:^5.16.4"
@@ -7588,7 +7587,7 @@ __metadata:
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
     resolve: "npm:^2.0.0-next.6"
   peerDependencies:
-    "@react-spectrum/provider": ^3.10.14
+    "@adobe/react-spectrum": ^3.46.2
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -7657,7 +7656,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/theme-default@npm:^3.1.0, @react-spectrum/theme-default@npm:^3.5.13, @react-spectrum/theme-default@workspace:packages/@react-spectrum/theme-default":
+"@react-spectrum/theme-default@npm:^3.1.0, @react-spectrum/theme-default@workspace:packages/@react-spectrum/theme-default":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/theme-default@workspace:packages/@react-spectrum/theme-default"
   dependencies:
