@@ -1533,6 +1533,7 @@ function remarkRemoveImportsExports() {
 
             const docsSource = statement.source.value.slice(5);
             for (const specifier of statement.specifiers) {
+              // eslint-disable-next-line max-depth
               if (specifier.local?.name) {
                 docsImports[specifier.local.name] = docsSource;
               }
@@ -2917,6 +2918,7 @@ function generateClassAPITable(className, file) {
         const returnTag = methodDocs[0].getTags().find(t => t.getTagName() === 'returns' || t.getTagName() === 'return');
         if (returnTag) {
           const returnDesc = returnTag.getCommentText() || '';
+          // eslint-disable-next-line max-depth
           if (returnDesc) {
             sections.push(`**Returns:** ${returnDesc}\n`);
           }
