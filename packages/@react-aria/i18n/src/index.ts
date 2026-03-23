@@ -12,7 +12,7 @@
 
 export {I18nProvider, useLocale} from 'react-aria/I18nProvider';
 
-export {useMessageFormatter} from 'react-aria/private/i18n/useMessageFormatter';
+export {useMessageFormatter} from './useMessageFormatter';
 export {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 export {useLocalizedStringDictionary} from 'react-aria/private/i18n/useLocalizedStringFormatter';
 export {useListFormatter} from 'react-aria/useListFormatter';
@@ -21,7 +21,7 @@ export {useNumberFormatter} from 'react-aria/useNumberFormatter';
 export {useCollator} from 'react-aria/useCollator';
 export {useFilter} from 'react-aria/useFilter';
 export {isRTL} from 'react-aria/private/i18n/utils';
-export type {FormatMessage} from 'react-aria/private/i18n/useMessageFormatter';
+export type {FormatMessage} from './useMessageFormatter';
 export type {I18nProviderProps, Locale} from 'react-aria/I18nProvider';
 export type {DateFormatterOptions} from 'react-aria/useDateFormatter';
 export type {Filter} from 'react-aria/useFilter';
