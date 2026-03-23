@@ -12,27 +12,18 @@
 
 import {ActionButton, ActionButtonContext} from './ActionButton';
 import {baseColor, centerPadding, colorMix, focusRing, fontRelative, lightDark, setColorScheme, space, style} from '../style' with {type: 'macro'};
+import {Button, ButtonContext} from 'react-aria-components/Button';
+
+import {ButtonGroup} from './ButtonGroup';
+
 import {
-  Button,
-  ButtonContext,
   CellRenderProps,
-  Collection,
-  CollectionRendererContext,
   ColumnRenderProps,
   ColumnResizer,
-  ContextValue,
-  DEFAULT_SLOT,
-  DefaultCollectionRenderer,
-  Form,
-  Key,
-  OverlayTriggerStateContext,
-  Provider,
   Cell as RACCell,
   CellProps as RACCellProps,
-  CheckboxContext as RACCheckboxContext,
   Column as RACColumn,
   ColumnProps as RACColumnProps,
-  Popover as RACPopover,
   Row as RACRow,
   RowProps as RACRowProps,
   Table as RACTable,
@@ -41,47 +32,58 @@ import {
   TableHeader as RACTableHeader,
   TableHeaderProps as RACTableHeaderProps,
   TableProps as RACTableProps,
-  Rect,
   ResizableTableContainer,
   TableBodyRenderProps,
   TableLayout,
   TableLoadMoreItem,
   TableRenderProps,
-  useSlottedContext,
-  useTableOptions,
-  Virtualizer
-} from 'react-aria-components';
-import {ButtonGroup} from './ButtonGroup';
+  useTableOptions
+} from 'react-aria-components/Table';
 import {Checkbox} from './Checkbox';
 import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
 import Chevron from '../ui-icons/Chevron';
 import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
-import {ColumnSize} from 'react-stately';
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-components/Collection';
+import {ColumnSize} from 'react-stately/Column';
+import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/utils';
 import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {css} from '../style/style-macro' with {type: 'macro'};
-import {CustomDialog, DialogContainer} from '..';
+import {CustomDialog} from './CustomDialog';
+import {DialogContainer} from './DialogContainer';
 import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
-import {getActiveElement, getOwnerDocument, isFocusWithin, nodeContains, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import {GridNode} from '@react-stately/grid';
+import {Form} from 'react-aria-components/Form';
+import {getActiveElement, isFocusWithin, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
+import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isFirstItem, isNextSelected} from './ListView';
-import {LayoutNode} from '@react-stately/layout';
+import {Key} from '@react-types/shared';
+import {LayoutNode} from 'react-stately/private/layout/ListLayout';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
+import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {ProgressCircle} from './ProgressCircle';
+import {CheckboxContext as RACCheckboxContext} from 'react-aria-components/Checkbox';
+// @ts-ignore
+import {Popover as RACPopover} from 'react-aria-components/Popover';
 import React, {createContext, CSSProperties, FormEvent, FormHTMLAttributes, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {Rect} from 'react-stately/private/virtualizer/Rect';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {Button as SpectrumButton} from './Button';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from './useDOMRef';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useMediaQuery} from './useMediaQuery';
+import {useObjectRef} from 'react-aria/useObjectRef';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import {VisuallyHidden} from 'react-aria';
+import {Virtualizer} from 'react-aria-components/Virtualizer';
+import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
 interface S2TableProps {
   /** Whether the Table should be displayed with a quiet style. */
@@ -908,7 +910,7 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   let domRef = useDOMRef(ref);
 
   return (
-    <RACTableHeader
+    (<RACTableHeader
       // @ts-ignore
       ref={domRef}
       className={tableHeader}>
@@ -916,7 +918,7 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       {selectionBehavior === 'toggle' && selectionStyle === 'checkbox' &&  (
         // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
         // @ts-ignore
-        <RACColumn isSticky width={scale === 'medium' ? 40 : 52} minWidth={scale === 'medium' ? 40 : 52} className={selectAllCheckboxColumn({isQuiet})}>
+        (<RACColumn isSticky width={scale === 'medium' ? 40 : 52} minWidth={scale === 'medium' ? 40 : 52} className={selectAllCheckboxColumn({isQuiet})}>
           {({isFocusVisible}) => (
             <>
               {selectionMode === 'single' &&
@@ -930,12 +932,12 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
               }
             </>
           )}
-        </RACColumn>
+        </RACColumn>)
       )}
       <Collection items={columns} dependencies={dependencies}>
         {children}
       </Collection>
-    </RACTableHeader>
+    </RACTableHeader>)
   );
 });
 
@@ -1489,7 +1491,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
       </Provider>
     </Provider>
   );
-};
+}
 
 // Use color-mix instead of transparency so sticky cells work correctly.
 const selectedBackground = colorMix('gray-25', 'gray-900', 7);
@@ -1682,7 +1684,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
   let domRef = useDOMRef(ref);
 
   return (
-    <RACRow
+    (<RACRow
       // @ts-ignore
       ref={domRef}
       id={id}
@@ -1698,16 +1700,16 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       }
       {...otherProps}>
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
-      // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
-      // The `spread` otherProps must be after className in Cell.
-      // @ts-ignore
-      <Cell isSticky className={checkboxCellStyle}>
-        <Checkbox slot="selection" styles={selectionCheckbox} />
-      </Cell>
-    )}
+        // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
+        // The `spread` otherProps must be after className in Cell.
+        // @ts-ignore
+        (<Cell isSticky className={checkboxCellStyle}>
+          <Checkbox slot="selection" styles={selectionCheckbox} />
+        </Cell>)
+      )}
       <Collection items={columns} dependencies={[...dependencies, columns]}>
         {children}
       </Collection>
-    </RACRow>
+    </RACRow>)
   );
 });

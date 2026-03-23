@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {composeRenderProps} from 'react-aria-components';
+import {composeRenderProps} from 'react-aria-components/utils';
 import {CSSProperties, RefObject} from 'react';
 
 export function pressScale<R extends {isPressed: boolean}>(ref: RefObject<HTMLElement | null>, style?: CSSProperties | ((renderProps: R) => CSSProperties)): (renderProps: R) => CSSProperties {

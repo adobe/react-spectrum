@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusRing, useHover, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
+import {AriaRadioGroupProps, AriaRadioProps, useRadio, useRadioGroup} from 'react-aria/useRadioGroup';
+
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -26,15 +27,22 @@ import {
   useSlottedContext
 } from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
+import {HoverEvents, Orientation} from '@react-types/shared';
 import {LabelContext} from './Label';
-import {RadioGroupState, useRadioGroupState} from 'react-stately';
+import {mergeProps} from 'react-aria/mergeProps';
+import {mergeRefs} from 'react-aria/private/utils/mergeRefs';
+import {RadioGroupState, useRadioGroupState} from 'react-stately/useRadioGroupState';
 import React, {createContext, ForwardedRef, forwardRef, useMemo} from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {useObjectRef} from 'react-aria/useObjectRef';
+import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**

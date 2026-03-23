@@ -10,12 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Form, TextArea, TextField} from '../src';
+import {Button} from '../src/Button';
+
 import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
+import {Form} from '../src/Form';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {TextArea, TextField} from '../src/TextField';
 
 const meta: Meta<typeof TextField> = {
   component: TextField,

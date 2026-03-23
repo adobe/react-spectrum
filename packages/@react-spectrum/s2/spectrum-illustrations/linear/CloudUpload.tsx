@@ -15,7 +15,7 @@ import CloudUpload_M from 'illustration:./S2_lin_cloudUpload_96.svg';
 import CloudUpload_S from 'illustration:./S2_lin_cloudUpload_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function CloudUpload(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

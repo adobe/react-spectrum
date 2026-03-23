@@ -10,7 +10,7 @@ import {Key} from 'react-aria-components';
 
 import {type Library, TAB_DEFS} from './constants';
 // @ts-ignore
-// eslint-disable-next-line monorepo/no-internal-import
+ 
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import {Page, TocNode} from '@parcel/rsc';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';

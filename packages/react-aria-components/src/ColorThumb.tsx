@@ -1,9 +1,11 @@
 import {ClassNameOrFunction, dom, RenderProps, useRenderProps} from './utils';
-import {Color} from 'react-stately';
-import {filterDOMProps} from '@react-aria/utils';
+import {Color} from 'react-stately/Color';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {GlobalDOMAttributes, HoverEvents, RefObject} from '@react-types/shared';
-import {mergeProps, useFocusRing, useHover} from 'react-aria';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, useContext} from 'react';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
 
 interface ColorState {
   getDisplayColor(): Color,

@@ -10,9 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSlider, ColorSliderContext, ColorThumb, Label, SliderOutput, SliderTrack} from '../';
+import {ColorSlider, ColorSliderContext} from '../src/ColorSlider';
+
+import {ColorThumb} from '../src/ColorThumb';
 import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {Label} from '../src/Label';
 import React from 'react';
+import {SliderOutput, SliderTrack} from '../src/Slider';
 import userEvent from '@testing-library/user-event';
 
 let TestColorSlider = ({sliderProps, thumbProps, trackProps, outputProps}) => (

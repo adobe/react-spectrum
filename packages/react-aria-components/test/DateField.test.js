@@ -12,8 +12,12 @@
 
 import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {CalendarDate} from '@internationalized/date';
-import {DateField, DateFieldContext, DateInput, DateSegment, FieldError, I18nProvider, Label, Text} from '../';
+import {DateField, DateFieldContext, DateInput, DateSegment} from '../src/DateField';
+import {FieldError} from '../src/FieldError';
+import {I18nProvider} from 'react-aria/I18nProvider';
+import {Label} from '../src/Label';
 import React from 'react';
+import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
 describe('DateField', () => {

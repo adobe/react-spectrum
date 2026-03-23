@@ -10,11 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria';
-import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
+import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria/useSeparator';
+
+import {BaseCollection, CollectionNode} from 'react-aria/private/collections/BaseCollection';
 import {ContextValue, dom, DOMRenderProps, SlotProps, StyleProps, useContextProps} from './utils';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef} from 'react';
 
 export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps, DOMRenderProps<'hr' | 'div', undefined>, GlobalDOMAttributes<HTMLElement> {

@@ -11,18 +11,43 @@
  */
 
 import {action} from 'storybook/actions';
-import {Autocomplete, Button, Cell, Collection, Column, DialogTrigger, GridList, GridListHeader, GridListSection, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, OverlayArrow, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Table, TableBody, TableHeader, TableLayout, TagGroup, TagList, Text, TextArea, TextField, Tooltip, TooltipTrigger, Virtualizer} from 'react-aria-components';
+import {Autocomplete} from '../src/Autocomplete';
+import {Button} from '../src/Button';
+import {Cell, Column, Row, Table, TableBody, TableHeader, TableLayout} from '../src/Table';
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {DialogTrigger} from '../src/Dialog';
+import {GridList, GridListHeader, GridListSection} from '../src/GridList';
+import {Header} from '../src/Header';
+import {Input} from '../src/Input';
+import {Keyboard} from '../src/Keyboard';
+import {Label} from '../src/Label';
+import {ListBox, ListBoxSection} from '../src/ListBox';
+import {ListLayout} from 'react-stately/private/layout/ListLayout';
 import {LoadingSpinner, MyListBoxItem, MyMenuItem} from './utils';
+import {Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger} from '../src/Menu';
 import {Meta, StoryObj} from '@storybook/react';
 import {MyCheckbox} from './Table.stories';
 import {MyGridListItem} from './GridList.stories';
 import {MyListBoxLoaderIndicator} from './ListBox.stories';
 import {MyTag} from './TagGroup.stories';
 import {Node} from '@react-types/shared';
+import {OverlayArrow} from '../src/OverlayArrow';
+import {Popover} from '../src/Popover';
 import React, {useState} from 'react';
+import {SearchField} from '../src/SearchField';
+import {Select, SelectValue} from '../src/Select';
+import {Separator} from '../src/Separator';
 import styles from '../example/index.css';
-import {useAsyncList, useListData, useTreeData} from 'react-stately';
-import {useFilter} from 'react-aria';
+import {TagGroup, TagList} from '../src/TagGroup';
+import {Text} from '../src/Text';
+import {TextArea} from '../src/TextArea';
+import {TextField} from '../src/TextField';
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
+import {useAsyncList} from 'react-stately/useAsyncList';
+import {useFilter} from 'react-aria/useFilter';
+import {useListData} from 'react-stately/useListData';
+import {useTreeData} from 'react-stately/useTreeData';
+import {Virtualizer} from '../src/Virtualizer';
 import './styles.css';
 
 export default {
@@ -1290,4 +1315,4 @@ export function AutocompleteGrid() {
       </div>
     </AutocompleteWrapper>
   );
-};
+}

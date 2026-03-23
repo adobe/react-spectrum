@@ -10,14 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Collection, ComboBox, ComboBoxProps, ComboBoxStateContext, Input, Label, ListBox, ListLayout, Popover, useFilter, Virtualizer} from 'react-aria-components';
+import {Button} from '../src/Button';
+
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {ComboBox, ComboBoxProps, ComboBoxStateContext} from '../src/ComboBox';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
+import {ListBox} from '../src/ListBox';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
+import {ListLayout} from 'react-stately/private/layout/ListLayout';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Popover} from '../src/Popover';
 import React, {JSX, useMemo, useState} from 'react';
 import styles from '../example/index.css';
 import {Tag, TagGroup} from 'vanilla-starter/TagGroup';
-import {useAsyncList} from 'react-stately';
+import {useAsyncList} from 'react-stately/useAsyncList';
+import {useFilter} from 'react-aria/useFilter';
+import {Virtualizer} from '../src/Virtualizer';
 import './styles.css';
 
 export default {

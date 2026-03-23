@@ -10,5 +10,6 @@
  * governing permissions and limitations under the License.
  */
 /// <reference types="css-module-types" />
-export {Avatar} from './Avatar';
-export type {AvatarProps, SpectrumAvatarProps} from './Avatar';
+export {Avatar} from '@adobe/react-spectrum/Avatar';
+
+export type {AvatarProps, SpectrumAvatarProps} from '@adobe/react-spectrum/Avatar';

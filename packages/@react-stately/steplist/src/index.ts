@@ -10,5 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export {useStepListState} from './useStepListState';
-export type {StepListProps, StepListState} from './useStepListState';
+export {useStepListState} from 'react-stately/private/steplist/useStepListState';
+
+export type {StepListProps, StepListState} from 'react-stately/private/steplist/useStepListState';

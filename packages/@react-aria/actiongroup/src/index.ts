@@ -9,7 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export type {ActionGroupProps, AriaActionGroupProps, ActionGroupAria} from './useActionGroup';
-export {useActionGroup} from './useActionGroup';
-export {useActionGroupItem} from './useActionGroupItem';
-export type {ActionGroupItemAria, AriaActionGroupItemProps} from './useActionGroupItem';
+export {useActionGroup} from 'react-aria/private/actiongroup/useActionGroup';
+
+export {useActionGroupItem} from 'react-aria/private/actiongroup/useActionGroupItem';
+export type {ActionGroupProps, AriaActionGroupProps, ActionGroupAria} from 'react-aria/private/actiongroup/useActionGroup';
+export type {ActionGroupItemAria, AriaActionGroupItemProps} from 'react-aria/private/actiongroup/useActionGroupItem';

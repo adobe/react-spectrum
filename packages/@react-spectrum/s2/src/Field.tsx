@@ -15,18 +15,24 @@ import {Alignment, DOMRef, NecessityIndicator} from '@react-types/shared';
 import AsteriskIcon from '../ui-icons/Asterisk';
 import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {CenterBaseline, centerBaseline, centerBaselineBefore} from './CenterBaseline';
-import {composeRenderProps, FieldError, FieldErrorProps, Group, GroupProps, Label, LabelProps, Provider, Input as RACInput, InputProps as RACInputProps, Text} from 'react-aria-components';
+import {composeRenderProps, Provider} from 'react-aria-components/utils';
 import {ContextualHelpContext} from './ContextualHelp';
 import {control, controlFont, fieldInput, fieldLabel, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {FieldError, FieldErrorProps} from 'react-aria-components/FieldError';
 import {ForwardedRef, forwardRef, ReactNode} from 'react';
-import {getEventTarget, useId} from '@react-aria/utils';
+import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {Group, GroupProps} from 'react-aria-components/Group';
 import {IconContext} from './Icon';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
+import {Label, LabelProps} from 'react-aria-components/Label';
 import {mergeStyles} from '../style/runtime';
+import {Input as RACInput, InputProps as RACInputProps} from 'react-aria-components/Input';
+// @ts-ignore
 import {StyleString} from '../style/types';
+import {Text} from 'react-aria-components/Text';
 import {useDOMRef} from './useDOMRef';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useId} from 'react-aria/useId';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'render' | 'children'>, StyleProps {
   isDisabled?: boolean,

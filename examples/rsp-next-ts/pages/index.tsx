@@ -84,15 +84,15 @@ import {
   DisclosurePanel,
   TreeView,
   TreeViewItem,
-  TreeViewItemContent
+  TreeViewItemContent,
+  ToastQueue,
+  SubmenuTrigger
 } from "@adobe/react-spectrum";
 import {AutocompleteExample} from "../components/AutocompleteExample";
 import Edit from "@spectrum-icons/workflow/Edit";
 import NotFound from "@spectrum-icons/illustrations/NotFound";
 import Section from "../components/Section";
 import ReorderableListView from "../components/ReorderableListView";
-import {ToastQueue} from '@react-spectrum/toast';
-import {SubmenuTrigger} from "@react-spectrum/menu";
 
 import FileTxt from '@spectrum-icons/workflow/FileTxt';
 import Folder from '@spectrum-icons/workflow/Folder';

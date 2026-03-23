@@ -10,17 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Content,
-  ContextualHelp,
-  Footer,
-  Heading,
-  Link,
-  Radio,
-  RadioGroup,
-  Text
-} from '../src';
+import {Content, Footer, Heading, Text} from '../src/Content';
+
+import {ContextualHelp} from '../src/ContextualHelp';
+import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
+import {Radio, RadioGroup} from '../src/RadioGroup';
 import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof RadioGroup> = {

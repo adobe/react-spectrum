@@ -10,20 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  ContextValue,
-  SliderThumb,
-  SliderTrack
-} from 'react-aria-components';
+import {ContextValue} from 'react-aria-components/utils';
+
 import {createContext, forwardRef, useContext, useRef} from 'react';
 import {filledTrack, SliderBase, SliderBaseProps, thumb, thumbContainer, thumbHitArea, track, upperTrack} from './Slider';
 import {FocusableRef, FocusableRefValue, RangeValue} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
+// @ts-ignore
 import {pressScale} from './pressScale';
+import {SliderThumb, SliderTrack} from 'react-aria-components/Slider';
 import {useFocusableRef} from './useDOMRef';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface RangeSliderProps extends Omit<SliderBaseProps<RangeValue<number>>, 'children'> {

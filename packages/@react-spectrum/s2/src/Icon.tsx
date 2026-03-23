@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMProps} from '@react-types/shared';
 import {ComponentType, Context, createContext, FunctionComponent, ReactNode, SVGProps, useRef} from 'react';
-import {ContextValue, SlotProps} from 'react-aria-components';
+import {ContextValue, SlotProps} from 'react-aria-components/utils';
 import {mergeStyles} from '../style/runtime';
 import {SkeletonWrapper, useSkeletonIcon} from './Skeleton';
 import {style} from '../style' with {type: 'macro'};

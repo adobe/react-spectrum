@@ -25,3 +25,8 @@ declare module '*.svg' {
   const content: FunctionComponent<SVGProps<SVGSVGElement>> ;
   export default content;
 }
+
+declare module '*.json' {
+  const content: any;
+  export default content;
+}

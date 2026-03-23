@@ -12,24 +12,16 @@
 
 /// <reference types="css-module-types" />
 
-export type {StyleHandlers} from './styleProps';
-export {shouldKeepSpectrumClassNames, keepSpectrumClassNames, classNames} from './classNames';
-export {getWrappedElement} from './getWrappedElement';
-export {useMediaQuery} from './useMediaQuery';
-export {createDOMRef, createFocusableRef, useDOMRef, useFocusableRef, unwrapDOMRef, useUnwrapDOMRef} from './useDOMRef';
-export {
-  baseStyleProps,
-  viewStyleProps,
-  dimensionValue,
-  responsiveDimensionValue,
-  convertStyleProps,
-  useStyleProps,
-  passthroughStyle,
-  getResponsiveProp
-} from './styleProps';
-export {useSlotProps, cssModuleToSlots, SlotProvider, ClearSlots} from './Slots';
-export {useHasChild} from './useHasChild';
-export {useIsMobileDevice} from './useIsMobileDevice';
-export {useValueEffect} from '@react-aria/utils';
-export {BreakpointProvider, useMatchedBreakpoints, useBreakpoint} from './BreakpointProvider';
-export {useResizeObserver} from '@react-aria/utils';
+export {shouldKeepSpectrumClassNames, keepSpectrumClassNames, classNames} from '@adobe/react-spectrum/private/utils/classNames';
+
+export {getWrappedElement} from '@adobe/react-spectrum/private/utils/getWrappedElement';
+export {useMediaQuery} from '@adobe/react-spectrum/private/utils/useMediaQuery';
+export {createDOMRef, createFocusableRef, useDOMRef, useFocusableRef, unwrapDOMRef, useUnwrapDOMRef} from '@adobe/react-spectrum/private/utils/useDOMRef';
+export {baseStyleProps, viewStyleProps, dimensionValue, responsiveDimensionValue, convertStyleProps, useStyleProps, passthroughStyle, getResponsiveProp} from '@adobe/react-spectrum/private/utils/styleProps';
+export {useSlotProps, cssModuleToSlots, SlotProvider, ClearSlots} from '@adobe/react-spectrum/private/utils/Slots';
+export {useHasChild} from '@adobe/react-spectrum/private/utils/useHasChild';
+export {useIsMobileDevice} from '@adobe/react-spectrum/private/utils/useIsMobileDevice';
+export {BreakpointProvider, useMatchedBreakpoints, useBreakpoint} from '@adobe/react-spectrum/private/utils/BreakpointProvider';
+export type {StyleHandlers} from '@adobe/react-spectrum/private/utils/styleProps';
+export {useValueEffect} from 'react-aria/private/utils/useValueEffect';
+export {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';

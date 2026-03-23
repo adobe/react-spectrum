@@ -11,12 +11,18 @@
  */
 
 import {action} from 'storybook/actions';
-import {Button, DateField, DateInput, DateSegment, FieldError, Form, Input, Label, TextField} from 'react-aria-components';
+import {Button} from '../src/Button';
 import clsx from 'clsx';
+import {DateField, DateInput, DateSegment} from '../src/DateField';
+import {FieldError} from '../src/FieldError';
+import {Form} from '../src/Form';
 import {fromAbsolute, getLocalTimeZone, parseAbsoluteToLocal} from '@internationalized/date';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
+import {TextField} from '../src/TextField';
 import './styles.css';
 
 export default {

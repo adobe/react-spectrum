@@ -11,11 +11,12 @@
  */
 
 import {action} from 'storybook/actions';
-import {Button, Text} from '../src';
+import {Button} from '../src/Button';
 import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {Text} from '../src/Content';
 import {useEffect, useRef, useState} from 'react';
 
 const events = ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'];
