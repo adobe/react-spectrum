@@ -56,10 +56,6 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
     ) {
 
       workspace.set('dependencies.@swc/helpers', '^0.5.0');
-      workspace.set('dependencies.@adobe/spectrum-css-temp');
-      if (workspace.ident.startsWith('@react-spectrum') && !workspace.ident.endsWith('/utils') && !workspace.ident.endsWith('/mcp')) {
-        workspace.set('devDependencies.@adobe/spectrum-css-temp', '3.0.0-alpha.1');
-      }
       // these should not be in dependencies, but should be in dev or peer
       // can't change the error message, but the package knows if it even needs it
       if (!workspace.ident.startsWith('@react-spectrum/test-utils-internal')) {
