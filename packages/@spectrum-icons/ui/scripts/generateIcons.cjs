@@ -38,7 +38,7 @@ function template(iconName) {
     return (
 `import {${iconName} as IconComponent} from '@adobe/react-spectrum-ui/dist/${iconName}.js';
 import {UIIcon, UIIconPropsWithoutChildren} from '@adobe/react-spectrum/private/icon/UIIcon';
-import {useProvider} from '@react-spectrum/provider';
+import {useProvider} from '@adobe/react-spectrum/Provider';
 import React, {JSX} from 'react';
 
 ${jsx}
