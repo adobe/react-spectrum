@@ -392,11 +392,7 @@ let treeRowFocusRing = style({
     selectionStyle: {
       highlight: {
         default: 'focus-ring',
-        forcedColors: 'Highlight',
-        isSelected: {
-          default: 'focus-ring',
-          forcedColors: 'ButtonBorder'
-        }
+        forcedColors: 'ButtonBorder'
       }
     }
   },
