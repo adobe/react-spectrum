@@ -11,11 +11,12 @@
  */
 
 import {cloneElement, JSX, ReactNode, RefObject, useState} from 'react';
-import {ColorThumb} from 'react-aria-components';
+import {ColorThumb} from 'react-aria-components/ColorThumb';
 import {createPortal} from 'react-dom';
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
-import {useId, useLayoutEffect} from '@react-aria/utils';
+import {useId} from 'react-aria/useId';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 
 const HANDLE_SIZE = 16;
 const LOUPE_HEIGHT = 64; // Does not include borders

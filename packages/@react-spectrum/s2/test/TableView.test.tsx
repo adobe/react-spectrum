@@ -10,27 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/live-announcer');
-jest.mock('@react-aria/utils/src/scrollIntoView');
+jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
+jest.mock('react-aria/src/utils/scrollIntoView');
 import {act, render} from '@react-spectrum/test-utils-internal';
-import {
-  Cell,
-  Column,
-  MenuItem,
-  MenuSection,
-  Row,
-  Tab,
-  TableBody,
-  TableHeader,
-  TableView,
-  TabList,
-  Tabs,
-  Text
-} from '../src';
+import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../src/TableView';
 import {DisabledBehavior} from '@react-types/shared';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
+import {MenuItem, MenuSection} from '../src/Menu';
 import {pointerMap, User} from '@react-aria/test-utils';
 import React, {useState} from 'react';
+import {Tab, TabList, Tabs} from '../src/Tabs';
+import {Text} from '../src/Content';
 import userEvent from '@testing-library/user-event';
 
 // @ts-ignore

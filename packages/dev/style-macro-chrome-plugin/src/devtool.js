@@ -28,9 +28,6 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
   });
   debugLog('Init message sent to background');
 
-  // Store macro data directly in DevTools
-  const macroData = new Map();
-
   // Track mutation observer for selected element
   let currentObserver = null;
   let currentElementId = null;
@@ -39,17 +36,7 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
   backgroundPageConnection.onMessage.addListener((message) => {
     debugLog('Message from background:', message);
 
-    if (message.action === 'stylemacro-update-macros') {
-      debugLog('Received stylemacro-update-macros for hash:', message.hash);
-      // Store the macro data directly in DevTools
-      macroData.set(message.hash, {
-        loc: message.loc,
-        style: message.style
-      });
-      debugLog('Stored macro data, total macros:', macroData.size);
-      // Refresh the panel to show updated data
-      update();
-    } else if (message.action === 'stylemacro-class-changed') {
+    if (message.action === 'stylemacro-class-changed') {
       debugLog('Received stylemacro-class-changed notification for element:', message.elementId);
       // Only update if the changed element is the one we're currently watching
       if (message.elementId === currentElementId) {
@@ -59,23 +46,62 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
     }
   });
 
-  // Get macro data from local storage
-  const getDynamicMacroData = (hash) => {
-    debugLog('Looking up dynamic macro with hash:', hash);
-    const data = macroData.get(hash);
-    debugLog('Found data:', !!data);
-    return data || null;
-  };
-
-  function getMacroData(className) {
-    let promise = new Promise((resolve) => {
-      debugLog('Getting macro data for:', className);
-      chrome.devtools.inspectedWindow.eval(`window.getComputedStyle($0).getPropertyValue("--macro-data-${className}")`, (style) => {
-        debugLog('Got style:', style);
-        resolve(style ? JSON.parse(style) : null);
+  // Get all static macro data in one eval (from CSS custom properties on $0).
+  // Uses the element's window so iframes work correctly. Value is plain JSON.
+  function getMacroDataStaticBatch(hashes) {
+    if (hashes.length === 0) {
+      return Promise.resolve([]);
+    }
+    return new Promise((resolve) => {
+      const hashesJson = JSON.stringify(hashes);
+      const staticEval = `
+(function () {
+  var el = $0;
+  if (!el) return [];
+  var w = (el.ownerDocument && el.ownerDocument.defaultView) || window;
+  var s = w.getComputedStyle(el);
+  var hashes = ${hashesJson};
+  return hashes.map(function (h) {
+    var raw = s.getPropertyValue("--macro-data-" + h).trim();
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw);
+    } catch (e) {
+      return null;
+    }
+  });
+})();
+      `.trim();
+      chrome.devtools.inspectedWindow.eval(staticEval, (results) => {
+        resolve(Array.isArray(results) ? results : []);
       });
     });
-    return promise;
+  }
+
+  // Get all dynamic macro data in one eval. Uses $0's window (correct for iframes).
+  // Reads from (element's document defaultView).__styleMacroDynamic__.map.
+  function getMacroDataDynamicBatch(hashes) {
+    if (hashes.length === 0) {
+      return Promise.resolve([]);
+    }
+    return new Promise((resolve) => {
+      const hashesJson = JSON.stringify(hashes);
+      const dynamicEval = `
+(function () {
+  var el = $0;
+  var w = (el && el.ownerDocument && el.ownerDocument.defaultView) || window;
+  var g = w && w.__styleMacroDynamic__;
+  if (!g || !g.map) return [];
+  var hashes = ${hashesJson};
+  return hashes.map(function (h) {
+    return g.map["-macro-dynamic-" + h] || null;
+  });
+})();
+      `.trim();
+      chrome.devtools.inspectedWindow.eval(dynamicEval, (results) => {
+        resolve(Array.isArray(results) ? results : []);
+      });
+    });
   }
 
   // Function to disconnect the current observer
@@ -167,16 +193,12 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
         debugLog('Static macro hashes:', staticMacroHashes);
         debugLog('Dynamic macro hashes:', dynamicMacroHashes);
 
-        // Get static macro data (async from CSS)
-        let staticMacros = staticMacroHashes.map(macro => getMacroData(macro));
-
-        debugLog('Waiting for', staticMacros.length, 'static macros...');
-        let staticResults = await Promise.all(staticMacros);
-
-        // Get dynamic macro data (sync from local storage)
-        let dynamicResults = dynamicMacroHashes.map(hash => getDynamicMacroData(hash));
-
-        // Combine results
+        // Get macro data: static from CSS custom properties on $0, dynamic from element's window.__styleMacroDynamic__.map
+        debugLog('Waiting for', staticMacroHashes.length, 'static +', dynamicMacroHashes.length, 'dynamic macros...');
+        let [staticResults, dynamicResults] = await Promise.all([
+          getMacroDataStaticBatch(staticMacroHashes),
+          getMacroDataDynamicBatch(dynamicMacroHashes)
+        ]);
         let results = [...staticResults, ...dynamicResults];
         debugLog('Results:', results);
 
@@ -220,49 +242,4 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
 
   // Initial observation when the panel is first opened
   startObserving();
-
-  // Cleanup stale macro data every 5 minutes
-  const CLEANUP_INTERVAL = 1000 * 60 * 5;
-  setInterval(() => {
-    if (macroData.size === 0) {
-      return;
-    }
-
-    debugLog('Running macro data cleanup, checking', macroData.size, 'macros...');
-    const hashes = Array.from(macroData.keys());
-
-    // Check all hashes in a single eval for efficiency
-    const checkScript = `
-      (function() {
-        const hashes = ${JSON.stringify(hashes)};
-        const results = {};
-        for (const hash of hashes) {
-          results[hash] = !!document.querySelector('.-macro-dynamic-' + hash);
-        }
-        return results;
-      })();
-    `;
-
-    chrome.devtools.inspectedWindow.eval(checkScript, (results, isException) => {
-      if (isException) {
-        debugLog('Error during cleanup:', results);
-        return;
-      }
-
-      let removedCount = 0;
-      for (const hash in results) {
-        if (!results[hash]) {
-          debugLog('Removing stale macro:', hash);
-          macroData.delete(hash);
-          removedCount++;
-        }
-      }
-
-      if (removedCount > 0) {
-        debugLog(`Cleaned up ${removedCount} stale macro(s). Remaining: ${macroData.size}`);
-      } else {
-        debugLog('No stale macros found.');
-      }
-    });
-  }, CLEANUP_INTERVAL);
 });

@@ -21,19 +21,16 @@ import {
   MenuTriggerProps as AriaMenuTriggerProps,
   SubmenuTrigger as AriaSubmenuTrigger,
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
-  ContextValue,
-  DEFAULT_SLOT,
-  MenuItemRenderProps,
-  Provider,
-  Separator,
-  SeparatorProps
-} from 'react-aria-components';
-import {baseColor, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
+  MenuItemRenderProps
+} from 'react-aria-components/Menu';
+
+import {baseColor, centerPadding, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
+import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/utils';
+import {control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, JSX, ReactElement, ReactNode, useContext, useRef, useState} from 'react';
 import {divider} from './Divider';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, PressEvent} from '@react-types/shared';
@@ -41,18 +38,21 @@ import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
-import {ImageContext} from './Image'; // chevron right removed??
-import InfoCircleIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
+import {ImageContext} from './Image';
+import InfoCircleIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg'; // chevron right removed??
 import {InPopoverContext, Popover, PopoverContext} from './Popover';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
+// @ts-ignore
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
-import {Placement, useLocale} from 'react-aria';
-import {PressResponder} from '@react-aria/interactions';
+import {Placement} from 'react-aria/private/overlays/useOverlayPosition';
+import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {pressScale} from './pressScale';
-import {useGlobalListeners, useId} from '@react-aria/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {Separator, SeparatorProps} from 'react-aria-components/Separator';
+import {useGlobalListeners} from 'react-aria/private/utils/useGlobalListeners';
+import {useId} from 'react-aria/useId';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
 // need to strip id's from icons

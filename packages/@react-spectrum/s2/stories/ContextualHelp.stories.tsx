@@ -1,4 +1,5 @@
-import {Content, ContextualHelp, Footer, Heading, Text} from '../src';
+import {Content, Footer, Heading, Text} from '../src/Content';
+import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 

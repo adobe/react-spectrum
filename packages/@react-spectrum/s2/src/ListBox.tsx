@@ -15,7 +15,7 @@ import {
   ListBoxItem as AriaListBoxItem,
   ListBoxItemProps,
   ListBoxProps
-} from 'react-aria-components';
+} from 'react-aria-components/ListBox';
 import {ReactNode} from 'react';
 
 

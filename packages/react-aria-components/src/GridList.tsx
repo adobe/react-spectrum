@@ -9,9 +9,16 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSection, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
+import {
+  AriaGridListProps,
+  useGridList,
+  useGridListItem,
+  useGridListSection,
+  useGridListSelectionCheckbox
+} from 'react-aria/useGridList';
+
 import {ButtonContext} from './Button';
-import {CheckboxContext, FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
+import {CheckboxContext} from './Checkbox';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -27,18 +34,37 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent, HeaderNode, ItemNode, LoaderNode, SectionNode} from '@react-aria/collections';
+import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, SectionProps} from './Collection';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
-import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
-import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
+import {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
+import {DraggableItemResult} from 'react-aria/useDraggableCollection';
+import {DragPreviewRenderer} from '@react-types/shared';
+import {DropIndicatorAria, DroppableCollectionResult} from 'react-aria/useDroppableCollection';
+import {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
+import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {FocusScope} from 'react-aria/FocusScope';
+import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, Orientation, PressEvents, RefObject} from '@react-types/shared';
+import {HeaderNode, ItemNode, LoaderNode, SectionNode} from 'react-aria/private/collections/BaseCollection';
+import {Collection as ICollection, Node, SelectionBehavior} from '@react-types/shared';
+import {inertValue} from 'react-aria/private/utils/inertValue';
+import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
+import {ListState, UNSTABLE_useFilteredListState, useListState} from 'react-stately/useListState';
 import {ListStateContext} from './ListBox';
+import {LoadMoreSentinelProps, useLoadMoreSentinel} from 'react-aria/private/utils/useLoadMoreSentinel';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
+import {useCollator} from 'react-aria/useCollator';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useObjectRef} from 'react-aria/useObjectRef';
+import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 export interface GridListRenderProps {
   /**
@@ -66,6 +92,11 @@ export interface GridListRenderProps {
    * @selector [data-layout="stack | grid"]
    */
   layout: 'stack' | 'grid',
+  /**
+   * The primary orientation of the items.
+   * @selector [data-orientation="vertical | horizontal"]
+   */
+  orientation: Orientation,
   /**
    * State of the grid list.
    */
@@ -101,7 +132,7 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
    * The primary orientation of the items. Usually this is the direction that the collection scrolls.
    * @default 'vertical'
    */
-  orientation?: 'horizontal' | 'vertical'
+  orientation?: Orientation
 }
 
 
@@ -213,14 +244,6 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       selectionManager
     });
 
-    let keyboardDelegate = new ListKeyboardDelegate({
-      collection: filteredState.collection,
-      disabledKeys: selectionManager.disabledKeys,
-      disabledBehavior: selectionManager.disabledBehavior,
-      ref,
-      orientation,
-      direction
-    });
     let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, ref, {layout, direction, orientation});
     droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate,
@@ -234,6 +257,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   let isEmpty = filteredState.collection.size === 0;
   let renderValues = {
     isDropTarget: isRootDropTarget,
+    orientation,
     isEmpty,
     isFocused,
     isFocusVisible,
@@ -274,7 +298,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
         data-empty={isEmpty || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
-        data-layout={layout}>
+        data-layout={layout}
+        data-orientation={orientation}>
         <Provider
           values={[
             [ListStateContext, filteredState],

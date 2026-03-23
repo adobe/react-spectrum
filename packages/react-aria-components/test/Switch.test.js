@@ -12,7 +12,7 @@
 
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import {Switch, SwitchContext} from '../';
+import {Switch, SwitchContext} from '../src/Switch';
 import userEvent from '@testing-library/user-event';
 
 describe('Switch', () => {

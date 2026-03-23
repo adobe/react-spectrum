@@ -10,8 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Dialog, DialogTrigger, Heading, OverlayArrow, Popover} from 'react-aria-components';
+import {Button} from '../src/Button';
+
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {Heading} from '../src/Heading';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {OverlayArrow} from '../src/OverlayArrow';
+import {Popover} from '../src/Popover';
 import React, {JSX, useEffect, useRef, useState} from 'react';
 import styles from './styles.css';
 

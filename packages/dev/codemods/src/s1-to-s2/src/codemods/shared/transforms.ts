@@ -533,6 +533,7 @@ export function movePropToNewChildComponentName(
     getName(path, path.parentPath.node.openingElement.name) === parentComponentName
   ) {
     let propValue: t.JSXAttribute['value'] | void;
+    let localName = newChildComponentName;
     path.node.openingElement.attributes =
       path.node.openingElement.attributes.filter((attr) => {
         if (t.isJSXAttribute(attr) && attr.name.name === propName) {
@@ -543,10 +544,14 @@ export function movePropToNewChildComponentName(
       });
 
     if (propValue) {
+      if (availableComponents.has(newChildComponentName)) {
+        let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
+        localName = addComponentImport(program, newChildComponentName);
+      }
       path.node.children.unshift(
         t.jsxElement(
-          t.jsxOpeningElement(t.jsxIdentifier(newChildComponentName), []),
-          t.jsxClosingElement(t.jsxIdentifier(newChildComponentName)),
+          t.jsxOpeningElement(t.jsxIdentifier(localName), []),
+          t.jsxClosingElement(t.jsxIdentifier(localName)),
           [t.isStringLiteral(propValue) ? t.jsxText(propValue.value) : propValue]
         )
       );

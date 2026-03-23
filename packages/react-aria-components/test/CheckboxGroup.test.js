@@ -11,8 +11,11 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Checkbox, CheckboxGroup, CheckboxGroupContext, FieldError, Label, Text} from '../';
+import {Checkbox, CheckboxGroup, CheckboxGroupContext} from '../src/Checkbox';
+import {FieldError} from '../src/FieldError';
+import {Label} from '../src/Label';
 import React from 'react';
+import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
 let TestCheckboxGroup = ({groupProps, checkboxProps}) => (

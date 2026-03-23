@@ -15,7 +15,7 @@ import NoInternetConnection_M from 'illustration:./S2_lin_noInternetConnection_9
 import NoInternetConnection_S from 'illustration:./S2_lin_noInternetConnection_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function NoInternetConnection(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

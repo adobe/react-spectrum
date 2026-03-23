@@ -10,7 +10,7 @@ import {iconAliases} from './iconAliases.js';
 // @ts-ignore
 import icons from '/packages/@react-spectrum/s2/s2wf-icons/*.svg';
 import {InfoMessage} from './colorSearchData';
-// eslint-disable-next-line monorepo/no-internal-import
+ 
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 

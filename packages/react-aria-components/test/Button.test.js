@@ -11,8 +11,13 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, ButtonContext, Dialog, DialogTrigger, Heading, Modal, ProgressBar, Text} from '../';
+import {Button, ButtonContext} from '../src/Button';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {Heading} from '../src/Heading';
+import {Modal} from '../src/Modal';
+import {ProgressBar} from '../src/ProgressBar';
 import React, {useState} from 'react';
+import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
 describe('Button', () => {
@@ -348,7 +353,7 @@ describe('Button', () => {
       let [pending, setPending] = useState(false);
       return (
         // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-        <form
+        (<form
           onSubmit={(e) => {
             // forms are submitted implicitly on keydown, so we need to wait to set pending until after to set pending
             props.onSubmit(e);
@@ -379,7 +384,7 @@ describe('Button', () => {
               </>
             )}
           </Button>
-        </form>
+        </form>)
       );
     }
     render(

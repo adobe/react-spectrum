@@ -767,6 +767,10 @@ module.exports = new Transformer({
         let result = {
           description: parsed.description
         };
+        let extractedExamples = extractExamples(comments);
+        if (extractedExamples.length > 0) {
+          result.examples = extractedExamples;
+        }
 
         for (let tag of parsed.tags) {
           if (tag.title === 'default') {
@@ -789,13 +793,72 @@ module.exports = new Transformer({
             result.params[tag.name] = tag.description;
           } else if (tag.title === 'selector') {
             result.selector = tag.description;
+          } else if (tag.title === 'example') {
+            if (!result.examples) {
+              result.examples = [];
+            }
+
+            if (tag.description) {
+              result.examples.push(tag.description);
+            }
           }
+        }
+
+        if (result.examples) {
+          result.examples = [...new Set(result.examples.map(example => example.trim()).filter(Boolean))];
         }
 
         return result;
       }
 
       return {};
+    }
+
+    function extractExamples(comments) {
+      let lines = comments.split('\n')
+        .map(line => line.replace(/^\s*\*?\s?/, ''));
+      let examples = [];
+      let current = null;
+
+      for (let line of lines) {
+        if (/^@example\b/.test(line)) {
+          if (current) {
+            let prev = current.join('\n').trim();
+            if (prev) {
+              examples.push(prev);
+            }
+          }
+
+          current = [];
+          let inlineExample = line.replace(/^@example\b\s*/, '');
+          if (inlineExample) {
+            current.push(inlineExample);
+          }
+          continue;
+        }
+
+        if (current) {
+          if (/^@\w+/.test(line)) {
+            let example = current.join('\n').trim();
+            if (example) {
+              examples.push(example);
+            }
+            current = null;
+            continue;
+          }
+
+          current.push(line);
+        }
+      }
+
+      if (current) {
+        let example = current.join('\n').trim();
+        if (example) {
+          examples.push(example);
+        }
+      }
+
+      return examples;
     }
 
     function getDocComments(path) {
@@ -856,6 +919,10 @@ module.exports = new Transformer({
 
       if (value.return) {
         value.return.description = docs.return || value.return.description || null;
+      }
+
+      if (docs.examples) {
+        value.examples = docs.examples;
       }
     }
 

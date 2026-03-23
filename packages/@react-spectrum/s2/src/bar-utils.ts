@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {centerPadding, controlSize, fieldInput, staticColor} from './style-utils' with {type: 'macro'};
+import {centerPadding} from '../style' with {type: 'macro'};
+import {controlSize, fieldInput, staticColor} from './style-utils' with {type: 'macro'};
 
 export const bar = () => ({
   ...staticColor(),

@@ -20,7 +20,8 @@ module.exports = new Resolver({
       fs: options.inputFS,
       projectRoot: options.projectRoot,
       extensions: ['ts', 'tsx', 'd.ts', 'js'],
-      mainFields: ['source', 'types', 'main']
+      mainFields: ['source', 'types', 'main'],
+      packageExports: true
     });
   },
   async resolve({dependency, options, specifier, config: resolver}) {

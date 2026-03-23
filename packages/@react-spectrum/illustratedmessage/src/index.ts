@@ -12,5 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export {IllustratedMessage} from './IllustratedMessage';
-export type {SpectrumIllustratedMessageProps} from '@react-types/illustratedmessage';
+export {IllustratedMessage} from '@adobe/react-spectrum/IllustratedMessage';
+
+export type {SpectrumIllustratedMessageProps} from '@adobe/react-spectrum/IllustratedMessage';

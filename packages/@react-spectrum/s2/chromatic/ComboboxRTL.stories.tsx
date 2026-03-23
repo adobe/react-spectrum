@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComboBox} from '../src';
+import {ComboBox} from '../src/ComboBox';
 
 import type {Meta} from '@storybook/react';
 
