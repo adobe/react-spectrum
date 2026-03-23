@@ -85,6 +85,18 @@
       "isLibrary": true,
       "outputFormat": "commonjs",
       "includeNodeModules": false
+    },
+    "legacy-module": {
+      "source": [
+        "exports/**/*.ts"
+      ],
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false,
+      "engines": {
+        "browsers": "chrome >= 79"
+      }
     }
   }
 }

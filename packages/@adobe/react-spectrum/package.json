@@ -96,6 +96,20 @@
       "includeNodeModules": [
         "@adobe/spectrum-css-temp"
       ]
+    },
+    "legacy-module": {
+      "source": [
+        "exports/**/*.ts"
+      ],
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ],
+      "engines": {
+        "browsers": "chrome >= 79"
+      }
     }
   }
 }
