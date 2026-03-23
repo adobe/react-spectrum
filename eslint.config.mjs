@@ -493,8 +493,8 @@ export default [{
     },
 }, {
     files: [
-        "packages/@react-aria/interactions/src/**/*.ts",
-        "packages/@react-aria/interactions/src/**/*.tsx",
+        "packages/react-aria/src/interactions/**/*.ts",
+        "packages/react-aria/src/interactions/**/*.tsx",
     ],
 
     rules: {
