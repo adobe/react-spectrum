@@ -11,13 +11,15 @@
  */
 
 import {act, fireEvent, render, screen} from '@testing-library/react';
-import {Button, Text, Toolbar, ToolbarContext} from '../';
+import {Button} from '../src/Button';
 import {composeStory} from '@storybook/react';
-import {I18nProvider} from '@react-aria/i18n';
-
+import {I18nProvider} from 'react-aria/I18nProvider';
 import Meta, {ToolbarExample as ToolbarExampleStory} from '../stories/Toolbar.stories';
 import {pointerMap} from '@react-spectrum/test-utils-internal';
+
 import React, {createRef} from 'react';
+import {Text} from '../src/Text';
+import {Toolbar, ToolbarContext} from '../src/Toolbar';
 import userEvent from '@testing-library/user-event';
 
 const ToolbarExample = composeStory(ToolbarExampleStory, Meta);

@@ -12,19 +12,27 @@
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
 import {AriaTreeTests} from './AriaTree.test-util';
-import {Button, Checkbox, Collection, DropIndicator, ListLayout, Text, Tree, TreeHeader, TreeItem, TreeItemContent, TreeLoadMoreItem, TreeSection, useDragAndDrop, Virtualizer} from '../';
+import {Button} from '../src/Button';
+import {Checkbox} from '../src/Checkbox';
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
 import {composeStories} from '@storybook/react';
 // @ts-ignore
-import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
+import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
+import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
+import {ListLayout} from 'react-stately/private/layout/ListLayout';
 import React from 'react';
 import * as stories from '../stories/Tree.stories';
+import {Text} from '../src/Text';
+import {Tree, TreeHeader, TreeItem, TreeItemContent, TreeLoadMoreItem, TreeSection} from '../src/Tree';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
-import {useTreeData} from 'react-stately';
+import {useTreeData} from 'react-stately/useTreeData';
+import {Virtualizer} from '../src/Virtualizer';
 
 let {
   EmptyTreeStaticStory: EmptyLoadingTree,
-  LoadingStoryDepOnTopStory: LoadingMoreTree
+  LoadingStoryDepOnTopStory: LoadingMoreTree,
+  TreeWithDragAndDrop
 } = composeStories(stories);
 
 let onSelectionChange = jest.fn();
@@ -1922,6 +1930,60 @@ describe('Tree', () => {
       act(() => jest.runAllTimers());
 
       expect(onRootDrop).toHaveBeenCalledTimes(1);
+    });
+
+    it('should automatically focus the newly added dropped item', async () => {
+      const {getAllByRole} = render(<TreeWithDragAndDrop />);
+
+      const trees = getAllByRole('treegrid');
+      const firstTreeRows = within(trees[0]).getAllByRole('row');
+      const dataTransfer = new DataTransfer();
+
+      fireEvent(firstTreeRows[1], new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
+      act(() => jest.runAllTimers());
+
+      fireEvent(trees[1], new DragEvent('dragenter', {dataTransfer, clientX: 50, clientY: 50}));
+      fireEvent(trees[1], new DragEvent('dragover', {dataTransfer, clientX: 50, clientY: 50}));
+      expect(trees[1]).toHaveAttribute('data-drop-target', 'true');
+
+      // ¯\_(ツ)_/¯
+      await act(async () => fireEvent(trees[1], new DragEvent('drop', {dataTransfer, clientX: 50, clientY: 50})));
+      act(() => jest.runAllTimers());
+
+      let secondTreeRows = within(trees[1]).getAllByRole('row');
+
+      expect(secondTreeRows).toHaveLength(1);
+      // The newly added row in the second tree should be the active element
+      expect(secondTreeRows[0]).toBe(document.activeElement);
+
+      await user.click(document.body);
+      act(() => jest.runAllTimers());
+
+      await user.tab();
+      await user.keyboard('{ArrowRight}'); // expand the projects item
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      await user.tab();
+      act(() => jest.runAllTimers());
+
+      secondTreeRows = within(trees[1]).getAllByRole('row');
+      expect(secondTreeRows).toHaveLength(4);
+      expect(within(secondTreeRows[3]).getAllByRole('button')[0]).toHaveAttribute('aria-label', 'Insert after Reports');
+      expect(document.activeElement).toBe(within(secondTreeRows[3]).getAllByRole('button')[0]);
+      expect(secondTreeRows[3]).toHaveAttribute('data-drop-target', 'true');
+
+      await user.keyboard('{ArrowUp}');
+      expect(within(secondTreeRows[2]).getAllByRole('button')[0]).toHaveAttribute('aria-label', 'Drop on Reports');
+      expect(document.activeElement).toBe(within(secondTreeRows[2]).getAllByRole('button')[0]);
+
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      secondTreeRows = within(trees[1]).getAllByRole('row');
+      expect(secondTreeRows).toHaveLength(1);
+      expect(secondTreeRows[0]).toBe(document.activeElement);
     });
 
     it('should support disabled drag and drop', async () => {

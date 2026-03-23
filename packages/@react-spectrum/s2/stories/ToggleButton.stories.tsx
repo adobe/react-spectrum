@@ -13,7 +13,8 @@
 import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
-import {Text, ToggleButton} from '../src';
+import {Text} from '../src/Content';
+import {ToggleButton} from '../src/ToggleButton';
 
 const events = ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange'];
 

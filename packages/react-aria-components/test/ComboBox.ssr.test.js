@@ -15,7 +15,7 @@ import {fireEvent, screen, testSSR} from '@react-spectrum/test-utils-internal';
 describe('ComboBox SSR', function () {
   it('should render text of default selected key', async function () {
     await testSSR(__filename, `
-      import {ComboBox, Label, Input, Popover, ListBox, ListBoxItem} from '../';
+      import {ComboBox, Label, Input, Popover, ListBox, ListBoxItem} from '../exports/index.ts';
 
       <React.StrictMode>
         <ComboBox defaultSelectedKey="dog">
@@ -43,7 +43,7 @@ describe('ComboBox SSR', function () {
 
   it('should point ref correctly after hydration', async function () {
     await testSSR(__filename, `
-      import {ComboBox, Label, Input, Popover, ListBox, ListBoxItem} from '../';
+      import {ComboBox, Label, Input, Popover, ListBox, ListBoxItem} from '../exports/index.ts';
       import {useState, useRef} from 'react';
       import {useLayoutEffect} from '@react-aria/utils';
 

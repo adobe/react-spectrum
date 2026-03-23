@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTextFieldProps, useTextField} from 'react-aria';
+import {AriaTextFieldProps, useTextField} from 'react-aria/useTextField';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -26,10 +26,10 @@ import {
   useSlot,
   useSlottedContext
 } from './utils';
-import {createHideableComponent} from '@react-aria/collections';
+import {createHideableComponent} from 'react-aria/private/collections/Hidden';
 import {FieldErrorContext} from './FieldError';
-import {FieldInputContext} from './RSPContexts';
-import {filterDOMProps} from '@react-aria/utils';
+import {FieldInputContext} from './Autocomplete';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {FormContext} from './Form';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {GroupContext} from './Group';

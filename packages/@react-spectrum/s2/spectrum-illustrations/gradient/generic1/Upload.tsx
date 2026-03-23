@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../../src/Icon';
 import Upload_L from 'illustration:./S2_fill_upload_generic1_160.svg';
 import Upload_M from 'illustration:./S2_fill_upload_generic1_96.svg';
 import Upload_S from 'illustration:./S2_fill_upload_generic1_48.svg';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function Upload(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

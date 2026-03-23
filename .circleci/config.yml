@@ -390,7 +390,7 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
-  test-esm:
+  test-build:
     executor: rsp-2xlarge
     steps:
       - restore_cache:
@@ -401,6 +401,7 @@ jobs:
           command: |
             make build
             node --loader ./scripts/esm-support/loader.mjs ./scripts/esm-support/testESM.mjs
+            node scripts/testCJS.cjs
 
   lint:
     executor: rsp-xlarge
@@ -921,7 +922,7 @@ workflows:
       - test-ssr-18:
           requires:
             - install-18
-      - test-esm:
+      - test-build:
           requires:
             - install
       - lint:
@@ -1011,7 +1012,7 @@ workflows:
             - test-17
             - test-ssr-18
             - test-18
-            - test-esm
+            - test-build
             - storybook
             - storybook-s2
       - deploy-s3-stage:

@@ -15,7 +15,7 @@ import {fireEvent, screen, testSSR} from '@react-spectrum/test-utils-internal';
 describe('Table SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {Table, TableHeader, Column, TableBody, Row, Cell} from '../';
+      import {Table, TableHeader, Column, TableBody, Row, Cell} from '../exports/index.ts';
 
       function Test() {
         let [show, setShow] = React.useState(false);

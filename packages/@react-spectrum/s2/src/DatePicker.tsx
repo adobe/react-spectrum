@@ -10,33 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  DatePicker as AriaDatePicker,
-  DatePickerProps as AriaDatePickerProps,
-  Button,
-  ButtonRenderProps,
-  ContextValue,
-  DateValue,
-  Dialog,
-  FormContext,
-  OverlayTriggerStateContext,
-  PopoverProps,
-  Provider,
-  TimeValue
-} from 'react-aria-components';
+import {DatePicker as AriaDatePicker, DatePickerProps as AriaDatePickerProps, DateValue} from 'react-aria-components/DatePicker';
 import {baseColor, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
-import {Calendar, CalendarProps, IconContext, TimeField} from '../';
+import {Button, ButtonRenderProps} from 'react-aria-components/Button';
+import {Calendar, CalendarProps} from './Calendar';
 import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
+import {ContextValue, Provider} from 'react-aria-components/utils';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactElement, ReactNode, Ref, useContext, useRef, useState} from 'react';
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
+import {Dialog, OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {FieldGroup, FieldLabel, HelpText} from './Field';
+import {FormContext} from 'react-aria-components/Form';
 import {forwardRefType, GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Popover} from './Popover';
+import {PopoverProps} from 'react-aria-components/Popover';
 import {pressScale} from './pressScale';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {TimeField} from './TimeField';
+import {TimeValue} from 'react-aria-components/TimeField';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 

@@ -11,7 +11,8 @@
  */
 
 import clsx from 'clsx';
-import {DateInput, DateSegment, Label, TimeField} from 'react-aria-components';
+import {DateInput, DateSegment, TimeField} from '../src/DateField';
+import {Label} from '../src/Label';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';

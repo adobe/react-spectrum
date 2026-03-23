@@ -19,19 +19,34 @@ import Chevron from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import {CloseButton} from './CloseButton';
 import {createContext, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {DOMProps} from '@react-types/shared';
-import {filterDOMProps, getEventTarget, isWebKit, useEvent} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {flushSync} from 'react-dom';
 import {focusRing, style} from '../style' with {type: 'macro'};
-import {FocusScope, useModalOverlay} from 'react-aria';
+import {FocusScope} from 'react-aria/FocusScope';
+import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
-import {ToastOptions as RACToastOptions, UNSTABLE_Toast as Toast, UNSTABLE_ToastContent as ToastContent, UNSTABLE_ToastList as ToastList, ToastProps, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastRegion as ToastRegion, ToastRegionProps, UNSTABLE_ToastStateContext as ToastStateContext} from 'react-aria-components';
+import {isWebKit} from 'react-aria/private/utils/platform';
+import {ToastOptions as RACToastOptions, ToastQueue} from 'react-stately/useToastState';
+// @ts-ignore
 import {Text} from './Content';
+import {
+  UNSTABLE_Toast as Toast,
+  UNSTABLE_ToastContent as ToastContent,
+  UNSTABLE_ToastList as ToastList,
+  ToastProps,
+  UNSTABLE_ToastRegion as ToastRegion,
+  ToastRegionProps,
+  UNSTABLE_ToastStateContext as ToastStateContext
+} from 'react-aria-components/Toast';
+
 import toastCss from './Toast.module.css';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useMediaQuery} from '@react-spectrum/utils';
-import {useOverlayTriggerState} from 'react-stately';
+
+import {useEvent} from 'react-aria/private/utils/useEvent';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useMediaQuery} from './useMediaQuery';
+import {useModalOverlay} from 'react-aria/useModalOverlay';
+import {useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 
 export type ToastPlacement = 'top' | 'top end' | 'bottom' | 'bottom end';
 export interface ToastContainerProps extends Omit<ToastRegionProps<SpectrumToastValue>, 'queue' | 'children' | 'style' | 'className' | 'render'> {
@@ -396,7 +411,7 @@ export function ToastContainer(props: ToastContainerProps): ReactNode {
   }, [reduceMotion]);
 
   return (
-    <ToastRegion
+    (<ToastRegion
       {...props}
       ref={regionRef}
       queue={queue}
@@ -410,9 +425,9 @@ export function ToastContainer(props: ToastContainerProps): ReactNode {
         <ToastContainerContext.Provider value={ctx}>
           {isExpanded && (
             // eslint-disable-next-line
-            <div
+            (<div
               className={toastCss['toast-background'] + style({position: 'fixed', inset: 0, backgroundColor: 'transparent-black-500'})}
-              onClick={collapse} />
+              onClick={collapse} />)
           )}
           <SpectrumToastList
             placement={placement}
@@ -435,7 +450,7 @@ export function ToastContainer(props: ToastContainerProps): ReactNode {
           </div>
         </ToastContainerContext.Provider>
       </FocusScope>
-    </ToastRegion>
+    </ToastRegion>)
   );
 }
 

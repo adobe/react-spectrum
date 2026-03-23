@@ -13,8 +13,8 @@
 import type {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {SpectrumToast, SpectrumToastValue} from '../src/Toast';
-import {UNSTABLE_ToastStateContext} from 'react-aria-components';
-import {useToastState} from 'react-stately';
+import {UNSTABLE_ToastStateContext} from 'react-aria-components/Toast';
+import {useToastState} from 'react-stately/useToastState';
 
 function FakeToast(props: SpectrumToastValue) {
   return (

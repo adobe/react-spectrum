@@ -10,6 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export {useAutocompleteState} from './useAutocompleteState';
+export {useAutocompleteState} from 'react-stately/private/autocomplete/useAutocompleteState';
 
-export type {AutocompleteProps, AutocompleteStateOptions, AutocompleteState} from './useAutocompleteState';
+export type {AutocompleteProps, AutocompleteStateOptions, AutocompleteState} from 'react-stately/private/autocomplete/useAutocompleteState';

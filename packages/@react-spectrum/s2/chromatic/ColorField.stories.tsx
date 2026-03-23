@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorField, ColorFieldProps} from '../src';
+import {ColorField, ColorFieldProps} from '../src/ColorField';
 import {generateComboChunks, shortName} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement} from 'react';

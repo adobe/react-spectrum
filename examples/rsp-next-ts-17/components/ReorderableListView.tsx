@@ -1,5 +1,4 @@
-import { Item, ListView, Text, useListData } from "@adobe/react-spectrum";
-import { useDragAndDrop } from "@react-spectrum/dnd";
+import { Item, ListView, Text, useListData, useDragAndDrop } from "@adobe/react-spectrum";
 import Folder from "@spectrum-icons/illustrations/Folder";
 
 export default function ReorderableListView() {

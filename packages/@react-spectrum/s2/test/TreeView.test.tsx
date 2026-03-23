@@ -1,18 +1,14 @@
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {
-  ActionMenu,
-  MenuItem,
-  Text,
-  TreeView,
-  TreeViewItem,
-  TreeViewItemContent
-} from '../src';
+import {ActionMenu} from '../src/ActionMenu';
 import {AriaTreeTests} from '../../../react-aria-components/test/AriaTree.test-util';
 import {DisabledBehavior} from '@react-types/shared';
 import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
+import {MenuItem} from '../src/Menu';
 import React, {useState} from 'react';
+import {Text} from '../src/Content';
+import {TreeView, TreeViewItem, TreeViewItemContent} from '../src/TreeView';
 import userEvent from '@testing-library/user-event';
 
 AriaTreeTests({

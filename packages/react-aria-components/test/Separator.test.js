@@ -12,7 +12,7 @@
 
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
-import {Separator, SeparatorContext} from '../';
+import {Separator, SeparatorContext} from '../src/Separator';
 
 describe('Separator', () => {
   it('should render a separator with default class', () => {

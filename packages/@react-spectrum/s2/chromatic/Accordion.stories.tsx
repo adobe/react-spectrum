@@ -10,11 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, AccordionItem, AccordionItemHeader, AccordionItemPanel, AccordionItemTitle, ActionButton, TextField} from '../src';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionItemHeader,
+  AccordionItemPanel,
+  AccordionItemTitle
+} from '../src/Accordion';
+
+import {ActionButton} from '../src/ActionButton';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {TextField} from '../src/TextField';
 
 const meta: Meta<typeof Accordion> = {
   component: Accordion,

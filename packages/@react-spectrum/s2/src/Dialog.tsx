@@ -12,15 +12,22 @@
 
 import {ButtonGroupContext} from './ButtonGroup';
 import {CloseButton} from './CloseButton';
-import {composeRenderProps, OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
+import {composeRenderProps, Provider} from 'react-aria-components/utils';
+
 import {ContentContext, FooterContext, HeaderContext, HeadingContext} from './Content';
+
 import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {forwardRef} from 'react';
 import {ImageContext} from './Image';
 import {Modal} from './Modal';
+import {
+  OverlayTriggerStateContext,
+  Dialog as RACDialog,
+  DialogProps as RACDialogProps
+} from 'react-aria-components/Dialog';
 import {style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 
 // TODO: what style overrides should be allowed?
 export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps {
@@ -103,7 +110,7 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
   let domRef = useDOMRef(ref);
 
   return (
-    <Modal size={size} isDismissable={isDismissible} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
+    (<Modal size={size} isDismissable={isDismissible} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
       <RACDialog
         {...props}
         ref={domRef}
@@ -113,7 +120,7 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
           // Render the children multiple times inside the wrappers we need to implement the layout.
           // Each instance hides certain children so that they are all rendered in the correct locations.
           // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
-          <OverlayTriggerStateContext.Provider value={null}>
+          (<OverlayTriggerStateContext.Provider value={null}>
             {/* Hero image */}
             <Provider
               values={[
@@ -227,9 +234,9 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
                 {children}
               </Provider>
             </div>
-          </OverlayTriggerStateContext.Provider>
+          </OverlayTriggerStateContext.Provider>)
         ))}
       </RACDialog>
-    </Modal>
+    </Modal>)
   );
 });

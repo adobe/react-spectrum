@@ -15,7 +15,7 @@ import {fireEvent, screen, testSSR} from '@react-spectrum/test-utils-internal';
 describe('Tree SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {Button, Tree, TreeItem, TreeItemContent} from '../';
+      import {Button, Tree, TreeItem, TreeItemContent} from '../exports/index.ts';
 
       function MyTreeItemContent(props) {
         return (

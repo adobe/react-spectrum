@@ -15,7 +15,9 @@ import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
 import Italic from '../s2wf-icons/S2_Icon_TextItalic_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
-import {Text, ToggleButton, ToggleButtonGroup} from '../src';
+import {Text} from '../src/Content';
+import {ToggleButton} from '../src/ToggleButton';
+import {ToggleButtonGroup} from '../src/ToggleButtonGroup';
 import Underline from '../s2wf-icons/S2_Icon_TextUnderline_20_N.svg';
 
 const events = ['onSelectionChange'];

@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorArea, ColorAreaContext, ColorThumb} from '../';
+import {ColorArea, ColorAreaContext} from '../src/ColorArea';
+
+import {ColorThumb} from '../src/ColorThumb';
 import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';

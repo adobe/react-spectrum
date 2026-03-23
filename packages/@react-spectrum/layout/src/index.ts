@@ -12,7 +12,9 @@
 
 /// <reference types="css-module-types" />
 
-export {repeat, minmax, fitContent, Grid} from './Grid';
-export {Flex} from './Flex';
+export {repeat, minmax, fitContent, Grid} from '@adobe/react-spectrum/Grid';
+
+export {Flex} from '@adobe/react-spectrum/Flex';
+export type {FlexProps} from '@adobe/react-spectrum/Flex';
+export type {GridProps} from '@adobe/react-spectrum/Grid';
 export type {DimensionValue} from '@react-types/shared';
-export type {FlexProps, GridProps} from '@react-types/layout';

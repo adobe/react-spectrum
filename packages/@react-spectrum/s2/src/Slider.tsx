@@ -13,13 +13,14 @@
 import {
   Slider as AriaSlider,
   SliderProps as AriaSliderProps,
-  ContextValue,
   SliderOutput,
   SliderThumb,
   SliderThumbRenderProps,
   SliderTrack
-} from 'react-aria-components';
-import {clamp} from '@react-aria/utils';
+} from 'react-aria-components/Slider';
+
+import {clamp} from 'react-stately/private/utils/number';
+import {ContextValue} from 'react-aria-components/utils';
 import {controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {FieldLabel} from './Field';
@@ -28,8 +29,9 @@ import {focusRing, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
-import {useFocusableRef} from '@react-spectrum/utils';
-import {useLocale, useNumberFormatter} from '@react-aria/i18n';
+import {useFocusableRef} from './useDOMRef';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useNumberFormatter} from 'react-aria/useNumberFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children' | 'style' | 'className' | 'render' | 'orientation' | keyof GlobalDOMAttributes>, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, StyleProps {

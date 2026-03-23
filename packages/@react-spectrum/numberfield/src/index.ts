@@ -12,5 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export {NumberField} from './NumberField';
-export type {SpectrumNumberFieldProps} from '@react-types/numberfield';
+export {NumberField} from '@adobe/react-spectrum/NumberField';
+
+export type {SpectrumNumberFieldProps} from '@adobe/react-spectrum/NumberField';
