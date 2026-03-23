@@ -11,10 +11,11 @@
  */
 
 import {Button} from '../src/Button';
+
 import {Meta, StoryFn} from '@storybook/react';
 import {Orientation} from '@react-types/shared';
 import {OverlayArrow} from '../src/OverlayArrow';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useState} from 'react';
 import {RouterProvider} from 'react-aria/private/utils/openLink';
 import {Tab, TabList, TabPanel, TabProps, Tabs} from '../src/Tabs';
 import {Tooltip, TooltipTrigger} from '../src/Tooltip';
@@ -26,10 +27,6 @@ export default {
 } as Meta<typeof Tabs>;
 
 export type TabsStory = StoryFn<typeof Tabs>;
-
-function getStoryUrl() {
-  return new URL(typeof window === 'undefined' ? 'https://example.com/' : window.location.href);
-}
 
 export const TabsExample: TabsStory = () => {
   let [url, setUrl] = useState('/FoR');
@@ -71,66 +68,6 @@ export const TabsExample: TabsStory = () => {
         </TabPanel>
       </Tabs>
     </RouterProvider>
-  );
-};
-
-export const TabsPressUpNavigation: TabsStory = () => {
-  useEffect(() => {
-    let onBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue = '';
-    };
-
-    window.addEventListener('beforeunload', onBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', onBeforeUnload);
-    };
-  }, []);
-
-  let tabs = useMemo(() => {
-    let currentUrl = getStoryUrl();
-    let items = [
-      {id: 'home', label: 'Home', copy: 'Home content.'},
-      {id: 'send', label: 'Send', copy: 'Send content.'},
-      {id: 'admin', label: 'Admin', copy: 'Admin content.'}
-    ];
-
-    return items.map((item) => {
-      let href = new URL(currentUrl.href);
-      href.searchParams.set('tab-story', item.id);
-      return {
-        ...item,
-        href: href.toString()
-      };
-    });
-  }, []);
-
-  let selectedHref = useMemo(() => {
-    let currentUrl = getStoryUrl();
-    let selectedTab = currentUrl.searchParams.get('tab-story') ?? 'home';
-    return tabs.find(tab => tab.id === selectedTab)?.href ?? tabs[0].href;
-  }, [tabs]);
-
-  return (
-    <div style={{display: 'grid', gap: 12, maxWidth: 720}}>
-      <p style={{margin: 0}}>
-        Click a tab and cancel the native browser prompt. Hovering the same tab should not reopen the dialog, and selection should only change on mouse up/click.
-      </p>
-      <Tabs selectedKey={selectedHref}>
-        <TabList aria-label="Bulk sign navigation" style={{display: 'flex', gap: 8}}>
-          {tabs.map((tab) => (
-            <CustomTab key={tab.id} id={tab.href} href={tab.href}>
-              {tab.label}
-            </CustomTab>
-          ))}
-        </TabList>
-        {tabs.map((tab) => (
-          <TabPanel key={tab.id} id={tab.href}>
-            {tab.copy}
-          </TabPanel>
-        ))}
-      </Tabs>
-    </div>
   );
 };
 
