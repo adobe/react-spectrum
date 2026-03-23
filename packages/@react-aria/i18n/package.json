@@ -16,7 +16,7 @@
       "require": "./dist/main.js"
     },
     "./server": {
-      "source": "./src/server.tsx",
+      "source": "./src/server.ts",
       "import": "./server/index.mjs",
       "require": "./server/index.js"
     },
@@ -27,7 +27,19 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "targets": {
-    "types": false
+    "types": false,
+    "server-module": {
+      "source": "src/server.ts",
+      "outputFormat": "esmodule",
+      "isLibrary": true,
+      "includeNodeModules": false
+    },
+    "server-main": {
+      "source": "src/server.ts",
+      "outputFormat": "commonjs",
+      "isLibrary": true,
+      "includeNodeModules": false
+    }
   },
   "files": [
     "dist",
