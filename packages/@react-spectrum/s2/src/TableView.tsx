@@ -150,6 +150,7 @@ const tableWrapper = style({
   overflow: 'clip'
 }, getAllowedOverrides({height: true}));
 
+const dropTargetBackground = colorMix('gray-25', 'blue-900', 10);
 const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boolean, isDragAndDrop?: boolean}>({
   width: 'full',
   height: 'full',
@@ -163,32 +164,27 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
   backgroundColor: {
     default: 'gray-25',
     isQuiet: 'transparent',
-    forcedColors: 'Background'
+    forcedColors: 'Background',
+    isDropTarget: {
+      // TODO: will need to change the row colors as well since those have non transparent background colors
+      default: dropTargetBackground,
+      // TODO: this is the same as forcedColors defualt, choose a different value
+      forcedColors: 'Background'
+    }
   },
-  borderColor: 'gray-300',
+  borderColor: {
+    default: 'gray-300',
+    isDropTarget: 'blue-800',
+    forcedColors: {
+      isDropTarget: 'Highlight'
+    }
+  },
   borderStyle: 'solid',
   borderWidth: {
     default: 1,
     isQuiet: 0
   },
   ...focusRing(),
-  // TODO: check this, these don't seem to work as well as they do in listview
-  outlineOffset: {
-    default: -1, // Cover the border
-    isDropTarget: -2
-  },
-  outlineWidth: {
-    isDropTarget: 2
-  },
-  outlineStyle: {
-    isDropTarget: 'solid'
-  },
-  outlineColor: {
-    isDropTarget: {
-      default: 'blue-800',
-      forcedColors: 'Highlight'
-    }
-  },
   borderRadius: {
     default: '[6px]',
     isQuiet: 'none'
@@ -1163,10 +1159,7 @@ const dragCellStyle = style({
 const dragButton = style({
   alignItems: 'center',
   justifyContent: 'center',
-  height: 22,
-  width: 16,
   padding: 0,
-  margin: 0,
   backgroundColor: 'transparent',
   borderStyle: 'none',
   borderRadius: 'sm',
@@ -1182,23 +1175,33 @@ const dragButton = style({
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
+  },
+  // TODO: no clip or clipPath, but this might be sufficient?
+  height: {
+    default: 1,
+    ':is([role="row"][data-focus-visible-within] *)': 22,
+  },
+  width: {
+    default: 1,
+    ':is([role="row"][data-focus-visible-within] *)': 16
+  },
+  margin: {
+    default: '[-1]',
+     ':is([role="row"][data-focus-visible-within] *)': 0
+  },
+  overflow: {
+    default: 'hidden',
+    ':is([role="row"][data-focus-visible-within] *)': 'visible'
+  },
+  position: {
+    default: 'absolute',
+    ':is([role="row"][data-focus-visible-within] *)': 'relative'
+  },
+  whiteSpace: {
+    default: 'nowrap',
+    ':is([role="row"][data-focus-visible-within] *)': 'normal'
   }
 });
-
-const visuallyHidden = css(`
-  &:not(:is([role="row"][data-focus-visible-within] *)) {
-    border: 0;
-    clip: rect(0, 0, 0, 0);
-    clip-path: inset(50%);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    width: 1px;
-    white-space: nowrap;
-  }
-`);
 
 const cellContent = style({
   truncate: true,
@@ -1670,7 +1673,8 @@ const rowBackgroundColor = {
   },
   forcedColors: {
     default: 'Background'
-  }
+  },
+
 } as const;
 
 const rowTextColor = {
@@ -1687,7 +1691,15 @@ const row = style<RowRenderProps & S2TableProps>({
   height: 'full',
   position: 'relative',
   boxSizing: 'border-box',
-  backgroundColor: '--rowBackgroundColor',
+  backgroundColor: {
+    default: '--rowBackgroundColor',
+    ':is([role="grid"][data-drop-target] *)': {
+      // TODO: these will need to have a blend, selected should be a bit darker, and teh default should be a bit darker than the background
+      // color on the body. Will need to apply the same color scheme to the checkbox cell
+      default: 'transparent',
+      isSelected: 'transparent'
+    },
+  },
   '--rowBackgroundColor': {
     type: 'backgroundColor',
     value: rowBackgroundColor
@@ -1727,6 +1739,8 @@ const row = style<RowRenderProps & S2TableProps>({
   //     isFocusVisible: 'solid'
   //   }
   // },
+  // TODO: this literally runs into the same problem as noted above for the focusedColors experience when the user targets the
+  // row for a "on" drop operation
   outlineStyle: {
     default: 'none',
     isDropTarget: 'solid'
@@ -1792,7 +1806,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
           {!otherProps.isDisabled && (
             <Button
               slot="drag"
-              className={({isFocusVisible}) => dragButton({isFocusVisible}) + visuallyHidden}>
+              className={dragButton}>
               <DragHandle size="M" />
             </Button>
           )
