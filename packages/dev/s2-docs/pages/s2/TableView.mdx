@@ -14,7 +14,7 @@ export const description = 'Displays data in rows and columns, with row selectio
 
 <PageDescription>{docs.exports.TableView.description}</PageDescription>
 
-```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'overflowMode', 'density', 'isQuiet', 'disabledBehavior']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple', 'treeColumn': 'name', disabledBehavior: 'selection'}} type="s2"
+```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'overflowMode', 'density', 'isQuiet', 'disabledBehavior', 'selectionStyle']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple', 'treeColumn': 'name', disabledBehavior: 'selection', selectionStyle: 'checkbox'}} type="s2"
 "use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -293,7 +293,7 @@ function AsyncSortTable() {
 
 Use the `href` prop on a Row to create a link. See the [getting started guide](getting-started) to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection) for more details.
 
-```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple'}} wide type="s2"
+```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'selectionStyle']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple', selectionStyle: 'checkbox'}} wide type="s2"
 "use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -635,7 +635,7 @@ export default function EditableTable(props) {
 
 Use `selectionMode` to enable single or multiple selection, and `selectedKeys` (matching each row's `id`) to control the selected rows. Return an [ActionBar](ActionBar) from `renderActionBar` to handle bulk actions, and use `onAction` for row navigation. Disable rows with `isDisabled`. See the [selection guide](selection) for details.
 
-```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide type="s2"
+```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'disallowEmptySelection', 'selectionStyle']} initialProps={{selectionMode: 'multiple', selectionStyle: 'checkbox'}} wide type="s2"
 "use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell, ActionBar, ActionButton, Text, type Selection} from '@react-spectrum/s2';
 import Edit from '@react-spectrum/s2/icons/Edit';
