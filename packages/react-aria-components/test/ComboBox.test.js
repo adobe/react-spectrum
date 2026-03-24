@@ -857,11 +857,11 @@ describe('ComboBox', () => {
     act(() => {getByTestId('form').checkValidity();});
     expect(combobox).toHaveAttribute('aria-describedby');
     expect(container.querySelector('.react-aria-ComboBox')).toHaveAttribute('data-invalid');
-    
+
     await comboboxTester.open();
     let options = comboboxTester.options();
     await user.click(options[0]);
-    
+
     act(() => combobox.blur());
     expect(combobox).not.toHaveAttribute('required');
     expect(combobox.validity.valid).toBe(true);
@@ -948,5 +948,133 @@ describe('ComboBox', () => {
     expect(input.closest('.react-aria-ComboBox')).not.toHaveAttribute('data-readonly');
     rerender(<TestComboBox isReadOnly />);
     expect(input.closest('.react-aria-ComboBox')).toHaveAttribute('data-readonly');
+  });
+
+  it('should re-open the menu when controlled items go from empty to non-empty controlled items', async () => {
+    let onOpenChange = jest.fn();
+    let onInputChange = jest.fn().mockReturnValueOnce(true).mockReturnValue(false);
+
+    function ControlledComboBox() {
+      let [items, setItems] = useState([{id: 1, name: 'Luke Skywalker'}]);
+      return (
+        <ComboBox
+          items={items}
+          onInputChange={() => {
+            if (onInputChange()) {
+              setItems([]);
+            } else {
+              setItems([{id: 1, name: 'Luke Skywalker'}]);
+            }
+          }}
+          onOpenChange={onOpenChange}>
+          <Label>SW Characters</Label>
+          <Input />
+          <Button>{'<'}</Button>
+          <Popover>
+            <ListBox>
+              {(item) => {
+                return <ListBoxItem id={item.id}>{item.name}</ListBoxItem>;
+              }}
+            </ListBox>
+          </Popover>
+        </ComboBox>
+      );
+    }
+
+    let {container, queryByRole} = render(<ControlledComboBox />);
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    await user.tab();
+    await user.keyboard('{ArrowDown}');
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(comboboxTester.listbox).toBeVisible();
+    onOpenChange.mockClear();
+
+    await user.keyboard('L');
+    expect(queryByRole('listbox')).toBeNull();
+
+    await user.keyboard('{Backspace}');
+    expect(comboboxTester.listbox).toBeVisible();
+  });
+
+  it('should still close the menu when uncontrolled items are empty', async () => {
+    let onOpenChange = jest.fn();
+    let onInputChange = jest.fn().mockReturnValueOnce(true).mockReturnValue(false);
+
+    let items = [{id: 1, name: 'Luke Skywalker'}];
+    function ControlledComboBox() {
+      return (
+        <ComboBox
+          defaultItems={items}
+          onOpenChange={onOpenChange}>
+          <Label>SW Characters</Label>
+          <Input />
+          <Button>{'<'}</Button>
+          <Popover>
+            <ListBox>
+              {(item) => {
+                return <ListBoxItem id={item.id}>{item.name}</ListBoxItem>;
+              }}
+            </ListBox>
+          </Popover>
+        </ComboBox>
+      );
+    }
+
+    let {container, queryByRole} = render(<ControlledComboBox />);
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    await user.tab();
+    await user.keyboard('{ArrowDown}');
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(comboboxTester.listbox).toBeVisible();
+    onOpenChange.mockClear();
+
+    await user.keyboard('Z');
+    expect(queryByRole('listbox')).toBeNull();
+  });
+
+  it('should not re-open after user dismisses with Escape (revert) controlled items', async () => {
+    let onOpenChange = jest.fn();
+    let onInputChange = jest.fn().mockReturnValueOnce(true).mockReturnValue(false);
+
+    function ControlledComboBox() {
+      let [items, setItems] = useState([{id: 1, name: 'Luke Skywalker'}]);
+      return (
+        <ComboBox
+          items={items}
+          onInputChange={() => {
+            if (onInputChange()) {
+              setItems([]);
+            } else {
+              setItems([{id: 1, name: 'Luke Skywalker'}]);
+            }
+          }}
+          onOpenChange={onOpenChange}>
+          <Label>SW Characters</Label>
+          <Input />
+          <Button>{'<'}</Button>
+          <Popover>
+            <ListBox>
+              {(item) => {
+                return <ListBoxItem id={item.id}>{item.name}</ListBoxItem>;
+              }}
+            </ListBox>
+          </Popover>
+        </ComboBox>
+      );
+    }
+
+    let {container, queryByRole} = render(<ControlledComboBox />);
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    await user.tab();
+    await user.keyboard('{ArrowDown}');
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(comboboxTester.listbox).toBeVisible();
+    onOpenChange.mockClear();
+
+    await user.keyboard('L');
+    expect(queryByRole('listbox')).toBeNull();
+
+    await user.keyboard('{Escape}');
+    expect(queryByRole('listbox')).toBeNull();
   });
 });
