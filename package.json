@@ -76,7 +76,8 @@
     "packages/tailwindcss-react-aria-components",
     "packages/dev/mcp/s2",
     "packages/dev/mcp/react-aria",
-    "packages/*/*"
+    "packages/dev/*",
+    "packages/@*/*"
   ],
   "devDependencies": {
     "@actions/core": "^1.10.0",
@@ -227,8 +228,7 @@
     "postcss-custom-properties": "13.2.0",
     "postcss-import": "15.1.0",
     "react-refresh": "0.9.0",
-    "browserslist": "4.24.0",
-    "caniuse-lite": "1.0.30001563",
+    "browserslist": "4.28.1",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
     "recast": "0.23.6",

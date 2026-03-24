@@ -1,3 +1,7 @@
-/i18n
-/*.js
-/private
+/*
+!/docs
+!/exports
+!/intl
+!/src
+!/stories
+!/test
