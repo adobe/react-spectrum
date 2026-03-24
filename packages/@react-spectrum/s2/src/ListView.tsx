@@ -42,8 +42,6 @@ import {isFirstItem, isLastItem, isNextSelected, isPrevSelected, useScale} from 
 import {Key} from '@react-types/shared';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {ListLayout} from 'react-stately/private/layout/ListLayout';
-// @ts-ignore
-import {ListState} from 'react-stately/useListState';
 import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
