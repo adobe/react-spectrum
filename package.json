@@ -76,7 +76,8 @@
     "packages/tailwindcss-react-aria-components",
     "packages/dev/mcp/s2",
     "packages/dev/mcp/react-aria",
-    "packages/*/*"
+    "packages/dev/*",
+    "packages/@*/*"
   ],
   "devDependencies": {
     "@actions/core": "^1.10.0",
