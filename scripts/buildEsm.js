@@ -6,7 +6,7 @@ const swc = require('@swc/core');
 let regex = /\.mjs(['"])/g;
 
 // Add .mjs equivalents for individual packages for Node.js.
-for (let pkg of fs.globSync(['packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}/'])) {
+for (let pkg of fs.globSync(['packages/@react-{spectrum,aria,stately}/*/'])) {
   if (pkg === 'packages/@react-spectrum/s2') {
     continue;
   }
