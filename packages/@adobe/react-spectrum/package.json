@@ -33,9 +33,16 @@
   "types": "./dist/types/exports/index.d.ts",
   "source": "exports/index.ts",
   "files": [
-    "dist",
-    "i18n",
-    "*.js"
+    "*",
+    "!chromatic",
+    "!chromatic-fc",
+    "!docs",
+    "!exports",
+    "!intl",
+    "!scripts",
+    "!src",
+    "!stories",
+    "!test"
   ],
   "sideEffects": [
     "*.css"
@@ -108,7 +115,11 @@
         "@adobe/spectrum-css-temp"
       ],
       "engines": {
-        "browsers": ["chrome >= 79", "firefox >= 85", "safari >= 13"]
+        "browsers": [
+          "chrome >= 79",
+          "firefox >= 85",
+          "safari >= 13"
+        ]
       }
     }
   }

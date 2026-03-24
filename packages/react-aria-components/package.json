@@ -34,10 +34,14 @@
     "./private/*": null
   },
   "files": [
-    "dist",
-    "src",
-    "i18n",
-    "*.js"
+    "*",
+    "!docs",
+    "!example",
+    "!exports",
+    "!intl",
+    "!src",
+    "!stories",
+    "!test"
   ],
   "sideEffects": [
     "*.css"
@@ -91,7 +95,11 @@
       "outputFormat": "esmodule",
       "includeNodeModules": false,
       "engines": {
-        "browsers": ["chrome >= 79", "firefox >= 85", "safari >= 13"]
+        "browsers": [
+          "chrome >= 79",
+          "firefox >= 85",
+          "safari >= 13"
+        ]
       }
     }
   }

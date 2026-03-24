@@ -23,6 +23,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
+  "NOTE": "Do not update Jest. The old version is used for testing.",
   "devDependencies": {
     "@babel/cli": "^7.24.3",
     "@babel/core": "^7.24.3",
@@ -30,7 +31,7 @@
     "@babel/preset-react": "^7.24.1",
     "babel-loader": "^8.0.2",
     "css-loader": "^1.0.0",
-    "jest": "^29",
+    "jest": "^26",
     "patch-package": "^8.0.0",
     "style-loader": "0.23.0",
     "webpack": "^4.46.0",
