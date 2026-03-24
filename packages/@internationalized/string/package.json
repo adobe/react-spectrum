@@ -33,7 +33,7 @@
     "types": false,
     "module": {
       "engines": {
-        "browsers": "chrome >= 79"
+        "browsers": ["chrome >= 79", "firefox >= 85", "safari >= 13"]
       }
     },
     "import": {
