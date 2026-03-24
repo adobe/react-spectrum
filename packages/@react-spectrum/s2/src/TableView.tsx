@@ -204,8 +204,9 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
   scrollPaddingStart: {
     isCheckboxSelection: 40,
     isDragAndDrop: {
-      default: 16,
-      isCheckboxSelection: 56
+      // Larger than the 16 from v3 since we need some room for the halo focus rin
+      default: 24,
+      isCheckboxSelection: 64
     }
   }
 });
@@ -465,8 +466,6 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
           // No need for estimated headingHeight since the headers aren't affected by overflow mode: wrap
           headingHeight: DEFAULT_HEADER_HEIGHT[scale],
           loaderHeight: 60,
-          // TODO: figure out why this is cut off
-          // TODO: override the layout in RAC and have the dropIndicators get tabindex 1, do same for gridlist
           // 8px circle + 2px top + 2px bottom padding
           dropIndicatorThickness: 12
         }}>
@@ -1031,7 +1030,7 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       className={tableHeader}>
       {allowsDragging && (
         // @ts-ignore
-        <RACColumn isSticky width={scale === 'medium' ? 16 : 20} minWidth={scale === 'medium' ? 16 : 20} className={selectAllCheckboxColumn({isQuiet})}>
+        <RACColumn isSticky width={scale === 'medium' ? 24 : 30} minWidth={scale === 'medium' ? 24 : 30} className={selectAllCheckboxColumn({isQuiet})}>
           {/* TODO: intl, need to grab for other locales */}
           {({isFocusVisible}) => (
             <>
@@ -1150,16 +1149,16 @@ const checkboxCellStyle = style({
   backgroundColor: '--rowBackgroundColor'
 });
 
-// const dragCellStyle = style({
-//   ...commonCellStyles,
-//   ...stickyCell,
-//   paddingStart: 12,
-//   paddingEnd: 4,
-//   alignContent: 'center',
-//   height: 'calc(100% - 1px)',
-//   borderBottomWidth: 0,
-//   backgroundColor: '--rowBackgroundColor'
-// });
+const dragCellStyle = style({
+  ...commonCellStyles,
+  ...stickyCell,
+  paddingStart: 4,
+  paddingEnd: 4,
+  alignContent: 'center',
+  height: 'calc(100% - 1px)',
+  borderBottomWidth: 0,
+  backgroundColor: '--rowBackgroundColor'
+});
 
 const dragButton = style({
   alignItems: 'center',
@@ -1185,6 +1184,21 @@ const dragButton = style({
     value: 'currentColor'
   }
 });
+
+const visuallyHidden = css(`
+  &:not(:is([role="row"][data-focus-visible-within] *)) {
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    white-space: nowrap;
+  }
+`);
 
 const cellContent = style({
   truncate: true,
@@ -1757,16 +1771,6 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
   let tableVisualOptions = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
-  let {visuallyHiddenProps} = useVisuallyHidden();
-  let {
-    // TODO: can't move these props to an internal wrapper unlike listview since it expects cell children...
-    // Row doesn't have a data selector for focus visible either...
-    // TODO: options -> add data-focusvisible withing to RAC row (render prop already exists)
-    // have cell render props also have row focus within provided to it
-    // have cell also have table row render props alongside cell render props
-    isFocusVisible: isFocusVisibleWithin,
-    focusProps: focusWithinProps
-  } = useFocusRing({within: true});
 
   return (
     (<RACRow
@@ -1780,17 +1784,15 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       }) + (renderProps.isFocusVisible ? ' ' + css('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')}
       {...otherProps}>
       {allowsDragging  && (
-        // TODO: this isn't being sticky when selection isn't enabled
         // @ts-ignore
-        <Cell isSticky className={checkboxCellStyle}>
+        <Cell isSticky className={dragCellStyle}>
           {/* TODO: check if this isDisabled is enough, should be if selection and action is disabled */}
           {/* can try to move this into cell perhaps but focusvisible needs to be set on the row and we'd need
           to only render it once via something similar to isTreeCOlumn */}
           {!otherProps.isDisabled && (
             <Button
               slot="drag"
-              style={!isFocusVisibleWithin ? {...visuallyHiddenProps.style} : {}}
-              className={dragButton}>
+              className={({isFocusVisible}) => dragButton({isFocusVisible}) + visuallyHidden}>
               <DragHandle size="M" />
             </Button>
           )

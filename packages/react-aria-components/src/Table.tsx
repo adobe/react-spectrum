@@ -260,7 +260,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     if (k == null) {
       k = node.parentKey;
     }
-    
+
     if (k != null && this.getItem(k)?.type === 'tablebody') {
       return null;
     }
@@ -1279,7 +1279,10 @@ export const TableBody = /*#__PURE__*/ createBranchComponent(TableBodyNode, <T e
 });
 
 export interface RowRenderProps extends ItemRenderProps {
-  /** Whether the row's children have keyboard focus. */
+  /**
+   * Whether the row's children have keyboard focus.
+   * @selector [data-focus-visible-within]
+   */
   isFocusVisibleWithin: boolean,
   /** The unique id of the row. */
   id?: Key,
