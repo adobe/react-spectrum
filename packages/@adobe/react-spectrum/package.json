@@ -33,9 +33,16 @@
   "types": "./dist/types/exports/index.d.ts",
   "source": "exports/index.ts",
   "files": [
-    "dist",
-    "i18n",
-    "*.js"
+    "*",
+    "!chromatic",
+    "!chromatic-fc",
+    "!docs",
+    "!exports",
+    "!intl",
+    "!scripts",
+    "!src",
+    "!stories",
+    "!test"
   ],
   "sideEffects": [
     "*.css"
@@ -46,7 +53,6 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.12.0",
-    "@internationalized/message": "^3.1.8",
     "@react-spectrum/style-macro-s1": "3.0.0-alpha.5",
     "@react-types/shared": "^3.33.1",
     "@spectrum-icons/ui": "^3.6.23",
@@ -97,6 +103,24 @@
       "includeNodeModules": [
         "@adobe/spectrum-css-temp"
       ]
+    },
+    "legacy-module": {
+      "source": [
+        "exports/**/*.ts"
+      ],
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ],
+      "engines": {
+        "browsers": [
+          "chrome >= 79",
+          "firefox >= 85",
+          "safari >= 13"
+        ]
+      }
     }
   }
 }

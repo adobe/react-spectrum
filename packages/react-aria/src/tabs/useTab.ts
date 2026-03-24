@@ -54,12 +54,16 @@ export function useTab<T>(
   let isSelected = key === selectedKey;
 
   let isDisabled = propsDisabled || state.isDisabled || state.selectionManager.isDisabled(key);
+  let item = state.collection.getItem(key);
   let {itemProps, isPressed} = useSelectableItem({
     selectionManager: manager,
     key,
     ref,
     isDisabled,
-    shouldSelectOnPressUp,
+    // Link tabs should behave like native anchors (navigate on press up)
+    // This avoids reopening beforeunload dialogs when browsers replay
+    // queued pointer enter/leave events after cancellation.
+    shouldSelectOnPressUp: shouldSelectOnPressUp ?? item?.props.href != null,
     linkBehavior: 'selection'
   });
 
@@ -67,7 +71,6 @@ export function useTab<T>(
   let tabPanelId = generateId(state, key, 'tabpanel');
   let {tabIndex} = itemProps;
 
-  let item = state.collection.getItem(key);
   let domProps = filterDOMProps(item?.props, {labelable: true});
   delete domProps.id;
   let linkProps = useLinkProps(item?.props);
