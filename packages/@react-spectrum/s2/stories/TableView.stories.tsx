@@ -28,9 +28,7 @@ import {
 import {Collection} from 'react-aria/private/collections/CollectionBuilder';
 import {Content, Heading, Text} from '../src/Content';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
-import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
-import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {IllustratedMessage} from '../src/IllustratedMessage';
 import {Key} from '@react-types/shared';
@@ -1979,6 +1977,7 @@ function ReorderableTableExample(props) {
       aria-label="Reorderable files"
       dragAndDropHooks={dragAndDropHooks}
       styles={style({width: 400, height: 320})}
+      disabledKeys={['4']}
       {...props}>
       <TableHeader columns={dragColumns}>
         {column => <Column width={column?.width} isRowHeader={column.isRowHeader}>{column.name}</Column>}
@@ -2197,7 +2196,7 @@ function BetweenTables(props) {
         aria-label="First TableView in drag between table example"
         selectionMode="multiple"
         dragAndDropHooks={dragAndDropHooksTable1}
-        // TODO need separate props?
+        disabledKeys={['4']}
         styles={style({width: 400, height: 320})}
         {...props}>
         <TableHeader columns={dragColumns}>
@@ -2217,6 +2216,7 @@ function BetweenTables(props) {
         aria-label="Second TableView in drag between table example"
         selectionMode="multiple"
         dragAndDropHooks={dragAndDropHooksTable2}
+        disabledKeys={['8']}
         styles={style({width: 400, height: 320})}
         {...props}>
         <TableHeader columns={dragColumns}>

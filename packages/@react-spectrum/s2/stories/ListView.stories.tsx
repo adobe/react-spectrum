@@ -665,6 +665,7 @@ function ReorderExample(props) {
       aria-label="reorderable gridlist"
       items={list.items}
       dragAndDropHooks={dragAndDropHooks}
+      disabledKeys={['d']}
       {...props}>
       {(item: any) => (
         <ListViewItem textValue={item.name}>
@@ -906,6 +907,7 @@ function BetweenLists(props) {
         aria-label="First ListView in drag between list example"
         items={list1.items}
         dragAndDropHooks={dragAndDropHooksList1}
+        disabledKeys={['4']}
         {...props}
         styles={style({height: 320, width: 320})}>
         {(item: any) => (
@@ -925,6 +927,7 @@ function BetweenLists(props) {
         aria-label="Second ListView in drag between list example"
         items={list2.items}
         dragAndDropHooks={dragAndDropHooksList2}
+        disabledKeys={['8']}
         {...props}
         styles={style({height: 320, width: 320})}>
         {(item: any) => (

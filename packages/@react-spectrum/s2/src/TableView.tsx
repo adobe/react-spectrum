@@ -54,16 +54,17 @@ import {CustomDialog} from './CustomDialog';
 import {DialogContainer} from './DialogContainer';
 import {DOMProps, DOMRef, DOMRefValue, DragItem, forwardRefType, GlobalDOMAttributes, ItemDropTarget, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
 import DragHandle from '../ui-icons/DragHandle';
+import {dragPreviewBadge, dragPreviewCardBack, dragPreviewWrapper, InsertionIndicator, label} from './ListView';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {Form} from 'react-aria-components/Form';
 import {getActiveElement, isFocusWithin, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
-import {dragPreviewBadge, dragPreviewCardBack, dragPreviewWrapper, InsertionIndicator, label} from './ListView';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
+import {LayoutInfo, Virtualizer} from 'react-aria-components/Virtualizer';
 import {LayoutNode} from 'react-stately/private/layout/ListLayout';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
@@ -74,13 +75,12 @@ import {CheckboxContext as RACCheckboxContext} from 'react-aria-components/Check
 import {Popover as RACPopover} from 'react-aria-components/Popover';
 import React, {createContext, CSSProperties, FormEvent, FormHTMLAttributes, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Rect} from 'react-stately/private/virtualizer/Rect';
-import {Text, TextContext} from './Content';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {Button as SpectrumButton} from './Button';
+import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from './useDOMRef';
-import {useFocusRing} from 'react-aria/useFocusRing';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
@@ -88,8 +88,6 @@ import {useMediaQuery} from './useMediaQuery';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
-import {LayoutInfo, Virtualizer} from 'react-aria-components/Virtualizer';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
 interface S2TableProps {
@@ -164,12 +162,8 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
   backgroundColor: {
     default: 'gray-25',
     isQuiet: 'transparent',
-    forcedColors: 'Background',
-    isDropTarget: {
-      default: dropTargetBackground,
-      // todo: ideally we'd change the border/outline width just like in v3
-      forcedColors: 'Background'
-    }
+    isDropTarget: dropTargetBackground,
+    forcedColors:  'Background'
   },
   borderColor: {
     default: 'gray-300',
@@ -399,6 +393,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     onLoadMore,
     selectionMode = 'none',
     dragAndDropHooks,
+    disabledBehavior = 'all',
     ...otherProps
   } = props;
 
@@ -432,8 +427,9 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     onLoadMore,
     isInResizeMode,
     setIsInResizeMode,
-    selectionMode
-  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode, selectionMode]);
+    selectionMode,
+    disabledBehavior
+  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode, selectionMode, disabledBehavior]);
 
   let scrollRef = useRef<HTMLElement | null>(null);
   let isCheckboxSelection = selectionMode === 'multiple' || selectionMode === 'single';
@@ -486,6 +482,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
             selectionMode={selectionMode}
             onRowAction={onAction}
             dragAndDropHooks={dragAndDropHooks}
+            disabledBehavior={disabledBehavior}
             {...otherProps}
             selectedKeys={selectedKeys}
             defaultSelectedKeys={undefined}
@@ -1027,7 +1024,6 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       {allowsDragging && (
         // @ts-ignore
         <RACColumn isSticky width={scale === 'medium' ? 24 : 30} minWidth={scale === 'medium' ? 24 : 30} className={selectAllCheckboxColumn({isQuiet})}>
-          {/* TODO: intl, need to grab for other locales */}
           {({isFocusVisible}) => (
             <>
               {isFocusVisible && <CellFocusRing />}
@@ -1197,7 +1193,7 @@ const dragButton = style({
   // TODO: no clip or clipPath, but this might be sufficient?
   height: {
     default: 1,
-    ':is([role="row"][data-focus-visible-within] *)': 22,
+    ':is([role="row"][data-focus-visible-within] *)': 22
   },
   width: {
     default: 1,
@@ -1205,7 +1201,7 @@ const dragButton = style({
   },
   margin: {
     default: '[-1]',
-     ':is([role="row"][data-focus-visible-within] *)': 0
+    ':is([role="row"][data-focus-visible-within] *)': 0
   },
   overflow: {
     default: 'hidden',
@@ -1811,10 +1807,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       {allowsDragging  && (
         // @ts-ignore
         <Cell isSticky className={dragCellStyle}>
-          {/* TODO: check if this isDisabled is enough, should be if selection and action is disabled */}
-          {/* can try to move this into cell perhaps but focusvisible needs to be set on the row and we'd need
-          to only render it once via something similar to isTreeCOlumn */}
-          {!otherProps.isDisabled && (
+          {!(otherProps.isDisabled && tableVisualOptions.disabledBehavior === 'all') && (
             <Button
               slot="drag"
               className={dragButton}>

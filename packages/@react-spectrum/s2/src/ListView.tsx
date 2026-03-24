@@ -12,7 +12,7 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {baseColor, color, colorMix, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
+import {baseColor, colorMix, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
@@ -22,7 +22,7 @@ import {Collection} from 'react-aria/private/collections/CollectionBuilder';
 import {CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-components/Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, useSlottedContext} from 'react-aria-components/utils';
 import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactElement, ReactNode, useContext, useEffect, useRef, useState} from 'react';
+import {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue, DragItem, forwardRefType, GlobalDOMAttributes, ItemDropTarget, LoadingState} from '@react-types/shared';
 import DragHandle from '../ui-icons/DragHandle';
 import {DropIndicator} from 'react-aria-components/useDragAndDrop';
@@ -41,6 +41,7 @@ import {ImageContext} from './Image';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
+import {LayoutInfo, Virtualizer} from 'react-aria-components/Virtualizer';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {ListLayout} from 'react-stately/private/layout/ListLayout';
 import {ListState} from 'react-stately/useListState';
@@ -54,7 +55,6 @@ import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatte
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
-import {LayoutInfo, Virtualizer} from 'react-aria-components/Virtualizer';
 
 export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | 'selectionBehavior' | 'layout' | 'render' | 'keyboardNavigationBehavior' | 'orientation' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, ListViewStylesProps, SlotProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
@@ -118,7 +118,7 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean, isDropTarget?: 
   ...focusRing(),
   outlineOffset: {
     default: -2,
-    isQuiet: -1,
+    isQuiet: -1
   },
   userSelect: 'none',
   minHeight: 0,
@@ -1126,16 +1126,16 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                     isLastItem: isLastItem(id, state)
                   })} />
               }
-              {allowsDragging && !isDisabled && (
+              {allowsDragging && (
                 <div className={dragButtonContainer}>
-                  <Button
-                    slot="drag"
-                    // TODO: need a isFocusVisibleWithin for the row to keep it visible, consider if adding to
-                    // RAC GridList is reasonable
-                    style={!isFocusVisibleWithin && !isFocusVisible ? {...visuallyHiddenProps.style} : {}}
-                    className={dragButton}>
-                    <DragHandle size="M" />
-                  </Button>
+                  {!isDisabled && (
+                    <Button
+                      slot="drag"
+                      style={!isFocusVisibleWithin && !isFocusVisible ? {...visuallyHiddenProps.style} : {}}
+                      className={dragButton}>
+                      <DragHandle size="M" />
+                    </Button>
+                  )}
                 </div>
               )}
               {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
