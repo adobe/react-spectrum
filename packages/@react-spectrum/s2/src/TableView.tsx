@@ -166,9 +166,8 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
     isQuiet: 'transparent',
     forcedColors: 'Background',
     isDropTarget: {
-      // TODO: will need to change the row colors as well since those have non transparent background colors
       default: dropTargetBackground,
-      // TODO: this is the same as forcedColors defualt, choose a different value
+      // todo: ideally we'd change the border/outline width just like in v3
       forcedColors: 'Background'
     }
   },
@@ -1657,6 +1656,25 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
 // Use color-mix instead of transparency so sticky cells work correctly.
 const selectedBackground = colorMix('gray-25', 'gray-900', 7);
 const selectedActiveBackground = colorMix('gray-25', 'gray-900', 10);
+// TODO: I made these up, not sure if there is a great way to go from v3 values to
+// S2. Overally the root drop color should be lighter than the row color during a root drop
+// which should be lighter than a selected row during root drop. Those root drop row colors should also be darker
+// than if the row is the drop target itself
+const rootDropRowBackground = colorMix('gray-25', 'blue-900', 17);
+const rootDropSelectedRowBackground = colorMix('gray-25', 'blue-900', 28);
+const rowDropBackground = colorMix('gray-25', 'blue-900', 10);
+const rowDropSelectedBackground = colorMix('gray-25', 'blue-900', 15);
+const rootRowDropStyles = {
+  default: rootDropRowBackground,
+  isSelected: rootDropSelectedRowBackground,
+  forcedColors: 'Background'
+} as const;
+const rowDropStyles = {
+  default: rowDropBackground,
+  isSelected: rowDropSelectedBackground,
+  forcedColors: 'Background'
+} as const;
+
 const rowBackgroundColor = {
   default: {
     default: 'gray-25',
@@ -1674,7 +1692,8 @@ const rowBackgroundColor = {
   forcedColors: {
     default: 'Background'
   },
-
+  ':is([role="grid"][data-drop-target] *)': rootRowDropStyles,
+  isDropTarget: rowDropStyles
 } as const;
 
 const rowTextColor = {
@@ -1691,15 +1710,7 @@ const row = style<RowRenderProps & S2TableProps>({
   height: 'full',
   position: 'relative',
   boxSizing: 'border-box',
-  backgroundColor: {
-    default: '--rowBackgroundColor',
-    ':is([role="grid"][data-drop-target] *)': {
-      // TODO: these will need to have a blend, selected should be a bit darker, and teh default should be a bit darker than the background
-      // color on the body. Will need to apply the same color scheme to the checkbox cell
-      default: 'transparent',
-      isSelected: 'transparent'
-    },
-  },
+  backgroundColor: '--rowBackgroundColor',
   '--rowBackgroundColor': {
     type: 'backgroundColor',
     value: rowBackgroundColor
