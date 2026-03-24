@@ -10,6 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {Key} from '@react-types/shared';
+import {ListState} from 'react-stately/useListState';
+import {TableState} from 'react-stately/useTableState';
+import {TreeState} from 'react-stately/useTreeState';
 import {useMediaQuery} from './useMediaQuery';
 
 export type Scale = 'large' | 'medium';
@@ -25,4 +29,33 @@ export function useScale(): Scale {
   }
 
   return 'medium';
+}
+
+export function isNextSelected(id: Key | undefined, state: ListState<unknown> | TableState<unknown> | TreeState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+  let keyAfter = state.collection.getKeyAfter(id);
+  return keyAfter != null && state.selectionManager.isSelected(keyAfter);
+}
+
+export function isPrevSelected(id: Key | undefined, state:ListState<unknown> | TableState<unknown> | TreeState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+  let keyBefore = state.collection.getKeyBefore(id);
+  return keyBefore != null && state.selectionManager.isSelected(keyBefore);
+}
+
+export function isFirstItem(id: Key | undefined, state: ListState<unknown> | TableState<unknown> | TreeState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+  return state.collection.getFirstKey() === id;
+}
+export function isLastItem(id: Key | undefined, state: ListState<unknown> | TableState<unknown> | TreeState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+  return state.collection.getLastKey() === id;
 }

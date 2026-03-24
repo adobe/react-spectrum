@@ -58,7 +58,7 @@ import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
-import {isFirstItem, isNextSelected} from './ListView';
+import {isFirstItem, isNextSelected, useScale} from './utils';
 import {Key} from '@react-types/shared';
 import {LayoutNode} from 'react-stately/private/layout/ListLayout';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
@@ -80,7 +80,6 @@ import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useMediaQuery} from './useMediaQuery';
 import {useObjectRef} from 'react-aria/useObjectRef';
-import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
@@ -995,37 +994,12 @@ const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean, isTreeC
   fontSize: controlFont(),
   alignItems: 'center',
   display: 'flex',
-  // borderStyle: {
-  //   default: 'none',
-  //   isDivider: 'solid'
-  // },
-  // borderEndWidth: {
-  //   default: 0,
-  //   isDivider: 1
-  // },
   boxShadow: {
     isDivider: {
       default: '[inset -1px 0 0 var(--borderColorGray)]'
-      // isFirstItem: '[inset -1px 0 0 var(--borderColorGray), inset 0px 1px 0px var(--borderColorBlue)]'
     }
-  },
-  zIndex: -1
-  // borderColor: {
-  //   default: 'gray-300',
-  //   forcedColors: 'ButtonBorder'
-  // }
+  }
 });
-
-// const divider = raw(
-//   `&:before { 
-//     content: ""; 
-//     position: absolute; 
-//     inset-inline-end: 0;
-//     top: 0,
-//     width: 1px; 
-//     height: 100%;
-//     background-color: var(--borderColorGray)}`
-// );
 
 const stickyCell = {
   backgroundColor: 'gray-25'
@@ -1537,7 +1511,8 @@ const row = style({
         isSelected: {
           default: colorMix('gray-25', 'blue-900', 10),
           isHovered: colorMix('gray-25', 'blue-900', 15),
-          isPressed: colorMix('gray-25', 'blue-900', 15)
+          isPressed: colorMix('gray-25', 'blue-900', 15),
+          forcedColors: 'Highlight'
         }
       }
     }
@@ -1582,9 +1557,6 @@ const row = style({
   //   }
   // },
   outlineStyle: 'none',
-  // kinda unfortunate but the border is really only needed for the first item case. the issue is related to the divider
-  // essentially, the gray box shadow from the divider would appear on top of the blue box shadow but only for the first item
-  // in order for it to be on the bottom, i used border...couldn't figure out why this was only happening with box shadow
   borderTopWidth: 0,
   borderBottomWidth: {
     selectionStyle: {
@@ -1597,13 +1569,7 @@ const row = style({
   borderStyle: 'solid',
   borderColor: {
     selectionStyle: {
-      highlight: {
-        default: 'transparent'
-        // isFirstItem: {
-        //   default: 'transparent',
-        //   isSelected: 'blue-900'
-        // }
-      },
+      highlight: 'transparent',
       checkbox: 'gray-300'
     }
   },
@@ -1615,10 +1581,10 @@ const row = style({
     type: 'borderColor',
     value: 'blue-900'
   },
-  // to avoid affecting the layout, use box shadow instead
-  // also selected groups still have gray borders in between the items, hard to have two colors with borders because you'll get a diagonal line where the two borders meet 
-  // have more control over how the borders are rendered using box shadow instead
-  // couldn't add an absolute positioned div because it would mess up the cell count
+  // In order to prevent layout shifts, we use box shadows to render the borders since we can't add an absolute position div (it messes up the cell count due to the way Table collections are built)
+  // In highlight mode, selected groups also have gray borders between the items in addition to having a blue outer border
+  // Having a border have two colors is possible, the issue is that the browser will render a diagonal line where the two borders meet
+  // Using box shadows gives us a bit more control on how the border colors appear
   boxShadow: {
     selectionStyle: {
       highlight: {
@@ -1646,6 +1612,9 @@ const row = style({
   forcedColorAdjust: 'none'
 });
 
+// Unlike the other items, the first item needs to render a border on top when it is selected in highlight mode
+// Unfortunately, we can't add a position: absolute div to Row because it messes up the cell count
+// As a result, we rely on adding a css pseudo element when the item is selected + first item + highlight selection
 const border = css(
   `&:after {
     content: "";

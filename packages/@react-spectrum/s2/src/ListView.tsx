@@ -38,6 +38,7 @@ import {
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
 import intlMessages from '../intl/*.json';
+import {isFirstItem, isLastItem, isNextSelected, isPrevSelected, useScale} from './utils';
 import {Key} from '@react-types/shared';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {ListLayout} from 'react-stately/private/layout/ListLayout';
@@ -49,7 +50,6 @@ import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 
@@ -705,34 +705,6 @@ function ListSelectionCheckbox({isDisabled}: {isDisabled: boolean}) {
       <Checkbox slot="selection" />
     </div>
   );
-}
-
-export function isNextSelected(id: Key | undefined, state: ListState<unknown>) {
-  if (id == null || !state) {
-    return false;
-  }
-  let keyAfter = state.collection.getKeyAfter(id);
-  return keyAfter != null && state.selectionManager.isSelected(keyAfter);
-}
-export function isPrevSelected(id: Key | undefined, state: ListState<unknown>) {
-  if (id == null || !state) {
-    return false;
-  }
-  let keyBefore = state.collection.getKeyBefore(id);
-  return keyBefore != null && state.selectionManager.isSelected(keyBefore);
-}
-
-export function isFirstItem(id: Key | undefined, state: ListState<unknown>) {
-  if (id == null || !state) {
-    return false;
-  }
-  return state.collection.getFirstKey() === id;
-}
-function isLastItem(id: Key | undefined, state: ListState<unknown>) {
-  if (id == null || !state) {
-    return false;
-  }
-  return state.collection.getLastKey() === id;
 }
 
 export function ListViewItem(props: ListViewItemProps): ReactNode {
