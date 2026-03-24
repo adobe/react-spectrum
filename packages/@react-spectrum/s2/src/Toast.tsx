@@ -17,7 +17,7 @@ import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
 import Chevron from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import {CloseButton} from './CloseButton';
-import {createContext, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import {createContext, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {flushSync} from 'react-dom';
@@ -348,6 +348,43 @@ interface ToastContainerContextValue {
 const ToastContainerContext = createContext<ToastContainerContextValue | null>(null);
 
 /**
+ * Returns the number of pixels the visual viewport is offset from the bottom
+ * of the layout viewport (i.e. how much the on-screen keyboard has pushed the
+ * visible area up). Returns 0 when no keyboard is present or the API is
+ * unavailable.
+ */
+function useKeyboardOffset(): number {
+  let [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    let vv = typeof window !== 'undefined' ? window.visualViewport : null;
+    if (!vv) {
+      return;
+    }
+
+    let update = () => {
+      // offsetTop is the distance from the top of the layout viewport to the
+      // top of the visual viewport. When the keyboard is open the visual
+      // viewport shrinks upward, so:
+      //   keyboardHeight = layoutHeight - (vv.offsetTop + vv.height)
+      let keyboardHeight = window.innerHeight - (vv!.offsetTop + vv!.height);
+      setOffset(Math.max(0, Math.round(keyboardHeight)));
+    };
+
+    vv.addEventListener('resize', update);
+    vv.addEventListener('scroll', update);
+    update();
+
+    return () => {
+      vv!.removeEventListener('resize', update);
+      vv!.removeEventListener('scroll', update);
+    };
+  }, []);
+
+  return offset;
+}
+
+/**
  * A ToastContainer renders the queued toasts in an application. It should be placed
  * at the root of the app.
  */
@@ -360,6 +397,10 @@ export function ToastContainer(props: ToastContainerProps): ReactNode {
   [placement, align = 'center'] = placement.split(' ') as any;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let regionRef = useRef<HTMLDivElement | null>(null);
+
+  // Offset the toast region above the on-screen keyboard on mobile.
+  let keyboardOffset = useKeyboardOffset();
+  let isBottom = placement === 'bottom';
 
   let state = useOverlayTriggerState({});
   let {isOpen: isExpanded, close, toggle} = state;
@@ -415,6 +456,7 @@ export function ToastContainer(props: ToastContainerProps): ReactNode {
       {...props}
       ref={regionRef}
       queue={queue}
+      style={isBottom && keyboardOffset > 0 ? {bottom: keyboardOffset + 16} : undefined}
       className={renderProps => toastRegion({
         ...renderProps,
         placement,
