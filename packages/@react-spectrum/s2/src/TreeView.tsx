@@ -378,18 +378,21 @@ const treeActionMenu = style({
 
 let treeRowFocusRing = style({
   ...focusRing(),
-  outlineOffset: -2,
+  outlineOffset: {
+    default: -2,
+    forcedColors: -3
+  },
+  outlineWidth: {
+    default: 2,
+    forcedColors: '[3px]'
+  },
   outlineColor: {
     default: 'focus-ring',
     forcedColors: 'Highlight',
     selectionStyle: {
       highlight: {
         default: 'focus-ring',
-        forcedColors: 'Highlight',
-        isSelected: {
-          default: 'focus-ring',
-          forcedColors: 'ButtonBorder'
-        }
+        forcedColors: 'ButtonBorder'
       }
     }
   },
