@@ -8,10 +8,7 @@
   "exports": {
     ".": {
       "source": "./src/index.ts",
-      "types": [
-        "./dist/types.d.ts",
-        "./src/index.ts"
-      ],
+      "types": "./dist/types/src/index.d.ts",
       "import": "./dist/import.mjs",
       "require": "./dist/main.js"
     },
@@ -24,7 +21,7 @@
   },
   "server-module": "server/index.mjs",
   "server-main": "server/index.js",
-  "types": "dist/types.d.ts",
+  "types": "dist/types/src/index.d.ts",
   "source": "src/index.ts",
   "targets": {
     "types": false,
