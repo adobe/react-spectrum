@@ -48,7 +48,7 @@ ExpressIcon.displayName = IconComponent.displayName;
 export default function ${iconName}(props: UIIconPropsWithoutChildren): JSX.Element {
   let express = false;
   try {
-    express = useProvider().theme.global.express;
+    express = (useProvider() as any).theme.global.express;
   } catch {
     // ignore
   }
