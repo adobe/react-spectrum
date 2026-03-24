@@ -11,7 +11,7 @@
  */
 
 import {ActionButton, ActionButtonContext} from './ActionButton';
-import {baseColor, centerPadding, colorMix, focusRing, fontRelative, lightDark, setColorScheme, space, style} from '../style' with {type: 'macro'};
+import {baseColor, centerPadding, color, colorMix, focusRing, fontRelative, lightDark, setColorScheme, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 
 import {ButtonGroup} from './ButtonGroup';
@@ -199,11 +199,12 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
   scrollPaddingStart: {
     isCheckboxSelection: 40,
     isDragAndDrop: {
-      // Larger than the 16 from v3 since we need some room for the halo focus rin
+      // Larger than the 16 from v3 since we need some room for the halo focus ring
       default: 24,
       isCheckboxSelection: 64
     }
-  }
+  },
+  forcedColorAdjust: 'none'
 });
 
 let dragPreviewCard = style<{scale?: 'medium' | 'large'}>({
@@ -1134,9 +1135,26 @@ const stickyCell = {
   backgroundColor: 'gray-25'
 } as const;
 
+// Bit gross but this is needed because the sticky cells currently cover/partially cover styles that the row applies so that
+// they don't appear when the table is scrolled. The below basically just continues the inset outline that the row has when
+// it is focused as a drop target
+const rowDropTargetStickyOutline = {
+  boxShadow: {
+    default: 'none',
+    ':is([role="row"][data-drop-target] *)': {
+      default: `[inset 0 2px 0 0 ${color('blue-800')}, inset 0 -1px 0 0 ${color('blue-800')}]`,
+      forcedColors: '[inset 0 2px 0 0 Highlight, inset 0 -1px 0 0 Highlight]'
+    },
+    ':is([role="row"][data-focus-visible] *)': {
+      forcedColors: '[inset 0 2px 0 0 Highlight, inset 0 -1px 0 0 Highlight]'
+    }
+  }
+} as const;
+
 const checkboxCellStyle = style({
   ...commonCellStyles,
   ...stickyCell,
+  ...rowDropTargetStickyOutline,
   paddingStart: 16,
   alignContent: 'center',
   height: 'calc(100% - 1px)',
@@ -1147,6 +1165,7 @@ const checkboxCellStyle = style({
 const dragCellStyle = style({
   ...commonCellStyles,
   ...stickyCell,
+  ...rowDropTargetStickyOutline,
   paddingStart: 4,
   paddingEnd: 4,
   alignContent: 'center',
@@ -1726,47 +1745,28 @@ const row = style<RowRenderProps & S2TableProps>({
       forcedColors: 'Highlight'
     }
   },
-  // TODO: outline here is to emulate v3 forcedColors experience but runs into the same problem where the sticky column covers the outline
-  // This doesn't quite work because it gets cut off by the checkbox cell background masking element, figure out another way. Could shrink the checkbox cell's content even more
-  // and offset it by margin top but that messes up the checkbox centering a bit
-  // outlineWidth: {
-  //   forcedColors: {
-  //     isFocusVisible: 2
-  //   }
-  // },
-  // outlineOffset: {
-  //   forcedColors: {
-  //     isFocusVisible: -1
-  //   }
-  // },
-  // outlineColor: {
-  //   forcedColors: {
-  //     isFocusVisible: 'ButtonBorder'
-  //   }
-  // },
-  // outlineStyle: {
-  //   default: 'none',
-  //   forcedColors: {
-  //     isFocusVisible: 'solid'
-  //   }
-  // },
-  // TODO: this literally runs into the same problem as noted above for the focusedColors experience when the user targets the
-  // row for a "on" drop operation
   outlineStyle: {
     default: 'none',
-    isDropTarget: 'solid'
+    isDropTarget: 'solid',
+    forcedColors: {
+      isFocusVisible: 'solid'
+    }
   },
   outlineWidth: {
-    isDropTarget: 2
+    isDropTarget: 2,
+    forcedColors: {
+      isFocusVisible: 2
+    }
   },
   outlineOffset: {
-    isDropTarget: -2
+    isDropTarget: -2,
+    forcedColors: {
+      isFocusVisible: -2
+    }
   },
   outlineColor: {
-    isDropTarget: {
-      default: 'blue-800',
-      forcedColors: 'Highlight'
-    }
+    isDropTarget: 'blue-800',
+    forcedColors: 'Highlight'
   },
   borderTopWidth: 0,
   borderBottomWidth: 1,
@@ -1806,7 +1806,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       className={renderProps => row({
         ...renderProps,
         ...tableVisualOptions
-      }) + (renderProps.isFocusVisible ? ' ' + css('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')}
+      }) + (renderProps.isFocusVisible || renderProps.isDropTarget ? ' ' + css('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')}
       {...otherProps}>
       {allowsDragging  && (
         // @ts-ignore

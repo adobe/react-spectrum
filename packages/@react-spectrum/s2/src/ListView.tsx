@@ -306,6 +306,8 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
 const selectedBackground = colorMix('gray-25', 'gray-900', 7);
 const selectedActiveBackground = colorMix('gray-25', 'gray-900', 10);
 
+// TODO: removed the background color in HCM for highlight selection since it made it hard to see the focus
+// ring of the drag button, this matches v3 anyways. thoughts?
 const listitem = style<GridListItemRenderProps & {
   isFocused: boolean,
   isLink?: boolean,
@@ -349,11 +351,6 @@ const listitem = style<GridListItemRenderProps & {
     isDisabled: 'disabled',
     forcedColors: {
       default: 'ButtonText',
-      selectionStyle: {
-        highlight: {
-          isSelected: 'HighlightText'
-        }
-      },
       isDisabled: 'GrayText'
     }
   },
@@ -422,6 +419,21 @@ const listitem = style<GridListItemRenderProps & {
 });
 
 const insetBorderRadius = 'calc(var(--radius) - 1px)';
+const rootDropSelectedRowBackground = colorMix('gray-25', 'blue-900', 28);
+const rowDropBackground = colorMix('gray-25', 'blue-900', 10);
+const rootRowDropStyles = {
+  // Unlike v3 tableview, v3 listview has the same background color for the listview itself and the rows when
+  // dropping on root
+  default: dropTargetBackground,
+  isSelected: rootDropSelectedRowBackground,
+  forcedColors: 'Background'
+} as const;
+const rowDropStyles = {
+  // Also unlike v3, dropping on a selected row vs a non selected row doesn't have any difference in background color
+  default: rowDropBackground,
+  isSelected: rowDropBackground,
+  forcedColors: 'Background'
+} as const;
 
 const listRowBackground = style<GridListItemRenderProps & {
   isFirstItem?: boolean,
@@ -452,7 +464,6 @@ const listRowBackground = style<GridListItemRenderProps & {
   },
   backgroundColor: {
     default: '--rowBackgroundColor',
-    isDropTarget: dropTargetBackground,
     isHovered: {
       default: 'gray-900/5',
       selectionStyle: {
@@ -481,16 +492,11 @@ const listRowBackground = style<GridListItemRenderProps & {
         }
       }
     },
-    forcedColors: {
-      // TODO: this causes the drop indicator for the root and the insertion drop indicator to be cut off in HCM,
-      // so we use transparent. Will need to check against a variet of HCM themes
-      default: 'transparent',
-      selectionStyle: {
-        highlight: {
-          isSelected: 'Highlight'
-        }
-      }
-    }
+    // TODO: this causes the drop indicator for the root and the insertion drop indicator to be cut off in HCM,
+    // so we use transparent. Will need to check against a variet of HCM themes
+    forcedColors: 'transparent',
+    ':is([role="grid"][data-drop-target] *)': rootRowDropStyles,
+    isDropTarget: rowDropStyles
   },
   borderTopStartRadius: {
     isQuiet: 'default',
