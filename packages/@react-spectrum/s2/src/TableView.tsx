@@ -483,13 +483,18 @@ const cellFocus = {
   outlineWidth: 2,
   outlineColor: {
     default: 'focus-ring',
-    forcedColors: 'Highlight'
+    forcedColors: {
+      default: 'Highlight',
+      selectionStyle: {
+        highlight: 'ButtonBorder'
+      }
+    }
   },
   borderRadius: '[6px]'
 } as const;
 
-function CellFocusRing() {
-  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0, pointerEvents: 'none', top: 0, bottom: '[-1px]'})({isFocusVisible: true})} />;
+function CellFocusRing({selectionStyle} : {selectionStyle?: 'checkbox' | 'highlight'}) {
+  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0, pointerEvents: 'none', top: 0, bottom: '[-1px]'})({isFocusVisible: true, selectionStyle})} />;
 }
 
 const columnStyles = style({
@@ -559,7 +564,6 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
   let domRef = useDOMRef(ref);
   let isMenu = allowsResizing || !!props.menuItems;
 
-
   return (
     <RACColumn {...props} ref={domRef} style={{borderInlineEndColor: 'transparent'}} className={renderProps => columnStyles({...renderProps, isMenu, align, isQuiet, selectionStyle})}>
       {({allowsSorting, sortDirection, isFocusVisible, sort, startResize}) => (
@@ -567,7 +571,7 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
           {/* Note this is mainly for column's without a dropdown menu. If there is a dropdown menu, the button is styled to have a focus ring for simplicity
           (no need to juggle showing this focus ring if focus is on the menu button and not if it is on the resizer) */}
           {/* Separate absolutely positioned element because appyling the ring on the column directly via outline means the ring's required borderRadius will cause the bottom gray border to curve as well */}
-          {isFocusVisible && <CellFocusRing />}
+          {isFocusVisible && <CellFocusRing selectionStyle={selectionStyle} />}
           {isMenu ?
             (
               <ColumnWithMenu isColumnResizable={allowsResizing} menuItems={props.menuItems} allowsSorting={allowsSorting} sortDirection={sortDirection} sort={sort} startResize={startResize} align={align}>
@@ -1083,7 +1087,7 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
             <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
           }
           <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
-          {isFocusVisible && <CellFocusRing />}
+          {isFocusVisible && <CellFocusRing selectionStyle={tableVisualOptions.selectionStyle} />}
         </>
       )}
     </RACCell>
@@ -1164,7 +1168,12 @@ const editableCell = style<CellRenderProps & S2TableProps & {isDivider: boolean,
   ...treeColumnStyles,
   color: {
     default: baseColor('neutral'),
-    isSaving: baseColor('neutral-subdued')
+    isSaving: baseColor('neutral-subdued'),
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    },
+    forcedColors: 'ButtonText'    
   },
   paddingY: centerPadding(),
   boxSizing: 'border-box',
@@ -1385,7 +1394,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
         }]
       ]}>
       <span className={cellContent({...tableVisualOptions, align: align || 'start'})}>{children}</span>
-      {isFocusVisible && <CellFocusRing />}
+      {isFocusVisible && <CellFocusRing selectionStyle={tableVisualOptions.selectionStyle} />}
 
       <Provider
         values={[
@@ -1528,8 +1537,16 @@ const row = style({
   '--rowFocusIndicatorColor': {
     type: 'outlineColor',
     value: {
-      default: 'focus-ring',
-      forcedColors: 'Highlight'
+      selectionStyle: {
+        checkbox: {
+          default: 'focus-ring',
+          forcedColors: 'Highlight'
+        },
+        highlight: {
+          default: 'focus-ring',
+          forcedColors: 'ButtonBorder'
+        }
+      }
     }
   },
   // TODO: outline here is to emulate v3 forcedColors experience but runs into the same problem where the sticky column covers the outline
@@ -1575,11 +1592,17 @@ const row = style({
   },
   '--borderColorGray': {
     type: 'borderColor',
-    value: 'gray-300'
+    value: {
+      default: 'gray-300',
+      forcedColors: 'ButtonBorder'
+    }
   },
   '--borderColorBlue': {
     type: 'borderColor',
-    value: 'blue-900'
+    value: {
+      default: 'blue-900',
+      forcedColors: 'ButtonBorder'
+    }
   },
   // In order to prevent layout shifts, we use box shadows to render the borders since we can't add an absolute position div (it messes up the cell count due to the way Table collections are built)
   // In highlight mode, selected groups also have gray borders between the items in addition to having a blue outer border
@@ -1604,7 +1627,7 @@ const row = style({
   '--focusIndicatorHeight': {
     type: 'top',
     value: {
-      default: 'calc(self(height) - 1px)'
+      default: 'calc(self(height))'
     }
   },
   isolation: 'isolate',
@@ -1612,9 +1635,9 @@ const row = style({
   forcedColorAdjust: 'none'
 });
 
-// Unlike the other items, the first item needs to render a border on top when it is selected in highlight mode
-// Unfortunately, we can't add a position: absolute div to Row because it messes up the cell count
-// As a result, we rely on adding a css pseudo element when the item is selected + first item + highlight selection
+// Unlike the other rows, the first row needs to render a border on top when it is selected in highlight mode
+// Unfortunately, we can't add a position: absolute div to <Row> because it messes up the cell count
+// As a result, we rely on adding a css pseudo element when the row is selected + first item + highlight selection
 const border = css(
   `&:after {
     content: "";
