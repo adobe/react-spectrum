@@ -163,7 +163,7 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
     default: 'gray-25',
     isQuiet: 'transparent',
     isDropTarget: dropTargetBackground,
-    forcedColors:  'Background'
+    forcedColors: 'Background'
   },
   borderColor: {
     default: 'gray-300',
