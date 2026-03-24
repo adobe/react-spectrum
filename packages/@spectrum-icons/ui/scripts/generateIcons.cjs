@@ -37,8 +37,8 @@ function template(iconName) {
 
     return (
 `import {${iconName} as IconComponent} from '@adobe/react-spectrum-ui/dist/${iconName}.js';
-import {UIIcon, UIIconPropsWithoutChildren} from '@react-spectrum/icon';
-import {useProvider} from '@react-spectrum/provider';
+import {UIIcon, UIIconPropsWithoutChildren} from '@adobe/react-spectrum/private/icon/UIIcon';
+import {useProvider} from '@adobe/react-spectrum/Provider';
 import React, {JSX} from 'react';
 
 ${jsx}
@@ -46,13 +46,13 @@ ${jsx}
 ExpressIcon.displayName = IconComponent.displayName;
 
 export default function ${iconName}(props: UIIconPropsWithoutChildren): JSX.Element {
-  let provider;
+  let express = false;
   try {
-    provider = useProvider();
+    express = (useProvider() as any).theme.global.express;
   } catch {
     // ignore
   }
-  return <UIIcon {...props}>{provider?.theme?.global?.express ? <ExpressIcon /> : <IconComponent />}</UIIcon>;
+  return <UIIcon {...props}>{express ? <ExpressIcon /> : <IconComponent />}</UIIcon>;
 }
 `
   );
@@ -60,7 +60,7 @@ export default function ${iconName}(props: UIIconPropsWithoutChildren): JSX.Elem
 
   return (
 `import {${iconName} as IconComponent} from '@adobe/react-spectrum-ui/dist/${iconName}.js';
-import {UIIcon, UIIconPropsWithoutChildren} from '@react-spectrum/icon';
+import {UIIcon, UIIconPropsWithoutChildren} from '@adobe/react-spectrum/private/icon/UIIcon';
 import React, {JSX} from 'react';
 
 export default function ${iconName}(props: UIIconPropsWithoutChildren): JSX.Element {

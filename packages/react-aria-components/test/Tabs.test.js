@@ -11,9 +11,12 @@
  */
 
 import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
-import {Button, Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip, TooltipTrigger} from '../';
+import {Button} from '../src/Button';
 import React, {useState} from 'react';
+import {RouterProvider} from 'react-aria/private/utils/openLink';
+import {Tab, TabList, TabPanel, TabPanels, Tabs} from '../src/Tabs';
 import {TabsExample} from '../stories/Tabs.stories';
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -517,6 +520,35 @@ describe('Tabs', () => {
 
     fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
     expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('should navigate linked tabs on click rather than mouse down', async function () {
+    let navigate = jest.fn();
+    let {getAllByRole} = render(
+      <RouterProvider navigate={navigate}>
+        <Tabs selectedKey="/a">
+          <TabList aria-label="Test">
+            <Tab id="/a" href="/a">A</Tab>
+            <Tab id="/b" href="/b">B</Tab>
+          </TabList>
+          <TabPanel id="/a">A</TabPanel>
+          <TabPanel id="/b">B</TabPanel>
+        </Tabs>
+      </RouterProvider>
+    );
+
+    let tabs = getAllByRole('tab');
+    fireEvent.mouseDown(tabs[1], {button: 0, detail: 1});
+    expect(navigate).not.toHaveBeenCalled();
+
+    fireEvent.mouseLeave(tabs[1]);
+    fireEvent.mouseEnter(tabs[1]);
+    expect(navigate).not.toHaveBeenCalled();
+
+    fireEvent.mouseUp(tabs[1], {button: 0, detail: 1});
+    fireEvent.click(tabs[1], {button: 0, detail: 1});
+    expect(navigate).toHaveBeenCalledTimes(1);
+    expect(navigate).toHaveBeenCalledWith('/b', undefined);
   });
 
   it('should render tab with aria-label', () => {

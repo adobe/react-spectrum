@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Breadcrumb, Breadcrumbs, Link} from 'react-aria-components';
+import {Breadcrumb, Breadcrumbs} from '../src/Breadcrumbs';
+
+import {Link} from '../src/Link';
 import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import './styles.css';

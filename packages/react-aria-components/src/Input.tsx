@@ -18,9 +18,12 @@ import {
  useContextProps,
  useRenderProps
 } from './utils';
-import {createHideableComponent} from '@react-aria/collections';
-import {HoverEvents, mergeProps, useFocusRing, useHover} from 'react-aria';
+import {createHideableComponent} from 'react-aria/private/collections/Hidden';
+import {HoverEvents} from '@react-types/shared';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, InputHTMLAttributes} from 'react';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
 
 export interface InputRenderProps {
   /**

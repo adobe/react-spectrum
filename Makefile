@@ -39,6 +39,7 @@ clean_dist:
 	rm -rf packages/@adobe/react-spectrum/i18n
 	rm -rf packages/@react-aria/i18n/server
 	rm -rf packages/@react-spectrum/s2/style/dist packages/@react-spectrum/s2/page.css packages/@react-spectrum/s2/icons packages/@react-spectrum/s2/illustrations
+	git clean -Xdf packages/{@adobe/react-spectrum,@react-spectrum/s2,react-aria,react-stately,react-aria-components}
 
 clean_parcel:
 	rm -rf .parcel-cache
@@ -98,14 +99,16 @@ publish-nightly: build
 	yarn publish:nightly
 
 build:
-	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/react-aria-components --no-optimize --config .parcelrc-build
+	mkdir -p dist
+	yarn tsgo --project tsconfig.build.json --declaration --emitDeclarationOnly --outDir dist/types --rootDir packages
+	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/{react-aria,react-stately,react-aria-components,@adobe/react-spectrum} --no-optimize --config .parcelrc-build
 	yarn workspaces foreach --all -pt run prepublishOnly
-	for pkg in packages/@react-{spectrum,aria,stately}/*/  packages/@internationalized/{message,string,date,number}/ packages/@adobe/react-spectrum/ packages/react-aria/ packages/react-stately/ packages/react-aria-components/; \
-		do node scripts/buildEsm.js $$pkg; \
-	done
+	node scripts/buildEsm.js
 	node scripts/buildI18n.js
 	node scripts/generateIconDts.js
 	node scripts/fixUseClient.js
+	node scripts/moveTypes.mjs
+	rm -rf types
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs

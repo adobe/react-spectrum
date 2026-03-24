@@ -10,21 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Switch as AriaSwitch,
-  SwitchProps as AriaSwitchProps,
-  ContextValue,
-  SwitchRenderProps,
-  useLocale
-} from 'react-aria-components';
+import {Switch as AriaSwitch, SwitchProps as AriaSwitchProps, SwitchRenderProps} from 'react-aria-components/Switch';
+
 import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
+import {ContextValue} from 'react-aria-components/utils';
 import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {Direction, FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {pressScale} from './pressScale';
-import {useFocusableRef} from '@react-spectrum/utils';
+import {useFocusableRef} from './useDOMRef';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface SwitchStyleProps {

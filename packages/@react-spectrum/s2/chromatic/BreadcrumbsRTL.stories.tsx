@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Breadcrumbs} from '../src';
+import {Breadcrumbs} from '../src/Breadcrumbs';
 
 import type {Meta} from '@storybook/react';
 

@@ -10,13 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Checkbox, Group, Label, Link, ListBox, Popover, Select, SelectValue, Separator, ToggleButton, Toolbar, ToolbarProps} from 'react-aria-components';
-import {classNames} from '@react-spectrum/utils';
+import {Button} from '../src/Button';
+
+import {Checkbox} from '../src/Checkbox';
+import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
+import {Group} from '../src/Group';
+import {Label} from '../src/Label';
+import {Link} from '../src/Link';
+import {ListBox} from '../src/ListBox';
 import {Meta, StoryObj} from '@storybook/react';
 import {MyListBoxItem} from './utils';
-import {Orientation} from 'react-stately';
+import {Orientation} from '@react-types/shared';
+import {Popover} from '../src/Popover';
 import React from 'react';
+import {Select, SelectValue} from '../src/Select';
+import {Separator} from '../src/Separator';
 import styles from '../example/index.css';
+import {ToggleButton} from '../src/ToggleButton';
+import {Toolbar, ToolbarProps} from '../src/Toolbar';
 import './styles.css';
 
 export default {

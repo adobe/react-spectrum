@@ -15,7 +15,7 @@ import NoReviewLinks_M from 'illustration:./S2_lin_noReviewLinks_96.svg';
 import NoReviewLinks_S from 'illustration:./S2_lin_noReviewLinks_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function NoReviewLinks(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

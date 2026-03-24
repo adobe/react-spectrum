@@ -11,20 +11,23 @@
  */
 
 import {ActionButtonGroup} from './ActionButtonGroup';
-import {announce} from '@react-aria/live-announcer';
+import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {CloseButton} from './CloseButton';
-import {ContextValue, SlotProps} from 'react-aria-components';
+import {ContextValue, SlotProps} from 'react-aria-components/utils';
 import {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {DOMProps, DOMRef, DOMRefValue, Key} from '@react-types/shared';
-import {FocusScope, useKeyboard} from 'react-aria';
-// @ts-ignore
+import {FocusScope} from 'react-aria/FocusScope';
 import intlMessages from '../intl/*.json';
+// @ts-ignore
 import {lightDark, style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils' with { type: 'macro' };
-import {useControlledState} from '@react-stately/utils';
-import {useDOMRef} from '@react-spectrum/utils';
-import {useEnterAnimation, useExitAnimation, useObjectRef, useResizeObserver} from '@react-aria/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useControlledState} from 'react-stately/private/utils/useControlledState';
+import {useDOMRef} from './useDOMRef';
+import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
+import {useKeyboard} from 'react-aria/useKeyboard';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useObjectRef} from 'react-aria/useObjectRef';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 const actionBarStyles = style({

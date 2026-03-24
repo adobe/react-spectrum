@@ -9,16 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useColorArea} from './useColorArea';
-export {useColorSlider} from './useColorSlider';
-export {useColorWheel} from './useColorWheel';
-export {useColorField} from './useColorField';
-export {useColorSwatch} from './useColorSwatch';
-export {useColorChannelField} from './useColorChannelField';
-export type {AriaColorAreaOptions, ColorAreaAria} from './useColorArea';
-export type {AriaColorSliderOptions, ColorSliderAria} from './useColorSlider';
-export type {AriaColorWheelOptions, ColorWheelAria} from './useColorWheel';
-export type {AriaColorAreaProps, AriaColorFieldProps, AriaColorSliderProps} from '@react-types/color';
-export type {ColorFieldAria} from './useColorField';
-export type {AriaColorSwatchProps, ColorSwatchAria} from './useColorSwatch';
-export type {AriaColorChannelFieldProps, ColorChannelFieldAria} from './useColorChannelField';
+export {useColorArea} from 'react-aria/useColorArea';
+
+export {useColorSlider} from 'react-aria/useColorSlider';
+export {useColorWheel} from 'react-aria/useColorWheel';
+export {useColorField, useColorChannelField} from 'react-aria/useColorField';
+export {useColorSwatch} from 'react-aria/useColorSwatch';
+export type {AriaColorAreaProps, AriaColorAreaOptions, ColorAreaAria} from 'react-aria/useColorArea';
+export type {AriaColorSliderProps, AriaColorSliderOptions, ColorSliderAria} from 'react-aria/useColorSlider';
+export type {AriaColorWheelProps, AriaColorWheelOptions, ColorWheelAria} from 'react-aria/useColorWheel';
+export type {AriaColorFieldProps, ColorFieldAria, AriaColorChannelFieldProps, ColorChannelFieldAria} from 'react-aria/useColorField';
+export type {AriaColorSwatchProps, ColorSwatchAria} from 'react-aria/useColorSwatch';

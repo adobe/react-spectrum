@@ -11,36 +11,36 @@
  */
 
 import {ActionButton} from './ActionButton';
+
 import {
   Breadcrumb as AriaBreadcrumb,
   BreadcrumbProps as AriaBreadcrumbItemProps,
   BreadcrumbsProps as AriaBreadcrumbsProps,
-  CollectionRenderer,
-  CollectionRendererContext,
-  ContextValue,
-  DefaultCollectionRenderer,
-  HeadingContext,
-  Link,
-  LinkRenderProps,
-  Provider,
   Breadcrumbs as RACBreadcrumbs
-} from 'react-aria-components';
+} from 'react-aria-components/Breadcrumbs';
+
 import {baseColor, focusRing, size, style} from '../style' with { type: 'macro' };
 import ChevronIcon from '../ui-icons/Chevron';
 import {Collection, DOMRef, DOMRefValue, GlobalDOMAttributes, LinkDOMProps, Node} from '@react-types/shared';
+import {CollectionRenderer, CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-components/Collection';
+import {ContextValue, Provider} from 'react-aria-components/utils';
 import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, Fragment, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-// @ts-ignore
 import FolderIcon from '../s2wf-icons/S2_Icon_FolderBreadcrumb_20_N.svg';
 import {forwardRefType} from './types';
-import {inertValue, useLayoutEffect} from '@react-aria/utils';
 // @ts-ignore
+import {HeadingContext} from 'react-aria-components/Heading';
+import {inertValue} from 'react-aria/private/utils/inertValue';
 import intlMessages from '../intl/*.json';
+import {Link, LinkRenderProps} from 'react-aria-components/Link';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
+// @ts-ignore
 import {Text} from './Content';
-import {useDOMRef, useResizeObserver} from '@react-spectrum/utils';
-import {useLocale} from 'react-aria';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useDOMRef} from './useDOMRef';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 const MIN_VISIBLE_ITEMS = 1;

@@ -15,7 +15,7 @@ import FileText_M from 'illustration:./S2_lin_fileText_96.svg';
 import FileText_S from 'illustration:./S2_lin_fileText_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function FileText(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

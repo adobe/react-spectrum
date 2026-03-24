@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export {useDisclosureState} from './useDisclosureState';
-export {useDisclosureGroupState} from './useDisclosureGroupState';
+export {useDisclosureState} from 'react-stately/useDisclosureState';
 
-export type {DisclosureState, DisclosureProps} from './useDisclosureState';
-export type {DisclosureGroupState, DisclosureGroupProps} from './useDisclosureGroupState';
+export {useDisclosureGroupState} from 'react-stately/useDisclosureGroupState';
+export type {DisclosureState, DisclosureProps} from 'react-stately/useDisclosureState';
+export type {DisclosureGroupState, DisclosureGroupProps} from 'react-stately/useDisclosureGroupState';
