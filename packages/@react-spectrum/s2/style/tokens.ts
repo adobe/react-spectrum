@@ -20,7 +20,7 @@ function keys<T extends Record<string, any>>(v: T): Record<keyof T, any> {
   return v;
 }
 
-const tokens = keys({...originalTokens});
+const tokens = keys(originalTokens);
 type TokenName = keyof typeof tokens;
 
 export function getToken(name: TokenName): string {
