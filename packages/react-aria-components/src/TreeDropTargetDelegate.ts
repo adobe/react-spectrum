@@ -194,7 +194,7 @@ export class TreeDropTargetDelegate<T> {
     if (potentialTargets.length === 1) {
       let nextKey = collection.getKeyAfter(target.key);
       let nextNode = nextKey ? collection.getItem(nextKey) : null;
-      if (nextKey != null && nextNode && currentItem && nextNode.level != null && currentItem.level != null && nextNode.level > currentItem.level) {
+      if (nextKey != null && nextNode && currentItem && nextNode.type === 'item' && nextNode.level != null && currentItem.level != null && nextNode.level > currentItem.level) {
         let beforeTarget = {
           type: 'item',
           key: nextKey,
