@@ -86,9 +86,7 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
             e.stopPropagation();
           } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === treeNode.key) {
             if (state.expandedKeys !== 'all') {
-              if (treeNode.level === 0 && !state.expandedKeys.has(treeNode.key)) {
-                return;
-              } else if (hasChildRows && state.expandedKeys.has(treeNode.key)) {
+              if (hasChildRows && state.expandedKeys.has(treeNode.key)) {
                 state.toggleKey(treeNode.key);
                 e.stopPropagation();
               } else if (!state.expandedKeys.has(treeNode.key) && treeNode.parentKey && treeNode.level > 0) {
