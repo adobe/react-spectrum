@@ -22,7 +22,29 @@ import {Size} from '../virtualizer/Size';
 import {ITableCollection as TableCollection} from '../table/TableCollection';
 import {TableColumnLayout} from '../table/TableColumnLayout';
 
-export interface TableLayoutProps extends ListLayoutOptions {
+export interface TableLayoutProps extends Omit<ListLayoutOptions, 'orientation' | 'rowSize' | 'estimatedRowSize' | 'headingSize' | 'estimatedHeadingSize' | 'loaderSize'> {
+  /**
+   * The fixed height of a row in px.
+   * @default 48
+   */
+  rowHeight?: number,
+  /** The estimated height of a row, when row heights are variable.
+   */
+  estimatedRowHeight?: number,
+  /**
+   * The fixed height of a section header in px.
+   * @default 48
+   */
+  headingHeight?: number,
+  /** The estimated height of a section header, when the height is variable.
+   */
+  estimatedHeadingHeight?: number,
+  /**
+   * The fixed height of a loader element in px. This loader is specifically for
+   * "load more" elements rendered when loading more rows at the root level or inside nested row/sections.
+   * @default 48
+   */
+  loaderHeight?: number,
   columnWidths?: Map<Key, number>
 }
 
@@ -39,7 +61,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
   private lastPersistedKeys: Set<Key> | null = null;
   private persistedIndices: Map<Key, number[]> = new Map();
 
-  constructor(options?: ListLayoutOptions) {
+  constructor(options?: TableLayoutProps) {
     super(options);
     this.stickyColumnIndices = [];
   }

@@ -12,7 +12,7 @@ export const description = 'Renders a scrollable collection of data using custom
 
 <PageDescription>{docs.exports.Virtualizer.description}</PageDescription>
 
-```tsx render docs={docs.exports.ListLayoutOptions} links={docs.links} props={['rowHeight', 'gap', 'padding']} initialProps={{rowHeight: 32, gap: 4, padding: 4}} propsObject="layoutOptions" wide
+```tsx render docs={docs.exports.ListLayoutOptions} links={docs.links} props={['rowSize', 'gap', 'padding']} initialProps={{rowSize: 32, gap: 4, padding: 4}} propsObject="layoutOptions" wide
 "use client";
 import {Virtualizer, ListLayout} from 'react-aria-components';
 import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
@@ -49,9 +49,9 @@ Virtualizer uses <TypeLink links={docs.links} type={docs.exports.Layout} /> obje
 
 ### List
 
-`ListLayout` supports layout of items in a vertical stack. Rows can be fixed or variable height. When using variable heights, set the `estimatedRowHeight` to a reasonable guess for how tall the rows will be on average. This allows the size of the scrollbar to be calculated.
+`ListLayout` places items along its orientation. Rows can be fixed or variable size. When using variable size, set the `estimatedRowSize` to a reasonable guess for how tall or wide the rows will be on average. This allows the size of the scrollbar to be calculated.
 
-```tsx render docs={docs.exports.ListLayoutOptions} links={docs.links} props={['gap', 'padding']} initialProps={{estimatedRowHeight: 75, gap: 4, padding: 4}} propsObject="layoutOptions" wide
+```tsx render docs={docs.exports.ListLayoutOptions} links={docs.links} props={['gap', 'padding']} initialProps={{estimatedRowSize: 75, gap: 4, padding: 4}} propsObject="layoutOptions" wide
 "use client";
 import {Virtualizer, ListLayout} from 'react-aria-components';
 import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
@@ -76,6 +76,41 @@ for (let i = 0; i < 5000; i++) {
     items={items}
     style={{display: 'block', padding: 0}}>
     {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
+  </ListBox>
+</Virtualizer>
+```
+
+
+Use the `orientation` option to arrange items horizontally or vertically. Provide the same `orientation` on the collection component so keyboard navigation matches the layout.
+
+```tsx render docs={docs.exports.ListLayoutOptions} links={docs.links} props={['gap', 'padding']} initialProps={{estimatedRowSize: 100, gap: 4, padding: 4, orientation: 'horizontal'}} propsObject="layoutOptions" wide
+"use client";
+import {Virtualizer, ListLayout} from 'react-aria-components';
+import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+
+let lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.'.split(' ');
+let items: {id: number, name: string}[] = [];
+for (let i = 0; i < 5000; i++) {
+  let words = Math.max(2, Math.floor(Math.random() * 10));
+  let name = lorem.slice(0, words).join(' ');
+  items.push({id: i, name});
+}
+
+<Virtualizer
+  /*- begin highlight -*/
+  layout={ListLayout}
+  /* PROPS */
+>
+  {/*- end highlight -*/}
+  <ListBox
+    /*- begin highlight -*/
+    orientation="horizontal"
+    /*- end highlight -*/
+    aria-label="Horizontal virtualized list"
+    selectionMode="multiple"
+    items={items}
+    style={{display: 'block', padding: 0, height: 150}}>
+    {(item) => <ListBoxItem style={{height: '100%'}}>{item.name}</ListBoxItem>}
   </ListBox>
 </Virtualizer>
 ```
@@ -426,7 +461,7 @@ for (let i = 0; images.length < 500; i++) {
 
 `TableLayout` provides layout of items in rows and columns, supporting virtualization of both horizontal and vertical scrolling. It should be used with the [Table](Table) component. Rows can be fixed or variable height. When using variable heights, set the `estimatedRowHeight` to a reasonable guess for how tall the rows will be on average. This allows the size of the scrollbar to be calculated.
 
-```tsx render docs={docs.exports.ListLayoutOptions} links={docs.links} props={['rowHeight', 'headingHeight', 'padding', 'gap']} initialProps={{rowHeight: 32, headingHeight: 32, padding: 4, gap: 4}} propsObject="layoutOptions" wide
+```tsx render docs={docs.exports.TableLayoutProps} links={docs.links} props={['rowHeight', 'headingHeight', 'padding', 'gap']} initialProps={{rowHeight: 32, headingHeight: 32, padding: 4, gap: 4}} propsObject="layoutOptions" wide
 "use client";
 import {Virtualizer, TableLayout} from 'react-aria-components';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from 'vanilla-starter/Table';
@@ -501,4 +536,4 @@ for (let i = 0; i < 1000; i++) {
 
 ### TableLayout
 
-<GroupedPropTable {...docs.exports.ListLayoutOptions} links={docs.links} />
+<GroupedPropTable {...docs.exports.TableLayoutProps} links={docs.links} />

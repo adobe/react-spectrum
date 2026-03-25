@@ -207,4 +207,5 @@ export type {AutocompleteState} from 'react-stately/private/autocomplete/useAuto
 export type {ListLayoutOptions} from 'react-stately/private/layout/ListLayout';
 export type {GridLayoutOptions} from 'react-stately/private/layout/GridLayout';
 export type {WaterfallLayoutOptions} from 'react-stately/private/layout/WaterfallLayout';
+export type {TableLayoutProps} from 'react-stately/private/layout/TableLayout';
 export type {RangeValue, ValidationResult, RouterConfig} from '@react-types/shared';
