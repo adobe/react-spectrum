@@ -152,15 +152,17 @@ export const fieldInput = () => ({
  * ```
  */
 export const setColorScheme = () => ({
-  colorScheme: {
-    // Default to page color scheme if none is defined.
-    default: 'var(--s2-color-scheme)',
-    colorScheme: {
-      'light dark': 'light dark',
-      light: 'light',
-      dark: 'dark'
+  '--s2-color-scheme': {
+    type: 'colorScheme',
+    value: {
+      colorScheme: {
+        'light dark': 'light dark',
+        light: 'light',
+        dark: 'dark'
+      }
     }
-  }
+  },
+  colorScheme: '--s2-color-scheme'
 } as const);
 
 export function staticColor(): Record<string, any> {
