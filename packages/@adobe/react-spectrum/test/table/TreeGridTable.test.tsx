@@ -700,7 +700,7 @@ describe('TableView with expandable rows', function () {
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(row2);
         expect(row2).toContainElement(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
-        // Focus doesn't move because Arrow Left on the row will collapse it here
+        // Focus doesn't move because Arrow Right on the row will collapse it here
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(row2);
         moveFocus('ArrowRight');
@@ -717,7 +717,7 @@ describe('TableView with expandable rows', function () {
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(row);
         expect(row).toContainElement(getCell(treegrid, 'Row 2, Lvl 1, Foo'));
-        // Focus doesn't move because Arrow Left on the row will collapse it here
+        // Focus doesn't move because Arrow Right on the row will collapse it here
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(row);
         moveFocus('ArrowRight');
