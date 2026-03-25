@@ -121,6 +121,10 @@ interface S2TableProps {
   onLoadMore?: () => any,
   /** Provides the ActionBar to display when rows are selected in the TableView. */
   renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement,
+  /**
+   * How selection should be displayed.
+   * @default 'checkbox'
+   */
   selectionStyle?: 'checkbox' | 'highlight'
 }
 
@@ -1064,7 +1068,6 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
   let {children, isSticky, showDivider = false, align, textValue, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let tableVisualOptions = useContext(InternalTableContext);
-  // let {isFirstItem} = useContext(InternalRowContext);
   textValue ||= typeof children === 'string' ? children : undefined;
 
   return (
@@ -1493,6 +1496,20 @@ const rowBackgroundColor = {
     isHovered: selectedActiveBackground, // table-selected-row-background-color, opacity /15
     isPressed: selectedActiveBackground // table-selected-row-background-color, opacity /15
   },
+  selectionStyle: {
+    highlight: {
+      default: 'gray-25',
+      isFocusVisibleWithin: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
+      isHovered: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
+      isPressed: colorMix('gray-25', 'gray-900', 10), // table-row-hover-color
+      isSelected: {
+        default: colorMix('gray-25', 'blue-900', 10),
+        isHovered: colorMix('gray-25', 'blue-900', 15),
+        isPressed: colorMix('gray-25', 'blue-900', 15),
+        forcedColors: 'Highlight'
+      }
+    }
+  },
   forcedColors: {
     default: 'Background'
   }
@@ -1513,18 +1530,7 @@ const row = style({
   position: 'relative',
   boxSizing: 'border-box',
   backgroundColor: {
-    default: '--rowBackgroundColor',
-    selectionStyle: {
-      highlight: {
-        default: '--rowBackgroundColor',
-        isSelected: {
-          default: colorMix('gray-25', 'blue-900', 10),
-          isHovered: colorMix('gray-25', 'blue-900', 15),
-          isPressed: colorMix('gray-25', 'blue-900', 15),
-          forcedColors: 'Highlight'
-        }
-      }
-    }
+    default: '--rowBackgroundColor'
   },
   '--rowBackgroundColor': {
     type: 'backgroundColor',
