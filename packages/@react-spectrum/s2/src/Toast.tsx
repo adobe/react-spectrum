@@ -17,7 +17,7 @@ import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
 import Chevron from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import {CloseButton} from './CloseButton';
-import {createContext, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {CSSProperties, createContext, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {flushSync} from 'react-dom';
@@ -179,7 +179,9 @@ const toastRegion = style({
   bottom: {
     placement: {
       bottom: {
-        default: 16,
+        // Use a CSS variable so the keyboard offset can be injected at runtime
+        // without an inline style override. Falls back to 0 when not set.
+        default: 'calc(var(--keyboardOffset, 0px) + 16px)' as any,
         isExpanded: 0
       }
     }
@@ -456,7 +458,7 @@ export function ToastContainer(props: ToastContainerProps): ReactNode {
       {...props}
       ref={regionRef}
       queue={queue}
-      style={isBottom && keyboardOffset > 0 ? {bottom: keyboardOffset + 16} : undefined}
+      style={isBottom ? {'--keyboardOffset': `${keyboardOffset}px`} as CSSProperties : undefined}
       className={renderProps => toastRegion({
         ...renderProps,
         placement,
