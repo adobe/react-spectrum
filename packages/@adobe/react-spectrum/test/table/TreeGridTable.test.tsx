@@ -692,42 +692,78 @@ describe('TableView with expandable rows', function () {
         expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
       });
 
-      it('should properly wrap focus with ArrowRight (RTL)', function () {
+      it('should move focus to parent if already collapsed (RTL)', function () {
         let treegrid = render(<ManyRowsExpandableTable />, undefined, 'ar-AE');
-        let row = treegrid.getAllByRole('row')[2];
+        let row1 = treegrid.getAllByRole('row')[1];
+        let row2 = treegrid.getAllByRole('row')[2];
         focusCell(treegrid, 'Row 1, Lvl 2, Foo');
         moveFocus('ArrowRight');
-        expect(document.activeElement).toBe(row);
-        expect(row).toContainElement(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
-        // Focus doesn't move because Arrow Right on the row will collapse it
+        expect(document.activeElement).toBe(row2);
+        expect(row2).toContainElement(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+        // Focus doesn't move because Arrow Left on the row will collapse it here
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(row2);
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(row1);
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(row1);
+        moveFocus('ArrowRight');
+      });
+
+      it('should properly wrap focus with ArrowRight when top level row is collapsed (RTL)', function () {
+        let treegrid = render(<ManyRowsExpandableTable />, undefined, 'ar-AE');
+        let row = treegrid.getAllByRole('row')[4];
+        focusCell(treegrid, 'Row 2, Lvl 1, Foo');
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(row);
+        expect(row).toContainElement(getCell(treegrid, 'Row 2, Lvl 1, Foo'));
+        // Focus doesn't move because Arrow Left on the row will collapse it here
         moveFocus('ArrowRight');
-        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Baz'));
+        expect(document.activeElement).toBe(row);
         moveFocus('ArrowRight');
-        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Bar'));
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 2, Lvl 1, Baz'));
         moveFocus('ArrowRight');
-        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 2, Lvl 1, Bar'));
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 2, Lvl 1, Foo'));
       });
     });
 
     describe('ArrowLeft', function () {
-      it('should properly wrap focus with ArrowLeft', function () {
+      it('should move focus to parent if already collapsed', function () {
         let treegrid = render(<ManyRowsExpandableTable />);
-        let row = treegrid.getAllByRole('row')[2];
+        let row1 = treegrid.getAllByRole('row')[1];
+        let row2 = treegrid.getAllByRole('row')[2];
         focusCell(treegrid, 'Row 1, Lvl 2, Foo');
         moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(row2);
+        expect(row2).toContainElement(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+        // Focus doesn't move because Arrow Left on the row will collapse it here
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(row2);
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(row1);
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(row1);
+        moveFocus('ArrowLeft');
+      });
+
+      it('should properly wrap focus with ArrowLeft when top level row is collapsed', function () {
+        let treegrid = render(<ManyRowsExpandableTable />);
+        let row = treegrid.getAllByRole('row')[4];
+        focusCell(treegrid, 'Row 2, Lvl 1, Foo');
+        moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(row);
-        expect(row).toContainElement(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+        expect(row).toContainElement(getCell(treegrid, 'Row 2, Lvl 1, Foo'));
         // Focus doesn't move because Arrow Left on the row will collapse it here
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(row);
         moveFocus('ArrowLeft');
-        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Baz'));
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 2, Lvl 1, Baz'));
         moveFocus('ArrowLeft');
-        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Bar'));
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 2, Lvl 1, Bar'));
         moveFocus('ArrowLeft');
-        expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 2, Foo'));
+        expect(document.activeElement).toBe(getCell(treegrid, 'Row 2, Lvl 1, Foo'));
       });
 
       it('should properly wrap focus with ArrowLeft (RTL)', function () {
