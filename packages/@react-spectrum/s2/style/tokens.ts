@@ -13,9 +13,17 @@
 // package.json in this directory is not the real package.json. Lint rule not smart enough.
 import assert from 'assert';
 // eslint-disable-next-line rulesdir/imports
-import * as tokens from '@adobe/spectrum-tokens/dist/json/variables.json';
+import * as originalTokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 
-export function getToken(name: keyof typeof tokens): string {
+// This forces TSC to inline the token keys instead of leaving a dependency on it.
+function keys<T extends Record<string, any>>(v: T): Record<keyof T, any> {
+  return v;
+}
+
+const tokens = keys({...originalTokens});
+type TokenName = keyof typeof tokens;
+
+export function getToken(name: TokenName): string {
   return (tokens[name] as any).value;
 }
 
@@ -26,7 +34,7 @@ export interface ColorToken {
   forcedColors?: string
 }
 
-export function colorToken(name: keyof typeof tokens): ColorToken | ColorRef {
+export function colorToken(name: TokenName): ColorToken | ColorRef {
   let token = tokens[name] as typeof tokens['gray-25'] | typeof tokens['neutral-content-color-default'];
   if ('ref' in token) {
     return {
@@ -43,7 +51,7 @@ export function colorToken(name: keyof typeof tokens): ColorToken | ColorRef {
   };
 }
 
-export function rawColorToken(name: keyof typeof tokens): string {
+export function rawColorToken(name: TokenName): string {
   let token = tokens[name] as typeof tokens['gray-25'];
   return `light-dark(${token.sets.light.value}, ${token.sets.dark.value})`;
 }
@@ -55,7 +63,7 @@ export interface ColorRef {
   forcedColors?: string
 }
 
-export function weirdColorToken(name: keyof typeof tokens): ColorRef {
+export function weirdColorToken(name: TokenName): ColorRef {
   let token = tokens[name] as typeof tokens['accent-background-color-default'];
   return {
     type: 'ref',
@@ -66,18 +74,18 @@ export function weirdColorToken(name: keyof typeof tokens): ColorRef {
 
 type ReplaceColor<S extends string> = S extends `${infer S}-color-${infer N}` ? `${S}-${N}` : S;
 
-export function colorScale<S extends string>(scale: S): Record<ReplaceColor<Extract<keyof typeof tokens, `${S}-${number}`>>, ReturnType<typeof colorToken>> {
+export function colorScale<S extends string>(scale: S): Record<ReplaceColor<Extract<TokenName, `${S}-${number}`>>, ReturnType<typeof colorToken>> {
   let res: any = {};
   let re = new RegExp(`^${scale}-\\d+$`);
   for (let token in tokens) {
     if (re.test(token)) {
-      res[token.replace('-color', '')] = colorToken(token as keyof typeof tokens);
+      res[token.replace('-color', '')] = colorToken(token as TokenName);
     }
   }
   return res;
 }
 
-export function simpleColorScale<S extends string>(scale: S): Record<Extract<keyof typeof tokens, `${S}-${number}`>, string> {
+export function simpleColorScale<S extends string>(scale: S): Record<Extract<TokenName, `${S}-${number}`>, string> {
   let res: any = {};
   let re = new RegExp(`^${scale}-\\d+$`);
   for (let token in tokens) {
@@ -156,10 +164,10 @@ const indexes = {
 };
 
 /** Returns the index of a font token relative to font-size-100 (which is index 0). */
-export function fontSizeToken(name: keyof typeof tokens): number {
+export function fontSizeToken(name: TokenName): number {
   let token = tokens[name] as typeof tokens['font-size-100'] | typeof tokens['heading-size-m'];
   if ('ref' in token) {
-    name = token.ref.slice(1, -1) as keyof typeof tokens;
+    name = token.ref.slice(1, -1) as TokenName;
   }
 
   let index = indexes[name];
