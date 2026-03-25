@@ -1,6 +1,8 @@
 import {API, FileInfo, ImportSpecifier, Options} from 'jscodeshift';
 const fs = require('fs');
 const path = require('path');
+const Module = require('module');
+const url = require('url');
 
 function areSpecifiersAlphabetized(specifiers: ImportSpecifier[]) {
   const specifierNames = specifiers.map(
@@ -54,10 +56,16 @@ const transformer: Transformer = function transformer(file: FileInfo, api: API, 
   const monopackageExports: Record<string, string[]> = {};
 
   selectedPackages.forEach((pkg) => {
-    const indexPath = path.join(
-      process.cwd(),
-      `node_modules/${packages[pkg].monopackage}/dist/types.d.ts`
-    );
+    let indexPath: string;
+    try {
+      let pkgPath = path.dirname(Module.findPackageJSON(packages[pkg].monopackage, url.pathToFileURL(file.path || `${process.cwd()}/index`))!);
+      indexPath = `${pkgPath}/dist/types/exports/index.d.ts`;
+      if (!fs.existsSync(indexPath)) {
+        indexPath = `${pkgPath}/exports/index.ts`;
+      }
+    } catch {
+      return;
+    }
 
     if (fs.existsSync(indexPath)) {
       anyIndexFound = true;
