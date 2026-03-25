@@ -236,10 +236,16 @@ export function useDrop(options: DropOptions): DropResult {
     // events will never be fired for these. This can happen, for example, with drop
     // indicators between items, which disappear when the drop target changes.
 
-    state.dragOverElements.delete(getEventTarget(e));
-    for (let element of state.dragOverElements) {
-      if (!nodeContains(e.currentTarget, element)) {
-        state.dragOverElements.delete(element);
+    let target = getEventTarget(e);
+    state.dragOverElements.delete(target);
+
+    // Only remove stale elements when leaving the drop target itself.
+    // Avoids issues with portal children bubbling dragleave events through the React tree.
+    if (target === e.currentTarget) {
+      for (let element of state.dragOverElements) {
+        if (!nodeContains(e.currentTarget, element)) {
+          state.dragOverElements.delete(element);
+        }
       }
     }
 
