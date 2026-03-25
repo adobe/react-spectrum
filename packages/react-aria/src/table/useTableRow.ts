@@ -95,8 +95,8 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
                 e.stopPropagation();
               }
             } else if (state.expandedKeys === 'all') {
-                state.toggleKey(treeNode.key);
-                e.stopPropagation();
+              state.toggleKey(treeNode.key);
+              e.stopPropagation();
             }
           }
         },
