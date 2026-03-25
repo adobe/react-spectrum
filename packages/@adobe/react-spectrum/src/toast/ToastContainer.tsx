@@ -37,7 +37,7 @@ export interface SpectrumToastOptions extends ToastOptions, DOMProps {
   shouldCloseOnAction?: boolean
 }
 
-type CloseFunction = () => void;
+export type CloseFunction = () => void;
 
 function wrapInViewTransition(fn: () => void): void {
   if ('startViewTransition' in document) {

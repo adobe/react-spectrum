@@ -17,6 +17,8 @@ import {dateTimeToString, dateToString, timeToString, zonedDateTimeToString} fro
 import {GregorianCalendar} from './calendars/GregorianCalendar';
 import {toCalendarDateTime, toDate, toZoned, zonedToDate} from './conversion';
 
+export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
+
 function shiftArgs(args: any[]) {
   let calendar: Calendar = typeof args[0] === 'object'
     ? args.shift()
