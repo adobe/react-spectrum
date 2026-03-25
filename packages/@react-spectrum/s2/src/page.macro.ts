@@ -26,7 +26,8 @@ export function generatePageStyles(this: MacroContext | void): void {
     this.addAsset({
       type: 'css',
       content: `:where(:root, :host) {
-        color-scheme: light dark;
+        --s2-color-scheme: light dark;
+        color-scheme: var(--s2-color-scheme);
         --s2-container-bg: ${colorToken(tokens['background-base-color'])};
         background: var(--s2-container-bg);
         --s2-scale: 1;
@@ -38,11 +39,11 @@ export function generatePageStyles(this: MacroContext | void): void {
         }
 
         &[data-color-scheme=light] {
-          color-scheme: light;
+          --s2-color-scheme: light;
         }
 
         &[data-color-scheme=dark] {
-          color-scheme: dark;
+          --s2-color-scheme: dark;
         }
 
         &[data-background=layer-1] {
@@ -57,13 +58,19 @@ export function generatePageStyles(this: MacroContext | void): void {
   }
 }
 
-// Set the default styles for --s2-scale and --s2-font-size-base, when page.css is not used.
-export function generateDefaultStyles(this: MacroContext | void): void {
+// This generates a low specificity rule to define a default value for
+// --s2-color-scheme. This is used when rendering
+// a <Provider> without setting a colorScheme prop, and when page.css is not present.
+// It is equivalent to setting `color-scheme: light dark`, but without overriding
+// the browser default for content outside the provider.
+// Also set defaults for --s2-scale here.
+export function generateDefaultColorSchemeStyles(this: MacroContext | void): void {
   if (this && typeof this.addAsset === 'function') {
     this.addAsset({
       type: 'css',
       content: `@layer _.a {
         :where(:root, :host) {
+          --s2-color-scheme: light dark;
           --s2-scale: 1;
           --s2-font-size-base: 14;
 

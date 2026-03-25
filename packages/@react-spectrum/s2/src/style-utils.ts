@@ -153,6 +153,8 @@ export const fieldInput = () => ({
  */
 export const setColorScheme = () => ({
   colorScheme: {
+    // Default to page color scheme if none is defined.
+    default: 'var(--s2-color-scheme)',
     colorScheme: {
       'light dark': 'light dark',
       light: 'light',
