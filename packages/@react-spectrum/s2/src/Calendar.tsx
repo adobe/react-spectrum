@@ -470,7 +470,10 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                     flexBasis: '0%',
                     minWidth: 0,
                     width: 'calc(7 * var(--cell-min-width) + var(--cell-gap) * 12)',
-                    maxWidth: 'calc(100% / var(--visible-months))'
+                    maxWidth: {
+                      default: 'calc(100vw / var(--visible-months))',
+                      '@media (max-width: 375px)': '100%'
+                    }
                   })}>
                   <CalendarGrid months={i} />
                 </div>

@@ -19,7 +19,7 @@ import {CalendarButton, CalendarGrid, CalendarHeading} from './Calendar';
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
 import {ContextValue, Provider} from 'react-aria-components/utils';
-import {createContext, ForwardedRef, forwardRef, ReactNode} from 'react';
+import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode} from 'react';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Header, HeaderContext, HeadingContext} from './Content';
@@ -53,7 +53,15 @@ const calendarStyles = style({
   display: 'flex',
   flexDirection: 'column',
   gap: 24,
-  width: 'fit'
+  width: 'fit',
+  '--cell-gap': {
+    type: 'paddingStart',
+    value: 4
+  },
+  '--cell-min-width': {
+    type: 'width',
+    value: 32
+  }
 }, getAllowedOverrides());
 
 const headerStyles = style({
@@ -108,7 +116,23 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
                 alignItems: 'start'
               })}>
               {Array.from({length: visibleMonths}).map((_, i) => (
-                <CalendarGrid months={i} key={i} />
+                <div
+                  key={i}
+                  style={{'--visible-months': visibleMonths} as CSSProperties}
+                  className={style({
+                    containerType: 'inline-size',
+                    flexGrow: 1,
+                    flexShrink: 0,
+                    flexBasis: '0%',
+                    minWidth: 0,
+                    width: 'calc(7 * var(--cell-min-width) + var(--cell-gap) * 12)',
+                    maxWidth: {
+                      default: 'calc(100vw / var(--visible-months))',
+                      '@media (max-width: 375px)': '100%'
+                    }
+                  })}>
+                  <CalendarGrid months={i} />
+                </div>
               ))}
             </div>
             {isInvalid && (

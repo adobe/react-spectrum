@@ -88,7 +88,6 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
   } = props;
   let formContext = useContext(FormContext);
   let [buttonHasFocus, setButtonHasFocus] = useState(false);
-  console.log('errorMessage', errorMessage);
 
   return (
     <AriaDateRangePicker
