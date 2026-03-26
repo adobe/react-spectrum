@@ -166,7 +166,7 @@ export type {TimeValue, MappedTimeValue} from 'react-stately/useTimeFieldState';
 export type {AriaDialogProps, DialogAria} from '../src/dialog/useDialog';
 export type {DisclosureAria, AriaDisclosureProps} from '../src/disclosure/useDisclosure';
 export type {AriaFocusRingProps, FocusRingAria} from '../src/focus/useFocusRing';
-export type {FocusableAria, FocusableOptions} from '../src/interactions/useFocusable';
+export type {FocusableAria, FocusableOptions, FocusableComponentProps as FocusableProps} from '../src/interactions/useFocusable';
 export type {FocusManager, FocusManagerOptions, FocusScopeProps} from '../src/focus/FocusScope';
 export type {FocusRingProps} from '../src/focus/FocusRing';
 export type {DateFormatter} from '@internationalized/date';
@@ -194,6 +194,7 @@ export type {LongPressProps, LongPressResult} from '../src/interactions/useLongP
 export type {MoveEvents, PressEvent, PressEvents, LongPressEvent, MoveStartEvent, MoveMoveEvent, MoveEndEvent, MoveEvent, HoverEvent, HoverEvents, FocusEvents, KeyboardEvents} from '@react-types/shared';
 export type {MoveResult} from '../src/interactions/useMove';
 export type {PressHookProps, PressProps, PressResult} from '../src/interactions/usePress';
+export type {PressableProps} from '../src/interactions/Pressable';
 export type {ScrollWheelProps} from '../src/interactions/useScrollWheel';
 export type {AriaFieldProps, FieldAria} from '../src/label/useField';
 export type {LabelAria, LabelAriaProps} from '../src/label/useLabel';

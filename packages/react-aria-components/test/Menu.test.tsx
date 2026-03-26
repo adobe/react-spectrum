@@ -21,7 +21,7 @@ import {Keyboard} from '../src/Keyboard';
 import {Label} from '../src/Label';
 import {Menu, MenuContext, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger} from '../src/Menu';
 import {Popover} from '../src/Popover';
-import {Pressable} from 'react-aria/private/interactions/Pressable';
+import {Pressable} from 'react-aria/Pressable';
 import React, {useState} from 'react';
 import {Selection, SelectionMode} from '@react-types/shared';
 import {Separator} from '../src/Separator';
