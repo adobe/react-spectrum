@@ -6086,7 +6086,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/i18n@npm:^3.12.10, @react-aria/i18n@npm:^3.12.16, @react-aria/i18n@workspace:packages/@react-aria/i18n":
+"@react-aria/i18n@npm:^3.12.10, @react-aria/i18n@workspace:packages/@react-aria/i18n":
   version: 0.0.0-use.local
   resolution: "@react-aria/i18n@workspace:packages/@react-aria/i18n"
   dependencies:
@@ -6509,7 +6509,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/utils@npm:^3.29.0, @react-aria/utils@npm:^3.33.1, @react-aria/utils@npm:^3.8.0, @react-aria/utils@workspace:packages/@react-aria/utils":
+"@react-aria/utils@npm:^3.29.0, @react-aria/utils@npm:^3.8.0, @react-aria/utils@workspace:packages/@react-aria/utils":
   version: 0.0.0-use.local
   resolution: "@react-aria/utils@workspace:packages/@react-aria/utils"
   dependencies:
@@ -7228,11 +7228,7 @@ __metadata:
     "@internationalized/date": "npm:^3.12.0"
     "@internationalized/number": "npm:^3.6.5"
     "@parcel/macros": "npm:^2.16.3"
-    "@react-aria/calendar": "npm:^3.9.5"
-    "@react-aria/i18n": "npm:^3.12.16"
     "@react-aria/test-utils": "npm:^1.0.0-alpha.8"
-    "@react-aria/utils": "npm:^3.33.1"
-    "@react-spectrum/utils": "npm:^3.12.12"
     "@react-types/shared": "npm:^3.33.1"
     "@storybook/jest": "npm:^0.2.3"
     "@testing-library/dom": "npm:^10.1.0"
@@ -7521,7 +7517,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/utils@npm:^3.12.12, @react-spectrum/utils@npm:^3.12.6, @react-spectrum/utils@workspace:packages/@react-spectrum/utils":
+"@react-spectrum/utils@npm:^3.12.6, @react-spectrum/utils@workspace:packages/@react-spectrum/utils":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/utils@workspace:packages/@react-spectrum/utils"
   dependencies:
