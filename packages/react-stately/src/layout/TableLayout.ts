@@ -71,6 +71,27 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     return this.virtualizer!.collection as TableCollection<T>;
   }
 
+  // Preserve the old rowHeight/other "height" properties since Table doesn't support a "horizontal" orientation
+  protected get rowHeight(): number | null {
+    return super.rowHeight;
+  }
+
+  protected get estimatedRowHeight(): number | null {
+    return super.estimatedRowHeight;
+  }
+
+  protected get headingHeight(): number | null {
+    return super.headingHeight;
+  }
+
+  protected get estimatedHeadingHeight(): number | null {
+    return super.estimatedHeadingHeight;
+  }
+
+  protected get loaderHeight(): number | null {
+    return super.loaderHeight;
+  }
+
   private columnsChanged(newCollection: TableCollection<T>, oldCollection: TableCollection<T> | null) {
     return !oldCollection ||
       newCollection.columns !== oldCollection.columns &&
