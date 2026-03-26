@@ -101,6 +101,9 @@ export {Size} from 'react-stately/private/virtualizer/Size';
 export {Rect} from 'react-stately/private/virtualizer/Rect';
 export {Point} from 'react-stately/private/virtualizer/Point';
 
+export type {I18nProviderProps, Locale} from 'react-aria/I18nProvider';
+export type {Filter} from 'react-aria/useFilter';
+
 export type {AutocompleteProps, SelectableCollectionContextValue} from '../src/Autocomplete';
 export type {BreadcrumbsProps, BreadcrumbProps, BreadcrumbRenderProps} from '../src/Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from '../src/Button';
@@ -199,9 +202,9 @@ export type {ToggleGroupState} from 'react-stately/useToggleGroupState';
 export type {ToggleState} from 'react-stately/useToggleState';
 export type {TooltipTriggerState} from 'react-stately/useTooltipTriggerState';
 export type {TreeState} from 'react-stately/useTreeState';
-export type {ListData} from 'react-stately/useListData';
-export type {TreeData} from 'react-stately/useTreeData';
-export type {AsyncListData} from 'react-stately/useAsyncList';
+export type {ListOptions as ListDataOptions, ListData} from 'react-stately/useListData';
+export type {TreeOptions as TreeDataOptions, TreeData} from 'react-stately/useTreeData';
+export type {AsyncListOptions, AsyncListData, AsyncListLoadFunction, AsyncListLoadOptions, AsyncListStateUpdate} from 'react-stately/useAsyncList';
 export type {AutocompleteState} from 'react-stately/private/autocomplete/useAutocompleteState';
 export type {ListLayoutOptions} from 'react-stately/private/layout/ListLayout';
 export type {GridLayoutOptions} from 'react-stately/private/layout/GridLayout';
