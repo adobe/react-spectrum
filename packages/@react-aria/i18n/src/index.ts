@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export {I18nProvider, useLocale} from 'react-aria/I18nProvider';
+export {I18nProvider, useLocale, isRTL} from 'react-aria/I18nProvider';
 
 export {useMessageFormatter} from './useMessageFormatter';
 export {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
@@ -20,7 +20,6 @@ export {useDateFormatter} from 'react-aria/useDateFormatter';
 export {useNumberFormatter} from 'react-aria/useNumberFormatter';
 export {useCollator} from 'react-aria/useCollator';
 export {useFilter} from 'react-aria/useFilter';
-export {isRTL} from 'react-aria/private/i18n/utils';
 export type {FormatMessage} from './useMessageFormatter';
 export type {I18nProviderProps, Locale} from 'react-aria/I18nProvider';
 export type {DateFormatterOptions} from 'react-aria/useDateFormatter';

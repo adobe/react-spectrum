@@ -81,8 +81,7 @@ export {useDragAndDrop, DropIndicator, DropIndicatorContext, DragAndDropContext}
 export {Virtualizer} from '../src/Virtualizer';
 export {SSRProvider} from 'react-aria/SSRProvider';
 export {RouterProvider} from 'react-aria/private/utils/openLink';
-export {I18nProvider, useLocale} from 'react-aria/I18nProvider';
-export {isRTL} from 'react-aria/private/i18n/utils';
+export {I18nProvider, useLocale, isRTL} from 'react-aria/I18nProvider';
 export {useFilter} from 'react-aria/useFilter';
 export {Pressable} from 'react-aria/private/interactions/Pressable';
 export {Focusable} from 'react-aria/private/interactions/useFocusable';
