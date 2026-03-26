@@ -60,7 +60,13 @@ export interface GridLayoutOptions {
    * "load more" elements rendered when loading more rows at the root level or inside nested row/sections.
    * @default 48
    */
-  loaderHeight?: number
+  loaderHeight?: number,
+  /**
+   * The layout direction. When `'rtl'`, drop target positions (`'before'`/`'after'`)
+   * are computed correctly for right-to-left locales in multi-column grids.
+   * @default 'ltr'
+   */
+  direction?: 'ltr' | 'rtl'
 }
 
 const DEFAULT_OPTIONS = {
@@ -84,6 +90,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
   protected gap: Size = DEFAULT_OPTIONS.minSpace;
   protected dropIndicatorThickness = 2;
   protected numColumns: number = 0;
+  protected direction: 'ltr' | 'rtl' = 'ltr';
   private contentSize: Size = new Size();
   private layoutInfos: Map<Key, LayoutInfo> = new Map();
   private margin: number = 0;
@@ -96,7 +103,8 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       || (!(newOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize).equals(oldOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize))
       || (!(newOptions.minSpace || DEFAULT_OPTIONS.minSpace).equals(oldOptions.minSpace || DEFAULT_OPTIONS.minSpace))
       || newOptions.maxHorizontalSpace !== oldOptions.maxHorizontalSpace
-      || newOptions.loaderHeight !== oldOptions.loaderHeight;
+      || newOptions.loaderHeight !== oldOptions.loaderHeight
+      || newOptions.direction !== oldOptions.direction;
   }
 
   update(invalidationContext: InvalidationContext<O>): void {
@@ -108,9 +116,11 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       maxHorizontalSpace = DEFAULT_OPTIONS.maxSpace,
       maxColumns = DEFAULT_OPTIONS.maxColumns,
       dropIndicatorThickness = DEFAULT_OPTIONS.dropIndicatorThickness,
-      loaderHeight = DEFAULT_OPTIONS.loaderHeight
+      loaderHeight = DEFAULT_OPTIONS.loaderHeight,
+      direction = 'ltr' as const
     } = invalidationContext.layoutOptions || {};
     this.dropIndicatorThickness = dropIndicatorThickness;
+    this.direction = direction;
 
     let visibleWidth = this.virtualizer!.visibleRect.width;
 
@@ -280,6 +290,13 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
 
     x += this.virtualizer!.visibleRect.x;
     y += this.virtualizer!.visibleRect.y;
+
+    // In RTL mode the virtualizer positions items using CSS `right` with the
+    // layout rect's x value as the right-offset, but pointer coordinates are
+    // in visual (left-origin) space. Flip x so it matches the layout coords.
+    if (this.direction === 'rtl' && this.numColumns > 1) {
+      x = this.contentSize.width - x;
+    }
 
     // Find the closest item within on either side of the point using the gap width.
     let key: Key | null = null;
