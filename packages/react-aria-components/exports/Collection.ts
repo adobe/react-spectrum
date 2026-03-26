@@ -15,5 +15,5 @@
 import 'client-only';
 
 export {Collection, createLeafComponent, createBranchComponent, CollectionBuilder} from 'react-aria/private/collections/CollectionBuilder';
-export {Section, CollectionRendererContext, DefaultCollectionRenderer} from '../src/Collection';
-export type {SectionProps, CollectionRenderer} from '../src/Collection';
+export {CollectionRendererContext, DefaultCollectionRenderer} from '../src/Collection';
+export type {CollectionRenderer} from '../src/Collection';
