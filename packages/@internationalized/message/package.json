@@ -3,18 +3,16 @@
   "version": "3.1.8",
   "description": "Internationalized message formatting and locale negotiation",
   "license": "Apache-2.0",
-  "main": "dist/main.js",
-  "module": "dist/module.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "import": "dist/index.mjs",
   "exports": {
     "source": "./src/index.ts",
-    "types": [
-      "./dist/types.d.ts",
-      "./src/index.ts"
-    ],
-    "import": "./dist/import.mjs",
-    "require": "./dist/main.js"
+    "types": "./dist/types/src/index.d.ts",
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs"
   },
-  "types": "dist/types.d.ts",
+  "types": "./dist/types/src/index.d.ts",
   "source": "src/index.ts",
   "files": [
     "dist",
@@ -31,5 +29,22 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "targets": {
+    "types": false,
+    "module": {
+      "engines": {
+        "browsers": [
+          "chrome >= 79",
+          "firefox >= 85",
+          "safari >= 13"
+        ]
+      }
+    },
+    "import": {
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false
+    }
   }
 }

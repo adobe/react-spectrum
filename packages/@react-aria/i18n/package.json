@@ -8,34 +8,31 @@
   "exports": {
     ".": {
       "source": "./src/index.ts",
-      "types": [
-        "./dist/types.d.ts",
-        "./src/index.ts"
-      ],
+      "types": "./dist/types/src/index.d.ts",
       "import": "./dist/import.mjs",
       "require": "./dist/main.js"
     },
     "./server": {
-      "source": "./src/server.tsx",
+      "source": "./src/server.ts",
       "import": "./server/index.mjs",
       "require": "./server/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "server-module": "server/index.mjs",
   "server-main": "server/index.js",
-  "types": "dist/types.d.ts",
+  "types": "dist/types/src/index.d.ts",
   "source": "src/index.ts",
   "targets": {
-    "main": {},
-    "module": {},
+    "types": false,
     "server-module": {
-      "source": "src/server.tsx",
+      "source": "src/server.ts",
       "outputFormat": "esmodule",
       "isLibrary": true,
       "includeNodeModules": false
     },
     "server-main": {
-      "source": "src/server.tsx",
+      "source": "src/server.ts",
       "outputFormat": "commonjs",
       "isLibrary": true,
       "includeNodeModules": false
@@ -54,12 +51,9 @@
   "dependencies": {
     "@internationalized/date": "^3.12.0",
     "@internationalized/message": "^3.1.8",
-    "@internationalized/number": "^3.6.5",
     "@internationalized/string": "^3.2.7",
-    "@react-aria/ssr": "^3.9.10",
-    "@react-aria/utils": "^3.33.1",
-    "@react-types/shared": "^3.33.1",
-    "@swc/helpers": "^0.5.0"
+    "@swc/helpers": "^0.5.0",
+    "react-aria": "^3.47.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",

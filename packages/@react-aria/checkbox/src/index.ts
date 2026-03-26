@@ -9,9 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export type {CheckboxAria} from './useCheckbox';
-export {useCheckbox} from './useCheckbox';
-export {useCheckboxGroup} from './useCheckboxGroup';
-export {useCheckboxGroupItem} from './useCheckboxGroupItem';
-export type {AriaCheckboxGroupItemProps, AriaCheckboxGroupProps, AriaCheckboxProps} from '@react-types/checkbox';
-export type {CheckboxGroupAria} from './useCheckboxGroup';
+export {useCheckbox} from 'react-aria/useCheckbox';
+
+export {useCheckboxGroup, useCheckboxGroupItem} from 'react-aria/useCheckboxGroup';
+export type {CheckboxAria, CheckboxProps, AriaCheckboxProps} from 'react-aria/useCheckbox';
+export type {AriaCheckboxGroupProps, CheckboxGroupAria, AriaCheckboxGroupItemProps} from 'react-aria/useCheckboxGroup';

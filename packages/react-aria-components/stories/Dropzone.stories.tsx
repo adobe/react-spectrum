@@ -11,12 +11,20 @@
  */
 
 import {action} from 'storybook/actions';
-import {Button, DropZone, FileTrigger, Link, Text, useDrag} from 'react-aria-components';
-import {classNames} from '@react-spectrum/utils';
-import {FocusRing, mergeProps, useButton, useClipboard} from 'react-aria';
+import {Button} from '../src/Button';
+import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
+import {DropZone} from '../src/DropZone';
+import {FileTrigger} from '../src/FileTrigger';
+import {FocusRing} from 'react-aria/FocusRing';
+import {Link} from '../src/Link';
+import {mergeProps} from 'react-aria/mergeProps';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {useRef} from 'react';
 import styles from '../example/index.css';
+import {Text} from '../src/Text';
+import {useButton} from 'react-aria/useButton';
+import {useClipboard} from 'react-aria/useClipboard';
+import {useDrag} from 'react-aria/useDrag';
 import './styles.css';
 
 export default {

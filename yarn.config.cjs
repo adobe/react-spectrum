@@ -56,10 +56,6 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
     ) {
 
       workspace.set('dependencies.@swc/helpers', '^0.5.0');
-      workspace.set('dependencies.@adobe/spectrum-css-temp');
-      if (workspace.ident.startsWith('@react-spectrum') && !workspace.ident.endsWith('/utils') && !workspace.ident.endsWith('/mcp')) {
-        workspace.set('devDependencies.@adobe/spectrum-css-temp', '3.0.0-alpha.1');
-      }
       // these should not be in dependencies, but should be in dev or peer
       // can't change the error message, but the package knows if it even needs it
       if (!workspace.ident.startsWith('@react-spectrum/test-utils-internal')) {
@@ -105,6 +101,7 @@ function enforceNoCircularDependencies({Yarn}) {
     seen.add(workspace.ident);
 
     for (let d of Yarn.dependencies({ident: workspace.ident})) {
+      if (d.type === 'peerDependencies') {continue;}
       addDep(d.workspace, seen);
     }
 
@@ -170,7 +167,7 @@ function enforceWorkspaceDependencies({Yarn}) {
               ...workspace.manifest.peerDependencies,
               [dependency.ident]: dependency.range
             });
-          } else if (!seen.has(workspace.ident)) {
+          } else if (!seen.has(workspace.ident) && workspace.ident !== dependency.ident) {
             seen.set(workspace.ident, [dependency.ident]);
             workspace.set('peerDependencies', {
               ...workspace.manifest.peerDependencies,
@@ -179,25 +176,6 @@ function enforceWorkspaceDependencies({Yarn}) {
           }
         }
       }
-    }
-  }
-}
-
-/** @param {Context} context */
-function enforceCSS({Yarn}) {
-  for (const workspace of Yarn.workspaces()) {
-    let name = workspace.ident;
-    if (!name.startsWith('@react-spectrum/docs')
-      && !name.startsWith('@react-spectrum/s2-docs')
-      && !name.startsWith('@react-spectrum/test-utils')
-      && name.startsWith('@react-spectrum')
-      && !name.startsWith('@react-spectrum/mcp')
-      && workspace.pkg.dependencies?.has('@adobe/spectrum-css-temp')) {
-
-      workspace.set('targets', {
-        main: {includeNodeModules: ['@adobe/spectrum-css-temp']},
-        module: {includeNodeModules: ['@adobe/spectrum-css-temp']}
-      });
     }
   }
 }
@@ -242,71 +220,15 @@ function enforcePublishing({Yarn}) {
   }
 }
 
-function setExtension(filepath, ext = '.js') {
-  if (!filepath) {
-    return;
-  }
-  return filepath.replace(/\.[a-zA-Z0-9]*$/, ext);
-}
-
 /** @param {Context} context */
 function enforceExports({Yarn}) {
   // make sure build fields are correctly set
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
     if (isPublishing(workspace) && workspace.manifest.rsp?.type !== 'cli') {
-      let moduleExt = name === '@react-spectrum/s2' ? '.mjs' : '.js';
-      let cjsExt = name === '@react-spectrum/s2' ? '.cjs' : '.js';
-      if (workspace.manifest.main) {
-        workspace.set('main', setExtension(workspace.manifest.main, cjsExt));
-      } else {
-        workspace.set('main', setExtension('dist/main.js', cjsExt));
-      }
-
-      if (
-        name !== '@internationalized/string-compiler' &&
-        name !== 'tailwindcss-react-aria-components'
-      ) {
-        workspace.set('module', setExtension('dist/module.js', moduleExt));
-      }
-
-      let exportsRequire = workspace.manifest?.exports?.require;
-      let exportsImport = workspace.manifest?.exports?.import;
-      if (workspace.manifest.exports?.['.']) {
-        for (let key in workspace.manifest.exports) {
-          if (workspace.manifest.exports[key]) {
-            let subExportsRequire = workspace.manifest.exports[key].require;
-            workspace.set(`exports["${key}"].require`, setExtension(subExportsRequire, cjsExt));
-            let subExportsImport = workspace.manifest.exports[key].import;
-            workspace.set(`exports["${key}"].import`, setExtension(subExportsImport, '.mjs'));
-          }
-        }
-      } else {
-        workspace.set('exports.require', setExtension(exportsRequire, cjsExt));
-        workspace.set('exports.import', setExtension(exportsImport, '.mjs'));
-      }
-
-      if ((!workspace.manifest.types || !workspace.manifest.types.endsWith('.d.ts'))) {
-        workspace.set('types', 'dist/types.d.ts');
-      }
-
-      if (name !== '@adobe/react-spectrum' && name !== 'react-aria' && name !== 'react-stately' && name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components') {
-        workspace.set('source', 'src/index.ts');
-      }
-
-      if (name !== '@adobe/react-spectrum' && name !== 'react-aria' && name !== 'react-stately' && name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components') {
-        if (!workspace.manifest.files || (!workspace.manifest.files.includes('dist') && !workspace.manifest.files.includes('src'))) {
-          workspace.set('files', [...workspace.manifest.files || [], 'dist', 'src']);
-        } else if (!workspace.manifest.files.includes('dist')) {
-          workspace.set('files', [...workspace.manifest.files, 'dist']);
-        } else if (!workspace.manifest.files.includes('src')) {
-          workspace.set('files', [...workspace.manifest.files, 'src']);
-        }
-      }
-
       // better to do in enforceCSS? it doesn't match the set of packages handled
       if (name !== 'react-aria-components') {
-        if (name.includes('@react-spectrum') || name.includes('@react-aria/visually-hidden')) {
+        if (name.includes('@react-spectrum') || name.includes('@adobe/react-spectrum') || name.includes('@react-aria/visually-hidden')) {
           workspace.set('sideEffects', ['*.css']);
         } else {
           workspace.set('sideEffects', false);
@@ -320,7 +242,6 @@ module.exports = defineConfig({
   constraints: async ctx => {
     enforceWorkspaceDependencies(ctx);
     enforceConsistentDependenciesAcrossTheProject(ctx);
-    enforceCSS(ctx);
     enforcePublishing(ctx);
     enforceExports(ctx);
     enforceNonPrivateDependencies(ctx);

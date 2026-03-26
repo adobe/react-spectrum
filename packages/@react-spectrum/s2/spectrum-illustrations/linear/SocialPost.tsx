@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../src/Icon';
 import SocialPost_L from 'illustration:./S2_lin_socialPost_160.svg';
 import SocialPost_M from 'illustration:./S2_lin_socialPost_96.svg';
 import SocialPost_S from 'illustration:./S2_lin_socialPost_48.svg';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function SocialPost(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

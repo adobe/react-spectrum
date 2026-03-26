@@ -11,9 +11,15 @@
  */
 
 import {ActionButtonGroupProps, actionGroupStyle} from './ActionButtonGroup';
-import {ContextValue, ToggleButtonGroup as RACToggleButtonGroup, ToggleButtonGroupProps as RACToggleButtonGroupProps} from 'react-aria-components';
+import {ContextValue} from 'react-aria-components/utils';
+
 import {createContext, ForwardedRef, forwardRef} from 'react';
+
 import {DOMProps, GlobalDOMAttributes} from '@react-types/shared';
+import {
+  ToggleButtonGroup as RACToggleButtonGroup,
+  ToggleButtonGroupProps as RACToggleButtonGroupProps
+} from 'react-aria-components/ToggleButtonGroup';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ToggleButtonGroupProps extends ActionButtonGroupProps, Omit<RACToggleButtonGroupProps, 'children' | 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, DOMProps {

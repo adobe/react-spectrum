@@ -10,8 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldProps} from 'react-aria-components';
+import {Button} from '../src/Button';
+
+import {FieldError} from '../src/FieldError';
+import {Group} from '../src/Group';
+import {I18nProvider} from 'react-aria/I18nProvider';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
 import {Meta, StoryObj} from '@storybook/react';
+import {NumberField, NumberFieldProps} from '../src/NumberField';
 import React, {useState} from 'react';
 import './styles.css';
 
@@ -29,10 +36,12 @@ export const NumberFieldExample: NumberFieldStory = {
     maxValue: 100,
     step: 1,
     formatOptions: {style: 'currency', currency: 'USD'},
-    isWheelDisabled: false
+    isWheelDisabled: false,
+    isRequired: false,
+    commitBehavior: 'snap'
   },
   render: (args) => (
-    <NumberField {...args} validate={(v) => (v & 1 ? 'Invalid value' : null)}>
+    <NumberField {...args}>
       <Label>Test</Label>
       <Group style={{display: 'flex'}}>
         <Button slot="decrement">-</Button>
@@ -70,5 +79,25 @@ export const NumberFieldControlledExample = {
   },
   render: (args) => (
     <NumberFieldControlled {...args} />
+  )
+};
+
+export const ArabicNumberFieldExample = {
+  args: {
+    defaultValue: 0,
+    formatOptions: {style: 'unit', unit: 'day', unitDisplay: 'long'}
+  },
+  render: (args) => (
+    <I18nProvider locale="ar-AE">
+      <NumberField {...args} validate={(v) => (v & 1 ? 'Invalid value' : null)}>
+        <Label>Test</Label>
+        <Group style={{display: 'flex'}}>
+          <Button slot="decrement">-</Button>
+          <Input />
+          <Button slot="increment">+</Button>
+        </Group>
+        <FieldError />
+      </NumberField>
+    </I18nProvider>
   )
 };

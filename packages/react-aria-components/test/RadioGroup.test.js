@@ -11,8 +11,14 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Dialog, DialogTrigger, FieldError, Label, Modal, Radio, RadioContext, RadioGroup, RadioGroupContext, Text} from '../';
+import {Button} from '../src/Button';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {FieldError} from '../src/FieldError';
+import {Label} from '../src/Label';
+import {Modal} from '../src/Modal';
+import {Radio, RadioContext, RadioGroup, RadioGroupContext} from '../src/RadioGroup';
 import React from 'react';
+import {Text} from '../src/Text';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 

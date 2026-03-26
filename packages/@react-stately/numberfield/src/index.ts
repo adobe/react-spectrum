@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export {useNumberFieldState} from './useNumberFieldState';
+export {useNumberFieldState} from 'react-stately/useNumberFieldState';
 
-export type {NumberFieldStateOptions} from './useNumberFieldState';
-export type {NumberFieldState} from './useNumberFieldState';
+export type {NumberFieldStateOptions, NumberFieldProps, NumberFieldState} from 'react-stately/useNumberFieldState';

@@ -1,8 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Converts dynamic TabList Item to Tab 1`] = `
+"import { Tab, Collection, TabPanel, Tabs, TabList } from "@react-spectrum/s2";
+
+let tabs = [{name: 'Tab 1', children: 'Tab Body 1'}];
+
+<Tabs aria-label="Dynamic tabs"><TabList items={tabs}>
+    {(item) => (
+      <Tab id={item.name}>
+        {item.name}
+      </Tab>
+    )}
+  </TabList><Collection items={tabs}>
+    {(item) => (
+      <TabPanel id={item.name}>
+        {item.children}
+      </TabPanel>
+    )}
+  </Collection></Tabs>"
+`;
+
 exports[`Move items from Tabs to TabList 1`] = `
-"import { Collection, TabPanel, Tabs, TabList } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
+"import { Tab, Collection, TabPanel, Tabs, TabList } from "@react-spectrum/s2";
 
 let items = [
   {name: 'Tab 1', children: 'Tab Body 1'},
@@ -15,9 +34,9 @@ let items = [
 
 <Tabs aria-label="Dynamic tabs"><TabList items={tabs}>
     {(item) => (
-      <Item key={item.name}>
+      <Tab id={item.name}>
         {item.name}
-      </Item>
+      </Tab>
     )}
   </TabList><Collection items={tabs}>
     {(item) => (
@@ -94,6 +113,17 @@ let props = {isQuiet: true};
       <Tab id="Emp">Empire</Tab>
     </TabList><TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel><TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel><TabPanel id="Emp">Alea jacta est.</TabPanel></Tabs>
 </div>"
+`;
+
+exports[`Removes TabPanels from v3 import when s2 import exists first 1`] = `
+"import { Tabs as S2Tabs, Tab, TabPanel, Tabs as RSPTabs, TabList } from '@react-spectrum/s2';
+
+<>
+  <S2Tabs />
+  <RSPTabs aria-label="Test tabs"><TabList>
+      <Tab id="a">A</Tab>
+    </TabList><TabPanel id="a">A panel</TabPanel></RSPTabs>
+</>"
 `;
 
 exports[`Update to use new API 1`] = `

@@ -10,13 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {composeRenderProps, OverlayTriggerStateContext, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
+import {composeRenderProps} from 'react-aria-components/utils';
+
 import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
+
 import {forwardRef} from 'react';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Modal} from './Modal';
+import {
+  OverlayTriggerStateContext,
+  Dialog as RACDialog,
+  DialogProps as RACDialogProps
+} from 'react-aria-components/Dialog';
 import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 
 export interface CustomDialogProps extends Omit<RACDialogProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps {
   /**
@@ -68,7 +75,7 @@ export const CustomDialog = forwardRef(function CustomDialog(props: CustomDialog
   let domRef = useDOMRef(ref);
 
   return (
-    <Modal size={size} isDismissable={isDismissible} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
+    (<Modal size={size} isDismissable={isDismissible} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
       <RACDialog
         {...props}
         ref={domRef}
@@ -76,11 +83,11 @@ export const CustomDialog = forwardRef(function CustomDialog(props: CustomDialog
         className={(props.UNSAFE_className || '') + dialogStyle({padding}, props.styles)}>
         {composeRenderProps(props.children, (children) => (
           // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
-          <OverlayTriggerStateContext.Provider value={null}>
+          (<OverlayTriggerStateContext.Provider value={null}>
             {children}
-          </OverlayTriggerStateContext.Provider>
+          </OverlayTriggerStateContext.Provider>)
         ))}
       </RACDialog>
-    </Modal>
+    </Modal>)
   );
 });

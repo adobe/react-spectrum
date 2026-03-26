@@ -11,8 +11,13 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {ColorField, ColorFieldContext, FieldError, Input, Label, parseColor, Text} from '../';
+import {ColorField, ColorFieldContext} from '../src/ColorField';
+import {FieldError} from '../src/FieldError';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
+import {parseColor} from 'react-stately/Color';
 import React from 'react';
+import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
 let TestColorField = (props) => (

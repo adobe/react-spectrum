@@ -1,6 +1,6 @@
 'use client';
 
-// eslint-disable-next-line monorepo/no-internal-import
+ 
 import BrowserError from '@react-spectrum/s2/illustrations/linear/BrowserError';
 import {Content, Heading, IllustratedMessage} from '@react-spectrum/s2';
 

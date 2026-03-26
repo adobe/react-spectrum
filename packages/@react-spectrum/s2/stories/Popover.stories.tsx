@@ -10,23 +10,40 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, ActionMenu, Avatar, Button, Card, CardPreview, Content, DialogTrigger, Divider, Form, Image, Menu, MenuItem, MenuSection, Popover, SearchField, SubmenuTrigger, Switch, Tab, TabList, TabPanel, Tabs, Text, TextField} from '../src';
+import {ActionButton} from '../src/ActionButton';
+
+import {ActionMenu} from '../src/ActionMenu';
+import {Avatar} from '../src/Avatar';
+import {Button} from '../src/Button';
+import {Card, CardPreview} from '../src/Card';
 import Cloud from '../s2wf-icons/S2_Icon_Cloud_20_N.svg';
 import Comment from '../s2wf-icons/S2_Icon_Comment_20_N.svg';
 import CommentText from '../s2wf-icons/S2_Icon_CommentText_20_N.svg';
+import {Content, Text} from '../src/Content';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
+import {DialogTrigger} from '../src/DialogTrigger';
+import {Divider} from '../src/Divider';
 import Education from '../s2wf-icons/S2_Icon_Education_20_N.svg';
 import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
+import {Form} from '../src/Form';
 import Help from '../s2wf-icons/S2_Icon_HelpCircle_20_N.svg';
+import {Image} from '../src/Image';
 import Lightbulb from '../s2wf-icons/S2_Icon_Lightbulb_20_N.svg';
+import {Menu, MenuItem, MenuSection, SubmenuTrigger} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import Org from '../s2wf-icons/S2_Icon_Buildings_20_N.svg';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
-import {Autocomplete as RACAutocomplete, useFilter} from 'react-aria-components';
+import {Popover} from '../src/Popover';
+import {Autocomplete as RACAutocomplete} from 'react-aria-components/Autocomplete';
 import {ReactElement, useRef, useState} from 'react';
+import {SearchField} from '../src/SearchField';
 import Settings from '../s2wf-icons/S2_Icon_Settings_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {Switch} from '../src/Switch';
+import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
+import {TextField} from '../src/TextField';
 import ThumbUp from '../s2wf-icons/S2_Icon_ThumbUp_20_N.svg';
+import {useFilter} from 'react-aria/useFilter';
 import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
 import Users from '../s2wf-icons/S2_Icon_UserGroup_20_N.svg';
 

@@ -9,9 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaCheckboxGroupProps, AriaCheckboxProps, HoverEvents, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, VisuallyHidden} from 'react-aria';
-import {CheckboxContext} from './RSPContexts';
-import {CheckboxGroupState, useCheckboxGroupState, useToggleState} from 'react-stately';
+import {AriaCheckboxGroupProps, useCheckboxGroup, useCheckboxGroupItem} from 'react-aria/useCheckboxGroup';
+
+import {AriaCheckboxProps, useCheckbox} from 'react-aria/useCheckbox';
+import {CheckboxGroupState, useCheckboxGroupState} from 'react-stately/useCheckboxGroupState';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -27,12 +28,20 @@ import {
   useSlottedContext
 } from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
+import {HoverEvents} from '@react-types/shared';
 import {LabelContext} from './Label';
+import {mergeProps} from 'react-aria/mergeProps';
+import {mergeRefs} from 'react-aria/private/utils/mergeRefs';
 import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo} from 'react';
 import {TextContext} from './Text';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {useObjectRef} from 'react-aria/useObjectRef';
+import {useToggleState} from 'react-stately/useToggleState';
+import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<CheckboxGroupRenderProps, 'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
@@ -133,6 +142,7 @@ export interface CheckboxRenderProps {
   isRequired: boolean
 }
 
+export const CheckboxContext = createContext<ContextValue<CheckboxProps, HTMLLabelElement>>(null);
 export const CheckboxGroupContext = createContext<ContextValue<CheckboxGroupProps, HTMLDivElement>>(null);
 export const CheckboxGroupStateContext = createContext<CheckboxGroupState | null>(null);
 

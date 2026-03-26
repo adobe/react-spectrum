@@ -10,18 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Button,
-  Content,
-  ContextualHelp,
-  Footer,
-  Form,
-  Heading,
-  Link,
-  NumberField,
-  Text
-} from '../src';
+import {Button} from '../src/Button';
+
+import {Content, Footer, Heading, Text} from '../src/Content';
+import {ContextualHelp} from '../src/ContextualHelp';
+import {Form} from '../src/Form';
+import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
+import {NumberField} from '../src/NumberField';
 import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof NumberField> = {

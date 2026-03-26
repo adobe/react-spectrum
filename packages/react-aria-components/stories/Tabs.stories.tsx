@@ -10,11 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, OverlayArrow, Tab, TabList, TabPanel, TabProps, Tabs, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button} from '../src/Button';
+
 import {Meta, StoryFn} from '@storybook/react';
-import {Orientation} from 'react-aria';
+import {Orientation} from '@react-types/shared';
+import {OverlayArrow} from '../src/OverlayArrow';
 import React, {useState} from 'react';
-import {RouterProvider} from '@react-aria/utils';
+import {RouterProvider} from 'react-aria/private/utils/openLink';
+import {Tab, TabList, TabPanel, TabProps, Tabs} from '../src/Tabs';
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import './styles.css';
 
 export default {
