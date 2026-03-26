@@ -13,22 +13,19 @@
 import {action} from 'storybook/actions';
 import {Collection} from 'react-aria/private/collections/CollectionBuilder';
 import {DragAndDropHooks, DropIndicator, isTextDropItem, useDragAndDrop} from '../exports/useDragAndDrop';
-import {GridLayout} from 'react-stately/private/layout/GridLayout';
+import {GridLayout, ListLayout, Size, WaterfallLayout} from 'react-stately/useVirtualizerState';
 import {Header} from '../src/Header';
 import {ListBox, ListBoxItem, ListBoxProps, ListBoxSection} from '../src/ListBox';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
 import {LoadingSpinner, MyHeader, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, useState} from 'react';
 import {Separator} from '../src/Separator';
-import {Size} from 'react-stately/private/virtualizer/Size';
 import styles from '../example/index.css';
 import {Text} from '../src/Text';
 import {useAsyncList} from 'react-stately/useAsyncList';
 import {useListData} from 'react-stately/useListData';
 import {Virtualizer} from '../src/Virtualizer';
-import {WaterfallLayout} from 'react-stately/private/layout/WaterfallLayout';
 import './styles.css';
 
 export default {

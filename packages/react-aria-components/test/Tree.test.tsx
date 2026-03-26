@@ -19,7 +19,7 @@ import {composeStories} from '@storybook/react';
 // @ts-ignore
 import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import React from 'react';
 import * as stories from '../stories/Tree.stories';
 import {Text} from '../src/Text';

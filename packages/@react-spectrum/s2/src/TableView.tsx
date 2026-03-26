@@ -60,7 +60,7 @@ import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
-import {LayoutNode} from 'react-stately/private/layout/ListLayout';
+import {LayoutNode} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
@@ -69,7 +69,7 @@ import {CheckboxContext as RACCheckboxContext} from 'react-aria-components/Check
 // @ts-ignore
 import {Popover as RACPopover} from 'react-aria-components/Popover';
 import React, {createContext, CSSProperties, FormEvent, FormHTMLAttributes, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {Rect} from 'react-stately/private/virtualizer/Rect';
+import {Rect, Virtualizer} from 'react-aria-components/Virtualizer';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {Button as SpectrumButton} from './Button';
@@ -82,7 +82,6 @@ import {useMediaQuery} from './useMediaQuery';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import {Virtualizer} from 'react-aria-components/Virtualizer';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
 interface S2TableProps {

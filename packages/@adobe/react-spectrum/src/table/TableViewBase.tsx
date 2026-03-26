@@ -33,7 +33,7 @@ import {InsertionIndicator} from './InsertionIndicator';
 import intlMessages from '../../intl/table/*.json';
 import {isAndroid} from 'react-aria/private/utils/platform';
 import {Item} from 'react-stately/Item';
-import {LayoutInfo} from 'react-stately/private/virtualizer/LayoutInfo';
+import {LayoutInfo, Rect, ReusableView} from 'react-stately/useVirtualizerState';
 import {layoutInfoToStyle, VirtualizerItem} from 'react-aria/private/virtualizer/VirtualizerItem';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
@@ -44,9 +44,7 @@ import {Nubbin} from './Nubbin';
 // @ts-ignore
 import {ProgressCircle} from '../progress/ProgressCircle';
 import React, {DOMAttributes, HTMLAttributes, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {Rect} from 'react-stately/private/virtualizer/Rect';
 import {Resizer, ResizeStateContext} from './Resizer';
-import {ReusableView} from 'react-stately/private/virtualizer/ReusableView';
 import {RootDropIndicator} from './RootDropIndicator';
 import {scrollIntoView, scrollIntoViewport} from 'react-aria/private/utils/scrollIntoView';
 import {ScrollView} from 'react-aria/private/virtualizer/ScrollView';
@@ -81,9 +79,7 @@ import {
   useTableSelectAllCheckbox,
   useTableSelectionCheckbox
 } from 'react-aria/useTable';
-
-import {useVirtualizerState} from 'react-stately/private/virtualizer/useVirtualizerState';
-
+import {useVirtualizerState} from 'react-stately/useVirtualizerState';
 import {useVisuallyHidden, VisuallyHidden} from 'react-aria/VisuallyHidden';
 
 const DEFAULT_HEADER_HEIGHT = {

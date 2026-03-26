@@ -16,11 +16,10 @@ import {
   ListBoxItem,
   ListBoxItemProps,
   ListBoxLoadMoreItem,
-  ListBoxProps
+  ListBoxProps,
+  ListBoxSectionProps
 } from 'react-aria-components/ListBox';
-
 import {PopoverProps as AriaPopoverProps} from 'react-aria-components/Popover';
-
 import {
   Select as AriaSelect,
   SelectProps as AriaSelectProps,
@@ -28,7 +27,6 @@ import {
   SelectStateContext,
   SelectValue
 } from 'react-aria-components/Select';
-
 import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
@@ -72,7 +70,7 @@ import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria/private/overlays/useOverlayPosition';
 import {Popover} from './Popover';
@@ -81,7 +79,6 @@ import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import React, {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {SectionProps} from 'react-aria-components/Collection';
 import {useFocusableRef} from './useDOMRef';
 import {useGlobalListeners} from 'react-aria/private/utils/useGlobalListeners';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -743,7 +740,7 @@ function DefaultProvider({context, value, children}: {context: React.Context<any
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 
-export interface PickerSectionProps<T extends object> extends Omit<SectionProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, StyleProps {}
+export interface PickerSectionProps<T extends object> extends Omit<ListBoxSectionProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, StyleProps {}
 export function PickerSection<T extends object>(props: PickerSectionProps<T>): ReactNode {
   let {size} = useContext(InternalPickerContext);
   return (

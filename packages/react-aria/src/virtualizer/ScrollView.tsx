@@ -14,7 +14,7 @@
 import {flushSync} from 'react-dom';
 import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getScrollLeft} from './utils';
-import {Point} from 'react-stately/private/virtualizer/Point';
+import {Point, Rect, Size} from 'react-stately/useVirtualizerState';
 import React, {
   CSSProperties,
   ForwardedRef,
@@ -26,8 +26,6 @@ import React, {
   useRef,
   useState
 } from 'react';
-import {Rect} from 'react-stately/private/virtualizer/Rect';
-import {Size} from 'react-stately/private/virtualizer/Size';
 import {useEffectEvent} from '../utils/useEffectEvent';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';

@@ -92,14 +92,7 @@ export {ToastQueue as UNSTABLE_ToastQueue} from 'react-stately/useToastState';
 export {useListData} from 'react-stately/useListData';
 export {useTreeData} from 'react-stately/useTreeData';
 export {useAsyncList} from 'react-stately/useAsyncList';
-export {ListLayout} from 'react-stately/private/layout/ListLayout';
-export {GridLayout} from 'react-stately/private/layout/GridLayout';
-export {WaterfallLayout} from 'react-stately/private/layout/WaterfallLayout';
-export {Layout} from 'react-stately/private/virtualizer/Layout';
-export {LayoutInfo} from 'react-stately/private/virtualizer/LayoutInfo';
-export {Size} from 'react-stately/private/virtualizer/Size';
-export {Rect} from 'react-stately/private/virtualizer/Rect';
-export {Point} from 'react-stately/private/virtualizer/Point';
+export {ListLayout, GridLayout, WaterfallLayout, Layout, LayoutInfo, Size, Rect, Point} from 'react-stately/useVirtualizerState';
 
 export type {I18nProviderProps, Locale} from 'react-aria/I18nProvider';
 export type {Filter} from 'react-aria/useFilter';
@@ -206,7 +199,5 @@ export type {ListOptions as ListDataOptions, ListData} from 'react-stately/useLi
 export type {TreeOptions as TreeDataOptions, TreeData} from 'react-stately/useTreeData';
 export type {AsyncListOptions, AsyncListData, AsyncListLoadFunction, AsyncListLoadOptions, AsyncListStateUpdate} from 'react-stately/useAsyncList';
 export type {AutocompleteState} from 'react-stately/private/autocomplete/useAutocompleteState';
-export type {ListLayoutOptions} from 'react-stately/private/layout/ListLayout';
-export type {GridLayoutOptions} from 'react-stately/private/layout/GridLayout';
-export type {WaterfallLayoutOptions} from 'react-stately/private/layout/WaterfallLayout';
+export type {ListLayoutOptions, GridLayoutOptions, WaterfallLayoutOptions} from 'react-stately/useVirtualizerState';
 export type {RangeValue, ValidationResult, RouterConfig} from '@react-types/shared';

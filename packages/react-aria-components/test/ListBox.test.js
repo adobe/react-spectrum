@@ -20,7 +20,7 @@ import {Header} from '../src/Header';
 import {Heading} from '../src/Heading';
 import {ListBox, ListBoxContext, ListBoxItem, ListBoxSection} from '../src/ListBox';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {Modal} from '../src/Modal';
 import React, {useEffect, useState} from 'react';
 import {Text} from '../src/Text';

@@ -25,17 +25,14 @@ import {createContext, forwardRef, ReactElement, useCallback, useMemo, useRef, u
 import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {GridLayout} from 'react-stately/private/layout/GridLayout';
+import {GridLayout, Size, Virtualizer, WaterfallLayout} from 'react-aria-components/Virtualizer';
 import {ImageCoordinator} from './ImageCoordinator';
-import {Size} from 'react-stately/private/virtualizer/Size';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from './useDOMRef';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import {Virtualizer} from 'react-aria-components/Virtualizer';
-import {WaterfallLayout} from 'react-stately/private/layout/WaterfallLayout';
 
 export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style' | 'render' | 'isLoading' | keyof GlobalDOMAttributes>, UnsafeStyles {
   /**

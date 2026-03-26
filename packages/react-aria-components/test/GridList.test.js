@@ -21,7 +21,7 @@ import {GridList, GridListContext, GridListHeader, GridListItem, GridListSection
 import {GridListLoadMoreItem} from '../src/GridList';
 import {installPointerEvent, User} from '@react-aria/test-utils';
 import {Label} from '../src/Label';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {Modal} from '../src/Modal';
 import React from 'react';
 import {RouterProvider} from 'react-aria/private/utils/openLink';

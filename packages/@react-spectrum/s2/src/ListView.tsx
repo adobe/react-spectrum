@@ -40,7 +40,7 @@ import {ImageContext} from './Image';
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
 import LinkOutIcon from '../ui-icons/LinkOut';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 // @ts-ignore
 import {ListState} from 'react-stately/useListState';
 import {ProgressCircle} from './ProgressCircle';

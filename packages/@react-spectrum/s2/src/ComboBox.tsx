@@ -23,7 +23,8 @@ import {
   ListBoxItemProps,
   ListBoxLoadMoreItem,
   ListBoxProps,
-  ListStateContext
+  ListStateContext,
+  ListBoxSectionProps
 } from 'react-aria-components/ListBox';
 
 import {PopoverProps as AriaPopoverProps} from 'react-aria-components/Popover';
@@ -57,7 +58,7 @@ import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
 import {InputContext, InputProps} from 'react-aria-components/Input';
 import intlMessages from '../intl/*.json';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {mergeRefs} from 'react-aria/private/utils/mergeRefs';
 // @ts-ignore
 import {Node} from '@react-types/shared';
@@ -65,7 +66,6 @@ import {Placement} from 'react-aria/private/overlays/useOverlayPosition';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
-import {SectionProps} from 'react-aria-components/Collection';
 import {TextFieldRef} from './TextField';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
@@ -435,7 +435,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   );
 }
 
-export interface ComboBoxSectionProps<T extends object> extends Omit<SectionProps<T>, keyof GlobalDOMAttributes> {}
+export interface ComboBoxSectionProps<T extends object> extends Omit<ListBoxSectionProps<T>, keyof GlobalDOMAttributes> {}
 export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>): ReactNode {
   let {size} = useContext(InternalComboboxContext);
   return (

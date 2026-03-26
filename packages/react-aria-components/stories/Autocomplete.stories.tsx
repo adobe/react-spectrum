@@ -22,7 +22,7 @@ import {Input} from '../src/Input';
 import {Keyboard} from '../src/Keyboard';
 import {Label} from '../src/Label';
 import {ListBox, ListBoxSection} from '../src/ListBox';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {LoadingSpinner, MyListBoxItem, MyMenuItem} from './utils';
 import {Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger} from '../src/Menu';
 import {Meta, StoryObj} from '@storybook/react';
