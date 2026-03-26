@@ -11,7 +11,7 @@
  */
 
 import type {Meta, StoryObj} from '@storybook/react';
-import {ProgressCircle} from '../src';
+import {ProgressCircle} from '../src/ProgressCircle';
 import {StaticColorDecorator} from '../stories/utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 

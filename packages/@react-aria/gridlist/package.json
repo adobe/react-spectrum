@@ -1,20 +1,20 @@
 {
   "name": "@react-aria/gridlist",
-  "version": "3.14.3",
+  "version": "3.14.4",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "source": "./src/index.ts",
-    "types": [
-      "./dist/types.d.ts",
-      "./src/index.ts"
-    ],
-    "import": "./dist/import.mjs",
-    "require": "./dist/main.js"
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/types/src/index.d.ts",
+      "import": "./dist/import.mjs",
+      "require": "./dist/main.js"
+    },
+    "./package.json": "./package.json"
   },
-  "types": "dist/types.d.ts",
+  "types": "dist/types/src/index.d.ts",
   "source": "src/index.ts",
   "files": [
     "dist",
@@ -26,16 +26,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.21.4",
-    "@react-aria/grid": "^3.14.7",
-    "@react-aria/i18n": "^3.12.15",
-    "@react-aria/interactions": "^3.27.0",
-    "@react-aria/selection": "^3.27.1",
-    "@react-aria/utils": "^3.33.0",
-    "@react-stately/list": "^3.13.3",
-    "@react-stately/tree": "^3.9.5",
-    "@react-types/shared": "^3.33.0",
-    "@swc/helpers": "^0.5.0"
+    "@swc/helpers": "^0.5.0",
+    "react-aria": "^3.47.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
@@ -43,5 +35,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "targets": {
+    "types": false
   }
 }

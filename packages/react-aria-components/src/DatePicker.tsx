@@ -9,7 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue, useDatePicker, useDateRangePicker, useFocusRing} from 'react-aria';
+import {AriaDatePickerProps, useDatePicker} from 'react-aria/useDatePicker';
+import {AriaDateRangePickerProps, useDateRangePicker} from 'react-aria/useDateRangePicker';
 import {ButtonContext} from './Button';
 import {CalendarContext, RangeCalendarContext} from './Calendar';
 import {
@@ -27,18 +28,22 @@ import {
   useSlottedContext
 } from './utils';
 import {DateFieldContext} from './DateField';
-import {DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, useDatePickerState, useDateRangePickerState} from 'react-stately';
+import {DatePickerState, DatePickerStateOptions, DateValue, useDatePickerState} from 'react-stately/useDatePickerState';
+import {DateRangePickerState, DateRangePickerStateOptions, useDateRangePickerState} from 'react-stately/useDateRangePickerState';
 import {DialogContext, OverlayTriggerStateContext} from './Dialog';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {HiddenDateInput} from './HiddenDateInput';
 import {LabelContext} from './Label';
+import {mergeProps} from 'react-aria/mergeProps';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
 import {TextContext} from './Text';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 
 export interface DatePickerRenderProps {
   /**
@@ -66,6 +71,11 @@ export interface DatePickerRenderProps {
    * @selector [data-invalid]
    */
   isInvalid: boolean,
+  /**
+   * Whether the date picker is required.
+   * @selector [data-required]
+   */
+  isRequired: boolean,
   /**
    * Whether the date picker's popover is currently open.
    * @selector [data-open]
@@ -161,7 +171,8 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
       isDisabled: props.isDisabled || false,
       isInvalid: state.isInvalid,
       isOpen: state.isOpen,
-      isReadOnly: props.isReadOnly || false
+      isReadOnly: props.isReadOnly || false,
+      isRequired: props.isRequired || false
     },
     defaultClassName: 'react-aria-DatePicker'
   });
@@ -204,6 +215,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined}
         data-readonly={props.isReadOnly || undefined}
+        data-required={props.isRequired || undefined}
         data-open={state.isOpen || undefined} />
       <HiddenDateInput
         autoComplete={props.autoComplete}
@@ -271,7 +283,8 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
       isDisabled: props.isDisabled || false,
       isInvalid: state.isInvalid,
       isOpen: state.isOpen,
-      isReadOnly: props.isReadOnly || false
+      isReadOnly: props.isReadOnly || false,
+      isRequired: props.isRequired || false
     },
     defaultClassName: 'react-aria-DateRangePicker'
   });
@@ -319,6 +332,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined}
         data-readonly={props.isReadOnly || undefined}
+        data-required={props.isRequired || undefined}
         data-open={state.isOpen || undefined} />
     </Provider>
   );

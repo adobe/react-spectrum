@@ -12,8 +12,12 @@
 
 import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {CalendarDate} from '@internationalized/date';
-import {DateField, DateFieldContext, DateInput, DateSegment, FieldError, I18nProvider, Label, Text} from '../';
+import {DateField, DateFieldContext, DateInput, DateSegment} from '../src/DateField';
+import {FieldError} from '../src/FieldError';
+import {I18nProvider} from 'react-aria/I18nProvider';
+import {Label} from '../src/Label';
 import React from 'react';
+import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
 describe('DateField', () => {
@@ -296,6 +300,46 @@ describe('DateField', () => {
     );
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-disabled-state', 'disabled');
+  });
+
+  it('should support required render prop', () => {
+    let {getByRole} = render(
+      <DateField isRequired>
+        {({isRequired}) => (
+          <>
+            <Label>Birth date</Label>
+            <DateInput
+              data-required-state={isRequired ? 'required' : null}>
+              {segment => <DateSegment segment={segment} />}
+            </DateInput>
+          </>
+        )}
+      </DateField>
+    );
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-required-state', 'required');
+  });
+
+  it('should support required state', () => {
+    let {getByRole, rerender} = render(
+      <DateField>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+    let group = getByRole('group');
+    expect(group.closest('.react-aria-DateField')).not.toHaveAttribute('data-required');
+    rerender(
+      <DateField isRequired>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+    expect(group.closest('.react-aria-DateField')).toHaveAttribute('data-required');
   });
 
   it('should support form value', () => {

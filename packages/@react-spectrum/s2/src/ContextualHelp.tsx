@@ -1,22 +1,100 @@
 import {ActionButton} from './ActionButton';
 import {AriaLabelingProps, DOMProps, FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {ContentContext, FooterContext, HeadingContext} from './Content';
-import {ContextValue, DEFAULT_SLOT, Provider, Dialog as RACDialog, TextContext} from 'react-aria-components';
+import {ContentContext, FooterContext, HeadingContext, TextContext as SpectrumTextContext} from './Content';
+import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/utils';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {dialogInner} from './Dialog';
 import {DialogTrigger, DialogTriggerProps} from './DialogTrigger';
-import {filterDOMProps, mergeProps, useLabels} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import HelpIcon from '../s2wf-icons/S2_Icon_HelpCircle_20_N.svg';
 import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
+import {mergeProps} from 'react-aria/mergeProps';
 import {mergeStyles} from '../style/runtime';
-import {Placement} from '@react-types/overlays';
+import {Placement} from 'react-aria/private/overlays/useOverlayPosition';
+// @ts-ignore
 import {Popover, PopoverDialogProps} from './Popover';
 import {space, style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils' with { type: 'macro' };
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {TextContext} from 'react-aria-components/Text';
+import {useId} from 'react-aria/useId';
+import {useLabels} from 'react-aria/private/utils/useLabels';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+
+export interface ContextualHelpPopoverProps extends PopoverDialogProps {
+  /**
+   * The children of the contextual help popover. Supports Heading, Content, and Footer elements. */
+  children: ReactNode
+}
+
+const wrappingDiv = style({
+  minWidth: 268,
+  width: 268,
+  padding: 24,
+  boxSizing: 'border-box',
+  height: 'full'
+});
+
+const headingStyles = style({
+  font: 'heading-xs',
+  margin: 0,
+  marginBottom: space(8) // This only makes it 10px on mobile and should be 12px
+});
+
+// TODO: docs to come after release, for now this is just mentioned in unavaiable menu docs
+/**
+ * A popover with contextual help styling that supports Heading, Content, and Footer.
+ */
+export function ContextualHelpPopover(props: ContextualHelpPopoverProps) {
+  let {children, ...popoverProps} = props;
+  let titleId = useId();
+
+  return (
+    <Popover
+      padding="none"
+      hideArrow
+      aria-labelledby={titleId}
+      {...popoverProps}>
+      <div
+        className={wrappingDiv}>
+        <div
+
+          className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: 'calc(self(paddingTop) * -1)', padding: 24}))}>
+          <Provider
+            values={[
+              [TextContext, {
+                slots: {
+                  [DEFAULT_SLOT]: {}
+                }
+              }],
+              // Make sure to clear context from above Menu
+              [SpectrumTextContext, null],
+              [HeadingContext, {
+                styles: headingStyles,
+                slots: {
+                  // needed so combobox/picker does not need to provide slot="title" to their provided
+                  // ContextualHelp (they get the aria-labelled by from the button)
+                  // otherwise, use the heading if available aka unavaiable menu item
+                  [DEFAULT_SLOT]: {styles: headingStyles},
+                  title: {id: titleId, styles: headingStyles, level: 2}
+                }
+              }],
+              [ContentContext, {styles: style({
+                font: 'body-sm'
+              })}],
+              [FooterContext, {styles: style({
+                font: 'body-sm',
+                marginTop: 16
+              })}]
+            ]}>
+            {children}
+          </Provider>
+        </div>
+      </div>
+    </Popover>
+  );
+}
 
 export interface ContextualHelpStyleProps {
   /**
@@ -44,14 +122,6 @@ export interface ContextualHelpProps extends
    */
   size?: 'XS' | 'S'
 }
-
-const wrappingDiv = style({
-  minWidth: 268,
-  width: 268,
-  padding: 24,
-  boxSizing: 'border-box',
-  height: 'full'
-});
 
 export const ContextualHelpContext = createContext<ContextValue<Partial<ContextualHelpProps>, FocusableRefValue<HTMLButtonElement>>>(null);
 
@@ -102,42 +172,14 @@ export const ContextualHelp = forwardRef(function ContextualHelp(props: Contextu
         isQuiet>
         {variant === 'info' ? <InfoIcon /> : <HelpIcon />}
       </ActionButton>
-      <Popover
-        padding="none"
+      <ContextualHelpPopover
         placement={placement}
         shouldFlip={shouldFlip}
         containerPadding={containerPadding}
         offset={8}
-        crossOffset={crossOffset}
-        hideArrow>
-        <div
-          className={wrappingDiv}>
-          <RACDialog className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: 'calc(self(paddingTop) * -1)', padding: 24}))}>
-            <Provider
-              values={[
-                [TextContext, {
-                  slots: {
-                    [DEFAULT_SLOT]: {}
-                  }
-                }],
-                [HeadingContext, {styles: style({
-                  font: 'heading-xs',
-                  margin: 0,
-                  marginBottom: space(8) // This only makes it 10px on mobile and should be 12px
-                })}],
-                [ContentContext, {styles: style({
-                  font: 'body-sm'
-                })}],
-                [FooterContext, {styles: style({
-                  font: 'body-sm',
-                  marginTop: 16
-                })}]
-              ]}>
-              {children}
-            </Provider>
-          </RACDialog>
-        </div>
-      </Popover>
+        crossOffset={crossOffset}>
+        {children}
+      </ContextualHelpPopover>
     </DialogTrigger>
   );
 });

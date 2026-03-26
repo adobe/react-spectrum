@@ -10,7 +10,7 @@ import {iconAliases} from './iconAliases.js';
 // @ts-ignore
 import icons from '/packages/@react-spectrum/s2/s2wf-icons/*.svg';
 import {InfoMessage} from './colorSearchData';
-// eslint-disable-next-line monorepo/no-internal-import
+ 
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
@@ -51,7 +51,9 @@ export function useCopyImport() {
     if (timeout.current) {
       clearTimeout(timeout.current);
     }
-    navigator.clipboard.writeText(`import ${id} from '@react-spectrum/s2/icons/${id}';`).then(() => {
+    // Use underscore prefix for names starting with a number (invalid JS identifier)
+    let importName = id.replace(/^(\d)/, '_$1');
+    navigator.clipboard.writeText(`import ${importName} from '@react-spectrum/s2/icons/${id}';`).then(() => {
       setCopiedId(id);
       timeout.current = setTimeout(() => setCopiedId(null), 2000);
     }).catch(() => {
@@ -76,7 +78,7 @@ function IconListBox({items, copiedId, onAction, listBoxClassName}: IconListBoxP
         onAction={(item) => onAction(item.toString())}
         items={items}
         layout="grid"
-        className={listBoxClassName || style({width: '100%', scrollPaddingY: 4, overflow: 'auto'})}
+        className={listBoxClassName || style({width: '100%', scrollPaddingY: 4, padding: 8})}
         dependencies={[copiedId]}
         renderEmptyState={() => (
           <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>

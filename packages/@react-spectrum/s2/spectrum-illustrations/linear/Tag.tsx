@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../src/Icon';
 import Tag_L from 'illustration:./S2_lin_tag_160.svg';
 import Tag_M from 'illustration:./S2_lin_tag_96.svg';
 import Tag_S from 'illustration:./S2_lin_tag_48.svg';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function Tag(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

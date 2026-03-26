@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Dialog} from '../src';
+import {Dialog} from '../src/Dialog';
 import {DialogContainerExample, DialogTriggerExample, Example, ExampleStoryType} from '../stories/Dialog.stories';
 import type {Meta, StoryObj} from '@storybook/react';
-import {userEvent, within} from '@storybook/test';
+import {userEvent, within} from 'storybook/test';
 
 const meta: Meta<typeof Dialog> = {
   component: Dialog,

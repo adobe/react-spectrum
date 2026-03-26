@@ -15,7 +15,7 @@ import Cloud_M from 'illustration:./S2_lin_cloud_96.svg';
 import Cloud_S from 'illustration:./S2_lin_cloud_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function Cloud(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

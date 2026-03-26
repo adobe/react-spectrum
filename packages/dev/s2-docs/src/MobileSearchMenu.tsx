@@ -17,6 +17,7 @@ import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library} from './constants';
 import React, {cloneElement, CSSProperties, ReactElement, ReactNode, Suspense, useContext, useEffect, useRef, useState} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
+import {TypographySearchView} from './TypographySearchView';
 import {useId} from '@react-aria/utils';
 import {useRouter} from './Router';
 
@@ -242,6 +243,7 @@ function MobileNav({initialTag}: {initialTag?: string}) {
 
   const filteredColors = useFilteredColors(searchValue);
   const isColorsSelected = selectedSection === 'colors';
+  const isTypographySelected = selectedSection === 'typography';
 
   let handleSearchFocus = () => {
     setSearchFocused(true);
@@ -311,12 +313,15 @@ function MobileNav({initialTag}: {initialTag?: string}) {
             const showIcons = isIconsSelected && library.id === 'react-spectrum';
             return (
               <MobileTabPanel key={library.id} id={library.id}>
-                <Autocomplete filter={showIcons ? iconFilter : undefined}>
+                <Autocomplete
+                  key={isTypographySelected ? 'typography' : 'default'}
+                  inputValue={searchValue}
+                  onInputChange={handleSearchChange}
+                  filter={showIcons ? iconFilter : undefined}
+                  disableVirtualFocus={isTypographySelected}>
                   <div className={stickySearchContainer}>
                     <SearchField
                       aria-label="Search"
-                      value={searchValue}
-                      onChange={handleSearchChange}
                       onFocus={handleSearchFocus}
                       onBlur={handleSearchBlur}
                       placeholder={placeholderText}
@@ -359,10 +364,19 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                         <LazyColorSearchView
                           filteredItems={filteredColors.sections}
                           exactMatches={filteredColors.exactMatches}
-                          closestMatches={filteredColors.closestMatches} />
+                          closestMatches={filteredColors.closestMatches}
+                          listBoxClassName={style({
+                            flexGrow: 1,
+                            overflow: 'auto',
+                            width: '100%',
+                            scrollPaddingY: 4
+                          })} />
                       </Suspense>
                     )}
-                    {!showIcons && (!isColorsSelected || library.id !== 'react-spectrum') && (
+                    {!showIcons && isTypographySelected && library.id === 'react-spectrum' && (
+                      <TypographySearchView searchValue={searchValue} />
+                    )}
+                    {!showIcons && !isColorsSelected && !isTypographySelected && (
                       <ComponentCardView
                         currentUrl={currentUrl}
                         onAction={key => {
@@ -389,4 +403,3 @@ function MobileNav({initialTag}: {initialTag?: string}) {
     </div>
   );
 }
-

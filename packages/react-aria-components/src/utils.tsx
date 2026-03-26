@@ -11,8 +11,11 @@
  */
 
 import {AriaLabelingProps, RefObject,  DOMProps as SharedDOMProps} from '@react-types/shared';
-import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import {mergeProps} from 'react-aria/mergeProps';
+import {mergeRefs} from 'react-aria/private/utils/mergeRefs';
 import React, {AllHTMLAttributes, AnchorHTMLAttributes, Context, CSSProperties, DetailedHTMLProps, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, RefCallback, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useObjectRef} from 'react-aria/useObjectRef';
 
 export const DEFAULT_SLOT = Symbol('default');
 
@@ -284,7 +287,7 @@ export interface DOMRenderProps<E extends keyof React.JSX.IntrinsicElements, T> 
 }
 
 // Makes `href` required in AnchorHTMLAttributes
-type LinkWithRequiredHref = Required<Pick<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>> & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>; 
+type LinkWithRequiredHref = Required<Pick<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>> & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>;
 
 // Same as DOMRenderProps but specific for the case where the element could be a 'a' or 'div' element.
 export interface PossibleLinkDOMRenderProps<Fallback extends keyof React.JSX.IntrinsicElements, T> {

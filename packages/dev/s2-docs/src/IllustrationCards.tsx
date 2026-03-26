@@ -1,7 +1,7 @@
 'use client';
 
 import {Autocomplete, GridLayout, ListBox, ListBoxItem, Size, useFilter, Virtualizer} from 'react-aria-components';
-// eslint-disable-next-line monorepo/no-internal-import
+ 
 import Checkmark from '@react-spectrum/s2/illustrations/gradient/generic1/Checkmark';
 import {Content, Heading, IllustratedMessage, Link, pressScale, ProgressCircle, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text, ToastQueue} from '@react-spectrum/s2';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -9,7 +9,7 @@ import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Gradient from '@react-spectrum/s2/icons/Gradient';
 import {illustrationAliases} from './illustrationAliases.js'; 
 import {InfoMessage} from './colorSearchData';
-// eslint-disable-next-line monorepo/no-internal-import
+ 
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
 import React, {Suspense, use, useCallback, useEffect, useRef, useState} from 'react';
@@ -119,9 +119,11 @@ function useCopyImport(variant: string, gradientStyle: string) {
     if (timeout.current) {
       clearTimeout(timeout.current);
     }
+    // Use underscore prefix for names starting with a number (invalid JS identifier)
+    let importName = id.replace(/^(\d)/, '_$1');
     let importText = variant === 'gradient' ?
-      `import ${id} from '@react-spectrum/s2/illustrations/gradient/${gradientStyle}/${id}';` :
-      `import ${id} from '@react-spectrum/s2/illustrations/linear/${id}';`;
+      `import ${importName} from '@react-spectrum/s2/illustrations/gradient/${gradientStyle}/${id}';` :
+      `import ${importName} from '@react-spectrum/s2/illustrations/linear/${id}';`;
     navigator.clipboard.writeText(importText).then(() => {
       setCopiedId(id);
       timeout.current = setTimeout(() => setCopiedId(null), 2000);

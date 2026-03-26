@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Badge, Text} from '../src';
+import {Badge} from '../src/Badge';
+
 import CheckmarkCircle from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with { type: 'macro' };
+import {Text} from '../src/Content';
 
 const meta: Meta<typeof Badge> = {
   component: Badge,

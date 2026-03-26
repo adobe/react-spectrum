@@ -10,7 +10,7 @@ import {Key} from 'react-aria-components';
 
 import {type Library, TAB_DEFS} from './constants';
 // @ts-ignore
-// eslint-disable-next-line monorepo/no-internal-import
+ 
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import {Page, TocNode} from '@parcel/rsc';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
@@ -479,6 +479,7 @@ export function getResourceTags(library: Library): Tag[] {
     return [
       {id: 'icons', name: 'Icons'},
       {id: 'colors', name: 'Colors'},
+      {id: 'typography', name: 'Typography'},
       {id: 'v3', name: 'React Spectrum v3', href: getBaseUrl('s2') + '/v3/getting-started.html'}
     ];
   }
@@ -866,6 +867,9 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
     const selectedResourceTag = resourceTags.find(tag => tag.id === selectedTagId);
     if (selectedTagId === 'colors') {
       return 'Search color names or hex values';
+    }
+    if (selectedTagId === 'typography') {
+      return 'Search typography styles';
     }
     return selectedResourceTag
       ? `Search ${selectedResourceTag.name}`

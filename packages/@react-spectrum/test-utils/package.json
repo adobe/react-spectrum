@@ -7,14 +7,11 @@
   "module": "dist/module.js",
   "exports": {
     "source": "./src/index.ts",
-    "types": [
-      "./dist/types.d.ts",
-      "./src/index.ts"
-    ],
+    "types": "./dist/types/src/index.d.ts",
     "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },
-  "types": "dist/types.d.ts",
+  "types": "./dist/types/src/index.d.ts",
   "source": "src/index.ts",
   "files": [
     "dist",
@@ -32,6 +29,7 @@
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
+    "@testing-library/dom": "^10.1.0",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.0.0",
     "jest": "^29.5.0",
@@ -41,7 +39,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "devDependencies": {
-    "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
+  "targets": {
+    "types": false
   }
 }

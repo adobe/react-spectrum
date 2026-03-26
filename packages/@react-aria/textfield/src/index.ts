@@ -9,8 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export type {TextFieldAria} from './useTextField';
-export {useTextField} from './useTextField';
-export {useFormattedTextField} from './useFormattedTextField';
-export type {AriaTextFieldOptions} from './useTextField';
-export type {AriaTextFieldProps} from '@react-types/textfield';
+export {useTextField} from 'react-aria/useTextField';
+
+export {useFormattedTextField} from 'react-aria/private/textfield/useFormattedTextField';
+export type {TextFieldAria, AriaTextFieldOptions, TextFieldProps, AriaTextFieldProps} from 'react-aria/useTextField';

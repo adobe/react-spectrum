@@ -11,9 +11,19 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DatePickerContext, DateSegment, Dialog, FieldError, Group, Heading, Label, Popover, Text} from 'react-aria-components';
+import {Button} from '../src/Button';
+import {Calendar, CalendarCell, CalendarGrid} from '../src/Calendar';
 import {CalendarDate} from '@internationalized/date';
+import {DateInput, DateSegment} from '../src/DateField';
+import {DatePicker, DatePickerContext} from '../src/DatePicker';
+import {Dialog} from '../src/Dialog';
+import {FieldError} from '../src/FieldError';
+import {Group} from '../src/Group';
+import {Heading} from '../src/Heading';
+import {Label} from '../src/Label';
+import {Popover} from '../src/Popover';
 import React from 'react';
+import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
 let TestDatePicker = (props) => (
@@ -156,6 +166,49 @@ describe('DatePicker', () => {
 
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
+  });
+
+  it('should support required render prop', () => {
+    let {getByRole} = render(
+      <DatePicker isRequired>
+        {({isRequired}) => (
+          <>
+            <Label>Birth date</Label>
+            <Group data-required-state={isRequired ? 'required' : null}>
+              <DateInput>
+                {(segment) => <DateSegment segment={segment} />}
+              </DateInput>
+              <Button>▼</Button>
+            </Group>
+            <Popover>
+              <Dialog>
+                <Calendar>
+                  <header>
+                    <Button slot="previous">◀</Button>
+                    <Heading />
+                    <Button slot="next">▶</Button>
+                  </header>
+                  <CalendarGrid>
+                    {(date) => <CalendarCell date={date} />}
+                  </CalendarGrid>
+                </Calendar>
+              </Dialog>
+            </Popover>
+          </>
+        )}
+      </DatePicker>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-required-state', 'required');
+  });
+
+  it('should support required state', () => {
+    let {getByRole, rerender} = render(<TestDatePicker />);
+    let group = getByRole('group');
+    expect(group.closest('.react-aria-DatePicker')).not.toHaveAttribute('data-required');
+    rerender(<TestDatePicker isRequired />);
+    expect(group.closest('.react-aria-DatePicker')).toHaveAttribute('data-required');
   });
 
   it('should support form value', () => {

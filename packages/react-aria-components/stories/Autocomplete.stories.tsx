@@ -10,19 +10,44 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
-import {Autocomplete, Button, Cell, Collection, Column, DialogTrigger, GridList, GridListHeader, GridListSection, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, OverlayArrow, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Table, TableBody, TableHeader, TableLayout, TagGroup, TagList, Text, TextArea, TextField, Tooltip, TooltipTrigger, Virtualizer} from 'react-aria-components';
+import {action} from 'storybook/actions';
+import {Autocomplete} from '../src/Autocomplete';
+import {Button} from '../src/Button';
+import {Cell, Column, Row, Table, TableBody, TableHeader, TableLayout} from '../src/Table';
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {DialogTrigger} from '../src/Dialog';
+import {GridList, GridListHeader, GridListSection} from '../src/GridList';
+import {Header} from '../src/Header';
+import {Input} from '../src/Input';
+import {Keyboard} from '../src/Keyboard';
+import {Label} from '../src/Label';
+import {ListBox, ListBoxSection} from '../src/ListBox';
+import {ListLayout} from 'react-stately/private/layout/ListLayout';
 import {LoadingSpinner, MyListBoxItem, MyMenuItem} from './utils';
+import {Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger} from '../src/Menu';
 import {Meta, StoryObj} from '@storybook/react';
 import {MyCheckbox} from './Table.stories';
 import {MyGridListItem} from './GridList.stories';
 import {MyListBoxLoaderIndicator} from './ListBox.stories';
 import {MyTag} from './TagGroup.stories';
 import {Node} from '@react-types/shared';
+import {OverlayArrow} from '../src/OverlayArrow';
+import {Popover} from '../src/Popover';
 import React, {useState} from 'react';
+import {SearchField} from '../src/SearchField';
+import {Select, SelectValue} from '../src/Select';
+import {Separator} from '../src/Separator';
 import styles from '../example/index.css';
-import {useAsyncList, useListData, useTreeData} from 'react-stately';
-import {useFilter} from 'react-aria';
+import {TagGroup, TagList} from '../src/TagGroup';
+import {Text} from '../src/Text';
+import {TextArea} from '../src/TextArea';
+import {TextField} from '../src/TextField';
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
+import {useAsyncList} from 'react-stately/useAsyncList';
+import {useFilter} from 'react-aria/useFilter';
+import {useListData} from 'react-stately/useListData';
+import {useTreeData} from 'react-stately/useTreeData';
+import {Virtualizer} from '../src/Virtualizer';
 import './styles.css';
 
 export default {
@@ -162,6 +187,29 @@ export const AutocompleteSearchfield: AutocompleteStory = {
   parameters: {
     description: {
       data: 'Note that on mobile, trying to type into the subdialog inputs may cause scrolling and thus cause the subdialog to close. Please test in landscape mode.'
+    }
+  }
+};
+
+export const AutocompleteFocusRecovery: AutocompleteStory = {
+  render: (args) => {
+    return (
+      <AutocompleteWrapper disableVirtualFocus={args.disableVirtualFocus}>
+        <div>
+          <TextField autoFocus data-testid="autocomplete-focus-recovery">
+            <Label style={{display: 'block'}}>Test</Label>
+            <Input />
+            <Text style={{display: 'block'}} slot="description">Focus the input, move virtual focus to an option, then click the input again.</Text>
+          </TextField>
+          <StaticMenu {...args} />
+        </div>
+      </AutocompleteWrapper>
+    );
+  },
+  name: 'Autocomplete focus recovery after virtual focus',
+  parameters: {
+    description: {
+      data: 'Manual check: focus the input, hover or keyboard navigate to an option, then click the input again. The input should regain focused styling and the active descendant should clear.'
     }
   }
 };
@@ -511,6 +559,30 @@ export const AutocompleteWithListbox: AutocompleteStory = {
     );
   },
   name: 'Autocomplete with ListBox + Popover'
+};
+
+export const AutocompleteSelectAllFiltering: AutocompleteStory = {
+  render: (args) => {
+    return (
+      <AutocompleteWrapper disableVirtualFocus={args.disableVirtualFocus}>
+        <div>
+          <SearchField autoFocus>
+            <Label style={{display: 'block'}}>Test</Label>
+            <Input />
+          </SearchField>
+          <ListBox<AutocompleteItem>
+            className={styles.menu}
+            items={items}
+            selectionMode="multiple"
+            defaultSelectedKeys="all"
+            onSelectionChange={action('onSelectionChange')}>
+            {(item: AutocompleteItem) => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
+          </ListBox>
+        </div>
+      </AutocompleteWrapper>
+    );
+  },
+  name: 'Autocomplete, select all with filtering'
 };
 
 function VirtualizedListBox(props) {
@@ -1208,3 +1280,39 @@ export const AutocompleteUserCustomFiltering: AutocompleteStory = {
     }
   }
 };
+
+export function AutocompleteGrid() {
+  return (
+    <AutocompleteWrapper>
+      <div>
+        <TextField autoFocus data-testid="autocomplete-example">
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+        </TextField>
+        <ListBox
+          className={styles.menu}
+          aria-label="test listbox"
+          layout="grid"
+          orientation="vertical"
+          style={{
+            width: 300,
+            height: 300,
+            display: 'grid',
+            gridTemplate: 'repeat(3, 1fr) / repeat(3, 1fr)',
+            gridAutoFlow: 'row'
+          }}>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,1</MyListBoxItem>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,2</MyListBoxItem>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,3</MyListBoxItem>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,1</MyListBoxItem>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,2</MyListBoxItem>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,3</MyListBoxItem>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,1</MyListBoxItem>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,2</MyListBoxItem>
+          <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,3</MyListBoxItem>
+        </ListBox>
+      </div>
+    </AutocompleteWrapper>
+  );
+}

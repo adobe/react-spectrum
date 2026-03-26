@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
-import {Breadcrumb, Breadcrumbs, BreadcrumbsProps} from '../src';
+import {action} from 'storybook/actions';
+import {Breadcrumb, Breadcrumbs, BreadcrumbsProps} from '../src/Breadcrumbs';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof Breadcrumbs> = {

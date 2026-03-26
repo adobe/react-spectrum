@@ -11,9 +11,9 @@
  */
 
 import {CalendarDate, CalendarDateTime} from '@internationalized/date';
-import {DateRangePicker} from '../';
+import {DateRangePicker} from '../src/DateRangePicker';
 import type {Meta, StoryObj} from '@storybook/react';
-import {userEvent} from '@storybook/test';
+import {userEvent} from 'storybook/test';
 
 const meta: Meta<typeof DateRangePicker> = {
   component: DateRangePicker,

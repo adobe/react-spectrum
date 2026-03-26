@@ -11,11 +11,16 @@
  */
 
 
-import {Collection, Header, Heading, Picker, PickerItem, PickerSection, Provider} from '../src';
-import {fn} from '@storybook/test';
-import {Key, useLocale} from 'react-aria';
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+
+import {fn} from 'storybook/test';
+import {Header, Heading} from '../src/Content';
+import {Key} from '@react-types/shared';
+import {Picker, PickerItem, PickerSection} from '../src/Picker';
 import {PropsWithChildren, ReactElement, ReactNode, useMemo, useState} from 'react';
+import {Provider} from '../src/Provider';
 import {style} from '../style' with {type: 'macro'};
+import {useLocale} from 'react-aria/I18nProvider';
 
 type StaticColor = 'black' | 'white' | 'auto' | undefined;
 

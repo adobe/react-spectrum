@@ -12,27 +12,23 @@
 
 import {ActionButton} from './ActionButton';
 import AlertIcon from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
+
 import {
   Tag as AriaTag,
   TagGroup as AriaTagGroup,
   TagGroupProps as AriaTagGroupProps,
   TagProps as AriaTagProps,
-  composeRenderProps,
-  ContextValue,
-  Provider,
-  ButtonContext as RACButtonContext,
-  TextContext as RACTextContext,
   TagList,
   TagListProps,
-  TagRenderProps,
-  useLocale,
-  useSlottedContext
-} from 'react-aria-components';
+  TagRenderProps
+} from 'react-aria-components/TagGroup';
+
 import {AvatarContext} from './Avatar';
 import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with { type: 'macro' };
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
-import {Collection, CollectionBuilder} from '@react-aria/collections';
+import {Collection, CollectionBuilder} from 'react-aria/private/collections/CollectionBuilder';
+import {composeRenderProps, ContextValue, Provider, useSlottedContext} from 'react-aria-components/utils';
 import {control, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, HelpTextProps, LabelableProps, Node, SpectrumLabelableProps} from '@react-types/shared';
@@ -42,13 +38,20 @@ import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
-import {inertValue, useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
-// @ts-ignore
+import {inertValue} from 'react-aria/private/utils/inertValue';
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
+import {ButtonContext as RACButtonContext} from 'react-aria-components/Button';
+import {TextContext as RACTextContext} from 'react-aria-components/Text';
 import {Text, TextContext} from './Content';
-import {useDOMRef} from '@react-spectrum/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useDOMRef} from './useDOMRef';
+import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
+// @ts-ignore
+import {useId} from 'react-aria/useId';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 // Get types from RSP and extend those?

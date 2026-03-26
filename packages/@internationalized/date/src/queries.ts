@@ -11,11 +11,9 @@
  */
 
 import {AnyCalendarDate, AnyTime, Calendar} from './types';
-import {CalendarDate, CalendarDateTime, ZonedDateTime} from './CalendarDate';
+import {CalendarDate, CalendarDateTime, DateValue, ZonedDateTime} from './CalendarDate';
 import {fromAbsolute, toAbsolute, toCalendar, toCalendarDate} from './conversion';
 import {weekStartData} from './weekStartData';
-
-type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
 
 /** Returns whether the given dates occur on the same day, regardless of the time or calendar system. */
 export function isSameDay(a: DateValue, b: DateValue): boolean {
@@ -130,6 +128,7 @@ export function getHoursInDay(a: CalendarDate, timeZone: string): number {
 }
 
 let localTimeZone: string | null = null;
+let localTimeZoneOverride = false;
 
 /** Returns the time zone identifier for the current user. */
 export function getLocalTimeZone(): string {
@@ -142,12 +141,19 @@ export function getLocalTimeZone(): string {
 
 /** Sets the time zone identifier for the current user. */
 export function setLocalTimeZone(timeZone: string): void {
+  localTimeZoneOverride = true;
   localTimeZone = timeZone;
 }
 
 /** Resets the time zone identifier for the current user. */
 export function resetLocalTimeZone(): void {
+  localTimeZoneOverride = false;
   localTimeZone = null;
+}
+
+/** Returns whether the local time zone has been explicitly overridden via `setLocalTimeZone`. */
+export function isLocalTimeZoneOverridden(): boolean {
+  return localTimeZoneOverride;
 }
 
 /** Returns the first date of the month for the given date. */

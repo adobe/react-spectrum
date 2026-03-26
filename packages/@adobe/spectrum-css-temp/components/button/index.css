@@ -25,6 +25,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-BaseButton {
+  composes: i18nFontFamily;
+
   /* Contain halo */
   position: relative;
 
@@ -68,8 +70,6 @@ governing permissions and limitations under the License.
               box-shadow var(--spectrum-global-animation-duration-100) ease-out;
 
   text-decoration: none;
-
-  composes: i18nFontFamily;
 
   line-height: var(--spectrum-button-line-height);
 

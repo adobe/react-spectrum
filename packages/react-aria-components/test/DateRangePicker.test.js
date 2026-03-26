@@ -11,25 +11,19 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {
-  Button,
-  CalendarCell,
-  CalendarGrid,
-  DateInput,
-  DateRangePicker,
-  DateRangePickerContext,
-  DateSegment,
-  Dialog,
-  FieldError,
-  Group,
-  Heading,
-  Label,
-  Popover,
-  RangeCalendar,
-  Text
-} from 'react-aria-components';
+import {Button} from '../src/Button';
+import {CalendarCell, CalendarGrid, RangeCalendar} from '../src/Calendar';
 import {CalendarDate} from '@internationalized/date';
+import {DateInput, DateSegment} from '../src/DateField';
+import {DateRangePicker, DateRangePickerContext} from '../src/DatePicker';
+import {Dialog} from '../src/Dialog';
+import {FieldError} from '../src/FieldError';
+import {Group} from '../src/Group';
+import {Heading} from '../src/Heading';
+import {Label} from '../src/Label';
+import {Popover} from '../src/Popover';
 import React from 'react';
+import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
 let TestDateRangePicker = (props) => (
@@ -182,6 +176,53 @@ describe('DateRangePicker', () => {
 
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
+  });
+
+  it('should support required render prop', () => {
+    let {getByRole} = render(
+      <DateRangePicker isRequired>
+        {({isRequired}) => (
+          <>
+            <Label>Trip dates</Label>
+            <Group data-required-state={isRequired ? 'required' : null}>
+              <DateInput slot="start">
+                {(segment) => <DateSegment segment={segment} />}
+              </DateInput>
+              <span aria-hidden="true">–</span>
+              <DateInput slot="end">
+                {(segment) => <DateSegment segment={segment} />}
+              </DateInput>
+              <Button>▼</Button>
+            </Group>
+            <Popover>
+              <Dialog>
+                <RangeCalendar>
+                  <header>
+                    <Button slot="previous">◀</Button>
+                    <Heading />
+                    <Button slot="next">▶</Button>
+                  </header>
+                  <CalendarGrid>
+                    {(date) => <CalendarCell date={date} />}
+                  </CalendarGrid>
+                </RangeCalendar>
+              </Dialog>
+            </Popover>
+          </>
+        )}
+      </DateRangePicker>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-required-state', 'required');
+  });
+
+  it('should support required state', () => {
+    let {getByRole, rerender} = render(<TestDateRangePicker />);
+    let group = getByRole('group');
+    expect(group.closest('.react-aria-DateRangePicker')).not.toHaveAttribute('data-required');
+    rerender(<TestDateRangePicker isRequired />);
+    expect(group.closest('.react-aria-DateRangePicker')).toHaveAttribute('data-required');
   });
 
   it('should support form value', () => {

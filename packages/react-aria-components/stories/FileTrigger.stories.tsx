@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
-import {Button, FileTrigger, Link} from 'react-aria-components';
+import {action} from 'storybook/actions';
+import {Button} from '../src/Button';
+import {FileTrigger} from '../src/FileTrigger';
+import {Link} from '../src/Link';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import './styles.css';

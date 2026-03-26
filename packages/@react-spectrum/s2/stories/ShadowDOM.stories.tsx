@@ -110,12 +110,12 @@ import {
   TreeViewItem,
   TreeViewItemContent,
   useAsyncList
-} from '../src';
-import {action} from '@storybook/addon-actions';
+} from '@react-spectrum/s2';
+import {action} from 'storybook/actions';
 import AlertNotice from '../spectrum-illustrations/linear/AlertNotice';
-import {CardViewProps} from '@react-types/card';
+import {AriaCardViewProps as CardViewProps} from '@react-types/card';
 import {createRoot} from 'react-dom/client';
-import {enableShadowDOM} from '@react-stately/flags';
+import {enableShadowDOM} from 'react-stately/private/flags/flags';
 import type {Meta, StoryObj} from '@storybook/react';
 import PaperAirplane from '../spectrum-illustrations/linear/Paperairplane';
 import Server from '../spectrum-illustrations/linear/Server';

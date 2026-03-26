@@ -7,7 +7,7 @@ import {colorSwatch, getColorScale} from './color.macro' with {type: 'macro'};
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Header, ListBox, ListBoxItem, ListBoxSection} from 'react-aria-components';
 import {InfoMessage} from './colorSearchData';
-// eslint-disable-next-line monorepo/no-internal-import
+ 
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Similar from '@react-spectrum/s2/icons/Similar';
@@ -201,10 +201,11 @@ interface ColorSearchViewProps {
   /** Names of colors that exactly match the searched hex value. */
   exactMatches?: Set<string>,
   /** Names of the closest matching colors when no exact matches exist. */
-  closestMatches?: Set<string>
+  closestMatches?: Set<string>,
+  listBoxClassName?: string
 }
 
-export function ColorSearchView({filteredItems, exactMatches = new Set(), closestMatches = new Set()}: ColorSearchViewProps) {
+export function ColorSearchView({filteredItems, exactMatches = new Set(), closestMatches = new Set(), listBoxClassName}: ColorSearchViewProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -261,7 +262,7 @@ export function ColorSearchView({filteredItems, exactMatches = new Set(), closes
           }
         }}
         layout="grid"
-        className={style({
+        className={listBoxClassName || style({
           width: 'full',
           display: 'flex',
           flexDirection: 'column',

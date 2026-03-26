@@ -12,10 +12,22 @@
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaMenuTests} from './AriaMenu.test-util';
-import {Button, Collection, Header, Heading, Input, Keyboard, Label, Menu, MenuContext, MenuItem, MenuSection, MenuTrigger, Popover, Pressable, Separator, SubmenuTrigger, Text, TextField} from '..';
+import {Button} from '../src/Button';
+import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Header} from '../src/Header';
+import {Heading} from '../src/Heading';
+import {Input} from '../src/Input';
+import {Keyboard} from '../src/Keyboard';
+import {Label} from '../src/Label';
+import {Menu, MenuContext, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger} from '../src/Menu';
+import {Popover} from '../src/Popover';
+import {Pressable} from 'react-aria/private/interactions/Pressable';
 import React, {useState} from 'react';
 import {Selection, SelectionMode} from '@react-types/shared';
-import {UNSAFE_PortalProvider} from '@react-aria/overlays';
+import {Separator} from '../src/Separator';
+import {Text} from '../src/Text';
+import {TextField} from '../src/TextField';
+import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -1736,6 +1748,72 @@ describe('Menu', () => {
     expect(onPressEnd).toHaveBeenCalledTimes(1);
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  describe('submenutrigger non menu content', () => {
+    it('opens popover and does not call onAction', async () => {
+      let onAction = jest.fn();
+      let {getByRole, getAllByRole, findByRole, findByText} = render(
+        <MenuTrigger>
+          <Button>Menu Button</Button>
+          <Popover>
+            <Menu onAction={onAction}>
+              <SubmenuTrigger>
+                <MenuItem id="delete">Delete</MenuItem>
+                <Popover>
+                  <div>Contact your administrator for permissions to delete.</div>
+                </Popover>
+              </SubmenuTrigger>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      await user.click(getByRole('button'));
+      await findByRole('menu');
+      let menuItems = getAllByRole('menuitem');
+      await user.click(menuItems[0]);
+      expect(await findByText('Contact your administrator for permissions to delete.')).toBeInTheDocument();
+      expect(onAction).not.toHaveBeenCalled();
+      let dialogs = getAllByRole('dialog');
+      expect(dialogs).toHaveLength(2);
+      expect(document.activeElement).toBe(menuItems[0]);
+      await user.keyboard('{Escape}');
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(getByRole('button'));
+    });
+
+    it('should auto focus the Popover if in keyboard modality', async () => {
+      let onAction = jest.fn();
+      let {getByRole, getAllByRole, findByRole, findByText} = render(
+        <MenuTrigger>
+          <Button>Menu Button</Button>
+          <Popover>
+            <Menu onAction={onAction}>
+              <SubmenuTrigger>
+                <MenuItem id="delete">Delete</MenuItem>
+                <Popover>
+                  <div>Contact your administrator for permissions to delete.</div>
+                </Popover>
+              </SubmenuTrigger>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button'), interactionType: 'keyboard'});
+      await menuTester.open();
+      await findByRole('menu');
+      await menuTester.selectOption({option: 0});
+      expect(await findByText('Contact your administrator for permissions to delete.')).toBeInTheDocument();
+      expect(onAction).not.toHaveBeenCalled();
+      let dialogs = getAllByRole('dialog');
+      expect(dialogs).toHaveLength(2);
+      expect(document.activeElement).toBe(dialogs[1]);
+      await user.keyboard('{Escape}');
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(menuTester.options()[0]);
+    });
   });
 });
 

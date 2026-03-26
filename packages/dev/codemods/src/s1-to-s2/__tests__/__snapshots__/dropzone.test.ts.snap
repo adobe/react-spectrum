@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Does nothing 1`] = `
+exports[`Rewrites illustration import to S2 1`] = `
 "import { DropZone, IllustratedMessage, Heading } from "@react-spectrum/s2";
-import Upload from '@spectrum-icons/illustrations/Upload';
+import Upload from "@react-spectrum/s2/illustrations/linear/Upload";
 
 <div>
   <DropZone>

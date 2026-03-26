@@ -1,4 +1,4 @@
-import {Illustration, IllustrationPropsWithoutChildren} from '@react-spectrum/icon';
+import {Illustration, IllustrationPropsWithoutChildren} from '@adobe/react-spectrum/private/icon/Illustration';
 import React, {JSX} from 'react';
 
 export default function Error403(props: IllustrationPropsWithoutChildren): JSX.Element {

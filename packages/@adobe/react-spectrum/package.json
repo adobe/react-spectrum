@@ -1,18 +1,16 @@
 {
   "name": "@adobe/react-spectrum",
-  "version": "3.46.1",
+  "version": "3.46.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
-  "main": "dist/main.js",
-  "module": "dist/module.js",
+  "main": "./dist/exports/index.cjs",
+  "module": "./dist/exports/index.js",
   "exports": {
     ".": {
-      "types": [
-        "./dist/types.d.ts",
-        "./src/index.ts"
-      ],
-      "import": "./dist/import.mjs",
-      "require": "./dist/main.js"
+      "source": "./exports/index.ts",
+      "types": "./dist/types/exports/index.d.ts",
+      "import": "./dist/exports/index.mjs",
+      "require": "./dist/exports/index.cjs"
     },
     "./i18n": {
       "types": "./i18n/index.d.ts",
@@ -23,87 +21,50 @@
       "types": "./i18n/lang.d.ts",
       "import": "./i18n/*.mjs",
       "require": "./i18n/*.js"
+    },
+    "./package.json": "./package.json",
+    "./*": {
+      "source": "./exports/*.ts",
+      "types": "./dist/types/exports/*.d.ts",
+      "import": "./dist/exports/*.mjs",
+      "require": "./dist/exports/*.cjs"
     }
   },
-  "types": "dist/types.d.ts",
-  "source": "src/index.ts",
+  "types": "./dist/types/exports/index.d.ts",
+  "source": "exports/index.ts",
   "files": [
-    "dist",
-    "i18n"
+    "*",
+    "!chromatic",
+    "!chromatic-fc",
+    "!docs",
+    "!exports",
+    "!intl",
+    "!scripts",
+    "!src",
+    "!stories",
+    "!test"
   ],
-  "sideEffects": false,
-  "scripts": {
-    "prepublishOnly": "mkdir -p dist; cp src/index.ts dist/types.d.ts; grep -v '^export type' src/index.ts > dist/module.js; babel --root-mode upward src/index.ts -o dist/main.js"
-  },
+  "sideEffects": [
+    "*.css"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/string": "^3.2.7",
-    "@react-aria/collections": "^3.0.2",
-    "@react-aria/i18n": "^3.12.15",
-    "@react-aria/ssr": "^3.9.10",
-    "@react-aria/utils": "^3.33.0",
-    "@react-aria/visually-hidden": "^3.8.30",
-    "@react-spectrum/accordion": "^3.0.15",
-    "@react-spectrum/actionbar": "^3.6.16",
-    "@react-spectrum/actiongroup": "^3.11.6",
-    "@react-spectrum/avatar": "^3.0.28",
-    "@react-spectrum/badge": "^3.1.32",
-    "@react-spectrum/breadcrumbs": "^3.9.26",
-    "@react-spectrum/button": "^3.17.6",
-    "@react-spectrum/buttongroup": "^3.6.28",
-    "@react-spectrum/calendar": "^3.7.10",
-    "@react-spectrum/checkbox": "^3.10.6",
-    "@react-spectrum/color": "^3.1.6",
-    "@react-spectrum/combobox": "^3.16.6",
-    "@react-spectrum/contextualhelp": "^3.6.30",
-    "@react-spectrum/datepicker": "^3.14.10",
-    "@react-spectrum/dialog": "^3.9.6",
-    "@react-spectrum/divider": "^3.5.29",
-    "@react-spectrum/dnd": "^3.6.4",
-    "@react-spectrum/dropzone": "^3.0.20",
-    "@react-spectrum/filetrigger": "^3.0.20",
-    "@react-spectrum/form": "^3.7.21",
-    "@react-spectrum/icon": "^3.8.11",
-    "@react-spectrum/illustratedmessage": "^3.5.16",
-    "@react-spectrum/image": "^3.6.4",
-    "@react-spectrum/inlinealert": "^3.2.22",
-    "@react-spectrum/labeledvalue": "^3.2.9",
-    "@react-spectrum/layout": "^3.6.21",
-    "@react-spectrum/link": "^3.6.24",
-    "@react-spectrum/list": "^3.10.10",
-    "@react-spectrum/listbox": "^3.15.10",
-    "@react-spectrum/menu": "^3.22.10",
-    "@react-spectrum/meter": "^3.5.16",
-    "@react-spectrum/numberfield": "^3.10.4",
-    "@react-spectrum/overlays": "^5.9.2",
-    "@react-spectrum/picker": "^3.16.6",
-    "@react-spectrum/progress": "^3.7.22",
-    "@react-spectrum/provider": "^3.10.13",
-    "@react-spectrum/radio": "^3.7.23",
-    "@react-spectrum/searchfield": "^3.8.25",
-    "@react-spectrum/slider": "^3.8.4",
-    "@react-spectrum/statuslight": "^3.5.28",
-    "@react-spectrum/switch": "^3.6.8",
-    "@react-spectrum/table": "^3.17.10",
-    "@react-spectrum/tabs": "^3.8.29",
-    "@react-spectrum/tag": "^3.3.9",
-    "@react-spectrum/text": "^3.5.24",
-    "@react-spectrum/textfield": "^3.14.4",
-    "@react-spectrum/theme-dark": "^3.5.23",
-    "@react-spectrum/theme-default": "^3.5.23",
-    "@react-spectrum/theme-light": "^3.4.23",
-    "@react-spectrum/toast": "^3.1.6",
-    "@react-spectrum/tooltip": "^3.8.1",
-    "@react-spectrum/tree": "^3.1.10",
-    "@react-spectrum/view": "^3.6.25",
-    "@react-spectrum/well": "^3.4.29",
-    "@react-stately/collections": "^3.12.9",
-    "@react-stately/data": "^3.15.1",
-    "@react-types/shared": "^3.33.0",
-    "client-only": "^0.0.1"
+    "@internationalized/date": "^3.12.0",
+    "@react-spectrum/style-macro-s1": "3.0.0-alpha.5",
+    "@react-types/shared": "^3.33.1",
+    "@spectrum-icons/ui": "^3.6.23",
+    "@spectrum-icons/workflow": "^4.2.28",
+    "@swc/helpers": "^0.5.0",
+    "client-only": "^0.0.1",
+    "clsx": "^2.0.0",
+    "react-aria": "3.47.0",
+    "react-aria-components": "^1.16.0",
+    "react-stately": "3.45.0",
+    "react-transition-group": "^4.4.5",
+    "use-sync-external-store": "^1.6.0"
   },
   "publishConfig": {
     "access": "public"
@@ -113,7 +74,53 @@
     "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   },
   "devDependencies": {
+    "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
     "@babel/cli": "^7.12.10",
     "@babel/core": "^7.24.3"
+  },
+  "targets": {
+    "main": false,
+    "module": false,
+    "types": false,
+    "exports-module": {
+      "source": [
+        "exports/**/*.ts"
+      ],
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    },
+    "exports-main": {
+      "source": [
+        "exports/**/*.ts"
+      ],
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "commonjs",
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    },
+    "legacy-module": {
+      "source": [
+        "exports/**/*.ts"
+      ],
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ],
+      "engines": {
+        "browsers": [
+          "chrome >= 79",
+          "firefox >= 85",
+          "safari >= 13"
+        ]
+      }
+    }
   }
 }

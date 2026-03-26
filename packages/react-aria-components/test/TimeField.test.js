@@ -11,8 +11,11 @@
  */
 
 import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {DateInput, DateSegment, FieldError, Label, Text, TimeField, TimeFieldContext} from '../';
+import {DateInput, DateSegment, TimeField, TimeFieldContext} from '../src/DateField';
+import {FieldError} from '../src/FieldError';
+import {Label} from '../src/Label';
 import React from 'react';
+import {Text} from '../src/Text';
 import {Time} from '@internationalized/date';
 import userEvent from '@testing-library/user-event';
 
@@ -148,6 +151,46 @@ describe('TimeField', () => {
 
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-disabled-state', 'disabled');
+  });
+
+  it('should support required render prop', () => {
+    let {getByRole} = render(
+      <TimeField isRequired>
+        {({isRequired}) => (
+          <>
+            <Label>Time</Label>
+            <DateInput
+              data-required-state={isRequired ? 'required' : null}>
+              {segment => <DateSegment segment={segment} />}
+            </DateInput>
+          </>
+        )}
+      </TimeField>
+    );
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-required-state', 'required');
+  });
+
+  it('should support required state', () => {
+    let {getByRole, rerender} = render(
+      <TimeField>
+        <Label>Time</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </TimeField>
+    );
+    let group = getByRole('group');
+    expect(group.closest('.react-aria-TimeField')).not.toHaveAttribute('data-required');
+    rerender(
+      <TimeField isRequired>
+        <Label>Time</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </TimeField>
+    );
+    expect(group.closest('.react-aria-TimeField')).toHaveAttribute('data-required');
   });
 
   it('should support form value', () => {

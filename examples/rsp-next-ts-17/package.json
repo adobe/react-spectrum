@@ -31,5 +31,6 @@
   },
   "resolutions": {
     "next/@swc/helpers": "0.4.36"
-  }
+  },
+  "browserslist": "defaults"
 }

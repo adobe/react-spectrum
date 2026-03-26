@@ -12,8 +12,8 @@
 
 import type {Meta, StoryObj} from '@storybook/react';
 import {Time} from '@internationalized/date';
-import {TimeField} from '../';
-import {userEvent} from '@storybook/test';
+import {TimeField} from '../src/TimeField';
+import {userEvent} from 'storybook/test';
 
 const meta: Meta<typeof TimeField> = {
   component: TimeField,

@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
-import {classNames} from '@react-spectrum/utils';
+import {action} from 'storybook/actions';
+import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useState} from 'react';
 import styles from '../example/index.css';
-import {ToggleButton} from 'react-aria-components';
+import {ToggleButton} from '../src/ToggleButton';
 import './styles.css';
 
 export default {

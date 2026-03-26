@@ -1,20 +1,20 @@
 {
   "name": "@react-spectrum/table",
-  "version": "3.17.10",
+  "version": "3.17.11",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "source": "./src/index.ts",
-    "types": [
-      "./dist/types.d.ts",
-      "./src/index.ts"
-    ],
-    "import": "./dist/import.mjs",
-    "require": "./dist/main.js"
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/types/src/index.d.ts",
+      "import": "./dist/import.mjs",
+      "require": "./dist/main.js"
+    },
+    "./package.json": "./package.json"
   },
-  "types": "dist/types.d.ts",
+  "types": "dist/types/src/index.d.ts",
   "source": "src/index.ts",
   "files": [
     "dist",
@@ -24,56 +24,18 @@
     "*.css"
   ],
   "targets": {
-    "main": {
-      "includeNodeModules": [
-        "@adobe/spectrum-css-temp"
-      ]
-    },
-    "module": {
-      "includeNodeModules": [
-        "@adobe/spectrum-css-temp"
-      ]
-    }
+    "types": false
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/button": "^3.14.4",
-    "@react-aria/focus": "^3.21.4",
-    "@react-aria/i18n": "^3.12.15",
-    "@react-aria/interactions": "^3.27.0",
-    "@react-aria/overlays": "^3.31.1",
-    "@react-aria/selection": "^3.27.1",
-    "@react-aria/table": "^3.17.10",
-    "@react-aria/utils": "^3.33.0",
-    "@react-aria/virtualizer": "^4.1.12",
-    "@react-aria/visually-hidden": "^3.8.30",
-    "@react-spectrum/checkbox": "^3.10.6",
-    "@react-spectrum/dnd": "^3.6.4",
-    "@react-spectrum/layout": "^3.6.21",
-    "@react-spectrum/menu": "^3.22.10",
-    "@react-spectrum/progress": "^3.7.22",
-    "@react-spectrum/tooltip": "^3.8.1",
-    "@react-spectrum/utils": "^3.12.11",
-    "@react-stately/flags": "^3.1.2",
-    "@react-stately/layout": "^4.5.3",
-    "@react-stately/table": "^3.15.3",
-    "@react-stately/virtualizer": "^4.4.5",
-    "@react-types/grid": "^3.3.7",
-    "@react-types/shared": "^3.33.0",
-    "@react-types/table": "^3.13.5",
-    "@spectrum-icons/ui": "^3.6.22",
-    "@swc/helpers": "^0.5.0"
-  },
-  "devDependencies": {
-    "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
-    "@react-aria/dnd": "^3.1.0",
-    "@react-stately/dnd": "^3.1.0"
+    "@adobe/react-spectrum": "^3.46.2",
+    "@swc/helpers": "^0.5.0",
+    "react-stately": "^3.45.0"
   },
   "peerDependencies": {
-    "@react-spectrum/provider": "^3.0.0",
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
     "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   },

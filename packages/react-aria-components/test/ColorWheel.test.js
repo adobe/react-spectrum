@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorThumb, ColorWheel, ColorWheelContext} from '../';
+import {ColorThumb} from '../src/ColorThumb';
+
+import {ColorWheel, ColorWheelContext} from '../src/ColorWheel';
 import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';

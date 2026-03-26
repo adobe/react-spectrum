@@ -14,24 +14,39 @@ import AlignLeft from '../s2wf-icons/S2_Icon_TextAlignLeft_20_N.svg';
 import AlignMiddle from '../s2wf-icons/S2_Icon_TextAlignCenter_20_N.svg';
 import AlignRight from '../s2wf-icons/S2_Icon_TextAlignRight_20_N.svg';
 import Bold from '../s2wf-icons/S2_Icon_TextBold_20_N.svg';
-import {Button, Header, Heading, Image, Keyboard, Menu, MenuItem, MenuProps, MenuSection, MenuTrigger, SubmenuTrigger, Text} from '../src';
+import {Button} from '../src/Button';
 import {categorizeArgTypes, getActionArgs} from './utils';
 import ClockPendingIcon from '../s2wf-icons/S2_Icon_ClockPending_20_N.svg';
 import {CombinedMenu} from '../src/Menu';
 import CommentTextIcon from '../s2wf-icons/S2_Icon_CommentText_20_N.svg';
+
 import CommunityIcon from '../s2wf-icons/S2_Icon_Community_20_N.svg';
+
+import {Content, Footer, Header, Heading, Keyboard, Text} from '../src/Content';
+import {ContextualHelpPopover} from '../src/ContextualHelp';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
+import {Image} from '../src/Image';
 import ImgIcon from '../s2wf-icons/S2_Icon_Image_20_N.svg';
 import Italic from '../s2wf-icons/S2_Icon_TextItalic_20_N.svg';
+import {Link} from '../src/Link';
+import {
+  Menu,
+  MenuItem,
+  MenuProps,
+  MenuSection,
+  MenuTrigger,
+  SubmenuTrigger,
+  UnavailableMenuItemTrigger
+} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import More from '../s2wf-icons/S2_Icon_More_20_N.svg';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
 import {ReactElement, useState} from 'react';
-import {Selection} from 'react-aria-components';
+import {Selection} from '@react-types/shared';
 import TextIcon from '../s2wf-icons/S2_Icon_Text_20_N.svg';
 import Underline from '../s2wf-icons/S2_Icon_TextUnderline_20_N.svg';
 
@@ -313,5 +328,53 @@ export const SelectionGroups: StoryObj<typeof SelectionGroupsRender> = {
   render: (args) => <SelectionGroupsRender {...args} />,
   parameters: {
     layout: 'padded'
+  }
+};
+
+export const UnavailableMenuItem: Story = {
+  render: (args) => {
+    return (
+      <MenuTrigger {...args}>
+        <Button aria-label="Actions for selected resource"><NewIcon /></Button>
+        <Menu {...args}>
+          <MenuItem>Favorite</MenuItem>
+          <UnavailableMenuItemTrigger>
+            <MenuItem>Edit</MenuItem>
+            <ContextualHelpPopover>
+              <Heading slot="title">Permission Denied</Heading>
+              <Content>
+                <Text>
+                  Contact your administrator for permissions to edit this item.
+                </Text>
+              </Content>
+              <Footer>
+                <Link isStandalone href="https://google.com" target="_blank">Learn more</Link>
+              </Footer>
+            </ContextualHelpPopover>
+          </UnavailableMenuItemTrigger>
+          <UnavailableMenuItemTrigger isUnavailable>
+            <MenuItem>Delete</MenuItem>
+            <ContextualHelpPopover>
+              <Heading slot="title">Permission Denied</Heading>
+              <Content>
+                <Text>
+                  Contact your administrator for permissions to delete this item.
+                </Text>
+              </Content>
+              <Footer>
+                <Link isStandalone href="https://google.com" target="_blank">Learn more</Link>
+              </Footer>
+            </ContextualHelpPopover>
+          </UnavailableMenuItemTrigger>
+          <SubmenuTrigger>
+            <MenuItem>Share</MenuItem>
+            <Menu>
+              <MenuItem>SMS</MenuItem>
+              <MenuItem>Email</MenuItem>
+            </Menu>
+          </SubmenuTrigger>
+        </Menu>
+      </MenuTrigger>
+    );
   }
 };

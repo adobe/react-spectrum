@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/live-announcer');
+jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 import {Direction} from '@react-types/shared';
 import {pointerMap, render, User} from '@react-spectrum/test-utils-internal';
-import {Provider, Radio, RadioGroup} from '../src';
+import {Provider} from '../src/Provider';
+import {Radio, RadioGroup} from '../src/RadioGroup';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 

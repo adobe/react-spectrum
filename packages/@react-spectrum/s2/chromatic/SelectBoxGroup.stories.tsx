@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
 import type {Meta, StoryObj} from '@storybook/react';
 import PaperAirplane from '../spectrum-illustrations/linear/Paperairplane';
 import React from 'react';
-import {SelectBox, SelectBoxGroup, Text} from '../src';
+import {SelectBox, SelectBoxGroup} from '../src/SelectBoxGroup';
 import Server from '../spectrum-illustrations/linear/Server';
+import {Text} from '../src/Content';
 
 const meta: Meta<typeof SelectBoxGroup> = {
   component: SelectBoxGroup,
@@ -33,8 +33,7 @@ export const VerticalOrientation: Story = {
     <div style={{width: 600}}>
       <SelectBoxGroup
         aria-label="Vertical"
-        orientation="vertical"
-        onSelectionChange={action('onSelectionChange')}>
+        orientation="vertical">
         <SelectBox id="text-only" textValue="V: Text Only">
           <Text slot="label">V: Text Only</Text>
         </SelectBox>
@@ -56,8 +55,7 @@ export const VerticalOrientationMultiSelect: Story = {
       <SelectBoxGroup
         selectionMode="multiple"
         aria-label="Vertical"
-        orientation="vertical"
-        onSelectionChange={action('onSelectionChange')}>
+        orientation="vertical">
         <SelectBox id="text-only" textValue="V: Text Only">
           <Text slot="label">V: Text Only</Text>
         </SelectBox>
@@ -78,8 +76,7 @@ export const HorizontalOrientation: Story = {
     <div style={{width: 800}}>
       <SelectBoxGroup
         aria-label="Horizontal"
-        orientation="horizontal"
-        onSelectionChange={action('onSelectionChange')}>
+        orientation="horizontal">
         <SelectBox id="text-only" textValue="Title Only">
           <Text slot="label">Title Only</Text>
         </SelectBox>
@@ -107,8 +104,7 @@ export const HorizontalOrientationMultSelect: Story = {
       <SelectBoxGroup
         selectionMode="multiple"
         aria-label="Horizontal"
-        orientation="horizontal"
-        onSelectionChange={action('onSelectionChange')}>
+        orientation="horizontal">
         <SelectBox id="text-only" textValue="Title Only">
           <Text slot="label">Title Only</Text>
         </SelectBox>

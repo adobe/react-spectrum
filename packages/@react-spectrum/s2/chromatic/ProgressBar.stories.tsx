@@ -11,7 +11,7 @@
  */
 
 import type {Meta, StoryObj} from '@storybook/react';
-import {ProgressBar} from '../src';
+import {ProgressBar} from '../src/ProgressBar';
 import {StaticColorDecorator} from '../stories/utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 

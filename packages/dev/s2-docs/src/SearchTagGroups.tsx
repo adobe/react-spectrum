@@ -2,7 +2,7 @@ import {divider} from './SearchMenu';
 import {Key, Separator as RACSeparator} from 'react-aria-components';
 import LinkOutIcon from '../../../@react-spectrum/s2/ui-icons/LinkOut';
 import React from 'react';
-import {SelectableCollectionContext} from '../../../react-aria-components/src/RSPContexts';
+import {SelectableCollectionContext} from '../../../react-aria-components/src/Autocomplete';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Tag, TagGroup} from '@react-spectrum/s2';
 
@@ -79,7 +79,7 @@ export function SearchTagGroups({
                 items={resourceTags}
                 UNSAFE_style={{whiteSpace: 'nowrap'}}>
                 {(tag) => (
-                  <Tag key={tag.id} id={tag.id} href={tag.href} target="_blank">
+                  <Tag key={tag.id} id={tag.id} href={tag.href} target="_blank" textValue={tag.href ?? tag.name}>
                     {tag.name}
                     {tag.href &&
                       <LinkOutIcon

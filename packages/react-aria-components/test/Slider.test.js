@@ -11,8 +11,9 @@
  */
 
 import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Label, Slider, SliderContext, SliderOutput, SliderThumb, SliderTrack} from '../';
+import {Label} from '../src/Label';
 import React, {useState} from 'react';
+import {Slider, SliderContext, SliderOutput, SliderThumb, SliderTrack} from '../src/Slider';
 import userEvent from '@testing-library/user-event';
 
 let TestSlider = ({sliderProps, thumbProps, trackProps, outputProps}) => (

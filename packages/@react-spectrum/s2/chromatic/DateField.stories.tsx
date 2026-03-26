@@ -11,9 +11,9 @@
  */
 
 import {CalendarDate} from '@internationalized/date';
-import {DateField} from '../';
+import {DateField} from '../src/DateField';
 import type {Meta, StoryObj} from '@storybook/react';
-import {userEvent} from '@storybook/test';
+import {userEvent} from 'storybook/test';
 
 const meta: Meta<typeof DateField> = {
   component: DateField,

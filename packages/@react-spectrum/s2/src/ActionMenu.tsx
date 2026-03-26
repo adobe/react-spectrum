@@ -12,16 +12,16 @@
 
 import {ActionButton, ActionButtonProps} from './ActionButton';
 import {AriaLabelingProps, DOMProps, FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {ContextValue} from 'react-aria-components';
+import {ContextValue} from 'react-aria-components/utils';
 import {createContext, forwardRef} from 'react';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
 import {forwardRefType} from './types';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Menu, MenuProps, MenuTrigger, MenuTriggerProps} from './Menu';
 import MoreIcon from '../s2wf-icons/S2_Icon_More_20_N.svg';
 import {StyleProps} from './style-utils' with { type: 'macro' };
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ActionMenuProps<T> extends

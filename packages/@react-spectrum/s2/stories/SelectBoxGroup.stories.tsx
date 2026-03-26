@@ -10,15 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {action} from 'storybook/actions';
 import AlertNotice from '../spectrum-illustrations/linear/AlertNotice';
 import type {Meta, StoryObj} from '@storybook/react';
 import PaperAirplane from '../spectrum-illustrations/linear/Paperairplane';
 import React from 'react';
-import {SelectBox, SelectBoxGroup, Text} from '../src';
+import {SelectBox, SelectBoxGroup} from '../src/SelectBoxGroup';
 import Server from '../spectrum-illustrations/linear/Server';
 import StarFilled1 from '../spectrum-illustrations/linear/Star';
 import {style} from '../style' with {type: 'macro'};
+import {Text} from '../src/Content';
 
 const headingStyles = style({
   font: 'heading',
@@ -34,7 +35,7 @@ const subheadingStyles = style({
 });
 
 const sectionHeadingStyles = style({
-  font: 'heading', 
+  font: 'heading',
   fontSize: 'heading-sm',
   color: 'gray-600',
   margin: 0,
@@ -98,18 +99,18 @@ export const AllSlotCombinations: Story = {
   render: () => (
     <div style={{maxWidth: 1200, padding: 20}}>
       <h2 className={headingStyles}>All Slot Combinations</h2>
-      
+
       {/* Vertical Orientation */}
       <div style={{marginBottom: 40}}>
         <h3 className={subheadingStyles}>Vertical Orientation</h3>
         <div style={{display: 'flex', gap: 20, flexWrap: 'wrap'}}>
-          
+
           {/* Text Only */}
           <div>
             <h4 className={sectionHeadingStyles}>Text Only</h4>
-            <SelectBoxGroup 
+            <SelectBoxGroup
               aria-label="Text Only"
-              orientation="vertical" 
+              orientation="vertical"
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox id="text-only" textValue="Simple Text">
                 <Text slot="label">Simple Text</Text>
@@ -120,9 +121,9 @@ export const AllSlotCombinations: Story = {
           {/* Illustration + Text */}
           <div>
             <h4 className={sectionHeadingStyles}>Illustration + Text</h4>
-            <SelectBoxGroup 
+            <SelectBoxGroup
               aria-label="Illustration + Text"
-              orientation="vertical" 
+              orientation="vertical"
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox id="illustration-text" textValue="With Illustration">
                 <Server />
@@ -136,7 +137,7 @@ export const AllSlotCombinations: Story = {
             <h4 className={sectionHeadingStyles}>Text + Description</h4>
             <SelectBoxGroup
               aria-label="Text + Description"
-              orientation="vertical" 
+              orientation="vertical"
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox id="text-desc" textValue="Main Text">
                 <Text slot="label">Main Text</Text>
@@ -148,9 +149,9 @@ export const AllSlotCombinations: Story = {
           {/* Illustration + Description */}
           <div>
             <h4 className={sectionHeadingStyles}>Illustration + Description</h4>
-            <SelectBoxGroup 
+            <SelectBoxGroup
               aria-label="Illustration + Description"
-              orientation="vertical" 
+              orientation="vertical"
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox id="illustration-desc" textValue="Only description text">
                 <PaperAirplane />
@@ -162,9 +163,9 @@ export const AllSlotCombinations: Story = {
           {/* Illustration + Text + Description */}
           <div>
             <h4 className={sectionHeadingStyles}>Illustration + Text + Description</h4>
-            <SelectBoxGroup 
+            <SelectBoxGroup
               aria-label="Illustration + Text + Description"
-              orientation="vertical" 
+              orientation="vertical"
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox id="all-vertical" textValue="Full Vertical">
                 <AlertNotice />
@@ -181,13 +182,13 @@ export const AllSlotCombinations: Story = {
       <div>
         <h3 className={subheadingStyles}>Horizontal Orientation</h3>
         <div style={{display: 'flex', flexDirection: 'column', gap: 20}}>
-          
+
           {/* Text Only */}
           <div>
             <h4 className={sectionHeadingStyles}>Text Only</h4>
-            <SelectBoxGroup 
+            <SelectBoxGroup
               aria-label="Text Only"
-              orientation="horizontal" 
+              orientation="horizontal"
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox id="h-text-only" textValue="Simple Horizontal Text">
                 <Text slot="label">Simple Horizontal Text</Text>
@@ -200,7 +201,7 @@ export const AllSlotCombinations: Story = {
             <h4 className={sectionHeadingStyles}>Illustration + Text</h4>
             <SelectBoxGroup
               aria-label="Illustration + Text"
-              orientation="horizontal" 
+              orientation="horizontal"
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox id="h-illustration-text" textValue="Horizontal with Illustration">
                 <PaperAirplane />
@@ -214,7 +215,7 @@ export const AllSlotCombinations: Story = {
             <h4 className={sectionHeadingStyles}>Text + Description</h4>
             <SelectBoxGroup
               aria-label="Text + Description"
-              orientation="horizontal" 
+              orientation="horizontal"
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox id="h-text-desc" textValue="Main Horizontal Text">
                 <Text slot="label">Main Horizontal Text</Text>
@@ -226,9 +227,9 @@ export const AllSlotCombinations: Story = {
           {/* Illustration + Text + Description */}
           <div>
             <h4 className={sectionHeadingStyles}>Illustration + Text + Description</h4>
-            <SelectBoxGroup 
+            <SelectBoxGroup
               aria-label="Illustration + Text + Description"
-              orientation="horizontal" 
+              orientation="horizontal"
               onSelectionChange={action('onSelectionChange')}>
               <SelectBox id="h-all" textValue="Complete Horizontal">
                 <Server />
@@ -244,36 +245,36 @@ export const AllSlotCombinations: Story = {
       {/* Comparison Grid */}
       <div style={{marginTop: 40}}>
         <h3 className={subheadingStyles}>Side-by-Side Comparison</h3>
-        <SelectBoxGroup 
+        <SelectBoxGroup
           aria-label="Vertical"
           onSelectionChange={action('onSelectionChange')}>
-          
+
           {/* Vertical examples */}
           <SelectBox id="v1" textValue="V: Text Only">
             <Text slot="label">V: Text Only</Text>
           </SelectBox>
-          
+
           <SelectBox id="v2" textValue="V: Illustration + Text">
             <StarFilled1 />
             <Text slot="label">V: Illustration + Text</Text>
           </SelectBox>
-          
+
           <SelectBox id="v3" textValue="V: Text + Desc">
             <Text slot="label">V: Text + Desc</Text>
             <Text slot="description">Vertical description</Text>
           </SelectBox>
-          
+
           <SelectBox id="v4" textValue="V: Illustration + Desc">
             <PaperAirplane />
             <Text slot="description">V: Illustration + Desc</Text>
           </SelectBox>
-          
+
           <SelectBox id="v5" textValue="V: All Elements">
             <AlertNotice />
             <Text slot="label">V: All Elements</Text>
             <Text slot="description">Complete vertical</Text>
           </SelectBox>
-          
+
         </SelectBoxGroup>
 
         <div style={{marginTop: 20}}>
@@ -281,33 +282,33 @@ export const AllSlotCombinations: Story = {
             aria-label="Horizontal"
             orientation="horizontal"
             onSelectionChange={action('onSelectionChange')}>
-            
+
             {/* Horizontal examples */}
             <SelectBox id="h1" textValue="H: Text Only">
               <Text slot="label">H: Text Only</Text>
             </SelectBox>
-            
+
             <SelectBox id="h2" textValue="H: Illustration + Text">
               <StarFilled1 />
               <Text slot="label">H: Illustration + Text</Text>
             </SelectBox>
-            
+
             <SelectBox id="h3" textValue="H: Text + Description">
               <Text slot="label">H: Text + Description</Text>
               <Text slot="description">Horizontal description</Text>
             </SelectBox>
-            
+
             <SelectBox id="h4" textValue="H: Illustration + Desc">
               <Server />
               <Text slot="description">H: Illustration + Desc</Text>
             </SelectBox>
-            
+
             <SelectBox id="h5" textValue="H: All Elements">
               <PaperAirplane />
               <Text slot="label">H: All Elements</Text>
               <Text slot="description">Complete horizontal layout</Text>
             </SelectBox>
-            
+
           </SelectBoxGroup>
         </div>
       </div>

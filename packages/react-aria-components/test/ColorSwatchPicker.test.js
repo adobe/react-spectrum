@@ -10,7 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSwatch, ColorSwatchPicker, ColorSwatchPickerItem, parseColor} from '../src';
+import {ColorSwatch} from '../src/ColorSwatch';
+
+import {ColorSwatchPicker, ColorSwatchPickerItem} from '../src/ColorSwatchPicker';
+import {parseColor} from 'react-stately/Color';
 import {pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';

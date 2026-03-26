@@ -10,22 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
-import {
-  Avatar,
-  Content,
-  ContextualHelp,
-  Footer,
-  Heading,
-  Image,
-  Link,
-  Tag,
-  TagGroup,
-  Text
-} from '../src';
+import {action} from 'storybook/actions';
+import {Avatar} from '../src/Avatar';
+import {Content, Footer, Heading, Text} from '../src/Content';
+import {ContextualHelp} from '../src/ContextualHelp';
+import {Image} from '../src/Image';
+import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style' with {type: 'macro'};
+import {Tag, TagGroup} from '../src/TagGroup';
 
 const meta: Meta<typeof TagGroup<any>> = {
   component: TagGroup,

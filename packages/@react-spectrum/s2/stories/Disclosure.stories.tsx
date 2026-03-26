@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTitle} from '../src';
+import {ActionButton} from '../src/ActionButton';
+
+import {Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTitle} from '../src/Disclosure';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';

@@ -11,8 +11,15 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, FieldError, Form, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, Popover, Select, SelectContext, SelectStateContext, SelectValue, Text} from '../';
+import {Button} from '../src/Button';
+import {FieldError} from '../src/FieldError';
+import {Form} from '../src/Form';
+import {Label} from '../src/Label';
+import {ListBox, ListBoxItem, ListBoxLoadMoreItem} from '../src/ListBox';
+import {Popover} from '../src/Popover';
 import React, {useEffect, useRef, useState} from 'react';
+import {Select, SelectContext, SelectStateContext, SelectValue} from '../src/Select';
+import {Text} from '../src/Text';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -220,6 +227,62 @@ describe('Select', () => {
 
     await selectTester.open();
     expect(trigger).toHaveTextContent('close');
+  });
+
+  it('should stay open on selecting an option if shouldCloseOnSelect is false and single selection mode', async () => {
+    let {getByTestId} = render(
+      <Select data-testid="select" shouldCloseOnSelect={false}>
+        <Label>Favorite Animal</Label>
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover>
+          <ListBox>
+            <ListBoxItem>Cat</ListBoxItem>
+            <ListBoxItem>Dog</ListBoxItem>
+            <ListBoxItem>Kangaroo</ListBoxItem>
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+    let trigger = selectTester.trigger;
+
+    await selectTester.open();
+    expect(trigger).toHaveAttribute('data-pressed', 'true');
+
+    await selectTester.selectOption({option: 'Dog', closesOnSelect: false});
+    expect(trigger).toHaveTextContent('Dog');
+    expect(trigger).toHaveAttribute('data-pressed', 'true');
+  });
+
+  it('should close on selecting an option if shouldCloseOnSelect is true and multiple selection mode', async () => {
+    let {getByTestId} = render(
+      <Select data-testid="select" shouldCloseOnSelect selectionMode="multiple">
+        <Label>Favorite Animal</Label>
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover>
+          <ListBox>
+            <ListBoxItem>Cat</ListBoxItem>
+            <ListBoxItem>Dog</ListBoxItem>
+            <ListBoxItem>Kangaroo</ListBoxItem>
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+    let trigger = selectTester.trigger;
+
+    await selectTester.open();
+    expect(trigger).toHaveAttribute('data-pressed', 'true');
+
+    await selectTester.selectOption({option: 'Dog', closesOnSelect: true});
+    expect(trigger).toHaveTextContent('Dog');
+    expect(trigger).not.toHaveAttribute('data-pressed', 'true');
   });
 
   it('should send disabled prop to the hidden field', () => {

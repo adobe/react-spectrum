@@ -10,13 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, Form, Group, Heading, Input, Label, Popover, RangeCalendar, TextField} from 'react-aria-components';
+import {action} from 'storybook/actions';
+import {Button} from '../src/Button';
+import {Calendar, CalendarCell, CalendarGrid, RangeCalendar} from '../src/Calendar';
 import clsx from 'clsx';
+import {DateInput, DateSegment} from '../src/DateField';
+import {DatePicker, DateRangePicker} from '../src/DatePicker';
+import {Dialog} from '../src/Dialog';
+import {Form} from '../src/Form';
+import {Group} from '../src/Group';
+import {Heading} from '../src/Heading';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
 import {Meta, StoryFn} from '@storybook/react';
 import {parseAbsoluteToLocal} from '@internationalized/date';
+import {Popover} from '../src/Popover';
 import React from 'react';
 import styles from '../example/index.css';
+import {TextField} from '../src/TextField';
 import './styles.css';
 
 export default {

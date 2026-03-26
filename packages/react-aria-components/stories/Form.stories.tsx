@@ -10,10 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
-import {Button, Form, Input, Label, ListBox, ListBoxItem, Popover, Select, SelectValue, TextField} from 'react-aria-components';
+import {action} from 'storybook/actions';
+import {Button} from '../src/Button';
+import {Form} from '../src/Form';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
+import {ListBox, ListBoxItem} from '../src/ListBox';
 import {Meta, StoryFn} from '@storybook/react';
+import {Popover} from '../src/Popover';
 import React from 'react';
+import {Select, SelectValue} from '../src/Select';
+import {TextField} from '../src/TextField';
 import './styles.css';
 
 export default {

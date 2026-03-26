@@ -12,7 +12,7 @@
 
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
-import {Switch} from '../src';
+import {Switch} from '../src/Switch';
 
 const meta: Meta<typeof Switch> = {
   component: Switch,

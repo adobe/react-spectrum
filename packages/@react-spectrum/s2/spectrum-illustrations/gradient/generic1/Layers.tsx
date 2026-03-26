@@ -15,7 +15,7 @@ import Layers_M from 'illustration:./S2_fill_layers_generic1_96.svg';
 import Layers_S from 'illustration:./S2_fill_layers_generic1_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/utils';
 
 export default function Layers(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

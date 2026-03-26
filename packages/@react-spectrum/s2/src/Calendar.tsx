@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Header, HeaderContext, Heading, HeadingContext, pressScale} from './';
+import {ActionButton} from './ActionButton';
+
 import {
   Calendar as AriaCalendar,
   CalendarCell as AriaCalendarCell,
@@ -18,39 +19,40 @@ import {
   CalendarGrid as AriaCalendarGrid,
   CalendarHeaderCell as AriaCalendarHeaderCell,
   CalendarProps as AriaCalendarProps,
-  ButtonProps,
   CalendarCellProps,
   CalendarCellRenderProps,
   CalendarGridBody,
   CalendarGridHeader,
   CalendarHeaderCellProps,
-  CalendarState,
   CalendarStateContext,
-  ContextValue,
-  DateValue,
-  Provider,
-  RangeCalendarContext,
-  RangeCalendarState,
-  RangeCalendarStateContext,
-  Text,
-  useSlottedContext
-} from 'react-aria-components';
-import {AriaCalendarGridProps} from '@react-aria/calendar';
-import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
+  DateValue
+} from 'react-aria-components/Calendar';
+import {AriaCalendarGridProps} from 'react-aria/useCalendar';
+import {ButtonProps} from 'react-aria-components/Button';
 import {
   CalendarDate,
   getDayOfWeek,
   startOfMonth
 } from '@internationalized/date';
+import {CalendarState} from 'react-stately/useCalendarState';
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
+import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/utils';
+import {focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {Header, HeaderContext, Heading, HeadingContext} from './Content';
 import {helpTextStyles} from './Field';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, CSSProperties, ForwardedRef, forwardRef, Fragment, PropsWithChildren, ReactElement, ReactNode, useContext, useMemo, useRef} from 'react';
-import {useDateFormatter, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {pressScale} from './pressScale';
+import {RangeCalendarContext, RangeCalendarStateContext} from 'react-aria-components/RangeCalendar';
+import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
+import React, {createContext, ForwardedRef, forwardRef, Fragment, PropsWithChildren, ReactElement, ReactNode, useContext, useMemo, useRef} from 'react';
+import {Text} from 'react-aria-components/Text';
+import {useDateFormatter} from 'react-aria/useDateFormatter';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
@@ -135,7 +137,10 @@ const cellStyles = style({
     default: 2,
     isFirstWeek: 0
   },
-  paddingBottom: 2,
+  paddingBottom: {
+    default: 2,
+    isLastWeek: 0
+  },
   position: 'relative',
   width: 32,
   height: 32,
@@ -156,7 +161,6 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
   },
   outlineOffset: {
     default: -2,
-    isToday: 2,
     isSelected: {
       selectionMode: {
         single: 2,
@@ -184,10 +188,6 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
     },
     isPressed: 'gray-100',
     isDisabled: 'transparent',
-    isToday: {
-      default: baseColor('gray-300'),
-      isDisabled: 'disabled'
-    },
     isSelected: {
       selectionMode: {
         single: {
@@ -254,7 +254,6 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
     },
     forcedColors: {
       default: 'transparent',
-      isToday: 'ButtonFace',
       isHovered: 'Highlight',
       isSelected: {
         selectionMode: {
@@ -282,12 +281,26 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
     isDisabled: 'disabled',
     forcedColors: {
       default: 'ButtonText',
-      isToday: 'ButtonFace',
       isSelected: 'HighlightText',
       isSelectionStart: 'HighlightText',
       isSelectionEnd: 'HighlightText',
       isDisabled: 'GrayText'
     }
+  }
+});
+
+const todayStyles = style({
+  position: 'absolute',
+  bottom: 4,
+  left: '50%',
+  transform: 'translateX(-50%)',
+  width: 4,
+  height: 4,
+  borderRadius: 'full',
+  backgroundColor: '[currentColor]',
+  display: {
+    default: 'none',
+    isToday: 'block'
   }
 });
 
@@ -302,24 +315,35 @@ const unavailableStyles = style({
   backgroundColor: '[currentColor]'
 });
 
-const selectionSpanStyles = style<{isInvalid?: boolean}>({
+const selectionBackgroundStyles = style<{isInvalid?: boolean, isFirstDayInWeek?: boolean, isLastDayInWeek?: boolean, isSelectionStart?: boolean, isSelectionEnd?: boolean, isPreviousDayNotSelected?: boolean, isNextDayNotSelected?: boolean}>({
   position: 'absolute',
   zIndex: -1,
   top: 0,
-  insetStart: 'calc(-1 * var(--selection-span) * (var(--cell-width) + var(--cell-gap) + var(--cell-gap)))',
-  insetEnd: 0,
-  bottom: 0,
-  borderWidth: 2,
-  borderStyle: 'dashed',
-  borderColor: {
-    default: 'blue-800', // focus-indicator-color
-    isInvalid: 'negative-900',
-    forcedColors: {
-      default: 'ButtonText'
-    }
+  insetStart: {
+    default: -4,
+    isFirstDayInWeek: 0,
+    isSelectionStart: 0,
+    isPreviousDayNotSelected: 0
   },
-  borderStartRadius: 'full',
-  borderEndRadius: 'full',
+  insetEnd: {
+    default: -4,
+    isLastDayInWeek: 0,
+    isSelectionEnd: 0,
+    isNextDayNotSelected: 0
+  },
+  bottom: 0,
+  borderStartRadius: {
+    default: 'none',
+    isFirstDayInWeek: 'full',
+    isSelectionStart: 'full',
+    isPreviousDayNotSelected: 'full'
+  },
+  borderEndRadius: {
+    default: 'none',
+    isLastDayInWeek: 'full',
+    isSelectionEnd: 'full',
+    isNextDayNotSelected: 'full'
+  },
   backgroundColor: {
     default: 'blue-subtle',
     isInvalid: 'negative-100',
@@ -330,6 +354,58 @@ const selectionSpanStyles = style<{isInvalid?: boolean}>({
   forcedColorAdjust: 'none'
 });
 
+const selectionBorderStyles = style<{isInvalid?: boolean, isFirstDayInWeek?: boolean, isLastDayInWeek?: boolean, isSelectionStart?: boolean, isSelectionEnd?: boolean, isPreviousDayNotSelected?: boolean, isNextDayNotSelected?: boolean}>({
+  position: 'absolute',
+  zIndex: 1,
+  top: 0,
+  insetStart: {
+    default: -4,
+    isFirstDayInWeek: 0,
+    isSelectionStart: 0,
+    isPreviousDayNotSelected: 0
+  },
+  insetEnd: {
+    default: -4,
+    isLastDayInWeek: 0,
+    isSelectionEnd: 0,
+    isNextDayNotSelected: 0
+  },
+  bottom: 0,
+  borderStartWidth: {
+    default: 0,
+    isFirstDayInWeek: 1,
+    isSelectionStart: 1,
+    isPreviousDayNotSelected: 1
+  },
+  borderTopWidth: 1,
+  borderEndWidth: {
+    default: 0,
+    isLastDayInWeek: 1,
+    isSelectionEnd: 1,
+    isNextDayNotSelected: 1
+  },
+  borderBottomWidth: 1,
+  borderStyle: 'solid',
+  borderColor: {
+    default: 'blue-800', // focus-indicator-color
+    isInvalid: 'negative-900',
+    forcedColors: {
+      default: 'ButtonText'
+    }
+  },
+  borderStartRadius: {
+    default: 'none',
+    isFirstDayInWeek: 'full',
+    isSelectionStart: 'full',
+    isPreviousDayNotSelected: 'full'
+  },
+  borderEndRadius: {
+    default: 'none',
+    isLastDayInWeek: 'full',
+    isSelectionEnd: 'full',
+    isNextDayNotSelected: 'full'
+  }
+});
 /**
  * Calendars display a grid of days in one or more months and allow users to select a single date.
  */
@@ -508,37 +584,35 @@ const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {firstDayOfWe
   let {locale} = useLocale();
   let firstDayOfWeek = props.firstDayOfWeek;
   // Calculate the day and week index based on the date.
-  let {dayIndex, weekIndex} = useWeekAndDayIndices(props.date, locale, firstDayOfWeek);
+  let {dayIndex, weekIndex, lastWeekIndex} = useWeekAndDayIndices(props.date, locale, firstDayOfWeek);
 
   let calendarStateContext = useContext(CalendarStateContext);
   let rangeCalendarStateContext = useContext(RangeCalendarStateContext);
   let state = (calendarStateContext ?? rangeCalendarStateContext)!;
 
+
   let isFirstWeek = weekIndex === 0;
+  let isLastWeek = weekIndex === lastWeekIndex;
   let isFirstChild = dayIndex === 0;
   let isLastChild = dayIndex === 6;
 
   return (
     <AriaCalendarCell
       date={props.date}
-      className={(renderProps) => cellStyles({...renderProps, isFirstChild, isLastChild, isFirstWeek})}>
+      className={(renderProps) => cellStyles({...renderProps, isFirstChild, isLastChild, isFirstWeek, isLastWeek})}>
       {(renderProps) => <CalendarCellInner {...props} weekIndex={weekIndex} dayIndex={dayIndex} state={state} isRangeSelection={!!rangeCalendarStateContext} renderProps={renderProps} />}
     </AriaCalendarCell>
   );
 };
 
 const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRangeSelection: boolean, state: CalendarState | RangeCalendarState, weekIndex: number, dayIndex: number, renderProps?: CalendarCellRenderProps, date: DateValue}): ReactElement => {
-  let {weekIndex, dayIndex, date, renderProps, state, isRangeSelection} = props;
-  let {getDatesInWeek} = state;
+  let {dayIndex, date, renderProps, state, isRangeSelection} = props;
   let ref = useRef<HTMLDivElement>(null);
   let {isUnavailable, formattedDate, isSelected, isSelectionStart, isSelectionEnd, isInvalid} = renderProps!;
   // only apply the selection start/end styles if the start/end date is actually selectable (aka not unavailable)
   // or if the range is invalid and thus we still want to show the styles even if the start/end date is an unavailable one
   isSelectionStart = isSelectionStart && (!isUnavailable || isInvalid);
   isSelectionEnd = isSelectionEnd && (!isUnavailable || isInvalid);
-
-  let startDate = startOfMonth(date);
-  let datesInWeek = getDatesInWeek(weekIndex, startDate);
 
   let isDateInRange = (checkDate: CalendarDate) => {
     if (!('highlightedRange' in state) || !state.highlightedRange) {
@@ -553,20 +627,12 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRange
     return state.isSelected(checkDate);
   };
 
-  // Starting from the current day, find the first day before it in the current week that is not selected.
-  // Then, the span of selected days is the current day minus the first unselected day.
-  let firstUnselectedInRangeInWeek = datesInWeek.slice(0, dayIndex + 1).reverse().findIndex((date, i) => {
-    return date && i > 0 && (!isDateInRange(date) || date.month !== props.date.month);
-  });
-
-  let selectionSpan = -1;
-  if (firstUnselectedInRangeInWeek > -1 && isSelected) {
-    selectionSpan = firstUnselectedInRangeInWeek - 1;
-  } else if (isSelected) {
-    selectionSpan = dayIndex;
-  }
   let prevDay = date.subtract({days: 1});
   let nextDay = date.add({days: 1});
+  let isFirstDayInWeek = dayIndex === 0;
+  let isLastDayInWeek = dayIndex === 6;
+  let isPreviousDayNotSelected = !prevDay || (!isDateInRange(prevDay) || prevDay.month !== props.date.month);
+  let isNextDayNotSelected = !nextDay || (!isDateInRange(nextDay) || nextDay.month !== props.date.month);
 
   // when invalid, show background for all selected dates (including unavailable) to make continuous range appearance
   // when valid, only show background for available selected dates
@@ -592,12 +658,14 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRange
         ref={ref}
         style={pressScale(ref, {})(renderProps!)}
         className={cellInnerStyles({...renderProps!, isSelectionStart, isSelectionEnd, selectionMode: isRangeSelection ? 'range' : 'single'})}>
+        <div className={todayStyles(renderProps!)} role="presentation" />
         <div>
           {formattedDate}
         </div>
         {isUnavailable && <div className={unavailableStyles} role="presentation" />}
       </div>
-      {isBackgroundStyleApplied && <div style={{'--selection-span': selectionSpan} as CSSProperties} className={selectionSpanStyles({isInvalid})} role="presentation" />}
+      {isBackgroundStyleApplied && <div className={selectionBackgroundStyles({isInvalid, isFirstDayInWeek, isLastDayInWeek, isSelectionStart, isSelectionEnd, isPreviousDayNotSelected, isNextDayNotSelected})} role="presentation" />}
+      {isBackgroundStyleApplied && <div className={selectionBorderStyles({isInvalid, isFirstDayInWeek, isLastDayInWeek, isSelectionStart, isSelectionEnd, isPreviousDayNotSelected, isNextDayNotSelected})} role="presentation" />}
     </div>
   );
 };
@@ -616,7 +684,7 @@ function useWeekAndDayIndices(
   locale: string,
   firstDayOfWeek?: DayOfWeek
 ) {
-  let {dayIndex, weekIndex} = useMemo(() => {
+  let result = useMemo(() => {
     // Get the day index within the week (0-6)
     const dayIndex = getDayOfWeek(date, locale, firstDayOfWeek);
 
@@ -628,12 +696,15 @@ function useWeekAndDayIndices(
     const dayOfMonth = date.day;
 
     const weekIndex = Math.floor((dayOfMonth + monthStartDayOfWeek - 1) / 7);
+    const lastDayOfMonth = startOfMonth(date).add({months: 1}).subtract({days: 1});
+    const lastWeekIndex = Math.floor((lastDayOfMonth.day + monthStartDayOfWeek - 1) / 7);
 
     return {
       weekIndex,
+      lastWeekIndex,
       dayIndex
     };
   }, [date, locale, firstDayOfWeek]);
 
-  return {dayIndex, weekIndex};
+  return result;
 }
