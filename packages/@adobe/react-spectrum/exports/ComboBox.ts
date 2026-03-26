@@ -16,3 +16,4 @@ export {ComboBox} from '../src/combobox/ComboBox';
 export type {SpectrumComboBoxProps} from '../src/combobox/ComboBox';
 export {Item} from 'react-stately/Item';
 export {Section} from 'react-stately/Section';
+export type {ItemProps, SectionProps, Key} from '@react-types/shared';
