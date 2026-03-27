@@ -83,9 +83,9 @@ for (let i = 0; i < 5000; i++) {
 
 Use the `orientation` option to arrange items horizontally or vertically. Provide the same `orientation` on the collection component so keyboard navigation matches the layout.
 
-```tsx render docs={docs.exports.ListLayoutOptions} links={docs.links} props={['gap', 'padding']} initialProps={{estimatedRowSize: 300, gap: 8, padding: 8, orientation: 'horizontal'}} propsObject="layoutOptions" wide
+```tsx render docs={docs.exports.ListLayoutOptions} links={docs.links} props={['gap', 'padding']} initialProps={{estimatedRowSize: 100, gap: 8, padding: 8, orientation: 'horizontal'}} propsObject="layoutOptions" wide
 "use client";
-import {Virtualizer, ListLayout, Text} from 'react-aria-components';
+import {Virtualizer, ListLayout} from 'react-aria-components';
 import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 
 ///- begin collapse -///
@@ -320,12 +320,10 @@ for (let i = 0; imageOptions.length < 500; i++) {
     aria-label="Horizontal virtualized list"
     selectionMode="multiple"
     items={imageOptions}
-    style={{display: 'block', padding: 0, height: 400}}>
+    style={{display: 'block', padding: 0, height: 250}}>
     {(item) => (
-      <ListBoxItem textValue={item.title} style={{height: '100%', display: 'flex', flexDirection: 'column', padding: '0px 16px', overflow: 'hidden', boxSizing: 'border-box', border: '2px solid var(--border-color)', borderRadius: 8}}>
-        <img src={item.image} alt="" style={{height: 250, width: 'auto', maxWidth: 500, aspectRatio: item.aspectRatio, objectFit: 'cover', display: 'block', flex: 'none', paddingBottom: '10px'}} />
-        <Text slot="label" style={{maxWidth: '500px', padding: '0px 16px', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{item.title}</Text>
-        <Text slot="description" style={{maxWidth: '500px', padding: '0px 16px', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{item.user}</Text>
+      <ListBoxItem textValue={item.title} aria-label={item.title} style={{height: '100%', padding: 12, overflow: 'hidden', boxSizing: 'border-box', border: '2px solid var(--border-color)', borderRadius: 8}}>
+        <img src={item.image} alt="" style={{maxHeight: 200, aspectRatio: item.aspectRatio, borderRadius: 4}} />
       </ListBoxItem>
     )}
   </ListBox>
