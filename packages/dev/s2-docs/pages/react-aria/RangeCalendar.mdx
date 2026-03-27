@@ -339,6 +339,27 @@ import {ChevronLeft, ChevronRight} from 'lucide-react';
 </RangeCalendar>
 ```
 
+## Interact outside behavior
+
+Use the `interactOutsideBehavior` prop to control what happens when a range selection is in progress and the user interacts outside the calendar.
+
+```tsx render docs={docs.exports.RangeCalendar} links={docs.links} props={['interactOutsideBehavior']} initialProps={{interactOutsideBehavior: 'select'}}
+"use client";
+import {RangeCalendar} from 'vanilla-starter/RangeCalendar';
+import {parseDate} from '@internationalized/date';
+
+<RangeCalendar
+  aria-label="Trip dates"
+  defaultValue={{
+    start: parseDate('2025-02-03'),
+    end: parseDate('2025-02-12')
+  }}
+  ///- begin highlight -///
+  /* PROPS */
+  ///- end highlight -///
+/>
+```
+
 ## API
 
 <Anatomy
