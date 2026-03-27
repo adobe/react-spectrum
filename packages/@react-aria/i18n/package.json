@@ -8,15 +8,12 @@
   "exports": {
     ".": {
       "source": "./src/index.ts",
-      "types": [
-        "./dist/types.d.ts",
-        "./src/index.ts"
-      ],
+      "types": "./dist/types/src/index.d.ts",
       "import": "./dist/import.mjs",
       "require": "./dist/main.js"
     },
     "./server": {
-      "source": "./src/server.tsx",
+      "source": "./src/server.ts",
       "import": "./server/index.mjs",
       "require": "./server/index.js"
     },
@@ -24,10 +21,22 @@
   },
   "server-module": "server/index.mjs",
   "server-main": "server/index.js",
-  "types": "dist/types.d.ts",
+  "types": "dist/types/src/index.d.ts",
   "source": "src/index.ts",
   "targets": {
-    "types": false
+    "types": false,
+    "server-module": {
+      "source": "src/server.ts",
+      "outputFormat": "esmodule",
+      "isLibrary": true,
+      "includeNodeModules": false
+    },
+    "server-main": {
+      "source": "src/server.ts",
+      "outputFormat": "commonjs",
+      "isLibrary": true,
+      "includeNodeModules": false
+    }
   },
   "files": [
     "dist",

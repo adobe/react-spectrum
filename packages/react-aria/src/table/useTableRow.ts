@@ -84,9 +84,20 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
           if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === treeNode.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(treeNode.key)) {
             state.toggleKey(treeNode.key);
             e.stopPropagation();
-          } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === treeNode.key && hasChildRows && (state.expandedKeys === 'all' || state.expandedKeys.has(treeNode.key))) {
-            state.toggleKey(treeNode.key);
-            e.stopPropagation();
+          } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === treeNode.key) {
+            if (state.expandedKeys !== 'all') {
+              if (hasChildRows && state.expandedKeys.has(treeNode.key)) {
+                state.toggleKey(treeNode.key);
+                e.stopPropagation();
+              } else if (!state.expandedKeys.has(treeNode.key) && treeNode.parentKey && treeNode.level > 0) {
+                // Item is a leaf or already collapsed, move focus to parent
+                state.selectionManager.setFocusedKey(treeNode.parentKey);
+                e.stopPropagation();
+              }
+            } else if (state.expandedKeys === 'all') {
+              state.toggleKey(treeNode.key);
+              e.stopPropagation();
+            }
           }
         },
         'aria-expanded': hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,

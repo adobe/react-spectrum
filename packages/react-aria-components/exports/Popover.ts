@@ -16,3 +16,4 @@ import 'client-only';
 
 export {Popover, PopoverContext} from '../src/Popover';
 export type {PopoverProps, PopoverRenderProps} from '../src/Popover';
+export type {Placement} from 'react-aria/useOverlayPosition';

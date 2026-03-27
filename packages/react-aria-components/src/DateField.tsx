@@ -39,7 +39,7 @@ import {
   useDateFieldState
 } from 'react-stately/useDateFieldState';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {Group, GroupContext} from './Group';

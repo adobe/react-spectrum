@@ -8,16 +8,13 @@
   "exports": {
     ".": {
       "source": "./src/index.ts",
-      "types": [
-        "./dist/types.d.ts",
-        "./src/index.ts"
-      ],
+      "types": "./dist/types/src/index.d.ts",
       "import": "./dist/import.mjs",
       "require": "./dist/main.js"
     },
     "./package.json": "./package.json"
   },
-  "types": "dist/types.d.ts",
+  "types": "dist/types/src/index.d.ts",
   "source": "src/index.ts",
   "files": [
     "dist",
@@ -38,8 +35,6 @@
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
-    "@react-spectrum/test-utils-internal": "3.0.0-alpha.1",
     "@types/use-sync-external-store": "^0.0.3"
   },
   "peerDependencies": {

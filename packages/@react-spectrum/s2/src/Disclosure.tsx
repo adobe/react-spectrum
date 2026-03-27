@@ -18,7 +18,7 @@ import {CenterBaseline} from './CenterBaseline';
 
 import Chevron from '../ui-icons/Chevron';
 
-import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/utils';
+import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
   DisclosureStateContext,
   Disclosure as RACDisclosure,
@@ -26,7 +26,7 @@ import {
   DisclosurePanelProps as RACDisclosurePanelProps,
   DisclosureProps as RACDisclosureProps
 } from 'react-aria-components/Disclosure';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Heading} from 'react-aria-components/Heading';
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';

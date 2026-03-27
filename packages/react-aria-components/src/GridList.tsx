@@ -34,7 +34,8 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
+import {CollectionBuilder, createBranchComponent, createLeafComponent} from 'react-aria/CollectionBuilder';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, SectionProps} from './Collection';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
@@ -44,7 +45,7 @@ import {DragPreviewRenderer} from '@react-types/shared';
 import {DropIndicatorAria, DroppableCollectionResult} from 'react-aria/useDroppableCollection';
 import {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
 import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusScope} from 'react-aria/FocusScope';
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, Orientation, PressEvents, RefObject} from '@react-types/shared';
 import {HeaderNode, ItemNode, LoaderNode, SectionNode} from 'react-aria/private/collections/BaseCollection';

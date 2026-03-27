@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../../src/Icon';
 import RotateCW_L from 'illustration:./S2_fill_rotateCW_generic1_160.svg';
 import RotateCW_M from 'illustration:./S2_fill_rotateCW_generic1_96.svg';
 import RotateCW_S from 'illustration:./S2_fill_rotateCW_generic1_48.svg';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function RotateCW(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

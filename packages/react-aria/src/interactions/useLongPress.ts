@@ -12,7 +12,7 @@
 
 import {DOMAttributes, FocusableElement, LongPressEvent} from '@react-types/shared';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
-import {getOwnerDocument} from '../utils/domHelpers';
+import {getOwnerDocument, getOwnerWindow} from '../utils/domHelpers';
 import {mergeProps} from '../utils/mergeProps';
 import {useDescription} from '../utils/useDescription';
 import {useGlobalListeners} from '../utils/useGlobalListeners';
@@ -106,8 +106,9 @@ export function useLongPress(props: LongPressProps): LongPressResult {
             e.preventDefault();
           };
 
+          let ownerWindow = getOwnerWindow(e.target);
           addGlobalListener(e.target, 'contextmenu', onContextMenu, {once: true});
-          addGlobalListener(window, 'pointerup', () => {
+          addGlobalListener(ownerWindow, 'pointerup', () => {
             // If no contextmenu event is fired quickly after pointerup, remove the handler
             // so future context menu events outside a long press are not prevented.
             setTimeout(() => {

@@ -23,7 +23,7 @@ import {
   useRenderProps,
   useSlot
 } from './utils';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';

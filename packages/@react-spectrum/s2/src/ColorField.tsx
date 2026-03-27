@@ -12,7 +12,7 @@
 
 import {ColorField as AriaColorField, ColorFieldProps as AriaColorFieldProps} from 'react-aria-components/ColorField';
 
-import {ContextValue} from 'react-aria-components/utils';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from './useDOMRef';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};

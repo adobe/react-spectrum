@@ -14,19 +14,16 @@ import {
   DraggableCollectionOptions,
   DraggableItemProps,
   DraggableItemResult,
+  DragPreview,
   useDraggableCollection,
   useDraggableItem
 } from 'react-aria/useDraggableCollection';
-
 import {DraggableCollectionProps, DragItem, DroppableCollectionProps, Key, RefObject} from '@react-types/shared';
-
 import {
   DraggableCollectionState,
   DraggableCollectionStateOptions,
   useDraggableCollectionState
 } from 'react-stately/useDraggableCollectionState';
-
-import {DragPreview} from 'react-aria/DragPreview';
 import {
   DropIndicatorAria,
   DropIndicatorProps,
@@ -38,15 +35,12 @@ import {
   useDroppableCollection,
   useDroppableItem
 } from 'react-aria/useDroppableCollection';
-
 import {
   DroppableCollectionState,
   DroppableCollectionStateOptions,
   useDroppableCollectionState
 } from 'react-stately/useDroppableCollectionState';
-
 import {isVirtualDragging} from 'react-aria/private/dnd/DragManager';
-
 import {JSX, useMemo} from 'react';
 
 interface DraggableCollectionStateOpts<T> extends Omit<DraggableCollectionStateOptions<T>, 'getItems'> {}

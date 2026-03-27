@@ -12,7 +12,7 @@
 
 import {ActionMenu} from '../src/ActionMenu';
 
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {Content, Heading, Text} from '../src/Content';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';

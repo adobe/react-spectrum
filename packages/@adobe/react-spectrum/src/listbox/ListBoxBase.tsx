@@ -24,7 +24,7 @@ import {ListState} from 'react-stately/useListState';
 import {mergeProps} from 'react-aria/mergeProps';
 import {ProgressCircle} from '../progress/ProgressCircle';
 import React, {ForwardedRef, HTMLAttributes, ReactElement, ReactNode, useCallback, useContext, useMemo} from 'react';
-import {ReusableView} from 'react-stately/private/virtualizer/ReusableView';
+import {ReusableView} from 'react-stately/useVirtualizerState';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useObjectRef} from 'react-aria/useObjectRef';

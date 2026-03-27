@@ -32,7 +32,7 @@ import {DatePickerState, DatePickerStateOptions, DateValue, useDatePickerState} 
 import {DateRangePickerState, DateRangePickerStateOptions, useDateRangePickerState} from 'react-stately/useDateRangePickerState';
 import {DialogContext, OverlayTriggerStateContext} from './Dialog';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {GroupContext} from './Group';

@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../src/Icon';
 import ThumbsUp_L from 'illustration:./S2_lin_thumbsUp_160.svg';
 import ThumbsUp_M from 'illustration:./S2_lin_thumbsUp_96.svg';
 import ThumbsUp_S from 'illustration:./S2_lin_thumbsUp_48.svg';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function ThumbsUp(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
