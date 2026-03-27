@@ -409,7 +409,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
         hideArrow>
         <div
           style={UNSAFE_style}
-          className={(UNSAFE_className || '') + wrappingDiv}>
+          className={(UNSAFE_className || '') + mergeStyles(wrappingDiv, styles)}>
           {content}
         </div>
       </Popover>
