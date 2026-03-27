@@ -12,7 +12,7 @@
 
 import {Button} from '../src/Button';
 
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {ComboBox, ComboBoxProps, ComboBoxStateContext} from '../src/ComboBox';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';

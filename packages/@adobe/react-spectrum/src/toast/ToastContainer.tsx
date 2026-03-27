@@ -13,7 +13,7 @@
 import {AriaToastRegionProps} from 'react-aria/useToast';
 import {classNames} from '../utils/classNames';
 import {DOMProps} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {flushSync} from 'react-dom';
 import React, {ReactElement, useEffect, useMemo, useRef} from 'react';
 import {SpectrumToastValue, Toast} from './Toast';

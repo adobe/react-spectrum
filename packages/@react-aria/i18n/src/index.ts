@@ -13,8 +13,7 @@
 export {I18nProvider, useLocale, isRTL} from 'react-aria/I18nProvider';
 
 export {useMessageFormatter} from './useMessageFormatter';
-export {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-export {useLocalizedStringDictionary} from 'react-aria/private/i18n/useLocalizedStringFormatter';
+export {useLocalizedStringFormatter, useLocalizedStringDictionary} from 'react-aria/useLocalizedStringFormatter';
 export {useListFormatter} from 'react-aria/useListFormatter';
 export {useDateFormatter} from 'react-aria/useDateFormatter';
 export {useNumberFormatter} from 'react-aria/useNumberFormatter';

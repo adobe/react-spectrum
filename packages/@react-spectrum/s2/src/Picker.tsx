@@ -44,8 +44,8 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
-import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/utils';
+import {Collection} from 'react-aria/Collection';
+import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {control, controlBorderRadius, controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createHideableComponent} from 'react-aria/private/collections/Hidden';
 import {createShadowTreeWalker} from 'react-aria/private/utils/shadowdom/ShadowTreeWalker';
@@ -72,7 +72,7 @@ import intlMessages from '../intl/*.json';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {mergeStyles} from '../style/runtime';
-import {Placement} from 'react-aria/private/overlays/useOverlayPosition';
+import {Placement} from 'react-aria-components/Popover';
 import {Popover} from './Popover';
 // @ts-ignore
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';

@@ -14,7 +14,7 @@ import {act, fireEvent, mockClickDefault, pointerMap, render, setupIntersectionO
 import {AriaTreeTests} from './AriaTree.test-util';
 import {Button} from '../src/Button';
 import {Checkbox} from '../src/Checkbox';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {composeStories} from '@storybook/react';
 // @ts-ignore
 import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';

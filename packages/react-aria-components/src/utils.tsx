@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, RefObject,  DOMProps as SharedDOMProps} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';
-import {mergeRefs} from 'react-aria/private/utils/mergeRefs';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import React, {AllHTMLAttributes, AnchorHTMLAttributes, Context, CSSProperties, DetailedHTMLProps, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, RefCallback, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useObjectRef} from 'react-aria/useObjectRef';

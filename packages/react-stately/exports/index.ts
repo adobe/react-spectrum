@@ -31,7 +31,7 @@ export type {DisclosureState, DisclosureProps} from '../src/disclosure/useDisclo
 export type {DisclosureGroupState, DisclosureGroupProps} from '../src/disclosure/useDisclosureGroupState';
 export type {DraggableCollectionStateOptions, DraggableCollectionState} from '../src/dnd/useDraggableCollectionState';
 export type {DroppableCollectionStateOptions, DroppableCollectionState} from '../src/dnd/useDroppableCollectionState';
-export type {AsyncListData, AsyncListOptions} from '../src/data/useAsyncList';
+export type {AsyncListOptions, AsyncListData, AsyncListLoadFunction, AsyncListLoadOptions, AsyncListStateUpdate} from '../src/data/useAsyncList';
 export type {ListData, ListOptions} from '../src/data/useListData';
 export type {TreeData, TreeOptions} from '../src/data/useTreeData';
 export type {ListProps, ListState} from '../src/list/useListState';
@@ -43,7 +43,7 @@ export type {RadioGroupProps, RadioGroupState} from '../src/radio/useRadioGroupS
 export type {SearchFieldProps, SearchFieldState} from '../src/searchfield/useSearchFieldState';
 export type {SelectProps, SelectState, SelectStateOptions} from '../src/select/useSelectState';
 export type {SliderState, SliderStateOptions, SliderProps} from '../src/slider/useSliderState';
-export type {MultipleSelectionManager, MultipleSelectionState, SingleSelectionState} from '../src/selection/types';
+export type {MultipleSelectionManager, MultipleSelectionState, SingleSelectionState, FocusState} from '../src/selection/types';
 export type {MultipleSelectionStateProps} from '../src/selection/useMultipleSelectionState';
 export type {NumberFieldState, NumberFieldStateOptions, NumberFieldProps} from '../src/numberfield/useNumberFieldState';
 export type {TableProps, TableState, TableStateProps} from '../src/table/useTableState';

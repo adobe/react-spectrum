@@ -33,10 +33,10 @@ import {DisclosureState, useDisclosureState} from 'react-stately/useDisclosureSt
 
 import {DOMProps, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {LabelAriaProps} from 'react-aria/useLabel';
 import {mergeProps} from 'react-aria/mergeProps';
-import {mergeRefs} from 'react-aria/private/utils/mergeRefs';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import React, {createContext, DOMAttributes, ForwardedRef, forwardRef, ReactNode, useContext} from 'react';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useId} from 'react-aria/useId';

@@ -19,8 +19,8 @@ import {
 } from 'react-aria-components/GridList';
 
 import {CardContext, InternalCardViewContext} from './Card';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
-import {ContextValue} from 'react-aria-components/utils';
+import {Collection} from 'react-aria/Collection';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactElement, useCallback, useMemo, useRef, useState} from 'react';
 import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};

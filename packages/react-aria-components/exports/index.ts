@@ -43,7 +43,8 @@ export {Header, HeaderContext} from '../src/Header';
 export {Heading, HeadingContext} from '../src/Heading';
 export {Input, InputContext} from '../src/Input';
 export {Section, CollectionRendererContext, DefaultCollectionRenderer} from '../src/Collection';
-export {Collection, createLeafComponent, createBranchComponent, CollectionBuilder} from 'react-aria/private/collections/CollectionBuilder';
+export {Collection} from 'react-aria/Collection';
+export {createLeafComponent, createBranchComponent, CollectionBuilder} from 'react-aria/CollectionBuilder';
 export {Keyboard, KeyboardContext} from '../src/Keyboard';
 export {Label, LabelContext} from '../src/Label';
 export {Link, LinkContext} from '../src/Link';
@@ -96,6 +97,9 @@ export {ListLayout, GridLayout, WaterfallLayout, Layout, LayoutInfo, Size, Rect,
 
 export type {I18nProviderProps, Locale} from 'react-aria/I18nProvider';
 export type {Filter} from 'react-aria/useFilter';
+export type {CollectionProps} from 'react-aria/Collection';
+export type {Placement} from 'react-aria/useOverlayPosition';
+export type {VisuallyHiddenProps} from 'react-aria/VisuallyHidden';
 
 export type {AutocompleteProps, SelectableCollectionContextValue} from '../src/Autocomplete';
 export type {BreadcrumbsProps, BreadcrumbProps, BreadcrumbRenderProps} from '../src/Breadcrumbs';

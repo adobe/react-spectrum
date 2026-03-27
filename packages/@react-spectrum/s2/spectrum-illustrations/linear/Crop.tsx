@@ -15,7 +15,7 @@ import Crop_M from 'illustration:./S2_lin_crop_96.svg';
 import Crop_S from 'illustration:./S2_lin_crop_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Crop(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

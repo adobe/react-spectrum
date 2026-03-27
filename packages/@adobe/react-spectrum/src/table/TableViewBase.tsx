@@ -16,7 +16,7 @@ import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames} from '../utils/classNames';
-import {ColumnSize} from 'react-stately/Column';
+import {ColumnSize} from 'react-stately/useTableState';
 import {DOMRef, DropTarget, FocusableElement, FocusableRef, Key, RefObject} from '@react-types/shared';
 import type {DragAndDropHooks} from '../dnd/useDragAndDrop';
 import type {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';

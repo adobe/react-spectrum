@@ -12,7 +12,7 @@
 
 import {act, fireEvent, mockClickDefault, mockImplementation, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '../../src/button/Button';
-import {chain} from 'react-aria/private/utils/chain';
+import {chain} from 'react-aria/chain';
 import {Item} from 'react-stately/Item';
 import {Link} from '../../src/link/Link';
 import {Provider} from '../../src/provider/Provider';

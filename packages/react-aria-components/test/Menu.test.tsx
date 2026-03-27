@@ -13,7 +13,7 @@
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaMenuTests} from './AriaMenu.test-util';
 import {Button} from '../src/Button';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {Header} from '../src/Header';
 import {Heading} from '../src/Heading';
 import {Input} from '../src/Input';

@@ -16,7 +16,7 @@ import {
   DateValue
 } from 'react-aria-components/DateRangePicker';
 import {CalendarButton, CalendarPopover, timeField} from './DatePicker';
-import {ContextValue} from 'react-aria-components/utils';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactElement, ReactNode, Ref, useContext, useState} from 'react';
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};

@@ -26,7 +26,7 @@ import intlMessages from '../intl/*.json';
 import {isFirstItem, isPrevSelected} from './ListView';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {ProgressCircle} from './ProgressCircle';
-import {Provider, useContextProps} from 'react-aria-components/utils';
+import {Provider, useContextProps} from 'react-aria-components/slots';
 // @ts-ignore
 import {
   TreeItemProps as RACTreeItemProps,

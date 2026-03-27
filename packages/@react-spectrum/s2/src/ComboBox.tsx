@@ -15,7 +15,6 @@ import {
   ComboBoxProps as AriaComboBoxProps,
   ComboBoxStateContext
 } from 'react-aria-components/ComboBox';
-
 import {
   ListBoxSection as AriaListBoxSection,
   ListBox,
@@ -23,11 +22,10 @@ import {
   ListBoxItemProps,
   ListBoxLoadMoreItem,
   ListBoxProps,
-  ListStateContext,
-  ListBoxSectionProps
+  ListBoxSectionProps,
+  ListStateContext
 } from 'react-aria-components/ListBox';
-
-import {PopoverProps as AriaPopoverProps} from 'react-aria-components/Popover';
+import {PopoverProps as AriaPopoverProps, Placement} from 'react-aria-components/Popover';
 import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SingleSelection, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {BaseCollection, CollectionNode} from 'react-aria/private/collections/BaseCollection';
@@ -44,12 +42,12 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
-import {ContextValue, Provider} from 'react-aria-components/utils';
+import {Collection} from 'react-aria/Collection';
+import {ContextValue, Provider} from 'react-aria-components/slots';
 import {control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {createFocusableRef} from './useDOMRef';
-import {createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
+import {createLeafComponent} from 'react-aria/CollectionBuilder';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
@@ -59,10 +57,9 @@ import {IconContext} from './Icon';
 import {InputContext, InputProps} from 'react-aria-components/Input';
 import intlMessages from '../intl/*.json';
 import {ListLayout} from 'react-stately/useVirtualizerState';
-import {mergeRefs} from 'react-aria/private/utils/mergeRefs';
+import {mergeRefs} from 'react-aria/mergeRefs';
 // @ts-ignore
 import {Node} from '@react-types/shared';
-import {Placement} from 'react-aria/private/overlays/useOverlayPosition';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';

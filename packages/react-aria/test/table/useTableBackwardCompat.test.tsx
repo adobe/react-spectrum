@@ -12,12 +12,9 @@
 
 jest.mock('../../src/live-announcer/LiveAnnouncer');
 import {announce} from '../../src/live-announcer/LiveAnnouncer';
-import {Cell} from 'react-stately/Cell';
-import {Column} from 'react-stately/Column';
+import {Cell, Column, Row, TableBody, TableHeader} from 'react-stately/useTableState';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useRef} from 'react';
-import {Row} from 'react-stately/Row';
-import {TableBody} from 'react-stately/TableBody';
 import {
   TableCell,
   TableCheckboxCell,
@@ -27,7 +24,6 @@ import {
   TableRowGroup,
   TableSelectAllCell
 } from '../../stories/table/example-backwards-compat';
-import {TableHeader} from 'react-stately/TableHeader';
 import userEvent from '@testing-library/user-event';
 import {useTable} from '../../src/table/useTable';
 import {useTableState} from 'react-stately/useTableState';

@@ -11,7 +11,7 @@
  */
 
 import {action} from 'storybook/actions';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {DragAndDropHooks, DropIndicator, isTextDropItem, useDragAndDrop} from '../exports/useDragAndDrop';
 import {GridLayout, ListLayout, Size, WaterfallLayout} from 'react-stately/useVirtualizerState';
 import {Header} from '../src/Header';

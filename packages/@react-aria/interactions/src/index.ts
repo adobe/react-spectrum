@@ -18,7 +18,7 @@ export {isFocusVisible, getInteractionModality, setInteractionModality, getPoint
 export {useFocusVisible} from 'react-aria/useFocusVisible';
 export {useFocusWithin} from 'react-aria/useFocusWithin';
 export {useHover} from 'react-aria/useHover';
-export {useInteractOutside} from 'react-aria/private/interactions/useInteractOutside';
+export {useInteractOutside} from 'react-aria/useInteractOutside';
 export {useKeyboard} from 'react-aria/useKeyboard';
 export {useMove} from 'react-aria/useMove';
 export {usePress} from 'react-aria/usePress';
@@ -33,7 +33,7 @@ export type {FocusVisibleHandler, Modality} from 'react-aria/private/interaction
 export type {FocusVisibleProps, FocusVisibleResult} from 'react-aria/useFocusVisible';
 export type {FocusWithinProps, FocusWithinResult} from 'react-aria/useFocusWithin';
 export type {HoverProps, HoverResult} from 'react-aria/useHover';
-export type {InteractOutsideProps} from 'react-aria/private/interactions/useInteractOutside';
+export type {InteractOutsideProps} from 'react-aria/useInteractOutside';
 export type {KeyboardProps, KeyboardResult} from 'react-aria/useKeyboard';
 export type {PressProps, PressHookProps, PressResult} from 'react-aria/usePress';
 export type {MoveResult} from 'react-aria/useMove';

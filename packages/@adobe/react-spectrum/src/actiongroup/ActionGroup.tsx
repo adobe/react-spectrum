@@ -18,7 +18,7 @@ import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames} from '../utils/classNames';
 import {ClearSlots, SlotProvider, useSlotProps} from '../utils/Slots';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusScope} from 'react-aria/FocusScope';
 import intlMessages from '../../intl/actiongroup/*.json';
 import {Item} from 'react-stately/Item';

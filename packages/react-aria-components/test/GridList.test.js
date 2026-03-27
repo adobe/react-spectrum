@@ -13,7 +13,7 @@
 import {act, fireEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
 import {Checkbox} from '../src/Checkbox';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {getFocusableTreeWalker} from 'react-aria/private/focus/FocusScope';

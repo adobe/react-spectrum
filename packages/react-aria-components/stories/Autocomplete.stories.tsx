@@ -14,7 +14,7 @@ import {action} from 'storybook/actions';
 import {Autocomplete} from '../src/Autocomplete';
 import {Button} from '../src/Button';
 import {Cell, Column, Row, Table, TableBody, TableHeader, TableLayout} from '../src/Table';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {DialogTrigger} from '../src/Dialog';
 import {GridList, GridListHeader, GridListSection} from '../src/GridList';
 import {Header} from '../src/Header';

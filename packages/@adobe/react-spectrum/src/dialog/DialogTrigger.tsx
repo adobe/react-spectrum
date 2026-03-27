@@ -14,7 +14,7 @@ import {DialogContext} from './context';
 import {Modal} from '../overlays/Modal';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 import {Popover} from '../overlays/Popover';
-import {PositionProps} from 'react-aria/private/overlays/useOverlayPosition';
+import {PositionProps} from 'react-aria/useOverlayPosition';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import React, {Fragment, JSX, ReactElement, RefObject, useEffect, useRef} from 'react';
 import {SpectrumDialogProps} from './Dialog';

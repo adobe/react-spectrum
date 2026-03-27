@@ -15,7 +15,7 @@ import {ActionBar} from '../src/ActionBar';
 import {ActionButton} from '../src/ActionButton';
 import {ActionMenu} from '../src/ActionMenu';
 import {categorizeArgTypes, getActionArgs} from './utils';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {Content, Heading, Text} from '../src/Content';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';

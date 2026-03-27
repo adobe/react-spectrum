@@ -19,7 +19,7 @@ import {getCollectionId, isNonContiguousSelectionModifier} from './utils';
 import {isCtrlKeyPressed} from '../utils/keyboard';
 import {mergeProps} from '../utils/mergeProps';
 import {moveVirtualFocus} from '../focus/virtualFocus';
-import {MultipleSelectionManager} from 'react-stately/private/selection/types';
+import {MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';
 import {openLink, useRouter} from '../utils/openLink';
 import {PressHookProps, usePress} from '../interactions/usePress';
 import {useEffect, useRef} from 'react';

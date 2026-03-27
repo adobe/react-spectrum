@@ -19,7 +19,7 @@ import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'}
 import {CenterBaseline} from './CenterBaseline';
 import {CheckboxGroupStateContext} from 'react-aria-components/CheckboxGroup';
 import CheckmarkIcon from '../ui-icons/Checkmark';
-import {ContextValue, useSlottedContext} from 'react-aria-components/utils';
+import {ContextValue, useSlottedContext} from 'react-aria-components/slots';
 import {controlBorderRadius, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import DashIcon from '../ui-icons/Dash';

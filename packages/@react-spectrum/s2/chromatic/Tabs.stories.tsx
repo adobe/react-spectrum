@@ -12,7 +12,7 @@
 
 import Bell from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
 import {Button} from '../src/Button';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Heart from '../s2wf-icons/S2_Icon_Heart_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';

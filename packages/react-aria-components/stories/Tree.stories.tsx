@@ -14,7 +14,7 @@ import {action} from 'storybook/actions';
 import {Button} from '../src/Button';
 import {Checkbox, CheckboxProps} from '../src/Checkbox';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {DroppableCollectionReorderEvent, Key} from '@react-types/shared';
 import {isTextDropItem, useDragAndDrop} from '../exports/useDragAndDrop';
 import {ListLayout} from 'react-stately/useVirtualizerState';

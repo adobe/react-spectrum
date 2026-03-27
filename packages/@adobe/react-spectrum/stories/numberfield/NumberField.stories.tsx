@@ -12,7 +12,7 @@
 
 import {action} from 'storybook/actions';
 import {Button} from '../../src/button/Button';
-import {chain} from 'react-aria/private/utils/chain';
+import {chain} from 'react-aria/chain';
 import {Content} from '../../src/view/Content';
 import {ContextualHelp} from '../../src/contextualhelp/ContextualHelp';
 import {Flex} from '../../src/layout/Flex';
