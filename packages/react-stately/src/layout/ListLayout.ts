@@ -132,27 +132,27 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
   }
 
   getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
-    let visibleRect = rect.copy();
     let offsetProperty = this.orientation === 'horizontal' ? 'x' : 'y';
     let heightProperty = this.orientation === 'horizontal' ? 'width' : 'height';
 
     // Adjust rect to keep number of visible rows consistent.
     // (only if height > 1 or width > 1 for getDropTargetFromPoint)
-    if (visibleRect[heightProperty] > 1) {
+    if (rect[heightProperty] > 1) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT) + this.gap;
-      visibleRect[offsetProperty] = Math.floor(visibleRect[offsetProperty] / rowHeight) * rowHeight;
-      visibleRect[heightProperty] = Math.ceil(visibleRect[heightProperty] / rowHeight) * rowHeight;
+      rect = rect.copy();
+      rect[offsetProperty] = Math.floor(rect[offsetProperty] / rowHeight) * rowHeight;
+      rect[heightProperty] = Math.ceil(rect[heightProperty] / rowHeight) * rowHeight;
     }
 
     // If layout hasn't yet been done for the requested rect, union the
     // new rect with the existing valid rect, and recompute.
-    this.layoutIfNeeded(visibleRect);
+    this.layoutIfNeeded(rect);
 
     let res: LayoutInfo[] = [];
 
     let addNodes = (nodes: LayoutNode[]) => {
       for (let node of nodes) {
-        if (this.isVisible(node, visibleRect)) {
+        if (this.isVisible(node, rect)) {
           res.push(node.layoutInfo);
 
           if (node.children) {
@@ -271,6 +271,9 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
 
   protected buildCollection(offset: number = this.padding): LayoutNode[] {
     let collection = this.virtualizer!.collection;
+    let offsetProperty = this.orientation === 'horizontal' ? 'x' : 'y';
+    let maxOffsetProperty = this.orientation === 'horizontal' ? 'maxX' : 'maxY';
+
     // filter out content nodes since we don't want them to affect the height
     // Tree specific for now, if we add content nodes to other collection items, we might need to reconsider this
     let collectionNodes = toArray(collection, (node) => node.type !== 'content');
@@ -282,8 +285,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     }
 
     for (let node of collectionNodes) {
-      let offsetProperty = this.orientation === 'horizontal' ? 'x' : 'y';
-      let maxOffsetProperty = this.orientation === 'horizontal' ? 'maxX' : 'maxY';
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT) + this.gap;
       // Skip rows before the valid rectangle unless they are already cached.
       if (node.type === 'item' && offset + rowHeight < this.requestedRect[offsetProperty] && !this.isValid(node, offset)) {
