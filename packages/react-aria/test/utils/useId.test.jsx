@@ -42,6 +42,7 @@ describe('useId', function () {
       let container = document.createElement('div');
       document.body.appendChild(container);
 
+      // Use createRoot for React 18+ and ReactDOM.render for older
       let renderElement;
       let unmount;
       if (isReact18OrHigher) {
@@ -67,7 +68,10 @@ describe('useId', function () {
         renderElement(React.createElement(Test, {tick: 2}));
       });
 
+      // Re-rendering the same mounted hook should not add more registry entries.
       expect(register).toHaveBeenCalledTimes(1);
+      // The held value should be the generated id string, and the unregister token should match
+      // the target object so useId can remove the same registration during cleanup.
       expect(register.mock.calls[0][1]).toEqual(expect.any(String));
       expect(register.mock.calls[0][2]).toBe(register.mock.calls[0][0]);
 
@@ -77,6 +81,7 @@ describe('useId', function () {
 
       document.body.removeChild(container);
 
+      // Unmount should remove the specific registration created for this hook instance.
       expect(unregister).toHaveBeenCalledTimes(1);
       expect(unregister).toHaveBeenCalledWith(register.mock.calls[0][2]);
     });
