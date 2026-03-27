@@ -13,7 +13,7 @@
 import {ActionButtonGroup} from './ActionButtonGroup';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {CloseButton} from './CloseButton';
-import {ContextValue, SlotProps} from 'react-aria-components/utils';
+import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {DOMProps, DOMRef, DOMRefValue, Key} from '@react-types/shared';
 import {FocusScope} from 'react-aria/FocusScope';
@@ -21,7 +21,7 @@ import intlMessages from '../intl/*.json';
 // @ts-ignore
 import {lightDark, style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils' with { type: 'macro' };
-import {useControlledState} from 'react-stately/private/utils/useControlledState';
+import {useControlledState} from 'react-stately/useControlledState';
 import {useDOMRef} from './useDOMRef';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useKeyboard} from 'react-aria/useKeyboard';

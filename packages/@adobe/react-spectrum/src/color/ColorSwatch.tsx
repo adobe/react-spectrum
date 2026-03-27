@@ -17,7 +17,7 @@ import {ColorSwatchContext} from 'react-aria-components/ColorSwatch';
 import {DOMRef, StyleProps} from '@react-types/shared';
 import React, {createContext, forwardRef, JSX, ReactElement, useContext} from 'react';
 import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 import {useDOMRef} from '../utils/useDOMRef';
 import {useStyleProps} from '../utils/styleProps';
 

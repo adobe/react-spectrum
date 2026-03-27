@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, AsyncLoadable, Collection, CollectionBase, Direction, DOMProps, KeyboardDelegate, LoadingState, MultipleSelection, Node, Orientation, StyleProps} from '@react-types/shared';
-import {Layout} from 'react-stately/private/virtualizer/Layout';
+import {Layout} from 'react-stately/useVirtualizerState';
 import {ReactNode} from 'react';
 import {Scale} from '../provider/types';
 

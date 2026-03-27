@@ -11,7 +11,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColumnProps} from 'react-stately/Column';
+import {ColumnProps} from 'react-stately/useTableState';
 
 export interface SpectrumColumnProps<T> extends ColumnProps<T> {
   /**

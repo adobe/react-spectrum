@@ -32,9 +32,9 @@ export interface AsyncListOptions<T, C> {
   sort?: AsyncListLoadFunction<T, C, AsyncListLoadOptions<T, C> & {sortDescriptor: SortDescriptor}>
 }
 
-type AsyncListLoadFunction<T, C, S extends AsyncListLoadOptions<T, C> = AsyncListLoadOptions<T, C>> = (state: S) => AsyncListStateUpdate<T, C> | Promise<AsyncListStateUpdate<T, C>>;
+export type AsyncListLoadFunction<T, C, S extends AsyncListLoadOptions<T, C> = AsyncListLoadOptions<T, C>> = (state: S) => AsyncListStateUpdate<T, C> | Promise<AsyncListStateUpdate<T, C>>;
 
-interface AsyncListLoadOptions<T, C> {
+export interface AsyncListLoadOptions<T, C> {
   /** The items currently in the list. */
   items: T[],
   /** The keys of the currently selected items in the list. */
@@ -51,7 +51,7 @@ interface AsyncListLoadOptions<T, C> {
   loadingState?: LoadingState
 }
 
-interface AsyncListStateUpdate<T, C> {
+export interface AsyncListStateUpdate<T, C> {
   /** The new items to append to the list. */
   items: Iterable<T>,
   /** The keys to add to the selection. */

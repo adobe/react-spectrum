@@ -13,7 +13,7 @@
 import {Alignment, DOMProps, DOMRef, LabelPosition, NecessityIndicator, StyleProps} from '@react-types/shared';
 import Asterisk from '@spectrum-icons/ui/Asterisk';
 import {classNames} from '../utils/classNames';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import intlMessages from '../../intl/label/*.json';
 import React, {ElementType, HTMLAttributes, ReactNode} from 'react';
 // @ts-ignore

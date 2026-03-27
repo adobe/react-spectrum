@@ -86,7 +86,7 @@ export const focusRing = () => ({
   outlineOffset: 2
 } as const);
 
-interface IconStyle {
+export interface IconStyle {
   size?: 'XS' | 'S' | 'M' | 'L' |'XL',
   color?: 'white' | 'black' | 'accent' | 'neutral' | 'negative' | 'informative' | 'positive' | 'notice' | 'gray' | 'red' | 'orange' | 'yellow' | 'chartreuse' | 'celery' | 'green' | 'seafoam' | 'cyan' | 'blue' | 'indigo' | 'purple' | 'fuchsia' | 'magenta' | 'pink' | 'turquoise' | 'cinnamon' | 'brown' | 'silver',
   margin?: Spacing,

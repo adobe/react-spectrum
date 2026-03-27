@@ -15,7 +15,7 @@ import {Alignment, DOMRef, NecessityIndicator} from '@react-types/shared';
 import AsteriskIcon from '../ui-icons/Asterisk';
 import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {CenterBaseline, centerBaseline, centerBaselineBefore} from './CenterBaseline';
-import {composeRenderProps, Provider} from 'react-aria-components/utils';
+import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContextualHelpContext} from './ContextualHelp';
 import {control, controlFont, fieldInput, fieldLabel, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {FieldError, FieldErrorProps} from 'react-aria-components/FieldError';
@@ -26,6 +26,7 @@ import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {Label, LabelProps} from 'react-aria-components/Label';
 import {mergeStyles} from '../style/runtime';
+import {Provider} from 'react-aria-components/slots';
 import {Input as RACInput, InputProps as RACInputProps} from 'react-aria-components/Input';
 // @ts-ignore
 import {StyleString} from '../style/types';

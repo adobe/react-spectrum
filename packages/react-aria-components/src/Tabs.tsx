@@ -13,11 +13,12 @@
 import {AriaLabelingProps, FocusEvents, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, useTab, useTabList, useTabPanel} from 'react-aria/useTabList';
 import {ClassNameOrFunction, ContextValue, dom, DOMRenderProps, PossibleLinkDOMRenderProps, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
-import {Collection, CollectionBuilder, createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
+import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuilder';
 import {CollectionNode} from 'react-aria/private/collections/BaseCollection';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, usePersistedKeys} from './Collection';
 import {createHideableComponent} from 'react-aria/private/collections/Hidden';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {Collection as ICollection, Node} from '@react-types/shared';
 import {inertValue} from 'react-aria/private/utils/inertValue';
 import {mergeProps} from 'react-aria/mergeProps';

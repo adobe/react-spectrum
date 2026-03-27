@@ -13,7 +13,7 @@
 import {Button} from '../../src/button/Button';
 
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../../src/table/TableView';
-import {ColumnSize} from 'react-stately/Column';
+import {ColumnSize} from 'react-stately/useTableState';
 import {Key} from '@react-types/shared';
 import React, {JSX, useCallback, useMemo, useState} from 'react';
 import {SpectrumColumnProps} from '../../src/table/types';

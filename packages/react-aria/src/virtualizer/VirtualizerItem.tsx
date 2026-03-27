@@ -11,7 +11,7 @@
  */
 
 import {Direction} from '@react-types/shared';
-import {LayoutInfo} from 'react-stately/private/virtualizer/LayoutInfo';
+import {LayoutInfo} from 'react-stately/useVirtualizerState';
 import React, {CSSProperties, JSX, ReactNode, useRef} from 'react';
 import {useLocale} from '../i18n/I18nProvider';
 import {useVirtualizerItem, VirtualizerItemOptions} from './useVirtualizerItem';

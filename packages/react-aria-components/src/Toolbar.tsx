@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToolbarProps, useToolbar} from 'react-aria/private/toolbar/useToolbar';
+import {AriaToolbarProps, useToolbar} from 'react-aria/useToolbar';
 
 import {
   ClassNameOrFunction,
@@ -21,7 +21,7 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes, Orientation} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';

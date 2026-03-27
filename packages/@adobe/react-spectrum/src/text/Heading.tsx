@@ -11,10 +11,10 @@
  */
 
 import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {HeadingContext} from 'react-aria-components/Heading';
 import React, {ElementType, forwardRef, ReactNode} from 'react';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 import {useDOMRef} from '../utils/useDOMRef';
 import {useSlotProps} from '../utils/Slots';
 import {useStyleProps} from '../utils/styleProps';

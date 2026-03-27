@@ -13,7 +13,7 @@
 import ariaStyles from './resizing.css';
 import {AriaTableColumnResizeProps, useTableColumnResize} from '../../src/table/useTableColumnResize';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
-import {ColumnSize} from 'react-stately/Column';
+import {ColumnSize} from 'react-stately/useTableState';
 import {FocusRing} from '../../src/focus/FocusRing';
 import {Key} from '@react-types/shared';
 import {mergeProps} from '../../src/utils/mergeProps';

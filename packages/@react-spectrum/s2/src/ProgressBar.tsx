@@ -13,7 +13,7 @@
 import {ProgressBar as AriaProgressBar, ProgressBarProps as AriaProgressBarProps} from 'react-aria-components/ProgressBar';
 
 import {bar, track} from './bar-utils'  with {type: 'macro'};
-import {ContextValue} from 'react-aria-components/utils';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';

@@ -12,7 +12,7 @@
 
 import {AriaMenuTests} from '../../../react-aria-components/test/AriaMenu.test-util';
 import {Button} from '../src/Button';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {Content, Header, Heading} from '../src/Content';
 import {ContextualHelpPopover} from '../src/ContextualHelp';
 

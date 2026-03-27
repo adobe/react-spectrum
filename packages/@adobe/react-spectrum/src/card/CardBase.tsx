@@ -15,7 +15,7 @@ import {AriaCardProps, SpectrumCardProps} from './types';
 import {Checkbox} from '../checkbox/Checkbox';
 import {classNames} from '../utils/classNames';
 import {DOMRef, Node} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusRing} from 'react-aria/FocusRing';
 import {getFocusableTreeWalker} from 'react-aria/private/focus/FocusScope';
 import {mergeProps} from 'react-aria/mergeProps';

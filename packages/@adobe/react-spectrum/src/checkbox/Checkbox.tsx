@@ -22,7 +22,7 @@ import {FocusRing} from 'react-aria/FocusRing';
 import React, {forwardRef, useContext, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/checkbox/vars.css';
 import {useCheckboxGroupItem} from 'react-aria/useCheckboxGroup';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 import {useFocusableRef} from '../utils/useDOMRef';
 import {useFormProps} from '../form/Form';
 import {useHover} from 'react-aria/useHover';

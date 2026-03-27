@@ -15,7 +15,7 @@ import {baseColor, focusRing, fontRelative, space, style} from '../style' with {
 import {Button, ButtonRenderProps} from 'react-aria-components/Button';
 import {Calendar, CalendarProps} from './Calendar';
 import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
-import {ContextValue, Provider} from 'react-aria-components/utils';
+import {ContextValue, Provider} from 'react-aria-components/slots';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactElement, ReactNode, Ref, useContext, useRef, useState} from 'react';
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
