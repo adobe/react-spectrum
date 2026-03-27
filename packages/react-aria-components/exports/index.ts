@@ -94,7 +94,7 @@ export {useListData} from 'react-stately/useListData';
 export {useTreeData} from 'react-stately/useTreeData';
 export {useAsyncList} from 'react-stately/useAsyncList';
 export {ListLayout} from 'react-stately/private/layout/ListLayout';
-export {GridLayout} from 'react-stately/private/layout/GridLayout';
+export {GridLayout} from '../src/GridLayout';
 export {WaterfallLayout} from 'react-stately/private/layout/WaterfallLayout';
 export {Layout} from 'react-stately/private/virtualizer/Layout';
 export {LayoutInfo} from 'react-stately/private/virtualizer/LayoutInfo';
