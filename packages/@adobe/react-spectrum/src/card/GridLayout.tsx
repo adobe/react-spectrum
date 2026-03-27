@@ -14,9 +14,7 @@
 import {BaseLayout, BaseLayoutOptions} from './BaseLayout';
 import {getChildNodes, getFirstItem} from 'react-stately/private/collections/getChildNodes';
 import {Key, Node, Orientation} from '@react-types/shared';
-import {LayoutInfo} from 'react-stately/private/virtualizer/LayoutInfo';
-import {Rect} from 'react-stately/private/virtualizer/Rect';
-import {Size} from 'react-stately/private/virtualizer/Size';
+import {LayoutInfo, Rect, Size} from 'react-stately/useVirtualizerState';
 
 export interface GridLayoutOptions extends BaseLayoutOptions {
   // /**

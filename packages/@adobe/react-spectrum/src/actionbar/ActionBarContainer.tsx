@@ -13,7 +13,7 @@
 import {classNames} from '../utils/classNames';
 
 import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import React, {ReactNode} from 'react';
 import styles from './actionbar.css';
 import {useDOMRef} from '../utils/useDOMRef';

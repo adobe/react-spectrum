@@ -12,7 +12,7 @@
 
 import {Alignment, DOMProps, DOMRef, FormProps, LabelPosition, SpectrumLabelableProps, StyleProps, ValidationState} from '@react-types/shared';
 import {classNames} from '../utils/classNames';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormValidationContext} from 'react-stately/private/form/useFormValidationState';
 import {Provider, useProviderProps} from '../provider/Provider';
 import React, {ReactElement, useContext} from 'react';

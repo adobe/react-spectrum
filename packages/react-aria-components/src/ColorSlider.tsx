@@ -11,7 +11,7 @@ import {
   useSlot
 } from './utils';
 import {ColorSliderState, useColorSliderState} from 'react-stately/useColorSliderState';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {InternalColorThumbContext} from './ColorThumb';
 import {LabelContext} from './Label';

@@ -11,15 +11,13 @@
  */
 
 import {AriaLabelingProps, FocusableElement, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
-
 import {
   AriaPositionProps,
   Placement,
   PlacementAxis,
   PositionProps,
   useOverlayPosition
-} from 'react-aria/private/overlays/useOverlayPosition';
-
+} from 'react-aria/useOverlayPosition';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -29,7 +27,7 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusableProvider} from 'react-aria/private/interactions/useFocusable';
 import {mergeProps} from 'react-aria/mergeProps';
 import {OverlayArrowContext} from './OverlayArrow';

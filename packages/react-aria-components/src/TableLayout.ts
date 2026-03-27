@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {TableLayout as BaseTableLayout, TableLayoutProps} from 'react-stately/private/layout/TableLayout';
+import {TableLayout as BaseTableLayout, TableLayoutProps} from 'react-stately/useVirtualizerState';
 import {LayoutOptionsDelegate} from './Virtualizer';
 import {TableColumnResizeStateContext} from './Table';
 import {useContext, useMemo} from 'react';

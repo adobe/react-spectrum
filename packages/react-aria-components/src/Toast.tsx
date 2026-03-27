@@ -26,7 +26,7 @@ import {
   useRenderProps
 } from './utils';
 import {createPortal} from 'react-dom';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';
 import {QueuedToast, ToastQueue, ToastState, useToastQueue} from 'react-stately/useToastState';

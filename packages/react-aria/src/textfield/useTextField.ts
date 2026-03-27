@@ -36,7 +36,7 @@ import React, {
   RefObject,
   useState
 } from 'react';
-import {useControlledState} from 'react-stately/private/utils/useControlledState';
+import {useControlledState} from 'react-stately/useControlledState';
 import {useField} from '../label/useField';
 import {useFocusable} from '../interactions/useFocusable';
 import {useFormReset} from '../utils/useFormReset';

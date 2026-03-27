@@ -14,7 +14,7 @@ import {cloneElement, createContext, CSSProperties, ReactElement, ReactNode, Ref
 import {color, style} from '../style' with {type: 'macro'};
 import {css} from '../style/style-macro' with {type: 'macro'};
 import {inertValue} from 'react-aria/private/utils/inertValue';
-import {mergeRefs} from 'react-aria/private/utils/mergeRefs';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import {mergeStyles} from '../style/runtime';
 import {StyleString} from '../style/types';
 import {useMediaQuery} from './useMediaQuery';

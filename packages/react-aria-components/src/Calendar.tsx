@@ -31,7 +31,7 @@ import {
 } from './utils';
 import {DateValue, useRangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {DOMAttributes, FocusableElement, forwardRefType, GlobalDOMAttributes, HoverEvents} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {HeadingContext} from './Heading';
 import {mergeProps} from 'react-aria/mergeProps';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';

@@ -19,7 +19,7 @@ import Chevron from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import {CloseButton} from './CloseButton';
 import {createContext, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {DOMProps} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {flushSync} from 'react-dom';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {FocusScope} from 'react-aria/FocusScope';

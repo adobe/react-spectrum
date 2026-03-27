@@ -12,7 +12,7 @@
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
 import Checkmark from '../ui-icons/Checkmark';
-import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/utils';
+import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, Key, Orientation} from '@react-types/shared';
 import {forwardRefType} from './types';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};

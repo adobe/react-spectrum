@@ -11,10 +11,10 @@
  */
 
 import {centerBaselineBefore} from './CenterBaseline';
-import {ContextValue, SlotProps} from 'react-aria-components/utils';
+import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {createContext, forwardRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getAllowedOverrides, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Image} from './Image';
 import {isDocsEnv} from './macros' with {type: 'macro'};

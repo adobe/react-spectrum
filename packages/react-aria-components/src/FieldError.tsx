@@ -12,7 +12,7 @@
 
 import {ClassNameOrFunction, RenderProps, useRenderProps} from './utils';
 import {DOMProps, GlobalDOMAttributes, ValidationResult} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {Text} from './Text';
 

@@ -14,7 +14,7 @@ import {action} from 'storybook/actions';
 import {Button} from '../../src/button/Button';
 import {ButtonGroup} from '../../src/buttongroup/ButtonGroup';
 import {CalendarDate, parseDate, parseDateTime, parseTime} from '@internationalized/date';
-import {chain} from 'react-aria/private/utils/chain';
+import {chain} from 'react-aria/chain';
 import {Checkbox} from '../../src/checkbox/Checkbox';
 import {CheckboxGroup} from '../../src/checkbox/CheckboxGroup';
 import {ColorField} from '../../src/color/ColorField';

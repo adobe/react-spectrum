@@ -12,7 +12,7 @@
 'use client';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 import VolumeOne_L from 'illustration:./S2_lin_volumeOne_160.svg';
 import VolumeOne_M from 'illustration:./S2_lin_volumeOne_96.svg';
 import VolumeOne_S from 'illustration:./S2_lin_volumeOne_48.svg';
