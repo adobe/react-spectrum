@@ -29,11 +29,10 @@ describe('useId', function () {
 
     jest.isolateModules(() => {
       let React = require('react');
-      let {createRoot} = require('react-dom/client');
+      let ReactDOM = require('react-dom');
       let {act} = require('react-dom/test-utils');
       let {useId} = require('../../src/utils/useId');
-      let previousActEnvironment = global.IS_REACT_ACT_ENVIRONMENT;
-      global.IS_REACT_ACT_ENVIRONMENT = true;
+      let isReact18OrHigher = parseInt(React.version, 10) >= 18;
 
       function Test({tick}) {
         let id = useId();
@@ -42,18 +41,30 @@ describe('useId', function () {
 
       let container = document.createElement('div');
       document.body.appendChild(container);
-      let root = createRoot(container);
+
+      let renderElement;
+      let unmount;
+      if (isReact18OrHigher) {
+        let {createRoot} = require('react-dom/client');
+        global.IS_REACT_ACT_ENVIRONMENT = true;
+        let root = createRoot(container);
+        renderElement = (el) => root.render(el);
+        unmount = () => root.unmount();
+      } else {
+        renderElement = (el) => ReactDOM.render(el, container);
+        unmount = () => ReactDOM.unmountComponentAtNode(container);
+      }
 
       act(() => {
-        root.render(React.createElement(Test, {tick: 0}));
+        renderElement(React.createElement(Test, {tick: 0}));
       });
 
       act(() => {
-        root.render(React.createElement(Test, {tick: 1}));
+        renderElement(React.createElement(Test, {tick: 1}));
       });
 
       act(() => {
-        root.render(React.createElement(Test, {tick: 2}));
+        renderElement(React.createElement(Test, {tick: 2}));
       });
 
       expect(register).toHaveBeenCalledTimes(1);
@@ -61,11 +72,10 @@ describe('useId', function () {
       expect(register.mock.calls[0][2]).toBe(register.mock.calls[0][0]);
 
       act(() => {
-        root.unmount();
+        unmount();
       });
 
       document.body.removeChild(container);
-      global.IS_REACT_ACT_ENVIRONMENT = previousActEnvironment;
 
       expect(unregister).toHaveBeenCalledTimes(1);
       expect(unregister).toHaveBeenCalledWith(register.mock.calls[0][2]);
