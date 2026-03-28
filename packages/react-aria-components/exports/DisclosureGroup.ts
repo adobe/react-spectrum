@@ -18,3 +18,9 @@ export {Disclosure, DisclosureGroup, DisclosureGroupStateContext, DisclosurePane
 export type {DisclosureProps, DisclosureRenderProps, DisclosurePanelProps, DisclosurePanelRenderProps, DisclosureGroupProps, DisclosureGroupRenderProps} from '../src/Disclosure';
 export type {DisclosureState} from 'react-stately/useDisclosureState';
 export type {DisclosureGroupState} from 'react-stately/useDisclosureGroupState';
+
+export {Heading} from '../src/Heading';
+export type {HeadingProps} from '../src/Heading';
+
+export {Button} from '../src/Button';
+export type {ButtonProps, ButtonRenderProps} from '../src/Button';

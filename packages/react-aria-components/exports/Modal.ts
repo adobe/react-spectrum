@@ -16,3 +16,14 @@ import 'client-only';
 
 export {Modal, ModalOverlay, ModalContext} from '../src/Modal';
 export type {ModalOverlayProps, ModalRenderProps} from '../src/Modal';
+
+export {DialogTrigger, Dialog} from '../src/Dialog';
+export type {DialogProps, DialogTriggerProps, DialogRenderProps} from '../src/Dialog';
+
+export {Heading} from '../src/Heading';
+export type {HeadingProps} from '../src/Heading';
+
+export {Button} from '../src/Button';
+export type {ButtonProps, ButtonRenderProps} from '../src/Button';
+
+export {Pressable} from 'react-aria/Pressable';
