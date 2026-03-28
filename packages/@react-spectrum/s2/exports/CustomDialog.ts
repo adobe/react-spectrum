@@ -7,5 +7,7 @@ export type {DialogTriggerProps} from '../src/DialogTrigger';
 export {DialogContainer, useDialogContainer} from '../src/DialogContainer';
 export type {DialogContainerProps, DialogContainerValue} from '../src/DialogContainer';
 
-export {Button} from '../src/Button';
-export type {ButtonProps} from '../src/Button';
+export {CloseButton} from '../src/CloseButton';
+export type {CloseButtonProps} from '../src/CloseButton';
+
+export {Heading} from '../src/Content';

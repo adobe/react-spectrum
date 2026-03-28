@@ -8,7 +8,4 @@ export type {MenuTriggerProps, MenuProps, MenuItemProps, MenuSectionProps, Subme
 export {ContextualHelpPopover} from '../src/ContextualHelp';
 export type {ContextualHelpPopoverProps} from '../src/ContextualHelp';
 
-export {Text} from '../src/Content';
-export {Keyboard} from '../src/Content';
-export {Header} from '../src/Content';
-export {Heading} from '../src/Content';
+export {Text, Keyboard, Header, Heading} from '../src/Content';
