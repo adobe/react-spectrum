@@ -179,7 +179,7 @@ export type {DateValue, DateRange} from 'react-aria-components/RangeCalendar';
 export type {TimeValue} from 'react-aria-components/TimeField';
 export type {FileTriggerProps} from 'react-aria-components/FileTrigger';
 export type {TooltipTriggerComponentProps as TooltipTriggerProps} from 'react-aria-components/Tooltip';
-export type {SortDescriptor, SortDirection, Key, Selection, RouterConfig, PressEvent} from '@react-types/shared';
+export type {SortDescriptor, SortDirection, Key, Selection, RouterConfig, PressEvent, RangeValue} from '@react-types/shared';
 export type {ColorSpace, ColorChannel, Color, ColorFormat, ColorAxes, ColorChannelRange} from 'react-stately/Color';
 export type {ListOptions, ListData} from 'react-stately/useListData';
 export type {TreeOptions, TreeData} from 'react-stately/useTreeData';
