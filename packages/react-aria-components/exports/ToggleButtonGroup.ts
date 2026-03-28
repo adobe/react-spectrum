@@ -23,3 +23,5 @@ export type {ToggleButtonProps, ToggleButtonRenderProps} from '../src/ToggleButt
 
 export {SelectionIndicator} from '../src/SelectionIndicator';
 export type {SelectionIndicatorProps} from '../src/SelectionIndicator';
+
+export type {Key} from '@react-types/shared';

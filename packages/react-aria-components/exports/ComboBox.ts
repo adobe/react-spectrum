@@ -43,3 +43,5 @@ export type {PopoverProps, PopoverRenderProps} from '../src/Popover';
 export {ListBoxLoadMoreItem, ListBox, ListBoxItem, ListBoxSection} from '../src/ListBox';
 export {Collection, type CollectionProps} from 'react-aria/Collection';
 export type {ListBoxProps, ListBoxRenderProps, ListBoxItemProps, ListBoxItemRenderProps, ListBoxSectionProps, ListBoxLoadMoreItemProps} from '../src/ListBox';
+
+export type {Key} from '@react-types/shared';

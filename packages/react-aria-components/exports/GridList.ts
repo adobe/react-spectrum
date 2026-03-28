@@ -28,3 +28,6 @@ export type {CheckboxRenderProps, CheckboxProps} from '../src/Checkbox';
 
 export {SelectionIndicator} from '../src/SelectionIndicator';
 export type {SelectionIndicatorProps} from '../src/SelectionIndicator';
+
+export {Text} from '../src/Text';
+export type {TextProps} from '../src/Text';

@@ -3,9 +3,12 @@ import {
   Button,
   GridList as AriaGridList,
   GridListItem as AriaGridListItem,
+  GridListLoadMoreItem as AriaGridListLoadMoreItem,
+  Text,
+  GridListSection,
+  GridListHeader,
   type GridListItemProps,
   type GridListProps,
-  GridListLoadMoreItem as AriaGridListLoadMoreItem,
   type GridListLoadMoreItemProps,
 } from 'react-aria-components/GridList';
 import {Checkbox} from './Checkbox';
@@ -56,3 +59,5 @@ export function GridListLoadMoreItem(props: GridListLoadMoreItemProps) {
     </AriaGridListLoadMoreItem>
   );
 }
+
+export {GridListSection, GridListHeader, Text};

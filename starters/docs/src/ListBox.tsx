@@ -4,6 +4,7 @@ import {
   ListBoxItem as AriaListBoxItem,
   ListBoxSection as AriaListBoxSection,
   ListBoxLoadMoreItem as AriaListBoxLoadMoreItem,
+  Header,
   type ListBoxItemProps,
   type ListBoxLoadMoreItemProps,
   type ListBoxProps,
@@ -66,3 +67,5 @@ export function DropdownItem(props: ListBoxItemProps) {
     </ListBoxItem>
   );
 }
+
+export {Text, Header};

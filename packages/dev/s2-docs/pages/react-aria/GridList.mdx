@@ -23,8 +23,7 @@ export const description = 'Displays a list of interactive items, with support f
 <ExampleSwitcher>
   ```tsx render docs={docs.exports.GridList} links={docs.links} props={['layout', 'selectionMode']} initialProps={{'aria-label': 'Photos', selectionMode: 'multiple', layout: 'grid'}} type="vanilla" files={["starters/docs/src/GridList.tsx", "starters/docs/src/GridList.css"]}
   "use client";
-  import {Text} from 'react-aria-components';
-  import {GridList, GridListItem} from 'vanilla-starter/GridList';
+  import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
 
   <GridList/* PROPS */>
     <GridListItem textValue="Desert Sunset">
@@ -102,8 +101,7 @@ export const description = 'Displays a list of interactive items, with support f
 
 ```tsx render
 "use client";
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
-import {Text} from 'react-aria-components';
+import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
 
 ///- begin collapse -///
 let images = [
@@ -369,10 +367,10 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 
 ```tsx render
 "use client";
-import {GridList, GridListItem, GridListLoadMoreItem} from 'vanilla-starter/GridList';
-import {Collection, Text} from 'react-aria-components';
+import {GridList, GridListItem, GridListLoadMoreItem, Text} from 'vanilla-starter/GridList';
+import {Collection} from 'react-aria-components/Collection';
+import {useAsyncList} from 'react-aria-components/useAsyncList';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
-import {useAsyncList} from '@react-stately/data';
 
 type Item = {
   id: string;
@@ -433,8 +431,7 @@ Use the `href` prop on a `<GridListItem>` to create a link. Link interactions va
 
 ```tsx render docs={docs.exports.GridList} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Links', selectionMode: 'multiple'}} wide
 "use client";
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
-import {Text} from 'react-aria-components';
+import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
 
 ///- begin collapse -///
 let images = [
@@ -544,8 +541,7 @@ Use the `<GridListSection>` component to group options. A `<GridListHeader>` ele
 
 ```tsx render
 "use client";
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
-import {GridListHeader, GridListSection, Text} from 'react-aria-components';
+import {GridList, GridListItem, GridListHeader, GridListSection, Text} from 'vanilla-starter/GridList';
 
 <GridList
   layout="grid"
@@ -595,8 +591,8 @@ Use the `selectionMode` prop to enable single or multiple selection. The selecte
 
 ```tsx render docs={docs.exports.GridList} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
-import {type Selection, Text} from 'react-aria-components';
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import type {Selection} from 'react-aria-components/GridList';
+import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
 import {useState} from 'react';
 
 function Example(props) {
@@ -678,8 +674,7 @@ Use the `layout` and `orientation` props to arrange items in horizontal and vert
 
 ```tsx render docs={docs.exports.GridList} links={docs.links} props={['layout', 'orientation', 'keyboardNavigationBehavior']} initialProps={{layout: 'grid', orientation: 'horizontal', keyboardNavigationBehavior: 'tab'}} wide
 "use client";
-import {Text} from 'react-aria-components';
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
 
 ///- begin collapse -///
 let photos = [
@@ -715,8 +710,9 @@ GridList supports drag and drop interactions when the `dragAndDropHooks` prop is
 
 ```tsx render
 "use client";
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
-import {useDragAndDrop, Text, useListData} from 'react-aria-components';
+import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
+import {useDragAndDrop} from 'react-aria-components/useDragAndDrop';
+import {useListData} from 'react-aria-components/useListData';
 
 ///- begin collapse -///
 let images = [

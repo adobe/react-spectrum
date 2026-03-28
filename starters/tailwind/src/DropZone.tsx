@@ -1,7 +1,7 @@
 'use client';
 import React from "react";
 import { composeRenderProps } from 'react-aria-components/composeRenderProps';
-import { type DropZoneProps, DropZone as RACDropZone } from 'react-aria-components/DropZone';
+import { type DropZoneProps, DropZone as RACDropZone, Text } from 'react-aria-components/DropZone';
 import { tv } from "tailwind-variants";
 
 const dropZone = tv({
@@ -23,3 +23,5 @@ export function DropZone(props: DropZoneProps) {
       className={composeRenderProps(props.className, (className, renderProps) => dropZone({ ...renderProps, className }))} />
   );
 }
+
+export {Text};
