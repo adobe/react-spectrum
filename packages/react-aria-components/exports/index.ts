@@ -203,5 +203,5 @@ export type {ListOptions as ListDataOptions, ListData} from 'react-stately/useLi
 export type {TreeOptions as TreeDataOptions, TreeData} from 'react-stately/useTreeData';
 export type {AsyncListOptions, AsyncListData, AsyncListLoadFunction, AsyncListLoadOptions, AsyncListStateUpdate} from 'react-stately/useAsyncList';
 export type {AutocompleteState} from 'react-stately/private/autocomplete/useAutocompleteState';
-export type {ListLayoutOptions, GridLayoutOptions, WaterfallLayoutOptions} from 'react-stately/useVirtualizerState';
+export type {ListLayoutOptions, GridLayoutOptions, TableLayoutProps, WaterfallLayoutOptions} from 'react-stately/useVirtualizerState';
 export type {RangeValue, ValidationResult, RouterConfig} from '@react-types/shared';

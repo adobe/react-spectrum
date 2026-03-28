@@ -672,6 +672,43 @@ function Example(props) {
 }
 ```
 
+## Layouts
+
+Use the `layout` and `orientation` props to arrange items in horizontal and vertical stacks and grids. This affects keyboard navigation and drag and drop behavior.
+
+```tsx render docs={docs.exports.GridList} links={docs.links} props={['layout', 'orientation', 'keyboardNavigationBehavior']} initialProps={{layout: 'grid', orientation: 'horizontal', keyboardNavigationBehavior: 'tab'}} wide
+"use client";
+import {Text} from 'react-aria-components';
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+
+///- begin collapse -///
+let photos = [
+  {id: 1, title: 'Desert Sunset', description: 'PNG • 2/3/2024', src: 'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop'},
+  {id: 2, title: 'Hiking Trail', description: 'JPEG • 1/10/2022', src: 'https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop'},
+  {id: 3, title: 'Lion', description: 'JPEG • 8/28/2021', src: 'https://images.unsplash.com/photo-1629812456605-4a044aa38fbc?q=80&w=600&auto=format&fit=crop'},
+  {id: 4, title: 'Mountain Sunrise', description: 'PNG • 3/15/2015', src: 'https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop'},
+  {id: 5, title: 'Giraffe tongue', description: 'PNG • 11/27/2019', src: 'https://images.unsplash.com/photo-1574870111867-089730e5a72b?q=80&w=600&auto=format&fit=crop'},
+  {id: 6, title: 'Golden Hour', description: 'WEBP • 7/24/2024', src: 'https://images.unsplash.com/photo-1718378037953-ab21bf2cf771?q=80&w=600&auto=format&fit=crop'},
+];
+///- end collapse -///
+
+<GridList
+  /*- begin highlight -*/
+  /* PROPS */
+  /*- end highlight -*/
+  aria-label="Photos"
+  items={photos}
+  selectionMode="multiple">
+  {item => (
+    <GridListItem textValue={item.title}>
+      <img src={item.src} alt="" />
+      <Text>{item.title}</Text>
+      <Text slot="description">{item.description}</Text>
+    </GridListItem>
+  )}
+</GridList>
+```
+
 ## Drag and drop
 
 GridList supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd?component=GridList) to learn more.
