@@ -25,7 +25,7 @@ A ColorSwatch displays a color value passed via the `color` prop. The value can 
 
 ```tsx render
 "use client";
-import {ColorSwatch} from '@react-spectrum/s2';
+import {ColorSwatch} from '@react-spectrum/s2/ColorSwatch';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <div className={style({display: 'flex', gap: 12, alignItems: 'center'})}>
@@ -43,7 +43,7 @@ ColorSwatch can be resized using the `styles` prop.
 
 ```tsx render
 "use client";
-import {ColorSwatch} from '@react-spectrum/s2';
+import {ColorSwatch} from '@react-spectrum/s2/ColorSwatch';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <ColorSwatch
@@ -57,7 +57,7 @@ By default, ColorSwatch includes a localized color description for screen reader
 
 ```tsx render
 "use client";
-import {ColorSwatch} from '@react-spectrum/s2';
+import {ColorSwatch} from '@react-spectrum/s2/ColorSwatch';
 
 <ColorSwatch
   color="#f00"

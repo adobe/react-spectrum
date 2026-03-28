@@ -31,7 +31,7 @@ Use the `value` or `defaultValue` prop to set the number value. The `onChange` e
 
 ```tsx render
 "use client";
-import {NumberField} from '@react-spectrum/s2';
+import {NumberField} from '@react-spectrum/s2/NumberField';
 import {useState} from 'react';
 
 function Example() {
@@ -99,7 +99,8 @@ By default, `NumberField` displays the value using the numbering system for the 
 
 ```tsx render wide docs={docs.exports.Provider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-nu-deva'}} controlOptions={{locale: 'numberingSystem'}} type="s2"
 "use client";
-import {Provider, NumberField} from '@react-spectrum/s2';
+import {Provider} from '@react-spectrum/s2/Provider';
+import {NumberField} from '@react-spectrum/s2/NumberField';
 
 <Provider/* PROPS */>
   <NumberField
@@ -115,7 +116,9 @@ Use the `name` prop to submit the raw number value (not a formatted string) to t
 
 ```tsx render docs={docs.exports.NumberField} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true, placeholder: 'Enter a number'}} type="s2" wide
 "use client";
-import {NumberField, Button, Form} from '@react-spectrum/s2';
+import {NumberField} from '@react-spectrum/s2/NumberField';
+import {Button} from '@react-spectrum/s2/Button';
+import {Form} from '@react-spectrum/s2/Form';
 
 function Example(props) {
   return (

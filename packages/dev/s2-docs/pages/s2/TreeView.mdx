@@ -16,7 +16,7 @@ export const description = 'Displays hierarchical data with selection and collap
 
 ```tsx render docs={docs.exports.TreeView} links={docs.links} props={['selectionMode', 'selectionStyle']} initialProps={{selectionMode: 'multiple', selectionStyle: 'checkbox'}} type="s2" wide
 "use client";
-import {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/s2';
+import {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/s2/TreeView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <TreeView
@@ -45,7 +45,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ```tsx render
 "use client";
-import {TreeView, TreeViewItem, TreeViewItemContent, Collection} from '@react-spectrum/s2';
+import {TreeView, TreeViewItem, TreeViewItemContent, Collection} from '@react-spectrum/s2/TreeView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
@@ -91,7 +91,8 @@ let items = [
 
 ```tsx render
 "use client";
-import {TreeView, TreeViewItem, TreeViewItemContent, Collection, ActionMenu, MenuItem, Text} from '@react-spectrum/s2';
+import {TreeView, TreeViewItem, TreeViewItemContent, Collection, Text} from '@react-spectrum/s2/TreeView';
+import {ActionMenu, MenuItem} from '@react-spectrum/s2/ActionMenu';
 import Folder from '@react-spectrum/s2/icons/Folder';
 import File from '@react-spectrum/s2/icons/File';
 import Edit from '@react-spectrum/s2/icons/Edit';
@@ -153,7 +154,8 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 
 ```tsx render
 "use client";
-import {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem, Collection, useAsyncList} from '@react-spectrum/s2';
+import {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem, Collection} from '@react-spectrum/s2/TreeView';
+import {useAsyncList} from '@react-spectrum/s2/useAsyncList';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 interface Character {
@@ -241,7 +243,7 @@ Use the `href` prop on a `<TreeItem>` to create a link. See the [getting started
 
 ```tsx render
 "use client";
-import {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/s2';
+import {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/s2/TreeView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <TreeView
@@ -281,7 +283,9 @@ Use `renderEmptyState` to render placeholder content when the tree is empty.
 
 ```tsx render
 "use client";
-import {TreeView, IllustratedMessage, Heading, Content, Link} from '@react-spectrum/s2';
+import {TreeView} from '@react-spectrum/s2/TreeView';
+import {IllustratedMessage, Heading, Content} from '@react-spectrum/s2/IllustratedMessage';
+import {Link} from '@react-spectrum/s2/Link';
 import FolderOpen from '@react-spectrum/s2/illustrations/linear/FolderOpen';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -307,7 +311,8 @@ Use the `selectionMode` prop to enable single or multiple selection. The selecte
 
 ```tsx render docs={docs.exports.TreeView} links={docs.links} props={['selectionMode', 'disabledBehavior', 'disallowEmptySelection', 'selectionStyle']} initialProps={{selectionMode: 'multiple', selectionStyle: 'checkbox'}} wide
 "use client";
-import {TreeView, TreeViewItem, TreeViewItemContent, ActionBar, ActionButton, Text, type Selection} from '@react-spectrum/s2';
+import {TreeView, TreeViewItem, TreeViewItemContent, Text, type Selection} from '@react-spectrum/s2/TreeView';
+import {ActionBar, ActionButton} from '@react-spectrum/s2/ActionBar';
 import Edit from '@react-spectrum/s2/icons/Edit';
 import Copy from '@react-spectrum/s2/icons/Copy';
 import Delete from '@react-spectrum/s2/icons/Delete';

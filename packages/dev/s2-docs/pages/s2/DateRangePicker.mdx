@@ -32,8 +32,9 @@ Use the `value` or `defaultValue` prop to set the selected date range, using obj
 ```tsx render
 "use client";
 import {parseDate, getLocalTimeZone, type CalendarDate} from '@internationalized/date';
-import {useDateFormatter, type RangeValue} from 'react-aria';
-import {DateRangePicker} from '@react-spectrum/s2';
+import {useDateFormatter} from 'react-aria/useDateFormatter';
+import {type RangeValue} from '@react-spectrum/s2';
+import {DateRangePicker} from '@react-spectrum/s2/DateRangePicker';
 import {useState} from 'react';
 
 function Example() {
@@ -66,7 +67,7 @@ The date format is automatically determined based on the user's locale. `DateRan
 ```tsx render docs={docs.exports.DateRangePicker} links={docs.links} props={['granularity', 'hourCycle', 'hideTimeZone', 'shouldForceLeadingZeros']} initialProps={{label: 'Date'}} type="s2"
 "use client";
 import {parseZonedDateTime} from '@internationalized/date';
-import {DateRangePicker} from '@react-spectrum/s2';
+import {DateRangePicker} from '@react-spectrum/s2/DateRangePicker';
 
 <DateRangePicker
   /* PROPS */
@@ -82,7 +83,8 @@ By default, `DateRangePicker` displays the value using the calendar system for t
 
 ```tsx render wide docs={docs.exports.Provider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-ca-indian'}} type="s2"
 "use client";
-import {Provider, DateRangePicker} from '@react-spectrum/s2';
+import {Provider} from '@react-spectrum/s2/Provider';
+import {DateRangePicker} from '@react-spectrum/s2/DateRangePicker';
 import {parseDate} from '@internationalized/date';
 
 <Provider/* PROPS */>
@@ -101,7 +103,10 @@ Use the `name` prop to submit the selected date to the server as an [ISO 8601](h
 ```tsx render docs={docs.exports.DateRangePicker} links={docs.links} props={['allowsNonContiguousRanges', 'isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} wide type="s2"
 "use client";
 import {isWeekend, today, getLocalTimeZone} from '@internationalized/date';
-import {DateRangePicker, Form, Button, useLocale} from '@react-spectrum/s2';
+import {DateRangePicker} from '@react-spectrum/s2/DateRangePicker';
+import {Form} from '@react-spectrum/s2/Form';
+import {Button} from '@react-spectrum/s2/Button';
+import {useLocale} from '@react-spectrum/s2/Provider';
 
 function Example(props) {
   let {locale} = useLocale();

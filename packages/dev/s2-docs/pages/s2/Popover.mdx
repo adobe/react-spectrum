@@ -12,7 +12,12 @@ export const description = 'Displays interactive content in context with a trigg
 
 ```tsx render docs={docs.exports.Popover} links={docs.links} props={['placement', 'size', 'offset', 'crossOffset', 'shouldFlip', 'hideArrow']} type="s2" initialProps={{size: 'S'}}
 "use client";
-import {Popover, DialogTrigger, ActionButton, Form, TextField, Switch, Button} from '@react-spectrum/s2';
+import {Popover, DialogTrigger} from '@react-spectrum/s2/Popover';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
+import {Form} from '@react-spectrum/s2/Form';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {Switch} from '@react-spectrum/s2/Switch';
+import {Button} from '@react-spectrum/s2/Button';
 import Feedback from '@react-spectrum/s2/icons/Feedback';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -46,7 +51,8 @@ To position a popover relative to a different element than its trigger, use the 
 
 ```tsx render
 "use client";
-import {Popover, Button} from '@react-spectrum/s2';
+import {Popover} from '@react-spectrum/s2/Popover';
+import {Button} from '@react-spectrum/s2/Button';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState, useRef} from 'react';
 

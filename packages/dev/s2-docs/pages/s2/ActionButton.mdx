@@ -26,7 +26,7 @@ Use the `onPress` prop to handle interactions via mouse, keyboard, and touch. Th
 
 ```tsx render hideImports
 "use client";
-import {ActionButton} from '@react-spectrum/s2';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {useState} from 'react';
 
 function Example() {
@@ -35,7 +35,7 @@ function Example() {
   return (
     /*- begin highlight -*/
     <ActionButton onPress={() => setCount(c => c + 1)}>
-    {/*- end highlight -*/}
+      {/*- end highlight -*/}
       {count} Edits
     </ActionButton>
   );
@@ -48,7 +48,7 @@ Use the `isPending` prop to display a pending state. Pending buttons remain focu
 
 ```tsx render
 "use client";
-import {ActionButton} from '@react-spectrum/s2';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {useState} from 'react';
 
 function PendingButton() {

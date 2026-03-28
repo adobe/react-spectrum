@@ -25,7 +25,7 @@ Use the `isSelected` or `defaultSelected` prop to set the selection state, and `
 
 ```tsx render wide docs={docs.exports.Checkbox} links={docs.links} props={['isIndeterminate']}
 "use client";
-import {Checkbox} from '@react-spectrum/s2';
+import {Checkbox} from '@react-spectrum/s2/Checkbox';
 import {useState} from 'react';
 
 function Example(props) {
@@ -55,7 +55,9 @@ Use the `name` and `value` props to submit the checkbox to the server. Set the `
 
 ```tsx render
 "use client";
-import {Checkbox, Button, Form} from '@react-spectrum/s2';
+import {Checkbox} from '@react-spectrum/s2/Checkbox';
+import {Button} from '@react-spectrum/s2/Button';
+import {Form} from '@react-spectrum/s2/Form';
 
 <Form>
   <Checkbox

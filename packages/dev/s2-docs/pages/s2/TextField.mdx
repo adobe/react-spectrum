@@ -29,7 +29,7 @@ Use the `value` or `defaultValue` prop to set the text value, and `onChange` to 
 
 ```tsx render
 "use client";
-import {TextField} from '@react-spectrum/s2';
+import {TextField} from '@react-spectrum/s2/TextField';
 import {useState} from 'react';
 
 function Example() {
@@ -56,7 +56,9 @@ Use the `name` prop to submit the text value to the server. Set the `isRequired`
 
 ```tsx render docs={docs.exports.TextField} links={docs.links} props={['isRequired', 'necessityIndicator', 'type', 'pattern', 'minLength', 'maxLength']} initialProps={{isRequired: true, type: 'email'}}
 "use client";
-import {TextField, Button, Form} from '@react-spectrum/s2';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {Button} from '@react-spectrum/s2/Button';
+import {Form} from '@react-spectrum/s2/Form';
 
 function Example(props) {
   return (

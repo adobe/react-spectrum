@@ -16,7 +16,8 @@ export const description = 'Displays a list of actions or options that a user ca
 
 ```tsx render docs={docs.exports.Menu} links={docs.links} props={['size']} type="s2" wide
 "use client";
-import {Menu, MenuTrigger, MenuItem, MenuSection, SubmenuTrigger, Header, Heading, Text, ActionButton} from '@react-spectrum/s2';
+import {Menu, MenuTrigger, MenuItem, MenuSection, SubmenuTrigger, Header, Heading, Text} from '@react-spectrum/s2/Menu';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import Image from '@react-spectrum/s2/icons/Image';
 import Copy from '@react-spectrum/s2/icons/Copy';
 import DeviceTablet from '@react-spectrum/s2/icons/DeviceTablet';
@@ -88,7 +89,8 @@ function Example(props) {
 
 ```tsx render
 "use client";
-import {Menu, MenuTrigger, MenuItem, ActionButton} from '@react-spectrum/s2';
+import {Menu, MenuTrigger, MenuItem} from '@react-spectrum/s2/Menu';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 
 let items = [
   {id: 'cut', name: 'Cut'},
@@ -115,7 +117,8 @@ let items = [
 
 ```tsx render
 "use client";
-import {MenuTrigger, ActionButton, Menu, MenuItem, Text, Keyboard} from '@react-spectrum/s2';
+import {MenuTrigger, Menu, MenuItem, Keyboard, Text} from '@react-spectrum/s2/Menu';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import Copy from '@react-spectrum/s2/icons/Copy';
 import Cut from '@react-spectrum/s2/icons/Cut';
 import Paste from '@react-spectrum/s2/icons/Paste';
@@ -149,7 +152,9 @@ import Paste from '@react-spectrum/s2/icons/Paste';
 
 ```tsx render type="s2"
 "use client";
-import {MenuTrigger, ActionButton, Menu, MenuItem, Text, Image} from '@react-spectrum/s2';
+import {MenuTrigger, Menu, MenuItem, Text} from '@react-spectrum/s2/Menu';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
+import {Image} from '@react-spectrum/s2/Image';
 import normal from 'url:./assets/normal.png';
 import multiply from 'url:./assets/multiply.png';
 import screen from 'url:./assets/screen.png';
@@ -191,7 +196,8 @@ Use the `<MenuSection>` component to group options. A `<Header>` element, with a
 
 ```tsx render
 "use client";
-import {MenuTrigger, ActionButton, Menu, MenuItem, MenuSection, Header, Heading, Text} from '@react-spectrum/s2';
+import {MenuTrigger, Menu, MenuItem, MenuSection, Header, Heading, Text} from '@react-spectrum/s2/Menu';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 
 <MenuTrigger>
   <ActionButton>Publish</ActionButton>
@@ -226,7 +232,8 @@ Wrap a `<MenuItem>` and a `<Menu>` with a `<SubmenuTrigger>` to create a submenu
 
 ```tsx render
 "use client";
-import {Menu, MenuTrigger, MenuItem, SubmenuTrigger, ActionButton} from '@react-spectrum/s2';
+import {Menu, MenuTrigger, MenuItem, SubmenuTrigger} from '@react-spectrum/s2/Menu';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 
 <MenuTrigger>
   <ActionButton>Actions</ActionButton>
@@ -254,7 +261,8 @@ Wrap a `<MenuItem>` with an `<UnavailableMenuItemTrigger>` to disable the item's
 
 ```tsx render docs={docs.exports.UnavailableMenuItemTrigger} links={docs.links} props={['isUnavailable']} initialProps={{isUnavailable: true}} type="s2" wide
 "use client";
-import {ActionButton, Content, ContextualHelpPopover, Heading, Menu, MenuTrigger, MenuItem, UnavailableMenuItemTrigger} from '@react-spectrum/s2';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
+import {ContextualHelpPopover, Menu, MenuTrigger, MenuItem, UnavailableMenuItemTrigger, Content, Heading} from '@react-spectrum/s2/Menu';
 
 function Example(props) {
   return (
@@ -281,7 +289,8 @@ Use the `href` prop on a `<MenuItem>` to create a link. See the [getting started
 
 ```tsx render docs={docs.exports.Menu} links={docs.links} props={['hideLinkOutIcon']} type="s2" wide
 "use client";
-import {Menu, MenuTrigger, MenuItem, ActionButton} from '@react-spectrum/s2';
+import {Menu, MenuTrigger, MenuItem} from '@react-spectrum/s2/Menu';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 
 function Example(props) {
   return (
@@ -306,7 +315,12 @@ Wrap the Menu in a [Popover](Popover) to add additional sibling elements. This e
 
 ```tsx render
 "use client";
-import {Popover, MenuTrigger, ActionButton, Menu, MenuItem, MenuSection, SubmenuTrigger, Avatar, Switch, Divider, Text} from '@react-spectrum/s2';
+import {Popover} from '@react-spectrum/s2/Popover';
+import {MenuTrigger, Menu, MenuItem, MenuSection, SubmenuTrigger, Text} from '@react-spectrum/s2/Menu';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
+import {Avatar} from '@react-spectrum/s2/Avatar';
+import {Switch} from '@react-spectrum/s2/Switch';
+import {Divider} from '@react-spectrum/s2/Divider';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Buildings from '@react-spectrum/s2/icons/Buildings';
 import Settings from '@react-spectrum/s2/icons/Settings';
@@ -363,8 +377,11 @@ Use [Autocomplete](react-aria:Autocomplete) from React Aria Components with a [S
 
 ```tsx render
 "use client";
-import {Autocomplete, MenuTrigger, ActionButton, Menu, MenuItem, Popover, SearchField} from '@react-spectrum/s2';
-import {useFilter} from 'react-aria-components';
+import {MenuTrigger, Menu, MenuItem} from '@react-spectrum/s2/Menu';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
+import {Popover} from '@react-spectrum/s2/Popover';
+import {SearchField} from '@react-spectrum/s2/SearchField';
+import {Autocomplete, useFilter} from '@react-spectrum/s2/Autocomplete';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function Example() {
@@ -402,7 +419,8 @@ Use the `selectionMode` prop to enable single or multiple selection. The selecte
 
 ```tsx render docs={docs.exports.Menu} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide align="start" type="s2"
 "use client";
-import {Menu, MenuTrigger, MenuItem, ActionButton, Selection} from '@react-spectrum/s2';
+import {Menu, MenuTrigger, MenuItem, Selection} from '@react-spectrum/s2/Menu';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {useState} from 'react';
 
 function Example(props) {
@@ -438,7 +456,8 @@ Each section in a menu may have independent selection states by passing `selecti
 
 ```tsx render hideImports
 "use client";
-import {Menu, MenuTrigger, MenuItem, MenuSection, Header, Heading, ActionButton, Selection} from '@react-spectrum/s2';
+import {Menu, MenuTrigger, MenuItem, MenuSection, Header, Heading, Selection} from '@react-spectrum/s2/Menu';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {useState} from 'react';
 
 function Example() {
@@ -489,7 +508,8 @@ MenuTrigger accepts props to control trigger interactions and Menu positioning.
 
 ```tsx render docs={docs.exports.MenuTrigger} links={docs.links} props={['trigger', 'align', 'direction', 'shouldFlip']} type="s2"
 "use client";
-import {MenuTrigger, Menu, MenuItem, ActionButton} from '@react-spectrum/s2';
+import {MenuTrigger, Menu, MenuItem} from '@react-spectrum/s2/Menu';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 
 <MenuTrigger/* PROPS */>
   <ActionButton>Copy</ActionButton>
