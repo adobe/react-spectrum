@@ -15,6 +15,7 @@ export const description = 'Displays a list of items with selection and actions.
 <PageDescription>{docs.exports.ListView.description}</PageDescription>
 
 ```tsx render docs={docs.exports.ListView} links={docs.links} props={['selectionMode', 'selectionStyle', 'isQuiet']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="s2" wide
+"use client";
 import {ListView, ListViewItem, Text} from '@react-spectrum/s2/ListView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -191,6 +192,7 @@ function AsyncListView() {
 Use the `href` prop on a `ListViewItem` to create a link. See the [getting started guide](getting-started) to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection) for more details.
 
 ```tsx render docs={docs.exports.ListView} links={docs.links} props={['selectionMode', 'isQuiet', 'hideLinkOutIcon']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'none'}} type="s2"
+"use client";
 import {ListView, ListViewItem} from '@react-spectrum/s2/ListView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
