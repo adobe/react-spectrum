@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
-import { composeRenderProps, ToggleButtonGroup as RACToggleButtonGroup, ToggleButtonGroupProps } from 'react-aria-components';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
+import { ToggleButtonGroup as RACToggleButtonGroup, type ToggleButtonGroupProps } from 'react-aria-components/ToggleButtonGroup';
 import { tv } from 'tailwind-variants';
 
 const styles = tv({

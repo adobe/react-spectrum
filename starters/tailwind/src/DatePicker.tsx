@@ -3,10 +3,10 @@ import { CalendarIcon } from 'lucide-react';
 import React from 'react';
 import {
   DatePicker as AriaDatePicker,
-  DatePickerProps as AriaDatePickerProps,
-  DateValue,
-  ValidationResult
-} from 'react-aria-components';
+  type DatePickerProps as AriaDatePickerProps,
+  type DateValue,
+  type ValidationResult,
+} from 'react-aria-components/DatePicker';
 import { Calendar } from './Calendar';
 import { DateInput } from './DateField';
 import { Description, FieldError, FieldGroup, Label } from './Field';

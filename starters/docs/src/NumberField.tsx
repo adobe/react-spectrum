@@ -3,9 +3,9 @@ import {
   Group,
   Input,
   NumberField as AriaNumberField,
-  NumberFieldProps as AriaNumberFieldProps,
-  ValidationResult
-} from 'react-aria-components';
+  type NumberFieldProps as AriaNumberFieldProps,
+  type ValidationResult,
+} from 'react-aria-components/NumberField';
 import {Button} from './Button';
 import {Plus, Minus} from 'lucide-react';
 import {Label, FieldError, Description} from './Form';

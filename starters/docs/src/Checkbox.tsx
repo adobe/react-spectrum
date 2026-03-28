@@ -1,6 +1,5 @@
 'use client';
-import {Checkbox as AriaCheckbox, CheckboxProps} from 'react-aria-components';
-
+import { Checkbox as AriaCheckbox, type CheckboxProps } from 'react-aria-components/Checkbox';
 import './Checkbox.css';
 
 export function Checkbox(

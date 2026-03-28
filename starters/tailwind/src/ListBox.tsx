@@ -4,14 +4,14 @@ import React from 'react';
 import {
   ListBox as AriaListBox,
   ListBoxItem as AriaListBoxItem,
-  ListBoxProps as AriaListBoxProps,
-  Collection,
-  Header,
-  ListBoxItemProps,
   ListBoxSection,
-  SectionProps,
-  composeRenderProps
-} from 'react-aria-components';
+  Header,
+  Collection,
+  type ListBoxProps as AriaListBoxProps,
+  type ListBoxItemProps,
+  type ListBoxSectionProps
+} from 'react-aria-components/ListBox';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import { tv } from 'tailwind-variants';
 import { composeTailwindRenderProps, focusRing } from './utils';
 
@@ -92,7 +92,7 @@ export function DropdownItem(props: ListBoxItemProps) {
   );
 }
 
-export interface DropdownSectionProps<T> extends SectionProps<T> {
+export interface DropdownSectionProps<T> extends ListBoxSectionProps<T> {
   title?: string
   items?: any
 }

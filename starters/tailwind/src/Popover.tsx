@@ -1,10 +1,6 @@
 'use client';
-import {
-  OverlayArrow,
-  Popover as AriaPopover,
-  PopoverProps as AriaPopoverProps,
-  composeRenderProps
-} from 'react-aria-components';
+import { OverlayArrow, Popover as AriaPopover, type PopoverProps as AriaPopoverProps } from 'react-aria-components/Popover';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import React from 'react';
 import {tv} from 'tailwind-variants';
 

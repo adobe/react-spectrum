@@ -1,5 +1,4 @@
 import {TextField} from '../src/TextField';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof TextField> = {

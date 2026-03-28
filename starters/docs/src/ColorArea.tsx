@@ -1,9 +1,5 @@
 'use client';
-import {
-  ColorArea as AriaColorArea,
-  ColorAreaProps
-} from 'react-aria-components';
-
+import { ColorArea as AriaColorArea, type ColorAreaProps } from 'react-aria-components/ColorArea';
 import {ColorThumb} from './ColorThumb';
 import './ColorArea.css';
 

@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { DialogProps, Dialog as RACDialog } from 'react-aria-components';
+import { type DialogProps, Dialog as RACDialog } from 'react-aria-components/Dialog';
 import { twMerge } from 'tailwind-merge';
 
 export function Dialog(props: DialogProps) {

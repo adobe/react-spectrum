@@ -6,12 +6,12 @@ import {
   MenuSection as AriaMenuSection,
   MenuTrigger as AriaMenuTrigger,
   SubmenuTrigger as AriaSubmenuTrigger,
-  MenuItemProps,
-  MenuProps,
-  MenuSectionProps,
-  MenuTriggerProps,
-  SubmenuTriggerProps,
-} from 'react-aria-components';
+  type MenuItemProps,
+  type MenuProps,
+  type MenuSectionProps,
+  type MenuTriggerProps,
+  type SubmenuTriggerProps,
+} from 'react-aria-components/Menu';
 import {Popover} from './Popover';
 import { Text } from './Content';
 import React from 'react';
