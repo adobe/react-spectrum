@@ -13,11 +13,8 @@
 
 import {BaseLayout, BaseLayoutOptions} from './BaseLayout';
 import {getChildNodes, getFirstItem} from 'react-stately/private/collections/getChildNodes';
-import {InvalidationContext} from 'react-stately/private/virtualizer/types';
+import {InvalidationContext, LayoutInfo, Rect, Size} from 'react-stately/useVirtualizerState';
 import {Key, KeyboardDelegate} from '@react-types/shared';
-import {LayoutInfo} from 'react-stately/private/virtualizer/LayoutInfo';
-import {Rect} from 'react-stately/private/virtualizer/Rect';
-import {Size} from 'react-stately/private/virtualizer/Size';
 
 export interface WaterfallLayoutOptions extends BaseLayoutOptions {
   /**

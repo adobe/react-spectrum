@@ -15,7 +15,7 @@ import {AvatarContext} from './Avatar';
 import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with { type: 'macro' };
 import {ButtonProps, ButtonRenderProps, Button as RACButton} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/utils';
+import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';

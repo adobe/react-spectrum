@@ -11,8 +11,7 @@
  */
 
 import {Key, RefObject} from '@react-types/shared';
-import {LayoutInfo} from 'react-stately/private/virtualizer/LayoutInfo';
-import {Size} from 'react-stately/private/virtualizer/Size';
+import {LayoutInfo, Size} from 'react-stately/useVirtualizerState';
 import {useCallback} from 'react';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 

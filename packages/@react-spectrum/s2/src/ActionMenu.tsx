@@ -12,9 +12,9 @@
 
 import {ActionButton, ActionButtonProps} from './ActionButton';
 import {AriaLabelingProps, DOMProps, FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {ContextValue} from 'react-aria-components/utils';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef} from 'react';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType} from './types';
 // @ts-ignore
 import intlMessages from '../intl/*.json';

@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-export {CollectionBuilder, Collection, createLeafComponent, createBranchComponent} from 'react-aria/private/collections/CollectionBuilder';
-
+export {CollectionBuilder, createLeafComponent, createBranchComponent} from 'react-aria/CollectionBuilder';
+export {Collection} from 'react-aria/Collection';
 export {createHideableComponent, useIsHidden} from 'react-aria/private/collections/Hidden';
 export {useCachedChildren} from 'react-aria/private/collections/useCachedChildren';
 export {BaseCollection, CollectionNode, ItemNode, SectionNode, FilterableNode, LoaderNode, HeaderNode} from 'react-aria/private/collections/BaseCollection';
-export type {CollectionBuilderProps, CollectionProps} from 'react-aria/private/collections/CollectionBuilder';
+export type {CollectionProps} from 'react-aria/Collection';
+export type {CollectionBuilderProps} from 'react-aria/CollectionBuilder';
 export type {CachedChildrenOptions} from 'react-aria/private/collections/useCachedChildren';

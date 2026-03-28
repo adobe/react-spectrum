@@ -13,7 +13,7 @@
 import {ModalContext} from 'react-aria-components/Modal';
 
 import React, {ReactElement, ReactNode, useState} from 'react';
-import {useSlottedContext} from 'react-aria-components/utils';
+import {useSlottedContext} from 'react-aria-components/slots';
 
 export interface DialogContainerProps {
   /** The Dialog to display, if any. */

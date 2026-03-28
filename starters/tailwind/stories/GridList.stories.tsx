@@ -8,6 +8,14 @@ const meta: Meta<typeof GridList> = {
   parameters: {
     layout: 'centered'
   },
+  argTypes: {
+    keyboardNavigationBehavior: {
+      control: {
+        type: 'radio'
+      },
+      options: ['arrow', 'tab']
+    }
+  },
   tags: ['autodocs']
 };
 
@@ -24,7 +32,21 @@ export const Example = (args: any) => (
 
 Example.args = {
   onAction: null,
-  selectionMode: 'multiple'
+  selectionMode: 'multiple',
+  keyboardNavigationBehavior: 'arrow'
+};
+
+export const Horizontal = (args: any) => (
+  <GridList aria-label="Ice cream flavors" orientation="horizontal" {...args}>
+    <GridListItem id="chocolate">Chocolate</GridListItem>
+    <GridListItem id="mint">Mint</GridListItem>
+    <GridListItem id="strawberry">Strawberry</GridListItem>
+    <GridListItem id="vanilla">Vanilla</GridListItem>
+  </GridList>
+);
+
+Horizontal.args = {
+  ...Example.args
 };
 
 export const DisabledItems = (args: any) => <Example {...args} />;

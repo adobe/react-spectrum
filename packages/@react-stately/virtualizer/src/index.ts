@@ -10,14 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-export {Layout} from 'react-stately/private/virtualizer/Layout';
-
-export {LayoutInfo} from 'react-stately/private/virtualizer/LayoutInfo';
-export {Point} from 'react-stately/private/virtualizer/Point';
-export {Rect} from 'react-stately/private/virtualizer/Rect';
-export {Size} from 'react-stately/private/virtualizer/Size';
-export {ReusableView} from 'react-stately/private/virtualizer/ReusableView';
-export {useVirtualizerState} from 'react-stately/private/virtualizer/useVirtualizerState';
-export type {InvalidationContext} from 'react-stately/private/virtualizer/types';
-export type {VirtualizerState} from 'react-stately/private/virtualizer/useVirtualizerState';
-export type {RectCorner} from 'react-stately/private/virtualizer/Rect';
+export {Layout, LayoutInfo, Point, Rect, Size, ReusableView, useVirtualizerState} from 'react-stately/useVirtualizerState';
+export type {InvalidationContext, VirtualizerState, RectCorner} from 'react-stately/useVirtualizerState';

@@ -15,7 +15,7 @@ import {ActionMenu} from '../src/ActionMenu';
 import {Avatar} from '../src/Avatar';
 import {Card, CardPreview, CollectionCardPreview} from '../src/Card';
 import {CardView, CardViewProps} from '../src/CardView';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {Content, Heading, Text} from '../src/Content';
 import EmptyIcon from '../spectrum-illustrations/gradient/generic1/Image';
 import ErrorIcon from '../spectrum-illustrations/linear/AlertNotice';

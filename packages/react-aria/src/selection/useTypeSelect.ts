@@ -13,7 +13,7 @@
 import {DOMAttributes, Key, KeyboardDelegate} from '@react-types/shared';
 import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {KeyboardEvent, useRef} from 'react';
-import {MultipleSelectionManager} from 'react-stately/private/selection/types';
+import {MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';
 
 /**
  * Controls how long to wait before clearing the typeahead buffer.

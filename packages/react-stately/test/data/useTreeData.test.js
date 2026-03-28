@@ -69,6 +69,26 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[0].children[1].value).toEqual({name: 'Devon'});
     expect(result.current.items[0].children[1]).toBe(initialResult.items[0].children[1]);
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
+
+    ({result} = renderHook(() => useTreeData({initialItems: [], getChildren, getKey})));
+
+    expect(result.current.items).toHaveLength(0);
+
+    act(() => {
+      result.current.insert(null, 0, {name: 'John'});
+    });
+
+    expect(result.current.items).toHaveLength(1);
+    expect(result.current.items[0].value).toEqual({name: 'John'});
+
+    act(() => {
+      result.current.insert('John', 0, {name: 'Devon'});
+    });
+
+    expect(result.current.items).toHaveLength(1);
+    expect(result.current.items[0].value).toEqual({name: 'John'});
+    expect(result.current.items[0].children).toHaveLength(1);
+    expect(result.current.items[0].children[0].value).toEqual({name: 'Devon'});
   });
 
   it('should insert multiple items into a child node', function () {
@@ -90,6 +110,27 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[0].children[2].value).toEqual({name: 'Danni'});
     expect(result.current.items[0].children[1]).toBe(initialResult.items[0].children[1]);
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
+
+    ({result} = renderHook(() => useTreeData({initialItems: [], getChildren, getKey})));
+
+    expect(result.current.items).toHaveLength(0);
+
+    act(() => {
+      result.current.insert(null, 0, {name: 'John'});
+    });
+
+    expect(result.current.items).toHaveLength(1);
+    expect(result.current.items[0].value).toEqual({name: 'John'});
+
+    act(() => {
+      result.current.insert('John', 0, {name: 'Devon'}, {name: 'Danni'});
+    });
+
+    expect(result.current.items).toHaveLength(1);
+    expect(result.current.items[0].value).toEqual({name: 'John'});
+    expect(result.current.items[0].children).toHaveLength(2);
+    expect(result.current.items[0].children[0].value).toEqual({name: 'Devon'});
+    expect(result.current.items[0].children[1].value).toEqual({name: 'Danni'});
   });
 
   it('should insert an item into the root', function () {

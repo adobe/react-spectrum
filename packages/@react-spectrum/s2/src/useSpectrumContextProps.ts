@@ -11,9 +11,9 @@
  */
 
 import {Context, ForwardedRef, useMemo} from 'react';
-import {ContextValue, SlotProps, useSlottedContext} from 'react-aria-components/utils';
+import {ContextValue, SlotProps, useSlottedContext} from 'react-aria-components/slots';
 import {mergeProps} from 'react-aria/mergeProps';
-import {mergeRefs} from 'react-aria/private/utils/mergeRefs';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import {mergeStyles} from '../style/runtime';
 import {RefObject} from '@react-types/shared';
 import {useObjectRef} from 'react-aria/useObjectRef';

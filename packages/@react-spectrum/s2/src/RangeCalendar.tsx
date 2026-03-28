@@ -16,7 +16,7 @@ import {
   DateValue
 } from 'react-aria-components/RangeCalendar';
 import {CalendarGrid, CalendarHeader} from './Calendar';
-import {ContextValue, Provider} from 'react-aria-components/utils';
+import {ContextValue, Provider} from 'react-aria-components/slots';
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode} from 'react';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};

@@ -24,7 +24,7 @@ import {
   useSlot,
   useSlottedContext
 } from './utils';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {HoverEvents, Orientation} from '@react-types/shared';
 import {LabelContext} from './Label';

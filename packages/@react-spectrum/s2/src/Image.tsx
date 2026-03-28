@@ -1,5 +1,5 @@
 import {ColorSchemeContext} from './Provider';
-import {ContextValue, SlotProps} from 'react-aria-components/utils';
+import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {createContext, ForwardedRef, forwardRef, HTMLAttributeReferrerPolicy, JSX, ReactNode, useCallback, useContext, useMemo, useReducer, useRef, version} from 'react';
 import {DefaultImageGroup, ImageGroup} from './ImageCoordinator';
 import {loadingStyle, useIsSkeleton, useLoadingAnimation} from './Skeleton';

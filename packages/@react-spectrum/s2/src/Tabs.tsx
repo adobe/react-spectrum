@@ -22,12 +22,11 @@ import {
   TabListStateContext,
   TabRenderProps
 } from 'react-aria-components/Tabs';
-
 import {baseColor, focusRing, size, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, GlobalDOMAttributes, Key, Node, Orientation, RefObject} from '@react-types/shared';
-import {CollectionBuilder} from 'react-aria/private/collections/CollectionBuilder';
-import {ContextValue, Provider} from 'react-aria-components/utils';
+import {CollectionBuilder} from 'react-aria/CollectionBuilder';
+import {ContextValue, Provider} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Group} from 'react-aria-components/Group';
@@ -36,7 +35,7 @@ import {inertValue} from 'react-aria/private/utils/inertValue';
 import {Picker, PickerItem} from './TabsPicker';
 import {SelectionIndicator} from 'react-aria-components/SelectionIndicator';
 import {Text, TextContext} from './Content';
-import {useControlledState} from 'react-stately/private/utils/useControlledState';
+import {useControlledState} from 'react-stately/useControlledState';
 import {useDOMRef} from './useDOMRef';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useHasTabbableChild} from 'react-aria/private/focus/useHasTabbableChild';

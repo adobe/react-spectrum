@@ -15,6 +15,7 @@
 import 'client-only';
 
 export {Menu, MenuItem, MenuTrigger, MenuSection, MenuContext, MenuStateContext, RootMenuTriggerStateContext, SubmenuTrigger} from '../src/Menu';
+export {Collection, type CollectionProps} from 'react-aria/Collection';
 export type {MenuProps, MenuItemProps, MenuItemRenderProps, MenuTriggerProps, SubmenuTriggerProps, MenuSectionProps} from '../src/Menu';
 export type {Key, Selection, SelectionMode} from '@react-types/shared';
 export type {ListState} from 'react-stately/useListState';

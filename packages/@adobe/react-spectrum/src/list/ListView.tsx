@@ -18,7 +18,7 @@ import type {DragAndDropHooks} from '../dnd/useDragAndDrop';
 import type {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
 import type {DroppableCollectionResult} from 'react-aria/useDroppableCollection';
 import type {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusRing} from 'react-aria/FocusRing';
 import {FocusScope} from 'react-aria/FocusScope';
 import InsertionIndicator from './InsertionIndicator';

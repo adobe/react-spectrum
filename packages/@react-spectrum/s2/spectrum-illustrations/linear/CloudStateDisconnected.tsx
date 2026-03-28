@@ -15,7 +15,7 @@ import CloudStateDisconnected_M from 'illustration:./S2_lin_cloudStateDisconnect
 import CloudStateDisconnected_S from 'illustration:./S2_lin_cloudStateDisconnected_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function CloudStateDisconnected(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

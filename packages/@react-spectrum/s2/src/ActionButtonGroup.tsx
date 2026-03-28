@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps} from '@react-types/shared';
-import {ContextValue, SlotProps} from 'react-aria-components/utils';
+import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {createContext, ForwardedRef, forwardRef, ReactNode} from 'react';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};

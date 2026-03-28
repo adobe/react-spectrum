@@ -12,14 +12,14 @@
 
 import {Button} from '../src/Button';
 
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {FieldError} from '../src/FieldError';
 import {Form} from '../src/Form';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {ListBox} from '../src/ListBox';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {OverlayArrow} from '../src/OverlayArrow';

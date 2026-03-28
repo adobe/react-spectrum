@@ -18,7 +18,7 @@ import {Avatar} from '../../src/avatar/Avatar';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../../src/button/Button';
 import {ButtonGroup} from '../../src/buttongroup/ButtonGroup';
-import {chain} from 'react-aria/private/utils/chain';
+import {chain} from 'react-aria/chain';
 import {ComboBox} from '../../src/combobox/ComboBox';
 import {Content} from '../../src/view/Content';
 import {ContextualHelp} from '../../src/contextualhelp/ContextualHelp';

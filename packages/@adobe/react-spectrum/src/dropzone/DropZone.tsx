@@ -16,7 +16,7 @@ import {DropZoneProps, DropZone as RACDropZone} from 'react-aria-components/Drop
 import {HeadingContext} from 'react-aria-components/Heading';
 import intlMessages from '../../intl/dropzone/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
-import {Provider} from 'react-aria-components/utils';
+import {Provider} from 'react-aria-components/slots';
 import React, {ReactNode} from 'react';
 // @ts-ignore
 import {SlotProvider} from '../utils/Slots';

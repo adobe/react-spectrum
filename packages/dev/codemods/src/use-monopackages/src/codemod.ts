@@ -111,7 +111,7 @@ const transformer: Transformer = function transformer(file: FileInfo, api: API, 
     const individualPackageImports = root
       .find(j.ImportDeclaration)
       .filter((path) => {
-        return (path.node.source.value as string)?.startsWith(
+        return path.node.source.value !== '@react-spectrum/s2' && (path.node.source.value as string)?.startsWith(
           packages[pkg].individualPrefix
         );
       });

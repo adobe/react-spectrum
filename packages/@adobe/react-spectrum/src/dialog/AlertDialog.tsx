@@ -13,14 +13,14 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button, SpectrumButtonProps} from '../button/Button';
 import {ButtonGroup} from '../buttongroup/ButtonGroup';
-import {chain} from 'react-aria/private/utils/chain';
+import {chain} from 'react-aria/chain';
 import {classNames} from '../utils/classNames';
 import {Content} from '../view/Content';
 import {Dialog} from './Dialog';
 import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '../divider/Divider';
 import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {Heading} from '../text/Heading';
 import intlMessages from '../../intl/dialog/*.json';
 // @ts-ignore

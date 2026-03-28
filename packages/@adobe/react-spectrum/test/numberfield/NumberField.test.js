@@ -14,7 +14,7 @@ jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 import {act, fireEvent, pointerMap, render, screen, within} from '@react-spectrum/test-utils-internal';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {Button} from '../../src/button/Button';
-import {chain} from 'react-aria/private/utils/chain';
+import {chain} from 'react-aria/chain';
 import {Form} from '../../src/form/Form';
 import messages from 'react-aria/intl/numberfield/*.json';
 import {NumberField} from '../../src/numberfield/NumberField';
