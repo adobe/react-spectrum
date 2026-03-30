@@ -15,15 +15,20 @@ const {Transformer} = require('@parcel/plugin');
 module.exports = new Transformer({
   async transform({asset, options}) {
     // Normalize CSS so it always has the same environment and isn't duplicated.
-    // This is necessary because the server bundle has a "node" environment, whereas
-    // the client bundle has a "browser" environment. We want them to end up resolving
-    // to the same asset.
+    // This is so the legacy JS bundle and the modern JS bundle share the same CSS.
     asset.setEnvironment({
       context: 'browser',
       engines: {
         browsers: 'baseline widely available'
       },
-      shouldOptimize: asset.env.shouldOptimize
+      shouldOptimize: asset.env.shouldOptimize,
+      outputFormat: asset.env.outputFormat,
+      isLibrary: asset.env.isLibrary,
+      shouldScopeHoist: asset.env.shouldScopeHoist,
+      includeNodeModules: asset.env.includeNodeModules,
+      loc: asset.env.loc,
+      sourceMap: asset.env.sourceMap,
+      sourceType: asset.env.sourceType
     });
 
     return [asset];
