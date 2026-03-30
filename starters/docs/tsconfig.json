@@ -13,7 +13,6 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "verbatimModuleSyntax": true,
-    "customConditions": ["source"],
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
