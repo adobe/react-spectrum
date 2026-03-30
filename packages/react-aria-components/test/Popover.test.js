@@ -15,7 +15,7 @@ import {Button} from '../src/Button';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {OverlayArrow} from '../src/OverlayArrow';
 import {Popover} from '../src/Popover';
-import {Pressable} from 'react-aria/private/interactions/Pressable';
+import {Pressable} from 'react-aria/Pressable';
 import React, {useRef} from 'react';
 import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import userEvent from '@testing-library/user-event';

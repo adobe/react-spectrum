@@ -28,7 +28,7 @@ import {
 
 import {CellProps, TableLoadMoreItem} from '../src/Table';
 import {Checkbox, CheckboxProps} from '../src/Checkbox';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, isTextDropItem, useDragAndDrop} from '../exports/useDragAndDrop';
 import {Heading} from '../src/Heading';

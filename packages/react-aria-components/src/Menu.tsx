@@ -42,19 +42,20 @@ import {
   useSlot,
   useSlottedContext
 } from './utils';
-import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
+import {CollectionBuilder, createBranchComponent, createLeafComponent} from 'react-aria/CollectionBuilder';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 
 import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
 
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusEvents, FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents} from '@react-types/shared';
 import {FocusScope} from 'react-aria/FocusScope';
 import {HeaderContext} from './Header';
 import {Collection as ICollection, Node} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';
 import {mergeProps} from 'react-aria/mergeProps';
-import {MultipleSelectionState} from 'react-stately/private/selection/types';
+import {MultipleSelectionState} from 'react-stately/useMultipleSelectionState';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';

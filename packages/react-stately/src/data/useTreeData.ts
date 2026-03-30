@@ -261,7 +261,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     },
     insert(parentKey: Key | null, index: number, ...values: T[]) {
       setItems(({items, nodeMap: originalMap}) => {
-        let {items: newNodes, nodeMap: newMap} = buildTree(values, originalMap, parentKey);
+        let {items: newNodes, nodeMap: newMap} = buildTree(values, new Map(originalMap), parentKey);
 
         // If parentKey is null, insert into the root.
         if (parentKey == null) {

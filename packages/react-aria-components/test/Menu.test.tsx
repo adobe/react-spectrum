@@ -13,7 +13,7 @@
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaMenuTests} from './AriaMenu.test-util';
 import {Button} from '../src/Button';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {Header} from '../src/Header';
 import {Heading} from '../src/Heading';
 import {Input} from '../src/Input';
@@ -21,7 +21,7 @@ import {Keyboard} from '../src/Keyboard';
 import {Label} from '../src/Label';
 import {Menu, MenuContext, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger} from '../src/Menu';
 import {Popover} from '../src/Popover';
-import {Pressable} from 'react-aria/private/interactions/Pressable';
+import {Pressable} from 'react-aria/Pressable';
 import React, {useState} from 'react';
 import {Selection, SelectionMode} from '@react-types/shared';
 import {Separator} from '../src/Separator';

@@ -58,6 +58,26 @@
     display: grid;
     grid-template-columns: auto;
     align-items: center;
+
+    &[data-orientation=horizontal] {
+      display: flex;
+      flex-direction: row;
+      justify-content: normal;
+
+      .react-aria-GridListItem {
+        flex-shrink: 0;
+        width: var(--grid-item-size);
+      }
+    }
+  }
+
+  &[data-layout=grid][data-orientation=horizontal] {
+    grid-auto-flow: column;
+    grid-template-rows: auto auto;
+    grid-template-columns: none;
+    grid-auto-columns: var(--grid-item-size);
+    justify-content: normal;
+    max-height: none;
   }
 
   &[data-focus-visible] {

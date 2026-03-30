@@ -11,7 +11,7 @@
  */
 
 import {ActionButtonGroupProps, actionGroupStyle} from './ActionButtonGroup';
-import {ContextValue} from 'react-aria-components/utils';
+import {ContextValue} from 'react-aria-components/slots';
 
 import {createContext, ForwardedRef, forwardRef} from 'react';
 

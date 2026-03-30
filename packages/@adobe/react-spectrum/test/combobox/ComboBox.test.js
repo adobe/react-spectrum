@@ -14,7 +14,7 @@ jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 import {act, fireEvent, pointerMap, render, simulateDesktop, simulateMobile, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {Button} from '../../src/button/Button';
-import {chain} from 'react-aria/private/utils/chain';
+import {chain} from 'react-aria/chain';
 import {ComboBox} from '../../src/combobox/ComboBox';
 import {Form} from '../../src/form/Form';
 import {Item} from 'react-stately/Item';

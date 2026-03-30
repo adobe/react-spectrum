@@ -13,7 +13,7 @@
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Cell as AriaCell, Column, Row, Table, TableBody, TableHeader} from '../src/Table';
 import {Button} from '../src/Button';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {composeRenderProps} from '../src/utils';
 import React from 'react';
 import {useDragAndDrop} from '../src/useDragAndDrop';

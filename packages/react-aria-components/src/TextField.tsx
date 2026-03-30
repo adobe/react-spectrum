@@ -29,7 +29,7 @@ import {
 import {createHideableComponent} from 'react-aria/private/collections/Hidden';
 import {FieldErrorContext} from './FieldError';
 import {FieldInputContext} from './Autocomplete';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {GroupContext} from './Group';

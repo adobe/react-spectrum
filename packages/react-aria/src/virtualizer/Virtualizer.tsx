@@ -11,15 +11,12 @@
  */
 
 import {Collection, Key, RefObject} from '@react-types/shared';
-import {Layout} from 'react-stately/private/virtualizer/Layout';
+import {Layout, Rect, ReusableView, useVirtualizerState} from 'react-stately/useVirtualizerState';
 import {mergeProps} from '../utils/mergeProps';
 import React, {ForwardedRef, HTMLAttributes, ReactElement, ReactNode, useCallback} from 'react';
-import {Rect} from 'react-stately/private/virtualizer/Rect';
-import {ReusableView} from 'react-stately/private/virtualizer/ReusableView';
 import {ScrollView} from './ScrollView';
 import {useLoadMore} from '../utils/useLoadMore';
 import {useObjectRef} from '../utils/useObjectRef';
-import {useVirtualizerState} from 'react-stately/private/virtualizer/useVirtualizerState';
 import {VirtualizerItem} from './VirtualizerItem';
 
 type RenderWrapper<T extends object, V> = (
