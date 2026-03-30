@@ -15,7 +15,7 @@ export const description = 'Allows a user to select a contiguous range of dates.
   component={RangeCalendar}
   docs={docs.exports.RangeCalendar}
   links={docs.links}
-  props={['visibleMonths', 'pageBehavior', 'firstDayOfWeek', 'isDisabled']}
+  props={['visibleMonths', 'pageBehavior', 'firstDayOfWeek', 'isDisabled', 'interactOutsideBehavior']}
   initialProps={{'aria-label': 'Trip dates'}}
   controlOptions={{
     visibleMonths: {
@@ -241,27 +241,6 @@ function Example() {
     </div>
   );
 }
-```
-
-## Interact outside behavior
-
-Use the `interactOutsideBehavior` prop to control what happens when a range selection is in progress and the user interacts outside the available dates.
-
-```tsx render docs={docs.exports.RangeCalendar} links={docs.links} props={['interactOutsideBehavior']} initialProps={{interactOutsideBehavior: 'select'}} type="s2"
-"use client";
-import {RangeCalendar} from '@react-spectrum/s2';
-import {parseDate} from '@internationalized/date';
-
-<RangeCalendar
-  aria-label="Trip dates"
-  defaultValue={{
-    start: parseDate('2025-02-03'),
-    end: parseDate('2025-02-12')
-  }}
-  ///- begin highlight -///
-  /* PROPS */
-  ///- end highlight -///
-/>
 ```
 
 ## API

@@ -21,14 +21,14 @@ export const description = 'Displays one or more date grids and allows users to 
     component={VanillaRangeCalendar}
     docs={vanillaDocs.exports.RangeCalendar}
     links={vanillaDocs.links}
-    props={['isDisabled']}
+    props={['isDisabled', 'interactOutsideBehavior']}
     type="vanilla"
     files={["starters/docs/src/RangeCalendar.tsx", "starters/docs/src/RangeCalendar.css"]} />
   <VisualExample
     component={TailwindRangeCalendar}
     docs={vanillaDocs.exports.RangeCalendar}
     links={vanillaDocs.links}
-    props={['isDisabled']}
+    props={['isDisabled', 'interactOutsideBehavior']}
     type="tailwind"
     files={["starters/tailwind/src/RangeCalendar.tsx"]} />
 </ExampleSwitcher>
@@ -337,27 +337,6 @@ import {ChevronLeft, ChevronRight} from 'lucide-react';
     {(date) => <CalendarCell date={date} />}
   </CalendarGrid>
 </RangeCalendar>
-```
-
-## Interact outside behavior
-
-Use the `interactOutsideBehavior` prop to control what happens when a range selection is in progress and the user interacts outside the available dates.
-
-```tsx render docs={docs.exports.RangeCalendar} links={docs.links} props={['interactOutsideBehavior']} initialProps={{interactOutsideBehavior: 'select'}}
-"use client";
-import {RangeCalendar} from 'vanilla-starter/RangeCalendar';
-import {parseDate} from '@internationalized/date';
-
-<RangeCalendar
-  aria-label="Trip dates"
-  defaultValue={{
-    start: parseDate('2025-02-03'),
-    end: parseDate('2025-02-12')
-  }}
-  ///- begin highlight -///
-  /* PROPS */
-  ///- end highlight -///
-/>
 ```
 
 ## API
