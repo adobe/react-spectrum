@@ -139,6 +139,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     // (only if height > 1 or width > 1 for getDropTargetFromPoint)
     if (rect[heightProperty] > 1) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT) + this.gap;
+      // Clone only before mutating
       rect = rect.copy();
       rect[offsetProperty] = Math.floor(rect[offsetProperty] / rowHeight) * rowHeight;
       rect[heightProperty] = Math.ceil(rect[heightProperty] / rowHeight) * rowHeight;
