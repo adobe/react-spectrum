@@ -1,37 +1,132 @@
 # Manual fixes after the codemod
 
-## Known gaps to handle explicitly
+## Icons and illustrations
 
-- `@react-spectrum/toast` imports are not automatically migrated. Move them to S2, then re-check `ToastContainer` mounts and `ToastQueue` usages.
-- v3 `Provider` and `defaultTheme` wrappers in apps and tests need human review. S2 does not use the v3 theme object model.
-
-## Imports and packages
-
-- Collapse v3 component imports onto `@react-spectrum/s2`.
-- Keep using `@spectrum-icons/*` only when there is no S2 icon or illustration equivalent. Prefer `@react-spectrum/s2/icons/*` and `@react-spectrum/s2/illustrations` when possible.
 - If the codemod leaves `TODO(S2-upgrade)` next to an icon or illustration import, pick the nearest S2 replacement manually.
 
-## App and Provider setup
+## Layout components
 
-- Full-page apps usually add `import '@react-spectrum/s2/page.css';` at the entrypoint and no longer need a mandatory root Provider just to supply `theme={defaultTheme}`.
-- Embedded sections still use S2 `Provider` with an explicit `background`.
-- Keep or add S2 `Provider` only when locale, router integration, color-scheme/background overrides, or SSR `elementType="html"` behavior are needed.
-- Preserve unrelated wrappers such as routing, store, analytics, i18n, and host-framework providers. Replace or remove only the React Spectrum-specific layer.
+`Flex`, `Grid`, `View`, and `Well` are not part of S2. These should be updated to `div` elements styled with the macro.
 
-## Style and layout follow-ups
+### Flex example
 
-- Convert v3 style props and `UNSAFE_style` cases to the S2 style macro when possible.
-- `Flex` and `Grid` often become `div` elements styled with the macro.
-- Review `ClearSlots` and other direct `@react-spectrum/utils` imports manually. These are not part of the common S2 app surface.
+Before:
+
+```jsx
+<Flex direction="column">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</Flex>
+```
+
+After:
+
+```jsx
+<div className={style({display: 'flex', flexDirection: 'column'})}>
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>
+```
+
+### Grid example
+
+Before:
+
+```jsx
+<Grid justifyContent="center">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</Grid>
+```
+
+After:
+
+```jsx
+<div className={style({display: 'grid', justifyContent: 'center'})}>
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>
+```
+
+### View example
+
+Before:
+
+```jsx
+<View>
+  Content
+</View>
+```
+
+After:
+
+```jsx
+<div>
+  Content
+</div>
+```
+### Well example
+
+Before:
+
+```jsx
+<Well>
+  Content
+</Well>
+```
+
+After:
+
+```jsx
+<div className={style({
+  display: 'block',
+  textAlign: 'start',
+  padding: 16,
+  minWidth: 160,
+  marginTop: 4,
+  borderWidth: 1,
+  borderRadius: 'sm',
+  borderStyle: 'solid',
+  borderColor: 'transparent-black-75',
+  font: 'body-sm'
+})}>
+  Content
+</div>
+```
+
+## UNSAFE_style and UNSAFE_className
+
+Move `UNSAFE_style` usage to the S2 style macro when possible.
+
+Move `UNSAFE_className` usage to the S2 style macro when possible.
 
 ## Dialogs and collections
 
 - `DialogContainer` and `useDialogContainer` still exist in S2, but the import path changes and dismiss logic may need to move between `Dialog`, `DialogTrigger`, and `DialogContainer`.
-- When `Item` survives the codemod, rename it based on its parent: `MenuItem`, `PickerItem`, `ComboBoxItem`, `ListBoxItem`, `Tab`, `TabPanel`, `Tag`, `Breadcrumb`, and similar.
+- When `Item` survives the codemod, rename it based on its parent component:
+
+  | Parent component | v3 child | S2 child |
+  |---|---|---|
+  | Menu / ActionMenu | Item | MenuItem |
+  | Picker | Item | PickerItem |
+  | ComboBox | Item | ComboBoxItem |
+  | ListBox | Item | ListBoxItem |
+  | Tabs | Item | Tab / TabPanel |
+  | TagGroup | Item | Tag |
+  | Breadcrumbs | Item | Breadcrumb |
+
 - Preserve React `key` when mapping arrays, but ensure collection data items expose `id` when S2 expects it.
 - Table and ListView migrations often need manual review for row headers, nested columns, and explicit item ids.
 
-## Tests
+## Toast migration
 
-- Replace v3 Provider/defaultTheme test wrappers with the minimal S2 `Provider` props the test actually needs, or remove the wrapper entirely if no S2 context is required.
-- Update toast mocks and assertions that still reference `@react-spectrum/toast` or old dialog markup.
+- Move `ToastContainer` and `ToastQueue` imports from `@react-spectrum/toast` to `@react-spectrum/s2`.
+- Keep a shared `ToastContainer` mounted near the app root or test harness, then update all queue calls to use the S2 import path.
+- S2 supports `ToastQueue.neutral`, `positive`, `negative`, and `info`.
+- Re-check options such as `timeout`, `actionLabel`, `onAction`, `shouldCloseOnAction`, and `onClose` after the import move.
+- The queue methods still return a close function. Keep programmatic dismissal logic when the existing UX depends on it.
+- Search for every `ToastContainer` mount and every `ToastQueue` usage after moving imports. Shared app roots, secondary entrypoints, and test harnesses are easy to miss.

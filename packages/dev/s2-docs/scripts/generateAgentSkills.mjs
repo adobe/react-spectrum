@@ -406,44 +406,88 @@ The \`references/\` directory contains detailed documentation organized as follo
 function generateMigrationSkillMd(skillConfig) {
   return `${generateFrontmatter(skillConfig)}# React Spectrum v3 to S2 migration
 
-Use this skill to upgrade React Spectrum v3 codebases to React Spectrum S2. Work codemod-first by default: inspect the repo, run the non-interactive codemod, then resolve the manual follow-up work it cannot finish safely.
+Upgrade React Spectrum v3 codebases to S2 by following these seven steps in order.
 
-## Inspect first
+## Step 1: Inspect the codebase
 
-- Search package manifests and source for \`@adobe/react-spectrum\`, \`@react-spectrum/*\` packages, and \`@spectrum-icons/*\`.
-- In monorepos or mixed-tooling repos, inspect the target package or app instead of assuming the workspace root has all the information. Determine the package manager and runtime bundler at the migration target level when needed.
-- Find app entrypoints, standalone pages, alternate render roots, embedded sub-apps, utility apps, test-only render targets, root providers, shared test wrappers, toast setup, dialog helpers, and any direct \`defaultTheme\` usage before running the codemod.
-- Prefer \`--path\` for monorepos or partial rollouts. Use \`--components\` only when the user explicitly wants an incremental migration.
+- Search package manifests for \`@adobe/react-spectrum\`, \`@react-spectrum/*\`, and \`@spectrum-icons/*\`.
+- Note the package manager (npm, yarn, pnpm) from the lockfile.
+- Identify the bundler used by the migration target (Parcel, Vite, webpack, Next.js, Rollup, ESBuild).
+- In monorepos, inspect the specific package or app being migrated rather than the workspace root.
+- Find app entrypoints, root providers, shared test wrappers, toast setup, and any \`defaultTheme\` usage.
 
-## Upgrade workflow
+See [Prerequisites](references/focused-prerequisites.md) for the full inspection checklist and minimum tool versions.
 
-- Follow [Focused codemod workflow](references/focused-workflow.md) for the exact codemod-first sequence and validation order.
-- Search for \`TODO(S2-upgrade)\` immediately after the codemod. Treat every remaining comment as a required manual review.
-- Resolve follow-up work in this order:
-  1. imports and package changes
-  2. app setup, \`page.css\`, and Provider decisions
-  3. style props, layout primitives, and \`UNSAFE_style\`
-  4. dialog, collection, and table follow-ups
-  5. icons, illustrations, and toast migration
-  6. test wrappers, mocks, and repo-native validation
+## Step 2: Install @react-spectrum/s2
 
-## Common blind spots
+Install the S2 package with the project's package manager:
 
-- \`@react-spectrum/toast\` imports need explicit migration to S2 toast APIs.
-- v3 \`Provider\` and \`defaultTheme\` wrappers in apps and tests require human review rather than a blind rename. Preserve unrelated providers and shared test harnesses while replacing only the React Spectrum-specific layer.
-- \`DialogContainer\`/\`useDialogContainer\`, \`ClearSlots\`, style prop conversions, icons, illustrations, and collection \`Item\` rewrites are common follow-up areas even after a successful codemod run.
+\`\`\`bash
+npm install @react-spectrum/s2
+yarn add @react-spectrum/s2
+pnpm add @react-spectrum/s2
+\`\`\`
 
-## References
+If the bundler is not Parcel v2.12.0+, also install and configure \`unplugin-parcel-macros\` as a dev dependency. See [Getting started](references/docs-getting-started.md) for bundler-specific setup instructions.
 
-- [Focused codemod workflow](references/focused-workflow.md): inspection checklist, \`--agent\` usage, and validation order.
-- [Focused manual fixes](references/focused-manual-fixes.md): the highest-signal follow-up areas after \`TODO(S2-upgrade)\`.
-- [Focused app setup](references/focused-app-setup.md): \`page.css\`, Parcel vs non-Parcel macro setup, Provider decisions, and test wrappers.
-- [Focused toast migration](references/focused-toast.md): how to replace \`@react-spectrum/toast\` imports and update test mocks.
-- [Docs: migrating](references/docs-migrating.md): the broader migration reference when you need more component-by-component detail.
-- [Docs: getting started](references/docs-getting-started.md): framework setup and macro guidance.
-- [Docs: Provider](references/docs-provider.md): locale, router, color-scheme, and SSR usage.
-- [Docs: style macro](references/docs-style-macro.md): exact style macro syntax and constraints.
-- [Docs: Toast](references/docs-toast.md): full S2 toast API and examples.
+## Step 3: Dry-run the codemod
+
+Preview what the codemod will change before applying:
+
+\`\`\`bash
+npx @react-spectrum/codemods s1-to-s2 --agent --dry
+yarn dlx @react-spectrum/codemods s1-to-s2 --agent --dry
+pnpm dlx @react-spectrum/codemods s1-to-s2 --agent --dry
+\`\`\`
+
+Use \`npx\` for npm/Yarn 1, \`yarn dlx\` for Yarn Berry/PnP, \`pnpm dlx\` for pnpm.
+Add \`--path <dir>\` for monorepos or partial rollouts.
+Add \`--components A,B\` only when explicitly requested for incremental migration.
+
+Review the dry-run output to understand the scope of changes.
+
+## Step 4: Run the codemod
+
+Execute the codemod to transform the source files:
+
+\`\`\`bash
+npx @react-spectrum/codemods s1-to-s2 --agent
+yarn dlx @react-spectrum/codemods s1-to-s2 --agent
+pnpm dlx @react-spectrum/codemods s1-to-s2 --agent
+\`\`\`
+
+Use the same \`--path\` and \`--components\` flags as the dry run if applicable.
+
+## Step 5: Format with the project's formatter
+
+If the project has a formatter (Prettier, ESLint, Biome, Oxfmt, etc.), run it on the changed files to remove extraneous formatting changes introduced by the codemod.
+
+## Step 6: Fix remaining TODO(S2-upgrade) comments
+
+Search the codebase for \`TODO(S2-upgrade)\` comments left by the codemod. Each one marks a change that requires manual review.
+
+See [Focused manual fixes](references/focused-manual-fixes.md) for information on how to fix these.
+
+## Step 7: Validate
+
+Run the project's own toolchain to verify the migration is complete:
+
+1. Install dependencies if package manifests changed.
+2. Run the typecheck or compile step (e.g. \`tsc --noEmit\`, \`tsc -b\`).
+3. Run tests covering the migrated code. Prefer the narrowest test scope that covers the changed files.
+4. Run the build to confirm the output is intact.
+
+In monorepos, validate the affected package first with its own scripts before running workspace-wide checks. Fix any failures before declaring the migration complete.
+
+## Deep reference
+
+Use these when you need more component-by-component or API-level detail:
+- [Migration guide](references/docs-migrating.md): comprehensive component-by-component migration reference.
+- [Getting started](references/docs-getting-started.md): framework setup and macro configuration.
+- [Provider](references/docs-provider.md): locale, router, color-scheme, and SSR usage.
+- [Styling](references/docs-styling.md): style macro overview including runtime conditions, CSS variables, CSS optimization, and CSS resets.
+- [Style macro](references/docs-style-macro.md): exact style macro syntax and constraints.
+- [Toast](references/docs-toast.md): full S2 toast API and examples.
 `.trimEnd() + '\n';
 }
 
@@ -541,10 +585,8 @@ function copyFocusedDocs(sourceDir, skillDir, docs) {
 function writeMigrationReferences(skillDir, sourceDir) {
   // Copy focused reference docs from source files
   const focusedRefs = [
-    'focused-workflow.md',
-    'focused-manual-fixes.md',
-    'focused-app-setup.md',
-    'focused-toast.md'
+    'focused-prerequisites.md',
+    'focused-manual-fixes.md'
   ];
 
   for (const filename of focusedRefs) {
@@ -563,6 +605,7 @@ function writeMigrationReferences(skillDir, sourceDir) {
     ['migrating.md', 'docs-migrating.md'],
     ['getting-started.md', 'docs-getting-started.md'],
     ['Provider.md', 'docs-provider.md'],
+    ['styling.md', 'docs-styling.md'],
     ['style-macro.md', 'docs-style-macro.md'],
     ['Toast.md', 'docs-toast.md']
   ]);
@@ -597,6 +640,37 @@ function collectSkillFiles(skillDir) {
       if (b === 'SKILL.md') {return 1;}
       return a.localeCompare(b);
     });
+}
+
+/**
+ * Validate that all references/ links in SKILL.md resolve to actual files.
+ * Throws if any broken links are found.
+ */
+function validateSkillLinks(skillDir) {
+  const skillMdPath = path.join(skillDir, 'SKILL.md');
+  if (!fs.existsSync(skillMdPath)) {
+    return;
+  }
+
+  const content = fs.readFileSync(skillMdPath, 'utf8');
+  const linkPattern = /\[([^\]]*)\]\((references\/[^)]+)\)/g;
+  const broken = [];
+
+  let match;
+  while ((match = linkPattern.exec(content)) !== null) {
+    const linkText = match[1];
+    const linkPath = match[2];
+    const resolvedPath = path.join(skillDir, linkPath);
+    if (!fs.existsSync(resolvedPath)) {
+      broken.push(`"${linkText}" -> ${linkPath}`);
+    }
+  }
+
+  if (broken.length > 0) {
+    throw new Error(
+      `Broken references in ${path.relative(REPO_ROOT, skillMdPath)}:\n  ${broken.join('\n  ')}`
+    );
+  }
 }
 
 function writeIndexJson(wellKnownRoot, skills) {
@@ -690,6 +764,7 @@ function main() {
     for (const config of skills) {
       console.log(`\nGenerating skill: ${config.name}`);
       const skillDir = generateSkill(config, wellKnownRoot);
+      validateSkillLinks(skillDir);
       const files = collectSkillFiles(skillDir);
       const entry = {
         name: config.name,
