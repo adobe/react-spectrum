@@ -22,7 +22,7 @@ import {
   useRenderProps
 } from './utils';
 import {DismissButton, Overlay} from 'react-aria/Overlay';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {focusSafely} from 'react-aria/private/interactions/focusSafely';
 import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import {isFocusWithin} from 'react-aria/private/utils/shadowdom/DOMFunctions';
@@ -30,7 +30,7 @@ import {mergeProps} from 'react-aria/mergeProps';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 import {OverlayTriggerStateContext} from './Dialog';
-import {PlacementAxis, PositionProps} from 'react-aria/private/overlays/useOverlayPosition';
+import {PlacementAxis, PositionProps} from 'react-aria/useOverlayPosition';
 import React, {Context, createContext, ForwardedRef, forwardRef, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useIsHidden} from 'react-aria/private/collections/Hidden';

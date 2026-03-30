@@ -16,7 +16,7 @@ import {AlertDialog} from '../../src/dialog/AlertDialog';
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button} from '../../src/button/Button';
 import {ButtonGroup} from '../../src/buttongroup/ButtonGroup';
-import {chain} from 'react-aria/private/utils/chain';
+import {chain} from 'react-aria/chain';
 import {Checkbox} from '../../src/checkbox/Checkbox';
 import {Content} from '../../src/view/Content';
 import {Dialog} from '../../src/dialog/Dialog';

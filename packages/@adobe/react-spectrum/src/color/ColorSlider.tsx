@@ -21,7 +21,7 @@ import React, {ReactNode, useRef, useState} from 'react';
 import {SlotProvider} from '../utils/Slots';
 import styles from '@adobe/spectrum-css-temp/components/colorslider/vars.css';
 import {useColorSliderState} from 'react-stately/useColorSliderState';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 import {useFocus} from 'react-aria/useFocus';
 import {useFocusableRef} from '../utils/useDOMRef';
 import {useFocusVisible} from 'react-aria/useFocusVisible';

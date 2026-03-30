@@ -15,7 +15,7 @@ import Libraries_M from 'illustration:./S2_fill_libraries_generic1_96.svg';
 import Libraries_S from 'illustration:./S2_fill_libraries_generic1_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Libraries(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

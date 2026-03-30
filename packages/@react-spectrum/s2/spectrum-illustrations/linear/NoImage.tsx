@@ -15,7 +15,7 @@ import NoImage_M from 'illustration:./S2_lin_noImage_96.svg';
 import NoImage_S from 'illustration:./S2_lin_noImage_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function NoImage(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

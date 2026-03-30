@@ -12,18 +12,14 @@
 
 import {action} from 'storybook/actions';
 import {Table as BackwardCompatTable} from './example-backwards-compat';
-import {Cell} from 'react-stately/Cell';
-import {Column, ColumnSize} from 'react-stately/Column';
+import {Cell, Column, ColumnSize, Row, TableBody, TableHeader} from 'react-stately/useTableState';
 import {Table as DocsTable} from './example-docs';
 import {Key} from '@react-types/shared';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX, useCallback, useMemo, useState} from 'react';
 import {Table as ResizingTable} from './example-resizing';
-import {Row} from 'react-stately/Row';
 import {SpectrumTableProps} from '@adobe/react-spectrum/TableView';
 import {Table} from './example';
-import {TableBody} from 'react-stately/TableBody';
-import {TableHeader} from 'react-stately/TableHeader';
 
 const meta: Meta<SpectrumTableProps<any>> = {
   title: 'useTable'

@@ -2,6 +2,7 @@
 const {parseArgs} = require('node:util');
 import {s1_to_s2} from './s1-to-s2/src';
 import {use_monopackages} from './use-monopackages/src';
+import {use_subpaths} from './use-subpaths/src';
 
 interface JSCodeshiftOptions {
   /**
@@ -52,9 +53,12 @@ export interface UseMonopackagesCodemodOptions extends JSCodeshiftOptions {
   packages?: string
 }
 
-const codemods: Record<string, (options: S1ToS2CodemodOptions | UseMonopackagesCodemodOptions) => void> = {
+export interface UseSubpathsCodemodOptions extends JSCodeshiftOptions {}
+
+const codemods: Record<string, (options: S1ToS2CodemodOptions | UseMonopackagesCodemodOptions | UseSubpathsCodemodOptions) => void> = {
   's1-to-s2': s1_to_s2,
-  'use-monopackages': use_monopackages
+  'use-monopackages': use_monopackages,
+  'use-subpaths': use_subpaths
 };
 
 // https://github.com/facebook/jscodeshift?tab=readme-ov-file#usage-cli
@@ -103,6 +107,7 @@ async function main() {
     parser: 'tsx',
     ignorePattern: '**/node_modules/**',
     path: '.',
+    extensions: 'js,jsx,mjs,cjs,ts,tsx',
     ...values
   }));
 }

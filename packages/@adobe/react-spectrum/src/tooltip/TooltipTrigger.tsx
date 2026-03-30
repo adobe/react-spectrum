@@ -12,7 +12,7 @@
 
 import {FocusableProvider} from 'react-aria/private/interactions/useFocusable';
 import {Overlay} from '../overlays/Overlay';
-import {Placement, PositionProps, useOverlayPosition} from 'react-aria/private/overlays/useOverlayPosition';
+import {Placement, PositionProps, useOverlayPosition} from 'react-aria/useOverlayPosition';
 import React, {JSX, ReactElement, useRef, useState} from 'react';
 import {TooltipContext} from './context';
 import {TooltipTriggerProps, useTooltipTriggerState} from 'react-stately/useTooltipTriggerState';
