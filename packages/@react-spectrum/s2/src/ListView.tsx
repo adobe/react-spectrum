@@ -39,7 +39,7 @@ import intlMessages from '../intl/*.json';
 import {isFirstItem, isLastItem, isNextSelected, isPrevSelected, useScale} from './utils';
 import {Key} from '@react-types/shared';
 import LinkOutIcon from '../ui-icons/LinkOut';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
