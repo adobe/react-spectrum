@@ -11,7 +11,6 @@
  */
 
 export type {CalendarState, RangeCalendarState, DateValue} from '../src/calendar/types';
-
 export type {CalendarStateOptions, CalendarProps} from '../src/calendar/useCalendarState';
 export type {RangeCalendarStateOptions, DateRange, RangeCalendarProps} from '../src/calendar/useRangeCalendarState';
 export type {CheckboxGroupProps, CheckboxGroupState} from '../src/checkbox/useCheckboxGroupState';
@@ -32,7 +31,7 @@ export type {DisclosureState, DisclosureProps} from '../src/disclosure/useDisclo
 export type {DisclosureGroupState, DisclosureGroupProps} from '../src/disclosure/useDisclosureGroupState';
 export type {DraggableCollectionStateOptions, DraggableCollectionState} from '../src/dnd/useDraggableCollectionState';
 export type {DroppableCollectionStateOptions, DroppableCollectionState} from '../src/dnd/useDroppableCollectionState';
-export type {AsyncListData, AsyncListOptions} from '../src/data/useAsyncList';
+export type {AsyncListOptions, AsyncListData, AsyncListLoadFunction, AsyncListLoadOptions, AsyncListStateUpdate} from '../src/data/useAsyncList';
 export type {ListData, ListOptions} from '../src/data/useListData';
 export type {TreeData, TreeOptions} from '../src/data/useTreeData';
 export type {ListProps, ListState} from '../src/list/useListState';
@@ -44,7 +43,7 @@ export type {RadioGroupProps, RadioGroupState} from '../src/radio/useRadioGroupS
 export type {SearchFieldProps, SearchFieldState} from '../src/searchfield/useSearchFieldState';
 export type {SelectProps, SelectState, SelectStateOptions} from '../src/select/useSelectState';
 export type {SliderState, SliderStateOptions, SliderProps} from '../src/slider/useSliderState';
-export type {MultipleSelectionManager, MultipleSelectionState, SingleSelectionState} from '../src/selection/types';
+export type {MultipleSelectionManager, MultipleSelectionState, SingleSelectionState, FocusState} from '../src/selection/types';
 export type {MultipleSelectionStateProps} from '../src/selection/useMultipleSelectionState';
 export type {NumberFieldState, NumberFieldStateOptions, NumberFieldProps} from '../src/numberfield/useNumberFieldState';
 export type {TableProps, TableState, TableStateProps} from '../src/table/useTableState';
@@ -62,6 +61,13 @@ export type {ToggleGroupProps, ToggleGroupState} from '../src/toggle/useToggleGr
 export type {TooltipTriggerProps, TooltipTriggerState} from '../src/tooltip/useTooltipTriggerState';
 export type {TreeProps, TreeState} from '../src/tree/useTreeState';
 export type {ItemProps, Key, SectionProps, Collection, Node, Orientation, DisabledBehavior, Selection, SelectionBehavior, SelectionMode, SortDescriptor, SortDirection, ValidationState} from '@react-types/shared';
+export type {GridLayoutOptions} from '../src/layout/GridLayout';
+export type {ListLayoutOptions, LayoutNode} from '../src/layout/ListLayout';
+export type {TableLayoutProps} from '../src/layout/TableLayout';
+export type {WaterfallLayoutOptions} from '../src/layout/WaterfallLayout';
+export type {InvalidationContext} from '../src/virtualizer/types';
+export type {RectCorner} from '../src/virtualizer/Rect';
+export type {VirtualizerState} from '../src/virtualizer/useVirtualizerState';
 
 export {useCalendarState} from '../src/calendar/useCalendarState';
 export {useRangeCalendarState} from '../src/calendar/useRangeCalendarState';
@@ -113,3 +119,14 @@ export {useToggleGroupState} from '../src/toggle/useToggleGroupState';
 export {useTooltipTriggerState} from '../src/tooltip/useTooltipTriggerState';
 export {useTreeState} from '../src/tree/useTreeState';
 export {FormValidationContext} from '../src/form/useFormValidationState';
+export {useVirtualizerState} from '../src/virtualizer/useVirtualizerState';
+export {Layout} from '../src/virtualizer/Layout';
+export {LayoutInfo} from '../src/virtualizer/LayoutInfo';
+export {Point} from '../src/virtualizer/Point';
+export {Rect} from '../src/virtualizer/Rect';
+export {ReusableView} from '../src/virtualizer/ReusableView';
+export {Size} from '../src/virtualizer/Size';
+export {GridLayout} from '../src/layout/GridLayout';
+export {ListLayout} from '../src/layout/ListLayout';
+export {TableLayout} from '../src/layout/TableLayout';
+export {WaterfallLayout} from '../src/layout/WaterfallLayout';

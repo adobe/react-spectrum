@@ -14,7 +14,7 @@ import {classNames} from '../utils/classNames';
 
 import {ClearSlots, SlotProvider, useSlotProps} from '../utils/Slots';
 import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {Flex} from '../layout/Flex';
 import React, {forwardRef, ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/illustratedmessage/vars.css';

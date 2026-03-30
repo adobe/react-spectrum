@@ -15,7 +15,7 @@ import Lightbulb_M from 'illustration:./S2_lin_lightbulb_96.svg';
 import Lightbulb_S from 'illustration:./S2_lin_lightbulb_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Lightbulb(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

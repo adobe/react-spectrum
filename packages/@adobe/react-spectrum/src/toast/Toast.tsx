@@ -16,7 +16,7 @@ import {classNames} from '../utils/classNames';
 import {ClearButton} from '../button/ClearButton';
 import CrossMedium from '@spectrum-icons/ui/CrossMedium';
 import {DOMProps, DOMRef} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import intlMessages from '../../intl/toast/*.json';
 import {mergeProps} from 'react-aria/mergeProps';

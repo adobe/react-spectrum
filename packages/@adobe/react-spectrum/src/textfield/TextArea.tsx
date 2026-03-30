@@ -12,12 +12,12 @@
 
 import {AriaTextFieldProps, useTextField} from 'react-aria/useTextField';
 
-import {chain} from 'react-aria/private/utils/chain';
+import {chain} from 'react-aria/chain';
 import React, {ReactElement, Ref, useCallback, useEffect, useRef} from 'react';
 import {SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
 import {TextFieldBase} from './TextFieldBase';
 import {TextFieldRef} from './TextField';
-import {useControlledState} from 'react-stately/private/utils/useControlledState';
+import {useControlledState} from 'react-stately/useControlledState';
 import {useFormProps} from '../form/Form';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useProviderProps} from '../provider/Provider';

@@ -16,7 +16,7 @@ import type {DragAndDropHooks} from './useDragAndDrop';
 import type {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
 import type {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
 import type {ItemDropTarget, Key} from '@react-types/shared';
-import type {MultipleSelectionManager} from 'react-stately/private/selection/types';
+import type {MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallback, useContext, useMemo} from 'react';
 
 export interface DragAndDropContextValue {

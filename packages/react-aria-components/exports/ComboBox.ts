@@ -15,5 +15,8 @@
 import 'client-only';
 
 export {ComboBox, ComboBoxValue, ComboBoxContext, ComboBoxStateContext, ComboBoxValueContext} from '../src/ComboBox';
+export {useFilter} from 'react-aria/useFilter';
+
 export type {ComboBoxProps, ComboBoxRenderProps, ComboBoxValueProps, ComboBoxValueRenderProps} from '../src/ComboBox';
 export type {ComboBoxState} from 'react-stately/useComboBoxState';
+export type {Filter} from 'react-aria/useFilter';

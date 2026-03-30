@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeItemOptions, useTreeItem} from 'react-aria/private/tree/useTreeItem';
+import {AriaTreeItemOptions, useTreeItem} from 'react-aria/useTree';
 
-import {AriaTreeProps, useTree} from 'react-aria/private/tree/useTree';
+import {AriaTreeProps, useTree} from 'react-aria/useTree';
 import {BaseCollection, CollectionNode, LoaderNode, SectionNode} from 'react-aria/private/collections/BaseCollection';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
@@ -30,7 +30,8 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
+import {CollectionBuilder, createBranchComponent, createLeafComponent} from 'react-aria/CollectionBuilder';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, SectionProps} from './Collection';
 import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents, RefObject, SelectionMode} from '@react-types/shared';
 import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
@@ -39,7 +40,7 @@ import {DraggableCollectionState} from 'react-stately/useDraggableCollectionStat
 import {DraggableItemResult} from 'react-aria/useDraggableCollection';
 import {DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult} from 'react-aria/useDroppableCollection';
 import {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusScope} from 'react-aria/FocusScope';
 import {GridListHeader, GridListHeaderContext, GridListHeaderInnerContext, GridListHeaderProps} from './GridList';
 import {inertValue} from 'react-aria/private/utils/inertValue';
@@ -54,7 +55,7 @@ import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {TreeState, useTreeState} from 'react-stately/useTreeState';
 import {useCachedChildren} from 'react-aria/private/collections/useCachedChildren';
 import {useCollator} from 'react-aria/useCollator';
-import {useControlledState} from 'react-stately/private/utils/useControlledState';
+import {useControlledState} from 'react-stately/useControlledState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useGridListSection, useGridListSelectionCheckbox} from 'react-aria/useGridList';
 import {useHover} from 'react-aria/useHover';

@@ -23,7 +23,7 @@ module.exports = new Transformer({
       engines: {
         browsers: 'baseline widely available'
       },
-      shouldOptimize: options.mode === 'production'
+      shouldOptimize: asset.env.shouldOptimize
     });
 
     return [asset];

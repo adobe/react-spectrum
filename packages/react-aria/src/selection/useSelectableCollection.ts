@@ -26,7 +26,7 @@ import {isAppleDevice} from '../utils/platform';
 import {isCtrlKeyPressed} from '../utils/keyboard';
 import {isTabbable} from '../utils/isFocusable';
 import {mergeProps} from '../utils/mergeProps';
-import {MultipleSelectionManager} from 'react-stately/private/selection/types';
+import {MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';
 import {scrollIntoView, scrollIntoViewport} from '../utils/scrollIntoView';
 import {useEvent} from '../utils/useEvent';
 import {useLocale} from '../i18n/I18nProvider';

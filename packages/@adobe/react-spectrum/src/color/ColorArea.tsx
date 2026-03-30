@@ -21,7 +21,7 @@ import {mergeProps} from 'react-aria/mergeProps';
 import React, {ReactElement, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/colorarea/vars.css';
 import {useColorAreaState} from 'react-stately/useColorAreaState';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 import {useFocusableRef} from '../utils/useDOMRef';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useProviderProps} from '../provider/Provider';

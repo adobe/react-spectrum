@@ -15,7 +15,7 @@ import {BreakpointProvider, useMatchedBreakpoints} from '../utils/BreakpointProv
 import clsx from 'clsx';
 import {Context} from './context';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {I18nProvider, useLocale} from 'react-aria/I18nProvider';
 import {ModalProvider, useModalProvider} from 'react-aria/private/overlays/useModal';
 import {ProviderContext, ProviderProps} from './types';

@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+export {Collection, CollectionBuilder, createLeafComponent, createBranchComponent} from '../src/collections/CollectionBuilder';
+export {useAutocomplete} from '../src/autocomplete/useAutocomplete';
 export {useBreadcrumbItem} from '../src/breadcrumbs/useBreadcrumbItem';
-
 export {useBreadcrumbs} from '../src/breadcrumbs/useBreadcrumbs';
 export {useButton} from '../src/button/useButton';
 export {useToggleButton} from '../src/button/useToggleButton';
@@ -55,7 +56,7 @@ export {isRTL} from '../src/i18n/utils';
 export {useCollator} from '../src/i18n/useCollator';
 export {useDateFormatter} from '../src/i18n/useDateFormatter';
 export {useFilter} from '../src/i18n/useFilter';
-export {useLocalizedStringFormatter} from '../src/i18n/useLocalizedStringFormatter';
+export {useLocalizedStringFormatter, useLocalizedStringDictionary} from '../src/i18n/useLocalizedStringFormatter';
 export {useNumberFormatter} from '../src/i18n/useNumberFormatter';
 export {useListFormatter} from '../src/i18n/useListFormatter';
 export {useFocus} from '../src/interactions/useFocus';
@@ -125,6 +126,7 @@ export {useTagGroup} from '../src/tag/useTagGroup';
 export {useTextField} from '../src/textfield/useTextField';
 export {useToast} from '../src/toast/useToast';
 export {useToastRegion} from '../src/toast/useToastRegion';
+export {useToolbar} from '../src/toolbar/useToolbar';
 export {useTooltip} from '../src/tooltip/useTooltip';
 export {useTooltipTrigger} from '../src/tooltip/useTooltipTrigger';
 export {useTree} from '../src/tree/useTree';
@@ -135,6 +137,9 @@ export {useId} from '../src/utils/useId';
 export {useObjectRef} from '../src/utils/useObjectRef';
 export {RouterProvider} from '../src/utils/openLink';
 export {VisuallyHidden, useVisuallyHidden} from '../src/visually-hidden/VisuallyHidden';
+
+export type {AriaAutocompleteProps, AriaAutocompleteOptions, AutocompleteAria, CollectionOptions, InputProps} from '../src/autocomplete/useAutocomplete';
+export type {CollectionProps, CollectionBuilderProps} from '../src/collections/CollectionBuilder';
 export type {AriaBreadcrumbItemProps, BreadcrumbItemAria, BreadcrumbItemProps} from '../src/breadcrumbs/useBreadcrumbItem';
 export type {AriaBreadcrumbsProps, BreadcrumbsAria} from '../src/breadcrumbs/useBreadcrumbs';
 export type {AriaButtonOptions, AriaButtonProps, ButtonAria, ButtonProps, LinkButtonProps, AriaBaseButtonProps} from '../src/button/useButton';
@@ -166,7 +171,7 @@ export type {TimeValue, MappedTimeValue} from 'react-stately/useTimeFieldState';
 export type {AriaDialogProps, DialogAria} from '../src/dialog/useDialog';
 export type {DisclosureAria, AriaDisclosureProps} from '../src/disclosure/useDisclosure';
 export type {AriaFocusRingProps, FocusRingAria} from '../src/focus/useFocusRing';
-export type {FocusableAria, FocusableOptions} from '../src/interactions/useFocusable';
+export type {FocusableAria, FocusableOptions, FocusableComponentProps as FocusableProps} from '../src/interactions/useFocusable';
 export type {FocusManager, FocusManagerOptions, FocusScopeProps} from '../src/focus/FocusScope';
 export type {FocusRingProps} from '../src/focus/FocusRing';
 export type {DateFormatter} from '@internationalized/date';
@@ -194,6 +199,7 @@ export type {LongPressProps, LongPressResult} from '../src/interactions/useLongP
 export type {MoveEvents, PressEvent, PressEvents, LongPressEvent, MoveStartEvent, MoveMoveEvent, MoveEndEvent, MoveEvent, HoverEvent, HoverEvents, FocusEvents, KeyboardEvents} from '@react-types/shared';
 export type {MoveResult} from '../src/interactions/useMove';
 export type {PressHookProps, PressProps, PressResult} from '../src/interactions/usePress';
+export type {PressableProps} from '../src/interactions/Pressable';
 export type {ScrollWheelProps} from '../src/interactions/useScrollWheel';
 export type {AriaFieldProps, FieldAria} from '../src/label/useField';
 export type {LabelAria, LabelAriaProps} from '../src/label/useLabel';
@@ -217,7 +223,7 @@ export type {AriaModalOptions, ModalAria, ModalProviderAria, ModalProviderProps,
 export type {AriaModalOverlayProps, ModalOverlayAria} from '../src/overlays/useModalOverlay';
 export type {AriaOverlayProps, OverlayAria} from '../src/overlays/useOverlay';
 export type {AriaPopoverProps, PopoverAria} from '../src/overlays/usePopover';
-export type {AriaPositionProps, PositionAria, Placement, PlacementAxis, PositionProps} from '../src/overlays/useOverlayPosition';
+export type {AriaPositionProps, PositionAria, Placement, PlacementAxis, PositionProps, Axis, SizeAxis} from '../src/overlays/useOverlayPosition';
 export type {DismissButtonProps} from '../src/overlays/DismissButton';
 export type {OverlayProps} from '../src/overlays/Overlay';
 export type {OverlayTriggerAria, OverlayTriggerProps} from '../src/overlays/useOverlayTrigger';
@@ -249,6 +255,7 @@ export type {AriaTagProps, TagAria} from '../src/tag/useTag';
 export type {AriaTextFieldOptions, AriaTextFieldProps, TextFieldAria, TextFieldProps} from '../src/textfield/useTextField';
 export type {AriaToastRegionProps, ToastRegionAria} from '../src/toast/useToastRegion';
 export type {AriaToastProps, ToastAria} from '../src/toast/useToast';
+export type {AriaToolbarProps, ToolbarAria} from '../src/toolbar/useToolbar';
 export type {AriaTooltipProps, TooltipAria, TooltipProps} from '../src/tooltip/useTooltip';
 export type {TooltipTriggerAria} from '../src/tooltip/useTooltipTrigger';
 export type {TooltipTriggerProps} from 'react-stately/useTooltipTriggerState';

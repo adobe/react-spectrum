@@ -24,10 +24,11 @@ import {
   useRenderProps,
   useSlottedContext
 } from './utils';
-import {Collection, CollectionBuilder, createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
+import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuilder';
 import {CollectionNode} from 'react-aria/private/collections/BaseCollection';
 import {CollectionProps, CollectionRendererContext} from './Collection';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {LinkContext} from './Link';
 import {mergeProps} from 'react-aria/mergeProps';
 import {Node} from '@react-types/shared';

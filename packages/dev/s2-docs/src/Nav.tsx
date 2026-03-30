@@ -256,16 +256,18 @@ export function SideNavItem(props) {
 
 export function SideNavLink(props) {
   let linkRef = useRef<HTMLAnchorElement | null>(null);
+  let shouldAutoScrollOnMount = useRef(props.isSelected);
   let selected = useContext(SideNavContext);
   let {isExternal, ...linkProps} = props;
 
   useEffect(() => {
     let link = linkRef.current;
-    if (!link || !props.isSelected) {
+    if (!link || !props.isSelected || !shouldAutoScrollOnMount.current) {
       return;
     }
 
-    link.scrollIntoView({block: 'start', behavior: 'smooth'});
+    shouldAutoScrollOnMount.current = false;
+    link.scrollIntoView({block: 'start'});
   }, [props.isSelected]);
 
   return (

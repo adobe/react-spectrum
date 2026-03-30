@@ -23,7 +23,7 @@ import {
   useRenderProps
 } from './utils';
 import {createHideableComponent} from 'react-aria/private/collections/Hidden';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {HoverEvents} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';

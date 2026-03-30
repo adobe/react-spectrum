@@ -20,7 +20,7 @@ import {DimensionValue, FocusableRef, StyleProps} from '@react-types/shared';
 import React, {useCallback, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/colorwheel/vars.css';
 import {useColorWheelState} from 'react-stately/useColorWheelState';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 import {useFocusableRef} from '../utils/useDOMRef';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
