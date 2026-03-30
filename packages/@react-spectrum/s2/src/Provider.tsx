@@ -12,7 +12,7 @@
 
 import {createContext, JSX, ReactNode, useContext} from 'react';
 import {DOMProps, Href, RouterOptions} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {Fonts} from './Fonts';
 import {generateDefaultColorSchemeStyles} from './page.macro' with {type: 'macro'};
 import {I18nProvider, useLocale} from 'react-aria/I18nProvider';

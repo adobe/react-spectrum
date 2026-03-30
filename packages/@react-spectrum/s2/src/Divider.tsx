@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue} from 'react-aria-components/utils';
+import {ContextValue} from 'react-aria-components/slots';
 
 import {createContext, forwardRef} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';

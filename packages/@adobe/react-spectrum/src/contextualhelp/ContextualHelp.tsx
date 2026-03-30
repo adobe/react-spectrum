@@ -24,7 +24,7 @@ import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 import intlMessages from '../../intl/contextualhelp/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import {OverlayTriggerProps} from 'react-stately/useOverlayTriggerState';
-import {Placement, PositionProps} from 'react-aria/private/overlays/useOverlayPosition';
+import {Placement, PositionProps} from 'react-aria/useOverlayPosition';
 import React, {ReactNode} from 'react';
 import {useLabels} from 'react-aria/private/utils/useLabels';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';

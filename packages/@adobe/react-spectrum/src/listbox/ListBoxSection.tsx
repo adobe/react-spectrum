@@ -12,7 +12,7 @@
 
 import {classNames} from '../utils/classNames';
 
-import {LayoutInfo} from 'react-stately/private/virtualizer/LayoutInfo';
+import {LayoutInfo} from 'react-stately/useVirtualizerState';
 import {layoutInfoToStyle} from 'react-aria/private/virtualizer/VirtualizerItem';
 import {ListBoxContext} from './ListBoxContext';
 import {Node} from '@react-types/shared';

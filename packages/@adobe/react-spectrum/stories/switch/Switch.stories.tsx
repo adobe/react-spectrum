@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain} from 'react-aria/private/utils/chain';
+import {chain} from 'react-aria/chain';
 import {Flex} from '../../src/layout/Flex';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';

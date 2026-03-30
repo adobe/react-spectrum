@@ -13,7 +13,7 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {classNames} from '../utils/classNames';
 import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusRing} from 'react-aria/FocusRing';
 import {Grid} from '../layout/Grid';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';

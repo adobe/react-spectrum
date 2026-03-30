@@ -17,7 +17,7 @@ import {classNames} from '../utils/classNames';
 import {ClearButton} from '../button/ClearButton';
 import {dimensionValue} from '../utils/styleProps';
 import {Field} from '../label/Field';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusRing} from 'react-aria/FocusRing';
 import intlMessages from '../../intl/autocomplete/*.json';
 import {ListBoxBase, useListBoxLayout} from '../listbox/ListBoxBase';

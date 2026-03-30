@@ -11,19 +11,15 @@
  */
 
 import {act, fireEvent} from '@react-spectrum/test-utils-internal';
-import {Cell} from 'react-stately/Cell';
-import {Column} from 'react-stately/Column';
+import {Cell, Column, Row, TableBody, TableHeader} from 'react-stately/useTableState';
 import {composeStories} from '@storybook/react';
 import {Key} from '@react-types/shared';
 import React from 'react';
 import {render} from '@testing-library/react';
 import {Table as ResizingTable} from '../../stories/table/example-resizing';
 import {resizingTests} from './tableResizingTests';
-import {Row} from 'react-stately/Row';
 import {setInteractionModality} from '../../src/interactions/useFocusVisible';
 import * as stories from '../../stories/table/useTable.stories';
-import {TableBody} from 'react-stately/TableBody';
-import {TableHeader} from 'react-stately/TableHeader';
 import {within} from '@testing-library/dom';
 
 

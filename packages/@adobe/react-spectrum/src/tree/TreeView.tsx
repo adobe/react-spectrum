@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeProps} from 'react-aria/private/tree/useTree';
+import {AriaTreeProps} from 'react-aria/useTree';
 
 import {ButtonContext} from 'react-aria-components/Button';
 
@@ -34,7 +34,7 @@ import {
   TreeRenderProps
 } from 'react-aria-components/Tree';
 import {useButton} from 'react-aria/useButton';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 import {useDOMRef} from '../utils/useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useStyleProps} from '../utils/styleProps';
