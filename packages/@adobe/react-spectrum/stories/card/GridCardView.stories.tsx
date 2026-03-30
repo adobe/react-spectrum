@@ -27,7 +27,7 @@ import {JSX, Meta, StoryObj} from '@storybook/react';
 import {Key} from '@react-types/shared';
 import {Link} from '../../src/link/Link';
 import React, {useMemo, useState} from 'react';
-import {Size} from 'react-stately/private/virtualizer/Size';
+import {Size} from 'react-stately/useVirtualizerState';
 import {SpectrumCardViewProps} from '../../src/card/types';
 import {Text} from '../../src/text/Text';
 import {TextField} from '../../src/textfield/TextField';

@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, Key} from '@react-types/shared';
-import {ContextValue, RenderProps, SlotProps} from 'react-aria-components/utils';
+import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {
   Disclosure,
   DisclosureContext,
@@ -22,6 +22,7 @@ import {
 import {DisclosureGroup} from 'react-aria-components/DisclosureGroup';
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import React, {createContext, forwardRef, ReactNode} from 'react';
+import {RenderProps} from 'react-aria-components/useRenderProps';
 import {style} from '../style' with { type: 'macro' };
 import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';

@@ -43,17 +43,13 @@ for (let pkg of ['@adobe/react-spectrum', 'react-aria', 'react-stately', 'react-
     // We do not support any tools that only support CommonJS.
     let shim = file.replace('/dist/exports/', '/');
     let specifier = path.relative(shim, file);
-    if (!specifier.startsWith('.')) {
-      specifier = './' + specifier;
-    }
 
     let dir = shim.replace('.js', '');
     fs.mkdirSync(dir, {recursive: true});
-    fs.writeFileSync(dir + '/module.js', `export * from '${specifier}';\n`);
-    fs.writeFileSync(dir + '/main.js', `module.exports = require('${specifier.replace('.js', '.cjs')}');\n`);
     fs.writeFileSync(dir + '/package.json', JSON.stringify({
-      main: 'main.js',
-      module: 'module.js'
+      main: specifier.replace('.js', '.cjs'),
+      module: specifier,
+      types: path.relative(shim, file.replace('/dist/exports/', '/dist/types/exports/').replace('.js', '.d.ts'))
     }, null, 2) + '\n');
   }
 }

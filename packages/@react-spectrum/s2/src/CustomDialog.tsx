@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {composeRenderProps} from 'react-aria-components/utils';
+import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 
 import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 

@@ -14,7 +14,7 @@ import {classNames} from '../utils/classNames';
 
 import {dimensionValue, useStyleProps} from '../utils/styleProps';
 import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import React, {forwardRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/avatar/vars.css';
 import {useDOMRef} from '../utils/useDOMRef';

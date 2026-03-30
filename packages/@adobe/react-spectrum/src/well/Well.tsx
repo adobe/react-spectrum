@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {classNames} from '../utils/classNames';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import React, {forwardRef, ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/well/vars.css';
 import {useDOMRef} from '../utils/useDOMRef';

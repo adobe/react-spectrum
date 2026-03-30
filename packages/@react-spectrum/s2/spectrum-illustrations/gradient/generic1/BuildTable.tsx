@@ -15,7 +15,7 @@ import BuildTable_M from 'illustration:./S2_fill_buildTable_generic1_96.svg';
 import BuildTable_S from 'illustration:./S2_fill_buildTable_generic1_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function BuildTable(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

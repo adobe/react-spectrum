@@ -26,7 +26,7 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/utils';
+import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {controlFont, fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
 import {css} from '../style/style-macro' with {type: 'macro'};
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
@@ -38,7 +38,7 @@ import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
 import {ListBox, ListBoxItem, ListBoxItemProps, ListBoxProps} from 'react-aria-components/ListBox';
-import {Placement} from 'react-aria/private/overlays/useOverlayPosition';
+import {Placement} from 'react-aria-components/Popover';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';

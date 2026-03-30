@@ -11,7 +11,7 @@
  */
 
 import {ContextValue, dom, DOMRenderProps, useContextProps} from './utils';
-import {createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
+import {createLeafComponent} from 'react-aria/CollectionBuilder';
 import {HeaderNode} from 'react-aria/private/collections/BaseCollection';
 import React, {createContext, ForwardedRef, HTMLAttributes} from 'react';
 

@@ -28,7 +28,7 @@ import {
 import {ColorChannel, ColorSpace} from 'react-stately/Color';
 import {ColorFieldState, useColorChannelFieldState, useColorFieldState} from 'react-stately/useColorFieldState';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {GlobalDOMAttributes, InputDOMProps, ValidationResult} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';

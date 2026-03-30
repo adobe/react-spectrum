@@ -18,9 +18,10 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
+import {CollectionBuilder, createBranchComponent, createLeafComponent} from 'react-aria/CollectionBuilder';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
-import {ColumnSize, ColumnStaticSize} from 'react-stately/Column';
+import {ColumnSize, ColumnStaticSize} from 'react-stately/useTableState';
 import {DisabledBehavior, Node, SelectionBehavior, SelectionMode, SortDirection} from '@react-types/shared';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
@@ -28,11 +29,9 @@ import {DraggableCollectionState} from 'react-stately/useDraggableCollectionStat
 import {DraggableItemResult} from 'react-aria/useDraggableCollection';
 import {DragPreviewRenderer} from '@react-types/shared';
 import {DropIndicatorAria, DroppableCollectionResult} from 'react-aria/useDroppableCollection';
-
 import {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
-
 import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusScope} from 'react-aria/FocusScope';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {inertValue} from 'react-aria/private/utils/inertValue';
@@ -42,11 +41,9 @@ import {ITableCollection} from 'react-stately/private/table/TableCollection';
 import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
 import {LoadMoreSentinelProps, useLoadMoreSentinel} from 'react-aria/private/utils/useLoadMoreSentinel';
 import {mergeProps} from 'react-aria/mergeProps';
-import {mergeRefs} from 'react-aria/private/utils/mergeRefs';
-import {MultipleSelectionState} from 'react-stately/private/selection/types';
-
+import {mergeRefs} from 'react-aria/mergeRefs';
+import {MultipleSelectionState} from 'react-stately/useMultipleSelectionState';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-
 import ReactDOM from 'react-dom';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
@@ -60,7 +57,7 @@ import {
 import {TableColumnResizeState} from 'react-stately/useTableState';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useCachedChildren} from 'react-aria/private/collections/useCachedChildren';
-import {useControlledState} from 'react-stately/private/utils/useControlledState';
+import {useControlledState} from 'react-stately/useControlledState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';

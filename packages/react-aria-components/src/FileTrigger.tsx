@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 
 import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {GlobalDOMAttributes} from '@react-types/shared';

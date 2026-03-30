@@ -17,11 +17,9 @@ import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import {CheckboxContext} from 'react-aria-components/Checkbox';
 import Chevron from '../ui-icons/Chevron';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
-import {CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-components/Collection';
-
-import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, useSlottedContext} from 'react-aria-components/utils';
-
+import {Collection} from 'react-aria/Collection';
+import {CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-components/CollectionBuilder';
+import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, useSlottedContext} from 'react-aria-components/slots';
 import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState} from '@react-types/shared';
@@ -51,7 +49,7 @@ import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatte
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 
-export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | 'selectionBehavior' | 'dragAndDropHooks' | 'layout' | 'render' | 'keyboardNavigationBehavior' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, ListViewStylesProps, SlotProps {
+export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | 'selectionBehavior' | 'dragAndDropHooks' | 'layout' | 'render' | 'keyboardNavigationBehavior' | 'orientation' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, ListViewStylesProps, SlotProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The current loading state of the ListView. */
@@ -836,4 +834,3 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
     </GridListItem>
   );
 }
-

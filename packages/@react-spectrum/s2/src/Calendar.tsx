@@ -37,7 +37,7 @@ import {
 import {CalendarState} from 'react-stately/useCalendarState';
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
-import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/utils';
+import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};

@@ -15,7 +15,7 @@ import Mention_M from 'illustration:./S2_fill_mention_generic2_96.svg';
 import Mention_S from 'illustration:./S2_fill_mention_generic2_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Mention(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

@@ -28,10 +28,10 @@ import {
   useSlottedContext
 } from './utils';
 import {Collection, Node} from '@react-types/shared';
-import {CollectionBuilder} from 'react-aria/private/collections/CollectionBuilder';
+import {CollectionBuilder} from 'react-aria/CollectionBuilder';
 import {createHideableComponent} from 'react-aria/private/collections/Hidden';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import intlMessages from '../intl/*.json';

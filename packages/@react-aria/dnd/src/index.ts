@@ -10,18 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-export {useDrag} from 'react-aria/useDrag';
+export {useDrag, DragPreview} from 'react-aria/useDrag';
 export {useDrop, DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem} from 'react-aria/useDrop';
 export {useDroppableCollection, useDroppableItem, useDropIndicator} from 'react-aria/useDroppableCollection';
 export {useDraggableItem, useDraggableCollection} from 'react-aria/useDraggableCollection';
 export {useClipboard} from 'react-aria/useClipboard';
-export {DragPreview} from 'react-aria/DragPreview';
 export {ListDropTargetDelegate} from 'react-aria/ListDropTargetDelegate';
 export {isVirtualDragging} from 'react-aria/private/dnd/DragManager';
 export type {DroppableCollectionOptions, DroppableCollectionResult, DroppableItemOptions, DroppableItemResult, DropIndicatorProps, DropIndicatorAria} from 'react-aria/useDroppableCollection';
 export type {DraggableItemProps, DraggableItemResult, DraggableCollectionOptions} from 'react-aria/useDraggableCollection';
-export type {DragPreviewProps} from 'react-aria/DragPreview';
-export type {DragOptions, DragResult} from 'react-aria/useDrag';
+export type {DragOptions, DragResult, DragPreviewProps} from 'react-aria/useDrag';
 export type {DropOptions, DropResult} from 'react-aria/useDrop';
 export type {ClipboardProps, ClipboardResult} from 'react-aria/useClipboard';
 export type {DirectoryDropItem, DragEndEvent, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DragTypes, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropMoveEvent, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, DropTargetDelegate, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-types/shared';

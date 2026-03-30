@@ -15,7 +15,7 @@ import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames} from '../utils/classNames';
 import datepickerStyles from './styles.css';
 import {mergeProps} from 'react-aria/mergeProps';
-import {mergeRefs} from 'react-aria/private/utils/mergeRefs';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import React, {ReactElement, useCallback, useRef} from 'react';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useEvent} from 'react-aria/private/utils/useEvent';

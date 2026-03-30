@@ -13,7 +13,7 @@
 import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {ButtonRenderProps, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, Provider} from 'react-aria-components/utils';
+import {ContextValue, Provider} from 'react-aria-components/slots';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
