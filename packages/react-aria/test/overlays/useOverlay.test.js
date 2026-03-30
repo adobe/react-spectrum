@@ -197,6 +197,40 @@ describe('useOverlay', function () {
       expect(onCloseOuter).not.toHaveBeenCalled();
     });
 
+    it('should not attach onKeyDown when CloseWatcher is supported', function () {
+      let onClose = jest.fn();
+      let res = render(<Example isOpen onClose={onClose} />);
+      let el = res.getByTestId('test');
+
+      // With CloseWatcher active, Escape keydown should not trigger onClose
+      // (the browser's CloseWatcher handles it instead)
+      fireEvent.keyDown(el, {key: 'Escape'});
+      expect(onClose).not.toHaveBeenCalled();
+
+      // But CloseWatcher still works
+      closeWatcherInstances[0].onclose();
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not double-dismiss nested overlays on Escape when CloseWatcher is active', function () {
+      let onCloseOuter = jest.fn();
+      let onCloseInner = jest.fn();
+      let outer = render(<Example isOpen onClose={onCloseOuter} data-testid="outer" />);
+      render(<Example isOpen onClose={onCloseInner} data-testid="inner" />);
+
+      let outerEl = outer.getByTestId('outer');
+
+      // Simulate browser behavior: CloseWatcher fires for inner overlay
+      closeWatcherInstances[1].onclose();
+      expect(onCloseInner).toHaveBeenCalledTimes(1);
+
+      // The Escape keydown event that triggered CloseWatcher also bubbles to the
+      // outer overlay's DOM. With the fix, onKeyDown is undefined so the outer
+      // overlay is NOT dismissed.
+      fireEvent.keyDown(outerEl, {key: 'Escape'});
+      expect(onCloseOuter).not.toHaveBeenCalled();
+    });
+
     it('should dismiss inner then outer with per-overlay watchers', function () {
       let onCloseOuter = jest.fn();
       let onCloseInner = jest.fn();

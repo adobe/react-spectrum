@@ -140,8 +140,11 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
     lastVisibleOverlay.current = undefined;
   };
 
-  // Handle the escape key
-  let onKeyDown = (e) => {
+  // Handle the escape key — only used as a fallback when CloseWatcher is not supported.
+  // When CloseWatcher handles dismiss, the keydown handler is skipped entirely to avoid
+  // double-dismiss in nested overlays (e.g. submenus where Escape would close both the
+  // submenu via CloseWatcher and the parent menu via the bubbling keydown event).
+  let onKeyDown = supportsCloseWatcher() ? undefined : (e) => {
     if (e.key === 'Escape' && !isKeyboardDismissDisabled && !e.nativeEvent.isComposing) {
       e.stopPropagation();
       e.preventDefault();
