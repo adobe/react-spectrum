@@ -18,3 +18,15 @@ export {TagGroup, TagGroupContext, TagList, TagListContext, Tag} from '../src/Ta
 export type {TagGroupProps, TagListProps, TagListRenderProps, TagProps, TagRenderProps} from '../src/TagGroup';
 export type {Key, Selection, SelectionMode} from '@react-types/shared';
 export {Collection, type CollectionProps} from 'react-aria/Collection';
+
+export {Button} from '../src/Button';
+export type {ButtonProps, ButtonRenderProps} from '../src/Button';
+
+export {Label} from '../src/Label';
+export type {LabelProps} from '../src/Label';
+
+export {Text} from '../src/Text';
+export type {TextProps} from '../src/Text';
+
+export {SelectionIndicator} from '../src/SelectionIndicator';
+export type {SelectionIndicatorProps} from '../src/SelectionIndicator';

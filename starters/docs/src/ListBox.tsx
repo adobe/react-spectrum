@@ -1,15 +1,16 @@
-'use client';
+'use client';;
 import {
   ListBox as AriaListBox,
   ListBoxItem as AriaListBoxItem,
   ListBoxSection as AriaListBoxSection,
-  composeRenderProps,
-  ListBoxItemProps,
   ListBoxLoadMoreItem as AriaListBoxLoadMoreItem,
-  ListBoxLoadMoreItemProps,
-  ListBoxProps,
-  ListBoxSectionProps
-} from 'react-aria-components';
+  Header,
+  type ListBoxItemProps,
+  type ListBoxLoadMoreItemProps,
+  type ListBoxProps,
+  type ListBoxSectionProps,
+} from 'react-aria-components/ListBox';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import {Check} from 'lucide-react';
 import {Text} from './Content';
 import {ProgressCircle} from './ProgressCircle';
@@ -66,3 +67,5 @@ export function DropdownItem(props: ListBoxItemProps) {
     </ListBoxItem>
   );
 }
+
+export {Text, Header};

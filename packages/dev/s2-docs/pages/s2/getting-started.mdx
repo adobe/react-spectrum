@@ -304,7 +304,7 @@ Install React Spectrum with your preferred package manager.
         "use client";
 
         import {useRouter} from 'next/navigation';
-        import {Provider} from '@react-spectrum/s2';
+        import {Provider} from '@react-spectrum/s2/Provider';
 
         // Configure the type of the `routerOptions` prop on all React Spectrum components.
         declare module '@react-spectrum/s2' {
@@ -396,7 +396,7 @@ Install React Spectrum with your preferred package manager.
 
         ```tsx
         // app/root.tsx
-        import {Provider} from '@react-spectrum/s2';
+        import {Provider} from '@react-spectrum/s2/Provider';
         import {useNavigate, useHref, useRouteLoaderData, type NavigateOptions, type LoaderFunctionArgs} from 'react-router';
         import type { Route } from "./+types/root";
 
@@ -427,7 +427,7 @@ Install React Spectrum with your preferred package manager.
           return (
             /*- begin highlight -*/
             <Provider elementType="html" locale={lang} router={{navigate, useHref}}>
-            {/*- end highlight -*/}
+              {/*- end highlight -*/}
               <head>
                 {/* ... */}
               </head>

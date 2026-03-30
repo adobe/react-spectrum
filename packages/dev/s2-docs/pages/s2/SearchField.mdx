@@ -20,7 +20,7 @@ export const description = 'Allows a user to enter and clear a search query.';
     label: 'Search',
     placeholder: 'Search documents'
   }}
-  importSource="@react-spectrum/s2"
+  importSource="@react-spectrum/s2/SearchField"
   type="s2" />
 
 ## Value
@@ -29,7 +29,7 @@ Use the `value` or `defaultValue` prop to set the text value, and `onChange` to 
 
 ```tsx render
 "use client";
-import {SearchField} from '@react-spectrum/s2';
+import {SearchField} from '@react-spectrum/s2/SearchField';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
@@ -62,7 +62,9 @@ Use the `name` prop to submit the text value to the server. Set the `isRequired`
 
 ```tsx render docs={docs.exports.SearchField} links={docs.links} props={['isRequired', 'necessityIndicator', 'type', 'pattern', 'minLength', 'maxLength']} initialProps={{isRequired: true}}
 "use client";
-import {SearchField, Button, Form} from '@react-spectrum/s2';
+import {SearchField} from '@react-spectrum/s2/SearchField';
+import {Button} from '@react-spectrum/s2/Button';
+import {Form} from '@react-spectrum/s2/Form';
 
 function Example(props) {
   return (

@@ -23,7 +23,7 @@ export const description = 'Allows a user to select a single date from a date gr
       maxValue: 3
     }
   }}
-  importSource="@react-spectrum/s2"
+  importSource="@react-spectrum/s2/Calendar"
   type="s2"
   wide />
 
@@ -34,7 +34,7 @@ Use the `value` or `defaultValue` prop to set the date value, using objects in t
 ```tsx render
 "use client";
 import {parseDate, getLocalTimeZone} from '@internationalized/date';
-import {Calendar} from '@react-spectrum/s2';
+import {Calendar} from '@react-spectrum/s2/Calendar';
 import {useState} from 'react';
 
 function Example() {
@@ -60,7 +60,8 @@ By default, `Calendar` displays the value using the calendar system for the user
 
 ```tsx render wide docs={docs.exports.Provider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-ca-indian'}} type="s2"
 "use client";
-import {Provider, Calendar} from '@react-spectrum/s2';
+import {Provider} from '@react-spectrum/s2/Provider';
+import {Calendar} from '@react-spectrum/s2/Calendar';
 import {parseDate} from '@internationalized/date';
 
 <Provider/* PROPS */>
@@ -76,7 +77,7 @@ import {parseDate} from '@internationalized/date';
 "use client";
 import type {AnyCalendarDate, Calendar as ICalendar} from '@internationalized/date';
 import {CalendarDate, startOfWeek, GregorianCalendar} from '@internationalized/date';
-import {Calendar} from '@react-spectrum/s2';
+import {Calendar} from '@react-spectrum/s2/Calendar';
 
 export default function Example() {
   return (
@@ -163,7 +164,8 @@ Use the `minValue` and `maxValue` props to set the valid date range. The `isDate
 ```tsx render docs={docs.exports.Calendar} links={docs.links} props={['isInvalid', 'errorMessage']} wide type="s2"
 "use client";
 import {isWeekend, today, getLocalTimeZone} from '@internationalized/date';
-import {Calendar, useLocale} from '@react-spectrum/s2';
+import {Calendar} from '@react-spectrum/s2/Calendar';
+import {useLocale} from '@react-spectrum/s2/Provider';
 
 function Example(props) {
   let {locale} = useLocale();
@@ -198,7 +200,8 @@ Use the `focusedValue` or `defaultFocusedValue` prop to control which date is fo
 
 ```tsx render
 "use client";
-import {Calendar, ActionButton} from '@react-spectrum/s2';
+import {Calendar} from '@react-spectrum/s2/Calendar';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {CalendarDate, today, getLocalTimeZone} from '@internationalized/date';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';

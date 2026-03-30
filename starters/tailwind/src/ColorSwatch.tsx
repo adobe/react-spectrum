@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import {ColorSwatch as AriaColorSwatch, ColorSwatchProps} from 'react-aria-components';
+import { ColorSwatch as AriaColorSwatch, type ColorSwatchProps } from 'react-aria-components/ColorSwatch';
 import { composeTailwindRenderProps } from './utils';
 
 export function ColorSwatch(props: ColorSwatchProps) {

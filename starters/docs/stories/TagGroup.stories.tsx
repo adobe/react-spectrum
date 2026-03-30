@@ -1,5 +1,4 @@
 import {Tag, TagGroup} from '../src/TagGroup';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof TagGroup> = {

@@ -1,9 +1,6 @@
 'use client';
 import React from 'react';
-import {
-  ColorArea as AriaColorArea,
-  ColorAreaProps as AriaColorAreaProps
-} from 'react-aria-components';
+import { ColorArea as AriaColorArea, type ColorAreaProps as AriaColorAreaProps } from 'react-aria-components/ColorArea';
 import { composeTailwindRenderProps } from './utils';
 import { ColorThumb } from './ColorThumb';
 

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Popover as AriaPopover, PopoverProps as AriaPopoverProps} from 'react-aria-components/Popover';
+import {Popover as AriaPopover, PopoverProps as AriaPopoverProps, OverlayArrow} from 'react-aria-components/Popover';
 import {ColorSchemeContext} from './Provider';
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContextValue} from 'react-aria-components/slots';
@@ -21,7 +21,6 @@ import {getAllowedOverrides, heightProperties, UnsafeStyles, widthProperties} fr
 import {lightDark, setColorScheme, style} from '../style' with {type: 'macro'};
 import {mergeRefs} from 'react-aria/mergeRefs';
 import {mergeStyles} from '../style/runtime';
-import {OverlayArrow} from 'react-aria-components/OverlayArrow';
 import {StyleString} from '../style/types' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';

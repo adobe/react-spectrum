@@ -2,9 +2,9 @@
 import React from 'react';
 import {
   ColorField as AriaColorField,
-  ColorFieldProps as AriaColorFieldProps,
-  ValidationResult
-} from 'react-aria-components';
+  type ColorFieldProps as AriaColorFieldProps,
+  type ValidationResult,
+} from 'react-aria-components/ColorField';
 import { tv } from 'tailwind-variants';
 import { Description, FieldError, Input, Label, fieldBorderStyles } from './Field';
 import { composeTailwindRenderProps, focusRing } from './utils';

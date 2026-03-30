@@ -16,7 +16,7 @@ export const description = 'Allows a user to select one or more items in a list 
 
 ```tsx render docs={docs.exports.CheckboxGroup} links={docs.links} props={['label', 'size', 'orientation', 'labelPosition', 'description', 'contextualHelp', 'isEmphasized', 'isDisabled']} initialProps={{label: 'Favorite sports'}} type="s2"
 "use client";
-import {CheckboxGroup, Checkbox} from '@react-spectrum/s2';
+import {CheckboxGroup, Checkbox} from '@react-spectrum/s2/CheckboxGroup';
 
 <CheckboxGroup/* PROPS */>
   <Checkbox value="soccer">Soccer</Checkbox>
@@ -31,7 +31,7 @@ Use the `value` or `defaultValue` prop to set the selected items, and `onChange`
 
 ```tsx render
 "use client";
-import {CheckboxGroup, Checkbox} from '@react-spectrum/s2';
+import {CheckboxGroup, Checkbox} from '@react-spectrum/s2/CheckboxGroup';
 import {useState} from 'react';
 
 function Example() {
@@ -61,7 +61,9 @@ Use the `name` prop to submit the selected checkboxes to the server. Set the `is
 
 ```tsx render
 "use client";
-import {CheckboxGroup, Checkbox, Button, Form} from '@react-spectrum/s2';
+import {CheckboxGroup, Checkbox} from '@react-spectrum/s2/CheckboxGroup';
+import {Button} from '@react-spectrum/s2/Button';
+import {Form} from '@react-spectrum/s2/Form';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Form/* PROPS */>

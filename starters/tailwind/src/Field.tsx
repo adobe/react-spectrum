@@ -1,6 +1,11 @@
 'use client';
 import React from 'react';
-import { FieldErrorProps, Group, GroupProps, InputProps, LabelProps, FieldError as RACFieldError, Input as RACInput, Label as RACLabel, Text, TextProps, composeRenderProps } from "react-aria-components";
+import { type FieldErrorProps, FieldError as RACFieldError } from 'react-aria-components/FieldError';
+import { Group, type GroupProps } from 'react-aria-components/Group';
+import { type InputProps, Input as RACInput } from 'react-aria-components/Input';
+import { type LabelProps, Label as RACLabel } from 'react-aria-components/Label';
+import { Text, type TextProps } from 'react-aria-components/Text';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import { twMerge } from 'tailwind-merge';
 import { tv } from 'tailwind-variants';
 import { composeTailwindRenderProps, focusRing } from "./utils";

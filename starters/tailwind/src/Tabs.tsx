@@ -7,13 +7,13 @@ import {
   TabPanel as RACTabPanel,
   Tabs as RACTabs,
   SelectionIndicator,
-  TabListProps,
-  TabPanelProps,
-  TabPanelsProps,
-  TabProps,
-  TabsProps,
-  composeRenderProps
-} from 'react-aria-components';
+  type TabListProps,
+  type TabPanelProps,
+  type TabPanelsProps,
+  type TabProps,
+  type TabsProps,
+} from 'react-aria-components/Tabs';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import { tv } from 'tailwind-variants';
 import { focusRing } from './utils';
 import { twMerge } from 'tailwind-merge';

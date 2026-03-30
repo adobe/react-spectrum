@@ -34,7 +34,7 @@ This example shows how to make a simple draggable element that provides data as 
 
 ```tsx render files={["packages/dev/s2-docs/pages/react-aria/DropTarget.tsx", "packages/dev/s2-docs/pages/react-aria/useDragExample.css"]}
 "use client";
-import {useDrag} from 'react-aria';
+import {useDrag} from 'react-aria/useDrag';
 import {DropTarget} from './DropTarget';
 import './useDragExample.css';
 import 'vanilla-starter/theme.css';
@@ -68,7 +68,7 @@ This example drags two items, each of which contains representations as plain te
 
 ```tsx render
 "use client";
-import {useDrag} from 'react-aria';
+import {useDrag} from 'react-aria/useDrag';
 import {DropTarget} from './DropTarget';
 
 function Draggable() {
@@ -114,9 +114,8 @@ This example renders a custom drag preview which shows the text of the first dra
 ```tsx render
 "use client";
 import React from 'react';
-import {useDrag} from 'react-aria';
+import {useDrag, DragPreview} from 'react-aria/useDrag';
 import {DropTarget} from './DropTarget';
-import {DragPreview} from 'react-aria';
 
 function Draggable() {
   let preview = React.useRef(null);
@@ -161,7 +160,7 @@ This example removes the draggable element from the UI when a move operation is 
 ```tsx render
 "use client"
 import React from 'react';
-import {useDrag} from 'react-aria';
+import {useDrag} from 'react-aria/useDrag';
 import {DropTarget} from './DropTarget';
 
 function Draggable() {
@@ -204,7 +203,7 @@ The drag source can also control which drop operations are allowed for the data.
 
 ```tsx render
 "use client";
-import {useDrag} from 'react-aria';
+import {useDrag} from 'react-aria/useDrag';
 import {DropTarget} from './DropTarget';
 
 function Draggable() {
@@ -245,7 +244,7 @@ When the `hasDragButton` option is enabled, the keyboard interactions are moved 
 ```tsx render
 "use client";
 import React from 'react';
-import {useDrag} from 'react-aria';
+import {useDrag} from 'react-aria/useDrag';
 import {useButton} from '@react-aria/button';
 import {DropTarget} from './DropTarget';
 
@@ -285,7 +284,8 @@ If you need to temporarily disable dragging, you can pass the `isDisabled` optio
 
 ```tsx render
 "use client";
-import {useDrag} from 'react-aria';
+import {useDrag} from 'react-aria/useDrag';
+
 function Draggable() {
   let {dragProps, isDragging} = useDrag({
     getItems() {

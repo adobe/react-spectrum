@@ -18,3 +18,12 @@ export {TreeLoadMoreItem, Tree, TreeItem, TreeContext, TreeItemContent, TreeHead
 export type {TreeProps, TreeRenderProps, TreeEmptyStateRenderProps, TreeItemProps, TreeItemRenderProps, TreeItemContentProps, TreeItemContentRenderProps, TreeLoadMoreItemProps, TreeLoadMoreItemRenderProps} from '../src/Tree';
 export type {Key, Selection, SelectionMode, DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-types/shared';
 export type {TreeState} from 'react-stately/useTreeState';
+
+export {Button} from '../src/Button';
+export type {ButtonProps, ButtonRenderProps} from '../src/Button';
+
+export {Checkbox} from '../src/Checkbox';
+export type {CheckboxRenderProps, CheckboxProps} from '../src/Checkbox';
+
+export {SelectionIndicator} from '../src/SelectionIndicator';
+export type {SelectionIndicatorProps} from '../src/SelectionIndicator';

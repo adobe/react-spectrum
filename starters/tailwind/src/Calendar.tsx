@@ -4,16 +4,16 @@ import React from 'react';
 import {
   Calendar as AriaCalendar,
   CalendarGridHeader as AriaCalendarGridHeader,
-  CalendarProps as AriaCalendarProps,
+  type CalendarProps as AriaCalendarProps,
   CalendarCell,
   CalendarGrid,
   CalendarGridBody,
   CalendarHeaderCell,
-  DateValue,
   Heading,
   Text,
-  useLocale
-} from 'react-aria-components';
+  type DateValue,
+} from 'react-aria-components/Calendar';
+import { useLocale } from 'react-aria-components/I18nProvider';
 import { tv } from 'tailwind-variants';
 import { Button } from './Button';
 import { composeTailwindRenderProps, focusRing } from './utils';

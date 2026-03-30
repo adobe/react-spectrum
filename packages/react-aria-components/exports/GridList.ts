@@ -19,3 +19,15 @@ export {Collection, type CollectionProps} from 'react-aria/Collection';
 export type {GridListProps, GridListRenderProps, GridListItemProps, GridListItemRenderProps, GridListLoadMoreItemProps, GridListSectionProps} from '../src/GridList';
 export type {Key, Selection, SelectionMode, DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-types/shared';
 export type {ListState} from 'react-stately/useListState';
+
+export {Button} from '../src/Button';
+export type {ButtonProps, ButtonRenderProps} from '../src/Button';
+
+export {Checkbox} from '../src/Checkbox';
+export type {CheckboxRenderProps, CheckboxProps} from '../src/Checkbox';
+
+export {SelectionIndicator} from '../src/SelectionIndicator';
+export type {SelectionIndicatorProps} from '../src/SelectionIndicator';
+
+export {Text} from '../src/Text';
+export type {TextProps} from '../src/Text';
