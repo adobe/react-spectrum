@@ -85,8 +85,8 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
   useEffect(() => {
     if (process.env.NODE_ENV !== 'production' && !hasWarned.current && ref.current) {
       let el = ref.current;
-      let hasAriaLabel = el.hasAttribute('aria-label');
-      let hasAriaLabelledby = el.hasAttribute('aria-labelledby');
+      let hasAriaLabel = !!props['aria-label'] || el.hasAttribute('aria-label');
+      let hasAriaLabelledby = !!props['aria-labelledby'] || !!titleId || el.hasAttribute('aria-labelledby');
       if (!hasAriaLabel && !hasAriaLabelledby) {
         console.warn(
           'A dialog must have a title for accessibility. ' +
