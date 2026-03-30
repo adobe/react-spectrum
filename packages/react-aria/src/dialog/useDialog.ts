@@ -89,7 +89,7 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
       let hasAriaLabelledby = el.hasAttribute('aria-labelledby');
       if (!hasAriaLabel && !hasAriaLabelledby) {
         console.warn(
-          'A dialog must have a visible title for accessibility. ' +
+          'A dialog must have a title for accessibility. ' +
           'Either provide an aria-label or aria-labelledby prop, or render a heading element inside the dialog with the titleProps from useDialog.'
         );
         hasWarned.current = true;

@@ -39,8 +39,7 @@ const ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
 ];
 
 const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
-  'Browserslist: caniuse-lite is outdated',
-  'A dialog must have a visible title for accessibility'
+  'Browserslist: caniuse-lite is outdated'
 ];
 
 function failTestOnConsoleError() {

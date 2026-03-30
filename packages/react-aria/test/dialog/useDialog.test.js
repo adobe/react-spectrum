@@ -70,7 +70,7 @@ describe('useDialog', function () {
     it('should warn when dialog has no accessible title', function () {
       render(<Example />);
       expect(console.warn).toHaveBeenCalledWith(
-        expect.stringContaining('A dialog must have a visible title for accessibility')
+        expect.stringContaining('A dialog must have a title for accessibility')
       );
     });
 
