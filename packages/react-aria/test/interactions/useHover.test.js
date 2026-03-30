@@ -578,7 +578,7 @@ describe('useHover', function () {
           <ElementType {...hoverProps} tabIndex="0">
             <DialogTrigger>
               <ActionButton>open</ActionButton>
-              <Dialog>
+              <Dialog aria-label="Test dialog">
                 test
               </Dialog>
             </DialogTrigger>

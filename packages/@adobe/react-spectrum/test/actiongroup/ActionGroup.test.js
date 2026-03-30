@@ -575,7 +575,7 @@ describe('ActionGroup', function () {
         <ActionGroup>
           <DialogTrigger>
             <Item>Hi</Item>
-            <Dialog>
+            <Dialog aria-label="Test dialog">
               I'm a dialog
             </Dialog>
           </DialogTrigger>

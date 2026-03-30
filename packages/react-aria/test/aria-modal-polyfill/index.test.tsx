@@ -73,7 +73,7 @@ describe('watchModals', () => {
         <Provider theme={theme}>
           <DialogTrigger>
             <ActionButton aria-label="Trigger" />
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
         <hr />
@@ -95,12 +95,12 @@ describe('watchModals', () => {
         <Provider theme={theme}>
           <DialogTrigger>
             <ActionButton aria-label="Trigger" />
-            <Dialog>
+            <Dialog aria-label="Test dialog">
               <Content>
                 <div>Outer</div>
                 <DialogTrigger>
                   <Button variant="primary" aria-label="Nested Trigger" />
-                  <Dialog>Inner</Dialog>
+                  <Dialog aria-label="Test dialog">Inner</Dialog>
                 </DialogTrigger>
               </Content>
             </Dialog>
@@ -249,7 +249,7 @@ describe('watchModals', () => {
         <Provider theme={theme}>
           <DialogTrigger type="popover">
             <ActionButton aria-label="Trigger" />
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
         <hr />
