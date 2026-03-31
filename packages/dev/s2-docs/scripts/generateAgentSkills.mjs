@@ -468,6 +468,8 @@ Search the codebase for \`TODO(S2-upgrade)\` comments left by the codemod. Each 
 
 See [Focused manual fixes](references/focused-manual-fixes.md) for information on how to fix these.
 
+Also reference the \`react-spectrum-s2\` skill (if available) for full S2 component documentation when needed.
+
 ## Step 7: Validate
 
 Run the project's own toolchain to verify the migration is complete:
