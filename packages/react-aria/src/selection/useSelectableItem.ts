@@ -76,7 +76,11 @@ export interface SelectableItemOptions extends DOMProps {
    * - 'none': links are disabled for both selection and actions (e.g. handled elsewhere).
    * @default 'action'
    */
-  linkBehavior?: 'action' | 'selection' | 'override' | 'none'
+  linkBehavior?: 'action' | 'selection' | 'override' | 'none',
+  /**
+   * Whether this item is draggable.
+   */
+  isDraggable?: boolean
 }
 
 export interface SelectableItemStates {
@@ -126,7 +130,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     isDisabled,
     onAction,
     allowsDifferentPressOrigin,
-    linkBehavior = 'action'
+    linkBehavior = 'action',
+    isDraggable = false
   } = options;
   let router = useRouter();
   id = useId(id);
@@ -417,7 +422,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     isFocused: manager.isFocused && manager.focusedKey === key,
     isDisabled,
     allowsSelection,
-    hasAction
+    hasAction: hasAction || isDraggable
   };
 }
 

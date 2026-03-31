@@ -402,8 +402,9 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function 
   let ref = useObjectRef<any>(forwardedRef);
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
+  let isDraggable = dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
   let {optionProps, labelProps, descriptionProps, ...states} = useOption(
-    {key: item.key, 'aria-label': props?.['aria-label']},
+    {key: item.key, 'aria-label': props?.['aria-label'], isDraggable},
     state,
     ref
   );

@@ -73,7 +73,7 @@ class TreeCollection<T> extends BaseCollection<T> {
     // Clone ancestor section nodes so React knows to re-render since the same item won't cause a new render but a clone creating a new object with the same value will
     // Without this change, the items won't expand and collapse when virtualized inside a section
     TreeCollection.cloneAncestorSections(expandedKeys, lastExpandedKeys, collection);
-    TreeCollection.cloneAncestorSections(lastExpandedKeys, expandedKeys, collection);   
+    TreeCollection.cloneAncestorSections(lastExpandedKeys, expandedKeys, collection);
 
     collection.frozen = this.frozen;
     return collection;
@@ -607,12 +607,14 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
   let state = useContext(TreeStateContext)!;
   ref = useObjectRef<HTMLDivElement>(ref);
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
+  let isDraggable = dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
 
   // TODO: remove this when we support description in tree row
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeItem({
     node: item,
-    shouldSelectOnPressUp: !!dragState
+    shouldSelectOnPressUp: !!dragState,
+    isDraggable
   }, state, ref);
   let isExpanded = rowProps['aria-expanded'] === true;
   let hasChildItems = props.hasChildItems || [...state.collection.getChildren!(item.key)]?.length > 1;

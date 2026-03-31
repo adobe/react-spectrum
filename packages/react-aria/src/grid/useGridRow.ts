@@ -30,7 +30,9 @@ export interface GridRowProps<T> {
    * Please use onCellAction at the collection level instead.
    * @deprecated
    **/
-  onAction?: () => void
+  onAction?: () => void,
+  /** Whether this item is draggable. */
+  isDraggable?: boolean
 }
 
 export interface GridRowAria extends SelectableItemStates {
@@ -50,7 +52,8 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     node,
     isVirtualized,
     shouldSelectOnPressUp,
-    onAction
+    onAction,
+    isDraggable = false
   } = props;
 
   let {actions, shouldSelectOnPressUp: gridShouldSelectOnPressUp} = gridMap.get(state)!;
@@ -62,7 +65,8 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     isVirtualized,
     shouldSelectOnPressUp: gridShouldSelectOnPressUp || shouldSelectOnPressUp,
     onAction: onRowAction || node?.props?.onAction ? chain(node?.props?.onAction, onRowAction) : undefined,
-    isDisabled: state.collection.size === 0
+    isDisabled: state.collection.size === 0,
+    isDraggable
   });
 
   let isSelected = state.selectionManager.isSelected(node.key);

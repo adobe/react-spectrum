@@ -82,7 +82,12 @@ export interface AriaOptionProps {
    * Whether the option should use virtual focus instead of being focused directly.
    * @deprecated
    */
-  shouldUseVirtualFocus?: boolean
+  shouldUseVirtualFocus?: boolean,
+
+  /**
+   * Whether this item is draggable.
+   */
+  isDraggable?: boolean
 }
 
 /**
@@ -93,7 +98,8 @@ export interface AriaOptionProps {
  */
 export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: RefObject<FocusableElement | null>): OptionAria {
   let {
-    key
+    key,
+    isDraggable = false
   } = props;
 
   let data = listData.get(state);
@@ -139,7 +145,8 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     linkBehavior: data?.linkBehavior,
     // @ts-ignore
     UNSTABLE_itemBehavior: data?.['UNSTABLE_itemBehavior'],
-    id
+    id,
+    isDraggable
   });
 
   let {hoverProps} = useHover({

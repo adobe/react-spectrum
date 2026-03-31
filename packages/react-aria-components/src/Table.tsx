@@ -1367,11 +1367,13 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     let state = useContext(TableStateContext)!;
     let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
     let {isVirtualized, CollectionBranch} = useContext(CollectionRendererContext);
+    let isDraggable = dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
     let {rowProps, expandButtonProps, ...states} = useTableRow(
       {
         node: item,
         shouldSelectOnPressUp: !!dragState,
-        isVirtualized
+        isVirtualized,
+        isDraggable
       },
       state,
       ref

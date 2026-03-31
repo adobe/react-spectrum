@@ -360,17 +360,22 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {isVirtualized} = useContext(CollectionRendererContext);
+  let isDraggable = dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
     {
       node: item,
       shouldSelectOnPressUp: !!dragState,
-      isVirtualized
+      isVirtualized,
+      isDraggable
     },
     state,
     ref
   );
 
   let {hoverProps, isHovered} = useHover({
+    // TODO: might be worth having this propagated down all the way to useSelectableItem in some fashion?
+    // should the useGridListItem hook/useSelectableItem hook take "isDraggable" or something?
+    // Can drop this now
     isDisabled: !states.allowsSelection && !states.hasAction,
     onHoverStart: item.props.onHoverStart,
     onHoverChange: item.props.onHoverChange,
