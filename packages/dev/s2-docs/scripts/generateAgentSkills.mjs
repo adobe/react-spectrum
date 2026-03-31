@@ -46,8 +46,8 @@ const SKILLS = {
       website: 'https://react-spectrum.adobe.com/'
     }
   },
-  'react-spectrum-v3-to-s2-migration': {
-    name: 'react-spectrum-v3-to-s2-migration',
+  'migrate-react-spectrum-v3-to-s2': {
+    name: 'migrate-react-spectrum-v3-to-s2',
     description:
       'Upgrade React Spectrum v3 (Spectrum 1) codebases to React Spectrum S2. Use when developers mention migrating or upgrading from React Spectrum v3, Spectrum 1, S1, @adobe/react-spectrum, @react-spectrum/* packages, or codemod-assisted upgrades to @react-spectrum/s2.',
     kind: 'migration',
