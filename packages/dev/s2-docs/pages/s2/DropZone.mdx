@@ -12,7 +12,9 @@ export const description = 'An area into which one or multiple objects can be dr
 
 ```tsx render type="s2" docs={docs.exports.DropZone} links={docs.links} props={['size', 'replaceMessage']} wide
 "use client";
-import {DropZone, IllustratedMessage, Heading, Content, ButtonGroup, Button, FileTrigger} from '@react-spectrum/s2';
+import {DropZone, IllustratedMessage, Heading, Content} from '@react-spectrum/s2/DropZone';
+import {ButtonGroup, Button} from '@react-spectrum/s2/ButtonGroup';
+import {FileTrigger} from '@react-spectrum/s2/FileTrigger';
 import React, {useState} from 'react';
 import CloudUpload from '@react-spectrum/s2/illustrations/gradient/generic1/CloudUpload';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};

@@ -2,7 +2,6 @@ import {Button} from '../src/Button';
 import {CommandPalette} from '../src/CommandPalette';
 import {DialogTrigger} from '../src/Dialog';
 import {MenuItem} from '../src/Menu';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof CommandPalette> = {

@@ -11,7 +11,7 @@
  */
 
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
-import {ContextValue} from 'react-aria-components/utils';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};

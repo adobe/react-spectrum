@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../../src/Icon';
 import ThreeArrowsCircle_L from 'illustration:./S2_fill_threeArrowsCircle_generic2_160.svg';
 import ThreeArrowsCircle_M from 'illustration:./S2_fill_threeArrowsCircle_generic2_96.svg';
 import ThreeArrowsCircle_S from 'illustration:./S2_fill_threeArrowsCircle_generic2_48.svg';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function ThreeArrowsCircle(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

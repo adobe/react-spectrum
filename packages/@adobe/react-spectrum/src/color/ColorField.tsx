@@ -21,7 +21,7 @@ import styles from './colorfield.css';
 import {TextFieldBase} from '../textfield/TextFieldBase';
 import {TextFieldRef} from '../textfield/TextField';
 import {useColorChannelFieldState, useColorFieldState} from 'react-stately/useColorFieldState';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 import {useFormProps} from '../form/Form';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useProviderProps} from '../provider/Provider';

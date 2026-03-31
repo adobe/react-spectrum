@@ -1,5 +1,12 @@
 'use client';
-import {ToggleButtonGroup as RACToggleButtonGroup, SelectionIndicator, ToggleButton, ToggleButtonProps, ToggleButtonGroupProps, composeRenderProps} from 'react-aria-components';
+import {
+  ToggleButtonGroup as RACToggleButtonGroup,
+  SelectionIndicator,
+  ToggleButton,
+  type ToggleButtonProps,
+  type ToggleButtonGroupProps,
+} from 'react-aria-components/ToggleButtonGroup';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import './SegmentedControl.css';
 
 export function SegmentedControl(props: ToggleButtonGroupProps) {

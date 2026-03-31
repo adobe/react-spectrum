@@ -1,5 +1,4 @@
 import {Slider} from '../src/Slider';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Slider> = {

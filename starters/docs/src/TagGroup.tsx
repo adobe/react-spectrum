@@ -3,11 +3,11 @@ import {
   Button,
   Tag as AriaTag,
   TagGroup as AriaTagGroup,
-  TagGroupProps as AriaTagGroupProps,
+  type TagGroupProps as AriaTagGroupProps,
   TagList,
-  TagListProps,
-  TagProps,
-} from 'react-aria-components';
+  type TagListProps,
+  type TagProps,
+} from 'react-aria-components/TagGroup';
 import {Description, Label} from './Form';
 import {Text} from './Content';
 import {X} from 'lucide-react';

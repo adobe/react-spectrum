@@ -4,7 +4,6 @@ import {DialogTrigger} from '../src/Dialog';
 import {Heading} from '../src/Content';
 import {HelpCircle} from 'lucide-react';
 import './styles.css';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Popover> = {

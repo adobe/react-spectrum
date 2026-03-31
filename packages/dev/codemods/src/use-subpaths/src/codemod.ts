@@ -121,7 +121,7 @@ export default function transformer(file: FileInfo, api: API): string {
 
           let importedName = getImportedName(specifier);
           let candidates = sourceMap[importedName];
-          if (candidates && candidates.length === 1) {
+          if (candidates && (candidates.length === 1 || candidates[0] === `${source}/${importedName}`)) {
             let importKind = node.importKind || 'value';
             uniqueSources.add(importKind + ':' + candidates[0]);
           }

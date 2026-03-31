@@ -17,7 +17,7 @@ import {Autocomplete} from '../src/Autocomplete';
 import {Breadcrumb, Breadcrumbs} from '../src/Breadcrumbs';
 import {Button} from '../src/Button';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../src/Table';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {GridList, GridListItem} from '../src/GridList';
 import {Header} from '../src/Header';

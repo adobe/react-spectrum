@@ -1,5 +1,4 @@
 import {ProgressBar} from '../src/ProgressBar';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ProgressBar> = {

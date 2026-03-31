@@ -32,7 +32,7 @@ import {
 import {CardView} from '../../src/card/CardView';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {useMemo} from 'react';
-import {Size} from 'react-stately/private/virtualizer/Size';
+import {Size} from 'react-stately/useVirtualizerState';
 import {SpectrumCardViewProps} from '../../src/card/types';
 import {useCollator} from 'react-aria/useCollator';
 import {WaterfallLayout} from '../../src/card/WaterfallLayout';

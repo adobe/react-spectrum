@@ -20,7 +20,7 @@ import React, {ForwardedRef, ReactElement, useEffect} from 'react';
 import {useFocusable} from './useFocusable';
 import {useObjectRef} from '../utils/useObjectRef';
 
-interface PressableProps extends PressProps {
+export interface PressableProps extends PressProps {
   children: ReactElement<DOMAttributes, string>
 }
 

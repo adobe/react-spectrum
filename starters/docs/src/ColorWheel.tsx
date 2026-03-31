@@ -1,12 +1,10 @@
 'use client';
 import {
   ColorWheel as AriaColorWheel,
-  ColorWheelProps as AriaColorWheelProps,
-  ColorWheelTrack
-} from 'react-aria-components';
-
+  type ColorWheelProps as AriaColorWheelProps,
+  ColorWheelTrack,
+} from 'react-aria-components/ColorWheel';
 import {ColorThumb} from './ColorThumb';
-
 import './ColorWheel.css';
 export interface ColorWheelProps
   extends Omit<AriaColorWheelProps, 'outerRadius' | 'innerRadius'> {}

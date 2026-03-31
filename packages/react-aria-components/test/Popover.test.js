@@ -17,7 +17,7 @@ import {enableShadowDOM} from 'react-stately/private/flags/flags';
 import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
 import {OverlayArrow} from '../src/OverlayArrow';
 import {Popover} from '../src/Popover';
-import {Pressable} from 'react-aria/private/interactions/Pressable';
+import {Pressable} from 'react-aria/Pressable';
 import React, {useRef} from 'react';
 import {screen} from 'shadow-dom-testing-library';
 import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';

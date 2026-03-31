@@ -2,17 +2,17 @@
 import {
   Tabs as RACTabs,
   TabList as RACTabList,
-  TabListProps,
-  TabProps,
+  type TabListProps,
+  type TabProps,
   Tab as RACTab,
-  TabsProps,
+  type TabsProps,
   TabPanels as RACTabPanels,
-  TabPanelProps,
+  type TabPanelProps,
   TabPanel as RACTabPanel,
-  composeRenderProps,
   SelectionIndicator,
-  TabPanelsProps
-} from 'react-aria-components';
+  type TabPanelsProps,
+} from 'react-aria-components/Tabs';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import './Tabs.css';
 
 export function Tabs(props: TabsProps) {

@@ -15,13 +15,13 @@ export {isMac, isIPhone, isIPad, isIOS, isAppleDevice, isWebKit, isChrome, isAnd
 export {openLink, getSyntheticLinkProps, useSyntheticLinkProps, RouterProvider, shouldClientNavigate, useRouter, useLinkProps, handleLinkClick} from 'react-aria/private/utils/openLink';
 export {useId} from 'react-aria/useId';
 export {mergeIds, useSlotId} from 'react-aria/private/utils/useId';
-export {chain} from 'react-aria/private/utils/chain';
+export {chain} from 'react-aria/chain';
 export {createShadowTreeWalker, ShadowTreeWalker} from 'react-aria/private/utils/shadowdom/ShadowTreeWalker';
 export {getActiveElement, getEventTarget, nodeContains, isFocusWithin} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 export {getOwnerDocument, getOwnerWindow, isShadowRoot} from 'react-aria/private/utils/domHelpers';
 export {mergeProps} from 'react-aria/mergeProps';
-export {mergeRefs} from 'react-aria/private/utils/mergeRefs';
-export {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+export {mergeRefs} from 'react-aria/mergeRefs';
+export {filterDOMProps} from 'react-aria/filterDOMProps';
 export {focusWithoutScrolling} from 'react-aria/private/utils/focusWithoutScrolling';
 export {getOffset} from 'react-aria/private/utils/getOffset';
 export {runAfterTransition} from 'react-aria/private/utils/runAfterTransition';

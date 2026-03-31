@@ -13,7 +13,7 @@
 import {ColorArea as AriaColorArea, ColorAreaProps as AriaColorAreaProps} from 'react-aria-components/ColorArea';
 
 import {ColorHandle} from './ColorHandle';
-import {ContextValue} from 'react-aria-components/utils';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};

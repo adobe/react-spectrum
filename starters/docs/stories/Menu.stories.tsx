@@ -1,6 +1,5 @@
 import {Menu, MenuTrigger, MenuItem, SubmenuTrigger} from '../src/Menu';
 import {Button} from '../src/Button';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Menu> = {

@@ -10,5 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-export {useLocalizedStringFormatter} from '../src/i18n/useLocalizedStringFormatter';
+export {useLocalizedStringFormatter, useLocalizedStringDictionary} from '../src/i18n/useLocalizedStringFormatter';
 export type {LocalizedStringFormatter} from '@internationalized/string';

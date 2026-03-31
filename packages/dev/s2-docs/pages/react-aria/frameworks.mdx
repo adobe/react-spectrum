@@ -34,7 +34,7 @@ export const description = 'How to integrate with your framework.';
         ```tsx
         // app/layout.tsx
         import {headers} from 'next/headers';
-        import {isRTL} from 'react-aria-components';
+        import {isRTL} from 'react-aria-components/I18nProvider';
         import {ClientProviders} from './provider';
 
         export default async function RootLayout({children}) {
@@ -62,7 +62,7 @@ export const description = 'How to integrate with your framework.';
         // app/provider.tsx
         "use client";
 
-        import {I18nProvider} from 'react-aria-components';
+        import {I18nProvider} from 'react-aria-components/I18nProvider';
 
         export function ClientProviders({lang, children}) {
           return (
@@ -92,7 +92,7 @@ export const description = 'How to integrate with your framework.';
         import {ServerRouter} from 'react-router';
         import {renderToPipeableStream} from 'react-dom/server';
         /*- begin highlight -*/
-        import {I18nProvider} from 'react-aria-components';
+        import {I18nProvider} from 'react-aria-components/I18nProvider';
         import {getLocalizationScript} from 'react-aria-components/i18n';
         /*- end highlight -*/
 
@@ -135,7 +135,7 @@ export const description = 'How to integrate with your framework.';
 
         ```tsx
         // app/root.tsx
-        import {useLocale} from 'react-aria-components';
+        import {useLocale} from 'react-aria-components/I18nProvider';
 
         export function Layout({children}) {
           /*- begin highlight -*/

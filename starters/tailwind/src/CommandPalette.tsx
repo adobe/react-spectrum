@@ -1,11 +1,11 @@
 'use client';
 import {
   Autocomplete as AriaAutocomplete,
-  AutocompleteProps as AriaAutocompleteProps,
-  MenuProps as AriaMenuProps,
+  type AutocompleteProps as AriaAutocompleteProps,
   useFilter,
-  Dialog
-} from 'react-aria-components';
+} from 'react-aria-components/Autocomplete';
+import { type MenuProps as AriaMenuProps } from 'react-aria-components/Menu';
+import { Dialog } from 'react-aria-components/Dialog';
 import {Menu} from './Menu';
 import {SearchField} from './SearchField';
 import {Modal} from './Modal';

@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../src/Icon';
 import Trophy_L from 'illustration:./S2_lin_trophy_160.svg';
 import Trophy_M from 'illustration:./S2_lin_trophy_96.svg';
 import Trophy_S from 'illustration:./S2_lin_trophy_48.svg';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Trophy(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

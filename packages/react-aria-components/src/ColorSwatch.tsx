@@ -9,7 +9,7 @@ import {
   useRenderProps
 } from './utils';
 import {Color} from 'react-stately/Color';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';

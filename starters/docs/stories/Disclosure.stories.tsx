@@ -1,5 +1,4 @@
 import {Disclosure, DisclosureHeader, DisclosurePanel} from '../src/Disclosure';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Disclosure> = {

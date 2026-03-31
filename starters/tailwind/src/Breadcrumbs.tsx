@@ -1,7 +1,13 @@
 'use client';
 import { ChevronRight } from 'lucide-react';
 import React from 'react';
-import { Breadcrumb as AriaBreadcrumb, Breadcrumbs as AriaBreadcrumbs, BreadcrumbProps, BreadcrumbsProps, LinkProps } from 'react-aria-components';
+import {
+  Breadcrumb as AriaBreadcrumb,
+  Breadcrumbs as AriaBreadcrumbs,
+  type BreadcrumbProps,
+  type BreadcrumbsProps,
+  type LinkProps,
+} from 'react-aria-components/Breadcrumbs';
 import { twMerge } from 'tailwind-merge';
 import { Link } from './Link';
 import { composeTailwindRenderProps } from './utils';

@@ -59,7 +59,8 @@ The following example shows a dynamic collection of items, grouped into sections
 ```tsx render
 "use client";
 import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
-import {ListBoxSection, Collection, Header} from 'react-aria-components';
+import {ListBoxSection, Header} from 'vanilla-starter/ListBox';
+import {Collection} from 'react-aria-components/Collection';
 
 function Example() {
   /*- begin collapse -*/
@@ -113,7 +114,7 @@ Use the `ComboBoxValue` render prop function to display the selected items as a 
 
 ```tsx render
 "use client";
-import {ComboBox, ComboBoxValue, Input} from 'react-aria-components';
+import {ComboBox, ComboBoxValue, Input} from 'react-aria-components/ComboBox';
 import {ComboBoxListBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 import {Label, FieldButton} from 'vanilla-starter/Form';
 import {Popover} from 'vanilla-starter/Popover';
@@ -217,7 +218,7 @@ Use the `defaultValue` or `value` prop to set the selected item. The value corre
 "use client";
 import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 import {useState} from 'react';
-import type {Key} from 'react-aria-components';
+import type {Key} from 'react-aria-components/ComboBox';
 
 function Example() {
   let [animal, setAnimal] = useState<Key | null>("bison");
@@ -286,7 +287,7 @@ Both `inputValue` and `value` can be controlled simultaneously. However, each in
 
 ```tsx render
 "use client";
-import type {Key} from 'react-aria-components';
+import type {Key} from 'react-aria-components/ComboBox';
 import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 import {useState} from 'react';
 

@@ -12,13 +12,13 @@
 
 import {Button} from '../src/Button';
 
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {ComboBox, ComboBoxProps, ComboBoxStateContext} from '../src/ComboBox';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {ListBox} from '../src/ListBox';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {Popover} from '../src/Popover';

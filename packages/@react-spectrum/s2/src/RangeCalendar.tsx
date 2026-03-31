@@ -18,7 +18,7 @@ import {
 import {CalendarButton, CalendarGrid, CalendarHeading} from './Calendar';
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
-import {ContextValue, Provider} from 'react-aria-components/utils';
+import {ContextValue, Provider} from 'react-aria-components/slots';
 import {createContext, ForwardedRef, forwardRef, ReactNode} from 'react';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};

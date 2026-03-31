@@ -1,10 +1,10 @@
 'use client';
 import {
   ColorSlider as AriaColorSlider,
-  ColorSliderProps as AriaColorSliderProps,
+  type ColorSliderProps as AriaColorSliderProps,
   SliderOutput,
-  SliderTrack
-} from 'react-aria-components';
+  SliderTrack,
+} from 'react-aria-components/ColorSlider';
 import {Label} from './Form';
 import {ColorThumb} from './ColorThumb';
 import './ColorSlider.css';

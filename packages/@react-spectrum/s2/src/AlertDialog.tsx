@@ -14,7 +14,7 @@ import AlertTriangle from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import {Button} from './Button';
 import {ButtonGroup} from './ButtonGroup';
 import {CenterBaseline} from './CenterBaseline';
-import {chain} from 'react-aria/private/utils/chain';
+import {chain} from 'react-aria/chain';
 import {Content, Heading} from './Content';
 import {Dialog} from './Dialog';
 import {DOMProps, DOMRef} from '@react-types/shared';
@@ -23,7 +23,7 @@ import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
-import {Provider} from 'react-aria-components/utils';
+import {Provider} from 'react-aria-components/slots';
 import {style} from '../style' with {type: 'macro'};
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';

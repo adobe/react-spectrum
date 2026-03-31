@@ -22,7 +22,7 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import {HoverEvents} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';

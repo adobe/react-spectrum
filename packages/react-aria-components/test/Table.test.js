@@ -28,7 +28,7 @@ import {
 } from '../src/Table';
 
 import {Checkbox} from '../src/Checkbox';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
 import {Dialog, DialogTrigger} from '../src/Dialog';

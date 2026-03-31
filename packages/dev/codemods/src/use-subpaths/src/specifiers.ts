@@ -49,7 +49,8 @@ export function getSpecifiersByPackage(from: string) {
         plugins: ['typescript']
       });
 
-      let importSpecifier = `${pkg}/${entry.name.replace(/(\.d)?\.ts$/, '')}`;
+      let subpath = entry.name.replace(/(\.d)?\.ts$/, '');
+      let importSpecifier = `${pkg}/${subpath}`;
       for (let node of ast.program.body) {
         if (node.type === 'ExportNamedDeclaration') {
           for (let specifier of node.specifiers) {
@@ -59,7 +60,11 @@ export function getSpecifiersByPackage(from: string) {
 
             let exported = specifier.exported.type === 'Identifier' ? specifier.exported.name : specifier.exported.value;
             exports[exported] ??= [];
-            exports[exported].push(importSpecifier);
+            if (exported.startsWith(subpath)) {
+              exports[exported].unshift(importSpecifier);
+            } else {
+              exports[exported].push(importSpecifier);
+            }
           }
         }
       }
