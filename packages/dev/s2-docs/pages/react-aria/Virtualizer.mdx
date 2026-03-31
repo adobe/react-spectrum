@@ -42,11 +42,6 @@ for (let i = 0; i < 5000; i++) {
 
 Virtualizer uses <TypeLink links={docs.links} type={docs.exports.Layout} /> objects to determine the position and size of each item, and provide the list of currently visible items. When using a Virtualizer, all items are positioned by the `Layout`, and CSS layout properties such as flexbox and grid do not apply.
 
-<InlineAlert variant="notice" maxWidth={600}>
-  <Heading>Virtualized components must have a defined size</Heading>
-  <Content>This may be an explicit CSS `width` and `height`, or an implicit size (e.g. percentage or `flex`) bounded by an ancestor element. Without a bounded size, all items will be rendered to the DOM, negating the performance benefits of virtualized scrolling.</Content>
-</InlineAlert>
-
 ### List
 
 `ListLayout` places items along its orientation. Rows can be fixed or variable in size. When using a variable size, set the `estimatedRowSize` to a reasonable guess for how tall or wide the rows will be on average. This allows the size of the scrollbar to be calculated.
@@ -322,7 +317,7 @@ for (let i = 0; imageOptions.length < 500; i++) {
     items={imageOptions}
     style={{display: 'block', padding: 0, height: 250}}>
     {(item) => (
-      <ListBoxItem textValue={item.title} aria-label={item.title} style={{height: '100%', padding: 12, overflow: 'hidden', boxSizing: 'border-box', border: '2px solid var(--border-color)', borderRadius: 8}}>
+      <ListBoxItem textValue={item.title} aria-label={item.title} style={{width: Math.round(200 * Number(item.aspectRatio) + 24), height: '100%', padding: 12, overflow: 'hidden', boxSizing: 'border-box', border: '2px solid var(--border-color)', borderRadius: 8}}>
         <img src={item.image} alt="" style={{maxHeight: 200, aspectRatio: item.aspectRatio, borderRadius: 4}} />
       </ListBoxItem>
     )}
