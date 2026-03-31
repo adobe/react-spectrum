@@ -867,16 +867,21 @@ const tableHeader = style({
 });
 
 const selectAllCheckbox = style({
-  marginStart: 16 // table-edge-to-content, same between mobile and desktop
+  marginStart: 16,
+  marginEnd: 8
 });
 
 const selectAllCheckboxColumn = style({
   padding: 0,
   height: 'full',
+  paddingX: 0,
   boxSizing: 'border-box',
   outlineStyle: 'none',
   position: 'relative',
+  display: 'flex',
   alignContent: 'center',
+  alignItems: 'center',
+  justifyContent: 'center',
   borderColor: {
     default: 'gray-300',
     forcedColors: 'ButtonBorder'
@@ -1009,8 +1014,13 @@ const stickyCell = {
 const checkboxCellStyle = style({
   ...commonCellStyles,
   ...stickyCell,
-  paddingStart: 16,
+  display: 'flex',
+  marginStart: 16,
+  marginEnd: 8,
+  paddingX: 0,
   alignContent: 'center',
+  alignItems: 'center',
+  justifyContent: 'center',
   height: 'calc(100% - 1px)',
   borderBottomWidth: 0,
   backgroundColor: '--rowBackgroundColor'
@@ -1031,7 +1041,10 @@ const cellContent = style({
       end: 'end'
     }
   },
-  width: 'full',
+  width: {
+    default: 'full',
+    isCheckboxCell: 'unset'
+  },
   isolation: 'isolate',
   padding: {
     default: 4,
@@ -1058,7 +1071,16 @@ export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | 'r
  * A cell within a table row.
  */
 export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, isSticky, showDivider = false, align, textValue, ...otherProps} = props;
+  let {
+    children,
+    isSticky,
+    showDivider = false,
+    align,
+    textValue,
+    // @ts-ignore
+    isCheckboxCell,
+    ...otherProps
+  } = props;
   let domRef = useDOMRef(ref);
   let tableVisualOptions = useContext(InternalTableContext);
   textValue ||= typeof children === 'string' ? children : undefined;
@@ -1079,10 +1101,10 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       {...otherProps}>
       {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
-          {hasChildItems && isTreeColumn && 
+          {hasChildItems && isTreeColumn &&
             <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
           }
-          <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
+          <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start', isCheckboxCell: isCheckboxCell})}>{children}</span>
           {isFocusVisible && <CellFocusRing />}
         </>
       )}
@@ -1252,7 +1274,7 @@ export const EditableCell = forwardRef(function EditableCell(props: EditableCell
       {...otherProps}>
       {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
-          {hasChildItems && isTreeColumn && 
+          {hasChildItems && isTreeColumn &&
             <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
           }
           <EditableCellInner {...props} isFocusVisible={isFocusVisible} cellRef={domRef as RefObject<HTMLDivElement>} />
@@ -1588,7 +1610,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
         // The `spread` otherProps must be after className in Cell.
         // @ts-ignore
-        (<Cell isSticky className={checkboxCellStyle}>
+        (<Cell isSticky className={checkboxCellStyle} isCheckboxCell>
           <Checkbox slot="selection" styles={selectionCheckbox} />
         </Cell>)
       )}
