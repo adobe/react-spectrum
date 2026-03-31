@@ -638,8 +638,9 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let rect: Rect;
     if (target.dropPosition === 'before') {
       rect = this.orientation === 'horizontal' ?
-        new Rect(Math.max(0, layoutInfo.rect.x - this.dropIndicatorThickness / 2), layoutInfo.rect.y, this.dropIndicatorThickness, layoutInfo.rect.height)
-        : new Rect(layoutInfo.rect.x, Math.max(0, layoutInfo.rect.y - this.dropIndicatorThickness / 2), layoutInfo.rect.width, this.dropIndicatorThickness);
+        new Rect(layoutInfo.rect.x - this.dropIndicatorThickness / 2, layoutInfo.rect.y, this.dropIndicatorThickness, layoutInfo.rect.height)
+        : new Rect(layoutInfo.rect.x, layoutInfo.rect.y - this.dropIndicatorThickness / 2, layoutInfo.rect.width, this.dropIndicatorThickness);
+
     } else if (target.dropPosition === 'after') {
       // Render after last visible descendant of the drop target.
       let targetNode = this.collection.getItem(target.key);
@@ -657,9 +658,18 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
           currentKey = this.collection.getKeyAfter(currentKey);
         }
       }
+
+      // TODO: are these changes too specific to S2? Move into S2 ListView/TableView?
+      // the last drop indicator rect end needs to match the virtualizer's height/width so that the appearance/disappearance of the drop indicator
+      // doesn't cause the height of the collection to increase
+      let dropIndicatorThickness = this.dropIndicatorThickness
+      if (this.collection.lastKey === targetNode.key) {
+        dropIndicatorThickness = dropIndicatorThickness / 2
+      }
+
       rect = this.orientation === 'horizontal' ?
-        new Rect(layoutInfo.rect.maxX - this.dropIndicatorThickness / 2, layoutInfo.rect.y, this.dropIndicatorThickness, layoutInfo.rect.height)
-        : new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY - this.dropIndicatorThickness / 2, layoutInfo.rect.width, this.dropIndicatorThickness);
+        new Rect(layoutInfo.rect.maxX - this.dropIndicatorThickness / 2, layoutInfo.rect.y, dropIndicatorThickness, layoutInfo.rect.height)
+        : new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY - this.dropIndicatorThickness / 2, layoutInfo.rect.width, dropIndicatorThickness);
     } else {
       rect = layoutInfo.rect;
     }
