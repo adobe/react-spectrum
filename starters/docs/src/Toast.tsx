@@ -4,14 +4,14 @@ import {
   UNSTABLE_Toast as Toast,
   UNSTABLE_ToastQueue as ToastQueue,
   UNSTABLE_ToastContent as ToastContent,
-  ToastProps,
-  Text
-} from 'react-aria-components';
+  type ToastProps,
+  Text,
+} from 'react-aria-components/Toast';
 import {Button} from './Button';
 import {X} from 'lucide-react';
 import './Toast.css';
 import {flushSync} from 'react-dom';
-import { CSSProperties } from 'react';
+import { type CSSProperties } from 'react';
 
 // Define the type for your toast content. This interface defines the properties of your toast content, affecting what you
 // pass to the queue calls as arguments.

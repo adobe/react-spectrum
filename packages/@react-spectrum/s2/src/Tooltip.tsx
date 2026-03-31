@@ -15,14 +15,13 @@ import {
   TooltipProps as AriaTooltipProps,
   TooltipTrigger as AriaTooltipTrigger,
   TooltipTriggerComponentProps as AriaTooltipTriggerComponentProps,
+  OverlayArrow,
   TooltipRenderProps
 } from 'react-aria-components/Tooltip';
-
 import {centerPadding, setColorScheme, style} from '../style' with {type: 'macro'};
 import {ColorScheme, ColorSchemeContext} from './Provider';
 import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext, useState} from 'react';
 import {DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
-import {OverlayArrow} from 'react-aria-components/OverlayArrow';
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';

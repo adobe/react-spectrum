@@ -1,14 +1,14 @@
 'use client';
 import {
   CalendarCell as AriaCalendarCell,
-  DateValue,
-  Heading,
   RangeCalendar as AriaRangeCalendar,
-  RangeCalendarProps as AriaRangeCalendarProps,
+  Heading,
   Text,
-  composeRenderProps,
-  CalendarCellProps
-} from 'react-aria-components';
+  type DateValue,
+  type RangeCalendarProps as AriaRangeCalendarProps,
+  type CalendarCellProps,
+} from 'react-aria-components/RangeCalendar';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import {Button} from './Button';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 import {CalendarGrid} from './Calendar';

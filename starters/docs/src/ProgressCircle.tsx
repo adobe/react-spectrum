@@ -1,6 +1,7 @@
 'use client';
-import {composeRenderProps, ProgressBar} from 'react-aria-components';
-import type {ProgressBarProps} from 'react-aria-components';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
+import { ProgressBar } from 'react-aria-components/ProgressBar';
+import type { ProgressBarProps } from 'react-aria-components/ProgressBar';
 
 export interface ProgressCircleProps extends ProgressBarProps {
   size?: number

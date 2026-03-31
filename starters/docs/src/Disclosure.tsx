@@ -1,12 +1,12 @@
 'use client';
+import { Button } from 'react-aria-components/Button';
 import {
-  Button,
   Disclosure as AriaDisclosure,
   DisclosurePanel as AriaDisclosurePanel,
-  DisclosureProps,
-  DisclosurePanelProps,
-  HeadingProps,
-} from 'react-aria-components';
+  type DisclosureProps,
+  type DisclosurePanelProps,
+  type HeadingProps
+} from 'react-aria-components/Disclosure';
 import {Heading} from './Content';
 import {ChevronRight} from 'lucide-react';
 import './Disclosure.css';

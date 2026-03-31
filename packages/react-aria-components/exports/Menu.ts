@@ -20,3 +20,22 @@ export type {MenuProps, MenuItemProps, MenuItemRenderProps, MenuTriggerProps, Su
 export type {Key, Selection, SelectionMode} from '@react-types/shared';
 export type {ListState} from 'react-stately/useListState';
 export type {RootMenuTriggerState} from 'react-stately/useMenuTriggerState';
+
+export {SelectionIndicator} from '../src/SelectionIndicator';
+export type {SelectionIndicatorProps} from '../src/SelectionIndicator';
+
+export {Text} from '../src/Text';
+export type {TextProps} from '../src/Text';
+
+export {Keyboard} from '../src/Keyboard';
+
+export {Header} from '../src/Header';
+export type {HeaderProps} from '../src/Header';
+
+export {Popover} from '../src/Popover';
+export type {PopoverProps, PopoverRenderProps} from '../src/Popover';
+
+export {Separator} from '../src/Separator';
+export type {SeparatorProps} from '../src/Separator';
+
+export {Pressable} from 'react-aria/Pressable';

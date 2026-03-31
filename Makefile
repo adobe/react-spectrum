@@ -129,7 +129,7 @@ website-production:
 
 check-examples:
 	node scripts/extractExamplesS2.mjs
-	yarn tsc --project dist/docs-examples/tsconfig.json
+	yarn tsgo --project dist/docs-examples/tsconfig.json
 
 starter:
 	cd starters/docs && yarn --no-immutable && yarn up react-aria-components && yarn tsc

@@ -1,8 +1,8 @@
-import {Meta} from "@storybook/react";
+import {type Meta} from "@storybook/react";
 import React from "react";
 import {CommandPalette} from "../src/CommandPalette";
 import {Button} from "../src/Button";
-import {DialogTrigger} from "react-aria-components";
+import { DialogTrigger } from 'react-aria-components/Dialog';
 import {MenuItem, MenuSection} from "../src/Menu";
 
 const meta: Meta<typeof CommandPalette> = {

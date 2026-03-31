@@ -13,9 +13,7 @@
 import {ActionButton, ActionButtonContext} from './ActionButton';
 import {baseColor, centerPadding, colorMix, focusRing, fontRelative, lightDark, setColorScheme, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
-
 import {ButtonGroup} from './ButtonGroup';
-
 import {
   CellRenderProps,
   ColumnRenderProps,
@@ -35,7 +33,6 @@ import {
   ResizableTableContainer,
   RowRenderProps,
   TableBodyRenderProps,
-  TableLayout,
   TableLoadMoreItem,
   TableRenderProps,
   useTableOptions
@@ -69,7 +66,7 @@ import {CheckboxContext as RACCheckboxContext} from 'react-aria-components/Check
 // @ts-ignore
 import {Popover as RACPopover} from 'react-aria-components/Popover';
 import React, {createContext, CSSProperties, FormEvent, FormHTMLAttributes, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {Rect, Virtualizer} from 'react-aria-components/Virtualizer';
+import {Rect, TableLayout, Virtualizer} from 'react-aria-components/Virtualizer';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {Button as SpectrumButton} from './Button';

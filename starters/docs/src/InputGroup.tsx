@@ -1,5 +1,7 @@
 'use client';
-import {composeRenderProps, Group, GroupProps, InputContext} from 'react-aria-components';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
+import { Group, type GroupProps } from 'react-aria-components/Group';
+import { InputContext } from 'react-aria-components/Input';
 import {Label} from './Form';
 import {useId} from 'react';
 import './InputGroup.css';

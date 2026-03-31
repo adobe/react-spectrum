@@ -1,5 +1,4 @@
 import {ColorField} from '../src/ColorField';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ColorField> = {

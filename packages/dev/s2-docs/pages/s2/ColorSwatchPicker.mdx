@@ -13,7 +13,7 @@ export const description = 'Displays a list of color swatches and allows a user 
 
 ```tsx render docs={docs.exports.ColorSwatchPicker} links={docs.links} props={['size', 'density', 'rounding']} initialProps={{defaultValue: '#f00'}} type="s2"
 "use client";
-import {ColorSwatchPicker, ColorSwatch} from '@react-spectrum/s2';
+import {ColorSwatchPicker, ColorSwatch} from '@react-spectrum/s2/ColorSwatchPicker';
 
 <ColorSwatchPicker/* PROPS */>
   <ColorSwatch color="#f00" />
@@ -31,7 +31,7 @@ Use the `value` or `defaultValue` prop to set the selected color, and `onChange`
 
 ```tsx render
 "use client";
-import {ColorSwatchPicker, ColorSwatch, parseColor} from '@react-spectrum/s2';
+import {ColorSwatchPicker, ColorSwatch, parseColor} from '@react-spectrum/s2/ColorSwatchPicker';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 

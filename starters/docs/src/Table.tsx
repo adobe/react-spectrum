@@ -3,24 +3,24 @@ import {
   Button,
   Collection,
   Column as AriaColumn,
-  ColumnProps as AriaColumnProps,
+  type ColumnProps as AriaColumnProps,
   Row as AriaRow,
-  RowProps,
+  type RowProps,
   Table as AriaTable,
   TableHeader as AriaTableHeader,
-  TableHeaderProps,
-  TableProps,
+  type TableHeaderProps,
+  type TableProps,
   useTableOptions,
-  TableBodyProps,
+  type TableBodyProps,
   TableBody as AriaTableBody,
-  CellProps,
+  type CellProps,
   Cell as AriaCell,
   ColumnResizer,
-  Group,
   TableLoadMoreItem as AriaTableLoadMoreItem,
-  TableLoadMoreItemProps,
-  composeRenderProps
-} from 'react-aria-components';
+  type TableLoadMoreItemProps,
+} from 'react-aria-components/Table';
+import { Group } from 'react-aria-components/Group';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import {Checkbox} from './Checkbox';
 import {ProgressCircle} from './ProgressCircle';
 import {ChevronUp, ChevronDown, GripVertical, ChevronRight} from 'lucide-react';
