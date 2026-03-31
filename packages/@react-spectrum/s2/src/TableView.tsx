@@ -867,21 +867,26 @@ const tableHeader = style({
 });
 
 const selectAllCheckbox = style({
-  marginStart: 16,
-  marginEnd: 8
 });
 
 const selectAllCheckboxColumn = style({
-  padding: 0,
+  paddingStart: {
+    default: 0,
+    ':has([slot="selection"])': 16
+  },
+  paddingEnd: {
+    default: 0,
+    ':has(slot="selection")': 8
+  },
+  paddingY: 0,
   height: 'full',
-  paddingX: 0,
   boxSizing: 'border-box',
   outlineStyle: 'none',
   position: 'relative',
   display: 'flex',
   alignContent: 'center',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'start',
   borderColor: {
     default: 'gray-300',
     forcedColors: 'ButtonBorder'
@@ -1015,12 +1020,11 @@ const checkboxCellStyle = style({
   ...commonCellStyles,
   ...stickyCell,
   display: 'flex',
-  marginStart: 16,
-  marginEnd: 8,
-  paddingX: 0,
+  paddingStart: 16,
+  paddingEnd: 8,
   alignContent: 'center',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'start',
   height: 'calc(100% - 1px)',
   borderBottomWidth: 0,
   backgroundColor: '--rowBackgroundColor'
@@ -1043,7 +1047,7 @@ const cellContent = style({
   },
   width: {
     default: 'full',
-    isCheckboxCell: 'unset'
+    ':has([slot="selection"])': 'unset'
   },
   isolation: 'isolate',
   padding: {
@@ -1077,8 +1081,6 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
     showDivider = false,
     align,
     textValue,
-    // @ts-ignore
-    isCheckboxCell,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -1104,7 +1106,7 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
           {hasChildItems && isTreeColumn &&
             <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
           }
-          <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start', isCheckboxCell: isCheckboxCell})}>{children}</span>
+          <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
           {isFocusVisible && <CellFocusRing />}
         </>
       )}
@@ -1610,7 +1612,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
         // The `spread` otherProps must be after className in Cell.
         // @ts-ignore
-        (<Cell isSticky className={checkboxCellStyle} isCheckboxCell>
+        (<Cell isSticky className={checkboxCellStyle}>
           <Checkbox slot="selection" styles={selectionCheckbox} />
         </Cell>)
       )}
