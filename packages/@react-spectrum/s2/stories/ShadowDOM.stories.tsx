@@ -132,7 +132,34 @@ const meta: Meta<any> = {
 
 export default meta;
 
-function ShadowDOMMenuContent() {
+/** Clone document stylesheets into a new div; each shadow root needs its own copy (appendChild moves nodes). */
+function createClonedDocumentStyleRoot(): HTMLDivElement {
+  const styleRoot = document.createElement('div');
+  styleRoot.setAttribute('data-shadow-styles', '');
+  for (const node of document.head.children) {
+    if (node.tagName === 'LINK' && (node as HTMLLinkElement).rel === 'stylesheet') {
+      const link = node as HTMLLinkElement;
+      const clone = document.createElement('link');
+      clone.rel = 'stylesheet';
+      clone.href = link.href;
+      styleRoot.appendChild(clone);
+    } else if (node.tagName === 'STYLE') {
+      const style = node as HTMLStyleElement;
+      const clone = style.cloneNode(true) as HTMLStyleElement;
+      styleRoot.appendChild(clone);
+    }
+  }
+  return styleRoot;
+}
+
+/** Nested `createRoot` must not unmount synchronously during Storybook/parent React commit — defer to avoid "unmount while already rendering". */
+function unmountRootDeferred(root: ReturnType<typeof createRoot>): void {
+  queueMicrotask(() => {
+    root.unmount();
+  });
+}
+
+function ShadowDOMContained() {
   const hostRef = useRef<HTMLDivElement>(null);
   const portalContainerRef = useRef<HTMLDivElement | null>(null);
   const rootRef = useRef<ReturnType<typeof createRoot> | null>(null);
@@ -153,22 +180,7 @@ function ShadowDOMMenuContent() {
 
     // Copy all styles from the document into the shadow root so S2 (and Storybook) styles apply.
     // Shadow DOM does not inherit styles; we must duplicate every stylesheet.
-    const styleRoot = document.createElement('div');
-    styleRoot.setAttribute('data-shadow-styles', '');
-    for (const node of document.head.children) {
-      if (node.tagName === 'LINK' && (node as HTMLLinkElement).rel === 'stylesheet') {
-        const link = node as HTMLLinkElement;
-        const clone = document.createElement('link');
-        clone.rel = 'stylesheet';
-        clone.href = link.href;
-        styleRoot.appendChild(clone);
-      } else if (node.tagName === 'STYLE') {
-        const style = node as HTMLStyleElement;
-        const clone = style.cloneNode(true) as HTMLStyleElement;
-        styleRoot.appendChild(clone);
-      }
-    }
-    shadowRoot.appendChild(styleRoot);
+    shadowRoot.appendChild(createClonedDocumentStyleRoot());
 
     const appContainer = document.createElement('div');
     appContainer.id = 'shadow-app';
@@ -184,276 +196,350 @@ function ShadowDOMMenuContent() {
     root.render(
       <Provider colorScheme="dark">
         <UNSAFE_PortalProvider getContainer={() => portalContainerRef.current}>
-          <div
-            className={style({
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 24,
-              padding: 16,
-              overflow: 'auto'
-            })}>
-            <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Buttons &amp; actions</h2>
-            <section className={style({display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'start'})}>
-              <Button onPress={action('button')}>Button</Button>
-              <Link href="#" isStandalone>Link</Link>
-              <ButtonGroup>
-                <Button>One</Button>
-                <Button>Two</Button>
-                <Button>Three</Button>
-              </ButtonGroup>
-              <ActionButton onPress={action('action button')}>Action</ActionButton>
-              <ActionButtonGroup>
-                <ActionButton>Copy</ActionButton>
-                <ActionButton>Paste</ActionButton>
-              </ActionButtonGroup>
-              <ToggleButton>Toggle</ToggleButton>
-              <ToggleButtonGroup selectionMode="single">
-                <ToggleButton id="left">Left</ToggleButton>
-                <ToggleButton id="center">Center</ToggleButton>
-                <ToggleButton id="right">Right</ToggleButton>
-              </ToggleButtonGroup>
-              <ActionMenu onAction={action('action menu action')}>
-                <MenuItem id="edit">Edit</MenuItem>
-                <MenuItem id="duplicate">Duplicate</MenuItem>
-                <MenuItem id="delete">Delete</MenuItem>
-              </ActionMenu>
-              <MenuTrigger>
-                <Button aria-label="Open menu">Menu</Button>
-                <Menu onAction={action('menu action')}>
-                  <MenuItem id="edit">Edit</MenuItem>
-                  <SubmenuTrigger>
-                    <MenuItem id="dup">Duplicate</MenuItem>
-                    <Menu onAction={action('submenu action')}>
-                      <MenuItem id="in-place">In place</MenuItem>
-                      <MenuItem id="elsewhere">Elsewhere</MenuItem>
-                    </Menu>
-                  </SubmenuTrigger>
-                  <MenuItem id="delete">Delete</MenuItem>
-                </Menu>
-              </MenuTrigger>
-              <DialogTrigger>
-                <Button>Dialog</Button>
-                <Dialog>
-                  {({close}) => (
-                    <>
-                      <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" alt="Sky over roof" />
-                      <Heading slot="title">Dialog title</Heading>
-                      <Header>Header</Header>
-                      <Content>
-                        {[...Array(3)].map((_, i) =>
-                          <p key={i} style={{marginTop: i === 0 ? 0 : undefined, marginBottom: i === 3 - 1 ? 0 : undefined}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>
-                        )}
-                      </Content>
-                      <Footer><Checkbox>Don't show this again</Checkbox></Footer>
-                      <ButtonGroup>
-                        <Button onPress={close} variant="secondary">Cancel</Button>
-                        <Button onPress={close} variant="accent">Save</Button>
-                      </ButtonGroup>
-                    </>
-                  )}
-                </Dialog>
-              </DialogTrigger>
-              <DialogTrigger>
-                <Button>Alert</Button>
-                <AlertDialog title="Confirm" primaryActionLabel="OK" cancelLabel="Cancel" onPrimaryAction={action('alert confirm')}>
-                  Are you sure?
-                </AlertDialog>
-              </DialogTrigger>
-            </section>
-            <Divider />
-            <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Form controls</h2>
-            <section className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
-              <TextField label="Name" placeholder="Enter name" />
-              <SearchField label="Search" placeholder="Search" />
-              <NumberField label="Quantity" defaultValue={5} />
-              <TimeField label="Time" />
-              <DatePicker label="Date" />
-              <DateRangePicker label="Date range" />
-              <RangeCalendar aria-label="Date range" />
-              <Checkbox onChange={action('checkbox')}>Checkbox</Checkbox>
-              <CheckboxGroup label="Options">
-                <Checkbox value="a">A</Checkbox>
-                <Checkbox value="b">B</Checkbox>
-              </CheckboxGroup>
-              <Switch onChange={action('switch')}>Switch</Switch>
-              <RadioGroup label="Choice" onChange={action('radio')}>
-                <Radio value="one">One</Radio>
-                <Radio value="two">Two</Radio>
-              </RadioGroup>
-              <Slider label="Volume" defaultValue={50} />
-              <RangeSlider label="Range" defaultValue={{start: 20, end: 80}} />
-              <ComboBox label="Flavors" onSelectionChange={action('combobox selection')}>
-                <ComboBoxItem>Chocolate</ComboBoxItem>
-                <ComboBoxItem>Mint</ComboBoxItem>
-                <ComboBoxItem>Vanilla</ComboBoxItem>
-              </ComboBox>
-              <Picker label="Pick" onChange={action('picker selection')}>
-                <PickerItem>Chocolate</PickerItem>
-                <PickerItem>Mint</PickerItem>
-                <PickerItem>Vanilla</PickerItem>
-              </Picker>
-              <SelectBoxGroup aria-label="Select" selectionMode="single" styles={style({width: 410})}>
-                <SelectBox id="aws" textValue="Amazon Web Services">
-                  <Server />
-                  <Text slot="label">Amazon Web Services</Text>
-                  <Text slot="description">Reliable cloud infrastructure</Text>
-                </SelectBox>
-                <SelectBox id="azure" textValue="Microsoft Azure">
-                  <AlertNotice />
-                  <Text slot="label">Microsoft Azure</Text>
-                </SelectBox>
-                <SelectBox id="gcp" textValue="Google Cloud Platform">
-                  <PaperAirplane />
-                  <Text slot="label">Google Cloud Platform</Text>
-                </SelectBox>
-                <SelectBox id="ibm" textValue="IBM Cloud">
-                  <StarFilled1 />
-                  <Text slot="label">IBM Cloud</Text>
-                  <Text slot="description">Hybrid cloud solutions</Text>
-                </SelectBox>
-              </SelectBoxGroup>
-              <SegmentedControl onSelectionChange={action('segmented')}>
-                <SegmentedControlItem id="a">A</SegmentedControlItem>
-                <SegmentedControlItem id="b">B</SegmentedControlItem>
-                <SegmentedControlItem id="c">C</SegmentedControlItem>
-              </SegmentedControl>
-            </section>
-            <Divider />
-            <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Navigation &amp; layout</h2>
-            <section className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
-              <Breadcrumbs onAction={action('breadcrumb')}>
-                <Breadcrumb id="home">Home</Breadcrumb>
-                <Breadcrumb id="docs">Docs</Breadcrumb>
-                <Breadcrumb id="page">Page</Breadcrumb>
-              </Breadcrumbs>
-              <Tabs aria-label="Tabs">
-                <TabList>
-                  <Tab id="1">Tab 1</Tab>
-                  <Tab id="2">Tab 2</Tab>
-                </TabList>
-                <TabPanel id="1"><Text>Panel 1</Text></TabPanel>
-                <TabPanel id="2"><Text>Panel 2</Text></TabPanel>
-              </Tabs>
-              <Accordion>
-                <AccordionItem id="item1">
-                  <AccordionItemTitle>Section</AccordionItemTitle>
-                  <AccordionItemPanel>Content</AccordionItemPanel>
-                </AccordionItem>
-              </Accordion>
-              <Disclosure>
-                <DisclosureHeader>
-                  <DisclosureTitle>Disclosure</DisclosureTitle>
-                </DisclosureHeader>
-                <DisclosurePanel>Panel content</DisclosurePanel>
-              </Disclosure>
-            </section>
-            <Divider />
-            <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Color</h2>
-            <section className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
-              <ColorField label="Color" defaultValue="#7f00ff" />
-              <ColorArea defaultValue="hsl(30, 100%, 50%)" />
-              <ColorSlider label="Hue" defaultValue="hsl(30, 100%, 50%)" channel="hue" />
-              <ColorSlider label="Alpha" defaultValue="#f00" channel="alpha" />
-              <ColorWheel defaultValue="hsl(30, 100%, 50%)" />
-              <ColorSwatchPicker defaultValue="#f00">
-                <ColorSwatch color="#f00" />
-                <ColorSwatch color="#0f0" />
-                <ColorSwatch color="#00f" />
-                <ColorSwatch color="#ff0" />
-              </ColorSwatchPicker>
-            </section>
-            <Divider />
-            <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Status &amp; feedback</h2>
-            <section className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
-              <Badge>Badge</Badge>
-              <StatusLight variant="positive">Positive</StatusLight>
-              <StatusLight variant="negative">Negative</StatusLight>
-              <ProgressBar label="Progress" value={0.6} />
-              <ProgressCircle aria-label="Loading" isIndeterminate />
-              <Meter label="Meter" value={70} />
-              <Skeleton isLoading><span>Placeholder</span></Skeleton>
-              <InlineAlert variant="neutral">
-                <Heading>Alert title</Heading>
-                <Content>Inline alert body with more detail about what happened or what to do next.</Content>
-              </InlineAlert>
-              <TooltipTrigger>
-                <Button>Hover for tooltip</Button>
-                <Tooltip>Tooltip text</Tooltip>
-              </TooltipTrigger>
-            </section>
-            <Divider />
-            <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Content &amp; data</h2>
-            <section className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
-              <IllustratedMessage>
-                <AlertNotice />
-                <Heading>No results</Heading>
-                <Content>Try adjusting your search or filters to find what you need.</Content>
-              </IllustratedMessage>
-              <Avatar src="https://i.pravatar.cc/64?u=1" alt="User" />
-              <TagGroup label="Tags" onRemove={action('tag remove')}>
-                <Tag>Tag 1</Tag>
-                <Tag>Tag 2</Tag>
-              </TagGroup>
-              <Calendar aria-label="Date" />
-              <Form>
-                <TextField label="Form field" />
-                <Button type="submit">Submit</Button>
-              </Form>
-              <DropZone>
-                <Text>Drop zone</Text>
-              </DropZone>
-            </section>
-            <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Card view</h2>
-            <section className={style({display: 'flex', flexDirection: 'column', gap: 8, height: 600, width: 'full'})}>
-              <ExampleRender />
-            </section>
-            <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Table</h2>
-            <section className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-              <TableView aria-label="Table" selectionMode="single" renderActionBar={() => <ActionBar selectedItemCount={1} onClearSelection={action('clear')}><Button>Action</Button></ActionBar>}>
-                <TableHeader>
-                  <Column id="col1">Name</Column>
-                  <Column id="col2">Value</Column>
-                </TableHeader>
-                <TableBody>
-                  <Row id="1">
-                    <Cell>Row 1 A</Cell>
-                    <Cell>Row 1 B</Cell>
-                  </Row>
-                  <Row id="2">
-                    <Cell>Row 2 A</Cell>
-                    <Cell>Row 2 B</Cell>
-                  </Row>
-                </TableBody>
-              </TableView>
-            </section>
-            <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Tree</h2>
-            <section className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-              <TreeView aria-label="Tree">
-                <TreeViewItem id="1" textValue="Node 1">
-                  <TreeViewItemContent>Node 1</TreeViewItemContent>
-                </TreeViewItem>
-                <TreeViewItem id="2" textValue="Node 2">
-                  <TreeViewItemContent>Node 2</TreeViewItemContent>
-                </TreeViewItem>
-              </TreeView>
-            </section>
-          </div>
+          <AllComponents />
         </UNSAFE_PortalProvider>
       </Provider>
     );
 
     return () => {
-      root.unmount();
       rootRef.current = null;
       portalContainerRef.current = null;
+      unmountRootDeferred(root);
     };
   }, []);
 
   return <div ref={hostRef} style={{minHeight: 600}} />;
 }
 
-export const MenuInShadowRoot: StoryObj = {
-  render: () => <ShadowDOMMenuContent />,
+function ShadowDOMPortalToBody() {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const portalHostRef = useRef<HTMLDivElement | null>(null);
+  const portalContainerRef = useRef<HTMLDivElement | null>(null);
+  const rootRef = useRef<ReturnType<typeof createRoot> | null>(null);
+
+  useEffect(() => {
+    const host = hostRef.current;
+    const portalHost = portalHostRef.current;
+    if (!host || !portalHost) {
+      return;
+    }
+
+    const shadowRoot = host.attachShadow({mode: 'open'});
+    const shadowPortal = portalHost.attachShadow({mode: 'open'});
+
+    // So S2 theme variables apply: :host in the copied CSS targets the shadow host.
+    const scheme = document.documentElement.getAttribute('data-color-scheme');
+    if (scheme) {
+      host.setAttribute('data-color-scheme', scheme);
+      portalHost.setAttribute('data-color-scheme', scheme);
+    }
+
+    // Each shadow root needs its own style clone — reusing one node only leaves styles in the last root.
+    shadowRoot.appendChild(createClonedDocumentStyleRoot());
+    shadowPortal.appendChild(createClonedDocumentStyleRoot());
+
+    const appContainer = document.createElement('div');
+    appContainer.id = 'shadow-app';
+    shadowRoot.appendChild(appContainer);
+
+    const portalContainer = document.createElement('div');
+    portalContainer.id = 'shadow-portal';
+    shadowPortal.appendChild(portalContainer);
+    portalContainerRef.current = portalContainer;
+
+    const root = createRoot(appContainer);
+    rootRef.current = root;
+    root.render(
+      <Provider colorScheme="dark">
+        <UNSAFE_PortalProvider getContainer={() => portalContainerRef.current}>
+          <AllComponents />
+        </UNSAFE_PortalProvider>
+      </Provider>
+    );
+
+    return () => {
+      rootRef.current = null;
+      portalContainerRef.current = null;
+      unmountRootDeferred(root);
+    };
+  }, []);
+
+  // Two light-DOM siblings, each with its own open shadow root: app vs portaled overlays.
+  return (
+    <>
+      <div ref={hostRef} style={{minHeight: 600}} />
+      <div ref={portalHostRef} />
+    </>
+  );
+}
+
+function AllComponents() {
+  return (
+    <div
+      className={style({
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 24,
+        padding: 16,
+        overflow: 'auto'
+      })}>
+      <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Buttons &amp; actions</h2>
+      <section className={style({display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'start'})}>
+        <Button onPress={action('button')}>Button</Button>
+        <Link href="#" isStandalone>Link</Link>
+        <ButtonGroup>
+          <Button>One</Button>
+          <Button>Two</Button>
+          <Button>Three</Button>
+        </ButtonGroup>
+        <ActionButton onPress={action('action button')}>Action</ActionButton>
+        <ActionButtonGroup>
+          <ActionButton>Copy</ActionButton>
+          <ActionButton>Paste</ActionButton>
+        </ActionButtonGroup>
+        <ToggleButton>Toggle</ToggleButton>
+        <ToggleButtonGroup selectionMode="single">
+          <ToggleButton id="left">Left</ToggleButton>
+          <ToggleButton id="center">Center</ToggleButton>
+          <ToggleButton id="right">Right</ToggleButton>
+        </ToggleButtonGroup>
+        <ActionMenu onAction={action('action menu action')}>
+          <MenuItem id="edit">Edit</MenuItem>
+          <MenuItem id="duplicate">Duplicate</MenuItem>
+          <MenuItem id="delete">Delete</MenuItem>
+        </ActionMenu>
+        <MenuTrigger>
+          <Button aria-label="Open menu">Menu</Button>
+          <Menu onAction={action('menu action')}>
+            <MenuItem id="edit">Edit</MenuItem>
+            <SubmenuTrigger>
+              <MenuItem id="dup">Duplicate</MenuItem>
+              <Menu onAction={action('submenu action')}>
+                <MenuItem id="in-place">In place</MenuItem>
+                <MenuItem id="elsewhere">Elsewhere</MenuItem>
+              </Menu>
+            </SubmenuTrigger>
+            <MenuItem id="delete">Delete</MenuItem>
+          </Menu>
+        </MenuTrigger>
+        <DialogTrigger>
+          <Button>Dialog</Button>
+          <Dialog>
+            {({close}) => (
+              <>
+                <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" alt="Sky over roof" />
+                <Heading slot="title">Dialog title</Heading>
+                <Header>Header</Header>
+                <Content>
+                  {[...Array(3)].map((_, i) =>
+                    <p key={i} style={{marginTop: i === 0 ? 0 : undefined, marginBottom: i === 3 - 1 ? 0 : undefined}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>
+                  )}
+                </Content>
+                <Footer><Checkbox>Don't show this again</Checkbox></Footer>
+                <ButtonGroup>
+                  <Button onPress={close} variant="secondary">Cancel</Button>
+                  <Button onPress={close} variant="accent">Save</Button>
+                </ButtonGroup>
+              </>
+            )}
+          </Dialog>
+        </DialogTrigger>
+        <DialogTrigger>
+          <Button>Alert</Button>
+          <AlertDialog title="Confirm" primaryActionLabel="OK" cancelLabel="Cancel" onPrimaryAction={action('alert confirm')}>
+            Are you sure?
+          </AlertDialog>
+        </DialogTrigger>
+      </section>
+      <Divider />
+      <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Form controls</h2>
+      <section className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
+        <TextField label="Name" placeholder="Enter name" />
+        <SearchField label="Search" placeholder="Search" />
+        <NumberField label="Quantity" defaultValue={5} />
+        <TimeField label="Time" />
+        <DatePicker label="Date" />
+        <DateRangePicker label="Date range" />
+        <RangeCalendar aria-label="Date range" />
+        <Checkbox onChange={action('checkbox')}>Checkbox</Checkbox>
+        <CheckboxGroup label="Options">
+          <Checkbox value="a">A</Checkbox>
+          <Checkbox value="b">B</Checkbox>
+        </CheckboxGroup>
+        <Switch onChange={action('switch')}>Switch</Switch>
+        <RadioGroup label="Choice" onChange={action('radio')}>
+          <Radio value="one">One</Radio>
+          <Radio value="two">Two</Radio>
+        </RadioGroup>
+        <Slider label="Volume" defaultValue={50} />
+        <RangeSlider label="Range" defaultValue={{start: 20, end: 80}} />
+        <ComboBox label="Flavors" onSelectionChange={action('combobox selection')}>
+          <ComboBoxItem>Chocolate</ComboBoxItem>
+          <ComboBoxItem>Mint</ComboBoxItem>
+          <ComboBoxItem>Vanilla</ComboBoxItem>
+        </ComboBox>
+        <Picker label="Pick" onChange={action('picker selection')}>
+          <PickerItem>Chocolate</PickerItem>
+          <PickerItem>Mint</PickerItem>
+          <PickerItem>Vanilla</PickerItem>
+        </Picker>
+        <SelectBoxGroup aria-label="Select" selectionMode="single" styles={style({width: 410})}>
+          <SelectBox id="aws" textValue="Amazon Web Services">
+            <Server />
+            <Text slot="label">Amazon Web Services</Text>
+            <Text slot="description">Reliable cloud infrastructure</Text>
+          </SelectBox>
+          <SelectBox id="azure" textValue="Microsoft Azure">
+            <AlertNotice />
+            <Text slot="label">Microsoft Azure</Text>
+          </SelectBox>
+          <SelectBox id="gcp" textValue="Google Cloud Platform">
+            <PaperAirplane />
+            <Text slot="label">Google Cloud Platform</Text>
+          </SelectBox>
+          <SelectBox id="ibm" textValue="IBM Cloud">
+            <StarFilled1 />
+            <Text slot="label">IBM Cloud</Text>
+            <Text slot="description">Hybrid cloud solutions</Text>
+          </SelectBox>
+        </SelectBoxGroup>
+        <SegmentedControl onSelectionChange={action('segmented')}>
+          <SegmentedControlItem id="a">A</SegmentedControlItem>
+          <SegmentedControlItem id="b">B</SegmentedControlItem>
+          <SegmentedControlItem id="c">C</SegmentedControlItem>
+        </SegmentedControl>
+      </section>
+      <Divider />
+      <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Navigation &amp; layout</h2>
+      <section className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
+        <Breadcrumbs onAction={action('breadcrumb')}>
+          <Breadcrumb id="home">Home</Breadcrumb>
+          <Breadcrumb id="docs">Docs</Breadcrumb>
+          <Breadcrumb id="page">Page</Breadcrumb>
+        </Breadcrumbs>
+        <Tabs aria-label="Tabs">
+          <TabList>
+            <Tab id="1">Tab 1</Tab>
+            <Tab id="2">Tab 2</Tab>
+          </TabList>
+          <TabPanel id="1"><Text>Panel 1</Text></TabPanel>
+          <TabPanel id="2"><Text>Panel 2</Text></TabPanel>
+        </Tabs>
+        <Accordion>
+          <AccordionItem id="item1">
+            <AccordionItemTitle>Section</AccordionItemTitle>
+            <AccordionItemPanel>Content</AccordionItemPanel>
+          </AccordionItem>
+        </Accordion>
+        <Disclosure>
+          <DisclosureHeader>
+            <DisclosureTitle>Disclosure</DisclosureTitle>
+          </DisclosureHeader>
+          <DisclosurePanel>Panel content</DisclosurePanel>
+        </Disclosure>
+      </section>
+      <Divider />
+      <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Color</h2>
+      <section className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
+        <ColorField label="Color" defaultValue="#7f00ff" />
+        <ColorArea defaultValue="hsl(30, 100%, 50%)" />
+        <ColorSlider label="Hue" defaultValue="hsl(30, 100%, 50%)" channel="hue" />
+        <ColorSlider label="Alpha" defaultValue="#f00" channel="alpha" />
+        <ColorWheel defaultValue="hsl(30, 100%, 50%)" />
+        <ColorSwatchPicker defaultValue="#f00">
+          <ColorSwatch color="#f00" />
+          <ColorSwatch color="#0f0" />
+          <ColorSwatch color="#00f" />
+          <ColorSwatch color="#ff0" />
+        </ColorSwatchPicker>
+      </section>
+      <Divider />
+      <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Status &amp; feedback</h2>
+      <section className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
+        <Badge>Badge</Badge>
+        <StatusLight variant="positive">Positive</StatusLight>
+        <StatusLight variant="negative">Negative</StatusLight>
+        <ProgressBar label="Progress" value={0.6} />
+        <ProgressCircle aria-label="Loading" isIndeterminate />
+        <Meter label="Meter" value={70} />
+        <Skeleton isLoading><span>Placeholder</span></Skeleton>
+        <InlineAlert variant="neutral">
+          <Heading>Alert title</Heading>
+          <Content>Inline alert body with more detail about what happened or what to do next.</Content>
+        </InlineAlert>
+        <TooltipTrigger>
+          <Button>Hover for tooltip</Button>
+          <Tooltip>Tooltip text</Tooltip>
+        </TooltipTrigger>
+      </section>
+      <Divider />
+      <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Content &amp; data</h2>
+      <section className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
+        <IllustratedMessage>
+          <AlertNotice />
+          <Heading>No results</Heading>
+          <Content>Try adjusting your search or filters to find what you need.</Content>
+        </IllustratedMessage>
+        <Avatar src="https://i.pravatar.cc/64?u=1" alt="User" />
+        <TagGroup label="Tags" onRemove={action('tag remove')}>
+          <Tag>Tag 1</Tag>
+          <Tag>Tag 2</Tag>
+        </TagGroup>
+        <Calendar aria-label="Date" />
+        <Form>
+          <TextField label="Form field" />
+          <Button type="submit">Submit</Button>
+        </Form>
+        <DropZone>
+          <Text>Drop zone</Text>
+        </DropZone>
+      </section>
+      <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Card view</h2>
+      <section className={style({display: 'flex', flexDirection: 'column', gap: 8, height: 600, width: 'full'})}>
+        <ExampleRender />
+      </section>
+      <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Table</h2>
+      <section className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
+        <TableView aria-label="Table" selectionMode="single" renderActionBar={() => <ActionBar selectedItemCount={1} onClearSelection={action('clear')}><Button>Action</Button></ActionBar>}>
+          <TableHeader>
+            <Column id="col1">Name</Column>
+            <Column id="col2">Value</Column>
+          </TableHeader>
+          <TableBody>
+            <Row id="1">
+              <Cell>Row 1 A</Cell>
+              <Cell>Row 1 B</Cell>
+            </Row>
+            <Row id="2">
+              <Cell>Row 2 A</Cell>
+              <Cell>Row 2 B</Cell>
+            </Row>
+          </TableBody>
+        </TableView>
+      </section>
+      <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Tree</h2>
+      <section className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
+        <TreeView aria-label="Tree">
+          <TreeViewItem id="1" textValue="Node 1">
+            <TreeViewItemContent>Node 1</TreeViewItemContent>
+          </TreeViewItem>
+          <TreeViewItem id="2" textValue="Node 2">
+            <TreeViewItemContent>Node 2</TreeViewItemContent>
+          </TreeViewItem>
+        </TreeView>
+      </section>
+    </div>
+  );
+}
+
+export const AllIn1Shadow: StoryObj = {
+  render: () => <ShadowDOMContained />,
+  parameters: {
+  }
+};
+
+export const MultipleShadows: StoryObj = {
+  render: () => <ShadowDOMPortalToBody />,
   parameters: {
   }
 };
