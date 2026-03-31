@@ -354,7 +354,7 @@ function generateRandomString(minLength: number, maxLength: number): string {
 function VirtualizedListBoxRender(args): JSX.Element {
   let {variableHeight, isLoading, orientation} = args;
   let estimatedRowHeight = orientation === 'horizontal' ? 117 : 25;
-  let estimatedHeadingHeight = orientation === 'horizontal' ? 63 : 25;
+  let estimatedHeadingHeight = orientation === 'horizontal' ? 63 : 26;
   let heightProperty = orientation === 'horizontal' ? 'width' : 'height';
   let widthProperty = orientation === 'horizontal' ? 'height' : 'width';
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
