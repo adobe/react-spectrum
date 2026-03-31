@@ -14,7 +14,7 @@ import {act, pointerMap, render, simulateDesktop} from '@react-spectrum/test-uti
 import {Content} from '../../src/view/Content';
 import {ContextualHelp} from '../../src/contextualhelp/ContextualHelp';
 import {Footer} from '../../src/view/Footer';
-import {Header} from '../../src/view/Header';
+import {Heading} from '../../src/text/Heading';
 import {Link} from '../../src/link/Link';
 import {Provider} from '../../src/provider/Provider';
 import React from 'react';
@@ -39,7 +39,7 @@ describe('ContextualHelp', function () {
     let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <ContextualHelp>
-          <Header>Test title</Header>
+          <Heading>Test title</Heading>
         </ContextualHelp>
       </Provider>
     );
@@ -56,7 +56,7 @@ describe('ContextualHelp', function () {
     let {getByRole, queryByRole, getByTestId, getByText} = render(
       <Provider theme={theme}>
         <ContextualHelp>
-          <Header>Test title</Header>
+          <Heading>Test title</Heading>
         </ContextualHelp>
       </Provider>
     );
@@ -84,7 +84,7 @@ describe('ContextualHelp', function () {
     let {getByRole, getByText} = render(
       <Provider theme={theme}>
         <ContextualHelp>
-          <Header>Test title</Header>
+          <Heading>Test title</Heading>
           <Content>Help content</Content>
         </ContextualHelp>
       </Provider>
@@ -109,7 +109,7 @@ describe('ContextualHelp', function () {
     let {getByRole, getByText} = render(
       <Provider theme={theme}>
         <ContextualHelp>
-          <Header>Test title</Header>
+          <Heading>Test title</Heading>
           <Content>Help content</Content>
           <Footer>
             <Link>Test link</Link>
@@ -137,7 +137,7 @@ describe('ContextualHelp', function () {
     let {getByRole} = render(
       <Provider theme={theme}>
         <ContextualHelp>
-          <Header>Test title</Header>
+          <Heading>Test title</Heading>
           <Content>Help content</Content>
         </ContextualHelp>
       </Provider>
@@ -151,7 +151,7 @@ describe('ContextualHelp', function () {
     let {getByRole} = render(
       <Provider theme={theme}>
         <ContextualHelp variant="info">
-          <Header>Test title</Header>
+          <Heading>Test title</Heading>
           <Content>Help content</Content>
         </ContextualHelp>
       </Provider>
@@ -165,7 +165,7 @@ describe('ContextualHelp', function () {
     let {getByRole} = render(
       <Provider theme={theme}>
         <ContextualHelp aria-label="test">
-          <Header>Test title</Header>
+          <Heading>Test title</Heading>
           <Content>Help content</Content>
         </ContextualHelp>
       </Provider>
@@ -179,7 +179,7 @@ describe('ContextualHelp', function () {
     let {getByRole} = render(
       <Provider theme={theme}>
         <ContextualHelp aria-labelledby="test">
-          <Header>Test title</Header>
+          <Heading>Test title</Heading>
           <Content>Help content</Content>
         </ContextualHelp>
       </Provider>

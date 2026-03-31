@@ -77,7 +77,7 @@ export const ContextualHelp = React.forwardRef(function ContextualHelp(props: Sp
       </ActionButton>
       <ClearSlots>
         <SlotProvider slots={slots}>
-          <Dialog UNSAFE_className={classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog')} aria-label={labelProps['aria-label']}>
+          <Dialog UNSAFE_className={classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog')}>
             {children}
           </Dialog>
         </SlotProvider>
