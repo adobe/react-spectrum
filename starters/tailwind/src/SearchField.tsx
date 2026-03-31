@@ -3,9 +3,9 @@ import { SearchIcon, XIcon } from 'lucide-react';
 import React from 'react';
 import {
   SearchField as AriaSearchField,
-  SearchFieldProps as AriaSearchFieldProps,
-  ValidationResult
-} from 'react-aria-components';
+  type SearchFieldProps as AriaSearchFieldProps,
+  type ValidationResult,
+} from 'react-aria-components/SearchField';
 import { Description, FieldError, FieldGroup, Input, Label } from './Field';
 import { composeTailwindRenderProps } from './utils';
 import { FieldButton } from './FieldButton';

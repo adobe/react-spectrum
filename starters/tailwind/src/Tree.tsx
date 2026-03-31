@@ -5,9 +5,9 @@ import {
   TreeItem as AriaTreeItem,
   TreeItemContent as AriaTreeItemContent,
   Button,
-  TreeItemProps as AriaTreeItemProps,
-  TreeProps
-} from 'react-aria-components';
+  type TreeItemProps as AriaTreeItemProps,
+  type TreeProps,
+} from 'react-aria-components/Tree';
 import { ChevronRight } from "lucide-react";
 import { tv } from 'tailwind-variants';
 import { Checkbox } from './Checkbox';

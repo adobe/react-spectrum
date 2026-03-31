@@ -24,7 +24,7 @@ import {Card} from './Card';
 import {CheckboxContext} from './Checkbox';
 import {ColorSchemeContext} from './Provider';
 import {ContentContext, FooterContext, KeyboardContext, TextContext} from './Content';
-import {ContextValue, DEFAULT_SLOT, Provider, useContextProps} from 'react-aria-components/utils';
+import {ContextValue, DEFAULT_SLOT, Provider, useContextProps} from 'react-aria-components/slots';
 import {
   createContext,
   ForwardedRef,

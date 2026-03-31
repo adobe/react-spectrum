@@ -12,9 +12,9 @@
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, Provider, SlotProps} from 'react-aria-components/utils';
+import {ContextValue, Provider, SlotProps} from 'react-aria-components/slots';
 import {control, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {TextContext as RACTextContext} from 'react-aria-components/Text';

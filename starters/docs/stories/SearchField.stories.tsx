@@ -1,5 +1,4 @@
 import {SearchField} from '../src/SearchField';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof SearchField> = {

@@ -12,9 +12,9 @@
 
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
-import {Focusable} from 'react-aria/private/interactions/useFocusable';
+import {Focusable} from 'react-aria/Focusable';
 import {OverlayArrow} from '../src/OverlayArrow';
-import {Pressable} from 'react-aria/private/interactions/Pressable';
+import {Pressable} from 'react-aria/Pressable';
 import React, {useRef} from 'react';
 import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';

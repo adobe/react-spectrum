@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue} from 'react-aria-components/utils';
+import {ContextValue} from 'react-aria-components/slots';
 
 import {createContext, forwardRef, useContext, useRef} from 'react';
 import {filledTrack, SliderBase, SliderBaseProps, thumb, thumbContainer, thumbHitArea, track, upperTrack} from './Slider';

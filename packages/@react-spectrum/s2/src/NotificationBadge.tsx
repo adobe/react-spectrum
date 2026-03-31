@@ -11,8 +11,8 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
-import {ContextValue, SlotProps} from 'react-aria-components/utils';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {ContextValue, SlotProps} from 'react-aria-components/slots';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {fontRelative, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 // @ts-ignore

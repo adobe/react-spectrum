@@ -50,7 +50,7 @@ export const description = 'A focusable list of labels, categories, keywords, fi
 ```tsx render
 "use client";
 import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
-import {useListData} from 'react-aria-components';
+import {useListData} from 'react-aria-components/useListData';
 
 function Example() {
   let list = useListData({
@@ -107,7 +107,7 @@ Use the `selectionMode` prop to enable single or multiple selection. The selecte
 
 ```tsx render docs={docs.exports.TagGroup} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
-import type {Selection} from 'react-aria-components';
+import type {Selection} from 'react-aria-components/TagGroup';
 import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
 import {useState} from 'react';
 

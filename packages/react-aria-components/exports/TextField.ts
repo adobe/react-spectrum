@@ -16,3 +16,19 @@ import 'client-only';
 
 export {TextField, TextFieldContext} from '../src/TextField';
 export type {TextFieldProps, TextFieldRenderProps} from '../src/TextField';
+
+export {Input} from '../src/Input';
+export type {InputProps, InputRenderProps} from '../src/Input';
+
+export {TextArea} from '../src/TextArea';
+export type {TextAreaProps} from '../src/TextArea';
+
+export {Label} from '../src/Label';
+export type {LabelProps} from '../src/Label';
+
+export {Text} from '../src/Text';
+export type {TextProps} from '../src/Text';
+
+export {FieldError} from '../src/FieldError';
+export type {FieldErrorProps, FieldErrorRenderProps} from '../src/FieldError';
+export type {ValidationResult} from '@react-types/shared';

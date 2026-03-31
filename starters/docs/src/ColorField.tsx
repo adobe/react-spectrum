@@ -1,12 +1,11 @@
 'use client';
 import {
   ColorField as AriaColorField,
-  ColorFieldProps as AriaColorFieldProps,
+  type ColorFieldProps as AriaColorFieldProps,
   Input,
-  ValidationResult
-} from 'react-aria-components';
+  type ValidationResult,
+} from 'react-aria-components/ColorField';
 import {Label, FieldError, Description} from './Form';
-
 import './ColorField.css';
 
 export interface ColorFieldProps extends AriaColorFieldProps {

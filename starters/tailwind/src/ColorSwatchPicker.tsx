@@ -3,10 +3,10 @@ import React from 'react';
 import {
   ColorSwatchPicker as AriaColorSwatchPicker,
   ColorSwatchPickerItem as AriaColorSwatchPickerItem,
-  ColorSwatchPickerItemProps,
-  ColorSwatchPickerProps,
-  composeRenderProps
-} from 'react-aria-components';
+  type ColorSwatchPickerItemProps,
+  type ColorSwatchPickerProps,
+} from 'react-aria-components/ColorSwatchPicker';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import {ColorSwatch} from './ColorSwatch';
 import {focusRing} from './utils';
 import {tv} from 'tailwind-variants';

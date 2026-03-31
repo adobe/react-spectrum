@@ -23,8 +23,13 @@
   "types": "./dist/types/exports/index.d.ts",
   "source": "exports/index.ts",
   "files": [
-    "dist",
-    "*.js"
+    "*",
+    "!docs",
+    "!exports",
+    "!intl",
+    "!src",
+    "!stories",
+    "!test"
   ],
   "sideEffects": false,
   "repository": {
@@ -70,6 +75,22 @@
       "isLibrary": true,
       "outputFormat": "commonjs",
       "includeNodeModules": false
+    },
+    "legacy-module": {
+      "source": [
+        "exports/**/*.ts"
+      ],
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false,
+      "engines": {
+        "browsers": [
+          "chrome >= 79",
+          "firefox >= 85",
+          "safari >= 13"
+        ]
+      }
     }
   }
 }

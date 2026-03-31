@@ -12,7 +12,7 @@ export const description = 'Displays a group of related objects, with support fo
 
 ```tsx render docs={docs.exports.CardView} links={docs.links} props={['layout', 'selectionMode', 'selectionStyle', 'variant', 'size', 'density']} initialProps={{selectionMode: 'multiple'}} type="s2" wide
 "use client";
-import {CardView, AssetCard, CardPreview, Image, Content, Text} from '@react-spectrum/s2';
+import {CardView, AssetCard, CardPreview, Image, Content, Text} from '@react-spectrum/s2/CardView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <CardView
@@ -120,7 +120,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ```tsx render
 "use client";
-import {CardView, AssetCard, CardPreview, Image, Content, Text} from '@react-spectrum/s2';
+import {CardView, AssetCard, CardPreview, Image, Content, Text} from '@react-spectrum/s2/CardView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
@@ -399,8 +399,10 @@ for (let i = 0; images.length < 200; i++) {
 Use the `loadingState` and `onLoadMore` props to enable async loading and infinite scrolling. When loading, render a `<SkeletonCollection>` to generate placeholder content to display as skeleton cards.
 
 ```tsx render docs={docs.exports.CardView} links={docs.links} props={['loadingState']} initialProps={{selectionMode: 'multiple'}} type="s2" wide
-"use client";
-import {CardView, Collection, SkeletonCollection, Card, CardPreview, Image, Content, Text, Avatar, useAsyncList} from '@react-spectrum/s2';
+'use client';
+import {CardView, Collection, SkeletonCollection, Card, CardPreview, Image, Content, Text} from '@react-spectrum/s2/CardView';
+import {Avatar} from '@react-spectrum/s2/Avatar';
+import {useAsyncList} from '@react-spectrum/s2/useAsyncList';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 type Item = {
@@ -447,7 +449,7 @@ export default function Example(props) {
       {(loadingState === 'loading' || loadingState === 'loadingMore') && (
         /*- begin highlight -*/
         <SkeletonCollection>
-        {/*- end highlight -*/}
+          {/*- end highlight -*/}
           {() => (
             <PhotoCard
               item={{
@@ -501,7 +503,7 @@ Use the `href` prop on a Card to create a link. See the [getting started guide](
 
 ```tsx render docs={docs.exports.CardView} links={docs.links} props={['selectionMode', 'selectionStyle']} wide type="s2"
 "use client";
-import {CardView, Card, CollectionCardPreview, Image, Content, Text} from '@react-spectrum/s2';
+import {CardView, Card, CollectionCardPreview, Image, Content, Text} from '@react-spectrum/s2/CardView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Folder from '@react-spectrum/s2/icons/Folder';
 
@@ -830,8 +832,9 @@ let topics = [
 Use `renderEmptyState` to render placeholder content when the CardView is empty.
 
 ```tsx render
-"use client";
-import {CardView, IllustratedMessage, Heading, Content} from '@react-spectrum/s2';
+'use client';
+import {CardView, Content} from '@react-spectrum/s2/CardView';
+import {IllustratedMessage, Heading} from '@react-spectrum/s2/IllustratedMessage';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
 
@@ -856,8 +859,9 @@ import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
 Use `selectionMode` to enable single or multiple selection, and `selectedKeys` (matching each card's `id`) to control the selected cards. Return an [ActionBar](ActionBar) from `renderActionBar` to handle bulk actions, and use `onAction` for row navigation. Disable cards with `isDisabled`. See the [selection guide](selection) for details.
 
 ```tsx render docs={docs.exports.CardView} links={docs.links} props={['selectionMode', 'selectionStyle', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide type="s2"
-"use client";
-import {CardView, AssetCard, CardPreview, Image, Content, Text, ActionBar, ActionButton, type Selection} from '@react-spectrum/s2';
+'use client';
+import {CardView, AssetCard, CardPreview, Image, Content, Text, type Selection} from '@react-spectrum/s2/CardView';
+import {ActionBar, ActionButton} from '@react-spectrum/s2/ActionBar';
 import Edit from '@react-spectrum/s2/icons/Edit';
 import Copy from '@react-spectrum/s2/icons/Copy';
 import Delete from '@react-spectrum/s2/icons/Delete';

@@ -27,13 +27,13 @@ import {
   useSlottedContext
 } from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {HoverEvents, Orientation} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
-import {mergeRefs} from 'react-aria/private/utils/mergeRefs';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import {RadioGroupState, useRadioGroupState} from 'react-stately/useRadioGroupState';
 import React, {createContext, ForwardedRef, forwardRef, useMemo} from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';

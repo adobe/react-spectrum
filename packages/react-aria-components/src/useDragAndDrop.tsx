@@ -21,15 +21,14 @@ import {
   useDroppableCollection,
   useDroppableItem
 } from 'react-aria/useDroppableCollection';
-
 import {
   DraggableCollectionOptions,
   DraggableItemProps,
   DraggableItemResult,
+  DragPreview,
   useDraggableCollection,
   useDraggableItem
 } from 'react-aria/useDraggableCollection';
-
 import {DraggableCollectionProps, DroppableCollectionProps, Key, RefObject} from '@react-types/shared';
 import {
   DraggableCollectionState,
@@ -37,16 +36,12 @@ import {
   useDraggableCollectionState
 } from 'react-stately/useDraggableCollectionState';
 import {DragItem, DropTarget, DropTargetDelegate} from '@react-types/shared';
-import {DragPreview} from 'react-aria/DragPreview';
-
 import {
   DroppableCollectionState,
   DroppableCollectionStateOptions,
   useDroppableCollectionState
 } from 'react-stately/useDroppableCollectionState';
-
 import {isVirtualDragging} from 'react-aria/private/dnd/DragManager';
-
 import {JSX, useMemo} from 'react';
 import {ListDropTargetDelegate} from 'react-aria/ListDropTargetDelegate';
 

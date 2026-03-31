@@ -27,9 +27,10 @@ import {
   useRenderProps,
   useSlot
 } from './utils';
-import {Collection, CollectionBuilder, createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
+import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuilder';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusEvents, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {ItemNode} from 'react-aria/private/collections/BaseCollection';
 import {LabelContext} from './Label';

@@ -18,7 +18,7 @@ export const description = 'Allows a user to turn a setting on or off.';
   initialProps={{
     children: 'Low power mode'
   }}
-  importSource="@react-spectrum/s2"
+  importSource="@react-spectrum/s2/Switch"
   type="s2" />
 
 ## Selection
@@ -27,7 +27,7 @@ Use the `isSelected` or `defaultSelected` prop to set the selection state, and `
 
 ```tsx render
 "use client";
-import {Switch} from '@react-spectrum/s2';
+import {Switch} from '@react-spectrum/s2/Switch';
 import {useState} from 'react';
 
 function Example(props) {
@@ -56,7 +56,9 @@ Use the `name` and `value` props to submit the switch to the server. See the [Fo
 
 ```tsx render
 "use client";
-import {Switch, Button, Form} from '@react-spectrum/s2';
+import {Switch} from '@react-spectrum/s2/Switch';
+import {Button} from '@react-spectrum/s2/Button';
+import {Form} from '@react-spectrum/s2/Form';
 
 <Form>
   {/*- begin highlight -*/}

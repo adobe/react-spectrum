@@ -13,7 +13,7 @@
 import {classNames} from '../utils/classNames';
 
 import {DOMProps, DOMRef, FlexStyleProps} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {passthroughStyle, responsiveDimensionValue, StyleHandlers, useStyleProps} from '../utils/styleProps';
 import React, {forwardRef, ReactNode} from 'react';
 import styles from './flex-gap.css';

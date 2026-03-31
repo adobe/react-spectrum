@@ -9,12 +9,5 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {GridLayout} from 'react-stately/private/layout/GridLayout';
-
-export {ListLayout} from 'react-stately/private/layout/ListLayout';
-export {TableLayout} from 'react-stately/private/layout/TableLayout';
-export {WaterfallLayout} from 'react-stately/private/layout/WaterfallLayout';
-export type {GridLayoutOptions} from 'react-stately/private/layout/GridLayout';
-export type {ListLayoutOptions, LayoutNode} from 'react-stately/private/layout/ListLayout';
-export type {TableLayoutProps} from 'react-stately/private/layout/TableLayout';
-export type {WaterfallLayoutOptions} from 'react-stately/private/layout/WaterfallLayout';
+export {GridLayout, ListLayout, TableLayout, WaterfallLayout} from 'react-stately/useVirtualizerState';
+export type {GridLayoutOptions, ListLayoutOptions, LayoutNode, TableLayoutProps, WaterfallLayoutOptions} from 'react-stately/useVirtualizerState';

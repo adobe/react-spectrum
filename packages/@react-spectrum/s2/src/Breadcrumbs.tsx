@@ -22,8 +22,8 @@ import {
 import {baseColor, focusRing, size, style} from '../style' with { type: 'macro' };
 import ChevronIcon from '../ui-icons/Chevron';
 import {Collection, DOMRef, DOMRefValue, GlobalDOMAttributes, LinkDOMProps, Node} from '@react-types/shared';
-import {CollectionRenderer, CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-components/Collection';
-import {ContextValue, Provider} from 'react-aria-components/utils';
+import {CollectionRenderer, CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-components/CollectionBuilder';
+import {ContextValue, Provider} from 'react-aria-components/slots';
 import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, Fragment, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import FolderIcon from '../s2wf-icons/S2_Icon_FolderBreadcrumb_20_N.svg';

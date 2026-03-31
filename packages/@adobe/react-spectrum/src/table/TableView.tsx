@@ -11,17 +11,12 @@
  */
 
 import type {AriaLabelingProps, DisabledBehavior, DOMProps, DOMRef, Key, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
-import {Cell} from 'react-stately/Cell';
-import {Column, ColumnSize} from 'react-stately/Column';
+import {Cell, Column, ColumnSize, Row, TableBody, TableHeader, TableProps} from 'react-stately/useTableState';
 import type {DragAndDropHooks} from '../dnd/useDragAndDrop';
 import React, {JSX, ReactElement} from 'react';
-import {Row} from 'react-stately/Row';
 import {Section} from 'react-stately/Section';
 import {SpectrumColumnProps} from './types';
-import {TableBody} from 'react-stately/TableBody';
-import {TableHeader} from 'react-stately/TableHeader';
 import {tableNestedRows} from 'react-stately/private/flags/flags';
-import {TableProps} from 'react-stately/useTableState';
 import {TableViewWithoutExpanding} from './TableViewWithoutExpanding';
 import {TreeGridTableView} from './TreeGridTableView';
 

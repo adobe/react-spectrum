@@ -34,7 +34,7 @@ import {GalleryLayout} from '../../src/card/GalleryLayout';
 import {GalleryLayoutOptions} from '../../src/card/GalleryLayout';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX, useMemo} from 'react';
-import {Size} from 'react-stately/private/virtualizer/Size';
+import {Size} from 'react-stately/useVirtualizerState';
 import {SpectrumCardViewProps} from '../../src/card/types';
 import {useCollator} from 'react-aria/useCollator';
 

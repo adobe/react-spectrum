@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, SlotProps} from 'react-aria-components/utils';
+import {ContextValue, SlotProps} from 'react-aria-components/slots';
 
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';

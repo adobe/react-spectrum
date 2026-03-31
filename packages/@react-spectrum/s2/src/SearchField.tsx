@@ -15,7 +15,7 @@ import {SearchField as AriaSearchField, SearchFieldProps as AriaSearchFieldProps
 import {baseColor, fontRelative, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
-import {ContextValue, Provider} from 'react-aria-components/utils';
+import {ContextValue, Provider} from 'react-aria-components/slots';
 import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from './useDOMRef';
 import {css} from '../style/style-macro' with {type: 'macro'};

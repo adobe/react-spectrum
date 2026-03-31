@@ -14,12 +14,10 @@ import {action} from 'storybook/actions';
 import {Button} from '../src/Button';
 import {Checkbox, CheckboxProps} from '../src/Checkbox';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
-
-import {GridLayout} from 'react-stately/private/layout/GridLayout';
-
+import {GridLayout, ListLayout, Size, WaterfallLayout} from 'react-stately/useVirtualizerState';
 import {
   GridList,
   GridListHeader,
@@ -31,21 +29,18 @@ import {
 } from '../src/GridList';
 import {Heading} from '../src/Heading';
 import {Key} from '@react-types/shared';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
 import {LoadingSpinner} from './utils';
 import {LoadingState} from '@react-types/shared';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {Modal, ModalOverlay, ModalOverlayProps} from '../src/Modal';
 import {Popover} from '../src/Popover';
 import React, {JSX, useState} from 'react';
-import {Size} from 'react-stately/private/virtualizer/Size';
 import styles from '../example/index.css';
 import {Tag, TagGroup, TagList} from '../src/TagGroup';
 import {Text} from '../src/Text';
 import {useAsyncList} from 'react-stately/useAsyncList';
 import {useListData} from 'react-stately/useListData';
 import {Virtualizer} from '../src/Virtualizer';
-import {WaterfallLayout} from 'react-stately/private/layout/WaterfallLayout';
 import './styles.css';
 
 export default {

@@ -1,10 +1,9 @@
 import {Toolbar} from '../src/Toolbar';
 import {Separator} from '../src/Separator';
-import {Group} from 'react-aria-components';
+import { Group } from 'react-aria-components/Group';
 import {Button} from '../src/Button';
 import {ToggleButton} from '../src/ToggleButton';
 import {Checkbox} from '../src/Checkbox';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Toolbar> = {

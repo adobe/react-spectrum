@@ -3,7 +3,6 @@ import {Button} from '../src/Button';
 import {Modal} from '../src/Modal';
 import {TextField} from '../src/TextField';
 import {Heading} from '../src/Content';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Dialog> = {

@@ -13,7 +13,7 @@ import {AriaDialogProps, useDialog} from 'react-aria/useDialog';
 
 import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, dom, DOMRenderProps, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {HeadingContext} from './Heading';
 import {mergeProps} from 'react-aria/mergeProps';

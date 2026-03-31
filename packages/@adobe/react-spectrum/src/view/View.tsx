@@ -13,7 +13,7 @@
 import {ClearSlots, useSlotProps} from '../utils/Slots';
 
 import {ColorVersion, DOMProps, DOMRef, ViewStyleProps} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import React, {forwardRef, JSXElementConstructor, ReactElement, ReactNode} from 'react';
 import {useDOMRef} from '../utils/useDOMRef';
 import {useStyleProps, viewStyleProps} from '../utils/styleProps';

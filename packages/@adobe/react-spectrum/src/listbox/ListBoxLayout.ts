@@ -1,8 +1,5 @@
-import {InvalidationContext} from 'react-stately/private/virtualizer/types';
-import {LayoutInfo} from 'react-stately/private/virtualizer/LayoutInfo';
-import {LayoutNode, ListLayout, ListLayoutOptions} from 'react-stately/private/layout/ListLayout';
+import {InvalidationContext, LayoutInfo, LayoutNode, ListLayout, ListLayoutOptions, Rect} from 'react-stately/useVirtualizerState';
 import {Node} from '@react-types/shared';
-import {Rect} from 'react-stately/private/virtualizer/Rect';
 
 interface ListBoxLayoutProps extends ListLayoutOptions {
   isLoading?: boolean

@@ -15,4 +15,4 @@
 export {TreeViewItem, TreeView, TreeViewItemContent} from '@adobe/react-spectrum/TreeView';
 
 export type {SpectrumTreeViewProps, SpectrumTreeViewItemProps, SpectrumTreeViewItemContentProps} from '@adobe/react-spectrum/TreeView';
-export {Collection} from 'react-aria/private/collections/CollectionBuilder';
+export {Collection} from 'react-aria/Collection';

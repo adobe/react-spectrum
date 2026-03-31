@@ -16,7 +16,7 @@ import {
   DateValue
 } from 'react-aria-components/DateRangePicker';
 import {CalendarButton, CalendarPopover, timeField} from './DatePicker';
-import {ContextValue} from 'react-aria-components/utils';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactElement, ReactNode, Ref, useContext, useState} from 'react';
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -35,7 +35,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface DateRangePickerProps<T extends DateValue> extends
   Omit<AriaDateRangePickerProps<T>, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
-  Pick<RangeCalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'firstDayOfWeek' | 'isDateUnavailable'>,
+  Pick<RangeCalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'firstDayOfWeek' | 'isDateUnavailable' | 'interactOutsideBehavior'>,
   Pick<PopoverProps, 'shouldFlip'>,
   StyleProps,
   SpectrumLabelableProps,
@@ -84,6 +84,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
     placeholderValue,
     maxVisibleMonths = 1,
     createCalendar,
+    interactOutsideBehavior,
     ...dateFieldProps
   } = props;
   let formContext = useContext(FormContext);
@@ -154,6 +155,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
               <RangeCalendar
                 visibleMonths={maxVisibleMonths}
                 createCalendar={createCalendar}
+                interactOutsideBehavior={interactOutsideBehavior}
                 errorMessage={errorMessage} />
               {showTimeField && (
                 <div className={style({display: 'flex', gap: 16, contain: 'inline-size', marginTop: 24})}>
