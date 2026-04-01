@@ -23,6 +23,8 @@ Before:
 After:
 
 ```jsx
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
 <div className={style({display: 'flex', flexDirection: 'column'})}>
   <div>Item 1</div>
   <div>Item 2</div>
@@ -45,6 +47,8 @@ Before:
 After:
 
 ```jsx
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
 <div className={style({display: 'grid', justifyContent: 'center'})}>
   <div>Item 1</div>
   <div>Item 2</div>
@@ -69,6 +73,7 @@ After:
   Content
 </div>
 ```
+
 ### Well example
 
 Before:
@@ -82,6 +87,8 @@ Before:
 After:
 
 ```jsx
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
 <div className={style({
   display: 'block',
   textAlign: 'start',
@@ -104,9 +111,14 @@ Move `UNSAFE_style` usage to the S2 style macro when possible.
 
 Move `UNSAFE_className` usage to the S2 style macro when possible.
 
-## Dialogs and collections
+Reference the S2 styling docs to see the supported CSS properties.
 
-- `DialogContainer` and `useDialogContainer` still exist in S2, but the import path changes and dismiss logic may need to move between `Dialog`, `DialogTrigger`, and `DialogContainer`.
+## Dialogs
+
+- `DialogContainer` and `useDialogContainer` still exist in S2, but the dismiss logic may need to move between `Dialog`, `DialogTrigger`, and `DialogContainer`. See the S2 Dialog documentation for more details.
+
+## Collections
+
 - When `Item` survives the codemod, rename it based on its parent component:
 
   | Parent component | v3 child | S2 child |
@@ -114,12 +126,11 @@ Move `UNSAFE_className` usage to the S2 style macro when possible.
   | Menu / ActionMenu | Item | MenuItem |
   | Picker | Item | PickerItem |
   | ComboBox | Item | ComboBoxItem |
-  | ListBox | Item | ListBoxItem |
   | Tabs | Item | Tab / TabPanel |
   | TagGroup | Item | Tag |
   | Breadcrumbs | Item | Breadcrumb |
 
-- Preserve React `key` when mapping arrays, but ensure collection data items expose `id` when S2 expects it.
+- Preserve React `key` when mapping arrays, but ensure collection data items expose `id` when S2 expects it. See the S2 Collections documentation for more details.
 - Table and ListView migrations often need manual review for row headers, nested columns, and explicit item ids.
 
 ## Toast migration
