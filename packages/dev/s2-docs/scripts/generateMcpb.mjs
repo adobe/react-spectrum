@@ -1,8 +1,8 @@
+import {execFileSync} from 'child_process';
+import {fileURLToPath} from 'url';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import {execFileSync} from 'child_process';
-import {fileURLToPath} from 'url';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, '../../../../');
