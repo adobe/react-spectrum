@@ -3,9 +3,12 @@ import {fileURLToPath} from 'url';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+import sharp from 'sharp';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, '../../../../');
+
+const assetsDir = path.join(scriptDir, '../assets');
 
 const libraries = {
   s2: {
@@ -19,6 +22,7 @@ const libraries = {
     description: 'Browse the React Spectrum docs, icons, illustrations, and style macro values.',
     homepage: 'https://react-spectrum.adobe.com/ai.html',
     documentation: 'https://react-spectrum.adobe.com/ai.html',
+    iconSvg: path.join(assetsDir, 'rsp-favicon.svg'),
     srcDirs: [
       {
         from: path.join(repoRoot, 'packages/dev/mcp/s2/dist/s2/src'),
@@ -45,6 +49,7 @@ const libraries = {
     description: 'Browse the React Aria docs.',
     homepage: 'https://react-aria.adobe.com/ai.html',
     documentation: 'https://react-aria.adobe.com/ai.html',
+    iconSvg: path.join(assetsDir, 'react-aria-favicon.svg'),
     srcDirs: [
       {
         from: path.join(repoRoot, 'packages/dev/mcp/react-aria/dist/react-aria/src'),
@@ -64,7 +69,7 @@ const requestedLibraries = process.argv.slice(2);
  * Generate an MCPB bundle for a given library. This makes the MCP servers easier to install in certain MCP clients like Claude Desktop.
  * Reference: https://github.com/modelcontextprotocol/mcpb
  */
-function generateBundle(libraryName, config) {
+async function generateBundle(libraryName, config) {
   const packageJsonPath = path.join(config.packageDir, 'package.json');
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `rsp-${libraryName}-mcpb-`));
@@ -81,6 +86,17 @@ function generateBundle(libraryName, config) {
     for (const dependency of Object.keys(packageJson.dependencies || {})) {
       copyDependencyTree(dependency, path.join(tempDir, 'node_modules'), bundledPackages);
     }
+
+    // Convert SVG icon to 128x128 PNG for the bundle.
+    const iconFile = 'icon.png';
+    let svg = fs.readFileSync(config.iconSvg, 'utf8');
+    // The React Aria favicon uses light-dark() CSS which sharp doesn't support.
+    // Replace it with the dark-mode color so the icon works on any background.
+    svg = svg.replace(/light-dark\([^,]+,\s*([^)]+)\)/, '$1');
+    await sharp(Buffer.from(svg))
+      .resize(112, 112, {fit: 'inside'})
+      .extend({top: 8, bottom: 8, left: 8, right: 8, background: {r: 0, g: 0, b: 0, alpha: 0}})
+      .png().toFile(path.join(tempDir, iconFile));
 
     fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
       name: config.extensionName,
@@ -100,6 +116,7 @@ function generateBundle(libraryName, config) {
       homepage: config.homepage,
       documentation: config.documentation,
       support: 'https://github.com/adobe/react-spectrum/issues',
+      icon: iconFile,
       server: {
         type: 'node',
         entry_point: config.serverEntryPoint,
@@ -195,5 +212,5 @@ for (const name of targets) {
 }
 
 for (const name of targets) {
-  generateBundle(name, libraries[name]);
+  await generateBundle(name, libraries[name]);
 }
