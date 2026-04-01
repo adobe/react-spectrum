@@ -257,7 +257,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     if (k == null) {
       k = node.parentKey;
     }
-    
+
     if (k != null && this.getItem(k)?.type === 'tablebody') {
       return null;
     }
@@ -687,7 +687,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       style = {
         ...style,
         tableLayout: 'fixed',
-        width: 'fit-content'
+        width: 'min-content'
       };
     }
   }
