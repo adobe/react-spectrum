@@ -82,7 +82,7 @@ export interface AriaOptionProps {
    * Whether the option should use virtual focus instead of being focused directly.
    * @deprecated
    */
-  shouldUseVirtualFocus?: boolean,
+  shouldUseVirtualFocus?: boolean
 }
 
 /**
