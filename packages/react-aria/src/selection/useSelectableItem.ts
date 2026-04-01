@@ -130,8 +130,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     isDisabled,
     onAction,
     allowsDifferentPressOrigin,
-    linkBehavior = 'action',
-    isDraggable = false
+    linkBehavior = 'action'
   } = options;
   let router = useRouter();
   id = useId(id);
@@ -422,7 +421,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     isFocused: manager.isFocused && manager.focusedKey === key,
     isDisabled,
     allowsSelection,
-    hasAction: hasAction || isDraggable
+    hasAction
   };
 }
 

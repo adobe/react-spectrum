@@ -365,18 +365,17 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
     {
       node: item,
       shouldSelectOnPressUp: !!dragState,
-      isVirtualized,
-      isDraggable
+      isVirtualized
     },
     state,
     ref
   );
 
   let {hoverProps, isHovered} = useHover({
-    // TODO: might be worth having this propagated down all the way to useSelectableItem in some fashion?
-    // should the useGridListItem hook/useSelectableItem hook take "isDraggable" or something?
-    // Can drop this now
-    isDisabled: !states.allowsSelection && !states.hasAction,
+    // TODO: bit iffy about needing to calculate if it is draggable yourself, alternative would
+    // be to pass the drag state enitrely to useGridListItem. I had initially passed isDraggable to useGridListItem but
+    // that kinda defeats the point since you could just do the below instead
+    isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
     onHoverStart: item.props.onHoverStart,
     onHoverChange: item.props.onHoverChange,
     onHoverEnd: item.props.onHoverEnd

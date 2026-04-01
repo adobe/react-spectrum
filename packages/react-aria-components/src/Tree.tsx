@@ -613,15 +613,14 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeItem({
     node: item,
-    shouldSelectOnPressUp: !!dragState,
-    isDraggable
+    shouldSelectOnPressUp: !!dragState
   }, state, ref);
   let isExpanded = rowProps['aria-expanded'] === true;
   let hasChildItems = props.hasChildItems || [...state.collection.getChildren!(item.key)]?.length > 1;
   let level = rowProps['aria-level'] || 1;
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection && !states.hasAction,
+    isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
     onHoverStart: props.onHoverStart,
     onHoverChange: props.onHoverChange,
     onHoverEnd: props.onHoverEnd

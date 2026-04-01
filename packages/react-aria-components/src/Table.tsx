@@ -1372,8 +1372,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       {
         node: item,
         shouldSelectOnPressUp: !!dragState,
-        isVirtualized,
-        isDraggable
+        isVirtualized
       },
       state,
       ref
@@ -1384,7 +1383,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       focusProps: focusWithinProps
     } = useFocusRing({within: true});
     let {hoverProps, isHovered} = useHover({
-      isDisabled: !states.allowsSelection && !states.hasAction,
+      isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
       onHoverStart: props.onHoverStart,
       onHoverChange: props.onHoverChange,
       onHoverEnd: props.onHoverEnd

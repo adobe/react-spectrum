@@ -466,6 +466,7 @@ function VirtualizedListBoxDndRender(args): JSX.Element {
           style={{width: '100%', height: '100%'}}
           aria-label="virtualized listbox"
           items={list.items}
+          disabledKeys={[3, 5]}
           dragAndDropHooks={dragAndDropHooks}>
           {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
         </ListBox>

@@ -404,13 +404,13 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function 
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
   let isDraggable = dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
   let {optionProps, labelProps, descriptionProps, ...states} = useOption(
-    {key: item.key, 'aria-label': props?.['aria-label'], isDraggable},
+    {key: item.key, 'aria-label': props?.['aria-label']},
     state,
     ref
   );
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection && !states.hasAction,
+    isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
     onHoverStart: item.props.onHoverStart,
     onHoverChange: item.props.onHoverChange,
     onHoverEnd: item.props.onHoverEnd

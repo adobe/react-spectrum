@@ -659,19 +659,14 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
         }
       }
 
-      // TODO: are these changes too specific to S2? Move into S2 ListView/TableView?
-      // the last drop indicator rect end needs to match the virtualizer's height/width so that the appearance/disappearance of the drop indicator
-      // doesn't cause the height of the collection to increase
+      // TODO: ideally the last drop indicator rect's "end" needs to match the virtualizer's height/width so that the appearance/disappearance of the drop indicator
+      // doesn't cause the height/width of the collection to increase
       // Additionally, we'd only want to do this if the collection's height is flush with the scroll container, if you
       // have ListView whose contents don't completely fill the height of the container, we are actually fine with having the full height drop indicator...
-      let dropIndicatorThickness = this.dropIndicatorThickness
-      if (this.collection.lastKey === targetNode.key) {
-        dropIndicatorThickness = dropIndicatorThickness / 2
-      }
-
+      // Not a great way to do this it feels though...
       rect = this.orientation === 'horizontal' ?
-        new Rect(layoutInfo.rect.maxX - this.dropIndicatorThickness / 2, layoutInfo.rect.y, dropIndicatorThickness, layoutInfo.rect.height)
-        : new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY - this.dropIndicatorThickness / 2, layoutInfo.rect.width, dropIndicatorThickness);
+        new Rect(layoutInfo.rect.maxX - this.dropIndicatorThickness / 2, layoutInfo.rect.y, this.dropIndicatorThickness, layoutInfo.rect.height)
+        : new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY - this.dropIndicatorThickness / 2, layoutInfo.rect.width, this.dropIndicatorThickness);
     } else {
       rect = layoutInfo.rect;
     }

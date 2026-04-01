@@ -37,9 +37,7 @@ export interface AriaGridListItemOptions {
   /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean,
   /** Whether this item has children, even if not loaded yet. */
-  hasChildItems?: boolean,
-  /** Whether this item is draggable. */
-  isDraggable?: boolean
+  hasChildItems?: boolean
 }
 
 export interface GridListItemAria extends SelectableItemStates {
@@ -72,8 +70,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   // Copied from useGridCell + some modifications to make it not so grid specific
   let {
     node,
-    isVirtualized,
-    isDraggable = false
+    isVirtualized
   } = props;
 
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
@@ -142,8 +139,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     shouldSelectOnPressUp: props.shouldSelectOnPressUp || shouldSelectOnPressUp,
     onAction: onAction || node.props?.onAction ? chain(node.props?.onAction, onAction ? () => onAction(node.key) : undefined) : undefined,
     focus,
-    linkBehavior,
-    isDraggable
+    linkBehavior
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
