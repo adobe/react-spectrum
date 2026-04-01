@@ -1031,7 +1031,10 @@ const checkboxCellStyle = style({
 });
 
 const cellContent = style({
-  truncate: true,
+  truncate: {
+    default: true,
+    isSticky: false
+  },
   whiteSpace: {
     default: 'nowrap',
     overflowMode: {

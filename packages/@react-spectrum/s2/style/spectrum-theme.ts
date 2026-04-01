@@ -1112,12 +1112,11 @@ export const style = createTheme({
       animationDuration: 150,
       animationTimingFunction: 'default'
     }),
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    truncate: (_value: true) => ({
-      overflowX: 'hidden',
-      overflowY: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap'
+    truncate: (value: boolean) => ({
+      overflowX: value ? 'hidden' : 'visible',
+      overflowY: value ? 'hidden' : 'visible',
+      textOverflow: value ? 'ellipsis' : 'clip',
+      whiteSpace: value ? 'nowrap' : 'normal'
     }),
     font: (value: keyof typeof fontSize) => {
       let type = value.split('-')[0];
