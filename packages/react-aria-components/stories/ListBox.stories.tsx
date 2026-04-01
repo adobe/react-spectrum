@@ -353,6 +353,8 @@ function generateRandomString(minLength: number, maxLength: number): string {
 
 function VirtualizedListBoxRender(args): JSX.Element {
   let {variableHeight, isLoading, orientation} = args;
+  let estimatedRowHeight = orientation === 'horizontal' ? 117 : 25;
+  let estimatedHeadingHeight = orientation === 'horizontal' ? 63 : 26;
   let heightProperty = orientation === 'horizontal' ? 'width' : 'height';
   let widthProperty = orientation === 'horizontal' ? 'height' : 'width';
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
@@ -369,8 +371,8 @@ function VirtualizedListBoxRender(args): JSX.Element {
     <Virtualizer
       layout={new ListLayout({
         orientation,
-        estimatedRowHeight: 25,
-        estimatedHeadingHeight: 26,
+        estimatedRowHeight,
+        estimatedHeadingHeight,
         loaderHeight: 30
       })}>
       <ListBox orientation={orientation} className={styles.menu} style={{[heightProperty]: 400, [widthProperty]: 200}} aria-label="virtualized listbox">
