@@ -253,10 +253,13 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         state.selectionManager.isSelectionEqual(prevSelectedKeys)
       ) {
         let newKeys = new Set<Key>();
-        for (let item of state.collection) {
-          if (item.type === 'item' && !prevCollection.getItem(item.key)) {
+        let key = state.collection.getFirstKey();
+        while (key != null) {
+          let item = state.collection.getItem(key);
+          if (item?.type === 'item' && !prevCollection.getItem(item.key)) {
             newKeys.add(item.key);
           }
+          key = state.collection.getKeyAfter(key);
         }
 
         state.selectionManager.setSelectedKeys(newKeys);
