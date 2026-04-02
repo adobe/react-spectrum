@@ -1531,7 +1531,8 @@ describe('Table', () => {
       expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
       await user.keyboard('{ArrowDown}');
       expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
-      await user.keyboard('{Enter}');
+      act(() => fireEvent.keyDown(document.activeElement, {key: 'Enter'}));
+      act(() => fireEvent.keyUp(document.activeElement, {key: 'Enter'}));
       // run onInsert promise in DnDTableExample first, otherwise updateFocusAfterDrop doesn't run properly
       await act(async () => {});
       act(() => jest.runAllTimers());
