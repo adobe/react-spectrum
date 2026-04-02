@@ -11,10 +11,10 @@
  */
 
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, Time, toCalendarDateTime, today, ZonedDateTime} from '@internationalized/date';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, isValidElement, ReactElement, ReactNode} from 'react';
-import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {DOMProps, DOMRef, DOMRefValue, RangeValue, SpectrumLabelableProps} from '@react-types/shared';
-import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {mergeStyles} from '../style/runtime';
@@ -25,15 +25,10 @@ import {useListFormatter} from 'react-aria/useListFormatter';
 import {useNumberFormatter} from 'react-aria/useNumberFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-// NOTE: the value/formatOptions types here need to be synchronized with the ones
-// in the docs/types.ts of the @adobe/react-spectrum package.
-
 export type DateTime = Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time;
 type RangeDateTime = RangeValue<DateTime>;
 type DateTimeValue = DateTime | RangeDateTime;
 type NumberValue = number | RangeValue<number>;
-
-type SpectrumLabeledValueTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateTime> | ReactElement;
 
 interface NumberValueProps<T extends NumberValue> {
   /** The value to display. */
@@ -41,7 +36,6 @@ interface NumberValueProps<T extends NumberValue> {
   /** Formatting options for the value. */
   formatOptions?: Intl.NumberFormatOptions
 }
-
 interface DateValueProps<T extends DateTimeValue> {
   /** The value to display. */
   value: T,
@@ -70,17 +64,6 @@ interface ReactElementValueProps<T extends ReactElement> {
   formatOptions?: never
 }
 
-type LabeledValueValueProps<T> =
-  T extends NumberValue ? NumberValueProps<T> :
-  T extends DateTimeValue ? DateValueProps<T> :
-  T extends string[] ? StringListValueProps<T> :
-  T extends string ? StringValueProps<T> :
-  T extends ReactElement ? ReactElementValueProps<T> :
-  never;
-
-/**
- * Style props for LabeledValue — contains the S2 size scale.
- */
 export interface LabeledValueStyleProps {
   /**
    * The size of the component.
@@ -88,32 +71,31 @@ export interface LabeledValueStyleProps {
    */
   size?: 'S' | 'M' | 'L' | 'XL'
 }
-
-/**
- * Base props for LabeledValue — mirrors the v3 LabeledValueBaseProps.
- * Extends SpectrumLabelableProps but omits necessity indicator props
- * since LabeledValue is a read-only display component.
- */
-export interface LabeledValueBaseProps extends DOMProps, StyleProps, SlotProps, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'> {
+export interface LabeledValueBaseProps extends DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, DOMProps {
   /** The content to display as the label. */
   label: ReactNode
 }
+type LabeledValueProps<T> =
+  T extends NumberValue ? NumberValueProps<T> :
+  T extends DateTimeValue ? DateValueProps<T> :
+  T extends string[] ? StringListValueProps<T> :
+  T extends string ? StringValueProps<T> :
+  T extends ReactElement ? ReactElementValueProps<T> :
+  never;
 
-/**
- * Combined props interface for LabeledValue.
- */
-export interface LabeledValueProps extends LabeledValueStyleProps, LabeledValueBaseProps {}
+type SpectrumLabeledValueTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateTime> | ReactElement;
+export type SpectrumLabeledValueProps<T> = LabeledValueProps<T> & LabeledValueBaseProps & LabeledValueStyleProps;
 
-export const LabeledValueContext = createContext<ContextValue<Partial<LabeledValueProps>, DOMRefValue<HTMLDivElement>>>(null);
+// do we really need a context for labeled value? 
+// maybe should consume field context? check how other form components do it...
+export const LabeledValueContext = createContext<ContextValue<Partial<SpectrumLabeledValueProps<SpectrumLabeledValueTypes>>, DOMRefValue<HTMLDivElement>>>(null);
 
 const labeledValueStyles = style({
   ...field()
 }, getAllowedOverrides());
 
 const valueStyles = style({
-  gridArea: 'input',
-  color: 'neutral',
-  minWidth: 0
+  ...fieldInput()
 });
 
 /**
@@ -121,7 +103,7 @@ const valueStyles = style({
  * dates, times, and lists according to the user's locale.
  */
 export const LabeledValue = /*#__PURE__*/ forwardRef(function LabeledValue<T extends SpectrumLabeledValueTypes>(
-  props: LabeledValueValueProps<T> & LabeledValueProps,
+  props: SpectrumLabeledValueProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
   [props, ref] = useSpectrumContextProps(props as any, ref, LabeledValueContext) as any;
@@ -137,7 +119,7 @@ export const LabeledValue = /*#__PURE__*/ forwardRef(function LabeledValue<T ext
     UNSAFE_style,
     styles,
     ...otherProps
-  } = props as LabeledValueValueProps<T> & LabeledValueProps & {value: SpectrumLabeledValueTypes, formatOptions?: any};
+  } = props;
 
   let domRef = useDOMRef(ref);
 
@@ -175,12 +157,12 @@ export const LabeledValue = /*#__PURE__*/ forwardRef(function LabeledValue<T ext
         contextualHelp={contextualHelp}>
         {label}
       </FieldLabel>
-      <span className={valueStyles({})}>
+      <span className={valueStyles({size})}>
         {children}
       </span>
     </div>
   );
-}) as <T extends SpectrumLabeledValueTypes>(props: LabeledValueValueProps<T> & LabeledValueProps & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+});
 
 function FormattedStringList({value, formatOptions}: {value: string[], formatOptions?: Intl.ListFormatOptions}) {
   let formatter = useListFormatter(formatOptions ?? {});
