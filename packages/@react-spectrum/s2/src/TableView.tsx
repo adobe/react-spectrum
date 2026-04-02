@@ -1132,17 +1132,17 @@ const stickyCell = {
 } as const;
 
 // Bit gross but this is needed because the sticky cells currently cover/partially cover styles that the row applies so that
-// they don't appear when the table is scrolled. The below basically just continues the inset outline that the row has when
+// they don't appear when the table is scrolled. The below basically just continues the inset box-shadow that the row has when
 // it is focused as a drop target
 const rowDropTargetStickyOutline = {
   boxShadow: {
     default: 'none',
     ':is([role="row"][data-drop-target] *)': {
-      default: `[inset 0 2px 0 0 ${color('blue-800')}, inset 0 -1px 0 0 ${color('blue-800')}]`,
-      forcedColors: '[inset 0 2px 0 0 Highlight, inset 0 -1px 0 0 Highlight]'
+      default: `[inset 0 2px 0 0 ${color('blue-800')}, inset 0 -2px 0 0 ${color('blue-800')}]`,
+      forcedColors: '[inset 0 2px 0 0 Highlight, inset 0 -2px 0 0 Highlight]'
     },
     ':is([role="row"][data-focus-visible] *)': {
-      forcedColors: '[inset 0 2px 0 0 Highlight, inset 0 -1px 0 0 Highlight]'
+      forcedColors: '[inset 0 2px 0 0 Highlight, inset 0 -2px 0 0 Highlight]'
     }
   }
 } as const;
@@ -1214,6 +1214,9 @@ const dragButton = style({
   whiteSpace: {
     default: 'nowrap',
     ':is([role="row"][data-focus-visible-within] *)': 'normal'
+  },
+  display: {
+    ':is([role="row"][data-focus-visible-within] *)': 'flex'
   }
 });
 
@@ -1741,28 +1744,13 @@ const row = style<RowRenderProps & S2TableProps>({
       forcedColors: 'Highlight'
     }
   },
-  outlineStyle: {
-    default: 'none',
-    isDropTarget: 'solid',
+  outlineStyle: 'none',
+  boxShadow: {
+    isDropTarget: `[inset 0 0 0 2px ${color('blue-800')}]`,
     forcedColors: {
-      isFocusVisible: 'solid'
+      isDropTarget: '[inset 0 0 0 2px Highlight]',
+      isFocusVisible: '[inset 0 0 0 2px Highlight]'
     }
-  },
-  outlineWidth: {
-    isDropTarget: 2,
-    forcedColors: {
-      isFocusVisible: 2
-    }
-  },
-  outlineOffset: {
-    isDropTarget: -2,
-    forcedColors: {
-      isFocusVisible: -2
-    }
-  },
-  outlineColor: {
-    isDropTarget: 'blue-800',
-    forcedColors: 'Highlight'
   },
   borderTopWidth: 0,
   borderBottomWidth: 1,
