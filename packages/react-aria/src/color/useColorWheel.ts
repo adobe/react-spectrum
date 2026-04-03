@@ -237,21 +237,23 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
   }, movePropsContainer);
 
   let thumbInteractions = isDisabled ? {} : mergeProps({
-    onMouseDown: (e: React.MouseEvent) => {
-      if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-        return;
-      }
-      onThumbDown(undefined);
-    },
-    onPointerDown: (e: React.PointerEvent) => {
-      if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
-        return;
-      }
-      onThumbDown(e.pointerId);
-    },
-    onTouchStart: (e: React.TouchEvent) => {
-      onThumbDown(e.changedTouches[0].identifier);
-    }
+    ...(typeof PointerEvent !== 'undefined' ? {
+      onPointerDown: (e: React.PointerEvent) => {
+        if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
+          return;
+        }
+        onThumbDown(e.pointerId);
+      }} : {
+        onMouseDown: (e: React.MouseEvent) => {
+          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+            return;
+          }
+          onThumbDown(undefined);
+        },
+        onTouchStart: (e: React.TouchEvent) => {
+          onThumbDown(e.changedTouches[0].identifier);
+        }
+      })
   }, keyboardProps, movePropsThumb);
   let {x, y} = state.getThumbPosition(thumbRadius);
 
