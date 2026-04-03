@@ -3,9 +3,9 @@ import {
   Button,
   Input,
   SearchField as AriaSearchField,
-  SearchFieldProps as AriaSearchFieldProps,
-  ValidationResult
-} from 'react-aria-components';
+  type SearchFieldProps as AriaSearchFieldProps,
+  type ValidationResult,
+} from 'react-aria-components/SearchField';
 import {Label, FieldError, Description} from './Form';
 import {Search, X} from 'lucide-react';
 import './SearchField.css';

@@ -1,14 +1,14 @@
 'use client';
 import {
   DateField as AriaDateField,
-  DateFieldProps as AriaDateFieldProps,
+  type DateFieldProps as AriaDateFieldProps,
   DateInput as AriaDateInput,
-  DateInputProps,
+  type DateInputProps,
   DateSegment as AriaDateSegment,
-  DateSegmentProps,
-  DateValue,
-  ValidationResult
-} from 'react-aria-components';
+  type DateSegmentProps,
+  type DateValue,
+  type ValidationResult,
+} from 'react-aria-components/DateField';
 import {Label, FieldError, Description} from './Form';
 import './DateField.css';
 

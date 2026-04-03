@@ -1,4 +1,4 @@
-import { composeRenderProps } from 'react-aria-components';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import { twMerge } from 'tailwind-merge';
 import { tv } from 'tailwind-variants';
 

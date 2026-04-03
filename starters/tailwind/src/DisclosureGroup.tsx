@@ -2,8 +2,8 @@
 import React from "react";
 import {
   DisclosureGroup as AriaDisclosureGroup,
-  DisclosureGroupProps as AriaDisclosureGroupProps,
-} from "react-aria-components";
+  type DisclosureGroupProps as AriaDisclosureGroupProps,
+} from 'react-aria-components/DisclosureGroup';
 
 export interface DisclosureGroupProps extends AriaDisclosureGroupProps {
   children: React.ReactNode

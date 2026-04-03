@@ -2,10 +2,10 @@
 import {
   Slider as AriaSlider,
   SliderOutput,
-  SliderProps as AriaSliderProps,
+  type SliderProps as AriaSliderProps,
   SliderThumb,
-  SliderTrack
-} from 'react-aria-components';
+  SliderTrack,
+} from 'react-aria-components/Slider';
 import {Label} from './Form';
 import './Slider.css';
 

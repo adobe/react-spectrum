@@ -2,13 +2,13 @@
 import React, { useContext } from "react";
 import {
   Disclosure as AriaDisclosure,
-  DisclosureProps as AriaDisclosureProps,
   DisclosurePanel as AriaDisclosurePanel,
-  DisclosurePanelProps as AriaDisclosurePanelProps,
-  composeRenderProps,
-  Heading,
   DisclosureStateContext,
-} from "react-aria-components";
+  Heading,
+  type DisclosurePanelProps as AriaDisclosurePanelProps,
+  type DisclosureProps as AriaDisclosureProps,
+} from 'react-aria-components/Disclosure';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import { Button } from './Button';
 import { tv } from "tailwind-variants";
 import { ChevronRight } from "lucide-react";

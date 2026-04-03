@@ -1,7 +1,6 @@
 import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import {Button} from '../src/Button';
 import {Save} from 'lucide-react';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Tooltip> = {

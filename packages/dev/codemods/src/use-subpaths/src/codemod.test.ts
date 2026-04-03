@@ -126,3 +126,23 @@ import { Button, ButtonContext } from 'react-aria-components/Button';
 import type { ButtonProps } from 'react-aria-components/Button';
 `
 );
+
+test(
+  'sorts exact match candidates first',
+  `
+import {Group, GroupProps} from 'react-aria-components';
+`,
+  `
+import { Group, GroupProps } from 'react-aria-components/Group';
+`
+);
+
+test(
+  'combines related imports',
+  `
+import {RangeCalendar, CalendarCell, Heading} from 'react-aria-components';
+`,
+  `
+import { RangeCalendar, CalendarCell, Heading } from 'react-aria-components/RangeCalendar';
+`
+);

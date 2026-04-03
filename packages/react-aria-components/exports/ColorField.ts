@@ -19,3 +19,16 @@ export type {ColorFieldProps, ColorFieldRenderProps} from '../src/ColorField';
 export {parseColor, getColorChannels} from 'react-stately/Color';
 export type {ColorSpace, ColorChannel, Color, ColorFormat, ColorAxes, ColorChannelRange} from 'react-stately/Color';
 export type {ColorFieldState} from 'react-stately/useColorFieldState';
+
+export {Input} from '../src/Input';
+export type {InputProps, InputRenderProps} from '../src/Input';
+
+export {Label} from '../src/Label';
+export type {LabelProps} from '../src/Label';
+
+export {Text} from '../src/Text';
+export type {TextProps} from '../src/Text';
+
+export {FieldError} from '../src/FieldError';
+export type {FieldErrorProps, FieldErrorRenderProps} from '../src/FieldError';
+export type {ValidationResult} from '@react-types/shared';

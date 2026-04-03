@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react';
+import { type Meta } from '@storybook/react';
 import React from 'react';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from '../src/Tabs';
 

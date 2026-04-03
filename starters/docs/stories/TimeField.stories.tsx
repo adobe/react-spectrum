@@ -1,5 +1,4 @@
 import {TimeField} from '../src/TimeField';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof TimeField> = {

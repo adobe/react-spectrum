@@ -2,11 +2,10 @@
 import {
   OverlayArrow,
   Tooltip as AriaTooltip,
-  TooltipProps as AriaTooltipProps,
+  type TooltipProps as AriaTooltipProps,
   TooltipTrigger as AriaTooltipTrigger,
-  TooltipTriggerComponentProps
-} from 'react-aria-components';
-
+  type TooltipTriggerComponentProps,
+} from 'react-aria-components/Tooltip';
 import './Tooltip.css';
 
 export interface TooltipProps extends Omit<AriaTooltipProps, 'children'> {

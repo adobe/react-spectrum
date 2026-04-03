@@ -5,14 +5,14 @@ import {
   GridListItem as AriaGridListItem,
   GridListHeader as AriaGridListHeader,
   Button,
-  composeRenderProps,
-  GridListItemProps,
-  GridListProps
-} from 'react-aria-components';
+  type GridListItemProps,
+  type GridListProps,
+} from 'react-aria-components/GridList';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import { tv } from 'tailwind-variants';
 import { Checkbox } from './Checkbox';
 import { composeTailwindRenderProps, focusRing } from './utils';
-import {HTMLAttributes} from 'react';
+import {type HTMLAttributes} from 'react';
 import { twMerge } from 'tailwind-merge';
 
 export function GridList<T extends object>(

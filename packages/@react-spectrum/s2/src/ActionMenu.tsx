@@ -26,7 +26,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ActionMenuProps<T> extends
   Pick<MenuTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange' | 'align' | 'direction' | 'shouldFlip'>,
-  Pick<MenuProps<T>, 'children' | 'items' | 'disabledKeys' | 'onAction'>,
+  Pick<MenuProps<T>, 'children' | 'items' | 'disabledKeys' | 'onAction' | 'shouldCloseOnSelect'>,
   Pick<ActionButtonProps, 'isDisabled' | 'isQuiet' | 'autoFocus' | 'size'>,
   StyleProps, DOMProps, AriaLabelingProps {
   /**
@@ -72,7 +72,8 @@ export const ActionMenu = /*#__PURE__*/(forwardRef as forwardRefType)(function A
         items={props.items}
         disabledKeys={props.disabledKeys}
         onAction={props.onAction}
-        size={props.menuSize}>
+        size={props.menuSize}
+        shouldCloseOnSelect={props.shouldCloseOnSelect}>
         {props.children}
       </Menu>
     </MenuTrigger>

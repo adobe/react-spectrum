@@ -1,6 +1,6 @@
 import {GridList, GridListItem} from '../src/GridList';
-import {Text, GridListSection, GridListHeader} from 'react-aria-components';
-
+import { Text } from 'react-aria-components/Text';
+import { GridListSection, GridListHeader } from 'react-aria-components/GridList';
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof GridList> = {

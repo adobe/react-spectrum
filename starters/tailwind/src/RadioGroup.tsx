@@ -1,6 +1,13 @@
 'use client';
-import React, { ReactNode } from 'react';
-import { composeRenderProps, Radio as RACRadio, RadioGroup as RACRadioGroup, RadioGroupProps as RACRadioGroupProps, RadioProps, ValidationResult } from 'react-aria-components';
+import React, { type ReactNode } from 'react';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
+import {
+  Radio as RACRadio,
+  RadioGroup as RACRadioGroup,
+  type RadioGroupProps as RACRadioGroupProps,
+  type RadioProps,
+  type ValidationResult,
+} from 'react-aria-components/RadioGroup';
 import { tv } from 'tailwind-variants';
 import { Description, FieldError, Label } from './Field';
 import { composeTailwindRenderProps, focusRing } from './utils';

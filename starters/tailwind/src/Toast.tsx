@@ -1,14 +1,14 @@
 'use client';
-import React, { CSSProperties } from 'react';
+import React, { type CSSProperties } from 'react';
 import {
   UNSTABLE_ToastRegion as ToastRegion,
   UNSTABLE_Toast as Toast,
   UNSTABLE_ToastQueue as ToastQueue,
   UNSTABLE_ToastContent as ToastContent,
-  ToastProps,
+  type ToastProps,
   Button,
-  Text
-} from 'react-aria-components';
+  Text,
+} from 'react-aria-components/Toast';
 import {XIcon} from 'lucide-react';
 import {composeTailwindRenderProps} from './utils';
 import {flushSync} from 'react-dom';

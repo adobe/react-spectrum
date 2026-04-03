@@ -4,14 +4,14 @@ import React, { createContext, useContext } from 'react';
 import {
   Tag as AriaTag,
   TagGroup as AriaTagGroup,
-  TagGroupProps as AriaTagGroupProps,
-  TagProps as AriaTagProps,
+  type TagGroupProps as AriaTagGroupProps,
+  type TagProps as AriaTagProps,
   Button,
   TagList,
-  TagListProps,
+  type TagListProps,
   Text,
-  composeRenderProps
-} from 'react-aria-components';
+} from 'react-aria-components/TagGroup';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import { twMerge } from 'tailwind-merge';
 import { tv } from 'tailwind-variants';
 import { Description, Label } from './Field';
