@@ -61,16 +61,16 @@ import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
+import {LayoutInfo, Rect, TableLayout,  Virtualizer} from 'react-aria-components/Virtualizer';
 import {LayoutNode} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {ProgressCircle} from './ProgressCircle';
-import {CheckboxContext as RACCheckboxContext} from 'react-aria-components/Checkbox';
 // @ts-ignore
+import {CheckboxContext as RACCheckboxContext} from 'react-aria-components/Checkbox';
 import {Popover as RACPopover} from 'react-aria-components/Popover';
 import React, {createContext, CSSProperties, FormEvent, FormHTMLAttributes, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {Rect, TableLayout, Virtualizer} from 'react-aria-components/Virtualizer';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {Button as SpectrumButton} from './Button';

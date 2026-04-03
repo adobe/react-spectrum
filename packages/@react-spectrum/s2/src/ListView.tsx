@@ -56,7 +56,7 @@ import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
-export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | 'selectionBehavior' | 'dragAndDropHooks' | 'layout' | 'render' | 'keyboardNavigationBehavior' | 'orientation' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, ListViewStylesProps, SlotProps {
+export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | 'selectionBehavior' | 'layout' | 'render' | 'keyboardNavigationBehavior' | 'orientation' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, ListViewStylesProps, SlotProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The current loading state of the ListView. */
