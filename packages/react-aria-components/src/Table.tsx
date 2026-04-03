@@ -689,7 +689,8 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
         tableLayout: 'fixed',
         // due to https://bugzilla.mozilla.org/show_bug.cgi?id=1959353, we can't use "fit-content".
         // Causes the table columns to grow to fill the available space in Firefox, ignoring user set column widths
-        width: 'min-content'
+        // width: 'min-content'
+        width: 'fit-content'
       };
     }
   }
