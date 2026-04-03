@@ -193,9 +193,8 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
   scrollPaddingStart: {
     isCheckboxSelection: 40,
     isDragAndDrop: {
-      // Larger than the 16 from v3 since we need some room for the halo focus ring
-      default: 24,
-      isCheckboxSelection: 64
+      default: 16,
+      isCheckboxSelection: 56
     }
   },
   forcedColorAdjust: 'none'
@@ -1023,7 +1022,7 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       className={tableHeader}>
       {allowsDragging && (
         // @ts-ignore
-        <RACColumn isSticky width={scale === 'medium' ? 24 : 30} minWidth={scale === 'medium' ? 24 : 30} className={selectAllCheckboxColumn({isQuiet})}>
+        <RACColumn isSticky width={scale === 'medium' ? 16 : 20} minWidth={scale === 'medium' ? 16 : 20} className={selectAllCheckboxColumn({isQuiet})}>
           {({isFocusVisible}) => (
             <>
               {isFocusVisible && <CellFocusRing />}
@@ -1197,7 +1196,7 @@ const dragButton = style({
   },
   width: {
     default: 1,
-    ':is([role="row"][data-focus-visible-within] *)': 16
+    ':is([role="row"][data-focus-visible-within] *)': 10
   },
   margin: {
     default: '[-1]',

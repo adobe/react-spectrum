@@ -361,10 +361,10 @@ const listitem = style<GridListItemRenderProps & {
   // TODO: what do we think about the positioning of the drag button? It essentially gets placed with the same spacing from the left edge
   // of the row as the checkbox does in a non dnd situation
   gridTemplateAreas: [
-    '. dragbutton checkmark icon label       actions actionmenu trailing-icon .',
-    '. .           .         .    description actions actionmenu trailing-icon .'
+    '. dragbutton . checkmark icon label       actions actionmenu trailing-icon .',
+    '. .          . .         .    description actions actionmenu trailing-icon .'
   ],
-  gridTemplateColumns: [edgeToText(40), 'auto', 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'var(--trailing-icon-width)', edgeToText(40)],
+  gridTemplateColumns: [4, 'auto', 8, 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'var(--trailing-icon-width)', 6],
   gridTemplateRows: '1fr auto',
   rowGap: {
     ':has([slot=description])': space(1)
@@ -756,16 +756,16 @@ let dragButtonContainer = style({
   alignSelf: 'center',
   display: 'flex',
   alignItems: 'center',
-  marginEnd: 4,
-  width: 16
+  width: 10
 });
 
 let dragButton = style<{isFocusVisible?: boolean}>({
+  display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   // TODO: arbitrary, basically taken from v3
   height: 22,
-  width: 16,
+  width: 10,
   padding: 0,
   margin: 0,
   backgroundColor: 'transparent',
@@ -817,7 +817,7 @@ export let dragPreviewCard = style<{scale?: 'medium' | 'large'}>({
     '. icon label       badge .',
     '. .    description badge .'
   ],
-  gridTemplateColumns: [edgeToText(40), 'auto', 'minmax(0, 1fr)', 'auto', edgeToText(40)],
+  gridTemplateColumns: [12, 'auto', 'minmax(0, 1fr)', 'auto', 6],
   gridTemplateRows: '1fr auto',
   alignItems: 'baseline',
   minHeight: {
