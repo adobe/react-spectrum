@@ -2064,8 +2064,8 @@ describe('Tree', () => {
       act(() => jest.runAllTimers());
       await user.tab();
       expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      fireEvent.keyDown(document.activeElement as Element, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement as Element, {key: 'Enter'});
       // run onInsert promise
       await act(async () => {});
       act(() => jest.runAllTimers());
