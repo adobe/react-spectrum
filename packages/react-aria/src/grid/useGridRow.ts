@@ -12,7 +12,7 @@
 
 import {chain} from '../utils/chain';
 
-import {Collection, DOMAttributes, FocusableElement, Key, Node, RefObject} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {IGridCollection as GridCollection, GridNode} from 'react-stately/private/grid/GridCollection';
 import {gridMap} from './utils';
 import {GridState} from 'react-stately/private/grid/useGridState';
