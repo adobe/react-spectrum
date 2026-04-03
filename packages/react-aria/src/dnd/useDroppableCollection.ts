@@ -259,7 +259,12 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           if (item?.type === 'item' && !prevCollection.getItem(item.key)) {
             newKeys.add(item.key);
           }
-          key = state.collection.getKeyAfter(key);
+
+          if (item?.hasChildNodes && state.collection.getItem(item.lastChildKey!)?.type === 'item') {
+            key = item.firstChildKey!;
+          } else {
+            key = state.collection.getKeyAfter(key);
+          }
         }
 
         state.selectionManager.setSelectedKeys(newKeys);
@@ -271,10 +276,11 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           let first: Key | null | undefined = newKeys.keys().next().value;
           if (first != null) {
             let item = state.collection.getItem(first);
-
+            let dropTarget = droppingState.current.target;
+            let isParentRowExpanded = state.collection['expandedKeys'] ? state.collection['expandedKeys'].has(item?.parentKey) : false;
             // If this is a cell, focus the parent row.
             // eslint-disable-next-line max-depth
-            if (item?.type === 'cell') {
+            if (item && (item?.type === 'cell' || (dropTarget.type === 'item' && dropTarget.dropPosition === 'on' && !isParentRowExpanded))) {
               first = item.parentKey;
             }
 

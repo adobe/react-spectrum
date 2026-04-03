@@ -2045,6 +2045,131 @@ describe('Tree', () => {
       expect(getItems).toHaveBeenCalledTimes(1);
       expect(getItems).toHaveBeenCalledWith(new Set(['projects', 'reports']));
     });
+
+    it('should select the parent and all its children when dropped', async () => {
+      let {getAllByRole} = render(<TreeWithDragAndDrop selectionMode="multiple" />);
+      let trees = getAllByRole('treegrid');
+
+      let firstTreeTester = testUtilUser.createTester('Tree', {root: trees[0]});
+      let secondTreeTester = testUtilUser.createTester('Tree', {root: trees[1]});
+      expect(firstTreeTester.rows).toHaveLength(2);
+      // has the empty state row
+      expect(secondTreeTester.rows).toHaveLength(1);
+      await user.tab();
+      // selects and drops first row onto second tree
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      await user.tab();
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      // run onInsert promise
+      await act(async () => {});
+      act(() => jest.runAllTimers());
+      expect(secondTreeTester.rows).toHaveLength(1);
+      // expands tree row children
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{ArrowRight}');
+      expect(secondTreeTester.selectedRows).toHaveLength(9);
+    });
+
+    it('should focus the parent row when dropped on if it isnt expanded', async () => {
+      let {getAllByRole} = render(<TreeWithDragAndDrop />);
+      let trees = getAllByRole('treegrid');
+
+      let firstTreeTester = testUtilUser.createTester('Tree', {root: trees[0]});
+      let secondTreeTester = testUtilUser.createTester('Tree', {root: trees[1]});
+      expect(firstTreeTester.rows).toHaveLength(2);
+      // has the empty state row
+      expect(secondTreeTester.rows).toHaveLength(1);
+      await user.tab();
+      // selects and drops first row onto second tree
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      await user.tab();
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+      fireEvent.keyDown(document.activeElement as Element, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement as Element, {key: 'Enter'});
+      // run onInsert promise
+      await act(async () => {});
+      act(() => jest.runAllTimers());
+      expect(secondTreeTester.rows).toHaveLength(1);
+      await user.keyboard('{ArrowRight}');
+      expect(secondTreeTester.rows).toHaveLength(6);
+      // tab back to the first tree and drop a new row onto one of the 2nd tree's child rows as it is expanded
+      await user.tab({shift: true});
+      expect(document.activeElement).toBe(firstTreeTester.rows[0]);
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      await user.tab();
+      for (let i = 0; i < 7; i++) {
+        await user.keyboard('{ArrowDown}');
+      }
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Project 2');
+      await user.keyboard('{Enter}');
+      await act(async () => {});
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toBe(secondTreeTester.rows[2]);
+    });
+
+    it('should focus the dropped row when dropped on a parent that is expanded', async () => {
+      let {getAllByRole} = render(<TreeWithDragAndDrop />);
+      let trees = getAllByRole('treegrid');
+
+      let firstTreeTester = testUtilUser.createTester('Tree', {root: trees[0]});
+      let secondTreeTester = testUtilUser.createTester('Tree', {root: trees[1]});
+      expect(firstTreeTester.rows).toHaveLength(2);
+      // has the empty state row
+      expect(secondTreeTester.rows).toHaveLength(1);
+      await user.tab();
+      // selects and drops first row onto second tree
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      await user.tab();
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+      fireEvent.keyDown(document.activeElement as Element, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement as Element, {key: 'Enter'});
+      // run onInsert promise
+      await act(async () => {});
+      act(() => jest.runAllTimers());
+      expect(secondTreeTester.rows).toHaveLength(1);
+      // expands tree row children
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{ArrowRight}');
+      expect(secondTreeTester.rows).toHaveLength(9);
+      // tab back to the first tree and drop a new row onto one of the 2nd tree's child rows as it is expanded
+      await user.tab({shift: true});
+      expect(document.activeElement).toBe(firstTreeTester.rows[0]);
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+
+      act(() => jest.runAllTimers());
+      await user.tab();
+      for (let i = 0; i < 14; i++) {
+        await user.keyboard('{ArrowDown}');
+      }
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Project 2');
+      fireEvent.keyDown(document.activeElement as Element, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement as Element, {key: 'Enter'});
+      await act(async () => {});
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toHaveTextContent('Projects');
+      expect(document.activeElement).toBe(secondTreeTester.rows[3]);
+
+    });
   });
 
   describe('press events', () => {
