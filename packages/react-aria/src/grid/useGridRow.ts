@@ -78,8 +78,7 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
       !hasLink &&
       hasChildRows &&
       ((state.disabledKeys.has(node.key) || node.props?.isDisabled) || 
-        state.selectionManager.selectionMode === 'none'))
-    {
+        state.selectionManager.selectionMode === 'none')) {
       onRowAction = () => tableState.toggleKey(node.key);
     }
   }
@@ -111,12 +110,4 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     rowProps,
     ...states
   };
-}
-
-function getLastTreeGridChild(collection: Collection<Node<unknown>>, node: Node<unknown>): Node<unknown> | null {
-  if ('lastChildKey' in node && node.lastChildKey != null) {
-    return collection.getItem(node.lastChildKey);
-  }
-
-  return Array.from(node.childNodes).findLast(item => item.parentKey === node.key) ?? null;
 }

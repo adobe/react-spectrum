@@ -99,11 +99,11 @@ function Example(props) {
 }
 
 interface ReorderableTreebleItem {
-  id: string;
-  title: string;
-  type: string;
-  date: string;
-  children?: ReorderableTreebleItem[];
+  id: string,
+  title: string,
+  type: string,
+  date: string,
+  children?: ReorderableTreebleItem[]
 }
 function ReorderableTreeble(props) {
   let tree = useTreeData<ReorderableTreebleItem>({

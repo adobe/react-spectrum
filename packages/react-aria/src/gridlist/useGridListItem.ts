@@ -108,8 +108,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       !hasLink && 
       hasChildRows &&
       ((state.disabledKeys.has(node.key) || node.props?.isDisabled) ||
-        state.selectionManager.selectionMode === 'none'))
-    {
+        state.selectionManager.selectionMode === 'none')) {
       onAction = () => state.toggleKey(node.key);
     }
 
