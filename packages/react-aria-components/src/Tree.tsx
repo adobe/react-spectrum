@@ -239,6 +239,11 @@ export interface TreeRenderProps {
    */
   allowsDragging: boolean,
   /**
+   * Whether the table is currently the active drop target.
+   * @selector [data-drop-target]
+   */
+  isDropTarget: boolean,
+  /**
    * State of the tree.
    */
   state: TreeState<unknown>

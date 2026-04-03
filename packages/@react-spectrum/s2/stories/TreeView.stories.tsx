@@ -19,9 +19,8 @@ import {Collection} from 'react-aria/Collection';
 import {Content, Heading, Text} from '../src/Content';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
-
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
-
+import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
 import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
@@ -34,6 +33,7 @@ import React, {ReactElement, useCallback, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {
   TreeView,
+  TreeViewDragPreview,
   TreeViewItem,
   TreeViewItemContent,
   TreeViewItemProps,
@@ -42,7 +42,9 @@ import {
   TreeViewProps
 } from '../src/TreeView';
 import {useAsyncList} from 'react-stately/useAsyncList';
+import {useDragAndDrop} from 'react-aria-components/useDragAndDrop';
 import {useListData} from 'react-stately/useListData';
+import {useTreeData} from 'react-stately/useTreeData';
 
 let onActionFunc = action('onAction');
 let noOnAction = null;
@@ -926,4 +928,86 @@ export const WithActionBarEmphasized: StoryObj<typeof ActionBarEmphasizedExample
     selectionMode: 'multiple'
   },
   name: 'with ActionBar (emphasized)'
+};
+
+function CustomDragPreview(props) {
+  let {items, parentList} = props;
+  let id = items[0].id;
+  let item = parentList.getItem(id);
+  return (
+    <TreeViewDragPreview {...props}>
+      {item.value.icon}
+      <Text>{item.value.name}</Text>
+    </TreeViewDragPreview>
+  );
+}
+
+function ReorderableTree(props: TreeViewProps<any>) {
+  let treeData = useTreeData<TreeViewItemType>({
+    initialItems: rows,
+    getKey: item => item.id as Key,
+    getChildren: item => item.childItems as TreeViewItemType[]
+  });
+
+  let getItems = (keys) => [...keys].map(key => {
+    let item = treeData.getItem(key)!;
+
+    let serializeItem = (nodeItem) => ({
+      ...nodeItem.value,
+      childItems: nodeItem.children ? [...nodeItem.children].map(serializeItem) : []
+    });
+
+    return {
+      id: item.value.id!.toString(),
+      'text/plain': item.value.name,
+      'tree-item': JSON.stringify(serializeItem(item))
+    };
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems,
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        treeData.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        treeData.moveAfter(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'on') {
+        let targetNode = treeData.getItem(e.target.key);
+        if (targetNode) {
+          let targetIndex = targetNode.children ? targetNode.children.length : 0;
+          let keyArray = Array.from(e.keys);
+          for (let i = 0; i < keyArray.length; i++) {
+            treeData.move(keyArray[i], e.target.key, targetIndex + i);
+          }
+        } else {
+          console.error('Target node not found for drop on:', e.target.key);
+        }
+      }
+    },
+    renderDragPreview: (items) => <CustomDragPreview parentList={treeData} items={items} />
+  });
+
+  return (
+    <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
+      <TreeView
+        {...props}
+        aria-label="Reorderable tree"
+        items={treeData.items}
+        dragAndDropHooks={dragAndDropHooks}>
+        {(item: any) => (
+          <DynamicTreeItem
+            id={item.value.id}
+            icon={item.value.icon}
+            childItems={item.value.childItems}
+            textValue={item.value.name}
+            name={item.value.name} />
+        )}
+      </TreeView>
+    </div>
+  );
+}
+
+export const Reorderable: StoryObj<typeof ReorderableTree> = {
+  render: (args) => <ReorderableTree {...args} />,
+  name: 'Drag and drop reordering'
 };

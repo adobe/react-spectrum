@@ -26,7 +26,6 @@ import {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} 
 import {DOMProps, DOMRef, DOMRefValue, DragItem, forwardRefType, GlobalDOMAttributes, ItemDropTarget, LoadingState} from '@react-types/shared';
 import DragHandle from '../ui-icons/DragHandle';
 import {DropIndicator} from 'react-aria-components/useDragAndDrop';
-import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   GridList,
   GridListItem,
