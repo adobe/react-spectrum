@@ -6,14 +6,17 @@ import {
   MenuSection as AriaMenuSection,
   MenuTrigger as AriaMenuTrigger,
   SubmenuTrigger as AriaSubmenuTrigger,
-  MenuItemProps,
-  MenuProps,
-  MenuSectionProps,
-  MenuTriggerProps,
-  SubmenuTriggerProps,
-} from 'react-aria-components';
+  Header,
+  Separator,
+  Keyboard,
+  type MenuItemProps,
+  type MenuProps,
+  type MenuSectionProps,
+  type MenuTriggerProps,
+  type SubmenuTriggerProps,
+} from 'react-aria-components/Menu';
 import {Popover} from './Popover';
-import { Text } from './Content';
+import {Text} from './Content';
 import React from 'react';
 import './Menu.css';
 
@@ -73,3 +76,5 @@ export function SubmenuTrigger(props: SubmenuTriggerProps) {
     </AriaSubmenuTrigger>
   );
 }
+
+export {Text, Header, Separator, Keyboard};

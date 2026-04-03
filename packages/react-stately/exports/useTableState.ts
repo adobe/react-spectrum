@@ -15,3 +15,20 @@ export type {TableProps, TableState, TableStateProps} from '../src/table/useTabl
 
 export {useTableColumnResizeState} from '../src/table/useTableColumnResizeState';
 export {useTableState, UNSTABLE_useFilteredTableState} from '../src/table/useTableState';
+
+export type {CellProps, CellElement, CellRenderer} from '../src/table/Cell';
+export {Cell} from '../src/table/Cell';
+
+export type {ColumnProps, ColumnSize, ColumnDynamicSize, ColumnStaticSize, ColumnElement, ColumnRenderer} from '../src/table/Column';
+export {Column} from '../src/table/Column';
+
+export type {RowProps, RowElement} from '../src/table/Row';
+export {Row} from '../src/table/Row';
+
+export type {TableBodyProps} from '../src/table/TableBody';
+export {TableBody} from '../src/table/TableBody';
+
+export type {TableHeaderProps} from '../src/table/TableHeader';
+export {TableHeader} from '../src/table/TableHeader';
+
+export type {SortDescriptor, SortDirection} from '@react-types/shared';

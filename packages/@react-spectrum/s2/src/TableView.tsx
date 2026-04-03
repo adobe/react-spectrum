@@ -13,9 +13,7 @@
 import {ActionButton, ActionButtonContext} from './ActionButton';
 import {baseColor, centerPadding, color, colorMix, focusRing, fontRelative, lightDark, setColorScheme, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
-
 import {ButtonGroup} from './ButtonGroup';
-
 import {
   CellRenderProps,
   ColumnRenderProps,
@@ -35,7 +33,6 @@ import {
   ResizableTableContainer,
   RowRenderProps,
   TableBodyRenderProps,
-  TableLayout,
   TableLoadMoreItem,
   TableRenderProps,
   useTableOptions
@@ -44,10 +41,10 @@ import {Checkbox} from './Checkbox';
 import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
 import Chevron from '../ui-icons/Chevron';
 import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
-import {CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-components/Collection';
-import {ColumnSize} from 'react-stately/Column';
-import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/utils';
+import {Collection} from 'react-aria/Collection';
+import {CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-components/CollectionBuilder';
+import {ColumnSize} from 'react-stately/useTableState';
+import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {css} from '../style/style-macro' with {type: 'macro'};
 import {CustomDialog} from './CustomDialog';
@@ -64,8 +61,7 @@ import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
-import {LayoutInfo, Virtualizer} from 'react-aria-components/Virtualizer';
-import {LayoutNode} from 'react-stately/private/layout/ListLayout';
+import {LayoutNode} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
@@ -74,7 +70,7 @@ import {CheckboxContext as RACCheckboxContext} from 'react-aria-components/Check
 // @ts-ignore
 import {Popover as RACPopover} from 'react-aria-components/Popover';
 import React, {createContext, CSSProperties, FormEvent, FormHTMLAttributes, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {Rect} from 'react-stately/private/virtualizer/Rect';
+import {Rect, TableLayout, Virtualizer} from 'react-aria-components/Virtualizer';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {Button as SpectrumButton} from './Button';
@@ -979,16 +975,26 @@ const tableHeader = style({
 });
 
 const selectAllCheckbox = style({
-  marginStart: 16 // table-edge-to-content, same between mobile and desktop
 });
 
 const selectAllCheckboxColumn = style({
-  padding: 0,
+  paddingStart: {
+    default: 0,
+    ':has([slot="selection"])': 16
+  },
+  paddingEnd: {
+    default: 0,
+    ':has(slot="selection")': 8
+  },
+  paddingY: 0,
   height: 'full',
   boxSizing: 'border-box',
   outlineStyle: 'none',
   position: 'relative',
+  display: 'flex',
   alignContent: 'center',
+  alignItems: 'center',
+  justifyContent: 'start',
   borderColor: {
     default: 'gray-300',
     forcedColors: 'ButtonBorder'
@@ -1150,8 +1156,12 @@ const checkboxCellStyle = style({
   ...commonCellStyles,
   ...stickyCell,
   ...rowDropTargetStickyOutline,
+  display: 'flex',
   paddingStart: 16,
+  paddingEnd: 8,
   alignContent: 'center',
+  alignItems: 'center',
+  justifyContent: 'start',
   height: 'calc(100% - 1px)',
   borderBottomWidth: 0,
   backgroundColor: '--rowBackgroundColor'
@@ -1220,7 +1230,10 @@ const dragButton = style({
 });
 
 const cellContent = style({
-  truncate: true,
+  truncate: {
+    default: true,
+    isSticky: false
+  },
   whiteSpace: {
     default: 'nowrap',
     overflowMode: {
@@ -1234,7 +1247,10 @@ const cellContent = style({
       end: 'end'
     }
   },
-  width: 'full',
+  width: {
+    default: 'full',
+    ':has([slot="selection"])': 'unset'
+  },
   isolation: 'isolate',
   padding: {
     default: 4,
@@ -1261,7 +1277,14 @@ export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | 'r
  * A cell within a table row.
  */
 export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, isSticky, showDivider = false, align, textValue, ...otherProps} = props;
+  let {
+    children,
+    isSticky,
+    showDivider = false,
+    align,
+    textValue,
+    ...otherProps
+  } = props;
   let domRef = useDOMRef(ref);
   let tableVisualOptions = useContext(InternalTableContext);
   textValue ||= typeof children === 'string' ? children : undefined;

@@ -18,10 +18,10 @@ export const description = 'Allows users to search or filter a list of suggestio
   ```tsx render docs={vanillaDocs.exports.CommandPalette} links={vanillaDocs.links} props={['disableAutoFocusFirst']} type="vanilla" files={["starters/docs/src/CommandPalette.tsx", "starters/docs/src/CommandPalette.css"]}
   "use client";
   import {CommandPalette} from 'vanilla-starter/CommandPalette';
-  import {MenuItem} from 'vanilla-starter/Menu';
+  import {MenuItem, Text} from 'vanilla-starter/Menu';
   import {Button} from 'vanilla-starter/Button';
   import {FilePlus2, FolderPlus, User, UserPen, CircleDotDashed, ChartPie, Tag} from 'lucide-react';
-  import {DialogTrigger, Text} from 'react-aria-components';
+  import {DialogTrigger} from 'react-aria-components/Dialog';
   import {useState} from 'react';
 
   function Example(props) {
@@ -79,7 +79,7 @@ export const description = 'Allows users to search or filter a list of suggestio
   import {CommandPalette} from 'tailwind-starter/CommandPalette';
   import {MenuItem} from 'tailwind-starter/Menu';
   import {Button} from 'tailwind-starter/Button';
-  import {DialogTrigger} from 'react-aria-components';
+  import {DialogTrigger} from 'react-aria-components/Dialog';
   import {useState} from 'react';
 
   function Example(props) {
@@ -120,7 +120,7 @@ Autocomplete filters a collection component using a [TextField](TextField) or [S
 
 ```tsx render docs={docs.exports.Autocomplete} links={docs.links} props={['disableVirtualFocus', 'disableAutoFocusFirst']} type="vanilla" wide
 "use client";
-import {Autocomplete, useFilter} from 'react-aria-components';
+import {Autocomplete, useFilter} from 'react-aria-components/Autocomplete';
 import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
 import {Button} from 'vanilla-starter/Button';
 import {SearchField} from 'vanilla-starter/SearchField';
@@ -160,7 +160,8 @@ function Example(props) {
 
 ```tsx render docs={docs.exports.Autocomplete} links={docs.links} props={['disableVirtualFocus', 'disableAutoFocusFirst']} type="vanilla" wide
 "use client";
-import {Select, Label, SelectValue, Autocomplete, useFilter} from 'react-aria-components';
+import {Autocomplete, useFilter} from 'react-aria-components/Autocomplete';
+import {Select, Label, SelectValue} from 'react-aria-components/Select';
 import {Button} from 'vanilla-starter/Button';
 import {SelectListBox, SelectItem} from 'vanilla-starter/Select';
 import {Popover} from 'vanilla-starter/Popover';
@@ -257,7 +258,7 @@ function Example(props) {
 
 ```tsx render docs={docs.exports.Autocomplete} links={docs.links} props={['disableVirtualFocus', 'disableAutoFocusFirst']} type="vanilla" wide
 "use client";
-import {Autocomplete, useFilter} from 'react-aria-components';
+import {Autocomplete, useFilter} from 'react-aria-components/Autocomplete';
 import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 import {SearchField} from 'vanilla-starter/SearchField';
 
@@ -294,7 +295,7 @@ function Example(props) {
 
 ```tsx render
 "use client";
-import {Autocomplete, useFilter} from 'react-aria-components';
+import {Autocomplete, useFilter} from 'react-aria-components/Autocomplete';
 import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
 import {SearchField} from 'vanilla-starter/SearchField';
 
@@ -331,8 +332,8 @@ function Example() {
 
 ```tsx render
 "use client";
-import {Autocomplete, Text, useFilter} from 'react-aria-components';
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {Autocomplete, useFilter} from 'react-aria-components/Autocomplete';
+import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
 import {SearchField} from 'vanilla-starter/SearchField';
 
 ///- begin collapse -///
@@ -596,7 +597,8 @@ function Example() {
 
 ```tsx render
 "use client";
-import {Autocomplete, ResizableTableContainer, useFilter} from 'react-aria-components';
+import {Autocomplete, useFilter} from 'react-aria-components/Autocomplete';
+import {ResizableTableContainer} from 'react-aria-components/Table';
 import {Table, TableHeader, TableBody, Column, Row, Cell} from 'vanilla-starter/Table';
 import {SearchField} from 'vanilla-starter/SearchField';
 
@@ -1059,7 +1061,8 @@ When the `filter` prop is not set, the items are controlled. This example uses a
 
 ```tsx render
 "use client";
-import {Autocomplete, useAsyncList} from 'react-aria-components';
+import {Autocomplete} from 'react-aria-components/Autocomplete';
+import {useAsyncList} from 'react-aria-components/useAsyncList';
 import {SearchField} from 'vanilla-starter/SearchField';
 import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 

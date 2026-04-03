@@ -17,3 +17,13 @@ import 'client-only';
 export {CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, RangeCalendar, RangeCalendarContext, RangeCalendarStateContext} from '../src/Calendar';
 export type {CalendarCellProps, CalendarRenderProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps, RangeCalendarProps, RangeCalendarRenderProps} from '../src/Calendar';
 export type {DateRange, DateValue, RangeCalendarState} from 'react-stately/useRangeCalendarState';
+export type {RangeValue} from '@react-types/shared';
+
+export {Button} from '../src/Button';
+export type {ButtonProps, ButtonRenderProps} from '../src/Button';
+
+export {Heading} from '../src/Heading';
+export type {HeadingProps} from '../src/Heading';
+
+export {Text} from '../src/Text';
+export type {TextProps} from '../src/Text';

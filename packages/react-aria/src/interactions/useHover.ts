@@ -57,15 +57,16 @@ function handleGlobalPointerEvent(e: PointerEvent) {
 }
 
 function setupGlobalTouchEvents() {
-  if (typeof document === 'undefined') {
+  let ownerDocument = getOwnerDocument(null);
+  if (typeof ownerDocument === 'undefined') {
     return;
   }
 
   if (hoverCount === 0) {
     if (typeof PointerEvent !== 'undefined') {
-      document.addEventListener('pointerup', handleGlobalPointerEvent);
+      ownerDocument.addEventListener('pointerup', handleGlobalPointerEvent);
     } else if (process.env.NODE_ENV === 'test') {
-      document.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
+      ownerDocument.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
     }
   }
 
@@ -77,9 +78,9 @@ function setupGlobalTouchEvents() {
     }
 
     if (typeof PointerEvent !== 'undefined') {
-      document.removeEventListener('pointerup', handleGlobalPointerEvent);
+      ownerDocument.removeEventListener('pointerup', handleGlobalPointerEvent);
     } else if (process.env.NODE_ENV === 'test') {
-      document.removeEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
+      ownerDocument.removeEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
     }
   };
 }

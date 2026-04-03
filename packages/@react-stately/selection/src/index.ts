@@ -14,4 +14,5 @@ export {useMultipleSelectionState} from 'react-stately/useMultipleSelectionState
 
 export {SelectionManager} from 'react-stately/private/selection/SelectionManager';
 export type {MultipleSelectionStateProps} from 'react-stately/useMultipleSelectionState';
-export type {FocusState, SingleSelectionState, MultipleSelectionState, MultipleSelectionManager} from 'react-stately/private/selection/types';
+export type {FocusState, MultipleSelectionState, MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';
+export type {SingleSelectionState} from 'react-stately/useSingleSelectListState';

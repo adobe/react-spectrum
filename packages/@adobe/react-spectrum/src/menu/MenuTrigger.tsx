@@ -14,7 +14,7 @@ import {Alignment, DOMRef} from '@react-types/shared';
 import {classNames} from '../utils/classNames';
 import {MenuContext} from './context';
 import {MenuTriggerProps, useMenuTriggerState} from 'react-stately/useMenuTriggerState';
-import {Placement} from 'react-aria/private/overlays/useOverlayPosition';
+import {Placement} from 'react-aria/useOverlayPosition';
 import {Popover} from '../overlays/Popover';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import React, {forwardRef, Fragment, ReactElement, useRef} from 'react';
@@ -22,7 +22,7 @@ import {SlotProvider} from '../utils/Slots';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Tray} from '../overlays/Tray';
 import {unwrapDOMRef, useDOMRef} from '../utils/useDOMRef';
-import {useInteractOutside} from 'react-aria/private/interactions/useInteractOutside';
+import {useInteractOutside} from 'react-aria/useInteractOutside';
 import {useIsMobileDevice} from '../utils/useIsMobileDevice';
 import {useMenuTrigger} from 'react-aria/useMenu';
 

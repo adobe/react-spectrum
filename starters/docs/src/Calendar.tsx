@@ -3,16 +3,14 @@ import {
   Calendar as AriaCalendar,
   CalendarCell as AriaCalendarCell,
   CalendarGrid as AriaCalendarGrid,
-  CalendarProps as AriaCalendarProps,
-  DateValue,
-  CalendarCellProps,
-  CalendarGridProps
-} from 'react-aria-components';
+  type CalendarProps as AriaCalendarProps,
+  type DateValue,
+  type CalendarCellProps,
+  type CalendarGridProps,
+} from 'react-aria-components/Calendar';
 import {Heading, Text} from './Content';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
-
 import {Button} from './Button';
-
 import './Calendar.css';
 
 export interface CalendarProps<T extends DateValue>

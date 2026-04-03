@@ -1,5 +1,4 @@
 import {Switch} from '../src/Switch';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Switch> = {

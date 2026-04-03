@@ -238,7 +238,7 @@ Rows can be nested to display hierarchical data. Use the `treeColumn` prop to de
 ```tsx render
 "use client";
 import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
-import {Collection, type Key} from 'react-aria-components';
+import {Collection, type Key} from 'react-aria-components/Collection';
 import {useState} from 'react';
 
 /*- begin collapse -*/
@@ -300,7 +300,8 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 
 ```tsx render
 "use client";
-import {Collection, useAsyncList} from 'react-aria-components';
+import {Collection} from 'react-aria-components/Collection';
+import {useAsyncList} from 'react-aria-components/useAsyncList';
 import {Table, TableHeader, Column, Row, TableBody, Cell, TableLoadMoreItem} from 'vanilla-starter/Table';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
 
@@ -449,7 +450,7 @@ Use the `selectionMode` prop to enable single or multiple selection. The selecte
 
 ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
-import type {Selection} from 'react-aria-components';
+import type {Selection} from 'react-aria-components/Table';
 import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
 import {useState} from 'react';
 
@@ -508,7 +509,7 @@ Set the `allowsSorting` prop on a `<Column>` to make it sortable. When the colum
 
 ```tsx render
 "use client";
-import {type SortDescriptor} from 'react-aria-components';
+import {type SortDescriptor} from 'react-aria-components/Table';
 import {Table, TableHeader, Column, TableBody, Row, Cell} from 'vanilla-starter/Table';
 import {useState} from 'react';
 
@@ -574,7 +575,7 @@ Wrap the `<Table>` with a `<ResizableTableContainer>`, and add a `<ColumnResizer
 ```tsx render
 "use client";
 import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
-import {ResizableTableContainer} from 'react-aria-components';
+import {ResizableTableContainer} from 'react-aria-components/Table';
 
 ///- begin collapse -///
 const rows = [
@@ -614,7 +615,7 @@ The ResizableTableContainer's `onResize` event is called when a column resizer i
 ```tsx render
 "use client";
 import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
-import {ResizableTableContainer} from 'react-aria-components';
+import {ResizableTableContainer} from 'react-aria-components/Table';
 import {useSyncExternalStore} from 'react';
 
 ///- begin collapse -///
@@ -718,7 +719,9 @@ Table supports drag and drop interactions when the `dragAndDropHooks` prop is pr
 ```tsx render
 "use client";
 import {Table, TableHeader, TableBody, Column, Row, Cell} from 'vanilla-starter/Table';
-import {useDragAndDrop, useTreeData, Collection} from 'react-aria-components';
+import {useDragAndDrop} from 'react-aria-components/useDragAndDrop';
+import {useTreeData} from 'react-aria-components/useTreeData';
+import {Collection} from 'react-aria-components/Collection';
 
 function ReorderableTable() {
   let tree = useTreeData({

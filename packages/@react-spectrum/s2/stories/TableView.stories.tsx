@@ -25,7 +25,7 @@ import {
   TableViewDragPreview,
   TableViewProps
 } from '../src/TableView';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {Content, Heading, Text} from '../src/Content';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';

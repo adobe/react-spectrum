@@ -56,10 +56,6 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
     ) {
 
       workspace.set('dependencies.@swc/helpers', '^0.5.0');
-      workspace.set('dependencies.@adobe/spectrum-css-temp');
-      if (workspace.ident.startsWith('@react-spectrum') && !workspace.ident.endsWith('/utils') && !workspace.ident.endsWith('/mcp')) {
-        workspace.set('devDependencies.@adobe/spectrum-css-temp', '3.0.0-alpha.1');
-      }
       // these should not be in dependencies, but should be in dev or peer
       // can't change the error message, but the package knows if it even needs it
       if (!workspace.ident.startsWith('@react-spectrum/test-utils-internal')) {
@@ -230,16 +226,6 @@ function enforceExports({Yarn}) {
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
     if (isPublishing(workspace) && workspace.manifest.rsp?.type !== 'cli') {
-      if (name !== '@adobe/react-spectrum' && name !== 'react-aria' && name !== 'react-stately' && name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components') {
-        if (!workspace.manifest.files || (!workspace.manifest.files.includes('dist') && !workspace.manifest.files.includes('src'))) {
-          workspace.set('files', [...workspace.manifest.files || [], 'dist', 'src']);
-        } else if (!workspace.manifest.files.includes('dist')) {
-          workspace.set('files', [...workspace.manifest.files, 'dist']);
-        } else if (!workspace.manifest.files.includes('src')) {
-          workspace.set('files', [...workspace.manifest.files, 'src']);
-        }
-      }
-
       // better to do in enforceCSS? it doesn't match the set of packages handled
       if (name !== 'react-aria-components') {
         if (name.includes('@react-spectrum') || name.includes('@adobe/react-spectrum') || name.includes('@react-aria/visually-hidden')) {

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {CollectionBase, DropTargetDelegate, GlobalDOMAttributes, ItemDropTarget, Key, LayoutDelegate, RefObject} from '@react-types/shared';
-import {createBranchComponent} from 'react-aria/private/collections/CollectionBuilder';
+import {createBranchComponent} from 'react-aria/CollectionBuilder';
 import {
   Collection as ICollection,
   Node,

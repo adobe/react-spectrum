@@ -1,4 +1,4 @@
-import {Illustration, IllustrationPropsWithoutChildren} from "@react-spectrum/icon";
+import {Illustration, IllustrationPropsWithoutChildren} from '@adobe/react-spectrum/private/icon/Illustration';
 import React, {JSX} from "react";
 
 export default function NoSearchResults(props: IllustrationPropsWithoutChildren): JSX.Element {

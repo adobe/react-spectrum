@@ -56,7 +56,7 @@ export const description = 'Displays a list of options and allows a user to sele
 
 ```tsx render
 "use client";
-import {ListBox, ListBoxItem} from 'react-aria-components';
+import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 
 function Example() {
   let options = [
@@ -87,7 +87,7 @@ Use the `"label"` and `"description"` slots to separate primary and secondary co
 
 ```tsx render
 "use client";
-import {ListBox, ListBoxItem, Text} from 'react-aria-components';
+import {ListBox, ListBoxItem, Text} from 'vanilla-starter/ListBox';
 
 <ListBox aria-label="Permissions" selectionMode="single">
   <ListBoxItem textValue="Read">
@@ -118,7 +118,7 @@ Use the `<ListBoxSection>` component to group options. A `<Header>` element may 
 
 ```tsx render
 "use client";
-import {ListBox, ListBoxItem, ListBoxSection, Header} from 'react-aria-components';
+import {ListBox, ListBoxItem, ListBoxSection, Header} from 'vanilla-starter/ListBox';
 
 <ListBox aria-label="Sandwich contents" selectionMode="multiple">
   {/*- begin highlight -*/}
@@ -152,7 +152,8 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 "use client";
 import {ListBox, ListBoxItem, ListBoxLoadMoreItem} from 'vanilla-starter/ListBox';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
-import {Collection, useAsyncList} from 'react-aria-components';
+import {Collection} from 'react-aria-components/Collection';
+import {useAsyncList} from 'react-aria-components/useAsyncList';
 
 interface Character {
   name: string
@@ -202,7 +203,7 @@ By default, link items in a ListBox are not selectable, and only perform navigat
 
 ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} wide
 "use client";
-import {ListBox, ListBoxItem} from 'react-aria-components';
+import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 
 <ListBox aria-label="Links" selectionMode="multiple">
   {/*- begin highlight -*/}
@@ -230,7 +231,7 @@ By default, links are rendered as an `<a>` element. Use the `render` prop to int
 
 ```tsx render hideImports
 "use client";
-import {ListBox} from 'react-aria-components';
+import {ListBox} from 'vanilla-starter/ListBox';
 
 <ListBox
   aria-label="Search results"
@@ -245,8 +246,8 @@ Use the `selectionMode` prop to enable single or multiple selection. The selecte
 
 ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
-import type {Selection} from 'react-aria-components';
-import {ListBox, ListBoxItem} from 'react-aria-components';
+import type {Selection} from 'react-aria-components/ListBox';
+import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 import {useState} from 'react';
 
 function Example(props) {
@@ -282,7 +283,7 @@ Use the `layout` and `orientation` props to create horizontal and vertical stack
 
 ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['layout', 'orientation']} initialProps={{layout: 'grid'}} wide
 "use client";
-import {ListBox, ListBoxItem, Text} from 'react-aria-components';
+import {ListBox, ListBoxItem, Text} from 'vanilla-starter/ListBox';
 
 ///- begin collapse -///
 let planets = [
@@ -351,7 +352,9 @@ ListBox supports drag and drop interactions when the `dragAndDropHooks` prop is 
 
 ```tsx render
 "use client";
-import {ListBox, ListBoxItem, useDragAndDrop, useListData} from 'react-aria-components';
+import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+import {useDragAndDrop} from 'react-aria-components/useDragAndDrop';
+import {useListData} from 'react-aria-components/useListData';
 
 function Example() {
   let list = useListData({

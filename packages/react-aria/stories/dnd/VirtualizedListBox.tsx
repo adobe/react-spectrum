@@ -21,7 +21,7 @@ import {FocusRing} from '../../src/focus/FocusRing';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Item} from 'react-stately/Item';
 import {ListKeyboardDelegate} from '../../src/selection/ListKeyboardDelegate';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {ListState, useListState} from 'react-stately/useListState';
 import {mergeProps} from '../../src/utils/mergeProps';
 import React, {JSX, useMemo} from 'react';

@@ -93,7 +93,7 @@ export {pressScale} from '../src/pressScale';
 export {mergeStyles} from '../style/runtime';
 
 export {Autocomplete} from 'react-aria-components/Autocomplete';
-export {Collection} from 'react-aria/private/collections/CollectionBuilder';
+export {Collection} from 'react-aria/Collection';
 export {FileTrigger} from 'react-aria-components/FileTrigger';
 export {parseColor, getColorChannels} from 'react-stately/Color';
 export {useLocale} from 'react-aria/I18nProvider';
@@ -179,11 +179,11 @@ export type {DateValue, DateRange} from 'react-aria-components/RangeCalendar';
 export type {TimeValue} from 'react-aria-components/TimeField';
 export type {FileTriggerProps} from 'react-aria-components/FileTrigger';
 export type {TooltipTriggerComponentProps as TooltipTriggerProps} from 'react-aria-components/Tooltip';
-export type {SortDescriptor, Key, Selection, RouterConfig, PressEvent} from '@react-types/shared';
+export type {SortDescriptor, SortDirection, Key, Selection, RouterConfig, PressEvent, RangeValue} from '@react-types/shared';
 export type {ColorSpace, ColorChannel, Color, ColorFormat, ColorAxes, ColorChannelRange} from 'react-stately/Color';
-export type {ListData} from 'react-stately/useListData';
-export type {TreeData} from 'react-stately/useTreeData';
-export type {AsyncListData} from 'react-stately/useAsyncList';
+export type {ListOptions, ListData} from 'react-stately/useListData';
+export type {TreeOptions, TreeData} from 'react-stately/useTreeData';
+export type {AsyncListOptions, AsyncListData, AsyncListLoadFunction, AsyncListLoadOptions, AsyncListStateUpdate} from 'react-stately/useAsyncList';
 
 export type {
   StylesProp,

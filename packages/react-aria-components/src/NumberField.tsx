@@ -28,7 +28,7 @@ import {
   useSlottedContext
 } from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes, InputDOMProps} from '@react-types/shared';
 import {GroupContext} from './Group';

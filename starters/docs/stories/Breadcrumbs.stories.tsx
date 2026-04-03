@@ -1,6 +1,5 @@
 import {Breadcrumbs, Breadcrumb} from '../src/Breadcrumbs';
 import {Link} from '../src/Link';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Breadcrumbs> = {

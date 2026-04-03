@@ -17,7 +17,7 @@ import {ActionButtonGroup} from '../src/ActionButtonGroup';
 import {ActionMenu} from '../src/ActionMenu';
 import {Breadcrumb, Breadcrumbs} from '../src/Breadcrumbs';
 import {categorizeArgTypes} from './utils';
-import {chain} from 'react-aria/private/utils/chain';
+import {chain} from 'react-aria/chain';
 import {Content, Heading, Text} from '../src/Content';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';

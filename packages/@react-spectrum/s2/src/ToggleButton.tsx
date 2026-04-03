@@ -12,7 +12,7 @@
 
 import {ActionButtonStyleProps, btnStyles} from './ActionButton';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/utils';
+import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {fontRelative, style} from '../style' with {type: 'macro'};

@@ -1,6 +1,8 @@
 'use client';
 import React from 'react';
-import { Toolbar as RACToolbar, ToggleButtonGroupContext, ToolbarProps, composeRenderProps } from 'react-aria-components';
+import { Toolbar as RACToolbar, type ToolbarProps } from 'react-aria-components/Toolbar';
+import { ToggleButtonGroupContext } from 'react-aria-components/ToggleButtonGroup';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import { tv } from 'tailwind-variants';
 
 const styles = tv({

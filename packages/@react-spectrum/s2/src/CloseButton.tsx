@@ -12,7 +12,7 @@
 
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {Button, ButtonProps} from 'react-aria-components/Button';
-import {ContextValue} from 'react-aria-components/utils';
+import {ContextValue} from 'react-aria-components/slots';
 import {controlSize, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef} from 'react';
 import CrossIcon from '../ui-icons/Cross';

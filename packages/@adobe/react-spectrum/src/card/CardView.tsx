@@ -21,7 +21,7 @@ import {mergeProps} from 'react-aria/mergeProps';
 import {ProgressCircle} from '../progress/ProgressCircle';
 // @ts-ignore
 import React, {ReactElement, ReactNode, useCallback, useMemo, useRef} from 'react';
-import {ReusableView} from 'react-stately/private/virtualizer/ReusableView';
+import {ReusableView} from 'react-stately/useVirtualizerState';
 import {SpectrumCardViewProps} from './types';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useCollator} from 'react-aria/useCollator';

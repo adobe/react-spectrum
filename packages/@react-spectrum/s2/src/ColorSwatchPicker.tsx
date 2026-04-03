@@ -17,7 +17,7 @@ import {
 } from 'react-aria-components/ColorSwatchPicker';
 
 import {ColorSwatchProps, InternalColorSwatchContext} from './ColorSwatch';
-import {ContextValue, SlotProps} from 'react-aria-components/utils';
+import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactElement, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, ValueBase} from '@react-types/shared';
 import {focusRing, space, style} from '../style' with {type: 'macro'};

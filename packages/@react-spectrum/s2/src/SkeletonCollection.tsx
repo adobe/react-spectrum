@@ -11,8 +11,7 @@
  */
 
 import {CollectionNode} from 'react-aria/private/collections/BaseCollection';
-
-import {createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
+import {createLeafComponent} from 'react-aria/CollectionBuilder';
 import {ReactNode} from 'react';
 import {Skeleton} from './Skeleton';
 

@@ -13,7 +13,7 @@
 import {action} from 'storybook/actions';
 import {ActionButton} from '../../src/button/ActionButton';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../../src/table/TableView';
-import {chain} from 'react-aria/private/utils/chain';
+import {chain} from 'react-aria/chain';
 import defaultConfig, {columns, EmptyStateTable, TableStory} from './Table.stories';
 import {enableTableNestedRows} from 'react-stately/private/flags/flags';
 import {Flex} from '../../src/layout/Flex';

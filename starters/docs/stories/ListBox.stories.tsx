@@ -1,6 +1,5 @@
 import {ListBox, ListBoxItem, ListBoxSection} from '../src/ListBox';
-import {Header} from 'react-aria-components';
-
+import { Header } from 'react-aria-components/Header';
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ListBox> = {

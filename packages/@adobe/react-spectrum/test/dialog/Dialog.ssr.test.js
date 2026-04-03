@@ -17,7 +17,7 @@ describe('Dialog SSR', function () {
     await testSSR(__filename, `
       import {Dialog} from '../../exports/index.ts';
 
-      <Dialog>
+      <Dialog aria-label="The label">
         contents
       </Dialog>
     `);

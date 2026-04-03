@@ -12,10 +12,8 @@
 
 import {ButtonGroupContext} from './ButtonGroup';
 import {CloseButton} from './CloseButton';
-import {composeRenderProps, Provider} from 'react-aria-components/utils';
-
+import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContentContext, FooterContext, HeaderContext, HeadingContext} from './Content';
-
 import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {forwardRef} from 'react';
 import {ImageContext} from './Image';
@@ -25,6 +23,7 @@ import {
   Dialog as RACDialog,
   DialogProps as RACDialogProps
 } from 'react-aria-components/Dialog';
+import {Provider} from 'react-aria-components/slots';
 import {style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils';
 import {useDOMRef} from './useDOMRef';

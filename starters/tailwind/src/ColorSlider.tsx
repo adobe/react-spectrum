@@ -2,10 +2,10 @@
 import React from 'react';
 import {
   ColorSlider as AriaColorSlider,
-  ColorSliderProps as AriaColorSliderProps,
+  type ColorSliderProps as AriaColorSliderProps,
   SliderOutput,
-  SliderTrack
-} from 'react-aria-components';
+  SliderTrack,
+} from 'react-aria-components/ColorSlider';
 import { tv } from 'tailwind-variants';
 import { Label } from './Field';
 import { composeTailwindRenderProps } from './utils';

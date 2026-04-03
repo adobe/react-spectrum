@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../src/Icon';
 import ThumbsDown_L from 'illustration:./S2_lin_thumbsDown_160.svg';
 import ThumbsDown_M from 'illustration:./S2_lin_thumbsDown_96.svg';
 import ThumbsDown_S from 'illustration:./S2_lin_thumbsDown_48.svg';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function ThumbsDown(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

@@ -13,7 +13,7 @@
 import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef, Key} from '@react-types/shared';
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, DEFAULT_SLOT, Provider, SlotProps} from 'react-aria-components/utils';
+import {ContextValue, DEFAULT_SLOT, Provider, SlotProps} from 'react-aria-components/slots';
 import {control, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useRef} from 'react';
 import {IconContext} from './Icon';

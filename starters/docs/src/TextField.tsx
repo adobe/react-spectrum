@@ -2,9 +2,9 @@
 import {
   Input,
   TextField as AriaTextField,
-  TextFieldProps as AriaTextFieldProps,
-  ValidationResult
-} from 'react-aria-components';
+  type TextFieldProps as AriaTextFieldProps,
+  type ValidationResult,
+} from 'react-aria-components/TextField';
 import {Label, FieldError, Description} from './Form';
 import './TextField.css';
 

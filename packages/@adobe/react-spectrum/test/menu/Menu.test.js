@@ -584,7 +584,7 @@ describe('Menu', function () {
           <Section title="Test">
             <DialogTrigger>
               <Item>Hi</Item>
-              <Dialog>
+              <Dialog aria-label="Test dialog">
                 I'm a dialog
               </Dialog>
             </DialogTrigger>

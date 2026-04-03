@@ -1,12 +1,12 @@
 'use client';
 import {
   RadioGroup as AriaRadioGroup,
-  RadioGroupProps as AriaRadioGroupProps,
-  ValidationResult,
-  RadioProps,
+  type RadioGroupProps as AriaRadioGroupProps,
+  type ValidationResult,
+  type RadioProps,
   Radio as AriaRadio,
-  composeRenderProps
-} from 'react-aria-components';
+} from 'react-aria-components/RadioGroup';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import {Label, FieldError, Description} from './Form';
 import './RadioGroup.css';
 import './utilities.css';

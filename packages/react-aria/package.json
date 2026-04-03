@@ -33,9 +33,13 @@
   "types": "./dist/types/exports/index.d.ts",
   "source": "exports/index.ts",
   "files": [
-    "dist",
-    "i18n",
-    "*.js"
+    "*",
+    "!docs",
+    "!exports",
+    "!intl",
+    "!src",
+    "!stories",
+    "!test"
   ],
   "sideEffects": false,
   "repository": {
@@ -44,7 +48,6 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.12.0",
-    "@internationalized/message": "^3.1.8",
     "@internationalized/number": "^3.6.5",
     "@internationalized/string": "^3.2.7",
     "@react-types/shared": "^3.33.1",
@@ -86,6 +89,22 @@
       "isLibrary": true,
       "outputFormat": "commonjs",
       "includeNodeModules": false
+    },
+    "legacy-module": {
+      "source": [
+        "exports/**/*.ts"
+      ],
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false,
+      "engines": {
+        "browsers": [
+          "chrome >= 79",
+          "firefox >= 85",
+          "safari >= 13"
+        ]
+      }
     }
   }
 }

@@ -217,3 +217,16 @@ import {Menu, MenuTrigger, ContextualHelpTrigger, Item, Button, Dialog, Heading,
   </Menu>
 </MenuTrigger>
 `);
+
+test('Renames closeOnSelect to shouldCloseOnSelect and moves to Menu', `
+import {Menu, MenuTrigger, Item, Button} from '@adobe/react-spectrum';
+
+<MenuTrigger closeOnSelect>
+  <Button>Edit</Button>
+  <Menu>
+    <Item>Cut</Item>
+    <Item>Copy</Item>
+    <Item>Paste</Item>
+  </Menu>
+</MenuTrigger>
+`);

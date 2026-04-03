@@ -1,5 +1,4 @@
 import {ColorWheel} from '../src/ColorWheel';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ColorWheel> = {

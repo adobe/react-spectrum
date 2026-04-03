@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { FormProps, Form as RACForm } from 'react-aria-components';
+import { type FormProps, Form as RACForm } from 'react-aria-components/Form';
 import { twMerge } from 'tailwind-merge';
 
 export function Form(props: FormProps) {
