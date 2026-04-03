@@ -12,58 +12,60 @@
 
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, Time, toCalendarDateTime, today, ZonedDateTime} from '@internationalized/date';
 import {ContextValue} from 'react-aria-components/slots';
+import {controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, isValidElement, ReactElement, ReactNode} from 'react';
 import {DOMProps, DOMRef, DOMRefValue, RangeValue, SpectrumLabelableProps} from '@react-types/shared';
-import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {mergeStyles} from '../style/runtime';
+import {FormContext, useFormProps} from './Form';
 import {style} from '../style' with {type: 'macro'};
+import {useContext, useEffect} from 'react';
 import {useDateFormatter} from 'react-aria/useDateFormatter';
 import {useDOMRef} from './useDOMRef';
 import {useListFormatter} from 'react-aria/useListFormatter';
 import {useNumberFormatter} from 'react-aria/useNumberFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export type DateTime = Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time;
-type RangeDateTime = RangeValue<DateTime>;
-type DateTimeValue = DateTime | RangeDateTime;
 type NumberValue = number | RangeValue<number>;
-
-interface NumberValueProps<T extends NumberValue> {
+interface NumberProps<T extends NumberValue> {
   /** The value to display. */
   value: T,
   /** Formatting options for the value. */
   formatOptions?: Intl.NumberFormatOptions
 }
-interface DateValueProps<T extends DateTimeValue> {
+
+export type DateTime = Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time;
+type RangeDateTime = RangeValue<DateTime>;
+type DateTimeValue = DateTime | RangeDateTime;
+interface DateProps<T extends DateTimeValue> {
   /** The value to display. */
   value: T,
   /** Formatting options for the value. */
   formatOptions?: Intl.DateTimeFormatOptions
 }
 
-interface StringValueProps<T extends string> {
+interface StringProps<T extends string> {
   /** The value to display. */
   value: T,
   /** Formatting options for the value. */
   formatOptions?: never
 }
 
-interface StringListValueProps<T extends string[]> {
+interface StringListProps<T extends string[]> {
   /** The value to display. */
   value: T,
   /** Formatting options for the value. */
   formatOptions?: Intl.ListFormatOptions
 }
 
-interface ReactElementValueProps<T extends ReactElement> {
+interface ReactElementProps<T extends ReactElement> {
   /** The value to display. */
   value: T,
   /** Formatting options for the value. */
   formatOptions?: never
 }
 
+// TODO: Add some prop (tbd, maybe the API will be different) to add additional vertical spacing when LabeledValue is next to a Picker/TextField so that the components look aligned
 export interface LabeledValueStyleProps {
   /**
    * The size of the component.
@@ -76,37 +78,31 @@ export interface LabeledValueBaseProps extends DOMProps, StyleProps, Omit<Spectr
   label: ReactNode
 }
 type LabeledValueProps<T> =
-  T extends NumberValue ? NumberValueProps<T> :
-  T extends DateTimeValue ? DateValueProps<T> :
-  T extends string[] ? StringListValueProps<T> :
-  T extends string ? StringValueProps<T> :
-  T extends ReactElement ? ReactElementValueProps<T> :
+  T extends NumberValue ? NumberProps<T> :
+  T extends DateTimeValue ? DateProps<T> :
+  T extends string[] ? StringListProps<T> :
+  T extends string ? StringProps<T> :
+  T extends ReactElement ? ReactElementProps<T> :
   never;
 
 type SpectrumLabeledValueTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateTime> | ReactElement;
 export type SpectrumLabeledValueProps<T> = LabeledValueProps<T> & LabeledValueBaseProps & LabeledValueStyleProps;
 
-// do we really need a context for labeled value? 
-// maybe should consume field context? check how other form components do it...
-export const LabeledValueContext = createContext<ContextValue<Partial<SpectrumLabeledValueProps<SpectrumLabeledValueTypes>>, DOMRefValue<HTMLDivElement>>>(null);
-
-const labeledValueStyles = style({
-  ...field()
-}, getAllowedOverrides());
+export const LabeledValueContext = createContext<ContextValue<Partial<SpectrumLabeledValueProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 const valueStyles = style({
-  ...fieldInput()
+  ...fieldInput(),
+  display: 'flex',
+  font: controlFont()
 });
 
 /**
  * A LabeledValue displays a non-editable value with a label. It formats numbers,
  * dates, times, and lists according to the user's locale.
  */
-export const LabeledValue = /*#__PURE__*/ forwardRef(function LabeledValue<T extends SpectrumLabeledValueTypes>(
-  props: SpectrumLabeledValueProps<T>,
-  ref: DOMRef<HTMLDivElement>
-) {
+export const LabeledValue = /*#__PURE__*/ forwardRef(function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabeledValueProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props as any, ref, LabeledValueContext) as any;
+  props = useFormProps(props);
   let {
     label,
     value,
@@ -120,8 +116,18 @@ export const LabeledValue = /*#__PURE__*/ forwardRef(function LabeledValue<T ext
     styles,
     ...otherProps
   } = props;
+  let formContext = useContext(FormContext);
 
   let domRef = useDOMRef(ref);
+  useEffect(() => {
+    if (
+      domRef?.current &&
+      domRef.current.querySelectorAll('input, [contenteditable], textarea')
+        .length > 0
+    ) {
+      throw new Error('LabeledValue cannot contain an editable value.');
+    }
+  }, [domRef]);
 
   let children: ReactNode;
 
@@ -143,21 +149,23 @@ export const LabeledValue = /*#__PURE__*/ forwardRef(function LabeledValue<T ext
 
   return (
     <div
-      {...filterDOMProps(otherProps as any, {labelable: true})}
+      {...filterDOMProps(otherProps)}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + mergeStyles(
-        labeledValueStyles({size, labelPosition}),
-        styles
-      )}>
+      className={UNSAFE_className + style(field(), getAllowedOverrides())({
+        isInForm: !!formContext,
+        labelPosition,
+        size
+      }, styles)} >
       <FieldLabel
+        elementType="span"
         size={size}
         labelPosition={labelPosition}
         labelAlign={labelAlign}
         contextualHelp={contextualHelp}>
         {label}
       </FieldLabel>
-      <span className={valueStyles({size})}>
+      <span className={valueStyles({size, labelPosition})}>
         {children}
       </span>
     </div>

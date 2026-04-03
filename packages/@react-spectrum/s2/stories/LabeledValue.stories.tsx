@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {Badge} from '../src/Badge';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
-import {Content, Heading, Text} from '../src/Content';
+import {Content, Heading} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
-import {Form} from '../src/Form';
 import {LabeledValue} from '../src/LabeledValue';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
-import {style} from '../style' with {type: 'macro'};
+import {StatusLight} from '../src/StatusLight';
 
 const meta: Meta<typeof LabeledValue> = {
   component: LabeledValue,
@@ -51,135 +51,113 @@ const meta: Meta<typeof LabeledValue> = {
 export default meta;
 type Story = StoryObj<typeof LabeledValue>;
 
-export const StringValue: Story = {
-  args: {
-    label: 'Name',
-    value: 'Jane Smith'
-  },
+
+export const Default: Story = {
+  args: {label: 'Name', value: 'Jane Smith'},
   name: 'String'
 };
 
-export const StringListValue: Story = {
-  render: (args) => <LabeledValue {...args} label="Pets" value={['Dogs', 'Cats', 'Fish']} />,
+export const LongText: Story = {
+  args: {label: 'Test', value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
+  name: 'Long text'
+};
+
+export const StringArray: Story = {
+  args: {label: 'Pets', value: ['Dogs', 'Cats', 'Fish']},
   name: 'String array'
 };
 
-export const NumberValue: Story = {
-  render: (args) => <LabeledValue {...args} label="Price" value={1234.56} formatOptions={{style: 'currency', currency: 'USD'}} />,
-  name: 'Number'
-};
-
-export const NumberRangeValue: Story = {
-  render: (args) => <LabeledValue {...args} label="Quantity Range" value={{start: 10, end: 50}} />,
-  name: 'RangeValue<Number>'
-};
-
-export const DateValue: Story = {
-  render: (args) => <LabeledValue {...args} label="Birthday" value={new CalendarDate(2024, 3, 15)} />,
+export const CalendarDateType: Story = {
+  args: {label: 'Birthday', value: new CalendarDate(2019, 6, 5)},
   name: 'CalendarDate'
 };
 
-export const DateRangeValue: Story = {
-  render: (args) => (
-    <LabeledValue
-      {...args}
-      label="Vacation"
-      value={{start: new CalendarDate(2024, 3, 15), end: new CalendarDate(2024, 3, 22)}} />
-  ),
-  name: 'RangeValue<CalendarDate>'
-};
-
-export const CalendarDateTimeValue: Story = {
-  render: (args) => (
-    <LabeledValue
-      {...args}
-      label="Meeting"
-      value={new CalendarDateTime(2024, 3, 15, 10, 30, 0)} />
-  ),
+export const CalendarDateTimeType: Story = {
+  args: {label: 'Meeting Time', value: new CalendarDateTime(2020, 2, 3, 12, 30, 24, 120)},
   name: 'CalendarDateTime'
 };
 
-export const CalendarDateTimeRangeValue: Story = {
-  render: (args) => (
-    <LabeledValue
-      {...args}
-      label="Event"
-      value={{start: new CalendarDateTime(2024, 3, 15, 10, 30, 0), end: new CalendarDateTime(2024, 3, 15, 12, 0, 0)}} />
-  ),
-  name: 'RangeValue<CalendarDateTime>'
+export const CalendarDateTimeTypeFormatOptions: Story = {
+  args: {label: 'Meeting Time', value: new CalendarDateTime(2020, 2, 3, 12, 30, 24, 120), formatOptions: {dateStyle: 'short', timeStyle: 'short'}},
+  name: 'CalendarDateTime with formatOptions'
 };
 
-export const ZonedDateTimeValue: Story = {
-  render: (args) => (
-    <LabeledValue
-      {...args}
-      label="Meeting Time"
-      value={new ZonedDateTime(2024, 3, 15, 'America/Los_Angeles', -28800000, 10, 30)} />
-  ),
+export const ZonedDateTimeType: Story = {
+  args: {label: 'Meeting Time', value: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000)},
   name: 'ZonedDateTime'
 };
 
-export const TimeValue: Story = {
-  render: (args) => <LabeledValue {...args} label="Start Time" value={new Time(14, 30)} />,
+export const DateType: Story = {
+  args: {label: 'Birthday', value: new Date(2000, 5, 5)},
+  name: 'Date'
+};
+
+export const TimeType: Story = {
+  args: {label: 'Start time', value: new Time(9, 45)},
   name: 'Time'
 };
 
-export const TimeRangeValue: Story = {
-  render: (args) => <LabeledValue {...args} label="Office Hours" value={{start: new Time(9, 0), end: new Time(17, 0)}} />,
+export const CalendarDateRange: Story = {
+  args: {label: 'Vacation', value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}},
+  name: 'RangeValue<CalendarDate>'
+};
+
+export const CalendarDateTimeRange: Story = {
+  args: {label: 'Sabbatical', value: {start: new CalendarDateTime(2020, 2, 3, 12, 30, 24, 120), end: new CalendarDateTime(2020, 3, 3, 12, 30, 24, 120)}},
+  name: 'RangeValue<CalendarDateTime>'
+};
+
+export const ZonedDateTimeRange: Story = {
+  args: {label: 'Event Time', value: {start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}},
+  name: 'RangeValue<ZonedDateTime>'
+};
+
+export const DateRange: Story = {
+  args: {label: 'Test', value: {start: new Date(2019, 6, 5), end: new Date(2019, 6, 10)}},
+  name: 'RangeValue<Date>'
+};
+
+export const TimeRange: Story = {
+  args: {label: 'Office Hours', value: {start: new Time(9, 45), end: new Time(10, 50)}},
   name: 'RangeValue<Time>'
 };
 
-export const SideLabelPosition: Story = {
-  args: {
-    label: 'Name',
-    value: 'Jane Smith',
-    labelPosition: 'side'
+export const Number: Story = {
+  args: {label: 'Quantity', value: 10},
+  name: 'Number'
+};
+
+export const NumberRange: Story = {
+  args: {label: 'Normal Range', value: {start: 10, end: 20}},
+  name: 'RangeValue<Number>'
+};
+
+export const CustomComponents: Story = {
+  render: (args) => {
+    return (
+      <div style={{display: 'flex', gap: 36, padding: 8, justifyContent: 'center', flexDirection: 'column'}}>
+        <LabeledValue {...args as any} value={<Badge variant="positive">Licensed</Badge>} />
+        <LabeledValue {...args as any} value={<Link href="https://www.adobe.com">Adobe</Link>} />
+        <LabeledValue {...args as any} value={<StatusLight variant="positive">Ready</StatusLight>} />
+      </div>
+    );
   },
-  name: 'Label position side'
+  args: {
+    label: 'Test'
+  },
+  name: 'Custom components'
 };
 
 export const WithContextualHelp: Story = {
-  render: (args) => (
-    <LabeledValue
-      {...args}
-      label="Account Owner"
-      value="Jane Smith"
-      contextualHelp={
-        <ContextualHelp>
-          <Heading>About this field</Heading>
-          <Content>
-            <Text>This field displays the account owner's full legal name.</Text>
-          </Content>
-        </ContextualHelp>
-      } />
-  ),
+  args: {
+    label: 'Test',
+    value: 25,
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )
+  },
   name: 'Contextual help'
-};
-
-export const CustomComponent: Story = {
-  render: (args) => (
-    <LabeledValue
-      {...args}
-      label="Website"
-      value={<Link href="https://www.adobe.com">Adobe</Link>} />
-  ),
-  name: 'Custom component'
-};
-
-export const CustomWidth: Story = {
-  render: (args) => (
-    <LabeledValue {...args} label="Name" value="Jane Smith" styles={style({width: 384})} />
-  ),
-  name: 'Custom width',
-  parameters: {docs: {disable: true}}
-};
-
-export const InForm: Story = {
-  render: (args) => (
-    <Form>
-      <LabeledValue {...args} label="Name" value="Jane Smith" />
-    </Form>
-  ),
-  name: 'In form',
-  parameters: {docs: {disable: true}}
 };
