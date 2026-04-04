@@ -17,14 +17,14 @@ import {FieldError} from '../src/FieldError';
 import {Label} from '../src/Label';
 import {Modal} from '../src/Modal';
 import {Radio, RadioButton, RadioContext, RadioField, RadioFieldContext, RadioGroup, RadioGroupContext} from '../src/RadioGroup';
-import React from 'react';
+import React, {forwardRef} from 'react';
 import {Text} from '../src/Text';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
-function RadioFieldItem(props) {
+const RadioFieldItem = forwardRef(function RadioFieldItem(props, ref) {
   return (
-    <RadioField {...props}>
+    <RadioField {...props} ref={ref}>
       <RadioButton
         className={props.buttonClassName}
         onHoverStart={props.onHoverStart}
@@ -36,7 +36,7 @@ function RadioFieldItem(props) {
       <FieldError />
     </RadioField>
   );
-}
+});
 
 describe.each(['RadioGroup', 'RadioField'])('%s', (comp) => {
   let user;

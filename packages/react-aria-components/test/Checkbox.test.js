@@ -14,13 +14,13 @@ import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Checkbox as AriaCheckbox, CheckboxButton, CheckboxContext, CheckboxField, CheckboxFieldContext} from '../src/Checkbox';
 import {FieldError} from '../src/FieldError';
 import {Form} from '../src/Form';
-import React from 'react';
+import React, {forwardRef} from 'react';
 import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
-function CheckboxExample(props) {
+const CheckboxExample = forwardRef(function CheckboxExample(props, ref) {
   return (
-    <CheckboxField {...props}>
+    <CheckboxField {...props} ref={ref}>
       <CheckboxButton
         className={props.buttonClassName}
         onHoverStart={props.onHoverStart}
@@ -32,11 +32,11 @@ function CheckboxExample(props) {
       <FieldError />
     </CheckboxField>
   );
-}
+});
 
-function CheckboxLegacy(props) {
-  return <AriaCheckbox {...props} className={props.className || props.buttonClassName} />;
-}
+const CheckboxLegacy = forwardRef(function CheckboxLegacy(props, ref) {
+  return <AriaCheckbox {...props} ref={ref} className={props.className || props.buttonClassName} />;
+});
 
 describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
   let user;

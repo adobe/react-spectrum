@@ -14,13 +14,13 @@ import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Switch as AriaSwitch, SwitchButton, SwitchContext, SwitchField, SwitchFieldContext} from '../src/Switch';
 import {FieldError} from '../src/FieldError';
 import {Form} from '../src/Form';
-import React from 'react';
+import React, {forwardRef} from 'react';
 import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
-function SwitchExample(props) {
+const SwitchExample = forwardRef(function SwitchExample(props, ref) {
   return (
-    <SwitchField {...props}>
+    <SwitchField {...props} ref={ref}>
       <SwitchButton
         className={props.buttonClassName}
         onHoverStart={props.onHoverStart}
@@ -32,11 +32,11 @@ function SwitchExample(props) {
       <FieldError />
     </SwitchField>
   );
-}
+});
 
-function SwitchLegacy(props) {
-  return <AriaSwitch {...props} className={props.className || props.buttonClassName} />;
-}
+const SwitchLegacy = forwardRef(function SwitchLegacy(props, ref) {
+  return <AriaSwitch {...props} ref={ref} className={props.className || props.buttonClassName} />;
+});
 
 describe.each(['Switch', 'SwitchField'])('%s', (comp) => {
   let user;
