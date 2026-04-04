@@ -10,46 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, FocusableDOMProps, FocusableProps, InputBase, InputDOMProps, RefObject} from '@react-types/shared';
-import {InputHTMLAttributes, LabelHTMLAttributes, ReactNode} from 'react';
-import {ToggleState} from 'react-stately/useToggleState';
-import {useToggle} from '../toggle/useToggle';
+import {AriaToggleProps, useToggle} from '../toggle/useToggle';
+import {DOMAttributes, InputDOMProps, RefObject, ValidationResult} from '@react-types/shared';
+import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
+import {ToggleProps, ToggleState} from 'react-stately/useToggleState';
 
-export interface SwitchProps extends InputBase, FocusableProps {
-  /**
-   * The content to render as the Switch's label.
-   */
-  children?: ReactNode,
-  /**
-   * Whether the Switch should be selected (uncontrolled).
-   */
-  defaultSelected?: boolean,
-  /**
-   * Whether the Switch should be selected (controlled).
-   */
-  isSelected?: boolean,
-  /**
-   * Handler that is called when the Switch's selection state changes.
-   */
-  onChange?: (isSelected: boolean) => void,
-  /**
-   * The value of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefvalue).
-   */
-  value?: string
-}
+export interface SwitchProps extends ToggleProps {}
 
-export interface AriaSwitchProps extends SwitchProps, FocusableDOMProps, InputDOMProps, AriaLabelingProps {
+export interface AriaSwitchProps extends SwitchProps, InputDOMProps, AriaToggleProps {
   /**
    * Identifies the element (or elements) whose contents or presence are controlled by the current element.
    */
   'aria-controls'?: string
 }
 
-export interface SwitchAria {
+export interface SwitchAria extends ValidationResult {
   /** Props for the label wrapper element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Props for the switch description element, if any. */
+  descriptionProps: DOMAttributes,
+  /** Props for the switch error message element, if any. */
+  errorMessageProps: DOMAttributes,
   /** Whether the switch is selected. */
   isSelected: boolean,
   /** Whether the switch is in a pressed state. */
@@ -68,7 +51,7 @@ export interface SwitchAria {
  * @param ref - Ref to the HTML input element.
  */
 export function useSwitch(props: AriaSwitchProps, state: ToggleState, ref: RefObject<HTMLInputElement | null>): SwitchAria {
-  let {labelProps, inputProps, isSelected, isPressed, isDisabled, isReadOnly} = useToggle(props, state, ref);
+  let {labelProps, inputProps, isSelected, ...states} = useToggle(props, state, ref);
 
   return {
     labelProps,
@@ -78,8 +61,6 @@ export function useSwitch(props: AriaSwitchProps, state: ToggleState, ref: RefOb
       checked: isSelected
     },
     isSelected,
-    isPressed,
-    isDisabled,
-    isReadOnly
+    ...states
   };
 }

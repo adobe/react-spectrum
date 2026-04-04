@@ -11,7 +11,6 @@
  */
 
 import {Switch as AriaSwitch, SwitchProps as AriaSwitchProps, SwitchRenderProps} from 'react-aria-components/Switch';
-
 import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import {ContextValue} from 'react-aria-components/slots';
@@ -43,7 +42,7 @@ export interface SwitchProps extends Omit<AriaSwitchProps, 'className' | 'style'
   children?: ReactNode
 }
 
-export const SwitchContext = createContext<ContextValue<Partial<SwitchProps>, FocusableRefValue<HTMLLabelElement>>>(null);
+export const SwitchContext = createContext<ContextValue<Partial<SwitchProps>, FocusableRefValue<HTMLInputElement, HTMLLabelElement>>>(null);
 
 const wrapper = style({
   display: 'flex',
@@ -156,7 +155,7 @@ const transformStyle = ({isSelected, direction}: SwitchRenderProps & {direction:
  * Switches allow users to turn an individual option on or off.
  * They are usually used to activate or deactivate a specific setting.
  */
-export const Switch = /*#__PURE__*/ forwardRef(function Switch(props: SwitchProps, ref: FocusableRef<HTMLLabelElement>) {
+export const Switch = /*#__PURE__*/ forwardRef(function Switch(props: SwitchProps, ref: FocusableRef<HTMLInputElement, HTMLLabelElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SwitchContext);
   let {children, UNSAFE_className = '', UNSAFE_style} = props;
   let inputRef = useRef<HTMLInputElement | null>(null);

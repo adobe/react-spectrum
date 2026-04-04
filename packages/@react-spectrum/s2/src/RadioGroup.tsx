@@ -144,7 +144,7 @@ export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(props: Ra
   );
 });
 
-export interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' | 'render' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
+export interface RadioProps extends Omit<AriaRadioProps, 'description' | 'className' | 'style' | 'render' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The label for the element.
    */
@@ -227,7 +227,7 @@ const circle = style<RenderProps>({
  * Radio buttons allow users to select a single option from a list of mutually exclusive options.
  * All possible options are exposed up front for users to compare.
  */
-export const Radio = /*#__PURE__*/ forwardRef(function Radio(props: RadioProps, ref: FocusableRef<HTMLLabelElement>) {
+export const Radio = /*#__PURE__*/ forwardRef(function Radio(props: RadioProps, ref: FocusableRef<HTMLInputElement, HTMLLabelElement>) {
   let {children, UNSAFE_className = '', UNSAFE_style} = props;
   let circleRef = useRef(null);
   let inputRef = useRef<HTMLInputElement | null>(null);

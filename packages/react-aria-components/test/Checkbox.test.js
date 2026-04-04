@@ -10,52 +10,79 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox, CheckboxContext} from '../src/Checkbox';
-import {pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {Checkbox as AriaCheckbox, CheckboxButton, CheckboxContext, CheckboxField, CheckboxFieldContext} from '../src/Checkbox';
+import {FieldError} from '../src/FieldError';
+import {Form} from '../src/Form';
 import React from 'react';
+import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
-describe('Checkbox', () => {
+function CheckboxExample(props) {
+  return (
+    <CheckboxField {...props}>
+      <CheckboxButton
+        className={props.buttonClassName}
+        onHoverStart={props.onHoverStart}
+        onHoverEnd={props.onHoverEnd}
+        onHoverChange={props.onHoverChange}>
+        {props.children}
+      </CheckboxButton>
+      {props.description && <Text slot="description">{props.description}</Text>}
+      <FieldError />
+    </CheckboxField>
+  );
+}
+
+function CheckboxLegacy(props) {
+  return <AriaCheckbox {...props} className={props.className || props.buttonClassName} />;
+}
+
+describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
+  let Checkbox = comp === 'CheckboxField' ? CheckboxExample : CheckboxLegacy;
+  let findRoot = el => comp === 'CheckboxField' ? el.closest('label').parentElement : el.closest('label');
+
   it('should render a checkbox with default class', () => {
     let {getByRole} = render(<Checkbox>Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
-    expect(checkbox).toHaveAttribute('class', 'react-aria-Checkbox');
+    expect(findRoot(checkbox)).toHaveAttribute('class', `react-aria-${comp}`);
   });
 
   it('should render a checkbox with custom class', () => {
     let {getByRole} = render(<Checkbox className="test">Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
-    expect(checkbox).toHaveAttribute('class', 'test');
+    expect(findRoot(checkbox)).toHaveAttribute('class', 'test');
   });
 
   it('should support DOM props', () => {
     let {getByRole} =  render(<Checkbox data-foo="bar">Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
-    expect(checkbox).toHaveAttribute('data-foo', 'bar');
+    expect(findRoot(checkbox)).toHaveAttribute('data-foo', 'bar');
     expect(getByRole('checkbox')).not.toHaveAttribute('data-foo', 'bar');
   });
 
   it('should support custom render function', () => {
     // eslint-disable-next-line jsx-a11y/label-has-associated-control
-    let {getByRole} = render(<Checkbox render={props => <label {...props} data-custom="bar" />}>Test</Checkbox>);
+    let {getByRole} = render(<Checkbox render={props => comp === 'CheckboxField' ? <div {...props} data-custom="bar" /> : <label {...props} data-custom="bar" />}>Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
-    expect(checkbox).toHaveAttribute('data-custom', 'bar');
+    expect(findRoot(checkbox)).toHaveAttribute('data-custom', 'bar');
   });
 
   it('should support slot', () => {
+    let Context = comp === 'CheckboxField' ? CheckboxFieldContext : CheckboxContext;
     let {getByRole} = render(
-      <CheckboxContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+      <Context.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
         <Checkbox slot="test">Test</Checkbox>
-      </CheckboxContext.Provider>
+      </Context.Provider>
     );
 
     let checkbox = getByRole('checkbox');
-    expect(checkbox.closest('label')).toHaveAttribute('slot', 'test');
+    expect(findRoot(checkbox.closest('label'))).toHaveAttribute('slot', 'test');
     expect(checkbox).toHaveAttribute('aria-label', 'test');
   });
 
@@ -63,7 +90,7 @@ describe('Checkbox', () => {
     let hoverStartSpy = jest.fn();
     let hoverChangeSpy = jest.fn();
     let hoverEndSpy = jest.fn();
-    let {getByRole} = render(<Checkbox className={({isHovered}) => isHovered ? 'hover' : ''} onHoverStart={hoverStartSpy} onHoverChange={hoverChangeSpy} onHoverEnd={hoverEndSpy}>Test</Checkbox>);
+    let {getByRole} = render(<Checkbox buttonClassName={({isHovered}) => isHovered ? 'hover' : ''} onHoverStart={hoverStartSpy} onHoverChange={hoverChangeSpy} onHoverEnd={hoverEndSpy}>Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
 
     expect(checkbox).not.toHaveAttribute('data-hovered');
@@ -83,7 +110,7 @@ describe('Checkbox', () => {
   });
 
   it('should support focus ring', async () => {
-    let {getByRole} = render(<Checkbox className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</Checkbox>);
+    let {getByRole} = render(<Checkbox buttonClassName={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</Checkbox>);
     let checkbox = getByRole('checkbox');
     let label = checkbox.closest('label');
 
@@ -133,7 +160,7 @@ describe('Checkbox', () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
     let onClickCapture = jest.fn();
-    let {getByRole} = render(<Checkbox className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</Checkbox>);
+    let {getByRole} = render(<Checkbox buttonClassName={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
 
     expect(checkbox).not.toHaveAttribute('data-pressed');
@@ -155,7 +182,7 @@ describe('Checkbox', () => {
   it('should support press state with keyboard', async () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
-    let {getByRole} = render(<Checkbox className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick}>Test</Checkbox>);
+    let {getByRole} = render(<Checkbox buttonClassName={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick}>Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
 
     expect(checkbox).not.toHaveAttribute('data-pressed');
@@ -181,70 +208,99 @@ describe('Checkbox', () => {
 
     expect(checkbox).toBeDisabled();
     expect(label).toHaveAttribute('data-disabled', 'true');
-    expect(label).toHaveClass('disabled');
+    expect(findRoot(label)).toHaveAttribute('data-disabled', 'true');
+    expect(findRoot(label)).toHaveClass('disabled');
   });
 
   it('should support selected state', async () => {
     let onChange = jest.fn();
-    let {getByRole} = render(<Checkbox onChange={onChange} className={({isSelected}) => isSelected ? 'selected' : ''}>Test</Checkbox>);
+    let {getByRole} = render(<Checkbox onChange={onChange} buttonClassName={({isSelected}) => isSelected ? 'selected' : ''}>Test</Checkbox>);
     let checkbox = getByRole('checkbox');
     let label = checkbox.closest('label');
 
     expect(checkbox).not.toBeChecked();
     expect(label).not.toHaveAttribute('data-selected');
+    expect(findRoot(label)).not.toHaveAttribute('data-selected');
     expect(label).not.toHaveClass('selected');
 
     await user.click(checkbox);
     expect(onChange).toHaveBeenLastCalledWith(true);
     expect(checkbox).toBeChecked();
     expect(label).toHaveAttribute('data-selected', 'true');
+    expect(findRoot(label)).toHaveAttribute('data-selected', 'true');
     expect(label).toHaveClass('selected');
 
     await user.click(checkbox);
     expect(onChange).toHaveBeenLastCalledWith(false);
     expect(checkbox).not.toBeChecked();
     expect(label).not.toHaveAttribute('data-selected');
+    expect(findRoot(label)).not.toHaveAttribute('data-selected');
     expect(label).not.toHaveClass('selected');
   });
 
   it('should support indeterminate state', () => {
-    let {getByRole} = render(<Checkbox isIndeterminate className={({isIndeterminate}) => isIndeterminate ? 'indeterminate' : ''}>Test</Checkbox>);
+    let {getByRole} = render(<Checkbox isIndeterminate buttonClassName={({isIndeterminate}) => isIndeterminate ? 'indeterminate' : ''}>Test</Checkbox>);
     let checkbox = getByRole('checkbox');
     let label = checkbox.closest('label');
 
     expect(checkbox).toHaveProperty('indeterminate', true);
     expect(label).toHaveAttribute('data-indeterminate');
+    expect(findRoot(label)).toHaveAttribute('data-indeterminate');
     expect(label).toHaveClass('indeterminate');
   });
 
   it('should support read only state', () => {
-    let {getByRole} = render(<Checkbox isReadOnly className={({isReadOnly}) => isReadOnly ? 'readonly' : ''}>Test</Checkbox>);
+    let {getByRole} = render(<Checkbox isReadOnly buttonClassName={({isReadOnly}) => isReadOnly ? 'readonly' : ''}>Test</Checkbox>);
     let checkbox = getByRole('checkbox');
     let label = checkbox.closest('label');
 
     expect(checkbox).toHaveAttribute('aria-readonly', 'true');
     expect(label).toHaveAttribute('data-readonly');
+    expect(findRoot(label)).toHaveAttribute('data-readonly');
     expect(label).toHaveClass('readonly');
   });
 
   it('should support invalid state', () => {
-    let {getByRole} = render(<Checkbox isInvalid className={({isInvalid}) => isInvalid ? 'invalid' : ''}>Test</Checkbox>);
+    let {getByRole} = render(<Checkbox isInvalid buttonClassName={({isInvalid}) => isInvalid ? 'invalid' : ''}>Test</Checkbox>);
     let checkbox = getByRole('checkbox');
     let label = checkbox.closest('label');
 
     expect(checkbox).toHaveAttribute('aria-invalid', 'true');
     expect(label).toHaveAttribute('data-invalid', 'true');
+    expect(findRoot(label)).toHaveAttribute('data-invalid', 'true');
     expect(label).toHaveClass('invalid');
   });
 
+  if (comp === 'CheckboxField') {
+    it('should support description', () => {
+      let {getByRole} = render(<Checkbox description="hello">Test</Checkbox>);
+      let checkbox = getByRole('checkbox');
+      expect(checkbox).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(checkbox.getAttribute('aria-describedby'))).toHaveTextContent('hello');
+    });
+  }
+
   it('should support required state', () => {
-    let {getByRole} = render(<Checkbox isRequired className={({isRequired}) => isRequired ? 'required' : ''}>Test</Checkbox>);
+    let {getByRole} = render(
+      <Form>
+        <Checkbox isRequired buttonClassName={({isRequired}) => isRequired ? 'required' : ''}>Test</Checkbox>
+      </Form>
+    );
     let checkbox = getByRole('checkbox');
     let label = checkbox.closest('label');
 
     expect(checkbox).toHaveAttribute('required');
     expect(label).toHaveAttribute('data-required', 'true');
     expect(label).toHaveClass('required');
+    expect(findRoot(label)).toHaveAttribute('data-required', 'true');
+
+    if (comp === 'CheckboxField') {
+      expect(checkbox).not.toHaveAttribute('aria-describedby');
+      act(() => checkbox.form.requestSubmit());
+
+      expect(checkbox).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(checkbox.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    }
   });
 
   it('should support render props', async () => {
@@ -260,7 +316,7 @@ describe('Checkbox', () => {
   it('should support refs', () => {
     let ref = React.createRef();
     let {getByRole} = render(<Checkbox ref={ref}>Test</Checkbox>);
-    expect(ref.current).toBe(getByRole('checkbox').closest('.react-aria-Checkbox'));
+    expect(ref.current).toBe(findRoot(getByRole('checkbox')));
   });
 
   it('should support input ref', () => {
@@ -272,10 +328,11 @@ describe('Checkbox', () => {
   it('should support and merge input ref on context', () => {
     let inputRef = React.createRef();
     let contextInputRef = React.createRef();
+    let Context = comp === 'CheckboxField' ? CheckboxFieldContext : CheckboxContext;
     let {getByRole} = render(
-      <CheckboxContext.Provider value={{inputRef: contextInputRef}}>
+      <Context.Provider value={{inputRef: contextInputRef}}>
         <Checkbox inputRef={inputRef}>Test</Checkbox>
-      </CheckboxContext.Provider>
+      </Context.Provider>
     );
     expect(inputRef.current).toBe(getByRole('checkbox'));
     expect(contextInputRef.current).toBe(getByRole('checkbox'));
