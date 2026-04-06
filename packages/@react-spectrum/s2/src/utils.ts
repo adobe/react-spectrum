@@ -57,5 +57,15 @@ export function isLastItem(id: Key | undefined, state: ListState<unknown> | Tabl
   if (id == null || !state) {
     return false;
   }
-  return state.collection.getLastKey() === id;
+
+  let key = state.collection.getLastKey();
+  let node = key ? state.collection.getItem(key) : null;
+
+  // sometimes the last key is a loader node! so we check we the previous nodes 
+  while (node && node.type !== 'item') {
+    let prevKey = node.prevKey;
+    node = prevKey ? state.collection.getItem(prevKey) : null;
+  }
+
+  return node ? node.key === id : false;
 }

@@ -55,7 +55,7 @@ import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
-import {isFirstItem, isNextSelected, useScale} from './utils';
+import {isFirstItem, isLastItem, isNextSelected, isPrevSelected, useScale} from './utils';
 import {Key} from '@react-types/shared';
 import {LayoutNode} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
@@ -962,9 +962,14 @@ function VisuallyHiddenSelectAllLabel() {
   );
 }
 
+
+// maybe for cell, i can add an absolute positioned div that only renders the divider (basically),
+// i can update the border width so that the divider won't lay on top of the blue border
+// updating the border width shouldn't cause any layout changes since it will be on a absolute positioned div
+
 const commonCellStyles = {
   borderColor: 'transparent',
-  borderBottomWidth: 1,
+  borderBottomWidth: 0,
   borderTopWidth: 0,
   borderXWidth: 0,
   borderStyle: 'solid',
@@ -1070,6 +1075,10 @@ const cellContent = style({
   }
 });
 
+const divider = style({
+
+});
+
 export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, Pick<ColumnProps, 'align' | 'showDivider'> {
   /** @private */
   isSticky?: boolean,
@@ -1109,6 +1118,7 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       {...otherProps}>
       {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
+          <div className={divider} />
           {hasChildItems && isTreeColumn &&
             <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
           }
@@ -1549,6 +1559,8 @@ const rowTextColor = {
 } as const;
 
 const row = style({
+  // ...focusRing(),
+  // outlineOffset: -2,
   height: 'full',
   position: 'relative',
   boxSizing: 'border-box',
@@ -1603,6 +1615,54 @@ const row = style({
   //   }
   // },
   outlineStyle: 'none',
+  // Another issue with not being able to absolute position a div inside of Row is that we 
+  // can't have rounded borders on all four edges when you hover over a row that is within a selected group.
+  // We want straight edges when the next or previous row is selected, while simultaneously wanting rounded borders
+  // so that when you hover over a row, you get the colored background with rounded border
+  '--borderBottomRadius': {
+    type: 'borderBottomStartRadius',
+    value: {
+      default: 'none',
+      selectionStyle: {
+        highlight: {
+          default: 'none',
+          isSelected: 'default',
+          isNextSelected: 'none'
+        }
+      }
+    }
+  },
+  '--borderTopRadius': {
+    type: 'borderTopStartRadius',
+    value: {
+      default: 'none',
+      selectionStyle: {
+        highlight: {
+          default: 'none',
+          isSelected: 'default',
+          isPrevSelected: 'none'
+        }
+      }
+    }
+  },
+  borderBottomRadius: {
+    selectionStyle: {
+      highlight: {
+        default: 'none',
+        isSelected: 'default',
+        isNextSelected: 'none'
+      }
+    }
+  },
+  borderTopRadius: {
+    selectionStyle: {
+      highlight: {
+        default: 'none',
+        isSelected: 'default',
+        isPrevSelected: 'none'
+      }
+    }
+  },
   borderTopWidth: 0,
   borderBottomWidth: {
     selectionStyle: {
@@ -1637,22 +1697,49 @@ const row = style({
   // In highlight mode, selected groups also have gray borders between the items in addition to having a blue outer border
   // Having a border have two colors is possible, the issue is that the browser will render a diagonal line where the two borders meet
   // Using box shadows gives us a bit more control on how the border colors appear
-  boxShadow: {
-    selectionStyle: {
-      highlight: {
-        default: '[inset 0px -1px 0px var(--borderColorGray)]',
-        isNextSelected: '[inset 0px -1px 0px var(--borderColorBlue)]',
-        isSelected: {
-          default: '[inset 0px -1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]',
-          isNextSelected: '[inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue), inset 0px -1px 0px var(--borderColorGray)]',
-          isFirstItem: {
-            default: '[inset 0px 1px 0px var(--borderColorBlue), inset 0px -1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]',
-            isNextSelected: '[inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px 0px var(--borderColorBlue), inset 0px -1px 0px var(--borderColorGray)]'
+  '--boxShadowBorder': {
+    type: 'borderColor',
+    value: {
+      selectionStyle: {
+        highlight: {
+          default: '[inset 0px 1px 0px var(--borderColorGray)]',
+          isFirstItem: '[inset 0 0 0]',
+          isPrevSelected: '[inset 0 0 0]',
+          isLastItem: '[inset 0px 1px 0px var(--borderColorGray), inset 0 -1px 0 var(--borderColorGray)]',
+          isSelected: {
+            default: '[inset 0px -1px 0px var(--borderColorBlue), inset 0px 1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]',
+            isPrevSelected: {
+              default: '[inset 0px -1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]'
+            },
+            isNextSelected: {
+              default: '[inset 0px 1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]',
+              isPrevSelected: '[inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]'
+            }
           }
         }
       }
     }
   },
+  // boxShadow: {
+  //   selectionStyle: {
+  //     highlight: {
+  //       default: '[inset 0px 1px 0px var(--borderColorGray)]',
+  //       isFirstItem: '[inset 0 0 0]',
+  //       isPrevSelected: '[inset 0 0 0]',
+  //       isLastItem: '[inset 0px 1px 0px var(--borderColorGray), inset 0 -1px 0 var(--borderColorGray)]',
+  //       isSelected: {
+  //         default: '[inset 0px -1px 0px var(--borderColorBlue), inset 0px 1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]',
+  //         isPrevSelected: {
+  //           default: '[inset 0px -1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]'
+  //         },
+  //         isNextSelected: {
+  //           default: '[inset 0px 1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]',
+  //           isPrevSelected: '[inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]'
+  //         }
+  //       }
+  //     }
+  //   }
+  // },
   '--focusIndicatorHeight': {
     type: 'top',
     value: {
@@ -1667,23 +1754,58 @@ const row = style({
 // Unlike the other rows, the first row needs to render a border on top when it is selected in highlight mode
 // Unfortunately, we can't add a position: absolute div to <Row> because it messes up the cell count
 // As a result, we rely on adding a css pseudo element when the row is selected + first item + highlight selection
-const border = css(
-  `&:after {
+// const border = css(
+//   `&:after {
+//     content: "";
+//     width: 100%;
+//     height: 100%;
+//     top: 0;
+//     inset-inline-start: 0;
+//     z-index: 3;
+//     position: absolute;
+//     box-sizing: border-box;
+//     border-top-width: 1px;
+//     border-bottom-width: 0px;
+//     border-inline-start-width: 0px;
+//     border-inline-end-width: 0px;
+//     border-style: solid;
+//     border-color: var(--borderColorBlue);
+//     }
+//   `
+// );
+
+const focusIndicator = css(
+  `&:before {
     content: "";
     width: 100%;
     height: 100%;
     top: 0;
     inset-inline-start: 0;
     z-index: 3;
+    border-radius: 6px;
     position: absolute;
-    box-sizing: border-box;
-    border-top-width: 1px;
-    border-bottom-width: 0px;
-    border-inline-start-width: 0px;
-    border-inline-end-width: 0px;
-    border-style: solid;
-    border-color: var(--borderColorBlue);
+    outline-style: solid;
+    outline-color: var(--borderColorBlue);
+    outline-width: 2px;
+    outline-offset: -2px
     }
+  `
+);
+
+const boxShadowBorder = css(
+  `&:after {
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    box-shadow: var(--boxShadowBorder);
+    inset: 0;
+    z-index: 1;
+    border-bottom-left-radius: var(--borderBottomRadius);
+    border-bottom-right-radius: var(--borderBottomRadius);
+    border-top-left-radius: var(--borderTopRadius);
+    border-top-right-radius: var(--borderTopRadius);
+  }
   `
 );
 
@@ -1701,7 +1823,9 @@ export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'is
  */
 export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T extends object>({id, columns, children, dependencies = [], ...otherProps}: RowProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {selectionBehavior, selectionMode} = useTableOptions();
-  let {selectionStyle, ...tableVisualOptions} = useContext(InternalTableContext);
+  let {selectionStyle, ...tableVisualOptions
+
+  } = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
 
   return (
@@ -1715,9 +1839,10 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         ...tableVisualOptions,
         selectionStyle,
         isNextSelected: isNextSelected(id, renderProps.state),
-        isFirstItem: isFirstItem(id, renderProps.state)
-      }) + (renderProps.isFocusVisible ? ' ' + css('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: var(--focusIndicatorHeight); margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')
-      + (isFirstItem(id, renderProps.state) && renderProps.isSelected && selectionStyle === 'highlight' ? ' ' + border : '')
+        isFirstItem: isFirstItem(id, renderProps.state),
+        isPrevSelected: isPrevSelected(id, renderProps.state),
+        isLastItem: isLastItem(id, renderProps.state)
+      }) + (renderProps.isFocusVisible ? ' ' + focusIndicator : '') + (' ' + boxShadowBorder)
       }
       {...otherProps}>
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
