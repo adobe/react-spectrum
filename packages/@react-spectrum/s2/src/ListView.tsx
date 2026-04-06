@@ -859,7 +859,7 @@ let insertionIndicatorWrapper = style({
   alignItems: 'center'
 });
 
-let insertionIndicatorBar = style<{isDropTarget?: boolean}>({
+export let insertionIndicatorBar = style<{isDropTarget?: boolean}>({
   flexGrow: 1,
   height: 2,
   backgroundColor: {
@@ -882,7 +882,7 @@ let insertionIndicatorBar = style<{isDropTarget?: boolean}>({
   forcedColorAdjust: 'none'
 });
 
-let insertionIndicatorCircle = style<{isDropTarget: boolean}>({
+export let insertionIndicatorCircle = style<{isDropTarget: boolean}>({
   width: 8,
   height: 8,
   borderRadius: 'full',

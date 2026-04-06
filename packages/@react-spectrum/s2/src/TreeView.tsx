@@ -19,8 +19,9 @@ import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {DEFAULT_SLOT, Provider, useContextProps} from 'react-aria-components/slots';
 import {DOMRef, DragItem, forwardRefType, GlobalDOMAttributes, ItemDropTarget, Key, LoadingState} from '@react-types/shared';
+import {DragAndDropContext, DropIndicator} from 'react-aria-components/useDragAndDrop';
 import DragHandle from '../ui-icons/DragHandle';
-import {dragPreviewBadge, icon, iconCenterWrapper, InsertionIndicator, isFirstItem, isPrevSelected, label, S2ListLayout} from './ListView';
+import {dragPreviewBadge, icon, iconCenterWrapper, insertionIndicatorBar, insertionIndicatorCircle, isFirstItem, isPrevSelected, label, S2ListLayout} from './ListView';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -48,7 +49,7 @@ import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
-import {Virtualizer} from 'react-aria-components/Virtualizer';;
+import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 interface S2TreeProps {
   /** Handler that is called when a user performs an action on a row. */
@@ -93,7 +94,16 @@ const treeViewWrapper = style({
   isolation: 'isolate',
   disableTapHighlight: true,
   position: 'relative',
-  overflow: 'clip'
+  overflow: 'clip',
+  '--indicator-level-padding': {
+    type: 'width',
+    value: {
+      // 4 (start gap) + 10 (drag handle) + (hasCheckbox ? 16 + 8 : 0) + 40 (expand button)
+      // keep in sync with treeCellGrid gridTemplateColumns
+      default: 54,
+      hasCheckbox: 78
+    }
+  }
 }, getAllowedOverrides({height: true}));
 
 // These are the same as ListView. we didn't have v3 tree dnd and dont have designs so to be adjusted later
@@ -143,11 +153,11 @@ const tree = style<TreeRenderProps>({
 });
 
 // TODO: same as TableView, to update based on feedback
-export let dragPreviewWrapper = style({
+const dragPreviewWrapper = style({
   position: 'relative'
 });
 
-export let dragPreviewCardBack = style({
+const dragPreviewCardBack = style({
   position: 'absolute',
   zIndex: -1,
   top: 4,
@@ -161,7 +171,7 @@ export let dragPreviewCardBack = style({
   backgroundColor: 'gray-25'
 });
 
-let dragPreviewCard = style<{scale?: 'medium' | 'large'}>({
+const dragPreviewCard = style<{scale?: 'medium' | 'large'}>({
   boxSizing: 'border-box',
   paddingX: 0,
   paddingY: 8,
@@ -235,6 +245,36 @@ export function TreeViewDragPreview(props: TreeDragPreviewProps) {
 
 let InternalTreeViewContext = createContext<{selectionStyle?: 'highlight' | 'checkbox'}>({});
 
+
+const insertionIndicatorWrapper = style({
+  display: 'flex',
+  alignItems: 'center',
+  marginStart: {
+    default: 'calc((var(--tree-item-level, 1) - 1) * var(--indent) + var(--indicator-level-padding, 0px))',
+    isRoot: 0
+  }
+});
+
+function TreeInsertionIndicator({target}: {target: ItemDropTarget}) {
+  let {dropState} = useContext(DragAndDropContext) ?? {};
+  let level = 0;
+  if (target.type === 'item' && dropState?.collection) {
+    level = dropState.collection.getItem(target.key)?.level ?? 0;
+  }
+
+  return (
+    <DropIndicator target={target}>
+      {({isDropTarget}) => (
+        <div className={insertionIndicatorWrapper({isRoot: level === 0})}>
+          <div className={insertionIndicatorCircle({isDropTarget})} />
+          <div className={insertionIndicatorBar({isDropTarget})} />
+          <div className={insertionIndicatorCircle({isDropTarget})} />
+        </div>
+      )}
+    </DropIndicator>
+  );
+}
+
 /**
  * A tree view provides users with a way to navigate nested hierarchical information.
  */
@@ -246,10 +286,11 @@ export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tr
     dragAndDropHooks.renderDragPreview = (items) => <TreeViewDragPreview items={items} />;
   }
 
-  if (dragAndDropHooks) {
-    dragAndDropHooks.renderDropIndicator = (target) => <InsertionIndicator target={target as ItemDropTarget} />;
-  }
+  let hasCheckbox = props.selectionMode !== 'none' && selectionStyle !== 'highlight';
 
+  if (dragAndDropHooks) {
+    dragAndDropHooks.renderDropIndicator = (target) => <TreeInsertionIndicator target={target as ItemDropTarget} />;
+  }
   let renderer;
   if (typeof children === 'function') {
     renderer = children;
@@ -263,7 +304,7 @@ export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tr
   return (
     <div
       ref={domRef}
-      className={(UNSAFE_className ?? '') + treeViewWrapper(null, props.styles)}
+      className={(UNSAFE_className ?? '') + treeViewWrapper({hasCheckbox}, props.styles)}
       style={UNSAFE_style}>
       <Virtualizer
         layout={S2ListLayout}

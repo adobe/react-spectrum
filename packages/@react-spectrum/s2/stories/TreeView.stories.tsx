@@ -19,12 +19,12 @@ import {Collection} from 'react-aria/Collection';
 import {Content, Heading, Text} from '../src/Content';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
+import {DroppableCollectionReorderEvent, Key} from '@react-types/shared';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {IllustratedMessage} from '../src/IllustratedMessage';
-import {Key} from '@react-types/shared';
 import {Link} from '../src/Link';
 import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -948,6 +948,14 @@ function ReorderableTree(props: TreeViewProps<any>) {
     getChildren: item => item.childItems as TreeViewItemType[]
   });
 
+  let processItem = (item) => ({
+    ...item.value,
+    id: item.key,
+    childItems: item.children ? item.children.map(processItem) : []
+  });
+
+  let items = treeData.items.map(processItem);
+
   let getItems = (keys) => [...keys].map(key => {
     let item = treeData.getItem(key)!;
 
@@ -965,22 +973,27 @@ function ReorderableTree(props: TreeViewProps<any>) {
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems,
-    onReorder(e) {
-      if (e.target.dropPosition === 'before') {
-        treeData.moveBefore(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'after') {
-        treeData.moveAfter(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'on') {
-        let targetNode = treeData.getItem(e.target.key);
-        if (targetNode) {
-          let targetIndex = targetNode.children ? targetNode.children.length : 0;
-          let keyArray = Array.from(e.keys);
-          for (let i = 0; i < keyArray.length; i++) {
-            treeData.move(keyArray[i], e.target.key, targetIndex + i);
+    getAllowedDropOperations: () => ['move'],
+    onMove(e: DroppableCollectionReorderEvent) {
+      try {
+        if (e.target.dropPosition === 'before') {
+          treeData.moveBefore(e.target.key, e.keys);
+        } else if (e.target.dropPosition === 'after') {
+          treeData.moveAfter(e.target.key, e.keys);
+        } else if (e.target.dropPosition === 'on') {
+          let targetNode = treeData.getItem(e.target.key);
+          if (targetNode) {
+            let targetIndex = targetNode.children ? targetNode.children.length : 0;
+            let keyArray = Array.from(e.keys);
+            for (let i = 0; i < keyArray.length; i++) {
+              treeData.move(keyArray[i], e.target.key, targetIndex + i);
+            }
+          } else {
+            console.error('Target node not found for drop on:', e.target.key);
           }
-        } else {
-          console.error('Target node not found for drop on:', e.target.key);
         }
+      } catch (error) {
+        console.error(error);
       }
     },
     renderDragPreview: (items) => <CustomDragPreview parentList={treeData} items={items} />
@@ -991,15 +1004,15 @@ function ReorderableTree(props: TreeViewProps<any>) {
       <TreeView
         {...props}
         aria-label="Reorderable tree"
-        items={treeData.items}
+        items={items}
         dragAndDropHooks={dragAndDropHooks}>
-        {(item: any) => (
+        {(item) => (
           <DynamicTreeItem
-            id={item.value.id}
-            icon={item.value.icon}
-            childItems={item.value.childItems}
-            textValue={item.value.name}
-            name={item.value.name} />
+            id={item.id}
+            icon={item.icon}
+            childItems={item.childItems}
+            textValue={item.name}
+            name={item.name} />
         )}
       </TreeView>
     </div>
