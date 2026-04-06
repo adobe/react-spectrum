@@ -281,6 +281,8 @@ function TreeInsertionIndicator({target}: {target: ItemDropTarget}) {
 export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function TreeView<T extends object>(props: TreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {children, selectionStyle = 'checkbox', UNSAFE_className, UNSAFE_style, dragAndDropHooks} = props;
   let scale = useScale();
+  // 8 + 2 + 2 aka circle height + the circle thickness * 2
+  let dropIndicatorThickness = scale === 'large' ? 15 : 12;
 
   if (dragAndDropHooks && dragAndDropHooks.renderDragPreview == null) {
     dragAndDropHooks.renderDragPreview = (items) => <TreeViewDragPreview items={items} />;
@@ -310,7 +312,7 @@ export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tr
         layout={S2ListLayout}
         layoutOptions={{
           rowHeight: scale === 'large' ? 50 : 40,
-          dropIndicatorThickness: 12
+          dropIndicatorThickness
         }}>
         <TreeRendererContext.Provider value={{renderer}}>
           <InternalTreeViewContext.Provider value={{selectionStyle}}>

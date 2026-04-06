@@ -200,6 +200,8 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let rowHeight = scale === 'large' ? 50 : 40;
+  // 8 + 2 + 2 aka circle height + the circle thickness * 2
+  let dropIndicatorThickness = scale === 'large' ? 15 : 12;
 
   let domRef = useDOMRef(ref);
   let scrollRef = useRef<HTMLElement | null>(null);
@@ -272,7 +274,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
         layoutOptions={{
           estimatedRowHeight: rowHeight,
           loaderHeight: 60,
-          dropIndicatorThickness: 12 // 8 + 2 + 2 aka circle height + the circle thickness * 2
+          dropIndicatorThickness
         }}>
         <InternalListViewContext.Provider value={{isQuiet, selectionStyle, overflowMode, scale, hideLinkOutIcon}}>
           <GridList
