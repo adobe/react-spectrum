@@ -354,7 +354,6 @@ const rowBackgroundColor = {
 } as const;
 
 const treeRow = style<TreeItemRenderProps & {isLink?: boolean, isPreviousSelected?: boolean}>({
-  // TODO: check these styles
   outlineStyle: {
     default: 'none',
     isDropTarget: 'solid'
@@ -640,7 +639,6 @@ export const TreeViewItem = (props: TreeViewItemProps): ReactNode => {
   let {
     href
   } = props;
-  // let {selectionStyle} = useContext(InternalTreeViewContext);
 
   return (
     <TreeItem
@@ -648,9 +646,6 @@ export const TreeViewItem = (props: TreeViewItemProps): ReactNode => {
       className={(renderProps) => treeRow({
         ...renderProps,
         isLink: !!href
-        // TODO: don't think we need these?
-        // selectionStyle,
-        // isPreviousSelected: isPrevSelected(renderProps.id, renderProps.state)
       })} />
   );
 };

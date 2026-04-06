@@ -1199,7 +1199,7 @@ const dragButton = style({
     type: 'fill',
     value: 'currentColor'
   },
-  // TODO: no clip or clipPath, but this might be sufficient?
+  // note that this doesn't have clip or clipPath, but this seems to be sufficient
   height: {
     default: 1,
     ':is([role="row"][data-focus-visible-within] *)': 22

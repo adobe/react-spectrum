@@ -358,8 +358,6 @@ const listitem = style<GridListItemRenderProps & {
   gridColumnStart: 1,
   gridColumnEnd: -1,
   display: 'grid',
-  // TODO: what do we think about the positioning of the drag button? It essentially gets placed with the same spacing from the left edge
-  // of the row as the checkbox does in a non dnd situation
   gridTemplateAreas: [
     '. dragbutton . checkmark icon label       actions actionmenu trailing-icon .',
     '. .          . .         .    description actions actionmenu trailing-icon .'
