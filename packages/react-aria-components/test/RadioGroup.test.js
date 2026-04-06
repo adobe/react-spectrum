@@ -392,6 +392,19 @@ describe.each(['RadioGroup', 'RadioField'])('%s', (comp) => {
     expect(radio.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Error Description');
   });
 
+  if (comp === 'RadioField') {
+    it('supports help text on individual radios', () => {
+      let {getByRole} = renderGroup({}, {description: 'hello'});
+      let radioGroupTester = testUtilUser.createTester('RadioGroup', {root: getByRole('radiogroup')});
+      let radios = radioGroupTester.radios;
+
+      for (let radio of radios) {
+        expect(radio).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(radio.getAttribute('aria-describedby'))).toHaveTextContent('hello');
+      }
+    });
+  }
+
   it('should not navigate within the group using Tab', async () => {
     let {getAllByRole} = renderGroup({}, {buttonClassName: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let radios = getAllByRole('radio');
