@@ -170,8 +170,7 @@ const cellStyles = style({
   justifyContent: 'center',
   disableTapHighlight: true,
   width: '--cell-responsive-size',
-  aspectRatio: 'square',
-  height: 'auto'
+  height: '--cell-responsive-size'
 });
 
 const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single' | 'range'}>({
