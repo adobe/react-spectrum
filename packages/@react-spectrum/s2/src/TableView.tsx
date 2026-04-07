@@ -1693,6 +1693,13 @@ const row = style({
       forcedColors: 'ButtonBorder'
     }
   },
+
+  // So actually...I kinda like this route of creating variables like this and then just setting them on the pseudo element. Is it ideal? Probably not...but hey, I don't have a better solution
+  // So if this is the case and I can do it like this, then maybe I can proceed to use borders. The main reason for using boxShadows is because I needed both the blue border on the sides and
+  // gray border on the bottom. If I used borders, then it would render a weird diagonal line so then I opted for box shadows. But if we do update the highlight selection design to better align
+  // with ListView and TreeView, then it should be possible to do this with just borders. Just define everything here as a variable and set it on the pseudo element...
+  // That said, if they still want the gray borders in between...then we might be out of luck. But we didn't have them in ListView so maybe they can be convinced...
+
   // In order to prevent layout shifts, we use box shadows to render the borders since we can't add an absolute position div (it messes up the cell count due to the way Table collections are built)
   // In highlight mode, selected groups also have gray borders between the items in addition to having a blue outer border
   // Having a border have two colors is possible, the issue is that the browser will render a diagonal line where the two borders meet
