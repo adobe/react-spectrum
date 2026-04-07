@@ -11,15 +11,38 @@
  */
 
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, TableLoadMoreItem, Tag, TagGroup, TagList, useDragAndDrop, useTableOptions, Virtualizer} from '../';
+import {Button} from '../src/Button';
+
+import {
+  Cell,
+  Column,
+  ColumnResizer,
+  ResizableTableContainer,
+  Row,
+  Table,
+  TableBody,
+  TableHeader,
+  TableLayout,
+  TableLoadMoreItem,
+  useTableOptions
+} from '../src/Table';
+
+import {Checkbox} from '../src/Checkbox';
+import {Collection} from 'react-aria/Collection';
 import {composeStories} from '@storybook/react';
-import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
+import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
+import {Label} from '../src/Label';
+import {Modal} from '../src/Modal';
 import React, {useMemo, useState} from 'react';
-import {resizingTests} from '@react-aria/table/test/tableResizingTests';
-import {setInteractionModality} from '@react-aria/interactions';
+import {resizingTests} from 'react-aria/test/table/tableResizingTests.tsx';
+import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import * as stories from '../stories/Table.stories';
+import {Tag, TagGroup, TagList} from '../src/TagGroup';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
+import {Virtualizer} from '../src/Virtualizer';
 
 let {
   RenderEmptyStateStory: EmptyLoadingTable,

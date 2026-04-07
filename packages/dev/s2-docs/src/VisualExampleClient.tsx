@@ -406,22 +406,23 @@ function renderValue(value: any, indent = '') {
 function renderImports(name: string, importSource: string, props: Props) {
   let imports: ReactNode[] = [];
   let components = [name];
-  if (props.children?.avatar) {
-    components.push('Avatar');
-  }
   if (props.children?.badge) {
     components.push('NotificationBadge');
   }
 
-  if (components.length > 1 || props.children?.icon) {
+  if (components.length > 1 || ((props.children?.icon || props.children?.avatar) && props.children?.text)) {
     components.push('Text');
   }
 
-  if (props.contextualHelp) {
-    components.push('ContextualHelp', 'Heading', 'Content');
+  imports.push(renderImport(components.join(', '), importSource));
+
+  if (props.children?.avatar) {
+    imports.push('\n', renderImport('Avatar', '@react-spectrum/s2/Avatar'));
   }
 
-  imports.push(renderImport(components.join(', '), importSource));
+  if (props.contextualHelp) {
+    imports.push('\n', renderImport('ContextualHelp, Heading, Content', '@react-spectrum/s2/ContextualHelp'));
+  }
 
   if (props.children?.icon && !props.children?.avatar) {
     imports.push('\n', renderImport(props.children.icon.replace(/^(\d)/, '_$1'), `@react-spectrum/s2/icons/${props.children.icon}`, true));

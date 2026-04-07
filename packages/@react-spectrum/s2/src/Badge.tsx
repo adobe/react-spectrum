@@ -12,15 +12,16 @@
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, Provider, TextContext as RACTextContext, SlotProps} from 'react-aria-components';
+import {ContextValue, Provider, SlotProps} from 'react-aria-components/slots';
 import {control, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
+import {TextContext as RACTextContext} from 'react-aria-components/Text';
 import React, {createContext, forwardRef, ReactNode} from 'react';
 import {SkeletonWrapper} from './Skeleton';
 import {Text, TextContext} from './Content';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface BadgeStyleProps {

@@ -12,6 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export {ToastContainer, ToastQueue} from './ToastContainer';
+export {ToastContainer, ToastQueue} from '@adobe/react-spectrum/Toast';
 
-export type {SpectrumToastOptions, SpectrumToastContainerProps} from './ToastContainer';
+export type {SpectrumToastOptions, SpectrumToastContainerProps, CloseFunction} from '@adobe/react-spectrum/Toast';

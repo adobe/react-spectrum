@@ -12,7 +12,7 @@
 
 import {ClassNameOrFunction, RenderProps, useRenderProps} from './utils';
 import {DOMProps, GlobalDOMAttributes, ValidationResult} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {Text} from './Text';
 
@@ -24,7 +24,13 @@ export interface FieldErrorProps extends RenderProps<FieldErrorRenderProps>, DOM
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-FieldError'
    */
-  className?: ClassNameOrFunction<FieldErrorRenderProps>
+  className?: ClassNameOrFunction<FieldErrorRenderProps>,
+  /**
+   * The HTML element type to render. Defaults to `'span'`.
+   * Set to `'div'` when using block-level children (e.g. `<ul>`) to avoid invalid HTML.
+   * @default 'span'
+   */
+  elementType?: string
 }
 
 /**
@@ -41,9 +47,10 @@ export const FieldError = forwardRef(function FieldError(props: FieldErrorProps,
 
 const FieldErrorInner = forwardRef((props: FieldErrorProps, ref: ForwardedRef<HTMLElement>) => {
   let validation = useContext(FieldErrorContext)!;
-  let domProps = filterDOMProps(props, {global: true})!;
+  let {elementType, ...restProps} = props;
+  let domProps = filterDOMProps(restProps, {global: true})!;
   let renderProps = useRenderProps({
-    ...props,
+    ...restProps,
     defaultClassName: 'react-aria-FieldError',
     defaultChildren: validation.validationErrors.length === 0 ? undefined : validation.validationErrors.join(' '),
     values: validation
@@ -53,5 +60,5 @@ const FieldErrorInner = forwardRef((props: FieldErrorProps, ref: ForwardedRef<HT
     return null;
   }
 
-  return <Text slot="errorMessage" {...domProps} {...renderProps} ref={ref} />;
+  return <Text slot="errorMessage" elementType={elementType} {...domProps} {...renderProps} ref={ref} />;
 });

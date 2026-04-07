@@ -15,20 +15,24 @@ import {AvatarContext} from './Avatar';
 import {ButtonContext, LinkButtonContext} from './Button';
 import {Checkbox} from './Checkbox';
 import {color, focusRing, lightDark, space, style} from '../style' with {type: 'macro'};
-import {composeRenderProps, ContextValue, DEFAULT_SLOT, type GridListItem, GridListItemProps, Link, Provider} from 'react-aria-components';
+import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContentContext, FooterContext, TextContext} from './Content';
+import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'react';
 import {DividerContext} from './Divider';
 import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
-import {filterDOMProps, inertValue} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
 import {IllustrationContext} from './Icon';
 import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
+import {inertValue} from 'react-aria/private/utils/inertValue';
+import {Link} from 'react-aria-components/Link';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
 import {SkeletonContext, SkeletonWrapper, useIsSkeleton} from './Skeleton';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface CardRenderProps {

@@ -11,7 +11,9 @@
  */
 
 import {act, render, setupIntersectionObserverMock} from '@react-spectrum/test-utils-internal';
-import {Content, ContextualHelp, Heading, Picker, PickerItem, Text} from '../src';
+import {Content, Heading, Text} from '../src/Content';
+import {ContextualHelp} from '../src/ContextualHelp';
+import {Picker, PickerItem} from '../src/Picker';
 import {pointerMap, User} from '@react-aria/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';

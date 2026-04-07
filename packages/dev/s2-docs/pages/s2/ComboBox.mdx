@@ -16,7 +16,7 @@ export const description = 'Combines a text input with a listbox, and allows a u
 
 ```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['label', 'placeholder', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']} initialProps={{label: 'Ice cream flavor', placeholder: 'Select a flavor'}} type="s2"
 "use client";
-import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
 
 <ComboBox/* PROPS */>
   <ComboBoxItem>Chocolate</ComboBoxItem>
@@ -33,7 +33,7 @@ import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
 
 ```tsx render
 "use client";
-import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
 
 function Example() {
   let options = [
@@ -64,7 +64,8 @@ function Example() {
 
 ```tsx render
 "use client";
-import {Avatar, ComboBox, ComboBoxItem, Text} from '@react-spectrum/s2';
+import {Avatar} from '@react-spectrum/s2/Avatar';
+import {ComboBox, ComboBoxItem, Text} from '@react-spectrum/s2/ComboBox';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Comment from '@react-spectrum/s2/icons/Comment';
 import Edit from '@react-spectrum/s2/icons/Edit';
@@ -123,7 +124,7 @@ Use the `<ComboBoxSection>` component to group options. A `<Header>` element, wi
 
 ```tsx render
 "use client";
-import {ComboBox, ComboBoxItem, ComboBoxSection, Header, Heading, Text} from '@react-spectrum/s2';
+import {ComboBox, ComboBoxItem, ComboBoxSection, Header, Heading, Text} from '@react-spectrum/s2/ComboBox';
 
 <ComboBox label="Preferred fruit or vegetable" placeholder="Select an option">
   {/*- begin highlight -*/}
@@ -157,7 +158,8 @@ Use the `loadingState` and `onLoadMore` props to enable async loading and infini
 
 ```tsx render
 "use client";
-import {ComboBox, ComboBoxItem, useAsyncList} from '@react-spectrum/s2';
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
+import {useAsyncList} from '@react-spectrum/s2/useAsyncList';
 
 interface Character {
   name: string
@@ -203,7 +205,7 @@ Use the `onAction` prop on a `<ComboBoxItem>` to perform a custom action when th
 
 ```tsx render
 "use client";
-import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
 import {useState} from 'react';
 
 function Example() {
@@ -239,7 +241,7 @@ Use the `href` prop on a `<ComboBoxItem>` to create a link. See the [getting sta
 
 ```tsx render
 "use client";
-import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
 
 <ComboBox label="Bookmarks" placeholder="Select a bookmark">
   <ComboBoxItem href="https://adobe.com/" target="_blank">Adobe</ComboBoxItem>
@@ -255,7 +257,7 @@ Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The
 
 ```tsx render
 "use client";
-import {ComboBox, ComboBoxItem, type Key} from '@react-spectrum/s2';
+import {ComboBox, ComboBoxItem, type Key} from '@react-spectrum/s2/ComboBox';
 import {useState} from 'react';
 
 function Example() {
@@ -289,7 +291,7 @@ Use the `inputValue` or `defaultInputValue` prop to set the value of the input f
 
 ```tsx render wide docs={docs.exports.ComboBox} links={docs.links} props={['allowsCustomValue']} initialProps={{defaultSelectedKey: 'kangaroo'}} type="s2"
 "use client";
-import {ComboBox, ComboBoxItem, type Key} from '@react-spectrum/s2';
+import {ComboBox, ComboBoxItem, type Key} from '@react-spectrum/s2/ComboBox';
 import {useState} from 'react';
 
 function Example(props) {
@@ -325,7 +327,7 @@ Both `inputValue` and `selectedKey` can be controlled simultaneously. However, e
 
 ```tsx render
 "use client";
-import {ComboBox, ComboBoxItem, type Key} from '@react-spectrum/s2';
+import {ComboBox, ComboBoxItem, type Key} from '@react-spectrum/s2/ComboBox';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
@@ -394,7 +396,9 @@ Use the `name` prop to submit the `id` of the selected item to the server. Set t
 
 ```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2" wide
 "use client";
-import {ComboBox, ComboBoxItem, Form, Button} from '@react-spectrum/s2';
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
+import {Form} from '@react-spectrum/s2/Form';
+import {Button} from '@react-spectrum/s2/Button';
 
 function Example(props) {
   return (
@@ -433,7 +437,7 @@ The `align`, `direction`, `shouldFlip` and `menuWidth` props control the behavio
 
 ```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['menuTrigger', 'align', 'direction', 'shouldFlip', 'menuWidth']} initialProps={{label: 'Favorite Animal', placeholder: 'Select an animal'}} type="s2"
 "use client";
-import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
 
 <ComboBox/* PROPS */>
   <ComboBoxItem id="red panda">Red Panda</ComboBoxItem>

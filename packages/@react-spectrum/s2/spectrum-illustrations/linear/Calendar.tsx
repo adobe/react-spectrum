@@ -15,7 +15,7 @@ import Calendar_M from 'illustration:./S2_lin_calendar_96.svg';
 import Calendar_S from 'illustration:./S2_lin_calendar_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Calendar(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

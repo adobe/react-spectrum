@@ -12,21 +12,21 @@
 
 import {ActionButton, ActionButtonProps} from './ActionButton';
 import {AriaLabelingProps, DOMProps, FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {ContextValue} from 'react-aria-components';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef} from 'react';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType} from './types';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Menu, MenuProps, MenuTrigger, MenuTriggerProps} from './Menu';
 import MoreIcon from '../s2wf-icons/S2_Icon_More_20_N.svg';
 import {StyleProps} from './style-utils' with { type: 'macro' };
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ActionMenuProps<T> extends
   Pick<MenuTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange' | 'align' | 'direction' | 'shouldFlip'>,
-  Pick<MenuProps<T>, 'children' | 'items' | 'disabledKeys' | 'onAction'>,
+  Pick<MenuProps<T>, 'children' | 'items' | 'disabledKeys' | 'onAction' | 'shouldCloseOnSelect'>,
   Pick<ActionButtonProps, 'isDisabled' | 'isQuiet' | 'autoFocus' | 'size'>,
   StyleProps, DOMProps, AriaLabelingProps {
   /**
@@ -72,7 +72,8 @@ export const ActionMenu = /*#__PURE__*/(forwardRef as forwardRefType)(function A
         items={props.items}
         disabledKeys={props.disabledKeys}
         onAction={props.onAction}
-        size={props.menuSize}>
+        size={props.menuSize}
+        shouldCloseOnSelect={props.shouldCloseOnSelect}>
         {props.children}
       </Menu>
     </MenuTrigger>

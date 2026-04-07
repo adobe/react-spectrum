@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSwitchProps, HoverEvents, mergeProps, useFocusRing, useHover, useSwitch, VisuallyHidden} from 'react-aria';
+import {AriaSwitchProps, useSwitch} from 'react-aria/useSwitch';
+
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -21,10 +22,17 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
+import {HoverEvents} from '@react-types/shared';
+import {mergeProps} from 'react-aria/mergeProps';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
-import {ToggleState, useToggleState} from 'react-stately';
+import {ToggleState, useToggleState} from 'react-stately/useToggleState';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {useObjectRef} from 'react-aria/useObjectRef';
+import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
 export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps, 'label'>, SlotProps, Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
  /**

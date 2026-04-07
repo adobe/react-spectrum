@@ -13,11 +13,22 @@
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
 import {baseColor, colorMix, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
+import {Button, ButtonContext} from 'react-aria-components/Button';
+import {centerBaseline} from './CenterBaseline';
+import {Checkbox} from './Checkbox';
+
+import Chevron from '../ui-icons/Chevron';
+
+import {DOMRef, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
+import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {IconContext} from './Icon';
+import intlMessages from '../intl/*.json';
+import {isFirstItem, isPrevSelected} from './ListView';
+import {ListLayout} from 'react-stately/useVirtualizerState';
+import {ProgressCircle} from './ProgressCircle';
+import {Provider, useContextProps} from 'react-aria-components/slots';
+// @ts-ignore
 import {
-  Button,
-  ButtonContext,
-  ListLayout,
-  Provider,
   TreeItemProps as RACTreeItemProps,
   TreeProps as RACTreeProps,
   Tree,
@@ -25,26 +36,17 @@ import {
   TreeItemContent,
   TreeItemContentProps,
   TreeLoadMoreItem,
-  TreeLoadMoreItemProps,
-  useContextProps,
-  Virtualizer
-} from 'react-aria-components';
-import {centerBaseline} from './CenterBaseline';
-import {Checkbox} from './Checkbox';
-import Chevron from '../ui-icons/Chevron';
-import {DOMRef, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
-import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {IconContext} from './Icon';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
-import {ProgressCircle} from './ProgressCircle';
-import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useRef} from 'react';
+  TreeLoadMoreItemProps
+} from 'react-aria-components/Tree';
+import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {Text, TextContext} from './Content';
+import {TreeState} from 'react-stately/useTreeState';
 import {useActionBarContainer} from './ActionBar';
-import {useDOMRef} from '@react-spectrum/utils';
-import {useLocale, useLocalizedStringFormatter} from 'react-aria';
+import {useDOMRef} from './useDOMRef';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
+import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 interface S2TreeProps {
   /** Handler that is called when a user performs an action on a row. */
@@ -53,7 +55,15 @@ interface S2TreeProps {
   renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement
 }
 
-export interface TreeViewProps<T> extends Omit<RACTreeProps<T>, 'style' | 'className' | 'render' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, UnsafeStyles, S2TreeProps {
+interface TreeViewStyleProps {
+  /**
+   * How selection should be displayed. For guidance on when to use which option, refer to the [Spectrum](https://spectrum.adobe.com/page/tree-view/#Checkbox-or-highlight-selection-style) page.
+   * @default 'checkbox'
+   */
+  selectionStyle?: 'highlight' | 'checkbox'
+}
+
+export interface TreeViewProps<T> extends Omit<RACTreeProps<T>, 'style' | 'className' | 'render' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, UnsafeStyles, S2TreeProps, TreeViewStyleProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
@@ -109,11 +119,13 @@ const tree = style({
   }
 });
 
+let InternalTreeViewContext = createContext<{selectionStyle?: 'highlight' | 'checkbox'}>({});
+
 /**
  * A tree view provides users with a way to navigate nested hierarchical information.
  */
 export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function TreeView<T extends object>(props: TreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {children, UNSAFE_className, UNSAFE_style} = props;
+  let {children, selectionStyle = 'checkbox', UNSAFE_className, UNSAFE_style} = props;
   let scale = useScale();
 
   let renderer;
@@ -137,20 +149,22 @@ export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tr
           rowHeight: scale === 'large' ? 50 : 40
         }}>
         <TreeRendererContext.Provider value={{renderer}}>
-          <Tree
-            {...props}
-            style={{
-              paddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0,
-              scrollPaddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0
-            }}
-            className={tree}
-            selectionBehavior="toggle"
-            selectedKeys={selectedKeys}
-            defaultSelectedKeys={undefined}
-            onSelectionChange={onSelectionChange}
-            ref={scrollRef}>
-            {props.children}
-          </Tree>
+          <InternalTreeViewContext.Provider value={{selectionStyle}}>
+            <Tree
+              {...props}
+              style={{
+                paddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0,
+                scrollPaddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0
+              }}
+              className={tree}
+              selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
+              selectedKeys={selectedKeys}
+              defaultSelectedKeys={undefined}
+              onSelectionChange={onSelectionChange}
+              ref={scrollRef}>
+              {props.children}
+            </Tree>
+          </InternalTreeViewContext.Provider>
         </TreeRendererContext.Provider>
       </Virtualizer>
       {actionBar}
@@ -162,7 +176,7 @@ const rowBackgroundColor = {
   default: '--s2-container-bg',
   isFocusVisibleWithin: colorMix('gray-25', 'gray-900', 7),
   isHovered: colorMix('gray-25', 'gray-900', 7),
-  isPressed: colorMix('gray-25', 'gray-900', 10),
+  isPressed: colorMix('gray-25', 'gray-900', 7),
   isSelected: {
     default: colorMix('gray-25', 'gray-900', 7),
     isFocusVisibleWithin: colorMix('gray-25', 'gray-900', 10),
@@ -175,6 +189,7 @@ const rowBackgroundColor = {
 } as const;
 
 const treeRow = style({
+  outlineStyle: 'none',
   position: 'relative',
   display: 'flex',
   height: 40,
@@ -186,7 +201,6 @@ const treeRow = style({
     isSelected: baseColor('neutral'),
     forcedColors: 'ButtonText'
   },
-  outlineStyle: 'none',
   cursor: {
     default: 'default',
     isLink: 'pointer'
@@ -195,13 +209,11 @@ const treeRow = style({
     type: 'backgroundColor',
     value: rowBackgroundColor
   },
-  '--rowFocusIndicatorColor': {
-    type: 'outlineColor',
-    value: {
-      default: 'focus-ring',
-      forcedColors: 'Highlight'
-    }
-  }
+  '--borderRadiusTreeItem': {
+    type: 'borderTopStartRadius',
+    value: 'sm'
+  },
+  borderRadius: 'sm'
 });
 
 const treeCellGrid = style({
@@ -209,6 +221,7 @@ const treeCellGrid = style({
   width: 'full',
   height: 'full',
   boxSizing: 'border-box',
+  borderRadius: 'sm',
   alignContent: 'center',
   alignItems: 'center',
   gridTemplateColumns: ['auto', 'auto', 'auto', 'auto', 'auto', '1fr', 'minmax(0, auto)', 'auto'],
@@ -216,12 +229,19 @@ const treeCellGrid = style({
   gridTemplateAreas: [
     'drag-handle checkbox level-padding expand-button icon content actions actionmenu'
   ],
-  backgroundColor: '--rowBackgroundColor',
   paddingEnd: 4, // account for any focus rings on the last item in the cell
   color: {
     isDisabled: {
       default: 'gray-400',
       forcedColors: 'GrayText'
+    },
+    forcedColors: 'ButtonText',
+    selectionStyle: {
+      highlight: {
+        isSelected: {
+          forcedColors: 'HighlightText'
+        }
+      }
     }
   },
   '--rowSelectedBorderColor': {
@@ -238,6 +258,82 @@ const treeCellGrid = style({
       default: 'focus-ring',
       forcedColors: 'Highlight'
     }
+  },
+  '--borderColor': {
+    type: 'borderColor',
+    value: {
+      default: 'transparent',
+      selectionStyle: {
+        highlight: 'blue-900'
+      },
+      forcedColors: 'ButtonBorder'
+    }
+  },
+  forcedColorAdjust: 'none'
+});
+
+const treeRowBackground = style({
+  position: 'absolute',
+  zIndex: -1,
+  inset: 0,
+  backgroundColor: {
+    default: '--rowBackgroundColor',
+    forcedColors: 'Background',
+    selectionStyle: {
+      highlight: {
+        default: '--rowBackgroundColor',
+        isSelected: {
+          default: colorMix('gray-25', 'blue-900', 10),
+          isHovered: colorMix('gray-25', 'blue-900', 15),
+          isPressed: colorMix('gray-25', 'blue-900', 15),
+          isFocusVisible: colorMix('gray-25', 'blue-900', 15),
+          forcedColors: 'Highlight'
+        }
+      }
+    }
+  },
+  borderTopStartRadius: {
+    default: '--borderRadiusTreeItem',
+    isPreviousSelected: {
+      default: '--borderRadiusTreeItem',
+      isSelected: 'none'
+    }
+  },
+  borderTopEndRadius: {
+    default: '--borderRadiusTreeItem',
+    isPreviousSelected: {
+      default: '--borderRadiusTreeItem',
+      isSelected: 'none'
+    }
+  },
+  borderBottomStartRadius: {
+    default: '--borderRadiusTreeItem',
+    isNextSelected: {
+      default: '--borderRadiusTreeItem',
+      isSelected: 'none'
+    }
+  },
+  borderBottomEndRadius: {
+    default: '--borderRadiusTreeItem',
+    isNextSelected: {
+      default: '--borderRadiusTreeItem',
+      isSelected: 'none'
+    }
+  },
+  borderTopWidth: {
+    default: 1,
+    isPreviousSelected: 0
+  },
+  borderBottomWidth: {
+    default: 1,
+    isNextSelected: 0
+  },
+  borderStartWidth: 1,
+  borderEndWidth: 1,
+  borderStyle: 'solid',
+  borderColor: {
+    default: 'transparent',
+    isSelected: '--borderColor'
   }
 });
 
@@ -279,33 +375,66 @@ const treeActionMenu = style({
   gridArea: 'actionmenu'
 });
 
-const treeRowFocusIndicator = raw(`
-  &:before {
-    content: "";
-    display: inline-block;
-    position: sticky;
-    inset-inline-start: 0;
-    width: 3px;
-    height: 100%;
-    margin-inline-end: -3px;
-    margin-block-end: 1px;
-    z-index: 3;
-    background-color: var(--rowFocusIndicatorColor);
-  }`
-);
+
+let treeRowFocusRing = style({
+  ...focusRing(),
+  outlineOffset: {
+    default: -2,
+    forcedColors: -3
+  },
+  outlineWidth: {
+    default: 2,
+    forcedColors: '[3px]'
+  },
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight',
+    selectionStyle: {
+      highlight: {
+        default: 'focus-ring',
+        forcedColors: 'ButtonBorder'
+      }
+    }
+  },
+  position: 'absolute',
+  inset: 0,
+  top: {
+    default: '[-1px]',
+    isFirstItem: 0
+  },
+  bottom: {
+    selectionStyle: {
+      checkbox: 0,
+      highlight: {
+        default: 0,
+        isNextSelected: '[-1px]',
+        isSelected: {
+          default: 0,
+          isNextSelected: 0
+        }
+      }
+    }
+  },
+  borderRadius: 'sm',
+  zIndex: 1,
+  pointerEvents: 'none'
+});
 
 export const TreeViewItem = (props: TreeViewItemProps): ReactNode => {
   let {
     href
   } = props;
+  let {selectionStyle} = useContext(InternalTreeViewContext);
 
   return (
     <TreeItem
       {...props}
       className={(renderProps) => treeRow({
         ...renderProps,
-        isLink: !!href
-      }) + (renderProps.isFocusVisible ? ' ' + treeRowFocusIndicator : '')} />
+        isLink: !!href,
+        selectionStyle,
+        isPreviousSelected: isPrevSelected(renderProps.id, renderProps.state)
+      })} />
   );
 };
 
@@ -320,23 +449,20 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
   } = props;
   let scale = useScale();
 
+  let {selectionStyle} = useContext(InternalTreeViewContext);
+  
   return (
-    <TreeItemContent>
-      {({isExpanded, hasChildItems, selectionMode, selectionBehavior, isDisabled, isSelected, id, state}) => {
-        let isNextSelected = false;
-        let isNextFocused = false;
-        let keyAfter = state.collection.getKeyAfter(id);
-        if (keyAfter != null) {
-          isNextSelected = state.selectionManager.isSelected(keyAfter);
-        }
-        let isFirst = state.collection.getFirstKey() === id;
+    (<TreeItemContent>
+      {({isExpanded, hasChildItems, selectionMode, selectionBehavior, isDisabled, isSelected, id, state, isHovered, isFocusVisible}) => {
         return (
-          <div className={treeCellGrid({isDisabled, isNextSelected, isSelected, isFirst, isNextFocused})}>
-            {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+          (<div className={treeCellGrid({isDisabled, isNextSelected: isNextSelected(id, state), isSelected, selectionStyle})}>
+            <div className={treeRowBackground({isHovered, isFocusVisible, isSelected, selectionStyle, isNextSelected: isNextSelected(id, state), isPreviousSelected: isPrevSelected(id, state)})} />
+            {isFocusVisible && <div className={treeRowFocusRing({isFocusVisible, selectionStyle, isSelected, isNextSelected: isNextSelected(id, state), isFirstItem: isFirstItem(id, state)})} />}
+            {selectionMode !== 'none' && selectionBehavior === 'toggle' && selectionStyle !== 'highlight' && (
               // TODO: add transition?
-              <div className={treeCheckbox({isDisabled: isDisabled || !state.selectionManager.canSelectItem(id) || state.disabledKeys.has(id)})}>
+              (<div className={treeCheckbox({isDisabled: isDisabled || !state.selectionManager.canSelectItem(id) || state.disabledKeys.has(id)})}>
                 <Checkbox slot="selection" />
-              </div>
+              </div>)
             )}
             <div
               className={style({
@@ -356,10 +482,10 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
               ]}>
               {typeof children === 'string' ? <Text>{children}</Text> : children}
             </Provider>
-          </div>
+          </div>)
         );
       }}
-    </TreeItemContent>
+    </TreeItemContent>)
   );
 };
 
@@ -458,4 +584,20 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
         })({direction})} />
     </Button>
   );
+}
+
+function isNextSelected(id: Key | undefined, state: TreeState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+  let keyAfter = state.collection.getKeyAfter(id);
+
+  // We need to skip non-item nodes because the selection manager will map non-item nodes to their parent before checking selection
+  let node = keyAfter ? state.collection.getItem(keyAfter) : null;
+  while (node && node.type !== 'item' && keyAfter) {
+    keyAfter = state.collection.getKeyAfter(keyAfter);
+    node = keyAfter ? state.collection.getItem(keyAfter) : null;
+  }
+
+  return keyAfter != null && state.selectionManager.isSelected(keyAfter);
 }

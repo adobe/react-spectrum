@@ -11,28 +11,22 @@
  */
 
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
-import {
-  Button,
-  Collection,
-  Dialog,
-  DialogTrigger,
-  DropIndicator,
-  Header, Heading,
-  ListBox,
-  ListBoxContext,
-  ListBoxItem,
-  ListBoxSection,
-  ListLayout,
-  Modal,
-  Text,
-  useDragAndDrop,
-  Virtualizer
-} from '../';
-import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
+import {Button} from '../src/Button';
+import {Collection} from 'react-aria/Collection';
+import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
+import {Header} from '../src/Header';
+import {Heading} from '../src/Heading';
+import {ListBox, ListBoxContext, ListBoxItem, ListBoxSection} from '../src/ListBox';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
+import {ListLayout} from 'react-stately/useVirtualizerState';
+import {Modal} from '../src/Modal';
 import React, {useEffect, useState} from 'react';
+import {Text} from '../src/Text';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
+import {Virtualizer} from '../src/Virtualizer';
 
 let TestListBox = ({listBoxProps, itemProps}) => (
   <ListBox aria-label="Test" {...listBoxProps}>
@@ -1199,7 +1193,7 @@ describe('ListBox', () => {
     it('should support dropping into an empty ListBox with a ListBoxLoadMoreItem', () => {
       let onRootDrop = jest.fn();
       let onLoadMore = jest.fn();
-      
+
       let EmptyListBoxWithLoader = (props) => {
         let {dragAndDropHooks} = useDragAndDrop({
           getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
@@ -1210,7 +1204,7 @@ describe('ListBox', () => {
           <ListBox aria-label="Empty ListBox" dragAndDropHooks={dragAndDropHooks} {...props}>
             <Collection items={[]}>
               {(item) => <ListBoxItem id={item.id}>{item.name}</ListBoxItem>}
-            </Collection> 
+            </Collection>
             <ListBoxLoadMoreItem isLoading onLoadMore={onLoadMore} />
           </ListBox>
         );
@@ -1235,7 +1229,7 @@ describe('ListBox', () => {
 
       let listboxes = getAllByRole('listbox');
       let options = getAllByRole('option');
-      
+
       // Start dragging from first listbox
       let dataTransfer = new DataTransfer();
       fireEvent(options[0], new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
@@ -1244,7 +1238,7 @@ describe('ListBox', () => {
       // Drag over the empty listbox (which only has a loader)
       fireEvent(listboxes[1], new DragEvent('dragenter', {dataTransfer, clientX: 50, clientY: 50}));
       fireEvent(listboxes[1], new DragEvent('dragover', {dataTransfer, clientX: 50, clientY: 50}));
-      
+
       expect(listboxes[1]).toHaveAttribute('data-drop-target', 'true');
 
       // Drop on the empty listbox

@@ -9,5 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useControlledState} from './useControlledState';
-export {clamp, snapValueToStep, toFixedNumber} from './number';
+export {useControlledState} from 'react-stately/useControlledState';
+
+export {clamp, snapValueToStep, toFixedNumber} from 'react-stately/private/utils/number';

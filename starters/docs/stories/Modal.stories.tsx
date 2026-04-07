@@ -3,7 +3,6 @@ import {Dialog, DialogTrigger} from '../src/Dialog';
 import {TextField} from '../src/TextField';
 import {Button} from '../src/Button';
 import {Heading} from '../src/Content';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Modal> = {

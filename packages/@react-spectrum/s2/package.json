@@ -7,24 +7,20 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
-  "main": "dist/main.cjs",
-  "module": "dist/module.mjs",
-  "types": "dist/types.d.ts",
+  "main": "./dist/exports/index.cjs",
+  "module": "./dist/exports/index.mjs",
+  "types": "./dist/types/exports/index.d.ts",
   "page": "dist/page.cjs",
   "style-module": "style/dist/module.mjs",
   "style-main": "style/dist/main.cjs",
-  "style-types": "style/dist/types.d.ts",
-  "source": "src/index.ts",
+  "source": "exports/index.ts",
   "exports": {
     ".": {
-      "source": "./src/index.ts",
-      "types": [
-        "./dist/types.d.ts",
-        "./src/index.ts"
-      ],
-      "module": "./dist/module.mjs",
-      "import": "./dist/module.mjs",
-      "require": "./dist/main.cjs"
+      "source": "./exports/index.ts",
+      "types": "./dist/types/exports/index.d.ts",
+      "module": "./dist/exports/index.mjs",
+      "import": "./dist/exports/index.mjs",
+      "require": "./dist/exports/index.cjs"
     },
     "./page.css": {
       "source": "./src/page.ts",
@@ -32,10 +28,7 @@
     },
     "./style": {
       "source": "./style/index.ts",
-      "types": [
-        "./style/dist/types.d.ts",
-        "./style/index.ts"
-      ],
+      "types": "./dist/types/style/index.d.ts",
       "module": "./style/dist/module.mjs",
       "import": "./style/dist/module.mjs",
       "require": "./style/dist/main.cjs"
@@ -61,12 +54,20 @@
       "require": "./illustrations/*.cjs"
     },
     "./illustrations/linear/internal/*": null,
-    "./illustrations/gradient/*/internal/*": null
+    "./illustrations/gradient/*/internal/*": null,
+    "./package.json": "./package.json",
+    "./*": {
+      "source": "./exports/*.ts",
+      "types": "./dist/types/exports/*.d.ts",
+      "import": "./dist/exports/*.mjs",
+      "require": "./dist/exports/*.cjs"
+    },
+    "./private/*": null
   },
   "targets": {
-    "module": {},
-    "main": {},
-    "types": {},
+    "module": false,
+    "main": false,
+    "types": false,
     "page": {
       "source": "src/page.ts",
       "isLibrary": true
@@ -82,9 +83,6 @@
       "isLibrary": true,
       "outputFormat": "commonjs",
       "context": "node"
-    },
-    "style-types": {
-      "source": "style/index.ts"
     },
     "icons-module": {
       "source": "s2wf-icons/*.svg",
@@ -119,6 +117,20 @@
       "isLibrary": true,
       "outputFormat": "commonjs",
       "includeNodeModules": false
+    },
+    "exports-module": {
+      "source": "exports/*.ts",
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false
+    },
+    "exports-main": {
+      "source": "exports/*.ts",
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "commonjs",
+      "includeNodeModules": false
     }
   },
   "browserslist": "last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions",
@@ -132,44 +144,28 @@
     "page.css.map",
     "icons",
     "illustrations",
-    "src"
+    "src",
+    "exports",
+    "*.js"
   ],
   "scripts": {
-    "prepublishOnly": "rm -rf dist/page.cjs* && mv dist/page*.css page.css && mv dist/page.css.map page.css.map || true",
+    "prepublishOnly": "rm -rf dist/page.cjs* && mv dist/private/page*.css page.css && mv dist/private/page.css.map page.css.map || true",
     "prepack": "npm pkg delete scripts devDependencies resolutions alias targets",
     "postpack": "git checkout -- package.json"
   },
   "devDependencies": {
-    "@adobe/spectrum-tokens": "^14.0.0",
+    "@adobe/spectrum-tokens": "14.0.0",
     "@react-aria/test-utils": "^1.0.0-alpha.8",
     "@storybook/jest": "^0.2.3",
     "@testing-library/dom": "^10.1.0",
     "@testing-library/react": "^16.0.0",
-    "@testing-library/user-event": "^14.0.0",
-    "jest": "^29.5.0"
+    "@testing-library/user-event": "^14.0.0"
   },
   "dependencies": {
     "@internationalized/date": "^3.12.0",
     "@internationalized/number": "^3.6.5",
     "@parcel/macros": "^2.16.3",
-    "@react-aria/calendar": "^3.9.5",
-    "@react-aria/collections": "^3.0.3",
-    "@react-aria/focus": "^3.21.5",
-    "@react-aria/i18n": "^3.12.16",
-    "@react-aria/interactions": "^3.27.1",
-    "@react-aria/live-announcer": "^3.4.4",
-    "@react-aria/utils": "^3.33.1",
-    "@react-spectrum/utils": "^3.12.12",
-    "@react-stately/layout": "^4.6.0",
-    "@react-stately/utils": "^3.11.0",
-    "@react-types/dialog": "^3.5.24",
-    "@react-types/grid": "^3.3.8",
-    "@react-types/overlays": "^3.9.4",
-    "@react-types/provider": "^3.8.15",
     "@react-types/shared": "^3.33.1",
-    "@react-types/table": "^3.13.6",
-    "@react-types/textfield": "^3.12.8",
-    "csstype": "^3.0.2",
     "react-aria": "^3.47.0",
     "react-aria-components": "^1.16.0",
     "react-stately": "^3.45.0"

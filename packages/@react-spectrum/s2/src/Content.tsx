@@ -10,13 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, Keyboard as KeyboardAria, Header as RACHeader, Heading as RACHeading, TextContext as RACTextContext, SlotProps, Text as TextAria} from 'react-aria-components';
+import {ContextValue, SlotProps} from 'react-aria-components/slots';
+
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
-import {inertValue} from '@react-aria/utils';
+import {inertValue} from 'react-aria/private/utils/inertValue';
+import {Keyboard as KeyboardAria} from 'react-aria-components/Keyboard';
+import {Header as RACHeader} from 'react-aria-components/Header';
+import {Heading as RACHeading} from 'react-aria-components/Heading';
+import {TextContext as RACTextContext, Text as TextAria} from 'react-aria-components/Text';
 import {StyleString} from '../style/types';
 import {UnsafeStyles} from './style-utils';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useIsSkeleton, useSkeletonText} from './Skeleton';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

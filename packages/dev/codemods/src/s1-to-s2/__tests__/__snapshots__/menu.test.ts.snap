@@ -159,7 +159,6 @@ exports[`Renames ContextualHelpTrigger to UnavailableMenuItemTrigger and Dialog 
   Menu,
   MenuTrigger,
   Button,
-  Dialog,
   Heading,
   Content,
 } from "@react-spectrum/s2";
@@ -180,16 +179,28 @@ exports[`Renames ContextualHelpTrigger to UnavailableMenuItemTrigger and Dialog 
 </MenuTrigger>"
 `;
 
+exports[`Renames closeOnSelect to shouldCloseOnSelect and moves to Menu 1`] = `
+"import { MenuItem, Menu, MenuTrigger, Button } from "@react-spectrum/s2";
+
+<MenuTrigger>
+  <Button>Edit</Button>
+  <Menu shouldCloseOnSelect>
+    <MenuItem>Cut</MenuItem>
+    <MenuItem>Copy</MenuItem>
+    <MenuItem>Paste</MenuItem>
+  </Menu>
+</MenuTrigger>"
+`;
+
 exports[`Static - Renames Item to MenuItem, Section to MenuSection 1`] = `
 "import {
   MenuItem,
   MenuSection,
+  Header as Header1,
   Menu,
   MenuTrigger,
   SubmenuTrigger,
   Button,
-  Header,
-  Heading,
 } from "@react-spectrum/s2";
 <div>
   <MenuTrigger>
@@ -205,7 +216,7 @@ exports[`Static - Renames Item to MenuItem, Section to MenuSection 1`] = `
           <MenuItem>Email</MenuItem>
         </Menu>
       </SubmenuTrigger>
-      <MenuSection><Header>Section heading</Header>
+      <MenuSection><Header1>Section heading</Header1>
         <MenuItem>Save</MenuItem>
       </MenuSection>
     </Menu>
@@ -217,12 +228,11 @@ exports[`Static - Renames key to id 1`] = `
 "import {
   MenuItem,
   MenuSection,
+  Header as Header1,
   Menu,
   MenuTrigger,
   SubmenuTrigger,
   Button,
-  Header,
-  Heading,
 } from "@react-spectrum/s2";
 <div>
   <MenuTrigger>
@@ -238,7 +248,7 @@ exports[`Static - Renames key to id 1`] = `
           <MenuItem id="email">Email</MenuItem>
         </Menu>
       </SubmenuTrigger>
-      <MenuSection><Header>Section heading</Header>
+      <MenuSection><Header1>Section heading</Header1>
         <MenuItem id="save">Save</MenuItem>
       </MenuSection>
     </Menu>

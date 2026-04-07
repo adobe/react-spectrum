@@ -11,12 +11,15 @@
  */
 
 import {action} from 'storybook/actions';
-import {Button, ProgressBar, Text, Tooltip, TooltipTrigger} from 'react-aria-components';
-import {mergeProps} from '@react-aria/utils';
+import {Button} from '../src/Button';
+import {mergeProps} from 'react-aria/mergeProps';
 import {Meta, StoryObj} from '@storybook/react';
+import {ProgressBar} from '../src/ProgressBar';
 import React, {useEffect, useRef, useState} from 'react';
 import * as styles from './button-ripple.css';
 import * as styles2 from './button-pending.css';
+import {Text} from '../src/Text';
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import './styles.css';
 
 export default {

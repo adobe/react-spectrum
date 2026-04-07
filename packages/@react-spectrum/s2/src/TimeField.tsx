@@ -10,21 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  TimeField as AriaTimeField,
-  TimeFieldProps as AriaTimeFieldProps,
-  ContextValue,
-  FormContext,
-  TimeValue
-} from 'react-aria-components';
+import {TimeField as AriaTimeField, TimeFieldProps as AriaTimeFieldProps, TimeValue} from 'react-aria-components/TimeField';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactElement, Ref, useContext} from 'react';
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText} from './Field';
+import {FormContext} from 'react-aria-components/Form';
 import {forwardRefType, GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-
 
 export interface TimeFieldProps<T extends TimeValue> extends
   Omit<AriaTimeFieldProps<T>, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,

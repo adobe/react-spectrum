@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToastProps, AriaToastRegionProps, mergeProps, useFocusRing, useHover, useLocale, useToast, useToastRegion} from 'react-aria';
+import {AriaToastProps, AriaToastRegionProps, useToast, useToastRegion} from 'react-aria/useToast';
+
 import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
@@ -25,15 +26,20 @@ import {
   useRenderProps
 } from './utils';
 import {createPortal} from 'react-dom';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
-import {QueuedToast, ToastQueue, ToastState, useToastQueue} from 'react-stately';
+import {mergeProps} from 'react-aria/mergeProps';
+import {QueuedToast, ToastQueue, ToastState, useToastQueue} from 'react-stately/useToastState';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, useContext} from 'react';
 import {TextContext} from './Text';
-import {useIsSSR} from '@react-aria/ssr';
-import {useUNSAFE_PortalContext} from '@react-aria/overlays';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {useIsSSR} from 'react-aria/SSRProvider';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useObjectRef} from 'react-aria/useObjectRef';
+import {useUNSAFE_PortalContext} from 'react-aria/PortalProvider';
 
-export const ToastStateContext = createContext<ToastState<any> | null>(null);
+const ToastStateContext = createContext<ToastState<any> | null>(null);
 
 export interface ToastRegionRenderProps<T> {
   /** A list of all currently visible toasts. */
@@ -70,7 +76,7 @@ export interface ToastRegionProps<T> extends AriaToastRegionProps, StyleRenderPr
 /**
  * A ToastRegion displays one or more toast notifications.
  */
-export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastRegion<T>(props: ToastRegionProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
+const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastRegion<T>(props: ToastRegionProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
   let isSSR = useIsSSR();
   let state = useToastQueue(props.queue);
   let objectRef = useObjectRef(ref);
@@ -126,7 +132,7 @@ export interface ToastListProps<T> extends Omit<ToastRegionProps<T>, 'queue' | '
   children: (renderProps: {toast: QueuedToast<T>}) => ReactElement
 }
 
-export const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(props: ToastListProps<T>, ref: ForwardedRef<HTMLOListElement>) {
+const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(props: ToastListProps<T>, ref: ForwardedRef<HTMLOListElement>) {
   let state = useContext(ToastStateContext)!;
   let {hoverProps, isHovered} = useHover({});
   let renderProps = useRenderProps({
@@ -180,7 +186,7 @@ export interface ToastProps<T> extends AriaToastProps<T>, RenderProps<ToastRende
 /**
  * A Toast displays a brief, temporary notification of actions, errors, or other events in an application.
  */
-export const Toast = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toast<T>(props: ToastProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+const Toast = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toast<T>(props: ToastProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   let state = useContext(ToastStateContext)!;
   let objectRef = useObjectRef(ref);
   let {toastProps, contentProps, titleProps, descriptionProps, closeButtonProps} = useToast(
@@ -246,3 +252,5 @@ export const ToastContent = /*#__PURE__*/ forwardRef(function ToastContent(props
     </dom.div>
   );
 });
+
+export {Toast as UNSTABLE_Toast, ToastList as UNSTABLE_ToastList, ToastRegion as UNSTABLE_ToastRegion, ToastContent as UNSTABLE_ToastContent, ToastStateContext as UNSTABLE_ToastStateContext};

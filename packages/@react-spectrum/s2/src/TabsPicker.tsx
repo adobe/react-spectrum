@@ -9,21 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {
-  PopoverProps as AriaPopoverProps,
-  Select as AriaSelect,
-  SelectProps as AriaSelectProps,
-  Button,
-  ContextValue,
-  DEFAULT_SLOT,
-  ListBox,
-  ListBoxItem,
-  ListBoxItemProps,
-  ListBoxProps,
-  Provider,
-  SelectValue
-} from 'react-aria-components';
+import {PopoverProps as AriaPopoverProps} from 'react-aria-components/Popover';
+
+import {Select as AriaSelect, SelectProps as AriaSelectProps, SelectValue} from 'react-aria-components/Select';
 import {baseColor, focusRing, size, style} from '../style' with {type: 'macro'};
+import {Button} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
@@ -36,7 +26,9 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
+import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {controlFont, fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
+import {css} from '../style/style-macro' with {type: 'macro'};
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   FieldLabel
@@ -45,13 +37,14 @@ import {FocusableRef, FocusableRefValue, SpectrumLabelableProps} from '@react-ty
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
-import {Placement, useLocale} from 'react-aria';
+import {ListBox, ListBoxItem, ListBoxItemProps, ListBoxProps} from 'react-aria-components/ListBox';
+import {Placement} from 'react-aria-components/Popover';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
-import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
-import {useFocusableRef} from '@react-spectrum/utils';
+import {useFocusableRef} from './useDOMRef';
 import {useFormProps} from './Form';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface PickerStyleProps {
 }
@@ -204,7 +197,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                 isQuiet,
                 density
               })}>
-              <SelectValue className={valueStyles + ' ' + raw('&> * {display: none;}')}>
+              <SelectValue className={valueStyles + ' ' + css('&> * {display: none;}')}>
                 {({defaultChildren}) => {
                   return (
                     <Provider

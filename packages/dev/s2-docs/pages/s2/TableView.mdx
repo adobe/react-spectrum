@@ -14,13 +14,14 @@ export const description = 'Displays data in rows and columns, with row selectio
 
 <PageDescription>{docs.exports.TableView.description}</PageDescription>
 
-```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'overflowMode', 'density', 'isQuiet']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple', 'treeColumn': 'name'}} type="s2"
+```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'overflowMode', 'density', 'isQuiet', 'disabledBehavior']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple', 'treeColumn': 'name', disabledBehavior: 'selection'}} type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <TableView
   /* PROPS */
+  disabledKeys={['pacman', 'apps']}
   styles={style({width: 'full'})}>
   <TableHeader>
     <Column id="name" isRowHeader>Name</Column>
@@ -89,7 +90,9 @@ In this example, both the columns and the rows are provided to the table via a r
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, CheckboxGroup, Checkbox, ActionButton} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
+import {CheckboxGroup, Checkbox} from '@react-spectrum/s2/CheckboxGroup';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -165,7 +168,7 @@ Rows can be nested to display hierarchical data. Use the `treeColumn` prop to de
 
 ```tsx render
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, Collection, type Key} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, Collection, type Key} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
@@ -229,7 +232,8 @@ Use the `loadingState` and `onLoadMore` props to enable async loading and infini
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, useAsyncList} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
+import {useAsyncList} from '@react-spectrum/s2/useAsyncList';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 interface Character {
@@ -294,7 +298,7 @@ Use the `href` prop on a Row to create a link. See the [getting started guide](g
 
 ```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple'}} wide type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <TableView
@@ -333,7 +337,9 @@ Use `renderEmptyState` to render placeholder content when the table is empty.
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, IllustratedMessage, Heading, Content, Link} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody} from '@react-spectrum/s2/TableView';
+import {IllustratedMessage, Heading, Content} from '@react-spectrum/s2/IllustratedMessage';
+import {Link} from '@react-spectrum/s2/Link';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import FolderOpen from '@react-spectrum/s2/illustrations/linear/FolderOpen';
 
@@ -365,7 +371,7 @@ Use the `align` prop on a Column and Cell to set the text alignment. `showDivide
 
 ```tsx render hideImports type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, Collection} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, Collection} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
@@ -434,7 +440,8 @@ Use the `menuItems` prop to add custom menu items to a Column. See the [Menu](Me
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, MenuSection, MenuItem} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
+import {MenuSection, MenuItem} from '@react-spectrum/s2/Menu';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
@@ -499,7 +506,10 @@ Render an `<EditableCell>` instead of a `<Cell>` to allow users to edit the valu
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, EditableCell, TextField, ActionButton, Picker, PickerItem, Text, type Key, type ColumnProps} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, EditableCell, type Key, type ColumnProps,} from '@react-spectrum/s2/TableView';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {ActionButton, Text} from '@react-spectrum/s2/ActionButton';
+import {Picker, PickerItem} from '@react-spectrum/s2/Picker';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import User from '@react-spectrum/s2/icons/User';
 import Edit from '@react-spectrum/s2/icons/Edit';
@@ -636,7 +646,9 @@ Use `selectionMode` to enable single or multiple selection, and `selectedKeys` (
 
 ```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, ActionBar, ActionButton, Text, type Selection} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, type Selection} from '@react-spectrum/s2/TableView';
+import {ActionBar, ActionButton} from '@react-spectrum/s2/ActionBar';
+import {Text} from '@react-spectrum/s2/ActionButton';
 import Edit from '@react-spectrum/s2/icons/Edit';
 import Copy from '@react-spectrum/s2/icons/Copy';
 import Delete from '@react-spectrum/s2/icons/Delete';
@@ -717,7 +729,7 @@ Set the `allowsSorting` prop on a Column to make it sortable. When the column he
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, type SortDescriptor} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, type SortDescriptor} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
@@ -782,7 +794,7 @@ Set the `allowsResizing` prop on a Column to make it resizable. Use the `default
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
@@ -824,7 +836,7 @@ The TableView's `onResize` event is called when a column resizer is moved by the
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useSyncExternalStore} from 'react';
 

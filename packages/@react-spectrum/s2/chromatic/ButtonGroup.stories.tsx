@@ -10,13 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ButtonGroup, ButtonGroupProps, Text} from '../src';
+import {Button} from '../src/Button';
+
+import {ButtonGroup, ButtonGroupProps} from '../src/ButtonGroup';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {ReactNode} from 'react';
 import {shortName} from './utils';
 import {style} from '../style' with { type: 'macro' };
+import {Text} from '../src/Content';
 
 const meta: Meta<typeof ButtonGroup> = {
   component: ButtonGroup,

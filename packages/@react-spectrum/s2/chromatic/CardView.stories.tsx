@@ -10,10 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {CardView, Content, Heading, IllustratedMessage, SkeletonCollection} from '../src';
+import {CardView} from '../src/CardView';
+
+import {Content, Heading} from '../src/Content';
 import EmptyIcon from '../spectrum-illustrations/gradient/generic1/Image';
+import {IllustratedMessage} from '../src/IllustratedMessage';
 import type {Meta, StoryObj} from '@storybook/react';
 import {PhotoCard} from '../stories/CardView.stories';
+import {SkeletonCollection} from '../src/SkeletonCollection';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof CardView> = {

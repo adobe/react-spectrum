@@ -10,8 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ButtonGroup, Checkbox, Content, Dialog, DialogContainer, DialogProps, DialogTrigger, Footer, Header, Heading, Image, Provider} from '../src';
+import {Button} from '../src/Button';
+
+import {ButtonGroup} from '../src/ButtonGroup';
+import {Checkbox} from '../src/Checkbox';
+import {Content, Footer, Header, Heading} from '../src/Content';
+import {Dialog, DialogProps} from '../src/Dialog';
+import {DialogContainer} from '../src/DialogContainer';
+import {DialogTrigger} from '../src/DialogTrigger';
+import {Image} from '../src/Image';
 import type {Meta, StoryObj} from '@storybook/react';
+import {Provider} from '../src/Provider';
 import {ReactElement, useState} from 'react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
@@ -48,9 +57,12 @@ const ExampleRender = (args: ExampleRenderProps): ReactElement => (
           <Heading slot="title">Dialog title</Heading>
           <Header>Header</Header>
           <Content>
-            {[...Array(args.paragraphs)].map((_, i) =>
-              <p key={i} style={{marginTop: i === 0 ? 0 : undefined, marginBottom: i === args.paragraphs - 1 ? 0 : undefined}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>
-            )}
+            <>
+              {[...Array(args.paragraphs)].map((_, i) =>
+                <p key={i} style={{marginTop: i === 0 ? 0 : undefined, marginBottom: i === args.paragraphs - 1 ? 0 : undefined}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>
+              )}
+              <input type="text" defaultValue="Hello" />
+            </>
           </Content>
           <Footer><Checkbox>Don't show this again</Checkbox></Footer>
           <ButtonGroup>

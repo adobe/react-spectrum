@@ -1,9 +1,9 @@
 'use client';
 import {
   CheckboxGroup as AriaCheckboxGroup,
-  CheckboxGroupProps as AriaCheckboxGroupProps,
-  ValidationResult
-} from 'react-aria-components';
+  type CheckboxGroupProps as AriaCheckboxGroupProps,
+  type ValidationResult,
+} from 'react-aria-components/CheckboxGroup';
 import {Label, FieldError, Description} from './Form';
 import './CheckboxGroup.css';
 

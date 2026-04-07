@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-export {useSelectableCollection} from './useSelectableCollection';
-export {useSelectableItem} from './useSelectableItem';
-export {useSelectableList} from './useSelectableList';
-export {ListKeyboardDelegate} from './ListKeyboardDelegate';
-export {DOMLayoutDelegate} from './DOMLayoutDelegate';
-export {useTypeSelect} from './useTypeSelect';
+export {useSelectableCollection} from 'react-aria/private/selection/useSelectableCollection';
 
-export type {AriaSelectableCollectionOptions, SelectableCollectionAria} from './useSelectableCollection';
-export type {AriaSelectableListOptions, SelectableListAria} from './useSelectableList';
-export type {SelectableItemOptions, SelectableItemStates, SelectableItemAria} from './useSelectableItem';
-export type {AriaTypeSelectOptions, TypeSelectAria} from './useTypeSelect';
+export {useSelectableItem} from 'react-aria/private/selection/useSelectableItem';
+export {useSelectableList} from 'react-aria/private/selection/useSelectableList';
+export {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
+export {DOMLayoutDelegate} from 'react-aria/private/selection/DOMLayoutDelegate';
+export {useTypeSelect} from 'react-aria/private/selection/useTypeSelect';
+export type {AriaSelectableCollectionOptions, SelectableCollectionAria} from 'react-aria/private/selection/useSelectableCollection';
+export type {AriaSelectableListOptions, SelectableListAria} from 'react-aria/private/selection/useSelectableList';
+export type {SelectableItemOptions, SelectableItemStates, SelectableItemAria} from 'react-aria/private/selection/useSelectableItem';
+export type {AriaTypeSelectOptions, TypeSelectAria} from 'react-aria/private/selection/useTypeSelect';

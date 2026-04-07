@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaDisclosureProps, LabelAriaProps, useDisclosure, useFocusRing} from 'react-aria';
+import {AriaDisclosureProps, useDisclosure} from 'react-aria/useDisclosure';
+
 import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
@@ -23,10 +24,22 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {DisclosureGroupState, DisclosureState, DisclosureGroupProps as StatelyDisclosureGroupProps, useDisclosureGroupState, useDisclosureState} from 'react-stately';
+import {
+  DisclosureGroupState,
+  DisclosureGroupProps as StatelyDisclosureGroupProps,
+  useDisclosureGroupState
+} from 'react-stately/useDisclosureGroupState';
+import {DisclosureState, useDisclosureState} from 'react-stately/useDisclosureState';
+
 import {DOMProps, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
-import {filterDOMProps, mergeProps, mergeRefs, useId} from '@react-aria/utils';
+
+import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {LabelAriaProps} from 'react-aria/useLabel';
+import {mergeProps} from 'react-aria/mergeProps';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import React, {createContext, DOMAttributes, ForwardedRef, forwardRef, ReactNode, useContext} from 'react';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useId} from 'react-aria/useId';
 
 export interface DisclosureGroupProps extends StatelyDisclosureGroupProps, RenderProps<DisclosureGroupRenderProps>, DOMProps, GlobalDOMAttributes<HTMLDivElement> {
   /**

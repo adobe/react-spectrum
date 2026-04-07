@@ -1,5 +1,4 @@
 import {RadioGroup, Radio} from '../src/RadioGroup';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof RadioGroup> = {

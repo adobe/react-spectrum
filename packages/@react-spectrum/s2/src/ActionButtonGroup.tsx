@@ -11,10 +11,11 @@
  */
 
 import {AriaLabelingProps} from '@react-types/shared';
-import {ContextValue, SlotProps, Toolbar} from 'react-aria-components';
+import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {createContext, ForwardedRef, forwardRef, ReactNode} from 'react';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
+import {Toolbar} from 'react-aria-components/Toolbar';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ActionButtonGroupProps extends AriaLabelingProps, UnsafeStyles, SlotProps {

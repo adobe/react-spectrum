@@ -533,6 +533,7 @@ export function movePropToNewChildComponentName(
     getName(path, path.parentPath.node.openingElement.name) === parentComponentName
   ) {
     let propValue: t.JSXAttribute['value'] | void;
+    let localName = newChildComponentName;
     path.node.openingElement.attributes =
       path.node.openingElement.attributes.filter((attr) => {
         if (t.isJSXAttribute(attr) && attr.name.name === propName) {
@@ -543,10 +544,14 @@ export function movePropToNewChildComponentName(
       });
 
     if (propValue) {
+      if (availableComponents.has(newChildComponentName)) {
+        let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
+        localName = addComponentImport(program, newChildComponentName);
+      }
       path.node.children.unshift(
         t.jsxElement(
-          t.jsxOpeningElement(t.jsxIdentifier(newChildComponentName), []),
-          t.jsxClosingElement(t.jsxIdentifier(newChildComponentName)),
+          t.jsxOpeningElement(t.jsxIdentifier(localName), []),
+          t.jsxClosingElement(t.jsxIdentifier(localName)),
           [t.isStringLiteral(propValue) ? t.jsxText(propValue.value) : propValue]
         )
       );
@@ -588,6 +593,57 @@ export function movePropToParentComponent(
       }
     }
   });
+}
+
+/**
+ * Moves a prop from the parent component onto a direct child JSX element.
+ *
+ * Example:
+ * - MenuTrigger: Remove `shouldCloseOnSelect` and add it to the child `Menu` instead.
+ */
+export function movePropToChildComponent(
+  path: NodePath<t.JSXElement>,
+  options: {
+    parentComponentName: string,
+    childComponentName: string,
+    propName: string
+  }
+): void {
+  const {parentComponentName, childComponentName, propName} = options;
+
+  if (
+    !t.isJSXIdentifier(path.node.openingElement.name) ||
+    getName(path, path.node.openingElement.name) !== parentComponentName
+  ) {
+    return;
+  }
+
+  let attrs = path.node.openingElement.attributes;
+  let propAttr = attrs.find(
+    (attr): attr is t.JSXAttribute => t.isJSXAttribute(attr) && attr.name.name === propName
+  );
+  if (!propAttr) {
+    return;
+  }
+
+  let childPath = path.get('children').find(
+    (child) =>
+      child.isJSXElement() &&
+      t.isJSXIdentifier(child.node.openingElement.name) &&
+      getName(path, child.node.openingElement.name) === childComponentName
+  );
+
+  if (!childPath?.isJSXElement()) {
+    return;
+  }
+
+  childPath.node.openingElement.attributes.push(
+    t.jsxAttribute(t.jsxIdentifier(propName), propAttr.value)
+  );
+  let index = attrs.indexOf(propAttr);
+  if (index !== -1) {
+    attrs.splice(index, 1);
+  }
 }
 
 /**

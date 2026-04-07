@@ -11,11 +11,33 @@
  */
 
 import {CSSProperties} from 'react';
-import {fontRelative} from '../style';
+import {fontRelative as internalFontRelative} from '../style/spectrum-theme';
 import {StyleString} from '../style/types';
 
+/**
+ * Calculates vertical padding to center a single line of text within a container.
+ * Uses the CSS `self()` function and `1lh` unit to compute the padding based on
+ * the container's minimum height and border widths.
+ * This is useful for precise vertical centering without introducing a flex/grid layout to the container.
+ *
+ * @param minHeight - A CSS expression for the minimum height to center within. Defaults to `'self(minHeight)'`.
+ * @returns A CSS `calc()` expression wrapped as an arbitrary style value.
+ *
+ * @example
+ * ```tsx
+ * import {centerPadding, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
+ * const styles = style({
+ *   paddingY: centerPadding()
+ * });
+ * ```
+ */
 export function centerPadding(minHeight: string = 'self(minHeight)'): `[${string}]` {
   return `[calc((${minHeight} - self(borderTopWidth, 0px) - self(borderBottomWidth, 0px) - 1lh) / 2)]`;
+}
+
+function fontRelative(base: number, baseFontSize = 14): `[${string}]` {
+  return `[${internalFontRelative(base, baseFontSize)}]`;
 }
 
 export const field = () => ({
@@ -113,16 +135,34 @@ export const fieldInput = () => ({
   containIntrinsicWidth: 'calc(var(--defaultWidth) - self(paddingStart, 0px) - self(paddingEnd, 0px) - self(borderStartWidth, 0px) - self(borderEndWidth, 0px))'
 } as const);
 
-export const colorScheme = () => ({
-  colorScheme: {
-    // Default to page color scheme if none is defined.
-    default: '[var(--lightningcss-light, light) var(--lightningcss-dark, dark)]',
-    colorScheme: {
-      'light dark': 'light dark',
-      light: 'light',
-      dark: 'dark'
+/**
+ * Returns style properties that set the CSS `color-scheme` for a component.
+ * Defaults to the page's color scheme and supports `'light'`, `'dark'`, and `'light dark'` values
+ * via the `colorScheme` render prop condition.
+ * Intended for root containers (e.g. providers, modals, and popovers), and not needed for individual components.
+ *
+ * @example
+ * ```tsx
+ * import {setColorScheme, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
+ * const styles = style({
+ *   ...setColorScheme(),
+ *   backgroundColor: 'layer-1'
+ * });
+ * ```
+ */
+export const setColorScheme = () => ({
+  '--s2-color-scheme': {
+    type: 'colorScheme',
+    value: {
+      colorScheme: {
+        'light dark': 'light dark',
+        light: 'light',
+        dark: 'dark'
+      }
     }
-  }
+  },
+  colorScheme: '--s2-color-scheme'
 } as const);
 
 export function staticColor(): Record<string, any> {

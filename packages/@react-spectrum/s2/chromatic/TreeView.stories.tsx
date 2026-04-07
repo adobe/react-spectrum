@@ -10,14 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu, Collection, Content, Heading, IllustratedMessage, Link, MenuItem, Text, TreeView, TreeViewItem, TreeViewItemContent, TreeViewItemProps, TreeViewProps} from '../src';
+import {ActionMenu} from '../src/ActionMenu';
+
+import {Collection} from 'react-aria/Collection';
+import {Content, Heading, Text} from '../src/Content';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
+
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
+
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
+import {IllustratedMessage} from '../src/IllustratedMessage';
+import {Link} from '../src/Link';
+import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement} from 'react';
+import {
+  TreeView,
+  TreeViewItem,
+  TreeViewItemContent,
+  TreeViewItemProps,
+  TreeViewProps
+} from '../src/TreeView';
 
 const meta: Meta<typeof TreeView> = {
   component: TreeView,
@@ -143,10 +158,19 @@ export const TreeStatic: StoryObj<typeof TreeExample> = {
   render: (args) => <TreeExample {...args} />
 };
 
-export const TreeSelection: StoryObj<typeof TreeExample> = {
+export const TreeCheckboxSelection: StoryObj<typeof TreeExample> = {
   ...TreeStatic,
   args: {
     selectionMode: 'multiple',
+    defaultSelectedKeys: ['projects-2', 'projects-3']
+  }
+};
+
+export const TreeHighlightSelection: StoryObj<typeof TreeExample> = {
+  ...TreeStatic,
+  args: {
+    selectionMode: 'multiple',
+    selectionStyle: 'highlight',
     defaultSelectedKeys: ['projects-2', 'projects-3']
   }
 };

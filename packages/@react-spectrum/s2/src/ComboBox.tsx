@@ -13,32 +13,25 @@
 import {
   ComboBox as AriaComboBox,
   ComboBoxProps as AriaComboBoxProps,
+  ComboBoxStateContext
+} from 'react-aria-components/ComboBox';
+import {
   ListBoxSection as AriaListBoxSection,
-  PopoverProps as AriaPopoverProps,
-  Button,
-  ButtonRenderProps,
-  Collection,
-  ComboBoxStateContext,
-  ContextValue,
-  InputContext,
-  InputProps,
   ListBox,
   ListBoxItem,
   ListBoxItemProps,
   ListBoxLoadMoreItem,
   ListBoxProps,
-  ListLayout,
-  ListStateContext,
-  Provider,
-  SectionProps,
-  Virtualizer
-} from 'react-aria-components';
+  ListBoxSectionProps,
+  ListStateContext
+} from 'react-aria-components/ListBox';
+import {PopoverProps as AriaPopoverProps, Placement} from 'react-aria-components/Popover';
 import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SingleSelection, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
-import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
-import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
+import {BaseCollection, CollectionNode} from 'react-aria/private/collections/BaseCollection';
+import {baseColor, centerPadding, focusRing, space, style} from '../style' with {type: 'macro'};
+import {Button, ButtonRenderProps} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   checkmark,
   description,
@@ -49,26 +42,34 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
+import {Collection} from 'react-aria/Collection';
+import {ContextValue, Provider} from 'react-aria-components/slots';
+import {control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
-import {createFocusableRef} from '@react-spectrum/utils';
+import {createFocusableRef} from './useDOMRef';
+import {createLeafComponent} from 'react-aria/CollectionBuilder';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
-// @ts-ignore
+import {InputContext, InputProps} from 'react-aria-components/Input';
 import intlMessages from '../intl/*.json';
-import {mergeRefs, useResizeObserver, useSlotId} from '@react-aria/utils';
-import {Node} from 'react-stately';
-import {Placement} from 'react-aria';
+import {ListLayout} from 'react-stately/useVirtualizerState';
+import {mergeRefs} from 'react-aria/mergeRefs';
+// @ts-ignore
+import {Node} from '@react-types/shared';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
-import {TextFieldRef} from '@react-types/textfield';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {TextFieldRef} from './TextField';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 import {useScale} from './utils';
+import {useSlotId} from 'react-aria/private/utils/useId';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 export interface ComboboxStyleProps {
   /**
@@ -431,7 +432,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   );
 }
 
-export interface ComboBoxSectionProps<T extends object> extends Omit<SectionProps<T>, keyof GlobalDOMAttributes> {}
+export interface ComboBoxSectionProps<T extends object> extends Omit<ListBoxSectionProps<T>, keyof GlobalDOMAttributes> {}
 export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>): ReactNode {
   let {size} = useContext(InternalComboboxContext);
   return (

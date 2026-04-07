@@ -2,11 +2,11 @@
 import React from 'react';
 import {
   Slider as AriaSlider,
-  SliderProps as AriaSliderProps,
+  type SliderProps as AriaSliderProps,
   SliderOutput,
   SliderThumb,
-  SliderTrack
-} from 'react-aria-components';
+  SliderTrack,
+} from 'react-aria-components/Slider';
 import { tv } from 'tailwind-variants';
 import { Label } from './Field';
 import { composeTailwindRenderProps, focusRing } from './utils';

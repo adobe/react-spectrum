@@ -13,28 +13,29 @@
 import {
   DateRangePicker as AriaDateRangePicker,
   DateRangePickerProps as AriaDateRangePickerProps,
-  ContextValue,
-  DateValue,
-  FormContext,
-  PopoverProps
-} from 'react-aria-components';
+  DateValue
+} from 'react-aria-components/DateRangePicker';
 import {CalendarButton, CalendarPopover, timeField} from './DatePicker';
-import {createContext, forwardRef, ReactElement, Ref, useContext, useState} from 'react';
+import {ContextValue} from 'react-aria-components/slots';
+import {createContext, forwardRef, ReactElement, ReactNode, Ref, useContext, useState} from 'react';
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText} from './Field';
+import {FormContext} from 'react-aria-components/Form';
 import {forwardRefType, GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {RangeCalendar, RangeCalendarProps, TimeField} from '../';
+import {PopoverProps} from 'react-aria-components/Popover';
+import {RangeCalendar, RangeCalendarProps} from './RangeCalendar';
 import {style} from '../style' with {type: 'macro'};
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {TimeField} from './TimeField';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface DateRangePickerProps<T extends DateValue> extends
   Omit<AriaDateRangePickerProps<T>, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
-  Pick<RangeCalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'firstDayOfWeek' | 'isDateUnavailable'>,
+  Pick<RangeCalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'firstDayOfWeek' | 'isDateUnavailable' | 'interactOutsideBehavior'>,
   Pick<PopoverProps, 'shouldFlip'>,
   StyleProps,
   SpectrumLabelableProps,
@@ -49,7 +50,11 @@ export interface DateRangePickerProps<T extends DateValue> extends
      * The maximum number of months to display at once in the calendar popover, if screen space permits.
      * @default 1
      */
-    maxVisibleMonths?: number
+    maxVisibleMonths?: number,
+    /**
+     * The error message to display when the calendar is invalid.
+     */
+    errorMessage?: ReactNode
 }
 
 export const DateRangePickerContext = createContext<ContextValue<Partial<DateRangePickerProps<any>>, HTMLDivElement>>(null);
@@ -79,6 +84,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
     placeholderValue,
     maxVisibleMonths = 1,
     createCalendar,
+    interactOutsideBehavior,
     ...dateFieldProps
   } = props;
   let formContext = useContext(FormContext);
@@ -148,7 +154,9 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
             <CalendarPopover shouldFlip={props.shouldFlip}>
               <RangeCalendar
                 visibleMonths={maxVisibleMonths}
-                createCalendar={createCalendar} />
+                createCalendar={createCalendar}
+                interactOutsideBehavior={interactOutsideBehavior}
+                errorMessage={errorMessage} />
               {showTimeField && (
                 <div className={style({display: 'flex', gap: 16, contain: 'inline-size', marginTop: 24})}>
                   <TimeField

@@ -6,7 +6,7 @@ import vanillaDocs from 'docs:vanilla-starter/Calendar';
 import {Calendar as VanillaCalendar} from 'vanilla-starter/Calendar';
 import {Calendar as TailwindCalendar} from 'tailwind-starter/Calendar';
 import '../../tailwind/tailwind.css';
-import Anatomy from '@react-aria/calendar/docs/calendar-anatomy.svg';
+import Anatomy from '/packages/react-aria/docs/calendar/calendar-anatomy.svg';
 
 export const tags = ['date'];
 export const relatedPages = [{'title': 'useCalendar', 'url': 'Calendar/useCalendar.html'}];
@@ -40,7 +40,7 @@ Use the `value` or `defaultValue` prop to set the date value, using objects in t
 ```tsx render
 "use client";
 import {parseDate, getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from 'react-aria';
+import {useDateFormatter} from 'react-aria/useDateFormatter';
 import {Calendar} from 'vanilla-starter/Calendar';
 import {useState} from 'react';
 
@@ -68,7 +68,7 @@ By default, `Calendar` displays the value using the calendar system for the user
 
 ```tsx render wide docs={docs.exports.I18nProvider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-ca-indian'}}
 "use client";
-import {I18nProvider} from 'react-aria-components';
+import {I18nProvider} from 'react-aria-components/I18nProvider';
 import {parseDate} from '@internationalized/date';
 import {Calendar} from 'vanilla-starter/Calendar';
 
@@ -172,7 +172,7 @@ Use the `minValue` and `maxValue` props to set the valid date range. The `isDate
 ```tsx render docs={vanillaDocs.exports.Calendar} links={docs.links} props={['isInvalid', 'errorMessage']} wide
 "use client";
 import {isWeekend, today, getLocalTimeZone} from '@internationalized/date';
-import {useLocale} from 'react-aria-components';
+import {useLocale} from 'react-aria-components/I18nProvider';
 import {Calendar} from 'vanilla-starter/Calendar';
 
 function Example(props) {
@@ -208,10 +208,10 @@ Set the `visibleDuration` prop and render multiple `CalendarGrid` elements to di
 
 ```tsx render docs={docs.exports.Calendar} links={docs.links} props={['visibleDuration', 'pageBehavior', 'firstDayOfWeek']} initialProps={{visibleDuration: {months: 2}}} wide
 "use client";
-import {Calendar, Heading} from 'react-aria-components';
+import {Calendar, Heading} from 'react-aria-components/Calendar';
 import {CalendarGrid, CalendarCell} from 'vanilla-starter/Calendar';
 import {Button} from 'vanilla-starter/Button';
-import {useDateFormatter} from 'react-aria';
+import {useDateFormatter} from 'react-aria/useDateFormatter';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 
 // TODO: move this into the starter example.
@@ -297,7 +297,7 @@ You can also control the focused date via `CalendarStateContext`. This example s
 
 ```tsx render files={['packages/dev/s2-docs/pages/react-aria/MonthDropdown.tsx', 'packages/dev/s2-docs/pages/react-aria/YearDropdown.tsx']}
 "use client";
-import {Calendar} from 'react-aria-components';
+import {Calendar} from 'react-aria-components/Calendar';
 import {CalendarGrid, CalendarCell} from 'vanilla-starter/Calendar';
 import {MonthDropdown} from './MonthDropdown';
 import {YearDropdown} from './YearDropdown';

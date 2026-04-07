@@ -6,7 +6,7 @@ import vanillaDocs from 'docs:vanilla-starter/DateRangePicker';
 import {DateRangePicker as VanillaDateRangePicker} from 'vanilla-starter/DateRangePicker';
 import {DateRangePicker as TailwindDateRangePicker} from 'tailwind-starter/DateRangePicker';
 import '../../tailwind/tailwind.css';
-import Anatomy from '@react-aria/datepicker/docs/daterangepicker-anatomy.svg';
+import Anatomy from '/packages/react-aria/docs/datepicker/daterangepicker-anatomy.svg';
 
 export const tags = ['calendar', 'input'];
 export const relatedPages = [{'title': 'useDateRangePicker', 'url': 'DateRangePicker/useDateRangePicker.html'}];
@@ -42,7 +42,8 @@ Use the `value` or `defaultValue` prop to set the selected date range, using obj
 ```tsx render
 "use client";
 import {parseDate, getLocalTimeZone, type CalendarDate} from '@internationalized/date';
-import {useDateFormatter, type RangeValue} from 'react-aria';
+import {type RangeValue} from 'react-aria-components/DateRangePicker';
+import {useDateFormatter} from 'react-aria/useDateFormatter';
 import {DateRangePicker} from 'vanilla-starter/DateRangePicker';
 import {useState} from 'react';
 
@@ -92,7 +93,7 @@ By default, `DateRangePicker` displays the value using the calendar system for t
 
 ```tsx render wide docs={docs.exports.I18nProvider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-ca-indian'}}
 "use client";
-import {I18nProvider} from 'react-aria-components';
+import {I18nProvider} from 'react-aria-components/I18nProvider';
 import {parseDate} from '@internationalized/date';
 import {DateRangePicker} from 'vanilla-starter/DateRangePicker';
 
@@ -112,7 +113,7 @@ Use the `name` prop to submit the selected date to the server as an [ISO 8601](h
 ```tsx render docs={vanillaDocs.exports.DateRangePicker} links={docs.links} props={['allowsNonContiguousRanges']} wide
 "use client";
 import {isWeekend, today, getLocalTimeZone} from '@internationalized/date';
-import {useLocale} from 'react-aria-components';
+import {useLocale} from 'react-aria-components/I18nProvider';
 import {DateRangePicker} from 'vanilla-starter/DateRangePicker';
 import {Button} from 'vanilla-starter/Button';
 import {Form} from 'vanilla-starter/Form';;

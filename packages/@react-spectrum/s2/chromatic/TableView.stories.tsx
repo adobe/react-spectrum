@@ -11,13 +11,17 @@
  */
 
 import {action} from 'storybook/actions';
-import {Cell, Column, Content, Heading, IllustratedMessage, Link, Row, TableBody, TableHeader, TableView, TableViewProps} from '../src';
+import {Cell, Column, Row, TableBody, TableHeader, TableView, TableViewProps} from '../src/TableView';
+import {Content, Heading} from '../src/Content';
+import {FixedColumnWidths} from '../../../react-aria-components/stories/Table.stories';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
+import {IllustratedMessage} from '../src/IllustratedMessage';
+import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement, useState} from 'react';
-import {SortDescriptor} from 'react-aria-components';
+import {SortDescriptor} from '@react-types/shared';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {useAsyncList} from '@react-stately/data';
+import {useAsyncList} from 'react-stately/useAsyncList';
 
 const meta: Meta<typeof TableView> = {
   component: TableView,
@@ -496,5 +500,16 @@ export const TableWithNestedRows: StoryObj<typeof TableView> = {
   args: {
     selectionMode: 'multiple',
     defaultExpandedKeys: ['apps']
+  }
+};
+
+export const RACFixedWidth = {
+  render: FixedColumnWidths,
+  parameters: {
+    chromaticProvider: {
+      locales: ['en-US'],
+      scales: ['medium'],
+      colorSchemes: ['light']
+    }
   }
 };

@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaProgressBarProps, useProgressBar} from 'react-aria';
-import {clamp} from '@react-stately/utils';
+import {AriaProgressBarProps, useProgressBar} from 'react-aria/useProgressBar';
+
+import {clamp} from 'react-stately/private/utils/number';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -22,9 +23,10 @@ import {
   useRenderProps,
   useSlot
 } from './utils';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {LabelContext} from './Label';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
 export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'label'>, RenderProps<ProgressBarRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {

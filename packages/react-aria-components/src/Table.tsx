@@ -1,8 +1,8 @@
 import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
-import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, FilterableNode, LoaderNode, useCachedChildren} from '@react-aria/collections';
-import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
+import {BaseCollection, CollectionNode, FilterableNode, LoaderNode} from 'react-aria/private/collections/BaseCollection';
+import {buildHeaderRows} from 'react-stately/private/table/TableCollection';
 import {ButtonContext} from './Button';
-import {CheckboxContext, FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
+import {CheckboxContext} from './Checkbox';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -18,22 +18,69 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
+import {Collection} from 'react-aria/Collection';
+import {CollectionBuilder, createBranchComponent, createLeafComponent} from 'react-aria/CollectionBuilder';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
-import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
-import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, MultipleSelectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, UNSTABLE_useFilteredTableState, useMultipleSelectionState, useTableColumnResizeState, useTableState} from 'react-stately';
+import {ColumnSize, ColumnStaticSize} from 'react-stately/useTableState';
+import {DisabledBehavior, Node, SelectionBehavior, SelectionMode, SortDirection} from '@react-types/shared';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
-import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {filterDOMProps, inertValue, isScrollable, LoadMoreSentinelProps, mergeRefs, useLayoutEffect, useLoadMoreSentinel, useObjectRef, useResizeObserver} from '@react-aria/utils';
-import {GridNode} from '@react-types/grid';
-// @ts-ignore
+import {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
+import {DraggableItemResult} from 'react-aria/useDraggableCollection';
+import {DragPreviewRenderer} from '@react-types/shared';
+import {DropIndicatorAria, DroppableCollectionResult} from 'react-aria/useDroppableCollection';
+import {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
+import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {FocusScope} from 'react-aria/FocusScope';
+import {GridNode} from 'react-stately/private/grid/GridCollection';
+import {inertValue} from 'react-aria/private/utils/inertValue';
 import intlMessages from '../intl/*.json';
+import {isScrollable} from 'react-aria/private/utils/isScrollable';
+import {ITableCollection} from 'react-stately/private/table/TableCollection';
+import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
+import {LoadMoreSentinelProps, useLoadMoreSentinel} from 'react-aria/private/utils/useLoadMoreSentinel';
+import {mergeProps} from 'react-aria/mergeProps';
+import {mergeRefs} from 'react-aria/mergeRefs';
+import {MultipleSelectionState} from 'react-stately/useMultipleSelectionState';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
+import {
+  TableProps as SharedTableProps,
+  TableState,
+  UNSTABLE_useFilteredTableState,
+  useTableColumnResizeState,
+  useTableState
+} from 'react-stately/useTableState';
+import {TableColumnResizeState} from 'react-stately/useTableState';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
-import {useControlledState} from '@react-stately/utils';
+import {useCachedChildren} from 'react-aria/private/collections/useCachedChildren';
+import {useControlledState} from 'react-stately/useControlledState';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+// @ts-ignore
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useMultipleSelectionState} from 'react-stately/useMultipleSelectionState';
+import {useObjectRef} from 'react-aria/useObjectRef';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
+import {
+  useTable,
+  useTableCell,
+  useTableColumnHeader,
+  useTableColumnResize,
+  useTableHeaderRow,
+  useTableRow,
+  useTableRowGroup,
+  useTableSelectAllCheckbox,
+  useTableSelectionCheckbox
+} from 'react-aria/useTable';
+import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
+
+export {TableLayout} from './TableLayout';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
@@ -210,7 +257,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     if (k == null) {
       k = node.parentKey;
     }
-    
+
     if (k != null && this.getItem(k)?.type === 'tablebody') {
       return null;
     }
@@ -640,7 +687,9 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       style = {
         ...style,
         tableLayout: 'fixed',
-        width: 'fit-content'
+        // due to https://bugzilla.mozilla.org/show_bug.cgi?id=1959353, we can't use "fit-content".
+        // Causes the table columns to grow to fill the available space in Firefox, ignoring user set column widths
+        width: 'min-content'
       };
     }
   }

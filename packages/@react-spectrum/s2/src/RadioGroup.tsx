@@ -11,17 +11,23 @@
  */
 
 import {
+  Radio as AriaRadio,
   RadioGroup as AriaRadioGroup,
   RadioGroupProps as AriaRadioGroupProps,
-  ContextValue
-} from 'react-aria-components';
-import {DOMRef, DOMRefValue, GlobalDOMAttributes, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
-import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+  RadioProps as AriaRadioProps,
+  RadioRenderProps
+} from 'react-aria-components/RadioGroup';
+
+import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
+import {CenterBaseline} from './CenterBaseline';
+import {ContextValue} from 'react-aria-components/slots';
+import {controlFont, controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {DOMRef, DOMRefValue, FocusableRef, GlobalDOMAttributes, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
-import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {pressScale} from './pressScale';
+import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
+import {useDOMRef, useFocusableRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps {
@@ -135,5 +141,126 @@ export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(props: Ra
         </>
       )}
     </AriaRadioGroup>
+  );
+});
+
+export interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' | 'render' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
+  /**
+   * The label for the element.
+   */
+  children?: ReactNode
+}
+
+interface ContextProps {
+  /**
+   * The size of the Radio.
+   *
+   * @default 'M'
+   */
+  size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * Whether the Radio within a RadioGroup should be displayed with an emphasized style.
+   */
+  isEmphasized?: boolean
+}
+
+interface RadioContextProps extends RadioProps, ContextProps {}
+
+interface RenderProps extends RadioRenderProps, ContextProps {}
+
+const wrapper = style({
+  display: 'flex',
+  position: 'relative',
+  columnGap: 'text-to-control',
+  alignItems: 'baseline',
+  font: controlFont(),
+  transition: 'colors',
+  color: {
+    default: baseColor('neutral'),
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
+  },
+  gridColumnStart: {
+    isInForm: 'field'
+  },
+  disableTapHighlight: true
+}, getAllowedOverrides());
+
+const circle = style<RenderProps>({
+  ...focusRing(),
+  size: controlSize('sm'),
+  flexShrink: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  transition: 'default',
+  borderRadius: 'full',
+  borderStyle: 'solid',
+  boxSizing: 'border-box',
+  borderWidth: {
+    default: space(2),
+    isSelected: 'calc((self(height) - (4 / 16) * 1rem) / 2)'
+  },
+  forcedColorAdjust: 'none',
+  backgroundColor: 'gray-25',
+  borderColor: {
+    default: baseColor('gray-800'),
+    forcedColors: 'ButtonBorder',
+    isSelected: {
+      isEmphasized: baseColor('accent-900'),
+      forcedColors: 'Highlight'
+    },
+    isInvalid: {
+      default: baseColor('negative'),
+      forcedColors: 'Mark'
+    },
+    isDisabled: {
+      default: 'gray-400',
+      forcedColors: 'GrayText'
+    }
+  }
+});
+
+/**
+ * Radio buttons allow users to select a single option from a list of mutually exclusive options.
+ * All possible options are exposed up front for users to compare.
+ */
+export const Radio = /*#__PURE__*/ forwardRef(function Radio(props: RadioProps, ref: FocusableRef<HTMLLabelElement>) {
+  let {children, UNSAFE_className = '', UNSAFE_style} = props;
+  let circleRef = useRef(null);
+  let inputRef = useRef<HTMLInputElement | null>(null);
+  let domRef = useFocusableRef(ref, inputRef);
+  let isInForm = !!useContext(FormContext);
+  let {
+    size = 'M',
+    ...allProps
+  } = useFormProps<RadioContextProps>(props);
+
+  return (
+    <AriaRadio
+      {...allProps}
+      ref={domRef}
+      inputRef={inputRef}
+      style={UNSAFE_style}
+      className={renderProps => UNSAFE_className + wrapper({...renderProps, isInForm, size}, allProps.styles)}>
+      {renderProps => (
+        <>
+          <CenterBaseline>
+            <div
+              ref={circleRef}
+              style={pressScale(circleRef)(renderProps)}
+              className={circle({
+                ...renderProps,
+                isEmphasized: allProps.isEmphasized,
+                isSelected: renderProps.isSelected,
+                size
+              })} />
+          </CenterBaseline>
+          {children}
+        </>
+      )}
+    </AriaRadio>
   );
 });
