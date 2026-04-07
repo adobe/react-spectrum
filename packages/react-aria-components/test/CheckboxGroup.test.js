@@ -205,7 +205,7 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', (comp) => 
     let {getByRole, getAllByRole} = render(
       <CheckboxGroup isInvalid>
         <Label>Test</Label>
-        <Checkbox value="a">A</Checkbox>
+        <Checkbox value="a" description="hello">A</Checkbox>
         <Text slot="description">Description</Text>
         <Text slot="errorMessage">Error</Text>
       </CheckboxGroup>
@@ -217,7 +217,7 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', (comp) => 
 
     let checkbox = getAllByRole('checkbox')[0];
     expect(checkbox).toHaveAttribute('aria-describedby');
-    expect(checkbox.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Error Description');
+    expect(checkbox.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe(comp === 'CheckboxField' ? 'hello Error Description' : 'Error Description');
   });
 
   it('should support render props', () => {

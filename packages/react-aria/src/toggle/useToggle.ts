@@ -10,18 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AriaValidationProps, DOMAttributes, FocusableDOMProps, InputDOMProps, PressEvents, RefObject, ValidationResult} from '@react-types/shared';
+import {AriaLabelingProps, AriaValidationProps, DOMAttributesWithRef, FocusableDOMProps, InputDOMProps, PressEvents, RefObject, ValidationResult} from '@react-types/shared';
 import {ChangeEventHandler, InputHTMLAttributes, LabelHTMLAttributes, useState} from 'react';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {mergeProps} from '../utils/mergeProps';
 import {privateValidationStateProp, useFormValidationState} from 'react-stately/private/form/useFormValidationState';
 import {ToggleProps, ToggleState} from 'react-stately/useToggleState';
-import {useField} from '../label/useField';
 import {useFocusable} from '../interactions/useFocusable';
 import {useFormReset} from '../utils/useFormReset';
 import {useFormValidation} from '../form/useFormValidation';
 import {usePress} from '../interactions/usePress';
+import {useSlotId2} from '../utils/useSlot';
 
 export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLabelingProps, AriaValidationProps, InputDOMProps, PressEvents {
   /**
@@ -36,9 +36,9 @@ export interface ToggleAria extends ValidationResult {
   /** Props to be spread on the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the checkbox description element, if any. */
-  descriptionProps: DOMAttributes,
+  descriptionProps: DOMAttributesWithRef<HTMLElement>,
   /** Props for the checkbox error message element, if any. */
-  errorMessageProps: DOMAttributes,
+  errorMessageProps: DOMAttributesWithRef<HTMLElement>,
   /** Whether the toggle is selected. */
   isSelected: boolean,
   /** Whether the toggle is in a pressed state. */
@@ -66,6 +66,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
     validationBehavior = 'aria',
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
+    'aria-describedby': ariaDescribedby,
     onPressStart,
     onPressEnd,
     onPressChange,
@@ -166,16 +167,13 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
 
   useFormReset(ref, state.defaultSelected, state.setSelected);
 
-  let {labelProps: fieldLabelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
-    ...props,
-    label: props.children,
-    isInvalid,
-    errorMessage: validationErrors
-  });
+  // Copied from useField because we don't want the label behavior that provides.
+  let descriptionProps = useSlotId2();
+  let errorMessageProps = useSlotId2();
 
   return {
-    labelProps: mergeProps(labelProps, fieldLabelProps, {onClick: e => e.preventDefault()}),
-    inputProps: mergeProps(domProps, fieldProps, {
+    labelProps: mergeProps(labelProps, {onClick: e => e.preventDefault()}),
+    inputProps: mergeProps(domProps, {
       checked: state.isSelected,
       'aria-required': (isRequired && validationBehavior === 'aria') || undefined,
       required: isRequired && validationBehavior === 'native',
@@ -183,6 +181,11 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
       'aria-errormessage': props['aria-errormessage'],
       'aria-controls': props['aria-controls'],
       'aria-readonly': isReadOnly || undefined,
+      'aria-describedby': [
+        descriptionProps.id,
+        errorMessageProps.id,
+        ariaDescribedby
+      ].filter(Boolean).join(' ') || undefined,
       onChange,
       disabled: isDisabled,
       ...(value == null ? {} : {value}),

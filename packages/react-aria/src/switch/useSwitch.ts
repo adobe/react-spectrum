@@ -11,7 +11,7 @@
  */
 
 import {AriaToggleProps, useToggle} from '../toggle/useToggle';
-import {DOMAttributes, InputDOMProps, RefObject, ValidationResult} from '@react-types/shared';
+import {DOMAttributesWithRef, InputDOMProps, RefObject, ValidationResult} from '@react-types/shared';
 import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
 import {ToggleProps, ToggleState} from 'react-stately/useToggleState';
 
@@ -30,9 +30,9 @@ export interface SwitchAria extends ValidationResult {
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the switch description element, if any. */
-  descriptionProps: DOMAttributes,
+  descriptionProps: DOMAttributesWithRef<HTMLElement>,
   /** Props for the switch error message element, if any. */
-  errorMessageProps: DOMAttributes,
+  errorMessageProps: DOMAttributesWithRef<HTMLElement>,
   /** Whether the switch is selected. */
   isSelected: boolean,
   /** Whether the switch is in a pressed state. */

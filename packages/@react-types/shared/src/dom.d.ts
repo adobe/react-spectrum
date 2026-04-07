@@ -26,6 +26,7 @@ import {
   PointerEventHandler,
   DOMAttributes as ReactDOMAttributes,
   ReactEventHandler,
+  RefAttributes,
   TouchEventHandler,
   TransitionEventHandler,
   UIEventHandler,
@@ -236,6 +237,8 @@ export interface DOMAttributes<T = FocusableElement> extends AriaAttributes, Rea
   style?: CSSProperties | undefined,
   className?: string | undefined
 }
+
+export interface DOMAttributesWithRef<T = Element> extends DOMAttributes<T>, RefAttributes<T> {}
 
 export interface GroupDOMAttributes extends Omit<DOMAttributes<HTMLElement>, 'role'> {
   role?: 'group' | 'region' | 'presentation'

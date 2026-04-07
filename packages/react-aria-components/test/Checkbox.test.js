@@ -278,9 +278,21 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
       expect(checkbox).toHaveAttribute('aria-describedby');
       expect(document.getElementById(checkbox.getAttribute('aria-describedby'))).toHaveTextContent('hello');
     });
+
+    it('should update aria-describedby when changing description prop', () => {
+      let {getByRole, rerender} = render(<Checkbox>Test</Checkbox>);
+      let checkbox = getByRole('checkbox');
+      expect(checkbox).not.toHaveAttribute('aria-describedby');
+
+      rerender(<Checkbox description="hello">Test</Checkbox>);
+      expect(checkbox).toHaveAttribute('aria-describedby');
+
+      rerender(<Checkbox>Test</Checkbox>);
+      expect(checkbox).not.toHaveAttribute('aria-describedby');
+    });
   }
 
-  it('should support required state', () => {
+  it('should support required state', async () => {
     let {getByRole} = render(
       <Form>
         <Checkbox isRequired buttonClassName={({isRequired}) => isRequired ? 'required' : ''}>Test</Checkbox>
@@ -301,6 +313,13 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
       expect(checkbox).toHaveAttribute('aria-describedby');
       expect(document.getElementById(checkbox.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
     }
+
+    await user.click(label);
+
+    expect(checkbox).not.toHaveAttribute('aria-invalid');
+    expect(label).not.toHaveAttribute('data-invalid');
+    expect(findRoot(label)).not.toHaveAttribute('data-invalid');
+    expect(checkbox).not.toHaveAttribute('aria-describedby');
   });
 
   it('should support render props', async () => {

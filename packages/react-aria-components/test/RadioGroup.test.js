@@ -16,7 +16,7 @@ import {Dialog, DialogTrigger} from '../src/Dialog';
 import {FieldError} from '../src/FieldError';
 import {Label} from '../src/Label';
 import {Modal} from '../src/Modal';
-import {Radio, RadioButton, RadioContext, RadioField, RadioFieldContext, RadioGroup, RadioGroupContext} from '../src/RadioGroup';
+import {RadioButton, RadioContext, RadioField, RadioFieldContext, RadioGroup, RadioGroupContext, Radio as RadioLegacy} from '../src/RadioGroup';
 import React, {forwardRef} from 'react';
 import {Text} from '../src/Text';
 import {User} from '@react-aria/test-utils';
@@ -33,7 +33,6 @@ const RadioFieldItem = forwardRef(function RadioFieldItem(props, ref) {
         {props.children}
       </RadioButton>
       {props.description && <Text slot="description">{props.description}</Text>}
-      <FieldError />
     </RadioField>
   );
 });
@@ -45,6 +44,7 @@ describe.each(['RadioGroup', 'RadioField'])('%s', (comp) => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
+  let Radio = comp === 'RadioGroup' ? RadioLegacy : RadioFieldItem;
   let TestRadioGroupLegacy = ({groupProps, radioProps}) => (
     <RadioGroup {...groupProps}>
       <Label>Test</Label>
@@ -377,7 +377,7 @@ describe.each(['RadioGroup', 'RadioField'])('%s', (comp) => {
     let {getByRole, getAllByRole} = render(
       <RadioGroup isInvalid>
         <Label>Test</Label>
-        <Radio value="a">A</Radio>
+        <Radio value="a" description="hello">A</Radio>
         <Text slot="description">Description</Text>
         <Text slot="errorMessage">Error</Text>
       </RadioGroup>
@@ -389,21 +389,8 @@ describe.each(['RadioGroup', 'RadioField'])('%s', (comp) => {
 
     let radio = getAllByRole('radio')[0];
     expect(radio).toHaveAttribute('aria-describedby');
-    expect(radio.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Error Description');
+    expect(radio.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe(comp === 'RadioField' ? 'hello Error Description' : 'Error Description');
   });
-
-  if (comp === 'RadioField') {
-    it('supports help text on individual radios', () => {
-      let {getByRole} = renderGroup({}, {description: 'hello'});
-      let radioGroupTester = testUtilUser.createTester('RadioGroup', {root: getByRole('radiogroup')});
-      let radios = radioGroupTester.radios;
-
-      for (let radio of radios) {
-        expect(radio).toHaveAttribute('aria-describedby');
-        expect(document.getElementById(radio.getAttribute('aria-describedby'))).toHaveTextContent('hello');
-      }
-    });
-  }
 
   it('should not navigate within the group using Tab', async () => {
     let {getAllByRole} = renderGroup({}, {buttonClassName: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
@@ -516,7 +503,7 @@ describe.each(['RadioGroup', 'RadioField'])('%s', (comp) => {
     );
     let radio = getAllByTestId('radio-a');
     expect(radio).toHaveLength(1);
-    expect(radio[0].nodeName).toBe('LABEL');
+    expect(radio[0].nodeName).toBe(comp === 'RadioField' ? 'DIV' : 'LABEL');
     let group = getAllByRole('radiogroup');
     expect(group).toHaveLength(1);
     expect(group[0]).toHaveAttribute('data-testid', 'radio-group');
@@ -634,7 +621,7 @@ describe.each(['RadioGroup', 'RadioField'])('%s', (comp) => {
       </RadioGroup>
     );
     expect(groupRef.current).toBe(getByRole('radiogroup'));
-    expect(radioRef.current).toBe(getByRole('radio').closest('.react-aria-Radio'));
+    expect(radioRef.current).toBe(findRoot(getByRole('radio')));
   });
 
   it('should support input ref', () => {
@@ -652,12 +639,13 @@ describe.each(['RadioGroup', 'RadioField'])('%s', (comp) => {
   it('should support and merge input ref on context', () => {
     let inputRef = React.createRef();
     let contextInputRef = React.createRef();
+    let Context = comp === 'RadioField' ? RadioFieldContext : RadioContext;
     let {getByRole} = render(
       <RadioGroup>
         <Label>Test</Label>
-        <RadioContext.Provider value={{inputRef: contextInputRef}}>
+        <Context.Provider value={{inputRef: contextInputRef}}>
           <Radio inputRef={inputRef} value="a">A</Radio>
-        </RadioContext.Provider>
+        </Context.Provider>
       </RadioGroup>
     );
     let radio = getByRole('radio');

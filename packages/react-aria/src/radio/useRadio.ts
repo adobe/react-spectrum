@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, DOMProps, FocusableProps, PressEvents, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributesWithRef, DOMProps, FocusableProps, PressEvents, RefObject} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {InputHTMLAttributes, LabelHTMLAttributes, ReactNode, useMemo} from 'react';
 import {mergeProps} from '../utils/mergeProps';
 import {radioGroupData} from './utils';
 import {RadioGroupState} from 'react-stately/useRadioGroupState';
-import {useField} from '../label/useField';
 import {useFocusable} from '../interactions/useFocusable';
 import {useFormReset} from '../utils/useFormReset';
 import {useFormValidation} from '../form/useFormValidation';
 import {usePress} from '../interactions/usePress';
+import {useSlotId2} from '../utils/useSlot';
 
 export interface RadioProps extends FocusableProps {
   /**
@@ -47,7 +47,7 @@ export interface RadioAria {
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the checkbox description element, if any. */
-  descriptionProps: DOMAttributes,
+  descriptionProps: DOMAttributesWithRef<HTMLElement>,
   /** Whether the radio is disabled. */
   isDisabled: boolean,
   /** Whether the radio is currently selected. */
@@ -139,15 +139,11 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
   useFormReset(ref, state.defaultSelectedValue, state.setSelectedValue);
   useFormValidation({validationBehavior}, state, ref);
 
-  let {labelProps: fieldLabelProps, fieldProps, descriptionProps} = useField({
-    ...props,
-    label: props.children
-  });
+  let descriptionProps = useSlotId2();
 
   return {
     labelProps: mergeProps(
       labelProps,
-      fieldLabelProps,
       useMemo(() => ({
         onClick: e => e.preventDefault(),
 
@@ -155,7 +151,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
         // Note, this does not prevent the input from being focused in the `click` event.
         onMouseDown: e => e.preventDefault()
       }), [])),
-    inputProps: mergeProps(domProps, fieldProps, {
+    inputProps: mergeProps(domProps, {
       ...interactions,
       type: 'radio',
       name,
@@ -168,6 +164,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
       onChange,
       'aria-describedby': [
         props['aria-describedby'],
+        descriptionProps.id,
         state.isInvalid ? errorMessageId : null,
         descriptionId
       ].filter(Boolean).join(' ') || undefined

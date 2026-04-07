@@ -11,7 +11,7 @@
  */
 
 import {AriaToggleProps, useToggle} from '../toggle/useToggle';
-import {DOMAttributes, InputDOMProps, RefObject, ValidationResult} from '@react-types/shared';
+import {DOMAttributesWithRef, InputDOMProps, RefObject, ValidationResult} from '@react-types/shared';
 import {InputHTMLAttributes, LabelHTMLAttributes, useEffect, useMemo} from 'react';
 import {mergeProps} from '../utils/mergeProps';
 import {ToggleProps, ToggleState} from 'react-stately/useToggleState';
@@ -32,9 +32,9 @@ export interface CheckboxAria extends ValidationResult {
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the checkbox description element, if any. */
-  descriptionProps: DOMAttributes,
+  descriptionProps: DOMAttributesWithRef<HTMLElement>,
   /** Props for the checkbox error message element, if any. */
-  errorMessageProps: DOMAttributes,
+  errorMessageProps: DOMAttributesWithRef<HTMLElement>,
   /** Whether the checkbox is selected. */
   isSelected: boolean,
   /** Whether the checkbox is in a pressed state. */
