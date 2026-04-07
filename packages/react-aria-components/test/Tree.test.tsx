@@ -2064,10 +2064,10 @@ describe('Tree', () => {
       act(() => jest.runAllTimers());
       await user.tab();
       expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
-      fireEvent.keyDown(document.activeElement as Element, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement as Element, {key: 'Enter'});
-      // run onInsert promise
-      await act(async () => {});
+      await act(async () => {
+        fireEvent.keyDown(document.activeElement as Element, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement as Element, {key: 'Enter'});
+      });
       act(() => jest.runAllTimers());
       expect(secondTreeTester.rows).toHaveLength(1);
       // expands tree row children
@@ -2095,10 +2095,10 @@ describe('Tree', () => {
       act(() => jest.runAllTimers());
       await user.tab();
       expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
-      fireEvent.keyDown(document.activeElement as Element, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement as Element, {key: 'Enter'});
-      // run onInsert promise
-      await act(async () => {});
+      await act(async () => {
+        fireEvent.keyDown(document.activeElement as Element, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement as Element, {key: 'Enter'});
+      });
       act(() => jest.runAllTimers());
       expect(secondTreeTester.rows).toHaveLength(1);
       await user.keyboard('{ArrowRight}');
@@ -2114,8 +2114,10 @@ describe('Tree', () => {
         await user.keyboard('{ArrowDown}');
       }
       expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Project 2');
-      await user.keyboard('{Enter}');
-      await act(async () => {});
+      await act(async () => {
+        fireEvent.keyDown(document.activeElement as Element, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement as Element, {key: 'Enter'});
+      });
       act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(secondTreeTester.rows[2]);
     });
@@ -2138,10 +2140,10 @@ describe('Tree', () => {
 
       await user.tab();
       expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
-      fireEvent.keyDown(document.activeElement as Element, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement as Element, {key: 'Enter'});
-      // run onInsert promise
-      await act(async () => {});
+      await act(async () => {
+        fireEvent.keyDown(document.activeElement as Element, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement as Element, {key: 'Enter'});
+      });
       act(() => jest.runAllTimers());
       expect(secondTreeTester.rows).toHaveLength(1);
       // expands tree row children
@@ -2162,9 +2164,10 @@ describe('Tree', () => {
         await user.keyboard('{ArrowDown}');
       }
       expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Project 2');
-      fireEvent.keyDown(document.activeElement as Element, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement as Element, {key: 'Enter'});
-      await act(async () => {});
+      await act(async () => {
+        fireEvent.keyDown(document.activeElement as Element, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement as Element, {key: 'Enter'});
+      });
       act(() => jest.runAllTimers());
       expect(document.activeElement).toHaveTextContent('Projects');
       expect(document.activeElement).toBe(secondTreeTester.rows[3]);
