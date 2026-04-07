@@ -9,19 +9,19 @@ import {
   TableHeader as AriaTableHeader,
   TableBody as AriaTableBody,
   Button,
-  CellProps,
+  type CellProps,
   Collection,
-  ColumnProps,
+  type ColumnProps,
   ColumnResizer,
-  Group,
   ResizableTableContainer,
-  RowProps,
-  TableHeaderProps,
-  TableProps as AriaTableProps,
-  composeRenderProps,
+  type RowProps,
+  type TableHeaderProps,
+  type TableProps as AriaTableProps,
   useTableOptions,
-  TableBodyProps
-} from 'react-aria-components';
+  type TableBodyProps,
+} from 'react-aria-components/Table';
+import { Group } from 'react-aria-components/Group';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import { twMerge } from 'tailwind-merge';
 import { tv } from 'tailwind-variants';
 import { Checkbox } from './Checkbox';

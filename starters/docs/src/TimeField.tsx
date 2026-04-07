@@ -1,10 +1,10 @@
 'use client';
 import {
   TimeField as AriaTimeField,
-  TimeFieldProps as AriaTimeFieldProps,
-  TimeValue,
-  ValidationResult
-} from 'react-aria-components';
+  type TimeFieldProps as AriaTimeFieldProps,
+  type TimeValue,
+  type ValidationResult,
+} from 'react-aria-components/TimeField';
 import {Label, FieldError, Description} from './Form';
 import {DateInput, DateSegment} from './DateField';
 import './TimeField.css';

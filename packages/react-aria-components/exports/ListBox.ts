@@ -19,3 +19,12 @@ export {Collection, type CollectionProps} from 'react-aria/Collection';
 export type {ListBoxProps, ListBoxRenderProps, ListBoxItemProps, ListBoxItemRenderProps, ListBoxSectionProps, ListBoxLoadMoreItemProps} from '../src/ListBox';
 export type {Key, Selection, SelectionMode, DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-types/shared';
 export type {ListState} from 'react-stately/useListState';
+
+export {SelectionIndicator} from '../src/SelectionIndicator';
+export type {SelectionIndicatorProps} from '../src/SelectionIndicator';
+
+export {Text} from '../src/Text';
+export type {TextProps} from '../src/Text';
+
+export {Header} from '../src/Header';
+export type {HeaderProps} from '../src/Header';

@@ -1,9 +1,5 @@
 'use client';
-import {
-  ColorSwatch as AriaColorSwatch,
-  ColorSwatchProps
-} from 'react-aria-components';
-
+import { ColorSwatch as AriaColorSwatch, type ColorSwatchProps } from 'react-aria-components/ColorSwatch';
 import './ColorSwatch.css';
 
 export function ColorSwatch(props: ColorSwatchProps) {

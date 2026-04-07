@@ -1,5 +1,4 @@
 import {ColorArea} from '../src/ColorArea';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ColorArea> = {

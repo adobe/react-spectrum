@@ -1,11 +1,11 @@
 'use client';
 import {
   DateRangePicker as AriaDateRangePicker,
-  DateRangePickerProps as AriaDateRangePickerProps,
-  DateValue,
+  type DateRangePickerProps as AriaDateRangePickerProps,
+  type DateValue,
   Group,
-  ValidationResult
-} from 'react-aria-components';
+  type ValidationResult,
+} from 'react-aria-components/DateRangePicker';
 import {DateInput, DateSegment} from './DateField';
 import {Description, FieldButton} from './Form';
 import {Popover} from './Popover';

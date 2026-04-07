@@ -1,9 +1,5 @@
 'use client';
-import {
-  Switch as AriaSwitch,
-  SwitchProps as AriaSwitchProps
-} from 'react-aria-components';
-
+import { Switch as AriaSwitch, type SwitchProps as AriaSwitchProps } from 'react-aria-components/Switch';
 import './Switch.css';
 
 export interface SwitchProps extends Omit<AriaSwitchProps, 'children'> {

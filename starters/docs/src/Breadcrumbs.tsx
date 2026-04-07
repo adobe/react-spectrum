@@ -1,5 +1,12 @@
 'use client';
-import {Breadcrumbs as RACBreadcrumbs, BreadcrumbsProps, Breadcrumb as RACBreadcrumb, BreadcrumbProps, LinkProps, Link} from 'react-aria-components';
+import {
+  Breadcrumbs as RACBreadcrumbs,
+  type BreadcrumbsProps,
+  Breadcrumb as RACBreadcrumb,
+  type BreadcrumbProps,
+  type LinkProps,
+  Link,
+} from 'react-aria-components/Breadcrumbs';
 import {ChevronRight} from 'lucide-react';
 import './Breadcrumbs.css';
 
