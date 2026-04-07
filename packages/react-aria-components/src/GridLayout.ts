@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {GridLayout as BaseGridLayout, GridLayoutOptions} from 'react-stately/private/layout/GridLayout';
+import {GridLayout as BaseGridLayout, GridLayoutOptions} from 'react-stately/useVirtualizerState';
 import {LayoutOptionsDelegate} from './Virtualizer';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useMemo} from 'react';
