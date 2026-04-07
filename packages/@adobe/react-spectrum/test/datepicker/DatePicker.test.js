@@ -1618,11 +1618,14 @@ describe('DatePicker', function () {
       });
 
       it('should support typing into the era segment', function () {
+        let formatter = new Intl.DateTimeFormat('en-US-u-ca-ethiopic', {year: 'numeric', era: 'narrow', timeZone: 'UTC'});
+        let era0 = formatter.formatToParts(0).find(p => p.type === 'era').value;
+
         testInput('era,', new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3), 'h', new CalendarDate(new JapaneseCalendar(), 'heisei', 5, 2, 3), false, {locale: 'en-US-u-ca-japanese'});
         testInput('era,', new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3), 's', new CalendarDate(new JapaneseCalendar(), 'showa', 5, 2, 3), false, {locale: 'en-US-u-ca-japanese'});
         testInput('era,', new CalendarDate(new JapaneseCalendar(), 'showa', 5, 2, 3), 'r', new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3), false, {locale: 'en-US-u-ca-japanese'});
-        testInput('era,', new CalendarDate(new EthiopicCalendar(), 'AM', 2012, 2, 3), '0', new CalendarDate(new EthiopicCalendar(), 'AA', 2012, 2, 3), false, {locale: 'en-US-u-ca-ethiopic'});
-        testInput('era,', new CalendarDate(new EthiopicCalendar(), 'AA', 2012, 2, 3), '1', new CalendarDate(new EthiopicCalendar(), 'AM', 2012, 2, 3), false, {locale: 'en-US-u-ca-ethiopic'});
+        testInput('era,', new CalendarDate(new EthiopicCalendar(), 'AM', 2012, 2, 3), era0 === 'AM' ? 'A' : '0', new CalendarDate(new EthiopicCalendar(), 'AA', 2012, 2, 3), false, {locale: 'en-US-u-ca-ethiopic'});
+        testInput('era,', new CalendarDate(new EthiopicCalendar(), 'AA', 2012, 2, 3), era0 === 'AM' ? 'M' : '1', new CalendarDate(new EthiopicCalendar(), 'AM', 2012, 2, 3), false, {locale: 'en-US-u-ca-ethiopic'});
       });
 
       it('should allow entering invalid dates, and constrain on blur', async function () {
