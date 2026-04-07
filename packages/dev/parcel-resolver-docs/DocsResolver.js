@@ -37,11 +37,13 @@ module.exports = new Resolver({
       if (resolved && resolved.filePath) {
         // HACK: ensure source code is used to build types, not compiled code.
         // Parcel removes the source field from package.json when the code comes from node_modules.
+        // With packageExports:true, parcel resolves via the exports map using env conditions (e.g. "import"),
+        // which point to compiled .mjs/.js files instead of source. Redirect those back to src/index.ts.
         // these are full filepaths, so don't check if they start with the pattern, they won't
         if ((
           /@(react-spectrum|react-aria|react-stately|internationalized|spectrum-icons|adobe\/react-spectrum)/g.test(resolved.filePath)
-          || /react-aria-components/g.test(resolved.filePath)
-        ) && resolved.filePath.endsWith('.d.ts')) {
+          || /[/\\](react-aria-components|tailwindcss-react-aria-components)[/\\]/g.test(resolved.filePath)
+        ) && (resolved.filePath.endsWith('.d.ts') || /[/\\]dist[/\\][^/\\]+\.(m?js|cjs)$/.test(resolved.filePath))) {
           resolved.filePath = path.resolve(path.dirname(resolved.filePath), '..', 'src', 'index.ts');
         }
 
