@@ -1,0 +1,539 @@
+import {Layout} from '../../src/Layout';
+import {InlineAlert, Heading, Content, Link} from '@react-spectrum/s2';
+export default Layout;
+
+export const section = 'Guides';
+export const tags = ['style', 'macro', 'spectrum', 'custom', 'components', 'react aria'];
+export const description = 'Learn how to build custom Spectrum 2 components using React Aria Components and the style macro.';
+
+# Creating Custom Components
+
+<PageDescription>Learn how to build custom Spectrum 2 components using React Aria and the Spectrum 2 `style` macro.</PageDescription>
+
+React Spectrum offers over many components, but there may be times when you need to implement something custom that doesn't already exist in the library. This can be achieved by combining unstyled [React Aria Components](react-aria:) with the Spectrum 2 `style` macro. React Aria provides the component's behavior and accessibility features, while the `style` macro gives you access to Spectrum 2 design tokens for colors, spacing, typography, and more.
+
+```tsx
+// 1. Import the React Aria Component
+import {Button} from 'react-aria-components/Button';
+
+// 2. Import the style macro (with type: 'macro')
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+// 3. Define the styles
+const myButtonStyles = style({
+  backgroundColor: 'accent',
+  color: 'white',
+  paddingX: 16,
+  paddingY: 8,
+  borderRadius: 'default',
+  borderStyle: 'none',
+  font: 'ui',
+});
+
+function MyButton({children}) {
+  // 4. Apply the styles to the component's className
+  return <Button className={myButtonStyles}>{children}</Button>;
+}
+```
+
+The `style` macro runs at build time and returns a class name string. Because it produces atomic CSS using Spectrum 2 design tokens, your custom components automatically inherit the same visual language as the rest of the library.
+
+## Render props
+
+React Aria Components pass interaction state via [render props](react-aria:styling#render-props). When you set `className` to a function, the component calls it with the current state (hover, press, focus, etc.) and uses the returned string as the class name. The `style` macro is designed to work directly with this pattern.
+
+When a `style` call includes conditions like `isHovered` or `isPressed`, the macro returns a **function** instead of a static string. This function accepts the render props and resolves the correct classes at runtime.
+
+```tsx
+import {Button} from 'react-aria-components/Button';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const myButtonStyles = style({
+  /*- begin highlight -*/
+  backgroundColor: {
+    default: 'accent',
+    isHovered: 'accent-900',
+    isPressed: 'accent-1000'
+  },
+  /*- end highlight -*/
+  color: 'white',
+  paddingX: 16,
+  paddingY: 8,
+  borderRadius: 'default',
+  borderStyle: 'none',
+  font: 'ui',
+  transition: 'default'
+});
+
+function MyButton({children}) {
+  return <Button className={myButtonStyles}>{children}</Button>;
+}
+```
+
+Because the `style` result already has the correct function signature, you can pass it directly to `className` without a wrapper. React Aria calls it with `{isHovered, isPressed, isFocusVisible, ...}` and the macro resolves the matching classes.
+
+### Available render props
+
+Every React Aria component exposes its own set of render props. Here are some of the most common ones:
+
+- **`isHovered`** – mouse is over the element
+- **`isPressed`** – element is being pressed
+- **`isFocused`** – element has focus (either via mouse or keyboard)
+- **`isFocusVisible`** – element has keyboard focus (useful for focus rings)
+- **`isDisabled`** – element is disabled
+- **`isSelected`** – element is selected (for selectable components like checkboxes and switches)
+
+When you inline `style()` inside a JSX `className`, TypeScript will autocomplete the available conditions for that component.
+
+### Custom conditions
+
+You can define your own arbitrary conditions that map to component props like `variant` or `size`. Pass these alongside the render props when calling the style function.
+
+```tsx
+import {Button} from 'react-aria-components/Button';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const buttonStyles = style({
+  backgroundColor: {
+    variant: {
+      primary: 'accent',
+      secondary: 'neutral-subtle'
+    }
+  },
+  color: {
+    variant: {
+      primary: 'white',
+      secondary: 'neutral'
+    }
+  },
+  paddingX: {
+    size: {
+      S: 12,
+      M: 16,
+      L: 24
+    }
+  },
+  paddingY: {
+    size: {
+      S: 4,
+      M: 8,
+      L: 12
+    }
+  },
+  borderRadius: 'default',
+  borderStyle: 'none',
+  font: 'ui'
+});
+
+interface MyButtonProps {
+  variant: 'primary' | 'secondary';
+  size?: 'S' | 'M' | 'L';
+  children: React.ReactNode;
+}
+
+function MyButton({variant, size = 'M', children}: MyButtonProps) {
+  return (
+    <Button className={renderProps => buttonStyles({...renderProps, variant, size})}>
+      {children}
+    </Button>
+  );
+}
+```
+
+When you spread `renderProps` together with your own props, the macro resolves both built-in states (hover, press) and your custom variants.
+
+### Nesting conditions
+
+Conditions can be nested to express "when A **and** B are both true." Conditions at the same level are mutually exclusive, so the last matching condition wins.
+
+```tsx
+import {ToggleButton} from 'react-aria-components/ToggleButton';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const toggleStyles = style({
+  backgroundColor: {
+    default: 'gray-100',
+    isHovered: 'gray-200',
+    /*- begin highlight -*/
+    isSelected: {
+      default: 'accent',
+      isHovered: 'accent-900',
+      isPressed: 'accent-1000'
+    }
+    /*- end highlight -*/
+  },
+  color: {
+    default: 'neutral',
+    isSelected: 'white'
+  },
+  paddingX: 16,
+  paddingY: 8,
+  borderRadius: 'default',
+  borderStyle: 'none',
+  font: 'ui',
+  transition: 'default'
+});
+
+function MyToggle({children}) {
+  return <ToggleButton className={toggleStyles}>{children}</ToggleButton>;
+}
+```
+
+The nesting here means: when `isSelected` is true **and** `isHovered` is also true, use `accent-900`. This lets you express complex state combinations without writing manual CSS selectors.
+
+## Base layers
+
+The visual foundation of a Spectrum component is typically a background color, a border, and interactive state variations. The `baseColor` utility generates all four interaction states (default, hovered, focused, pressed) from a single color token, matching the Spectrum 2 interaction model.
+
+```tsx
+import {Button} from 'react-aria-components/Button';
+import {style, baseColor} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const buttonStyles = style({
+  /*- begin highlight -*/
+  backgroundColor: baseColor('accent'),
+  // Expands to:
+  // backgroundColor: {
+  //   default: 'accent',
+  //   isHovered: 'accent:hovered',
+  //   isFocusVisible: 'accent:focused',
+  //   isPressed: 'accent:pressed'
+  // }
+  /*- end highlight -*/
+  color: 'white',
+  paddingX: 16,
+  paddingY: 8,
+  borderRadius: 'default',
+  borderStyle: 'none',
+  font: 'ui',
+  transition: 'default'
+});
+```
+
+`baseColor` works with any Spectrum color token. It's especially useful for backgrounds and borders where you want consistent Spectrum interaction feedback.
+
+```tsx
+const cardStyles = style({
+  /*- begin highlight -*/
+  backgroundColor: baseColor('gray-50'),
+  borderColor: baseColor('gray-200'),
+  /*- end highlight -*/
+  borderWidth: 1,
+  borderStyle: 'solid',
+  borderRadius: 'lg',
+  padding: 24
+});
+```
+
+### Disabled states
+
+For disabled states, use the semantic `disabled` color token. You can combine `baseColor` with disabled overrides by nesting conditions.
+
+```tsx
+const buttonStyles = style({
+  backgroundColor: {
+    ...baseColor('accent'),
+    isDisabled: 'disabled'
+  },
+  color: {
+    default: 'white',
+    isDisabled: 'disabled'
+  }
+});
+```
+
+### Forced colors
+
+When building components that need to work in Windows High Contrast Mode, use `forcedColors` conditions with [system colors](https://developer.mozilla.org/en-US/docs/Web/CSS/system-color).
+
+```tsx
+const buttonStyles = style({
+  backgroundColor: {
+    ...baseColor('accent'),
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonFace',
+      isDisabled: 'ButtonFace'
+    }
+  },
+  color: {
+    default: 'white',
+    forcedColors: 'ButtonText'
+  },
+  borderColor: {
+    default: 'transparent',
+    forcedColors: 'ButtonBorder'
+  },
+  forcedColorAdjust: 'none'
+});
+```
+
+## Spacing
+
+The `style` macro provides a spacing scale based on Spectrum 2 tokens. Spacing values are specified as numbers (representing pixel values that are converted to `rem` at build time) and applied through properties like `padding`, `margin`, `gap`, and `inset`.
+
+```tsx
+const cardStyles = style({
+  /*- begin highlight -*/
+  padding: 24,
+  /*- end highlight -*/
+  display: 'flex',
+  flexDirection: 'column',
+  /*- begin highlight -*/
+  rowGap: 8,
+  /*- end highlight -*/
+});
+```
+
+Logical properties like `paddingStart`, `paddingEnd`, `marginStart`, and `marginEnd` are available and automatically flip in right-to-left languages.
+
+```tsx
+const listItemStyles = style({
+  paddingX: 16,
+  paddingY: 8,
+  marginBottom: 4
+});
+```
+
+### Responsive spacing
+
+Spacing values can vary by breakpoint using conditional objects.
+
+```tsx
+const sectionStyles = style({
+  padding: {
+    default: 16,
+    sm: 24,
+    lg: 32
+  },
+  rowGap: {
+    default: 8,
+    lg: 16
+  }
+});
+```
+
+These scaling conditions are built-in to the `style` macro, so you don't need to pass them in yourself.
+
+### Sizing
+
+Width, height, and related sizing properties accept the same numeric scale, plus semantic values like `'fit'` (fit-content) and `'full'` (100%).
+
+```tsx
+const avatarStyles = style({
+  size: 40,
+  borderRadius: 'full'
+});
+
+const containerStyles = style({
+  maxWidth: 640,
+  width: 'full',
+  marginX: 'auto'
+});
+```
+
+## Typography
+
+Spectrum 2 typography is applied via the `font` shorthand property, which sets `fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, and `color` in one declaration. Individual properties can be overridden separately.
+
+The available font presets are grouped into four categories:
+
+- **Heading** – `heading-2xs`, `heading-xs`, `heading-sm`, `heading`, `heading-lg`, `heading-xl`, `heading-2xl`, `heading-3xl`
+- **Title** – `title-xs`, `title-sm`, `title`, `title-lg`, `title-xl`, `title-2xl`, `title-3xl`
+- **Body** – `body-xs`, `body-sm`, `body`, `body-lg`, `body-xl`, `body-2xl`, `body-3xl`
+- **UI** – `ui-xs`, `ui-sm`, `ui`, `ui-lg`, `ui-xl`
+- **Code** – `code-xs`, `code-sm`, `code`, `code-lg`, `code-xl`
+
+Apply `font` on a per-element basis rather than globally to properly conform with Spectrum designs.
+
+```tsx
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const pageStyles = style({
+  display: 'flex',
+  flexDirection: 'column',
+  rowGap: 16
+});
+
+const headingStyles = style({font: 'heading-lg'});
+const subtitleStyles = style({font: 'body', color: 'neutral-subdued'});
+const bodyStyles = style({font: 'body'});
+const labelStyles = style({font: 'ui', fontWeight: 'bold'});
+
+function ArticlePage() {
+  return (
+    <div className={pageStyles}>
+      <h1 className={headingStyles}>Article Title</h1>
+      <p className={subtitleStyles}>A short description of the article.</p>
+      <p className={bodyStyles}>The main body content goes here.</p>
+      <span className={labelStyles}>Category</span>
+    </div>
+  );
+}
+```
+
+### Semantic text colors
+
+Spectrum 2 provides semantic color tokens for text: `'neutral'` for primary text, `'neutral-subdued'` for secondary text, `'disabled'` for disabled states, and semantic status colors like `'negative'`, `'positive'`, `'informative'`, and `'notice'`.
+
+```tsx
+const errorStyles = style({
+  font: 'body-sm',
+  color: 'negative'
+});
+
+const helpTextStyles = style({
+  font: 'body-sm',
+  color: 'neutral-subdued'
+});
+```
+
+## Focus rings
+
+Keyboard focus indicators are essential for accessibility. The `focusRing` utility spreads into a `style` call and applies the standard Spectrum 2 focus ring on keyboard focus (`isFocusVisible`).
+
+```tsx
+import {Button} from 'react-aria-components/Button';
+import {style, focusRing} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const buttonStyles = style({
+  /*- begin highlight -*/
+  ...focusRing(),
+  /*- end highlight -*/
+  backgroundColor: 'accent',
+  color: 'white',
+  paddingX: 16,
+  paddingY: 8,
+  borderRadius: 'default',
+  borderStyle: 'none',
+  font: 'ui',
+});
+```
+
+<InlineAlert variant="informative">
+  <Heading>Always add focus rings</Heading>
+  <Content>
+    Every interactive custom component should include `focusRing()`. It ensures keyboard users can see which element is focused, which is a core accessibility requirement.
+  </Content>
+</InlineAlert>
+
+## Icons
+
+Spectrum 2 icons can be imported from `@react-spectrum/s2/icons` and styled with the `iconStyle` macro. This is a specialized version of `style` that sets the icon size and color.
+
+When placing icons inside custom components, you can set the `--iconPrimary` CSS variable to control the icon fill color from a parent style.
+
+```tsx
+import {Button} from 'react-aria-components/Button';
+import {style, focusRing, iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
+import EditIcon from '@react-spectrum/s2/icons/Edit';
+
+const buttonStyles = style({
+  ...focusRing(),
+  display: 'flex',
+  alignItems: 'center',
+  columnGap: 8,
+  backgroundColor: 'accent',
+  color: 'white',
+  /*- begin highlight -*/
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'white'
+  },
+  /*- end highlight -*/
+  paddingX: 16,
+  paddingY: 8,
+  borderRadius: 'default',
+  borderStyle: 'none',
+  font: 'ui',
+});
+
+function EditButton() {
+  return (
+    <Button className={buttonStyles}>
+      <EditIcon className={iconStyle({size: 'S'})} />
+      Edit
+    </Button>
+  );
+}
+```
+
+## CSS variables
+
+CSS variables can be defined in a `style` call so that child elements can reference them. Provide a `type` to specify what CSS property category the value represents.
+
+```tsx
+const parentStyles = style({
+  // -- begin highlight --
+  '--cardBg': {
+    type: 'backgroundColor',
+    value: 'gray-50'
+  },
+  '--cardBorder': {
+    type: 'borderColor',
+    value: 'gray-200'
+  }
+  // -- end highlight --
+});
+
+const childStyles = style({
+  /*- begin highlight -*/
+  backgroundColor: '--cardBg',
+  borderColor: '--cardBorder',
+  /*- end highlight -*/
+  borderWidth: 1,
+  borderStyle: 'solid',
+  borderRadius: 'lg'
+});
+```
+
+This is useful when a parent component needs to influence the colors of deeply nested children without prop drilling.
+
+## Escape hatches
+
+### CSS macro
+
+For cases where the `style` macro's object API doesn't cover what you need (pseudo-elements, complex selectors, animations), the `css` macro lets you inject raw CSS.
+
+Use these escape hatches sparingly since they bypass the type safety and token constraints of the `style` macro.
+
+### Merging styles
+
+When you need to combine multiple `style` results, for example when merging a base style with an override, use `mergeStyles`. This correctly resolves atomic CSS class conflicts so the last value wins.
+
+```tsx
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {mergeStyles} from '@react-spectrum/s2';
+
+const baseCard = style({
+  padding: 24,
+  borderRadius: 'lg',
+  backgroundColor: 'gray-50'
+});
+
+const highlightedCard = style({
+  backgroundColor: 'accent-100',
+  borderColor: 'accent',
+  borderWidth: 2,
+  borderStyle: 'solid'
+});
+
+function Card({isHighlighted, children}) {
+  return (
+    <div className={mergeStyles(baseCard, isHighlighted ? highlightedCard : undefined)}>
+      {children}
+    </div>
+  );
+}
+```
+
+<InlineAlert variant="informative">
+  <Heading>Note</Heading>
+  <Content>
+    `mergeStyles` is a **runtime** function imported from `@react-spectrum/s2` (not the style macro). It deduplicates atomic classes so the last style wins for each property.
+  </Content>
+</InlineAlert>
+
+## Examples
+
+See the [Examples](examples) page for complete, interactive demonstrations of custom components built with React Aria and the Spectrum 2 style macro.
