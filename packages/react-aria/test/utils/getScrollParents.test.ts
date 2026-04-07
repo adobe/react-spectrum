@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {getScrollParents} from '../src/getScrollParents';
+import {getScrollParents} from '../../src/utils/getScrollParents';
 
 describe('getScrollParents', () => {
   let root: Element;
