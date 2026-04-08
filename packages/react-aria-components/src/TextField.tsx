@@ -35,9 +35,11 @@ import {GlobalDOMAttributes} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
+import {ProgressBarContext} from './ProgressBar';
 import React, {createContext, ForwardedRef, useCallback, useRef, useState} from 'react';
 import {TextAreaContext} from './TextArea';
 import {TextContext} from './Text';
+import {useTextFieldState} from 'react-stately/useTextFieldState';
 
 export interface TextFieldRenderProps {
   /**
@@ -59,7 +61,12 @@ export interface TextFieldRenderProps {
    * Whether the text field is required.
    * @selector [data-required]
    */
-  isRequired: boolean
+  isRequired: boolean,
+  /**
+   * Whether the text field is currently in a pending state.
+   * @selector [data-pending]
+   */
+  isPending: boolean
 }
 
 export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, Omit<DOMProps, 'style' | 'className' | 'render' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
@@ -87,12 +94,13 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
     !props['aria-label'] && !props['aria-labelledby']
   );
   let [inputElementType, setInputElementType] = useState('input');
-  let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField<any>({
+  let state = useTextFieldState(props);
+  let {labelProps, inputProps, descriptionProps, errorMessageProps, progressBarProps, ...validation} = useTextField<any>({
     ...removeDataAttributes(props),
     inputElementType,
     label,
     validationBehavior
-  }, inputRef);
+  }, state, inputRef);
 
   // Intercept setting the input ref so we can determine what kind of element we have.
   // useTextField uses this to determine what props to include.
@@ -109,7 +117,8 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
       isDisabled: props.isDisabled || false,
       isInvalid: validation.isInvalid,
       isReadOnly: props.isReadOnly || false,
-      isRequired: props.isRequired || false
+      isRequired: props.isRequired || false,
+      isPending: state.isPending
     },
     defaultClassName: 'react-aria-TextField'
   });
@@ -126,7 +135,8 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
       data-disabled={props.isDisabled || undefined}
       data-invalid={validation.isInvalid || undefined}
       data-readonly={props.isReadOnly || undefined}
-      data-required={props.isRequired || undefined}>
+      data-required={props.isRequired || undefined}
+      data-pending={state.isPending || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
@@ -139,7 +149,8 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
               errorMessage: errorMessageProps
             }
           }],
-          [FieldErrorContext, validation]
+          [FieldErrorContext, validation],
+          [ProgressBarContext, progressBarProps]
         ]}>
         {renderProps.children}
       </Provider>

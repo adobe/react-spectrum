@@ -13,7 +13,7 @@
 import {AriaButtonProps} from '../button/useButton';
 import {AriaTextFieldProps, useTextField} from '../textfield/useTextField';
 import {chain} from '../utils/chain';
-import {DOMAttributes, RefObject, ValidationResult} from '@react-types/shared';
+import {DOMAttributes, DOMProps, RefObject, ValidationResult} from '@react-types/shared';
 import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../../intl/searchfield/*.json';
@@ -39,6 +39,8 @@ export interface SearchFieldAria extends ValidationResult {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the clear button. */
   clearButtonProps: AriaButtonProps,
+  /** Props for the progress bar element shown when the action is pending. */
+  progressBarProps: DOMProps,
   /** Props for the searchfield's description element, if any. */
   descriptionProps: DOMAttributes,
   /** Props for the searchfield's error message element, if any. */
@@ -61,7 +63,7 @@ export function useSearchField(
     isDisabled,
     isReadOnly,
     onSubmit,
-    onClear,
+    submitAction,
     type = 'search'
   } = props;
 
@@ -78,9 +80,9 @@ export function useSearchField(
 
     // for backward compatibility;
     // otherwise, "Enter" on an input would trigger a form submit, the default browser behavior
-    if (key === 'Enter' && onSubmit) {
+    if (key === 'Enter' && (onSubmit || submitAction)) {
       e.preventDefault();
-      onSubmit(state.value);
+      state.submit();
     }
 
     if (key === 'Escape') {
@@ -90,20 +92,13 @@ export function useSearchField(
         e.continuePropagation();
       } else {
         e.preventDefault();
-        state.setValue('');
-        if (onClear) {
-          onClear();
-        }
+        state.clear();
       }
     }
   };
 
   let onClearButtonClick = () => {
-    state.setValue('');
-
-    if (onClear) {
-      onClear();
-    }
+    state.clear();
   };
 
   let onPressStart = () => {
@@ -112,13 +107,11 @@ export function useSearchField(
     inputRef.current?.focus();
   };
 
-  let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField({
+  let {labelProps, inputProps, descriptionProps, errorMessageProps, progressBarProps, ...validation} = useTextField({
     ...props,
-    value: state.value,
-    onChange: state.setValue,
     onKeyDown: !isReadOnly ? chain(onKeyDown, props.onKeyDown) : props.onKeyDown,
     type
-  }, inputRef);
+  }, state, inputRef);
 
   return {
     labelProps,
@@ -135,6 +128,7 @@ export function useSearchField(
       onPress: onClearButtonClick,
       onPressStart
     },
+    progressBarProps,
     descriptionProps,
     errorMessageProps,
     ...validation

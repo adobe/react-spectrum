@@ -16,7 +16,8 @@ import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {Meta, StoryFn} from '@storybook/react';
-import React from 'react';
+import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
+import React, {useState} from 'react';
 import {SearchField} from '../src/SearchField';
 import styles from '../example/index.css';
 import './styles.css';
@@ -37,3 +38,42 @@ export const SearchFieldExample: SearchFieldStory = () => {
     </SearchField>
   );
 };
+
+export const ReactAction: SearchFieldStory = () => {
+  let [search, setSearch] = useState('');
+  return (
+    <div>
+      <SearchField
+        className={classNames(styles, 'searchFieldExample')}
+        data-testid="search-field-example"
+        value={search}
+        changeAction={async value => {
+          setSearch(value);
+        }}>
+        {({isPending}) => (<>
+          <Label>Search</Label>
+          <Input />
+          <Button>✕</Button>
+          {isPending && <ProgressCircle aria-label="Loading" isIndeterminate style={{display: 'inline-block'}} />}
+        </>)}
+      </SearchField>
+      <React.Suspense fallback="Loading">
+        <Results search={search} />
+      </React.Suspense>
+    </div>
+  );
+};
+
+let cache = new Map();
+
+function Results({search}) {
+  let promise = cache.get(search);
+  if (!promise) {
+    cache.clear();
+    promise = new Promise(resolve => setTimeout(resolve, 2000));
+    cache.set(search, promise);
+  }
+
+  React.use(promise);
+  return <div>Results for: {search}</div>;
+}

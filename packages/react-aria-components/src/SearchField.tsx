@@ -35,6 +35,7 @@ import {GlobalDOMAttributes} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
+import {ProgressBarContext} from './ProgressBar';
 import React, {createContext, ForwardedRef, useRef} from 'react';
 import {SearchFieldState, useSearchFieldState} from 'react-stately/useSearchFieldState';
 import {TextContext} from './Text';
@@ -65,6 +66,11 @@ export interface SearchFieldRenderProps {
    * @selector [data-required]
    */
   isRequired: boolean,
+  /**
+   * Whether the search field is currently in a pending state.
+   * @selector [data-pending]
+   */
+  isPending: boolean,
   /**
    * State of the search field.
    */
@@ -98,7 +104,7 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
     validationBehavior
   });
 
-  let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps, ...validation} = useSearchField({
+  let {labelProps, inputProps, clearButtonProps, progressBarProps, descriptionProps, errorMessageProps, ...validation} = useSearchField({
     ...removeDataAttributes(props),
     label,
     validationBehavior
@@ -112,6 +118,7 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
       isInvalid: validation.isInvalid || false,
       isReadOnly: props.isReadOnly || false,
       isRequired: props.isRequired || false,
+      isPending: state.isPending,
       state
     },
     defaultClassName: 'react-aria-SearchField'
@@ -130,7 +137,8 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
       data-disabled={props.isDisabled || undefined}
       data-invalid={validation.isInvalid || undefined}
       data-readonly={props.isReadOnly || undefined}
-      data-required={props.isRequired || undefined}>
+      data-required={props.isRequired || undefined}
+      data-pending={state.isPending || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
@@ -143,7 +151,8 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
             }
           }],
           [GroupContext, {isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
-          [FieldErrorContext, validation]
+          [FieldErrorContext, validation],
+          [ProgressBarContext, progressBarProps]
         ]}>
         {renderProps.children}
       </Provider>
