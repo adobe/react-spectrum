@@ -7171,6 +7171,8 @@ __metadata:
     json5: "npm:^2.2.3"
     lz-string: "npm:^1.5.0"
     markdown-to-jsx: "npm:^6.11.0"
+    mdast-util-mdx: "npm:^1.0.0"
+    mdast-util-to-markdown: "npm:^1.0.0"
     playwright: "npm:^1.57.0"
     react: "npm:^19.2.0"
     react-aria: "npm:^3.40.0"
