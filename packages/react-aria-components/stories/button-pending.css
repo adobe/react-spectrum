@@ -5,6 +5,10 @@
   align-items: center;
   box-sizing: border-box;
   outline: none;
+
+  &[data-selected] {
+    filter: invert();
+  }
 }
 
 .spinner {
