@@ -1377,6 +1377,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       isFocusVisible: isFocusVisibleWithin,
       focusProps: focusWithinProps
     } = useFocusRing({within: true});
+
     let {hoverProps, isHovered} = useHover({
       isDisabled: !states.allowsSelection && !states.hasAction,
       onHoverStart: props.onHoverStart,
