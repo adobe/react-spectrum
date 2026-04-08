@@ -77,7 +77,7 @@ export interface LabeledValueBaseProps extends DOMProps, StyleProps, Omit<Spectr
   /** The content to display as the label. */
   label: ReactNode
 }
-type LabeledValueProps<T> =
+type LabeledValueTypeProps<T> =
   T extends NumberValue ? NumberProps<T> :
   T extends DateTimeValue ? DateProps<T> :
   T extends string[] ? StringListProps<T> :
@@ -85,10 +85,10 @@ type LabeledValueProps<T> =
   T extends ReactElement ? ReactElementProps<T> :
   never;
 
-type SpectrumLabeledValueTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateTime> | ReactElement;
-export type SpectrumLabeledValueProps<T> = LabeledValueProps<T> & LabeledValueBaseProps & LabeledValueStyleProps;
+type LabeledValueTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateTime> | ReactElement;
+export type LabeledValueProps<T> = LabeledValueTypeProps<T> & LabeledValueBaseProps & LabeledValueStyleProps;
 
-export const LabeledValueContext = createContext<ContextValue<Partial<SpectrumLabeledValueProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
+export const LabeledValueContext = createContext<ContextValue<Partial<LabeledValueProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 const valueStyles = style({
   ...fieldInput(),
@@ -100,7 +100,7 @@ const valueStyles = style({
  * A LabeledValue displays a non-editable value with a label. It formats numbers,
  * dates, times, and lists according to the user's locale.
  */
-export const LabeledValue = /*#__PURE__*/ forwardRef(function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabeledValueProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const LabeledValue = /*#__PURE__*/ forwardRef(function LabeledValue<T extends LabeledValueTypes>(props: LabeledValueProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props as any, ref, LabeledValueContext) as any;
   props = useFormProps(props);
   let {
