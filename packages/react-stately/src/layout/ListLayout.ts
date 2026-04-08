@@ -376,7 +376,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
 
     offset = Math.max(offset - this.gap, 0);
     offset += isEmptyOrLoading ? 0 : this.padding;
-    this.contentSize = this.orientation === 'horizontal' ? new Size(offset, this.virtualizer!.visibleRect.height) : new Size(this.virtualizer!.visibleRect.width, offset);
+    this.contentSize = this.orientation === 'horizontal' ? new Size(offset, this.virtualizer!.size.height) : new Size(this.virtualizer!.size.width, offset);
     return nodes;
   }
 
@@ -445,8 +445,8 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
 
   protected buildSection(node: Node<T>, x: number, y: number): LayoutNode {
     let collection = this.virtualizer!.collection;
-    let width = this.virtualizer!.visibleRect.width - this.padding - x;
-    let height = this.virtualizer!.visibleRect.height - this.padding - y;
+    let width = this.virtualizer!.size.width - this.padding - x;
+    let height = this.virtualizer!.size.height - this.padding - y;
     let rect = this.orientation === 'horizontal' ? new Rect(x, y, 0, height) : new Rect(x, y, width, 0);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
 
@@ -497,7 +497,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
   protected buildSectionHeader(node: Node<T>, x: number, y: number): LayoutNode {
     let widthProperty = this.orientation === 'horizontal' ? 'height' : 'width';
     let heightProperty = this.orientation === 'horizontal' ? 'width' : 'height';
-    let width = this.virtualizer!.visibleRect[widthProperty] - this.padding - (this.orientation === 'horizontal' ? y : x);
+    let width = this.virtualizer!.size[widthProperty] - this.padding - (this.orientation === 'horizontal' ? y : x);
     let rectHeight = this.headingSize;
     let isEstimated = false;
 
@@ -538,7 +538,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let widthProperty = this.orientation === 'horizontal' ? 'height' : 'width';
     let heightProperty = this.orientation === 'horizontal' ? 'width' : 'height';
 
-    let width = this.virtualizer!.visibleRect[widthProperty] - this.padding - (this.orientation === 'horizontal' ? y : x);
+    let width = this.virtualizer!.size[widthProperty] - this.padding - (this.orientation === 'horizontal' ? y : x);
     let rectHeight = this.rowSize;
     let isEstimated = false;
 

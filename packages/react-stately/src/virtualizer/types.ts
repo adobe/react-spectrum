@@ -13,6 +13,7 @@
 import {Collection, Key} from '@react-types/shared';
 import {Layout} from './Layout';
 import {Rect} from './Rect';
+import {Size} from './Size';
 
 export interface InvalidationContext<O = any> {
   contentChanged?: boolean,
@@ -34,6 +35,7 @@ export interface VirtualizerRenderOptions<T extends object, O = any> {
   collection: Collection<T>,
   persistedKeys?: Set<Key> | null,
   visibleRect: Rect,
+  size: Size,
   invalidationContext: InvalidationContext,
   isScrolling: boolean,
   layoutOptions?: O
