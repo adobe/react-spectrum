@@ -14,7 +14,7 @@ import {DateFieldState, useDateFieldState} from './useDateFieldState';
 import {DateValue, MappedTimeValue, TimePickerProps, TimeValue} from './types';
 import {getLocalTimeZone, GregorianCalendar, Time, toCalendarDateTime, today, toTime, toZoned} from '@internationalized/date';
 import {useCallback, useMemo} from 'react';
-import {useControlledState} from '../utils/useControlledState';
+import {useControlledStateAction} from '../utils/useControlledStateAction';
 
 export interface TimeFieldStateOptions<T extends TimeValue = TimeValue> extends TimePickerProps<T> {
   /** The locale to display and edit the value according to. */
@@ -41,10 +41,11 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
     validate
   } = props;
 
-  let [value, setValue] = useControlledState<TimeValue | null, MappedTimeValue<T> | null>(
+  let [value, isPending, setValue] = useControlledStateAction<TimeValue | null, MappedTimeValue<T> | null>(
     props.value,
     defaultValue ?? null,
-    props.onChange
+    props.onChange,
+    props.changeAction
   );
 
   let v = value || placeholderValue;
@@ -72,6 +73,7 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
     minValue: minDate,
     maxValue: maxDate,
     onChange,
+    changeAction: undefined,
     granularity: granularity || 'minute',
     maxGranularity: 'hour',
     placeholderValue: placeholderDate ?? undefined,
@@ -82,6 +84,7 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
 
   return {
     ...state,
+    isPending,
     timeValue
   };
 }

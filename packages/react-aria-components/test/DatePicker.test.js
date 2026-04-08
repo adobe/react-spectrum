@@ -10,7 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
+
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {Button} from '../src/Button';
 import {Calendar, CalendarCell, CalendarGrid} from '../src/Calendar';
 import {CalendarDate} from '@internationalized/date';
@@ -22,6 +25,7 @@ import {Group} from '../src/Group';
 import {Heading} from '../src/Heading';
 import {Label} from '../src/Label';
 import {Popover} from '../src/Popover';
+import {ProgressBar} from '../src/ProgressBar';
 import React from 'react';
 import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
@@ -57,6 +61,7 @@ let TestDatePicker = (props) => (
 describe('DatePicker', () => {
   let user;
   beforeAll(() => {
+    jest.useFakeTimers();
     user = userEvent.setup({delay: null, pointerMap});
   });
   it('provides slots', async () => {
@@ -393,4 +398,72 @@ describe('DatePicker', () => {
     let input = group.querySelector('.react-aria-DateInput');
     expect(input).toHaveTextContent('5/30/2000');
   });
+
+  if (parseInt(React.version, 10) >= 19) {
+    describe('changeAction', () => {  
+      function DatePickerChangeActionExample() {
+        return (
+          <DatePicker
+            defaultValue={new CalendarDate(2024, 6, 15)}
+            changeAction={async v => {
+              await new Promise(resolve => setTimeout(resolve, 500));
+            }}>
+            {({isPending}) => (
+              <>
+                <Label>Birth date</Label>
+                <Group>
+                  <DateInput>
+                    {(segment) => <DateSegment segment={segment} />}
+                  </DateInput>
+                  <Button>▼</Button>
+                  {isPending ? <ProgressBar aria-label="Loading" isIndeterminate /> : null}
+                </Group>
+                <Popover>
+                  <Dialog>
+                    <Calendar>
+                      <header>
+                        <Button slot="previous">◀</Button>
+                        <Heading />
+                        <Button slot="next">▶</Button>
+                      </header>
+                      <CalendarGrid>
+                        {(date) => <CalendarCell date={date} />}
+                      </CalendarGrid>
+                    </Calendar>
+                  </Dialog>
+                </Popover>
+              </>
+            )}
+          </DatePicker>
+        );
+      }
+  
+      it('shows ProgressBar while pending', async () => {
+        let {getByRole, queryByRole} = render(<DatePickerChangeActionExample />);
+        let group = getByRole('group');
+        let field = group.closest('.react-aria-DatePicker');
+        let segments = within(group).getAllByRole('spinbutton');
+
+        await user.click(segments[0]);
+        await user.keyboard('{ArrowUp}');
+  
+        expect(field).toHaveAttribute('data-pending');
+        expect(segments[0]).toHaveTextContent('7');
+
+        let progressbar = getByRole('progressbar');
+        expect(progressbar).toBeInTheDocument();
+        expect(group.getAttribute('aria-describedby')).toContain(progressbar.id);
+  
+        expect(announce).toHaveBeenCalledWith({'aria-labelledby': progressbar.id}, 'assertive');
+  
+        await act(async () => {
+          jest.runAllTimers();
+        });
+  
+        expect(field).not.toHaveAttribute('data-pending');
+        expect(queryByRole('progressbar')).not.toBeInTheDocument();
+        expect(announce).toHaveBeenCalledWith({'aria-labelledby': group.id}, 'assertive');
+      });
+    });
+  }
 });

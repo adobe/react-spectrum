@@ -28,12 +28,12 @@ import {
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {flushSync} from 'react-dom';
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
+// @ts-ignore
 import intlMessages from '../../intl/numberfield/*.json';
 import {isAndroid, isIOS, isIPhone} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
 import {NumberFieldProps, NumberFieldState} from 'react-stately/useNumberFieldState';
 import {privateValidationStateProp} from 'react-stately/private/form/useFormValidationState';
-// @ts-ignore
 import {useFocus} from '../interactions/useFocus';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useFormattedTextField} from '../textfield/useFormattedTextField';
@@ -70,7 +70,9 @@ export interface NumberFieldAria extends ValidationResult {
   /** Props for the number field's description element, if any. */
   descriptionProps: DOMAttributes,
   /** Props for the number field's error message element, if any. */
-  errorMessageProps: DOMAttributes
+  errorMessageProps: DOMAttributes,
+  /** Props for the progress bar element shown when the action is pending. */
+  progressBarProps: DOMProps
 }
 
 /**
@@ -247,9 +249,10 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   }, [commit, commitValidation]);
 
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
-  let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({
+  let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps, progressBarProps} = useFormattedTextField({
     ...otherProps,
     ...domProps,
+    changeAction: undefined,
     // These props are added to a hidden input rather than the formatted textfield.
     name: undefined,
     form: undefined,
@@ -377,6 +380,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     decrementButtonProps,
     errorMessageProps,
     descriptionProps,
+    progressBarProps,
     isInvalid,
     validationErrors,
     validationDetails

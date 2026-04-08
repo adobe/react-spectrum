@@ -115,7 +115,9 @@ export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> exte
   /**
    * An enumerated attribute that defines what action label or icon to preset for the enter key on virtual keyboards. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
    */
-  enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send'
+  enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send',
+  /** Whether an action is pending. */
+  isPending?: boolean
 }
 
 /**
@@ -154,6 +156,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     type = 'text',
     validationBehavior = 'aria'
   } = props;
+  // Backward compatibility - we used to not require the state argument.
   // eslint-disable-next-line react-hooks/rules-of-hooks
   let state: TextFieldState = arguments.length === 3 ? arguments[1] : useTextFieldState(props);
   let ref: TextFieldRefObject<T> = arguments.length === 3 ? arguments[2] : arguments[1];
@@ -161,7 +164,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps, progressBarProps} = useField({
     ...props,
-    isPending: state.isPending,
+    isPending: state.isPending || props.isPending,
     isInvalid,
     errorMessage: props.errorMessage || validationErrors
   });

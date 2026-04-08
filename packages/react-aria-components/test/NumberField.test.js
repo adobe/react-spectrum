@@ -21,6 +21,7 @@ import {I18nProvider} from 'react-aria/I18nProvider';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {NumberField, NumberFieldContext} from '../src/NumberField';
+import {ProgressBar} from '../src/ProgressBar';
 import React from 'react';
 import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
@@ -41,8 +42,10 @@ let TestNumberField = (props) => (
 describe('NumberField', () => {
   let user;
   beforeAll(() => {
+    jest.useFakeTimers();
     user = userEvent.setup({delay: null, pointerMap});
   });
+
   it('provides slots', () => {
     let {getByRole, getAllByRole} = render(<TestNumberField />);
 
@@ -508,4 +511,55 @@ describe('NumberField', () => {
     expect(input.validity.valid).toBe(true);
     expect(input).not.toHaveAttribute('aria-describedby');
   });
+
+  if (parseInt(React.version, 10) >= 19) {
+    describe('changeAction', () => {  
+      function NumberFieldChangeActionExample() {
+        return (
+          <NumberField
+            defaultValue={1}
+            changeAction={async () => {
+              await new Promise(resolve => setTimeout(resolve, 500));
+            }}>
+            {({isPending}) => (
+              <>
+                <Label>Amount</Label>
+                <Group>
+                  <Button slot="decrement">-</Button>
+                  <Input />
+                  <Button slot="increment">+</Button>
+                </Group>
+                {isPending ? <ProgressBar aria-label="Updating" isIndeterminate /> : null}
+              </>
+            )}
+          </NumberField>
+        );
+      }
+  
+      it('shows ProgressBar while pending', async () => {
+        let {getByRole, queryByRole} = render(<NumberFieldChangeActionExample />);
+        let input = getByRole('textbox');
+        let field = input.closest('.react-aria-NumberField');
+  
+        await user.click(getByRole('button', {name: 'Increase Amount'}));
+  
+        expect(field).toHaveAttribute('data-pending');
+        expect(input).toHaveValue('2');
+
+        let progressbar = getByRole('progressbar');
+        expect(progressbar).toBeInTheDocument();
+        expect(input).toHaveAttribute('aria-describedby', progressbar.id);
+  
+        expect(announce).toHaveBeenCalledWith({'aria-labelledby': progressbar.id}, 'assertive');
+  
+        await act(async () => {
+          jest.runAllTimers();
+        });
+  
+        expect(field).not.toHaveAttribute('data-pending');
+        expect(queryByRole('progressbar')).not.toBeInTheDocument();
+        expect(announce).toHaveBeenCalledWith({'aria-labelledby': input.id}, 'assertive');
+      });
+    });
+  }
 });

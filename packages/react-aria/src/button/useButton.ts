@@ -251,7 +251,7 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
       'aria-controls': props['aria-controls'],
       'aria-pressed': props['aria-pressed'],
       'aria-current': props['aria-current'],
-      'aria-disabled': isPending ? 'true' : buttonProps['aria-disabled'],
+      'aria-disabled': isPending ? 'true' : props['aria-disabled'],
       'aria-labelledby': ariaLabelledby,
       // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
       // We do this by changing the button's type to button.

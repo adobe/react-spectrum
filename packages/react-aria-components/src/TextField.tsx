@@ -94,7 +94,10 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
     !props['aria-label'] && !props['aria-labelledby']
   );
   let [inputElementType, setInputElementType] = useState('input');
-  let state = useTextFieldState(props);
+  let state = useTextFieldState({
+    ...props,
+    validationBehavior
+  });
   let {labelProps, inputProps, descriptionProps, errorMessageProps, progressBarProps, ...validation} = useTextField<any>({
     ...removeDataAttributes(props),
     inputElementType,

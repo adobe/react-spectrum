@@ -10,13 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorField, ColorFieldProps} from '../src/ColorField';
+import {Color, parseColor} from 'react-stately/Color';
 
+import {ColorField, ColorFieldProps} from '../src/ColorField';
 import {FieldError} from '../src/FieldError';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {Meta, StoryObj} from '@storybook/react';
-import React from 'react';
+import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
+import React, {useState} from 'react';
 import './styles.css';
 
 export default {
@@ -47,5 +49,51 @@ export const ColorFieldExample: ColorFieldStory = {
   args: {
     label: 'Test',
     defaultValue: '#f00'
+  }
+};
+
+let colorActionCache = new Map<string, Promise<void>>();
+
+function ColorActionResults({colorKey}: {colorKey: string}) {
+  let promise = colorActionCache.get(colorKey);
+  if (!promise) {
+    colorActionCache.clear();
+    promise = new Promise<void>(resolve => setTimeout(resolve, 2000));
+    colorActionCache.set(colorKey, promise);
+  }
+  React.use(promise);
+  return <div>Results for: {colorKey || '(empty)'}</div>;
+}
+
+function ColorFieldReactActionExample(args) {
+  let [color, setColor] = useState<Color | null>(() => parseColor('#ff0000'));
+  let colorKey = color?.toString('hex') ?? '';
+  return (
+    <div>
+      <ColorField
+        {...args}
+        value={color}
+        changeAction={async c => {
+          setColor(c);
+        }}>
+        {({isPending}) => (
+          <>
+            <Label>Color</Label>
+            <Input style={{display: 'block'}} />
+            {isPending && <ProgressCircle aria-label="Loading" isIndeterminate style={{display: 'inline-block'}} />}
+          </>
+        )}
+      </ColorField>
+      <React.Suspense fallback="Loading">
+        <ColorActionResults colorKey={colorKey} />
+      </React.Suspense>
+    </div>
+  );
+}
+
+export const ReactAction: ColorFieldStory = {
+  render: (args) => <ColorFieldReactActionExample {...args} />,
+  args: {
+    label: 'Color'
   }
 };

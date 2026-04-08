@@ -14,13 +14,14 @@ import {action} from 'storybook/actions';
 import {Button} from '../src/Button';
 import clsx from 'clsx';
 import {DateField, DateInput, DateSegment} from '../src/DateField';
+import {DateValue, fromAbsolute, getLocalTimeZone, parseAbsoluteToLocal} from '@internationalized/date';
 import {FieldError} from '../src/FieldError';
 import {Form} from '../src/Form';
-import {fromAbsolute, getLocalTimeZone, parseAbsoluteToLocal} from '@internationalized/date';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {Meta, StoryFn} from '@storybook/react';
-import React from 'react';
+import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
+import React, {useState} from 'react';
 import styles from '../example/index.css';
 import {TextField} from '../src/TextField';
 import './styles.css';
@@ -111,3 +112,44 @@ export const DateFieldAutoFill = (props) => (
     <Button type="submit">Submit</Button>
   </Form>
 );
+
+let dateActionCache = new Map<string, Promise<void>>();
+
+function DateActionResults({dateKey}: {dateKey: string}) {
+  let promise = dateActionCache.get(dateKey);
+  if (!promise) {
+    dateActionCache.clear();
+    promise = new Promise<void>(resolve => setTimeout(resolve, 2000));
+    dateActionCache.set(dateKey, promise);
+  }
+  React.use(promise);
+  return <div>Results for: {dateKey || '(empty)'}</div>;
+}
+
+export const ReactAction: DateFieldStory = (args) => {
+  let [value, setValue] = useState<DateValue | null>(() => parseAbsoluteToLocal('2024-01-01T01:01:00Z'));
+  let dateKey = value?.toString() ?? '';
+  return (
+    <div>
+      <DateField
+        {...args as any}
+        value={value}
+        changeAction={async v => {
+          setValue(v);
+        }}>
+        {({isPending}) => (
+          <>
+            <Label style={{display: 'block'}}>Date</Label>
+            <DateInput className={styles.field} data-testid2="date-input">
+              {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+            </DateInput>
+            {isPending && <ProgressCircle aria-label="Loading" isIndeterminate style={{display: 'inline-block'}} />}
+          </>
+        )}
+      </DateField>
+      <React.Suspense fallback="Loading">
+        <DateActionResults dateKey={dateKey} />
+      </React.Suspense>
+    </div>
+  );
+};

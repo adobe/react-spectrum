@@ -14,8 +14,11 @@ import clsx from 'clsx';
 import {DateInput, DateSegment, TimeField} from '../src/DateField';
 import {Label} from '../src/Label';
 import {Meta, StoryFn} from '@storybook/react';
-import React from 'react';
+import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
+import React, {useState} from 'react';
 import styles from '../example/index.css';
+import {Time} from '@internationalized/date';
+import {TimeValue} from 'react-stately/useTimeFieldState';
 import './styles.css';
 
 export default {
@@ -33,3 +36,44 @@ export const TimeFieldExample: TimeFieldStory = () => (
     </DateInput>
   </TimeField>
 );
+
+let timeActionCache = new Map<string, Promise<void>>();
+
+function TimeActionResults({timeKey}: {timeKey: string}) {
+  let promise = timeActionCache.get(timeKey);
+  if (!promise) {
+    timeActionCache.clear();
+    promise = new Promise<void>(resolve => setTimeout(resolve, 2000));
+    timeActionCache.set(timeKey, promise);
+  }
+  React.use(promise);
+  return <div>Results for: {timeKey || '(empty)'}</div>;
+}
+
+export const ReactAction: TimeFieldStory = (args) => {
+  let [value, setValue] = useState<TimeValue | null>(() => new Time(9, 0));
+  let timeKey = value?.toString() ?? '';
+  return (
+    <div>
+      <TimeField
+        {...args}
+        value={value}
+        changeAction={async v => {
+          setValue(v);
+        }}>
+        {({isPending}) => (
+          <>
+            <Label style={{display: 'block'}}>Time</Label>
+            <DateInput className={styles.field}>
+              {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+            </DateInput>
+            {isPending && <ProgressCircle aria-label="Loading" isIndeterminate style={{display: 'inline-block'}} />}
+          </>
+        )}
+      </TimeField>
+      <React.Suspense fallback="Loading">
+        <TimeActionResults timeKey={timeKey} />
+      </React.Suspense>
+    </div>
+  );
+};

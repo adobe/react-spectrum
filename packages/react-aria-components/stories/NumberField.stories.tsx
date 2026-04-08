@@ -19,6 +19,7 @@ import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {Meta, StoryObj} from '@storybook/react';
 import {NumberField, NumberFieldProps} from '../src/NumberField';
+import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
 import React, {useState} from 'react';
 import './styles.css';
 
@@ -100,4 +101,55 @@ export const ArabicNumberFieldExample = {
       </NumberField>
     </I18nProvider>
   )
+};
+
+let numberActionCache = new Map<string, Promise<void>>();
+
+function NumberActionResults({valueKey}: {valueKey: string}) {
+  let promise = numberActionCache.get(valueKey);
+  if (!promise) {
+    numberActionCache.clear();
+    promise = new Promise<void>(resolve => setTimeout(resolve, 2000));
+    numberActionCache.set(valueKey, promise);
+  }
+  React.use(promise);
+  return <div>Results for: {valueKey}</div>;
+}
+
+function NumberFieldReactActionExample() {
+  let [value, setValue] = useState(42);
+  let valueKey = String(value);
+  return (
+    <div>
+      <NumberField
+        data-testid="numberfield-react-action"
+        value={value}
+        minValue={0}
+        maxValue={100}
+        step={1}
+        formatOptions={{style: 'currency', currency: 'USD'}}
+        changeAction={async v => {
+          setValue(v);
+        }}>
+        {({isPending}) => (
+          <>
+            <Label>Amount</Label>
+            <Group style={{display: 'flex'}}>
+              <Button slot="decrement">-</Button>
+              <Input />
+              <Button slot="increment">+</Button>
+            </Group>
+            {isPending && <ProgressCircle aria-label="Loading" isIndeterminate style={{display: 'inline-block'}} />}
+          </>
+        )}
+      </NumberField>
+      <React.Suspense fallback="Loading">
+        <NumberActionResults valueKey={valueKey} />
+      </React.Suspense>
+    </div>
+  );
+}
+
+export const ReactAction: NumberFieldStory = {
+  render: () => <NumberFieldReactActionExample />
 };

@@ -16,7 +16,7 @@ import {FocusableProps, HelpTextProps, InputBase, LabelableProps, RangeInputBase
 import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
 import {useCallback, useMemo, useState} from 'react';
-import {useControlledState} from '../utils/useControlledState';
+import {useControlledStateAction} from '../utils/useControlledStateAction';
 
 export interface NumberFieldProps extends InputBase, Validation<number>, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps, HelpTextProps {
   /**
@@ -30,7 +30,13 @@ export interface NumberFieldProps extends InputBase, Validation<number>, Focusab
    * 'validate' will not clamp the value, and will validate that the value is within the min/max range and on a valid step.
    * @default 'snap'
    */
-  commitBehavior?: 'snap' | 'validate'
+  commitBehavior?: 'snap' | 'validate',
+  /**
+   * Async action that is called when the value changes.
+   * During the action, the field is in a pending state.
+   * Only supported in React 19 and later.
+   */
+  changeAction?: (value: number) => void | Promise<void>
 }
 
 export interface NumberFieldState extends FormValidationState {
@@ -44,6 +50,8 @@ export interface NumberFieldState extends FormValidationState {
    * Updated based on the `inputValue` as the user types.
    */
   numberValue: number,
+  /** Whether the change action is pending. */
+  isPending: boolean,
   /** The default value of the input. */
   defaultNumberValue: number,
   /** The minimum value of the number field. */
@@ -129,7 +137,7 @@ export function useNumberFieldState(
     defaultValue = snapValue(defaultValue);
   }
 
-  let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, onChange);
+  let [numberValue, isPending, setNumberValue] = useControlledStateAction<number>(value, isNaN(defaultValue) ? NaN : defaultValue, onChange, props.changeAction);
   let [initialValue] = useState(numberValue);
   let [inputValue, setInputValue] = useState(() => isNaN(numberValue) ? '' : new NumberFormatter(locale, formatOptions).format(numberValue));
 
@@ -296,6 +304,7 @@ export function useNumberFieldState(
     minValue,
     maxValue,
     numberValue: parsedValue,
+    isPending,
     defaultNumberValue: isNaN(defaultValue) ? initialValue : defaultValue,
     setNumberValue,
     setInputValue,

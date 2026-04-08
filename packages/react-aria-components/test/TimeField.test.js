@@ -10,10 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
+
 import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {DateInput, DateSegment, TimeField, TimeFieldContext} from '../src/DateField';
 import {FieldError} from '../src/FieldError';
 import {Label} from '../src/Label';
+import {ProgressBar} from '../src/ProgressBar';
 import React from 'react';
 import {Text} from '../src/Text';
 import {Time} from '@internationalized/date';
@@ -24,6 +28,7 @@ describe('TimeField', () => {
 
   let user;
   beforeAll(() => {
+    jest.useFakeTimers();
     user = userEvent.setup({delay: null, pointerMap});
   });
 
@@ -242,4 +247,55 @@ describe('TimeField', () => {
 
     expect(getDescription()).not.toContain('Constraints not satisfied');
   });
+
+  if (parseInt(React.version, 10) >= 19) {
+    describe('changeAction', () => {  
+      function DateFieldChangeActionExample() {
+        return (
+          <TimeField
+            defaultValue={new Time(8, 30)}
+            changeAction={async () => {
+              await new Promise(resolve => setTimeout(resolve, 500));
+            }}>
+            {({isPending}) => (
+              <>
+                <Label>Time</Label>
+                <DateInput>
+                  {segment => <DateSegment segment={segment} />}
+                </DateInput>
+                {isPending ? <ProgressBar aria-label="Loading" isIndeterminate /> : null}
+              </>
+            )}
+          </TimeField>
+        );
+      }
+  
+      it('shows ProgressBar while pending', async () => {
+        let {getByRole, queryByRole} = render(<DateFieldChangeActionExample />);
+        let group = getByRole('group');
+        let field = group.closest('.react-aria-TimeField');
+        let segments = within(group).getAllByRole('spinbutton');
+
+        await user.click(segments[0]);
+        await user.keyboard('{ArrowUp}');
+  
+        expect(field).toHaveAttribute('data-pending');
+        expect(segments[0]).toHaveTextContent('9');
+
+        let progressbar = getByRole('progressbar');
+        expect(progressbar).toBeInTheDocument();
+        expect(group.getAttribute('aria-describedby')).toContain(progressbar.id);
+  
+        expect(announce).toHaveBeenCalledWith({'aria-labelledby': progressbar.id}, 'assertive');
+  
+        await act(async () => {
+          jest.runAllTimers();
+        });
+  
+        expect(field).not.toHaveAttribute('data-pending');
+        expect(queryByRole('progressbar')).not.toBeInTheDocument();
+        expect(announce).toHaveBeenCalledWith({'aria-labelledby': group.id}, 'assertive');
+      });
+    });
+  }
 });

@@ -9,12 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {Button} from '../src/Button';
 import {FieldError} from '../src/FieldError';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
+import {ProgressBar} from '../src/ProgressBar';
 import React from 'react';
 import {SearchField, SearchFieldContext} from '../src/SearchField';
 import {Text} from '../src/Text';
@@ -33,6 +36,7 @@ let TestSearchField = (props) => (
 describe('SearchField', () => {
   let user;
   beforeAll(() => {
+    jest.useFakeTimers();
     user = userEvent.setup({delay: null, pointerMap});
   });
 
@@ -165,4 +169,52 @@ describe('SearchField', () => {
     let input = getByRole('searchbox');
     expect(input).toHaveAttribute('form', 'test');
   });
+
+  if (parseInt(React.version, 10) >= 19) {
+    describe('changeAction', () => {  
+      function SearchFieldChangeActionExample() {
+        return (
+          <SearchField
+            changeAction={async () => {
+              await new Promise(resolve => setTimeout(resolve, 500));
+            }}>
+            {({isPending}) => (
+              <>
+                <Label>Test</Label>
+                <Input />
+                {isPending ? <ProgressBar aria-label="Updating" isIndeterminate /> : null}
+              </>
+            )}
+          </SearchField>
+        );
+      }
+  
+      it('shows ProgressBar while pending', async () => {
+        let {getByRole, queryByRole} = render(<SearchFieldChangeActionExample />);
+        let input = getByRole('searchbox');
+        let field = input.closest('.react-aria-SearchField');
+  
+        await user.click(input);
+        await user.clear(input);
+        await user.keyboard('h');
+  
+        expect(field).toHaveAttribute('data-pending');
+        expect(input).toHaveValue('h');
+
+        let progressbar = getByRole('progressbar');
+        expect(progressbar).toBeInTheDocument();
+        expect(input).toHaveAttribute('aria-describedby', progressbar.id);
+  
+        expect(announce).toHaveBeenCalledWith({'aria-labelledby': progressbar.id}, 'assertive');
+  
+        await act(async () => {
+          jest.runAllTimers();
+        });
+  
+        expect(field).not.toHaveAttribute('data-pending');
+        expect(queryByRole('progressbar')).not.toBeInTheDocument();
+        expect(announce).toHaveBeenCalledWith({'aria-labelledby': input.id}, 'assertive');
+      });
+    });
+  }
 });

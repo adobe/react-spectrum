@@ -1681,10 +1681,8 @@ describe('NumberField', function () {
       expect(label).toHaveAttribute('for', textField.id);
 
       expect(incrementButton).toHaveAttribute('aria-label', 'Increase Width');
-      expect(incrementButton).not.toHaveAttribute('id');
       expect(incrementButton).not.toHaveAttribute('aria-labelledby');
       expect(decrementButton).toHaveAttribute('aria-label', 'Decrease Width');
-      expect(decrementButton).not.toHaveAttribute('id');
       expect(decrementButton).not.toHaveAttribute('aria-labelledby');
     });
 
@@ -1697,10 +1695,8 @@ describe('NumberField', function () {
       expect(textField).toHaveAttribute('aria-label', 'Width');
 
       expect(incrementButton).toHaveAttribute('aria-label', 'Increase Width');
-      expect(incrementButton).not.toHaveAttribute('id');
       expect(incrementButton).not.toHaveAttribute('aria-labelledby');
       expect(decrementButton).toHaveAttribute('aria-label', 'Decrease Width');
-      expect(decrementButton).not.toHaveAttribute('id');
       expect(decrementButton).not.toHaveAttribute('aria-labelledby');
     });
 
@@ -1753,10 +1749,8 @@ describe('NumberField', function () {
       expect(textField).toHaveAttribute('aria-label', 'Width');
 
       expect(incrementButton).toHaveAttribute('aria-label', 'Increment');
-      expect(incrementButton).not.toHaveAttribute('id');
       expect(incrementButton).not.toHaveAttribute('aria-labelledby');
       expect(decrementButton).toHaveAttribute('aria-label', 'Decrease Width');
-      expect(decrementButton).not.toHaveAttribute('id');
       expect(decrementButton).not.toHaveAttribute('aria-labelledby');
     });
 
@@ -1770,10 +1764,8 @@ describe('NumberField', function () {
       expect(textField).toHaveAttribute('aria-label', 'Width');
 
       expect(incrementButton).toHaveAttribute('aria-label', 'Increase Width');
-      expect(incrementButton).not.toHaveAttribute('id');
       expect(incrementButton).not.toHaveAttribute('aria-labelledby');
       expect(decrementButton).toHaveAttribute('aria-label', 'Decrement');
-      expect(decrementButton).not.toHaveAttribute('id');
       expect(decrementButton).not.toHaveAttribute('aria-labelledby');
     });
 
