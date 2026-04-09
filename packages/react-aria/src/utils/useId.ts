@@ -43,9 +43,14 @@ export function useId(defaultId?: string): string {
 
   let res = useSSRSafeId(value);
   let cleanupRef = useRef(null);
+  let registeredId = useRef<string | null>(null);
 
-  if (registry) {
+  if (registry && registeredId.current !== res) {
+    if (registeredId.current !== null) {
+      registry.unregister(cleanupRef);
+    }
     registry.register(cleanupRef, res);
+    registeredId.current = res;
   }
 
   if (canUseDOM) {
@@ -65,6 +70,7 @@ export function useId(defaultId?: string): string {
       if (registry) {
         registry.unregister(cleanupRef);
       }
+      registeredId.current = null;
       idsUpdaterMap.delete(r);
     };
   }, [res]);
