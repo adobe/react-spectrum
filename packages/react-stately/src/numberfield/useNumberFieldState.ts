@@ -15,7 +15,7 @@ import {clamp, snapValueToStep} from '../utils/number';
 import {FocusableProps, HelpTextProps, InputBase, LabelableProps, RangeInputBase, TextInputBase, Validation, ValueBase} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
-import {useCallback, useMemo, useState} from 'react';
+import {useCallback, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '../utils/useControlledState';
 
 export interface NumberFieldProps extends InputBase, Validation<number>, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps, HelpTextProps {
@@ -110,6 +110,14 @@ export function useNumberFieldState(
     isReadOnly,
     commitBehavior = 'snap'
   } = props;
+
+  // Stabilize formatOptions reference to avoid unnecessary re-renders
+  // when consumers pass inline object literals with the same content.
+  let formatOptionsRef = useRef(formatOptions);
+  if (!isEqualFormatOptions(formatOptions, formatOptionsRef.current)) {
+    formatOptionsRef.current = formatOptions;
+  }
+  formatOptions = formatOptionsRef.current;
 
   if (value === null) {
     value = NaN;
@@ -302,6 +310,26 @@ export function useNumberFieldState(
     inputValue,
     commit
   };
+}
+
+function isEqualFormatOptions(a: Intl.NumberFormatOptions | undefined, b: Intl.NumberFormatOptions | undefined) {
+  if (a === b) {
+    return true;
+  }
+  if (!a || !b) {
+    return false;
+  }
+  let aKeys = Object.keys(a);
+  let bKeys = Object.keys(b);
+  if (aKeys.length !== bKeys.length) {
+    return false;
+  }
+  for (let key of aKeys) {
+    if (b[key] !== a[key]) {
+      return false;
+    }
+  }
+  return true;
 }
 
 function handleDecimalOperation(operator: '-' | '+', value1: number, value2: number): number {
