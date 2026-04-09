@@ -2075,6 +2075,65 @@ describe('Tree', () => {
       expect(getItems).toHaveBeenCalledTimes(1);
       expect(getItems).toHaveBeenCalledWith(new Set(['projects', 'reports']));
     });
+
+    it('should allow dropping a child before its parent when parent is the only root node', () => {
+      let onMove = jest.fn();
+      let items = [
+        {id: 'projects', name: 'Projects', childItems: [
+          {id: 'project-1', name: 'Project 1'}
+        ]}
+      ];
+
+      let realGetBoundingClientRect = window.HTMLElement.prototype.getBoundingClientRect;
+      let rectSpy = jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement): DOMRect {
+        let rect = realGetBoundingClientRect.call(this);
+
+        if (this.getAttribute('role') === 'treegrid') {
+          return {...rect, top: 0, left: 0, width: 100, height: 100, bottom: 100, right: 100};
+        }
+
+        if (this.getAttribute('data-key') === 'projects') {
+          return {...rect, top: 10, left: 0, width: 100, height: 20, bottom: 30, right: 100};
+        }
+
+        if (this.getAttribute('data-key') === 'project-1') {
+          return {...rect, top: 30, left: 0, width: 100, height: 20, bottom: 50, right: 100};
+        }
+
+        return rect;
+      });
+
+      function SingleRootDraggableTree() {
+        let {dragAndDropHooks} = useDragAndDrop({
+          getItems: (keys) => [...keys].map((key) => ({'text/plain': key.toString()})),
+          onMove
+        });
+
+        return <DynamicTree treeProps={{dragAndDropHooks, items}} />;
+      }
+
+      let {getByRole} = render(<SingleRootDraggableTree />);
+
+      let tree = getByRole('treegrid');
+      let project1Row = getByRole('row', {name: 'Project 1'});
+      let dataTransfer = new DataTransfer();
+
+      fireEvent(project1Row, new DragEvent('dragstart', {dataTransfer, clientX: 50, clientY: 35}));
+      act(() => jest.runAllTimers());
+
+      fireEvent(tree, new DragEvent('dragenter', {dataTransfer, clientX: 50, clientY: 0}));
+      fireEvent(tree, new DragEvent('dragover', {dataTransfer, clientX: 50, clientY: 0}));
+
+      fireEvent(tree, new DragEvent('drop', {dataTransfer, clientX: 50, clientY: 0}));
+      fireEvent(project1Row, new DragEvent('dragend', {dataTransfer, clientX: 50, clientY: 0}));
+      act(() => jest.runAllTimers());
+
+      expect(onMove).toHaveBeenCalledTimes(1);
+      expect(onMove.mock.calls[0][0].keys).toEqual(new Set(['project-1']));
+      expect(onMove.mock.calls[0][0].target).toEqual({type: 'item', key: 'projects', dropPosition: 'before'});
+
+      rectSpy.mockRestore();
+    });
   });
 
   describe('press events', () => {
