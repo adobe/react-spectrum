@@ -175,5 +175,9 @@ let selectedKey = 'cat';
     <Item key="dog">Dog</Item>
     <Item key="cat">Cat</Item>
   </Picker>
+  <Picker label="Pets" defaultSelectedKey="cat">
+    <Item key="dog">Dog</Item>
+    <Item key="cat">Cat</Item>
+  </Picker>
 </div>
 `);

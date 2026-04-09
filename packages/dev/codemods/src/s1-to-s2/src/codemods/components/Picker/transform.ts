@@ -16,6 +16,7 @@ import * as t from '@babel/types';
  * - Replace isLoading with loadingState.
  * - Rename onSelectionChange to onChange.
  * - Rename selectedKey to value.
+ * - Rename defaultSelectedKey to defaultValue.
  */
 export default function transformPicker(path: NodePath<t.JSXElement>): void {
   // Change menuWidth value from a DimensionValue to a pixel value
@@ -52,5 +53,11 @@ export default function transformPicker(path: NodePath<t.JSXElement>): void {
   updatePropName(path, {
     oldPropName: 'selectedKey',
     newPropName: 'value'
+  });
+
+  // Rename defaultSelectedKey to defaultValue
+  updatePropName(path, {
+    oldPropName: 'defaultSelectedKey',
+    newPropName: 'defaultValue'
   });
 }

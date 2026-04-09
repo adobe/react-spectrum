@@ -161,6 +161,10 @@ let selectedKey = 'cat';
     <PickerItem id="dog">Dog</PickerItem>
     <PickerItem id="cat">Cat</PickerItem>
   </Picker>
+  <Picker label="Pets" defaultValue="cat">
+    <PickerItem id="dog">Dog</PickerItem>
+    <PickerItem id="cat">Cat</PickerItem>
+  </Picker>
 </div>"
 `;
 
