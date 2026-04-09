@@ -2,6 +2,7 @@ import {Layout} from '../../src/Layout';
 import {PendingBadge} from '../../src/PendingBadge';
 import {InstallCommand} from '../../src/InstallCommand';
 import {StaticTable} from '../../src/StaticTable';
+import {Command} from '../../src/Command';
 export default Layout;
 
 export const section = 'Guides';
@@ -11,6 +12,18 @@ export const description = 'How to migrate from React Spectrum v3 to Spectrum 2.
 # Migrating to Spectrum 2
 
 <PageDescription>Learn how to migrate from React Spectrum v3 to Spectrum 2.</PageDescription>
+
+## AI-assisted migration (recommended)
+
+If you're using an AI coding tool that supports [Agent Skills](https://agentskills.io/home), React Spectrum now includes a dedicated skill for guiding v3 to S2 upgrades.
+
+To install the migration skill and the general S2 skill, run:
+
+<Command command="npx skills add https://react-spectrum.adobe.com --skill migrate-react-spectrum-v3-to-s2 --skill react-spectrum-s2" />
+
+Then ask your agent to use the `migrate-react-spectrum-v3-to-s2` skill to migrate your project.
+
+## Command-line tool
 
 An automated upgrade assistant is available by running the following command in the project you want to upgrade:
 
@@ -25,6 +38,7 @@ The following arguments are also available:
 - `--path` - Path to apply the upgrade changes to. Defaults to the current directory (`.`)
 - `--dry` - Runs the upgrade assistant without making changes to components
 - `--ignore-pattern` - Ignore files that match the provided glob expression. Defaults to `'**/node_modules/**'`
+- `--agent` - Runs the upgrade assistant non-interactively for AI tools. This skips prompts, package installation, and macro setup, so `@react-spectrum/s2` must already be installed and resolvable
 
 For cases that the upgrade assistant doesn't handle automatically or where you'd rather upgrade some components manually, use the guide below.
 
