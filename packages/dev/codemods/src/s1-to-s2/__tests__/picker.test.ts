@@ -162,3 +162,18 @@ test('replaces isLoading with loadingState and keeps onLoadMore', `
       </Picker>
     </>
 `);
+
+test('renames deprecated selection props', `
+import {Picker, Item} from '@adobe/react-spectrum';
+let selectedKey = 'cat';
+<div>
+  <Picker label="Pets" onSelectionChange={console.log} selectedKey="dog">
+    <Item key="dog">Dog</Item>
+    <Item key="cat">Cat</Item>
+  </Picker>
+  <Picker label="Pets" onSelectionChange={(key) => console.log(key)} selectedKey={selectedKey}>
+    <Item key="dog">Dog</Item>
+    <Item key="cat">Cat</Item>
+  </Picker>
+</div>
+`);
