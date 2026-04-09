@@ -13,7 +13,7 @@
 import React, {SetStateAction, useCallback, useInsertionEffect, useRef} from 'react';
 import {useControlledState} from './useControlledState';
 
-export const useControlledStateAction = typeof React['useTransition'] === 'function'
+export const useControlledStateAction = typeof React['useTransition'] === 'function' && typeof React['useOptimistic'] === 'function'
   ? useControlledStateActionModern
   : useControlledStateActionLegacy;
 

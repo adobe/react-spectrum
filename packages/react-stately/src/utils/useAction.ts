@@ -12,7 +12,7 @@
 
 import React from 'react';
 
-export const useAction = typeof React['useTransition'] === 'function'
+export const useAction = typeof React['useTransition'] === 'function' && typeof React['useOptimistic'] === 'function'
   ? useActionModern
   : useActionLegacy;
 
