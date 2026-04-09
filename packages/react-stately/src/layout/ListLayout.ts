@@ -193,8 +193,10 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       let rowHeight = (this.rowSize ?? this.estimatedRowSize ?? DEFAULT_HEIGHT) + this.gap;
       // Clone only before mutating
       rect = rect.copy();
-      rect[offsetProperty] = Math.floor(rect[offsetProperty] / rowHeight) * rowHeight;
-      rect[heightProperty] = Math.ceil(rect[heightProperty] / rowHeight) * rowHeight;
+      let offset = Math.floor(rect[offsetProperty] / rowHeight) * rowHeight;
+      let height = rect[heightProperty] + rect[offsetProperty] - offset;
+      rect[offsetProperty] = offset;
+      rect[heightProperty] = Math.ceil(height / rowHeight) * rowHeight;
     }
 
     // If layout hasn't yet been done for the requested rect, union the
