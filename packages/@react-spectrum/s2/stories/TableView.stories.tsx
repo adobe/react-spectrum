@@ -49,9 +49,8 @@ import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
 import {useTreeData} from 'react-stately/useTreeData';
 
 let onActionFunc = action('onAction');
-let noOnAction = null;
+let noOnAction = undefined;
 const onActionOptions = {onActionFunc, noOnAction};
-
 const events = ['onResizeStart', 'onResize', 'onResizeEnd', 'onSelectionChange', 'onSortChange'];
 
 const meta: Meta<typeof TableView> = {
@@ -63,7 +62,7 @@ const meta: Meta<typeof TableView> = {
   tags: ['autodocs'],
   args: {...getActionArgs(events)},
   argTypes: {
-    ...categorizeArgTypes('Events', ['onAction', 'onLoadMore', 'onResizeStart', 'onResize', 'onResizeEnd', 'onSelectionChange', 'onSortChange']),
+    ...categorizeArgTypes('Events', ['onAction', 'onLoadMore', ...events]),
     children: {table: {disable: true}},
     onAction: {
       options: Object.keys(onActionOptions), // An array of serializable values
@@ -1784,7 +1783,7 @@ export const TableWithNestedRows: StoryObj<typeof TableView> = {
             <Cell>5/22/1980</Cell>
           </Row>
         </Row>
-        <Row id="apps">
+        <Row id="apps" isDisabled>
           <Cell>Applications</Cell>
           <Cell>Folder</Cell>
           <Cell>4/7/2025</Cell>

@@ -624,8 +624,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
             paddingStart: 'edge-to-text',
             // better way to do this one? it's not actually half, they are
             // [9, 4], [12, 6], [15, 8], [18, 8]
-            // also noticed that our measurement is including the border, making the padding too much
-            paddingEnd: 'calc(self(height, self(minHeight)) * 3 / 16)'
+            paddingEnd: 'calc(self(height, self(minHeight)) * 3 / 16 - self(borderEndWidth, 2px))'
           })({size})}>
           <InputContext.Consumer>
             {ctx => (
