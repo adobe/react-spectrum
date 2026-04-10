@@ -52,11 +52,7 @@ export interface DatePickerProps<T extends DateValue> extends
      * The maximum number of months to display at once in the calendar popover, if screen space permits.
      * @default 1
      */
-    maxVisibleMonths?: number,
-    /**
-     * The error message to display when the calendar is invalid.
-     */
-    errorMessage?: ReactNode
+    maxVisibleMonths?: number
 }
 
 export const DatePickerContext = createContext<ContextValue<Partial<DatePickerProps<any>>, HTMLDivElement>>(null);
@@ -132,7 +128,6 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     label,
     contextualHelp,
     description: descriptionMessage,
-    errorMessage,
     isRequired,
     size = 'M',
     labelPosition = 'top',
@@ -144,6 +139,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     placeholderValue,
     maxVisibleMonths = 1,
     createCalendar,
+    errorMessage,
     ...dateFieldProps
   } = props;
   let formContext = useContext(FormContext);
@@ -167,6 +163,11 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         let timeMaxValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : undefined;
         let timeGranularity = state.granularity === 'hour' || state.granularity === 'minute' || state.granularity === 'second' ? state.granularity : undefined;
         let showTimeField = !!timeGranularity;
+        
+        // Ideally, we could remove references to errorMessage here and instead pull it from the RAC CalendarContext in S2 Calendar
+        // However, CalendarProps type does not include errorMessage so we get a type error
+        // Instead, we resolve the error message here with the same logic used in useDatePicker
+        let resolvedErrorMessage = typeof errorMessage === 'function' ? errorMessage(state.displayValidation) : (errorMessage || state.displayValidation.validationErrors.join(' '));
         return (
           <>
             <FieldLabel
@@ -207,8 +208,8 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
             <CalendarPopover shouldFlip={props.shouldFlip}>
               <Calendar
                 visibleMonths={maxVisibleMonths}
-                createCalendar={createCalendar}
-                errorMessage={errorMessage} />
+                createCalendar={createCalendar} 
+                errorMessage={resolvedErrorMessage} />
               {showTimeField && (
                 <div className={style({display: 'flex', gap: 16, contain: 'inline-size'})}>
                   <TimeField
@@ -231,7 +232,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
               isDisabled={isDisabled}
               isInvalid={isInvalid}
               description={descriptionMessage}>
-              {errorMessage}
+              {resolvedErrorMessage}
             </HelpText>
           </>
         );
