@@ -20,7 +20,7 @@ import {useRef} from 'react';
 
 export interface AriaRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps, AriaLabelingProps {
   /**
-   * Controls the behavior when a pointer is released outside the calendar:
+   * Controls the behavior when a pointer is released outside the calendar or a blur occurs mid selection:
    *
    * - `clear`: clear the currently selected range of dates.
    *
