@@ -786,16 +786,177 @@ describe('ComboBox', () => {
   });
 
   it('should support multi-select with custom value', async () => {
-    // allowsCustomValue doesn't really make sense to use with multi-selection, but test it anyway.
-    let {container} = render(<TestComboBox selectionMode="multiple" allowsCustomValue />);
+    let onChange = jest.fn();
+    let {container} = render(<TestComboBox selectionMode="multiple" allowsCustomValue onChange={onChange} />);
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
 
     await user.tab();
     await user.keyboard('Test');
     expect(comboboxTester.combobox).toHaveValue('Test');
 
+    // Custom value should be committed to selection and input cleared
     await user.tab();
-    expect(comboboxTester.combobox).toHaveValue('Test');
+    expect(comboboxTester.combobox).toHaveValue('');
+    expect(onChange).toHaveBeenCalledWith(['Test']);
+  });
+
+  it('should not clear selection when pressing Escape with multi-select and allowsCustomValue', async () => {
+    let onChange = jest.fn();
+    let {container} = render(<TestComboBox defaultValue={['1', '2']} selectionMode="multiple" allowsCustomValue onChange={onChange} />);
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+
+    await user.tab();
+    await user.keyboard('den');
+    expect(comboboxTester.combobox).toHaveValue('den');
+
+    await user.keyboard('{Escape}');
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('should not clear selection when pressing Tab with multi-select and allowsCustomValue and existing selection', async () => {
+    let onChange = jest.fn();
+    let {container} = render(<TestComboBox defaultValue={['1', '2']} selectionMode="multiple" allowsCustomValue onChange={onChange} />);
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+
+    await user.tab();
+    await user.keyboard('den');
+    expect(comboboxTester.combobox).toHaveValue('den');
+
+    await user.tab();
+    // "den" doesn't match any item, so it's added as a custom value
+    expect(onChange).toHaveBeenCalledWith(['1', '2', 'den']);
+    expect(comboboxTester.combobox).toHaveValue('');
+  });
+
+  it('should deselect custom value when typing it again in multi-select', async () => {
+    let onChange = jest.fn();
+    let {container} = render(<TestComboBox selectionMode="multiple" allowsCustomValue onChange={onChange} />);
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+
+    await user.tab();
+    await user.keyboard('Test');
+    await user.tab();
+    expect(onChange).toHaveBeenCalledWith(['Test']);
+
+    onChange.mockClear();
+    await user.click(comboboxTester.combobox);
+    await user.keyboard('Test');
+    await user.tab();
+    // Should deselect "Test"
+    expect(onChange).toHaveBeenCalledWith([]);
+  });
+
+  it('should deselect custom value when typing it again and pressing Enter in multi-select', async () => {
+    let onChange = jest.fn();
+    let {container} = render(<TestComboBox defaultValue={['Custom']} selectionMode="multiple" allowsCustomValue onChange={onChange} />);
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+
+    await user.tab();
+    await user.keyboard('Custom');
+    await user.keyboard('{Enter}');
+    // Should deselect "Custom"
+    expect(onChange).toHaveBeenCalledWith([]);
+    expect(comboboxTester.combobox).toHaveValue('');
+  });
+
+  it('should not add empty custom values in multi-select', async () => {
+    let onChange = jest.fn();
+    let {container} = render(<TestComboBox selectionMode="multiple" allowsCustomValue onChange={onChange} />);
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+
+    await user.tab();
+    await user.keyboard('   ');
+    await user.tab();
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('should select existing item instead of creating custom value when input matches item text in multi-select', async () => {
+    let onChange = jest.fn();
+    let {container} = render(<TestComboBox selectionMode="multiple" allowsCustomValue onChange={onChange} />);
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+
+    await user.tab();
+    await user.keyboard('Cat');
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    await user.tab();
+    // Should select the existing "Cat" item (id: '1'), not create a custom "Cat" value
+    expect(onChange).toHaveBeenCalledWith(['1']);
+    expect(comboboxTester.combobox).toHaveValue('');
+  });
+
+  it('should clear input when selecting an item from the list in multi-select', async () => {
+    let onChange = jest.fn();
+    let {container} = render(<TestComboBox selectionMode="multiple" allowsCustomValue onChange={onChange} />);
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+
+    await comboboxTester.open();
+    await user.keyboard('C');
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    // Arrow down to first item and select it
+    await user.keyboard('{ArrowDown}{Enter}');
+    expect(onChange).toHaveBeenCalledWith(['1']);
+    expect(comboboxTester.combobox).toHaveValue('');
+  });
+
+  it('should submit custom values in form data for multi-select with allowsCustomValue', async () => {
+    let {container} = render(
+      <Form data-testid="form">
+        <ComboBox name="combobox" selectionMode="multiple" allowsCustomValue allowsEmptyCollection>
+          <Label>Favorite Animal</Label>
+          <Input />
+          <Button />
+          <Popover>
+            <ListBox>
+              <ListBoxItem id="1">Cat</ListBoxItem>
+              <ListBoxItem id="2">Dog</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </ComboBox>
+      </Form>
+    );
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+
+    // Select an existing item
+    await comboboxTester.open();
+    await user.keyboard('{ArrowDown}{Enter}');
+
+    // Add a custom value
+    await user.keyboard('Unicorn');
+    await user.tab();
+
+    let hiddenInputs = container.querySelectorAll('input[type="hidden"]');
+    expect(hiddenInputs).toHaveLength(2);
+    expect(hiddenInputs[0]).toHaveAttribute('name', 'combobox');
+    expect(hiddenInputs[0]).toHaveAttribute('value', '1');
+    expect(hiddenInputs[1]).toHaveAttribute('name', 'combobox');
+    expect(hiddenInputs[1]).toHaveAttribute('value', 'Unicorn');
+  });
+
+  it('should match item with trimmed input in multi-select with allowsCustomValue', async () => {
+    let onChange = jest.fn();
+    let {container} = render(<TestComboBox selectionMode="multiple" allowsCustomValue onChange={onChange} />);
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+
+    await user.tab();
+    // Type item name with surrounding whitespace
+    await user.keyboard('  Cat  ');
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    await user.tab();
+    // Should select the existing "Cat" item (id: '1'), not create a custom " Cat " value
+    expect(onChange).toHaveBeenCalledWith(['1']);
+    expect(comboboxTester.combobox).toHaveValue('');
   });
 
   it('should allow the user to deselect items with keyboard when multiselect (uncontrolled)', async () => {
