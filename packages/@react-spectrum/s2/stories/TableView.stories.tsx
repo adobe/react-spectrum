@@ -1783,7 +1783,7 @@ export const TableWithNestedRows: StoryObj<typeof TableView> = {
             <Cell>5/22/1980</Cell>
           </Row>
         </Row>
-        <Row id="apps" isDisabled>
+        <Row id="apps">
           <Cell>Applications</Cell>
           <Cell>Folder</Cell>
           <Cell>4/7/2025</Cell>
