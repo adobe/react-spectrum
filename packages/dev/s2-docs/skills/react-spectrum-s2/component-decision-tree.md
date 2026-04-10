@@ -17,7 +17,7 @@ If the user does not specify which component they would like to use, choose one 
 - Use `ButtonGroup` or `ActionButtonGroup` only to group related buttons.
 - Use `ActionMenu` for a simple "more actions" ellipsis button that opens a menu.
 - Use `Menu` when the menu itself is the pattern, especially if you need sections, submenus, selection, links, or a custom trigger arrangement.
-- Use `ActionBar` for bulk actions within a collection compoment
+- Use `ActionBar` for bulk actions within a collection component.
 
 ### Choosing from options
 
