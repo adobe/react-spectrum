@@ -10,19 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {SetStateAction, useCallback, useInsertionEffect, useRef} from 'react';
+import React, {SetStateAction, useCallback, useInsertionEffect, useRef, useState} from 'react';
 import {useControlledState} from './useControlledState';
 
 export const useControlledStateAction = typeof React['useTransition'] === 'function' && typeof React['useOptimistic'] === 'function'
   ? useControlledStateActionModern
   : useControlledStateActionLegacy;
 
-function useControlledStateActionModern<T, C = T>(value: Exclude<T, undefined>, defaultValue: Exclude<T, undefined> | undefined, onChange?: (v: C) => void, changeAction?: (v: C) => void | Promise<void>): [T, boolean, (value: SetStateAction<T>) => void];
-function useControlledStateActionModern<T, C = T>(value: Exclude<T, undefined> | undefined, defaultValue: Exclude<T, undefined>, onChange?: (v: C) => void, changeAction?: (v: C) => void | Promise<void>): [T, boolean, (value: SetStateAction<T>) => void];
-function useControlledStateActionModern<T, C = T>(value: T, defaultValue: T, onChange?: (v: C) => void, changeAction?: (v: C) => void | Promise<void>): [T, boolean, (value: SetStateAction<T>) => void] {
+function useControlledStateActionModern<T, C = T>(value: Exclude<T, undefined>, defaultValue: Exclude<T, undefined> | undefined, onChange?: (v: C) => void, changeAction?: (v: C) => void | Promise<void>): [T, boolean, (value: SetStateAction<T>) => void, error: unknown | null];
+function useControlledStateActionModern<T, C = T>(value: Exclude<T, undefined> | undefined, defaultValue: Exclude<T, undefined>, onChange?: (v: C) => void, changeAction?: (v: C) => void | Promise<void>): [T, boolean, (value: SetStateAction<T>) => void, error: unknown | null];
+function useControlledStateActionModern<T, C = T>(value: T, defaultValue: T, onChange?: (v: C) => void, changeAction?: (v: C) => void | Promise<void>): [T, boolean, (value: SetStateAction<T>) => void, error: unknown | null] {
   let [controlledValue, setControlledValue] = useControlledState(value as any, defaultValue, onChange);
   let [optimisticValue, setOptimisticValue] = React.useOptimistic(controlledValue);
   let [isPending, transition] = React.useTransition();
+  let [error, setError] = useState<unknown | null>(null);
+  let [optimisticError, setOptimisticError] = React.useOptimistic(error);
 
   // Store the optimistic value in a ref for use in setState callback.
   let valueRef = useRef(optimisticValue);
@@ -50,21 +52,27 @@ function useControlledStateActionModern<T, C = T>(value: T, defaultValue: T, onC
         setControlledValue(newValue);
 
         // Trigger the async action.
-        await changeAction(newValue);
+        try {
+          setOptimisticError(null);
+          await changeAction(newValue);
+          setError(null);
+        } catch (err) {
+          setError(err);
+        }
       }
     });
-  }, [setControlledValue, setOptimisticValue, changeAction]);
+  }, [setControlledValue, setOptimisticValue, setOptimisticError, changeAction]);
 
-  return [optimisticValue, isPending, setValue];
+  return [optimisticValue, isPending, setValue, optimisticError];
 }
 
-function useControlledStateActionLegacy<T, C = T>(value: Exclude<T, undefined>, defaultValue: Exclude<T, undefined> | undefined, onChange?: (v: C) => void, changeAction?: (v: C) => void | Promise<void>): [T, boolean, (value: SetStateAction<T>) => void];
-function useControlledStateActionLegacy<T, C = T>(value: Exclude<T, undefined> | undefined, defaultValue: Exclude<T, undefined>, onChange?: (v: C) => void, changeAction?: (v: C) => void | Promise<void>): [T, boolean, (value: SetStateAction<T>) => void];
-function useControlledStateActionLegacy<T, C = T>(value: T, defaultValue: T, onChange?: (v: C) => void, changeAction?: (v: C) => void | Promise<void>): [T, boolean, (value: SetStateAction<T>) => void] {
+function useControlledStateActionLegacy<T, C = T>(value: Exclude<T, undefined>, defaultValue: Exclude<T, undefined> | undefined, onChange?: (v: C) => void, changeAction?: (v: C) => void | Promise<void>): [T, boolean, (value: SetStateAction<T>) => void, unknown | null];
+function useControlledStateActionLegacy<T, C = T>(value: Exclude<T, undefined> | undefined, defaultValue: Exclude<T, undefined>, onChange?: (v: C) => void, changeAction?: (v: C) => void | Promise<void>): [T, boolean, (value: SetStateAction<T>) => void, unknown | null];
+function useControlledStateActionLegacy<T, C = T>(value: T, defaultValue: T, onChange?: (v: C) => void, changeAction?: (v: C) => void | Promise<void>): [T, boolean, (value: SetStateAction<T>) => void, unknown | null] {
   if (changeAction) {
     throw new Error('Actions are only supported in React 19 and later.');
   }
 
   let [controlledValue, setControlledValue] = useControlledState(value as any, defaultValue, onChange);
-  return [controlledValue, false, setControlledValue];
+  return [controlledValue, false, setControlledValue, null];
 }

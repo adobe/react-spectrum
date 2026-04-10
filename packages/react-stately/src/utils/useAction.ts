@@ -10,27 +10,36 @@
  * governing permissions and limitations under the License.
  */
 
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 
 export const useAction = typeof React['useTransition'] === 'function' && typeof React['useOptimistic'] === 'function'
   ? useActionModern
   : useActionLegacy;
 
-export function useActionModern(action: ((...args: any[]) => void | Promise<void>) | null | undefined): [((...args: any[]) => void) | undefined, boolean] {
+export function useActionModern(action: ((...args: any[]) => void | Promise<void>) | null | undefined): [((...args: any[]) => void) | undefined, boolean, unknown | null] {
   let [isPending, transition] = React.useTransition();
-  let onEvent = (...args: any[]) => {
+  let [error, setError] = useState<unknown | null>(null);
+  let [optimisticError, setOptimisticError] = React.useOptimistic(error);
+  let onEvent = useCallback((...args: any[]) => {
     transition(async () => {
-      await action!(...args);
+      try {
+        setOptimisticError(null);
+        await action!(...args);
+        setError(null);
+      } catch (err) {
+        // TODO: if the component is no longer mounted, re-throw?
+        setError(err);
+      }
     });
-  };
+  }, [action, setOptimisticError]);
 
-  return [action ? onEvent : undefined, isPending];
+  return [action ? onEvent : undefined, isPending, optimisticError];
 }
 
-export function useActionLegacy(action: ((...args: any[]) => void | Promise<void>) | null | undefined): [((...args: any[]) => void) | undefined, boolean] {
+export function useActionLegacy(action: ((...args: any[]) => void | Promise<void>) | null | undefined): [((...args: any[]) => void) | undefined, boolean, unknown | null] {
   if (action) {
     throw new Error('Actions are only supported in React 19 and later.');
   }
 
-  return [undefined, false];
+  return [undefined, false, null];
 }

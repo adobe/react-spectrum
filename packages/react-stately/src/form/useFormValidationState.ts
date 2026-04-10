@@ -49,7 +49,8 @@ export const privateValidationStateProp: string = '__reactAriaFormValidationStat
 interface FormValidationProps<T> extends Validation<T> {
   builtinValidation?: ValidationResult,
   name?: string | string[],
-  value: T | null
+  value: T | null,
+  actionError?: unknown
 }
 
 export interface FormValidationState {
@@ -77,17 +78,26 @@ export function useFormValidationState<T>(props: FormValidationProps<T>): FormVa
 }
 
 function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValidationState {
-  let {isInvalid, validationState, name, value, builtinValidation, validate, validationBehavior = 'aria'} = props;
+  let {isInvalid, validationState, name, actionError, value, builtinValidation, validate, validationBehavior = 'aria'} = props;
 
   // backward compatibility.
   if (validationState) {
     isInvalid ||= validationState === 'invalid';
   }
 
+  let actionErrorMessage: string | null = '';
+  if (actionError) {
+    if (typeof actionError === 'object' && 'message' in actionError && typeof actionError.message === 'string') {
+      actionErrorMessage = actionError.message;
+    } else if (typeof actionError === 'string') {
+      actionErrorMessage = actionError;
+    }
+  }
+
   // If the isInvalid prop is controlled, update validation result in realtime.
-  let controlledError: ValidationResult | null = isInvalid !== undefined ? {
-    isInvalid,
-    validationErrors: [],
+  let controlledError: ValidationResult | null = isInvalid !== undefined || actionError != null ? {
+    isInvalid: isInvalid || actionError != null,
+    validationErrors: actionErrorMessage ? [actionErrorMessage] : [],
     validationDetails: CUSTOM_VALIDITY_STATE
   } : null;
 

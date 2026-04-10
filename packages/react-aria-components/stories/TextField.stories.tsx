@@ -75,15 +75,21 @@ export const ReactAction: TextFieldStory = () => {
     <div>
       <TextField
         data-testid="textfield-example"
-        value={search}
         changeAction={async value => {
-          setSearch(value);
+          if (value === 'error') {
+            throw new Error('Error in action');
+          } else {
+            setSearch(value);
+          }
         }}>
-        {({isPending}) => (<>
-          <Label>Name</Label>
-          <Input />
-          {isPending && <ProgressCircle aria-label="Loading" isIndeterminate style={{display: 'inline-block'}} />}
-        </>)}
+        {({isPending}) => (
+          <div style={{display: 'flex', flexDirection: 'column', position: 'relative'}}>
+            <Label>Name</Label>
+            <Input />
+            {isPending && <ProgressCircle aria-label="Loading" isIndeterminate style={{position: 'absolute', right: 0}} />}
+            <FieldError style={{color: 'red'}} />
+          </div>
+        )}
       </TextField>
       <React.Suspense fallback="Loading">
         <Results search={search} />

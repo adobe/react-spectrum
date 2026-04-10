@@ -34,9 +34,10 @@ export interface TextFieldState extends FormValidationState {
  * Provides state management for a text field.
  */
 export function useTextFieldState(props: TextFieldProps<any>): TextFieldState {
-  let [value, isPending, setValue] = useControlledStateAction(props.value, props.defaultValue || '', props.onChange, props.changeAction);
+  let [value, isPending, setValue, actionError] = useControlledStateAction(props.value, props.defaultValue || '', props.onChange, props.changeAction);
   let validationState = useFormValidationState({
     ...props,
+    actionError,
     value
   });
 

@@ -130,7 +130,9 @@ export interface ButtonAria<T> {
   /** Whether the button is currently pressed. */
   isPressed: boolean,
   /** Whether the button action is pending. */
-  isPending: boolean
+  isPending: boolean,
+  /** The last error that occurred within the button's action. */
+  actionError: unknown | null
 }
 
 // Order with overrides is important: 'button' should be default
@@ -190,7 +192,7 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
     };
   }
 
-  let [onAction, isActionPending] = useAction(props.action);
+  let [onAction, isActionPending, actionError] = useAction(props.action);
   let isPending = props.isPending || isActionPending;
 
   let {pressProps, isPressed} = usePress({
@@ -260,7 +262,8 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
     progressBarProps: {
       id: progressId
     },
-    isPending
+    isPending,
+    actionError
   };
 }
 

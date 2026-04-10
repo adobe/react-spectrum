@@ -60,7 +60,12 @@ export interface ButtonRenderProps {
    * Whether the button's action is pending.
    * @selector [data-pending]
    */
-  isPending: boolean
+  isPending: boolean,
+  /**
+   * The last error that occurred within the button's action.
+   * @selector [data-action-error]
+   */
+  actionError: unknown | null
 }
 
 export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps, 'button'>, Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'> {
@@ -83,7 +88,7 @@ export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTML
 export const Button = /*#__PURE__*/ createHideableComponent(function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
   let ctx = props as ButtonContextValue;
-  let {buttonProps, progressBarProps, isPressed, isPending} = useButton(props, ref);
+  let {buttonProps, progressBarProps, isPressed, isPending, actionError} = useButton(props, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover({
     ...props,
@@ -95,7 +100,8 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
     isFocused,
     isFocusVisible,
     isDisabled: props.isDisabled || false,
-    isPending
+    isPending,
+    actionError
   };
 
   let renderProps = useRenderProps({
@@ -117,7 +123,8 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-pending={isPending || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
+      data-focus-visible={isFocusVisible || undefined}
+      data-action-error={actionError || undefined}>
       <ProgressBarContext.Provider value={progressBarProps}>
         {renderProps.children}
       </ProgressBarContext.Provider>

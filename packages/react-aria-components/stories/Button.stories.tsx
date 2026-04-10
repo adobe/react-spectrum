@@ -52,7 +52,9 @@ export const PendingButtonTooltip: ButtonStory = {
 export const ReactAction: ButtonStory = {
   render: (args) => <ReactActionExample {...args} />,
   args: {
-    children: 'Press me'
+    children: 'Press me',
+    // @ts-ignore
+    error: false
   }
 };
 
@@ -121,14 +123,23 @@ function PendingButtonTooltipExample(props) {
 }
 
 function ReactActionExample(props) {
+  let ref = useRef(null);
   return (
     <Button
       {...props}
+      ref={ref}
       className={styles2['button']}
       action={async () => {
-        await new Promise(resolve => setTimeout(resolve, 3000));
-      }}>
-      {({isPending}) => (
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        if (props.error) {
+          throw 'Error in action';
+        }
+      }}
+      style={({actionError}) => ({
+        animation: actionError ? `${styles2.shake} 1s cubic-bezier(.36,.07,.19,.97)` : undefined
+      })}>
+      {({isPending, actionError}) => (
+        // TODO: we need aria-describedby on the button pointing at the tooltip as well
         <>
           <Text className={isPending ? styles2['pending'] : undefined}>{props.children}</Text>
           <ProgressBar
@@ -142,6 +153,20 @@ function ReactActionExample(props) {
               </path>
             </svg>
           </ProgressBar>
+          <Tooltip
+            isOpen={!!actionError}
+            triggerRef={ref}
+            offset={8}
+            style={{
+              background: 'red',
+              color: 'white',
+              fontFamily: 'system-ui',
+              fontSize: '14px',
+              padding: '0 4px',
+              borderRadius: 4
+            }}>
+            {String(actionError)}
+          </Tooltip>
         </>
       )}
     </Button>
