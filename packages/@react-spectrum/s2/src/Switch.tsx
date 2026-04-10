@@ -14,7 +14,7 @@ import {Switch as AriaSwitch, SwitchProps as AriaSwitchProps, SwitchRenderProps}
 
 import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
-import {ContextValue} from 'react-aria-components/utils';
+import {ContextValue} from 'react-aria-components/slots';
 import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {Direction, FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';

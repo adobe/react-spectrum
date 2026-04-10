@@ -19,3 +19,9 @@ export type {ColorSliderProps, ColorSliderRenderProps} from '../src/ColorSlider'
 export {parseColor, getColorChannels} from 'react-stately/Color';
 export type {ColorSpace, ColorChannel, Color, ColorFormat, ColorAxes, ColorChannelRange} from 'react-stately/Color';
 export type {ColorSliderState} from 'react-stately/useColorSliderState';
+
+export {SliderOutput, SliderTrack} from '../src/Slider';
+export type {SliderOutputProps, SliderTrackProps, SliderTrackRenderProps} from '../src/Slider';
+
+export {ColorThumb} from '../src/ColorThumb';
+export type {ColorThumbProps, ColorThumbRenderProps} from '../src/ColorThumb';

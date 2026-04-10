@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaAutocompleteProps, useAutocomplete} from 'react-aria/private/autocomplete/useAutocomplete';
+import {AriaAutocompleteProps, useAutocomplete} from 'react-aria/useAutocomplete';
 import {AriaLabelingProps, DOMProps, FocusableElement, FocusEvents, KeyboardEvents, Node, ValueBase} from '@react-types/shared';
 import {AriaTextFieldProps} from 'react-aria/useTextField';
 import {AutocompleteState, useAutocompleteState} from 'react-stately/private/autocomplete/useAutocompleteState';

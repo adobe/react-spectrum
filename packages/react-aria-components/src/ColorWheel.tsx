@@ -11,7 +11,7 @@ import {
   useRenderProps
 } from './utils';
 import {ColorWheelState, useColorWheelState} from 'react-stately/useColorWheelState';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {InternalColorThumbContext} from './ColorThumb';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, useContext, useRef} from 'react';

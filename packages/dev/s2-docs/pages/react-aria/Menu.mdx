@@ -20,8 +20,7 @@ export const description = 'Displays a list of actions or options that a user ca
 <ExampleSwitcher>
   ```tsx render type="vanilla" files={["starters/docs/src/Menu.tsx", "starters/docs/src/Menu.css"]}
   "use client";
-  import {MenuTrigger, SubmenuTrigger, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
-  import {Separator, Text, Keyboard} from 'react-aria-components';
+  import {MenuTrigger, SubmenuTrigger, Menu, MenuItem, MenuSection, Separator, Text, Keyboard} from 'vanilla-starter/Menu';
   import {Button} from 'vanilla-starter/Button';
   import {Ellipsis, FolderOpen, Pencil, Copy, Trash, Share, Mail, Smartphone, Instagram} from 'lucide-react';
 
@@ -156,8 +155,7 @@ Use the `"label"` and `"description"` slots to separate primary and secondary co
 
 ```tsx render hideImports
 "use client";
-import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
-import {Text, Keyboard} from 'react-aria-components';
+import {MenuTrigger, Menu, MenuItem, Text, Keyboard} from 'vanilla-starter/Menu';
 import {Button} from 'vanilla-starter/Button';
 
 <MenuTrigger>
@@ -195,8 +193,7 @@ Use the `<MenuSection>` component to group options. A `<Header>` element may als
 
 ```tsx render hideImports
 "use client";
-import {Header} from 'react-aria-components';
-import {MenuTrigger, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+import {MenuTrigger, Menu, MenuItem, MenuSection, Header} from 'vanilla-starter/Menu';
 import {Button} from 'vanilla-starter/Button';
 
 <MenuTrigger>
@@ -261,8 +258,7 @@ Separators may be added between menu items or sections in order to create non-la
 
 ```tsx render hideImports
 "use client";
-import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
-import {Separator} from 'react-aria-components';
+import {MenuTrigger, Menu, MenuItem, Separator} from 'vanilla-starter/Menu';
 import {Button} from 'vanilla-starter/Button';
 
 <MenuTrigger>
@@ -323,7 +319,7 @@ Popovers can include additional components as siblings of a menu. This example u
 
 ```tsx render
 "use client";
-import {Autocomplete, useFilter} from 'react-aria-components';
+import {Autocomplete, useFilter} from 'react-aria-components/Autocomplete';
 import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
 import {Button} from 'vanilla-starter/Button';
 import {SearchField} from 'vanilla-starter/SearchField';
@@ -363,7 +359,7 @@ Use the `selectionMode` prop to enable single or multiple selection. The selecte
 
 ```tsx render docs={docs.exports.Menu} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide align="start"
 "use client";
-import type {Selection} from 'react-aria-components';
+import type {Selection} from 'react-aria-components/Menu';
 import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
 import {Button} from 'vanilla-starter/Button';
 import {useState} from 'react';
@@ -401,9 +397,8 @@ Each section in a menu may have independent selection states by passing `selecti
 
 ```tsx render hideImports
 "use client";
-import type {Selection} from 'react-aria-components';
-import {Header} from 'react-aria-components';
-import {MenuTrigger, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+import type {Selection} from 'react-aria-components/Menu';
+import {MenuTrigger, Menu, MenuItem, MenuSection, Header} from 'vanilla-starter/Menu';
 import {Button} from 'vanilla-starter/Button';
 import {useState} from 'react';
 
@@ -451,7 +446,7 @@ function Example() {
 
 ```tsx render hideImports
 "use client";
-import {Pressable} from 'react-aria-components';
+import {Pressable} from 'react-aria-components/Menu';
 import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
 
 <MenuTrigger>

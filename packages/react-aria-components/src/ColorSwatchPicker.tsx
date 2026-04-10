@@ -9,7 +9,7 @@ import {
 } from './utils';
 import {Color} from 'react-stately/Color';
 import {ColorSwatchContext} from './ColorSwatch';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import intlMessages from '../intl/*.json';
 import {ListBox, ListBoxItem, ListBoxItemRenderProps, ListBoxRenderProps} from './ListBox';
 // @ts-ignore

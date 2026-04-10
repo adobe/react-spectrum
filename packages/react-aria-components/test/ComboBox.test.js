@@ -20,7 +20,7 @@ import {Header} from '../src/Header';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection} from '../src/ListBox';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {Popover} from '../src/Popover';
 import React, {useState} from 'react';
 import {Text} from '../src/Text';
@@ -936,5 +936,17 @@ describe('ComboBox', () => {
     expect(comboboxTester.listbox).toBeVisible();
     expect(comboboxTester.combobox).toHaveFocus();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support read-only state', async () => {
+    let {getByRole, rerender} = render(
+      <TestComboBox />
+    );
+
+    let input = getByRole('combobox');
+
+    expect(input.closest('.react-aria-ComboBox')).not.toHaveAttribute('data-readonly');
+    rerender(<TestComboBox isReadOnly />);
+    expect(input.closest('.react-aria-ComboBox')).toHaveAttribute('data-readonly');
   });
 });

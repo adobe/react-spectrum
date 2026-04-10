@@ -16,6 +16,18 @@ let actionMenuItems = [
 </div>"
 `;
 
+exports[`Renames closeOnSelect to shouldCloseOnSelect 1`] = `
+"import { MenuItem, ActionMenu } from "@react-spectrum/s2";
+
+<div>
+  <ActionMenu shouldCloseOnSelect>
+    <MenuItem>Cut</MenuItem>
+    <MenuItem>Copy</MenuItem>
+    <MenuItem>Paste</MenuItem>
+  </ActionMenu>
+</div>"
+`;
+
 exports[`Static - no change 1`] = `
 "import { MenuItem, ActionMenu } from "@react-spectrum/s2";
 

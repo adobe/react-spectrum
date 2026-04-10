@@ -12,7 +12,7 @@
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
 import {Popover} from '../src/Popover';
 import React from 'react';

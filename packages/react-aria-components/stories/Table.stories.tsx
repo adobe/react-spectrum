@@ -28,7 +28,7 @@ import {
 
 import {CellProps, TableLoadMoreItem} from '../src/Table';
 import {Checkbox, CheckboxProps} from '../src/Checkbox';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, isTextDropItem, useDragAndDrop} from '../exports/useDragAndDrop';
 import {Heading} from '../src/Heading';
@@ -141,68 +141,106 @@ const TableExample: TableStory = (args) => {
   });
 
   return (
-    <ResizableTableContainer style={{width: 400, overflow: 'auto'}}>
-      <Table aria-label="Example table" {...args}>
-        <TableHeader>
-          <Column width={30} minWidth={0}><MyCheckbox slot="selection" /></Column>
-          <MyColumn isRowHeader defaultWidth="30%">Name</MyColumn>
-          <MyColumn>Type</MyColumn>
-          <MyColumn>Date Modified</MyColumn>
-          <MyColumn>Actions</MyColumn>
-        </TableHeader>
-        <TableBody items={list.items}>
-          {item => (
-            <Row>
-              <Cell><MyCheckbox slot="selection" /></Cell>
-              <Cell>{item.name}</Cell>
-              <Cell>{item.type}</Cell>
-              <Cell>{item.date}</Cell>
-              <Cell>
-                <DialogTrigger>
-                  <Button>Delete</Button>
-                  <ModalOverlay
-                    style={{
-                      position: 'fixed',
-                      zIndex: 100,
-                      top: 0,
-                      left: 0,
-                      bottom: 0,
-                      right: 0,
-                      background: 'rgba(0, 0, 0, 0.5)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                    <Modal
+    <div style={{width: 600, overflow: 'auto'}}>
+      <ResizableTableContainer>
+        <Table aria-label="Example table" {...args}>
+          <TableHeader>
+            <Column width={30} minWidth={0}><MyCheckbox slot="selection" /></Column>
+            <MyColumn isRowHeader defaultWidth="30%">Name</MyColumn>
+            <MyColumn>Type</MyColumn>
+            <MyColumn>Date Modified</MyColumn>
+            <MyColumn>Actions</MyColumn>
+          </TableHeader>
+          <TableBody items={list.items}>
+            {item => (
+              <Row>
+                <Cell><MyCheckbox slot="selection" /></Cell>
+                <Cell>{item.name}</Cell>
+                <Cell>{item.type}</Cell>
+                <Cell>{item.date}</Cell>
+                <Cell>
+                  <DialogTrigger>
+                    <Button>Delete</Button>
+                    <ModalOverlay
                       style={{
-                        background: 'Canvas',
-                        color: 'CanvasText',
-                        border: '1px solid gray',
-                        padding: 30
+                        position: 'fixed',
+                        zIndex: 100,
+                        top: 0,
+                        left: 0,
+                        bottom: 0,
+                        right: 0,
+                        background: 'rgba(0, 0, 0, 0.5)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
                       }}>
-                      <Dialog>
-                        {({close}) => (<>
-                          <Heading slot="title">Delete item</Heading>
-                          <p>Are you sure?</p>
-                          <Button onPress={close}>Cancel</Button>
-                          <Button
-                            onPress={() => {
-                              close();
-                              list.remove(item.id);
-                            }}>
-                            Delete
-                          </Button>
-                        </>)}
-                      </Dialog>
-                    </Modal>
-                  </ModalOverlay>
-                </DialogTrigger>
-              </Cell>
-            </Row>
-          )}
-        </TableBody>
-      </Table>
-    </ResizableTableContainer>
+                      <Modal
+                        style={{
+                          background: 'Canvas',
+                          color: 'CanvasText',
+                          border: '1px solid gray',
+                          padding: 30
+                        }}>
+                        <Dialog>
+                          {({close}) => (<>
+                            <Heading slot="title">Delete item</Heading>
+                            <p>Are you sure?</p>
+                            <Button onPress={close}>Cancel</Button>
+                            <Button
+                              onPress={() => {
+                                close();
+                                list.remove(item.id);
+                              }}>
+                              Delete
+                            </Button>
+                          </>)}
+                        </Dialog>
+                      </Modal>
+                    </ModalOverlay>
+                  </DialogTrigger>
+                </Cell>
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      </ResizableTableContainer>
+    </div>
+  );
+};
+
+export const FixedColumnWidths: TableStory = (args) => {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+      {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+      {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+      {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+    ]
+  });
+
+  return (
+    <div style={{width: 600, overflow: 'auto'}}>
+      <ResizableTableContainer>
+        <Table aria-label="Example table with fixed column widths" {...args}>
+          <TableHeader>
+            <Column width={30} minWidth={0}><MyCheckbox slot="selection" /></Column>
+            <MyColumn isRowHeader width={100}>Name</MyColumn>
+            <MyColumn width={100}>Type</MyColumn>
+            <MyColumn width={100}>Date Modified</MyColumn>
+          </TableHeader>
+          <TableBody items={list.items}>
+            {item => (
+              <Row>
+                <Cell><MyCheckbox slot="selection" /></Cell>
+                <Cell>{item.name}</Cell>
+                <Cell>{item.type}</Cell>
+                <Cell>{item.date}</Cell>
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      </ResizableTableContainer>
+    </div>
   );
 };
 

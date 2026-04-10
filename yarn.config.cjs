@@ -226,16 +226,6 @@ function enforceExports({Yarn}) {
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
     if (isPublishing(workspace) && workspace.manifest.rsp?.type !== 'cli') {
-      if (name !== '@adobe/react-spectrum' && name !== 'react-aria' && name !== 'react-stately' && name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components') {
-        if (!workspace.manifest.files || (!workspace.manifest.files.includes('dist') && !workspace.manifest.files.includes('src'))) {
-          workspace.set('files', [...workspace.manifest.files || [], 'dist', 'src']);
-        } else if (!workspace.manifest.files.includes('dist')) {
-          workspace.set('files', [...workspace.manifest.files, 'dist']);
-        } else if (!workspace.manifest.files.includes('src')) {
-          workspace.set('files', [...workspace.manifest.files, 'src']);
-        }
-      }
-
       // better to do in enforceCSS? it doesn't match the set of packages handled
       if (name !== 'react-aria-components') {
         if (name.includes('@react-spectrum') || name.includes('@adobe/react-spectrum') || name.includes('@react-aria/visually-hidden')) {

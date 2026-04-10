@@ -1,7 +1,8 @@
-import { Meta } from '@storybook/react';
+import { type Meta } from '@storybook/react';
 import { HelpCircle } from 'lucide-react';
 import React from 'react';
-import { DialogTrigger, Heading } from 'react-aria-components';
+import { DialogTrigger } from 'react-aria-components/Dialog';
+import { Heading } from 'react-aria-components/Heading';
 import { Button } from '../src/Button';
 import { Dialog } from '../src/Dialog';
 import { Popover } from '../src/Popover';

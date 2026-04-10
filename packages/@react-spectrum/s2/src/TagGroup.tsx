@@ -12,23 +12,23 @@
 
 import {ActionButton} from './ActionButton';
 import AlertIcon from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
-
 import {
   Tag as AriaTag,
   TagGroup as AriaTagGroup,
   TagGroupProps as AriaTagGroupProps,
   TagProps as AriaTagProps,
+  Collection,
   TagList,
   TagListProps,
   TagRenderProps
 } from 'react-aria-components/TagGroup';
-
 import {AvatarContext} from './Avatar';
 import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with { type: 'macro' };
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
-import {Collection, CollectionBuilder} from 'react-aria/private/collections/CollectionBuilder';
-import {composeRenderProps, ContextValue, Provider, useSlottedContext} from 'react-aria-components/utils';
+import {CollectionBuilder} from 'react-aria/CollectionBuilder';
+import {composeRenderProps} from 'react-aria-components/composeRenderProps';
+import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {control, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, HelpTextProps, LabelableProps, Node, SpectrumLabelableProps} from '@react-types/shared';

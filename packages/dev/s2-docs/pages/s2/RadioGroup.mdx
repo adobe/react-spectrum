@@ -16,12 +16,12 @@ export const description = 'Allows a user to select a single item from a list of
 
 ```tsx render docs={docs.exports.RadioGroup} links={docs.links} props={['label', 'size', 'orientation', 'labelPosition', 'description', 'contextualHelp', 'isEmphasized', 'isDisabled']} initialProps={{label: 'Favorite pet'}} type="s2"
 "use client";
-import {RadioGroup, Radio} from '@react-spectrum/s2';
+import {RadioGroup, Radio} from '@react-spectrum/s2/RadioGroup';
 
 <RadioGroup/* PROPS */>
   <Radio value="cats">Cat</Radio>
   <Radio value="dogs">Dog</Radio>
-  <Radio value="dragon">Dragon</Radio>
+  <Radio value="leopard gecko">Leopard Gecko</Radio>
 </RadioGroup>
 ```
 
@@ -31,7 +31,7 @@ Use the `value` or `defaultValue` prop to set the selected item, and `onChange` 
 
 ```tsx render
 "use client";
-import {RadioGroup, Radio} from '@react-spectrum/s2';
+import {RadioGroup, Radio} from '@react-spectrum/s2/RadioGroup';
 import {useState} from 'react';
 
 function Example() {
@@ -61,7 +61,9 @@ Use the `name` prop to submit the selected radio to the server. Set the `isRequi
 
 ```tsx render docs={docs.exports.RadioGroup} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} wide
 "use client";
-import {RadioGroup, Radio, Button, Form} from '@react-spectrum/s2';
+import {RadioGroup, Radio} from '@react-spectrum/s2/RadioGroup';
+import {Button} from '@react-spectrum/s2/Button';
+import {Form} from '@react-spectrum/s2/Form';
 
 function Example(props) {
   return (

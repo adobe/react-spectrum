@@ -27,11 +27,11 @@ import {
   useSlottedContext
 } from './utils';
 import {Collection, Node} from '@react-types/shared';
-import {CollectionBuilder} from 'react-aria/private/collections/CollectionBuilder';
+import {CollectionBuilder} from 'react-aria/CollectionBuilder';
 import {ComboBoxState, useComboBoxState} from 'react-stately/useComboBoxState';
 import {createHideableComponent} from 'react-aria/private/collections/Hidden';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes, Key, RefObject} from '@react-types/shared';
 import {GroupContext} from './Group';
@@ -68,7 +68,12 @@ export interface ComboBoxRenderProps {
    * Whether the combobox is required.
    * @selector [data-required]
    */
-  isRequired: boolean
+  isRequired: boolean,
+  /**
+   * Whether the combobox is read only.
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean
 }
 
 export interface ComboBoxProps<T extends object, M extends SelectionMode = 'single'> extends Omit<AriaComboBoxProps<T, M>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<ComboBoxRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
@@ -97,7 +102,7 @@ export const ComboBoxStateContext = createContext<ComboBoxState<any, SelectionMo
  */
 export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T extends object, M extends SelectionMode = 'single'>(props: ComboBoxProps<T, M>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
-  let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
+  let {children, isDisabled = false, isInvalid = false, isRequired = false, isReadOnly = false} = props;
   let content = useMemo(() => (
     <ListBoxContext.Provider value={{items: props.items ?? props.defaultItems}}>
       {typeof children === 'function'
@@ -106,11 +111,12 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
           isDisabled,
           isInvalid,
           isRequired,
-          defaultChildren: null
+          defaultChildren: null,
+          isReadOnly
         })
         : children}
     </ListBoxContext.Provider>
-  ), [children, isDisabled, isInvalid, isRequired, props.items, props.defaultItems]);
+  ), [children, isDisabled, isInvalid, isRequired, isReadOnly, props.items, props.defaultItems]);
 
   return (
     <CollectionBuilder content={content}>
@@ -200,8 +206,9 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     isOpen: state.isOpen,
     isDisabled: props.isDisabled || false,
     isInvalid: validation.isInvalid || false,
-    isRequired: props.isRequired || false
-  }), [state.isOpen, props.isDisabled, validation.isInvalid, props.isRequired]);
+    isRequired: props.isRequired || false,
+    isReadOnly: props.isReadOnly || false
+  }), [state.isOpen, props.isDisabled, validation.isInvalid, props.isRequired, props.isReadOnly]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -262,6 +269,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         data-focused={state.isFocused || undefined}
         data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}
+        data-readonly={props.isReadOnly || undefined}
         data-invalid={validation.isInvalid || undefined}
         data-required={props.isRequired || undefined}>
         {renderProps.children}

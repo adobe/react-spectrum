@@ -3,13 +3,14 @@
   "version": "3.2.7",
   "description": "Internationalized string formatting and locale negotiation",
   "license": "Apache-2.0",
-  "main": "dist/main.js",
-  "module": "dist/module.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "import": "dist/index.mjs",
   "exports": {
     "source": "./src/index.ts",
     "types": "./dist/types/src/index.d.ts",
-    "import": "./dist/import.mjs",
-    "require": "./dist/main.js"
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs"
   },
   "types": "./dist/types/src/index.d.ts",
   "source": "src/index.ts",
@@ -29,6 +30,20 @@
     "access": "public"
   },
   "targets": {
-    "types": false
+    "types": false,
+    "module": {
+      "engines": {
+        "browsers": [
+          "chrome >= 79",
+          "firefox >= 85",
+          "safari >= 13"
+        ]
+      }
+    },
+    "import": {
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false
+    }
   }
 }

@@ -11,11 +11,8 @@
  */
 import {DropTarget} from '@react-types/shared';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
-import {LayoutInfo} from 'react-stately/private/virtualizer/LayoutInfo';
-import {LayoutNode} from 'react-stately/private/layout/ListLayout';
-import {Rect} from 'react-stately/private/virtualizer/Rect';
+import {LayoutInfo, LayoutNode, Rect, TableLayout} from 'react-stately/useVirtualizerState';
 import {TableCollection} from 'react-stately/private/table/TableCollection';
-import {TableLayout} from 'react-stately/private/layout/TableLayout';
 
 export class TableViewLayout<T> extends TableLayout<T> {
   private isLoading: boolean = false;

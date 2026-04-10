@@ -20,7 +20,7 @@ import {
 
 import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
-import {ContextValue} from 'react-aria-components/utils';
+import {ContextValue} from 'react-aria-components/slots';
 import {controlFont, controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {DOMRef, DOMRefValue, FocusableRef, GlobalDOMAttributes, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
 import {FieldLabel, HelpText} from './Field';

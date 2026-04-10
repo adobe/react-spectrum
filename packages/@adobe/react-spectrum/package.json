@@ -33,9 +33,16 @@
   "types": "./dist/types/exports/index.d.ts",
   "source": "exports/index.ts",
   "files": [
-    "dist",
-    "i18n",
-    "*.js"
+    "*",
+    "!chromatic",
+    "!chromatic-fc",
+    "!docs",
+    "!exports",
+    "!intl",
+    "!scripts",
+    "!src",
+    "!stories",
+    "!test"
   ],
   "sideEffects": [
     "*.css"
@@ -98,6 +105,24 @@
       "includeNodeModules": [
         "@adobe/spectrum-css-temp"
       ]
+    },
+    "legacy-module": {
+      "source": [
+        "exports/**/*.ts"
+      ],
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ],
+      "engines": {
+        "browsers": [
+          "chrome >= 79",
+          "firefox >= 85",
+          "safari >= 13"
+        ]
+      }
     }
   }
 }

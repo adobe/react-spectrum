@@ -13,9 +13,7 @@
 import {ActionButton, ActionButtonContext} from './ActionButton';
 import {baseColor, centerPadding, colorMix, focusRing, fontRelative, lightDark, setColorScheme, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
-
 import {ButtonGroup} from './ButtonGroup';
-
 import {
   CellRenderProps,
   ColumnRenderProps,
@@ -35,7 +33,6 @@ import {
   ResizableTableContainer,
   RowRenderProps,
   TableBodyRenderProps,
-  TableLayout,
   TableLoadMoreItem,
   TableRenderProps,
   useTableOptions
@@ -44,10 +41,10 @@ import {Checkbox} from './Checkbox';
 import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
 import Chevron from '../ui-icons/Chevron';
 import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
-import {CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-components/Collection';
-import {ColumnSize} from 'react-stately/Column';
-import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/utils';
+import {Collection} from 'react-aria/Collection';
+import {CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-components/CollectionBuilder';
+import {ColumnSize} from 'react-stately/useTableState';
+import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {css} from '../style/style-macro' with {type: 'macro'};
 import {CustomDialog} from './CustomDialog';
@@ -60,7 +57,7 @@ import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
-import {LayoutNode} from 'react-stately/private/layout/ListLayout';
+import {LayoutNode} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
@@ -69,7 +66,7 @@ import {CheckboxContext as RACCheckboxContext} from 'react-aria-components/Check
 // @ts-ignore
 import {Popover as RACPopover} from 'react-aria-components/Popover';
 import React, {createContext, CSSProperties, FormEvent, FormHTMLAttributes, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {Rect} from 'react-stately/private/virtualizer/Rect';
+import {Rect, TableLayout, Virtualizer} from 'react-aria-components/Virtualizer';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {Button as SpectrumButton} from './Button';
@@ -82,7 +79,6 @@ import {useMediaQuery} from './useMediaQuery';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import {Virtualizer} from 'react-aria-components/Virtualizer';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
 interface S2TableProps {
@@ -219,7 +215,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
     // we want the body to be sticky and only as wide as the table so it is always in view if loading/empty
     let isEmptyOrLoading = this.virtualizer?.collection.size === 0;
     if (isEmptyOrLoading) {
-      layoutInfo.rect.width = this.virtualizer!.visibleRect.width - 80;
+      layoutInfo.rect.width = this.virtualizer!.size.width - 80;
     }
 
     return [
@@ -232,7 +228,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
     let layoutNode = super.buildLoader(node, x, y);
     let {layoutInfo} = layoutNode;
     layoutInfo.allowOverflow = true;
-    layoutInfo.rect.width = this.virtualizer!.visibleRect.width;
+    layoutInfo.rect.width = this.virtualizer!.size.width;
     // If performing first load or empty, the body will be sticky so we don't want to apply sticky to the loader, otherwise it will
     // affect the positioning of the empty state renderer
     let collection = this.virtualizer!.collection;
@@ -250,7 +246,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
     // If loading or empty, we'll want the body to be sticky and centered
     let isEmptyOrLoading = this.virtualizer?.collection.size === 0;
     if (isEmptyOrLoading) {
-      layoutInfo.rect = new Rect(40, 40, this.virtualizer!.visibleRect.width - 80, this.virtualizer!.visibleRect.height - 80);
+      layoutInfo.rect = new Rect(40, 40, this.virtualizer!.size.width - 80, this.virtualizer!.size.height - 80);
       layoutInfo.isSticky = true;
     }
 
@@ -871,16 +867,26 @@ const tableHeader = style({
 });
 
 const selectAllCheckbox = style({
-  marginStart: 16 // table-edge-to-content, same between mobile and desktop
 });
 
 const selectAllCheckboxColumn = style({
-  padding: 0,
+  paddingStart: {
+    default: 0,
+    ':has([slot="selection"])': 16
+  },
+  paddingEnd: {
+    default: 0,
+    ':has(slot="selection")': 8
+  },
+  paddingY: 0,
   height: 'full',
   boxSizing: 'border-box',
   outlineStyle: 'none',
   position: 'relative',
+  display: 'flex',
   alignContent: 'center',
+  alignItems: 'center',
+  justifyContent: 'start',
   borderColor: {
     default: 'gray-300',
     forcedColors: 'ButtonBorder'
@@ -1013,15 +1019,22 @@ const stickyCell = {
 const checkboxCellStyle = style({
   ...commonCellStyles,
   ...stickyCell,
+  display: 'flex',
   paddingStart: 16,
+  paddingEnd: 8,
   alignContent: 'center',
+  alignItems: 'center',
+  justifyContent: 'start',
   height: 'calc(100% - 1px)',
   borderBottomWidth: 0,
   backgroundColor: '--rowBackgroundColor'
 });
 
 const cellContent = style({
-  truncate: true,
+  truncate: {
+    default: true,
+    isSticky: false
+  },
   whiteSpace: {
     default: 'nowrap',
     overflowMode: {
@@ -1035,7 +1048,10 @@ const cellContent = style({
       end: 'end'
     }
   },
-  width: 'full',
+  width: {
+    default: 'full',
+    ':has([slot="selection"])': 'unset'
+  },
   isolation: 'isolate',
   padding: {
     default: 4,
@@ -1062,7 +1078,14 @@ export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | 'r
  * A cell within a table row.
  */
 export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, isSticky, showDivider = false, align, textValue, ...otherProps} = props;
+  let {
+    children,
+    isSticky,
+    showDivider = false,
+    align,
+    textValue,
+    ...otherProps
+  } = props;
   let domRef = useDOMRef(ref);
   let tableVisualOptions = useContext(InternalTableContext);
   textValue ||= typeof children === 'string' ? children : undefined;
@@ -1083,7 +1106,7 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       {...otherProps}>
       {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
-          {hasChildItems && isTreeColumn && 
+          {hasChildItems && isTreeColumn &&
             <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
           }
           <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
@@ -1256,7 +1279,7 @@ export const EditableCell = forwardRef(function EditableCell(props: EditableCell
       {...otherProps}>
       {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
-          {hasChildItems && isTreeColumn && 
+          {hasChildItems && isTreeColumn &&
             <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
           }
           <EditableCellInner {...props} isFocusVisible={isFocusVisible} cellRef={domRef as RefObject<HTMLDivElement>} />

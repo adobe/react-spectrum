@@ -19,7 +19,7 @@ import {
 } from '../utils/styleProps';
 
 import {DimensionValue, DOMProps, DOMRef, GridStyleProps} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import React, {forwardRef, ReactNode} from 'react';
 import {useDOMRef} from '../utils/useDOMRef';
 

@@ -1,18 +1,17 @@
 'use client';
 import {
   ComboBox as AriaComboBox,
-  ComboBoxProps as AriaComboBoxProps,
+  type ComboBoxProps as AriaComboBoxProps,
   ComboBoxValue,
   Input,
-  ListBoxItemProps,
-  ListBoxProps,
-  ValidationResult
-} from 'react-aria-components';
+  type ListBoxItemProps,
+  type ListBoxProps,
+  type ValidationResult,
+} from 'react-aria-components/ComboBox';
 import {Label, FieldError, FieldButton, Description} from './Form';
 import {DropdownItem, DropdownListBox} from './ListBox';
 import {Popover} from './Popover';
 import {ChevronDown} from 'lucide-react';
-
 import './ComboBox.css';
 
 export interface ComboBoxProps<T extends object, M extends 'single' | 'multiple'>

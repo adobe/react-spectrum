@@ -15,7 +15,6 @@ import {
   ComboBoxProps as AriaComboBoxProps,
   ComboBoxStateContext
 } from 'react-aria-components/ComboBox';
-
 import {
   ListBoxSection as AriaListBoxSection,
   ListBox,
@@ -23,10 +22,10 @@ import {
   ListBoxItemProps,
   ListBoxLoadMoreItem,
   ListBoxProps,
+  ListBoxSectionProps,
   ListStateContext
 } from 'react-aria-components/ListBox';
-
-import {PopoverProps as AriaPopoverProps} from 'react-aria-components/Popover';
+import {PopoverProps as AriaPopoverProps, Placement} from 'react-aria-components/Popover';
 import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SingleSelection, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {BaseCollection, CollectionNode} from 'react-aria/private/collections/BaseCollection';
@@ -43,12 +42,12 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
-import {ContextValue, Provider} from 'react-aria-components/utils';
+import {Collection} from 'react-aria/Collection';
+import {ContextValue, Provider} from 'react-aria-components/slots';
 import {control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {createFocusableRef} from './useDOMRef';
-import {createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
+import {createLeafComponent} from 'react-aria/CollectionBuilder';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
@@ -57,15 +56,13 @@ import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
 import {InputContext, InputProps} from 'react-aria-components/Input';
 import intlMessages from '../intl/*.json';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
-import {mergeRefs} from 'react-aria/private/utils/mergeRefs';
+import {ListLayout} from 'react-stately/useVirtualizerState';
+import {mergeRefs} from 'react-aria/mergeRefs';
 // @ts-ignore
 import {Node} from '@react-types/shared';
-import {Placement} from 'react-aria/private/overlays/useOverlayPosition';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
-import {SectionProps} from 'react-aria-components/Collection';
 import {TextFieldRef} from './TextField';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
@@ -435,7 +432,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   );
 }
 
-export interface ComboBoxSectionProps<T extends object> extends Omit<SectionProps<T>, keyof GlobalDOMAttributes> {}
+export interface ComboBoxSectionProps<T extends object> extends Omit<ListBoxSectionProps<T>, keyof GlobalDOMAttributes> {}
 export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>): ReactNode {
   let {size} = useContext(InternalComboboxContext);
   return (
@@ -627,8 +624,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
             paddingStart: 'edge-to-text',
             // better way to do this one? it's not actually half, they are
             // [9, 4], [12, 6], [15, 8], [18, 8]
-            // also noticed that our measurement is including the border, making the padding too much
-            paddingEnd: 'calc(self(height, self(minHeight)) * 3 / 16)'
+            paddingEnd: 'calc(self(height, self(minHeight)) * 3 / 16 - self(borderEndWidth, 2px))'
           })({size})}>
           <InputContext.Consumer>
             {ctx => (

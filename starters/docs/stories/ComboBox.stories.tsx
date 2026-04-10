@@ -1,5 +1,4 @@
 import {ComboBox, ComboBoxItem} from '../src/ComboBox';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ComboBox> = {

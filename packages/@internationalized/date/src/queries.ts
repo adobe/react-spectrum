@@ -11,11 +11,9 @@
  */
 
 import {AnyCalendarDate, AnyTime, Calendar} from './types';
-import {CalendarDate, CalendarDateTime, ZonedDateTime} from './CalendarDate';
+import {CalendarDate, CalendarDateTime, DateValue, ZonedDateTime} from './CalendarDate';
 import {fromAbsolute, toAbsolute, toCalendar, toCalendarDate} from './conversion';
 import {weekStartData} from './weekStartData';
-
-type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
 
 /** Returns whether the given dates occur on the same day, regardless of the time or calendar system. */
 export function isSameDay(a: DateValue, b: DateValue): boolean {

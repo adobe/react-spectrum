@@ -5,14 +5,11 @@
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
-  "types": "dist/types.d.ts",
+  "types": "dist/types/src/index.d.ts",
   "exports": {
     ".": {
       "source": "./src/index.ts",
-      "types": [
-        "./dist/types.d.ts",
-        "./src/index.ts"
-      ],
+      "types": "./dist/types/src/index.d.ts",
       "import": "./dist/import.mjs",
       "require": "./dist/main.js"
     },

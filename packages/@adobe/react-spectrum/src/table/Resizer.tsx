@@ -1,6 +1,6 @@
 
 import {classNames} from '../utils/classNames';
-import {ColumnSize} from 'react-stately/Column';
+import {ColumnSize, TableColumnResizeState} from 'react-stately/useTableState';
 import eCursor from 'bundle-text:./cursors/Cur_MoveToRight_9_9.svg';
 import ewCursor from 'bundle-text:./cursors/Cur_MoveHorizontal_9_9.svg';
 import {FocusRing} from 'react-aria/FocusRing';
@@ -13,7 +13,6 @@ import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, useContext, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import {TableColumnResizeState} from 'react-stately/useTableState';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useObjectRef} from 'react-aria/useObjectRef';

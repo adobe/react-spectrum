@@ -179,6 +179,19 @@ exports[`Renames ContextualHelpTrigger to UnavailableMenuItemTrigger and Dialog 
 </MenuTrigger>"
 `;
 
+exports[`Renames closeOnSelect to shouldCloseOnSelect and moves to Menu 1`] = `
+"import { MenuItem, Menu, MenuTrigger, Button } from "@react-spectrum/s2";
+
+<MenuTrigger>
+  <Button>Edit</Button>
+  <Menu shouldCloseOnSelect>
+    <MenuItem>Cut</MenuItem>
+    <MenuItem>Copy</MenuItem>
+    <MenuItem>Paste</MenuItem>
+  </Menu>
+</MenuTrigger>"
+`;
+
 exports[`Static - Renames Item to MenuItem, Section to MenuSection 1`] = `
 "import {
   MenuItem,

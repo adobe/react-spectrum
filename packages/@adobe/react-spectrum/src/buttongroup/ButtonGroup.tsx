@@ -12,7 +12,7 @@
 
 import {Alignment, DOMProps, DOMRef, Orientation, StyleProps} from '@react-types/shared';
 import {classNames} from '../utils/classNames';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {Provider, useProvider, useProviderProps} from '../provider/Provider';
 import React, {ReactNode, useCallback, useRef} from 'react';
 import {SlotProvider, useSlotProps} from '../utils/Slots';

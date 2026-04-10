@@ -14,8 +14,8 @@ import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria/use
 
 import {BaseCollection, CollectionNode} from 'react-aria/private/collections/BaseCollection';
 import {ContextValue, dom, DOMRenderProps, SlotProps, StyleProps, useContextProps} from './utils';
-import {createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {createLeafComponent} from 'react-aria/CollectionBuilder';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef} from 'react';

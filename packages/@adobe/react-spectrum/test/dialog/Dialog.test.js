@@ -21,7 +21,7 @@ import {render} from '@react-spectrum/test-utils-internal';
 describe('Dialog', function () {
   it('does not auto focus anything inside', function () {
     let {getByRole} = render(
-      <Dialog>
+      <Dialog aria-label="Test dialog">
         <input data-testid="input1" />
         <input data-testid="input2" />
       </Dialog>
@@ -35,7 +35,7 @@ describe('Dialog', function () {
 
   it('auto focuses the dialog itself if there is no focusable child', function () {
     let {getByRole} = render(
-      <Dialog>
+      <Dialog aria-label="Test dialog">
         contents
       </Dialog>
     );
@@ -46,7 +46,7 @@ describe('Dialog', function () {
 
   it('autofocuses any element that has autofocus inside', function () {
     let {getByTestId} = render(
-      <Dialog>
+      <Dialog aria-label="Test dialog">
         <input data-testid="input1" />
         <input data-testid="input2" autoFocus />
       </Dialog>

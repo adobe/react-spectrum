@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../src/Icon';
 import SpeedFast_L from 'illustration:./S2_lin_speedFast_160.svg';
 import SpeedFast_M from 'illustration:./S2_lin_speedFast_96.svg';
 import SpeedFast_S from 'illustration:./S2_lin_speedFast_48.svg';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function SpeedFast(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

@@ -12,7 +12,7 @@
 
 import {ActionButton} from '../button/ActionButton';
 import {AriaLabelingProps, CollectionBase, DOMProps, FocusableRef, Key, StyleProps} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 // @ts-ignore
 import intlMessages from '../../intl/menu/*.json';
 import {Menu} from './Menu';

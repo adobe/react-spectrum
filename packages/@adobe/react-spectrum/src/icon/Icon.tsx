@@ -13,7 +13,7 @@
 import {AriaLabelingProps, DOMProps, IconColorValue, StyleProps} from '@react-types/shared';
 import {baseStyleProps, StyleHandlers, useStyleProps} from '../utils/styleProps';
 import {classNames} from '../utils/classNames';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {ProviderContext} from '../provider/types';
 import React, {JSX, ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';

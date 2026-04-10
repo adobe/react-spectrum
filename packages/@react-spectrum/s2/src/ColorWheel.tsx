@@ -17,7 +17,7 @@ import {
 } from 'react-aria-components/ColorWheel';
 
 import {ColorHandle} from './ColorHandle';
-import {ContextValue} from 'react-aria-components/utils';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};

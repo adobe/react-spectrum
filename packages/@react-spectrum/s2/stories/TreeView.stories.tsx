@@ -15,7 +15,7 @@ import {ActionBar} from '../src/ActionBar';
 import {ActionButton} from '../src/ActionButton';
 import {ActionMenu} from '../src/ActionMenu';
 import {categorizeArgTypes, getActionArgs} from './utils';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {Content, Heading, Text} from '../src/Content';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
@@ -45,9 +45,9 @@ import {useAsyncList} from 'react-stately/useAsyncList';
 import {useListData} from 'react-stately/useListData';
 
 let onActionFunc = action('onAction');
-let noOnAction = null;
+let noOnAction = undefined;
 const onActionOptions = {onActionFunc, noOnAction};
-const events = ['onSelectionChange', 'onAction'];
+const events = ['onSelectionChange'];
 
 const meta: Meta<typeof TreeView> = {
   component: TreeView,
@@ -57,7 +57,7 @@ const meta: Meta<typeof TreeView> = {
   tags: ['autodocs'],
   args: {...getActionArgs(events)},
   argTypes: {
-    ...categorizeArgTypes('Events', events),
+    ...categorizeArgTypes('Events', ['onAction', ...events]),
     children: {table: {disable: true}},
     onAction: {
       options: Object.keys(onActionOptions), // An array of serializable values
@@ -81,7 +81,7 @@ const TreeExampleStatic = (args: TreeViewProps<any>): ReactElement => (
   <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
     <TreeView
       {...args}
-      disabledKeys={['projects-1']}
+      disabledKeys={['projects']}
       aria-label="test static tree"
       onExpandedChange={action('onExpandedChange')}
       onSelectionChange={action('onSelectionChange')}>
