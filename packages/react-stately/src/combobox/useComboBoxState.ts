@@ -147,7 +147,24 @@ export interface ComboBoxStateOptions<T, M extends SelectionMode = 'single'> ext
   shouldCloseOnBlur?: boolean
 }
 
-const EMPTY_VALUE: Key[] = [];
+function createCustomNode<T>(key: Key): Node<T> {
+  return {
+    type: 'item',
+    key,
+    value: null,
+    level: 0,
+    hasChildNodes: false,
+    childNodes: [],
+    rendered: String(key),
+    textValue: String(key),
+    'aria-label': undefined,
+    index: -1,
+    parentKey: null,
+    prevKey: null,
+    nextKey: null,
+    props: {isCustomValue: true}
+  };
+}
 
 /**
  * Provides state management for a combo box component. Handles building a collection
@@ -226,15 +243,27 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
           setValue(key);
         }
       } else {
-        setValue([...keys]);
+        let newKeys = [...keys];
+        let prevKeys = Array.isArray(displayValue) ? displayValue as Key[] : [];
+        setValue(newKeys);
+        // Clear input when an item is added (not when deselected)
+        if (newKeys.length > prevKeys.length) {
+          setInputValue('');
+        }
       }
     }
   });
 
   let selectedKey = selectionMode === 'single' ? selectionManager.firstSelectedKey : null;
   let selectedItems = useMemo(() => {
-    return [...selectionManager.selectedKeys].map(key => collection.getItem(key)).filter(item => item != null);
-  }, [selectionManager.selectedKeys, collection]);
+    return [...selectionManager.selectedKeys].map(key => {
+      let item = collection.getItem(key);
+      if (item == null) {
+        return allowsCustomValue ? createCustomNode<T>(key) : null;
+      }
+      return item;
+    }).filter(item => item != null);
+  }, [selectionManager.selectedKeys, collection, allowsCustomValue]);
 
   let [inputValue, setInputValue] = useControlledState(
     props.inputValue,
@@ -418,7 +447,11 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
 
   // Revert input value and close menu
   let revert = () => {
-    if (allowsCustomValue && selectedKey == null) {
+    if (selectionMode === 'multiple') {
+      // In multi-select, revert just clears input without changing selection
+      setInputValue('');
+      closeMenu();
+    } else if (allowsCustomValue && selectedKey == null) {
       commitCustomValue();
     } else {
       commitSelection();
@@ -426,9 +459,23 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
   };
 
   let commitCustomValue = () => {
-    let value = selectionMode === 'multiple' ? EMPTY_VALUE : null;
-    lastValueRef.current = value as any;
-    setValue(value);
+    lastValueRef.current = null as any;
+    if (selectionMode === 'single') {
+      setValue(null);
+    } else {
+      let trimmed = inputValue.trim();
+      if (trimmed === '') {
+        closeMenu();
+        return;
+      }
+      let current: Key[] = Array.isArray(displayValue) ? displayValue as Key[] : [];
+      if (current.includes(trimmed)) {
+        setValue(current.filter(v => v !== trimmed));
+      } else {
+        setValue([...current, trimmed]);
+      }
+      setInputValue('');
+    }
     closeMenu();
   };
 
@@ -458,8 +505,21 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
 
   const commitValue = () => {
     if (allowsCustomValue) {
-      const itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
-      (inputValue === itemText) ? commitSelection() : commitCustomValue();
+      if (selectionMode === 'single') {
+        let itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
+        (inputValue === itemText) ? commitSelection() : commitCustomValue();
+      } else {
+        // In multi-select, check if input matches any item's textValue
+        let trimmedInput = inputValue.trim();
+        let matchingItem = trimmedInput ? [...collection].find(item => item.textValue === trimmedInput) : undefined;
+        if (matchingItem) {
+          selectionManager.select(matchingItem.key);
+          setInputValue('');
+          closeMenu();
+        } else {
+          commitCustomValue();
+        }
+      }
     } else {
       // Reset inputValue and close menu
       commitSelection();
