@@ -163,10 +163,9 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         let timeMaxValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : undefined;
         let timeGranularity = state.granularity === 'hour' || state.granularity === 'minute' || state.granularity === 'second' ? state.granularity : undefined;
         let showTimeField = !!timeGranularity;
-        
-        // Ideally, we could remove references to errorMessage here and instead pull it from the RAC CalendarContext in S2 Calendar
-        // However, CalendarProps type does not include errorMessage so we get a type error
-        // Instead, we resolve the error message here with the same logic used in useDatePicker
+
+        // Ideally, we could omit errorMessage here and let S2 Calendar read it from RAC's CalendarContext which already contains the resolved value via calendarProps from useDatePicker.
+        // However, RAC's CalendarProps omits errorMessage, so reading it back from the context would require an unsafe cast. Instead, we resolve it here using the same logic as useDatePicker.
         let resolvedErrorMessage = typeof errorMessage === 'function' ? errorMessage(state.displayValidation) : (errorMessage || state.displayValidation.validationErrors.join(' '));
         return (
           <>
