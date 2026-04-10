@@ -90,7 +90,7 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
       if (!hasAriaLabel && !hasAriaLabelledby) {
         console.warn(
           'A dialog must have a title for accessibility. ' +
-          'Either provide an aria-label or aria-labelledby prop, or render a heading element inside the dialog with the titleProps from useDialog.'
+          'Either provide an aria-label or aria-labelledby prop, or render a heading element inside the dialog.'
         );
         hasWarned.current = true;
       }
