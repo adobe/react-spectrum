@@ -74,7 +74,7 @@ export const description = 'How to integrate with your framework.';
         ```
       </Step>
       <Step>
-        <Counter />If you are using a [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP) (CSP), follow the [Next.js CSP](https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy) guide to generate and inject a nonce. React Aria automatically reads the nonce that Next.js injects.
+        <Counter />If you are using a [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) (CSP) with a nonce, add a `<meta property="csp-nonce">` tag to your document head, setting the `content` attribute to the generated nonce value. React Aria automatically reads the nonce from this tag.
       </Step>
     </StepList>
   </TabPanel>

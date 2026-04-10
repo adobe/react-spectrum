@@ -103,7 +103,7 @@ import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
 
 ## Selection and actions
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=TagGroup) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=TagGroup) for more details.
 
 ```tsx render docs={docs.exports.TagGroup} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
@@ -123,7 +123,6 @@ function Example(props) {
         /* PROPS */
         selectedKeys={selected}
         onSelectionChange={setSelected}
-        onAction={key => alert(`Clicked ${key}`)}
         ///- end highlight -///
       >
         <Tag id="laundry">Laundry</Tag>
@@ -134,6 +133,30 @@ function Example(props) {
       </TagGroup>
       <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
     </div>
+  );
+}
+```
+
+Use the `onAction` prop to handle item actions.
+
+```tsx render wide
+"use client";
+import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
+
+function Example() {
+  return (
+    <TagGroup
+      label="Music genres"
+      ///- begin highlight -///
+      onAction={key => alert(`Clicked ${key}`)}
+      ///- end highlight -///
+    >
+      <Tag id="rock">Rock</Tag>
+      <Tag id="jazz">Jazz</Tag>
+      <Tag id="pop">Pop</Tag>
+      <Tag id="classical">Classical</Tag>
+      <Tag id="edm">EDM</Tag>
+    </TagGroup>
   );
 }
 ```
