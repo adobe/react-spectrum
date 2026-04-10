@@ -947,6 +947,27 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
+  `('$Name does not reset input during typing when re-rendered with same formatOptions content', async () => {
+    let {textField, rerender} = renderNumberField({
+      defaultValue: 1,
+      formatOptions: {maximumFractionDigits: 2}
+    });
+
+    act(() => {textField.focus();});
+    await user.clear(textField);
+    await user.keyboard('2');
+    expect(textField).toHaveAttribute('value', '2');
+
+    // Re-render with same-content but new-reference formatOptions (simulates inline object literal)
+    rerender({defaultValue: 1, formatOptions: {maximumFractionDigits: 2}});
+
+    // Should NOT be reset to '1'
+    expect(textField).toHaveAttribute('value', '2');
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
   `('$Name keeps formatting on focus', () => {
     let {textField} = renderNumberField({defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 

@@ -366,6 +366,45 @@ describe('NumberField', () => {
     expect(onChange).toHaveBeenCalledWith(1024);
   });
 
+  it('does not reset input value when parent re-renders with same formatOptions content', async () => {
+    function Wrapper() {
+      let [, setCount] = React.useState(0);
+      return (
+        <>
+          <button onClick={() => setCount(c => c + 1)}>Force rerender</button>
+          <TestNumberField defaultValue={1} formatOptions={{maximumFractionDigits: 2}} />
+        </>
+      );
+    }
+
+    let {getByRole} = render(<Wrapper />);
+    let input = getByRole('textbox');
+
+    await user.tab();
+    await user.clear(input);
+    await user.keyboard('2');
+    expect(input).toHaveValue('2');
+
+    // Trigger parent re-render — inline object literal creates new formatOptions reference
+    await user.click(getByRole('button', {name: 'Force rerender'}));
+
+    // Input should still show '2', NOT be reset to '1'
+    expect(input).toHaveValue('2');
+  });
+
+  it('updates formatted value when formatOptions content actually changes', async () => {
+    let {getByRole, rerender} = render(
+      <TestNumberField defaultValue={1024} formatOptions={{style: 'currency', currency: 'EUR'}} />
+    );
+    let input = getByRole('textbox');
+    expect(input).toHaveValue('€1,024.00');
+
+    rerender(
+      <TestNumberField defaultValue={1024} formatOptions={{style: 'currency', currency: 'USD'}} />
+    );
+    expect(input).toHaveValue('$1,024.00');
+  });
+
   it('should support pasting into a format', async () => {
     let onChange = jest.fn();
     let {getByRole} = render(<TestNumberField defaultValue={200} onChange={onChange} formatOptions={{style: 'currency', currency: 'USD'}} />);
