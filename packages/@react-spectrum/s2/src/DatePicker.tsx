@@ -208,7 +208,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
             <CalendarPopover shouldFlip={props.shouldFlip}>
               <Calendar
                 visibleMonths={maxVisibleMonths}
-                createCalendar={createCalendar} 
+                createCalendar={createCalendar}
                 errorMessage={resolvedErrorMessage} />
               {showTimeField && (
                 <div className={style({display: 'flex', gap: 16, contain: 'inline-size'})}>
