@@ -94,7 +94,8 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     viewportSize: new Size(),
     scrollEndTime: 0,
     scrollTimeout: null as ReturnType<typeof setTimeout> | null,
-    isScrolling: false
+    isScrolling: false,
+    lastVisibleRect: new Rect()
   }).current;
   let {direction} = useLocale();
 
@@ -105,7 +106,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     // their sizes into account for performance reasons. Their scroll positions are accounted for in viewportOffset
     // though (due to getBoundingClientRect). This may result in more rows than absolutely necessary being rendered,
     // but no more than the entire height of the viewport which is good enough for virtualization use cases.
-    let visibleRect = allowsWindowScrolling 
+    let visibleRect = allowsWindowScrolling
       ? new Rect(
         state.viewportOffset.x + state.scrollPosition.x,
         state.viewportOffset.y + state.scrollPosition.y,
@@ -113,7 +114,11 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
         Math.max(0, Math.min(state.size.height - state.viewportOffset.y, state.viewportSize.height))
       )
       : new Rect(state.scrollPosition.x, state.scrollPosition.y, state.size.width, state.size.height);
-    onVisibleRectChange(visibleRect);
+    // Don't emit updates if the visible area is zero and the last emitted area was also zero.
+    if (visibleRect.area > 0 || state.lastVisibleRect.area > 0) {
+      onVisibleRectChange(visibleRect);
+      state.lastVisibleRect = visibleRect;
+    }
   }, [state, allowsWindowScrolling, onVisibleRectChange]);
 
   let [isScrolling, setScrolling] = useState(false);
