@@ -751,36 +751,6 @@ describe('Tree', () => {
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
 
-    it('multi select should expand the row if anywhere on the row is clicked and there is no onAction provided', async () => {
-      let {getAllByRole} = render(<StaticTree treeProps={{defaultExpandedKeys: new Set([]), selectionMode: 'multiple', disabledBehavior: 'selection', disabledKeys: ['projects']}} />);
-      let row = getAllByRole('row')[1];
-      await user.hover(row);
-      expect(row).toHaveAttribute('data-hovered', 'true');
-
-      await user.click(row);
-      expect(row).toHaveAttribute('aria-expanded', 'true');
-    });
-
-    it('single select should expand the row if anywhere on the row is clicked and there is no onAction provided', async () => {
-      let {getAllByRole} = render(<StaticTree treeProps={{defaultExpandedKeys: new Set([]), selectionMode: 'single', disabledBehavior: 'selection', disabledKeys: ['projects']}} />);
-      let row = getAllByRole('row')[1];
-      await user.hover(row);
-      expect(row).toHaveAttribute('data-hovered', 'true');
-
-      await user.click(row);
-      expect(row).toHaveAttribute('aria-expanded', 'true');
-    });
-
-    it('no selection should expand the row if anywhere on the row is clicked and there is no onAction provided', async () => {
-      let {getAllByRole} = render(<StaticTree treeProps={{defaultExpandedKeys: new Set([]), selectionMode: 'none', disabledBehavior: 'selection', disabledKeys: ['projects']}} />);
-      let row = getAllByRole('row')[1];
-      await user.hover(row);
-      expect(row).toHaveAttribute('data-hovered', 'true');
-
-      await user.click(row);
-      expect(row).toHaveAttribute('aria-expanded', 'true');
-    });
-
     it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
       let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', escapeKeyBehavior: 'none'}}  />);
 

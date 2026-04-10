@@ -77,8 +77,7 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     if (
       !hasLink &&
       hasChildRows &&
-      ((state.disabledKeys.has(node.key) || node.props?.isDisabled) || 
-        state.selectionManager.selectionMode === 'none')) {
+      state.selectionManager.selectionMode === 'none') {
       onRowAction = () => tableState.toggleKey(node.key);
     }
   }

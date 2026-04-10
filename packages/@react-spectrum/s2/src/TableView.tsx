@@ -1121,13 +1121,15 @@ interface ExpandableRowChevronProps {
   isExpanded?: boolean,
   isDisabled?: boolean,
   isRTL?: boolean,
-  isHidden?: boolean
+  isHidden?: boolean,
+  isHovered?: boolean
 }
 
 const expandButton = style<ExpandableRowChevronProps>({
   gridArea: 'expand-button',
   color: {
     default: 'inherit',
+    isHovered: baseColor('neutral-subdued').isHovered,
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'

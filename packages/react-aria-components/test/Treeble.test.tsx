@@ -536,39 +536,6 @@ describe('Treeble', () => {
     expect(onSelectionChange).toHaveBeenLastCalledWith(new Set(['games', 'mario', 'tetris']));
   });
 
-  it('supports expansion on disabled items with no action in disabledBehavior="selection" multiple selection', async () => {
-    let tree = render(<Example disabledKeys={['apps']} selectionMode="multiple" disabledBehavior="selection" />);
-    let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
-
-    await user.hover(tester.rows[1]);
-    expect(tester.rows[1]).toHaveAttribute('data-hovered', 'true');
-
-    await user.click(tester.rows[1]);
-    expect(tester.rows[1]).toHaveAttribute('aria-expanded', 'true');
-  });
-
-  it('supports expansion on disabled items with no action in disabledBehavior="selection" single selection', async () => {
-    let tree = render(<Example disabledKeys={['apps']} selectionMode="single" disabledBehavior="selection" />);
-    let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
-
-    await user.hover(tester.rows[1]);
-    expect(tester.rows[1]).toHaveAttribute('data-hovered', 'true');
-
-    await user.click(tester.rows[1]);
-    expect(tester.rows[1]).toHaveAttribute('aria-expanded', 'true');
-  });
-
-  it('supports expansion on disabled items with no action in disabledBehavior="selection" no selection', async () => {
-    let tree = render(<Example disabledKeys={['apps']} selectionMode="none" disabledBehavior="selection" />);
-    let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
-
-    await user.hover(tester.rows[1]);
-    expect(tester.rows[1]).toHaveAttribute('data-hovered', 'true');
-
-    await user.click(tester.rows[1]);
-    expect(tester.rows[1]).toHaveAttribute('aria-expanded', 'true');
-  });
-
   it('should support drag and drop', async () => {
     let tree = render(<ReorderableTreeble />);
     let tester = utils.createTester('Table', {root: tree.getByRole('treegrid')});
