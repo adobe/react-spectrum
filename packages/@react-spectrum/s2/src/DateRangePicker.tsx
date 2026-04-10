@@ -35,7 +35,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface DateRangePickerProps<T extends DateValue> extends
   Omit<AriaDateRangePickerProps<T>, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
-  Pick<RangeCalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'firstDayOfWeek' | 'isDateUnavailable' | 'interactOutsideBehavior'>,
+  Pick<RangeCalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'firstDayOfWeek' | 'isDateUnavailable' | 'commitBehavior'>,
   Pick<PopoverProps, 'shouldFlip'>,
   StyleProps,
   SpectrumLabelableProps,
@@ -84,7 +84,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
     placeholderValue,
     maxVisibleMonths = 1,
     createCalendar,
-    interactOutsideBehavior,
+    commitBehavior,
     ...dateFieldProps
   } = props;
   let formContext = useContext(FormContext);
@@ -155,7 +155,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
               <RangeCalendar
                 visibleMonths={maxVisibleMonths}
                 createCalendar={createCalendar}
-                interactOutsideBehavior={interactOutsideBehavior}
+                commitBehavior={commitBehavior}
                 errorMessage={errorMessage} />
               {showTimeField && (
                 <div className={style({display: 'flex', gap: 16, contain: 'inline-size', marginTop: 24})}>

@@ -1549,14 +1549,14 @@ describe('RangeCalendar', () => {
       jest.setSystemTime(new Date('2025-11-01'));
     });
 
-    it('should select the last hovered date when interactOutsideBehavior is "select"', async () => {
+    it('should select the last hovered date when commitBehavior is "select"', async () => {
       const onChange = jest.fn();
 
       let {getByText, getAllByText} = render(
         <RangeCalendar
           defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
           onChange={onChange}
-          interactOutsideBehavior="select" />
+          commitBehavior="select" />
       );
 
       await user.click(getByText('25'));
@@ -1568,13 +1568,13 @@ describe('RangeCalendar', () => {
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2025, 11, 20), end: new CalendarDate(2025, 11, 25)});
     });
 
-    it('should clear the selection when interactOutsideBehavior is "clear"', async () => {
+    it('should clear the selection when commitBehavior is "clear"', async () => {
       const onChange = jest.fn();
       let {getByText, getAllByText, getByRole} = render(
         <RangeCalendar
           defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
           onChange={onChange}
-          interactOutsideBehavior="clear" />
+          commitBehavior="clear" />
       );
 
       let startCell = getByRole('gridcell', {name: '25'});
@@ -1592,12 +1592,12 @@ describe('RangeCalendar', () => {
       expect(endCell).not.toHaveAttribute('aria-selected');
     });
 
-    it('should clear the selection when interactOutsideBehavior is "clear" no default selected range', async () => {
+    it('should clear the selection when commitBehavior is "clear" no default selected range', async () => {
       const onChange = jest.fn();
       let {getByText, getByRole} = render(
         <RangeCalendar
           onChange={onChange}
-          interactOutsideBehavior="clear" />
+          commitBehavior="clear" />
       );
 
       let startCell = getByRole('gridcell', {name: '25'});
@@ -1614,13 +1614,13 @@ describe('RangeCalendar', () => {
       expect(endCell).not.toHaveAttribute('aria-selected');
     });
 
-    it('should reset to the initial range when interactOutsideBehavior is "reset"', async () => {
+    it('should reset to the initial range when commitBehavior is "reset"', async () => {
       const onChange = jest.fn();
       let {getByText, getAllByText, getByRole} = render(
         <RangeCalendar
           defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
           onChange={onChange}
-          interactOutsideBehavior="reset" />
+          commitBehavior="reset" />
       );
 
       let originalStartCell = getByRole('gridcell', {name: '13'});
@@ -1645,13 +1645,13 @@ describe('RangeCalendar', () => {
       expect(originalEndCell).toHaveAttribute('aria-selected', 'true');
     });
 
-    it('should reset to the initial range when interactOutsideBehavior is "reset" (controlled value)', async () => {
+    it('should reset to the initial range when commitBehavior is "reset" (controlled value)', async () => {
       const onChange = jest.fn();
       let {getByText, getAllByText, getByRole} = render(
         <RangeCalendar
           value={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
           onChange={onChange}
-          interactOutsideBehavior="reset" />
+          commitBehavior="reset" />
       );
 
       let originalStartCell = getByRole('gridcell', {name: '13'});
@@ -1673,13 +1673,13 @@ describe('RangeCalendar', () => {
     });
 
     describe('blur (e.g. tabbing away)', () => {
-      it('should select the hovered range when interactOutsideBehavior is "select" and calendar blurs', async () => {
+      it('should select the hovered range when commitBehavior is "select" and calendar blurs', async () => {
         const onChange = jest.fn();
         let {getByText, getByRole} = render(
           <RangeCalendar
             defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
             onChange={onChange}
-            interactOutsideBehavior="select" />
+            commitBehavior="select" />
         );
 
         let startCell = getByRole('gridcell', {name: '13'});
@@ -1701,13 +1701,13 @@ describe('RangeCalendar', () => {
         expect(newEndCell).toHaveAttribute('aria-selected', 'true');
       });
 
-      it('should clear the selection when interactOutsideBehavior is "clear" and calendar blurs', async () => {
+      it('should clear the selection when commitBehavior is "clear" and calendar blurs', async () => {
         const onChange = jest.fn();
         let {getByText, getByRole} = render(
           <RangeCalendar
             defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
             onChange={onChange}
-            interactOutsideBehavior="clear" />
+            commitBehavior="clear" />
         );
 
         let startCell = getByRole('gridcell', {name: '13'});
@@ -1727,13 +1727,13 @@ describe('RangeCalendar', () => {
         expect(newEndCell).not.toHaveAttribute('aria-selected', 'true');
       });
 
-      it('should reset to the initial range when interactOutsideBehavior is "reset" and calendar blurs', async () => {
+      it('should reset to the initial range when commitBehavior is "reset" and calendar blurs', async () => {
         const onChange = jest.fn();
         let {getByText, getByRole} = render(
           <RangeCalendar
             defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
             onChange={onChange}
-            interactOutsideBehavior="reset" />
+            commitBehavior="reset" />
         );
 
         let originalStartCell = getByRole('gridcell', {name: '13'});
