@@ -512,6 +512,48 @@ any value within the field.
 </MyComboBox>
 ```
 
+### Custom values with multiple selection
+
+When `allowsCustomValue` is combined with `selectionMode="multiple"`, users can both select predefined items and type custom values. Pressing Enter or Tab with a non-matching input adds the typed text as a custom value to the selection. The input clears after each selection so the user can continue searching. Pressing Escape discards the typed text without affecting the current selection.
+
+Custom values appear in `selectedItems` as nodes with `value: null` and `textValue` set to the custom string. You can distinguish them from collection items by checking `item.value`.
+
+```tsx example
+import {ComboBoxStateContext, TagGroup, TagList, Tag} from 'react-aria-components';
+
+<ComboBox allowsEmptyCollection allowsCustomValue selectionMode="multiple">
+  <Label>Favorite Animals</Label>
+  <div className="my-combobox-container">
+    <Input />
+    <Button><ChevronDown size={16} /></Button>
+  </div>
+  <ComboBoxStateContext.Consumer>
+    {state => state && (
+      <TagGroup
+        aria-label="Selected items"
+        onRemove={(keys) => {
+          if (Array.isArray(state.value)) {
+            state.setValue(state.value.filter(k => !keys.has(k)));
+          }
+        }}>
+        <TagList items={state.selectedItems.map(item => item.value ?? {id: item.key, name: item.textValue})}>
+          {item => <Tag>{item.name}</Tag>}
+        </TagList>
+      </TagGroup>
+    )}
+  </ComboBoxStateContext.Consumer>
+  <Popover>
+    <ListBox renderEmptyState={() => <div className="my-item">No results found</div>}>
+      <ListBoxItem id="red panda">Red Panda</ListBoxItem>
+      <ListBoxItem id="cat">Cat</ListBoxItem>
+      <ListBoxItem id="dog">Dog</ListBoxItem>
+      <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      <ListBoxItem id="snake">Snake</ListBoxItem>
+    </ListBox>
+  </Popover>
+</ComboBox>
+```
+
 ### HTML forms
 
 ComboBox supports the `name` prop for integration with HTML forms. By default, the `id` of the selected item will be submitted to the server. If the `formValue` prop is set to `"text"` or the `allowsCustomValue` prop is true, the text in the input field will be submitted instead.
