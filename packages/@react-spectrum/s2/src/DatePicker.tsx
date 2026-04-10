@@ -128,6 +128,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     label,
     contextualHelp,
     description: descriptionMessage,
+    errorMessage,
     isRequired,
     size = 'M',
     labelPosition = 'top',
@@ -139,7 +140,6 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     placeholderValue,
     maxVisibleMonths = 1,
     createCalendar,
-    errorMessage,
     ...dateFieldProps
   } = props;
   let formContext = useContext(FormContext);
