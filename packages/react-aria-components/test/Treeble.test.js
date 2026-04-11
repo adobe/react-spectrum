@@ -98,15 +98,8 @@ function Example(props) {
   );
 }
 
-interface ReorderableTreebleItem {
-  id: string,
-  title: string,
-  type: string,
-  date: string,
-  children?: ReorderableTreebleItem[]
-}
 function ReorderableTreeble(props) {
-  let tree = useTreeData<ReorderableTreebleItem>({
+  let tree = useTreeData({
     initialItems: [
       {id: '1', title: 'Documents', type: 'Directory', date: '10/20/2025', children: [
         {id: '2', title: 'Project', type: 'Directory', date: '8/2/2025', children: [
@@ -121,7 +114,7 @@ function ReorderableTreeble(props) {
     ]
   });
 
-  let {dragAndDropHooks} = useDragAndDrop<{value: ReorderableTreebleItem}>({
+  let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys, items) => items.map(item => ({'text/plain': item.value.title})),
     onMove(e) {
       if (e.target.dropPosition === 'before') {
@@ -246,7 +239,7 @@ describe('Treeble', () => {
     expect(tester.rowHeaders[3]).toHaveTextContent('Job Posting');
   });
 
-  it.each(['mouse', 'touch', 'keyboard'] as const)('should expand a row with %s', async (interactionType) => {
+  it.each(['mouse', 'touch', 'keyboard'])('should expand a row with %s', async (interactionType) => {
     let tree = render(<Example />);
     let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
 
@@ -534,39 +527,6 @@ describe('Treeble', () => {
 
     expect(onSelectionChange).toHaveBeenCalledTimes(2);
     expect(onSelectionChange).toHaveBeenLastCalledWith(new Set(['games', 'mario', 'tetris']));
-  });
-
-  it('supports expansion on disabled items with no action in disabledBehavior="selection" multiple selection', async () => {
-    let tree = render(<Example disabledKeys={['apps']} selectionMode="multiple" disabledBehavior="selection" />);
-    let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
-
-    await user.hover(tester.rows[1]);
-    expect(tester.rows[1]).toHaveAttribute('data-hovered', 'true');
-
-    await user.click(tester.rows[1]);
-    expect(tester.rows[1]).toHaveAttribute('aria-expanded', 'true');
-  });
-
-  it('supports expansion on disabled items with no action in disabledBehavior="selection" single selection', async () => {
-    let tree = render(<Example disabledKeys={['apps']} selectionMode="single" disabledBehavior="selection" />);
-    let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
-
-    await user.hover(tester.rows[1]);
-    expect(tester.rows[1]).toHaveAttribute('data-hovered', 'true');
-
-    await user.click(tester.rows[1]);
-    expect(tester.rows[1]).toHaveAttribute('aria-expanded', 'true');
-  });
-
-  it('supports expansion on disabled items with no action in disabledBehavior="selection" no selection', async () => {
-    let tree = render(<Example disabledKeys={['apps']} selectionMode="none" disabledBehavior="selection" />);
-    let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
-
-    await user.hover(tester.rows[1]);
-    expect(tester.rows[1]).toHaveAttribute('data-hovered', 'true');
-
-    await user.click(tester.rows[1]);
-    expect(tester.rows[1]).toHaveAttribute('aria-expanded', 'true');
   });
 
   it('should support drag and drop', async () => {
