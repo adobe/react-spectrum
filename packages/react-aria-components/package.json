@@ -35,13 +35,13 @@
   },
   "files": [
     "*",
-    "!docs",
-    "!example",
-    "!exports",
-    "!intl",
-    "!src",
-    "!stories",
-    "!test"
+    "!docs/**",
+    "!example/**",
+    "!exports/**",
+    "!intl/**",
+    "!src/**",
+    "!stories/**",
+    "!test/**"
   ],
   "sideEffects": [
     "*.css"

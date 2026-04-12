@@ -24,12 +24,12 @@
   "source": "exports/index.ts",
   "files": [
     "*",
-    "!docs",
-    "!exports",
-    "!intl",
-    "!src",
-    "!stories",
-    "!test"
+    "!docs/**",
+    "!exports/**",
+    "!intl/**",
+    "!src/**",
+    "!stories/**",
+    "!test/**"
   ],
   "sideEffects": false,
   "repository": {
