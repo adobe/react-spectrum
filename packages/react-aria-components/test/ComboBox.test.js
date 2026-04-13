@@ -1065,6 +1065,74 @@ describe('ComboBox', () => {
     ).toBeInTheDocument();
   });
 
+  it('should re-open the menu when using Collection pattern (items on ListBox, not ComboBox)', async () => {
+    const ASYNC_DELAY_MS = 50;
+
+    function itemsForFilterText(filterText) {
+      if (filterText === 'luka') {
+        return [];
+      }
+      return [{id: 1, name: 'Luke Skywalker'}];
+    }
+
+    function CollectionComboBox() {
+      let list = useAsyncList({
+        getKey: (item) => item.id,
+        async load({filterText}) {
+          let rows = itemsForFilterText(filterText);
+          await new Promise((resolve) => setTimeout(resolve, ASYNC_DELAY_MS));
+          return {items: rows};
+        }
+      });
+
+      return (
+        <ComboBox inputValue={list.filterText} onInputChange={list.setFilterText}>
+          <Label>SW Characters</Label>
+          <Input />
+          <Button>{'<'}</Button>
+          <Popover>
+            <ListBox items={list.items}>
+              {(item) => <ListBoxItem id={item.id}>{item.name}</ListBoxItem>}
+            </ListBox>
+          </Popover>
+        </ComboBox>
+      );
+    }
+
+    let {container, queryByRole} = render(<CollectionComboBox />);
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+
+    await act(async () => {
+      jest.runAllTimers();
+    });
+
+    await user.tab();
+    await user.keyboard('{ArrowDown}');
+    await act(async () => {
+      jest.runAllTimers();
+    });
+    expect(comboboxTester.listbox).toBeVisible();
+    expect(
+      within(comboboxTester.listbox).getByRole('option', {name: 'Luke Skywalker'})
+    ).toBeInTheDocument();
+
+    await user.keyboard('luka');
+    await act(async () => {
+      jest.runAllTimers();
+    });
+    expect(queryByRole('listbox')).toBeNull();
+
+    await user.keyboard('{Backspace}');
+    expect(queryByRole('listbox')).toBeNull();
+    await act(async () => {
+      jest.runAllTimers();
+    });
+    expect(comboboxTester.listbox).toBeVisible();
+    expect(
+      within(comboboxTester.listbox).getByRole('option', {name: 'Luke Skywalker'})
+    ).toBeInTheDocument();
+  });
+
   it('should still close the menu when uncontrolled items are empty', async () => {
     let onOpenChange = jest.fn();
 
