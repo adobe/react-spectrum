@@ -414,7 +414,10 @@ const MyColumn = (props: ColumnProps) => {
               </Menu>
             </Popover>
           </MenuTrigger>
-          <ColumnResizer onHoverStart={action('onHoverStart')} onHoverChange={action('onHoverChange')} onHoverEnd={action('onHoverEnd')}>
+          <ColumnResizer
+            onHoverStart={e => action('onHoverStart')({type: e.type, pointerType: e.pointerType})}
+            onHoverChange={action('onHoverChange')}
+            onHoverEnd={e => action('onHoverEnd')({type: e.type, pointerType: e.pointerType})}>
             ↔
           </ColumnResizer>
         </div>
