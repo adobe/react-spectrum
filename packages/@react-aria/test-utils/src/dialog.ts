@@ -82,7 +82,9 @@ export class DialogTester {
           if (!dialogId || document.getElementById(dialogId) == null) {
             throw new Error(`Dialog with id of ${dialogId} not found in document.`);
           } else {
-            this._dialog = document.getElementById(dialogId)!;
+            let el = document.getElementById(dialogId)!;
+            let nestedDialog = el.querySelector('[role=dialog], [role=alertdialog]');
+            this._dialog = nestedDialog as HTMLElement || el;
             return true;
           }
         });
