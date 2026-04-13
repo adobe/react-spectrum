@@ -503,15 +503,25 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     }
   };
 
+  let findItemCaseInsensitive = (text: string): Node<T> | undefined => {
+    let lower = text.toLowerCase();
+    return [...collection].find(item => item.textValue?.toLowerCase() === lower);
+  };
+
   const commitValue = () => {
     if (allowsCustomValue) {
       if (selectionMode === 'single') {
-        let itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
-        (inputValue === itemText) ? commitSelection() : commitCustomValue();
+        let matchingItem = inputValue ? findItemCaseInsensitive(inputValue) : undefined;
+        if (matchingItem) {
+          selectionManager.select(matchingItem.key);
+          closeMenu();
+        } else {
+          commitCustomValue();
+        }
       } else {
-        // In multi-select, check if input matches any item's textValue
+        // In multi-select, check if input matches any item's textValue (case insensitive)
         let trimmedInput = inputValue.trim();
-        let matchingItem = trimmedInput ? [...collection].find(item => item.textValue === trimmedInput) : undefined;
+        let matchingItem = trimmedInput ? findItemCaseInsensitive(trimmedInput) : undefined;
         if (matchingItem) {
           selectionManager.select(matchingItem.key);
           setInputValue('');
@@ -521,8 +531,14 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
         }
       }
     } else {
-      // Reset inputValue and close menu
-      commitSelection();
+      // Check if input matches an existing item case-insensitively
+      let matchingItem = inputValue ? findItemCaseInsensitive(inputValue) : undefined;
+      if (matchingItem) {
+        selectionManager.select(matchingItem.key);
+        closeMenu();
+      } else {
+        commitSelection();
+      }
     }
   };
 
