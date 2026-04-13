@@ -34,15 +34,15 @@
   "source": "exports/index.ts",
   "files": [
     "*",
-    "!chromatic",
-    "!chromatic-fc",
-    "!docs",
-    "!exports",
-    "!intl",
-    "!scripts",
-    "!src",
-    "!stories",
-    "!test"
+    "!chromatic/**",
+    "!chromatic-fc/**",
+    "!docs/**",
+    "!exports/**",
+    "!intl/**",
+    "!scripts/**",
+    "!src/**",
+    "!stories/**",
+    "!test/**"
   ],
   "sideEffects": [
     "*.css"
