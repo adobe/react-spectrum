@@ -244,7 +244,12 @@ export interface TagProps extends RenderProps<TagRenderProps, 'div'>, LinkDOMPro
    */
   textValue?: string,
   /** Whether the tag is disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /**
+   * Handler that is called when a user performs an action on the item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: () => void
 }
 
 /**
