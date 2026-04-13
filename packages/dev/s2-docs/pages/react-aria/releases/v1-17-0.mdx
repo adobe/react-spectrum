@@ -22,86 +22,82 @@ export const isSubpage = true;
 
 # v1.17.0
 
-## General Changes
-* Support CSP nonces on injected style elements - [@costajohnt](https://github.com/costajohnt) - [PR](https://github.com/adobe/react-spectrum/pull/9655)
-* Fix an SSR hydration mismatch from `Date.now`-based private property keys - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9787)
-* Use an attribute presence check for `data-react-aria-top-layer` in `MutationObserver` - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9763)
+## Changelog
+
+### General Changes
+* Support CSP nonces on injected style elements - [@costajohnt](https://github.com/costajohnt) - [PR](https://github.com/adobe/react-spectrum/pull/9655), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9910)
 * Fix global event attachment timing for `usePress` and `useMove` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9749)
-* Fix focus behavior for inputs inside FocusScope - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8903)
-## Autocomplete
+### Autocomplete
 * Allow moving into an Autocomplete-wrapped two-dimensional grid with ArrowLeft and ArrowRight - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9755)
 * Fix Autocomplete focus styles when clicking the input after virtual focus - [@hanityx](https://github.com/hanityx) - [PR](https://github.com/adobe/react-spectrum/pull/9767)
-## Collections
+### Collections
 * Support the full collection in SelectionManager for `selectedKeys="all"` behavior - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9621)
-* Fix focus restoration in Collections when deleting items - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9545)
-## ColorPicker
-* Make ColorPicker commit its new value when clicking outside the Dialog - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9768)
-## ColorWheel
+* Fix focus restoration in collections when deleting items - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9545)
+### ColorPicker
+* Commit new value when clicking outside the Dialog - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9768)
+### ColorWheel
 * Prevent ColorWheel Loupe from getting stuck - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9862)
-## ComboBox
+### ComboBox
 * Add a generic type parameter to `useComboBoxState` for the `ComboBoxState` return type - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9782)
 * Use stable `selectedKeys` in ComboBox to prevent an infinite loop - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9781)
 * Accept `readonly` arrays for multiple-selection ComboBox values - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9741)
 * Pass the selection mode generic through to ComboBox `validate` types - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9795)
-* Allow `null` in ComboBox `validate` for single selection - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9742)
-* Prevent extra `onSelectionChange` calls in ComboBox - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9729)
+* Allow `null` in `validate` for single selection - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9742)
+* Prevent extra `onSelectionChange` calls - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9729)
 * Fix required validation for multi-select ComboBox - [@Nawaz-B-04](https://github.com/Nawaz-B-04) - [PR](https://github.com/adobe/react-spectrum/pull/9792)
-* Add `isReadOnly` render props to ComboBox - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9892)
-## Dependency consolidation
-* Consolidate dependencies in part 1 by removing `@react-types` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9461)
-* Consolidate packages to improve tree shaking and reduce dependencies - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9774)
-* Apply follow-up fixes for dependency consolidation - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9830)
-* Raise browserslist targets for modern bundlers and fix legacy Jest usage - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9831)
-* Update documentation to use package subpaths - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9857)
-## Dialog
-* Warn in development when Dialog has no accessible title - [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/9819)
+* Add `isReadOnly` render props - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9892)
+### Date and Time
+* Fix an SSR hydration mismatch from `Date.now`-based private property keys - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9787)
+### Dialog
+* Warn in development when Dialog has no accessible title - [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/9819), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9910)
 ## Drag and Drop
-* Prevent repeated `useDrop` enter and exit events for portaled children in drag and drop - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9844)
-## Form
+* Prevent repeated `useDrop` enter and exit events for portal children in drag and drop - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9844)
+### FocusScope
+* Fix focus behavior for inputs inside FocusScope - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8903)
+### Form
 * Expose `elementType` on FieldError to control the host element - [@fellipeutaka](https://github.com/fellipeutaka) - [PR](https://github.com/adobe/react-spectrum/pull/9759)
 * Skip resetting form fields when the reset event is canceled - [@nanto](https://github.com/nanto) - [PR](https://github.com/adobe/react-spectrum/pull/7603)
-## GridList
+### GridList
 * Add an `orientation` prop to GridList - [@essandhu](https://github.com/essandhu) - [PR](https://github.com/adobe/react-spectrum/pull/9785), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9843)
-* Add `orientation="horizontal"` support to GridList - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/8533), [PR](https://github.com/adobe/react-spectrum/pull/9854)
-## Listbox
-* Add `orientation="horizontal"` support to Listbox - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/8533), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9843)
+* Add `orientation="horizontal"` support - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/8533), [PR](https://github.com/adobe/react-spectrum/pull/9854)
+### Listbox
+* Add `orientation="horizontal"` support - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/8533), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9843)
 * Remove the macOS ARIA label workaround in Listbox `useOption` - [@cbodin](https://github.com/cbodin) - [PR](https://github.com/adobe/react-spectrum/pull/9736)
-## Modal
+### Modal
 * Prevent modal from reopening by settling canceled animation promises - [@christophmeise](https://github.com/christophmeise) - [PR](https://github.com/adobe/react-spectrum/pull/9772)
 * Prevent hover styles from sticking after closing a Modal with touch on Safari iOS 26 - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9715)
-* Expose `--page-width` and `--visual-viewport-width` from React Aria Modal - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9318)
-## NumberField
-* Add `isReadOnly` render props to ComboBox and NumberField - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9892)
-* Wrap `commit()` in `flushSync` when Enter is pressed in NumberField so the value flushes before form submit - [@tariq-r](https://github.com/tariq-r) - [PR](https://github.com/adobe/react-spectrum/pull/9683)
-* Preserve NumberField validation errors on blur when the value doesn't change - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9798)
+* Expose `--page-width` and `--visual-viewport-width` - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9318)
+* Use an attribute presence check for `data-react-aria-top-layer` in `MutationObserver` - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9763)
+### NumberField
+* Add `isReadOnly` render props - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9892)
+* Wrap `commit()` in `flushSync` when `Enter` is pressed so the value flushes before form submit - [@tariq-r](https://github.com/tariq-r) - [PR](https://github.com/adobe/react-spectrum/pull/9683)
+* Preserve validation errors on blur when the value doesn't change - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9798)
 * Fix various bugs in NumberParser - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8592)
 * Add `commitBehavior` to NumberField - [@will-stone](https://github.com/will-stone) - [PR](https://github.com/adobe/react-spectrum/pull/9679)
-## RangeCalendar
-* Add `commitBehavior` to allow customized behavior when the pointer is released outside RangeCalendar - [@Jiiieeef](https://github.com/Jiiieeef) - [PR](https://github.com/adobe/react-spectrum/pull/8899), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9855)
-## Select
+### RangeCalendar
+* Add `commitBehavior` to customize behavior when the pointer is released outside RangeCalendar - [@Jiiieeef](https://github.com/Jiiieeef) - [PR](https://github.com/adobe/react-spectrum/pull/8899), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9855), [PR](https://github.com/adobe/react-spectrum/pull/9910)
+### Select
 * Add `shouldCloseOnSelect` to Select - [@acr92](https://github.com/acr92) - [PR](https://github.com/adobe/react-spectrum/pull/8733)
 * Avoid an empty option in hidden Select markup - [@sonsu-lee](https://github.com/sonsu-lee) - [PR](https://github.com/adobe/react-spectrum/pull/9677)
-## Table
-* Add support for nested Table rows - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9740)
-* Fix keyboard Drag and Drop navigation in expandable rows for Table - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9773)
+### Table
+* Add support for expandable rows - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9740)
+* Fix keyboard drag and drop navigation in expandable rows - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9773)
 * Honor minimum width set by the Table column menu - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9838)
 * Prevent double focus rings in Table when clicking expand buttons - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9861)
 * Use `min-width` so Firefox respects applied Table column widths - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9871)
-* Automatically focus newly added Table rows after a drop - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9873)
-* Add a default expand action for Table - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9875)
-* Return focus to the parent when collapsing Table rows to improve navigation speed - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9842)
-## Tabs
+* Automatically focus newly added rows after a drop - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9873)
+* Update keyboard navigation to improve navigation speed with expandable rows - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9842)
+### Tabs
 * Default `shouldSelectOnPressUp` to true in Tabs when an item is a link - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9827)
-## TagGroup
+### TagGroup
 * Apply hover state to TagGroup items with an `href` - [@essandhu](https://github.com/essandhu) - [PR](https://github.com/adobe/react-spectrum/pull/9750)
-* Add `onAction` prop - [@onx2](https://github.com/onx2) - [PR](https://github.com/adobe/react-spectrum/pull/9222)
-## Tree
-* Add a default expand action for Tree - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9875)
-* Replace `TreeSection` with a `div` to prevent accessibility error - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9746)
+* Add `onAction` prop - [@onx2](https://github.com/onx2) - [PR](https://github.com/adobe/react-spectrum/pull/9222), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9910)
+### Tree
+* Improve accessibility for TreeSection - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9746)
 * Export `TreeEmptyStateRenderProps` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9783)
-* Return focus to the parent when collapsing Tree items to improve navigation speed - [@Sidnioulz](https://github.com/Sidnioulz) - [PR](https://github.com/adobe/react-spectrum/pull/9547)
+* Update keyboard navigation to improve navigation speed - [@Sidnioulz](https://github.com/Sidnioulz) - [PR](https://github.com/adobe/react-spectrum/pull/9547)
 * Update Tree drag and drop focus behavior - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/9751)
 * Fix inserting items into a child node with `useTreeData` under React Strict Mode - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/9824)
-## Virtualizer
+### Virtualizer
 * Automatically bind the Virtualizer visible rectangle to the window viewport - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9784), [PR](https://github.com/adobe/react-spectrum/pull/9902)
 * Lay out Virtualizer items using a consistent size - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9889)
