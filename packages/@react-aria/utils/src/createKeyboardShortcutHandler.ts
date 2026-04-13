@@ -11,8 +11,9 @@
  */
 
 import {isMac} from './platform';
+import {KeyboardEvent} from '@react-types/shared';
 
-export type KeyboardShortcutAction = (e: KeyboardEvent) => boolean;
+export type KeyboardShortcutAction = (e: KeyboardEvent) => (boolean | Partial<{shouldContinuePropagation?: boolean, shouldPreventDefault?: boolean}>);
 
 /** Maps shortcut strings (e.g. `"Mod+s"`, `"Ctrl+Shift+a"`) to handlers. */
 export type KeyboardShortcutBindings = Record<string, KeyboardShortcutAction>;
@@ -24,7 +25,8 @@ const MODIFIER_NAMES = new Set([
   'ctrl',
   'control',
   'meta',
-  'mod'
+  'mod',
+  'sel'
 ]);
 
 /** Canonical modifier order for stable keys (sorted, fixed order). */
@@ -37,11 +39,17 @@ export interface ParsedKeyboardShortcut {
   meta: boolean,
   /** Platform primary: Cmd on Mac, Ctrl on Windows/Linux — expands to Meta or Ctrl in canonical form. */
   mod: boolean,
+  /** Platform secondary: Alt on Mac, Ctrl on Windows/Linux. */
+  sel: boolean,
   key: string
 }
 
 function addModExpansion(set: Set<string>): void {
   set.add(isMac() ? 'Meta' : 'Ctrl');
+}
+
+function addSelExpansion(set: Set<string>): void {
+  set.add(isMac() ? 'Alt' : 'Ctrl');
 }
 
 /**
@@ -64,6 +72,9 @@ export function modifierSetFromParsed(parsed: ParsedKeyboardShortcut): Set<strin
   }
   if (parsed.mod) {
     addModExpansion(set);
+  }
+  if (parsed.sel) {
+    addSelExpansion(set);
   }
   return set;
 }
@@ -116,6 +127,7 @@ export function parseKeyboardShortcut(spec: string): ParsedKeyboardShortcut {
   let ctrl = false;
   let meta = false;
   let mod = false;
+  let sel = false;
   let keySegments: string[] = [];
   for (let part of parts) {
     let lower = part.toLowerCase();
@@ -130,6 +142,8 @@ export function parseKeyboardShortcut(spec: string): ParsedKeyboardShortcut {
         meta = true;
       } else if (lower === 'mod') {
         mod = true;
+      } else if (lower === 'sel') {
+        sel = true;
       }
     } else {
       keySegments.push(part);
@@ -140,7 +154,7 @@ export function parseKeyboardShortcut(spec: string): ParsedKeyboardShortcut {
       `Invalid keyboard shortcut "${spec}": include exactly one non-modifier key (e.g. "a", "Enter", "ArrowDown"). Combine any of Shift, Alt, Ctrl, Meta, and Mod.`
     );
   }
-  return {shift, alt, ctrl, meta, mod, key: keySegments[0]};
+  return {shift, alt, ctrl, meta, mod, sel, key: keySegments[0]};
 }
 
 function normalizeEventKey(key: string): string {
@@ -232,17 +246,15 @@ export function createKeyboardShortcutHandler(
   return (e: KeyboardEvent) => {
     let canonical = keyboardEventToCanonicalShortcut(e);
     let action = map.get(canonical);
-    let tookAction = false;
-    if (action != null) {
-      tookAction = action(e);
-      if (tookAction) {
-        e.preventDefault();
-      }
+    let result = action?.(e);
+    if (typeof result === 'boolean') {
+      result = {shouldContinuePropagation: !result, shouldPreventDefault: result};
     }
-    if (!tookAction && 'continuePropagation' in e) {
-      (e as any).continuePropagation();
-    } else if (tookAction && !('continuePropagation' in e)) {
-      e.stopPropagation();
+    if (result?.shouldPreventDefault) {
+      e.preventDefault();
+    }
+    if (!action || result?.shouldContinuePropagation) {
+      e.continuePropagation();
     }
   };
 }
