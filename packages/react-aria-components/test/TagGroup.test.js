@@ -661,6 +661,19 @@ describe('TagGroup', () => {
     expect(onAction).toHaveBeenCalledTimes(1);
   });
 
+  it('should support onAction on the items', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = renderTagGroup({selectionMode: 'none'}, {}, {onAction});
+    let items = getAllByRole('row');
+
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalledTimes(1);
+    onAction.mockReset();
+
+    await user.keyboard('{Enter}');
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
   it('should support onAction with selectionMode = single, behaviour = replace', async () => {
     let onAction = jest.fn();
     let {getAllByRole} = renderTagGroup({onAction, selectionMode: 'single', selectionBehavior: 'replace'});
