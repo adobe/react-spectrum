@@ -11,7 +11,7 @@
  */
 
 import {createEventHandler} from './createEventHandler';
-import {createKeyboardShortcutHandler, getEventTarget, type KeyboardShortcutAction, nodeContains} from '@react-aria/utils';
+import {createKeyboardShortcutHandler, getEventTarget, KeyboardShortcutBindings, nodeContains} from '@react-aria/utils';
 import {DOMAttributes, KeyboardEvents} from '@react-types/shared';
 import {KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 
@@ -19,7 +19,7 @@ export interface KeyboardProps extends KeyboardEvents {
   /** Whether the keyboard events should be disabled. */
   isDisabled?: boolean,
   /** Keyboard shortcuts to handle. */
-  shortcuts?: Record<string, KeyboardShortcutAction>,
+  shortcuts?: KeyboardShortcutBindings,
   /** A ref to the element to ignore portal events. */
   ignorePortalRef?: RefObject<Element> | null
 }
