@@ -12,8 +12,8 @@
 
 /// <reference types="css-module-types" />
 
-export {useDragAndDrop} from '@adobe/react-spectrum/useDragAndDrop';
+export {useDragAndDrop, DIRECTORY_DRAG_TYPE} from '@adobe/react-spectrum/useDragAndDrop';
 
-export type {DragAndDropOptions, DragAndDropHooks, DIRECTORY_DRAG_TYPE} from '@adobe/react-spectrum/useDragAndDrop';
+export type {DragAndDropOptions, DragAndDropHooks} from '@adobe/react-spectrum/useDragAndDrop';
 
 export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-types/shared';
