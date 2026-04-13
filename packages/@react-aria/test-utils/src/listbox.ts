@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act} from './act';
+import {act, within} from '@testing-library/react';
 import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
 import {ListBoxTesterOpts, UserOpts} from './types';
-import {within} from '@testing-library/dom';
 
 interface ListBoxToggleOptionOpts {
   /**
