@@ -14,6 +14,9 @@ import * as t from '@babel/types';
  * - Change validationState="invalid" to isInvalid.
  * - Remove validationState="valid" (it is no longer supported in Spectrum 2).
  * - Replace isLoading with loadingState.
+ * - Rename onSelectionChange to onChange.
+ * - Rename selectedKey to value.
+ * - Rename defaultSelectedKey to defaultValue.
  */
 export default function transformPicker(path: NodePath<t.JSXElement>): void {
   // Change menuWidth value from a DimensionValue to a pixel value
@@ -38,5 +41,23 @@ export default function transformPicker(path: NodePath<t.JSXElement>): void {
     oldPropName: 'isLoading',
     newPropName: 'loadingState',
     comment: 'Replace boolean passed to isLoading with appropriate loadingState.'
+  });
+
+  // Rename onSelectionChange to onChange
+  updatePropName(path, {
+    oldPropName: 'onSelectionChange',
+    newPropName: 'onChange'
+  });
+
+  // Rename selectedKey to value
+  updatePropName(path, {
+    oldPropName: 'selectedKey',
+    newPropName: 'value'
+  });
+
+  // Rename defaultSelectedKey to defaultValue
+  updatePropName(path, {
+    oldPropName: 'defaultSelectedKey',
+    newPropName: 'defaultValue'
   });
 }

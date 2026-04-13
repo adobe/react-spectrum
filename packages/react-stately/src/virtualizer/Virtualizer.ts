@@ -58,6 +58,8 @@ export class Virtualizer<T extends object, V> {
   readonly contentSize: Size;
   /** The currently visible rectangle. */
   readonly visibleRect: Rect;
+  /** The size of the virtualizer scroll view. */
+  readonly size: Size;
   /** The set of persisted keys that are always present in the DOM, even if not currently in view. */
   readonly persistedKeys: Set<Key>;
 
@@ -74,6 +76,7 @@ export class Virtualizer<T extends object, V> {
     this.layout = options.layout;
     this.contentSize = new Size;
     this.visibleRect = new Rect;
+    this.size = new Size;
     this.persistedKeys = new Set();
     this._visibleViews = new Map();
     this._renderedContent = new WeakMap();
@@ -288,19 +291,25 @@ export class Virtualizer<T extends object, V> {
       needsUpdate = true;
     }
 
-    if (!this.visibleRect.equals(opts.visibleRect)) {
+    if (!this.visibleRect.equals(opts.visibleRect) || !this.size.equals(opts.size)) {
       this._overscanManager.setVisibleRect(opts.visibleRect);
-      let shouldInvalidate = this.layout.shouldInvalidate(opts.visibleRect, this.visibleRect);
+
+      // Create a rectangle using the scroll position and layout size of the scroll view. This is not the same
+      // as the visibleRect, whose width and height may change during window scrolling.
+      let oldRect = new Rect(this.visibleRect.x, this.visibleRect.y, this.size.width, this.size.height);
+      let newRect = new Rect(opts.visibleRect.x, opts.visibleRect.y, opts.size.width, opts.size.height);
+      let shouldInvalidate = this.layout.shouldInvalidate(newRect, oldRect);
 
       if (shouldInvalidate) {
         offsetChanged = !opts.visibleRect.pointEquals(this.visibleRect);
-        sizeChanged = !opts.visibleRect.sizeEquals(this.visibleRect);
+        sizeChanged = !this.size.equals(opts.size);
         needsLayout = true;
       } else {
         needsUpdate = true;
       }
 
       mutableThis.visibleRect = opts.visibleRect;
+      mutableThis.size = opts.size;
     }
 
     if (opts.invalidationContext !== this._invalidationContext) {

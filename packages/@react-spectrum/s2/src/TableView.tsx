@@ -215,7 +215,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
     // we want the body to be sticky and only as wide as the table so it is always in view if loading/empty
     let isEmptyOrLoading = this.virtualizer?.collection.size === 0;
     if (isEmptyOrLoading) {
-      layoutInfo.rect.width = this.virtualizer!.visibleRect.width - 80;
+      layoutInfo.rect.width = this.virtualizer!.size.width - 80;
     }
 
     return [
@@ -228,7 +228,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
     let layoutNode = super.buildLoader(node, x, y);
     let {layoutInfo} = layoutNode;
     layoutInfo.allowOverflow = true;
-    layoutInfo.rect.width = this.virtualizer!.visibleRect.width;
+    layoutInfo.rect.width = this.virtualizer!.size.width;
     // If performing first load or empty, the body will be sticky so we don't want to apply sticky to the loader, otherwise it will
     // affect the positioning of the empty state renderer
     let collection = this.virtualizer!.collection;
@@ -246,7 +246,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
     // If loading or empty, we'll want the body to be sticky and centered
     let isEmptyOrLoading = this.virtualizer?.collection.size === 0;
     if (isEmptyOrLoading) {
-      layoutInfo.rect = new Rect(40, 40, this.virtualizer!.visibleRect.width - 80, this.virtualizer!.visibleRect.height - 80);
+      layoutInfo.rect = new Rect(40, 40, this.virtualizer!.size.width - 80, this.virtualizer!.size.height - 80);
       layoutInfo.isSticky = true;
     }
 

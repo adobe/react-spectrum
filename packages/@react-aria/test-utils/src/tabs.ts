@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act} from './act';
+import {act, within} from '@testing-library/react';
 import {Direction, Orientation, TabsTesterOpts, UserOpts} from './types';
 import {pressElement} from './events';
-import {within} from '@testing-library/dom';
 
 interface TriggerTabOptions {
   /**

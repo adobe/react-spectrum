@@ -75,6 +75,7 @@ function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicat
   let {layout, layoutOptions} = useContext(LayoutContext)!;
   let layoutOptions2 = layout.useLayoutOptions?.();
   let state = useVirtualizerState({
+    allowsWindowScrolling: true,
     layout,
     collection,
     renderView: (type, item) => {
@@ -98,9 +99,11 @@ function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicat
 
   let {contentProps} = useScrollView({
     onVisibleRectChange: state.setVisibleRect,
+    onSizeChange: state.setSize,
     contentSize: state.contentSize,
     onScrollStart: state.startScrolling,
-    onScrollEnd: state.endScrolling
+    onScrollEnd: state.endScrolling,
+    allowsWindowScrolling: true
   }, scrollRef!);
 
   return (
