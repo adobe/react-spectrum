@@ -341,41 +341,25 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   };
 
 
+  let withShiftSel = (key, callback) => {
+    return {
+      [key + '+Shift+Sel']: callback,
+      [key + '+Shift']: callback,
+      [key + '+Sel']: callback,
+      [key]: callback
+    };
+  };
   let {keyboardProps} = useKeyboard({
     ignorePortalRef: ref as RefObject<Element>,
     shortcuts: {
-      'ArrowDown+Shift+Sel': arrowDown,
-      'ArrowDown+Shift': arrowDown,
-      'ArrowDown+Sel': arrowDown,
-      'ArrowDown': arrowDown,
-      'ArrowUp+Shift+Sel': arrowUp,
-      'ArrowUp+Shift': arrowUp,
-      'ArrowUp+Sel': arrowUp,
-      'ArrowUp': arrowUp,
-      'Home+Shift+Sel': home,
-      'Home+Shift': home,
-      'Home+Sel': home,
-      'Home': home,
-      'ArrowLeft+Shift+Sel': arrowLeft,
-      'ArrowLeft+Shift': arrowLeft,
-      'ArrowLeft+Sel': arrowLeft,
-      'ArrowLeft': arrowLeft,
-      'ArrowRight+Shift+Sel': arrowRight,
-      'ArrowRight+Shift': arrowRight,
-      'ArrowRight+Sel': arrowRight,
-      'ArrowRight': arrowRight,
-      'End+Shift+Sel': end,
-      'End+Shift': end,
-      'End+Sel': end,
-      'End': end,
-      'PageDown+Shift+Sel': pageDown,
-      'PageDown+Shift': pageDown,
-      'PageDown+Sel': pageDown,
-      'PageDown': pageDown,
-      'PageUp+Shift+Sel': pageUp,
-      'PageUp+Shift': pageUp,
-      'PageUp+Sel': pageUp,
-      'PageUp': pageUp,
+      ...withShiftSel('ArrowDown', arrowDown),
+      ...withShiftSel('ArrowUp', arrowUp),
+      ...withShiftSel('ArrowLeft', arrowLeft),
+      ...withShiftSel('ArrowRight', arrowRight),
+      ...withShiftSel('Home', home),
+      ...withShiftSel('End', end),
+      ...withShiftSel('PageDown', pageDown),
+      ...withShiftSel('PageUp', pageUp),
       'a+Sel': aHandler,
       'Escape': escape,
       'Tab': tab,
