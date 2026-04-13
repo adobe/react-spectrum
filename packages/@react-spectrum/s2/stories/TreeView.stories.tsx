@@ -45,9 +45,9 @@ import {useAsyncList} from 'react-stately/useAsyncList';
 import {useListData} from 'react-stately/useListData';
 
 let onActionFunc = action('onAction');
-let noOnAction = undefined;
+let noOnAction = null;
 const onActionOptions = {onActionFunc, noOnAction};
-const events = ['onSelectionChange'];
+const events = ['onSelectionChange', 'onAction'];
 
 const meta: Meta<typeof TreeView> = {
   component: TreeView,
@@ -57,7 +57,7 @@ const meta: Meta<typeof TreeView> = {
   tags: ['autodocs'],
   args: {...getActionArgs(events)},
   argTypes: {
-    ...categorizeArgTypes('Events', ['onAction', ...events]),
+    ...categorizeArgTypes('Events', events),
     children: {table: {disable: true}},
     onAction: {
       options: Object.keys(onActionOptions), // An array of serializable values
@@ -81,7 +81,7 @@ const TreeExampleStatic = (args: TreeViewProps<any>): ReactElement => (
   <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
     <TreeView
       {...args}
-      disabledKeys={['projects']}
+      disabledKeys={['projects-1']}
       aria-label="test static tree"
       onExpandedChange={action('onExpandedChange')}
       onSelectionChange={action('onSelectionChange')}>
