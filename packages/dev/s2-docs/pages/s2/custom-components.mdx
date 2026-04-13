@@ -8,9 +8,11 @@ export const description = 'Learn how to build custom Spectrum 2 components usin
 
 # Creating Custom Components
 
-<PageDescription>Learn how to build custom Spectrum 2 components using React Aria and the Spectrum 2 `style` macro.</PageDescription>
+React Spectrum includes many components, but there may be times when you need to implement something custom that doesn't already exist in the library.
 
-React Spectrum offers over many components, but there may be times when you need to implement something custom that doesn't already exist in the library. This can be achieved by combining unstyled [React Aria Components](react-aria:) with the Spectrum 2 `style` macro. React Aria provides the component's behavior and accessibility features, while the `style` macro gives you access to Spectrum 2 design tokens for colors, spacing, typography, and more.
+This can be achieved by using the **[Spectrum 2 style macro](styling)** with unstyled **[React Aria Components](react-aria:)**.
+
+React Aria provides the component's behavior and accessibility features, while the `style` macro gives you access to Spectrum 2 design tokens for colors, spacing, typography, and more.
 
 ```tsx
 // 1. Import the React Aria Component
@@ -36,7 +38,7 @@ function MyButton({children}) {
 }
 ```
 
-The `style` macro runs at build time and returns a class name string. Because it produces atomic CSS using Spectrum 2 design tokens, your custom components automatically inherit the same visual language as the rest of the library.
+The `style` macro runs at build time and returns a class name string. Because it produces atomic CSS using Spectrum 2 design tokens, your custom components automatically use the same visual styles as the rest of the library.
 
 ## Render props
 
@@ -81,13 +83,15 @@ Every React Aria component exposes its own set of render props. Here are some of
 - **`isFocused`** – element has focus (either via mouse or keyboard)
 - **`isFocusVisible`** – element has keyboard focus (useful for focus rings)
 - **`isDisabled`** – element is disabled
-- **`isSelected`** – element is selected (for selectable components like checkboxes and switches)
+- **`isSelected`** – element is selected
 
-When you inline `style()` inside a JSX `className`, TypeScript will autocomplete the available conditions for that component.
+When you inline `style()` inside the `className` prop, TypeScript will autocomplete the available conditions for that component.
+
+Each React Aria component's render props are documented in the **API** section of its documentation page.
 
 ### Custom conditions
 
-You can define your own arbitrary conditions that map to component props like `variant` or `size`. Pass these alongside the render props when calling the style function.
+You can also define your own arbitrary conditions that map to component props like `variant` or `size`. Pass these alongside the render props when calling the style function.
 
 ```tsx
 import {Button} from 'react-aria-components/Button';
@@ -390,7 +394,7 @@ const helpTextStyles = style({
 
 ## Focus rings
 
-Keyboard focus indicators are essential for accessibility. The `focusRing` utility spreads into a `style` call and applies the standard Spectrum 2 focus ring on keyboard focus (`isFocusVisible`).
+The `focusRing` utility spreads into a `style` call and applies the standard Spectrum 2 focus ring on keyboard focus (`isFocusVisible`).
 
 ```tsx
 import {Button} from 'react-aria-components/Button';
