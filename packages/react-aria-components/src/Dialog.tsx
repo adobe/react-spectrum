@@ -105,7 +105,7 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
 export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
   let originalAriaLabelledby = props['aria-labelledby'];
   [props, ref] = useContextProps(props, ref, DialogContext);
-  let {dialogProps, titleProps} = useDialog({
+  let {dialogProps, titleProps, contentProps} = useDialog({
     ...props,
     // Only pass aria-labelledby from props, not context.
     // Context is used as a fallback below.

@@ -55,6 +55,50 @@ describe('useDialog', function () {
     expect(document.activeElement).toBe(input);
   });
 
+  describe('aria-describedby for alertdialog', function () {
+    function AlertDialogExample(props) {
+      let ref = useRef();
+      let {dialogProps, titleProps, contentProps} = useDialog({role: 'alertdialog', ...props}, ref);
+      return (
+        <div ref={ref} {...dialogProps} data-testid="test">
+          <h2 {...titleProps}>Alert Title</h2>
+          {props.showContent && <p {...contentProps}>Alert message content</p>}
+          {props.children}
+        </div>
+      );
+    }
+
+    it('should set aria-describedby on alertdialog when content is rendered', function () {
+      let res = render(<AlertDialogExample aria-label="Test" showContent />);
+      let el = res.getByTestId('test');
+      let contentEl = el.querySelector('p');
+      expect(el).toHaveAttribute('aria-describedby', contentEl.id);
+    });
+
+    it('should not set aria-describedby on regular dialog', function () {
+      function RegularDialogExample(props) {
+        let ref = useRef();
+        let {dialogProps, titleProps, contentProps} = useDialog(props, ref);
+        return (
+          <div ref={ref} {...dialogProps} data-testid="test">
+            <h2 {...titleProps}>Title</h2>
+            <p {...contentProps}>Content</p>
+          </div>
+        );
+      }
+
+      let res = render(<RegularDialogExample aria-label="Test" />);
+      let el = res.getByTestId('test');
+      expect(el).not.toHaveAttribute('aria-describedby');
+    });
+
+    it('should allow aria-describedby override on alertdialog', function () {
+      let res = render(<AlertDialogExample aria-label="Test" aria-describedby="custom-id" showContent />);
+      let el = res.getByTestId('test');
+      expect(el).toHaveAttribute('aria-describedby', 'custom-id');
+    });
+  });
+
   describe('dev warnings', function () {
     let originalWarn;
 
