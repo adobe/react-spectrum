@@ -1,6 +1,6 @@
 {
   "name": "@adobe/react-spectrum",
-  "version": "3.46.2",
+  "version": "3.47.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "./dist/exports/index.cjs",
@@ -52,17 +52,16 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/date": "^3.12.0",
-    "@react-spectrum/style-macro-s1": "3.0.0-alpha.5",
-    "@react-types/shared": "^3.33.1",
-    "@spectrum-icons/ui": "^3.6.23",
-    "@spectrum-icons/workflow": "^4.2.28",
+    "@internationalized/date": "^3.12.1",
+    "@react-types/shared": "^3.34.0",
+    "@spectrum-icons/ui": "^3.7.0",
+    "@spectrum-icons/workflow": "^4.3.0",
     "@swc/helpers": "^0.5.0",
     "client-only": "^0.0.1",
     "clsx": "^2.0.0",
-    "react-aria": "3.47.0",
-    "react-aria-components": "^1.16.0",
-    "react-stately": "3.45.0",
+    "react-aria": "3.48.0",
+    "react-aria-components": "1.17.0",
+    "react-stately": "3.46.0",
     "react-transition-group": "^4.4.5",
     "use-sync-external-store": "^1.6.0"
   },
@@ -76,7 +75,8 @@
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
     "@babel/cli": "^7.12.10",
-    "@babel/core": "^7.24.3"
+    "@babel/core": "^7.24.3",
+    "@react-spectrum/style-macro-s1": "3.0.0-alpha.6"
   },
   "targets": {
     "main": false,
