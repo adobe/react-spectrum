@@ -23,6 +23,7 @@ import {OverlayArrow} from '../src/OverlayArrow';
 import {Popover} from '../src/Popover';
 import React, {useRef} from 'react';
 import * as stories from '../stories/Modal.stories';
+import {Text} from '../src/Text';
 import {TextField} from '../src/TextField';
 import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import {User} from '@react-aria/test-utils';
@@ -75,6 +76,8 @@ describe('Dialog', () => {
     let heading = getByRole('heading');
     expect(dialog).toHaveAttribute('aria-labelledby', heading.id);
     expect(dialog).toHaveAttribute('data-test', 'dialog');
+    // aria-describedby is not set here because no Text slot="description" is rendered
+    expect(dialog).not.toHaveAttribute('aria-describedby');
 
     expect(dialog.closest('.react-aria-Modal')).toHaveAttribute('data-test', 'modal');
     expect(dialog.closest('.react-aria-ModalOverlay')).toBeInTheDocument();
@@ -83,6 +86,36 @@ describe('Dialog', () => {
     await user.click(close);
 
     expect(dialog).not.toBeInTheDocument();
+  });
+
+  it('should set aria-describedby when Text slot="description" is used in alertdialog', async () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Button>Open</Button>
+        <Modal>
+          <Dialog role="alertdialog">
+            {({close}) => (
+              <>
+                <Heading slot="title">Alert Title</Heading>
+                <Text slot="description">This is the alert message.</Text>
+                <Button onPress={close}>OK</Button>
+              </>
+            )}
+          </Dialog>
+        </Modal>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+    let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'modal'});
+    await dialogTester.open();
+    let dialog = dialogTester.dialog;
+    expect(dialog).toHaveAttribute('role', 'alertdialog');
+    expect(dialog).toHaveAttribute('aria-describedby');
+    let descId = dialog.getAttribute('aria-describedby');
+    let descEl = document.getElementById(descId);
+    expect(descEl).not.toBeNull();
+    expect(descEl.textContent).toBe('This is the alert message.');
   });
 
   it('works with modal and custom underlay', async () => {
