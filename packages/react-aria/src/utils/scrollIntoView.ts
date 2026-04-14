@@ -51,20 +51,20 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, op
   let viewLeft = scrollView === root ? 0 : view.left;
   let viewRight = scrollView === root ? scrollView.clientWidth : view.right;
 
-  let scrollMarginTop = parseInt(itemStyle.scrollMarginTop, 10) || 0;
-  let scrollMarginBottom = parseInt(itemStyle.scrollMarginBottom, 10) || 0;
-  let scrollMarginLeft = parseInt(itemStyle.scrollMarginLeft, 10) || 0;
-  let scrollMarginRight = parseInt(itemStyle.scrollMarginRight, 10) || 0;
+  let scrollMarginTop = parseFloat(itemStyle.scrollMarginTop) || 0;
+  let scrollMarginBottom = parseFloat(itemStyle.scrollMarginBottom) || 0;
+  let scrollMarginLeft = parseFloat(itemStyle.scrollMarginLeft) || 0;
+  let scrollMarginRight = parseFloat(itemStyle.scrollMarginRight) || 0;
 
-  let scrollPaddingTop = parseInt(viewStyle.scrollPaddingTop, 10) || 0;
-  let scrollPaddingBottom = parseInt(viewStyle.scrollPaddingBottom, 10) || 0;
-  let scrollPaddingLeft = parseInt(viewStyle.scrollPaddingLeft, 10) || 0;
-  let scrollPaddingRight = parseInt(viewStyle.scrollPaddingRight, 10) || 0;
+  let scrollPaddingTop = parseFloat(viewStyle.scrollPaddingTop) || 0;
+  let scrollPaddingBottom = parseFloat(viewStyle.scrollPaddingBottom) || 0;
+  let scrollPaddingLeft = parseFloat(viewStyle.scrollPaddingLeft) || 0;
+  let scrollPaddingRight = parseFloat(viewStyle.scrollPaddingRight) || 0;
 
-  let borderTopWidth = parseInt(viewStyle.borderTopWidth, 10) || 0;
-  let borderBottomWidth = parseInt(viewStyle.borderBottomWidth, 10) || 0;
-  let borderLeftWidth = parseInt(viewStyle.borderLeftWidth, 10) || 0;
-  let borderRightWidth = parseInt(viewStyle.borderRightWidth, 10) || 0;
+  let borderTopWidth = parseFloat(viewStyle.borderTopWidth) || 0;
+  let borderBottomWidth = parseFloat(viewStyle.borderBottomWidth) || 0;
+  let borderLeftWidth = parseFloat(viewStyle.borderLeftWidth) || 0;
+  let borderRightWidth = parseFloat(viewStyle.borderRightWidth) || 0;
 
   let scrollAreaTop = target.top - scrollMarginTop;
   let scrollAreaBottom = target.bottom + scrollMarginBottom;
