@@ -16,13 +16,13 @@ import {ContextValue, DEFAULT_SLOT, dom, DOMRenderProps, Provider, SlotProps, St
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {HeadingContext} from './Heading';
-import {TextContext} from './Text';
 import {mergeProps} from 'react-aria/mergeProps';
 import {OverlayTriggerProps, OverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 import {PopoverContext} from './Popover';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import {RootMenuTriggerStateContext} from './Menu';
+import {TextContext} from './Text';
 import {useId} from 'react-aria/useId';
 import {useMenuTriggerState} from 'react-stately/useMenuTriggerState';
 import {useOverlayTrigger} from 'react-aria/useOverlayTrigger';
