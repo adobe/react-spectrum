@@ -3,7 +3,7 @@ import {CodeFold} from './CodeFold';
 import {CodeLink} from './Link';
 import {CodeProps} from './VisualExampleClient';
 import {HastNode, HastTextNode, highlightHast, Language} from 'tree-sitter-highlight';
-import React, {cache} from 'react';
+import React, {cache, ReactNode} from 'react';
 import {style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {TabLink} from './FileTabs';
 import {Token, TokenType} from './CodeToken';
@@ -382,7 +382,7 @@ function text(node) {
 
 function highlightDiff(code: string) {
   let lines = code.split('\n');
-  let result = [];
+  let result: ReactNode[] = [];
   for (let line of lines) {
     if (line[0] === '-') {
       result.push(<span key={result.length} className={style({color: 'red-1000'})}>{line}</span>);
