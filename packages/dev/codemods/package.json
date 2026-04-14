@@ -7,6 +7,9 @@
   "targets": {
     "main": false
   },
+  "engines": {
+    "node": ">=22.14.0"
+  },
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "yarn build"
