@@ -8,7 +8,7 @@ export const description = 'Learn how to build custom Spectrum 2 components usin
 
 # Creating Custom Components
 
-React Spectrum includes many components, but there may be times when you need to implement something custom that doesn't already exist in the library.
+React Spectrum includes many components, but there may be times when you want to implement something custom that doesn't already exist in the library.
 
 This can be achieved by using the **[Spectrum 2 style macro](styling)** with unstyled **[React Aria Components](react-aria:)**.
 
@@ -38,7 +38,7 @@ function MyButton({children}) {
 }
 ```
 
-The `style` macro runs at build time and returns a class name string. Because it produces atomic CSS using Spectrum 2 design tokens, your custom components automatically use the same visual styles as the rest of the library.
+The `style` macro runs at build time and returns a class name string. Because it produces atomic CSS using Spectrum 2 design tokens, your custom components automatically use the Spectrum 2 styles as the rest of the library.
 
 ## Render props
 
@@ -274,7 +274,7 @@ const buttonStyles = style({
 
 ## Spacing
 
-The `style` macro provides a spacing scale based on Spectrum 2 tokens. Spacing values are specified as numbers (representing pixel values that are converted to `rem` at build time) and applied through properties like `padding`, `margin`, `gap`, and `inset`.
+The `style` macro provides a spacing scale based on Spectrum 2 tokens. Spacing values are specified as numbers on the 4px grid (representing pixel values that are converted to `rem` at build time) and applied through properties like `padding`, `margin`, `gap`, and `inset`.
 
 ```tsx
 const cardStyles = style({
@@ -417,7 +417,7 @@ const buttonStyles = style({
 <InlineAlert variant="informative">
   <Heading>Always add focus rings</Heading>
   <Content>
-    Every interactive custom component should include `focusRing()`. It ensures keyboard users can see which element is focused, which is a core accessibility requirement.
+    Every interactive custom component should include `focusRing()` or some other visual indicator of focus in order to satisfy [WCAG SC 2.4.7](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html)
   </Content>
 </InlineAlert>
 
@@ -493,15 +493,13 @@ const childStyles = style({
 
 This is useful when a parent component needs to influence the colors of deeply nested children without prop drilling.
 
-## Escape hatches
-
-### CSS macro
+## CSS macro
 
 For cases where the `style` macro's object API doesn't cover what you need (pseudo-elements, complex selectors, animations), the `css` macro lets you inject raw CSS.
 
-Use these escape hatches sparingly since they bypass the type safety and token constraints of the `style` macro.
+Use this escape hatch sparingly since it bypasses the type safety and token constraints of the `style` macro.
 
-### Merging styles
+## Merging styles
 
 When you need to combine multiple `style` results, for example when merging a base style with an override, use `mergeStyles`. This correctly resolves atomic CSS class conflicts so the last value wins.
 
@@ -534,7 +532,7 @@ function Card({isHighlighted, children}) {
 <InlineAlert variant="informative">
   <Heading>Note</Heading>
   <Content>
-    `mergeStyles` is a **runtime** function imported from `@react-spectrum/s2` (not the style macro). It deduplicates atomic classes so the last style wins for each property.
+    `mergeStyles` is a **runtime** function imported from `@react-spectrum/s2` (not the style macro).
   </Content>
 </InlineAlert>
 
