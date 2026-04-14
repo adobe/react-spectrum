@@ -490,11 +490,12 @@ const cellFocus = {
       }
     }
   },
-  borderRadius: '[6px]'
+  borderRadius: '[5px]',
+  zIndex: 5
 } as const;
 
 function CellFocusRing({selectionStyle} : {selectionStyle?: 'checkbox' | 'highlight'}) {
-  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0, pointerEvents: 'none', top: 0, bottom: '[-1px]'})({isFocusVisible: true, selectionStyle})} />;
+  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0, pointerEvents: 'none', top: 0, bottom: 0})({isFocusVisible: true, selectionStyle})} />;
 }
 
 const columnStyles = style({
@@ -1626,7 +1627,7 @@ const row = style({
       selectionStyle: {
         highlight: {
           default: 'none',
-          isSelected: 'default',
+          isSelected: '[5px]',
           isNextSelected: 'none'
         }
       }
@@ -1639,7 +1640,7 @@ const row = style({
       selectionStyle: {
         highlight: {
           default: 'none',
-          isSelected: 'default',
+          isSelected: '[5px]',
           isPrevSelected: 'none'
         }
       }
@@ -1649,7 +1650,7 @@ const row = style({
     selectionStyle: {
       highlight: {
         default: 'none',
-        isSelected: 'default',
+        isSelected: '[5px]',
         isNextSelected: 'none'
       }
     }
@@ -1658,7 +1659,7 @@ const row = style({
     selectionStyle: {
       highlight: {
         default: 'none',
-        isSelected: 'default',
+        isSelected: '[5px]',
         isPrevSelected: 'none'
       }
     }
@@ -1712,7 +1713,10 @@ const row = style({
           default: '[inset 0px 1px 0px var(--borderColorGray)]',
           isFirstItem: '[inset 0 0 0]',
           isPrevSelected: '[inset 0 0 0]',
-          isLastItem: '[inset 0px 1px 0px var(--borderColorGray), inset 0 -1px 0 var(--borderColorGray)]',
+          isLastItem: {
+            default: '[inset 0px 1px 0px var(--borderColorGray), inset 0 -1px 0 var(--borderColorGray)]',
+            isPrevSelected: '[inset 0 -1px 0 var(--borderColorGray)]'
+          },
           isSelected: {
             default: '[inset 0px -1px 0px var(--borderColorBlue), inset 0px 1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]',
             isPrevSelected: {
@@ -1782,14 +1786,14 @@ const row = style({
 // );
 
 const focusIndicator = css(
-  `&:before {
+  `&:after {
     content: "";
     width: 100%;
     height: 100%;
     top: 0;
     inset-inline-start: 0;
     z-index: 3;
-    border-radius: 6px;
+    border-radius: 5px;
     position: absolute;
     outline-style: solid;
     outline-color: var(--borderColorBlue);
@@ -1800,7 +1804,7 @@ const focusIndicator = css(
 );
 
 const boxShadowBorder = css(
-  `&:after {
+  `&:before {
     content: "";
     width: 100%;
     height: 100%;

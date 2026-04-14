@@ -129,8 +129,59 @@ export const Example: StoryObj<typeof StaticTable> = {
   }
 };
 
+
+const HighlightTable = (args: any) => (
+  <TableView aria-label="Files" {...args} styles={style({width: 400, height: 260})}>
+    <TableHeader>
+      <Column isRowHeader>Name</Column>
+      <Column>Type</Column>
+      <Column>Date Modified</Column>
+      <Column>Size</Column>
+    </TableHeader>
+    <TableBody>
+      <Row id="1">
+        <Cell>Games</Cell>
+        <Cell>File folder</Cell>
+        <Cell>6/7/2020</Cell>
+        <Cell>74 GB</Cell>
+      </Row>
+      <Row id="2">
+        <Cell>Program Files</Cell>
+        <Cell>File folder</Cell>
+        <Cell>4/7/2021</Cell>
+        <Cell>1.2 GB</Cell>
+      </Row>
+      <Row id="3">
+        <Cell>bootmgr</Cell>
+        <Cell>System file</Cell>
+        <Cell>11/20/2010</Cell>
+        <Cell>0.2 GB</Cell>
+      </Row>
+      <Row id="4">
+        <Cell>bootmgr</Cell>
+        <Cell>System file</Cell>
+        <Cell>11/20/2010</Cell>
+        <Cell>0.2 GB</Cell>
+      </Row>
+      <Row id="5">
+        <Cell>bootmgr</Cell>
+        <Cell>System file</Cell>
+        <Cell>11/20/2010</Cell>
+        <Cell>0.2 GB</Cell>
+      </Row>
+      <Row id="6">
+        <Cell>bootmgr</Cell>
+        <Cell>System file</Cell>
+        <Cell>11/20/2010</Cell>
+        <Cell>0.2 GB</Cell>
+      </Row>
+    </TableBody>
+  </TableView>
+);
+
+
 export const Highlight: StoryObj<typeof StaticTable> = {
-  render: StaticTable,
+  render: HighlightTable,
   args: {
     selectionMode: 'multiple',
     selectionStyle: 'highlight',
