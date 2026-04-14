@@ -740,7 +740,7 @@ function DefaultProvider({context, value, children}: {context: React.Context<any
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 
-export interface PickerSectionProps<T extends object> extends Omit<ListBoxSectionProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, StyleProps {}
+export interface PickerSectionProps<T extends object> extends Omit<ListBoxSectionProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes> {}
 export function PickerSection<T extends object>(props: PickerSectionProps<T>): ReactNode {
   let {size} = useContext(InternalPickerContext);
   return (

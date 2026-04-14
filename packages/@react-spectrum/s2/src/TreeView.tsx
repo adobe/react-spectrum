@@ -85,6 +85,7 @@ const TreeRendererContext = createContext<TreeRendererContextValue>({});
 
 const treeViewWrapper = style({
   minHeight: 0,
+  height: 'full',
   minWidth: 160,
   display: 'flex',
   isolation: 'isolate',

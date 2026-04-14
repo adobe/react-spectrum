@@ -14,14 +14,13 @@ export const description = 'Displays data in rows and columns, with row selectio
 
 <PageDescription>{docs.exports.TableView.description}</PageDescription>
 
-```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'overflowMode', 'density', 'isQuiet', 'disabledBehavior', 'selectionStyle']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple', 'treeColumn': 'name', disabledBehavior: 'selection', selectionStyle: 'checkbox'}} type="s2"
+```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'overflowMode', 'density', 'isQuiet', 'selectionStyle']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple', 'treeColumn': 'name', 'selectionStyle': 'checkbox'}} type="s2"
 "use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <TableView
   /* PROPS */
-  disabledKeys={['pacman', 'apps']}
   styles={style({width: 'full'})}>
   <TableHeader>
     <Column id="name" isRowHeader>Name</Column>
@@ -644,7 +643,7 @@ export default function EditableTable(props) {
 
 Use `selectionMode` to enable single or multiple selection, and `selectedKeys` (matching each row's `id`) to control the selected rows. Return an [ActionBar](ActionBar) from `renderActionBar` to handle bulk actions, and use `onAction` for row navigation. Disable rows with `isDisabled`. See the [selection guide](selection) for details.
 
-```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'disallowEmptySelection', 'selectionStyle']} initialProps={{selectionMode: 'multiple', selectionStyle: 'checkbox'}} wide type="s2"
+```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'disallowEmptySelection', 'disabledBehavior', 'selectionStyle']} initialProps={{selectionMode: 'multiple', disabledBehavior: 'selection', selectionStyle: 'checkbox'}} wide type="s2"
 "use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell, type Selection} from '@react-spectrum/s2/TableView';
 import {ActionBar, ActionButton} from '@react-spectrum/s2/ActionBar';
