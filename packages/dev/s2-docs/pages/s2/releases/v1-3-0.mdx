@@ -7,6 +7,9 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
+import {InstallCommand} from '../../../src/InstallCommand';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+
 import {Layout} from '../../../src/Layout';
 export default Layout;
 
@@ -15,12 +18,46 @@ import docs from 'docs:@react-spectrum/s2';
 export const hideNav = true;
 export const section = 'Releases';
 export const tags = ['release', 'S2'];
-export const date = 'April 16, 2026';
+export const date = 'April 14, 2026';
 export const title = 'v1.3.0';
-export const description = '';
+export const description = 'In this release, we are excited to support expandable rows in TableView, highlight selection in TreeView, window scrolling in collection components, and a new set of S2 workflow icons. In addition, we also added a new Agent skill to help with S1-to-S2 migrations, and made improvements to our existing S2 Agent skill.';
 export const isSubpage = true;
 
 # v1.3.0
+
+In this release we are excited to announce support for [expandable rows](../TableView#expandable-rows) in TableView, highlight selection in [TreeView](../TreeView), and window scrolling in collection components! Window scrolling enables virtualized collections to automatically scroll with the rest of the page – no height needed. In addition, we've updated the set of available [workflow icons](../icons), and reduced the number of dependencies installed when using S2 by over 90% – see below for details.
+
+To help assist with migrations from S1 to S2, we've added a new end to end [migration Agent skill](migrating#ai-assisted-migration-recommended) that you can use with your agent of choice. Our existing [S2 Agent skill](../ai#agent-skills) has also been updated to greatly improve its ability to select the proper S2 component to use from context, so be sure to update.
+
+## Sub-path imports
+
+In this release, we are adding support for sub-path imports for each component. These sub-paths match the name of the main component, and include all child components used within it. For example, `@react-spectrum/s2/Menu` includes `Menu`, `MenuItem`, etc.
+
+```diff
+-import {Menu, MenuItem} from '@react-spectrum/s2';
++import {Menu, MenuItem} from '@react-spectrum/s2/Menu';
+```
+
+Benefits of using sub-paths include:
+
+* Smaller bundles without relying on tree-shaking
+* Faster builds and test runs (only need to parse code you use instead of the entire library)
+* Improved discoverability of child components. TypeScript autocomplete shows you only the components typically used together.
+
+Our documentation has been updated to show sub-paths by default, but you can continue using the main entry point if you prefer. To migrate to using sub-path imports, run the `use-subpaths` codemod.
+
+<InstallCommand isCommand pkg="@react-spectrum/codemods" flags="use-subpaths --path /path/to/src" />
+
+<InlineAlert variant="notice">
+  <Heading>Important note</Heading>
+  <Content>To use sub-path imports, you must be using tools that support the package.json `exports` field. This may need to be enabled in [Parcel](https://parceljs.org/features/dependency-resolution/#enabling-package-exports) and [TypeScript](https://www.typescriptlang.org/tsconfig/#moduleResolution) (`"moduleResolution": "bundler"`).</Content>
+</InlineAlert>
+
+## Dependency consolidation
+
+We have also reduced the number of dependencies installed when using S2 by over 90%! To accomplish this, we have consolidated all of our internal hook packages (e.g. `@react-aria/button`, `@react-stately/table`) into the `react-aria` and `react-stately` monopackages. This means easier upgrades with fewer dependencies to manage, simplified discovery of child components, faster builds, more effective tree shaking, and improved micro-frontend support.
+
+Learn more about the changes and backwards compatibility in the [React Aria release notes](react-aria:releases/v1-17-0).
 
 ## Changelog
 

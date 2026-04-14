@@ -78,6 +78,14 @@ export function Code({children, lang, isFencedBlock, hideImports = true, links, 
     );
   }
 
+  if (lang === 'diff') {
+    return (
+      <code className={styles} style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}}>
+        {highlightDiff(children)}
+      </code>
+    );
+  }
+
   // If inside a fenced code block (pre element) or has an unsupported language,
   // render as plain text block without syntax highlighting
   if (isFencedBlock || lang) {
@@ -370,4 +378,20 @@ function text(node) {
   } else {
     return node.children.map(c => text(c)).join('');
   }
+}
+
+function highlightDiff(code: string) {
+  let lines = code.split('\n');
+  let result = [];
+  for (let line of lines) {
+    if (line[0] === '-') {
+      result.push(<span key={result.length} className={style({color: 'red-1000'})}>{line}</span>);
+    } else if (line[0] === '+') {
+      result.push(<span key={result.length} className={style({color: 'green-1000'})}>{line}</span>);
+    } else {
+      result.push(line);
+    }
+    result.push('\n');
+  }
+  return result;
 }
