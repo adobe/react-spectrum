@@ -16,6 +16,7 @@ import {ContextValue, DEFAULT_SLOT, dom, DOMRenderProps, Provider, SlotProps, St
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {HeadingContext} from './Heading';
+import {TextContext} from './Text';
 import {mergeProps} from 'react-aria/mergeProps';
 import {OverlayTriggerProps, OverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 import {PopoverContext} from './Popover';
@@ -147,6 +148,12 @@ export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dial
             slots: {
               [DEFAULT_SLOT]: {},
               title: {...titleProps, level: 2}
+            }
+          }],
+          [TextContext, {
+            slots: {
+              [DEFAULT_SLOT]: {},
+              description: contentProps
             }
           }],
           [ButtonContext, {
