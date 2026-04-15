@@ -51,6 +51,11 @@ export interface NumberFieldRenderProps {
    */
   isInvalid: boolean,
   /**
+   * Whether the number field is read only.
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean,
+  /**
    * Whether the number field is required.
    * @selector [data-required]
    */
@@ -111,7 +116,8 @@ export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       state,
       isDisabled: props.isDisabled || false,
       isInvalid: validation.isInvalid || false,
-      isRequired: props.isRequired || false
+      isRequired: props.isRequired || false,
+      isReadOnly: props.isReadOnly || false
     },
     defaultClassName: 'react-aria-NumberField'
   });
@@ -146,6 +152,7 @@ export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function
         ref={ref}
         slot={props.slot || undefined}
         data-disabled={props.isDisabled || undefined}
+        data-readonly={props.isReadOnly || undefined}
         data-required={props.isRequired || undefined}
         data-invalid={validation.isInvalid || undefined} />
       {props.name && <input type="hidden" name={props.name} form={props.form} value={isNaN(state.numberValue) ? '' : state.numberValue} disabled={props.isDisabled || undefined} />}

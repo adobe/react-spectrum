@@ -107,21 +107,21 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
       loaderHeight = DEFAULT_OPTIONS.loaderHeight
     } = invalidationContext.layoutOptions || {};
     this.dropIndicatorThickness = dropIndicatorThickness;
-    let visibleWidth = this.virtualizer!.visibleRect.width;
+    let virtualizerWidth = this.virtualizer!.size.width;
 
     // The max item width is always the entire viewport.
     // If the max item height is infinity, scale in proportion to the max width.
-    let maxItemWidth = Math.min(maxItemSize.width, visibleWidth);
+    let maxItemWidth = Math.min(maxItemSize.width, virtualizerWidth);
     let maxItemHeight = Number.isFinite(maxItemSize.height)
       ? maxItemSize.height
       : Math.floor((minItemSize.height / minItemSize.width) * maxItemWidth);
 
     // Compute the number of rows and columns needed to display the content
-    let columns = Math.floor(visibleWidth / (minItemSize.width + minSpace.width));
+    let columns = Math.floor(virtualizerWidth / (minItemSize.width + minSpace.width));
     let numColumns = Math.max(1, Math.min(maxColumns, columns));
 
     // Compute the available width (minus the space between items)
-    let width = visibleWidth - (minSpace.width * Math.max(0, numColumns));
+    let width = virtualizerWidth - (minSpace.width * Math.max(0, numColumns));
 
     // Compute the item width based on the space available
     let itemWidth = Math.floor(width / numColumns);
@@ -133,8 +133,8 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
     itemHeight = Math.max(minItemSize.height, Math.min(maxItemHeight, itemHeight));
 
     // Compute the horizontal spacing, content height and horizontal margin
-    let horizontalSpacing = Math.min(Math.max(maxHorizontalSpace, minSpace.width), Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1)));
-    this.margin = Math.floor((visibleWidth - numColumns * itemWidth - horizontalSpacing * (numColumns + 1)) / 2);
+    let horizontalSpacing = Math.min(Math.max(maxHorizontalSpace, minSpace.width), Math.floor((virtualizerWidth - numColumns * itemWidth) / (numColumns + 1)));
+    this.margin = Math.floor((virtualizerWidth - numColumns * itemWidth - horizontalSpacing * (numColumns + 1)) / 2);
 
     // Setup an array of column heights
     let columnHeights = Array(numColumns).fill(minSpace.height);
@@ -176,7 +176,7 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
         let startingHeights = [...columnHeights];
         while (
           !columnHeights.every((h, i) => h !== startingHeights[i]) ||
-          Math.min(...columnHeights) < this.virtualizer!.visibleRect.height
+          Math.min(...columnHeights) < this.virtualizer!.size.height
         ) {
           let key = `${node.key}-${skeletonCount++}`;
           let content = this.layoutInfos.get(key)?.content || {...node};
@@ -200,7 +200,7 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
       if (skeletonCount > 0 || !lastNode.props.isLoading) {
         loaderHeight = 0;
       }
-      const loaderWidth = visibleWidth - horizontalSpacing * 2;
+      const loaderWidth = virtualizerWidth - horizontalSpacing * 2;
       // Note that if the user provides isLoading to their sentinel during a case where they only want to render the emptyState, this will reserve
       // room for the loader alongside rendering the emptyState
       let rect = new Rect(horizontalSpacing, maxHeight, loaderWidth, loaderHeight);
@@ -209,7 +209,7 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
       maxHeight = layoutInfo.rect.maxY;
     }
 
-    this.contentSize = new Size(this.virtualizer!.visibleRect.width, maxHeight);
+    this.contentSize = new Size(this.virtualizer!.size.width, maxHeight);
     this.layoutInfos = newLayoutInfos;
     this.numColumns = numColumns;
   }

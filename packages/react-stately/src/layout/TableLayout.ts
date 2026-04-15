@@ -124,7 +124,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       }
     } else if (invalidationContext.sizeChanged || this.columnsChanged(newCollection, this.lastCollection)) {
       let columnLayout = new TableColumnLayout({});
-      this.columnWidths = columnLayout.buildColumnWidths(this.virtualizer!.visibleRect.width - this.padding * 2, newCollection, new Map());
+      this.columnWidths = columnLayout.buildColumnWidths(this.virtualizer!.size.width - this.padding * 2, newCollection, new Map());
       invalidationContext.sizeChanged = true;
     }
 
@@ -345,7 +345,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     // Make sure that the table body gets a height if empty or performing initial load
     let isEmptyOrLoading = collection?.size === 0;
     if (isEmptyOrLoading) {
-      y = this.virtualizer!.visibleRect.maxY;
+      y = this.virtualizer!.size.height;
     } else {
       y -= this.gap;
     }

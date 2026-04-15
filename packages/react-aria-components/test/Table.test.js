@@ -1524,6 +1524,30 @@ describe('Table', () => {
       await user.keyboard('{Escape}');
       act(() => jest.runAllTimers());
     });
+
+    it('should select dropped item', async () => {
+      const DndTableExample = stories.DndTableExample;
+      let {getAllByRole} = render(<DndTableExample />);
+      let tableTester = testUtilUser.createTester('Table', {root: getAllByRole('grid')[1]});
+      expect(tableTester.rows).toHaveLength(7);
+      expect(tableTester.selectedRows).toHaveLength(0);
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Adobe Photoshop and Adobe XD');
+      await user.tab();
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      // run onInsert promise in DnDTableExample first, otherwise updateFocusAfterDrop doesn't run properly
+      await act(async () => {});
+      act(() => jest.runAllTimers());
+      expect(tableTester.rows).toHaveLength(8);
+      expect(tableTester.selectedRows).toHaveLength(1);
+    });
   });
 
   describe('column resizing', () => {

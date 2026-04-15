@@ -1,11 +1,14 @@
 {
   "name": "@react-spectrum/codemods",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "main": "dist/index.js",
   "source": "src/index.ts",
   "bin": "dist/index.js",
   "targets": {
     "main": false
+  },
+  "engines": {
+    "node": ">=22.14.0"
   },
   "scripts": {
     "build": "tsc",
@@ -21,12 +24,12 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/react-spectrum": "^3.46.2",
+    "@adobe/react-spectrum": "3.47.0",
     "@babel/parser": "^7.24.5",
     "@babel/traverse": "^7.24.5",
     "@babel/types": "^7.24.5",
-    "@react-spectrum/s2": "^1.2.0",
-    "@react-types/shared": "^3.33.1",
+    "@react-spectrum/s2": "1.3.0",
+    "@react-types/shared": "^3.34.0",
     "@types/node": "^24",
     "boxen": "^5.1.2",
     "chalk": "^4.0.0",
