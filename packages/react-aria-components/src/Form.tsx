@@ -63,7 +63,7 @@ export const FormPendingContext = createContext<boolean>(false);
  */
 export const Form = forwardRef(function Form(props: FormProps, ref: ForwardedRef<HTMLFormElement>) {
   [props, ref] = useContextProps(props, ref, FormContext);
-  let {validationErrors, validationBehavior = 'native', children, className, style, submitAction, action, onSubmit, ...domProps} = props;
+  let {validationErrors, validationBehavior = 'native', render, children, className, style, submitAction, action, onSubmit, ...domProps} = props;
 
   let [onAction, isPending, actionError] = useAction(submitAction);
   let [formError, fieldErrors] = useMemo(() => {
@@ -100,6 +100,7 @@ export const Form = forwardRef(function Form(props: FormProps, ref: ForwardedRef
     children,
     className,
     style,
+    render,
     defaultClassName: 'react-aria-Form',
     values: {
       isPending,
