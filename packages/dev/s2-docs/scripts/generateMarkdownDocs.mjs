@@ -1734,21 +1734,16 @@ function remarkDocsComponentsToMarkdown() {
             }
           }
         }
-        // Use literal text content inside <PageDescription> if present.
-        const textContent = (node.children || [])
-          .filter(c => c.type === 'text' || c.type === 'mdxText')
-          .map(c => c.value)
-          .join('')
-          .trim();
-
-        if (textContent) {
+        // Use children inside <PageDescription> if present.
+        const descChildren = (node.children || []).filter(c => c.type !== 'mdxjsEsm');
+        if (descChildren.length > 0) {
           if (node.type === 'mdxJsxFlowElement') {
             parent.children[index] = {
               type: 'paragraph',
-              children: [{type: 'text', value: textContent}]
+              children: descChildren
             };
           } else {
-            parent.children[index] = {type: 'text', value: textContent};
+            parent.children.splice(index, 1, ...descChildren);
           }
           return;
         }
