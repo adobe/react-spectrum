@@ -1,50 +1,47 @@
-#  [React Spectrum Libraries](https://react-spectrum.adobe.com/)
+# Replacing react-spectrum's Fake DOM with Real DOM
 
-A collection of libraries and tools that help you build adaptive, accessible, and robust user experiences.
+## What was done
 
-### React Spectrum
+React-spectrum's collection system uses a two-phase render: React components first render into a hidden tree to build a Collection data structure, then the real UI renders from that Collection. The hidden tree was backed by a fake DOM — custom `Document`, `ElementNode`, and `TextNode` classes in `packages/react-aria/src/collections/Document.ts` that mimicked a subset of the browser DOM API.
 
-A React implementation of Spectrum, Adobe’s design system. Spectrum provides adaptive, accessible, and cohesive experiences for all Adobe applications.
+The goal was to replace this fake DOM with a real detached DOM element, using `createPortal` to render into it, and relying on the browser's native capabilities instead of reimplementing them.
 
-[Explore React Spectrum](https://react-spectrum.adobe.com/react-spectrum/index.html)
+## Why
 
-### React Aria
+The fake DOM duplicated browser functionality: tree management, child ordering, sibling traversal, node insertion/removal. A real detached `<div>` gets all of this for free. The fake DOM also required its own visibility tracking (an `isHidden` property with a custom style setter), its own node registration lifecycle, and its own mutation detection — all things the browser already does.
 
-A library of unstyled React components and hooks that helps you build accessible, high quality UI components for your application or design system.
+## Limitations and how they were overcome
 
-[Learn more about React Aria](https://react-spectrum.adobe.com/react-aria/index.html)
+### First attempt: Proxy-based interception (abandoned)
 
-### React Stately
+The initial implementation replaced the fake DOM with real elements but kept the same synchronous architecture. This required:
 
-A library of React Hooks that provides cross-platform state management for your design system.
+- **Proxy on `style`** to intercept `style.display = 'none'`. React hides stale Suspense content by setting this during the commit mutation phase. The fake DOM caught this via its custom style setter. With real elements, a Proxy was installed on each element's `style` property to detect the change and mark the element as hidden.
+- **Ref callbacks with complex dirty tracking** that registered DOM nodes, associated props, tracked siblings, marked dirty flags, and synchronously triggered collection rebuilds.
+- **`queueMicrotask` in `subscribe()`** to handle React.Activity transitions, where `useSyncExternalStore`'s `updateStoreInstance` passive effect doesn't replay.
 
-[More information about React Stately](https://react-spectrum.adobe.com/react-stately/index.html)
+This passed all tests (602 across Table, ListBox, GridList, Menu, Select, ComboBox, TagGroup, Tree, Tabs, Breadcrumbs, Disclosure). But it essentially recreated the fake DOM's behavior with more complexity on top of real DOM nodes — monkey-patching native objects and running dense logic in ref callbacks. It defeated the purpose of using real DOM.
 
-### Internationalized
+### Key realization
 
-A collection of framework-agnostic internationalization libraries for the web.
+If `updateCollection` is deferred to a microtask, by the time it runs, all of React's synchronous commit mutations have already settled. You don't need to intercept anything — just read the DOM state directly. `element.style.display === 'none'`? Check it when building the collection. Node added or removed? The DOM tree already reflects it.
 
-[Internationalized Packages](https://react-spectrum.adobe.com/internationalized/index.html)
+### Second attempt: MutationObserver + microtask (final approach)
 
-## Features
+The clean architecture:
 
-* ♿️ **[Accessible](https://react-spectrum.adobe.com/react-aria/accessibility.html)** – Accessibility and behavior is implemented according to [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/), including full screen reader and keyboard navigation support. All components have been tested across a wide variety of screen readers and devices to ensure the best experience possible for all users.
-* 📱 **[Adaptive](https://react-spectrum.adobe.com/react-aria/interactions.html)** – All components are designed to work with mouse, touch, and keyboard interactions. They’re built with responsive design principles to deliver a great experience, no matter the device.
-* 🌍 **[International](https://react-spectrum.adobe.com/react-aria/internationalization.html)** – Support over 30 languages is included out of the box, including support for right-to-left languages, date and number formatting, and more.
-* 🎨 **[Customizable](https://react-spectrum.adobe.com/react-spectrum/theming.html)** – React Spectrum components support custom themes, and automatically adapt for dark mode. For even more customizability, you can build your own components with your own DOM structure and styling using the [React Aria](https://react-spectrum.adobe.com/react-aria/index.html) and [React Stately](https://react-spectrum.adobe.com/react-stately/index.html) hooks to provide behavior, accessibility, and interactions.
+1. **MutationObserver** on the portal root with `childList`, `subtree`, and `attributeFilter: ['style']` detects all changes — additions, removals, reorders, and Suspense hiding — through one native mechanism.
+2. **Microtask-deferred `updateCollection`** — when the observer fires, queue a microtask. By that point, walk the real DOM tree, read its state directly, and build the collection.
+3. **`WeakMap<HTMLElement, Props>`** for associating React props with DOM nodes. Ref callbacks do one thing: `map.set(el, props)` on mount, `map.delete(el)` on unmount.
+4. **No Proxy, no dirty tracking, no synchronous collection builds in callbacks.**
 
-## Getting started
+### Specific React behaviors that required attention
 
-React Spectrum includes several libraries, which you can choose depending on your usecase.
+- **Suspense**: React sets `style.display = 'none'` via CSSOM during the mutation phase. CSSOM changes update the `style` attribute, so MutationObserver sees them. The microtask runs after all mutations settle, reads the correct display state.
+- **React.Activity**: `useSyncExternalStore`'s `updateStoreInstance` passive effect doesn't fire on hidden-to-visible transitions. `subscribe()` uses `queueMicrotask` to retry pending updates when a new subscriber registers, catching the case where React's own effect didn't fire.
+- **Async timing**: The fake DOM was synchronous; MutationObserver is async. Some tests needed `await act(() => Promise.resolve())` to flush the microtask queue. This is an acceptable test change reflecting the deliberate architectural choice.
 
-* [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/getting-started.html) is an implementation of Adobe's design system. If you’re integrating with Adobe software or would like a complete component library to use in your project, look no further!
-* [React Aria](https://react-spectrum.adobe.com/react-aria/getting-started.html) is a collection of unstyled React components and hooks that helps you build accessible, high quality UI components for your own application or design system. If you're building a component library for the web from scratch with your own styling, start here.
-* [React Stately](https://react-spectrum.adobe.com/react-stately/getting-started.html) is a library of state management hooks for use in your component library. If you're using React Aria, you'll likely also use React Stately, but it can also be used independently (e.g. on other platforms like React Native).
+## Files changed
 
-[Read more about our architecture](https://react-spectrum.adobe.com/architecture.html).
-
-## Contributing
-
-One of the goals of the React Spectrum project is to make building design systems and component libraries as easy as possible, while maintaining high quality interactions and accessibility support. We aim to raise the bar for web applications. The best way to achieve that goal is **together**. We would love contributions from the community no matter how big or small. 😍
-
-Read our [contributing guide](https://github.com/adobe/react-spectrum/blob/main/CONTRIBUTING.md) to learn about how to propose bugfixes and improvements, and how the development process works. For detailed information about our architecture, and how all of the pieces fit together, read our [architecture docs](https://react-spectrum.adobe.com/architecture.html).
+- `packages/react-aria/src/collections/Document.ts` — replaced fake DOM with real DOM wrapper, MutationObserver, microtask-deferred collection build
+- `packages/react-aria/src/collections/CollectionBuilder.tsx` — portal into real detached div, simplified ref callbacks
