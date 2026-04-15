@@ -232,6 +232,11 @@ class NumberParserImpl {
       value = replaceAll(value, "'", this.symbols.group);
     }
 
+    // On newer ICU versions, the special single quote has been normalized, so we need to backport.
+    if (this.symbols.group === "'" && value.includes('’') && isGroupSymbolAllowed) {
+      value = replaceAll(value, '’', this.symbols.group);
+    }
+
     // fr-FR group character is narrow non-breaking space, char code 8239 (U+202F), but that's not a key on the french keyboard,
     // so allow space and non-breaking space as a group char as well
     if (this.options.locale === 'fr-FR' && this.symbols.group && isGroupSymbolAllowed) {
@@ -274,9 +279,10 @@ class NumberParserImpl {
 
 const nonLiteralParts = new Set(['decimal', 'fraction', 'integer', 'minusSign', 'plusSign', 'group']);
 
-// This list is derived from https://www.unicode.org/cldr/charts/49/supplemental/language_plural_rules.html#comparison and includes
+// @cldr-plural-meta release=48.2 chart=https://www.unicode.org/cldr/charts/49/supplemental/language_plural_rules.html
+// This list is derived from the CLDR language plural rules comparison chart and includes
 // all unique numbers which we need to check in order to determine all the plural forms for a given locale.
-// Run scripts/generateAllPlurals.mjs to generate this list.
+// See: https://github.com/adobe/react-spectrum/pull/5134/files#r1337037855 (scripts/generateAllPlurals.mjs)
 const pluralNumbers = [
   0, 4, 2, 1, 11, 20, 3, 7, 100, 21, 0.1, 1.1
 ];

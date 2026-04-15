@@ -1,0 +1,74 @@
+name: CLDR plural numbers (weekly)
+on:
+  schedule:
+    # Mondays 09:00 UTC — checks https://cldr.unicode.org/index/downloads
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Open bump PR already exists?
+        id: open_pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          count=$(gh pr list --repo "${{ github.repository }}" --head chore/cldr-plural-meta-weekly --state open --json number -q 'length')
+          echo "open_pr_count=$count" >> "$GITHUB_OUTPUT"
+          if [ "$count" != 0 ]; then
+            echo "Skipping: branch \`chore/cldr-plural-meta-weekly\` already has $count open PR(s)." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Setup Node
+        if: steps.open_pr.outputs.open_pr_count == '0'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - name: Install
+        if: steps.open_pr.outputs.open_pr_count == '0'
+        run: yarn install --immutable
+
+      - name: Run plural maintenance (generateAllPlurals.mjs)
+        id: run
+        if: steps.open_pr.outputs.open_pr_count == '0'
+        run: |
+          set -e
+          node scripts/generateAllPlurals.mjs --maintenance | tee maintenance-log.txt
+
+      - name: Prepare PR body
+        if: steps.open_pr.outputs.open_pr_count == '0'
+        run: |
+          {
+            echo "This PR was opened by [.github/workflows/cldr-plural-numbers-weekly.yaml](${{ github.server_url }}/${{ github.repository }}/blob/${{ github.ref_name }}/.github/workflows/cldr-plural-numbers-weekly.yaml)."
+            echo ''
+            echo '### Maintenance log (JSON)'
+            echo ''
+            echo '```json'
+            cat maintenance-log.txt
+            echo '```'
+            echo ''
+            echo 'When `numbersChanged` is `false`, only the `// @cldr-plural-meta` line (release + chart URL) was refreshed against the [CLDR downloads](https://cldr.unicode.org/index/downloads) listing.'
+          } > pr-body.md
+
+      - name: Create pull request
+        if: steps.open_pr.outputs.open_pr_count == '0'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: sync CLDR plural meta for NumberParser'
+          title: 'chore: sync CLDR plural meta for NumberParser'
+          body-path: pr-body.md
+          branch: chore/cldr-plural-meta-weekly
+          delete-branch: true
+          add-paths: |
+            packages/@internationalized/number/src/NumberParser.ts

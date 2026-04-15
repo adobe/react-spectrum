@@ -10,11 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-/* Scrapes data on CLDR https://www.unicode.org/cldr/charts/49/supplemental/language_plural_rules.html#comparison
- * and generates a list of all possible values needed between all locales for plural rules.
- * It is used by our NumberParser to generate all literal strings, ex units 1 foot, 2 feet, but other locales have more than 2 forms.
+/**
+ * Scrapes CLDR language plural rules comparison tables (see unicode.org/cldr/charts/…/supplemental/language_plural_rules.html#comparison)
+ * and generates the list of sample values NumberParser needs for formatToParts across locales.
+ *
+ * Usage:
+ *   node scripts/generateAllPlurals.mjs [chartsPathSegment]   # default: latest
+ *   node scripts/generateAllPlurals.mjs 48
+ *   node scripts/generateAllPlurals.mjs --json [chartsPathSegment]
+ *   node scripts/generateAllPlurals.mjs --maintenance
+ *
+ * --maintenance: compares https://cldr.unicode.org/index/downloads to NumberParser.ts, re-scrapes via "latest" charts, updates the file when a newer CLDR release exists.
  */
+import fs from 'fs';
+import path from 'path';
+import {fileURLToPath} from 'url';
 import {JSDOM} from 'jsdom';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const NUMBER_PARSER = path.join(__dirname, '../packages/@internationalized/number/src/NumberParser.ts');
+const DOWNLOADS_URL = 'https://cldr.unicode.org/index/downloads';
 
 function getRange(row) {
   let range = [];
@@ -22,7 +37,7 @@ function getRange(row) {
   let th = row.firstElementChild;
 
   do {
-    const { textContent } = th;
+    const {textContent} = th;
 
     let [start, end = start] = textContent.split('-');
 
@@ -159,4 +174,13 @@ fetch('https://www.unicode.org/cldr/charts/49/supplemental/language_plural_rules
 
     let values = extractTable(dom, integerTable, fractionTable);
     console.log(values);
-  });
+    if (chartUrl) {
+      console.error('Source:', chartUrl);
+    }
+  }
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
