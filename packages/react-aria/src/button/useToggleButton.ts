@@ -63,7 +63,7 @@ export function useToggleButton(props: AriaToggleButtonOptions<ElementType>, sta
  */
 export function useToggleButton(props: AriaToggleButtonOptions<ElementType>, state: ToggleState, ref: RefObject<any>): ToggleButtonAria<HTMLAttributes<any>> {
   const {isSelected} = state;
-  const {isPressed, buttonProps, progressBarProps, isPending} = useButton({
+  const {isPressed, buttonProps, progressBarProps, isPending, actionError} = useButton({
     ...props,
     isPending: props.isPending || state.isPending,
     onPress: chain(state.toggle, props.onPress)
@@ -77,6 +77,7 @@ export function useToggleButton(props: AriaToggleButtonOptions<ElementType>, sta
       'aria-pressed': isSelected
     }),
     progressBarProps,
-    isPending
+    isPending,
+    actionError
   };
 }

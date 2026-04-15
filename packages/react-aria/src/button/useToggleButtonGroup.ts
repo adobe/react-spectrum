@@ -82,7 +82,7 @@ export function useToggleButtonGroupItem(props: AriaToggleButtonGroupItemOptions
     }
   };
 
-  let {isPressed, isSelected, isDisabled, isPending, buttonProps, progressBarProps} = useToggleButton({
+  let {isPressed, isSelected, isDisabled, isPending, buttonProps, progressBarProps, actionError} = useToggleButton({
     ...props,
     id: undefined,
     isDisabled: props.isDisabled || state.isDisabled
@@ -99,6 +99,7 @@ export function useToggleButtonGroupItem(props: AriaToggleButtonGroupItemOptions
     isDisabled,
     buttonProps,
     progressBarProps,
-    isPending
+    isPending,
+    actionError
   };
 }

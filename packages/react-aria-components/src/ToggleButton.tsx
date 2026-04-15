@@ -71,7 +71,7 @@ export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
     }
   } : props);
 
-  let {buttonProps, progressBarProps, isPressed, isSelected, isDisabled, isPending} = groupState && props.id != null
+  let {buttonProps, progressBarProps, isPressed, isSelected, isDisabled, isPending, actionError} = groupState && props.id != null
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useToggleButtonGroupItem({...props, id: props.id}, groupState, ref)
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -82,7 +82,7 @@ export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
-    values: {isHovered, isPressed, isFocused, isSelected: state.isSelected, isFocusVisible, isDisabled, isPending, state},
+    values: {isHovered, isPressed, isFocused, isSelected: state.isSelected, isFocusVisible, isDisabled, isPending, state, actionError},
     defaultClassName: 'react-aria-ToggleButton'
   });
 

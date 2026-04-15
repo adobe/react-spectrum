@@ -457,7 +457,8 @@ export const LinkButton = forwardRef(function LinkButton(props: LinkButtonProps,
         size,
         staticColor,
         isStaticColor: !!staticColor,
-        isPending: false
+        isPending: false,
+        actionError: null
       }, styles)}>
       {(renderProps) => (<>
         {variant === 'genai' || variant === 'premium'
