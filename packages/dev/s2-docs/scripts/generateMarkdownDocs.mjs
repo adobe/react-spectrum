@@ -3218,6 +3218,12 @@ async function main() {
 
   for (const filePath of mdxFiles) {
     const rawContent = fs.readFileSync(filePath, 'utf8');
+
+    // Skip redirect pages
+    if (rawContent.includes('<meta http-equiv="refresh"')) {
+      continue;
+    }
+
     const mdContent = rawContent.replace(LICENSE_COMMENT_REGEX, '');
     const processor = unified()
       .use(remarkParse)
