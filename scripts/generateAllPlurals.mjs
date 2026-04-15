@@ -165,14 +165,156 @@ function extractTable(dom, integerTable, fractionTable) {
   return Array.from(values);
 }
 
-fetch('https://www.unicode.org/cldr/charts/49/supplemental/language_plural_rules.html#comparison')
-  .then(async (response) => {
-    let data = await response.text();
-    const dom = new JSDOM(data);
+export async function scrapePluralNumbers(chartsPathSegment) {
+  const url = `https://www.unicode.org/cldr/charts/${chartsPathSegment}/supplemental/language_plural_rules.html#comparison`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
+  }
+  const finalUrl = response.url;
+  const data = await response.text();
+  const dom = new JSDOM(data);
+  const tables = dom.window.document.querySelectorAll('.pluralComp');
+  if (tables.length < 2) {
+    throw new Error(`Expected at least 2 .pluralComp tables, found ${tables.length} at ${finalUrl}`);
+  }
+  const integerTable = tables[0];
+  const fractionTable = tables[1];
+  const values = extractTable(dom, integerTable, fractionTable);
+  return {values, chartUrl: finalUrl};
+}
 
-    const [integerTable, fractionTable] = dom.window.document.querySelectorAll('.pluralComp');
+function compareRelease(a, b) {
+  const pa = a.split('.').map((x) => parseInt(x, 10));
+  const pb = b.split('.').map((x) => parseInt(x, 10));
+  const len = Math.max(pa.length, pb.length);
+  for (let i = 0; i < len; i++) {
+    const da = pa[i] ?? 0;
+    const db = pb[i] ?? 0;
+    if (da !== db) {
+      return da - db;
+    }
+  }
+  return 0;
+}
 
-    let values = extractTable(dom, integerTable, fractionTable);
+async function latestReleaseFromDownloads() {
+  const res = await fetch(DOWNLOADS_URL);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch ${DOWNLOADS_URL}: ${res.status}`);
+  }
+  const html = await res.text();
+  const re = /<td style="text-align: center">(\d+(?:\.\d+)*)<\/td>/g;
+  let m;
+  let best = null;
+  while ((m = re.exec(html)) !== null) {
+    const v = m[1];
+    if (best === null || compareRelease(v, best) > 0) {
+      best = v;
+    }
+  }
+  if (!best) {
+    throw new Error('Could not parse any CLDR release version from downloads page');
+  }
+  return best;
+}
+
+function readLastCheckedRelease(tsSource) {
+  const m = tsSource.match(/@cldr-plural-meta\s+release=([0-9.]+)/);
+  return m ? m[1] : null;
+}
+
+function formatPluralNumbersArray(values) {
+  const body = values.map((n) => (Number.isInteger(n) ? String(n) : String(n))).join(', ');
+  return `[\n  ${body}\n]`;
+}
+
+/** Parses `const pluralNumbers = [...]` array literal from NumberParser source. */
+function parsePluralNumbersFromTs(tsSource) {
+  const m = tsSource.match(/const pluralNumbers = (\[[\s\S]*?\]);/);
+  if (!m) {
+    return null;
+  }
+  const inner = m[1].trim().slice(1, -1).trim();
+  if (!inner) {
+    return [];
+  }
+  return inner.split(',').map((part) => parseFloat(part.trim())).filter((n) => !Number.isNaN(n));
+}
+
+/** True if the two lists are the same set of numbers. */
+function samePluralNumbers(a, b) {
+  if (a.length !== b.length) {
+    return false;
+  }
+  const sort = (xs) => [...xs].sort((x, y) => x - y);
+  const as = sort(a);
+  const bs = sort(b);
+  for (let i = 0; i < as.length; i++) {
+    if (as[i] !== bs[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function applyNumberParserUpdate(tsSource, {release, chartUrl, values}) {
+  const meta = `// @cldr-plural-meta release=${release} chart=${chartUrl}`;
+  const pluralBlock = `${meta}
+// This list is derived from the CLDR language plural rules comparison chart and includes
+// all unique numbers which we need to check in order to determine all the plural forms for a given locale.
+// See: https://github.com/adobe/react-spectrum/pull/5134/files#r1337037855 (scripts/generateAllPlurals.mjs)
+const pluralNumbers = ${formatPluralNumbersArray(values)};`;
+
+  const re = /\/\/ @cldr-plural-meta release=[^\n]+\n(?:\/\/[^\n]*\n)*const pluralNumbers = \[[\s\S]*?\];/;
+  if (!re.test(tsSource)) {
+    throw new Error('Could not find pluralNumbers block (expected // @cldr-plural-meta …) in NumberParser.ts');
+  }
+  return tsSource.replace(re, pluralBlock);
+}
+
+async function runMaintenance() {
+  const latest = await latestReleaseFromDownloads();
+  let ts = fs.readFileSync(NUMBER_PARSER, 'utf8');
+  const current = readLastCheckedRelease(ts);
+  if (current && compareRelease(latest, current) <= 0) {
+    console.log(JSON.stringify({action: 'skip', reason: 'no-newer-cldr-release', latest, current}));
+    return;
+  }
+
+  const {values, chartUrl} = await scrapePluralNumbers('latest');
+  const previousValues = parsePluralNumbersFromTs(ts);
+  const numbersChanged =
+    previousValues === null || !samePluralNumbers(previousValues, values);
+
+  ts = applyNumberParserUpdate(ts, {release: latest, chartUrl, values});
+  fs.writeFileSync(NUMBER_PARSER, ts, 'utf8');
+
+  console.log(JSON.stringify({
+    action: 'updated',
+    latestRelease: latest,
+    previousRelease: current,
+    chartUrl,
+    numbersChanged,
+    values,
+  }));
+}
+
+async function main() {
+  const argv = process.argv.slice(2);
+  if (argv.includes('--maintenance')) {
+    await runMaintenance();
+    return;
+  }
+
+  const json = argv.includes('--json');
+  const pos = argv.filter((a) => !a.startsWith('--'));
+  const charts = pos[0] || process.env.CLDR_CHARTS_VERSION || 'latest';
+
+  const {values, chartUrl} = await scrapePluralNumbers(charts);
+  if (json) {
+    console.log(JSON.stringify({values, chartUrl, chartsPathSegment: charts}));
+  } else {
     console.log(values);
     if (chartUrl) {
       console.error('Source:', chartUrl);
