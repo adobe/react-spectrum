@@ -52,24 +52,41 @@ export interface CheckboxProps extends Omit<CheckboxFieldProps, 'className' | 's
 export const CheckboxContext = createContext<ContextValue<Partial<CheckboxProps>, FocusableRefValue<HTMLInputElement, HTMLDivElement>>>(null);
 
 const field = style({
-  width: 'fit',
+  display: 'grid',
+  gridTemplateColumns: ['max-content', '1fr'],
+  columnGap: 'text-to-control',
+  width: {
+    default: 'fit',
+    isInCheckboxGroup: 'full'
+  },
+  font: controlFont(),
   '--field-height': {
     type: 'height',
     value: controlSize()
   },
-  '--field-gap': {
-    type: 'rowGap',
-    value: 'calc(var(--field-height) - 1lh)'
+  rowGap: {
+    default: 'calc(var(--field-height) - 1lh)',
+    isInCheckboxGroup: {
+      size: {
+        S: space(1),
+        M: space(1), 
+        L: 2,
+        XL: 2
+      }
+    }
+  },
+  gridColumnStart: {
+    isInForm: 'field'
   }
 }, getAllowedOverrides());
 
 const wrapper = style({
-  display: 'flex',
+  display: 'grid',
+  gridTemplateColumns: 'subgrid',
+  gridColumnStart: 1,
+  gridColumnEnd: -1,
   position: 'relative',
-  columnGap: 'text-to-control',
   alignItems: 'baseline',
-  width: 'full',
-  font: controlFont(),
   transition: 'colors',
   color: {
     default: baseColor('neutral'),
@@ -77,9 +94,6 @@ const wrapper = style({
       default: 'disabled',
       forcedColors: 'GrayText'
     }
-  },
-  gridColumnStart: {
-    isInForm: 'field'
   },
   disableTapHighlight: true
 });
@@ -140,7 +154,7 @@ export const iconStyles = style({
   }
 });
 
-const iconSize = {
+const smallerSize = {
   S: 'XS',
   M: 'S',
   L: 'M',
@@ -167,7 +181,7 @@ export const Checkbox = forwardRef(function Checkbox({children, ...props}: Check
       ref={domRef}
       inputRef={inputRef}
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + field({size: props.size || 'M'}, props.styles)}>
+      className={(props.UNSAFE_className || '') + field({size: props.size || 'M', isInCheckboxGroup}, props.styles)}>
       {({isDisabled, isInvalid}) => (<>
         <CheckboxButton className={renderProps => wrapper({...renderProps, isInForm, size: props.size || 'M'})}>
           {renderProps => {
@@ -182,10 +196,10 @@ export const Checkbox = forwardRef(function Checkbox({children, ...props}: Check
                   isEmphasized: isInCheckboxGroup ? ctx?.isEmphasized : props.isEmphasized
                 })}>
                 {renderProps.isIndeterminate &&
-                  <DashIcon size={iconSize[props.size || 'M']} className={iconStyles} />
+                  <DashIcon size={smallerSize[props.size || 'M']} className={iconStyles} />
                 }
                 {renderProps.isSelected && !renderProps.isIndeterminate &&
-                  <CheckmarkIcon size={iconSize[props.size || 'M']} className={iconStyles} />
+                  <CheckmarkIcon size={smallerSize[props.size || 'M']} className={iconStyles} />
                 }
               </div>
             );
@@ -201,15 +215,22 @@ export const Checkbox = forwardRef(function Checkbox({children, ...props}: Check
                 <CenterBaseline>
                   {checkbox}
                 </CenterBaseline>
-                {children}
+                <span className={style({gridColumnStart: 2})}>{children}</span>
               </>
             );
           }}
         </CheckboxButton>
         <HelpText
-          size={props.size || 'M'}
+          size={isInCheckboxGroup ? smallerSize[props.size || 'M'] : props.size || 'M'}
+          styles={style({
+            gridColumnStart: {
+              default: 1,
+              isInCheckboxGroup: 2
+            },
+            paddingTop: 0
+          })({isInCheckboxGroup})}
           isDisabled={isDisabled}
-          isInvalid={isInvalid}
+          isInvalid={isInCheckboxGroup ? false : isInvalid}
           description={props.description}
           showErrorIcon>
           {props.errorMessage}

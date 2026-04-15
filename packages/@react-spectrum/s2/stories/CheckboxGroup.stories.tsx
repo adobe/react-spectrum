@@ -17,6 +17,7 @@ import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof CheckboxGroup> = {
   component: CheckboxGroup,
@@ -97,5 +98,22 @@ export const ContextualHelpExample: Story = {
         </Footer>
       </ContextualHelp>
     )
+  }
+};
+
+export const HelpText: Story = {
+  render(args) {
+    return (
+      <CheckboxGroup {...args} styles={style({width: 300})}>
+        <Checkbox value="soccer" description="Get notified about new features and improvements">Product update</Checkbox>
+        <Checkbox value="baseball" description="Important notifications about your account safety">Security alerts</Checkbox>
+        <Checkbox value="basketball" description="Receive promotions, offers, and newsletters">Marketing emails</Checkbox>
+      </CheckboxGroup>
+    );
+  },
+  args: {
+    label: 'Email notification preferences',
+    description: 'Optional checkbox group description',
+    errorMessage: 'Please choose notification preferences'
   }
 };

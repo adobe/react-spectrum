@@ -11,13 +11,13 @@
  */
 
 import {
-  Radio as AriaRadio,
   RadioGroup as AriaRadioGroup,
   RadioGroupProps as AriaRadioGroupProps,
   RadioProps as AriaRadioProps,
+  RadioButton,
+  RadioField,
   RadioRenderProps
 } from 'react-aria-components/RadioGroup';
-
 import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import {ContextValue} from 'react-aria-components/slots';
@@ -144,7 +144,7 @@ export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(props: Ra
   );
 });
 
-export interface RadioProps extends Omit<AriaRadioProps, 'description' | 'className' | 'style' | 'render' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
+export interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' | 'render' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, Pick<HelpTextProps, 'description'> {
   /**
    * The label for the element.
    */
@@ -168,12 +168,36 @@ interface RadioContextProps extends RadioProps, ContextProps {}
 
 interface RenderProps extends RadioRenderProps, ContextProps {}
 
-const wrapper = style({
-  display: 'flex',
-  position: 'relative',
+const radioField = style({
+  display: 'grid',
+  gridTemplateColumns: ['max-content', '1fr'],
   columnGap: 'text-to-control',
-  alignItems: 'baseline',
+  width: 'full',
   font: controlFont(),
+  '--field-height': {
+    type: 'height',
+    value: controlSize()
+  },
+  rowGap: {
+    size: {
+      S: space(1),
+      M: space(1), 
+      L: 2,
+      XL: 2
+    }
+  },
+  gridColumnStart: {
+    isInForm: 'field'
+  }
+}, getAllowedOverrides());
+
+const wrapper = style({
+  display: 'grid',
+  gridTemplateColumns: 'subgrid',
+  gridColumnStart: 1,
+  gridColumnEnd: -1,
+  position: 'relative',
+  alignItems: 'baseline',
   transition: 'colors',
   color: {
     default: baseColor('neutral'),
@@ -182,11 +206,8 @@ const wrapper = style({
       forcedColors: 'GrayText'
     }
   },
-  gridColumnStart: {
-    isInForm: 'field'
-  },
   disableTapHighlight: true
-}, getAllowedOverrides());
+});
 
 const circle = style<RenderProps>({
   ...focusRing(),
@@ -223,11 +244,18 @@ const circle = style<RenderProps>({
   }
 });
 
+const smallerSize = {
+  S: 'XS',
+  M: 'S',
+  L: 'M',
+  XL: 'L'
+} as const;
+
 /**
  * Radio buttons allow users to select a single option from a list of mutually exclusive options.
  * All possible options are exposed up front for users to compare.
  */
-export const Radio = /*#__PURE__*/ forwardRef(function Radio(props: RadioProps, ref: FocusableRef<HTMLInputElement, HTMLLabelElement>) {
+export const Radio = /*#__PURE__*/ forwardRef(function Radio(props: RadioProps, ref: FocusableRef<HTMLInputElement, HTMLDivElement>) {
   let {children, UNSAFE_className = '', UNSAFE_style} = props;
   let circleRef = useRef(null);
   let inputRef = useRef<HTMLInputElement | null>(null);
@@ -239,28 +267,42 @@ export const Radio = /*#__PURE__*/ forwardRef(function Radio(props: RadioProps, 
   } = useFormProps<RadioContextProps>(props);
 
   return (
-    <AriaRadio
+    <RadioField
       {...allProps}
       ref={domRef}
       inputRef={inputRef}
       style={UNSAFE_style}
-      className={renderProps => UNSAFE_className + wrapper({...renderProps, isInForm, size}, allProps.styles)}>
+      className={renderProps => UNSAFE_className + radioField({...renderProps, isInForm, size}, allProps.styles)}>
       {renderProps => (
         <>
-          <CenterBaseline>
-            <div
-              ref={circleRef}
-              style={pressScale(circleRef)(renderProps)}
-              className={circle({
-                ...renderProps,
-                isEmphasized: allProps.isEmphasized,
-                isSelected: renderProps.isSelected,
-                size
-              })} />
-          </CenterBaseline>
-          {children}
+          <RadioButton className={renderProps => wrapper({...renderProps, isInForm, size})}>
+            {renderProps => (
+              <>
+                <CenterBaseline>
+                  <div
+                    ref={circleRef}
+                    style={pressScale(circleRef)(renderProps)}
+                    className={circle({
+                      ...renderProps,
+                      isEmphasized: allProps.isEmphasized,
+                      isSelected: renderProps.isSelected,
+                      size
+                    })} />
+                </CenterBaseline>
+                {children}
+              </>
+            )}
+          </RadioButton>
+          <HelpText
+            size={smallerSize[size]}
+            styles={style({
+              gridColumnStart: 2,
+              paddingTop: 0
+            })}
+            isDisabled={renderProps.isDisabled}
+            description={props.description} />
         </>
       )}
-    </AriaRadio>
+    </RadioField>
   );
 });
