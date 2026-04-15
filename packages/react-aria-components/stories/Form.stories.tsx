@@ -11,7 +11,9 @@
  */
 
 import {action} from 'storybook/actions';
+import {Alert} from '../src/Alert';
 import {Button} from '../src/Button';
+import {FieldError} from '../src/FieldError';
 import {Form} from '../src/Form';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
@@ -77,3 +79,51 @@ export const FormAutoFillExample: FormStory = () => {
   );
 };
 
+export const FormErrorExample: FormStory = () => {
+  return (
+    <Form
+      style={{display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'start'}}
+      submitAction={async (formData) => {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        let name = formData.get('name');
+        if (!name) {
+          throw {
+            issues: [{
+              message: 'Enter your name',
+              path: ['name']
+            }]
+          };
+        }
+
+        if (name === 'test') {
+          throw 'Could not create account. Please try again later.';
+        }
+      }}>
+      {({actionError}) => (<>
+        <p>Submit an empty value for a field-level error.<br />Enter "test" to see a form-level error.</p>
+        {actionError && 
+          <Alert
+            style={({isFocusVisible}) => ({
+              border: '2px solid red',
+              padding: 16,
+              outline: isFocusVisible ? '2px solid blue' : undefined,
+              outlineOffset: 2
+            })}>
+            {String(actionError)}
+          </Alert>
+        }
+        <TextField
+          name="name"
+          style={{display: 'flex', flexDirection: 'column'}}>
+          <Label>Name</Label>
+          <Input />
+          <FieldError style={{color: 'red'}} />
+        </TextField>
+        <Button type="submit">
+          {({isPending}) => isPending ? 'Submitting...' : 'Submit'}
+        </Button>
+      </>)}
+    </Form>
+  );
+};

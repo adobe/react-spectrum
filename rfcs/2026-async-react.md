@@ -207,6 +207,51 @@ function App() {
 }
 ```
 
+#### Form errors
+
+When an error is thrown in a form's `submitAction`, it will be available via the `actionError` render prop. This can be displayed to the user by rendering an `<Alert>`, which will be focused and announced by screen readers. For field-level errors (e.g. server validation), a special error object compatible with [Standard Schema](https://standardschema.dev/schema) could be supported, allowing these errors to be automatically propagated to the correct fields (as we support via the `validationErrors` prop today).
+
+**Note**: This proposes a separate `submitAction` prop rather than overloading the existing `action` prop supported by React. `submitAction` has a few differences from `action`:
+
+* Errors thrown during the action are caught and passed to the `actionError` render prop.
+* The pending state is automatically passed to the form's submit button. Alternatively we could use React's [useFormStatus](https://react.dev/reference/react-dom/hooks/useFormStatus) hook for that, but this has [bugs](https://github.com/facebook/react/issues/30368) at the moment.
+* The form is not automatically reset after the action completes. This is a [controversial](https://github.com/facebook/react/issues/29034) behavior that is often unwanted (e.g. when errors occur). If a reset is desired, it can be triggered manually via `ReactDOM.requestFormReset`.
+
+```tsx
+function App() {
+  return (
+    <Form
+      submitAction={async (formData) => {
+        let email = formData.get('email');
+        if (!await isAccountAvailable(email)) {
+          throw {
+            issues: [{
+              message: 'An account with that email already exists',
+              path: ['email']
+            }]
+          }
+        }
+
+        try {
+          await createAccount(email);
+        } catch {
+          throw 'Could not create account';
+        }
+      }}>
+      {({actionError}) => (
+        <>
+          {actionError &&
+            <Alert>{String(actionError)}</Alert>
+          }
+          <TextField name="email" />
+          <Button type="submit">Submit</Button>
+        </>
+      )}
+    </Form>
+  );
+}
+```
+
 ## Documentation
 
 We'll add new examples to our documentation showing how to use action props, and add pending states to components in our starter kits.

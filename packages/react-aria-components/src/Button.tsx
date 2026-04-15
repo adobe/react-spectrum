@@ -22,11 +22,12 @@ import {
 } from './utils';
 import {createHideableComponent} from 'react-aria/private/collections/Hidden';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {FormPendingContext} from './Form';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {HoverEvents} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';
 import {ProgressBarContext} from './ProgressBar';
-import React, {createContext, ForwardedRef} from 'react';
+import React, {createContext, ForwardedRef, useContext} from 'react';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 
@@ -88,7 +89,14 @@ export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTML
 export const Button = /*#__PURE__*/ createHideableComponent(function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
   let ctx = props as ButtonContextValue;
-  let {buttonProps, progressBarProps, isPressed, isPending, actionError} = useButton(props, ref);
+
+  // Ideally we would use React's `useFormStatus` for this but it is buggy.
+  // https://github.com/facebook/react/issues/30368
+  let isFormPending = useContext(FormPendingContext);
+  let {buttonProps, progressBarProps, isPressed, isPending, actionError} = useButton({
+    ...props,
+    isPending: props.isPending || (props.type === 'submit' && isFormPending)
+  }, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover({
     ...props,
