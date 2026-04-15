@@ -74,7 +74,7 @@ export const TextArea = forwardRef(function TextArea(props: TextAreaProps, ref: 
       {...props}
       ref={ref}
       fieldGroupCss={style({
-        alignItems: 'baseline',
+        alignItems: 'start',
         height: 'auto'
       })}>
       <TextAreaInput />
