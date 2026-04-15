@@ -143,8 +143,12 @@ Example illustrations:
 
 ```tsx
 import DropToUpload from '@react-spectrum/s2/illustrations/gradient/generic1/DropToUpload';
+import CloudUpload from '@react-spectrum/s2/illustrations/gradient/generic2/CloudUpload';
+import Warning from '@react-spectrum/s2/illustrations/linear/Warning';
 
 <DropToUpload />
+<CloudUpload />
+<Warning />
 ```
 
 - Note that illustrations can be in a Gradient or Linear style.
