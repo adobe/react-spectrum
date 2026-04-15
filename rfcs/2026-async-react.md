@@ -33,9 +33,9 @@ Components with state will use `useOptimistic` to update immediately in response
 
 To implement this, we can create a new hook that wraps `useControlledState` and also supports action props. When the value setter is called, we start a transition, set the optimistic value, and trigger the change action. We will also continue emit the `onChange` event and support both controlled and uncontrolled state.
 
-We could also potentially catch errors that are thrown by actions and expose these as render props, enabling [in-line contextual error UIs](https://x.com/devongovett/status/1989788456751697958).
+We will also catch errors that are thrown by actions and expose them as an `actionError` render prop, or via the `FieldError` component, enabling [in-line contextual error UIs](https://x.com/devongovett/status/1989788456751697958). This will help reduce over-reliance on toasts as a catch-all way of handling errors in applications by making inline errors just as easy to implement.
 
-All together, this significantly simplifies the implementation of loading states for component libraries and applications. Simply render a `<ProgressBar>` when `isPending` is true, add an async function as an action prop, and React Aria handles the rest.
+All together, this significantly simplifies the implementation of loading states and error handling for component libraries and applications. Simply render a `<ProgressBar>` when `isPending` is true, add an async function as an action prop, and React Aria handles the rest.
 
 Here's a potential list of components that could support actions:
 
@@ -50,6 +50,7 @@ Here's a potential list of components that could support actions:
 * DatePicker - `changeAction`
 * DateRangePicker - `changeAction`
 * Disclosure - `expandAction`
+* Form – `submitAction` (add a `FormError` component to display form-level errors)
 * NumberField - `changeAction`
 * RadioGroup - `changeAction`
 * SearchField - `changeAction`, `submitAction`, `clearAction`
@@ -60,6 +61,151 @@ Here's a potential list of components that could support actions:
 * TextField - `changeAction`
 * TimeField - `changeAction`
 * ToggleButton - `changeAction`
+
+### Examples
+
+#### Pending button
+
+A save button that displays a spinner while an action is running (e.g. calling a server). Pending buttons are not interactive (but remain focusable).
+
+```tsx
+function App() {
+  return (
+    <Button
+      action={async () => {
+        await save();
+      }}>
+      {({isPending}) => (
+        <>
+          {isPending 
+            ? <ProgressBar aria-label="Saving" isIndeterminate />
+            : 'Save'}
+        </>
+      )}
+    </Button>
+  );
+}
+```
+
+#### Async search results
+
+A search field for a filterable list. Typing in the field causes a state update, and the results list suspends. While the results are loading, the search field displays a spinner and the previous results display in the list and remain interactive.
+
+This illustrates that the pending state may display for longer than the action itself if another part of the UI suspends as a result. The `Suspense` wrapping the result list only displays its fallback during the initial load sequence, not when the update is triggered by an action (this is React's default behavior for transitions).
+
+```tsx
+function App() {
+  let [search, setSearch] = useState('');
+
+  return (
+    <>
+      <SearchField
+        value={search}
+        changeAction={value => setSearch(value)}>
+        {({isPending}) => (
+          <>
+            <Label>Search</Label>
+            <Input />
+            {isPending && <ProgressBar aria-label="Saving" isIndeterminate />}
+          </>
+        )}
+      </SearchField>
+      <React.Suspense fallback="Initial loading state">
+        <ResultList search={search} />
+      </React.Suspense>
+    </>
+  );
+}
+```
+
+#### Error handling
+
+If an error occurs in an action, it is available via the `actionError` render prop. This button has a shake animation when an error occurs, and displays an error icon.
+
+```tsx
+function App() {
+  return (
+    <Button
+      action={async () => {
+        await save();
+      }}
+      style={({actionError}) => ({
+        animation: actionError ? `shake 1s` : undefined
+      })}>
+      {({isPending, actionError}) => (
+        <>
+          {actionError && <ErrorIcon aria-label="Error" />}
+          {isPending 
+            ? <ProgressBar aria-label="Saving" isIndeterminate />
+            : 'Save'}
+        </>
+      )}
+    </Button>
+  );
+}
+```
+
+If you didn't want the Button itself to handle errors and wanted to show errors in a different way, you could add a try/catch statement within the action and catch the error there.
+
+```diff
+action={async () => {
++ try {
+    await save();
++ } catch (err) {
++   showToast(err);
++ }
+}}
+```
+
+In field components, we could also use the existing `FieldError` to show action errors. In this example, if saving a setting failed, the error would be displayed below the checkbox.
+
+```tsx
+function App() {
+  return (
+    <CheckboxField
+      changeAction={async (isSelected) => {
+        try {
+          await saveSetting(isSelected);
+        } catch {
+          throw 'Failed to save setting.';
+        }
+      }}>
+      <CheckboxButton>Setting</CheckboxButton>
+      <FieldError />
+    </CheckboxField>
+  );
+}
+```
+
+**Note**: Errors are only caught when they occur within the action itself, not if another component suspends as a result. This makes sense from a UI perspective: if an error occurred while loading something, it should display where the results would have been (via an error boundary). If it occurred while saving something, it should display where the action was initiated.
+
+#### In a design system
+
+In a design system such as Spectrum, the loading and error states in the above examples would be built-in. This means application code does not need to worry these states at all.
+
+```tsx
+import {Button, Checkbox} from '@react-spectrum/s2';
+
+function App() {
+  return (
+    <>
+      <Button action={async () => await doIt()}>
+        Do something
+      </Button>
+      <Checkbox
+        changeAction={async (isSelected) => {
+          try {
+            await saveSetting(isSelected);
+          } catch {
+            throw 'Failed to save setting.';
+          }
+        }}>
+        Setting
+      </Checkbox>
+    </>
+  );
+}
+```
 
 ## Documentation
 
