@@ -1,0 +1,17 @@
+{
+  "name": "rsp-api-extractor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "typescript": "~5.7.0",
+    "tsx": "^4.0.0"
+  },
+  "devDependencies": {
+    "vitest": "^2.0.0"
+  }
+}
