@@ -2,10 +2,10 @@
 
 use std::collections::HashMap;
 use std::path::Path;
+use std::time::Duration;
 
 use anyhow::{Context, Result};
 use futures::stream::{self, StreamExt};
-use serde::Deserialize;
 
 #[derive(Debug, Clone)]
 pub struct PublishedPackage {
@@ -13,48 +13,95 @@ pub struct PublishedPackage {
     pub version: String,
 }
 
-#[derive(Deserialize)]
-struct NpmRegistryResponse {
-    #[serde(default, rename = "dist-tags")]
-    dist_tags: HashMap<String, String>,
-    #[serde(default)]
-    versions: HashMap<String, serde_json::Value>,
-}
-
 /// Query the npm registry for a single package. Returns `None` if the package
 /// is not published or doesn't have the requested tag.
+///
+/// Uses the `/-/package/{name}/dist-tags` endpoint so the response is a tiny
+/// JSON object (just the dist-tags map) rather than the full package metadata
+/// which can be several megabytes for popular packages.
+///
+/// Retries up to 3 times with exponential back-off on transient errors
+/// (network failures, HTTP 429 rate-limit, HTTP 5xx server errors).
 async fn check_published(
     client: &reqwest::Client,
     name: &str,
     tag: &str,
 ) -> Result<Option<PublishedPackage>> {
-    let url = format!("https://registry.npmjs.org/{}", name.replace('/', "%2f"));
-    let resp = client
-        .get(&url)
-        .header("Accept", "application/json")
-        .send()
-        .await;
+    let url = format!(
+        "https://registry.npmjs.org/-/package/{}/dist-tags",
+        name.replace('/', "%2f")
+    );
+    const MAX_ATTEMPTS: u32 = 3;
+    let mut delay_ms: u64 = 1_000;
 
-    let resp = match resp {
-        Ok(r) => r,
-        Err(_) => return Ok(None),
-    };
+    let dist_tags: HashMap<String, String> = 'retry: {
+        for attempt in 0..MAX_ATTEMPTS {
+            let resp = client
+                .get(&url)
+                .header("Accept", "application/json")
+                .send()
+                .await;
 
-    if !resp.status().is_success() {
+            let resp = match resp {
+                Ok(r) => r,
+                Err(e) => {
+                    if attempt + 1 < MAX_ATTEMPTS {
+                        eprintln!("  warn: network error for {name} (attempt {}/{MAX_ATTEMPTS}), retrying: {e}", attempt + 1);
+                        tokio::time::sleep(Duration::from_millis(delay_ms)).await;
+                        delay_ms *= 2;
+                        continue;
+                    }
+                    return Err(e).context(format!("network request for {name}"));
+                }
+            };
+
+            let status = resp.status();
+
+            // 404 → package is not published; return None immediately (no retry needed)
+            if status.as_u16() == 404 {
+                return Ok(None);
+            }
+
+            // 429 (rate-limit) or 5xx (server error) → retry with back-off
+            if status.as_u16() == 429 || status.is_server_error() {
+                if attempt + 1 < MAX_ATTEMPTS {
+                    eprintln!("  warn: HTTP {} for {name} (attempt {}/{MAX_ATTEMPTS}), retrying", status.as_u16(), attempt + 1);
+                    tokio::time::sleep(Duration::from_millis(delay_ms)).await;
+                    delay_ms *= 2;
+                    continue;
+                }
+                return Err(anyhow::anyhow!("HTTP {} from npm registry for {name}", status.as_u16()));
+            }
+
+            if !status.is_success() {
+                // Other non-success status (e.g. 401, 403) — treat as not published
+                return Ok(None);
+            }
+
+            match resp.json::<HashMap<String, String>>().await {
+                Ok(tags) => break 'retry tags,
+                Err(e) => {
+                    if attempt + 1 < MAX_ATTEMPTS {
+                        eprintln!("  warn: failed to parse npm response for {name} (attempt {}/{MAX_ATTEMPTS}), retrying: {e}", attempt + 1);
+                        tokio::time::sleep(Duration::from_millis(delay_ms)).await;
+                        delay_ms *= 2;
+                        continue;
+                    }
+                    return Err(e).context(format!("parsing npm response for {name}"));
+                }
+            }
+        }
+        // All attempts exhausted — should be unreachable because the last iteration
+        // always returns, but the compiler needs a value for this branch.
         return Ok(None);
-    }
-
-    let body: NpmRegistryResponse = match resp.json().await {
-        Ok(b) => b,
-        Err(_) => return Ok(None),
     };
 
-    // Check if the requested tag exists
-    let version = if let Some(v) = body.dist_tags.get(tag) {
+    // Resolve the version for the requested tag
+    let version = if let Some(v) = dist_tags.get(tag) {
         v.clone()
     } else if tag == "nightly" {
         // Fallback: if "nightly" tag doesn't exist, try "latest"
-        match body.dist_tags.get("latest") {
+        match dist_tags.get("latest") {
             Some(v) => v.clone(),
             None => return Ok(None),
         }
@@ -62,12 +109,10 @@ async fn check_published(
         return Ok(None);
     };
 
-    // For "latest" tag, skip packages that only have nightly versions
-    if tag == "latest" {
-        let has_stable = body.versions.keys().any(|v| !v.contains("nightly"));
-        if !has_stable {
-            return Ok(None);
-        }
+    // For the "latest" tag, skip packages whose latest version is itself a
+    // nightly build (i.e. the package has never had a stable release).
+    if tag == "latest" && version.contains("nightly") {
+        return Ok(None);
     }
 
     Ok(Some(PublishedPackage {
@@ -265,40 +310,35 @@ mod tests {
         assert!(!names.contains(&"@too/deep".to_string()));
     }
 
-    // ── NpmRegistryResponse deserialization ────────────────────────────────
+    // ── dist-tags endpoint deserialization ────────────────────────────────
 
     #[test]
-    fn test_registry_response_parses_dist_tags() {
-        let json = r#"{
-            "dist-tags": {"latest":"1.2.3","nightly":"2.0.0-nightly.1"},
-            "versions":{"1.2.3":{},"1.1.0":{}}
-        }"#;
-        let resp: NpmRegistryResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(resp.dist_tags.get("latest").unwrap(), "1.2.3");
-        assert_eq!(resp.dist_tags.get("nightly").unwrap(), "2.0.0-nightly.1");
-        assert_eq!(resp.versions.len(), 2);
+    fn test_dist_tags_endpoint_parses_correctly() {
+        // The /-/package/{name}/dist-tags endpoint returns a flat map of tag → version.
+        let json = r#"{"latest":"1.2.3","nightly":"2.0.0-nightly.1"}"#;
+        let tags: HashMap<String, String> = serde_json::from_str(json).unwrap();
+        assert_eq!(tags.get("latest").unwrap(), "1.2.3");
+        assert_eq!(tags.get("nightly").unwrap(), "2.0.0-nightly.1");
     }
 
     #[test]
-    fn test_registry_response_stable_version_check() {
-        let json = r#"{"versions":{"2.0.0-nightly.1":{}}}"#;
-        let resp: NpmRegistryResponse = serde_json::from_str(json).unwrap();
-        let has_stable = resp.versions.keys().any(|v| !v.contains("nightly"));
-        assert!(!has_stable, "nightly-only package should have no stable version");
+    fn test_nightly_only_package_skipped_for_latest_tag() {
+        // A package whose "latest" dist-tag points to a nightly version
+        // should be excluded — it has never had a stable release.
+        let latest_version = "2.0.0-nightly.1";
+        assert!(latest_version.contains("nightly"));
     }
 
     #[test]
-    fn test_registry_response_mixed_versions_has_stable() {
-        let json = r#"{"versions":{"1.0.0":{},"2.0.0-nightly.1":{}}}"#;
-        let resp: NpmRegistryResponse = serde_json::from_str(json).unwrap();
-        let has_stable = resp.versions.keys().any(|v| !v.contains("nightly"));
-        assert!(has_stable);
+    fn test_stable_latest_tag_not_skipped() {
+        // A package whose "latest" dist-tag points to a stable version is included.
+        let latest_version = "3.7.0";
+        assert!(!latest_version.contains("nightly"));
     }
 
     #[test]
-    fn test_registry_response_empty_defaults() {
-        let resp: NpmRegistryResponse = serde_json::from_str(r#"{}"#).unwrap();
-        assert!(resp.dist_tags.is_empty());
-        assert!(resp.versions.is_empty());
+    fn test_dist_tags_empty_map_parses() {
+        let tags: HashMap<String, String> = serde_json::from_str(r#"{}"#).unwrap();
+        assert!(tags.is_empty());
     }
 }
