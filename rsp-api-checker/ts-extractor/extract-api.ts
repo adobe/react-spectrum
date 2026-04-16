@@ -188,7 +188,7 @@ function findPackageJsonDirs(rootDir: string): string[] {
     if (depth > 4) return;
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     for (const entry of entries) {
-      if (entry.name === "node_modules" || entry.name === ".git") continue;
+      if (entry.name === "node_modules" || entry.name === ".git" || entry.name === "dev") continue;
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) {
         if (fs.existsSync(path.join(full, "package.json"))) {

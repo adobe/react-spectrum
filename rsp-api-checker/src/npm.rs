@@ -144,7 +144,7 @@ pub(crate) fn walk_for_packages(dir: &Path, depth: usize, out: &mut Vec<String>)
                         let is_private = v.get("private").and_then(|p| p.as_bool()).unwrap_or(false);
                         let pkg_name = v.get("name").and_then(|n| n.as_str());
                         if let Some(name) = pkg_name {
-                            if !is_private && name != "@adobe/react-spectrum" {
+                            if !is_private {
                                 out.push(name.to_string());
                             }
                         }
@@ -196,15 +196,25 @@ mod tests {
         assert!(!names.contains(&"@internal/pkg".to_string()));
     }
 
+    // @adobe/react-spectrum is a public API package and must be included in
+    // the npm check so that the published and local extractions are symmetric.
+    // If it is excluded here but the TypeScript extractor finds it under
+    // packages/, every one of its exports will appear as "added" in the diff.
     #[test]
-    fn test_skips_adobe_react_spectrum() {
+    fn walk_for_packages_includes_adobe_react_spectrum() {
         let dir = TempDir::new().unwrap();
         let pkg = dir.path().join("adobe-pkg");
         fs::create_dir(&pkg).unwrap();
         write_pkg_json(&pkg, "@adobe/react-spectrum", false);
 
-        let names = discover_local_packages(dir.path()).unwrap();
-        assert!(!names.contains(&"@adobe/react-spectrum".to_string()));
+        let mut names = Vec::new();
+        walk_for_packages(dir.path(), 0, &mut names).unwrap();
+        assert!(
+            names.contains(&"@adobe/react-spectrum".to_string()),
+            "@adobe/react-spectrum must be included in the npm package list: \
+             excluding it causes a spurious diff because the local extractor \
+             always finds it under packages/@adobe/react-spectrum/"
+        );
     }
 
     #[test]

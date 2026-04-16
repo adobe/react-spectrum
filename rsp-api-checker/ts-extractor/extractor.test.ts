@@ -13,6 +13,7 @@ import * as os from "os";
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const EXTRACTOR = path.join(__dirname, "extract-api.ts");
 const FIXTURES_DIR = path.join(__dirname, "tests", "fixtures", "packages");
+const WITH_DEV_PKG_DIR = path.join(__dirname, "tests", "fixtures", "with-dev-pkg", "packages");
 
 // Temporary output directories created during tests — cleaned up in afterEach.
 const tmpDirs: string[] = [];
@@ -130,5 +131,42 @@ describe("extract-api.ts (integration)", () => {
     expect(fs.existsSync(pkgJsonPath)).toBe(true);
     const pkg = JSON.parse(fs.readFileSync(pkgJsonPath, "utf8"));
     expect(pkg.name).toBe("@react-aria/test-widget");
+  });
+
+  // Packages under a directory named "dev/" are build tools, not public API.
+  // The Rust walk_for_packages already skips "dev/" when collecting packages
+  // to install from npm. The TypeScript extractor must apply the same exclusion
+  // so that local and published extractions are symmetric — otherwise packages
+  // in packages/dev/ appear as "added" in every diff run.
+  it("does not extract packages from dev/ subdirectory", () => {
+    const outputDir = makeTmpDir();
+    runExtractor(WITH_DEV_PKG_DIR, outputDir);
+
+    // The normal package should be extracted
+    const normalApiPath = path.join(
+      outputDir,
+      "@react-aria",
+      "normal-widget",
+      "dist",
+      "api.json",
+    );
+    expect(
+      fs.existsSync(normalApiPath),
+      `expected @react-aria/normal-widget to be extracted at ${normalApiPath}`,
+    ).toBe(true);
+
+    // The package inside dev/ must NOT be extracted
+    const devApiPath = path.join(
+      outputDir,
+      "@react-spectrum",
+      "dev-tool",
+      "dist",
+      "api.json",
+    );
+    expect(
+      fs.existsSync(devApiPath),
+      "packages inside dev/ must not be extracted (they are build tools, not public API, " +
+        "and the npm check already excludes the dev/ directory)",
+    ).toBe(false);
   });
 });
