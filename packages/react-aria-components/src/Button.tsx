@@ -77,7 +77,7 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
    * while retaining focusability, and announces the pending state to screen readers.
    */
   isPending?: boolean,
-  /** dummy prop */
+  /** Dummy prop. */
   isFoo?: boolean
 }
 

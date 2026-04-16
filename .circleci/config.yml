@@ -469,7 +469,7 @@ jobs:
           name: extract published API
           command: |
             cd rsp-api-checker
-            target/release/rsp-api-check get-published-api --repo-root ..
+            target/release/rsp-api-check get-published-api --repo-root .. --output ../dist/base-api
       - persist_to_workspace:
           root: .
           paths:
@@ -489,7 +489,7 @@ jobs:
           name: extract branch API
           command: |
             cd rsp-api-checker
-            target/release/rsp-api-check get-local-api --repo-root ..
+            target/release/rsp-api-check get-local-api --repo-root .. --output ../dist/branch-api
       - persist_to_workspace:
           root: .
           paths:
