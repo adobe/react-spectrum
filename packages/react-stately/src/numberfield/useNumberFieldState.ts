@@ -15,7 +15,7 @@ import {clamp, snapValueToStep} from '../utils/number';
 import {FocusableProps, HelpTextProps, InputBase, LabelableProps, RangeInputBase, TextInputBase, Validation, ValueBase} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
-import {useCallback, useMemo, useRef, useState} from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import {useControlledState} from '../utils/useControlledState';
 
 export interface NumberFieldProps extends InputBase, Validation<number>, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps, HelpTextProps {
@@ -111,14 +111,6 @@ export function useNumberFieldState(
     commitBehavior = 'snap'
   } = props;
 
-  // Stabilize formatOptions reference to avoid unnecessary re-renders
-  // when consumers pass inline object literals with the same content.
-  let formatOptionsRef = useRef(formatOptions);
-  if (!isEqualFormatOptions(formatOptions, formatOptionsRef.current)) {
-    formatOptionsRef.current = formatOptions;
-  }
-  formatOptions = formatOptionsRef.current;
-
   if (value === null) {
     value = NaN;
   }
@@ -163,7 +155,7 @@ export function useNumberFieldState(
   let [prevValue, setPrevValue] = useState(numberValue);
   let [prevLocale, setPrevLocale] = useState(locale);
   let [prevFormatOptions, setPrevFormatOptions] = useState(formatOptions);
-  if (!Object.is(numberValue, prevValue) || locale !== prevLocale || formatOptions !== prevFormatOptions) {
+  if (!Object.is(numberValue, prevValue) || locale !== prevLocale || !isEqualFormatOptions(formatOptions, prevFormatOptions)) {
     setInputValue(format(numberValue));
     setPrevValue(numberValue);
     setPrevLocale(locale);
@@ -312,6 +304,7 @@ export function useNumberFieldState(
   };
 }
 
+// Shallow equality is sufficient here because all values in Intl.NumberFormatOptions are primitives.
 function isEqualFormatOptions(a: Intl.NumberFormatOptions | undefined, b: Intl.NumberFormatOptions | undefined) {
   if (a === b) {
     return true;
