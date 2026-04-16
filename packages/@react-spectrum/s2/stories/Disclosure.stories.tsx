@@ -13,10 +13,12 @@
 import {ActionButton} from '../src/ActionButton';
 
 import {Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTitle} from '../src/Disclosure';
+import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';
 import {style} from '../style' with { type: 'macro' };
+import {Text} from '../src/Content';
 
 
 const meta: Meta<typeof Disclosure> = {
@@ -129,7 +131,8 @@ export const WithActionButton: Story = {
         <Disclosure {...args}>
           <DisclosureHeader>
             <DisclosureTitle>
-              Files
+              <File />
+              <Text>Files</Text>
             </DisclosureTitle>
             <ActionButton><NewIcon aria-label="new icon " /></ActionButton>
           </DisclosureHeader>
