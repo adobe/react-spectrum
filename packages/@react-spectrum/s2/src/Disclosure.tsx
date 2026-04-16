@@ -29,7 +29,7 @@ import {
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Heading} from 'react-aria-components/Heading';
-import {IconContext} from '@react-spectrum/s2/Icon';
+import {IconContext} from './Icon';
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {Text, TextContext} from './Content';
 import {useDOMRef} from './useDOMRef';
