@@ -411,6 +411,12 @@ jobs:
             node --loader ./scripts/esm-support/loader.mjs ./scripts/esm-support/testESM.mjs
             node scripts/testCJS.cjs
 
+      - persist_to_workspace:
+          root: .
+          paths:
+            - 'packages/*/dist/'
+            - 'packages/@*/*/dist/'
+
   lint:
     executor: rsp-xlarge
     steps:
@@ -459,7 +465,8 @@ jobs:
   ts-get-published:
     executor: rsp-large
     steps:
-      - checkout
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
       - attach_workspace:
           at: ~/react-spectrum
       - run:
@@ -482,9 +489,6 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
       - attach_workspace:
           at: ~/react-spectrum
-      - run:
-          name: build
-          command: yarn build
       - run:
           name: extract branch API
           command: |
@@ -978,6 +982,7 @@ workflows:
               ignore: main
       - ts-get-published:
           requires:
+            - install
             - ts-build-binary
           filters:
             branches:
@@ -985,6 +990,7 @@ workflows:
       - ts-build-branch:
           requires:
             - install
+            - test-build
             - ts-build-binary
           filters:
             branches:

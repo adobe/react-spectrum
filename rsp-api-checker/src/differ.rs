@@ -118,7 +118,14 @@ pub fn diff_package(
     }
 }
 
+/// How many unchanged lines to preserve on each side of a change.
+const DIFF_CONTEXT: usize = 2;
+
 /// Compute a colored/marked diff between two formatted interface strings.
+///
+/// Unchanged lines that are far from any change are collapsed to `...` so the
+/// output stays readable for large interfaces. The first line (interface header)
+/// and last line (closing `}`) are always shown so the output is self-contained.
 fn compute_diff(base: &str, branch: &str, is_ci: bool) -> String {
     let text_diff = TextDiff::from_lines(base, branch);
 
@@ -130,39 +137,74 @@ fn compute_diff(base: &str, branch: &str, is_ci: bool) -> String {
         return String::new();
     }
 
-    let mut lines = Vec::new();
-    for change in text_diff.iter_all_changes() {
-        let line = change.to_string_lossy();
-        let line = line.trim_end_matches('\n');
-        match change.tag() {
-            ChangeTag::Delete => {
-                if is_ci {
-                    lines.push(format!("-{line}"));
-                } else {
-                    lines.push(format!("-{line}").red().to_string());
-                }
+    // Collect all (tag, formatted_line) pairs, dropping blank Equal lines
+    // (the blank line inserted between the interface header and its properties).
+    let all_lines: Vec<(ChangeTag, String)> = text_diff
+        .iter_all_changes()
+        .filter_map(|change| {
+            let line = change.to_string_lossy();
+            let line = line.trim_end_matches('\n');
+            if line.is_empty() && change.tag() == ChangeTag::Equal {
+                return None;
             }
-            ChangeTag::Insert => {
-                if is_ci {
-                    lines.push(format!("+{line}"));
-                } else {
-                    lines.push(format!("+{line}").green().to_string());
+            let formatted = match change.tag() {
+                ChangeTag::Delete => {
+                    if is_ci {
+                        format!("-{line}")
+                    } else {
+                        format!("-{line}").red().to_string()
+                    }
                 }
-            }
-            ChangeTag::Equal => {
-                // Skip the blank line we insert between header and properties
-                if line.is_empty() {
-                    continue;
+                ChangeTag::Insert => {
+                    if is_ci {
+                        format!("+{line}")
+                    } else {
+                        format!("+{line}").green().to_string()
+                    }
                 }
-                lines.push(format!(" {line}"));
+                ChangeTag::Equal => format!(" {line}"),
+            };
+            Some((change.tag(), formatted))
+        })
+        .collect();
+
+    let n = all_lines.len();
+    if n == 0 {
+        return String::new();
+    }
+
+    // Decide which lines to keep: every changed line, DIFF_CONTEXT lines around
+    // it, plus always the first (interface header) and last (closing brace).
+    let mut keep = vec![false; n];
+    keep[0] = true;
+    keep[n - 1] = true;
+    for i in 0..n {
+        if all_lines[i].0 != ChangeTag::Equal {
+            let lo = i.saturating_sub(DIFF_CONTEXT);
+            let hi = (i + DIFF_CONTEXT + 1).min(n);
+            for j in lo..hi {
+                keep[j] = true;
             }
         }
     }
 
+    // Emit kept lines; collapse each contiguous run of omitted lines to "   ...".
+    let mut result_lines: Vec<String> = Vec::new();
+    let mut in_gap = false;
+    for i in 0..n {
+        if keep[i] {
+            in_gap = false;
+            result_lines.push(all_lines[i].1.clone());
+        } else if !in_gap {
+            result_lines.push("   ...".to_string());
+            in_gap = true;
+        }
+    }
+
     if is_ci {
-        format!("```diff\n{}\n```", lines.join("\n"))
+        format!("```diff\n{}\n```", result_lines.join("\n"))
     } else {
-        lines.join("\n")
+        result_lines.join("\n")
     }
 }
 
@@ -483,6 +525,39 @@ mod tests {
         let text = &result.diffs[0].diff_text;
         assert!(text.starts_with("```diff\n"), "CI output should start with code fence");
         assert!(text.ends_with("```"), "CI output should end with code fence");
+    }
+
+    #[test]
+    fn test_large_interface_elides_unchanged_middle() {
+        // Build an interface with many props where only one in the middle changes.
+        let mut base_props: Vec<(&str, bool, TypeNode)> = Vec::new();
+        let mut branch_props: Vec<(&str, bool, TypeNode)> = Vec::new();
+        for i in 0..10_u32 {
+            let name = Box::leak(format!("prop{i}").into_boxed_str()) as &str;
+            base_props.push((name, true, TypeNode::String { value: None }));
+            // Change prop5 from string to number
+            let ty = if i == 5 { TypeNode::Number { value: None } } else { TypeNode::String { value: None } };
+            branch_props.push((name, true, ty));
+        }
+        let base = api("@pkg:BigProps", iface_with_props(base_props));
+        let branch = api("@pkg:BigProps", iface_with_props(branch_props));
+        let result = diff_package("@pkg", &base, &branch, false);
+        let text = &result.diffs[0].diff_text;
+
+        // Changed line must be present
+        assert!(text.contains("-  prop5?: string"), "expected removal of prop5 string");
+        assert!(text.contains("+  prop5?: number"), "expected addition of prop5 number");
+
+        // Distant unchanged lines must be collapsed
+        assert!(text.contains("..."), "expected ellipsis for collapsed context");
+        assert!(!text.contains("prop0"), "prop0 is far from the change and should be elided");
+        assert!(!text.contains("prop9"), "prop9 is far from the change and should be elided");
+
+        // First and last lines of the interface must always be present.
+        // iface_with_props hard-codes the internal name as "ButtonProps".
+        let lines: Vec<&str> = text.lines().collect();
+        assert!(lines.first().unwrap().contains("ButtonProps {"), "first line must be the interface header");
+        assert_eq!(lines.last().unwrap().trim(), "}", "last line must be the closing brace");
     }
 
     #[test]
