@@ -87,6 +87,39 @@ const styles = style({
 <div className={styles({isSelected: true})} />
 ```
 
+Do not concatenate class names from the `style` macro:
+
+The `style` macro returns an opaque class name string that encodes style precedence. Concatenating it with other class names (via template literals, `clsx`, `classnames`, spaces, etc.) breaks the precedence system and produces incorrect or unpredictable styles.
+
+- Do **not** build up class names conditionally by calling `style(...)` multiple times and joining the results.
+- Instead, express runtime decisions inside a **single** `style({...})` call using the macro's runtime conditions (nested `default`/variant objects, and `is*`/`allows*` boolean conditions).
+- When merging style strings together, use the `mergeStyles` runtime function.
+
+Bad:
+
+```tsx
+// ❌ Concatenates two style macro results — breaks precedence.
+const base = style({padding: 8, backgroundColor: 'gray-100'});
+const active = style({backgroundColor: 'accent'});
+
+<div className={`${base} ${isActive ? active : ''}`} />
+```
+
+Good:
+
+```tsx
+// ✅ One style call, runtime decision inside the macro.
+const styles = style({
+  padding: 8,
+  backgroundColor: {
+    default: 'gray-100',
+    isActive: 'accent'
+  }
+});
+
+<div className={styles({isActive})} />
+```
+
 Note:
 - Base spacing values (for `margin`, `gap`, etc.): Use pixels following a 4px grid (`0`, `2`, `4`, `8`, `12`, `16`...)
 
