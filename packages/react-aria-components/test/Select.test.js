@@ -503,6 +503,47 @@ describe('Select', () => {
       expect(trigger).toHaveTextContent('Northern Territory');
       expect(trigger).not.toHaveAttribute('data-pressed');
     });
+
+    it('should handle typeahead transitions correctly with and without debounce', async () => {
+      let {getByTestId} = render(
+        <Select data-testid="select">
+          <Label>Test</Label>
+          <Button>
+            <SelectValue />
+          </Button>
+          <Popover>
+            <ListBox>
+              <ListBoxItem id="a">a</ListBoxItem>
+              <ListBoxItem id="aa">aa</ListBoxItem>
+              <ListBoxItem id="ab">ab</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+      );
+
+      let wrapper = getByTestId('select');
+      let selectTester = testUtilUser.createTester('Select', {root: wrapper});
+      let trigger = selectTester.trigger;
+
+      await user.tab();
+
+      await user.keyboard('a');
+      expect(trigger).toHaveTextContent('a');
+
+      // continuing search narrows — 'aa' matches 'aa'
+      await user.keyboard('a');
+      expect(trigger).toHaveTextContent('aa');
+
+      // no match on 'aaa' — selection unchanged
+      await user.keyboard('a');
+      expect(trigger).toHaveTextContent('aa');
+
+      act(() => { jest.runAllTimers(); });
+
+      // new search after debounce skips focused item and cycles to next match
+      await user.keyboard('a');
+      expect(trigger).toHaveTextContent('ab');
+    });
   });
 
   it('should support autoFocus', () => {

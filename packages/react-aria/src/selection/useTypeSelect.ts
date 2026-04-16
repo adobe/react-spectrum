@@ -72,10 +72,15 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
     state.search += character;
 
     if (keyboardDelegate.getKeyForSearch != null) {
-      // Use the delegate to find a key to focus.
-      // Prioritize items after the currently focused item, falling back to searching the whole list.
-      let key = keyboardDelegate.getKeyForSearch(state.search, selectionManager.focusedKey);
+      // On a new search, skip the focused item; when continuing a search, include it.
+      // Falls back to searching the whole list if no match is found.
+      let fromKey = selectionManager.focusedKey;
+      const isNewSearch = state.search === character;
+      if (isNewSearch && fromKey != null && keyboardDelegate.getKeyBelow) {
+        fromKey = keyboardDelegate.getKeyBelow(fromKey);
+      }
 
+      let key = keyboardDelegate.getKeyForSearch(state.search, fromKey);
       // If no key found, search from the top.
       if (key == null) {
         key = keyboardDelegate.getKeyForSearch(state.search);
