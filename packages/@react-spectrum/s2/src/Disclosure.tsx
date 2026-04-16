@@ -12,9 +12,9 @@
 
 import {ActionButtonContext} from './ActionButton';
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
-import {baseColor, centerPadding, focusRing, lightDark, space, style} from '../style' with { type: 'macro' };
+import {baseColor, centerPadding, focusRing, fontRelative, lightDark, space, style} from '../style' with { type: 'macro' };
 import {Button} from 'react-aria-components/Button';
-import {CenterBaseline} from './CenterBaseline';
+import {CenterBaseline, centerBaseline} from './CenterBaseline';
 
 import Chevron from '../ui-icons/Chevron';
 
@@ -29,7 +29,9 @@ import {
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Heading} from 'react-aria-components/Heading';
+import {IconContext} from '@react-spectrum/s2/Icon';
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
+import {Text, TextContext} from './Content';
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -153,12 +155,18 @@ const buttonStyles = style({
     }
   },
   lineHeight: 'ui',
-  display: 'flex',
-  flexGrow: 1,
-  alignItems: 'baseline',
-  paddingX: 'calc(self(minHeight) * 3/8 - 1px)',
+  display: 'grid',
+  gridTemplateAreas: [
+    'expand-button icon label'
+  ],
+  gridTemplateColumns: ['auto', 'auto', 'minmax(0, 1fr)'],
+  alignItems: 'center',
+  '--spacingGap': {
+    type: 'marginEnd',
+    value: 'calc(self(minHeight) * 3/8 - 1px)'
+  },
+  paddingX: '--spacingGap',
   paddingY: centerPadding(),
-  gap: 'calc(self(minHeight) * 3/8 - 1px)',
   minHeight: {
     // compact is equivalent to 'control', but other densities have more padding.
     size: {
@@ -220,8 +228,7 @@ const chevronStyles = style({
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
-  },
-  flexShrink: 0
+  }
 });
 
 const InternalDisclosureHeader = createContext<{} | null>(null);
@@ -288,10 +295,19 @@ export const DisclosureTitle = forwardRef(function DisclosureTitle(props: Disclo
       style={UNSAFE_style}
       className={(UNSAFE_className ?? '') + headingStyle}>
       <Button className={(renderProps) => buttonStyles({...renderProps, size, density, isQuiet})} slot="trigger">
-        <CenterBaseline>
+        <CenterBaseline styles={style({gridArea: 'expand-button', marginEnd: '--spacingGap'})}>
           <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
         </CenterBaseline>
-        {props.children}
+        <Provider
+          values={[
+            [IconContext, {
+              render: centerBaseline({slot: 'icon', styles: style({gridArea: 'icon', marginEnd: 'text-to-visual'})}),
+              styles: style({size: fontRelative(16)})
+            }],
+            [TextContext, {styles: style({gridArea: 'label'})}]
+          ]}>
+          {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+        </Provider>
       </Button>
     </Heading>
   );
