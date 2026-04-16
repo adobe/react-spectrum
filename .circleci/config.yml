@@ -49,6 +49,14 @@ executors:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
+  rsp-rust:
+    docker:
+      - image: cimg/rust:1.86.0
+    resource_class: large
+    environment:
+      CACHE_VERSION: v1
+    working_directory: ~/react-spectrum
+
 commands:
   deploy-s3:
     parameters:
@@ -415,55 +423,91 @@ jobs:
             yarn test:lint
             yarn lint
 
+  # Build the rsp-api-check Rust binary once and share it via workspace.
+  # Runs in parallel with the yarn `install` job — no dependency needed.
+  # The Cargo registry + target dir are cached by Cargo.lock hash so
+  # incremental rebuilds are fast when only Rust source changes.
+  ts-build-binary:
+    executor: rsp-rust
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - rsp-api-check-v1-{{ checksum "rsp-api-checker/Cargo.lock" }}
+            - rsp-api-check-v1-
+      - run:
+          name: build rsp-api-check
+          command: cd rsp-api-checker && cargo build --release
+      - save_cache:
+          key: rsp-api-check-v1-{{ checksum "rsp-api-checker/Cargo.lock" }}
+          paths:
+            - ~/.cargo/registry
+            - ~/.cargo/git
+            - rsp-api-checker/target
+      - persist_to_workspace:
+          root: .
+          paths:
+            - rsp-api-checker/target/release/rsp-api-check
+
+  # Fetch the last published release from npm and extract its type API.
+  # Runs after ts-build-binary but in parallel with ts-build-branch.
+  #
+  # Future fork-point support: to compare against a specific git ref rather
+  # than the npm release, add a ts-build-main job that checks out that ref,
+  # runs `yarn build`, then `rsp-api-check get-local-api --output dist/base-api`,
+  # and substitute it for ts-get-published in the ts-diff requires list.
+  ts-get-published:
+    executor: rsp-large
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/react-spectrum
+      - run:
+          name: install ts-extractor dependencies
+          command: cd rsp-api-checker/ts-extractor && npm ci
+      - run:
+          name: extract published API
+          command: |
+            cd rsp-api-checker
+            target/release/rsp-api-check get-published-api --repo-root ..
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist/base-api/
+
   ts-build-branch:
     executor: rsp-large
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
+      - attach_workspace:
+          at: ~/react-spectrum
       - run:
-          name: build branch apis
-          command: yarn build:api-branch
-
-      - persist_to_workspace:
-          root: dist
-          paths:
-            - 'branch-api/'
-
-  ts-build-fork-point:
-    executor: rsp-large
-    steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
+          name: build
+          command: yarn build
       - run:
-          name: build fork-point apis
+          name: extract branch API
           command: |
-            mkdir -p ~/.ssh
-            curl -L https://api.github.com/meta | jq -r '.ssh_keys | .[]' | sed -e 's/^/github.com /' >> ~/.ssh/known_hosts
-            yarn build:api-branch --githash="origin/main" --output="base-api" && yarn build:api-branch && yarn compare:apis
-
+            cd rsp-api-checker
+            target/release/rsp-api-check get-local-api --repo-root ..
       - persist_to_workspace:
-          root: dist
+          root: .
           paths:
-            - 'base-api/'
+            - dist/branch-api/
 
   ts-diff:
-    executor: rsp-large
+    executor: rsp
     steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
       - attach_workspace:
-          at: /tmp/dist
-
+          at: ~/react-spectrum
       - run:
-          name: compare api
+          name: compare APIs
           command: |
-            yarn test:parcel
-            mkdir -p dist
-            yarn compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" --base-api-dir="/tmp/dist/base-api" | tee dist/ts-diff.txt
-
+            cd rsp-api-checker
+            target/release/rsp-api-check compare \
+              --base-api-dir ../dist/base-api \
+              --branch-api-dir ../dist/branch-api \
+              --ci | tee ../dist/ts-diff.txt
       - persist_to_workspace:
           root: dist
           paths:
@@ -928,21 +972,26 @@ workflows:
       - lint:
           requires:
             - install
-      - ts-build-fork-point:
+      - ts-build-binary:
+          filters:
+            branches:
+              ignore: main
+      - ts-get-published:
           requires:
-            - install
+            - ts-build-binary
           filters:
             branches:
               ignore: main
       - ts-build-branch:
           requires:
             - install
+            - ts-build-binary
           filters:
             branches:
               ignore: main
       - ts-diff:
           requires:
-            - ts-build-fork-point
+            - ts-get-published
             - ts-build-branch
           filters:
             branches:
