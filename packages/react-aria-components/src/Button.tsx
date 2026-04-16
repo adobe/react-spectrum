@@ -76,7 +76,9 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
    * Whether the button is in a pending state. This disables press and hover events
    * while retaining focusability, and announces the pending state to screen readers.
    */
-  isPending?: boolean
+  isPending?: boolean,
+  /** dummy prop */
+  isFoo?: boolean
 }
 
 interface ButtonContextValue extends ButtonProps {
