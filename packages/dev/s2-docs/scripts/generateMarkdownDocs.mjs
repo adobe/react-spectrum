@@ -50,6 +50,17 @@ const COMPONENT_SRC_ROOTS = [S2_SRC_ROOT, RAC_SRC_ROOT, INTL_SRC_ROOT];
 const S2_DOCS_PAGES_ROOT = path.join(REPO_ROOT, 'packages/dev/s2-docs/pages');
 const DIST_ROOT = path.join(REPO_ROOT, 'packages/dev/s2-docs/dist');
 const LICENSE_COMMENT_REGEX = /^\s*\{\/\*[\s\S]*?Copyright\s+20\d{2}\s+Adobe[\s\S]*?\*\/\}\s*/;
+const ROUTERS_MDX_PATH = path.join(REPO_ROOT, 'packages/dev/s2-docs/src/routers-s2.mdx');
+const ROUTERS_PLACEHOLDER_REGEX = /<Routers\s+components=\{props\.components\}\s*\/>/g;
+let routersMdxCache = null;
+function getRoutersMdxContent() {
+  if (routersMdxCache == null) {
+    let contents = fs.readFileSync(ROUTERS_MDX_PATH, 'utf8').replace(LICENSE_COMMENT_REGEX, '');
+    contents = contents.replace(/^\s*(?:import|export)\s[^\n]*(?:\n|$)/gm, '');
+    routersMdxCache = contents.trim();
+  }
+  return routersMdxCache;
+}
 const S2_ICON_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/s2wf-icons');
 const S2_ILLUSTRATION_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/spectrum-illustrations');
 
@@ -1970,8 +1981,9 @@ function remarkDocsComponentsToMarkdown() {
             }
           }
 
-          if (switcherType === 'component' && exampleTitles.length > 0) {
-            // Each code block gets its own heading from the examples array
+          if (switcherType && switcherType !== 'css' && exampleTitles.length > 0) {
+            // For any explicit switcher type (e.g. "component", "router"), each code block
+            // represents a distinct example and gets its own heading from the examples array.
             codeChildren.forEach((codeChild, i) => {
               const title = exampleTitles[i] || `Example ${i + 1}`;
               const meta = parseCodeMeta(codeChild.meta);
@@ -3219,7 +3231,15 @@ async function main() {
       continue;
     }
 
-    const mdContent = rawContent.replace(LICENSE_COMMENT_REGEX, '');
+    let mdContent = rawContent.replace(LICENSE_COMMENT_REGEX, '');
+
+    // Inline the S2 Routers MDX content once at the bottom of the page.
+    // Avoids rendering the same content for every framework.
+    if (mdContent.includes('<Routers components={props.components} />')) {
+      mdContent = mdContent.replace(ROUTERS_PLACEHOLDER_REGEX, 'See the Routers section below.');
+      mdContent += '\n\n## Routers\n\n' + getRoutersMdxContent();
+    }
+
     const processor = unified()
       .use(remarkParse)
       .use(remarkMdx)
