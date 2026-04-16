@@ -121,6 +121,14 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 See [Style Macro]({{guidesBase}}style-macro.md) for the available typography tokens and related text styling options.
 
+## Buttons with icons and text
+
+When a `Button`, `ActionButton`, or `LinkButton` contains **both** an icon and a text label, the text **must** be wrapped in an S2 `<Text>` element so the component can apply the correct icon/label slot styling and spacing. Plain string children next to an icon render incorrectly.
+
+- Icon-only: no `<Text>` needed (provide an accessible label via `aria-label`).
+- Text-only: plain string children are fine.
+- Icon + text: wrap the label in `<Text>`.
+
 ## Icons
 
 Use React Spectrum's built-in icons and illustrations.
