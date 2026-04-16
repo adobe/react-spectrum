@@ -3328,6 +3328,11 @@ async function main() {
       continue;
     }
 
+    // Skip error pages
+    if (path.basename(filePath) === 'error.mdx') {
+      continue;
+    }
+
     let mdContent = rawContent.replace(LICENSE_COMMENT_REGEX, '');
 
     // Inline the S2 Routers MDX content once at the bottom of the page.
