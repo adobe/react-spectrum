@@ -184,6 +184,10 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
   let [showAllItems, setShowAllItems] = useState(false);
   let [isFocused, setFocusedState] = useState(false);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
+  // Tracks keys that were added via commitCustomValue so we can distinguish them
+  // from real item keys that happen to have the same string (e.g. typing "NY" when
+  // there is an item with id "NY" and textValue "New York").
+  let [customKeys, setCustomKeys] = useState<Set<Key>>(() => new Set());
 
   let defaultValue = useMemo(() => {
     return props.defaultValue !== undefined ? props.defaultValue : (selectionMode === 'single' ? props.defaultSelectedKey ?? null : []) as ValueType<M>;
@@ -257,13 +261,18 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
   let selectedKey = selectionMode === 'single' ? selectionManager.firstSelectedKey : null;
   let selectedItems = useMemo(() => {
     return [...selectionManager.selectedKeys].map(key => {
+      // If the key was added as a custom value, render it as custom even if the
+      // collection happens to contain an item with the same key.
+      if (customKeys.has(key)) {
+        return createCustomNode<T>(key);
+      }
       let item = collection.getItem(key);
       if (item == null) {
         return allowsCustomValue ? createCustomNode<T>(key) : null;
       }
       return item;
     }).filter(item => item != null);
-  }, [selectionManager.selectedKeys, collection, allowsCustomValue]);
+  }, [selectionManager.selectedKeys, collection, allowsCustomValue, customKeys]);
 
   let [inputValue, setInputValue] = useControlledState(
     props.inputValue,
@@ -471,8 +480,21 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
       let current: Key[] = Array.isArray(displayValue) ? displayValue as Key[] : [];
       if (current.includes(trimmed)) {
         setValue(current.filter(v => v !== trimmed));
+        setCustomKeys(prev => {
+          if (!prev.has(trimmed)) {
+            return prev;
+          }
+          let next = new Set(prev);
+          next.delete(trimmed);
+          return next;
+        });
       } else {
         setValue([...current, trimmed]);
+        setCustomKeys(prev => {
+          let next = new Set(prev);
+          next.add(trimmed);
+          return next;
+        });
       }
       setInputValue('');
     }

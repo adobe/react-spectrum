@@ -959,6 +959,40 @@ describe('ComboBox', () => {
     expect(comboboxTester.combobox).toHaveValue('');
   });
 
+  it('should add custom value as-is when typed text collides with an existing item key in multi-select', async () => {
+    let onChange = jest.fn();
+    let {container} = render(
+      <ComboBox selectionMode="multiple" allowsCustomValue allowsEmptyCollection onChange={onChange}>
+        <Label>State</Label>
+        <Input />
+        <Button />
+        <ComboBoxValue placeholder="No items selected" />
+        <Popover>
+          <ListBox>
+            <ListBoxItem id="NY">New York</ListBoxItem>
+            <ListBoxItem id="CA">California</ListBoxItem>
+          </ListBox>
+        </Popover>
+      </ComboBox>
+    );
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+
+    await user.tab();
+    // "NY" matches an item's id but not any item's textValue ("New York", "California")
+    await user.keyboard('NY');
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    await user.tab();
+    // Should add "NY" as a custom value, NOT select the New York item (whose id is 'NY')
+    let value = container.querySelector('.react-aria-ComboBoxValue');
+    expect(value).toHaveTextContent('NY');
+    expect(value).not.toHaveTextContent('New York');
+    expect(comboboxTester.combobox).toHaveValue('');
+  });
+
   it('should allow the user to deselect items with keyboard when multiselect (uncontrolled)', async () => {
     let onChange = jest.fn();
     let {container} = render(<TestComboBox defaultValue={['1', '2']} selectionMode="multiple" onChange={onChange} />);
