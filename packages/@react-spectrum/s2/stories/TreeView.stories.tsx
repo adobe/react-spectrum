@@ -25,6 +25,7 @@ import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {IllustratedMessage} from '../src/IllustratedMessage';
+import {isTextDropItem, useDragAndDrop} from 'react-aria-components/useDragAndDrop';
 import {Link} from '../src/Link';
 import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -41,7 +42,6 @@ import {
   TreeViewProps
 } from '../src/TreeView';
 import {useAsyncList} from 'react-stately/useAsyncList';
-import {isTextDropItem, useDragAndDrop} from 'react-aria-components/useDragAndDrop';
 import {useListData} from 'react-stately/useListData';
 import {useTreeData} from 'react-stately/useTreeData';
 
