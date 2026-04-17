@@ -160,7 +160,7 @@ const buttonStyles = style({
     'expand-button icon label'
   ],
   gridTemplateColumns: ['auto', 'auto', 'minmax(0, 1fr)'],
-  alignItems: 'center',
+  alignItems: 'baseline',
   '--spacingGap': {
     type: 'marginEnd',
     value: 'calc(self(minHeight) * 3/8 - 1px)'
