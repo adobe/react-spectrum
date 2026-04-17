@@ -495,23 +495,18 @@ jobs:
       - run:
           name: diff agent skills
           command: |
-            FULL_DEST="dist/s2-docs/s2/pr/$CIRCLE_SHA1/skills-diff.md"
-            mkdir -p dist "$(dirname "$FULL_DEST")"
+            mkdir -p dist
             node .circleci/skills-diff.js \
               /tmp/dist/skills-main /tmp/dist/skills-branch \
-              --full "$FULL_DEST" \
               > dist/skills-diff.md || true
 
       - store_artifacts:
           path: dist/skills-diff.md
-      - store_artifacts:
-          path: dist/s2-docs
 
       - persist_to_workspace:
           root: dist
           paths:
             - 'skills-diff.md'
-            - 's2-docs'
 
   typecheck-docs:
     executor: rsp-large
@@ -1073,7 +1068,6 @@ workflows:
           name: deploy-s3-commit
           requires:
             - s2-docs
-            - skills-diff
           filters:
             branches:
               ignore: main
