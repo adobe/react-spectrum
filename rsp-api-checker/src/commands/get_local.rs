@@ -40,8 +40,11 @@ pub async fn execute(opts: GetLocalOpts) -> Result<()> {
             .context("removing existing output directory")?;
     }
 
-    // Run the TypeScript extractor directly on the local packages
-    run_extractor(&packages_dir, &opts.output_dir).await?;
+    // Run the TypeScript extractor directly on the local packages.
+    // Pass `check_build_freshness = true` so we fail loudly if any package's
+    // src/ is newer than its dist/types/ — that means `yarn build` is overdue
+    // and the diff would silently drop newly-added props.
+    run_extractor(&packages_dir, &opts.output_dir, true).await?;
 
     println!("\nLocal API extracted to {}", opts.output_dir.display());
     Ok(())

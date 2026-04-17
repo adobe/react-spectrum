@@ -77,7 +77,7 @@ pub fn find_extractor_script() -> Result<PathBuf> {
 }
 
 /// Run the TypeScript API extractor on a packages directory.
-pub async fn run_extractor(packages_dir: &Path, output_dir: &Path) -> Result<()> {
+pub async fn run_extractor(packages_dir: &Path, output_dir: &Path, check_build_freshness: bool) -> Result<()> {
     let script = find_extractor_script()?;
     let script_dir = script.parent().unwrap();
 
@@ -97,19 +97,20 @@ pub async fn run_extractor(packages_dir: &Path, output_dir: &Path) -> Result<()>
     }
 
     println!("Running API extractor...");
-    run(
-        "npx",
-        &[
-            "tsx",
-            script.to_str().unwrap(),
-            "--packages-dir",
-            abs_packages.to_str().unwrap(),
-            "--output-dir",
-            abs_output.to_str().unwrap(),
-        ],
-        script_dir,
-    )
-    .await?;
+    let mut extractor_args: Vec<&str> = vec![
+        "tsx",
+        script.to_str().unwrap(),
+        "--packages-dir",
+        abs_packages.to_str().unwrap(),
+        "--output-dir",
+        abs_output.to_str().unwrap(),
+    ];
+    // Only meaningful against the local workspace — published tarballs are
+    // immutable, so mtimes there don't represent "out of date".
+    if check_build_freshness {
+        extractor_args.push("--check-build-freshness");
+    }
+    run("npx", &extractor_args, script_dir).await?;
 
     Ok(())
 }

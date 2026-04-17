@@ -76,3 +76,42 @@ export function resolveTypesField(value: unknown): string | undefined {
   }
   return undefined;
 }
+
+/**
+ * Recursively resolve a `.ts` / `.tsx` source path from a `source` /
+ * `exports["."].source` field of a `package.json`.
+ *
+ * Used to detect when a package's source is newer than its generated
+ * `.d.ts` (an out-of-date build): we locate the source entry via this
+ * helper and compare mtimes. Published npm tarballs usually strip the
+ * `source` directory, so the returned path is only meaningful when it
+ * actually exists on disk (see callers).
+ */
+export function resolveSourceField(value: unknown): string | undefined {
+  if (typeof value === "string") {
+    // Exclude generated declaration files — those are handled by resolveTypesField.
+    if (value.endsWith(".d.ts") || value.endsWith(".d.mts") || value.endsWith(".d.cts")) {
+      return undefined;
+    }
+    return value.endsWith(".ts") || value.endsWith(".tsx") || value.endsWith(".mts") || value.endsWith(".cts")
+      ? value
+      : undefined;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const resolved = resolveSourceField(item);
+      if (resolved) return resolved;
+    }
+    return undefined;
+  }
+  if (value && typeof value === "object") {
+    const obj = value as Record<string, unknown>;
+    for (const key of ["source", "import", "default", "require"]) {
+      if (obj[key]) {
+        const resolved = resolveSourceField(obj[key]);
+        if (resolved) return resolved;
+      }
+    }
+  }
+  return undefined;
+}

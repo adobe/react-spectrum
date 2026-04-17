@@ -14,6 +14,7 @@ const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const EXTRACTOR = path.join(__dirname, "extract-api.ts");
 const FIXTURES_DIR = path.join(__dirname, "tests", "fixtures", "packages");
 const WITH_DEV_PKG_DIR = path.join(__dirname, "tests", "fixtures", "with-dev-pkg", "packages");
+const WITH_PREVIOUS_TYPES_DIR = path.join(__dirname, "tests", "fixtures", "with-previous-types", "packages");
 
 // Temporary output directories created during tests — cleaned up in afterEach.
 const tmpDirs: string[] = [];
@@ -30,9 +31,10 @@ function makeTmpDir(): string {
   return dir;
 }
 
-function runExtractor(packagesDir: string, outputDir: string): void {
+function runExtractor(packagesDir: string, outputDir: string, extraArgs: string[] = []): void {
+  const extra = extraArgs.length ? " " + extraArgs.join(" ") : "";
   execSync(
-    `npx tsx ${EXTRACTOR} --packages-dir ${packagesDir} --output-dir ${outputDir}`,
+    `npx tsx ${EXTRACTOR} --packages-dir ${packagesDir} --output-dir ${outputDir}${extra}`,
     { cwd: __dirname, stdio: "pipe" },
   );
 }
@@ -168,5 +170,151 @@ describe("extract-api.ts (integration)", () => {
       "packages inside dev/ must not be extracted (they are build tools, not public API, " +
         "and the npm check already excludes the dev/ directory)",
     ).toBe(false);
+  });
+
+  // When a developer adds a prop to a source .ts file but has not re-run
+  // `yarn build`, the dist/types/*.d.ts represents the *previous* build —
+  // the baseline before the current edit. The extractor reads .d.ts only
+  // (a single, consistent path for both the published and local sides),
+  // so if source is newer than types we cannot silently fall back to
+  // reading source — that would introduce a second extraction path whose
+  // output can diverge subtly from the .d.ts path. Instead, fail loudly
+  // with a "run yarn build" message so the user fixes the real problem.
+  // This guards against the "isFoo added to ButtonProps but never appears
+  // in the diff" class of bug.
+  it("errors when source is newer than dist/types (build is out of date)", () => {
+    const outputDir = makeTmpDir();
+
+    // Both files may have identical mtimes after a fresh checkout. Force
+    // the .d.ts to be older than the .ts so the mtime comparison kicks in.
+    const srcPath = path.join(
+      WITH_PREVIOUS_TYPES_DIR,
+      "@react-aria",
+      "previous-widget",
+      "src",
+      "index.ts",
+    );
+    const previousTypesPath = path.join(
+      WITH_PREVIOUS_TYPES_DIR,
+      "@react-aria",
+      "previous-widget",
+      "dist",
+      "types",
+      "src",
+      "index.d.ts",
+    );
+    const now = Date.now();
+    fs.utimesSync(previousTypesPath, new Date(now - 60_000), new Date(now - 60_000));
+    fs.utimesSync(srcPath, new Date(now), new Date(now));
+
+    let threw = false;
+    let stderr = "";
+    try {
+      runExtractor(WITH_PREVIOUS_TYPES_DIR, outputDir, ["--check-build-freshness"]);
+    } catch (err) {
+      threw = true;
+      const e = err as { stderr?: Buffer; stdout?: Buffer };
+      stderr = (e.stderr?.toString() ?? "") + (e.stdout?.toString() ?? "");
+    }
+
+    expect(
+      threw,
+      "extractor must fail when src/ is newer than dist/types/ — silently " +
+        "falling back to source would introduce a second extraction path " +
+        "whose output can diverge from the .d.ts path.",
+    ).toBe(true);
+    expect(stderr).toMatch(/@react-aria\/previous-widget/);
+    expect(stderr).toMatch(/yarn build/);
+  });
+
+  // The freshness check is only meaningful against the live workspace —
+  // published npm tarballs are immutable, so their src/ vs dist/types/
+  // mtime relationship doesn't imply an out-of-date build. Without the
+  // --check-build-freshness flag, the extractor must accept the package
+  // as-is even when source is newer than types.
+  it("does not error when --check-build-freshness is not set", () => {
+    const outputDir = makeTmpDir();
+
+    const srcPath = path.join(
+      WITH_PREVIOUS_TYPES_DIR,
+      "@react-aria",
+      "previous-widget",
+      "src",
+      "index.ts",
+    );
+    const previousTypesPath = path.join(
+      WITH_PREVIOUS_TYPES_DIR,
+      "@react-aria",
+      "previous-widget",
+      "dist",
+      "types",
+      "src",
+      "index.d.ts",
+    );
+    const now = Date.now();
+    fs.utimesSync(previousTypesPath, new Date(now - 60_000), new Date(now - 60_000));
+    fs.utimesSync(srcPath, new Date(now), new Date(now));
+
+    // No extra flag → no freshness check → no error, even though src/ is newer.
+    runExtractor(WITH_PREVIOUS_TYPES_DIR, outputDir);
+
+    const apiJsonPath = path.join(
+      outputDir,
+      "@react-aria",
+      "previous-widget",
+      "dist",
+      "api.json",
+    );
+    expect(fs.existsSync(apiJsonPath)).toBe(true);
+  });
+
+  // The inverse: when the .d.ts is *up to date* (same mtime or newer than
+  // src/), the extractor must keep using types. Reading from source when
+  // unnecessary changes the resolution behaviour in a monorepo (relative
+  // `import` paths into un-built sibling packages → TS falls back to `any`),
+  // which produces spurious "removed" diffs against the published side.
+  it("keeps using dist/types when it is current (same or newer than source)", () => {
+    const outputDir = makeTmpDir();
+
+    // Force .d.ts to be newer than .ts
+    const srcPath = path.join(
+      WITH_PREVIOUS_TYPES_DIR,
+      "@react-aria",
+      "previous-widget",
+      "src",
+      "index.ts",
+    );
+    const typesPath = path.join(
+      WITH_PREVIOUS_TYPES_DIR,
+      "@react-aria",
+      "previous-widget",
+      "dist",
+      "types",
+      "src",
+      "index.d.ts",
+    );
+    const now = Date.now();
+    fs.utimesSync(srcPath, new Date(now - 60_000), new Date(now - 60_000));
+    fs.utimesSync(typesPath, new Date(now), new Date(now));
+
+    runExtractor(WITH_PREVIOUS_TYPES_DIR, outputDir, ["--check-build-freshness"]);
+
+    const apiJsonPath = path.join(
+      outputDir,
+      "@react-aria",
+      "previous-widget",
+      "dist",
+      "api.json",
+    );
+    const { exports } = JSON.parse(fs.readFileSync(apiJsonPath, "utf8"));
+    const widgetProps = exports["WidgetProps"];
+    // The previous .d.ts doesn't have isFresh — since it's current enough
+    // per mtime, we stick with it and isFresh must NOT appear.
+    expect(
+      widgetProps.properties,
+      "when the .d.ts is newer than src/, the extractor must stick with the " +
+        "declaration file — switching to source unnecessarily causes spurious " +
+        "diffs in monorepos where un-built sibling packages can't resolve from .ts.",
+    ).not.toHaveProperty("isFresh");
   });
 });

@@ -15,7 +15,7 @@
 import * as ts from "typescript";
 import * as path from "path";
 import * as fs from "fs";
-import { isOurPackage, shouldSkipProperty, resolveTypesField, OUR_SCOPES, OUR_PACKAGES } from "./utils.js";
+import { isOurPackage, shouldSkipProperty, resolveTypesField, resolveSourceField, OUR_SCOPES, OUR_PACKAGES } from "./utils.js";
 
 // ---------------------------------------------------------------------------
 // CLI
@@ -28,6 +28,10 @@ interface CliArgs {
   outputDir: string | null;
   verbose: boolean;
   debug: string | null; // export name to debug in detail
+  // When true, fail if any package's src/ is newer than its dist/types/ —
+  // meaningful only for the local workspace (published tarballs are
+  // immutable by definition, so the check would just noise).
+  checkBuildFreshness: boolean;
 }
 
 function parseCliArgs(): CliArgs {
@@ -36,6 +40,7 @@ function parseCliArgs(): CliArgs {
   let outputDir: string | null = null;
   let verbose = false;
   let debug: string | null = null;
+  let checkBuildFreshness = false;
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--packages-dir" && argv[i + 1]) {
       packagesDir = argv[++i];
@@ -46,13 +51,15 @@ function parseCliArgs(): CliArgs {
     } else if (argv[i] === "--debug" && argv[i + 1]) {
       debug = argv[++i];
       verbose = true;
+    } else if (argv[i] === "--check-build-freshness") {
+      checkBuildFreshness = true;
     }
   }
   if (!packagesDir) {
-    console.error("Usage: npx tsx extract-api.ts --packages-dir <dir> [--output-dir <dir>] [--verbose] [--debug <exportName>]");
+    console.error("Usage: npx tsx extract-api.ts --packages-dir <dir> [--output-dir <dir>] [--verbose] [--debug <exportName>] [--check-build-freshness]");
     process.exit(1);
   }
-  return { packagesDir, outputDir, verbose, debug };
+  return { packagesDir, outputDir, verbose, debug, checkBuildFreshness };
 }
 
 // ---------------------------------------------------------------------------
@@ -140,8 +147,16 @@ interface PackageEntry {
   isPrivate: boolean;
 }
 
+interface OutOfDatePackage {
+  name: string;
+  dir: string;
+  sourceEntry: string;
+  typesEntry: string;
+}
+
 function discoverPackages(rootDir: string): PackageEntry[] {
   const result: PackageEntry[] = [];
+  const outOfDate: OutOfDatePackage[] = [];
   const globDirs = findPackageJsonDirs(rootDir);
   for (const dir of globDirs) {
     const pkgPath = path.join(dir, "package.json");
@@ -149,7 +164,10 @@ function discoverPackages(rootDir: string): PackageEntry[] {
     const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
     if (!pkg.name) continue;
 
-    // Find types entry point
+    // Find the types entry point (.d.ts). This is the default — the extractor
+    // was designed against declaration files, the full dependency graph
+    // resolves well in a monorepo, and both the published and local sides
+    // produce consistent output.
     let typesEntry: string | undefined;
     if (pkg.exports?.["."]?.types) {
       typesEntry = resolveTypesField(pkg.exports["."].types);
@@ -164,11 +182,47 @@ function discoverPackages(rootDir: string): PackageEntry[] {
     if (!typesEntry && pkg.typings) {
       typesEntry = resolveTypesField(pkg.typings);
     }
-    if (!typesEntry) continue;
 
-    const resolved = path.resolve(dir, typesEntry);
+    // Detect an out-of-date build: if a `source` entry (.ts/.tsx) exists on
+    // disk AND any source file in the package is newer than the types entry,
+    // the developer added/changed API in src/ without re-running
+    // `yarn build`. We *could* silently fall back to reading source, but
+    // that introduces a second extraction path whose output can diverge
+    // from the .d.ts-based path in subtle ways (e.g. unresolved relative
+    // imports into un-built sibling packages → TS falls back to `any`).
+    // Keeping the extractor on a single, consistent path means we collect
+    // these packages and fail loudly — the user should rebuild.
+    let sourceEntry: string | undefined;
+    if (pkg.exports?.["."]) {
+      sourceEntry = resolveSourceField(pkg.exports["."]);
+    }
+    if (!sourceEntry && pkg.source) {
+      sourceEntry = resolveSourceField(pkg.source);
+    }
+
+    if (args.checkBuildFreshness && sourceEntry && typesEntry && isOurPackage(pkg.name)) {
+      const resolvedSource = path.resolve(dir, sourceEntry);
+      const resolvedTypes = path.resolve(dir, typesEntry);
+      if (fs.existsSync(resolvedSource) && fs.existsSync(resolvedTypes)) {
+        const newestSource = newestMtimeInSources(dir);
+        const typesM = fs.statSync(resolvedTypes).mtimeMs;
+        if (newestSource !== null && newestSource > typesM) {
+          outOfDate.push({
+            name: pkg.name,
+            dir,
+            sourceEntry,
+            typesEntry,
+          });
+        }
+      }
+    }
+
+    const entry = typesEntry;
+    if (!entry) continue;
+
+    const resolved = path.resolve(dir, entry);
     if (!fs.existsSync(resolved)) {
-      if (args.verbose) console.warn(`  skip ${pkg.name}: types entry not found at ${resolved}`);
+      if (args.verbose) console.warn(`  skip ${pkg.name}: entry point not found at ${resolved}`);
       continue;
     }
 
@@ -179,7 +233,85 @@ function discoverPackages(rootDir: string): PackageEntry[] {
       isPrivate: !!pkg.private,
     });
   }
+
+  if (outOfDate.length > 0) {
+    const lines = outOfDate.map(
+      (p) =>
+        `  • ${p.name}: src/ is newer than ${path.relative(p.dir, path.resolve(p.dir, p.typesEntry))}`,
+    );
+    console.error(
+      `\nError: ${outOfDate.length} package${outOfDate.length === 1 ? "" : "s"} ` +
+        `${outOfDate.length === 1 ? "has" : "have"} source files newer than the generated ` +
+        `declaration files:\n${lines.join("\n")}\n\n` +
+        `Run \`yarn build\` to regenerate dist/types/ before extracting API. The extractor ` +
+        `reads .d.ts only — stale declarations would silently drop newly-added props from ` +
+        `the diff.`,
+    );
+    process.exit(1);
+  }
+
   return result;
+}
+
+/**
+ * Return the newest mtime (ms) found among .ts/.tsx source files under the
+ * package directory, skipping `dist/`, `node_modules/`, and `.git/`.
+ * Returns `null` if no source files are found.
+ *
+ * We use this to detect out-of-date `.d.ts` files: if any source file in
+ * the package is newer than the built types, a `yarn build` is overdue.
+ * We surface this as a hard error rather than silently swapping to source,
+ * since that would create a second extraction path whose output can
+ * diverge from the .d.ts-based path in subtle ways.
+ */
+function newestMtimeInSources(pkgDir: string): number | null {
+  let newest: number | null = null;
+  function walk(dir: string, depth: number): void {
+    if (depth > 6) return;
+    let entries: fs.Dirent[];
+    try {
+      entries = fs.readdirSync(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
+      if (
+        entry.name === "node_modules" ||
+        entry.name === ".git" ||
+        entry.name === "dist" ||
+        entry.name === "stories" ||
+        entry.name === "test" ||
+        entry.name === "tests" ||
+        entry.name === "__tests__"
+      ) {
+        continue;
+      }
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(full, depth + 1);
+      } else if (entry.isFile()) {
+        // Consider only files that contribute to the compiled type surface.
+        if (
+          entry.name.endsWith(".ts") ||
+          entry.name.endsWith(".tsx") ||
+          entry.name.endsWith(".d.ts")
+        ) {
+          // Skip the `.d.ts` files that live under dist/ (already excluded
+          // via the directory filter above); but in some packages like
+          // @react-types/shared the "source" IS a set of .d.ts files that
+          // live in src/, and those are what we want to pick up.
+          try {
+            const m = fs.statSync(full).mtimeMs;
+            if (newest === null || m > newest) newest = m;
+          } catch {
+            /* ignore */
+          }
+        }
+      }
+    }
+  }
+  walk(pkgDir, 0);
+  return newest;
 }
 
 function findPackageJsonDirs(rootDir: string): string[] {

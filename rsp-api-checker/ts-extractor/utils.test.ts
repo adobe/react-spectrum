@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isOurPackage, shouldSkipProperty, resolveTypesField, OUR_SCOPES, OUR_PACKAGES } from "./utils.js";
+import { isOurPackage, shouldSkipProperty, resolveTypesField, resolveSourceField, OUR_SCOPES, OUR_PACKAGES } from "./utils.js";
 
 // ---------------------------------------------------------------------------
 // isOurPackage
@@ -146,5 +146,56 @@ describe("resolveTypesField", () => {
     expect(resolveTypesField(undefined)).toBeUndefined();
     expect(resolveTypesField(42)).toBeUndefined();
     expect(resolveTypesField(true)).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// resolveSourceField
+// ---------------------------------------------------------------------------
+
+describe("resolveSourceField", () => {
+  it("returns a .ts string directly", () => {
+    expect(resolveSourceField("./src/index.ts")).toBe("./src/index.ts");
+  });
+
+  it("returns a .tsx string directly", () => {
+    expect(resolveSourceField("./src/Button.tsx")).toBe("./src/Button.tsx");
+  });
+
+  it("returns undefined for a non-source string", () => {
+    // .d.ts is a *built* type file — resolveSourceField must not pick it up,
+    // otherwise the previous-types fallback stops working.
+    expect(resolveSourceField("./dist/index.d.ts")).toBeUndefined();
+    expect(resolveSourceField("./dist/index.js")).toBeUndefined();
+    expect(resolveSourceField("")).toBeUndefined();
+  });
+
+  it("picks the first .ts from an array", () => {
+    expect(resolveSourceField(["./a.js", "./b.ts", "./c.tsx"])).toBe("./b.ts");
+  });
+
+  it("prefers the 'source' key in a conditional-exports object", () => {
+    // Real-world case: exports['.']['.'] = { source, types, import, require }
+    const val = {
+      source: "./src/index.ts",
+      types: "./dist/types/index.d.ts",
+      import: "./dist/index.mjs",
+      require: "./dist/index.cjs",
+    };
+    expect(resolveSourceField(val)).toBe("./src/index.ts");
+  });
+
+  it("does not return types field as a source entry", () => {
+    // The exports subtree has both source and types; we must never pick types.d.ts
+    // as a "source" file (otherwise we'd silently read the same previous-build
+    // d.ts we're trying to avoid).
+    const val = { types: "./dist/index.d.ts" };
+    expect(resolveSourceField(val)).toBeUndefined();
+  });
+
+  it("returns undefined for non-object / non-string / non-array input", () => {
+    expect(resolveSourceField(null)).toBeUndefined();
+    expect(resolveSourceField(undefined)).toBeUndefined();
+    expect(resolveSourceField(42)).toBeUndefined();
   });
 });

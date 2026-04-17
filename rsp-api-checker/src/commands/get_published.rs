@@ -88,7 +88,10 @@ pub async fn execute(opts: GetPublishedOpts) -> Result<()> {
     //    The extractor looks for package.json files with `types` entries
     //    under the given directory. npm installs into node_modules/.
     let nm_dir = tmp_dir.join("node_modules");
-    run_extractor(&nm_dir, &opts.output_dir).await?;
+    // check_build_freshness = false: published tarballs are immutable, so
+    // their src/ vs dist/types/ mtime relationship doesn't mean the build
+    // is stale — it's whatever npm chose to include.
+    run_extractor(&nm_dir, &opts.output_dir, false).await?;
 
     println!(
         "\nPublished API extracted to {}",
