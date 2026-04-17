@@ -5,7 +5,6 @@ const fs = require('fs');
 const path = require('path');
 
 const MAX_OUTPUT_CHARS = 60000;
-const MAX_FILE_DIFF_LINES = 400;
 const TEXT_EXTS = new Set(['.md', '.json', '.txt']);
 
 function walk(root) {
@@ -40,15 +39,12 @@ function readMaybeText(p) {
   return buf.toString('utf8');
 }
 
-// Minimal LCS-based unified diff — avoids any runtime deps (Octokit aside,
-// this script runs before `yarn install` results are guaranteed to have
-// extra libraries beyond what's already pinned).
+// Minimal LCS-based unified diff — avoids any runtime deps.
 function diffLines(a, b) {
   const aLines = a.split('\n');
   const bLines = b.split('\n');
   const n = aLines.length;
   const m = bLines.length;
-  // LCS length table
   const dp = Array.from({length: n + 1}, () => new Uint32Array(m + 1));
   for (let i = n - 1; i >= 0; i--) {
     for (let j = m - 1; j >= 0; j--) {
@@ -64,35 +60,72 @@ function diffLines(a, b) {
   let j = 0;
   while (i < n && j < m) {
     if (aLines[i] === bLines[j]) {
-      out.push(' ' + aLines[i]);
+      out.push(' ');
       i++;
       j++;
     } else if (dp[i + 1][j] >= dp[i][j + 1]) {
-      out.push('-' + aLines[i]);
+      out.push('-');
       i++;
     } else {
-      out.push('+' + bLines[j]);
+      out.push('+');
       j++;
     }
   }
-  while (i < n) {
-    out.push('-' + aLines[i++]);
-  }
-  while (j < m) {
-    out.push('+' + bLines[j++]);
-  }
+  while (i < n) { out.push('-'); i++; }
+  while (j < m) { out.push('+'); j++; }
   return out;
 }
 
-function truncateDiff(lines) {
-  if (lines.length <= MAX_FILE_DIFF_LINES) {
-    return {lines, truncated: false};
+function countLines(s) {
+  if (s.length === 0) {
+    return 0;
   }
-  return {
-    lines: lines.slice(0, MAX_FILE_DIFF_LINES),
-    truncated: true,
-    omitted: lines.length - MAX_FILE_DIFF_LINES
-  };
+  // A final newline doesn't add a line.
+  return s.split('\n').length - (s.endsWith('\n') ? 1 : 0);
+}
+
+function countChanges(mainPath, branchPath) {
+  const ext = path.extname(branchPath || mainPath).toLowerCase();
+  if (!TEXT_EXTS.has(ext)) {
+    return null;
+  }
+  const a = mainPath ? readMaybeText(mainPath) : '';
+  const b = branchPath ? readMaybeText(branchPath) : '';
+  if (a === null || b === null) {
+    return null;
+  }
+  if (mainPath && !branchPath) {
+    return {added: 0, removed: countLines(a)};
+  }
+  if (!mainPath && branchPath) {
+    return {added: countLines(b), removed: 0};
+  }
+  let added = 0;
+  let removed = 0;
+  for (const op of diffLines(a, b)) {
+    if (op === '+') {
+      added++;
+    } else if (op === '-') {
+      removed++;
+    }
+  }
+  return {added, removed};
+}
+
+// GitHub renders $\color{...}$ math spans in comments, which is the only
+// reliable way to get inline red/green text without images.
+function colorCounts(counts) {
+  if (!counts) {
+    return '';
+  }
+  const parts = [];
+  if (counts.added) {
+    parts.push(`$\\color{green}{+${counts.added}}$`);
+  }
+  if (counts.removed) {
+    parts.push(`$\\color{red}{-${counts.removed}}$`);
+  }
+  return parts.join(' ');
 }
 
 function classify(mainFiles, branchFiles) {
@@ -108,7 +141,6 @@ function classify(mainFiles, branchFiles) {
     } else if (!mainPath && branchPath) {
       added.push(key);
     } else {
-      // Both exist — compare bytes first (fast path).
       const a = fs.readFileSync(mainPath);
       const b = fs.readFileSync(branchPath);
       if (!a.equals(b)) {
@@ -131,77 +163,42 @@ function main() {
   const {added, removed, modified} = classify(mainFiles, branchFiles);
 
   if (added.length === 0 && removed.length === 0 && modified.length === 0) {
-    // Empty file signals "no changes" to the PR comment script.
     process.stdout.write('');
     return;
   }
 
   const parts = [];
-  parts.push('### Summary');
-  parts.push('');
-  parts.push(`- **Added:** ${added.length}`);
-  parts.push(`- **Removed:** ${removed.length}`);
-  parts.push(`- **Modified:** ${modified.length}`);
-  parts.push('');
 
-  const listFiles = (label, files) => {
+  const listSection = (label, files, getCounts) => {
     if (!files.length) {
       return;
     }
     parts.push(`<details><summary>${label} (${files.length})</summary>`);
     parts.push('');
     for (const f of files) {
-      parts.push(`- \`${f}\``);
+      const counts = getCounts ? getCounts(f) : null;
+      const suffix = counts ? ` ${colorCounts(counts)}` : '';
+      parts.push(`- \`${f}\`${suffix}`);
     }
     parts.push('');
     parts.push('</details>');
     parts.push('');
   };
 
-  listFiles('Added', added);
-  listFiles('Removed', removed);
+  listSection('Added', added, f => countChanges(null, branchFiles.get(f)));
+  listSection('Removed', removed);
+  listSection('Modified', modified, f => countChanges(mainFiles.get(f), branchFiles.get(f)));
 
-  if (modified.length) {
-    parts.push('### Modified files');
+  const buildUrl = process.env.CIRCLE_BUILD_URL;
+  if (buildUrl) {
+    parts.push(`[View full skills diff](${buildUrl}#artifacts)`);
     parts.push('');
-    for (const rel of modified) {
-      const ext = path.extname(rel).toLowerCase();
-      parts.push(`<details><summary><code>${rel}</code></summary>`);
-      parts.push('');
-      if (!TEXT_EXTS.has(ext)) {
-        parts.push('_Binary or non-text file — diff omitted._');
-      } else {
-        const a = readMaybeText(mainFiles.get(rel));
-        const b = readMaybeText(branchFiles.get(rel));
-        if (a === null || b === null) {
-          parts.push('_Binary content detected — diff omitted._');
-        } else {
-          const diff = diffLines(a, b);
-          const onlyContext = diff.every(l => l.startsWith(' '));
-          if (onlyContext) {
-            parts.push('_Trailing-whitespace or encoding-only change._');
-          } else {
-            const {lines, truncated, omitted} = truncateDiff(diff);
-            parts.push('```diff');
-            parts.push(lines.join('\n'));
-            parts.push('```');
-            if (truncated) {
-              parts.push('');
-              parts.push(`_… ${omitted} more diff lines truncated. See the \`skills-diff.md\` workflow artifact for the full diff._`);
-            }
-          }
-        }
-      }
-      parts.push('');
-      parts.push('</details>');
-      parts.push('');
-    }
   }
 
   let out = parts.join('\n');
   if (out.length > MAX_OUTPUT_CHARS) {
     out = out.slice(0, MAX_OUTPUT_CHARS) +
-      '\n\n_… output truncated to fit GitHub comment size limit. See the `skills-diff.md` workflow artifact for the full diff._\n';
+      '\n\n_… output truncated to fit GitHub comment size limit._\n';
   }
   process.stdout.write(out);
 }

@@ -61,7 +61,9 @@ async function run() {
       return;
     }
     if (diff.trim().length > 0) {
-      const body = `${commentKey}## Agent Skills Changes
+      const body = `${commentKey}
+## Agent Skills Changes
+
 ${diff}
 `;
       if (commentId != null) {
