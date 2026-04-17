@@ -76,6 +76,24 @@ struct PackageState {
     /// `realpath(this_pkg/node_modules/<dep>)` actually resolve to? A missing
     /// entry means the dep isn't reachable from this package at all.
     workspace_dep_resolution: Vec<WorkspaceDepResolution>,
+    /// Every `.d.ts` file under `dist/types/`, sorted by relative path. Lets
+    /// us diff CI vs local to spot subpath types that weren't built/persisted
+    /// (e.g. `react-aria/useButton` resolving empty because
+    /// `dist/types/exports/useButton.d.ts` is missing). `None` when the
+    /// package has no `dist/types/` directory.
+    dist_types_files: Option<Vec<DistTypesFile>>,
+}
+
+#[derive(Serialize)]
+struct DistTypesFile {
+    /// Path relative to the package dir, e.g. `dist/types/exports/useButton.d.ts`.
+    path: String,
+    /// Size in bytes. Trivially empty files (re-exports only) are still
+    /// meaningful — `0` would indicate an emit failure.
+    size: u64,
+    /// mtime in unix seconds. Matches `types_entry_mtime` for files built in
+    /// the same emit pass.
+    mtime: u64,
 }
 
 #[derive(Serialize)]
@@ -101,6 +119,13 @@ struct Summary {
     packages_with_stale_types: usize,
     /// Sum of workspace deps across all packages that failed to resolve.
     unresolved_workspace_deps: usize,
+    /// Total `.d.ts` files found across every package's `dist/types/` tree.
+    /// A large CI-vs-local delta here is a smoking gun for partial builds /
+    /// partial workspace persistence.
+    total_dist_types_files: usize,
+    /// Number of packages that declare a `types` entry but whose `dist/types/`
+    /// directory is absent.
+    packages_missing_dist_types_dir: usize,
 }
 
 pub async fn execute(opts: EnvReportOpts) -> Result<()> {
@@ -161,7 +186,8 @@ fn short_summary(r: &EnvReport) -> String {
         "node={}  yarn={}  tsc={}  rustc={}\n\
          git HEAD={}  branch={}  dirty files={}\n\
          packages: {} total, {} public, {} with types entry, {} with types on disk, \
-         {} stale, {} unresolved workspace deps",
+         {} stale, {} unresolved workspace deps\n\
+         dist/types: {} files across all packages, {} packages declare types but have no dist/types/ dir",
         t.node.as_deref().unwrap_or("?"),
         t.yarn.as_deref().unwrap_or("?"),
         t.tsc.as_deref().unwrap_or("?"),
@@ -175,6 +201,8 @@ fn short_summary(r: &EnvReport) -> String {
         s.packages_with_types_on_disk,
         s.packages_with_stale_types,
         s.unresolved_workspace_deps,
+        s.total_dist_types_files,
+        s.packages_missing_dist_types_dir,
     )
 }
 
@@ -263,6 +291,7 @@ fn inspect_package(repo_root: &Path, pkg_dir: &Path) -> Result<PackageState> {
     };
 
     let workspace_dep_resolution = inspect_workspace_deps(&pkg, pkg_dir, repo_root);
+    let dist_types_files = collect_dist_types_files(pkg_dir);
 
     let rel_dir = pkg_dir
         .strip_prefix(repo_root)
@@ -280,7 +309,57 @@ fn inspect_package(repo_root: &Path, pkg_dir: &Path) -> Result<PackageState> {
         newest_source_mtime,
         source_newer_than_types,
         workspace_dep_resolution,
+        dist_types_files,
     })
+}
+
+/// Enumerate every `.d.ts` file under `<pkg_dir>/dist/types/`, sorted by
+/// relative path. Returns `None` if `dist/types/` doesn't exist — distinguishes
+/// "no types built at all" from "empty types tree".
+fn collect_dist_types_files(pkg_dir: &Path) -> Option<Vec<DistTypesFile>> {
+    let dist_types = pkg_dir.join("dist").join("types");
+    if !dist_types.exists() {
+        return None;
+    }
+    let mut files = Vec::new();
+    fn walk(root: &Path, cur: &Path, out: &mut Vec<DistTypesFile>, depth: usize) {
+        if depth > 10 {
+            return;
+        }
+        let Ok(entries) = std::fs::read_dir(cur) else {
+            return;
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            match entry.file_type() {
+                Ok(ft) if ft.is_dir() => walk(root, &path, out, depth + 1),
+                Ok(ft) if ft.is_file() => {
+                    if path.extension().and_then(|s| s.to_str()) == Some("ts")
+                        && path
+                            .to_string_lossy()
+                            .ends_with(".d.ts")
+                    {
+                        if let Ok(meta) = entry.metadata() {
+                            let rel = path
+                                .strip_prefix(root)
+                                .map(|p| p.to_string_lossy().to_string())
+                                .unwrap_or_else(|_| path.display().to_string());
+                            out.push(DistTypesFile {
+                                path: rel,
+                                size: meta.len(),
+                                mtime: mtime_secs(&meta),
+                            });
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    walk(pkg_dir, &dist_types, &mut files, 0);
+    // Sort so CI vs local diffs cleanly.
+    files.sort_by(|a, b| a.path.cmp(&b.path));
+    Some(files)
 }
 
 fn mtime_secs(m: &std::fs::Metadata) -> u64 {
@@ -458,6 +537,26 @@ fn summarize(packages: &[PackageState]) -> Summary {
         .flat_map(|p| p.workspace_dep_resolution.iter())
         .filter(|d| d.resolved_to.is_none())
         .count();
+    let total_dist_types_files = packages
+        .iter()
+        .filter_map(|p| p.dist_types_files.as_ref().map(|v| v.len()))
+        .sum();
+    // A package that explicitly points its `types` entry inside `dist/types/`
+    // but has no `dist/types/` directory at all is the most suspicious case —
+    // its subpath imports will silently resolve to empty types. We skip
+    // packages whose types live elsewhere (e.g. `@react-types/*` ship raw .ts
+    // via `src/`) and stub package.json files with no name.
+    let packages_missing_dist_types_dir = packages
+        .iter()
+        .filter(|p| {
+            p.name != "<unnamed>"
+                && p.types_entry
+                    .as_deref()
+                    .map(|t| t.contains("dist/types/"))
+                    .unwrap_or(false)
+                && p.dist_types_files.is_none()
+        })
+        .count();
     Summary {
         total_packages,
         public_packages,
@@ -465,6 +564,8 @@ fn summarize(packages: &[PackageState]) -> Summary {
         packages_with_types_on_disk,
         packages_with_stale_types,
         unresolved_workspace_deps,
+        total_dist_types_files,
+        packages_missing_dist_types_dir,
     }
 }
 
