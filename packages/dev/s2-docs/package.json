@@ -49,6 +49,8 @@
     "json5": "^2.2.3",
     "lz-string": "^1.5.0",
     "markdown-to-jsx": "^6.11.0",
+    "mdast-util-mdx": "^1.0.0",
+    "mdast-util-to-markdown": "^1.0.0",
     "react": "^19.2.0",
     "react-aria": "^3.40.0",
     "react-aria-components": "^1.7.1",

@@ -265,7 +265,7 @@ Example:
 
 ### Border width
 
-Affected style props: `borderWidth`, `borderStartWidth`, `borderEndWidth`, `borderTopWidth`, `orderBottomWidth`, `borderXWidth`, `borderYWidth`.
+Affected style props: `borderWidth`, `borderStartWidth`, `borderEndWidth`, `borderTopWidth`, `borderBottomWidth`, `borderXWidth`, `borderYWidth`.
 
 Example:
 

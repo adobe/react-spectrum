@@ -12,12 +12,12 @@ import {Step, Counter} from './Step';
 
   ```tsx
   // src/app.tsx
-  import {Provider} from '@react-spectrum/s2';
+  import {Provider} from '@react-spectrum/s2/Provider';
   import {BrowserRouter, useNavigate, useHref, type NavigateOptions} from 'react-router';
 
   /*- begin highlight -*/
   // Configure the type of the `routerOptions` prop on all React Spectrum components.
-  declare module '@react-spectrum/s2' {
+  declare module '@react-spectrum/s2/Provider' {
     interface RouterConfig {
       routerOptions: NavigateOptions
     }
@@ -43,12 +43,12 @@ import {Step, Counter} from './Step';
 
   ```tsx
   // src/routes/__root.tsx
-  import {Provider} from '@react-spectrum/s2';
+  import {Provider} from '@react-spectrum/s2/Provider';
   import {useRouter, type NavigateOptions, type ToOptions} from '@tanstack/react-router';
 
   /*- begin highlight -*/
   // Configure the type of the `href` and `routerOptions` props on all React Spectrum components.
-  declare module '@react-spectrum/s2' {
+  declare module '@react-spectrum/s2/Provider' {
     interface RouterConfig {
       href: ToOptions,
       routerOptions: Omit<NavigateOptions, keyof ToOptions>

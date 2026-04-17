@@ -31,7 +31,8 @@ module.exports = new Resolver({
         specifierType: dependency.specifierType,
         parent: dependency.resolveFrom,
         env: dependency.env,
-        sourcePath: dependency.sourcePath
+        sourcePath: dependency.sourcePath,
+        packageConditions: ['source', 'types']
       });
 
       if (resolved && resolved.filePath) {

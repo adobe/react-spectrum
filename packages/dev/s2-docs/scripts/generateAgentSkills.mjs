@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Generates Agent Skills for React Spectrum (S2) and React Aria.
+ * Generates Agent Skills for React Spectrum (S2), migration, and React Aria.
  *
  * This script creates skills in the Agent Skills format (https://agentskills.io/specification)
  *
@@ -27,6 +27,7 @@ const REPO_ROOT = path.resolve(__dirname, '../../../../');
 const MARKDOWN_DOCS_DIST = path.join(REPO_ROOT, 'packages/dev/s2-docs/dist');
 const MDX_PAGES_DIR = path.join(REPO_ROOT, 'packages/dev/s2-docs/pages');
 const MARKDOWN_DOCS_SCRIPT = path.join(__dirname, 'generateMarkdownDocs.mjs');
+const MIGRATION_REFS_DIR = path.join(REPO_ROOT, 'packages/dev/s2-docs/migration-references');
 const WELL_KNOWN_DIR = '.well-known';
 const WELL_KNOWN_SKILLS_DIR = 'skills';
 
@@ -45,6 +46,20 @@ const SKILLS = {
       website: 'https://react-spectrum.adobe.com/'
     }
   },
+  'migrate-react-spectrum-v3-to-s2': {
+    name: 'migrate-react-spectrum-v3-to-s2',
+    description:
+      'Upgrade React Spectrum v3 (Spectrum 1) codebases to React Spectrum S2. Use when developers mention migrating or upgrading from React Spectrum v3, Spectrum 1, S1, @adobe/react-spectrum, @react-spectrum/* packages, or codemod-assisted upgrades to @react-spectrum/s2.',
+    kind: 'migration',
+    license: 'Apache-2.0',
+    sourceDir: 's2',
+    compatibility:
+      'Requires a React project currently using React Spectrum v3, @react-spectrum/* packages, or related React Spectrum v3 helpers.',
+    metadata: {
+      author: 'Adobe',
+      website: 'https://react-spectrum.adobe.com/'
+    }
+  },
   'react-aria': {
     name: 'react-aria',
     description:
@@ -57,6 +72,31 @@ const SKILLS = {
       author: 'Adobe',
       website: 'https://react-aria.adobe.com/'
     }
+  }
+};
+
+const CUSTOM_SKILL_CONTENT = {
+  'react-spectrum-s2': {
+    skillNotesMarkdown:
+      'If the requirements do not clearly specify which React Spectrum component to use, consult the [Component Decision Tree](references/guides/component-decision-tree.md) before choosing a component.',
+    embeddedMarkdownPaths: [
+      path.join(
+        REPO_ROOT,
+        'packages/dev/s2-docs/skills/react-spectrum-s2/implementation-guidance.md'
+      )
+    ],
+    guideEntries: [
+      {
+        title: 'Component Decision Tree',
+        path: 'component-decision-tree.md',
+        sourcePath: path.join(
+          REPO_ROOT,
+          'packages/dev/s2-docs/skills/react-spectrum-s2/component-decision-tree.md'
+        ),
+        description:
+          'How to choose the right S2 component when requirements do not name one explicitly.'
+      }
+    ]
   }
 };
 
@@ -83,6 +123,45 @@ function getWellKnownRootForLibrary(sourceDir) {
     WELL_KNOWN_DIR,
     WELL_KNOWN_SKILLS_DIR
   );
+}
+
+function getCustomSkillContent(skillName) {
+  return CUSTOM_SKILL_CONTENT[skillName] ?? null;
+}
+
+function renderCustomMarkdown(markdownPath, replacements = {}) {
+  let content = fs.readFileSync(markdownPath, 'utf8');
+  for (const [token, value] of Object.entries(replacements)) {
+    content = content.replaceAll(token, value);
+  }
+  return content.trim();
+}
+
+function readCustomEmbeddedMarkdown(skillName, replacements = {}) {
+  const customContent = getCustomSkillContent(skillName);
+  if (!customContent?.embeddedMarkdownPaths?.length) {
+    return '';
+  }
+
+  return customContent.embeddedMarkdownPaths
+    .flatMap((markdownPath) => {
+      if (!fs.existsSync(markdownPath)) {
+        console.warn(`Custom skill content not found at ${markdownPath}`);
+        return [];
+      }
+
+      return [renderCustomMarkdown(markdownPath, replacements)];
+    })
+    .filter(Boolean)
+    .join('\n\n');
+}
+
+function getCustomGuideEntries(skillName) {
+  return getCustomSkillContent(skillName)?.guideEntries ?? [];
+}
+
+function getCustomSkillNotesMarkdown(skillName) {
+  return getCustomSkillContent(skillName)?.skillNotesMarkdown ?? '';
 }
 
 /**
@@ -283,50 +362,66 @@ function categorizeEntries(entries, sourceDir) {
   return categories;
 }
 
-/**
- * Generate the SKILL.md content
- */
-function generateSkillMd(skillConfig, categories, isS2) {
-  const frontmatter = `---
-name: ${skillConfig.name}
-description: ${skillConfig.description}
-license: ${skillConfig.license}
-compatibility: ${skillConfig.compatibility}
+function generateFrontmatter(skillConfig) {
+  return `---
+name: "${skillConfig.name}"
+description: "${skillConfig.description}"
+license: "${skillConfig.license}"
+compatibility: "${skillConfig.compatibility}"
 metadata:
-  author: ${skillConfig.metadata.author}
-  website: ${skillConfig.metadata.website}
+  author: "${skillConfig.metadata.author}"
+  website: "${skillConfig.metadata.website}"
 ---
 
 `;
+}
 
-  let content = frontmatter;
+/**
+ * Generate the SKILL.md content
+ */
+function generateDocsSkillMd(skillConfig, categories, isS2) {
+  const customGuideEntries = getCustomGuideEntries(skillConfig.name);
+  const customSkillNotesMarkdown = getCustomSkillNotesMarkdown(skillConfig.name);
+  const embeddedCustomMarkdown = readCustomEmbeddedMarkdown(skillConfig.name, {
+    '{{guidesBase}}': 'references/guides/',
+    '{{componentsBase}}': 'references/components/'
+  });
+
+  let content = generateFrontmatter(skillConfig);
 
   if (isS2) {
     content += `# React Spectrum S2 (Spectrum 2)
 
 React Spectrum S2 is Adobe's implementation of the Spectrum 2 design system in React. It provides a collection of accessible, adaptive, and high-quality UI components.
-
-## Documentation Structure
-
-The \`references/\` directory contains detailed documentation organized as follows:
-
 `;
   } else {
     content += `# React Aria Components
 
 React Aria Components is a library of unstyled, accessible UI components that you can style with any CSS solution. Built on top of React Aria hooks, it provides the accessibility and behavior without prescribing any visual design.
+`;
+  }
 
-## Documentation Structure
+  if (customSkillNotesMarkdown) {
+    content += `\n${customSkillNotesMarkdown}\n`;
+  }
+
+  if (embeddedCustomMarkdown) {
+    content += `\n${embeddedCustomMarkdown}\n\n`;
+  }
+
+  content += `## Documentation Structure
 
 The \`references/\` directory contains detailed documentation organized as follows:
 
 `;
-  }
 
   // Add documentation sections
-  if (categories.guides.length > 0) {
+  if (customGuideEntries.length > 0 || categories.guides.length > 0) {
     content += `### Guides
 `;
+    for (const entry of customGuideEntries) {
+      content += `- [${entry.title}](references/guides/${entry.path})${entry.description ? `: ${entry.description}` : ''}\n`;
+    }
     for (const entry of categories.guides) {
       content += `- [${entry.title}](references/guides/${entry.path})${entry.description ? `: ${entry.description}` : ''}\n`;
     }
@@ -386,16 +481,132 @@ The \`references/\` directory contains detailed documentation organized as follo
   return content.trimEnd() + '\n';
 }
 
+function generateMigrationSkillMd(skillConfig) {
+  return `${generateFrontmatter(skillConfig)}# React Spectrum v3 to S2 migration
+
+Upgrade React Spectrum v3 codebases to S2 by following these eight steps in order.
+
+## Scope
+
+This skill covers only the React Spectrum v3 (S1) to S2 migration. Do **not** perform major dependency upgrades such as React version bumps (e.g. React 16→17, 17→18, 18→19) as part of this migration. If the project needs a major dependency upgrade, note it as a recommended follow-up in the final report (Step 8) rather than attempting it during migration.
+
+## Step 1: Inspect the codebase
+
+- Search package manifests for \`@adobe/react-spectrum\`, \`@react-spectrum/*\`, and \`@spectrum-icons/*\`.
+- Note the package manager (npm, yarn, pnpm) from the lockfile.
+- Identify the bundler used by the migration target (Parcel, Vite, webpack, Next.js, Rollup, ESBuild).
+- In monorepos, inspect the specific package or app being migrated rather than the workspace root.
+- Find app entrypoints, root providers, shared test wrappers, toast setup, and any \`defaultTheme\` usage.
+
+See [Prerequisites](references/focused-prerequisites.md) for the full inspection checklist and minimum tool versions.
+
+## Step 2: Install @react-spectrum/s2
+
+Install the S2 package with the project's package manager:
+
+\`\`\`bash
+npm install @react-spectrum/s2
+yarn add @react-spectrum/s2
+pnpm add @react-spectrum/s2
+\`\`\`
+
+If the bundler is not Parcel v2.12.0+, also install and configure \`unplugin-parcel-macros\` as a dev dependency. See [Getting started](references/docs-getting-started.md) for bundler-specific setup instructions.
+
+## Step 3: Dry-run the codemod
+
+Preview what the codemod will change before applying:
+
+\`\`\`bash
+npx @react-spectrum/codemods s1-to-s2 --agent --dry
+yarn dlx @react-spectrum/codemods s1-to-s2 --agent --dry
+pnpm dlx @react-spectrum/codemods s1-to-s2 --agent --dry
+\`\`\`
+
+Use \`npx\` for npm/Yarn 1, \`yarn dlx\` for Yarn Berry/PnP, \`pnpm dlx\` for pnpm.
+Add \`--path <dir>\` for monorepos or partial rollouts.
+Add \`--components A,B\` only when explicitly requested for incremental migration.
+
+Review the dry-run output to understand the scope of changes.
+
+## Step 4: Run the codemod
+
+Execute the codemod to transform the source files:
+
+\`\`\`bash
+npx @react-spectrum/codemods s1-to-s2 --agent
+yarn dlx @react-spectrum/codemods s1-to-s2 --agent
+pnpm dlx @react-spectrum/codemods s1-to-s2 --agent
+\`\`\`
+
+Use the same \`--path\` and \`--components\` flags as the dry run if applicable.
+
+## Step 5: Format with the project's formatter
+
+If the project has a formatter (Prettier, ESLint, Biome, Oxfmt, etc.), run it on the changed files to remove extraneous formatting changes introduced by the codemod.
+
+## Step 6: Fix remaining TODO(S2-upgrade) comments
+
+Search the codebase for \`TODO(S2-upgrade)\` comments left by the codemod. Each one marks a change that requires manual review.
+
+See [Focused manual fixes](references/focused-manual-fixes.md) for information on how to fix these.
+
+Also reference the \`react-spectrum-s2\` skill (if available) for full S2 component documentation when needed.
+
+## Step 7: Validate
+
+Run the project's own toolchain to verify the migration is complete:
+
+1. Install dependencies if package manifests changed.
+2. Run the typecheck or compile step (e.g. \`tsc --noEmit\`, \`tsc -b\`).
+3. Run tests covering the migrated code. Prefer the narrowest test scope that covers the changed files.
+4. Run the build to confirm the output is intact.
+
+In monorepos, validate the affected package first with its own scripts before running workspace-wide checks. Fix any failures before declaring the migration complete.
+
+## Step 8: Generate final report
+
+After the migration is complete, produce a final report for the user with the following sections:
+
+### Summary of changes
+- Packages added and removed.
+- What the codemod changed (files affected, components migrated).
+- Manual fixes applied (layout components, icons, dialogs, collections, toast, etc.).
+
+### Remaining issues
+- Any unresolved \`TODO(S2-upgrade)\` comments.
+- Type errors, test failures, or known gaps that still need attention.
+
+### Recommended follow-ups
+- If the project is not on **React 19**, recommend upgrading. React 19 is recommended for S2. Include the relevant upgrade guide links:
+  - React 17: https://legacy.reactjs.org/blog/2020/08/10/react-v17-rc.html
+  - React 18: https://react.dev/blog/2022/03/08/react-18-upgrade-guide
+  - React 19: https://react.dev/blog/2024/04/25/react-19-upgrade-guide
+- Any other major upgrades (e.g. React, bundler, etc.) that were out of scope for this migration.
+- Any additional cleanup or improvements the user may want to address.
+
+## Deep reference
+
+Use these when you need more component-by-component or API-level detail:
+- [Migration guide](references/docs-migrating.md): comprehensive component-by-component migration reference.
+- [Getting started](references/docs-getting-started.md): framework setup and macro configuration.
+- [Provider](references/docs-provider.md): locale, router, color-scheme, and SSR usage.
+- [Styling](references/docs-styling.md): style macro overview including runtime conditions, CSS variables, CSS optimization, and CSS resets.
+- [Style macro](references/docs-style-macro.md): exact style macro syntax and constraints.
+- [Toast](references/docs-toast.md): full S2 toast API and examples.
+`.trimEnd() + '\n';
+}
+
 /**
  * Copy documentation files to the skill's references directory
  */
-function copyDocumentation(skillConfig, categories, skillDir) {
+function copyDocsDocumentation(skillConfig, categories, skillDir) {
   const refsDir = path.join(skillDir, 'references');
   const sourceDir = path.join(MARKDOWN_DOCS_DIST, skillConfig.sourceDir);
+  const customGuideEntries = getCustomGuideEntries(skillConfig.name);
 
   // Create subdirectories only if they have content
   const subdirs = [
-    {name: 'guides', entries: categories.guides},
+    {name: 'guides', entries: [...customGuideEntries, ...categories.guides]},
     {name: 'components', entries: categories.components},
     {name: 'interactions', entries: categories.interactions},
     {name: 'utilities', entries: categories.utilities},
@@ -427,6 +638,28 @@ function copyDocumentation(skillConfig, categories, skillDir) {
   };
 
   // Copy guides
+  const customContent = getCustomSkillContent(skillConfig.name);
+  for (const entry of customGuideEntries) {
+    const sourcePath =
+      entry.sourcePath ||
+      customContent?.embeddedMarkdownPaths?.find((markdownPath) =>
+        markdownPath.endsWith(entry.path)
+      );
+    if (!sourcePath || !fs.existsSync(sourcePath)) {
+      continue;
+    }
+
+    const targetPath = path.join(refsDir, 'guides', entry.path);
+    fs.mkdirSync(path.dirname(targetPath), {recursive: true});
+    fs.writeFileSync(
+      targetPath,
+      renderCustomMarkdown(sourcePath, {
+        '{{guidesBase}}': '',
+        '{{componentsBase}}': '../components/'
+      }) + '\n'
+    );
+  }
+
   for (const entry of categories.guides) {
     copyFile(entry, 'guides');
   }
@@ -463,6 +696,49 @@ function copyDocumentation(skillConfig, categories, skillDir) {
   }
 }
 
+function copyFocusedDocs(sourceDir, skillDir, docs) {
+  for (const [sourceName, outputName] of docs) {
+    const sourcePath = path.join(MARKDOWN_DOCS_DIST, sourceDir, sourceName);
+    if (!fs.existsSync(sourcePath)) {
+      console.warn(`Warning: expected migration reference not found: ${sourcePath}`);
+      continue;
+    }
+
+    const outputPath = path.join(skillDir, 'references', outputName);
+    fs.mkdirSync(path.dirname(outputPath), {recursive: true});
+    fs.copyFileSync(sourcePath, outputPath);
+  }
+}
+
+function writeMigrationReferences(skillDir, sourceDir) {
+  // Copy focused reference docs from source files
+  const focusedRefs = [
+    'focused-prerequisites.md',
+    'focused-manual-fixes.md'
+  ];
+
+  for (const filename of focusedRefs) {
+    const sourcePath = path.join(MIGRATION_REFS_DIR, filename);
+    if (!fs.existsSync(sourcePath)) {
+      console.warn(`Warning: expected migration reference not found: ${sourcePath}`);
+      continue;
+    }
+
+    const outputPath = path.join(skillDir, 'references', filename);
+    fs.mkdirSync(path.dirname(outputPath), {recursive: true});
+    fs.copyFileSync(sourcePath, outputPath);
+  }
+
+  copyFocusedDocs(sourceDir, skillDir, [
+    ['migrating.md', 'docs-migrating.md'],
+    ['getting-started.md', 'docs-getting-started.md'],
+    ['Provider.md', 'docs-provider.md'],
+    ['styling.md', 'docs-styling.md'],
+    ['style-macro.md', 'docs-style-macro.md'],
+    ['Toast.md', 'docs-toast.md']
+  ]);
+}
+
 function collectSkillFiles(skillDir) {
   const files = [];
 
@@ -494,6 +770,37 @@ function collectSkillFiles(skillDir) {
     });
 }
 
+/**
+ * Validate that all references/ links in SKILL.md resolve to actual files.
+ * Throws if any broken links are found.
+ */
+function validateSkillLinks(skillDir) {
+  const skillMdPath = path.join(skillDir, 'SKILL.md');
+  if (!fs.existsSync(skillMdPath)) {
+    return;
+  }
+
+  const content = fs.readFileSync(skillMdPath, 'utf8');
+  const linkPattern = /\[([^\]]*)\]\((references\/[^)]+)\)/g;
+  const broken = [];
+
+  let match;
+  while ((match = linkPattern.exec(content)) !== null) {
+    const linkText = match[1];
+    const linkPath = match[2];
+    const resolvedPath = path.join(skillDir, linkPath);
+    if (!fs.existsSync(resolvedPath)) {
+      broken.push(`"${linkText}" -> ${linkPath}`);
+    }
+  }
+
+  if (broken.length > 0) {
+    throw new Error(
+      `Broken references in ${path.relative(REPO_ROOT, skillMdPath)}:\n  ${broken.join('\n  ')}`
+    );
+  }
+}
+
 function writeIndexJson(wellKnownRoot, skills) {
   const indexPath = path.join(wellKnownRoot, 'index.json');
   const payload = {skills};
@@ -506,10 +813,26 @@ function writeIndexJson(wellKnownRoot, skills) {
  */
 function generateSkill(skillConfig, wellKnownRoot) {
   const skillDir = path.join(wellKnownRoot, skillConfig.name);
-  const isS2 = skillConfig.name === 'react-spectrum-s2';
 
   // Create skill directory
   fs.mkdirSync(skillDir, {recursive: true});
+
+  if (skillConfig.kind === 'migration') {
+    const skillMdContent = generateMigrationSkillMd(skillConfig);
+    fs.writeFileSync(path.join(skillDir, 'SKILL.md'), skillMdContent);
+    console.log(
+      `Generated ${path.relative(REPO_ROOT, path.join(skillDir, 'SKILL.md'))}`
+    );
+
+    writeMigrationReferences(skillDir, skillConfig.sourceDir);
+    console.log(
+      `Copied migration references to ${path.relative(REPO_ROOT, path.join(skillDir, 'references'))}`
+    );
+
+    return skillDir;
+  }
+
+  const isS2 = skillConfig.name === 'react-spectrum-s2';
 
   // Parse documentation entries
   const llmsTxtPath = path.join(
@@ -526,14 +849,14 @@ function generateSkill(skillConfig, wellKnownRoot) {
   const categories = categorizeEntries(entries, skillConfig.sourceDir);
 
   // Generate SKILL.md
-  const skillMdContent = generateSkillMd(skillConfig, categories, isS2);
+  const skillMdContent = generateDocsSkillMd(skillConfig, categories, isS2);
   fs.writeFileSync(path.join(skillDir, 'SKILL.md'), skillMdContent);
   console.log(
     `Generated ${path.relative(REPO_ROOT, path.join(skillDir, 'SKILL.md'))}`
   );
 
   // Copy documentation to references
-  copyDocumentation(skillConfig, categories, skillDir);
+  copyDocsDocumentation(skillConfig, categories, skillDir);
   console.log(
     `Copied documentation to ${path.relative(REPO_ROOT, path.join(skillDir, 'references'))}`
   );
@@ -542,7 +865,7 @@ function generateSkill(skillConfig, wellKnownRoot) {
 }
 
 
-async function main() {
+function main() {
   console.log(
     'Generating Agent Skills for React Spectrum (S2) and React Aria...\n'
   );
@@ -569,12 +892,17 @@ async function main() {
     for (const config of skills) {
       console.log(`\nGenerating skill: ${config.name}`);
       const skillDir = generateSkill(config, wellKnownRoot);
+      validateSkillLinks(skillDir);
       const files = collectSkillFiles(skillDir);
-      indexEntries.push({
+      const entry = {
         name: config.name,
         description: config.description,
         files
-      });
+      };
+      if (config.kind) {
+        entry.kind = config.kind;
+      }
+      indexEntries.push(entry);
     }
 
     writeIndexJson(wellKnownRoot, indexEntries);
@@ -586,7 +914,9 @@ async function main() {
   console.log('\nAgent Skills generation complete!');
 }
 
-main().catch((err) => {
+try {
+  main();
+} catch (err) {
   console.error(err);
   process.exit(1);
-});
+}

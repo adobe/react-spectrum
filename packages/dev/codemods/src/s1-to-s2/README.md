@@ -9,6 +9,9 @@ Run `npx @react-spectrum/codemods s1-to-s2` from the directory you want to upgra
 ### Options
 
 - `-c, --components <components>`: Comma separated list of components to upgrade (ex: `Button,TableView`). If not specified, all available components will be upgraded.
+- `--path <path>`: The path to the directory to run the codemod in. Defaults to the current directory (`.`).
+- `-d, --dry`: Run the codemod without writing any changes to disk. Use this to preview migrations before applying.
+- `--agent`: Run in non-interactive mode. Skips interactive prompts, package installation, and macro setup. Required when running in CI or from an agent tool. Note: `@react-spectrum/s2` must still be installed and resolvable.
 
 ## How it works
 
