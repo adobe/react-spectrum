@@ -18,6 +18,8 @@ import {
   ColumnResizer,
   TableLoadMoreItem as AriaTableLoadMoreItem,
   type TableLoadMoreItemProps,
+  TableFooter as AriaTableFooter,
+  type TableFooterProps
 } from 'react-aria-components/Table';
 import { Group } from 'react-aria-components/Group';
 import { composeRenderProps } from 'react-aria-components/composeRenderProps';
@@ -110,6 +112,10 @@ export function Row<T extends object>(
 
 export function TableBody<T extends object>(props: TableBodyProps<T>) {
   return <AriaTableBody {...props} />;
+}
+
+export function TableFooter<T extends object>(props: TableFooterProps<T>) {
+  return <AriaTableFooter {...props} />;
 }
 
 export function Cell(props: CellProps) {
