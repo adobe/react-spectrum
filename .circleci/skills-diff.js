@@ -2,19 +2,14 @@
 // Generate a reviewer-friendly markdown diff between two agent-skill trees.
 //
 // Usage:
-//   node skills-diff.js <mainDir> <branchDir> [--full <path>] > skills-diff-summary.md
+//   node skills-diff.js <mainDir> <branchDir> > skills-diff.md
 //
-// Writes a short summary (file list with +/- counts) to stdout, and — when
-// `--full <path>` is passed — also writes a full markdown report with
-// unified diffs per modified file to that path.
-//
-// Per-file bullets link to the deployed branch build on cloudfront when
-// CIRCLE_SHA1 is set (the deploy URL pattern matches .circleci/comment.js).
+// Writes a short summary (file list with +/- counts) to stdout. Per-file
+// bullets and install commands link to the deployed branch build.
 const fs = require('fs');
 const path = require('path');
 
 const MAX_SUMMARY_CHARS = 60000;
-const MAX_FILE_DIFF_LINES = 1000;
 const TEXT_EXTS = new Set(['.md', '.json', '.txt']);
 
 const S2_BASE = 'https://d1pzu54gtk2aed.cloudfront.net';
@@ -198,7 +193,7 @@ function classify(mainFiles, branchFiles) {
   return {added, removed, modified};
 }
 
-function renderSummary({added, removed, modified, mainFiles, branchFiles, sha, fullDiffUrl}) {
+function renderSummary({added, removed, modified, mainFiles, branchFiles, sha}) {
   const parts = [];
 
   const listSection = (label, files, linkable, getCounts) => {
@@ -220,8 +215,22 @@ function renderSummary({added, removed, modified, mainFiles, branchFiles, sha, f
   listSection('Removed', removed, false);
   listSection('Modified', modified, true, f => countChanges(mainFiles.get(f), branchFiles.get(f)));
 
-  if (fullDiffUrl) {
-    parts.push(`[View full skills diff](${fullDiffUrl})`);
+  if (sha) {
+    parts.push('<details><summary>Install</summary>');
+    parts.push('');
+    parts.push('React Spectrum S2:');
+    parts.push('');
+    parts.push('```');
+    parts.push(`npx skills add ${S2_BASE}/pr/${sha}/`);
+    parts.push('```');
+    parts.push('');
+    parts.push('React Aria:');
+    parts.push('');
+    parts.push('```');
+    parts.push(`npx skills add ${RAC_BASE}/pr/${sha}/`);
+    parts.push('```');
+    parts.push('');
+    parts.push('</details>');
     parts.push('');
   }
 
@@ -233,82 +242,10 @@ function renderSummary({added, removed, modified, mainFiles, branchFiles, sha, f
   return out;
 }
 
-function renderFull({added, removed, modified, mainFiles, branchFiles}) {
-  const parts = [];
-  parts.push('# Agent skills diff');
-  parts.push('');
-  parts.push(`- Added: ${added.length}`);
-  parts.push(`- Removed: ${removed.length}`);
-  parts.push(`- Modified: ${modified.length}`);
-  parts.push('');
-
-  const listFiles = (label, files) => {
-    if (!files.length) {return;}
-    parts.push(`## ${label} (${files.length})`);
-    parts.push('');
-    for (const f of files) {
-      parts.push(`- \`${f}\``);
-    }
-    parts.push('');
-  };
-
-  listFiles('Added', added);
-  listFiles('Removed', removed);
-
-  if (modified.length) {
-    parts.push(`## Modified (${modified.length})`);
-    parts.push('');
-    for (const rel of modified) {
-      const ext = path.extname(rel).toLowerCase();
-      parts.push(`### \`${rel}\``);
-      parts.push('');
-      if (!TEXT_EXTS.has(ext)) {
-        parts.push('_Binary or non-text file — diff omitted._');
-        parts.push('');
-        continue;
-      }
-      const a = readMaybeText(mainFiles.get(rel));
-      const b = readMaybeText(branchFiles.get(rel));
-      if (a === null || b === null) {
-        parts.push('_Binary content detected — diff omitted._');
-        parts.push('');
-        continue;
-      }
-      const diff = diffLines(a, b);
-      const truncated = diff.length > MAX_FILE_DIFF_LINES;
-      const body = truncated ? diff.slice(0, MAX_FILE_DIFF_LINES) : diff;
-      parts.push('```diff');
-      parts.push(body.join('\n'));
-      parts.push('```');
-      if (truncated) {
-        parts.push('');
-        parts.push(`_… ${diff.length - MAX_FILE_DIFF_LINES} more diff lines truncated._`);
-      }
-      parts.push('');
-    }
-  }
-
-  return parts.join('\n');
-}
-
-function parseArgs(argv) {
-  const out = {positional: [], full: null};
-  for (let i = 0; i < argv.length; i++) {
-    const a = argv[i];
-    if (a === '--full') {
-      out.full = argv[++i];
-    } else {
-      out.positional.push(a);
-    }
-  }
-  return out;
-}
-
 function main() {
-  const {positional, full} = parseArgs(process.argv.slice(2));
-  const [mainDir, branchDir] = positional;
+  const [mainDir, branchDir] = process.argv.slice(2);
   if (!mainDir || !branchDir) {
-    console.error('usage: skills-diff.js <mainDir> <branchDir> [--full <path>]');
+    console.error('usage: skills-diff.js <mainDir> <branchDir>');
     process.exit(1);
   }
 
@@ -318,24 +255,12 @@ function main() {
 
   if (added.length === 0 && removed.length === 0 && modified.length === 0) {
     process.stdout.write('');
-    if (full) {
-      fs.writeFileSync(full, '# Agent skills diff\n\nNo changes.\n');
-    }
     return;
   }
 
   const sha = process.env.CIRCLE_SHA1 || '';
-  const fullDiffUrl = sha
-    ? `${S2_BASE}/pr/${sha}/skills-diff.md`
-    : null;
-
-  if (full) {
-    fs.mkdirSync(path.dirname(full), {recursive: true});
-    fs.writeFileSync(full, renderFull({added, removed, modified, mainFiles, branchFiles}));
-  }
-
   process.stdout.write(renderSummary({
-    added, removed, modified, mainFiles, branchFiles, sha, fullDiffUrl
+    added, removed, modified, mainFiles, branchFiles, sha
   }));
 }
 
