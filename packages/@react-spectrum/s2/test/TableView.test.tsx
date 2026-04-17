@@ -12,8 +12,8 @@
 
 jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 jest.mock('react-aria/src/utils/scrollIntoView');
-import {act, render} from '@react-spectrum/test-utils-internal';
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../src/TableView';
+import {act, render, within} from '@react-spectrum/test-utils-internal';
+import {Cell, Column, Row, TableBody, TableFooter, TableHeader, TableView} from '../src/TableView';
 import {DisabledBehavior} from '@react-types/shared';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import {MenuItem, MenuSection} from '../src/Menu';
@@ -33,7 +33,7 @@ describe('TableView', () => {
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 400);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 200);
+    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.CSSTransition = jest.fn(({children}) => children);
 
     // Mock the getAnimations method
@@ -195,5 +195,70 @@ describe('TableView', () => {
     await user.click(tabs[1]);
     expect(tabs[0]).toHaveAttribute('aria-selected', 'false');
     expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('should support table footer', async () => {
+    const invoices = [
+      {title: 'Website Design', status: 'Paid', paymentMethod: 'Credit Card', price: '$1,200'},
+      {title: 'Logo Creation', status: 'Pending', paymentMethod: 'PayPal', price: '$350'},
+      {title: 'SEO Optimization', status: 'Overdue', paymentMethod: 'Bank Transfer', price: '$800'},
+      {title: 'Social Media Setup', status: 'Paid', paymentMethod: 'Debit Card', price: '$450'},
+      {title: 'Content Writing', status: 'Pending', paymentMethod: 'Credit Card', price: '$600'},
+      {title: 'App Development', status: 'Paid', paymentMethod: 'Wire Transfer', price: '$5,000'},
+      {title: 'Maintenance Plan', status: 'Overdue', paymentMethod: 'PayPal', price: '$200'}
+    ];
+
+    let onSelectionChange = jest.fn();
+    let {container: root} = render(
+      <TableView aria-label="Files" selectionMode="multiple" onSelectionChange={onSelectionChange}>
+        <TableHeader>
+          <Column isRowHeader>Title</Column>
+          <Column>Status</Column>
+          <Column>Payment Method</Column>
+          <Column>Price</Column>
+        </TableHeader>
+        <TableBody items={invoices}>
+          {item => (
+            <Row id={item.title}>
+              <Cell>{item.title}</Cell>
+              <Cell>{item.status}</Cell>
+              <Cell>{item.paymentMethod}</Cell>
+              <Cell>{item.price}</Cell>
+            </Row>
+          )}
+        </TableBody>
+        <TableFooter>
+          <Row>
+            <Cell colSpan={3}>Total:</Cell>
+            <Cell>{invoices.reduce((p, item) => p + Number(item.price.replace(/[$,]/g, '')), 0).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})}</Cell>
+          </Row>
+        </TableFooter>
+      </TableView>
+    );
+
+    let tableTester = testUtilUser.createTester('Table', {root});
+    
+    let groups = tableTester.rowGroups;
+    expect(groups).toHaveLength(3);
+
+    await user.tab();
+    for (let row of tableTester.rows) {
+      expect(document.activeElement).toBe(row);
+      await user.keyboard('{ArrowDown}');
+    }
+
+    let footerRows = within(groups[2]).getAllByRole('row');
+    expect(document.activeElement).toBe(footerRows[0]);
+
+    for (let row of tableTester.rows.toReversed()) {
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(row);
+    }
+
+    await user.click(footerRows[0]);
+    expect(onSelectionChange).not.toHaveBeenCalled();
+
+    await user.click(tableTester.rows[0]);
+    expect(onSelectionChange).toHaveBeenCalled();
   });
 });

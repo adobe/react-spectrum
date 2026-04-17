@@ -21,6 +21,7 @@ import {
   Row,
   Table,
   TableBody,
+  TableFooter,
   TableHeader,
   TableLayout,
   TableLoadMoreItem,
@@ -2882,6 +2883,133 @@ describe('Table', () => {
       expect(onPress).toHaveBeenCalledTimes(1);
       expect(onClick).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it('should support table footer', async () => {
+    const invoices = [
+      {title: 'Website Design', status: 'Paid', paymentMethod: 'Credit Card', price: '$1,200'},
+      {title: 'Logo Creation', status: 'Pending', paymentMethod: 'PayPal', price: '$350'},
+      {title: 'SEO Optimization', status: 'Overdue', paymentMethod: 'Bank Transfer', price: '$800'},
+      {title: 'Social Media Setup', status: 'Paid', paymentMethod: 'Debit Card', price: '$450'},
+      {title: 'Content Writing', status: 'Pending', paymentMethod: 'Credit Card', price: '$600'},
+      {title: 'App Development', status: 'Paid', paymentMethod: 'Wire Transfer', price: '$5,000'},
+      {title: 'Maintenance Plan', status: 'Overdue', paymentMethod: 'PayPal', price: '$200'}
+    ];
+
+    let {container: root} = render(
+      <Table aria-label="Files" selectionMode="multiple">
+        <TableHeader style={{background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+          <Column isRowHeader>Title</Column>
+          <Column>Status</Column>
+          <Column>Payment Method</Column>
+          <Column>Price</Column>
+        </TableHeader>
+        <TableBody items={invoices}>
+          {item => (
+            <Row id={item.title}>
+              <Cell>{item.title}</Cell>
+              <Cell>{item.status}</Cell>
+              <Cell>{item.paymentMethod}</Cell>
+              <Cell>{item.price}</Cell>
+            </Row>
+          )}
+        </TableBody>
+        <TableFooter style={{background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+          <Row>
+            <Cell colSpan={3} style={{textAlign: 'end'}}>Total:</Cell>
+            <Cell>{invoices.reduce((p, item) => p + Number(item.price.replace(/[$,]/g, '')), 0).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})}</Cell>
+          </Row>
+        </TableFooter>
+      </Table>
+    );
+
+    let tableTester = testUtilUser.createTester('Table', {root});
+
+    let groups = tableTester.rowGroups;
+    expect(groups).toHaveLength(3);
+    expect(groups[0].tagName).toBe('THEAD');
+    expect(groups[1].tagName).toBe('TBODY');
+    expect(groups[2].tagName).toBe('TFOOT');
+
+    await user.tab();
+    for (let row of tableTester.rows) {
+      expect(document.activeElement).toBe(row);
+      await user.keyboard('{ArrowDown}');
+    }
+
+    let footerRows = within(groups[2]).getAllByRole('row');
+    expect(document.activeElement).toBe(footerRows[0]);
+
+    for (let row of tableTester.rows.toReversed()) {
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(row);
+    }
+  });
+
+  it('should support table footer with virtualizer', async () => {
+    const invoices = [
+      {title: 'Website Design', status: 'Paid', paymentMethod: 'Credit Card', price: '$1,200'},
+      {title: 'Logo Creation', status: 'Pending', paymentMethod: 'PayPal', price: '$350'},
+      {title: 'SEO Optimization', status: 'Overdue', paymentMethod: 'Bank Transfer', price: '$800'},
+      {title: 'Social Media Setup', status: 'Paid', paymentMethod: 'Debit Card', price: '$450'},
+      {title: 'Content Writing', status: 'Pending', paymentMethod: 'Credit Card', price: '$600'},
+      {title: 'App Development', status: 'Paid', paymentMethod: 'Wire Transfer', price: '$5,000'},
+      {title: 'Maintenance Plan', status: 'Overdue', paymentMethod: 'PayPal', price: '$200'}
+    ];
+
+    let clientWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    let clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+
+    let {container: root} = render(
+      <Virtualizer layout={TableLayout}>
+        <Table aria-label="Files" selectionMode="multiple">
+          <TableHeader style={{background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+            <Column isRowHeader>Title</Column>
+            <Column>Status</Column>
+            <Column>Payment Method</Column>
+            <Column>Price</Column>
+          </TableHeader>
+          <TableBody items={invoices}>
+            {item => (
+              <Row id={item.title}>
+                <Cell>{item.title}</Cell>
+                <Cell>{item.status}</Cell>
+                <Cell>{item.paymentMethod}</Cell>
+                <Cell>{item.price}</Cell>
+              </Row>
+            )}
+          </TableBody>
+          <TableFooter style={{background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+            <Row>
+              <Cell colSpan={3} style={{textAlign: 'end'}}>Total:</Cell>
+              <Cell>{invoices.reduce((p, item) => p + Number(item.price.replace(/[$,]/g, '')), 0).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})}</Cell>
+            </Row>
+          </TableFooter>
+        </Table>
+      </Virtualizer>
+    );
+
+    let tableTester = testUtilUser.createTester('Table', {root});
+
+    let groups = tableTester.rowGroups;
+    expect(groups).toHaveLength(3);
+
+    await user.tab();
+    for (let row of tableTester.rows) {
+      expect(document.activeElement).toBe(row);
+      await user.keyboard('{ArrowDown}');
+    }
+
+    let footerRows = within(groups[2]).getAllByRole('row');
+    expect(document.activeElement).toBe(footerRows[0]);
+
+    for (let row of tableTester.rows.toReversed()) {
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(row);
+    }
+
+    clientWidth.mockRestore();
+    clientHeight.mockRestore();
   });
 });
 

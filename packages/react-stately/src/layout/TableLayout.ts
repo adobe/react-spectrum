@@ -135,10 +135,6 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     this.stickyColumnIndices = [];
 
     let collection = this.virtualizer!.collection as TableCollection<T>;
-    if (collection.head?.key === -1) {
-      return [];
-    }
-
     for (let column of collection.columns) {
       // The selection cell and any other sticky columns always need to be visible.
       // In addition, row headers need to be in the DOM for accessibility labeling.
@@ -147,17 +143,53 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       }
     }
 
-    let header = this.buildTableHeader();
-    this.layoutNodes.set(header.layoutInfo.key, header);
-    let body = this.buildBody(header.layoutInfo.rect.maxY + this.gap);
-    this.lastPersistedKeys = null;
+    let layoutNodes: LayoutNode[] = [];
+    let y = 0;
+    let width = 0;
 
-    body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width, body.layoutInfo.rect.width);
-    this.contentSize = new Size(body.layoutInfo.rect.width + this.padding * 2, body.layoutInfo.rect.maxY + this.padding);
-    return [
-      header,
-      body
-    ];
+    if (!collection.head) {
+      let header = this.buildTableHeader();
+      this.layoutNodes.set(header.layoutInfo.key, header);
+      let body = this.buildBody(header.layoutInfo.rect.maxY + this.gap);
+      body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width, body.layoutInfo.rect.width);
+      y = body.layoutInfo.rect.maxY;
+      width = body.layoutInfo.rect.width;
+      layoutNodes = [header, body];
+    } else {
+      for (let node of collection) {
+        switch (node.type) {
+          case 'tableheader': {
+            let header = this.buildTableHeader();
+            y = header.layoutInfo.rect.maxY + this.gap;
+            width = Math.max(width, header.layoutInfo.rect.width);
+            this.layoutNodes.set(header.layoutInfo.key, header);
+            layoutNodes.push(header);
+            break;
+          }
+          case 'tablebody':
+          case 'tablefooter': {
+            let body = this.buildRowGroup(y, node);
+            y = body.layoutInfo.rect.maxY + this.gap;
+            width = Math.max(width, body.layoutInfo.rect.width);
+            this.layoutNodes.set(body.layoutInfo.key, body);
+            layoutNodes.push(body);
+            break;
+          }
+        }
+      }
+
+      if (y > 0) {
+        y -= this.gap;
+      }
+
+      for (let layoutNode of layoutNodes) {
+        layoutNode.layoutInfo.rect.width = width;
+      }
+    }
+    
+    this.lastPersistedKeys = null;
+    this.contentSize = new Size(width + this.padding * 2, y + this.padding);
+    return layoutNodes;
   }
 
   protected buildTableHeader(): LayoutNode {
@@ -297,20 +329,23 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
 
   protected buildBody(y: number): LayoutNode {
     let collection = this.virtualizer!.collection as TableCollection<T>;
+    return this.buildRowGroup(y, collection.body);
+  }
+
+  protected buildRowGroup(y: number, node: GridNode<T>): LayoutNode {
+    let collection = this.virtualizer!.collection as TableCollection<T>;
     let rect = new Rect(this.padding, y, 0, 0);
-    let layoutInfo = new LayoutInfo('rowgroup', collection.body.key, rect);
+    let layoutInfo = new LayoutInfo('rowgroup', node.key, rect);
 
     let startY = y;
-    let skipped = 0;
     let width = 0;
     let children: LayoutNode[] = [];
     let rowHeight = this.getEstimatedRowHeight() + this.gap;
-    let childNodes = getChildNodes(collection.body, collection);
+    let childNodes = getChildNodes(node, collection);
     for (let node of childNodes) {
       // Skip rows before the valid rectangle unless they are already cached.
       if (y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
         y += rowHeight;
-        skipped++;
         continue;
       }
 
@@ -322,8 +357,8 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       children.push(layoutNode);
 
       if (y > this.requestedRect.maxY) {
-        let rowsAfterRect = collection.size - (children.length + skipped);
         let lastNode = getLastItem(childNodes);
+        let rowsAfterRect = Math.max(0, lastNode!.index - node.index - 1);
 
         // Estimate the remaining height for rows that we don't need to layout right now.
         y += rowsAfterRect * rowHeight;
@@ -357,7 +392,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       layoutInfo,
       children,
       validRect: layoutInfo.rect.intersection(this.requestedRect),
-      node: collection.body
+      node
     };
   }
 

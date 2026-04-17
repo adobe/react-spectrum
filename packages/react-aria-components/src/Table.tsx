@@ -180,12 +180,14 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   }
 
   *[Symbol.iterator]() {
-    // Wait until the collection is initialized.
-    if (this.head.key === -1) {
-      return;
+    let key = this.firstKey;
+    while (key != null) {
+      let node = this.getItem(key);
+      if (node) {
+        yield node;
+      }
+      key = node?.nextKey ?? null;
     }
-    yield this.head;
-    yield this.body;
   }
 
   getFirstKey() {
@@ -193,7 +195,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   }
 
   getLastKey() {
-    let key = this.body.lastChildKey;
+    let key = this.lastKey;
     if (key == null) {
       return null;
     }
@@ -266,7 +268,8 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   }
 
   getChildren(key: Key): Iterable<Node<T>> {
-    if (!this.getItem(key)) {
+    let item = this.getItem(key);
+    if (!item) {
       for (let row of this.headerRows) {
         if (row.key === key) {
           return row.childNodes;
@@ -276,16 +279,19 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
     // Flatten all rows into the body.
     let self = this;
-    if (key === this.body.key) {
+    if (item?.type === 'tablebody' || item?.type === 'tablefooter') {
       return {
         *[Symbol.iterator]() {
-          let firstKey = self.getFirstKey();
+          let firstKey = item.firstChildKey;
           let node: Node<T> | null = firstKey != null ? self.getItem(firstKey) : null;
 
           while (node) {
             yield node as Node<T>;
             let key = self.getKeyAfter(node.key);
             node = key ? self.getItem(key) : null;
+            if (node && node.parentKey === item.parentKey) {
+              break;
+            }
           }
         }
       };
@@ -1211,7 +1217,7 @@ let TableBodyElementType = forwardRef(function TableBodyElementType(props: any, 
 /**
  * The body of a `<Table>`, containing the table rows.
  */
-export const TableBody = /*#__PURE__*/ createBranchComponent(TableBodyNode, <T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>) => {
+export const TableBody = /*#__PURE__*/ createBranchComponent(TableBodyNode, <T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>, node: Node<T>) => {
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let collection = state.collection;
@@ -1270,10 +1276,58 @@ export const TableBody = /*#__PURE__*/ createBranchComponent(TableBodyNode, <T e
       {isDroppable && <RootDropIndicator />}
       <CollectionBranch
         collection={collection}
-        parent={collection.body}
+        parent={node}
         renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
       {emptyState}
     </TableBodyElementType>
+  );
+});
+
+class TableFooterNode<T> extends FilterableNode<T> {
+  static readonly type = 'tablefooter';
+}
+
+export interface TableFooterProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleProps, GlobalDOMAttributes<HTMLTableSectionElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-TableFooter'
+   */
+  className?: string
+}
+
+let TableFooterElementType = forwardRef(function TableFooterElementType(props: any, ref: ForwardedRef<Element>) {
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  if (isVirtualized) {
+    return <dom.div {...props} ref={ref} />;
+  }
+  return <dom.tfoot {...props} ref={ref} />;
+});
+
+/**
+ * The footer of a `<Table>`, containing table rows.
+ */
+export const TableFooter = /*#__PURE__*/ createBranchComponent(TableFooterNode, <T extends object>(props: TableFooterProps<T>, ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>, node: Node<T>) => {
+  let state = useContext(TableStateContext)!;
+  let collection = state.collection as TableCollection<T>;
+  let {CollectionBranch} = useContext(CollectionRendererContext);
+
+  let {rowGroupProps} = useTableRowGroup();
+  let DOMProps = filterDOMProps(props, {global: true});
+  let renderProps = useRenderProps({
+    style: props.style,
+    className: props.className,
+    defaultClassName: 'react-aria-TableFooter',
+    values: {}
+  });
+
+  return (
+    <TableFooterElementType
+      {...mergeProps(DOMProps, renderProps, rowGroupProps)}
+      ref={ref as any}>
+      <CollectionBranch
+        collection={collection}
+        parent={node} />
+    </TableFooterElementType>
   );
 });
 
@@ -1317,6 +1371,8 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps, 'tr' | 'di
   textValue?: string,
   /** Whether the row is disabled. */
   isDisabled?: boolean,
+  /** Whether `disabledKeys` applies to all interactions, or only selection. */
+  disabledBehavior?: DisabledBehavior,
   /**
    * Handler that is called when a user performs an action on the row. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.

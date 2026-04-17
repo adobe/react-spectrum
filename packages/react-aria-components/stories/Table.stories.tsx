@@ -22,6 +22,7 @@ import {
   Row,
   Table,
   TableBody,
+  TableFooter,
   TableHeader,
   TableLayout
 } from '../src/Table';
@@ -1721,5 +1722,75 @@ export const TableNestedRows: TableStory = (args) => {
         </MyRow>
       </TableBody>
     </Table>
+  );
+};
+
+const invoices = [
+  {title: 'Website Design', status: 'Paid', paymentMethod: 'Credit Card', price: '$1,200'},
+  {title: 'Logo Creation', status: 'Pending', paymentMethod: 'PayPal', price: '$350'},
+  {title: 'SEO Optimization', status: 'Overdue', paymentMethod: 'Bank Transfer', price: '$800'},
+  {title: 'Social Media Setup', status: 'Paid', paymentMethod: 'Debit Card', price: '$450'},
+  {title: 'Content Writing', status: 'Pending', paymentMethod: 'Credit Card', price: '$600'},
+  {title: 'App Development', status: 'Paid', paymentMethod: 'Wire Transfer', price: '$5,000'},
+  {title: 'Maintenance Plan', status: 'Overdue', paymentMethod: 'PayPal', price: '$200'}
+];
+
+export const TableFooterExample: TableStory = (args) => {
+  return (
+    <Table aria-label="Files" selectionMode="multiple" {...args}>
+      <TableHeader style={{background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+        <Column isRowHeader>Title</Column>
+        <Column>Status</Column>
+        <Column>Payment Method</Column>
+        <Column>Price</Column>
+      </TableHeader>
+      <TableBody items={invoices}>
+        {item => (
+          <MyRow id={item.title}>
+            <Cell>{item.title}</Cell>
+            <Cell>{item.status}</Cell>
+            <Cell>{item.paymentMethod}</Cell>
+            <Cell>{item.price}</Cell>
+          </MyRow>
+        )}
+      </TableBody>
+      <TableFooter style={{background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+        <MyRow>
+          <Cell colSpan={3} style={{textAlign: 'end'}}>Total:</Cell>
+          <Cell>{invoices.reduce((p, item) => p + Number(item.price.replace(/[$,]/g, '')), 0).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})}</Cell>
+        </MyRow>
+      </TableFooter>
+    </Table>
+  );
+};
+
+export const VirtualizedTableFooter: TableStory = (args) => {
+  return (
+    <Virtualizer layout={TableLayout}>
+      <Table aria-label="Files" selectionMode="multiple" style={{width: 500}} {...args}>
+        <TableHeader style={{height: '100%', background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+          <Column isRowHeader>Title</Column>
+          <Column>Status</Column>
+          <Column>Payment Method</Column>
+          <Column>Price</Column>
+        </TableHeader>
+        <TableBody items={invoices}>
+          {item => (
+            <MyRow id={item.title}>
+              <Cell>{item.title}</Cell>
+              <Cell>{item.status}</Cell>
+              <Cell>{item.paymentMethod}</Cell>
+              <Cell>{item.price}</Cell>
+            </MyRow>
+          )}
+        </TableBody>
+        <TableFooter style={{height: '100%', background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+          <MyRow>
+            <Cell colSpan={3} style={{textAlign: 'end'}}>Total:</Cell>
+            <Cell>{invoices.reduce((p, item) => p + Number(item.price.replace(/[$,]/g, '')), 0).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})}</Cell>
+          </MyRow>
+        </TableFooter>
+      </Table>
+    </Virtualizer>
   );
 };
