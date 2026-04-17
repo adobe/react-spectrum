@@ -1,11 +1,24 @@
 #!/usr/bin/env node
 // Generate a reviewer-friendly markdown diff between two agent-skill trees.
-// Usage: node skills-diff.js <mainDir> <branchDir> > skills-diff.md
+//
+// Usage:
+//   node skills-diff.js <mainDir> <branchDir> [--full <path>] > skills-diff-summary.md
+//
+// Writes a short summary (file list with +/- counts) to stdout, and — when
+// `--full <path>` is passed — also writes a full markdown report with
+// unified diffs per modified file to that path.
+//
+// Per-file bullets link to the deployed branch build on cloudfront when
+// CIRCLE_SHA1 is set (the deploy URL pattern matches .circleci/comment.js).
 const fs = require('fs');
 const path = require('path');
 
-const MAX_OUTPUT_CHARS = 60000;
+const MAX_SUMMARY_CHARS = 60000;
+const MAX_FILE_DIFF_LINES = 1000;
 const TEXT_EXTS = new Set(['.md', '.json', '.txt']);
+
+const S2_BASE = 'https://d1pzu54gtk2aed.cloudfront.net';
+const RAC_BASE = 'https://d5iwopk28bdhl.cloudfront.net';
 
 function walk(root) {
   const out = new Map();
@@ -60,19 +73,23 @@ function diffLines(a, b) {
   let j = 0;
   while (i < n && j < m) {
     if (aLines[i] === bLines[j]) {
-      out.push(' ');
+      out.push(' ' + aLines[i]);
       i++;
       j++;
     } else if (dp[i + 1][j] >= dp[i][j + 1]) {
-      out.push('-');
+      out.push('-' + aLines[i]);
       i++;
     } else {
-      out.push('+');
+      out.push('+' + bLines[j]);
       j++;
     }
   }
-  while (i < n) { out.push('-'); i++; }
-  while (j < m) { out.push('+'); j++; }
+  while (i < n) {
+    out.push('-' + aLines[i++]);
+  }
+  while (j < m) {
+    out.push('+' + bLines[j++]);
+  }
   return out;
 }
 
@@ -80,8 +97,21 @@ function countLines(s) {
   if (s.length === 0) {
     return 0;
   }
-  // A final newline doesn't add a line.
   return s.split('\n').length - (s.endsWith('\n') ? 1 : 0);
+}
+
+function changeStats(diff) {
+  let added = 0;
+  let removed = 0;
+  for (const line of diff) {
+    const c = line.charAt(0);
+    if (c === '+') {
+      added++;
+    } else if (c === '-') {
+      removed++;
+    }
+  }
+  return {added, removed};
 }
 
 function countChanges(mainPath, branchPath) {
@@ -89,27 +119,20 @@ function countChanges(mainPath, branchPath) {
   if (!TEXT_EXTS.has(ext)) {
     return null;
   }
-  const a = mainPath ? readMaybeText(mainPath) : '';
-  const b = branchPath ? readMaybeText(branchPath) : '';
-  if (a === null || b === null) {
-    return null;
-  }
   if (mainPath && !branchPath) {
+    const a = readMaybeText(mainPath);
+    if (a === null) {return null;}
     return {added: 0, removed: countLines(a)};
   }
   if (!mainPath && branchPath) {
+    const b = readMaybeText(branchPath);
+    if (b === null) {return null;}
     return {added: countLines(b), removed: 0};
   }
-  let added = 0;
-  let removed = 0;
-  for (const op of diffLines(a, b)) {
-    if (op === '+') {
-      added++;
-    } else if (op === '-') {
-      removed++;
-    }
-  }
-  return {added, removed};
+  const a = readMaybeText(mainPath);
+  const b = readMaybeText(branchPath);
+  if (a === null || b === null) {return null;}
+  return changeStats(diffLines(a, b));
 }
 
 // GitHub renders $\color{...}$ math spans in comments, which is the only
@@ -126,6 +149,30 @@ function colorCounts(counts) {
     parts.push(`$\\color{red}{-${counts.removed}}$`);
   }
   return parts.join(' ');
+}
+
+// Map "s2/skills/<rest>" / "react-aria/skills/<rest>" (the layout produced
+// by build-skills.sh) to a cloudfront URL on the branch build.
+function fileUrl(relPath, sha) {
+  if (!sha) {return null;}
+  const parts = relPath.split(path.sep);
+  const lib = parts[0];
+  const rest = parts.slice(1).join('/');
+  // `rest` starts with "skills/...", the deploy lands it under /.well-known/
+  let base;
+  if (lib === 's2') {
+    base = S2_BASE;
+  } else if (lib === 'react-aria') {
+    base = RAC_BASE;
+  } else {
+    return null;
+  }
+  return `${base}/pr/${sha}/.well-known/${rest}`;
+}
+
+function bulletLabel(relPath, sha) {
+  const url = fileUrl(relPath, sha);
+  return url ? `[\`${relPath}\`](${url})` : `\`${relPath}\``;
 }
 
 function classify(mainFiles, branchFiles) {
@@ -151,10 +198,117 @@ function classify(mainFiles, branchFiles) {
   return {added, removed, modified};
 }
 
+function renderSummary({added, removed, modified, mainFiles, branchFiles, sha, fullDiffUrl}) {
+  const parts = [];
+
+  const listSection = (label, files, linkable, getCounts) => {
+    if (!files.length) {return;}
+    parts.push(`<details><summary>${label} (${files.length})</summary>`);
+    parts.push('');
+    for (const f of files) {
+      const labelMd = linkable ? bulletLabel(f, sha) : `\`${f}\``;
+      const counts = getCounts ? getCounts(f) : null;
+      const suffix = counts ? ` ${colorCounts(counts)}` : '';
+      parts.push(`- ${labelMd}${suffix}`);
+    }
+    parts.push('');
+    parts.push('</details>');
+    parts.push('');
+  };
+
+  listSection('Added', added, true, f => countChanges(null, branchFiles.get(f)));
+  listSection('Removed', removed, false);
+  listSection('Modified', modified, true, f => countChanges(mainFiles.get(f), branchFiles.get(f)));
+
+  if (fullDiffUrl) {
+    parts.push(`[View full skills diff](${fullDiffUrl})`);
+    parts.push('');
+  }
+
+  let out = parts.join('\n');
+  if (out.length > MAX_SUMMARY_CHARS) {
+    out = out.slice(0, MAX_SUMMARY_CHARS) +
+      '\n\n_… output truncated to fit GitHub comment size limit._\n';
+  }
+  return out;
+}
+
+function renderFull({added, removed, modified, mainFiles, branchFiles}) {
+  const parts = [];
+  parts.push('# Agent skills diff');
+  parts.push('');
+  parts.push(`- Added: ${added.length}`);
+  parts.push(`- Removed: ${removed.length}`);
+  parts.push(`- Modified: ${modified.length}`);
+  parts.push('');
+
+  const listFiles = (label, files) => {
+    if (!files.length) {return;}
+    parts.push(`## ${label} (${files.length})`);
+    parts.push('');
+    for (const f of files) {
+      parts.push(`- \`${f}\``);
+    }
+    parts.push('');
+  };
+
+  listFiles('Added', added);
+  listFiles('Removed', removed);
+
+  if (modified.length) {
+    parts.push(`## Modified (${modified.length})`);
+    parts.push('');
+    for (const rel of modified) {
+      const ext = path.extname(rel).toLowerCase();
+      parts.push(`### \`${rel}\``);
+      parts.push('');
+      if (!TEXT_EXTS.has(ext)) {
+        parts.push('_Binary or non-text file — diff omitted._');
+        parts.push('');
+        continue;
+      }
+      const a = readMaybeText(mainFiles.get(rel));
+      const b = readMaybeText(branchFiles.get(rel));
+      if (a === null || b === null) {
+        parts.push('_Binary content detected — diff omitted._');
+        parts.push('');
+        continue;
+      }
+      const diff = diffLines(a, b);
+      const truncated = diff.length > MAX_FILE_DIFF_LINES;
+      const body = truncated ? diff.slice(0, MAX_FILE_DIFF_LINES) : diff;
+      parts.push('```diff');
+      parts.push(body.join('\n'));
+      parts.push('```');
+      if (truncated) {
+        parts.push('');
+        parts.push(`_… ${diff.length - MAX_FILE_DIFF_LINES} more diff lines truncated._`);
+      }
+      parts.push('');
+    }
+  }
+
+  return parts.join('\n');
+}
+
+function parseArgs(argv) {
+  const out = {positional: [], full: null};
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '--full') {
+      out.full = argv[++i];
+    } else {
+      out.positional.push(a);
+    }
+  }
+  return out;
+}
+
 function main() {
-  const [, , mainDir, branchDir] = process.argv;
+  const {positional, full} = parseArgs(process.argv.slice(2));
+  const [mainDir, branchDir] = positional;
   if (!mainDir || !branchDir) {
-    console.error('usage: skills-diff.js <mainDir> <branchDir>');
+    console.error('usage: skills-diff.js <mainDir> <branchDir> [--full <path>]');
     process.exit(1);
   }
 
@@ -164,43 +318,25 @@ function main() {
 
   if (added.length === 0 && removed.length === 0 && modified.length === 0) {
     process.stdout.write('');
+    if (full) {
+      fs.writeFileSync(full, '# Agent skills diff\n\nNo changes.\n');
+    }
     return;
   }
 
-  const parts = [];
+  const sha = process.env.CIRCLE_SHA1 || '';
+  const fullDiffUrl = sha
+    ? `${S2_BASE}/pr/${sha}/skills-diff.md`
+    : null;
 
-  const listSection = (label, files, getCounts) => {
-    if (!files.length) {
-      return;
-    }
-    parts.push(`<details><summary>${label} (${files.length})</summary>`);
-    parts.push('');
-    for (const f of files) {
-      const counts = getCounts ? getCounts(f) : null;
-      const suffix = counts ? ` ${colorCounts(counts)}` : '';
-      parts.push(`- \`${f}\`${suffix}`);
-    }
-    parts.push('');
-    parts.push('</details>');
-    parts.push('');
-  };
-
-  listSection('Added', added, f => countChanges(null, branchFiles.get(f)));
-  listSection('Removed', removed);
-  listSection('Modified', modified, f => countChanges(mainFiles.get(f), branchFiles.get(f)));
-
-  const buildUrl = process.env.CIRCLE_BUILD_URL;
-  if (buildUrl) {
-    parts.push(`[View full skills diff](${buildUrl}#artifacts)`);
-    parts.push('');
+  if (full) {
+    fs.mkdirSync(path.dirname(full), {recursive: true});
+    fs.writeFileSync(full, renderFull({added, removed, modified, mainFiles, branchFiles}));
   }
 
-  let out = parts.join('\n');
-  if (out.length > MAX_OUTPUT_CHARS) {
-    out = out.slice(0, MAX_OUTPUT_CHARS) +
-      '\n\n_… output truncated to fit GitHub comment size limit._\n';
-  }
-  process.stdout.write(out);
+  process.stdout.write(renderSummary({
+    added, removed, modified, mainFiles, branchFiles, sha, fullDiffUrl
+  }));
 }
 
 main();
