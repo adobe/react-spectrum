@@ -477,6 +477,17 @@ jobs:
           command: |
             cd rsp-api-checker
             target/release/rsp-api-check get-published-api --repo-root .. --output ../dist/base-api
+      - run:
+          # Runs after extraction (the extraction wipes its output dir on start)
+          # so the report lands next to the api.json tree. Non-fatal: if env
+          # inspection itself errors, we still want the extracted api.json.
+          name: env-report (published side)
+          command: |
+            cd rsp-api-checker
+            target/release/rsp-api-check env-report --repo-root .. --output ../dist/base-api/env-report.json || true
+      - store_artifacts:
+          path: dist/base-api
+          destination: base-api
       - persist_to_workspace:
           root: .
           paths:
@@ -494,6 +505,14 @@ jobs:
           command: |
             cd rsp-api-checker
             target/release/rsp-api-check get-local-api --repo-root .. --output ../dist/branch-api
+      - run:
+          name: env-report (branch side)
+          command: |
+            cd rsp-api-checker
+            target/release/rsp-api-check env-report --repo-root .. --output ../dist/branch-api/env-report.json || true
+      - store_artifacts:
+          path: dist/branch-api
+          destination: branch-api
       - persist_to_workspace:
           root: .
           paths:
@@ -512,6 +531,9 @@ jobs:
               --base-api-dir ../dist/base-api \
               --branch-api-dir ../dist/branch-api \
               --ci | tee ../dist/ts-diff.txt
+      - store_artifacts:
+          path: dist/ts-diff.txt
+          destination: ts-diff.txt
       - persist_to_workspace:
           root: dist
           paths:

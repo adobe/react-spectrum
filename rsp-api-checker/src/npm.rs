@@ -168,6 +168,37 @@ fn discover_local_packages(dir: &Path) -> Result<Vec<String>> {
     Ok(names)
 }
 
+/// Same traversal as `walk_for_packages`, but returns directory paths instead
+/// of names. Used by `env-report` to inspect each package's on-disk state.
+/// Includes private packages (the report wants to show them) — callers can
+/// filter after reading the package.json.
+pub(crate) fn walk_for_package_dirs(
+    dir: &Path,
+    depth: usize,
+    out: &mut Vec<std::path::PathBuf>,
+) -> Result<()> {
+    if depth > 4 {
+        return Ok(());
+    }
+    let entries = std::fs::read_dir(dir).context(format!("reading {}", dir.display()))?;
+    for entry in entries {
+        let entry = entry?;
+        let name = entry.file_name();
+        let name_str = name.to_string_lossy();
+        if name_str == "node_modules" || name_str == ".git" || name_str == "dev" {
+            continue;
+        }
+        let path = entry.path();
+        if path.is_dir() {
+            if path.join("package.json").exists() {
+                out.push(path.clone());
+            }
+            walk_for_package_dirs(&path, depth + 1, out)?;
+        }
+    }
+    Ok(())
+}
+
 pub(crate) fn walk_for_packages(dir: &Path, depth: usize, out: &mut Vec<String>) -> Result<()> {
     if depth > 4 {
         return Ok(());

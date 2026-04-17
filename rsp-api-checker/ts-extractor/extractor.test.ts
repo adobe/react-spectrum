@@ -135,6 +135,26 @@ describe("extract-api.ts (integration)", () => {
     expect(pkg.name).toBe("@react-aria/test-widget");
   });
 
+  // health.json is the diagnostic companion to api.json: it reports how many
+  // type nodes in the extracted API are `any`, which is the signature of
+  // TS resolution falling back. Comparing these counts between environments
+  // (local vs CI) pinpoints cross-package resolution failures quickly.
+  it("writes a health.json with any-count metrics alongside api.json", () => {
+    const outputDir = makeTmpDir();
+    runExtractor(FIXTURES_DIR, outputDir);
+
+    const healthPath = path.join(outputDir, "@react-aria", "test-widget", "dist", "health.json");
+    expect(fs.existsSync(healthPath)).toBe(true);
+    const health = JSON.parse(fs.readFileSync(healthPath, "utf8"));
+    expect(health).toHaveProperty("topLevelExports");
+    expect(health).toHaveProperty("topLevelAnyExports");
+    expect(health).toHaveProperty("totalTypeNodes");
+    expect(health).toHaveProperty("anyTypeNodes");
+    expect(health).toHaveProperty("anyRatio");
+    // The minimal fixture has clean types — anyRatio should be low.
+    expect(health.anyRatio).toBeLessThan(0.5);
+  });
+
   // Packages under a directory named "dev/" are build tools, not public API.
   // The Rust walk_for_packages already skips "dev/" when collecting packages
   // to install from npm. The TypeScript extractor must apply the same exclusion

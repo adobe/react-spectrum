@@ -314,6 +314,56 @@ function newestMtimeInSources(pkgDir: string): number | null {
   return newest;
 }
 
+/**
+ * Recursively count occurrences of `{ type: "any" }` nodes anywhere in the
+ * api.json tree, plus total type nodes for a ratio. `topLevelAnyExports` is
+ * the narrower signal matching the historical warning. When CI and local
+ * runs disagree, comparing these counts quickly reveals whether one
+ * environment's TS compiler is falling back to `any` far more than the
+ * other — which is the signature of broken cross-package resolution.
+ */
+interface HealthReport {
+  topLevelExports: number;
+  topLevelAnyExports: number;
+  totalTypeNodes: number;
+  anyTypeNodes: number;
+  anyRatio: number; // anyTypeNodes / totalTypeNodes, 0..1
+}
+
+function computeHealth(apiJson: { exports: Record<string, any>; links: Record<string, any> }): HealthReport {
+  let total = 0;
+  let anyCount = 0;
+  function walk(node: unknown): void {
+    if (node === null || node === undefined) return;
+    if (Array.isArray(node)) {
+      for (const item of node) walk(item);
+      return;
+    }
+    if (typeof node !== "object") return;
+    const obj = node as Record<string, unknown>;
+    if (typeof obj.type === "string") {
+      total += 1;
+      if (obj.type === "any") anyCount += 1;
+    }
+    for (const v of Object.values(obj)) walk(v);
+  }
+  for (const v of Object.values(apiJson.exports)) walk(v);
+  for (const v of Object.values(apiJson.links)) walk(v);
+
+  const topLevelExports = Object.keys(apiJson.exports).length;
+  const topLevelAnyExports = Object.values(apiJson.exports).filter(
+    (v: any) => v?.type === "any",
+  ).length;
+
+  return {
+    topLevelExports,
+    topLevelAnyExports,
+    totalTypeNodes: total,
+    anyTypeNodes: anyCount,
+    anyRatio: total === 0 ? 0 : anyCount / total,
+  };
+}
+
 function findPackageJsonDirs(rootDir: string): string[] {
   const dirs: string[] = [];
   function walk(dir: string, depth: number) {
@@ -2040,10 +2090,15 @@ function main() {
 
     const apiJson = { exports: apiExports, links: ctx.links };
 
-    // Summary of problematic exports
-    const anyCount = Object.values(apiExports).filter((v: any) => v?.type === 'any').length;
-    if (anyCount > 0) {
-      console.warn(`  ⚠ ${pkg.name}: ${anyCount}/${Object.keys(apiExports).length} exports resolved to 'any'`);
+    // Health metrics: count 'any' occurrences at every depth (not just top-level
+    // exports) so CI and local runs can be compared for resolution health.
+    // A sudden spike in the `any` ratio between environments is the
+    // signature of broken cross-package type resolution.
+    const health = computeHealth(apiJson);
+    if (health.topLevelAnyExports > 0) {
+      console.warn(
+        `  ⚠ ${pkg.name}: ${health.topLevelAnyExports}/${health.topLevelExports} exports resolved to 'any'`,
+      );
     }
     const outputBase = args.outputDir
       ? path.join(args.outputDir, pkg.name)
@@ -2051,6 +2106,9 @@ function main() {
     const outputPath = path.join(outputBase, "dist", "api.json");
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     fs.writeFileSync(outputPath, JSON.stringify(apiJson, null, 2));
+
+    const healthPath = path.join(outputBase, "dist", "health.json");
+    fs.writeFileSync(healthPath, JSON.stringify(health, null, 2));
 
     // Also ensure package.json exists in output dir (for compareAPIs to read the name)
     const outPkgJson = path.join(outputBase, "package.json");

@@ -66,6 +66,24 @@ enum Commands {
         output: PathBuf,
     },
 
+    /// Collect environment + per-package state so CI and local runs can be
+    /// diffed to pinpoint cross-package TS resolution failures.
+    ///
+    /// Reports tool versions, git state, each package's types-entry presence
+    /// and mtimes, and where workspace dep symlinks resolve. Write it as a
+    /// CI artifact and compare against a local run when the CI diff
+    /// disagrees with local.
+    #[command(name = "env-report")]
+    EnvReport {
+        /// Root of the react-spectrum monorepo.
+        #[arg(long, default_value = ".")]
+        repo_root: PathBuf,
+
+        /// Write the report here. If omitted, dumps JSON to stdout.
+        #[arg(long, short)]
+        output: Option<PathBuf>,
+    },
+
     /// Compare two API snapshots and output a diff.
     ///
     /// By default, compares `dist/base-api` (published) against
@@ -127,6 +145,14 @@ async fn main() -> anyhow::Result<()> {
             commands::get_local::execute(commands::get_local::GetLocalOpts {
                 repo_root,
                 output_dir: output,
+            })
+            .await?;
+        }
+
+        Commands::EnvReport { repo_root, output } => {
+            commands::env_report::execute(commands::env_report::EnvReportOpts {
+                repo_root,
+                output,
             })
             .await?;
         }
