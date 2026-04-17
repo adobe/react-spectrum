@@ -11,7 +11,7 @@
  */
 
 import {DropTarget, ItemDropTarget, Key} from '@react-types/shared';
-import {getChildNodes, getLastItem} from '../collections/getChildNodes';
+import {getChildNodes} from '../collections/getChildNodes';
 import {GridNode} from '../grid/GridCollection';
 import {InvalidationContext} from '../virtualizer/types';
 import {LayoutInfo} from '../virtualizer/LayoutInfo';
@@ -343,8 +343,11 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     let rowHeight = this.getEstimatedRowHeight() + this.gap;
     let childNodes = getChildNodes(node, collection);
     for (let node of childNodes) {
-      // Skip rows before the valid rectangle unless they are already cached.
-      if (y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
+      // Skip rows outside the valid rectangle unless they are already cached.
+      if (
+        (y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) ||
+        (y > this.requestedRect.maxY && node.type !== 'loader')
+      ) {
         y += rowHeight;
         continue;
       }
@@ -355,26 +358,6 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       y = layoutNode.layoutInfo.rect.maxY + this.gap;
       width = Math.max(width, layoutNode.layoutInfo.rect.width);
       children.push(layoutNode);
-
-      if (y > this.requestedRect.maxY) {
-        let lastNode = getLastItem(childNodes);
-        let rowsAfterRect = Math.max(0, lastNode!.index - node.index - 1);
-
-        // Estimate the remaining height for rows that we don't need to layout right now.
-        y += rowsAfterRect * rowHeight;
-
-        // Always add the loader sentinel if present. This assumes the loader is the last row in the body,
-        // will need to refactor when handling multi section loading
-        if (lastNode?.type === 'loader' && children.at(-1)?.layoutInfo.type !== 'loader') {
-          let loader = this.buildChild(lastNode, this.padding, y, layoutInfo.key);
-          loader.layoutInfo.parentKey = layoutInfo.key;
-          loader.index = collection.size;
-          width = Math.max(width, loader.layoutInfo.rect.width);
-          children.push(loader);
-          y = loader.layoutInfo.rect.maxY;
-        }
-        break;
-      }
     }
 
     // Make sure that the table body gets a height if empty or performing initial load
