@@ -72,7 +72,11 @@ export interface CalendarPropsBase {
    * Determines the alignment of the visible months on initial render based on the current selection or current date if there is no selection. 
    * @default 'center'
    */
-  selectionAlignment?: 'start' | 'center' | 'end'
+  selectionAlignment?: 'start' | 'center' | 'end',
+  /**
+   * The number of weeks in a month. This overrides the default set by the locale.
+   */
+  weeksInMonth?: number
 }
 
 interface CalendarStateBase {
@@ -157,7 +161,9 @@ interface CalendarStateBase {
    * Returns an array of dates in the week index counted from the provided start date, or the first visible date if not given.
    * The returned array always has 7 elements, but may include null if the date does not exist according to the calendar system.
    */
-  getDatesInWeek(weekIndex: number, startDate?: CalendarDate): Array<CalendarDate | null>
+  getDatesInWeek(weekIndex: number, startDate?: CalendarDate): Array<CalendarDate | null>,
+  /** Returns the number of weeks in a month. */
+  getWeeksInMonth(startDate?: CalendarDate): number
 }
 
 export type CalendarSelectionMode = 'single' | 'multiple';

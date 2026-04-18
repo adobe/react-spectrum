@@ -555,4 +555,10 @@ describe('Calendar', () => {
     expect(within(yearPicker).getAllByRole('option').map(o => o.textContent)).toEqual(Array.from({length: 20}, (_, i) => String(i + 2020)));
     expect(grid).toHaveAttribute('aria-label', 'Appointment date, June 2030');
   });
+
+  it('should support weeksInMonth prop', async () => {
+    let tree = render(<TestCalendar calendarProps={{weeksInMonth: 6, defaultFocusedValue: new CalendarDate(2026, 4, 1)}} />);
+    let rows = tree.getAllByRole('row');
+    expect(rows).toHaveLength(6);
+  });
 });

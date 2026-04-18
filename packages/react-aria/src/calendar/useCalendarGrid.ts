@@ -153,8 +153,8 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
       let dateDay = date.toDate(state.timeZone);
       return dayFormatter.format(dateDay);
     });
-  }, [locale, state.timeZone, dayFormatter, firstDayOfWeek]);
-  let weeksInMonth = getWeeksInMonth(startDate, locale, firstDayOfWeek);
+  }, [locale, state.timeZone, dayFormatter, firstDayOfWeek, startDate, state.visibleDuration.days]);
+  let weeksInMonth = state.getWeeksInMonth(startDate);
 
   return {
     gridProps: mergeProps(labelProps, {

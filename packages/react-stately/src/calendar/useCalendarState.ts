@@ -20,6 +20,7 @@ import {
   endOfMonth,
   endOfWeek,
   getDayOfWeek,
+  getWeeksInMonth,
   GregorianCalendar,
   isEqualCalendar,
   isSameDay,
@@ -79,7 +80,8 @@ export function useCalendarState<T extends DateValue = DateValue, M extends Cale
     isDateUnavailable,
     pageBehavior = 'visible',
     selectionMode = 'single' as M,
-    firstDayOfWeek
+    firstDayOfWeek,
+    weeksInMonth
   } = props;
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar as CalendarIdentifier), [createCalendar, resolvedOptions.calendar]);
   
@@ -429,6 +431,16 @@ export function useCalendarState<T extends DateValue = DateValue, M extends Cale
       }
 
       return dates;
+    },
+    getWeeksInMonth(date = startDate) {
+      let weeks = weeksInMonth || getWeeksInMonth(date, locale, firstDayOfWeek);
+      if (visibleDuration.weeks || visibleDuration.days) {
+        weeks = visibleDuration.weeks ?? 0;
+        if (visibleDuration.days) {
+          weeks += Math.ceil(visibleDuration.days / 7);
+        }
+      }
+      return weeks;
     }
   };
 }
