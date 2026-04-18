@@ -27,8 +27,6 @@ export interface CalendarPropsBase {
   minValue?: DateValue | null,
   /** The maximum allowed date that a user may select. */
   maxValue?: DateValue | null,
-  /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
-  isDateUnavailable?: (date: DateValue) => boolean,
   /**
    * Whether the calendar is disabled.
    * @default false
@@ -198,5 +196,9 @@ export interface RangeCalendarState<T extends DateValue = DateValue> extends Cal
   /** Sets whether the user is dragging over the calendar. */
   setDragging(isDragging: boolean): void,
   /** Clears the current selection. */
-  clearSelection(): void
+  clearSelection(): void,
+  /** Commits the current selection. */
+  commitSelection(): void,
+  /** Focuses the next available day before or after the anchor date. */
+  focusNearestAvailableDate(anchorDate: CalendarDate): void
 }

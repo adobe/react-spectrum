@@ -114,7 +114,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     }
   }
 
-  if (isInvalid && isSelectable) {
+  if (isInvalid && !isDisabled) {
     isSelected = true;
   }
 
@@ -279,14 +279,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
           // For mouse, this is unnecessary because users will see the indication on hover. For screen readers,
           // there will be an announcement to "click to finish selecting range" (above).
           state.selectDate(date);
-          let nextDay = date.add({days: 1});
-          if (state.isInvalid(nextDay)) {
-            nextDay = date.subtract({days: 1});
-          }
-          if (!state.isInvalid(nextDay)) {
-            state.setFocusedDate(nextDay);
-            state.setFocused(true);
-          }
+          state.focusNearestAvailableDate(date);
         } else if (e.pointerType === 'virtual') {
           // For screen readers, just select the date on click.
           state.selectDate(date);

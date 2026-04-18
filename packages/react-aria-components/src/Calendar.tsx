@@ -564,7 +564,7 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
     buttonRef
   );
 
-  let {hoverProps, isHovered} = useHover({...otherProps, isDisabled: states.isDisabled});
+  let {hoverProps, isHovered} = useHover({...otherProps, isDisabled: states.isDisabled || states.isUnavailable});
   let {focusProps, isFocusVisible} = useFocusRing();
   isFocusVisible &&= states.isFocused;
   let isSelectionStart = false;

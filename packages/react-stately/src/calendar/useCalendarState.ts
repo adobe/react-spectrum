@@ -40,7 +40,9 @@ export interface CalendarProps<T extends DateValue, M extends CalendarSelectionM
    * Whether single or multiple selection is enabled.
    * @default "single"
    */
-  selectionMode?: M
+  selectionMode?: M,
+  /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
+  isDateUnavailable?: (date: DateValue) => boolean
 }
 
 export interface CalendarStateOptions<T extends DateValue = DateValue, M extends CalendarSelectionMode = 'single'> extends CalendarProps<T, M> {

@@ -207,7 +207,8 @@ function Example(props) {
       ///- begin highlight -///
       /* PROPS */
       minValue={today(getLocalTimeZone())}
-      isDateUnavailable={date => (
+      isDateUnavailable={(date, anchorDate) => (
+        (anchorDate && date.compare(anchorDate) > 7) ||
         disabledRanges.some((interval) =>
           date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
         )
@@ -287,34 +288,36 @@ import {Select, SelectItem} from 'vanilla-starter/Select';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 
 <RangeCalendar>
-  <div>
-    <header style={{display: 'flex', gap: 4}}>
-      <Button slot="previous" variant="quiet">
-        <ChevronLeft />
-      </Button>
-      {/*- begin highlight -*/}
-      <CalendarMonthPicker>
-        {(props) => (
-          <Select {...props}>
-            {item => <SelectItem>{item.formatted}</SelectItem>}
-          </Select>
-        )}
-      </CalendarMonthPicker>
-      <CalendarYearPicker>
-        {(props) => (
-          <Select {...props}>
-            {item => <SelectItem>{item.formatted}</SelectItem>}
-          </Select>
-        )}
-      </CalendarYearPicker>
-      {/*- end highlight -*/}
-      <Button slot="next" variant="quiet">
-        <ChevronRight />
-      </Button>
-    </header>
-    <CalendarGrid>
-      {(date) => <CalendarCell date={date} />}
-    </CalendarGrid>
+  <div className="months">
+    <div className="month">
+      <header style={{display: 'flex', gap: 4}}>
+        <Button slot="previous" variant="quiet">
+          <ChevronLeft />
+        </Button>
+        {/*- begin highlight -*/}
+        <CalendarMonthPicker>
+          {(props) => (
+            <Select {...props}>
+              {item => <SelectItem>{item.formatted}</SelectItem>}
+            </Select>
+          )}
+        </CalendarMonthPicker>
+        <CalendarYearPicker>
+          {(props) => (
+            <Select {...props}>
+              {item => <SelectItem>{item.formatted}</SelectItem>}
+            </Select>
+          )}
+        </CalendarYearPicker>
+        {/*- end highlight -*/}
+        <Button slot="next" variant="quiet">
+          <ChevronRight />
+        </Button>
+      </header>
+      <CalendarGrid>
+        {(date) => <CalendarCell date={date} />}
+      </CalendarGrid>
+    </div>
   </div>
 </RangeCalendar>
 ```
