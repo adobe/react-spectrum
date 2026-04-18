@@ -431,6 +431,48 @@ describe('RangeCalendar', () => {
     expect(cell).toHaveClass('unavailable');
   });
 
+  it('should allow changing the unavailable dates based on the anchor date', async () => {
+    let tree = render(
+      <TestCalendar
+        calendarProps={{
+          isDateUnavailable: (date, anchorDate) => (
+            anchorDate ? Math.abs(date.compare(anchorDate)) > 7 : false
+          )
+        }} />
+    );
+
+    let grid = tree.getByRole('grid');
+    let cells = within(grid).getAllByRole('button');
+
+    for (let cell of cells) {
+      if (!cell.hasAttribute('data-outside-month')) {
+        expect(cell).not.toHaveAttribute('data-disabled');
+      }
+    }
+
+    await user.click(cells[14]);
+
+    for (let i = 0; i < 7; i++) {
+      expect(cells[i]).toHaveAttribute('data-disabled');
+    }
+
+    for (let i = 7; i < 22; i++) {
+      expect(cells[i]).not.toHaveAttribute('data-disabled');
+    }
+
+    for (let i = 22; i < cells.length; i++) {
+      expect(cells[i]).toHaveAttribute('data-disabled');
+    }
+
+    await user.click(cells[19]);
+
+    for (let cell of cells) {
+      if (!cell.hasAttribute('data-outside-month')) {
+        expect(cell).not.toHaveAttribute('data-disabled');
+      }
+    }
+  });
+
   it('should support disabled state', () => {
     let {getByRole} = renderCalendar({isDisabled: true}, {}, {className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
     let grid = getByRole('grid');

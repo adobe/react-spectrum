@@ -208,7 +208,7 @@ function Example(props) {
       /* PROPS */
       minValue={today(getLocalTimeZone())}
       isDateUnavailable={(date, anchorDate) => (
-        (anchorDate && date.compare(anchorDate) > 7) ||
+        (anchorDate && Math.abs(date.compare(anchorDate)) > 7) ||
         disabledRanges.some((interval) =>
           date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
         )
