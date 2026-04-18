@@ -29,14 +29,19 @@ import {
   toCalendarDate,
   today
 } from '@internationalized/date';
-import {CalendarPropsBase, CalendarState, DateValue, MappedDateValue} from './types';
+import {CalendarPropsBase, CalendarSelectionMode, CalendarState, CalendarValueType, DateValue, MappedDateValue} from './types';
 import {useControlledState} from '../utils/useControlledState';
 import {useMemo, useState} from 'react';
 import {ValidationState, ValueBase} from '@react-types/shared';
 
-export interface CalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<T | null, MappedDateValue<T>> {}
+export interface CalendarProps<T extends DateValue, M extends CalendarSelectionMode = 'single'> extends CalendarPropsBase, ValueBase<CalendarValueType<T | null, M>, CalendarValueType<MappedDateValue<T>, M>> {
+  /**
+   * @default "single"
+   */
+  selectionMode?: M
+}
 
-export interface CalendarStateOptions<T extends DateValue = DateValue> extends CalendarProps<T> {
+export interface CalendarStateOptions<T extends DateValue = DateValue, M extends CalendarSelectionMode = 'single'> extends CalendarProps<T, M> {
   /** The locale to display and edit the value according to. */
   locale: string,
   /**
@@ -61,7 +66,7 @@ export interface CalendarStateOptions<T extends DateValue = DateValue> extends C
  * Provides state management for a calendar component.
  * A calendar displays one or more date grids and allows users to select a single date.
  */
-export function useCalendarState<T extends DateValue = DateValue>(props: CalendarStateOptions<T>): CalendarState {
+export function useCalendarState<T extends DateValue = DateValue, M extends CalendarSelectionMode = 'single'>(props: CalendarStateOptions<T, M>): CalendarState<M> {
   let defaultFormatter = useMemo(() => new DateFormatter(props.locale), [props.locale]);
   let resolvedOptions = useMemo(() => defaultFormatter.resolvedOptions(), [defaultFormatter]);
   let {
@@ -73,27 +78,51 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     selectionAlignment,
     isDateUnavailable,
     pageBehavior = 'visible',
+    selectionMode = 'single' as M,
     firstDayOfWeek
   } = props;
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar as CalendarIdentifier), [createCalendar, resolvedOptions.calendar]);
-
-  let [value, setControlledValue] = useControlledState<DateValue | null, MappedDateValue<T>>(props.value!, props.defaultValue ?? null!, props.onChange);
-  let calendarDateValue = useMemo(() => value ? toCalendar(toCalendarDate(value), calendar) : null, [value, calendar]);
-  let timeZone = useMemo(() => value && 'timeZone' in value ? value.timeZone : resolvedOptions.timeZone, [value, resolvedOptions.timeZone]);
+  
+  let [value, setControlledValue] = useControlledState<T | T[] | null, MappedDateValue<T> | MappedDateValue<T>[] | null>(props.value as any, props.defaultValue as any ?? null, props.onChange as any);
+  let calendarDateValue = useMemo(() => {
+    if (Array.isArray(value)) {
+      return value.map(value => toCalendar(toCalendarDate(value), calendar));
+    } else {
+      return value ? toCalendar(toCalendarDate(value), calendar) : null;
+    }
+  }, [value, calendar]);
+  let timeZone = useMemo(() => {
+    let val = Array.isArray(value) ? value[0] : value;
+    return val && 'timeZone' in val ? val.timeZone : resolvedOptions.timeZone;
+  }, [value, resolvedOptions.timeZone]);
   let focusedCalendarDate = useMemo(() => (
     props.focusedValue
       ? constrainValue(toCalendar(toCalendarDate(props.focusedValue), calendar), minValue, maxValue)
       : undefined
   ), [props.focusedValue, calendar, minValue, maxValue]);
-  let defaultFocusedCalendarDate = useMemo(() => (
-    constrainValue(
-      props.defaultFocusedValue
-        ? toCalendar(toCalendarDate(props.defaultFocusedValue), calendar)
-        : calendarDateValue || toCalendar(today(timeZone), calendar),
+  let defaultFocusedCalendarDate = useMemo(() => {
+    if (props.defaultFocusedValue) {
+      return constrainValue(
+        toCalendar(toCalendarDate(props.defaultFocusedValue), calendar),
+        minValue,
+        maxValue
+      );
+    }
+
+    if (calendarDateValue) {
+      return constrainValue(
+        Array.isArray(calendarDateValue) ? calendarDateValue[0] : calendarDateValue,
+        minValue,
+        maxValue
+      );
+    }
+
+    return constrainValue(
+      toCalendar(today(timeZone), calendar),
       minValue,
       maxValue
-    )
-  ), [props.defaultFocusedValue, calendarDateValue, timeZone, calendar, minValue, maxValue]);
+    );
+  }, [props.defaultFocusedValue, calendarDateValue, timeZone, calendar, minValue, maxValue]);
   let [focusedDate, setFocusedDate] = useControlledState(focusedCalendarDate, defaultFocusedCalendarDate, props.onFocusChange);
   let [startDate, setStartDate] = useState(() => {
     switch (selectionAlignment) {
@@ -142,28 +171,40 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     setFocusedDate(date);
   }
 
-  function setValue(newValue: CalendarDate | null) {
+  function normalizeValue(newValue: CalendarDate) {
+    let constrained = constrainValue(newValue, minValue, maxValue);
+    let prev = previousAvailableDate(constrained, startDate, isDateUnavailable);
+    if (!prev) {
+      return null;
+    }
+
+    // The display calendar should not have any effect on the emitted value.
+    // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
+    let baseValue = Array.isArray(value) ? value[0] : value;
+    let calendarValue = toCalendar(prev, baseValue?.calendar || new GregorianCalendar());
+
+    // Preserve time if the input value had one.
+    if (baseValue && 'hour' in baseValue) {
+      return baseValue.set(calendarValue) as T;
+    }
+
+    return calendarValue as T;
+  }
+
+  function setValue(newValue: CalendarDate | CalendarDate[] | null) {
     if (!props.isDisabled && !props.isReadOnly) {
-      let localValue = newValue;
-      if (localValue === null) {
-        setControlledValue(null);
-        return;
-      }
-      localValue = constrainValue(localValue, minValue, maxValue);
-      localValue = previousAvailableDate(localValue, startDate, isDateUnavailable);
-      if (!localValue) {
+      if (newValue === null) {
+        setControlledValue(selectionMode === 'multiple' ? [] : null);
         return;
       }
 
-      // The display calendar should not have any effect on the emitted value.
-      // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
-      localValue = toCalendar(localValue, value?.calendar || new GregorianCalendar());
-
-      // Preserve time if the input value had one.
-      if (value && 'hour' in value) {
-        setControlledValue(value.set(localValue));
+      if (Array.isArray(newValue)) {
+        setControlledValue(newValue.map(normalizeValue).filter(Boolean) as any);
       } else {
-        setControlledValue(localValue);
+        let localValue = normalizeValue(newValue);
+        if (localValue) {
+          setControlledValue(localValue as any);
+        }
       }
     }
   }
@@ -173,11 +214,11 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
       return false;
     }
 
-    if (isDateUnavailable && isDateUnavailable(calendarDateValue)) {
-      return true;
+    if (Array.isArray(calendarDateValue)) {
+      return calendarDateValue.some(date => isDateUnavailable?.(date) || isInvalid(date, minValue, maxValue));
     }
 
-    return isInvalid(calendarDateValue, minValue, maxValue);
+    return isDateUnavailable?.(calendarDateValue) || isInvalid(calendarDateValue, minValue, maxValue);
   }, [calendarDateValue, isDateUnavailable, minValue, maxValue]);
   let isValueInvalid = props.isInvalid || props.validationState === 'invalid' || isUnavailable;
   let validationState: ValidationState | null = isValueInvalid ? 'invalid' : null;
@@ -193,8 +234,9 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
   return {
     isDisabled: props.isDisabled ?? false,
     isReadOnly: props.isReadOnly ?? false,
-    value: calendarDateValue,
-    setValue,
+    value: calendarDateValue as any,
+    setValue: setValue as any,
+    selectionMode,
     visibleRange: {
       start: startDate,
       end: endDate
@@ -298,11 +340,35 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     },
     selectFocusedDate() {
       if (!(isDateUnavailable && isDateUnavailable(focusedDate))) {
-        setValue(focusedDate);
+        this.selectDate(focusedDate);
       }
     },
     selectDate(date) {
-      setValue(date);
+      if (props.isDisabled || props.isReadOnly) {
+        return;
+      }
+
+      if (selectionMode === 'multiple' && date != null) {
+        let newDate = normalizeValue(date);
+        if (!newDate) {
+          return;
+        }
+
+        let baseValue: T[] = [];
+        if (Array.isArray(value)) {
+          baseValue = value;
+        } else if (value != null) {
+          baseValue = [value];
+        }
+        
+        let index = baseValue.findIndex(value => isSameDay(value, newDate));
+        let newValue = index >= 0
+          ? baseValue.slice(0, index).concat(baseValue.slice(index + 1))
+          : [...baseValue, newDate];
+        setControlledValue(newValue);
+      } else {
+        setValue(date);
+      }
     },
     isFocused,
     setFocused,
@@ -310,7 +376,10 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
       return isInvalid(date, minValue, maxValue);
     },
     isSelected(date) {
-      return calendarDateValue != null && isSameDay(date, calendarDateValue) && !this.isCellDisabled(date) && !this.isCellUnavailable(date);
+      if (!calendarDateValue || this.isCellDisabled(date) || this.isCellUnavailable(date)) {
+        return false;
+      }
+      return Array.isArray(calendarDateValue) ? calendarDateValue.some(value => isSameDay(value, date)) : isSameDay(date, calendarDateValue);
     },
     isCellFocused(date) {
       return isFocused && focusedDate && isSameDay(date, focusedDate);

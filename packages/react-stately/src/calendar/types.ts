@@ -160,11 +160,15 @@ interface CalendarStateBase {
   getDatesInWeek(weekIndex: number, startDate?: CalendarDate): Array<CalendarDate | null>
 }
 
-export interface CalendarState extends CalendarStateBase {
+export type CalendarSelectionMode = 'single' | 'multiple';
+export type CalendarValueType<T, M extends CalendarSelectionMode> = M extends 'single' ? T : readonly T[];
+
+export interface CalendarState<M extends CalendarSelectionMode = 'single'> extends CalendarStateBase {
+  readonly selectionMode: M,
   /** The currently selected date. */
-  readonly value: CalendarDate | null,
+  readonly value: CalendarValueType<CalendarDate | null, M>,
   /** Sets the currently selected date. */
-  setValue(value: CalendarDate | null): void
+  setValue(value: CalendarValueType<CalendarDate | null, M>): void
 }
 
 export interface RangeCalendarState<T extends DateValue = DateValue> extends CalendarStateBase {

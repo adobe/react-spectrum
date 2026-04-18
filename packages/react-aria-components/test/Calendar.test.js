@@ -480,6 +480,34 @@ describe('Calendar', () => {
     expect(setFocusedDateButton).toHaveFocus();
   });
 
+  it('should support multiple selection', async () => {
+    let onChange = jest.fn();
+    function Example() {
+      let [value, setValue] = useState([]);
+      return <TestCalendar calendarProps={{defaultFocusedValue: new CalendarDate(2026, 4, 1), selectionMode: 'multiple', value, onChange: v => (onChange(v), setValue(v))}} />;
+    }
+
+    let {getByRole} = render(<Example />);
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('aria-multiselectable');
+
+    let cells = within(grid).getAllByRole('button');
+    
+    expect(cells[10]).not.toHaveAttribute('data-selected');
+    await user.click(cells[10]);
+    expect(cells[10]).toHaveAttribute('data-selected');
+    expect(onChange).toHaveBeenLastCalledWith([new CalendarDate(2026, 4, 8)]);
+
+    expect(cells[14]).not.toHaveAttribute('data-selected');
+    await user.click(cells[14]);
+    expect(cells[14]).toHaveAttribute('data-selected');
+    expect(onChange).toHaveBeenLastCalledWith([new CalendarDate(2026, 4, 8), new CalendarDate(2026, 4, 12)]);
+
+    await user.click(cells[14]);
+    expect(cells[14]).not.toHaveAttribute('data-selected');
+    expect(onChange).toHaveBeenLastCalledWith([new CalendarDate(2026, 4, 8)]);
+  });
+
   it('should support month and year dropdowns', async () => {
     let tree = render(
       <Calendar aria-label="Appointment date" defaultFocusedValue={new CalendarDate(2026, 4, 1)}>

@@ -42,7 +42,7 @@ import {useHover} from 'react-aria/useHover';
 import {useLocale} from 'react-aria/I18nProvider';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
-export interface CalendarRenderProps {
+export interface CalendarRenderProps<M extends CalendarSelectionMode = 'single'> {
   /**
    * Whether the calendar is disabled.
    * @selector [data-disabled]
@@ -51,7 +51,7 @@ export interface CalendarRenderProps {
   /**
    * State of the calendar.
    */
-  state: CalendarState,
+  state: CalendarState<M>,
   /**
    * Whether the calendar is invalid.
    * @selector [data-invalid]
@@ -66,12 +66,12 @@ export interface RangeCalendarRenderProps extends Omit<CalendarRenderProps, 'sta
   state: RangeCalendarState
 }
 
-export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<CalendarRenderProps, 'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface CalendarProps<T extends DateValue, M extends CalendarSelectionMode = 'single'> extends Omit<AriaCalendarProps<T, M>, 'errorMessage' | 'validationState'>, RenderProps<CalendarRenderProps<M>, 'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Calendar'
    */
-  className?: ClassNameOrFunction<CalendarRenderProps>,
+  className?: ClassNameOrFunction<CalendarRenderProps<M>>,
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -104,15 +104,15 @@ export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeC
   createCalendar?: (identifier: CalendarIdentifier) => ICalendar
 }
 
-export const CalendarContext = createContext<ContextValue<CalendarProps<any>, HTMLDivElement>>(null);
+export const CalendarContext = createContext<ContextValue<CalendarProps<any, CalendarSelectionMode>, HTMLDivElement>>(null);
 export const RangeCalendarContext = createContext<ContextValue<RangeCalendarProps<any>, HTMLDivElement>>(null);
-export const CalendarStateContext = createContext<CalendarState | null>(null);
+export const CalendarStateContext = createContext<CalendarState<CalendarSelectionMode> | null>(null);
 export const RangeCalendarStateContext = createContext<RangeCalendarState | null>(null);
 
 /**
  * A calendar displays one or more date grids and allows users to select a single date.
  */
-export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Calendar<T extends DateValue, M extends CalendarSelectionMode = 'single'>(props: CalendarProps<T, M>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, CalendarContext);
   let {locale} = useLocale();
   let state = useCalendarState({
@@ -152,7 +152,7 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
           }],
           [HeadingContext, {'aria-hidden': true, level: 2, children: title}],
           [CalendarStateContext, state],
-          [CalendarContext, props as CalendarProps<any>],
+          [CalendarContext, props as any],
           [TextContext, {
             slots: {
               errorMessage: errorMessageProps

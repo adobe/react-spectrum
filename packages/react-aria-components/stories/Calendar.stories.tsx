@@ -60,8 +60,8 @@ function Footer() {
 }
 
 export const CalendarExample: CalendarStory = {
-  render: () => (
-    <Calendar style={{width: 220}}>
+  render: (args) => (
+    <Calendar style={{width: 220}} {...args}>
       <div style={{display: 'flex', alignItems: 'center'}}>
         <Button slot="previous">&lt;</Button>
         <Heading style={{flex: 1, textAlign: 'center'}} />
@@ -71,7 +71,13 @@ export const CalendarExample: CalendarStory = {
         {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
       </CalendarGrid>
     </Calendar>
-  )
+  ),
+  argTypes: {
+    selectionMode: {
+      control: 'radio',
+      options: ['single', 'multiple']
+    }
+  }
 };
 
 export const CalendarResetValue: CalendarStory = {
@@ -104,19 +110,19 @@ function CalendarMultiMonthExample(args) {
       <Calendar style={{width: 500}} visibleDuration={{months: 3}} focusedValue={focusedDate} onFocusChange={setFocusedDate} defaultValue={defaultDate} {...args}>
         <div style={{display: 'flex', gap: 20, alignItems: 'start'}}>
           <div style={{flex: 1}}>
-        <div style={{display: 'flex', alignItems: 'center'}}>
-          <Button slot="previous">&lt;</Button>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <Button slot="previous">&lt;</Button>
               <CalendarMonthHeading style={{flex: 1, textAlign: 'center'}} />
-        </div>
+            </div>
             <CalendarGrid style={{width: '100%'}}>
-            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
-          </CalendarGrid>
+              {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
+            </CalendarGrid>
           </div>
           <div style={{flex: 1}}>
             <CalendarMonthHeading offset={1} style={{textAlign: 'center'}} />
             <CalendarGrid offset={{months: 1}} style={{width: '100%'}}>
-            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
-          </CalendarGrid>
+              {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
+            </CalendarGrid>
           </div>
           <div style={{flex: 1}}>
             <div style={{display: 'flex', alignItems: 'center'}}>
@@ -124,9 +130,9 @@ function CalendarMultiMonthExample(args) {
               <Button slot="next">&gt;</Button>
             </div>
             <CalendarGrid offset={{months: 2}} style={{width: '100%'}}>
-            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
-          </CalendarGrid>
-        </div>
+              {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
+            </CalendarGrid>
+          </div>
         </div>
       </Calendar>
     </>

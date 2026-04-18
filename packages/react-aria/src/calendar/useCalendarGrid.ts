@@ -11,7 +11,7 @@
  */
 
 import {CalendarDate, getWeeksInMonth, startOfWeek, today} from '@internationalized/date';
-import {CalendarState} from 'react-stately/useCalendarState';
+import {CalendarSelectionMode, CalendarState} from 'react-stately/useCalendarState';
 import {DOMAttributes} from '@react-types/shared';
 import {hookData, useVisibleRangeDescription} from './utils';
 import {KeyboardEvent, useMemo} from 'react';
@@ -62,7 +62,7 @@ export interface CalendarGridAria {
  * A calendar grid displays a single grid of days within a calendar or range calendar which
  * can be keyboard navigated and selected by the user.
  */
-export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarState | RangeCalendarState): CalendarGridAria {
+export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarState<CalendarSelectionMode> | RangeCalendarState): CalendarGridAria {
   let {
     startDate = state.visibleRange.start,
     endDate = state.visibleRange.end,
@@ -161,7 +161,7 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
       role: 'grid',
       'aria-readonly': state.isReadOnly || undefined,
       'aria-disabled': state.isDisabled || undefined,
-      'aria-multiselectable': ('highlightedRange' in state) || undefined,
+      'aria-multiselectable': ('highlightedRange' in state) || state.selectionMode === 'multiple' || undefined,
       onKeyDown,
       onFocus: () => state.setFocused(true),
       onBlur: () => state.setFocused(false)
