@@ -3,7 +3,7 @@ import {
   Calendar as AriaCalendar,
   CalendarCell as AriaCalendarCell,
   CalendarGrid as AriaCalendarGrid,
-  CalendarMonthHeading,
+  CalendarHeading,
   type CalendarProps as AriaCalendarProps,
   type DateValue,
   type CalendarCellProps,
@@ -14,8 +14,7 @@ import {ChevronLeft, ChevronRight} from 'lucide-react';
 import {Button} from './Button';
 import './Calendar.css';
 
-export interface CalendarProps<T extends DateValue>
-  extends AriaCalendarProps<T> {
+export interface CalendarProps<T extends DateValue> extends AriaCalendarProps<T> {
   errorMessage?: string;
 }
 
@@ -33,7 +32,7 @@ export function Calendar<T extends DateValue>(
                 <ChevronLeft />
               </Button>
             }
-            <CalendarMonthHeading offset={i} />
+            <CalendarHeading offset={{months: i}} />
             {i === months - 1 &&
               <Button slot="next" variant="quiet">
                 <ChevronRight />

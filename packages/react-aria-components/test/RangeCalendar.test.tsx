@@ -19,7 +19,7 @@ import {
   CalendarGridBody,
   CalendarGridHeader,
   CalendarHeaderCell,
-  CalendarMonthHeading,
+  CalendarHeading,
   CalendarMonthPicker,
   CalendarYearPicker,
   RangeCalendar,
@@ -197,11 +197,11 @@ describe('RangeCalendar', () => {
           <Button slot="next">▶</Button>
         </header>
         <div style={{display: 'flex', gap: 30}}>
-          <CalendarMonthHeading />
+          <CalendarHeading />
           <CalendarGrid>
             {date => <CalendarCell date={date} />}
           </CalendarGrid>
-          <CalendarMonthHeading offset={1} />
+          <CalendarHeading offset={{months: 1}} />
           <CalendarGrid offset={{months: 1}}>
             {date => <CalendarCell date={date} />}
           </CalendarGrid>

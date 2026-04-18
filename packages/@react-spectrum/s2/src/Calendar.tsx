@@ -23,7 +23,7 @@ import {
   CalendarGridBody,
   CalendarGridHeader,
   CalendarHeaderCellProps,
-  CalendarMonthHeading,
+  CalendarHeading,
   CalendarSelectionMode,
   CalendarState,
   CalendarStateContext,
@@ -490,7 +490,7 @@ export const CalendarHeader = ({visibleMonths}: {visibleMonths: number}): ReactE
       {Array.from({length: visibleMonths}).map((_, i) => (
         <div key={i} className={headingStyles}>
           {i === 0 && <CalendarButton slot="previous"><ChevronLeftIcon /></CalendarButton>}
-          <CalendarMonthHeading offset={i} className={titleStyles} />
+          <CalendarHeading offset={{months: i}} className={titleStyles} />
           {i === visibleMonths - 1 && <CalendarButton slot="next"><ChevronRightIcon /></CalendarButton>}
         </div>
       ))}

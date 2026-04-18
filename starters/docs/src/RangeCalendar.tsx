@@ -2,7 +2,7 @@
 import {
   CalendarCell as AriaCalendarCell,
   RangeCalendar as AriaRangeCalendar,
-  CalendarMonthHeading,
+  CalendarHeading,
   Text,
   type DateValue,
   type RangeCalendarProps as AriaRangeCalendarProps,
@@ -33,7 +33,7 @@ export function RangeCalendar<T extends DateValue>(
                 <ChevronLeft />
               </Button>
             }
-            <CalendarMonthHeading offset={i} />
+            <CalendarHeading offset={{months: i}} />
             {i === months - 1 &&
               <Button slot="next" variant="quiet">
                 <ChevronRight />

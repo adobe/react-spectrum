@@ -15,7 +15,7 @@ export {useCalendarGrid} from '../src/calendar/useCalendarGrid';
 export {useCalendarCell} from '../src/calendar/useCalendarCell';
 export {useCalendarMonthPicker} from '../src/calendar/useCalendarMonthPicker';
 export {useCalendarYearPicker} from '../src/calendar/useCalendarYearPicker';
-export {useCalendarMonthHeading} from '../src/calendar/useCalendarMonthHeading';
+export {useCalendarHeading} from '../src/calendar/useCalendarHeading';
 
 export type {AriaRangeCalendarProps} from '../src/calendar/useRangeCalendar';
 export type {AriaCalendarGridProps, CalendarGridAria} from '../src/calendar/useCalendarGrid';
@@ -23,6 +23,6 @@ export type {AriaCalendarCellProps, CalendarCellAria} from '../src/calendar/useC
 export type {CalendarAria} from '../src/calendar/useCalendarBase';
 export type {CalendarMonthPickerAria, CalendarMonthPickerItem, CalendarMonthPickerProps} from '../src/calendar/useCalendarMonthPicker';
 export type {CalendarYearPickerAria, CalendarYearPickerItem, CalendarYearPickerProps} from '../src/calendar/useCalendarYearPicker';
-export type {CalendarMonthHeadingProps} from '../src/calendar/useCalendarMonthHeading';
+export type {CalendarHeadingProps} from '../src/calendar/useCalendarHeading';
 export type {DateValue} from 'react-stately/useCalendarState';
 export type {RangeCalendarProps} from 'react-stately/useRangeCalendarState';

@@ -66,8 +66,8 @@
     }
   }
 
-  &[data-outside-month] {
-    display: none;
+  &[data-disabled] {
+    opacity: 0.5;
   }
 
   &[data-pressed] {

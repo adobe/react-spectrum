@@ -16,7 +16,7 @@ import {
   Calendar,
   CalendarCell,
   CalendarGrid,
-  CalendarMonthHeading,
+  CalendarHeading,
   CalendarMonthPicker,
   CalendarProps,
   CalendarStateContext,
@@ -112,21 +112,21 @@ function CalendarMultiMonthExample(args) {
           <div style={{flex: 1}}>
             <div style={{display: 'flex', alignItems: 'center'}}>
               <Button slot="previous">&lt;</Button>
-              <CalendarMonthHeading style={{flex: 1, textAlign: 'center'}} />
+              <CalendarHeading style={{flex: 1, textAlign: 'center'}} />
             </div>
             <CalendarGrid style={{width: '100%'}}>
               {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
             </CalendarGrid>
           </div>
           <div style={{flex: 1}}>
-            <CalendarMonthHeading offset={1} style={{textAlign: 'center'}} />
+            <CalendarHeading offset={{months: 1}} style={{textAlign: 'center'}} />
             <CalendarGrid offset={{months: 1}} style={{width: '100%'}}>
               {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
             </CalendarGrid>
           </div>
           <div style={{flex: 1}}>
             <div style={{display: 'flex', alignItems: 'center'}}>
-              <CalendarMonthHeading offset={2} style={{flex: 1, textAlign: 'center'}} />
+              <CalendarHeading offset={{months: 2}} style={{flex: 1, textAlign: 'center'}} />
               <Button slot="next">&gt;</Button>
             </div>
             <CalendarGrid offset={{months: 2}} style={{width: '100%'}}>

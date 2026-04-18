@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {CalendarMonthHeadingProps as AriaCalendarMonthHeadingProps, CalendarMonthPickerProps as AriaCalendarMonthPickerProps, AriaCalendarProps, CalendarYearPickerProps as AriaCalendarYearPickerProps, CalendarMonthPickerAria, CalendarYearPickerAria, useCalendar, useCalendarCell, useCalendarGrid, useCalendarMonthHeading, useCalendarMonthPicker, useCalendarYearPicker} from 'react-aria/useCalendar';
+import {CalendarHeadingProps as AriaCalendarHeadingProps, CalendarMonthPickerProps as AriaCalendarMonthPickerProps, AriaCalendarProps, CalendarYearPickerProps as AriaCalendarYearPickerProps, CalendarMonthPickerAria, CalendarYearPickerAria, useCalendar, useCalendarCell, useCalendarGrid, useCalendarHeading, useCalendarMonthPicker, useCalendarYearPicker} from 'react-aria/useCalendar';
 import {AriaRangeCalendarProps, useRangeCalendar} from 'react-aria/useRangeCalendar';
 import {ButtonContext} from './Button';
 import {CalendarDate, CalendarIdentifier, createCalendar, DateDuration, endOfMonth, Calendar as ICalendar, isSameDay, isSameMonth, isToday} from '@internationalized/date';
@@ -34,7 +34,7 @@ import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {Heading, HeadingContext, HeadingProps} from './Heading';
 import {mergeProps} from 'react-aria/mergeProps';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 import {useCalendarState} from 'react-stately/useCalendarState';
 import {useFocusRing} from 'react-aria/useFocusRing';
@@ -645,14 +645,14 @@ export function CalendarMonthPicker(props: CalendarMonthPickerProps): JSX.Elemen
   return props.children(aria);
 }
 
-export interface CalendarMonthHeadingProps extends AriaCalendarMonthHeadingProps, HeadingProps {}
+export interface CalendarHeadingProps extends AriaCalendarHeadingProps, HeadingProps {}
 
-export const CalendarMonthHeading = forwardRef(function CalendarMonthHeading(props: CalendarMonthHeadingProps, ref: ForwardedRef<HTMLHeadingElement>) {
+export const CalendarHeading = forwardRef(function CalendarHeading(props: CalendarHeadingProps, ref: ForwardedRef<HTMLHeadingElement>) {
   let {offset, format, ...headingProps} = props;
   let calendarState = React.useContext(CalendarStateContext);
   let rangeCalendarState = React.useContext(RangeCalendarStateContext);
   let state = calendarState || rangeCalendarState!;
-  let aria = useCalendarMonthHeading({offset, format}, state);
+  let aria = useCalendarHeading({offset, format}, state);
 
   return (
     <Heading {...headingProps} ref={ref}>
