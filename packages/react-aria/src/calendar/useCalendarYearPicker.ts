@@ -38,7 +38,7 @@ export interface CalendarYearPickerProps {
 export interface CalendarYearPickerAria {
   'aria-label': string,
   value: Key,
-  onChange: (key: Key) => void,
+  onChange: (key: Key | null) => void,
   items: CalendarYearPickerItem[]
 }
 
@@ -102,7 +102,9 @@ export function useCalendarYearPicker(props: CalendarYearPickerProps, state: Cal
     'aria-label': ariaLabel,
     value,
     onChange: key => {
-      state.setFocusedDate(years[key].date);
+      if (key != null) {
+        state.setFocusedDate(years[key].date);
+      }
     },
     items: years
   };

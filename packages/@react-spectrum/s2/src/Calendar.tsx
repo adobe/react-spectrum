@@ -49,7 +49,7 @@ import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {RangeCalendarContext, RangeCalendarStateContext} from 'react-aria-components/RangeCalendar';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
-import React, {createContext, ForwardedRef, forwardRef, Fragment, PropsWithChildren, ReactElement, ReactNode, useContext, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, PropsWithChildren, ReactElement, ReactNode, useContext, useMemo, useRef} from 'react';
 import {Text} from 'react-aria-components/Text';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';

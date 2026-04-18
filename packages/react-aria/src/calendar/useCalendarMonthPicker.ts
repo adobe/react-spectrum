@@ -28,7 +28,7 @@ export interface CalendarMonthPickerProps {
 export interface CalendarMonthPickerAria {
   'aria-label': string,
   value: Key,
-  onChange: (key: Key) => void,
+  onChange: (key: Key | null) => void,
   items: CalendarMonthPickerItem[]
 }
 
@@ -67,7 +67,9 @@ export function useCalendarMonthPicker(props: CalendarMonthPickerProps, state: C
     'aria-label': ariaLabel,
     value: state.focusedDate.month,
     onChange: key => {
-      state.setFocusedDate(months[Number(key) - 1].date);
+      if (key != null) {
+        state.setFocusedDate(months[Number(key) - 1].date);
+      }
     },
     items: months
   };
