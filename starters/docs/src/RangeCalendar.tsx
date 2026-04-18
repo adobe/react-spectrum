@@ -25,26 +25,28 @@ export function RangeCalendar<T extends DateValue>(
   let months = props.visibleDuration?.months || 1;
   return (
     <AriaRangeCalendar {...props}>
-      {Array.from({length: months}, (_, i) => (
-        <div key={i}>
-          <header>
-            {i === 0 &&
-              <Button slot="previous" variant="quiet">
-                <ChevronLeft />
-              </Button>
-            }
-            <CalendarHeading offset={{months: i}} />
-            {i === months - 1 &&
-              <Button slot="next" variant="quiet">
-                <ChevronRight />
-              </Button>
-            }
-          </header>
-          <CalendarGrid offset={{months: i}}>
-            {date => <CalendarCell date={date} />}
-          </CalendarGrid>
-        </div>
-      ))}
+      <div className="months">
+        {Array.from({length: months}, (_, i) => (
+          <div key={i} className="month">
+            <header>
+              {i === 0 &&
+                <Button slot="previous" variant="quiet">
+                  <ChevronLeft />
+                </Button>
+              }
+              <CalendarHeading offset={{months: i}} />
+              {i === months - 1 &&
+                <Button slot="next" variant="quiet">
+                  <ChevronRight />
+                </Button>
+              }
+            </header>
+            <CalendarGrid offset={{months: i}}>
+              {date => <CalendarCell date={date} />}
+            </CalendarGrid>
+          </div>
+        ))}
+      </div>
       {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
     </AriaRangeCalendar>
   );

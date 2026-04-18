@@ -24,8 +24,9 @@ export function Calendar<T extends DateValue>(
   let months = props.visibleDuration?.months || 1;
   return (
     <AriaCalendar {...props}>
-      {Array.from({length: months}, (_, i) => (
-        <div key={i}>
+      <div className="months">
+        {Array.from({length: months}, (_, i) => (
+          <div key={i} className="month">
           <header>
             {i === 0 &&
               <Button slot="previous" variant="quiet">
@@ -44,6 +45,7 @@ export function Calendar<T extends DateValue>(
           </CalendarGrid>
         </div>
       ))}
+      </div>
       {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
     </AriaCalendar>
   );

@@ -184,7 +184,9 @@ export function useRangeCalendarState<T extends DateValue = DateValue>(props: Ra
     validationState,
     isValueInvalid,
     selectFocusedDate() {
-      selectDate(calendar.focusedDate);
+      if (!(isDateUnavailable && isDateUnavailable(calendar.focusedDate))) {
+        selectDate(calendar.focusedDate);
+      }
     },
     selectDate,
     highlightDate(date) {

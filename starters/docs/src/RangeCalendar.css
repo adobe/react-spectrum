@@ -2,14 +2,20 @@
 
 .react-aria-RangeCalendar {
   display: flex;
-  gap: var(--spacing-3);
+  flex-direction: column;
+  gap: var(--spacing-2);
   overflow: auto;
   width: 100%;
   max-width: fit-content;
   font: var(--font-size) system-ui;
   color: var(--text-color);
 
-  > div {
+  .months {
+    display: flex;
+    gap: var(--spacing-3);
+  }
+
+  .month {
     width: calc(var(--spacing-9) * 7);
     min-width: calc(var(--spacing-7) * 7);
     container-type: inline-size;

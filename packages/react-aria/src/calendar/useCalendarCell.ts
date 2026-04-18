@@ -100,9 +100,9 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   });
   let isFocused = state.isCellFocused(date) && !props.isOutsideMonth;
   isDisabled = isDisabled || state.isCellDisabled(date) || !!props.isOutsideMonth;
-  let isSelected = state.isSelected(date) && !isDisabled;
   let isUnavailable = state.isCellUnavailable(date);
   let isSelectable = !isDisabled && !isUnavailable;
+  let isSelected = state.isSelected(date) && isSelectable;
   let isInvalid = false;
   if (state.isValueInvalid) {
     if ('highlightedRange' in state) {
@@ -114,7 +114,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     }
   }
 
-  if (isInvalid) {
+  if (isInvalid && isSelectable) {
     isSelected = true;
   }
 
