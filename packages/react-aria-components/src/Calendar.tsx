@@ -645,17 +645,23 @@ export function CalendarMonthPicker(props: CalendarMonthPickerProps): JSX.Elemen
   return props.children(aria);
 }
 
-export interface CalendarHeadingProps extends AriaCalendarHeadingProps, HeadingProps {}
+export interface CalendarHeadingProps extends AriaCalendarHeadingProps, HeadingProps {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-CalendarHeading'
+   */
+  className?: string
+}
 
 export const CalendarHeading = forwardRef(function CalendarHeading(props: CalendarHeadingProps, ref: ForwardedRef<HTMLHeadingElement>) {
-  let {offset, format, ...headingProps} = props;
+  let {offset, format, className = 'react-aria-CalendarHeading', ...headingProps} = props;
   let calendarState = React.useContext(CalendarStateContext);
   let rangeCalendarState = React.useContext(RangeCalendarStateContext);
   let state = calendarState || rangeCalendarState!;
   let aria = useCalendarHeading({offset, format}, state);
 
   return (
-    <Heading {...headingProps} ref={ref}>
+    <Heading {...headingProps} className={className} ref={ref}>
       {aria}
     </Heading>
   );

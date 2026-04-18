@@ -28,7 +28,6 @@ import {
 
 import {CalendarDate, getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
 import {DateValue} from 'react-stately/useRangeCalendarState';
-import {Heading} from '../src/Heading';
 import {RangeValue} from '@react-types/shared';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -37,7 +36,7 @@ let TestCalendar = ({calendarProps = {}, gridProps = {}, cellProps = {}}) => (
   <RangeCalendar aria-label="Trip dates" {...calendarProps}>
     <header>
       <Button slot="previous">◀</Button>
-      <Heading />
+      <CalendarHeading />
       <Button slot="next">▶</Button>
     </header>
     <CalendarGrid {...gridProps}>
@@ -105,7 +104,7 @@ describe('RangeCalendar', () => {
       <RangeCalendar aria-label="Trip dates">
         <header>
           <Button slot="previous">◀</Button>
-          <Heading />
+          <CalendarHeading />
           <Button slot="next">▶</Button>
         </header>
         <CalendarGrid>
@@ -174,7 +173,7 @@ describe('RangeCalendar', () => {
           <>
             <header>
               <Button slot="previous">◀</Button>
-              <Heading />
+              <CalendarHeading />
               <Button slot="next">▶</Button>
             </header>
             <CalendarGrid data-validation-state={isInvalid ? 'invalid' : null}>
@@ -216,7 +215,7 @@ describe('RangeCalendar', () => {
     expect(grids[0]).toHaveAttribute('aria-label', 'Trip dates, ' + formatter.format(new Date()));
     expect(grids[1]).toHaveAttribute('aria-label', 'Trip dates, ' + formatter.format(today(getLocalTimeZone()).add({months: 1}).toDate(getLocalTimeZone())));
 
-    let headings = container.querySelectorAll('.react-aria-Heading');
+    let headings = container.querySelectorAll('.react-aria-CalendarHeading');
     expect(headings).toHaveLength(2);
     expect(headings[0]).toHaveTextContent('April 2026');
     expect(headings[1]).toHaveTextContent('May 2026');
@@ -231,7 +230,7 @@ describe('RangeCalendar', () => {
       <RangeCalendar visibleDuration={{months: 3}} defaultValue={{start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 2, 10)}} selectionAlignment={alignment as 'start' | 'center' | 'end'}>
         <header>
           <Button slot="previous">◀</Button>
-          <Heading />
+          <CalendarHeading />
           <Button slot="next">▶</Button>
         </header>
         <div style={{display: 'flex', gap: 30}}>
@@ -366,7 +365,7 @@ describe('RangeCalendar', () => {
           <RangeCalendar aria-label="Trip dates" value={value} onChange={setValue}>
             <header>
               <Button slot="previous">◀</Button>
-              <Heading />
+              <CalendarHeading />
               <Button slot="next">▶</Button>
             </header>
             <CalendarGrid>
@@ -514,7 +513,7 @@ describe('RangeCalendar', () => {
     let tree = render(<TestCalendar calendarProps={{visibleDuration: {weeks: 1}, defaultFocusedValue: new CalendarDate(2026, 4, 1)}} />);
     let rows = tree.getAllByRole('row');
     expect(rows).toHaveLength(1);
-    let heading = tree.container.querySelector('.react-aria-Heading');
+    let heading = tree.container.querySelector('.react-aria-CalendarHeading');
     expect(heading).toHaveTextContent('March 29 – April 4, 2026');
   });
 
@@ -523,7 +522,7 @@ describe('RangeCalendar', () => {
     let rows = tree.getAllByRole('row');
     expect(rows).toHaveLength(1);
     expect(tree.getAllByRole('gridcell')).toHaveLength(2);
-    let heading = tree.container.querySelector('.react-aria-Heading');
+    let heading = tree.container.querySelector('.react-aria-CalendarHeading');
     expect(heading).toHaveTextContent('April 1 – 2, 2026');
   });
 });

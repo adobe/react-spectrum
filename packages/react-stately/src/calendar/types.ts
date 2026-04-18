@@ -172,6 +172,7 @@ export type CalendarSelectionMode = 'single' | 'multiple';
 export type CalendarValueType<T, M extends CalendarSelectionMode> = M extends 'single' ? T : readonly T[];
 
 export interface CalendarState<M extends CalendarSelectionMode = 'single'> extends CalendarStateBase {
+  /** Whether single or multiple selection is enabled. */
   readonly selectionMode: M,
   /** The currently selected date. */
   readonly value: CalendarValueType<CalendarDate | null, M>,

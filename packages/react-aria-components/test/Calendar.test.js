@@ -28,7 +28,6 @@ import {
 } from '../src/Calendar';
 
 import {CalendarDate, getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
-import {Heading} from '../src/Heading';
 import React, {useContext, useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -36,7 +35,7 @@ let TestCalendar = ({calendarProps, gridProps, cellProps}) => (
   <Calendar aria-label="Appointment date" {...calendarProps}>
     <header>
       <Button slot="previous">◀</Button>
-      <Heading />
+      <CalendarHeading />
       <Button slot="next">▶</Button>
     </header>
     <CalendarGrid {...gridProps}>
@@ -136,7 +135,7 @@ describe('Calendar', () => {
       <Calendar aria-label="Appointment date">
         <header>
           <Button slot="previous">◀</Button>
-          <Heading />
+          <CalendarHeading />
           <Button slot="next">▶</Button>
         </header>
         <CalendarGrid>
@@ -205,7 +204,7 @@ describe('Calendar', () => {
     expect(grids[0]).toHaveAttribute('aria-label', 'Appointment date, ' + formatter.format(new Date()));
     expect(grids[1]).toHaveAttribute('aria-label', 'Appointment date, ' + formatter.format(today(getLocalTimeZone()).add({months: 1}).toDate(getLocalTimeZone())));
 
-    let headings = container.querySelectorAll('.react-aria-Heading');
+    let headings = container.querySelectorAll('.react-aria-CalendarHeading');
     expect(headings).toHaveLength(2);
     expect(headings[0]).toHaveTextContent('April 2026');
     expect(headings[1]).toHaveTextContent('May 2026');
@@ -221,7 +220,7 @@ describe('Calendar', () => {
       <Calendar visibleDuration={{months: 3}} defaultValue={new CalendarDate(2020, 2, 3)} selectionAlignment={alignment}>
         <header>
           <Button slot="previous">◀</Button>
-          <Heading />
+          <CalendarHeading />
           <Button slot="next">▶</Button>
         </header>
         <div style={{display: 'flex', gap: 30}}>
@@ -353,7 +352,7 @@ describe('Calendar', () => {
           <>
             <header>
               <Button slot="previous">◀</Button>
-              <Heading />
+              <CalendarHeading />
               <Button slot="next">▶</Button>
             </header>
             <CalendarGrid data-validation-state={isInvalid ? 'invalid' : null}>
@@ -396,7 +395,7 @@ describe('Calendar', () => {
       <Calendar aria-label="Appointment date" className="grid" defaultValue={new CalendarDate(2020, 3, 3)}>
         <header>
           <Button slot="previous">◀</Button>
-          <Heading />
+          <CalendarHeading />
           <Button slot="next">▶</Button>
         </header>
         <CalendarGrid>
@@ -451,7 +450,7 @@ describe('Calendar', () => {
         <Calendar aria-label="Appointment date">
           <header>
             <Button slot="previous">◀</Button>
-            <Heading />
+            <CalendarHeading />
             <ButtonContext.Provider value={null}>
               <DatePicker />
             </ButtonContext.Provider>
@@ -566,7 +565,7 @@ describe('Calendar', () => {
     let tree = render(<TestCalendar calendarProps={{visibleDuration: {weeks: 1}, defaultFocusedValue: new CalendarDate(2026, 4, 1)}} />);
     let rows = tree.getAllByRole('row');
     expect(rows).toHaveLength(1);
-    let heading = tree.container.querySelector('.react-aria-Heading');
+    let heading = tree.container.querySelector('.react-aria-CalendarHeading');
     expect(heading).toHaveTextContent('March 29 – April 4, 2026');
   });
 
@@ -575,13 +574,13 @@ describe('Calendar', () => {
     let rows = tree.getAllByRole('row');
     expect(rows).toHaveLength(1);
     expect(tree.getAllByRole('gridcell')).toHaveLength(2);
-    let heading = tree.container.querySelector('.react-aria-Heading');
+    let heading = tree.container.querySelector('.react-aria-CalendarHeading');
     expect(heading).toHaveTextContent('April 1 – 2, 2026');
   });
 
   it('should handle changing the visible duration', async () => {
     let tree = render(<TestCalendar calendarProps={{visibleDuration: {weeks: 1}, defaultFocusedValue: new CalendarDate(2026, 4, 7)}} />);
-    let heading = tree.container.querySelector('.react-aria-Heading');
+    let heading = tree.container.querySelector('.react-aria-CalendarHeading');
     expect(heading).toHaveTextContent('April 5 – 11, 2026');
 
     tree.rerender(<TestCalendar calendarProps={{visibleDuration: {months: 1}, defaultFocusedValue: new CalendarDate(2026, 4, 7)}} />);

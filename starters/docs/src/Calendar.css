@@ -22,7 +22,7 @@
     margin: 0 var(--spacing-1) var(--spacing-4) var(--spacing-1);
     min-height: var(--spacing-8);
 
-    .react-aria-Heading {
+    .react-aria-CalendarHeading {
       flex: 1;
       margin: 0;
       text-align: center;

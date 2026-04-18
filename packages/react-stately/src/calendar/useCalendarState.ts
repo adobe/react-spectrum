@@ -37,6 +37,7 @@ import {ValidationState, ValueBase} from '@react-types/shared';
 
 export interface CalendarProps<T extends DateValue, M extends CalendarSelectionMode = 'single'> extends CalendarPropsBase, ValueBase<CalendarValueType<T | null, M>, CalendarValueType<MappedDateValue<T>, M>> {
   /**
+   * Whether single or multiple selection is enabled.
    * @default "single"
    */
   selectionMode?: M
