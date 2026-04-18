@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, CalendarDateTime, ZonedDateTime} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, DateDuration, ZonedDateTime} from '@internationalized/date';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {ReactNode} from 'react';
 
@@ -84,6 +84,8 @@ interface CalendarStateBase {
   readonly isDisabled: boolean,
   /** Whether the calendar is in a read only state. */
   readonly isReadOnly: boolean,
+  /** The visible duration in the calendar. */
+  readonly visibleDuration: DateDuration,
   /** The date range that is currently visible in the calendar. */
   readonly visibleRange: RangeValue<CalendarDate>,
   /** The minimum allowed date that a user may select. */

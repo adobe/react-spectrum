@@ -20,6 +20,7 @@
     display: flex;
     align-items: center;
     margin: 0 var(--spacing-1) var(--spacing-4) var(--spacing-1);
+    min-height: var(--spacing-8);
 
     .react-aria-Heading {
       flex: 1;

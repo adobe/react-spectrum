@@ -554,7 +554,7 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
   let rangeCalendarState = useContext(RangeCalendarStateContext);
   let state = calendarState ?? rangeCalendarState!;
   let {startDate: currentMonth} = useContext(InternalCalendarGridContext) ?? {startDate: state.visibleRange.start};
-  let isOutsideMonth = !isSameMonth(currentMonth, date);
+  let isOutsideMonth = state.visibleDuration.days || state.visibleDuration.weeks ? false : !isSameMonth(currentMonth, date);
   let istoday = isToday(date, state.timeZone);
 
   let buttonRef = useRef<HTMLDivElement>(null);

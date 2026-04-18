@@ -561,4 +561,30 @@ describe('Calendar', () => {
     let rows = tree.getAllByRole('row');
     expect(rows).toHaveLength(6);
   });
+
+  it('should support week view', async () => {
+    let tree = render(<TestCalendar calendarProps={{visibleDuration: {weeks: 1}, defaultFocusedValue: new CalendarDate(2026, 4, 1)}} />);
+    let rows = tree.getAllByRole('row');
+    expect(rows).toHaveLength(1);
+    let heading = tree.container.querySelector('.react-aria-Heading');
+    expect(heading).toHaveTextContent('March 29 – April 4, 2026');
+  });
+
+  it('should support day view', async () => {
+    let tree = render(<TestCalendar calendarProps={{visibleDuration: {days: 2}, defaultFocusedValue: new CalendarDate(2026, 4, 1)}} />);
+    let rows = tree.getAllByRole('row');
+    expect(rows).toHaveLength(1);
+    expect(tree.getAllByRole('gridcell')).toHaveLength(2);
+    let heading = tree.container.querySelector('.react-aria-Heading');
+    expect(heading).toHaveTextContent('April 1 – 2, 2026');
+  });
+
+  it('should handle changing the visible duration', async () => {
+    let tree = render(<TestCalendar calendarProps={{visibleDuration: {weeks: 1}, defaultFocusedValue: new CalendarDate(2026, 4, 7)}} />);
+    let heading = tree.container.querySelector('.react-aria-Heading');
+    expect(heading).toHaveTextContent('April 5 – 11, 2026');
+
+    tree.rerender(<TestCalendar calendarProps={{visibleDuration: {months: 1}, defaultFocusedValue: new CalendarDate(2026, 4, 7)}} />);
+    expect(heading).toHaveTextContent('April 2026');
+  });
 });

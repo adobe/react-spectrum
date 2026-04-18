@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {alignCenter, alignEnd, alignStart, constrainStart, constrainValue, isInvalid, previousAvailableDate} from './utils';
+import {alignCenter, alignEnd, alignStart, constrainStart, constrainValue, isEqualDuration, isInvalid, previousAvailableDate} from './utils';
 import {
   Calendar,
   CalendarDate,
@@ -126,7 +126,7 @@ export function useCalendarState<T extends DateValue = DateValue, M extends Cale
     );
   }, [props.defaultFocusedValue, calendarDateValue, timeZone, calendar, minValue, maxValue]);
   let [focusedDate, setFocusedDate] = useControlledState(focusedCalendarDate, defaultFocusedCalendarDate, props.onFocusChange);
-  let [startDate, setStartDate] = useState(() => {
+  let getStartDate = () => {
     switch (selectionAlignment) {
       case 'start':
         return alignStart(focusedDate, visibleDuration, locale, minValue, maxValue);
@@ -136,8 +136,16 @@ export function useCalendarState<T extends DateValue = DateValue, M extends Cale
       default:
         return alignCenter(focusedDate, visibleDuration, locale, minValue, maxValue);
     }
-  });
+  };
+
+  let [startDate, setStartDate] = useState(getStartDate);
   let [isFocused, setFocused] = useState(props.autoFocus || false);
+
+  let [lastVisibleDuration, setLastVisibleDuration] = useState(visibleDuration);
+  if (!isEqualDuration(visibleDuration, lastVisibleDuration)) {
+    setLastVisibleDuration(visibleDuration);
+    setStartDate(getStartDate());
+  }
 
   let endDate = useMemo(() => {
     let duration = {...visibleDuration};
@@ -239,6 +247,7 @@ export function useCalendarState<T extends DateValue = DateValue, M extends Cale
     value: calendarDateValue as any,
     setValue: setValue as any,
     selectionMode,
+    visibleDuration,
     visibleRange: {
       start: startDate,
       end: endDate
@@ -406,16 +415,19 @@ export function useCalendarState<T extends DateValue = DateValue, M extends Cale
       let date = from.add({weeks: weekIndex});
       let dates: (CalendarDate | null)[] = [];
 
-      date = startOfWeek(date, locale, firstDayOfWeek);
+      let days = visibleDuration.days && visibleDuration.days < 7 ? visibleDuration.days : 7;
+      if (days === 7) {
+        date = startOfWeek(date, locale, firstDayOfWeek);
 
-      // startOfWeek will clamp dates within the calendar system's valid range, which may
-      // start in the middle of a week. In this case, add null placeholders.
-      let dayOfWeek = getDayOfWeek(date, locale, firstDayOfWeek);
-      for (let i = 0; i < dayOfWeek; i++) {
-        dates.push(null);
+        // startOfWeek will clamp dates within the calendar system's valid range, which may
+        // start in the middle of a week. In this case, add null placeholders.
+        let dayOfWeek = getDayOfWeek(date, locale, firstDayOfWeek);
+        for (let i = 0; i < dayOfWeek; i++) {
+          dates.push(null);
+        }
       }
 
-      while (dates.length < 7) {
+      while (dates.length < days) {
         dates.push(date);
         let nextDate = date.add({days: 1});
         if (isSameDay(date, nextDate)) {
@@ -426,7 +438,7 @@ export function useCalendarState<T extends DateValue = DateValue, M extends Cale
       }
 
       // Add null placeholders if at the end of the calendar system.
-      while (dates.length < 7) {
+      while (dates.length < days) {
         dates.push(null);
       }
 

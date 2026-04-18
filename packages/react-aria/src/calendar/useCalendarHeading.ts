@@ -56,14 +56,9 @@ export function useCalendarHeading(props: CalendarHeadingProps, state: CalendarS
 
   return useMemo(() => {
     if (isDays) {
-      let duration: DateDuration = {};
-      for (let key in state.visibleDuration) {
-        duration[key] = 1;
-      }
-      let endDate = startDate.add(duration).subtract({days: 1});
-      return formatter.formatRange(startDate.toDate(state.timeZone), endDate.toDate(state.timeZone));
+      return formatter.formatRange(startDate.toDate(state.timeZone), state.visibleRange.end.toDate(state.timeZone));
     }
 
     return formatter.format(startDate.toDate(state.timeZone));
-  }, [formatter, isDays, startDate, state.timeZone, state.visibleDuration]);
+  }, [formatter, isDays, startDate, state.timeZone, state.visibleRange.end]);
 }

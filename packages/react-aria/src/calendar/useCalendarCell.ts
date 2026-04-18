@@ -98,9 +98,9 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     era: getEraFormat(date),
     timeZone: state.timeZone
   });
-  let isSelected = state.isSelected(date);
   let isFocused = state.isCellFocused(date) && !props.isOutsideMonth;
-  isDisabled = isDisabled || state.isCellDisabled(date);
+  isDisabled = isDisabled || state.isCellDisabled(date) || !!props.isOutsideMonth;
+  let isSelected = state.isSelected(date) && !isDisabled;
   let isUnavailable = state.isCellUnavailable(date);
   let isSelectable = !isDisabled && !isUnavailable;
   let isInvalid = false;

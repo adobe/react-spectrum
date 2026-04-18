@@ -221,7 +221,7 @@ function Example(props) {
 
 ## Display options
 
-Set the `visibleDuration` prop and render multiple `CalendarGrid` elements to display more than one month at a time. The `pageBehavior` prop controls whether pagination advances by a single month or multiple. The `firstDayOfWeek` prop overrides the locale-specified first day of the week.
+Set the `visibleDuration` prop and render multiple `CalendarGrid` elements to display more than one month at a time. The `pageBehavior` prop controls whether pagination advances by a single month or multiple. The `firstDayOfWeek` and `weeksInMonth` props override the locale-specified defaults.
 
 ```tsx render docs={docs.exports.RangeCalendar} links={docs.links} props={['visibleDuration', 'pageBehavior', 'firstDayOfWeek', 'weeksInMonth']} initialProps={{visibleDuration: {months: 2}}} wide
 "use client";
