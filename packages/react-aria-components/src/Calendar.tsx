@@ -9,12 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaCalendarProps, useCalendar, useCalendarCell, useCalendarGrid} from 'react-aria/useCalendar';
-
+import {CalendarMonthHeadingProps as AriaCalendarMonthHeadingProps, CalendarMonthPickerProps as AriaCalendarMonthPickerProps, AriaCalendarProps, CalendarYearPickerProps as AriaCalendarYearPickerProps, CalendarMonthPickerAria, CalendarYearPickerAria, useCalendar, useCalendarCell, useCalendarGrid, useCalendarMonthHeading, useCalendarMonthPicker, useCalendarYearPicker} from 'react-aria/useCalendar';
 import {AriaRangeCalendarProps, useRangeCalendar} from 'react-aria/useRangeCalendar';
 import {ButtonContext} from './Button';
 import {CalendarDate, CalendarIdentifier, createCalendar, DateDuration, endOfMonth, Calendar as ICalendar, isSameDay, isSameMonth, isToday} from '@internationalized/date';
-import {CalendarState} from 'react-stately/useCalendarState';
+import {CalendarSelectionMode, CalendarState} from 'react-stately/useCalendarState';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -32,10 +31,10 @@ import {
 import {DateValue, useRangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {DOMAttributes, FocusableElement, forwardRefType, GlobalDOMAttributes, HoverEvents} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {HeadingContext} from './Heading';
+import {Heading, HeadingContext, HeadingProps} from './Heading';
 import {mergeProps} from 'react-aria/mergeProps';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 import {useCalendarState} from 'react-stately/useCalendarState';
 import {useFocusRing} from 'react-aria/useFocusRing';
@@ -613,5 +612,51 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
     <td {...cellProps} ref={ref}>
       <dom.div {...mergeProps(DOMProps, buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={buttonRef} />
     </td>
+  );
+});
+
+export interface CalendarYearPickerProps extends AriaCalendarYearPickerProps {
+  /**
+   * A function to render the year picker.
+   */
+  children: (renderProps: CalendarYearPickerAria) => JSX.Element
+}
+
+export function CalendarYearPicker(props: CalendarYearPickerProps): JSX.Element {
+  let calendarState = React.useContext(CalendarStateContext);
+  let rangeCalendarState = React.useContext(RangeCalendarStateContext);
+  let state = calendarState || rangeCalendarState!;
+  let aria = useCalendarYearPicker(props, state);
+  return props.children(aria);
+}
+
+export interface CalendarMonthPickerProps extends AriaCalendarMonthPickerProps {
+  /**
+   * A function to render the month picker.
+   */
+  children: (renderProps: CalendarMonthPickerAria) => JSX.Element
+}
+
+export function CalendarMonthPicker(props: CalendarMonthPickerProps): JSX.Element {
+  let calendarState = React.useContext(CalendarStateContext);
+  let rangeCalendarState = React.useContext(RangeCalendarStateContext);
+  let state = calendarState || rangeCalendarState!;
+  let aria = useCalendarMonthPicker(props, state);
+  return props.children(aria);
+}
+
+export interface CalendarMonthHeadingProps extends AriaCalendarMonthHeadingProps, HeadingProps {}
+
+export const CalendarMonthHeading = forwardRef(function CalendarMonthHeading(props: CalendarMonthHeadingProps, ref: ForwardedRef<HTMLHeadingElement>) {
+  let {offset, format, ...headingProps} = props;
+  let calendarState = React.useContext(CalendarStateContext);
+  let rangeCalendarState = React.useContext(RangeCalendarStateContext);
+  let state = calendarState || rangeCalendarState!;
+  let aria = useCalendarMonthHeading({offset, format}, state);
+
+  return (
+    <Heading {...headingProps} ref={ref}>
+      {aria}
+    </Heading>
   );
 });

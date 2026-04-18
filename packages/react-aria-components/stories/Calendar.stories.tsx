@@ -16,8 +16,11 @@ import {
   Calendar,
   CalendarCell,
   CalendarGrid,
+  CalendarMonthHeading,
+  CalendarMonthPicker,
   CalendarProps,
   CalendarStateContext,
+  CalendarYearPicker,
   RangeCalendar
 } from '../src/Calendar';
 
@@ -99,21 +102,31 @@ function CalendarMultiMonthExample(args) {
         Reset focused date
       </button>
       <Calendar style={{width: 500}} visibleDuration={{months: 3}} focusedValue={focusedDate} onFocusChange={setFocusedDate} defaultValue={defaultDate} {...args}>
+        <div style={{display: 'flex', gap: 20, alignItems: 'start'}}>
+          <div style={{flex: 1}}>
         <div style={{display: 'flex', alignItems: 'center'}}>
           <Button slot="previous">&lt;</Button>
-          <Heading style={{flex: 1, textAlign: 'center'}} />
-          <Button slot="next">&gt;</Button>
+              <CalendarMonthHeading style={{flex: 1, textAlign: 'center'}} />
         </div>
-        <div style={{display: 'flex', gap: 20}}>
-          <CalendarGrid style={{flex: 1}}>
+            <CalendarGrid style={{width: '100%'}}>
             {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
           </CalendarGrid>
-          <CalendarGrid style={{flex: 1}} offset={{months: 1}}>
+          </div>
+          <div style={{flex: 1}}>
+            <CalendarMonthHeading offset={1} style={{textAlign: 'center'}} />
+            <CalendarGrid offset={{months: 1}} style={{width: '100%'}}>
             {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
           </CalendarGrid>
-          <CalendarGrid style={{flex: 1}} offset={{months: 2}}>
+          </div>
+          <div style={{flex: 1}}>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <CalendarMonthHeading offset={2} style={{flex: 1, textAlign: 'center'}} />
+              <Button slot="next">&gt;</Button>
+            </div>
+            <CalendarGrid offset={{months: 2}} style={{width: '100%'}}>
             {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
           </CalendarGrid>
+        </div>
         </div>
       </Calendar>
     </>
@@ -133,6 +146,37 @@ export const CalendarMultiMonth: CalendarStory = {
   }
 };
 
+function MonthYearPickersExample(args) {
+  return (
+    <Calendar style={{width: 'fit'}} {...args}>
+      <div style={{display: 'flex', alignItems: 'center'}}>
+        <Button slot="previous">&lt;</Button>
+        <CalendarMonthPicker>
+          {({items, value, onChange, 'aria-label': ariaLabel}) => (
+            <select aria-label={ariaLabel} value={value} onChange={e => onChange(e.target.value)}>
+              {items.map(item => <option key={item.id} value={item.id}>{item.formatted}</option>)}
+            </select>
+          )}
+        </CalendarMonthPicker>
+        <CalendarYearPicker>
+          {({items, value, onChange, 'aria-label': ariaLabel}) => (
+            <select aria-label={ariaLabel} value={value} onChange={e => onChange(e.target.value)}>
+              {items.map(item => <option key={item.id} value={item.id}>{item.formatted}</option>)}
+            </select>
+          )}
+        </CalendarYearPicker>
+        <Button slot="next">&gt;</Button>
+      </div>
+      <CalendarGrid style={{width: '100%'}}>
+        {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({opacity: isOutsideMonth ? '0.5' : '', textAlign: 'center', cursor: 'default', background: isSelected && !isOutsideMonth ? 'blue' : ''})} />}
+      </CalendarGrid>
+    </Calendar>
+  );
+}
+
+export const MonthYearPickers: CalendarStory = {
+  render: (args) => <MonthYearPickersExample {...args} />
+};
 
 interface CalendarFirstDayOfWeekExampleProps extends Omit<CalendarProps<DateValue>, 'render'> {
   locale: string

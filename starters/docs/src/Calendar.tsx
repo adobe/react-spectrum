@@ -3,12 +3,13 @@ import {
   Calendar as AriaCalendar,
   CalendarCell as AriaCalendarCell,
   CalendarGrid as AriaCalendarGrid,
+  CalendarMonthHeading,
   type CalendarProps as AriaCalendarProps,
   type DateValue,
   type CalendarCellProps,
   type CalendarGridProps,
 } from 'react-aria-components/Calendar';
-import {Heading, Text} from './Content';
+import {Text} from './Content';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 import {Button} from './Button';
 import './Calendar.css';
@@ -21,20 +22,31 @@ export interface CalendarProps<T extends DateValue>
 export function Calendar<T extends DateValue>(
   { errorMessage, ...props }: CalendarProps<T>
 ) {
+  let months = props.visibleDuration?.months || 1;
   return (
-    (
-      <AriaCalendar {...props}>
-        <header>
-          <Button slot="previous" variant="quiet"><ChevronLeft /></Button>
-          <Heading />
-          <Button slot="next" variant="quiet"><ChevronRight /></Button>
-        </header>
-        <CalendarGrid>
-          {(date) => <CalendarCell date={date} />}
-        </CalendarGrid>
-        {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
-      </AriaCalendar>
-    )
+    <AriaCalendar {...props}>
+      {Array.from({length: months}, (_, i) => (
+        <div key={i}>
+          <header>
+            {i === 0 &&
+              <Button slot="previous" variant="quiet">
+                <ChevronLeft />
+              </Button>
+            }
+            <CalendarMonthHeading offset={i} />
+            {i === months - 1 &&
+              <Button slot="next" variant="quiet">
+                <ChevronRight />
+              </Button>
+            }
+          </header>
+          <CalendarGrid offset={{months: i}}>
+            {date => <CalendarCell date={date} />}
+          </CalendarGrid>
+        </div>
+      ))}
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+    </AriaCalendar>
   );
 }
 

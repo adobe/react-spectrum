@@ -110,7 +110,7 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
                 [HeaderContext, null],
                 [HeadingContext, null]
               ]}>
-              <CalendarHeader />
+              <CalendarHeader visibleMonths={visibleMonths} />
             </Provider>
             <div
               className={style({

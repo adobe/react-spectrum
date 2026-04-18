@@ -208,20 +208,9 @@ Set the `visibleDuration` prop and render multiple `CalendarGrid` elements to di
 
 ```tsx render docs={docs.exports.Calendar} links={docs.links} props={['visibleDuration', 'pageBehavior', 'firstDayOfWeek']} initialProps={{visibleDuration: {months: 2}}} wide
 "use client";
-import {Calendar, Heading} from 'react-aria-components/Calendar';
-import {CalendarGrid, CalendarCell} from 'vanilla-starter/Calendar';
-import {Button} from 'vanilla-starter/Button';
-import {useDateFormatter} from 'react-aria/useDateFormatter';
-import {ChevronLeft, ChevronRight} from 'lucide-react';
+import {Calendar} from 'vanilla-starter/Calendar';
 
-// TODO: move this into the starter example.
 function Example(props) {
-  let monthFormatter = useDateFormatter({
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'UTC'
-  });
-
   return (
     <Calendar
       {...props}
@@ -229,31 +218,7 @@ function Example(props) {
       ///- begin highlight -///
       /* PROPS */
       ///- end highlight -///
-      style={{display: 'flex', gap: 12, overflow: 'auto'}}
-    >
-      {({state}) => (
-        [...Array(props.visibleDuration.months).keys()].map(i => (
-          <div key={i} style={{flex: 1}}>
-            <header style={{minHeight: 32}}>
-              {i === 0 &&
-                <Button slot="previous" variant="quiet">
-                  <ChevronLeft />
-                </Button>
-              }
-              <Heading>{monthFormatter.format(state.visibleRange.start.add({months: i}).toDate(state.timeZone))}</Heading>
-              {i === props.visibleDuration.months - 1 &&
-                <Button slot="next" variant="quiet">
-                  <ChevronRight />
-                </Button>
-              }
-            </header>
-            <CalendarGrid offset={{months: i}}>
-              {date => <CalendarCell date={date} />}
-            </CalendarGrid>
-          </div>
-        ))
-      )}
-    </Calendar>
+     />
   );
 }
 ```
@@ -293,25 +258,37 @@ function Example() {
 
 ### Month and year pickers
 
-You can also control the focused date via `CalendarStateContext`. This example shows month and year dropdown components that work inside any `<Calendar>`.
+Use the `<CalendarMonthPicker>` and `<CalendarYearPicker>` components to allow the user to jump to a different month or year. This example uses the render prop function to render a [Select](Select).
 
-```tsx render files={['packages/dev/s2-docs/pages/react-aria/MonthDropdown.tsx', 'packages/dev/s2-docs/pages/react-aria/YearDropdown.tsx']}
+```tsx render
 "use client";
-import {Calendar} from 'react-aria-components/Calendar';
+import {Calendar, CalendarMonthPicker, CalendarYearPicker} from 'react-aria-components/Calendar';
 import {CalendarGrid, CalendarCell} from 'vanilla-starter/Calendar';
-import {MonthDropdown} from './MonthDropdown';
-import {YearDropdown} from './YearDropdown';
 import {Button} from 'vanilla-starter/Button';
+import {Select, SelectItem} from 'vanilla-starter/Select';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 
 <Calendar>
+  <div>
   <header style={{display: 'flex', gap: 4}}>
     <Button slot="previous" variant="quiet">
       <ChevronLeft />
     </Button>
     {/*- begin highlight -*/}
-    <MonthDropdown />
-    <YearDropdown />
+      <CalendarMonthPicker>
+        {(props) => (
+          <Select {...props}>
+            {item => <SelectItem>{item.formatted}</SelectItem>}
+          </Select>
+        )}
+      </CalendarMonthPicker>
+      <CalendarYearPicker>
+        {(props) => (
+          <Select {...props}>
+            {item => <SelectItem>{item.formatted}</SelectItem>}
+          </Select>
+        )}
+      </CalendarYearPicker>
     {/*- end highlight -*/}
     <Button slot="next" variant="quiet">
       <ChevronRight />
@@ -320,6 +297,7 @@ import {ChevronLeft, ChevronRight} from 'lucide-react';
   <CalendarGrid>
     {(date) => <CalendarCell date={date} />}
   </CalendarGrid>
+  </div>
 </Calendar>
 ```
 
@@ -329,10 +307,12 @@ import {ChevronLeft, ChevronRight} from 'lucide-react';
   role="img"
   aria-label="Anatomy diagram of a calendar component, which consists of a heading, grid of cells, previous, and next buttons." />
 
-```tsx links={{Calendar: '#calendar', Button: 'Button', CalendarGrid: '#calendargrid', CalendarGridHeader: '#calendargridheader', CalendarHeaderCell: '#calendarheadercell', CalendarGridBody: '#calendargridbody', CalendarCell: '#calendarcell'}}
+```tsx links={{Calendar: '#calendar', Button: 'Button', CalendarMonthHeading: '#calendarmonthheading', CalendarMonthPicker: '#calendarmonthpicker', CalendarYearPicker: '#calendaryearpicker', CalendarGrid: '#calendargrid', CalendarGridHeader: '#calendargridheader', CalendarHeaderCell: '#calendarheadercell', CalendarGridBody: '#calendargridbody', CalendarCell: '#calendarcell'}}
 <Calendar>
+  <CalendarMonthHeading />
+  <CalendarMonthPicker />
+  <CalendarYearPicker />
   <Button slot="previous" />
-  <Heading />
   <Button slot="next" />
   <CalendarGrid>
     <CalendarGridHeader>
@@ -369,3 +349,15 @@ import {ChevronLeft, ChevronRight} from 'lucide-react';
 ### CalendarCell
 
 <PropTable component={docs.exports.CalendarCell} links={docs.links} showDescription />
+
+### CalendarMonthHeading
+
+<PropTable component={docs.exports.CalendarMonthHeading} links={docs.links} showDescription />
+
+### CalendarMonthPicker
+
+<PropTable component={docs.exports.CalendarMonthPicker} links={docs.links} showDescription />
+
+### CalendarYearPicker
+
+<PropTable component={docs.exports.CalendarYearPicker} links={docs.links} showDescription />

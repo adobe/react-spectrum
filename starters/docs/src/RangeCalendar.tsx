@@ -2,7 +2,7 @@
 import {
   CalendarCell as AriaCalendarCell,
   RangeCalendar as AriaRangeCalendar,
-  Heading,
+  CalendarMonthHeading,
   Text,
   type DateValue,
   type RangeCalendarProps as AriaRangeCalendarProps,
@@ -22,20 +22,31 @@ export interface RangeCalendarProps<T extends DateValue>
 export function RangeCalendar<T extends DateValue>(
   { errorMessage, ...props }: RangeCalendarProps<T>
 ) {
+  let months = props.visibleDuration?.months || 1;
   return (
-    (
-      <AriaRangeCalendar {...props}>
-        <header>
-          <Button slot="previous" variant="quiet"><ChevronLeft size={18} /></Button>
-          <Heading />
-          <Button slot="next" variant="quiet"><ChevronRight size={18} /></Button>
-        </header>
-        <CalendarGrid>
-          {(date) => <CalendarCell date={date} />}
-        </CalendarGrid>
-        {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
-      </AriaRangeCalendar>
-    )
+    <AriaRangeCalendar {...props}>
+      {Array.from({length: months}, (_, i) => (
+        <div key={i}>
+          <header>
+            {i === 0 &&
+              <Button slot="previous" variant="quiet">
+                <ChevronLeft />
+              </Button>
+            }
+            <CalendarMonthHeading offset={i} />
+            {i === months - 1 &&
+              <Button slot="next" variant="quiet">
+                <ChevronRight />
+              </Button>
+            }
+          </header>
+          <CalendarGrid offset={{months: i}}>
+            {date => <CalendarCell date={date} />}
+          </CalendarGrid>
+        </div>
+      ))}
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+    </AriaRangeCalendar>
   );
 }
 

@@ -19,6 +19,9 @@ import {
   CalendarGridBody,
   CalendarGridHeader,
   CalendarHeaderCell,
+  CalendarMonthHeading,
+  CalendarMonthPicker,
+  CalendarYearPicker,
   RangeCalendar,
   RangeCalendarContext
 } from '../src/Calendar';
@@ -187,17 +190,18 @@ describe('RangeCalendar', () => {
   });
 
   it('should support multi-month calendars', () => {
-    let {getAllByRole} = render(
-      <RangeCalendar aria-label="Trip dates" visibleDuration={{months: 2}}>
+    let {getAllByRole, container} = render(
+      <RangeCalendar aria-label="Trip dates" defaultFocusedValue={new CalendarDate(2026, 4, 1)} visibleDuration={{months: 2}}>
         <header>
           <Button slot="previous">◀</Button>
-          <Heading />
           <Button slot="next">▶</Button>
         </header>
         <div style={{display: 'flex', gap: 30}}>
+          <CalendarMonthHeading />
           <CalendarGrid>
             {date => <CalendarCell date={date} />}
           </CalendarGrid>
+          <CalendarMonthHeading offset={1} />
           <CalendarGrid offset={{months: 1}}>
             {date => <CalendarCell date={date} />}
           </CalendarGrid>
@@ -211,6 +215,11 @@ describe('RangeCalendar', () => {
     let formatter = new Intl.DateTimeFormat('en-US', {month: 'long', year: 'numeric'});
     expect(grids[0]).toHaveAttribute('aria-label', 'Trip dates, ' + formatter.format(new Date()));
     expect(grids[1]).toHaveAttribute('aria-label', 'Trip dates, ' + formatter.format(today(getLocalTimeZone()).add({months: 1}).toDate(getLocalTimeZone())));
+
+    let headings = container.querySelectorAll('.react-aria-Heading');
+    expect(headings).toHaveLength(2);
+    expect(headings[0]).toHaveTextContent('April 2026');
+    expect(headings[1]).toHaveTextContent('May 2026');
   });
 
   it.each([
@@ -445,5 +454,53 @@ describe('RangeCalendar', () => {
 
     expect(cell).toHaveAttribute('aria-invalid', 'true');
     expect(cell).toHaveClass('invalid');
+  });
+
+  it('should support month and year dropdowns', async () => {
+    let tree = render(
+      <RangeCalendar aria-label="Appointment date" defaultFocusedValue={new CalendarDate(2026, 4, 1)}>
+        <header>
+          <Button slot="previous">◀</Button>
+          <CalendarMonthPicker>
+            {({items, value, onChange, 'aria-label': ariaLabel}) => (
+              <select aria-label={ariaLabel} value={value} onChange={e => onChange(e.target.value)}>
+                {items.map(item => <option key={item.id} value={item.id}>{item.formatted}</option>)}
+              </select>
+            )}
+          </CalendarMonthPicker>
+          <CalendarYearPicker>
+            {({items, value, onChange, 'aria-label': ariaLabel}) => (
+              <select aria-label={ariaLabel} value={value} onChange={e => onChange(e.target.value)}>
+                {items.map(item => <option key={item.id} value={item.id}>{item.formatted}</option>)}
+              </select>
+            )}
+          </CalendarYearPicker>
+          <Button slot="next">▶</Button>
+        </header>
+        <CalendarGrid>
+          {(date) => <CalendarCell date={date} />}
+        </CalendarGrid>
+      </RangeCalendar>
+    );
+
+    let monthPicker = tree.getByLabelText('month');
+    let yearPicker = tree.getByLabelText('year');
+    let grid = tree.getByRole('grid');
+    expect(grid).toHaveAttribute('aria-label', 'Appointment date, April 2026');
+
+    expect(monthPicker).toHaveValue('4');
+    expect(within(monthPicker).getAllByRole('option').map(o => o.textContent)).toEqual(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']);
+
+    await user.selectOptions(monthPicker, 'Jun');
+    expect(monthPicker).toHaveValue('6');
+    expect(grid).toHaveAttribute('aria-label', 'Appointment date, June 2026');
+
+    expect(yearPicker).toHaveValue('10');
+    expect(within(yearPicker).getAllByRole('option').map(o => o.textContent)).toEqual(Array.from({length: 20}, (_, i) => String(i + 2016)));
+
+    await user.selectOptions(yearPicker, '2030');
+    expect(yearPicker).toHaveValue('10');
+    expect(within(yearPicker).getAllByRole('option').map(o => o.textContent)).toEqual(Array.from({length: 20}, (_, i) => String(i + 2020)));
+    expect(grid).toHaveAttribute('aria-label', 'Appointment date, June 2030');
   });
 });

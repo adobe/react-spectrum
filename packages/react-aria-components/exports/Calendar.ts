@@ -14,9 +14,10 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, CalendarContext, CalendarStateContext} from '../src/Calendar';
-export type {CalendarCellProps, CalendarProps, CalendarRenderProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps} from '../src/Calendar';
-export type {DateValue, CalendarState} from 'react-stately/useCalendarState';
+export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, CalendarContext, CalendarStateContext, CalendarMonthPicker, CalendarYearPicker, CalendarMonthHeading} from '../src/Calendar';
+export type {CalendarCellProps, CalendarProps, CalendarRenderProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps, CalendarMonthPickerProps, CalendarYearPickerProps, CalendarMonthHeadingProps} from '../src/Calendar';
+export type {DateValue, CalendarState, CalendarSelectionMode} from 'react-stately/useCalendarState';
+export type {CalendarMonthPickerAria, CalendarYearPickerAria} from 'react-aria/useCalendar';
 
 export {Button} from '../src/Button';
 export type {ButtonProps, ButtonRenderProps} from '../src/Button';

@@ -2,11 +2,19 @@
 @import "./utilities.css";
 
 .react-aria-Calendar {
-  width: calc(var(--spacing-9) * 7);
-  max-width: 100%;
-  container-type: inline-size;
+  display: flex;
+  gap: var(--spacing-3);
+  overflow: auto;
+  width: 100%;
+  max-width: fit-content;
   color: var(--text-color);
   font: var(--font-size) system-ui;
+
+  > div {
+    width: calc(var(--spacing-9) * 7);
+    min-width: calc(var(--spacing-7) * 7);
+    container-type: inline-size;
+  }
 
   header {
     display: flex;
