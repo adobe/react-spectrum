@@ -11,17 +11,15 @@
  */
 
 import {ContextValue} from 'react-aria-components/slots';
-
 import {createContext, forwardRef, useContext, useRef} from 'react';
 import {filledTrack, SliderBase, SliderBaseProps, thumb, thumbContainer, thumbHitArea, track, upperTrack} from './Slider';
 import {FocusableRef, FocusableRefValue, RangeValue} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
-import intlMessages from '../intl/*.json';
 // @ts-ignore
+import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
-import {SliderThumb, SliderTrack} from 'react-aria-components/Slider';
+import {SliderFill, SliderThumb, SliderTrack} from 'react-aria-components/Slider';
 import {useFocusableRef} from './useDOMRef';
-import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -64,8 +62,6 @@ export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: 
   let inputRef = useRef(null); // TODO: need to pass inputRef to SliderThumb when we release the next version of RAC 1.3.0
   let domRef = useFocusableRef(ref, inputRef);
 
-  let {direction} = useLocale();
-  let cssDirection = direction === 'rtl' ? 'right' : 'left';
   let defaultThumbValues: number[] | undefined = undefined;
   if (props.defaultValue != null) {
     defaultThumbValues = [props.defaultValue.start, props.defaultValue.end];
@@ -86,13 +82,9 @@ export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: 
         className={track({size, labelPosition, isInForm: !!formContext})}>
         {({state, isDisabled}) => (
           <>
-            <div className={upperTrack({isDisabled, trackStyle})} />
-            <div
-              style={{
-                width: `${Math.abs(state.getThumbPercent(0) - state.getThumbPercent(1)) * 100}%`,
-                [cssDirection]: `${state.getThumbPercent(0) * 100}%`
-              }}
-              className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
+            <div className={upperTrack({isDisabled, trackStyle})}>
+              <SliderFill className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
+            </div>
             <SliderThumb
               className={thumbContainer}
               index={0}

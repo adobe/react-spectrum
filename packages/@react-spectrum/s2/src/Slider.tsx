@@ -13,13 +13,12 @@
 import {
   Slider as AriaSlider,
   SliderProps as AriaSliderProps,
+  SliderFill,
   SliderOutput,
   SliderThumb,
   SliderThumbRenderProps,
   SliderTrack
 } from 'react-aria-components/Slider';
-
-import {clamp} from 'react-stately/private/utils/number';
 import {ContextValue} from 'react-aria-components/slots';
 import {controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
@@ -31,7 +30,6 @@ import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
 import {useFocusableRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
-import {useNumberFormatter} from 'react-aria/useNumberFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children' | 'style' | 'className' | 'render' | 'orientation' | keyof GlobalDOMAttributes>, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, StyleProps {
@@ -291,9 +289,10 @@ export let upperTrack = style<{isDisabled?: boolean, isStaticColor?: boolean, tr
   translateY: '-50%',
   width: 'full',
   boxSizing: 'border-box',
-  borderStyle: 'solid',
-  borderWidth: '[.5px]',
-  borderColor: {
+  outlineStyle: 'solid',
+  outlineWidth: '[.5px]',
+  outlineOffset: -0.5,
+  outlineColor: {
     default: 'transparent',
     forcedColors: {
       default: 'ButtonText',
@@ -336,10 +335,8 @@ export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T
     labelAlign = 'start',
     size = 'M',
     minValue = 0,
-    maxValue = 100,
-    formatOptions
+    maxValue = 100
   } = props;
-  let formatter = useNumberFormatter(formatOptions);
   let {direction} = useLocale();
 
   return (
@@ -348,19 +345,13 @@ export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T
       ref={props.sliderRef}
       className={renderProps => (props.UNSAFE_className || '') + mergeStyles(style(field())({labelPosition, isInForm: !!formContext}), slider({...renderProps, labelPosition, size, isInForm: !!formContext}, props.styles))}>
       {({state}) => {
-        let maxLabelLength = Math.max([...formatter.format(minValue)].length, [...formatter.format(maxValue)].length);
+        let maxLabelLength = 0;
         switch (state.values.length) {
           case 1:
+            maxLabelLength = Math.max([...state.getFormattedValue(minValue)].length, [...state.getFormattedValue(maxValue)].length);
             break;
           case 2:
-            // This should really use the NumberFormat#formatRange proposal...
-            // https://github.com/tc39/ecma402/issues/393
-            // https://github.com/tc39/proposal-intl-numberformat-v3#formatrange-ecma-402-393
-            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/formatRange
-            maxLabelLength = 3 + 2 * Math.max(
-              maxLabelLength,
-              [...formatter.format(minValue)].length, [...formatter.format(maxValue)].length
-            );
+            maxLabelLength = Math.max([...state.getFormattedValue([minValue, minValue + (props.step || 1)])].length, [...state.getFormattedValue([maxValue - (props.step || 1), maxValue])].length);
             break;
           default:
             throw new Error('Only sliders with 1 or 2 handles are supported!');
@@ -369,10 +360,7 @@ export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T
         let outputValue = (
           <SliderOutput
             style={{width: `${maxLabelLength}ch`, minWidth: `${maxLabelLength}ch`, fontVariantNumeric: 'tabular-nums'}}
-            className={output({direction, labelPosition, isInForm: !!formContext})}>
-            {({state}) =>
-              state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
-          </SliderOutput>
+            className={output({direction, labelPosition, isInForm: !!formContext})} />
         );
 
         return (
@@ -417,8 +405,6 @@ export const Slider = /*#__PURE__*/ forwardRef(function Slider(props: SliderProp
   let thumbRef = useRef(null);
   let inputRef = useRef(null); // TODO: need to pass inputRef to SliderThumb when we release the next version of RAC 1.3.0
   let domRef = useFocusableRef(ref, inputRef);
-  let {direction} = useLocale();
-  let cssDirection = direction === 'rtl' ? 'right' : 'left';
   let isStaticColor = props['PRIVATE_staticColor'];
 
   return (
@@ -427,18 +413,13 @@ export const Slider = /*#__PURE__*/ forwardRef(function Slider(props: SliderProp
       sliderRef={domRef}>
       <SliderTrack
         className={track({size, labelPosition, isInForm: !!formContext})}>
-        {({state, isDisabled}) => {
-
-          fillOffset = fillOffset !== undefined ? clamp(fillOffset, state.getThumbMinValue(0), state.getThumbMaxValue(0)) : state.getThumbMinValue(0);
-
-          let fillWidth = state.getThumbPercent(0) - state.getValuePercent(fillOffset);
-          let isRightOfOffset = fillWidth > 0;
-          let offset = isRightOfOffset ? state.getValuePercent(fillOffset) : state.getThumbPercent(0);
+        {({isDisabled}) => {
 
           return (
             <>
-              <div className={upperTrack({isDisabled, isStaticColor, trackStyle})} />
-              <div style={{width: `${Math.abs(fillWidth) * 100}%`, [cssDirection]: `${offset * 100}%`}} className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
+              <div className={upperTrack({isDisabled, isStaticColor, trackStyle})}>
+                <SliderFill offset={fillOffset} className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
+              </div>
               <SliderThumb  className={thumbContainer} index={0} name={props.name} form={props.form} ref={thumbRef} style={(renderProps) => pressScale(thumbRef, {transform: 'translate(-50%, -50%)'})({...renderProps, isPressed: renderProps.isDragging})}>
                 {(renderProps) => (
                   <div className={thumbHitArea({size})}>
