@@ -693,7 +693,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
 
   getDropTargetLayoutInfo(target: ItemDropTarget): LayoutInfo {
     let layoutInfo = super.getDropTargetLayoutInfo(target);
-    layoutInfo.parentKey = (this.virtualizer!.collection as TableCollection<T>).body.key;
+    layoutInfo.parentKey = this.virtualizer!.collection.getItem(target.key)?.parentKey ?? null;
     return layoutInfo;
   }
 }

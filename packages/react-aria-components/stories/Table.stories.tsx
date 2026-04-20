@@ -1794,3 +1794,34 @@ export const VirtualizedTableFooter: TableStory = (args) => {
     </Virtualizer>
   );
 };
+
+export const TableSectionExample: TableStory = (args) => {
+  let sections = ['Overdue', 'Pending', 'Paid'];
+
+  return (
+    <Table aria-label="Files" selectionMode="multiple" {...args}>
+      <TableHeader style={{background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+        <Column isRowHeader>Title</Column>
+        <Column>Payment Method</Column>
+        <Column>Price</Column>
+      </TableHeader>
+      {sections.map(section => (
+        <TableBody key={section}>
+          <MyRow style={{height: '100%', background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+            <Cell colSpan={3}>{section}</Cell>
+          </MyRow>
+          <Collection items={invoices.filter(invoice => invoice.status === section)}>
+            {item => (
+              <MyRow id={item.title}>
+                <Cell>{item.title}</Cell>
+                <Cell>{item.paymentMethod}</Cell>
+                <Cell>{item.price}</Cell>
+              </MyRow>
+            )}
+          </Collection>
+        </TableBody>
+
+      ))}
+    </Table>
+  );
+};

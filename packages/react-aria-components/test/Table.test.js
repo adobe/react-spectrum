@@ -2930,6 +2930,7 @@ describe('Table', () => {
     expect(groups[0].tagName).toBe('THEAD');
     expect(groups[1].tagName).toBe('TBODY');
     expect(groups[2].tagName).toBe('TFOOT');
+    expect(tableTester.rows).toHaveLength(8);
 
     await user.tab();
     for (let row of tableTester.rows) {
@@ -2937,10 +2938,7 @@ describe('Table', () => {
       await user.keyboard('{ArrowDown}');
     }
 
-    let footerRows = within(groups[2]).getAllByRole('row');
-    expect(document.activeElement).toBe(footerRows[0]);
-
-    for (let row of tableTester.rows.toReversed()) {
+    for (let row of tableTester.rows.toReversed().slice(1)) {
       await user.keyboard('{ArrowUp}');
       expect(document.activeElement).toBe(row);
     }
@@ -2993,6 +2991,7 @@ describe('Table', () => {
 
     let groups = tableTester.rowGroups;
     expect(groups).toHaveLength(3);
+    expect(tableTester.rows).toHaveLength(8);
 
     await user.tab();
     for (let row of tableTester.rows) {
@@ -3000,16 +2999,74 @@ describe('Table', () => {
       await user.keyboard('{ArrowDown}');
     }
 
-    let footerRows = within(groups[2]).getAllByRole('row');
-    expect(document.activeElement).toBe(footerRows[0]);
-
-    for (let row of tableTester.rows.toReversed()) {
+    for (let row of tableTester.rows.toReversed().slice(1)) {
       await user.keyboard('{ArrowUp}');
       expect(document.activeElement).toBe(row);
     }
 
     clientWidth.mockRestore();
     clientHeight.mockRestore();
+  });
+
+  it('should support multiple table bodies', async () => {
+    let sections = ['Overdue', 'Pending', 'Paid'];
+    let invoices = [
+      {title: 'Website Design', status: 'Paid', paymentMethod: 'Credit Card', price: '$1,200'},
+      {title: 'Logo Creation', status: 'Pending', paymentMethod: 'PayPal', price: '$350'},
+      {title: 'SEO Optimization', status: 'Overdue', paymentMethod: 'Bank Transfer', price: '$800'},
+      {title: 'Social Media Setup', status: 'Paid', paymentMethod: 'Debit Card', price: '$450'},
+      {title: 'Content Writing', status: 'Pending', paymentMethod: 'Credit Card', price: '$600'},
+      {title: 'App Development', status: 'Paid', paymentMethod: 'Wire Transfer', price: '$5,000'},
+      {title: 'Maintenance Plan', status: 'Overdue', paymentMethod: 'PayPal', price: '$200'}
+    ];
+
+    let {container: root} = render(
+      <Table aria-label="Files" selectionMode="multiple">
+        <TableHeader>
+          <Column isRowHeader>Title</Column>
+          <Column>Payment Method</Column>
+          <Column>Price</Column>
+        </TableHeader>
+        {sections.map(section => (
+          <TableBody key={section}>
+            <Row>
+              <Cell colSpan={3}>{section}</Cell>
+            </Row>
+            <Collection items={invoices.filter(invoice => invoice.status === section)}>
+              {item => (
+                <Row id={item.title}>
+                  <Cell>{item.title}</Cell>
+                  <Cell>{item.paymentMethod}</Cell>
+                  <Cell>{item.price}</Cell>
+                </Row>
+              )}
+            </Collection>
+          </TableBody>
+  
+        ))}
+      </Table>
+    );
+
+    let tableTester = testUtilUser.createTester('Table', {root});
+
+    let groups = tableTester.rowGroups;
+    expect(groups).toHaveLength(4);
+    expect(groups[0].tagName).toBe('THEAD');
+    expect(groups[1].tagName).toBe('TBODY');
+    expect(groups[2].tagName).toBe('TBODY');
+    expect(groups[3].tagName).toBe('TBODY');
+    expect(tableTester.rows).toHaveLength(10);
+
+    await user.tab();
+    for (let row of tableTester.rows) {
+      expect(document.activeElement).toBe(row);
+      await user.keyboard('{ArrowDown}');
+    }
+
+    for (let row of tableTester.rows.toReversed().slice(1)) {
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(row);
+    }
   });
 });
 

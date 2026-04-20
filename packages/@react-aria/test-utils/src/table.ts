@@ -504,8 +504,7 @@ export class TableTester {
    * Returns the rows within the table if any.
    */
   get rows(): HTMLElement[] {
-    let bodyRowGroup = this.rowGroups[1];
-    return bodyRowGroup ? within(bodyRowGroup).queryAllByRole('row') : [];
+    return this.rowGroups.slice(1).flatMap(rowGroup => within(rowGroup).queryAllByRole('row'));
   }
 
   /**

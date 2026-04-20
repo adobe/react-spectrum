@@ -88,7 +88,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   rows: GridNode<T>[] = [];
   rowHeaderColumnKeys: Set<Key> = new Set();
   head = new TableHeaderNode<T>(-1);
-  body = new TableBodyNode<T>(-2);
   columnsDirty = true;
   expandedKeys: Set<Key> = new Set();
 
@@ -96,7 +95,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     let collection = this.clone();
     collection.expandedKeys = expandedKeys;
     collection.frozen = this.frozen;
-    collection.rows = Array.from(collection.getChildren(collection.body.key));
+    collection.rows = Array.from(collection.getRows());
     return collection;
   }
 
@@ -107,17 +106,35 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     if (node.type === 'tableheader') {
       this.head = node;
     }
+  }
 
-    if (node.type === 'tablebody') {
-      this.body = node;
+  private getRows(): GridNode<T>[] {
+    let rows: GridNode<T>[] = [];
+    for (let child of this) {
+      if (child.type === 'tablebody') {
+        rows.push(...this.getChildren(child.key));
+      }
     }
+    return rows;
+  }
+
+  // backward compatibility
+  get body() {
+    for (let child of this) {
+      if (child.type === 'tablebody') {
+        return child;
+      }
+    }
+    return new TableBodyNode<T>(-2);
   }
 
   commit(firstKey: Key, lastKey: Key, isSSR = false) {
     this.updateColumns(isSSR);
 
+    this.firstKey = firstKey;
+    this.lastKey = lastKey;
     this.rows = [];
-    for (let row of this.getChildren(this.body.key)) {
+    for (let row of this.getRows()) {
       let lastChildKey = (row as CollectionNode<T>).lastChildKey;
       if (lastChildKey != null) {
         let lastCell = this.getItem(lastChildKey) as GridNode<T> | null;
@@ -191,7 +208,12 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   }
 
   getFirstKey() {
-    return this.body.firstChildKey;
+    for (let child of this) {
+      if (child.type === 'tablebody') {
+        return child.firstChildKey ?? null;
+      }
+    }
+    return null;
   }
 
   getLastKey() {
@@ -260,7 +282,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
       k = node.parentKey;
     }
 
-    if (k != null && this.getItem(k)?.type === 'tablebody') {
+    if (k != null && this.getItem(k)?.type === 'tableheader') {
       return null;
     }
 
@@ -321,7 +343,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     collection.rows = this.rows;
     collection.rowHeaderColumnKeys = this.rowHeaderColumnKeys;
     collection.head = this.head;
-    collection.body = this.body;
     return collection;
   }
 
