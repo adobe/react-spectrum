@@ -268,7 +268,7 @@ export let listboxItem = style({
     default: 'default',
     isLink: 'pointer'
   },
-  transition: 'default'
+  transition: 'transform'
 }, getAllowedOverrides());
 
 export let listboxHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
