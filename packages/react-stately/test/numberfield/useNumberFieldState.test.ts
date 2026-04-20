@@ -16,7 +16,7 @@ import {useNumberFieldState} from '../../src/numberfield/useNumberFieldState';
 describe('useNumberFieldState', () => {
   describe('formatOptions stability', () => {
     it('does not reset inputValue when re-rendered with same formatOptions content', () => {
-      let initialFormatOptions = {unit: 'millisecond', useGrouping: false};
+      let initialFormatOptions = {style: 'unit', unit: 'millisecond', useGrouping: false} as Intl.NumberFormatOptions;
       let {result, rerender} = renderHook(
         ({formatOptions}) => useNumberFieldState({defaultValue: 1, formatOptions, locale: 'en-US'}),
         {initialProps: {formatOptions: initialFormatOptions}}
@@ -29,7 +29,7 @@ describe('useNumberFieldState', () => {
       expect(result.current.inputValue).toBe('2');
 
       // Re-render with new-reference but same-content formatOptions (simulates inline object literal)
-      rerender({formatOptions: {unit: 'millisecond', useGrouping: false}});
+      rerender({formatOptions: {style: 'unit', unit: 'millisecond', useGrouping: false} as Intl.NumberFormatOptions});
 
       // inputValue should NOT be reset to '1' (the formatted defaultValue)
       expect(result.current.inputValue).toBe('2');
