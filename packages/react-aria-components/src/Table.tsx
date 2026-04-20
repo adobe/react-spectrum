@@ -111,7 +111,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   private getRows(): GridNode<T>[] {
     let rows: GridNode<T>[] = [];
     for (let child of this) {
-      if (child.type === 'tablebody') {
+      if (child.type === 'tablebody' || child.type === 'tablefooter') {
         rows.push(...this.getChildren(child.key));
       }
     }
@@ -1331,6 +1331,7 @@ export const TableFooter = /*#__PURE__*/ createBranchComponent(TableFooterNode, 
   let state = useContext(TableStateContext)!;
   let collection = state.collection as TableCollection<T>;
   let {CollectionBranch} = useContext(CollectionRendererContext);
+  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
 
   let {rowGroupProps} = useTableRowGroup();
   let DOMProps = filterDOMProps(props, {global: true});
@@ -1347,7 +1348,8 @@ export const TableFooter = /*#__PURE__*/ createBranchComponent(TableFooterNode, 
       ref={ref as any}>
       <CollectionBranch
         collection={collection}
-        parent={node} />
+        parent={node}
+        renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
     </TableFooterElementType>
   );
 });

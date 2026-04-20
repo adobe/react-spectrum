@@ -45,6 +45,7 @@ import {useAsyncList} from 'react-stately/useAsyncList';
 import {useListData} from 'react-stately/useListData';
 import {Virtualizer} from '../src/Virtualizer';
 import './styles.css';
+import {useTreeData} from 'react-stately';
 
 export default {
   title: 'React Aria Components/Table',
@@ -1822,6 +1823,81 @@ export const TableSectionExample: TableStory = (args) => {
         </TableBody>
 
       ))}
+    </Table>
+  );
+};
+
+export const TableSectionDnd: TableStory = (args) => {
+  let sections = ['Overdue', 'Pending', 'Paid'];
+  let tree = useTreeData({
+    initialItems: sections.map(section => ({
+      title: section,
+      children: invoices.filter(invoice => invoice.status === section)
+    })),
+    getKey: item => item.title
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys, items: typeof tree.items) => items.map(item => ({'text/plain': item.value.title})),
+    getDropOperation(target) {
+      // Prevent dropping on section headers or at the top-level (turning an item into a section)
+      if (target.type === 'item' && target.dropPosition !== 'on') {
+        let item = tree.getItem(target.key);
+        return item?.parentKey ? 'move' : 'cancel';
+      }
+      return 'cancel';
+    },
+    onMove(e) {
+      if (e.target.dropPosition === 'before') {
+        tree.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        tree.moveAfter(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'on') {
+        let targetNode = tree.getItem(e.target.key);
+        if (targetNode) {
+          let targetIndex = targetNode.children ? targetNode.children.length : 0;
+          let keyArray = Array.from(e.keys);
+          for (let i = 0; i < keyArray.length; i++) {
+            tree.move(keyArray[i], e.target.key, targetIndex + i);
+          }
+        }
+      }
+    }
+  });
+
+  return (
+    <Table aria-label="Files" selectionMode="multiple" dragAndDropHooks={dragAndDropHooks} {...args}>
+      <TableHeader style={{background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+        <Column />
+        <Column isRowHeader>Title</Column>
+        <Column>Payment Method</Column>
+        <Column>Price</Column>
+      </TableHeader>
+      <Collection items={tree.items}>
+        {section => (
+          <TableBody>
+            <MyRow isDisabled style={{height: '100%', background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+              <Cell colSpan={4}>{section.value.title}</Cell>
+            </MyRow>
+            <Collection items={section.children!}>
+              {(item: any) => (
+                <MyRow id={item.value.title}>
+                  <Column><Button slot="drag">≡</Button></Column>
+                  <Cell>{item.value.title}</Cell>
+                  <Cell>{item.value.paymentMethod}</Cell>
+                  <Cell>{item.value.price}</Cell>
+                </MyRow>
+              )}
+            </Collection>
+          </TableBody>
+        )}
+      </Collection>
+      <TableFooter style={{height: '100%', background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+        <MyRow isDisabled>
+          <Cell colSpan={3}>Total</Cell>
+          <Cell>{invoices.reduce((p, item) => p + Number(item.price.replace(/[$,]/g, '')), 0).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})}</Cell>
+        </MyRow>
+      </TableFooter>
     </Table>
   );
 };

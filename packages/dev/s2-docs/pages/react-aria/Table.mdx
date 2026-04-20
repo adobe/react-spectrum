@@ -817,7 +817,7 @@ function ReorderableTable() {
 
 <Anatomy role="img" aria-label="Anatomy diagram of a table, consisting of multiple rows and columns. The table header includes a select all checkbox, file name and size columns, and a column resizer. Each row in the table body contains a drag button, a selection checkbox, and file name and size cells." />
 
-```tsx links={{ResizableTableContainer: '#resizabletablecontainer', Table: '#table', TableHeader: '#tableheader', Column: '#column', Checkbox: 'Checkbox', ColumnResizer: '#columnresizer', TableBody: '#tablebody', Row: '#row', Cell: '#cell', Button: 'Button', TableLoadMoreItem: '#tableloadmoreitem', SelectionIndicator: 'selection#animated-selectionindicator'}}
+```tsx links={{ResizableTableContainer: '#resizabletablecontainer', Table: '#table', TableHeader: '#tableheader', Column: '#column', Checkbox: 'Checkbox', ColumnResizer: '#columnresizer', TableBody: '#tablebody', Row: '#row', Cell: '#cell', TableFooter: '#tablefooter', Button: 'Button', TableLoadMoreItem: '#tableloadmoreitem', SelectionIndicator: 'selection#animated-selectionindicator'}}
 <ResizableTableContainer>
   <Table>
     <TableHeader>
@@ -842,6 +842,11 @@ function ReorderableTable() {
       </Row>
       <TableLoadMoreItem />
     </TableBody>
+    <TableFooter>
+      <Row>
+        <Cell />
+      </Row>
+    </TableFooter>
   </Table>
 </ResizableTableContainer>
 ```

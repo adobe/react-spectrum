@@ -1904,9 +1904,9 @@ export const TableFooterExample: StoryObj<typeof TableView> = {
     return (
       <TableView aria-label="Files" selectionMode="multiple"  styles={style({width: 700})} {...args}>
         <TableHeader>
-          <Column isRowHeader>Title</Column>
-          <Column>Status</Column>
-          <Column>Payment Method</Column>
+          <Column isRowHeader allowsResizing>Title</Column>
+          <Column allowsResizing>Status</Column>
+          <Column allowsResizing>Payment Method</Column>
           <Column>Price</Column>
         </TableHeader>
         <TableBody items={invoices}>

@@ -949,7 +949,7 @@ function subscribe(fn) {
 
 ## API
 
-```tsx links={{TableView: '#tableview', TableHeader: '#tableheader', Column: '#column', TableBody: '#tablebody', Row: '#row', Cell: '#cell', 'EditableCell': '#editablecell'}}
+```tsx links={{TableView: '#tableview', TableHeader: '#tableheader', Column: '#column', TableBody: '#tablebody', Row: '#row', Cell: '#cell', TableFooter: '#tablefooter', 'EditableCell': '#editablecell'}}
 <TableView>
   <TableHeader>
     <Column />
@@ -960,6 +960,11 @@ function subscribe(fn) {
       <EditableCell />
     </Row>
   </TableBody>
+  <TableFooter>
+    <Row>
+      <Cell />
+    </Row>
+  </TableFooter>
 </TableView>
 ```
 
