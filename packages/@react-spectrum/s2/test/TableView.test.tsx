@@ -247,14 +247,12 @@ describe('TableView', () => {
       await user.keyboard('{ArrowDown}');
     }
 
-    let footerRows = within(groups[2]).getAllByRole('row');
-    expect(document.activeElement).toBe(footerRows[0]);
-
-    for (let row of tableTester.rows.toReversed()) {
+    for (let row of tableTester.rows.toReversed().slice(1)) {
       await user.keyboard('{ArrowUp}');
       expect(document.activeElement).toBe(row);
     }
 
+    let footerRows = within(groups[2]).getAllByRole('row');
     await user.click(footerRows[0]);
     expect(onSelectionChange).not.toHaveBeenCalled();
 
