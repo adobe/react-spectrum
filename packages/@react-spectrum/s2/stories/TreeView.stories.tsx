@@ -1044,20 +1044,33 @@ function BetweenTrees(props: TreeViewProps<any>) {
 
   let serializeNode = (node) => ({
     ...node.value,
+    // can't serialize icons so need to do this approach
     icon: undefined,
+    iconType: node.value.icon?.type === Folder ? 'folder' : 'file',
     childItems: node.children ? [...node.children].map(serializeNode) : []
   });
 
   let processIncomingItems = async (e) => {
-    return await Promise.all(e.items.filter(isTextDropItem).map(async item => {
-      let parsed = JSON.parse(await item.getText('tree-item'));
-      let convertItem = (i) => ({
-        ...i,
-        id: Math.random().toString(36),
-        childItems: i.childItems?.map(convertItem)
-      });
-      return convertItem(parsed);
-    }));
+    let convertItem = (i) => ({
+      ...i,
+      id: Math.random().toString(36),
+      icon: i.iconType === 'folder' ? <Folder /> : <FileTxt />,
+      childItems: i.childItems?.map(convertItem)
+    });
+    let textItems = e.items.filter(isTextDropItem);
+    let parsedItems: any[] = [];
+    for (let item of textItems) {
+      if (item.types.has('tree-item')) {
+        parsedItems.push(JSON.parse(await item.getText('tree-item')));
+      } else if (item.types.size === 1 && item.types.has('text/plain')) {
+        // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+        // Multiple drag items are contained in a single string so we need to split them out
+        let text = await item.getText('text/plain');
+        parsedItems = text.split('\n').map(val => JSON.parse(val));
+        break;
+      }
+    }
+    return parsedItems.map(convertItem);
   };
 
   let makeOnMove = (treeData) => (e: DroppableCollectionReorderEvent) => {
@@ -1082,7 +1095,7 @@ function BetweenTrees(props: TreeViewProps<any>) {
   };
 
   let makeDropHandlers = (treeData) => ({
-    acceptedDragTypes: ['tree-item'] as string[],
+    acceptedDragTypes: ['tree-item', 'text/plain'] as string[],
     async onInsert(e) {
       let items = await processIncomingItems(e);
       if (e.target.dropPosition === 'before') {
@@ -1103,10 +1116,11 @@ function BetweenTrees(props: TreeViewProps<any>) {
 
   let makeGetItems = (treeData) => (keys) => [...keys].map(key => {
     let item = treeData.getItem(key)!;
+    let serialized = JSON.stringify(serializeNode(item));
     return {
       id: item.value.id!.toString(),
-      'text/plain': item.value.name,
-      'tree-item': JSON.stringify(serializeNode(item))
+      'text/plain': serialized,
+      'tree-item': serialized
     };
   });
 
