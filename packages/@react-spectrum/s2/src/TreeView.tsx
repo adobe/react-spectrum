@@ -12,7 +12,8 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {baseColor, colorMix, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
+import {baseColor, color, colorMix, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
+import {css} from '../style/style-macro' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
@@ -104,8 +105,33 @@ const treeViewWrapper = style({
       default: 54,
       hasCheckbox: 78
     }
+  },
+  '--root-drop-radius': {
+    type: 'borderTopStartRadius',
+    value: 'default'
   }
 }, getAllowedOverrides({height: true}));
+
+// TODO: can't use border cuz it means the contents of the tree are no longer
+// flush with its container. Outline and box shadow are affected by the outlineOffset we
+// have in the tree styles and result in the rows clipping the drop outline. This approach
+// avoids that
+const rootDropOutline = css(`
+  &:has([role="treegrid"][data-drop-target])::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border: 2px solid ${color('blue-800')};
+    border-radius: var(--root-drop-radius);
+    z-index: 2;
+  }
+  @media (forced-colors: active) {
+    &:has([role="treegrid"][data-drop-target])::after {
+      border-color: Highlight;
+    }
+  }
+`);
 
 // These are the same as ListView. we didn't have v3 tree dnd and dont have designs so to be adjusted later
 const dropTargetBackground = colorMix('gray-25', 'blue-900', 10);
@@ -307,7 +333,7 @@ export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tr
   return (
     <div
       ref={domRef}
-      className={(UNSAFE_className ?? '') + treeViewWrapper({hasCheckbox}, props.styles)}
+      className={(UNSAFE_className ?? '') + treeViewWrapper({hasCheckbox}, props.styles) + ' ' + rootDropOutline}
       style={UNSAFE_style}>
       <Virtualizer
         layout={S2ListLayout}
@@ -679,7 +705,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
                 {!isDisabled && (
                   <Button
                     slot="drag"
-                    style={!isFocusVisibleWithin && !isFocusVisible && !isHovered ? {...visuallyHiddenProps.style} : {}}
+                    style={!isFocusVisibleWithin && !isFocusVisible ? {...visuallyHiddenProps.style} : {}}
                     className={treeDragButton}>
                     <DragHandle size="M" />
                   </Button>
