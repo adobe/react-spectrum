@@ -147,6 +147,49 @@ describe("resolveTypesField", () => {
     expect(resolveTypesField(42)).toBeUndefined();
     expect(resolveTypesField(true)).toBeUndefined();
   });
+
+  // Strict preference for `types` over runtime-environment keys
+  it("prefers `types` over runtime environment keys at the same level", () => {
+    // Real-world pattern: conditional exports with react-native before types.
+    // Object-key order should NOT decide — `types` must win.
+    const val = {
+      "react-native": "./dist/rn.d.ts",
+      types: "./dist/types.d.ts",
+    };
+    expect(resolveTypesField(val)).toBe("./dist/types.d.ts");
+  });
+
+  it("prefers `types` in nested condition even when parent has other keys first", () => {
+    const val = {
+      node: { "react-native": "./wrong.d.ts", types: "./right.d.ts" },
+    };
+    expect(resolveTypesField(val)).toBe("./right.d.ts");
+  });
+
+  it("prefers import over require and default", () => {
+    const val = {
+      require: "./r.d.ts",
+      default: "./d.d.ts",
+      import: "./i.d.ts",
+    };
+    expect(resolveTypesField(val)).toBe("./i.d.ts");
+  });
+
+  it("falls back to environment keys only when nothing else resolves", () => {
+    // Only a runtime-environment key is present → should still return it
+    // rather than reporting "no types found".
+    const val = { "react-native": "./rn.d.ts" };
+    expect(resolveTypesField(val)).toBe("./rn.d.ts");
+  });
+
+  it("skips environment keys when a non-environment key is also present", () => {
+    // `default` is a standard condition and must win over react-native.
+    const val = {
+      "react-native": "./rn.d.ts",
+      default: "./default.d.ts",
+    };
+    expect(resolveTypesField(val)).toBe("./default.d.ts");
+  });
 });
 
 // ---------------------------------------------------------------------------

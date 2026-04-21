@@ -44,8 +44,34 @@ export function shouldSkipProperty(name: string): boolean {
 // ---------------------------------------------------------------------------
 
 /**
+ * Keys we explicitly reject as candidates for type resolution when a better
+ * option exists. These are runtime-environment conditions that often point at
+ * non-type files (or wrong-environment types), so picking them would produce
+ * incorrect or inconsistent output.
+ */
+const NON_TYPES_ENVIRONMENT_KEYS = new Set([
+  "react-native",
+  "node-addons",
+  "worker",
+  "browser",
+  "deno",
+  "bun",
+]);
+
+/**
  * Recursively resolve a `.d.ts` path from the `types` / `exports` field of a
  * `package.json`, which can be a string, array, or conditional-exports object.
+ *
+ * Resolution order at each object level:
+ *   1. `types` (strict preference — per Node's conditional-exports spec the
+ *      types condition should always win when present).
+ *   2. `import` (modern ESM bias).
+ *   3. `require` (CJS path).
+ *   4. `default`.
+ *   5. Any remaining key, but environment-specific runtime keys
+ *      (`react-native`, `node-addons`, `worker`, `browser`, `deno`, `bun`)
+ *      are only considered if nothing else matches — those branches often
+ *      point at non-type JS or wrong-environment types.
  */
 export function resolveTypesField(value: unknown): string | undefined {
   if (typeof value === "string") {
@@ -62,14 +88,30 @@ export function resolveTypesField(value: unknown): string | undefined {
   }
   if (value && typeof value === "object") {
     const obj = value as Record<string, unknown>;
-    // Prefer well-known keys in order, then fall back to any string value
-    for (const key of ["types", "import", "default", "require"]) {
-      if (obj[key]) {
+
+    // 1. `types` always wins when present anywhere in the tree.
+    if (obj.types !== undefined) {
+      const resolved = resolveTypesField(obj.types);
+      if (resolved) return resolved;
+    }
+    // 2-4. ESM / CJS / default, in that order.
+    for (const key of ["import", "require", "default"]) {
+      if (obj[key] !== undefined) {
         const resolved = resolveTypesField(obj[key]);
         if (resolved) return resolved;
       }
     }
-    for (const v of Object.values(obj)) {
+    // 5a. Any remaining non-environment key (user-named or custom condition).
+    for (const [key, v] of Object.entries(obj)) {
+      if (key === "types" || key === "import" || key === "require" || key === "default") continue;
+      if (NON_TYPES_ENVIRONMENT_KEYS.has(key)) continue;
+      const resolved = resolveTypesField(v);
+      if (resolved) return resolved;
+    }
+    // 5b. Environment-specific keys as last resort — better to return a
+    // wrong-environment `.d.ts` than to silently report "no types found".
+    for (const [key, v] of Object.entries(obj)) {
+      if (!NON_TYPES_ENVIRONMENT_KEYS.has(key)) continue;
       const resolved = resolveTypesField(v);
       if (resolved) return resolved;
     }

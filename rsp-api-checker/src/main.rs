@@ -48,6 +48,10 @@ enum Commands {
         /// npm dist-tag to install (e.g. "latest", "nightly").
         #[arg(long, default_value = "latest")]
         tag: String,
+
+        /// Print a per-phase timing breakdown when the command finishes.
+        #[arg(long)]
+        timing: bool,
     },
 
     /// Extract the type API from a local build's `.d.ts` files.
@@ -64,6 +68,10 @@ enum Commands {
         /// Output directory for the extracted API files.
         #[arg(long, short, default_value = "dist/branch-api")]
         output: PathBuf,
+
+        /// Print a per-phase timing breakdown when the command finishes.
+        #[arg(long)]
+        timing: bool,
     },
 
     /// Collect environment + per-package state so CI and local runs can be
@@ -118,6 +126,10 @@ enum Commands {
         /// Output as JSON instead of text.
         #[arg(long)]
         json: bool,
+
+        /// Print a per-phase timing breakdown when the command finishes.
+        #[arg(long)]
+        timing: bool,
     },
 }
 
@@ -131,20 +143,23 @@ async fn main() -> anyhow::Result<()> {
             output,
             concurrency,
             tag,
+            timing,
         } => {
             commands::get_published::execute(commands::get_published::GetPublishedOpts {
                 repo_root,
                 output_dir: output,
                 concurrency,
                 tag,
+                timing,
             })
             .await?;
         }
 
-        Commands::GetLocalApi { repo_root, output } => {
+        Commands::GetLocalApi { repo_root, output, timing } => {
             commands::get_local::execute(commands::get_local::GetLocalOpts {
                 repo_root,
                 output_dir: output,
+                timing,
             })
             .await?;
         }
@@ -165,6 +180,7 @@ async fn main() -> anyhow::Result<()> {
             ci,
             verbose,
             json,
+            timing,
         } => {
             commands::compare::execute(commands::compare::CompareOpts {
                 base_dir: base_api_dir,
@@ -174,6 +190,7 @@ async fn main() -> anyhow::Result<()> {
                 is_ci: ci,
                 verbose,
                 json,
+                timing,
             })
             .await?;
         }

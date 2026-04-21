@@ -46,16 +46,21 @@ pub fn diff_package(
     let base_interfaces = rebuild_interfaces(base_json, &mut base_ctx);
     let branch_interfaces = rebuild_interfaces(branch_json, &mut branch_ctx);
 
-    // Union of all interface names
+    // Union of all interface names, sorted alphabetically so diff output is
+    // stable regardless of the order the TS compiler walked the exports.
+    // (Compiler order depends on the entry-file array in `ts.createProgram`,
+    // which is stable across runs but not guaranteed — and adding/removing an
+    // export or re-ordering entry files would otherwise reshuffle the whole
+    // output.)
     let all_names: Vec<String> = {
-        let mut names: IndexMap<String, ()> = IndexMap::new();
+        let mut names: std::collections::BTreeSet<String> = std::collections::BTreeSet::new();
         for k in base_interfaces.keys() {
-            names.entry(k.clone()).or_default();
+            names.insert(k.clone());
         }
         for k in branch_interfaces.keys() {
-            names.entry(k.clone()).or_default();
+            names.insert(k.clone());
         }
-        names.into_keys().collect()
+        names.into_iter().collect()
     };
 
     // Build combined dependency graph
@@ -495,6 +500,69 @@ mod tests {
         assert_eq!(result.diffs.len(), 1);
         assert!(result.diffs[0].diff_text.contains('+'));
         assert!(result.diffs[0].qualified_name.contains("NewExport"));
+    }
+
+    #[test]
+    fn test_reordered_exports_produce_no_diff() {
+        // Two api.jsons identical except export order must not diff.
+        let mut base_exports = IndexMap::new();
+        base_exports.insert(
+            "AProps".into(),
+            iface_named(Some("AProps"), vec![("a", false, TypeNode::String { value: None })]),
+        );
+        base_exports.insert(
+            "ZProps".into(),
+            iface_named(Some("ZProps"), vec![("z", false, TypeNode::Number { value: None })]),
+        );
+        let base = ApiJson { exports: base_exports, links: IndexMap::new() };
+
+        let mut branch_exports = IndexMap::new();
+        branch_exports.insert(
+            "ZProps".into(),
+            iface_named(Some("ZProps"), vec![("z", false, TypeNode::Number { value: None })]),
+        );
+        branch_exports.insert(
+            "AProps".into(),
+            iface_named(Some("AProps"), vec![("a", false, TypeNode::String { value: None })]),
+        );
+        let branch = ApiJson { exports: branch_exports, links: IndexMap::new() };
+
+        let result = diff_package("@pkg", &base, &branch, true);
+        assert!(
+            result.diffs.is_empty(),
+            "expected no diffs when only export order differs, got: {:?}",
+            result.diffs.iter().map(|d| &d.qualified_name).collect::<Vec<_>>()
+        );
+    }
+
+    #[test]
+    fn test_reordered_properties_produce_no_diff() {
+        // An interface with the same properties in different orders must not diff.
+        let base = api(
+            "@pkg:Props",
+            iface_named(
+                Some("Props"),
+                vec![
+                    ("zulu", false, TypeNode::String { value: None }),
+                    ("alpha", false, TypeNode::Number { value: None }),
+                ],
+            ),
+        );
+        let branch = api(
+            "@pkg:Props",
+            iface_named(
+                Some("Props"),
+                vec![
+                    ("alpha", false, TypeNode::Number { value: None }),
+                    ("zulu", false, TypeNode::String { value: None }),
+                ],
+            ),
+        );
+        let result = diff_package("@pkg", &base, &branch, true);
+        assert!(
+            result.diffs.is_empty(),
+            "expected no diffs when only property order differs"
+        );
     }
 
     #[test]

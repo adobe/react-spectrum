@@ -32,6 +32,18 @@ interface CliArgs {
   // meaningful only for the local workspace (published tarballs are
   // immutable by definition, so the check would just noise).
   checkBuildFreshness: boolean;
+  // When true, succeed even when no packages are discovered. Default is to
+  // exit 1, because finding zero packages almost always means a bad
+  // --packages-dir or broken filter — and a silent zero-diff from compare
+  // then hides the real bug.
+  allowEmpty: boolean;
+  // Optional path to a JSON file listing workspace package directories:
+  // [{ "name": "...", "location": "absolute/path" }, ...]. When supplied,
+  // the extractor skips its fs-walk and uses this list as the authoritative
+  // set — produced by the Rust wrapper from `yarn workspaces list`, which
+  // honors the repo's actual workspace globs rather than our hard-coded
+  // depth-4 walk.
+  workspacesFile: string | null;
 }
 
 function parseCliArgs(): CliArgs {
@@ -41,6 +53,8 @@ function parseCliArgs(): CliArgs {
   let verbose = false;
   let debug: string | null = null;
   let checkBuildFreshness = false;
+  let allowEmpty = false;
+  let workspacesFile: string | null = null;
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--packages-dir" && argv[i + 1]) {
       packagesDir = argv[++i];
@@ -53,13 +67,17 @@ function parseCliArgs(): CliArgs {
       verbose = true;
     } else if (argv[i] === "--check-build-freshness") {
       checkBuildFreshness = true;
+    } else if (argv[i] === "--allow-empty") {
+      allowEmpty = true;
+    } else if (argv[i] === "--workspaces-file" && argv[i + 1]) {
+      workspacesFile = argv[++i];
     }
   }
   if (!packagesDir) {
-    console.error("Usage: npx tsx extract-api.ts --packages-dir <dir> [--output-dir <dir>] [--verbose] [--debug <exportName>] [--check-build-freshness]");
+    console.error("Usage: npx tsx extract-api.ts --packages-dir <dir> [--output-dir <dir>] [--verbose] [--debug <exportName>] [--check-build-freshness] [--allow-empty] [--workspaces-file <path>]");
     process.exit(1);
   }
-  return { packagesDir, outputDir, verbose, debug, checkBuildFreshness };
+  return { packagesDir, outputDir, verbose, debug, checkBuildFreshness, allowEmpty, workspacesFile };
 }
 
 // ---------------------------------------------------------------------------
@@ -98,16 +116,7 @@ function closeDiagLog() {
 function isExternalSymbol(symbol: ts.Symbol, checker: ts.TypeChecker): boolean {
   const decls = symbol.getDeclarations();
   if (!decls || decls.length === 0) return true;
-  const fileName = decls[0].getSourceFile().fileName;
-  // If it lives in node_modules for a package that isn't ours, it's external
-  const nm = "/node_modules/";
-  const idx = fileName.lastIndexOf(nm);
-  if (idx === -1) return false; // local file
-  const afterNm = fileName.slice(idx + nm.length);
-  const pkgName = afterNm.startsWith("@")
-    ? afterNm.split("/").slice(0, 2).join("/")
-    : afterNm.split("/")[0];
-  return !isOurPackage(pkgName);
+  return isExternalDeclaration(decls[0]);
 }
 
 /** Check if a property is declared directly on the given type symbol (not inherited). */
@@ -121,12 +130,48 @@ function isOwnProperty(prop: ts.Symbol, ownerSymbol: ts.Symbol): boolean {
   return propDecls.some((d) => ownerFiles.has(d.getSourceFile().fileName));
 }
 
-/** Check if a declaration is in an external (non-our-package) file. */
+/** Check if a declaration is in an external (non-our-package) file.
+ *
+ * Uses both the path as seen by the TS compiler AND the realpath of the
+ * source file. With yarn/pnpm workspaces, a published package can pull in
+ * types from a nested `node_modules/` whose symlink target lives under
+ * `packages/` (or vice versa): comparing only the literal path would
+ * mis-attribute those files. If either path indicates the file lives inside
+ * a node_modules/<pkg-not-ours>/ tree, treat it as external.
+ */
 function isExternalDeclaration(decl: ts.Declaration): boolean {
   const fileName = decl.getSourceFile().fileName;
+  const external = externalFromPath(fileName);
+  if (external === true) return true;
+
+  // Resolve symlinks and re-check. For a symlinked workspace package the
+  // literal path is under node_modules/ but realpath is under packages/ —
+  // which correctly reports "not external". The reverse case (a nested
+  // node_modules/.../real location outside packages) is what this catches.
+  try {
+    const real = fs.realpathSync(fileName);
+    if (real !== fileName) {
+      const realExternal = externalFromPath(real);
+      if (realExternal === true) return true;
+      if (external === null && realExternal === false) return false;
+    }
+  } catch {
+    // realpath may fail on virtual files — fall through
+  }
+  // `external` is narrowed to false | null here (true was handled above).
+  // Neither indicates external, so the declaration is ours.
+  return false;
+}
+
+/**
+ * Returns `true` if the path is inside a non-our-package node_modules tree,
+ * `false` if it's definitely ours (path-based determination), or `null` when
+ * the path gives no information (no node_modules segment).
+ */
+function externalFromPath(fileName: string): boolean | null {
   const nm = "/node_modules/";
   const idx = fileName.lastIndexOf(nm);
-  if (idx === -1) return false;
+  if (idx === -1) return null;
   const afterNm = fileName.slice(idx + nm.length);
   const pkgName = afterNm.startsWith("@")
     ? afterNm.split("/").slice(0, 2).join("/")
@@ -144,7 +189,6 @@ interface PackageEntry {
   name: string;
   dir: string;
   typesEntryPoint: string;
-  isPrivate: boolean;
 }
 
 interface OutOfDatePackage {
@@ -163,6 +207,15 @@ function discoverPackages(rootDir: string): PackageEntry[] {
     if (!fs.existsSync(pkgPath)) continue;
     const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
     if (!pkg.name) continue;
+
+    // Drop private packages up front. The yarn-workspaces path has already
+    // excluded them (we pass --no-private), but the fs-walk fallback and any
+    // manually-assembled node_modules can still surface them. Filtering once
+    // here means the rest of the pipeline doesn't need to re-check.
+    if (pkg.private) {
+      if (args.verbose) console.log(`  skip private: ${pkg.name}`);
+      continue;
+    }
 
     // Find the types entry point (.d.ts). This is the default — the extractor
     // was designed against declaration files, the full dependency graph
@@ -230,7 +283,6 @@ function discoverPackages(rootDir: string): PackageEntry[] {
       name: pkg.name,
       dir,
       typesEntryPoint: resolved,
-      isPrivate: !!pkg.private,
     });
   }
 
@@ -245,7 +297,12 @@ function discoverPackages(rootDir: string): PackageEntry[] {
         `declaration files:\n${lines.join("\n")}\n\n` +
         `Run \`yarn build\` to regenerate dist/types/ before extracting API. The extractor ` +
         `reads .d.ts only — stale declarations would silently drop newly-added props from ` +
-        `the diff.`,
+        `the diff.\n\n` +
+        `Note: this check only compares each package's own src/ against its dist/types/. ` +
+        `If package A re-exports from package B and you edited B's src/ without rebuilding ` +
+        `B, A's check passes (A's src/ wasn't touched) and B's re-exported symbols in A's ` +
+        `.d.ts may still be stale. When in doubt, run \`yarn build\` across the whole ` +
+        `workspace before comparing.`,
     );
     process.exit(1);
   }
@@ -263,6 +320,14 @@ function discoverPackages(rootDir: string): PackageEntry[] {
  * We surface this as a hard error rather than silently swapping to source,
  * since that would create a second extraction path whose output can
  * diverge from the .d.ts-based path in subtle ways.
+ *
+ * Known limitation: this walks only the package's own src/. If package A
+ * re-exports from B and you touch B's src/ without rebuilding B, A's check
+ * still passes — but A's dist/types/ re-exports the stale B symbols, so
+ * the diff is wrong. Following workspace-dep edges was judged more
+ * complexity than it buys; the error message in discoverPackages warns
+ * about this case so the user knows to rebuild the whole workspace when
+ * they're not sure.
  */
 function newestMtimeInSources(pkgDir: string): number | null {
   let newest: number | null = null;
@@ -364,20 +429,69 @@ function computeHealth(apiJson: { exports: Record<string, any>; links: Record<st
   };
 }
 
+/**
+ * Read the workspace list written by the Rust wrapper (from
+ * `yarn workspaces list --json`). Format: one JSON object per line,
+ * `{ name, location }`, with absolute or root-relative paths.
+ *
+ * Returns `null` when no file was provided so the caller falls through to
+ * the fs-walk.
+ */
+function readWorkspacesFile(filePath: string | null): string[] | null {
+  if (!filePath) return null;
+  if (!fs.existsSync(filePath)) {
+    console.warn(`  workspaces-file not found: ${filePath} — falling back to fs walk`);
+    return null;
+  }
+  try {
+    const raw = fs.readFileSync(filePath, "utf8");
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return null;
+    const dirs: string[] = [];
+    for (const entry of parsed) {
+      const loc = entry?.location;
+      if (typeof loc !== "string") continue;
+      dirs.push(path.resolve(loc));
+    }
+    return dirs;
+  } catch (err: any) {
+    console.warn(`  failed to read workspaces-file: ${err?.message ?? err} — falling back to fs walk`);
+    return null;
+  }
+}
+
 function findPackageJsonDirs(rootDir: string): string[] {
+  // Prefer the yarn-supplied list when available — it honors the monorepo's
+  // actual workspace globs and `private: true` filtering without needing the
+  // extractor to mirror them in code.
+  const fromWorkspaces = readWorkspacesFile(args.workspacesFile);
+  if (fromWorkspaces && fromWorkspaces.length > 0) {
+    return fromWorkspaces.filter((d) => fs.existsSync(path.join(d, "package.json")));
+  }
+
+  // Fallback fs-walk. Used only when yarn workspaces isn't available — the
+  // primary case is the `get-published-api` flow, whose rootDir is a
+  // tmp node_modules/ (flat: either `name/` or `@scope/name/`). Both layouts
+  // need depth 2 max to reach the package.json, so we stop there and avoid
+  // walking into src/, dist/, etc.
   const dirs: string[] = [];
   function walk(dir: string, depth: number) {
-    if (depth > 4) return;
+    if (depth > 2) return;
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     for (const entry of entries) {
       if (entry.name === "node_modules" || entry.name === ".git" || entry.name === "dev") continue;
+      // Skip symlinked directories: a symlink reports isDirectory() === true,
+      // which would cause us to follow links into unrelated trees (e.g. a
+      // workspace package symlinked out of the monorepo).
+      if (!entry.isDirectory() || entry.isSymbolicLink()) continue;
       const full = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        if (fs.existsSync(path.join(full, "package.json"))) {
-          dirs.push(full);
-        }
-        walk(full, depth + 1);
+      if (fs.existsSync(path.join(full, "package.json"))) {
+        dirs.push(full);
+        // Packages don't nest — once we've found a package.json, stop
+        // descending so we don't re-enter src/, dist/, etc.
+        continue;
       }
+      walk(full, depth + 1);
     }
   }
   walk(rootDir, 0);
@@ -1992,14 +2106,26 @@ function validateExport(pkgName: string, exportName: string, result: any, depth 
   }
 }
 
-function main() {
+async function main() {
   initDiagLog();
   const allPackages = discoverPackages(args.packagesDir);
   // Only process our packages, not transitive dependencies
   const packages = allPackages.filter((p) => isOurPackage(p.name));
   if (packages.length === 0) {
-    console.error(`No react-spectrum packages with type entry points found in ${args.packagesDir}`);
-    console.error(`(found ${allPackages.length} total packages, but none matched our scopes)`);
+    if (args.allowEmpty) {
+      console.warn(`No react-spectrum packages found in ${args.packagesDir} (--allow-empty set, exiting 0)`);
+      closeDiagLog();
+      return;
+    }
+    if (allPackages.length === 0) {
+      console.error(`No packages with package.json found under ${args.packagesDir}.`);
+      console.error(`  Check that --packages-dir points at the right directory.`);
+      console.error(`  Pass --allow-empty to override this check.`);
+    } else {
+      console.error(`No react-spectrum packages with type entry points found in ${args.packagesDir}`);
+      console.error(`(found ${allPackages.length} total package${allPackages.length === 1 ? '' : 's'}, but none matched our scopes)`);
+      console.error(`  Pass --allow-empty to override this check.`);
+    }
     process.exit(1);
   }
 
@@ -2049,12 +2175,20 @@ function main() {
     console.warn("  Ensure @types/react is installed in node_modules");
   }
 
-  for (const pkg of packages) {
-    if (pkg.isPrivate) {
-      if (args.verbose) console.log(`  skip private: ${pkg.name}`);
-      continue;
-    }
+  // Collect writes and dispatch them concurrently at the end. The TS
+  // checker (and therefore serializeSymbol) must stay on the main thread,
+  // but disk writes can be issued in parallel so we're not paying
+  // fs.writeFileSync latency once per package.
+  const pendingWrites: Array<{ path: string; content: string }> = [];
 
+  // Aggregate health across all packages. If the vast majority of top-level
+  // exports come out as `any`, cross-package type resolution is broken
+  // (commonly: @types/react missing from packages-dir). The resulting
+  // wall-of-diff would be noise, so fail loudly instead.
+  let totalTopLevelExports = 0;
+  let totalTopLevelAnyExports = 0;
+
+  for (const pkg of packages) {
     const sourceFile = program.getSourceFile(pkg.typesEntryPoint);
     if (!sourceFile) {
       console.warn(`  could not load source file for ${pkg.name}: ${pkg.typesEntryPoint}`);
@@ -2100,20 +2234,24 @@ function main() {
         `  ⚠ ${pkg.name}: ${health.topLevelAnyExports}/${health.topLevelExports} exports resolved to 'any'`,
       );
     }
+    totalTopLevelExports += health.topLevelExports;
+    totalTopLevelAnyExports += health.topLevelAnyExports;
     const outputBase = args.outputDir
       ? path.join(args.outputDir, pkg.name)
       : pkg.dir;
     const outputPath = path.join(outputBase, "dist", "api.json");
+    // Directory creation is sync — cheap and we need it to exist before
+    // any write in that directory kicks off.
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-    fs.writeFileSync(outputPath, JSON.stringify(apiJson, null, 2));
+    pendingWrites.push({ path: outputPath, content: JSON.stringify(apiJson, null, 2) });
 
     const healthPath = path.join(outputBase, "dist", "health.json");
-    fs.writeFileSync(healthPath, JSON.stringify(health, null, 2));
+    pendingWrites.push({ path: healthPath, content: JSON.stringify(health, null, 2) });
 
     // Also ensure package.json exists in output dir (for compareAPIs to read the name)
     const outPkgJson = path.join(outputBase, "package.json");
     if (!fs.existsSync(outPkgJson)) {
-      fs.writeFileSync(outPkgJson, JSON.stringify({ name: pkg.name }, null, 2));
+      pendingWrites.push({ path: outPkgJson, content: JSON.stringify({ name: pkg.name }, null, 2) });
     }
 
     if (args.verbose) {
@@ -2123,7 +2261,38 @@ function main() {
     }
   }
 
+  // Flush all writes in parallel. Node dispatches these to the libuv
+  // thread pool, so for ~200 packages we overlap disk I/O instead of
+  // paying sync-write latency serially.
+  await Promise.all(
+    pendingWrites.map((w) => fs.promises.writeFile(w.path, w.content)),
+  );
+
+  // Fail loudly when more than half of all top-level exports resolved to
+  // `any`. That pattern means TS couldn't resolve component prop types
+  // (usually: `@types/react` missing from the packages-dir's
+  // node_modules/). Without this check the downstream compare produces a
+  // sprawling diff that looks like an API rewrite, which is worse than
+  // failing.
+  if (totalTopLevelExports > 0) {
+    const anyRatio = totalTopLevelAnyExports / totalTopLevelExports;
+    if (anyRatio > 0.5) {
+      console.error(
+        `\nError: ${totalTopLevelAnyExports}/${totalTopLevelExports} ` +
+          `(${(anyRatio * 100).toFixed(1)}%) of top-level exports resolved to 'any'. ` +
+          `Type resolution is broken — ensure @types/react (and any other required ` +
+          `@types/*) is installed in the packages-dir's node_modules/ so TS can ` +
+          `resolve component prop types.`,
+      );
+      closeDiagLog();
+      process.exit(1);
+    }
+  }
+
   closeDiagLog();
 }
 
-main();
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

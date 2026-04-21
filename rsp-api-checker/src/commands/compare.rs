@@ -23,9 +23,12 @@ pub struct CompareOpts {
     pub verbose: bool,
     /// Output as JSON instead of text.
     pub json: bool,
+    /// Print per-phase timing breakdown on completion.
+    pub timing: bool,
 }
 
 pub async fn execute(opts: CompareOpts) -> Result<()> {
+    let t_total = std::time::Instant::now();
     if !opts.base_dir.exists() {
         anyhow::bail!(
             "Base API directory not found: {}. \
@@ -41,11 +44,13 @@ pub async fn execute(opts: CompareOpts) -> Result<()> {
         );
     }
 
+    let t_discover = std::time::Instant::now();
     let pairs = discover_pairs(&opts.base_dir, &opts.branch_dir)?;
     if pairs.is_empty() {
         println!("No API files found to compare.");
         return Ok(());
     }
+    let discover_elapsed = t_discover.elapsed();
 
     if opts.verbose {
         println!("Found {} package pairs to compare", pairs.len());
@@ -53,6 +58,7 @@ pub async fn execute(opts: CompareOpts) -> Result<()> {
 
     let mut all_diffs: Vec<PackageDiff> = Vec::new();
 
+    let t_diff = std::time::Instant::now();
     for pair in pairs {
         if let Some(ref filter) = opts.package_filter {
             if !pair.package_name.contains(filter.as_str()) {
@@ -84,7 +90,9 @@ pub async fn execute(opts: CompareOpts) -> Result<()> {
 
         all_diffs.push(pkg_diff);
     }
+    let diff_elapsed = t_diff.elapsed();
 
+    let t_format = std::time::Instant::now();
     if opts.json {
         print_json(&all_diffs)?;
     } else {
@@ -94,6 +102,17 @@ pub async fn execute(opts: CompareOpts) -> Result<()> {
         } else {
             print!("{output}");
         }
+    }
+    let format_elapsed = t_format.elapsed();
+
+    if opts.timing {
+        eprintln!(
+            "Timing: discover={:.2}s diff={:.2}s format={:.2}s total={:.2}s",
+            discover_elapsed.as_secs_f64(),
+            diff_elapsed.as_secs_f64(),
+            format_elapsed.as_secs_f64(),
+            t_total.elapsed().as_secs_f64(),
+        );
     }
 
     Ok(())

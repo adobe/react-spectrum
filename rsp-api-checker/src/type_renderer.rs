@@ -100,7 +100,12 @@ pub fn render_type(node: &TypeNode, ctx: &mut RenderContext) -> String {
             }
             let mut lines = Vec::new();
             ctx.depth += 2;
-            for (_, prop) in props {
+            // Sort by key so inline object literals render deterministically —
+            // the TS compiler can emit property order that depends on entry-file
+            // order, which would otherwise produce spurious diff churn.
+            let mut sorted: Vec<_> = props.iter().collect();
+            sorted.sort_by(|(a, _), (b, _)| a.cmp(b));
+            for (_, prop) in sorted {
                 let indent = " ".repeat(ctx.depth);
                 let line = render_property(prop, ctx);
                 lines.push(format!("{indent}{line}"));

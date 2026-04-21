@@ -288,7 +288,13 @@ fn collect_properties(
     out: &mut IndexMap<String, PropertyData>,
     ctx: &mut RenderContext,
 ) {
-    for (_, prop) in props {
+    // Sort by key so diff output is stable no matter what order the TS
+    // compiler emitted properties in. Property ordering out of the compiler
+    // depends on resolution order, which depends on entry-file order — so
+    // two otherwise-identical api.jsons can reorder keys between runs.
+    let mut sorted: Vec<_> = props.iter().collect();
+    sorted.sort_by(|(a, _), (b, _)| a.cmp(b));
+    for (_, prop) in sorted {
         add_property(prop, out, ctx);
     }
 }
@@ -298,11 +304,7 @@ fn collect_sorted_properties(
     out: &mut IndexMap<String, PropertyData>,
     ctx: &mut RenderContext,
 ) {
-    let mut sorted: Vec<_> = props.iter().collect();
-    sorted.sort_by(|(a, _), (b, _)| a.cmp(b));
-    for (_, prop) in sorted {
-        add_property(prop, out, ctx);
-    }
+    collect_properties(props, out, ctx);
 }
 
 fn add_property(prop: &TypeNode, out: &mut IndexMap<String, PropertyData>, ctx: &mut RenderContext) {

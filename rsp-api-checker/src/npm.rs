@@ -123,12 +123,20 @@ async fn check_published(
 
 /// Discover all non-private packages under a directory and check which
 /// are published to npm. Returns the list of published packages.
+///
+/// If `preresolved_names` is `Some`, skips the fs-walk and uses those names
+/// directly. Callers should prefer yarn-workspaces-based discovery when
+/// available — see [`crate::workspaces::discover_workspaces`].
 pub async fn get_published_packages(
     packages_dir: &Path,
     concurrency: usize,
     tag: &str,
+    preresolved_names: Option<Vec<String>>,
 ) -> Result<Vec<PublishedPackage>> {
-    let local_packages = discover_local_packages(packages_dir)?;
+    let local_packages = match preresolved_names {
+        Some(names) => names,
+        None => discover_local_packages(packages_dir)?,
+    };
     let client = reqwest::Client::builder()
         .user_agent("rsp-api-check")
         .build()?;
@@ -138,25 +146,51 @@ pub async fn get_published_packages(
         local_packages.len()
     );
 
-    let results: Vec<Option<PublishedPackage>> = stream::iter(local_packages)
+    let results: Vec<(String, Option<PublishedPackage>)> = stream::iter(local_packages)
         .map(|name| {
             let client = client.clone();
             let tag = tag.to_string();
             async move {
-                match check_published(&client, &name, &tag).await {
+                let name_for_log = name.clone();
+                let pkg = match check_published(&client, &name, &tag).await {
                     Ok(pkg) => pkg,
                     Err(e) => {
                         eprintln!("  warn: failed to check {name}: {e}");
                         None
                     }
-                }
+                };
+                (name_for_log, pkg)
             }
         })
         .buffer_unordered(concurrency)
         .collect()
         .await;
 
-    let published: Vec<PublishedPackage> = results.into_iter().flatten().collect();
+    let mut published = Vec::new();
+    let mut dropped = Vec::new();
+    for (name, pkg) in results {
+        match pkg {
+            Some(p) => published.push(p),
+            None => dropped.push(name),
+        }
+    }
+
+    // Surface dropped packages loudly so "package missing from diff" doesn't
+    // silently hide behind a registry lookup miss.
+    if !dropped.is_empty() {
+        eprintln!(
+            "  warn: {} package{} not published under tag `{tag}` — excluded from diff:",
+            dropped.len(),
+            if dropped.len() == 1 { "" } else { "s" }
+        );
+        for name in &dropped {
+            eprintln!("    • {name}");
+        }
+        if tag != "latest" {
+            eprintln!("    (consider retrying with --tag latest if these packages only have stable releases)");
+        }
+    }
+
     println!("Found {} published packages", published.len());
     Ok(published)
 }
