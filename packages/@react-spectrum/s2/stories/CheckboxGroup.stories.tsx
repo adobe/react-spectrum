@@ -17,7 +17,6 @@ import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
-import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof CheckboxGroup> = {
   component: CheckboxGroup,
