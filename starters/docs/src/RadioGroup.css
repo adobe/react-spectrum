@@ -4,7 +4,6 @@
 .react-aria-RadioGroup {
   display: flex;
   flex-direction: column;
-  flex-wrap: wrap;
   max-width: 100%;
   color: var(--text-color);
   gap: var(--spacing-1);
@@ -20,6 +19,7 @@
 
   &[data-orientation=horizontal] .radio-items {
     flex-direction: row;
+    flex-wrap: wrap;
   }
 }
 

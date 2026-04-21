@@ -164,7 +164,7 @@ export interface SwitchButtonRenderProps extends SwitchRenderProps {
 }
 
 export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLLabelElement>>(null);
-export const SwitchFieldContext = createContext<ContextValue<SwitchProps, HTMLDivElement>>(null);
+export const SwitchFieldContext = createContext<ContextValue<SwitchFieldProps, HTMLDivElement>>(null);
 export const ToggleStateContext = createContext<ToggleState | null>(null);
 
 /**

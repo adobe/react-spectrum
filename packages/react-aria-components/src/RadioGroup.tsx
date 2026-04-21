@@ -194,7 +194,7 @@ export interface RadioButtonRenderProps extends RadioRenderProps {}
 
 export const RadioGroupContext = createContext<ContextValue<RadioGroupProps, HTMLDivElement>>(null);
 export const RadioContext = createContext<ContextValue<Partial<RadioProps>, HTMLLabelElement>>(null);
-export const RadioFieldContext = createContext<ContextValue<Partial<RadioProps>, HTMLDivElement>>(null);
+export const RadioFieldContext = createContext<ContextValue<Partial<RadioFieldProps>, HTMLDivElement>>(null);
 export const RadioGroupStateContext = createContext<RadioGroupState | null>(null);
 
 /**

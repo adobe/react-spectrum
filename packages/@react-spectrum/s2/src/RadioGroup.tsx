@@ -106,6 +106,7 @@ export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(props: Ra
             size={size}
             labelPosition={labelPosition}
             labelAlign={labelAlign}
+            isQuiet // Make the label affect the width of the group
             necessityIndicator={necessityIndicator}
             contextualHelp={props.contextualHelp}>
             {label}
@@ -120,7 +121,11 @@ export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(props: Ra
                   horizontal: 'row'
                 }
               },
-              flexWrap: 'wrap',
+              flexWrap: {
+                orientation: {
+                  horizontal: 'wrap'
+                }
+              },
               // Spectrum uses a fixed spacing value for horizontal (column),
               // but the gap changes depending on t-shirt size in vertical (row).
               columnGap: 16,
@@ -172,7 +177,7 @@ const radioField = style({
   display: 'grid',
   gridTemplateColumns: ['max-content', '1fr'],
   columnGap: 'text-to-control',
-  width: 'full',
+  alignContent: 'start',
   font: controlFont(),
   '--field-height': {
     type: 'height',

@@ -55,9 +55,10 @@ const field = style({
   display: 'grid',
   gridTemplateColumns: ['max-content', '1fr'],
   columnGap: 'text-to-control',
+  alignContent: 'start',
   width: {
     default: 'fit',
-    isInCheckboxGroup: 'full'
+    isInCheckboxGroup: 'auto'
   },
   font: controlFont(),
   '--field-height': {

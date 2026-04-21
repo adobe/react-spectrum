@@ -104,7 +104,7 @@ export const ContextualHelpExample: Story = {
 export const HelpText: Story = {
   render(args) {
     return (
-      <CheckboxGroup {...args} styles={style({width: 300})}>
+      <CheckboxGroup {...args}>
         <Checkbox value="soccer" description="Get notified about new features and improvements">Product update</Checkbox>
         <Checkbox value="baseball" description="Important notifications about your account safety">Security alerts</Checkbox>
         <Checkbox value="basketball" description="Receive promotions, offers, and newsletters">Marketing emails</Checkbox>
