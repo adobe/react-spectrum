@@ -13,11 +13,11 @@
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
 import {baseColor, color, colorMix, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
-import {css} from '../style/style-macro' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
+import {css} from '../style/style-macro' with {type: 'macro'};
 import {DEFAULT_SLOT, Provider, useContextProps} from 'react-aria-components/slots';
 import {DOMRef, DragItem, forwardRefType, GlobalDOMAttributes, ItemDropTarget, Key, LoadingState} from '@react-types/shared';
 import {DragAndDropContext, DropIndicator} from 'react-aria-components/useDragAndDrop';
@@ -596,6 +596,8 @@ const treeDragButtonContainer = style({
 });
 
 const treeDragButton = style({
+  color: 'inherit',
+  display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   height: 22,

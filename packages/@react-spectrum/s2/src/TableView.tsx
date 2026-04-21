@@ -1181,6 +1181,8 @@ const dragCellStyle = style({
 });
 
 const dragButton = style({
+  color: 'inherit',
+  display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   padding: 0,
