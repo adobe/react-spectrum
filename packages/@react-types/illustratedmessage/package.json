@@ -1,6 +1,6 @@
 {
   "name": "@react-types/illustratedmessage",
-  "version": "3.3.23",
+  "version": "3.4.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-spectrum/illustratedmessage": "^3.5.17"
+    "@react-spectrum/illustratedmessage": "^3.6.0"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0",

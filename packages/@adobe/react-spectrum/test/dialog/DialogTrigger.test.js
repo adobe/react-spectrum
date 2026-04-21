@@ -68,7 +68,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger>
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
@@ -90,7 +90,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger type="tray">
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
@@ -116,7 +116,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger type="popover">
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
@@ -140,7 +140,7 @@ describe('DialogTrigger', function () {
         <DialogTrigger type="popover">
           <ActionButton>Trigger</ActionButton>
           {(close) => (
-            <Dialog>
+            <Dialog aria-label="Test dialog">
               contents
               <ButtonGroup>
                 <Button variant="secondary" onPress={close}>
@@ -180,7 +180,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger type="popover">
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
@@ -207,7 +207,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger type="popover" mobileType="tray">
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
@@ -233,7 +233,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger type={type}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog>
+          <Dialog aria-label="Test dialog">
             <input data-testid="input1" />
             <input data-testid="input2" />
           </Dialog>
@@ -268,7 +268,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger>
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
@@ -291,7 +291,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger type="popover">
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
@@ -336,7 +336,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger onOpenChange={onOpenChange} type="popover">
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
@@ -382,7 +382,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme} ref={rootProviderRef}>
         <DialogTrigger>
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
@@ -422,7 +422,7 @@ describe('DialogTrigger', function () {
         <Provider theme={theme}>
           <DialogTrigger isOpen={isOpen} onOpenChange={onOpenChange}>
             <ActionButton>Trigger</ActionButton>
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
       );
@@ -480,7 +480,7 @@ describe('DialogTrigger', function () {
         <Provider theme={theme}>
           <DialogTrigger defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
             <ActionButton>Trigger</ActionButton>
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
       );
@@ -518,7 +518,7 @@ describe('DialogTrigger', function () {
         <Provider theme={theme}>
           <DialogTrigger defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
             <ActionButton>Trigger</ActionButton>
-            {(close) => <Dialog>contents<Button variant="primary" data-testid="closebtn" onPress={close}>Close</Button></Dialog>}
+            {(close) => <Dialog aria-label="Test dialog">contents<Button variant="primary" data-testid="closebtn" onPress={close}>Close</Button></Dialog>}
           </DialogTrigger>
         </Provider>
       );
@@ -557,7 +557,7 @@ describe('DialogTrigger', function () {
         <Provider theme={theme}>
           <DialogTrigger isDismissable defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
             <ActionButton>Trigger</ActionButton>
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
       );
@@ -596,7 +596,7 @@ describe('DialogTrigger', function () {
         <Provider theme={theme}>
           <DialogTrigger type="modal" isDismissable defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
             <ActionButton>Trigger</ActionButton>
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
       );
@@ -634,7 +634,7 @@ describe('DialogTrigger', function () {
         <Provider theme={theme}>
           <DialogTrigger type="modal" defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
             <ActionButton>Trigger</ActionButton>
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
       );
@@ -667,7 +667,7 @@ describe('DialogTrigger', function () {
         <Provider theme={theme}>
           <DialogTrigger type="popover" mobileType="modal" defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
             <ActionButton>Trigger</ActionButton>
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
       );
@@ -705,7 +705,7 @@ describe('DialogTrigger', function () {
         <Provider theme={theme}>
           <DialogTrigger type="popover" defaultOpen={defaultOpen} onOpenChange={onOpenChange} isDismissable={false}>
             <ActionButton>Trigger</ActionButton>
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
       );
@@ -742,7 +742,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger isKeyboardDismissDisabled>
           <ActionButton>Trigger</ActionButton>
-          {close => <Dialog><ActionButton onPress={close}>Close</ActionButton></Dialog>}
+          {close => <Dialog aria-label="Test dialog"><ActionButton onPress={close}>Close</ActionButton></Dialog>}
         </DialogTrigger>
       </Provider>
     );
@@ -794,7 +794,7 @@ describe('DialogTrigger', function () {
           <Menu>
             <DialogTrigger isKeyboardDismissDisabled>
               <Item>Open menu</Item>
-              <Dialog>Content body</Dialog>
+              <Dialog aria-label="Test dialog">Content body</Dialog>
             </DialogTrigger>
           </Menu>
         </MenuTrigger>
@@ -830,12 +830,12 @@ describe('DialogTrigger', function () {
         <TextField id="document-input" aria-label="document input" />
         <DialogTrigger>
           <ActionButton id="outer-trigger">Trigger</ActionButton>
-          <Dialog id="outer-dialog">
+          <Dialog aria-label="Test dialog" id="outer-dialog">
             <Content>
               <TextField id="outer-input" aria-label="outer input" autoFocus />
               <DialogTrigger>
                 <ActionButton id="inner-trigger">Trigger</ActionButton>
-                <Dialog id="inner-dialog">
+                <Dialog aria-label="Test dialog" id="inner-dialog">
                   <Content>
                     <TextField id="inner-input" aria-label="outer input" autoFocus />
                   </Content>
@@ -900,12 +900,12 @@ describe('DialogTrigger', function () {
         <TextField id="document-input" aria-label="document input" />
         <DialogTrigger type="popover">
           <ActionButton id="outer-trigger">Trigger1</ActionButton>
-          <Dialog id="outer-dialog">
+          <Dialog aria-label="Test dialog" id="outer-dialog">
             <Content>
               <TextField id="outer-input" aria-label="outer input" />
               <DialogTrigger type="popover">
                 <ActionButton id="inner-trigger">Trigger2</ActionButton>
-                <Dialog id="inner-dialog">
+                <Dialog aria-label="Test dialog" id="inner-dialog">
                   <Content>
                     <TextField id="inner-input" label="inner input" />
                   </Content>
@@ -958,7 +958,7 @@ describe('DialogTrigger', function () {
           <UNSAFE_PortalProvider getContainer={() => container.current}>
             <DialogTrigger type={props.type}>
               <ActionButton>Trigger</ActionButton>
-              <Dialog>contents</Dialog>
+              <Dialog aria-label="Test dialog">contents</Dialog>
             </DialogTrigger>
           </UNSAFE_PortalProvider>
         </Provider>

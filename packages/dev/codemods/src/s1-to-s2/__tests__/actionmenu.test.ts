@@ -33,3 +33,15 @@ let actionMenuItems = [
   </ActionMenu>
 </div>
 `);
+
+test('Renames closeOnSelect to shouldCloseOnSelect', `
+import {ActionMenu, Item} from '@adobe/react-spectrum';
+
+<div>
+  <ActionMenu closeOnSelect>
+    <Item>Cut</Item>
+    <Item>Copy</Item>
+    <Item>Paste</Item>
+  </ActionMenu>
+</div>
+`);

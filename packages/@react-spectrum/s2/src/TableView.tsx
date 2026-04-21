@@ -215,7 +215,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
     // we want the body to be sticky and only as wide as the table so it is always in view if loading/empty
     let isEmptyOrLoading = this.virtualizer?.collection.size === 0;
     if (isEmptyOrLoading) {
-      layoutInfo.rect.width = this.virtualizer!.visibleRect.width - 80;
+      layoutInfo.rect.width = this.virtualizer!.size.width - 80;
     }
 
     return [
@@ -228,7 +228,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
     let layoutNode = super.buildLoader(node, x, y);
     let {layoutInfo} = layoutNode;
     layoutInfo.allowOverflow = true;
-    layoutInfo.rect.width = this.virtualizer!.visibleRect.width;
+    layoutInfo.rect.width = this.virtualizer!.size.width;
     // If performing first load or empty, the body will be sticky so we don't want to apply sticky to the loader, otherwise it will
     // affect the positioning of the empty state renderer
     let collection = this.virtualizer!.collection;
@@ -246,7 +246,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
     // If loading or empty, we'll want the body to be sticky and centered
     let isEmptyOrLoading = this.virtualizer?.collection.size === 0;
     if (isEmptyOrLoading) {
-      layoutInfo.rect = new Rect(40, 40, this.virtualizer!.visibleRect.width - 80, this.virtualizer!.visibleRect.height - 80);
+      layoutInfo.rect = new Rect(40, 40, this.virtualizer!.size.width - 80, this.virtualizer!.size.height - 80);
       layoutInfo.isSticky = true;
     }
 
@@ -867,16 +867,26 @@ const tableHeader = style({
 });
 
 const selectAllCheckbox = style({
-  marginStart: 16 // table-edge-to-content, same between mobile and desktop
 });
 
 const selectAllCheckboxColumn = style({
-  padding: 0,
+  paddingStart: {
+    default: 0,
+    ':has([slot="selection"])': 16
+  },
+  paddingEnd: {
+    default: 0,
+    ':has(slot="selection")': 8
+  },
+  paddingY: 0,
   height: 'full',
   boxSizing: 'border-box',
   outlineStyle: 'none',
   position: 'relative',
+  display: 'flex',
   alignContent: 'center',
+  alignItems: 'center',
+  justifyContent: 'start',
   borderColor: {
     default: 'gray-300',
     forcedColors: 'ButtonBorder'
@@ -1009,15 +1019,22 @@ const stickyCell = {
 const checkboxCellStyle = style({
   ...commonCellStyles,
   ...stickyCell,
+  display: 'flex',
   paddingStart: 16,
+  paddingEnd: 8,
   alignContent: 'center',
+  alignItems: 'center',
+  justifyContent: 'start',
   height: 'calc(100% - 1px)',
   borderBottomWidth: 0,
   backgroundColor: '--rowBackgroundColor'
 });
 
 const cellContent = style({
-  truncate: true,
+  truncate: {
+    default: true,
+    isSticky: false
+  },
   whiteSpace: {
     default: 'nowrap',
     overflowMode: {
@@ -1031,7 +1048,10 @@ const cellContent = style({
       end: 'end'
     }
   },
-  width: 'full',
+  width: {
+    default: 'full',
+    ':has([slot="selection"])': 'unset'
+  },
   isolation: 'isolate',
   padding: {
     default: 4,
@@ -1058,7 +1078,14 @@ export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | 'r
  * A cell within a table row.
  */
 export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, isSticky, showDivider = false, align, textValue, ...otherProps} = props;
+  let {
+    children,
+    isSticky,
+    showDivider = false,
+    align,
+    textValue,
+    ...otherProps
+  } = props;
   let domRef = useDOMRef(ref);
   let tableVisualOptions = useContext(InternalTableContext);
   textValue ||= typeof children === 'string' ? children : undefined;
@@ -1079,7 +1106,7 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       {...otherProps}>
       {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
-          {hasChildItems && isTreeColumn && 
+          {hasChildItems && isTreeColumn &&
             <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
           }
           <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
@@ -1252,7 +1279,7 @@ export const EditableCell = forwardRef(function EditableCell(props: EditableCell
       {...otherProps}>
       {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
-          {hasChildItems && isTreeColumn && 
+          {hasChildItems && isTreeColumn &&
             <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
           }
           <EditableCellInner {...props} isFocusVisible={isFocusVisible} cellRef={domRef as RefObject<HTMLDivElement>} />

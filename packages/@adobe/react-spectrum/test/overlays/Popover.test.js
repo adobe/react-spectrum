@@ -24,7 +24,7 @@ function PopoverWithDialog({children}) {
   let state = useOverlayTriggerState({isOpen: true});
   return (
     <Popover triggerRef={ref} state={state}>
-      <Dialog>{children}</Dialog>
+      <Dialog aria-label="Test dialog">{children}</Dialog>
     </Popover>
   );
 }

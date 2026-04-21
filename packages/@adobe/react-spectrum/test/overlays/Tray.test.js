@@ -99,7 +99,7 @@ describe('Tray', function () {
     let {getByRole} = render(
       <Provider theme={theme}>
         <TestTray isOpen onOpenChange={onOpenChange} shouldCloseOnBlur>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </TestTray>
       </Provider>
     );

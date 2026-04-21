@@ -3557,7 +3557,7 @@ describe('usePress', function () {
           <ElementType {...pressProps} tabIndex="0">
             <DialogTrigger>
               <ActionButton>open</ActionButton>
-              <Dialog>
+              <Dialog aria-label="Test dialog">
                 test
               </Dialog>
             </DialogTrigger>

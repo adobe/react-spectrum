@@ -15,7 +15,7 @@ import {Button} from '../../src/button/Button';
 import {Content} from '../../src/view/Content';
 import {ContextualHelp} from '../../src/contextualhelp/ContextualHelp';
 import {Form} from '../../src/form/Form';
-import {Header} from '../../src/view/Header';
+import {Heading} from '../../src/text/Heading';
 import {Item} from 'react-stately/Item';
 import {Picker} from '../../src/picker/Picker';
 import {pointerMap, render, simulateMobile} from '@react-spectrum/test-utils-internal';
@@ -212,7 +212,7 @@ describe('Form', function () {
               label="Test Picker"
               contextualHelp={(
                 <ContextualHelp>
-                  <Header>What is it good for?</Header>
+                  <Heading>What is it good for?</Heading>
                   <Content>Absolutely nothing.</Content>
                 </ContextualHelp>
               )}>

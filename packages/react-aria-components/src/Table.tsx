@@ -257,7 +257,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     if (k == null) {
       k = node.parentKey;
     }
-    
+
     if (k != null && this.getItem(k)?.type === 'tablebody') {
       return null;
     }
@@ -687,7 +687,9 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       style = {
         ...style,
         tableLayout: 'fixed',
-        width: 'fit-content'
+        // due to https://bugzilla.mozilla.org/show_bug.cgi?id=1959353, we can't use "fit-content".
+        // Causes the table columns to grow to fill the available space in Firefox, ignoring user set column widths
+        width: 'min-content'
       };
     }
   }

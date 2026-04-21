@@ -13,6 +13,7 @@
 import {action} from 'storybook/actions';
 import {Cell, Column, Row, TableBody, TableHeader, TableView, TableViewProps} from '../src/TableView';
 import {Content, Heading} from '../src/Content';
+import {FixedColumnWidths} from '../../../react-aria-components/stories/Table.stories';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {IllustratedMessage} from '../src/IllustratedMessage';
 import {Link} from '../src/Link';
@@ -499,5 +500,16 @@ export const TableWithNestedRows: StoryObj<typeof TableView> = {
   args: {
     selectionMode: 'multiple',
     defaultExpandedKeys: ['apps']
+  }
+};
+
+export const RACFixedWidth = {
+  render: FixedColumnWidths,
+  parameters: {
+    chromaticProvider: {
+      locales: ['en-US'],
+      scales: ['medium'],
+      colorSchemes: ['light']
+    }
   }
 };

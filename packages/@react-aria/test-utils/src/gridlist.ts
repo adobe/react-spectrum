@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act} from './act';
+import {act, within} from '@testing-library/react';
 import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
 import {GridListTesterOpts, GridRowActionOpts, ToggleGridRowOpts, UserOpts} from './types';
-import {within} from '@testing-library/dom';
 
 interface GridListToggleRowOpts extends ToggleGridRowOpts {}
 interface GridListRowActionOpts extends GridRowActionOpts {}

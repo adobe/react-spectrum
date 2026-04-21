@@ -83,54 +83,54 @@ export interface FocusableDOMProps extends DOMProps {
 }
 
 
-export interface TextInputDOMEvents {
+export interface TextInputDOMEvents<T = HTMLInputElement> {
   // Clipboard events
   /**
    * Handler that is called when the user copies text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncopy).
    */
-   onCopy?: ClipboardEventHandler<HTMLInputElement>,
+   onCopy?: ClipboardEventHandler<T>,
 
    /**
     * Handler that is called when the user cuts text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncut).
     */
-   onCut?: ClipboardEventHandler<HTMLInputElement>,
+   onCut?: ClipboardEventHandler<T>,
 
    /**
     * Handler that is called when the user pastes text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/onpaste).
     */
-   onPaste?: ClipboardEventHandler<HTMLInputElement>,
+   onPaste?: ClipboardEventHandler<T>,
 
    // Composition events
    /**
     * Handler that is called when a text composition system starts a new text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionstart_event).
     */
-   onCompositionStart?: CompositionEventHandler<HTMLInputElement>,
+   onCompositionStart?: CompositionEventHandler<T>,
 
    /**
     * Handler that is called when a text composition system completes or cancels the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionend_event).
     */
-   onCompositionEnd?: CompositionEventHandler<HTMLInputElement>,
+   onCompositionEnd?: CompositionEventHandler<T>,
 
    /**
     * Handler that is called when a new character is received in the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionupdate_event).
     */
-   onCompositionUpdate?: CompositionEventHandler<HTMLInputElement>,
+   onCompositionUpdate?: CompositionEventHandler<T>,
 
    // Selection events
    /**
     * Handler that is called when text in the input is selected. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/select_event).
     */
-   onSelect?: ReactEventHandler<HTMLInputElement>,
+   onSelect?: ReactEventHandler<T>,
 
    // Input events
    /**
     * Handler that is called when the input value is about to be modified. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/beforeinput_event).
     */
-   onBeforeInput?: FormEventHandler<HTMLInputElement>,
+   onBeforeInput?: FormEventHandler<T>,
    /**
     * Handler that is called when the input value is modified. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/input_event).
     */
-   onInput?: FormEventHandler<HTMLInputElement>
+   onInput?: FormEventHandler<T>
 }
 
 export interface InputDOMProps {
@@ -148,7 +148,7 @@ export interface InputDOMProps {
 
 // DOM props that apply to all text inputs
 // Ensure this is synced with useTextField
-export interface TextInputDOMProps extends DOMProps, InputDOMProps, TextInputDOMEvents {
+export interface TextInputDOMProps<T = HTMLInputElement> extends DOMProps, InputDOMProps, TextInputDOMEvents<T> {
   /**
    * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
@@ -261,7 +261,7 @@ export interface GlobalDOMAttributes<T = Element> extends GlobalDOMEvents<T> {
 // NOTES:
 //   - Drag and drop events are omitted for now.
 //   - Keyboard and focus events are supported directly on focusable elements (FocusableProps).
-//   - Text input events (e.g. onInput, onCompositionStart, onCopy) are 
+//   - Text input events (e.g. onInput, onCompositionStart, onCopy) are
 //     supported only directly on input elements (TextInputDOMProps).
 //     We don't support contentEditable on our components.
 //   - Media events should be handled directly on the <video>/<audio><img> element.
@@ -389,7 +389,7 @@ export interface FormProps extends AriaLabelingProps {
    */
   autoComplete?: 'off' | 'on',
   /**
-   * Controls whether inputted text is automatically capitalized and, if so, in what manner. 
+   * Controls whether inputted text is automatically capitalized and, if so, in what manner.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autocapitalize).
    */
   autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters',

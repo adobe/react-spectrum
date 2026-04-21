@@ -937,4 +937,16 @@ describe('ComboBox', () => {
     expect(comboboxTester.combobox).toHaveFocus();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
   });
+
+  it('should support read-only state', async () => {
+    let {getByRole, rerender} = render(
+      <TestComboBox />
+    );
+
+    let input = getByRole('combobox');
+
+    expect(input.closest('.react-aria-ComboBox')).not.toHaveAttribute('data-readonly');
+    rerender(<TestComboBox isReadOnly />);
+    expect(input.closest('.react-aria-ComboBox')).toHaveAttribute('data-readonly');
+  });
 });
