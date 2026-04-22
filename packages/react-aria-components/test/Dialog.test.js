@@ -60,6 +60,7 @@ describe('Dialog', () => {
             {({close}) => (
               <>
                 <Heading slot="title">Alert</Heading>
+                <Text slot="description">This is the alert message.</Text>
                 <Button onPress={close}>Close</Button>
               </>
             )}
@@ -76,9 +77,6 @@ describe('Dialog', () => {
     let heading = getByRole('heading');
     expect(dialog).toHaveAttribute('aria-labelledby', heading.id);
     expect(dialog).toHaveAttribute('data-test', 'dialog');
-    // aria-describedby is not set here because no Text slot="description" is rendered
-    expect(dialog).not.toHaveAttribute('aria-describedby');
-
     expect(dialog.closest('.react-aria-Modal')).toHaveAttribute('data-test', 'modal');
     expect(dialog.closest('.react-aria-ModalOverlay')).toBeInTheDocument();
 
@@ -128,6 +126,7 @@ describe('Dialog', () => {
               {({close}) => (
                 <>
                   <Heading slot="title">Alert</Heading>
+                  <Text slot="description">This is the alert message.</Text>
                   <Button onPress={close}>Close</Button>
                 </>
               )}
@@ -163,6 +162,7 @@ describe('Dialog', () => {
             {({close}) => (
               <>
                 <Heading slot="title">Alert</Heading>
+                <Text slot="description">This is the alert message.</Text>
                 <Button onPress={close}>Close</Button>
               </>
             )}
@@ -354,6 +354,7 @@ describe('Dialog', () => {
               {({close}) => (
                 <>
                   <Heading slot="title">Alert</Heading>
+                  <Text slot="description">This is the alert message.</Text>
                   <Button onPress={close}>Close</Button>
                 </>
               )}
@@ -394,6 +395,7 @@ describe('Dialog', () => {
               {({close}) => (
                 <>
                   <Heading slot="title">Alert</Heading>
+                  <Text slot="description">This is the alert message.</Text>
                   <Button onPress={close}>Close</Button>
                 </>
               )}

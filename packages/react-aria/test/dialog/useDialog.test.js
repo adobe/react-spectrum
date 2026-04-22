@@ -75,7 +75,7 @@ describe('useDialog', function () {
       expect(el).toHaveAttribute('aria-describedby', contentEl.id);
     });
 
-    it('should not set aria-describedby on regular dialog', function () {
+    it('should not auto-wire aria-describedby on regular dialog, but contentProps.id is still provided', function () {
       function RegularDialogExample(props) {
         let ref = useRef();
         let {dialogProps, titleProps, contentProps} = useDialog(props, ref);

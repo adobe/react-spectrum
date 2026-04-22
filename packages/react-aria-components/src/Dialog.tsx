@@ -123,6 +123,12 @@ export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dial
       console.warn('If a Dialog does not contain a <Heading slot="title">, it must have an aria-label or aria-labelledby attribute for accessibility.');
     }
   }
+  
+  if (!dialogProps['aria-describedby'] && dialogProps['role'] === 'alertdialog') {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('If a Dialog does not contain a <Text slot="description">, it must have an aria-describedby for accessibility');
+    }
+  }
 
   let renderProps = useRenderProps({
     defaultClassName: 'react-aria-Dialog',
