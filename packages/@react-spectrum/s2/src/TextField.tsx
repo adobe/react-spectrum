@@ -14,7 +14,7 @@ import {TextArea as AriaTextArea, TextAreaContext as AriaTextAreaContext} from '
 import {TextContext as AriaTextContext} from 'react-aria-components/Text';
 import {TextField as AriaTextField, TextFieldProps as AriaTextFieldProps} from 'react-aria-components/TextField';
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, style} from '../style' with {type: 'macro'};
+import {centerPadding, fontRelative, style} from '../style' with {type: 'macro'};
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -150,6 +150,7 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldP
                   [IconContext, {
                     render: centerBaseline({}),
                     styles: style({
+                      size: fontRelative(20),
                       '--iconPrimary': {
                         type: 'fill',
                         value: 'currentColor'
