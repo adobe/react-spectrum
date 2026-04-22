@@ -179,8 +179,9 @@ export const FormCustomWidth: StoryTextField = {
 export const TextFieldWithAddons: StoryTextField = {
   render: (args) => (
     <Form>
-      <TextField {...args} prefix="#" />
-      <TextField {...args} prefix={<Magnifier />} />
+      <TextField {...args} label="Phone Number" prefix="#" placeholder="(000) 000-0000" />
+      <TextField {...args} label="URL" prefix="https://" placeholder="example.com" />
+      <TextField {...args} label="Search" prefix={<Magnifier />} placeholder="Search phrase" />
       <Button type="submit" variant="primary">Submit</Button>
     </Form>
   ),
@@ -193,8 +194,8 @@ export const TextFieldWithAddons: StoryTextField = {
 export const TextAreaWithAddons: StoryTextArea = {
   render: (args) => (
     <Form>
-      <TextArea {...args} prefix="#" />
-      <TextArea {...args} prefix={<Magnifier />} />
+      <TextArea {...args} label="Phone Number" prefix="#" placeholder="(000) 000-0000" />
+      <TextArea {...args} label="Search" prefix={<Magnifier />} placeholder="Search phrase" />
       <Button type="submit" variant="primary">Submit</Button>
     </Form>
   ),
