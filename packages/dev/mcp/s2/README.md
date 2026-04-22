@@ -138,3 +138,11 @@ Update your MCP client configuration to use the local MCP server:
   }
 }
 ```
+
+## Bundling
+
+To build an [MCP Bundle (MCPB)](https://github.com/modelcontextprotocol/mcpb), run:
+
+```bash
+yarn workspace @react-spectrum/s2-docs generate:mcpb
+```
