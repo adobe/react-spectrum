@@ -1,0 +1,12 @@
+{
+  "name": "@react-aria/previous-widget",
+  "version": "1.0.0",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/types/src/index.d.ts"
+    }
+  },
+  "source": "src/index.ts",
+  "types": "./dist/types/src/index.d.ts"
+}

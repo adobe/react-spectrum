@@ -1,0 +1,9 @@
+# Rust build artifacts
+target/
+
+# Diagnostic log produced by the TypeScript extractor
+ts-extractor/extract-diag.log
+
+# Generated API snapshots produced by running the tool
+# (dist/ is also covered by the root .gitignore, this makes it explicit)
+dist/
