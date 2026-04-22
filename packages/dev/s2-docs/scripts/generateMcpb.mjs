@@ -10,6 +10,21 @@ const repoRoot = path.resolve(scriptDir, '../../../../');
 
 const assetsDir = path.join(scriptDir, '../assets');
 
+const sharedPageTools = (libraryLabel, toolPrefix) => [
+  {
+    name: `list_${toolPrefix}_pages`,
+    description: `Returns a list of available pages in the ${libraryLabel} docs.`
+  },
+  {
+    name: `get_${toolPrefix}_page_info`,
+    description: 'Returns page description and list of sections for a given page.'
+  },
+  {
+    name: `get_${toolPrefix}_page`,
+    description: 'Returns the full markdown content for a page, or a specific section if provided.'
+  }
+];
+
 const libraries = {
   s2: {
     packageDir: path.join(repoRoot, 'packages/dev/mcp/s2'),
@@ -20,9 +35,26 @@ const libraries = {
     displayName: 'React Spectrum (S2)',
     extensionName: 'react-spectrum-s2',
     description: 'Browse the React Spectrum docs, icons, illustrations, and style macro values.',
+    longDescription: 'Provides tools for browsing the React Spectrum (S2) documentation, including listing pages, reading page markdown, searching workflow icons and illustrations, and looking up allowed values for style macro properties. Uses Adobe\'s public docs CDN at https://react-spectrum.adobe.com.',
     homepage: 'https://react-spectrum.adobe.com/ai.html',
     documentation: 'https://react-spectrum.adobe.com/ai.html',
     iconSvg: path.join(assetsDir, 'rsp-favicon.svg'),
+    keywords: ['react', 'react-spectrum', 's2', 'adobe', 'docs', 'design-system', 'icons', 'illustrations'],
+    tools: [
+      ...sharedPageTools('React Spectrum (S2)', 's2'),
+      {
+        name: 'search_s2_icons',
+        description: 'Searches the S2 workflow icon set by one or more terms; returns matching icon names.'
+      },
+      {
+        name: 'search_s2_illustrations',
+        description: 'Searches the S2 illustrations set by one or more terms; returns matching illustration names.'
+      },
+      {
+        name: 'get_style_macro_property_values',
+        description: 'Returns the allowed values for a given S2 style macro property (including expanded color/spacing value lists where applicable).'
+      }
+    ],
     srcDirs: [
       {
         from: path.join(repoRoot, 'packages/dev/mcp/s2/dist/s2/src'),
@@ -47,9 +79,12 @@ const libraries = {
     displayName: 'React Aria',
     extensionName: 'react-aria',
     description: 'Browse the React Aria docs.',
+    longDescription: 'Provides tools for browsing the React Aria documentation, including listing pages, inspecting page sections, and reading page markdown. Uses Adobe\'s public docs CDN at https://react-aria.adobe.com.',
     homepage: 'https://react-aria.adobe.com/ai.html',
     documentation: 'https://react-aria.adobe.com/ai.html',
     iconSvg: path.join(assetsDir, 'react-aria-favicon.svg'),
+    keywords: ['react', 'react-aria', 'adobe', 'docs', 'accessibility', 'aria', 'hooks', 'components'],
+    tools: sharedPageTools('React Aria', 'react_aria'),
     srcDirs: [
       {
         from: path.join(repoRoot, 'packages/dev/mcp/react-aria/dist/react-aria/src'),
@@ -87,19 +122,20 @@ async function generateBundle(libraryName, config) {
       copyDependencyTree(dependency, path.join(tempDir, 'node_modules'), bundledPackages);
     }
 
-    // Convert SVG icon to 128x128 PNG for the bundle.
+    // Convert SVG icon to 512x512 PNG for the bundle.
     const iconFile = 'icon.png';
     let svg = fs.readFileSync(config.iconSvg, 'utf8');
     // The React Aria favicon uses light-dark() CSS which sharp doesn't support.
     // Replace it with the dark-mode color so the icon works on any background.
     svg = svg.replace(/light-dark\([^,]+,\s*([^)]+)\)/, '$1');
     await sharp(Buffer.from(svg))
-      .resize(112, 112, {fit: 'inside'})
-      .extend({top: 8, bottom: 8, left: 8, right: 8, background: {r: 0, g: 0, b: 0, alpha: 0}})
+      .resize(448, 448, {fit: 'contain', background: {r: 0, g: 0, b: 0, alpha: 0}})
+      .extend({top: 32, bottom: 32, left: 32, right: 32, background: {r: 0, g: 0, b: 0, alpha: 0}})
       .png().toFile(path.join(tempDir, iconFile));
 
     fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
       name: config.extensionName,
+      version: packageJson.version,
       private: true,
       type: 'module'
     }, null, 2) + '\n');
@@ -110,13 +146,29 @@ async function generateBundle(libraryName, config) {
       display_name: config.displayName,
       version: packageJson.version,
       description: config.description,
+      long_description: config.longDescription,
       author: {
-        name: 'Adobe'
+        name: 'Adobe',
+        url: 'https://www.adobe.com'
+      },
+      repository: {
+        type: 'git',
+        url: 'https://github.com/adobe/react-spectrum'
       },
       homepage: config.homepage,
       documentation: config.documentation,
       support: 'https://github.com/adobe/react-spectrum/issues',
       icon: iconFile,
+      license: 'Apache-2.0',
+      keywords: config.keywords,
+      privacy_policies: ['https://www.adobe.com/privacy/policy.html'],
+      tools: config.tools,
+      compatibility: {
+        platforms: ['darwin', 'win32', 'linux'],
+        runtimes: {
+          node: '>=18'
+        }
+      },
       server: {
         type: 'node',
         entry_point: config.serverEntryPoint,
