@@ -34,12 +34,12 @@ const libraries = {
     serverEntryPoint: 'server/s2/src/index.js',
     displayName: 'React Spectrum (S2)',
     extensionName: 'react-spectrum-s2',
-    description: 'Browse the React Spectrum docs, icons, illustrations, and style macro values.',
+    description: 'Build apps with Adobe\'s React Spectrum component library.',
     longDescription: 'Provides tools for browsing the React Spectrum (S2) documentation, including listing pages, reading page markdown, searching workflow icons and illustrations, and looking up allowed values for style macro properties. Uses Adobe\'s public docs CDN at https://react-spectrum.adobe.com.',
-    homepage: 'https://react-spectrum.adobe.com/ai.html',
+    homepage: 'https://react-spectrum.adobe.com/',
     documentation: 'https://react-spectrum.adobe.com/ai.html',
     iconSvg: path.join(assetsDir, 'rsp-favicon.svg'),
-    keywords: ['react', 'react-spectrum', 's2', 'adobe', 'docs', 'design-system', 'icons', 'illustrations'],
+    keywords: ['react', 'react-spectrum', 'spectrum', 'adobe', 'design-system', 'components'],
     tools: [
       ...sharedPageTools('React Spectrum (S2)', 's2'),
       {
@@ -78,12 +78,12 @@ const libraries = {
     serverEntryPoint: 'server/react-aria/src/index.js',
     displayName: 'React Aria',
     extensionName: 'react-aria',
-    description: 'Browse the React Aria docs.',
+    description: 'Build accessible UI components with React Aria.',
     longDescription: 'Provides tools for browsing the React Aria documentation, including listing pages, inspecting page sections, and reading page markdown. Uses Adobe\'s public docs CDN at https://react-aria.adobe.com.',
-    homepage: 'https://react-aria.adobe.com/ai.html',
+    homepage: 'https://react-aria.adobe.com/',
     documentation: 'https://react-aria.adobe.com/ai.html',
     iconSvg: path.join(assetsDir, 'react-aria-favicon.svg'),
-    keywords: ['react', 'react-aria', 'adobe', 'docs', 'accessibility', 'aria', 'hooks', 'components'],
+    keywords: ['react', 'react-aria', 'adobe', 'accessibility', 'aria', 'design-system', 'components'],
     tools: sharedPageTools('React Aria', 'react_aria'),
     srcDirs: [
       {
