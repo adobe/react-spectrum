@@ -63,10 +63,17 @@ commands:
       - run:
           name: Check AWS credentials
           command: |
-            if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
+            if [ -z "$AWS_ROLE_ARN" ]; then
               echo "AWS credentials not found"
               circleci-agent step halt
             fi
+      - aws-cli/setup:
+          role_arn: $AWS_ROLE_ARN
+          region: $AWS_DEFAULT_REGION
+          role_session_name: "CircleCI-Deploy-Session"
+      - run:
+          name: Verify AWS CLI setup
+          command: aws sts get-caller-identity
       - run:
           name: Configure AWS CLI for concurrent requests
           command: aws configure set default.s3.max_concurrent_requests 100
