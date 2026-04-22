@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-/* Scrapes data on CLDR https://www.unicode.org/cldr/charts/44/supplemental/language_plural_rules.html#comparison
+/* Scrapes data on CLDR https://www.unicode.org/cldr/charts/49/supplemental/language_plural_rules.html#comparison
  * and generates a list of all possible values needed between all locales for plural rules.
  * It is used by our NumberParser to generate all literal strings, ex units 1 foot, 2 feet, but other locales have more than 2 forms.
  */
@@ -150,7 +150,7 @@ function extractTable(dom, integerTable, fractionTable) {
   return Array.from(values);
 }
 
-fetch('https://www.unicode.org/cldr/charts/44/supplemental/language_plural_rules.html#comparison')
+fetch('https://www.unicode.org/cldr/charts/49/supplemental/language_plural_rules.html#comparison')
   .then(async (response) => {
     let data = await response.text();
     const dom = new JSDOM(data);
