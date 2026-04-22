@@ -1210,7 +1210,7 @@ const VirtualizedTableLoaderWidthTest = (args: {delay: number}): JSX.Element => 
 
 export const VirtualizedTableLoaderWidthTestStory: StoryObj<typeof VirtualizedTableLoaderWidthTest> = {
   render: VirtualizedTableLoaderWidthTest,
-  name: 'virtualized table, loader dynaimc width',
+  name: 'virtualized table, loader dynamic width',
   args: {delay: 10000},
   parameters: {
     description: {
