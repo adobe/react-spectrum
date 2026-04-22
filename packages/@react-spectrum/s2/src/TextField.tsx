@@ -13,6 +13,7 @@
 import {TextArea as AriaTextArea, TextAreaContext as AriaTextAreaContext} from 'react-aria-components/TextArea';
 import {TextContext as AriaTextContext} from 'react-aria-components/Text';
 import {TextField as AriaTextField, TextFieldProps as AriaTextFieldProps} from 'react-aria-components/TextField';
+import {centerBaseline} from './CenterBaseline';
 import {centerPadding, style} from '../style' with {type: 'macro'};
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
@@ -22,13 +23,12 @@ import {createFocusableRef} from './useDOMRef';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FocusableRefValue, GlobalDOMAttributes, HelpTextProps, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
+import {IconContext} from './Icon';
 import {InputContext, InputProps} from 'react-aria-components/Input';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import {StyleString} from '../style/types';
 import {Text, TextContext} from './Content';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import { IconContext } from './Icon';
-import { centerBaseline } from './CenterBaseline';
 
 export interface TextFieldRef<T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends FocusableRefValue<T, HTMLDivElement> {
   select(): void,
@@ -41,11 +41,11 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'c
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
   /**
    * The prefix to display in the text field. Either a string or workflow icon.
    */
-  prefix?: ReactNode;
+  prefix?: ReactNode
 }
 
 export const TextFieldContext = createContext<ContextValue<Partial<TextFieldProps>, TextFieldRef>>(null);

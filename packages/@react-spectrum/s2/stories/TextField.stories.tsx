@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '../src/ActionButton';
 import {Button} from '../src/Button';
 import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
