@@ -26,6 +26,7 @@ import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
 import {Provider} from 'react-aria-components/slots';
 import {style} from '../style' with {type: 'macro'};
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {useId} from 'react-aria/useId';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 export interface AlertDialogProps extends DOMProps, UnsafeStyles {
@@ -96,6 +97,7 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
     children,
     variant = 'confirmation'
   } = props;
+  let contentId = useId();
 
   let buttonVariant = 'primary';
   if (variant === 'confirmation') {
@@ -109,6 +111,7 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
       role="alertdialog"
       ref={ref}
       size={props.size}
+      aria-describedby={contentId}
       UNSAFE_style={props.UNSAFE_style}
       UNSAFE_className={(props.UNSAFE_className || '')}>
       {({close}) => (
@@ -125,7 +128,7 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
               </CenterBaseline>
             </Heading>
           </Provider>
-          <Content>{children}</Content>
+          <Content id={contentId}>{children}</Content>
           <ButtonGroup>
             {cancelLabel &&
               <Button
