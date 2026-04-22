@@ -513,7 +513,7 @@ export class SelectionManager implements MultipleSelectionManager {
 
   isDisabled(key: Key): boolean {
     let item = this.collection.getItem(key);
-    return this.state.disabledBehavior === 'all' && (this.state.disabledKeys.has(key) || !!item?.props?.isDisabled) && item?.props?.disabledBehavior !== 'selection';;
+    return this.state.disabledBehavior === 'all' && (this.state.disabledKeys.has(key) || !!item?.props?.isDisabled) && item?.props?.disabledBehavior !== 'selection';
   }
 
   isLink(key: Key): boolean {
