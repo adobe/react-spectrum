@@ -87,6 +87,39 @@ const styles = style({
 <div className={styles({isSelected: true})} />
 ```
 
+Do not concatenate class names from the `style` macro:
+
+The `style` macro returns an opaque class name string that encodes style precedence. Concatenating it with other class names (via template literals, `clsx`, `classnames`, spaces, etc.) breaks the precedence system and produces incorrect or unpredictable styles.
+
+- Do **not** build up class names conditionally by calling `style(...)` multiple times and joining the results.
+- Instead, express runtime decisions inside a **single** `style({...})` call using the macro's runtime conditions (nested `default`/variant objects, and `is*`/`allows*` boolean conditions).
+- When merging style strings together, use the `mergeStyles` runtime function.
+
+Bad:
+
+```tsx
+// ❌ Concatenates two style macro results — breaks precedence.
+const base = style({padding: 8, backgroundColor: 'gray-100'});
+const active = style({backgroundColor: 'accent'});
+
+<div className={`${base} ${isActive ? active : ''}`} />
+```
+
+Good:
+
+```tsx
+// ✅ One style call, runtime decision inside the macro.
+const styles = style({
+  padding: 8,
+  backgroundColor: {
+    default: 'gray-100',
+    isActive: 'accent'
+  }
+});
+
+<div className={styles({isActive})} />
+```
+
 Note:
 - Base spacing values (for `margin`, `gap`, etc.): Use pixels following a 4px grid (`0`, `2`, `4`, `8`, `12`, `16`...)
 
@@ -121,6 +154,14 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 See [Style Macro]({{guidesBase}}style-macro.md) for the available typography tokens and related text styling options.
 
+## Buttons with icons and text
+
+When a `Button`, `ActionButton`, or `LinkButton` contains **both** an icon and a text label, the text **must** be wrapped in an S2 `<Text>` element so the component can apply the correct icon/label slot styling and spacing. Plain string children next to an icon render incorrectly.
+
+- Icon-only: no `<Text>` needed (provide an accessible label via `aria-label`).
+- Text-only: plain string children are fine.
+- Icon + text: wrap the label in `<Text>`.
+
 ## Icons
 
 Use React Spectrum's built-in icons and illustrations.
@@ -143,8 +184,12 @@ Example illustrations:
 
 ```tsx
 import DropToUpload from '@react-spectrum/s2/illustrations/gradient/generic1/DropToUpload';
+import CloudUpload from '@react-spectrum/s2/illustrations/gradient/generic2/CloudUpload';
+import Warning from '@react-spectrum/s2/illustrations/linear/Warning';
 
 <DropToUpload />
+<CloudUpload />
+<Warning />
 ```
 
 - Note that illustrations can be in a Gradient or Linear style.
