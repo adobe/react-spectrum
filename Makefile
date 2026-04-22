@@ -177,9 +177,6 @@ s2-docs-production:
 build-s2-docs:
 	yarn workspace @react-spectrum/s2-docs generate:md
 	yarn workspace @react-spectrum/s2-docs generate:og
-	yarn workspace @react-spectrum/mcp build
-	yarn workspace @react-aria/mcp build
-	yarn workspace @react-spectrum/s2-docs generate:mcpb
 	LIBRARY=react-aria node scripts/buildRegistry.mjs
 	yarn build:s2-docs
 	LIBRARY=react-aria node scripts/createFeedS2.mjs
