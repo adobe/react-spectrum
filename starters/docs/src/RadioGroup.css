@@ -30,6 +30,10 @@
   [slot=description] {
     margin-left: calc(var(--spacing) * 6.5)
   }
+
+  &[data-disabled] [slot=description] {
+    color: var(--text-color-disabled);
+  }
 }
 
 .react-aria-RadioButton {
