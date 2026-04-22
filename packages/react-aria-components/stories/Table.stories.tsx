@@ -1177,7 +1177,7 @@ const VirtualizedTableLoaderWidthTest = (args: {delay: number}): JSX.Element => 
           headingHeight: 25,
           loaderHeight: 30
         }}>
-        <Table aria-label="Star Wars characters" style={{width: '100%', height: '100%'}}>
+        <Table aria-label="Star Wars characters" style={{width: '100%', height: '100%', overflow: 'auto'}}>
           <TableHeader>
             <Column id="name" isRowHeader>Name</Column>
             <Column id="height">Height</Column>
