@@ -83,6 +83,14 @@ export class TreeDropTargetDelegate<T> {
     // Normalize to 'after'
     if (target.dropPosition === 'before') {
       let keyBefore = this.state!.collection.getKeyBefore(target.key);
+
+      while (keyBefore != null) {
+        let node = this.state!.collection.getItem(keyBefore);
+        if (node?.type === 'item') {
+          break;
+        }
+        keyBefore = node?.parentKey ?? null;
+      }
       if (keyBefore != null) {
         let convertedTarget = {
           type: 'item',
