@@ -118,6 +118,10 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     }
   });
 
+  // Let the hidden radio input handle keyboard events natively so Enter can
+  // submit forms like a native radio control.
+  delete labelProps.onKeyDown;
+
   let {focusableProps} = useFocusable(mergeProps(props, {
     onFocus: () => state.setLastFocusedValue(value)
   }), ref);

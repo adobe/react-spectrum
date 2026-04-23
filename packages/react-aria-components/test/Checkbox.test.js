@@ -385,4 +385,20 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
     expect(onBlur).not.toHaveBeenCalled();
     expect(onFocus).not.toHaveBeenCalled();
   });
+
+  it('should support implicit form submission from a focused checkbox on Enter', async () => {
+    let onSubmit = jest.fn(e => e.preventDefault());
+    let {getByRole} = render(
+      <form onSubmit={onSubmit}>
+        <Checkbox>Test</Checkbox>
+        <button type="submit">Submit</button>
+      </form>
+    );
+
+    let checkbox = getByRole('checkbox');
+    await user.click(checkbox);
+    await user.keyboard('{Enter}');
+
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
 });
