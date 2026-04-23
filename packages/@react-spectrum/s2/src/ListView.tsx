@@ -12,7 +12,7 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {baseColor, colorMix, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
+import {baseColor, color, colorMix, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
@@ -23,6 +23,7 @@ import {CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-c
 import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, useSlottedContext} from 'react-aria-components/slots';
 import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
+import {css} from '../style/style-macro' with {type: 'macro'};
 import {DOMProps, DOMRef, DOMRefValue, DragItem, forwardRefType, GlobalDOMAttributes, ItemDropTarget, LoadingState} from '@react-types/shared';
 import DragHandle from '../ui-icons/DragHandle';
 import {DropIndicator} from 'react-aria-components/useDragAndDrop';
@@ -107,8 +108,32 @@ const listViewWrapper = style({
   disableTapHighlight: true,
   position: 'relative',
   // Clip ActionBar animation.
-  overflow: 'clip'
+  overflow: 'clip',
+  '--root-drop-radius': {
+    type: 'borderTopStartRadius',
+    value: 'default'
+  }
 }, getAllowedOverrides({height: true}));
+
+// similar to tableview, use this approach so we can actually have a 2px outline when root dropping.
+// cant do a external box shadow due to the clipping that is applied on the wrapper element...
+// an inset box shadow runs into problems with the item background clipping the box shadow...
+const rootDropOutline = css(`
+  &:has([role="grid"][data-drop-target])::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border: 2px solid ${color('blue-800')};
+    border-radius: var(--root-drop-radius);
+    z-index: 2;
+  }
+  @media (forced-colors: active) {
+    &:has([role="grid"][data-drop-target])::after {
+      border-color: Highlight;
+    }
+  }
+`);
 
 // When any row has a trailing icon, reserve space so actions align.
 const hasTrailingIconRows = ':has([data-has-trailing-icon]) [role="row"]';
@@ -140,27 +165,12 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean, isDropTarget?: 
     default: 'default',
     isQuiet: 'none'
   },
-  borderColor: {
-    default: 'gray-300',
-    isDropTarget: 'blue-800',
-    forcedColors: {
-      isDropTarget: 'Highlight'
-    }
-  },
+  borderColor: 'gray-300',
   borderWidth: {
     default: 1,
     isQuiet: 0
   },
   borderStyle: 'solid',
-  // TODO: cant do a external box shadow due to the clipping that is applied on the wrapper element...
-  // an inset box shadow here runs into problems with the item background clipping the box shadow...
-  // do we wanna hack it to support a 2px indicator for root drop or is 1px enough
-  // boxShadow: {
-  //   isDropTarget: `[inset 0 0 0 1px ${color('blue-800')}]`,
-  //   forcedColors: {
-  //     isDropTarget: '[inset 0 0 0 1px Highlight]'
-  //   }
-  // },
   forcedColorAdjust: 'none',
   '--trailing-icon-width': {
     type: 'width',
@@ -267,7 +277,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   return (
     <div
       ref={domRef}
-      className={(props.UNSAFE_className || '') + listViewWrapper(null, props.styles)}
+      className={(props.UNSAFE_className || '') + listViewWrapper(null, props.styles) + ' ' + rootDropOutline}
       style={props.UNSAFE_style}>
       <Virtualizer
         layout={S2ListLayout}
