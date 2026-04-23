@@ -239,7 +239,7 @@ export interface TreeRenderProps {
    */
   allowsDragging: boolean,
   /**
-   * Whether the table is currently the active drop target.
+   * Whether the tree is currently the active drop target.
    * @selector [data-drop-target]
    */
   isDropTarget: boolean,

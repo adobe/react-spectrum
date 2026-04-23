@@ -516,6 +516,18 @@ describe('Table', () => {
     expect(onHoverChange).toHaveBeenCalledTimes(2);
   });
 
+  it('should show hover state on draggable rows even when not selectable/actionable', async () => {
+    let {getAllByRole} = render(
+      <DraggableTable />
+    );
+    let row = getAllByRole('row')[1];
+    expect(row).not.toHaveAttribute('data-hovered');
+    await user.hover(row);
+    expect(row).toHaveAttribute('data-hovered', 'true');
+    await user.unhover(row);
+    expect(row).not.toHaveAttribute('data-hovered');
+  });
+
   it('should not show hover state when item is not interactive', async () => {
     let onHoverStart = jest.fn();
     let onHoverChange = jest.fn();
@@ -1368,6 +1380,23 @@ describe('Table', () => {
       act(() => jest.runAllTimers());
 
       expect(onReorder).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not skip drop positions before/after a disabled item', async () => {
+      let onReorder = jest.fn();
+      render(<DraggableTable tableProps={{disabledKeys: ['2'], disabledBehavior: 'all'}} onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Games and Program Files');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Program Files and bootmgr');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after bootmgr');
+
+      await user.keyboard('{Escape}');
+      act(() => jest.runAllTimers());
     });
 
     it('should support dropping on rows', async () => {
