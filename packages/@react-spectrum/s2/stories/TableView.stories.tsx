@@ -49,7 +49,7 @@ import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
 import {useTreeData} from 'react-stately/useTreeData';
 
 let onActionFunc = action('onAction');
-let noOnAction = null;
+let noOnAction = undefined;
 const onActionOptions = {onActionFunc, noOnAction};
 
 const events = ['onResizeStart', 'onResize', 'onResizeEnd', 'onSelectionChange', 'onSortChange'];
@@ -63,7 +63,7 @@ const meta: Meta<typeof TableView> = {
   tags: ['autodocs'],
   args: {...getActionArgs(events)},
   argTypes: {
-    ...categorizeArgTypes('Events', ['onAction', 'onLoadMore', 'onResizeStart', 'onResize', 'onResizeEnd', 'onSelectionChange', 'onSortChange']),
+    ...categorizeArgTypes('Events', ['onAction', 'onLoadMore', ...events]),
     children: {table: {disable: true}},
     onAction: {
       options: Object.keys(onActionOptions), // An array of serializable values

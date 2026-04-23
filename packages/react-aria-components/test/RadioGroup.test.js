@@ -16,29 +16,56 @@ import {Dialog, DialogTrigger} from '../src/Dialog';
 import {FieldError} from '../src/FieldError';
 import {Label} from '../src/Label';
 import {Modal} from '../src/Modal';
-import {Radio, RadioContext, RadioGroup, RadioGroupContext} from '../src/RadioGroup';
-import React from 'react';
+import {RadioButton, RadioContext, RadioField, RadioFieldContext, RadioGroup, RadioGroupContext, Radio as RadioLegacy} from '../src/RadioGroup';
+import React, {forwardRef} from 'react';
 import {Text} from '../src/Text';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
-let TestRadioGroup = ({groupProps, radioProps}) => (
-  <RadioGroup {...groupProps}>
-    <Label>Test</Label>
-    <Radio {...radioProps} value="a">A</Radio>
-    <Radio {...radioProps} value="b">B</Radio>
-    <Radio {...radioProps} value="c">C</Radio>
-  </RadioGroup>
-);
+const RadioFieldItem = forwardRef(function RadioFieldItem(props, ref) {
+  return (
+    <RadioField {...props} ref={ref}>
+      <RadioButton
+        className={props.buttonClassName}
+        onHoverStart={props.onHoverStart}
+        onHoverEnd={props.onHoverEnd}
+        onHoverChange={props.onHoverChange}>
+        {props.children}
+      </RadioButton>
+      {props.description && <Text slot="description">{props.description}</Text>}
+    </RadioField>
+  );
+});
 
-let renderGroup = (groupProps, radioProps) => render(<TestRadioGroup {...{groupProps, radioProps}} />);
-
-describe('RadioGroup', () => {
+describe.each(['RadioGroup', 'RadioField'])('%s', (comp) => {
   let user;
   let testUtilUser = new User();
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
+
+  let Radio = comp === 'RadioGroup' ? RadioLegacy : RadioFieldItem;
+  let TestRadioGroupLegacy = ({groupProps, radioProps}) => (
+    <RadioGroup {...groupProps}>
+      <Label>Test</Label>
+      <Radio {...radioProps} className={radioProps?.className || radioProps?.buttonClassName} value="a">A</Radio>
+      <Radio {...radioProps} className={radioProps?.className || radioProps?.buttonClassName} value="b">B</Radio>
+      <Radio {...radioProps} className={radioProps?.className || radioProps?.buttonClassName} value="c">C</Radio>
+    </RadioGroup>
+  );
+
+  let TestRadioGroupField = ({groupProps, radioProps}) => (
+    <RadioGroup {...groupProps}>
+      <Label>Test</Label>
+      <RadioFieldItem {...radioProps} value="a">A</RadioFieldItem>
+      <RadioFieldItem {...radioProps} value="b">B</RadioFieldItem>
+      <RadioFieldItem {...radioProps} value="c">C</RadioFieldItem>
+    </RadioGroup>
+  );
+
+  let TestRadioGroup = comp === 'RadioField' ? TestRadioGroupField : TestRadioGroupLegacy;
+  let renderGroup = (groupProps, radioProps) => render(<TestRadioGroup {...{groupProps, radioProps}} />);
+  let findRoot = el => comp === 'RadioField' ? el.closest('label').parentElement : el.closest('label');
 
   it('should render a radio group with default classes', () => {
     let {getByRole, getAllByRole} = renderGroup();
@@ -49,8 +76,8 @@ describe('RadioGroup', () => {
 
     let radios = getAllByRole('radio');
     for (let radio of radios) {
-      let label = radio.closest('label');
-      expect(label).toHaveAttribute('class', 'react-aria-Radio');
+      let label = findRoot(radio);
+      expect(label).toHaveAttribute('class', comp === 'RadioField' ? 'react-aria-RadioField' : 'react-aria-Radio');
     }
   });
 
@@ -60,7 +87,7 @@ describe('RadioGroup', () => {
     expect(group).toHaveAttribute('class', 'group');
     let radios = getAllByRole('radio');
     for (let radio of radios) {
-      let label = radio.closest('label');
+      let label = findRoot(radio);
       expect(label).toHaveAttribute('class', 'radio');
     }
   });
@@ -70,7 +97,7 @@ describe('RadioGroup', () => {
     let group = getByRole('radiogroup');
     expect(group).toHaveAttribute('data-foo', 'bar');
     for (let radio of getAllByRole('radio')) {
-      expect(radio.closest('label')).toHaveAttribute('data-test', 'test');
+      expect(findRoot(radio)).toHaveAttribute('data-test', 'test');
     }
   });
 
@@ -78,12 +105,12 @@ describe('RadioGroup', () => {
     let {getAllByRole, getByRole} = renderGroup(
       {render: props => <div {...props} data-custom="true" />},
       // eslint-disable-next-line jsx-a11y/label-has-associated-control
-      {render: props => <label {...props} data-custom="true" />}
+      {render: props => comp === 'RadioField' ? <div {...props} data-custom="true" /> : <label {...props} data-custom="true" />}
     );
     let group = getByRole('radiogroup');
     expect(group).toHaveAttribute('data-custom', 'true');
     for (let radio of getAllByRole('radio')) {
-      expect(radio.closest('label')).toHaveAttribute('data-custom', 'true');
+      expect(findRoot(radio)).toHaveAttribute('data-custom', 'true');
     }
   });
 
@@ -126,12 +153,13 @@ describe('RadioGroup', () => {
   });
 
   it('should support slot', () => {
-    let {getByRole, getAllByText} = render(
+    let ItemContext = comp === 'RadioField' ? RadioFieldContext : RadioContext;
+    let {getByRole, getAllByRole} = render(
       <RadioGroupContext.Provider
         value={{slots: {test: {'aria-label': 'test'}}}}>
-        <RadioContext.Provider value={{'data-test': 'test'}}>
+        <ItemContext.Provider value={{'data-test': 'test'}}>
           <TestRadioGroup groupProps={{slot: 'test'}} />
-        </RadioContext.Provider>
+        </ItemContext.Provider>
       </RadioGroupContext.Provider>
     );
 
@@ -139,10 +167,9 @@ describe('RadioGroup', () => {
     expect(group).toHaveAttribute('slot', 'test');
     expect(group).toHaveAttribute('aria-label', 'test');
 
-    // label elements were not being found with getAllByRole('label')
-    let labels = getAllByText(/A|B|C/i);
-    for (let label of labels) {
-      expect(label).toHaveAttribute('data-test', 'test');
+    let radios = getAllByRole('radio');
+    for (let radio of radios) {
+      expect(findRoot(radio)).toHaveAttribute('data-test', 'test');
     }
   });
 
@@ -150,7 +177,7 @@ describe('RadioGroup', () => {
     let hoverStartSpy = jest.fn();
     let hoverChangeSpy = jest.fn();
     let hoverEndSpy = jest.fn();
-    let {getAllByRole} = renderGroup({}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart: hoverStartSpy, onHoverChange: hoverChangeSpy, onHoverEnd: hoverEndSpy});
+    let {getAllByRole} = renderGroup({}, {buttonClassName: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart: hoverStartSpy, onHoverChange: hoverChangeSpy, onHoverEnd: hoverEndSpy});
     let radio = getAllByRole('radio')[0].closest('label');
 
     expect(radio).not.toHaveAttribute('data-hovered');
@@ -170,7 +197,7 @@ describe('RadioGroup', () => {
   });
 
   it('should support focus ring', async () => {
-    let {getAllByRole} = renderGroup({}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
+    let {getAllByRole} = renderGroup({}, {buttonClassName: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let radio = getAllByRole('radio')[0];
     let label = radio.closest('label');
 
@@ -191,7 +218,7 @@ describe('RadioGroup', () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
     let onClickCapture = jest.fn();
-    let {getAllByRole} = renderGroup({}, {className: ({isPressed}) => isPressed ? 'pressed' : '', onClick, onPress, onClickCapture});
+    let {getAllByRole} = renderGroup({}, {buttonClassName: ({isPressed}) => isPressed ? 'pressed' : '', onClick, onPress, onClickCapture});
     let radio = getAllByRole('radio')[0].closest('label');
 
     expect(radio).not.toHaveAttribute('data-pressed');
@@ -213,7 +240,7 @@ describe('RadioGroup', () => {
   it('should support press state with keyboard', async () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
-    let {getAllByRole} = renderGroup({}, {className: ({isPressed}) => isPressed ? 'pressed' : '', onClick, onPress});
+    let {getAllByRole} = renderGroup({}, {buttonClassName: ({isPressed}) => isPressed ? 'pressed' : '', onClick, onPress});
     let radio = getAllByRole('radio')[0].closest('label');
 
     expect(radio).not.toHaveAttribute('data-pressed');
@@ -233,12 +260,13 @@ describe('RadioGroup', () => {
   });
 
   it('should support disabled state on radio', () => {
-    let {getAllByRole} = renderGroup({}, {isDisabled: true, className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
+    let {getAllByRole} = renderGroup({}, {isDisabled: true, buttonClassName: ({isDisabled}) => isDisabled ? 'disabled' : ''});
     let radio = getAllByRole('radio')[0];
     let label = radio.closest('label');
 
     expect(radio).toBeDisabled();
     expect(label).toHaveAttribute('data-disabled', 'true');
+    expect(findRoot(label)).toHaveAttribute('data-disabled', 'true');
     expect(label).toHaveClass('disabled');
   });
 
@@ -254,24 +282,27 @@ describe('RadioGroup', () => {
 
     expect(radio).toBeDisabled();
     expect(label).toHaveAttribute('data-disabled', 'true');
-    expect(label).toHaveClass('disabled');
+    expect(findRoot(label)).toHaveClass('disabled');
+    expect(findRoot(label)).toHaveAttribute('data-disabled', 'true');
   });
 
   it('should support selected state', async () => {
     let onChange = jest.fn();
-    let {getByRole} = renderGroup({onChange}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
+    let {getByRole} = renderGroup({onChange}, {buttonClassName: ({isSelected}) => isSelected ? 'selected' : ''});
     let radioGroupTester = testUtilUser.createTester('RadioGroup', {root: getByRole('radiogroup')});
     let radios = radioGroupTester.radios;
     let label = radios[0].closest('label');
 
     expect(radioGroupTester.selectedRadio).toBeFalsy();
     expect(label).not.toHaveAttribute('data-selected');
+    expect(findRoot(label)).not.toHaveAttribute('data-selected');
     expect(label).not.toHaveClass('selected');
 
     await radioGroupTester.triggerRadio({radio: radios[0]});
     expect(onChange).toHaveBeenLastCalledWith('a');
     expect(radioGroupTester.selectedRadio).toBe(radios[0]);
     expect(label).toHaveAttribute('data-selected', 'true');
+    expect(findRoot(label)).toHaveAttribute('data-selected', 'true');
     expect(label).toHaveClass('selected');
 
     await radioGroupTester.triggerRadio({radio: radios[1]});
@@ -279,6 +310,7 @@ describe('RadioGroup', () => {
     expect(radios[0]).not.toBeChecked();
     expect(radioGroupTester.selectedRadio).toBe(radios[1]);
     expect(label).not.toHaveAttribute('data-selected');
+    expect(findRoot(label)).not.toHaveAttribute('data-selected');
     expect(label).not.toHaveClass('selected');
   });
 
@@ -292,7 +324,8 @@ describe('RadioGroup', () => {
     expect(group).toHaveClass('readonly');
 
     expect(label).toHaveAttribute('data-readonly');
-    expect(label).toHaveClass('readonly');
+    expect(findRoot(label)).toHaveAttribute('data-readonly');
+    expect(findRoot(label)).toHaveClass('readonly');
   });
 
   it('should support invalid state', () => {
@@ -306,7 +339,8 @@ describe('RadioGroup', () => {
     expect(group).toHaveClass('invalid');
 
     expect(label).toHaveAttribute('data-invalid', 'true');
-    expect(label).toHaveClass('invalid');
+    expect(findRoot(label)).toHaveAttribute('data-invalid', 'true');
+    expect(findRoot(label)).toHaveClass('invalid');
   });
 
   it('should support required state', () => {
@@ -320,7 +354,8 @@ describe('RadioGroup', () => {
     expect(group).toHaveClass('required');
 
     expect(label).toHaveAttribute('data-required', 'true');
-    expect(label).toHaveClass('required');
+    expect(findRoot(label)).toHaveAttribute('data-required', 'true');
+    expect(findRoot(label)).toHaveClass('required');
   });
 
   it('should support orientation', async () => {
@@ -342,7 +377,7 @@ describe('RadioGroup', () => {
     let {getByRole, getAllByRole} = render(
       <RadioGroup isInvalid>
         <Label>Test</Label>
-        <Radio value="a">A</Radio>
+        <Radio value="a" description="hello">A</Radio>
         <Text slot="description">Description</Text>
         <Text slot="errorMessage">Error</Text>
       </RadioGroup>
@@ -354,11 +389,11 @@ describe('RadioGroup', () => {
 
     let radio = getAllByRole('radio')[0];
     expect(radio).toHaveAttribute('aria-describedby');
-    expect(radio.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Error Description');
+    expect(radio.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe(comp === 'RadioField' ? 'hello Error Description' : 'Error Description');
   });
 
   it('should not navigate within the group using Tab', async () => {
-    let {getAllByRole} = renderGroup({}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
+    let {getAllByRole} = renderGroup({}, {buttonClassName: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let radios = getAllByRole('radio');
     let labelA = radios[0].closest('label');
     let labelB = radios[1].closest('label');
@@ -397,7 +432,7 @@ describe('RadioGroup', () => {
           <Dialog role="alertdialog" data-test="dialog">
             {({close}) => (
               <>
-                <TestRadioGroup radioProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''}} />
+                <TestRadioGroup radioProps={{buttonClassName: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''}} />
                 <Text slot="description">Alert description</Text>
                 <Button onPress={close}>Close</Button>
               </>
@@ -469,7 +504,7 @@ describe('RadioGroup', () => {
     );
     let radio = getAllByTestId('radio-a');
     expect(radio).toHaveLength(1);
-    expect(radio[0].nodeName).toBe('LABEL');
+    expect(radio[0].nodeName).toBe(comp === 'RadioField' ? 'DIV' : 'LABEL');
     let group = getAllByRole('radiogroup');
     expect(group).toHaveLength(1);
     expect(group[0]).toHaveAttribute('data-testid', 'radio-group');
@@ -587,7 +622,7 @@ describe('RadioGroup', () => {
       </RadioGroup>
     );
     expect(groupRef.current).toBe(getByRole('radiogroup'));
-    expect(radioRef.current).toBe(getByRole('radio').closest('.react-aria-Radio'));
+    expect(radioRef.current).toBe(findRoot(getByRole('radio')));
   });
 
   it('should support input ref', () => {
@@ -605,12 +640,13 @@ describe('RadioGroup', () => {
   it('should support and merge input ref on context', () => {
     let inputRef = React.createRef();
     let contextInputRef = React.createRef();
+    let Context = comp === 'RadioField' ? RadioFieldContext : RadioContext;
     let {getByRole} = render(
       <RadioGroup>
         <Label>Test</Label>
-        <RadioContext.Provider value={{inputRef: contextInputRef}}>
+        <Context.Provider value={{inputRef: contextInputRef}}>
           <Radio inputRef={inputRef} value="a">A</Radio>
-        </RadioContext.Provider>
+        </Context.Provider>
       </RadioGroup>
     );
     let radio = getByRole('radio');

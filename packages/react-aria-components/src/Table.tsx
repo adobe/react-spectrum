@@ -2,7 +2,7 @@ import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, 
 import {BaseCollection, CollectionNode, FilterableNode, LoaderNode} from 'react-aria/private/collections/BaseCollection';
 import {buildHeaderRows} from 'react-stately/private/table/TableCollection';
 import {ButtonContext} from './Button';
-import {CheckboxContext} from './Checkbox';
+import {CheckboxContext, CheckboxFieldContext} from './Checkbox';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -859,6 +859,11 @@ function TableHeaderRow({item}: {item: GridNode<any>}) {
             slots: {
               selection: checkboxProps
             }
+          }],
+          [CheckboxFieldContext, {
+            slots: {
+              selection: checkboxProps
+            }
           }]
         ]}>
         <CollectionBranch collection={state.collection} parent={item} />
@@ -1473,6 +1478,12 @@ export const Row = /*#__PURE__*/ createBranchComponent(
           <Provider
             values={[
               [CheckboxContext, {
+                slots: {
+                  [DEFAULT_SLOT]: {},
+                  selection: checkboxProps
+                }
+              }],
+              [CheckboxFieldContext, {
                 slots: {
                   [DEFAULT_SLOT]: {},
                   selection: checkboxProps
