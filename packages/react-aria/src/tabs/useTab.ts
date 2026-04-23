@@ -64,7 +64,9 @@ export function useTab<T>(
     // This avoids reopening beforeunload dialogs when browsers replay
     // queued pointer enter/leave events after cancellation.
     shouldSelectOnPressUp: shouldSelectOnPressUp ?? item?.props.href != null,
-    linkBehavior: 'selection'
+    linkBehavior: 'selection',
+    // Tabs that are links do not participate in selection, so onSelectionChange will not be called.
+    shouldSkipResetSelection: true
   });
 
   let tabId = generateId(state, key, 'tab');
