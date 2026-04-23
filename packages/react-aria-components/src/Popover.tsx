@@ -102,6 +102,7 @@ export interface PopoverRenderProps {
 }
 
 interface PopoverContextValue extends PopoverProps {
+  id?: string,
   /** Contexts to clear. */
   clearContexts?: Context<any>[]
 }

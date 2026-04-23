@@ -56,6 +56,10 @@ describe('Popover', () => {
     expect(dialog).toBeInTheDocument();
     expect(dialog.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'DialogTrigger');
 
+    let popover = dialog.closest('.react-aria-Popover');
+    expect(button).toHaveAttribute('aria-controls');
+    expect(popover).toHaveAttribute('id', button.getAttribute('aria-controls'));
+
     await user.click(document.body);
 
     expect(dialog).not.toBeInTheDocument();

@@ -84,10 +84,11 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
       values={[
         [OverlayTriggerStateContext, state],
         [RootMenuTriggerStateContext, state],
-        [DialogContext, overlayProps],
+        [DialogContext, {...overlayProps, id: undefined}],
         [PopoverContext, {
           trigger: 'DialogTrigger',
           triggerRef: buttonRef,
+          id: overlayProps.id,
           'aria-labelledby': overlayProps['aria-labelledby'],
           style: {'--trigger-width': buttonWidth} as React.CSSProperties
         }]
