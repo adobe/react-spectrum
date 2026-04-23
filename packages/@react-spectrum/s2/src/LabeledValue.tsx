@@ -65,7 +65,6 @@ interface ReactElementProps<T extends ReactElement> {
   formatOptions?: never
 }
 
-// TODO: Add some prop (tbd, maybe the API will be different) to add additional vertical spacing when LabeledValue is next to a Picker/TextField so that the components look aligned
 export interface LabeledValueStyleProps {
   /**
    * The size of the component.
