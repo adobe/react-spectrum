@@ -384,6 +384,10 @@ function renderValue(value: any, indent = '') {
         return <><span className={style({color: 'magenta-1000'})}>new</span> <span className={style({color: 'red-1000'})}>Size</span>(<span className={style({color: 'pink-1000'})}>{value.width}</span>, <span className={style({color: 'pink-1000'})}>{value.height}</span>)</>;
       }
 
+      if (value instanceof Date) {
+        return <><span className={style({color: 'magenta-1000'})}>new</span> <span className={style({color: 'red-1000'})}>Date</span>(<span className={style({color: 'pink-1000'})}>{value.getFullYear()}</span>, <span className={style({color: 'pink-1000'})}>{value.getMonth()}</span>, <span className={style({color: 'pink-1000'})}>{value.getDate()}</span>)</>;
+      }
+
       let entries = Object.entries(value);
       let res: ReactNode[] = entries.map(([name, value], i) => {
         let result = <><span className={style({color: 'indigo-1000'})}>{name}</span>: {renderValue(value, indent)}</>;

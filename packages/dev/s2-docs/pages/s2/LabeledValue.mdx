@@ -72,12 +72,11 @@ with the option parameter of [Intl.DateTimeFormat](https://developer.mozilla.org
   links={types.links}
   props={['formatOptions']}
   initialProps={{
-    label: 'Value',
-    value: new Date(2022, 6, 5, 14, 30),
+    label: 'Birthday',
+    value: new Date(2022, 6, 5),
     formatOptions: {dateStyle: 'short'}
   }}
   type="s2" />
-
 
 By default, the formatting depends on the type of value provided. Above, a [CalendarDate](react-aria:internationalized/date/CalendarDate) is provided, so only the date is displayed. To display a time, pass a [Time](react-aria:internationalized/date/Time) object. You can also provide a [CalendarDateTime](react-aria:internationalized/date/CalendarDateTime) or [ZonedDateTime](react-aria:internationalized/date/ZonedDateTime) to display a date with a time.
 
