@@ -147,6 +147,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
   });
 
   let {isFocusVisible, focusProps} = useFocusRing({within: true});
+  let [isLabelHovered, setLabelHovered] = useState(false);
 
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);
@@ -195,8 +196,8 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         [SelectContext, props],
         [SelectStateContext, state],
         [SelectValueContext, valueProps],
-        [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen, autoFocus: props.autoFocus}],
+        [LabelContext, {...labelProps, ref: labelRef, elementType: 'span', onPointerEnter: () => setLabelHovered(true), onPointerLeave: () => setLabelHovered(false)}],
+        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen, autoFocus: props.autoFocus, isHovered: isLabelHovered}],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
           trigger: 'Select',

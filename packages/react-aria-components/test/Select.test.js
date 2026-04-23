@@ -819,4 +819,33 @@ describe('Select', () => {
     let selectValue = getByTestId('select-value');
     expect(selectValue).toHaveTextContent('select value: 1');
   });
+
+  it('should show hover state on button when label is hovered', async () => {
+    let {getByTestId} = render(<TestSelect />);
+    let wrapper = getByTestId('select');
+    let label = wrapper.querySelector('.react-aria-Label');
+    let button = wrapper.querySelector('button');
+
+    expect(button).not.toHaveAttribute('data-hovered');
+
+    await user.hover(label);
+    expect(button).toHaveAttribute('data-hovered', 'true');
+
+    await user.unhover(label);
+    expect(button).not.toHaveAttribute('data-hovered');
+  });
+
+  it('should still show hover state on button when button is directly hovered', async () => {
+    let {getByTestId} = render(<TestSelect />);
+    let wrapper = getByTestId('select');
+    let button = wrapper.querySelector('button');
+
+    expect(button).not.toHaveAttribute('data-hovered');
+
+    await user.hover(button);
+    expect(button).toHaveAttribute('data-hovered', 'true');
+
+    await user.unhover(button);
+    expect(button).not.toHaveAttribute('data-hovered');
+  });
 });
