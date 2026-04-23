@@ -11,29 +11,51 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Checkbox, CheckboxGroup, CheckboxGroupContext} from '../src/Checkbox';
+import {Checkbox as AriaCheckbox, CheckboxButton, CheckboxField, CheckboxGroup, CheckboxGroupContext} from '../src/Checkbox';
 import {FieldError} from '../src/FieldError';
 import {Label} from '../src/Label';
-import React from 'react';
+import React, {forwardRef} from 'react';
 import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
-let TestCheckboxGroup = ({groupProps, checkboxProps}) => (
-  <CheckboxGroup {...groupProps}>
-    <Label>Test</Label>
-    <Checkbox {...checkboxProps} value="a">A</Checkbox>
-    <Checkbox {...checkboxProps} value="b">B</Checkbox>
-    <Checkbox {...checkboxProps} value="c">C</Checkbox>
-  </CheckboxGroup>
-);
+const CheckboxExample = forwardRef(function CheckboxExample(props, ref) {
+  return (
+    <CheckboxField {...props} ref={ref}>
+      <CheckboxButton
+        className={props.buttonClassName}
+        onHoverStart={props.onHoverStart}
+        onHoverEnd={props.onHoverEnd}
+        onHoverChange={props.onHoverChange}>
+        {props.children}
+      </CheckboxButton>
+      {props.description && <Text slot="description">{props.description}</Text>}
+      <FieldError />
+    </CheckboxField>
+  );
+});
 
-let renderGroup = (groupProps, checkboxProps) => render(<TestCheckboxGroup {...{groupProps, checkboxProps}} />);
+const CheckboxLegacy = forwardRef(function CheckboxLegacy(props, ref) {
+  return <AriaCheckbox {...props} ref={ref} className={props.className || props.buttonClassName} />;
+});
 
-describe('CheckboxGroup', () => {
+describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', (comp) => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
+
+  let Checkbox = comp === 'CheckboxField' ? CheckboxExample : CheckboxLegacy;
+  let findRoot = el => comp === 'CheckboxField' ? el.closest('label').parentElement : el.closest('label');
+  let TestCheckboxGroup = ({groupProps, checkboxProps}) => (
+    <CheckboxGroup {...groupProps}>
+      <Label>Test</Label>
+      <Checkbox {...checkboxProps} value="a">A</Checkbox>
+      <Checkbox {...checkboxProps} value="b">B</Checkbox>
+      <Checkbox {...checkboxProps} value="c">C</Checkbox>
+    </CheckboxGroup>
+  );
+
+  let renderGroup = (groupProps, checkboxProps) => render(<TestCheckboxGroup {...{groupProps, checkboxProps}} />);
 
   it('should render a checkbox group with default classes', () => {
     let {getByRole, getAllByRole} = renderGroup();
@@ -44,8 +66,7 @@ describe('CheckboxGroup', () => {
 
     let checkboxes = getAllByRole('checkbox');
     for (let checkbox of checkboxes) {
-      let label = checkbox.closest('label');
-      expect(label).toHaveAttribute('class', 'react-aria-Checkbox');
+      expect(findRoot(checkbox)).toHaveAttribute('class', `react-aria-${comp}`);
     }
   });
 
@@ -55,8 +76,7 @@ describe('CheckboxGroup', () => {
     expect(group).toHaveAttribute('class', 'group');
     let checkboxes = getAllByRole('checkbox');
     for (let checkbox of checkboxes) {
-      let label = checkbox.closest('label');
-      expect(label).toHaveAttribute('class', 'checkbox');
+      expect(findRoot(checkbox)).toHaveAttribute('class', 'checkbox');
     }
   });
 
@@ -91,7 +111,8 @@ describe('CheckboxGroup', () => {
 
     expect(checkbox).toBeDisabled();
     expect(label).toHaveAttribute('data-disabled', 'true');
-    expect(label).toHaveClass('disabled');
+    expect(findRoot(checkbox)).toHaveAttribute('data-disabled', 'true');
+    expect(findRoot(checkbox)).toHaveClass('disabled');
   });
 
   it('should support disabled state on group', () => {
@@ -106,7 +127,8 @@ describe('CheckboxGroup', () => {
 
     expect(checkbox).toBeDisabled();
     expect(label).toHaveAttribute('data-disabled', 'true');
-    expect(label).toHaveClass('disabled');
+    expect(findRoot(checkbox)).toHaveAttribute('data-disabled', 'true');
+    expect(findRoot(checkbox)).toHaveClass('disabled');
   });
 
   it('should support selected state', async () => {
@@ -123,26 +145,30 @@ describe('CheckboxGroup', () => {
     expect(onChange).toHaveBeenLastCalledWith(['a']);
     expect(checkboxes[0]).toBeChecked();
     expect(label).toHaveAttribute('data-selected', 'true');
-    expect(label).toHaveClass('selected');
+    expect(findRoot(checkboxes[0])).toHaveAttribute('data-selected', 'true');
+    expect(findRoot(checkboxes[0])).toHaveClass('selected');
 
     await user.click(checkboxes[0]);
     expect(onChange).toHaveBeenLastCalledWith([]);
     expect(checkboxes[0]).not.toBeChecked();
     expect(label).not.toHaveAttribute('data-selected');
-    expect(label).not.toHaveClass('selected');
+    expect(findRoot(checkboxes[0])).not.toHaveAttribute('data-selected');
+    expect(findRoot(checkboxes[0])).not.toHaveClass('selected');
   });
 
   it('should support read only state', () => {
     let className = ({isReadOnly}) => isReadOnly ? 'readonly' : '';
     let {getByRole, getAllByRole} = renderGroup({isReadOnly: true, className}, {className});
     let group = getByRole('group');
-    let label = getAllByRole('checkbox')[0].closest('label');
+    let checkbox = getAllByRole('checkbox')[0];
+    let label = checkbox.closest('label');
 
     expect(group).toHaveAttribute('data-readonly');
     expect(group).toHaveClass('readonly');
 
     expect(label).toHaveAttribute('data-readonly');
-    expect(label).toHaveClass('readonly');
+    expect(findRoot(checkbox)).toHaveAttribute('data-readonly');
+    expect(findRoot(checkbox)).toHaveClass('readonly');
   });
 
   it('should support validation state', () => {
@@ -156,7 +182,8 @@ describe('CheckboxGroup', () => {
     expect(group).toHaveClass('invalid');
 
     expect(label).toHaveAttribute('data-invalid', 'true');
-    expect(label).toHaveClass('invalid');
+    expect(findRoot(checkbox)).toHaveAttribute('data-invalid', 'true');
+    expect(findRoot(checkbox)).toHaveClass('invalid');
   });
 
   it('should support required state', () => {
@@ -170,14 +197,15 @@ describe('CheckboxGroup', () => {
     expect(group).toHaveClass('required');
 
     expect(label).toHaveAttribute('data-required', 'true');
-    expect(label).toHaveClass('required');
+    expect(findRoot(checkbox)).toHaveAttribute('data-required', 'true');
+    expect(findRoot(checkbox)).toHaveClass('required');
   });
 
   it('supports help text', () => {
     let {getByRole, getAllByRole} = render(
       <CheckboxGroup isInvalid>
         <Label>Test</Label>
-        <Checkbox value="a">A</Checkbox>
+        <Checkbox value="a" description="hello">A</Checkbox>
         <Text slot="description">Description</Text>
         <Text slot="errorMessage">Error</Text>
       </CheckboxGroup>
@@ -189,7 +217,7 @@ describe('CheckboxGroup', () => {
 
     let checkbox = getAllByRole('checkbox')[0];
     expect(checkbox).toHaveAttribute('aria-describedby');
-    expect(checkbox.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Error Description');
+    expect(checkbox.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe(comp === 'CheckboxField' ? 'hello Error Description' : 'Error Description');
   });
 
   it('should support render props', () => {
@@ -232,7 +260,7 @@ describe('CheckboxGroup', () => {
     expect(group).not.toHaveAttribute('aria-describedby');
     expect(group).not.toHaveAttribute('data-invalid');
     for (let checkbox of checkboxes) {
-      expect(checkbox.closest('.react-aria-Checkbox')).not.toHaveAttribute('data-invalid');
+      expect(findRoot(checkbox)).not.toHaveAttribute('data-invalid');
     }
 
     act(() => {getByTestId('form').checkValidity();});
@@ -242,14 +270,14 @@ describe('CheckboxGroup', () => {
     expect(group).toHaveAttribute('data-invalid');
 
     for (let checkbox of checkboxes) {
-      expect(checkbox.closest('.react-aria-Checkbox')).toHaveAttribute('data-invalid');
+      expect(findRoot(checkbox)).toHaveAttribute('data-invalid');
     }
 
     await user.click(checkboxes[0]);
     expect(group).not.toHaveAttribute('aria-describedby');
     expect(group).not.toHaveAttribute('data-invalid');
     for (let checkbox of checkboxes) {
-      expect(checkbox.closest('.react-aria-Checkbox')).not.toHaveAttribute('data-invalid');
+      expect(findRoot(checkbox)).not.toHaveAttribute('data-invalid');
     }
   });
 

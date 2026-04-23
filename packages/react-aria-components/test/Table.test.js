@@ -27,7 +27,7 @@ import {
   useTableOptions
 } from '../src/Table';
 
-import {Checkbox} from '../src/Checkbox';
+import {Checkbox, CheckboxButton, CheckboxField} from '../src/Checkbox';
 import {Collection} from 'react-aria/Collection';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
@@ -102,7 +102,7 @@ function MyTableHeader({columns, children, ...otherProps}) {
   );
 }
 
-function MyRow({id, columns, children, ...otherProps}) {
+function MyRow({id, columns, children, checkboxComponent, ...otherProps}) {
   let {selectionBehavior, allowsDragging} = useTableOptions();
 
   return (
@@ -114,7 +114,7 @@ function MyRow({id, columns, children, ...otherProps}) {
       )}
       {selectionBehavior === 'toggle' && (
         <Cell>
-          <MyCheckbox />
+          <MyCheckbox comp={checkboxComponent} />
         </Cell>
       )}
       <Collection items={columns}>
@@ -124,7 +124,15 @@ function MyRow({id, columns, children, ...otherProps}) {
   );
 }
 
-function MyCheckbox() {
+function MyCheckbox({comp}) {
+  if (comp === 'CheckboxField') {
+    return (
+      <CheckboxField slot="selection">
+        <CheckboxButton />
+      </CheckboxField>
+    );
+  }
+
   return (
     <Checkbox slot="selection">
       {({isIndeterminate}) => (
@@ -391,9 +399,10 @@ describe('Table', () => {
     }
   });
 
-  it('should render checkboxes for selection', async () => {
+  it.each(['Checkbox', 'CheckboxField'])('should render checkboxes for selection using %s', async (comp) => {
     let {getAllByRole} = renderTable({
-      tableProps: {selectionMode: 'multiple'}
+      tableProps: {selectionMode: 'multiple'},
+      rowProps: {checkboxComponent: comp}
     });
 
     for (let row of getAllByRole('row')) {
