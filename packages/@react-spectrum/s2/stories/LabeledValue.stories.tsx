@@ -11,13 +11,20 @@
  */
 
 import {Badge} from '../src/Badge';
+import {Button} from '../src/Button';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
+import {ComboBox, ComboBoxItem} from '../src/ComboBox';
 import {Content, Heading} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
+import {Form} from '../src/Form';
 import {LabeledValue} from '../src/LabeledValue';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
+import {NumberField} from '../src/NumberField';
+import {ReactElement} from 'react';
 import {StatusLight} from '../src/StatusLight';
+import {style} from '../style' with {type: 'macro'};
+import {TextField} from '../src/TextField';
 
 const meta: Meta<typeof LabeledValue> = {
   component: LabeledValue,
@@ -161,3 +168,54 @@ export const WithContextualHelp: Story = {
   },
   name: 'Contextual help'
 };
+
+const FormCustomLayout = (args): ReactElement => {
+  return (
+    <Form {...args}>
+      <div role="group" aria-labelledby="searchLabel" className={style({display: 'flex', alignItems: 'center', gap: 8, font: 'ui'})}>
+        <TextField label="Query" styles={style({width: 144})} placeholder="Enter your name" />
+        <ComboBox label="Search terms" styles={style({width: 144})}>
+          <ComboBoxItem>search term 1</ComboBoxItem>
+          <ComboBoxItem>search term 2</ComboBoxItem>
+        </ComboBox>
+        <NumberField label="Number of results" placeholder="–" defaultValue={50} styles={style({width: 120})} />
+        <LabeledValue label="Name" value="Jane Smith" styles={style({width: 96})} />
+      </div>
+      <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
+    </Form>
+  );
+};
+
+export const FormCustomLayoutExample: StoryObj<typeof FormCustomLayout> = {
+  render: (args) => <FormCustomLayout {...args} />,
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
+
+const FormLayoutExample = (args): ReactElement => {
+  return (
+    <Form {...args}>
+      <TextField label="Query" styles={style({width: 144})} placeholder="Enter your name" />
+      <ComboBox label="Search terms" styles={style({width: 144})}>
+        <ComboBoxItem>search term 1</ComboBoxItem>
+        <ComboBoxItem>search term 2</ComboBoxItem>
+      </ComboBox>
+      <NumberField label="Number of results" placeholder="–" defaultValue={50} styles={style({width: 120})} />
+      <LabeledValue label="Name" value="Jane Smith" styles={style({width: 96})} />
+      <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
+    </Form>
+  );
+};
+
+export const FormLayout: StoryObj<typeof FormLayoutExample> = {
+  render: (args) => <FormLayoutExample {...args} />,
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
+

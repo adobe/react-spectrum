@@ -12,7 +12,7 @@
 
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, Time, toCalendarDateTime, today, ZonedDateTime} from '@internationalized/date';
 import {ContextValue} from 'react-aria-components/slots';
-import {controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, isValidElement, ReactElement, ReactNode} from 'react';
 import {DOMProps, DOMRef, DOMRefValue, RangeValue, SpectrumLabelableProps} from '@react-types/shared';
 import {FieldLabel} from './Field';
@@ -90,9 +90,17 @@ export type LabeledValueProps<T> = LabeledValueTypeProps<T> & LabeledValueBasePr
 
 export const LabeledValueContext = createContext<ContextValue<Partial<LabeledValueProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
+const fieldStyles = style({
+  ...field()
+}, getAllowedOverrides());
+
 const valueStyles = style({
   ...fieldInput(),
+  minHeight: {
+    isInForm: controlSize()
+  },
   display: 'flex',
+  alignItems: 'center',
   font: controlFont()
 });
 
@@ -152,7 +160,7 @@ export const LabeledValue = /*#__PURE__*/ forwardRef(function LabeledValue<T ext
       {...filterDOMProps(otherProps)}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + style(field(), getAllowedOverrides())({
+      className={UNSAFE_className + fieldStyles({
         isInForm: !!formContext,
         labelPosition,
         size
@@ -165,7 +173,7 @@ export const LabeledValue = /*#__PURE__*/ forwardRef(function LabeledValue<T ext
         contextualHelp={contextualHelp}>
         {label}
       </FieldLabel>
-      <span className={valueStyles({size, labelPosition})}>
+      <span className={valueStyles({isInForm: !!formContext, size, labelPosition})}>
         {children}
       </span>
     </div>
