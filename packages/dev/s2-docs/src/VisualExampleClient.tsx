@@ -772,37 +772,33 @@ function NumberFormatControl({control, value, onChange}: ControlProps) {
 
 function ListFormatControl({control, value, onChange}: ControlProps) {
   return (
-    <>
-      <Picker
-        label={control.name}
-        contextualHelp={<PropContextualHelp control={control} />}
-        value={value?.type ?? 'conjunction'}
-        onChange={type => onChange({...value, type})}
-        styles={style({width: controlWidth})}>
-        <PickerItem id="conjunction">Conjunction</PickerItem>
-        <PickerItem id="disjunction">Disjunction</PickerItem>
-        <PickerItem id="unit">Unit</PickerItem>
-      </Picker>
-    </>
+    <Picker
+      label={control.name}
+      contextualHelp={<PropContextualHelp control={control} />}
+      value={value?.type ?? 'conjunction'}
+      onChange={type => onChange({...value, type})}
+      styles={style({width: controlWidth})}>
+      <PickerItem id="conjunction">Conjunction</PickerItem>
+      <PickerItem id="disjunction">Disjunction</PickerItem>
+      <PickerItem id="unit">Unit</PickerItem>
+    </Picker>
   );
 }
 
 function DateTimeFormatControl({control, value, onChange}: ControlProps) {
-  let clear = (v: any) => v === 'none' ? undefined : v;
+  let clear = (v: any) => v === 'short' ? undefined : v;
   return (
-    <>
-      <Picker
-        label={control.name}
-        contextualHelp={<PropContextualHelp control={control} />}
-        value={value?.dateStyle ?? 'none'}
-        onChange={dateStyle => onChange({...value, dateStyle: clear(dateStyle)})}
-        styles={style({width: controlWidth})}>
-        <PickerItem id="short">Short</PickerItem>
-        <PickerItem id="medium">Medium</PickerItem>
-        <PickerItem id="long">Long</PickerItem>
-        <PickerItem id="full">Full</PickerItem>
-      </Picker>
-    </>
+    <Picker
+      label={control.name}
+      contextualHelp={<PropContextualHelp control={control} />}
+      value={value?.dateStyle ?? 'short'}
+      onChange={dateStyle => onChange({...value, dateStyle: clear(dateStyle)})}
+      styles={style({width: controlWidth})}>
+      <PickerItem id="short">Short</PickerItem>
+      <PickerItem id="medium">Medium</PickerItem>
+      <PickerItem id="long">Long</PickerItem>
+      <PickerItem id="full">Full</PickerItem>
+    </Picker>
   );
 }
 

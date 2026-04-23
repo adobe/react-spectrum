@@ -72,7 +72,7 @@ export interface LabeledValueStyleProps {
    */
   size?: 'S' | 'M' | 'L' | 'XL'
 }
-export interface LabeledValueBaseProps extends DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, DOMProps {
+export interface LabeledValueBaseProps extends DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'> {
   /** The content to display as the label. */
   label: ReactNode
 }
