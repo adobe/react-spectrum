@@ -1,6 +1,6 @@
 {
   "name": "@react-types/tooltip",
-  "version": "3.5.2",
+  "version": "3.6.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -9,9 +9,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/tooltip": "^3.9.2",
-    "@react-spectrum/tooltip": "^3.8.2",
-    "@react-stately/tooltip": "^3.5.11"
+    "@react-aria/tooltip": "^3.10.0",
+    "@react-spectrum/tooltip": "^3.9.0",
+    "@react-stately/tooltip": "^3.6.0"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0",

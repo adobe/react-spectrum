@@ -1,6 +1,6 @@
 {
   "name": "@react-types/slider",
-  "version": "3.8.4",
+  "version": "3.9.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -9,9 +9,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/slider": "^3.8.5",
-    "@react-spectrum/slider": "^3.8.5",
-    "@react-stately/slider": "^3.7.5"
+    "@react-aria/slider": "^3.9.0",
+    "@react-spectrum/slider": "^3.9.0",
+    "@react-stately/slider": "^3.8.0"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0",

@@ -1152,6 +1152,73 @@ export const OnLoadMoreTableVirtualizedResizeWrapperStory: StoryObj<typeof OnLoa
   }
 };
 
+const VirtualizedTableLoaderWidthTest = (args: {delay: number}): JSX.Element => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+        await new Promise(resolve => setTimeout(resolve, args.delay));
+      }
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <div style={{resize: 'horizontal', overflow: 'auto', width: 600, height: 400, minWidth: 300, border: '1px solid gray', padding: 8}}>
+      <Virtualizer
+        layout={TableLayout}
+        layoutOptions={{
+          rowHeight: 25,
+          headingHeight: 25,
+          loaderHeight: 30
+        }}>
+        <Table aria-label="Star Wars characters" style={{width: '100%', height: '100%', overflow: 'auto'}}>
+          <TableHeader>
+            <Column id="name" isRowHeader>Name</Column>
+            <Column id="height">Height</Column>
+            <Column id="mass">Mass</Column>
+            <Column id="birth_year">Birth Year</Column>
+          </TableHeader>
+          <TableBody renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading'})}>
+            <Collection items={list.items}>
+              {(item) => (
+                <Row id={item.name}>
+                  <Cell>{item.name}</Cell>
+                  <Cell>{item.height}</Cell>
+                  <Cell>{item.mass}</Cell>
+                  <Cell>{item.birth_year}</Cell>
+                </Row>
+              )}
+            </Collection>
+            <TableLoadMoreItem
+              onLoadMore={list.loadMore}
+              isLoading={list.loadingState === 'loadingMore'}
+              style={{height: 30, width: '100%'}}>
+              <LoadingSpinner style={{height: 20, position: 'unset'}} />
+            </TableLoadMoreItem>
+          </TableBody>
+        </Table>
+      </Virtualizer>
+    </div>
+  );
+};
+
+export const VirtualizedTableLoaderWidthTestStory: StoryObj<typeof VirtualizedTableLoaderWidthTest> = {
+  render: VirtualizedTableLoaderWidthTest,
+  name: 'virtualized table, loader dynamic width',
+  args: {delay: 10000},
+  parameters: {
+    description: {
+      data: 'resizing the table should also resize the loader element width'
+    }
+  }
+};
+
 interface Launch {
   id: number,
   mission_name: string,

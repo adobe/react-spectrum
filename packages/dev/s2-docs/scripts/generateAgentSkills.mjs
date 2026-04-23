@@ -75,6 +75,31 @@ const SKILLS = {
   }
 };
 
+const CUSTOM_SKILL_CONTENT = {
+  'react-spectrum-s2': {
+    skillNotesMarkdown:
+      'If the requirements do not clearly specify which React Spectrum component to use, consult the [Component Decision Tree](references/guides/component-decision-tree.md) before choosing a component.',
+    embeddedMarkdownPaths: [
+      path.join(
+        REPO_ROOT,
+        'packages/dev/s2-docs/skills/react-spectrum-s2/implementation-guidance.md'
+      )
+    ],
+    guideEntries: [
+      {
+        title: 'Component Decision Tree',
+        path: 'component-decision-tree.md',
+        sourcePath: path.join(
+          REPO_ROOT,
+          'packages/dev/s2-docs/skills/react-spectrum-s2/component-decision-tree.md'
+        ),
+        description:
+          'How to choose the right S2 component when requirements do not name one explicitly.'
+      }
+    ]
+  }
+};
+
 /**
  * Ensure markdown docs are generated
  */
@@ -98,6 +123,45 @@ function getWellKnownRootForLibrary(sourceDir) {
     WELL_KNOWN_DIR,
     WELL_KNOWN_SKILLS_DIR
   );
+}
+
+function getCustomSkillContent(skillName) {
+  return CUSTOM_SKILL_CONTENT[skillName] ?? null;
+}
+
+function renderCustomMarkdown(markdownPath, replacements = {}) {
+  let content = fs.readFileSync(markdownPath, 'utf8');
+  for (const [token, value] of Object.entries(replacements)) {
+    content = content.replaceAll(token, value);
+  }
+  return content.trim();
+}
+
+function readCustomEmbeddedMarkdown(skillName, replacements = {}) {
+  const customContent = getCustomSkillContent(skillName);
+  if (!customContent?.embeddedMarkdownPaths?.length) {
+    return '';
+  }
+
+  return customContent.embeddedMarkdownPaths
+    .flatMap((markdownPath) => {
+      if (!fs.existsSync(markdownPath)) {
+        console.warn(`Custom skill content not found at ${markdownPath}`);
+        return [];
+      }
+
+      return [renderCustomMarkdown(markdownPath, replacements)];
+    })
+    .filter(Boolean)
+    .join('\n\n');
+}
+
+function getCustomGuideEntries(skillName) {
+  return getCustomSkillContent(skillName)?.guideEntries ?? [];
+}
+
+function getCustomSkillNotesMarkdown(skillName) {
+  return getCustomSkillContent(skillName)?.skillNotesMarkdown ?? '';
 }
 
 /**
@@ -316,34 +380,48 @@ metadata:
  * Generate the SKILL.md content
  */
 function generateDocsSkillMd(skillConfig, categories, isS2) {
+  const customGuideEntries = getCustomGuideEntries(skillConfig.name);
+  const customSkillNotesMarkdown = getCustomSkillNotesMarkdown(skillConfig.name);
+  const embeddedCustomMarkdown = readCustomEmbeddedMarkdown(skillConfig.name, {
+    '{{guidesBase}}': 'references/guides/',
+    '{{componentsBase}}': 'references/components/'
+  });
+
   let content = generateFrontmatter(skillConfig);
 
   if (isS2) {
     content += `# React Spectrum S2 (Spectrum 2)
 
 React Spectrum S2 is Adobe's implementation of the Spectrum 2 design system in React. It provides a collection of accessible, adaptive, and high-quality UI components.
-
-## Documentation Structure
-
-The \`references/\` directory contains detailed documentation organized as follows:
-
 `;
   } else {
     content += `# React Aria Components
 
 React Aria Components is a library of unstyled, accessible UI components that you can style with any CSS solution. Built on top of React Aria hooks, it provides the accessibility and behavior without prescribing any visual design.
+`;
+  }
 
-## Documentation Structure
+  if (customSkillNotesMarkdown) {
+    content += `\n${customSkillNotesMarkdown}\n`;
+  }
+
+  if (embeddedCustomMarkdown) {
+    content += `\n${embeddedCustomMarkdown}\n\n`;
+  }
+
+  content += `## Documentation Structure
 
 The \`references/\` directory contains detailed documentation organized as follows:
 
 `;
-  }
 
   // Add documentation sections
-  if (categories.guides.length > 0) {
+  if (customGuideEntries.length > 0 || categories.guides.length > 0) {
     content += `### Guides
 `;
+    for (const entry of customGuideEntries) {
+      content += `- [${entry.title}](references/guides/${entry.path})${entry.description ? `: ${entry.description}` : ''}\n`;
+    }
     for (const entry of categories.guides) {
       content += `- [${entry.title}](references/guides/${entry.path})${entry.description ? `: ${entry.description}` : ''}\n`;
     }
@@ -524,10 +602,11 @@ Use these when you need more component-by-component or API-level detail:
 function copyDocsDocumentation(skillConfig, categories, skillDir) {
   const refsDir = path.join(skillDir, 'references');
   const sourceDir = path.join(MARKDOWN_DOCS_DIST, skillConfig.sourceDir);
+  const customGuideEntries = getCustomGuideEntries(skillConfig.name);
 
   // Create subdirectories only if they have content
   const subdirs = [
-    {name: 'guides', entries: categories.guides},
+    {name: 'guides', entries: [...customGuideEntries, ...categories.guides]},
     {name: 'components', entries: categories.components},
     {name: 'interactions', entries: categories.interactions},
     {name: 'utilities', entries: categories.utilities},
@@ -559,6 +638,28 @@ function copyDocsDocumentation(skillConfig, categories, skillDir) {
   };
 
   // Copy guides
+  const customContent = getCustomSkillContent(skillConfig.name);
+  for (const entry of customGuideEntries) {
+    const sourcePath =
+      entry.sourcePath ||
+      customContent?.embeddedMarkdownPaths?.find((markdownPath) =>
+        markdownPath.endsWith(entry.path)
+      );
+    if (!sourcePath || !fs.existsSync(sourcePath)) {
+      continue;
+    }
+
+    const targetPath = path.join(refsDir, 'guides', entry.path);
+    fs.mkdirSync(path.dirname(targetPath), {recursive: true});
+    fs.writeFileSync(
+      targetPath,
+      renderCustomMarkdown(sourcePath, {
+        '{{guidesBase}}': '',
+        '{{componentsBase}}': '../components/'
+      }) + '\n'
+    );
+  }
+
   for (const entry of categories.guides) {
     copyFile(entry, 'guides');
   }

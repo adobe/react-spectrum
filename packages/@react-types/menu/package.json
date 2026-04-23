@@ -1,6 +1,6 @@
 {
   "name": "@react-types/menu",
-  "version": "3.10.7",
+  "version": "3.11.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -9,9 +9,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/menu": "^3.21.0",
-    "@react-spectrum/menu": "^3.22.11",
-    "@react-stately/menu": "^3.9.11"
+    "@react-aria/menu": "^3.22.0",
+    "@react-spectrum/menu": "^3.23.0",
+    "@react-stately/menu": "^3.10.0"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0",

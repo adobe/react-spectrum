@@ -268,7 +268,7 @@ export let listboxItem = style({
     default: 'default',
     isLink: 'pointer'
   },
-  transition: 'default'
+  transition: 'transform'
 }, getAllowedOverrides());
 
 export let listboxHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
@@ -432,7 +432,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   );
 }
 
-export interface ComboBoxSectionProps<T extends object> extends Omit<ListBoxSectionProps<T>, keyof GlobalDOMAttributes> {}
+export interface ComboBoxSectionProps<T extends object> extends Omit<ListBoxSectionProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes> {}
 export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>): ReactNode {
   let {size} = useContext(InternalComboboxContext);
   return (

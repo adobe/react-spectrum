@@ -1,6 +1,6 @@
 {
   "name": "@react-types/progress",
-  "version": "3.5.18",
+  "version": "3.6.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -9,8 +9,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/progress": "^3.4.30",
-    "@react-spectrum/progress": "^3.7.23"
+    "@react-aria/progress": "^3.5.0",
+    "@react-spectrum/progress": "^3.8.0"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0",

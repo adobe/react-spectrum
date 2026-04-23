@@ -1,6 +1,6 @@
 {
   "name": "@react-types/switch",
-  "version": "3.5.17",
+  "version": "3.6.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -9,8 +9,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/switch": "^3.7.11",
-    "@react-spectrum/switch": "^3.6.9"
+    "@react-aria/switch": "^3.8.0",
+    "@react-spectrum/switch": "^3.7.0"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0",
