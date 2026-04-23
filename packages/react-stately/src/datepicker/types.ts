@@ -56,7 +56,14 @@ interface DateFieldBase<T extends DateValue> extends InputBase, Validation<Mappe
   shouldForceLeadingZeros?: boolean
 }
 
-export interface DateFieldProps<T extends DateValue> extends DateFieldBase<T>, ValueBase<T | null, MappedDateValue<T> | null> {}
+export interface DateFieldProps<T extends DateValue> extends DateFieldBase<T>, ValueBase<T | null, MappedDateValue<T> | null> {
+  /**
+   * Async action that is called when the value changes.
+   * During the action, the field is in a pending state.
+   * Only supported in React 19 and later.
+   */
+  changeAction?: (value: MappedDateValue<T> | null) => void | Promise<void>
+}
 
 interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayTriggerProps {
   /**
@@ -70,7 +77,14 @@ interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayT
   firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
 }
 
-export interface DatePickerProps<T extends DateValue> extends DatePickerBase<T>, ValueBase<T | null, MappedDateValue<T> | null> {}
+export interface DatePickerProps<T extends DateValue> extends DatePickerBase<T>, ValueBase<T | null, MappedDateValue<T> | null> {
+  /**
+   * Async action that is called when the value changes.
+   * During the action, the field is in a pending state.
+   * Only supported in React 19 and later.
+   */
+  changeAction?: (value: MappedDateValue<T> | null) => void | Promise<void>
+}
 
 export interface DateRangePickerProps<T extends DateValue> extends Omit<DatePickerBase<T>, 'validate'>, Validation<RangeValue<MappedDateValue<T>>>, ValueBase<RangeValue<T> | null, RangeValue<MappedDateValue<T>> | null> {
   /**
@@ -85,7 +99,13 @@ export interface DateRangePickerProps<T extends DateValue> extends Omit<DatePick
   /**
    * The name of the end date input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
-  endName?: string
+  endName?: string,
+  /**
+   * Async action that is called when the value changes.
+   * During the action, the field is in a pending state.
+   * Only supported in React 19 and later.
+   */
+  changeAction?: (value: RangeValue<MappedDateValue<T>> | null) => void | Promise<void>
 }
 
 export interface TimePickerProps<T extends TimeValue> extends InputBase, Validation<MappedTimeValue<T>>, FocusableProps, LabelableProps, HelpTextProps, ValueBase<T | null, MappedTimeValue<T> | null> {
@@ -111,5 +131,11 @@ export interface TimePickerProps<T extends TimeValue> extends InputBase, Validat
   /** The minimum allowed time that a user may select. */
   minValue?: TimeValue | null,
   /** The maximum allowed time that a user may select. */
-  maxValue?: TimeValue | null
+  maxValue?: TimeValue | null,
+  /**
+   * Async action that is called when the value changes.
+   * During the action, the field is in a pending state.
+   * Only supported in React 19 and later.
+   */
+  changeAction?: (value: MappedTimeValue<T> | null) => void | Promise<void>
 }

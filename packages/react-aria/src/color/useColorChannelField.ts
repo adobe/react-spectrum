@@ -26,6 +26,7 @@ export function useColorChannelField(props: AriaColorChannelFieldProps, state: C
   let {locale} = useLocale();
   return useNumberField({
     ...props,
+    changeAction: undefined,
     value: undefined,
     defaultValue: undefined,
     onChange: undefined,

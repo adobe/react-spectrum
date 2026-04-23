@@ -48,6 +48,7 @@ import {HoverEvents} from '@react-types/shared';
 import {Input, InputContext} from './Input';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
+import {ProgressBarContext} from './ProgressBar';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, JSX, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 import {TimeFieldState, useTimeFieldState} from 'react-stately/useTimeFieldState';
@@ -81,7 +82,12 @@ export interface DateFieldRenderProps {
    * Whether the date field is required.
    * @selector [data-required]
    */
-  isRequired: boolean
+  isRequired: boolean,
+  /**
+   * Whether the date field is currently in a pending state.
+   * @selector [data-pending]
+   */
+  isPending: boolean
 }
 export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
@@ -124,7 +130,7 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
     !props['aria-label'] && !props['aria-labelledby']
   );
   let inputRef = useRef<HTMLInputElement>(null);
-  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useDateField({
+  let {labelProps, fieldProps, inputProps, progressBarProps, descriptionProps, errorMessageProps, ...validation} = useDateField({
     ...removeDataAttributes(props),
     label,
     inputRef,
@@ -137,6 +143,7 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
       state,
       isInvalid: state.isInvalid,
       isDisabled: state.isDisabled,
+      isPending: state.isPending,
       isReadOnly: state.isReadOnly,
       isRequired: props.isRequired || false
     },
@@ -159,7 +166,8 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
             errorMessage: errorMessageProps
           }
         }],
-        [FieldErrorContext, validation]
+        [FieldErrorContext, validation],
+        [ProgressBarContext, progressBarProps]
       ]}>
       <dom.div
         {...DOMProps}
@@ -168,6 +176,7 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
         slot={props.slot || undefined}
         data-invalid={state.isInvalid || undefined}
         data-disabled={state.isDisabled || undefined}
+        data-pending={state.isPending || undefined}
         data-readonly={state.isReadOnly || undefined}
         data-required={props.isRequired || undefined} />
       <HiddenDateInput
@@ -199,7 +208,7 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
     !props['aria-label'] && !props['aria-labelledby']
   );
   let inputRef = useRef<HTMLInputElement>(null);
-  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTimeField({
+  let {labelProps, fieldProps, inputProps, progressBarProps, descriptionProps, errorMessageProps, ...validation} = useTimeField({
     ...removeDataAttributes(props),
     label,
     inputRef,
@@ -212,6 +221,7 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
       state,
       isInvalid: state.isInvalid,
       isDisabled: state.isDisabled,
+      isPending: state.isPending,
       isReadOnly: state.isReadOnly,
       isRequired: props.isRequired || false
     },
@@ -234,7 +244,8 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
             errorMessage: errorMessageProps
           }
         }],
-        [FieldErrorContext, validation]
+        [FieldErrorContext, validation],
+        [ProgressBarContext, progressBarProps]
       ]}>
       <dom.div
         {...DOMProps}
@@ -243,6 +254,7 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
         slot={props.slot || undefined}
         data-invalid={state.isInvalid || undefined}
         data-disabled={state.isDisabled || undefined}
+        data-pending={state.isPending || undefined}
         data-readonly={state.isReadOnly || undefined}
         data-required={props.isRequired || undefined} />
     </Provider>

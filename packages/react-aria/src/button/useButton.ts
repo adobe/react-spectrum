@@ -18,19 +18,37 @@ import {
   InputHTMLAttributes,
   JSXElementConstructor,
   ReactNode,
-  RefObject
+  RefObject,
+  useEffect,
+  useRef
 } from 'react';
-import {AriaLabelingProps, DOMAttributes, FocusableDOMProps, FocusableProps, PressEvents} from '@react-types/shared';
+import {announce} from '../live-announcer/LiveAnnouncer';
+import {AriaLabelingProps, DOMAttributes, DOMProps, FocusableDOMProps, FocusableProps, PressEvents} from '@react-types/shared';
+import {chain} from '../utils/chain';
 import {filterDOMProps} from '../utils/filterDOMProps';
+import {getActiveElement} from '../utils/shadowdom/DOMFunctions';
+import {getOwnerDocument} from '../utils/domHelpers';
 import {mergeProps} from '../utils/mergeProps';
+import {useAction} from 'react-stately/private/utils/useAction';
 import {useFocusable} from '../interactions/useFocusable';
+import {useId} from '../utils/useId';
 import {usePress} from '../interactions/usePress';
 
 export interface ButtonProps extends PressEvents, FocusableProps {
   /** Whether the button is disabled. */
   isDisabled?: boolean,
   /** The content to display in the button. */
-  children?: ReactNode
+  children?: ReactNode,
+  /**
+   * Async action that is called when the button is pressed. During the action, the button is in a pending state.
+   * Only supported in React 19 and later.
+   */
+  action?: () => Promise<void> | void,
+  /**
+   * Whether the button is in a pending state. This disables press and hover events
+   * while retaining focusability, and announces the pending state to screen readers.
+   */
+  isPending?: boolean
 }
 
 export interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
@@ -107,8 +125,14 @@ export interface AriaButtonOptions<E extends ElementType> extends Omit<AriaButto
 export interface ButtonAria<T> {
   /** Props for the button element. */
   buttonProps: T,
+  /** Props for the progress bar element shown when the button is pending. */
+  progressBarProps: DOMProps,
   /** Whether the button is currently pressed. */
-  isPressed: boolean
+  isPressed: boolean,
+  /** Whether the button action is pending. */
+  isPending: boolean,
+  /** The last error that occurred within the button's action. */
+  actionError: unknown | null
 }
 
 // Order with overrides is important: 'button' should be default
@@ -168,11 +192,14 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
     };
   }
 
+  let [onAction, isActionPending, actionError] = useAction(props.action);
+  let isPending = props.isPending || isActionPending;
+
   let {pressProps, isPressed} = usePress({
     onPressStart,
     onPressEnd,
     onPressChange,
-    onPress,
+    onPress: chain(onPress, onAction),
     onPressUp,
     onClick,
     isDisabled,
@@ -184,17 +211,74 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
   if (allowFocusWhenDisabled) {
     focusableProps.tabIndex = isDisabled ? -1 : focusableProps.tabIndex;
   }
-  let buttonProps = mergeProps(focusableProps, pressProps, filterDOMProps(props, {labelable: true}));
+  let buttonProps = mergeProps(additionalProps, focusableProps, pressProps, filterDOMProps(props, {labelable: true}));
+  buttonProps = useDisableInteractions(buttonProps, isPending);
+
+  let buttonId = useId(buttonProps.id);
+  let progressId = useId();
+
+  let ariaLabelledby = buttonProps['aria-labelledby'];
+  if (isPending) {
+    // aria-labelledby wins over aria-label
+    // https://www.w3.org/TR/accname-1.2/#computation-steps
+    if (ariaLabelledby) {
+      ariaLabelledby = `${ariaLabelledby} ${progressId}`;
+    } else if (buttonProps['aria-label']) {
+      ariaLabelledby = `${buttonId} ${progressId}`;
+    }
+  }
+
+  let wasPending = useRef(isPending);
+  useEffect(() => {
+    if (!ref.current) {
+      return;
+    }
+
+    let message = {'aria-labelledby': ariaLabelledby || buttonId};
+    let isFocused = getActiveElement(getOwnerDocument(ref.current)) === ref.current;
+    if (!wasPending.current && isFocused && isPending) {
+      announce(message, 'assertive');
+    } else if (wasPending.current && isFocused && !isPending) {
+      announce(message, 'assertive');
+    }
+    wasPending.current = isPending;
+  }, [isPending, ref, ariaLabelledby, buttonId]);
 
   return {
     isPressed, // Used to indicate press state for visual
-    buttonProps: mergeProps(additionalProps, buttonProps, {
+    buttonProps: mergeProps(buttonProps, {
+      id: buttonId,
       'aria-haspopup': props['aria-haspopup'],
       'aria-expanded': props['aria-expanded'],
       'aria-controls': props['aria-controls'],
       'aria-pressed': props['aria-pressed'],
       'aria-current': props['aria-current'],
-      'aria-disabled': props['aria-disabled']
-    })
+      'aria-disabled': isPending ? 'true' : props['aria-disabled'],
+      'aria-labelledby': ariaLabelledby,
+      // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
+      // We do this by changing the button's type to button.
+      type: buttonProps.type === 'submit' && isPending ? 'button' : buttonProps.type
+    }),
+    progressBarProps: {
+      id: progressId
+    },
+    isPending,
+    actionError
   };
+}
+
+// Events to preserve when isPending is true (for tooltips and other overlays)
+const PRESERVED_EVENT_PATTERN = /Focus|Blur|Hover|Pointer(Enter|Leave|Over|Out)|Mouse(Enter|Leave|Over|Out)/;
+
+function useDisableInteractions(props, isPending) {
+  if (isPending) {
+    for (const key in props) {
+      if (key.startsWith('on') && !PRESERVED_EVENT_PATTERN.test(key)) {
+        props[key] = undefined;
+      }
+    }
+    props.href = undefined;
+    props.target = undefined;
+  }
+  return props;
 }

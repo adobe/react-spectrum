@@ -10,44 +10,49 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusableProps, HelpTextProps, InputBase, LabelableProps, TextInputBase, Validation, ValueBase} from '@react-types/shared';
-import {useControlledState} from '../utils/useControlledState';
-
-// Copied here to avoid depending on @react-aria/textfield from stately.
-export interface TextFieldProps<T = HTMLInputElement> extends InputBase, Validation<string>, HelpTextProps, FocusableProps<T>, TextInputBase, ValueBase<string>, LabelableProps {}
+import {TextFieldProps, TextFieldState, useTextFieldState} from '../textfield/useTextFieldState';
+import {useAction} from '../utils/useAction';
 
 export interface SearchFieldProps extends TextFieldProps {
   /** Handler that is called when the SearchField is submitted. */
   onSubmit?: (value: string) => void,
 
   /** Handler that is called when the clear button is pressed. */
-  onClear?: () => void
+  onClear?: () => void,
+
+  /** Async action that is called when the SearchField is submitted. */
+  submitAction?: (value: string) => void | Promise<void>,
+  
+  /** Async action that is called when the clear button is pressed. */
+  clearAction?: () => void | Promise<void>
 }
 
-export interface SearchFieldState {
-  /** The current value of the search field. */
-  readonly value: string,
-
-  /** Sets the value of the search field. */
-  setValue(value: string): void
+export interface SearchFieldState extends TextFieldState {
+  /** Clears the search field. */
+  clear(): void,
+  /** Submits the search field. */
+  submit(): void
 }
 
 /**
  * Provides state management for a search field.
  */
 export function useSearchFieldState(props: SearchFieldProps): SearchFieldState {
-  let [value, setValue] = useControlledState(toString(props.value), toString(props.defaultValue) || '', props.onChange);
+  let state = useTextFieldState(props);
+  let [submitAction, isSubmitPending] = useAction(props.submitAction);
+  let [clearAction, isClearPending] = useAction(props.clearAction);
 
   return {
-    value,
-    setValue
+    ...state,
+    clear() {
+      clearAction?.();
+      state.setValue('');
+      props.onClear?.();
+    },
+    submit() {
+      submitAction?.(state.value);
+      props.onSubmit?.(state.value);
+    },
+    isPending: state.isPending || isSubmitPending || isClearPending
   };
-}
-
-function toString(val) {
-  if (val == null) {
-    return;
-  }
-
-  return val.toString();
 }

@@ -10,12 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
+
 import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {CalendarDate} from '@internationalized/date';
 import {DateField, DateFieldContext, DateInput, DateSegment} from '../src/DateField';
 import {FieldError} from '../src/FieldError';
 import {I18nProvider} from 'react-aria/I18nProvider';
 import {Label} from '../src/Label';
+import {ProgressBar} from '../src/ProgressBar';
 import React from 'react';
 import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
@@ -25,6 +29,7 @@ describe('DateField', () => {
 
   let user;
   beforeAll(() => {
+    jest.useFakeTimers();
     user = userEvent.setup({delay: null, pointerMap});
   });
 
@@ -541,4 +546,55 @@ describe('DateField', () => {
     expect(segements[1]).toHaveTextContent('dd');
     expect(segements[2]).toHaveTextContent('yyyy');
   });
+
+  if (parseInt(React.version, 10) >= 19) {
+    describe('changeAction', () => {  
+      function DateFieldChangeActionExample() {
+        return (
+          <DateField
+            defaultValue={new CalendarDate(2024, 6, 15)}
+            changeAction={async () => {
+              await new Promise(resolve => setTimeout(resolve, 500));
+            }}>
+            {({isPending}) => (
+              <>
+                <Label>Date</Label>
+                <DateInput>
+                  {segment => <DateSegment segment={segment} />}
+                </DateInput>
+                {isPending ? <ProgressBar aria-label="Loading" isIndeterminate /> : null}
+              </>
+            )}
+          </DateField>
+        );
+      }
+  
+      it('shows ProgressBar while pending', async () => {
+        let {getByRole, queryByRole} = render(<DateFieldChangeActionExample />);
+        let group = getByRole('group');
+        let field = group.closest('.react-aria-DateField');
+        let segments = within(group).getAllByRole('spinbutton');
+
+        await user.click(segments[0]);
+        await user.keyboard('{ArrowUp}');
+  
+        expect(field).toHaveAttribute('data-pending');
+        expect(segments[0]).toHaveTextContent('7');
+
+        let progressbar = getByRole('progressbar');
+        expect(progressbar).toBeInTheDocument();
+        expect(group.getAttribute('aria-describedby')).toContain(progressbar.id);
+  
+        expect(announce).toHaveBeenCalledWith({'aria-labelledby': progressbar.id}, 'assertive');
+  
+        await act(async () => {
+          jest.runAllTimers();
+        });
+  
+        expect(field).not.toHaveAttribute('data-pending');
+        expect(queryByRole('progressbar')).not.toBeInTheDocument();
+        expect(announce).toHaveBeenCalledWith({'aria-labelledby': group.id}, 'assertive');
+      });
+    });
+  }
 });

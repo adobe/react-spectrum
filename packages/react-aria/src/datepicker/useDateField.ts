@@ -15,11 +15,11 @@ import {createFocusManager, FocusManager} from '../focus/FocusScope';
 import {DateFieldProps, DateFieldState, DateValue} from 'react-stately/useDateFieldState';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {InputHTMLAttributes, useEffect, useMemo, useRef} from 'react';
+// @ts-ignore
 import intlMessages from '../../intl/datepicker/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {TimeFieldState, TimePickerProps, TimeValue} from 'react-stately/useTimeFieldState';
 import {useDatePickerGroup} from './useDatePickerGroup';
-// @ts-ignore
 import {useDescription} from '../utils/useDescription';
 import {useField} from '../label/useField';
 import {useFocusWithin} from '../interactions/useFocusWithin';
@@ -50,7 +50,9 @@ export interface DateFieldAria extends ValidationResult {
   /** Props for the description element, if any. */
   descriptionProps: DOMAttributes,
   /** Props for the error message element, if any. */
-  errorMessageProps: DOMAttributes
+  errorMessageProps: DOMAttributes,
+  /** Props for the progress bar element shown when the action is pending. */
+  progressBarProps: DOMProps
 }
 
 // Data that is passed between useDateField and useDateSegment.
@@ -76,9 +78,10 @@ export const focusManagerSymbol: string = '__reactAriaDateFieldFocusManager';
  */
 export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>, state: DateFieldState, ref: RefObject<Element | null>): DateFieldAria {
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
-  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps, progressBarProps} = useField({
     ...props,
     labelElementType: 'span',
+    isPending: state.isPending,
     isInvalid,
     errorMessage: props.errorMessage || validationErrors
   });
@@ -201,6 +204,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     inputProps,
     descriptionProps,
     errorMessageProps,
+    progressBarProps,
     isInvalid,
     validationErrors,
     validationDetails
@@ -220,7 +224,7 @@ export interface AriaTimeFieldOptions<T extends TimeValue> extends AriaTimeField
  * Each part of a time value is displayed in an individually editable segment.
  */
 export function useTimeField<T extends TimeValue>(props: AriaTimeFieldOptions<T>, state: TimeFieldState, ref: RefObject<Element | null>): DateFieldAria {
-  let res = useDateField(props, state, ref);
+  let res = useDateField({...props, changeAction: undefined}, state, ref);
   res.inputProps.value = state.timeValue?.toString() || '';
   return res;
 }

@@ -17,7 +17,7 @@ import {FieldOptions, FormatterOptions, getFormatOptions, getPlaceholderTime, ge
 import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
 import {OverlayTriggerState, useOverlayTriggerState} from '../overlays/useOverlayTriggerState';
 import {RangeValue, ValidationState} from '@react-types/shared';
-import {useControlledState} from '../utils/useControlledState';
+import {useControlledStateAction} from '../utils/useControlledStateAction';
 import {useMemo, useState} from 'react';
 
 export interface DateRangePickerStateOptions<T extends DateValue = DateValue> extends DateRangePickerProps<T> {
@@ -34,6 +34,8 @@ export interface DateRangePickerState extends OverlayTriggerState, FormValidatio
   value: RangeValue<DateValue | null>,
   /** The default selected date range. */
   defaultValue: DateRange | null,
+  /** Whether the change action is pending. */
+  isPending: boolean,
   /** Sets the selected date range. */
   setValue(value: DateRange | null): void,
   /**
@@ -84,7 +86,7 @@ export interface DateRangePickerState extends OverlayTriggerState, FormValidatio
  */
 export function useDateRangePickerState<T extends DateValue = DateValue>(props: DateRangePickerStateOptions<T>): DateRangePickerState {
   let overlayState = useOverlayTriggerState(props);
-  let [controlledValue, setControlledValue] = useControlledState<DateRange | null, RangeValue<MappedDateValue<T>> | null>(props.value, props.defaultValue || null, props.onChange);
+  let [controlledValue, isPending, setControlledValue] = useControlledStateAction<DateRange | null, RangeValue<MappedDateValue<T>> | null>(props.value, props.defaultValue || null, props.onChange, props.changeAction);
   let [initialValue] = useState(controlledValue);
   let [placeholderValue, setPlaceholderValue] = useState<RangeValue<DateValue | null>>(() => controlledValue || {start: null, end: null});
 
@@ -197,6 +199,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
     ...validation,
     value,
     defaultValue: props.defaultValue ?? initialValue,
+    isPending,
     setValue,
     dateRange,
     timeRange,

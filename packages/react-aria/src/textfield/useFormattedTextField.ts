@@ -19,7 +19,8 @@ import {useEffectEvent} from '../utils/useEffectEvent';
 
 interface FormattedTextFieldState {
   validate: (val: string) => boolean,
-  setInputValue: (val: string) => void
+  setInputValue: (val: string) => void,
+  isPending?: boolean
 }
 
 
@@ -120,7 +121,10 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
     }
     : null;
 
-  let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps, ...validation} = useTextField(props, inputRef);
+  let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps, progressBarProps, ...validation} = useTextField({
+    ...props,
+    isPending: state.isPending
+  }, inputRef);
 
   let compositionStartState = useRef<{value: string, selectionStart: number | null, selectionEnd: number | null} | null>(null);
   return {
@@ -159,6 +163,7 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
     labelProps,
     descriptionProps,
     errorMessageProps,
+    progressBarProps,
     ...validation
   };
 }

@@ -15,7 +15,7 @@ import {DatePickerProps, DateValue, Granularity, MappedDateValue, TimeValue} fro
 import {FieldOptions, FormatterOptions, getFormatOptions, getPlaceholderTime, getValidationResult, useDefaultProps} from './utils';
 import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
 import {OverlayTriggerState, useOverlayTriggerState} from '../overlays/useOverlayTriggerState';
-import {useControlledState} from '../utils/useControlledState';
+import {useControlledStateAction} from '../utils/useControlledStateAction';
 import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
@@ -32,6 +32,8 @@ export interface DatePickerState extends OverlayTriggerState, FormValidationStat
   value: DateValue | null,
   /** The default date. */
   defaultValue: DateValue | null,
+  /** Whether the change action is pending. */
+  isPending: boolean,
   /** Sets the selected date. */
   setValue(value: DateValue | null): void,
   /**
@@ -75,7 +77,7 @@ export interface DatePickerState extends OverlayTriggerState, FormValidationStat
  */
 export function useDatePickerState<T extends DateValue = DateValue>(props: DatePickerStateOptions<T>): DatePickerState {
   let overlayState = useOverlayTriggerState(props);
-  let [value, setValue] = useControlledState<DateValue | null, MappedDateValue<T> | null>(props.value, props.defaultValue || null, props.onChange);
+  let [value, isPending, setValue] = useControlledStateAction<DateValue | null, MappedDateValue<T> | null>(props.value, props.defaultValue || null, props.onChange, props.changeAction);
   let [initialValue] = useState(value);
 
   let v = (value || props.placeholderValue || null);
@@ -165,6 +167,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
     ...validation,
     value,
     defaultValue: props.defaultValue ?? initialValue,
+    isPending,
     setValue,
     dateValue: selectedDate,
     timeValue: selectedTime,

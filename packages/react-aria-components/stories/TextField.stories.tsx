@@ -18,10 +18,11 @@ import {Form} from '../src/Form';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {Meta, StoryFn} from '@storybook/react';
-import React from 'react';
+import React, {useState} from 'react';
 import styles from '../example/index.css';
 import {TextField} from '../src/TextField';
 import './styles.css';
+import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
 
 export default {
   title: 'React Aria Components/TextField',
@@ -67,3 +68,46 @@ TextFieldSubmitExample.story = {
     }
   }
 };
+
+export const ReactAction: TextFieldStory = () => {
+  let [search, setSearch] = useState('');
+  return (
+    <div>
+      <TextField
+        data-testid="textfield-example"
+        changeAction={async value => {
+          if (value === 'error') {
+            throw new Error('Error in action');
+          } else {
+            setSearch(value);
+          }
+        }}>
+        {({isPending}) => (
+          <div style={{display: 'flex', flexDirection: 'column', position: 'relative'}}>
+            <Label>Name</Label>
+            <Input />
+            {isPending && <ProgressCircle aria-label="Loading" isIndeterminate style={{position: 'absolute', right: 0}} />}
+            <FieldError style={{color: 'red'}} />
+          </div>
+        )}
+      </TextField>
+      <React.Suspense fallback="Loading">
+        <Results search={search} />
+      </React.Suspense>
+    </div>
+  );
+};
+
+let cache = new Map();
+
+function Results({search}) {
+  let promise = cache.get(search);
+  if (!promise) {
+    cache.clear();
+    promise = new Promise(resolve => setTimeout(resolve, 2000));
+    cache.set(search, promise);
+  }
+
+  React.use(promise);
+  return <div>Results for: {search}</div>;
+}

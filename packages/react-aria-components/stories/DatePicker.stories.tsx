@@ -16,6 +16,8 @@ import {Calendar, CalendarCell, CalendarGrid, RangeCalendar} from '../src/Calend
 import clsx from 'clsx';
 import {DateInput, DateSegment} from '../src/DateField';
 import {DatePicker, DateRangePicker} from '../src/DatePicker';
+import {DateRange} from 'react-stately/useDateRangePickerState';
+import {DateValue, parseAbsoluteToLocal} from '@internationalized/date';
 import {Dialog} from '../src/Dialog';
 import {Form} from '../src/Form';
 import {Group} from '../src/Group';
@@ -23,9 +25,9 @@ import {Heading} from '../src/Heading';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {Meta, StoryFn} from '@storybook/react';
-import {parseAbsoluteToLocal} from '@internationalized/date';
 import {Popover} from '../src/Popover';
-import React from 'react';
+import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
+import React, {useState} from 'react';
 import styles from '../example/index.css';
 import {TextField} from '../src/TextField';
 import './styles.css';
@@ -256,3 +258,134 @@ export const DatePickerAutofill = (props) => (
     <Button type="submit">Submit</Button>
   </Form>
 );
+
+let datePickerActionCache = new Map<string, Promise<void>>();
+
+function DatePickerActionResults({dateKey}: {dateKey: string}) {
+  let promise = datePickerActionCache.get(dateKey);
+  if (!promise) {
+    datePickerActionCache.clear();
+    promise = new Promise<void>(resolve => setTimeout(resolve, 2000));
+    datePickerActionCache.set(dateKey, promise);
+  }
+  React.use(promise);
+  return <div>Results for: {dateKey || '(empty)'}</div>;
+}
+
+export const ReactAction: DatePickerStory = (args) => {
+  let [value, setValue] = useState<DateValue | null>(() => parseAbsoluteToLocal('2024-01-01T00:00:00Z'));
+  let dateKey = value?.toString() ?? '';
+  return (
+    <div>
+      <DatePicker {...args} value={value} changeAction={async v => setValue(v)}>
+        {({isPending}) => (
+          <>
+            <Label style={{display: 'block'}}>Date</Label>
+            <Group style={{display: 'inline-flex'}}>
+              <DateInput className={styles.field}>
+                {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+              </DateInput>
+              <Button>🗓</Button>
+              {isPending && <ProgressCircle aria-label="Loading" isIndeterminate style={{display: 'inline-block'}} />}
+            </Group>
+            <Popover
+              placement="bottom start"
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 20
+              }}>
+              <Dialog>
+                <Calendar style={{width: 220}}>
+                  <div style={{display: 'flex', alignItems: 'center'}}>
+                    <Button slot="previous">&lt;</Button>
+                    <Heading style={{flex: 1, textAlign: 'center'}} />
+                    <Button slot="next">&gt;</Button>
+                  </div>
+                  <CalendarGrid style={{width: '100%'}}>
+                    {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+                  </CalendarGrid>
+                </Calendar>
+              </Dialog>
+            </Popover>
+          </>
+        )}
+      </DatePicker>
+      <React.Suspense fallback="Loading">
+        <DatePickerActionResults dateKey={dateKey} />
+      </React.Suspense>
+    </div>
+  );
+};
+
+let dateRangePickerActionCache = new Map<string, Promise<void>>();
+
+function DateRangePickerActionResults({rangeKey}: {rangeKey: string}) {
+  let promise = dateRangePickerActionCache.get(rangeKey);
+  if (!promise) {
+    dateRangePickerActionCache.clear();
+    promise = new Promise<void>(resolve => setTimeout(resolve, 2000));
+    dateRangePickerActionCache.set(rangeKey, promise);
+  }
+  React.use(promise);
+  return <div>Results for: {rangeKey || '(empty)'}</div>;
+}
+
+export const RangeReactAction: DateRangePickerStory = (args) => {
+  let [value, setValue] = useState < DateRange | null>(() => ({
+    start: parseAbsoluteToLocal('2024-01-01T00:00:00Z'),
+    end: parseAbsoluteToLocal('2024-01-07T00:00:00Z')
+  }));
+  let rangeKey = value?.start != null && value?.end != null
+    ? `${value.start.toString()}–${value.end.toString()}`
+    : '';
+  return (
+    <div>
+      <DateRangePicker {...args} value={value} changeAction={async v => setValue(v)}>
+        {({isPending}) => (
+          <>
+            <Label style={{display: 'block'}}>Date range</Label>
+            <Group style={{display: 'inline-flex'}}>
+              <div className={styles.field}>
+                <DateInput data-testid="date-range-picker-date-input" slot="start" style={{display: 'inline'}}>
+                  {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+                </DateInput>
+                <span aria-hidden="true" style={{padding: '0 4px'}}>–</span>
+                <DateInput slot="end" style={{display: 'inline'}}>
+                  {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+                </DateInput>
+              </div>
+              <Button>🗓</Button>
+              {isPending && <ProgressCircle aria-label="Loading" isIndeterminate style={{display: 'inline-block'}} />}
+            </Group>
+            <Popover
+              placement="bottom start"
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 20
+              }}>
+              <Dialog>
+                <RangeCalendar style={{width: 220}}>
+                  <div style={{display: 'flex', alignItems: 'center'}}>
+                    <Button slot="previous">&lt;</Button>
+                    <Heading style={{flex: 1, textAlign: 'center'}} />
+                    <Button slot="next">&gt;</Button>
+                  </div>
+                  <CalendarGrid style={{width: '100%'}}>
+                    {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+                  </CalendarGrid>
+                </RangeCalendar>
+              </Dialog>
+            </Popover>
+          </>
+        )}
+      </DateRangePicker>
+      <React.Suspense fallback="Loading">
+        <DateRangePickerActionResults rangeKey={rangeKey} />
+      </React.Suspense>
+    </div>
+  );
+};

@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
-
 import {AriaButtonProps, useButton} from 'react-aria/useButton';
 import {
   ClassNameOrFunction,
@@ -24,14 +22,14 @@ import {
 } from './utils';
 import {createHideableComponent} from 'react-aria/private/collections/Hidden';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {FormPendingContext} from './Form';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {HoverEvents} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';
 import {ProgressBarContext} from './ProgressBar';
-import React, {createContext, ForwardedRef, useEffect, useRef} from 'react';
+import React, {createContext, ForwardedRef, useContext} from 'react';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
-import {useId} from 'react-aria/useId';
 
 export interface ButtonRenderProps {
   /**
@@ -60,10 +58,15 @@ export interface ButtonRenderProps {
    */
   isDisabled: boolean,
   /**
-   * Whether the button is currently in a pending state.
+   * Whether the button's action is pending.
    * @selector [data-pending]
    */
-  isPending: boolean
+  isPending: boolean,
+  /**
+   * The last error that occurred within the button's action.
+   * @selector [data-action-error]
+   */
+  actionError: unknown | null
 }
 
 export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps, 'button'>, Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'> {
@@ -71,12 +74,7 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Button'
    */
-  className?: ClassNameOrFunction<ButtonRenderProps>,
-  /**
-   * Whether the button is in a pending state. This disables press and hover events
-   * while retaining focusability, and announces the pending state to screen readers.
-   */
-  isPending?: boolean
+  className?: ClassNameOrFunction<ButtonRenderProps>
 }
 
 interface ButtonContextValue extends ButtonProps {
@@ -91,9 +89,14 @@ export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTML
 export const Button = /*#__PURE__*/ createHideableComponent(function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
   let ctx = props as ButtonContextValue;
-  let {isPending} = ctx;
-  let {buttonProps, isPressed} = useButton(props, ref);
-  buttonProps = useDisableInteractions(buttonProps, isPending);
+
+  // Ideally we would use React's `useFormStatus` for this but it is buggy.
+  // https://github.com/facebook/react/issues/30368
+  let isFormPending = useContext(FormPendingContext);
+  let {buttonProps, progressBarProps, isPressed, isPending, actionError} = useButton({
+    ...props,
+    isPending: props.isPending || (props.type === 'submit' && isFormPending)
+  }, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover({
     ...props,
@@ -105,7 +108,8 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
     isFocused,
     isFocusVisible,
     isDisabled: props.isDisabled || false,
-    isPending: isPending ?? false
+    isPending,
+    actionError
   };
 
   let renderProps = useRenderProps({
@@ -114,70 +118,24 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
     defaultClassName: 'react-aria-Button'
   });
 
-  let buttonId = useId(buttonProps.id);
-  let progressId = useId();
-
-  let ariaLabelledby = buttonProps['aria-labelledby'];
-  if (isPending) {
-    // aria-labelledby wins over aria-label
-    // https://www.w3.org/TR/accname-1.2/#computation-steps
-    if (ariaLabelledby) {
-      ariaLabelledby = `${ariaLabelledby} ${progressId}`;
-    } else if (buttonProps['aria-label']) {
-      ariaLabelledby = `${buttonId} ${progressId}`;
-    }
-  }
-
-  let wasPending = useRef(isPending);
-  useEffect(() => {
-    let message = {'aria-labelledby': ariaLabelledby || buttonId};
-    if (!wasPending.current && isFocused && isPending) {
-      announce(message, 'assertive');
-    } else if (wasPending.current && isFocused && !isPending) {
-      announce(message, 'assertive');
-    }
-    wasPending.current = isPending;
-  }, [isPending, isFocused, ariaLabelledby, buttonId]);
-
   let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.onClick;
 
   return (
     <dom.button
       {...mergeProps(DOMProps, renderProps, buttonProps, focusProps, hoverProps)}
-      // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
-      // We do this by changing the button's type to button.
-      type={buttonProps.type === 'submit' && isPending ? 'button' : buttonProps.type}
-      id={buttonId}
       ref={ref}
-      aria-labelledby={ariaLabelledby}
       slot={props.slot || undefined}
-      aria-disabled={isPending ? 'true' : buttonProps['aria-disabled']}
       data-disabled={props.isDisabled || undefined}
       data-pressed={renderValues.isPressed || undefined}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-pending={isPending || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
-      <ProgressBarContext.Provider value={{id: progressId}}>
+      data-focus-visible={isFocusVisible || undefined}
+      data-action-error={actionError || undefined}>
+      <ProgressBarContext.Provider value={progressBarProps}>
         {renderProps.children}
       </ProgressBarContext.Provider>
     </dom.button>
   );
 });
-
-// Events to preserve when isPending is true (for tooltips and other overlays)
-const PRESERVED_EVENT_PATTERN = /Focus|Blur|Hover|Pointer(Enter|Leave|Over|Out)|Mouse(Enter|Leave|Over|Out)/;
-
-function useDisableInteractions(props, isPending) {
-  if (isPending) {
-    for (const key in props) {
-      if (key.startsWith('on') && !PRESERVED_EVENT_PATTERN.test(key)) {
-        props[key] = undefined;
-      }
-    }
-    props.href = undefined;
-    props.target = undefined;
-  }
-  return props;
-}

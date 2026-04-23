@@ -17,7 +17,7 @@ import {AriaSearchFieldProps, useSearchField} from '../searchfield/useSearchFiel
 import {ComboBoxState, MenuTriggerAction} from 'react-stately/useComboBoxState';
 import {InputHTMLAttributes} from 'react';
 import {mergeProps} from '../utils/mergeProps';
-import {SearchFieldProps} from 'react-stately/useSearchFieldState';
+import {SearchFieldProps, useSearchFieldState} from 'react-stately/useSearchFieldState';
 import {useComboBox} from '../combobox/useComboBox';
 
 export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<SearchFieldProps, 'onChange' | 'onSubmit' | 'defaultValue' | 'value'> {
@@ -107,11 +107,9 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
     ...otherProps
   } = props;
 
-  let {inputProps, clearButtonProps} = useSearchField({
-    ...otherProps,
+  let searchState = useSearchFieldState({
     value: state.inputValue,
     onChange: state.setInputValue,
-    autoComplete: 'off',
     onClear: () => {
       state.setInputValue('');
       if (onClear) {
@@ -123,13 +121,15 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
       if (state.selectionManager.focusedKey === null) {
         onSubmit(value, null);
       }
-    },
+    }
+  });
+
+  let {inputProps, clearButtonProps} = useSearchField({
+    ...otherProps,
+    autoComplete: 'off',
     onKeyDown,
     onKeyUp
-  }, {
-    value: state.inputValue,
-    setValue: state.setInputValue
-  }, inputRef);
+  }, searchState, inputRef);
 
 
   let {listBoxProps, labelProps, inputProps: comboBoxInputProps, ...validation} = useComboBox(

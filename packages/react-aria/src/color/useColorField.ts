@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AriaValidationProps, DOMAttributes, FocusableDOMProps, TextInputDOMProps, ValidationResult} from '@react-types/shared';
+import {AriaLabelingProps, AriaValidationProps, DOMAttributes, DOMProps, FocusableDOMProps, TextInputDOMProps, ValidationResult} from '@react-types/shared';
 import {ColorFieldProps, ColorFieldState} from 'react-stately/useColorFieldState';
 import {
   InputHTMLAttributes,
@@ -41,7 +41,9 @@ export interface ColorFieldAria extends ValidationResult {
   /** Props for the text field's description element, if any. */
   descriptionProps: DOMAttributes,
   /** Props for the text field's error message element, if any. */
-  errorMessageProps: DOMAttributes
+  errorMessageProps: DOMAttributes,
+  /** Props for the progress bar element shown when the action is pending. */
+  progressBarProps: DOMProps
 }
 
 /**
@@ -113,6 +115,7 @@ export function useColorField(
 
   let {inputProps, ...otherProps} = useFormattedTextField({
     ...props,
+    changeAction: undefined,
     id: inputId,
     value: inputValue,
     // Intentionally invalid value that will be ignored by onChange during form reset

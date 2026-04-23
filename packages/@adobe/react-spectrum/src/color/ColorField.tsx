@@ -75,6 +75,7 @@ function ColorChannelField(props: ColorChannelFieldProps) {
     value,          // eslint-disable-line @typescript-eslint/no-unused-vars
     defaultValue,   // eslint-disable-line @typescript-eslint/no-unused-vars
     onChange,       // eslint-disable-line @typescript-eslint/no-unused-vars
+    changeAction,   // eslint-disable-line @typescript-eslint/no-unused-vars
     validate,       // eslint-disable-line @typescript-eslint/no-unused-vars
     forwardedRef,
     ...otherProps
@@ -111,6 +112,7 @@ function HexColorField(props: HexColorFieldProps) {
     value,          // eslint-disable-line @typescript-eslint/no-unused-vars
     defaultValue,   // eslint-disable-line @typescript-eslint/no-unused-vars
     onChange,       // eslint-disable-line @typescript-eslint/no-unused-vars
+    changeAction,   // eslint-disable-line @typescript-eslint/no-unused-vars
     forwardedRef,
     ...otherProps
   } = props;

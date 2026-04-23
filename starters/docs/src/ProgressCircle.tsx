@@ -2,6 +2,7 @@
 import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import { ProgressBar } from 'react-aria-components/ProgressBar';
 import type { ProgressBarProps } from 'react-aria-components/ProgressBar';
+import './theme.css';
 
 export interface ProgressCircleProps extends ProgressBarProps {
   size?: number
@@ -31,13 +32,13 @@ export function ProgressCircle(props: ProgressCircleProps) {
                 cx="50%"
                 cy="50%"
                 r={radius}
-                stroke="var(--highlight-pressed)"
+                stroke="var(--highlight-pressed, #ccc)"
                 strokeWidth={strokeWidth} />
               <circle
                 cx="50%"
                 cy="50%"
                 r={radius}
-                stroke="var(--highlight-background)"
+                stroke="var(--highlight-background, black)"
                 strokeWidth={strokeWidth}
                 // Normalize the path length to 100 so we can easily set stroke-dashoffset to a percentage.
                 pathLength="100"

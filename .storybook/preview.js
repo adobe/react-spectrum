@@ -28,6 +28,12 @@ export const parameters = {
       ]
     }
   },
+  react: {
+    rootOptions: {
+      // Prevent errors caught in error boundaries from showing Parcel's error overlay.
+      onCaughtError() {}
+    }
+  },
   layout: 'fullscreen',
   // Stops infinite loop memory crash when saving CSF stories https://github.com/storybookjs/storybook/issues/12747#issuecomment-1151803506
   docs: {
