@@ -398,6 +398,7 @@ describe('RadioGroup', () => {
             {({close}) => (
               <>
                 <TestRadioGroup radioProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''}} />
+                <Text slot="description">Alert description</Text>
                 <Button onPress={close}>Close</Button>
               </>
             )}
