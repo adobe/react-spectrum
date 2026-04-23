@@ -938,7 +938,7 @@ const emptyStateWrapper = style({
 // we just be fine with the bottom indicator causing a bit of a height increase?
 export function InsertionIndicator({target}: {target: ItemDropTarget}) {
   return (
-    <DropIndicator target={target}>
+    <DropIndicator className="" target={target}>
       {({isDropTarget}) => (
         <div className={insertionIndicatorWrapper}>
           <div className={insertionIndicatorCircle({isDropTarget})} />
@@ -1000,6 +1000,11 @@ export interface ListViewDragPreviewProps {
   children?: ReactNode
 }
 
+/**
+ * The default drag preview rendered by ListView during drag and drop. Pass this to
+ * a your drag hooks `renderDragPreview` to match the default visual. Provide your own
+ * children to customize the drag preview's contents.
+ */
 export function ListViewDragPreview(props: ListViewDragPreviewProps) {
   let {items, overflowMode} = props;
   let isDraggingMultiple = items.length > 1;

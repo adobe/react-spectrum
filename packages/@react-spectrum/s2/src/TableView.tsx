@@ -144,6 +144,25 @@ const tableWrapper = style({
   overflow: 'clip'
 }, getAllowedOverrides({height: true}));
 
+// due to the overflow: clip for actionbar, render the outline via a psudo element so it isn't
+// clipped. 6px radius matches the table's border radius
+const rootDropOutline = css(`
+  &:has([role="grid"][data-drop-target])::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border: 2px solid ${color('blue-800')};
+    border-radius: 6px;
+    z-index: 2;
+  }
+  @media (forced-colors: active) {
+    &:has([role="grid"][data-drop-target])::after {
+      border-color: Highlight;
+    }
+  }
+`);
+
 const dropTargetBackground = colorMix('gray-25', 'blue-900', 10);
 const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boolean, isDragAndDrop?: boolean}>({
   width: 'full',
@@ -223,7 +242,7 @@ let dragPreviewCard = style<{scale?: 'medium' | 'large'}>({
   borderColor: 'blue-900'
 });
 
-export interface TableDragPreviewProps {
+export interface TableViewDragPreviewProps {
   /** The currently dragged items, sourced from renderDragPreview. */
   items: DragItem[],
   /** The overflow mode to be applied on the drag preview. */
@@ -235,7 +254,12 @@ export interface TableDragPreviewProps {
   children?: ReactNode
 }
 
-export function TableViewDragPreview(props: TableDragPreviewProps) {
+/**
+ * The default drag preview rendered by TableView during drag and drop. Pass this to
+ * a your drag hooks `renderDragPreview` to match the default visual. Provide your own
+ * children to customize the drag preview's contents.
+ */
+export function TableViewDragPreview(props: TableViewDragPreviewProps) {
   let {items, overflowMode} = props;
   let isDraggingMultiple = items.length > 1;
   let itemLabel = items[0]?.['text/plain'] ?? '';
@@ -441,7 +465,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
       onResize={propsOnResize}
       onResizeEnd={onResizeEnd}
       onResizeStart={onResizeStart}
-      className={(UNSAFE_className || '') + tableWrapper(null, styles)}
+      className={(UNSAFE_className || '') + tableWrapper(null, styles) + ' ' + rootDropOutline}
       style={UNSAFE_style}>
       <Virtualizer
         layout={S2TableLayout}
@@ -1226,9 +1250,6 @@ const dragButton = style({
   whiteSpace: {
     default: 'nowrap',
     ':is([role="row"][data-focus-visible-within] *)': 'normal'
-  },
-  display: {
-    ':is([role="row"][data-focus-visible-within] *)': 'flex'
   }
 });
 

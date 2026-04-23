@@ -86,7 +86,7 @@ export {ToastContainer, ToastQueue} from '../src/Toast';
 export {ToggleButton, ToggleButtonContext} from '../src/ToggleButton';
 export {ToggleButtonGroup, ToggleButtonGroupContext} from '../src/ToggleButtonGroup';
 export {Tooltip, TooltipTrigger} from '../src/Tooltip';
-export {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem} from '../src/TreeView';
+export {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem, TreeViewDragPreview} from '../src/TreeView';
 
 export {pressScale} from '../src/pressScale';
 
@@ -164,7 +164,7 @@ export type {SkeletonProps} from '../src/Skeleton';
 export type {SkeletonCollectionProps} from '../src/SkeletonCollection';
 export type {StatusLightProps} from '../src/StatusLight';
 export type {SwitchProps} from '../src/Switch';
-export type {TableViewProps, TableHeaderProps, TableBodyProps, RowProps, CellProps, ColumnProps, TableDragPreviewProps} from '../src/TableView';
+export type {TableViewProps, TableHeaderProps, TableBodyProps, RowProps, CellProps, ColumnProps, TableViewDragPreviewProps} from '../src/TableView';
 export type {TabsProps, TabProps, TabListProps, TabPanelProps} from '../src/Tabs';
 export type {TagGroupProps, TagProps} from '../src/TagGroup';
 export type {TextFieldProps, TextAreaProps, TextFieldRef} from '../src/TextField';
@@ -173,7 +173,7 @@ export type {ToastOptions, ToastContainerProps} from '../src/Toast';
 export type {ToggleButtonProps} from '../src/ToggleButton';
 export type {ToggleButtonGroupProps} from '../src/ToggleButtonGroup';
 export type {TooltipProps} from '../src/Tooltip';
-export type {TreeViewProps, TreeViewItemProps, TreeViewItemContentProps, TreeViewLoadMoreItemProps} from '../src/TreeView';
+export type {TreeViewProps, TreeViewItemProps, TreeViewItemContentProps, TreeViewLoadMoreItemProps, TreeViewDragPreviewProps} from '../src/TreeView';
 export type {AutocompleteProps} from 'react-aria-components/Autocomplete';
 export type {DateValue, DateRange} from 'react-aria-components/RangeCalendar';
 export type {TimeValue} from 'react-aria-components/TimeField';

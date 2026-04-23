@@ -226,7 +226,7 @@ const dragPreviewCard = style<{scale?: 'medium' | 'large'}>({
   borderColor: 'blue-900'
 });
 
-export interface TreeDragPreviewProps {
+export interface TreeViewDragPreviewProps {
   /** The currently dragged items, sourced from renderDragPreview. */
   items: DragItem[],
   /**
@@ -236,7 +236,12 @@ export interface TreeDragPreviewProps {
   children?: ReactNode
 }
 
-export function TreeViewDragPreview(props: TreeDragPreviewProps) {
+/**
+ * The default drag preview rendered by TreeView during drag and drop. Pass this to
+ * a your drag hooks `renderDragPreview` to match the default visual. Provide your own
+ * children to customize the drag preview's contents.
+ */
+export function TreeViewDragPreview(props: TreeViewDragPreviewProps) {
   let {items} = props;
   let isDraggingMultiple = items.length > 1;
   let itemLabel = items[0]?.['text/plain'] ?? '';
@@ -290,7 +295,7 @@ function TreeInsertionIndicator({target}: {target: ItemDropTarget}) {
   }
 
   return (
-    <DropIndicator target={target}>
+    <DropIndicator className="" target={target}>
       {({isDropTarget}) => (
         <div className={insertionIndicatorWrapper({isRoot: level === 0})}>
           <div className={insertionIndicatorCircle({isDropTarget})} />
