@@ -72,9 +72,9 @@ interface InputContextValue extends InputProps {
 
 export const InputContext = createContext<ContextValue<InputContextValue, HTMLInputElement>>({});
 
-let filterHoverProps = (props: InputProps) => {
+let filterHoverProps = (props: InputContextValue) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
+  let {onHoverStart, onHoverChange, onHoverEnd, isHovered, ...otherProps} = props;
   return otherProps;
 };
 

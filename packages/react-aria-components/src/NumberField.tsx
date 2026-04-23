@@ -35,7 +35,7 @@ import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {NumberFieldState, useNumberFieldState} from 'react-stately/useNumberFieldState';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useRef, useState} from 'react';
 import {TextContext} from './Text';
 import {useLocale} from 'react-aria/I18nProvider';
 
@@ -110,6 +110,8 @@ export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     validationBehavior
   }, state, inputRef);
 
+  let [isLabelHovered, setLabelHovered] = useState(false);
+
   let renderProps = useRenderProps({
     ...props,
     values: {
@@ -130,8 +132,8 @@ export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       values={[
         [NumberFieldStateContext, state],
         [GroupContext, groupProps],
-        [InputContext, {...inputProps, ref: inputRef}],
-        [LabelContext, {...labelProps, ref: labelRef}],
+        [InputContext, {...inputProps, ref: inputRef, isHovered: isLabelHovered}],
+        [LabelContext, {...labelProps, ref: labelRef, onPointerEnter: () => setLabelHovered(true), onPointerLeave: () => setLabelHovered(false)}],
         [ButtonContext, {
           slots: {
             increment: incrementButtonProps,
