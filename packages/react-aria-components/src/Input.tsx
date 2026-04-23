@@ -66,7 +66,11 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
  placeholder?: string
 }
 
-export const InputContext = createContext<ContextValue<InputProps, HTMLInputElement>>({});
+interface InputContextValue extends InputProps {
+  isHovered?: boolean
+}
+
+export const InputContext = createContext<ContextValue<InputContextValue, HTMLInputElement>>({});
 
 let filterHoverProps = (props: InputProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -79,11 +83,13 @@ let filterHoverProps = (props: InputProps) => {
  */
 export const Input = /*#__PURE__*/ createHideableComponent(function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, InputContext);
+  let ctx = props as InputContextValue;
 
-  let {hoverProps, isHovered} = useHover({
+  let {hoverProps, isHovered: selfHovered} = useHover({
     ...props,
     isDisabled: props.disabled
   });
+  let isHovered = selfHovered || ctx.isHovered || false;
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
     isTextInput: true,
     autoFocus: props.autoFocus
