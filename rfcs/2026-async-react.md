@@ -19,13 +19,15 @@ In this RFC, we propose adding support for React's action prop pattern to React 
 
 ## Motivation
 
-At React Conf 2025, the React core team [presented](https://www.youtube.com/watch?v=B_2E96URooA) their vision of "Async React". Using features introduced in React 19 such as [useTransition](https://react.dev/reference/react/useTransition), [useOptimistic](https://react.dev/reference/react/useOptimistic), and [Suspense](https://react.dev/reference/react/Suspense) for data fetching, React can now coordinate loading states across an entire app, and reduce the amount of code needed to handle data loading edge cases. This improves the user experience by making loading/saving states in-line with the component that triggered the update.
+At React Conf 2025, the React core team [presented](https://www.youtube.com/watch?v=B_2E96URooA) their vision of "Async React". Using features introduced in React 19 such as [useTransition](https://react.dev/reference/react/useTransition), [useOptimistic](https://react.dev/reference/react/useOptimistic), and [Suspense](https://react.dev/reference/react/Suspense) for data fetching, React can now coordinate pending states across an entire app, and reduce the amount of code needed to handle data fetching edge cases. This improves the user experience by making loading/saving states in-line with the component that triggered the update.
 
-While these React hooks are usable today, they require some boilerplate to set up. This can be simplified by introducing the [action prop](https://react.dev/reference/react/useTransition#exposing-action-props-from-components) pattern. By convention, action props are automatically wrapped in React's `startTransition` function and may include a pending state within the component that triggered them. This way the application doesn't need to handle these states themselves since it's handled by the component library.
+While these React features are usable today, they require some boilerplate to set up. This can be simplified by introducing the [action prop](https://react.dev/reference/react/useTransition#exposing-action-props-from-components) pattern. By convention, action props are automatically wrapped in React's `startTransition` function and may include a pending state within the component that triggered them. This way the application doesn't need to handle these states themselves since it's handled by the component library.
 
 ## Detailed Design
 
-This RFC proposes adding support for action props directly to React Aria Components. While it's possible to introduce these at a higher level (e.g. in a design system), pending states have accessibility requirements to ensure clear announcements for screen readers, focus management, etc. In addition, multiple design systems can benefit from handling pending states at a lower level layer.
+This RFC proposes two new features: built-in action props, and improved support for data fetching with Suspense. While it's possible to introduce these at a higher level (e.g. in a design system), pending and error states have accessibility requirements to ensure clear announcements for screen readers, focus management, etc. In addition, multiple design systems can benefit from handling pending states at a lower level layer.
+
+### Action props
 
 Action props will correspond to events, either using the `action` name for simple actions (e.g. Button) or the `Action` suffix (e.g. `changeAction`). These accept an `async` function, which is called within React's `startTransition` function. Each component supporting actions will expose an `isPending` render prop and `data-pending` DOM attribute. This will be used to render a `<ProgressBar>`, associated with the element via ARIA attributes. We will also handle announcing the state change via an ARIA live region.
 
@@ -35,7 +37,7 @@ To implement this, we can create a new hook that wraps `useControlledState` and 
 
 We will also catch errors that are thrown by actions and expose them as an `actionError` render prop, or via the `FieldError` component, enabling [in-line contextual error UIs](https://x.com/devongovett/status/1989788456751697958). This will help reduce over-reliance on toasts as a catch-all way of handling errors in applications by making inline errors just as easy to implement.
 
-All together, this significantly simplifies the implementation of loading states and error handling for component libraries and applications. Simply render a `<ProgressBar>` when `isPending` is true, add an async function as an action prop, and React Aria handles the rest.
+All together, this significantly simplifies the implementation of pending states and error handling for component libraries and applications. Simply render a `<ProgressBar>` when `isPending` is true, add an async function as an action prop, and React Aria handles the rest.
 
 Here's a potential list of components that could support actions:
 
@@ -57,12 +59,13 @@ Here's a potential list of components that could support actions:
 * Select - `changeAction`
 * Slider - `changeAction`
 * Switch - `changeAction` (only when using `SwitchField`, introduced in [#9877](https://github.com/adobe/react-spectrum/pull/9877))
+* Table – `sortAction` (progress should show within the sorted column header)
 * Tabs - `selectionAction`
 * TextField - `changeAction`
 * TimeField - `changeAction`
 * ToggleButton - `changeAction`
 
-### Examples
+Below are some examples of some common patterns.
 
 #### Pending button
 
@@ -211,12 +214,6 @@ function App() {
 
 When an error is thrown in a form's `submitAction`, it will be available via the `actionError` render prop. This can be displayed to the user by rendering an `<Alert>`, which will be focused and announced by screen readers. For field-level errors (e.g. server validation), a special error object compatible with [Standard Schema](https://standardschema.dev/schema) could be supported, allowing these errors to be automatically propagated to the correct fields (as we support via the `validationErrors` prop today).
 
-**Note**: This proposes a separate `submitAction` prop rather than overloading the existing `action` prop supported by React. `submitAction` has a few differences from `action`:
-
-* Errors thrown during the action are caught and passed to the `actionError` render prop.
-* The pending state is automatically passed to the form's submit button. Alternatively we could use React's [useFormStatus](https://react.dev/reference/react-dom/hooks/useFormStatus) hook for that, but this has [bugs](https://github.com/facebook/react/issues/30368) at the moment.
-* The form is not automatically reset after the action completes. This is a [controversial](https://github.com/facebook/react/issues/29034) behavior that is often unwanted (e.g. when errors occur). If a reset is desired, it can be triggered manually via `ReactDOM.requestFormReset`.
-
 ```tsx
 function App() {
   return (
@@ -251,6 +248,72 @@ function App() {
   );
 }
 ```
+
+**Note**: This proposes a separate `submitAction` prop rather than overloading the existing `action` prop supported by React. `submitAction` has a few differences from `action`:
+
+* Errors thrown during the action are caught and passed to the `actionError` render prop.
+* The pending state is automatically passed to the form's submit button. Alternatively we could use React's [useFormStatus](https://react.dev/reference/react-dom/hooks/useFormStatus) hook for that, but this has [bugs](https://github.com/facebook/react/issues/30368) at the moment.
+* The form is not automatically reset after the action completes. This is a [controversial](https://github.com/facebook/react/issues/29034) behavior that is often unwanted (e.g. when errors occur). If a reset is desired, it can be triggered manually via `ReactDOM.requestFormReset`.
+
+### Suspense
+
+Today, we support initial loading states in our collection components through `renderEmptyState` with externally controlled state management. Infinite loading is done via collection-specific components, e.g. `ListBoxLoadMoreItem` which trigger their `onLoadMore` callback when scrolled into view. State management is entirely left to external data fetching libraries (e.g. our `useAsyncList` hook).
+
+With Suspense, we can simplify this by building loading states into our collection components. Here's what an infinite loading ListBox could look like:
+
+```tsx
+function Example() {
+  return (
+    <ListBox>
+      <ListBoxSuspense
+        // Initial loading state
+        fallback={<ProgressCircle />}
+        renderError={error => `Error loading data: ${error}`}>
+        <Page url="https://pokeapi.co/api/v2/pokemon" />
+      </ListBoxSuspense>
+    </ListBox>
+  );
+}
+
+function Page({url}) {
+  // Use a Suspense-compatible data fetching library to get a cached promise for the url.
+  let promise = fetchCached(url);
+  let {results, next} = React.use(promise);
+
+  // After the data loads, render the items.
+  return (
+    <>
+      <Collection items={results}>
+        {item => <ListBoxItem>{item.name}</ListBoxItem>}
+      </Collection>
+      {next && (
+        // Lazily render the next page recursively.
+        <ListBoxSuspense
+          loading="lazy"
+          fallback={<ProgressCircle />}
+          renderError={error => `Error loading data: ${error}`}>
+          <Page url={next} />
+        </ListBoxSuspense>
+      )}
+    </>
+  );
+}
+```
+
+In this example, `ListBoxSuspense` works like `React.Suspense` but with a few additions:
+
+* It supports `loading="lazy"`, which renders its children only once it is near the viewport.
+* It includes an error boundary when `renderError` is provided.
+* It wraps its fallback/error in an appropriate element to ensure the accessibility tree is valid (e.g. `<div role="option">`).
+
+TBD whether a separate component per collection is necessary, or if we could somehow ensure the correct accessibility wrapper is added automatically.
+
+There are several benefits to using Suspense for data fetching instead of an external hook:
+
+* It is declarative. External loading and error states must be manually passed around and rendered. Suspense allows design systems and component libraries to build in these states automatically, no matter the data source.
+* It is composable. Different sections within a collection can load from different data sources. Apps can decide whether to make those have a single loading state or separate ones.
+* It will wait for nested parts of the UI to become ready. For example, if each list item contained an image, the list could wait to display the images together instead of popping in one by one.
+* It supports streaming data from the server with React Server Components, enabling fetching to start earlier.
 
 ## Documentation
 

@@ -19,6 +19,7 @@ import {ListBox, ListBoxItem, ListBoxProps, ListBoxSection} from '../src/ListBox
 import {ListBoxLoadMoreItem} from '../src/ListBox';
 import {LoadingSpinner, MyHeader, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {ListBoxSuspense as RACListBoxSuspense} from '../src/ListBox';
 import React, {JSX, useState} from 'react';
 import {Separator} from '../src/Separator';
 import styles from '../example/index.css';
@@ -777,6 +778,107 @@ export const AsyncListBoxVirtualized: StoryFn<typeof AsyncListBoxRender> = (args
     </Virtualizer>
   );
 };
+
+export const ListBoxSuspense: StoryObj<typeof ListBoxSuspenseRender> = {
+  render: (args) => <ListBoxSuspenseRender {...args} />,
+  args: {
+    orientation: 'vertical',
+    delay: 50,
+    error: false
+  },
+  argTypes: {
+    orientation: {
+      control: 'radio',
+      options: ['horizontal', 'vertical']
+    }
+  }
+};
+
+function ListBoxSuspenseRender(args: {delay: number, error: boolean, orientation: 'horizontal' | 'vertical'}): JSX.Element {
+  return (
+    <ListBox
+      {...args}
+      style={{
+        height: args.orientation === 'horizontal' ? 'fit-content' : 400,
+        width: args.orientation === 'horizontal' ? 400 : 200,
+        overflow: 'auto'
+      }}
+      aria-label="async listbox">
+      <RACListBoxSuspense
+        fallback={<LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />}
+        renderError={err => String(err)}>
+        <Page url="https://pokeapi.co/api/v2/pokemon" delay={args.delay} error={args.error} />
+      </RACListBoxSuspense>
+    </ListBox>
+  );
+}
+
+function Page({url, delay, error}: {url: string, delay: number, error: boolean}) {
+  let promise = loadCached<{results: Character[], next: string | null}>(url, delay, error);
+  let {results, next} = React.use(promise);
+
+  return (
+    <>
+      <Collection items={results}>
+        {item => (
+          <MyListBoxItem
+            style={{
+              minHeight: 50,
+              minWidth: 200,
+              backgroundColor: 'lightgrey',
+              border: '1px solid black',
+              boxSizing: 'border-box'
+            }}
+            id={item.name}>
+            {item.name}
+          </MyListBoxItem>
+        )}
+      </Collection>
+      {next && (
+        <RACListBoxSuspense
+          loading="lazy"
+          fallback={
+            <div
+              style={{
+                height: 30,
+                width: '100%',
+                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+              <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
+            </div>
+          }
+          renderError={(err) => String(err)}>
+          <Page url={next} delay={delay} error={error} />
+        </RACListBoxSuspense>
+      )}
+    </>
+  );
+}
+
+const cache = new Map();
+
+async function load(url: string, delay: number, error: boolean) {
+  await new Promise(resolve => setTimeout(resolve, delay));
+  if (error) {
+    throw 'Error loading pokemon!';
+  }
+  let res = await fetch(url);
+  let json = await res.json();
+  return json;
+}
+
+function loadCached<T>(url: string, delay: number, error: boolean): Promise<T>  {
+  let key = `${url}:${error}`;
+  let res = cache.get(key);
+  if (!res) {
+    res = load(url, delay, error);
+    cache.set(key, res);
+  }
+  return res;
+}
 
 export const ListBoxScrollMargin: ListBoxStory = (args) => {
   let items: {id: number, name: string, description: string}[] = [];
