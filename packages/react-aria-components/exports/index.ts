@@ -64,7 +64,7 @@ export {Separator, SeparatorContext} from '../src/Separator';
 export {SharedElementTransition, SharedElement} from '../src/SharedElementTransition';
 export {Slider, SliderOutput, SliderTrack, SliderThumb, SliderContext, SliderOutputContext, SliderTrackContext, SliderStateContext} from '../src/Slider';
 export {Switch, SwitchField, SwitchButton, SwitchContext, SwitchFieldContext} from '../src/Switch';
-export {TableLoadMoreItem, Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, ResizableTableContainer, useTableOptions, TableStateContext, TableColumnResizeStateContext, TableLayout} from '../src/Table';
+export {TableLoadMoreItem, Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, ResizableTableContainer, useTableOptions, TableStateContext, TableColumnResizeStateContext, TableLayout, TableFooter} from '../src/Table';
 export {Tabs, TabList, TabPanels, TabPanel, Tab, TabsContext, TabListStateContext} from '../src/Tabs';
 export {TagGroup, TagGroupContext, TagList, TagListContext, Tag} from '../src/TagGroup';
 export {Text, TextContext} from '../src/Text';
@@ -147,7 +147,7 @@ export type {SharedElementTransitionProps, SharedElementProps, SharedElementRend
 export type {SeparatorProps} from '../src/Separator';
 export type {SliderOutputProps, SliderProps, SliderRenderProps, SliderThumbProps, SliderTrackProps, SliderTrackRenderProps, SliderThumbRenderProps} from '../src/Slider';
 export type {SwitchProps, SwitchRenderProps, SwitchFieldProps, SwitchFieldRenderProps, SwitchButtonProps, SwitchButtonRenderProps} from '../src/Switch';
-export type {TableProps, TableRenderProps, TableHeaderProps, TableBodyProps, TableBodyRenderProps, ResizableTableContainerProps, ColumnProps, ColumnRenderProps, ColumnResizerProps, ColumnResizerRenderProps, RowProps, RowRenderProps, CellProps, CellRenderProps, TableLoadMoreItemProps} from '../src/Table';
+export type {TableProps, TableRenderProps, TableHeaderProps, TableBodyProps, TableBodyRenderProps, ResizableTableContainerProps, ColumnProps, ColumnRenderProps, ColumnResizerProps, ColumnResizerRenderProps, RowProps, RowRenderProps, CellProps, CellRenderProps, TableLoadMoreItemProps, TableFooterProps} from '../src/Table';
 export type {TabListProps, TabListRenderProps, TabPanelsProps, TabPanelProps, TabPanelRenderProps, TabProps, TabsProps, TabRenderProps, TabsRenderProps} from '../src/Tabs';
 export type {TagGroupProps, TagListProps, TagListRenderProps, TagProps, TagRenderProps} from '../src/TagGroup';
 export type {TextAreaProps} from '../src/TextArea';
