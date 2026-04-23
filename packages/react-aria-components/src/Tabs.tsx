@@ -364,7 +364,7 @@ export const TabPanels = /*#__PURE__*/ createHideableComponent(function TabPanel
     }
 
     if (hasTransition.current == null) {
-      hasTransition.current = /width|height|all/.test(window.getComputedStyle(el).transition);
+      hasTransition.current = /width|height|block-size|inline-size|all/.test(window.getComputedStyle(el).transition);
     }
 
     if (hasTransition.current && selectedKeyRef.current != null && selectedKeyRef.current !== state.selectedKey) {

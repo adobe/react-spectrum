@@ -11,7 +11,7 @@ const translate = (x: number, y: number) => `translate(${pos(x)}, ${pos(y)})`;
 export function PressAnimation(): ReactNode {
   let ref = useRef(null);
   let mouseRef = useRef<SVGSVGElement>(null);
-  let checkboxRef = useRef<FocusableRefValue<HTMLLabelElement>>(null);
+  let checkboxRef = useRef<FocusableRefValue<HTMLInputElement>>(null);
   let buttonRef = useRef<FocusableRefValue<HTMLButtonElement>>(null);
   let [isChecked, setChecked] = useState(false);
 

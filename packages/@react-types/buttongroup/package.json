@@ -1,6 +1,6 @@
 {
   "name": "@react-types/buttongroup",
-  "version": "3.3.23",
+  "version": "3.4.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-spectrum/buttongroup": "^3.6.29"
+    "@react-spectrum/buttongroup": "^3.7.0"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0",

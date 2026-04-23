@@ -4,7 +4,9 @@
 .react-aria-RadioGroup {
   display: flex;
   flex-direction: column;
+  max-width: 100%;
   color: var(--text-color);
+  gap: var(--spacing-1);
 
   .radio-items {
     display: flex;
@@ -17,10 +19,24 @@
 
   &[data-orientation=horizontal] .radio-items {
     flex-direction: row;
+    flex-wrap: wrap;
   }
 }
 
-.react-aria-Radio {
+.react-aria-RadioField {
+  display: flex;
+  flex-direction: column;
+
+  [slot=description] {
+    margin-left: calc(var(--spacing) * 6.5)
+  }
+
+  &[data-disabled] [slot=description] {
+    color: var(--text-color-disabled);
+  }
+}
+
+.react-aria-RadioButton {
   display: flex;
   /* This is needed so the HiddenInput is positioned correctly */
   position: relative;
@@ -39,6 +55,7 @@
     position: relative;
     width: calc(var(--spacing) * 4.5);
     height: calc(var(--spacing) * 4.5);
+    flex-shrink: 0;
     box-sizing: border-box;
     border-radius: 50%;
     transition: all 200ms;

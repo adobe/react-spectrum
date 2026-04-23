@@ -197,7 +197,7 @@
   }
 }
 
-:where(.react-aria-TreeItem) .react-aria-Checkbox {
+.react-aria-TreeItem .react-aria-CheckboxButton {
   --checkmark-color: var(--highlight-background);
   &[data-selected] .indicator {
     --indicator-color: var(--highlight-foreground);

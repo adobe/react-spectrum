@@ -1,17 +1,21 @@
 'use client';
-import { Checkbox as AriaCheckbox, type CheckboxProps } from 'react-aria-components/Checkbox';
+import { CheckboxButton, CheckboxField, type CheckboxFieldProps, type ValidationResult } from 'react-aria-components/Checkbox';
 import './Checkbox.css';
+import { Description, FieldError } from './Form';
+import type { ReactNode } from 'react';
 
-export function Checkbox(
-  { children, ...props }: Omit<CheckboxProps, 'children'> & {
-    children?: React.ReactNode;
-  }
-) {
+interface CheckboxProps extends CheckboxFieldProps {
+  children?: ReactNode,
+  description?: string,
+  errorMessage?: string | ((validation: ValidationResult) => string)
+}
+
+export function Checkbox({ children, description, errorMessage, ...props }: CheckboxProps) {
   return (
     (
-      <AriaCheckbox {...props}>
-        {({ isIndeterminate }) => (
-          <>
+      <CheckboxField {...props}>
+        <CheckboxButton>
+          {({ isIndeterminate }) => (<>
             <div className="indicator">
               <svg viewBox="0 0 18 18" aria-hidden="true" key={isIndeterminate ? 'indeterminate' : 'check'}>
                 {isIndeterminate
@@ -20,9 +24,11 @@ export function Checkbox(
               </svg>
             </div>
             {children}
-          </>
-        )}
-      </AriaCheckbox>
+          </>)}
+        </CheckboxButton>
+        {description && <Description>{description}</Description>}
+        <FieldError>{errorMessage}</FieldError>
+      </CheckboxField>
     )
   );
 }

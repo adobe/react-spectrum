@@ -124,7 +124,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       }
     } else if (invalidationContext.sizeChanged || this.columnsChanged(newCollection, this.lastCollection)) {
       let columnLayout = new TableColumnLayout({});
-      this.columnWidths = columnLayout.buildColumnWidths(this.virtualizer!.visibleRect.width - this.padding * 2, newCollection, new Map());
+      this.columnWidths = columnLayout.buildColumnWidths(this.virtualizer!.size.width - this.padding * 2, newCollection, new Map());
       invalidationContext.sizeChanged = true;
     }
 
@@ -345,7 +345,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     // Make sure that the table body gets a height if empty or performing initial load
     let isEmptyOrLoading = collection?.size === 0;
     if (isEmptyOrLoading) {
-      y = this.virtualizer!.visibleRect.maxY;
+      y = this.virtualizer!.size.height;
     } else {
       y -= this.gap;
     }
@@ -359,6 +359,17 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       validRect: layoutInfo.rect.intersection(this.requestedRect),
       node: collection.body
     };
+  }
+
+  protected buildLoader(node: GridNode<T>, x: number, y: number): LayoutNode {
+    let layoutNode = super.buildLoader(node, x, y);
+    let collection = this.virtualizer!.collection as TableCollection<T>;
+
+    // use the same approach as buildRow to get the proper width of the loader, otherwise
+    // we get a outdated loader width
+    layoutNode.layoutInfo.rect.width = this.layoutNodes.get(collection.head?.key ?? 'header')!.layoutInfo.rect.width;
+    layoutNode.validRect = layoutNode.layoutInfo.rect.intersection(this.requestedRect);
+    return layoutNode;
   }
 
   protected buildNode(node: GridNode<T>, x: number, y: number): LayoutNode {

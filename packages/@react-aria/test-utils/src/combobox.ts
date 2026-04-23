@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {act} from './act';
+import {act, waitFor, within} from '@testing-library/react';
 import {ComboBoxTesterOpts, UserOpts} from './types';
-import {waitFor, within} from '@testing-library/dom';
 
 interface ComboBoxOpenOpts {
   /**

@@ -200,7 +200,7 @@ export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> &
     default: 'default',
     isLink: 'pointer'
   },
-  transition: 'default',
+  transition: 'transform',
   forcedColorAdjust: 'none'
 }, getAllowedOverrides());
 
@@ -296,8 +296,7 @@ export let description = style<{size: 'S' | 'M' | 'L' | 'XL', isFocused: boolean
     forcedColors: {
       default: 'inherit'
     }
-  },
-  transition: 'default'
+  }
 });
 
 let value = style({

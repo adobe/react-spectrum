@@ -27,7 +27,7 @@ import {
   useTableOptions
 } from '../src/Table';
 
-import {Checkbox} from '../src/Checkbox';
+import {Checkbox, CheckboxButton, CheckboxField} from '../src/Checkbox';
 import {Collection} from 'react-aria/Collection';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
@@ -102,7 +102,7 @@ function MyTableHeader({columns, children, ...otherProps}) {
   );
 }
 
-function MyRow({id, columns, children, ...otherProps}) {
+function MyRow({id, columns, children, checkboxComponent, ...otherProps}) {
   let {selectionBehavior, allowsDragging} = useTableOptions();
 
   return (
@@ -114,7 +114,7 @@ function MyRow({id, columns, children, ...otherProps}) {
       )}
       {selectionBehavior === 'toggle' && (
         <Cell>
-          <MyCheckbox />
+          <MyCheckbox comp={checkboxComponent} />
         </Cell>
       )}
       <Collection items={columns}>
@@ -124,7 +124,15 @@ function MyRow({id, columns, children, ...otherProps}) {
   );
 }
 
-function MyCheckbox() {
+function MyCheckbox({comp}) {
+  if (comp === 'CheckboxField') {
+    return (
+      <CheckboxField slot="selection">
+        <CheckboxButton />
+      </CheckboxField>
+    );
+  }
+
   return (
     <Checkbox slot="selection">
       {({isIndeterminate}) => (
@@ -391,9 +399,10 @@ describe('Table', () => {
     }
   });
 
-  it('should render checkboxes for selection', async () => {
+  it.each(['Checkbox', 'CheckboxField'])('should render checkboxes for selection using %s', async (comp) => {
     let {getAllByRole} = renderTable({
-      tableProps: {selectionMode: 'multiple'}
+      tableProps: {selectionMode: 'multiple'},
+      rowProps: {checkboxComponent: comp}
     });
 
     for (let row of getAllByRole('row')) {
@@ -1514,6 +1523,30 @@ describe('Table', () => {
       expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
       await user.keyboard('{Escape}');
       act(() => jest.runAllTimers());
+    });
+
+    it('should select dropped item', async () => {
+      const DndTableExample = stories.DndTableExample;
+      let {getAllByRole} = render(<DndTableExample />);
+      let tableTester = testUtilUser.createTester('Table', {root: getAllByRole('grid')[1]});
+      expect(tableTester.rows).toHaveLength(7);
+      expect(tableTester.selectedRows).toHaveLength(0);
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Adobe Photoshop and Adobe XD');
+      await user.tab();
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      // run onInsert promise in DnDTableExample first, otherwise updateFocusAfterDrop doesn't run properly
+      await act(async () => {});
+      act(() => jest.runAllTimers());
+      expect(tableTester.rows).toHaveLength(8);
+      expect(tableTester.selectedRows).toHaveLength(1);
     });
   });
 

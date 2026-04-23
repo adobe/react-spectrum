@@ -141,68 +141,106 @@ const TableExample: TableStory = (args) => {
   });
 
   return (
-    <ResizableTableContainer style={{width: 400, overflow: 'auto'}}>
-      <Table aria-label="Example table" {...args}>
-        <TableHeader>
-          <Column width={30} minWidth={0}><MyCheckbox slot="selection" /></Column>
-          <MyColumn isRowHeader defaultWidth="30%">Name</MyColumn>
-          <MyColumn>Type</MyColumn>
-          <MyColumn>Date Modified</MyColumn>
-          <MyColumn>Actions</MyColumn>
-        </TableHeader>
-        <TableBody items={list.items}>
-          {item => (
-            <Row>
-              <Cell><MyCheckbox slot="selection" /></Cell>
-              <Cell>{item.name}</Cell>
-              <Cell>{item.type}</Cell>
-              <Cell>{item.date}</Cell>
-              <Cell>
-                <DialogTrigger>
-                  <Button>Delete</Button>
-                  <ModalOverlay
-                    style={{
-                      position: 'fixed',
-                      zIndex: 100,
-                      top: 0,
-                      left: 0,
-                      bottom: 0,
-                      right: 0,
-                      background: 'rgba(0, 0, 0, 0.5)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                    <Modal
+    <div style={{width: 600, overflow: 'auto'}}>
+      <ResizableTableContainer>
+        <Table aria-label="Example table" {...args}>
+          <TableHeader>
+            <Column width={30} minWidth={0}><MyCheckbox slot="selection" /></Column>
+            <MyColumn isRowHeader defaultWidth="30%">Name</MyColumn>
+            <MyColumn>Type</MyColumn>
+            <MyColumn>Date Modified</MyColumn>
+            <MyColumn>Actions</MyColumn>
+          </TableHeader>
+          <TableBody items={list.items}>
+            {item => (
+              <Row>
+                <Cell><MyCheckbox slot="selection" /></Cell>
+                <Cell>{item.name}</Cell>
+                <Cell>{item.type}</Cell>
+                <Cell>{item.date}</Cell>
+                <Cell>
+                  <DialogTrigger>
+                    <Button>Delete</Button>
+                    <ModalOverlay
                       style={{
-                        background: 'Canvas',
-                        color: 'CanvasText',
-                        border: '1px solid gray',
-                        padding: 30
+                        position: 'fixed',
+                        zIndex: 100,
+                        top: 0,
+                        left: 0,
+                        bottom: 0,
+                        right: 0,
+                        background: 'rgba(0, 0, 0, 0.5)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
                       }}>
-                      <Dialog>
-                        {({close}) => (<>
-                          <Heading slot="title">Delete item</Heading>
-                          <p>Are you sure?</p>
-                          <Button onPress={close}>Cancel</Button>
-                          <Button
-                            onPress={() => {
-                              close();
-                              list.remove(item.id);
-                            }}>
-                            Delete
-                          </Button>
-                        </>)}
-                      </Dialog>
-                    </Modal>
-                  </ModalOverlay>
-                </DialogTrigger>
-              </Cell>
-            </Row>
-          )}
-        </TableBody>
-      </Table>
-    </ResizableTableContainer>
+                      <Modal
+                        style={{
+                          background: 'Canvas',
+                          color: 'CanvasText',
+                          border: '1px solid gray',
+                          padding: 30
+                        }}>
+                        <Dialog>
+                          {({close}) => (<>
+                            <Heading slot="title">Delete item</Heading>
+                            <p>Are you sure?</p>
+                            <Button onPress={close}>Cancel</Button>
+                            <Button
+                              onPress={() => {
+                                close();
+                                list.remove(item.id);
+                              }}>
+                              Delete
+                            </Button>
+                          </>)}
+                        </Dialog>
+                      </Modal>
+                    </ModalOverlay>
+                  </DialogTrigger>
+                </Cell>
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      </ResizableTableContainer>
+    </div>
+  );
+};
+
+export const FixedColumnWidths: TableStory = (args) => {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+      {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+      {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+      {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+    ]
+  });
+
+  return (
+    <div style={{width: 600, overflow: 'auto'}}>
+      <ResizableTableContainer>
+        <Table aria-label="Example table with fixed column widths" {...args}>
+          <TableHeader>
+            <Column width={30} minWidth={0}><MyCheckbox slot="selection" /></Column>
+            <MyColumn isRowHeader width={100}>Name</MyColumn>
+            <MyColumn width={100}>Type</MyColumn>
+            <MyColumn width={100}>Date Modified</MyColumn>
+          </TableHeader>
+          <TableBody items={list.items}>
+            {item => (
+              <Row>
+                <Cell><MyCheckbox slot="selection" /></Cell>
+                <Cell>{item.name}</Cell>
+                <Cell>{item.type}</Cell>
+                <Cell>{item.date}</Cell>
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      </ResizableTableContainer>
+    </div>
   );
 };
 
@@ -376,7 +414,10 @@ const MyColumn = (props: ColumnProps) => {
               </Menu>
             </Popover>
           </MenuTrigger>
-          <ColumnResizer onHoverStart={action('onHoverStart')} onHoverChange={action('onHoverChange')} onHoverEnd={action('onHoverEnd')}>
+          <ColumnResizer
+            onHoverStart={e => action('onHoverStart')({type: e.type, pointerType: e.pointerType})}
+            onHoverChange={action('onHoverChange')}
+            onHoverEnd={e => action('onHoverEnd')({type: e.type, pointerType: e.pointerType})}>
             ↔
           </ColumnResizer>
         </div>
@@ -1110,6 +1151,73 @@ export const OnLoadMoreTableVirtualizedResizeWrapperStory: StoryObj<typeof OnLoa
   parameters: {
     description: {
       data: 'This table has a ResizableTableContainer wrapper around the Virtualizer. The table itself doesnt have any resizablity, this is simply to test that it still loads/scrolls in this configuration.'
+    }
+  }
+};
+
+const VirtualizedTableLoaderWidthTest = (args: {delay: number}): JSX.Element => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+        await new Promise(resolve => setTimeout(resolve, args.delay));
+      }
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <div style={{resize: 'horizontal', overflow: 'auto', width: 600, height: 400, minWidth: 300, border: '1px solid gray', padding: 8}}>
+      <Virtualizer
+        layout={TableLayout}
+        layoutOptions={{
+          rowHeight: 25,
+          headingHeight: 25,
+          loaderHeight: 30
+        }}>
+        <Table aria-label="Star Wars characters" style={{width: '100%', height: '100%', overflow: 'auto'}}>
+          <TableHeader>
+            <Column id="name" isRowHeader>Name</Column>
+            <Column id="height">Height</Column>
+            <Column id="mass">Mass</Column>
+            <Column id="birth_year">Birth Year</Column>
+          </TableHeader>
+          <TableBody renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading'})}>
+            <Collection items={list.items}>
+              {(item) => (
+                <Row id={item.name}>
+                  <Cell>{item.name}</Cell>
+                  <Cell>{item.height}</Cell>
+                  <Cell>{item.mass}</Cell>
+                  <Cell>{item.birth_year}</Cell>
+                </Row>
+              )}
+            </Collection>
+            <TableLoadMoreItem
+              onLoadMore={list.loadMore}
+              isLoading={list.loadingState === 'loadingMore'}
+              style={{height: 30, width: '100%'}}>
+              <LoadingSpinner style={{height: 20, position: 'unset'}} />
+            </TableLoadMoreItem>
+          </TableBody>
+        </Table>
+      </Virtualizer>
+    </div>
+  );
+};
+
+export const VirtualizedTableLoaderWidthTestStory: StoryObj<typeof VirtualizedTableLoaderWidthTest> = {
+  render: VirtualizedTableLoaderWidthTest,
+  name: 'virtualized table, loader dynamic width',
+  args: {delay: 10000},
+  parameters: {
+    description: {
+      data: 'resizing the table should also resize the loader element width'
     }
   }
 };
