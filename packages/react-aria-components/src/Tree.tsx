@@ -15,7 +15,7 @@ import {AriaTreeItemOptions, useTreeItem} from 'react-aria/useTree';
 import {AriaTreeProps, useTree} from 'react-aria/useTree';
 import {BaseCollection, CollectionNode, LoaderNode, SectionNode} from 'react-aria/private/collections/BaseCollection';
 import {ButtonContext} from './Button';
-import {CheckboxContext} from './Checkbox';
+import {CheckboxContext, CheckboxFieldContext} from './Checkbox';
 import {
   ChildrenOrFunction,
   ClassNameOrFunction,
@@ -783,6 +783,11 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
         <Provider
           values={[
             [CheckboxContext, {
+              slots: {
+                selection: checkboxProps
+              }
+            }],
+            [CheckboxFieldContext, {
               slots: {
                 selection: checkboxProps
               }

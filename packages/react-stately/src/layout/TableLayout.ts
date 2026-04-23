@@ -379,6 +379,17 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     };
   }
 
+  protected buildLoader(node: GridNode<T>, x: number, y: number): LayoutNode {
+    let layoutNode = super.buildLoader(node, x, y);
+    let collection = this.virtualizer!.collection as TableCollection<T>;
+
+    // use the same approach as buildRow to get the proper width of the loader, otherwise
+    // we get a outdated loader width
+    layoutNode.layoutInfo.rect.width = this.layoutNodes.get(collection.head?.key ?? 'header')!.layoutInfo.rect.width;
+    layoutNode.validRect = layoutNode.layoutInfo.rect.intersection(this.requestedRect);
+    return layoutNode;
+  }
+
   protected buildNode(node: GridNode<T>, x: number, y: number): LayoutNode {
     switch (node.type) {
       case 'headerrow':

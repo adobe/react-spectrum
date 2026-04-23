@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/codemods",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "main": "dist/index.js",
   "source": "src/index.ts",
   "bin": "dist/index.js",

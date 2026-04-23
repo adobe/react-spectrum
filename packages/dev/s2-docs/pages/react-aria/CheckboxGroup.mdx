@@ -19,27 +19,51 @@ export const description = 'Allows a user to select multiple items from a list o
 <PageDescription>{docs.exports.CheckboxGroup.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={vanillaDocs.exports.CheckboxGroup} links={vanillaDocs.links} props={['label', 'description', 'isDisabled']} initialProps={{label: 'Favorite sports'}} type="vanilla" files={["starters/docs/src/CheckboxGroup.tsx", "starters/docs/src/CheckboxGroup.css"]}
+  ```tsx render docs={vanillaDocs.exports.CheckboxGroup} links={vanillaDocs.links} props={['label', 'description', 'isDisabled']} initialProps={{label: 'Email Notification Preferences'}} type="vanilla" files={["starters/docs/src/CheckboxGroup.tsx", "starters/docs/src/CheckboxGroup.css"]}
   "use client";
   import {CheckboxGroup} from 'vanilla-starter/CheckboxGroup';
   import {Checkbox} from 'vanilla-starter/Checkbox';
 
   <CheckboxGroup/* PROPS */>
-    <Checkbox value="soccer">Soccer</Checkbox>
-    <Checkbox value="baseball">Baseball</Checkbox>
-    <Checkbox value="basketball">Basketball</Checkbox>
+    <Checkbox
+      value="product"
+      description="Get notified about new features and improvements">
+      Product Updates
+    </Checkbox>
+    <Checkbox
+      value="security"
+      description="Important notifications about your account safety">
+      Security Alerts
+    </Checkbox>
+    <Checkbox
+      value="marketing"
+      description="Receive promotions, offers, and newsletters">
+      Marketing Emails
+    </Checkbox>
   </CheckboxGroup>
   ```
 
-  ```tsx render docs={vanillaDocs.exports.CheckboxGroup} links={vanillaDocs.links} props={['label', 'description', 'isDisabled']} initialProps={{label: 'Favorite sports'}} type="tailwind" files={["starters/tailwind/src/CheckboxGroup.tsx"]}
+  ```tsx render docs={vanillaDocs.exports.CheckboxGroup} links={vanillaDocs.links} props={['label', 'description', 'isDisabled']} initialProps={{label: 'Email Notification Preferences'}} type="tailwind" files={["starters/tailwind/src/CheckboxGroup.tsx"]}
   "use client";
   import {CheckboxGroup} from 'tailwind-starter/CheckboxGroup';
   import {Checkbox} from 'tailwind-starter/Checkbox';
 
   <CheckboxGroup/* PROPS */>
-    <Checkbox value="soccer">Soccer</Checkbox>
-    <Checkbox value="baseball">Baseball</Checkbox>
-    <Checkbox value="basketball">Basketball</Checkbox>
+    <Checkbox
+      value="product"
+      description="Get notified about new features and improvements">
+      Product Updates
+    </Checkbox>
+    <Checkbox
+      value="security"
+      description="Important notifications about your account safety">
+      Security Alerts
+    </Checkbox>
+    <Checkbox
+      value="marketing"
+      description="Receive promotions, offers, and newsletters">
+      Marketing Emails
+    </Checkbox>
   </CheckboxGroup>
   ```
 </ExampleSwitcher>
@@ -115,10 +139,10 @@ import {Form} from 'vanilla-starter/Form';;
 
 <Anatomy />
 
-```tsx links={{CheckboxGroup: '#checkboxgroup', Checkbox: 'Checkbox'}}
+```tsx links={{CheckboxGroup: '#checkboxgroup', CheckboxField: 'Checkbox'}}
 <CheckboxGroup>
   <Label />
-  <Checkbox />
+  <CheckboxField />
   <Text slot="description" />
   <FieldError />
 </CheckboxGroup>
