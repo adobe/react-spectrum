@@ -10,21 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Checkbox as AriaCheckbox,
-  CheckboxProps as AriaCheckboxProps,
-  CheckboxRenderProps
-} from 'react-aria-components/Checkbox';
 import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
+import {
+  CheckboxButton,
+  CheckboxField,
+  CheckboxFieldProps,
+  CheckboxRenderProps
+} from 'react-aria-components/Checkbox';
 import {CheckboxGroupStateContext} from 'react-aria-components/CheckboxGroup';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import {ContextValue, useSlottedContext} from 'react-aria-components/slots';
 import {controlBorderRadius, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import DashIcon from '../ui-icons/Dash';
-import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
+import {HelpText} from './Field';
 import {pressScale} from './pressScale';
 import {useFocusableRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -42,20 +44,50 @@ interface CheckboxStyleProps {
 
 interface RenderProps extends CheckboxRenderProps, CheckboxStyleProps {}
 
-export interface CheckboxProps extends Omit<AriaCheckboxProps, 'className' | 'style' | 'render' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, CheckboxStyleProps {
+export interface CheckboxProps extends Omit<CheckboxFieldProps, 'className' | 'style' | 'render' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, HelpTextProps, StyleProps, CheckboxStyleProps {
   /** The label for the element. */
   children?: ReactNode
 }
 
-export const CheckboxContext = createContext<ContextValue<Partial<CheckboxProps>, FocusableRefValue<HTMLLabelElement>>>(null);
+export const CheckboxContext = createContext<ContextValue<Partial<CheckboxProps>, FocusableRefValue<HTMLInputElement, HTMLDivElement>>>(null);
+
+const field = style({
+  display: 'grid',
+  gridTemplateColumns: ['max-content', '1fr'],
+  columnGap: 'text-to-control',
+  alignContent: 'start',
+  width: {
+    default: 'fit',
+    isInCheckboxGroup: 'auto'
+  },
+  font: controlFont(),
+  '--field-height': {
+    type: 'height',
+    value: controlSize()
+  },
+  rowGap: {
+    default: 'calc(var(--field-height) - 1lh)',
+    isInCheckboxGroup: {
+      size: {
+        S: space(1),
+        M: space(1), 
+        L: 2,
+        XL: 2
+      }
+    }
+  },
+  gridColumnStart: {
+    isInForm: 'field'
+  }
+}, getAllowedOverrides());
 
 const wrapper = style({
-  display: 'flex',
+  display: 'grid',
+  gridTemplateColumns: 'subgrid',
+  gridColumnStart: 1,
+  gridColumnEnd: -1,
   position: 'relative',
-  columnGap: 'text-to-control',
   alignItems: 'baseline',
-  width: 'fit',
-  font: controlFont(),
   transition: 'colors',
   color: {
     default: baseColor('neutral'),
@@ -64,11 +96,8 @@ const wrapper = style({
       forcedColors: 'GrayText'
     }
   },
-  gridColumnStart: {
-    isInForm: 'field'
-  },
   disableTapHighlight: true
-}, getAllowedOverrides());
+});
 
 export const box = style<RenderProps>({
   ...focusRing(),
@@ -126,7 +155,7 @@ export const iconStyles = style({
   }
 });
 
-const iconSize = {
+const smallerSize = {
   S: 'XS',
   M: 'S',
   L: 'M',
@@ -137,7 +166,7 @@ const iconSize = {
  * Checkboxes allow users to select multiple items from a list of individual items,
  * or to mark one individual item as selected.
  */
-export const Checkbox = forwardRef(function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
+export const Checkbox = forwardRef(function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLInputElement, HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CheckboxContext);
   let boxRef = useRef(null);
   let inputRef = useRef<HTMLInputElement | null>(null);
@@ -148,47 +177,66 @@ export const Checkbox = forwardRef(function Checkbox({children, ...props}: Check
   let ctx = useSlottedContext(CheckboxContext, props.slot);
 
   return (
-    <AriaCheckbox
+    <CheckboxField
       {...props}
       ref={domRef}
       inputRef={inputRef}
       style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + wrapper({...renderProps, isInForm, size: props.size || 'M'}, props.styles)}>
-      {renderProps => {
-        let checkbox = (
-          <div
-            ref={boxRef}
-            style={pressScale(boxRef)(renderProps)}
-            className={box({
-              ...renderProps,
-              isSelected: renderProps.isSelected || renderProps.isIndeterminate,
-              size: props.size || 'M',
-              isEmphasized: isInCheckboxGroup ? ctx?.isEmphasized : props.isEmphasized
-            })}>
-            {renderProps.isIndeterminate &&
-              <DashIcon size={iconSize[props.size || 'M']} className={iconStyles} />
-            }
-            {renderProps.isSelected && !renderProps.isIndeterminate &&
-              <CheckmarkIcon size={iconSize[props.size || 'M']} className={iconStyles} />
-            }
-          </div>
-        );
+      className={(props.UNSAFE_className || '') + field({size: props.size || 'M', isInCheckboxGroup}, props.styles)}>
+      {({isDisabled, isInvalid}) => (<>
+        <CheckboxButton className={renderProps => wrapper({...renderProps, isInForm, size: props.size || 'M'})}>
+          {renderProps => {
+            let checkbox = (
+              <div
+                ref={boxRef}
+                style={pressScale(boxRef)(renderProps)}
+                className={box({
+                  ...renderProps,
+                  isSelected: renderProps.isSelected || renderProps.isIndeterminate,
+                  size: props.size || 'M',
+                  isEmphasized: isInCheckboxGroup ? ctx?.isEmphasized : props.isEmphasized
+                })}>
+                {renderProps.isIndeterminate &&
+                  <DashIcon size={smallerSize[props.size || 'M']} className={iconStyles} />
+                }
+                {renderProps.isSelected && !renderProps.isIndeterminate &&
+                  <CheckmarkIcon size={smallerSize[props.size || 'M']} className={iconStyles} />
+                }
+              </div>
+            );
 
-        // Only render checkbox without center baseline if no label.
-        // This avoids expanding the checkbox height to the font's line height.
-        if (!children) {
-          return checkbox;
-        }
+            // Only render checkbox without center baseline if no label.
+            // This avoids expanding the checkbox height to the font's line height.
+            if (!children) {
+              return checkbox;
+            }
 
-        return (
-          <>
-            <CenterBaseline>
-              {checkbox}
-            </CenterBaseline>
-            {children}
-          </>
-        );
-      }}
-    </AriaCheckbox>
+            return (
+              <>
+                <CenterBaseline>
+                  {checkbox}
+                </CenterBaseline>
+                <span className={style({gridColumnStart: 2})}>{children}</span>
+              </>
+            );
+          }}
+        </CheckboxButton>
+        <HelpText
+          size={isInCheckboxGroup ? smallerSize[props.size || 'M'] : props.size || 'M'}
+          styles={style({
+            gridColumnStart: {
+              default: 1,
+              isInCheckboxGroup: 2
+            },
+            paddingTop: 0
+          })({isInCheckboxGroup})}
+          isDisabled={isDisabled}
+          isInvalid={isInCheckboxGroup ? false : isInvalid}
+          description={props.description}
+          showErrorIcon>
+          {props.errorMessage}
+        </HelpText>
+      </>)}
+    </CheckboxField>
   );
 });
