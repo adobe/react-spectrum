@@ -144,7 +144,7 @@ export type {IconProps, IconContextValue, IllustrationProps, IllustrationContext
 export type {InlineAlertProps} from '../src/InlineAlert';
 export type {ImageProps} from '../src/Image';
 export type {ImageCoordinatorProps} from '../src/ImageCoordinator';
-export type {LabeledValueStyleProps, LabeledValueBaseProps, LabeledValueProps, DateTime as LabeledValueDateTime} from '../src/LabeledValue';
+export type {LabeledValueProps} from '../src/LabeledValue';
 export type {LinkProps} from '../src/Link';
 export type {ListViewProps, ListViewItemProps} from '../src/ListView';
 export type {MenuTriggerProps, MenuProps, MenuItemProps, MenuSectionProps, SubmenuTriggerProps, UnavailableMenuItemTriggerProps} from '../src/Menu';
