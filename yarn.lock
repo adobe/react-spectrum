@@ -28687,6 +28687,7 @@ __metadata:
   dependencies:
     "@parcel/core": "npm:^2.16.3"
     "@parcel/reporter-cli": "npm:^2.16.3"
+    "@parcel/utils": "npm:^2.16.3"
     http-proxy-middleware: "npm:^2.0.6"
     storybook: "npm:^10.0.0"
   peerDependencies:

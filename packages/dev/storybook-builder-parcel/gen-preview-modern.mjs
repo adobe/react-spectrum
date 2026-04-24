@@ -197,6 +197,14 @@ function processPreviewAnnotation(annotationPath) {
  * This file is largely based on https://github.com/storybookjs/storybook/blob/d1195cbd0c61687f1720fefdb772e2f490a46584/lib/core-common/src/utils/to-importFn.ts
  */
 
+// TODO(Task 3.1): toImportFn, generateImportFnScriptCode, and listStories are
+// INTENTIONALLY BROKEN at this stage. toImportFn emits `...import('story:...')`
+// which spreads a Promise into an object literal and yields an empty importers
+// map. listStories returns glob patterns rather than resolved file paths. Both
+// are rewritten in Task 3.1 to use static top-level imports plus a proper glob
+// expansion. Do not attempt to "fix" these in isolation — see the plan at
+// docs/superpowers/plans/2026-04-24-storybook-10-migration.md Phase 3.
+
 /**
  * This function takes an array of stories and creates a mapping between the stories' relative paths
  * to the working directory and their dynamic imports. The import is done in an asynchronous function
