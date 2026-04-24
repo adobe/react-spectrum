@@ -12,14 +12,14 @@
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '../src/ActionButton';
+import {Button} from '../src/Button';
+import {ButtonGroup} from '../src/ButtonGroup';
+import {Checkbox} from '../src/Checkbox';
 import {Content, Footer, Header, Heading} from '../src/Content';
+import {Dialog} from '../src/Dialog';
 import {DialogTrigger} from '../src/DialogTrigger';
 import React from 'react';
-import {Dialog} from '../src/Dialog';
 import userEvent from '@testing-library/user-event';
-import { Button } from '../src/Button';
-import { ButtonGroup } from '../src/ButtonGroup';
-import { Checkbox } from '../src/Checkbox';
 
 describe('StandardDialog', () => {
   let user;

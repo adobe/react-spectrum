@@ -193,19 +193,19 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
               }
             </div>
             {/* Main content */}
-              <Text slot="description" style={{display: 'contents'}}>
-                <Provider
-                  values={[
+            <Text slot="description" style={{display: 'contents'}}>
+              <Provider
+                values={[
                     [ImageContext, {hidden: true}],
                     [HeadingContext, {isHidden: true}],
                     [HeaderContext, {isHidden: true}],
                     [ContentContext, {styles: content}],
                     [FooterContext, {isHidden: true}],
                     [ButtonGroupContext, {isHidden: true}]
-                  ]}>
-                  {children}
-                </Provider>
-              </Text>
+                ]}>
+                {children}
+              </Provider>
+            </Text>
             {/* Footer and button group */}
             <div
               className={style({
