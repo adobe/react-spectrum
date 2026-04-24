@@ -332,5 +332,15 @@ export const RootDrop: TreeStory = {
   }
 };
 
-// TODO: add folder drop story once I figure out how to make the chromatic storybook stop crashing
-// due to ReferenceError: Cannot access 'TableLayout' before initialization
+export const OnFolderDrop: TreeStory = {
+  ...Reorderable,
+  play: async () => {
+    await userEvent.tab();
+    await userEvent.keyboard('[ArrowRight]');
+    await userEvent.keyboard('[ArrowRight]');
+    await userEvent.keyboard('[Enter]');
+    await userEvent.keyboard('[ArrowDown]');
+    expect(document.activeElement).toHaveRole('button');
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Reports');
+  }
+};
