@@ -80,8 +80,7 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
 }
 
 interface ButtonContextValue extends ButtonProps {
-  isPressed?: boolean,
-  isHovered?: boolean
+  isPressed?: boolean
 }
 
 export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
@@ -96,11 +95,10 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
   let {buttonProps, isPressed} = useButton(props, ref);
   buttonProps = useDisableInteractions(buttonProps, isPending);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
-  let {hoverProps, isHovered: selfHovered} = useHover({
+  let {hoverProps, isHovered} = useHover({
     ...props,
     isDisabled: props.isDisabled || isPending
   });
-  let isHovered = selfHovered || ctx.isHovered || false;
   let renderValues = {
     isHovered,
     isPressed: (ctx.isPressed || isPressed) && !isPending,

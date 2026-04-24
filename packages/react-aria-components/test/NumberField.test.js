@@ -102,33 +102,6 @@ describe('NumberField', () => {
     expect(group).not.toHaveClass('hover');
   });
 
-  it('should show hover state on input when label is hovered', async () => {
-    let {getByRole} = render(<TestNumberField />);
-    let input = getByRole('textbox');
-    let label = document.querySelector('.react-aria-Label');
-
-    expect(input).not.toHaveAttribute('data-hovered');
-
-    await user.hover(label);
-    expect(input).toHaveAttribute('data-hovered', 'true');
-
-    await user.unhover(label);
-    expect(input).not.toHaveAttribute('data-hovered');
-  });
-
-  it('should still show hover state on input when input is directly hovered', async () => {
-    let {getByRole} = render(<TestNumberField />);
-    let input = getByRole('textbox');
-
-    expect(input).not.toHaveAttribute('data-hovered');
-
-    await user.hover(input);
-    expect(input).toHaveAttribute('data-hovered', 'true');
-
-    await user.unhover(input);
-    expect(input).not.toHaveAttribute('data-hovered');
-  });
-
   it('should support focus visible state', async () => {
     let {getByRole} = render(<TestNumberField groupProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''}} />);
     let group = getByRole('group');
