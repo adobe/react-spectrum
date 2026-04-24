@@ -48,7 +48,7 @@ interface Offset {
   height: number
 }
 
-interface PositionOpts {
+export interface PositionOpts {
   arrowSize: number,
   placement: Placement,
   targetNode: Element,

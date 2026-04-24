@@ -21,7 +21,9 @@ import {
   MenuTriggerProps as AriaMenuTriggerProps,
   SubmenuTrigger as AriaSubmenuTrigger,
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
-  MenuItemRenderProps
+  MenuItemRenderProps,
+  MenuContext as RACMenuContext,
+  RootMenuTriggerStateContext
 } from 'react-aria-components/Menu';
 
 import {baseColor, centerPadding, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
@@ -29,7 +31,7 @@ import {box, iconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
-import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
+import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, JSX, ReactElement, ReactNode, useContext, useRef, useState} from 'react';
 import {divider} from './Divider';
@@ -45,7 +47,10 @@ import intlMessages from '../intl/*.json';
 // @ts-ignore
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
+import {OverlayPositioner, SubscribeOpts} from '/packages/react-aria/src/overlays/useOverlayPosition';
+import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {Placement} from 'react-aria/useOverlayPosition';
+import {PositionOpts, PositionResult} from '/packages/react-aria/src/overlays/calculatePosition';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {pressScale} from './pressScale';
 import {Separator, SeparatorProps} from 'react-aria-components/Separator';
@@ -201,7 +206,8 @@ export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> &
     isLink: 'pointer'
   },
   transition: 'transform',
-  forcedColorAdjust: 'none'
+  forcedColorAdjust: 'none',
+  disableTapHighlight: true
 }, getAllowedOverrides());
 
 export let checkmark = style<{isSelected: boolean, isFocused: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
@@ -356,6 +362,8 @@ let wrappingDiv = style({
   size: 'full'
 });
 
+let ParentMenuItemContext = createContext(null);
+
 /**
  * Menus display a list of actions or options that a user can choose.
  */
@@ -372,6 +380,8 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   } = props;
   let ctx = useContext(InternalMenuTriggerContext);
   let inPopover = useContext(InPopoverContext);
+  let parentMenuItem = useContext(ParentMenuItemContext);
+  let overlayState = useContext(OverlayTriggerStateContext);
 
   let isPopover = (ctx || isSubmenu) && !inPopover;
   let content = (
@@ -394,18 +404,33 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
         <AriaMenu
           {...props}
           className={menu({size, isPopover}, isPopover ? null : styles)}>
+          {isSubmenu && (
+            <SubmenuHeadingContext.Provider value={overlayState}>
+              {parentMenuItem}
+            </SubmenuHeadingContext.Provider>
+          )}
           {children}
         </AriaMenu>
       </Provider>
     </InternalMenuContext.Provider>
   );
 
+  let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
+  let c = useSlottedContext(RACMenuContext);
+  let level = c['submenuLevel'] ?? -1;
+  let childLevels = rootMenuTriggerState.expandedKeysStack.length > 0 ? rootMenuTriggerState.expandedKeysStack.length - (level + 1) : 0;
+
   if (isPopover) {
     return (
       <Popover
         ref={ref}
         padding="none"
-        hideArrow>
+        hideArrow
+        UNSAFE_style={{
+          scale: 1 - (0.05 * childLevels),
+          '--opacity': childLevels > 0 ? 0.7 : undefined,
+          transformOrigin: 'top left'
+        } as any}>
         <div
           style={UNSAFE_style}
           className={(UNSAFE_className || '') + mergeStyles(wrappingDiv, styles)}>
@@ -505,6 +530,8 @@ function UnavailableIconWrapper(props: UnavailableIconWrapperProps) {
   );
 }
 
+const SubmenuHeadingContext = createContext(false);
+
 export function MenuItem(props: MenuItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
@@ -514,12 +541,15 @@ export function MenuItem(props: MenuItemProps): ReactNode {
   let {direction} = useLocale();
   let isUnavailable = useContext(UnavailableContext);
   let infoIconId = useId();
+  let isSubmenuHeading = useContext(SubmenuHeadingContext);
 
   return (
     <AriaMenuItem
       {...props}
       aria-describedby={isUnavailable ? infoIconId : undefined}
       textValue={textValue}
+      shouldCloseOnSelect={isSubmenuHeading ? false : props.shouldCloseOnSelect}
+      onAction={isSubmenuHeading ? () => { isSubmenuHeading?.close(); } : props.onAction}
       ref={ref}
       style={pressScale(ref, props.UNSAFE_style)}
       className={renderProps => (props.UNSAFE_className || '') + menuitem({...renderProps, isFocused: (renderProps.hasSubmenu && renderProps.isOpen) || renderProps.isFocused, size, isLink}, props.styles)}>
@@ -548,14 +578,14 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                 [KeyboardContext, {styles: keyboard({...renderProps, size, isFocused})}],
                 [ImageContext, {styles: image({size})}]
               ]}>
-              {renderProps.selectionMode === 'single' && !renderProps.hasSubmenu && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
-              {renderProps.selectionMode === 'multiple' && !renderProps.hasSubmenu && (
+              {renderProps.selectionMode === 'single' && !renderProps.hasSubmenu && !isSubmenuHeading && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
+              {renderProps.selectionMode === 'multiple' && !renderProps.hasSubmenu && !isSubmenuHeading && (
                 <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
                   <CheckmarkIcon size={size} className={iconStyles} />
                 </div>
               )}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
-              {isLinkOut && !hideLinkOutIcon && (
+              {isLinkOut && !hideLinkOutIcon && !isSubmenuHeading && (
                 <div slot="descriptor" className={descriptor}>
                   <LinkOutIcon
                     size={linkIconSize[size]}
@@ -568,7 +598,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                     })({direction})} />
                 </div>
               )}
-              {renderProps.hasSubmenu && (
+              {(renderProps.hasSubmenu || isSubmenuHeading) && (
                 isUnavailable
                   ? <UnavailableIconWrapper direction={direction} size={size} id={infoIconId} />
                   : (
@@ -580,8 +610,11 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                             direction: {
                               rtl: -1
                             }
+                          },
+                          rotate: {
+                            isSubmenuHeading: 90
                           }
-                        })({direction})} />
+                        })({direction, isSubmenuHeading})} />
                     </div>
                   )
               )}
@@ -652,6 +685,32 @@ function MenuTrigger(props: MenuTriggerProps): ReactNode {
 
 export interface SubmenuTriggerProps extends Omit<AriaSubmenuTriggerProps, 'delay'> {}
 
+class SubmenuPositioner implements OverlayPositioner {
+  subscribe(opts: SubscribeOpts, updatePosition: () => void): () => void {
+    return () => {};
+  }
+
+  update(opts: PositionOpts): PositionResult | null {
+    let rect = opts.targetNode.getBoundingClientRect();
+
+    return {
+      maxHeight: 9999,
+      placement: 'bottom',
+      position: {
+        top: rect.top - 8,
+        left: rect.left - 16,
+        minWidth: (rect.width + 16)
+      },
+      triggerAnchorPoint: {
+        x: 0,
+        y: 0
+      }
+    };
+  }
+}
+
+const SUBMENU_POSIITONER = new SubmenuPositioner();
+
 function SubmenuTrigger(props: SubmenuTriggerProps): JSX.Element {
   // For submenus, the offset from the edge of the popover should be 10px.
   // Subtract 8px for the padding around the parent menu.
@@ -659,9 +718,11 @@ function SubmenuTrigger(props: SubmenuTriggerProps): JSX.Element {
   return (
     <AriaSubmenuTrigger {...props}>
       {props.children[0]}
-      <PopoverContext.Provider value={{hideArrow: true, offset: -2, crossOffset: -8, placement: 'end top'}}>
-        {props.children[1]}
-      </PopoverContext.Provider>
+      <ParentMenuItemContext value={props.children[0]}>
+        <PopoverContext.Provider value={{hideArrow: true, offset: -2, crossOffset: -8, placement: 'end top', positioner: SUBMENU_POSIITONER}}>
+          {props.children[1]}
+        </PopoverContext.Provider>
+      </ParentMenuItemContext>
     </AriaSubmenuTrigger>
   );
 }

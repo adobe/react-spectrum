@@ -173,6 +173,9 @@ export const PublishAndExport: Story = {
     selectionMode: 'none',
     selectedKeys: ['share'],
     disabledKeys: ['livestream']
+  },
+  parameters: {
+    layout: 'padded'
   }
 };
 

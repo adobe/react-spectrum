@@ -95,6 +95,7 @@ let popover = style({
   boxSizing: 'border-box',
   display: 'flex',
   opacity: {
+    default: '--opacity',
     isEntering: 0,
     isExiting: 0
   },
@@ -124,7 +125,7 @@ let popover = style({
     },
     isSubmenu: 0
   },
-  transition: '[opacity, translate]',
+  transition: '[opacity, translate, scale]',
   transitionDuration: 200,
   transitionTimingFunction: {
     isExiting: 'in'
@@ -296,10 +297,10 @@ export const Popover = forwardRef(function Popover(props: PopoverDialogProps, re
   } = props;
 
   return (
-    <PopoverBase {...otherProps} ref={domRef}>
+    <PopoverBase {...otherProps} UNSAFE_style={UNSAFE_style} ref={domRef}>
       {composeRenderProps(props.children, (children) => (
         <div
-          style={UNSAFE_style}
+          // style={UNSAFE_style}
           className={(UNSAFE_className || '') + innerDivStyle({padding}, styles)}>
           {/* Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state. */}
           <OverlayTriggerStateContext.Provider value={null}>

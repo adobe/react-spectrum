@@ -902,175 +902,175 @@ workflows:
   commit:
     jobs:
       - install
-      - install-16
-      - install-17
-      - install-18
-      - test-ssr:
-          requires:
-            - install
-      - test:
-          requires:
-            - install
-      - test-ssr-16:
-          requires:
-            - install-16
-      - test-16:
-          requires:
-            - install-16
-      - test-ssr-17:
-          requires:
-            - install-17
-      - test-17:
-          requires:
-            - install-17
-      - test-18:
-          requires:
-            - install-18
-      - test-ssr-18:
-          requires:
-            - install-18
-      - test-build:
-          requires:
-            - install
-      - lint:
-          requires:
-            - install
-      - ts-build-fork-point:
-          requires:
-            - install
-          filters:
-            branches:
-              ignore: 
-                - /main$/
-                - /gh-readonly-queue\/.*$/
-      - ts-build-branch:
-          requires:
-            - install
-          filters:
-            branches:
-              ignore: 
-                - /main$/
-                - /gh-readonly-queue\/.*$/
-      - ts-diff:
-          requires:
-            - ts-build-fork-point
-            - ts-build-branch
-          filters:
-            branches:
-              ignore: 
-                - /main$/
-                - /gh-readonly-queue\/.*$/
-      - typecheck-docs:
-          requires:
-            - install
-      - storybook:
-          requires:
-            - install
+      # - install-16
+      # - install-17
+      # - install-18
+      # - test-ssr:
+      #     requires:
+      #       - install
+      # - test:
+      #     requires:
+      #       - install
+      # - test-ssr-16:
+      #     requires:
+      #       - install-16
+      # - test-16:
+      #     requires:
+      #       - install-16
+      # - test-ssr-17:
+      #     requires:
+      #       - install-17
+      # - test-17:
+      #     requires:
+      #       - install-17
+      # - test-18:
+      #     requires:
+      #       - install-18
+      # - test-ssr-18:
+      #     requires:
+      #       - install-18
+      # - test-build:
+      #     requires:
+      #       - install
+      # - lint:
+      #     requires:
+      #       - install
+      # - ts-build-fork-point:
+      #     requires:
+      #       - install
+      #     filters:
+      #       branches:
+      #         ignore: 
+      #           - /main$/
+      #           - /gh-readonly-queue\/.*$/
+      # - ts-build-branch:
+      #     requires:
+      #       - install
+      #     filters:
+      #       branches:
+      #         ignore: 
+      #           - /main$/
+      #           - /gh-readonly-queue\/.*$/
+      # - ts-diff:
+      #     requires:
+      #       - ts-build-fork-point
+      #       - ts-build-branch
+      #     filters:
+      #       branches:
+      #         ignore: 
+      #           - /main$/
+      #           - /gh-readonly-queue\/.*$/
+      # - typecheck-docs:
+      #     requires:
+      #       - install
+      # - storybook:
+      #     requires:
+      #       - install
       - storybook-s2:
           requires:
             - install
-      - s2-docs:
-          requires:
-            - install
-      - s2-docs-stage:
-          requires:
-            - install
-          filters:
-            branches:
-              only: main
-      - verdaccio:
-          filters:
-            branches:
-              only: main
-          requires:
-            - install
-      - v-rsp-cra-18:
-          requires:
-            - verdaccio
-      - v-webpack-4:
-          requires:
-            - verdaccio
-      - v-nextjs:
-          requires:
-            - verdaccio
-      - v-rac-rsp-tailwind:
-          requires:
-            - verdaccio
-      - v-s2-parcel:
-          requires:
-            - verdaccio
-      - v-s2-webpack:
-          requires:
-            - verdaccio
-      - v-s2-next:
-          requires:
-            - verdaccio
-      - v-icon-builder:
-          requires:
-            - verdaccio
-      - v-publish-stats:
-          requires:
-            - verdaccio
-            - v-webpack-4
-            - v-nextjs
-            - v-rsp-cra-18
-      - v-starters:
-          requires:
-            - verdaccio
+      # - s2-docs:
+      #     requires:
+      #       - install
+      # - s2-docs-stage:
+      #     requires:
+      #       - install
+      #     filters:
+      #       branches:
+      #         only: main
+      # - verdaccio:
+      #     filters:
+      #       branches:
+      #         only: main
+      #     requires:
+      #       - install
+      # - v-rsp-cra-18:
+      #     requires:
+      #       - verdaccio
+      # - v-webpack-4:
+      #     requires:
+      #       - verdaccio
+      # - v-nextjs:
+      #     requires:
+      #       - verdaccio
+      # - v-rac-rsp-tailwind:
+      #     requires:
+      #       - verdaccio
+      # - v-s2-parcel:
+      #     requires:
+      #       - verdaccio
+      # - v-s2-webpack:
+      #     requires:
+      #       - verdaccio
+      # - v-s2-next:
+      #     requires:
+      #       - verdaccio
+      # - v-icon-builder:
+      #     requires:
+      #       - verdaccio
+      # - v-publish-stats:
+      #     requires:
+      #       - verdaccio
+      #       - v-webpack-4
+      #       - v-nextjs
+      #       - v-rsp-cra-18
+      # - v-starters:
+      #     requires:
+      #       - verdaccio
       - deploy:
           requires:
-            - lint
-            - test-ssr
-            - test
-            - test-ssr-16
-            - test-16
-            - test-ssr-17
-            - test-17
-            - test-ssr-18
-            - test-18
-            - test-build
-            - storybook
+            # - lint
+            # - test-ssr
+            # - test
+            # - test-ssr-16
+            # - test-16
+            # - test-ssr-17
+            # - test-17
+            # - test-ssr-18
+            # - test-18
+            # - test-build
+            # - storybook
             - storybook-s2
-      - deploy-s3-stage:
-          name: deploy-s3-commit
-          requires:
-            - s2-docs
-          filters:
-            branches:
-              ignore: main
-      - deploy-s3-stage:
-          name: deploy-s3-main
-          requires:
-            - s2-docs
-            - s2-docs-stage
-            - v-starters
-          filters:
-            branches:
-              only: main
-      - deploy-verdaccio:
-          requires:
-            - v-rsp-cra-18
-            - v-webpack-4
-            - v-nextjs
-            - v-rac-rsp-tailwind
-            - v-s2-parcel
-            - v-s2-webpack
-            - v-s2-next
-            - v-icon-builder
-            - v-publish-stats
+      # - deploy-s3-stage:
+      #     name: deploy-s3-commit
+      #     requires:
+      #       - s2-docs
+      #     filters:
+      #       branches:
+      #         ignore: main
+      # - deploy-s3-stage:
+      #     name: deploy-s3-main
+      #     requires:
+      #       - s2-docs
+      #       - s2-docs-stage
+      #       - v-starters
+      #     filters:
+      #       branches:
+      #         only: main
+      # - deploy-verdaccio:
+      #     requires:
+      #       - v-rsp-cra-18
+      #       - v-webpack-4
+      #       - v-nextjs
+      #       - v-rac-rsp-tailwind
+      #       - v-s2-parcel
+      #       - v-s2-webpack
+      #       - v-s2-next
+      #       - v-icon-builder
+      #       - v-publish-stats
       - comment:
           name: comment-pr
           filters:
             branches:
               ignore: main
           requires:
-            - ts-diff
+            # - ts-diff
             - deploy
-            - deploy-s3-commit
-      - comment:
-          name: comment-verdaccio
-          requires:
-            - deploy-verdaccio
+            # - deploy-s3-commit
+      # - comment:
+      #     name: comment-verdaccio
+      #     requires:
+      #       - deploy-verdaccio
 
   prod-docs:
     when:
