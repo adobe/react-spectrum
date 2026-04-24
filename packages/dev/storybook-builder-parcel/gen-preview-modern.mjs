@@ -132,7 +132,6 @@ ${importFnCode.imports}
 import './setup-addons.js';
 import { setup } from 'storybook/internal/preview/runtime';
 import { composeConfigs, PreviewWeb } from 'storybook/internal/preview-api';
-import { isPreview } from 'storybook/internal/csf';
 
 setup();
 

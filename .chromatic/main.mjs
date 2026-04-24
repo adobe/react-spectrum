@@ -1,8 +1,4 @@
 
-import { fileURLToPath } from "node:url";
-
-const localAddon = (rel) => fileURLToPath(import.meta.resolve(rel));
-
 export default {
   stories: [
     '../packages/**/chromatic/**/*.stories.@(js|jsx|ts|tsx)',
