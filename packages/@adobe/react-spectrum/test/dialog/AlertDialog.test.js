@@ -220,4 +220,16 @@ describe('AlertDialog', function () {
     expect(content).not.toBeNull();
     expect(content.textContent).toBe('Content body');
   });
+
+  it('accepts custom aria-describedby', function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <AlertDialog aria-describedby="content-id" variant="confirmation" title="the title" primaryActionLabel="confirm">
+          Content body
+        </AlertDialog>
+      </Provider>
+    );
+
+    expect(getByRole('alertdialog')).toHaveAttribute('aria-describedby', 'content-id');
+  });
 });
