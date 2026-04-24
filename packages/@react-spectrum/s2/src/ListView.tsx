@@ -425,6 +425,16 @@ const listitem = style<GridListItemRenderProps & {
     type: 'borderTopStartRadius',
     value: 'default'
   },
+  borderTopStartRadius: {
+    isDropTarget: {
+      isFirstItem: 'default'
+    }
+  },
+  borderTopEndRadius: {
+    isDropTarget: {
+      isFirstItem: 'default'
+    }
+  },
   forcedColorAdjust: 'none'
 });
 
