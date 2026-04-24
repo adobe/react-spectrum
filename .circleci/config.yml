@@ -940,20 +940,26 @@ workflows:
             - install
           filters:
             branches:
-              ignore: main
+              ignore: 
+                - /main$/
+                - /gh-readonly-queue\/.*$/
       - ts-build-branch:
           requires:
             - install
           filters:
             branches:
-              ignore: main
+              ignore: 
+                - /main$/
+                - /gh-readonly-queue\/.*$/
       - ts-diff:
           requires:
             - ts-build-fork-point
             - ts-build-branch
           filters:
             branches:
-              ignore: main
+              ignore: 
+                - /main$/
+                - /gh-readonly-queue\/.*$/
       - typecheck-docs:
           requires:
             - install

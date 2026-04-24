@@ -27,6 +27,8 @@ import {
   Table as RACTable,
   TableBody as RACTableBody,
   TableBodyProps as RACTableBodyProps,
+  TableFooter as RACTableFooter,
+  TableFooterProps as RACTableFooterProps,
   TableHeader as RACTableHeader,
   TableHeaderProps as RACTableHeaderProps,
   TableProps as RACTableProps,
@@ -315,11 +317,11 @@ export class S2TableLayout<T> extends TableLayout<T> {
   }
 
   protected buildCollection(): LayoutNode[] {
-    let [header, body] = super.buildCollection();
-    if (!header) {
+    let rowGroups = super.buildCollection();
+    if (rowGroups.length < 2) {
       return [];
     }
-    let {layoutInfo} = body;
+    let {layoutInfo} = rowGroups[1];
     // TableLayout's buildCollection always sets the body width to the max width between the header width, but
     // we want the body to be sticky and only as wide as the table so it is always in view if loading/empty
     let isEmptyOrLoading = this.virtualizer?.collection.size === 0;
@@ -327,10 +329,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
       layoutInfo.rect.width = this.virtualizer!.size.width - 80;
     }
 
-    return [
-      header,
-      body
-    ];
+    return rowGroups;
   }
 
   protected buildLoader(node: Node<T>, x: number, y: number): LayoutNode {
@@ -1753,6 +1752,7 @@ const rowBackgroundColor = {
     isHovered: selectedActiveBackground, // table-selected-row-background-color, opacity /15
     isPressed: selectedActiveBackground // table-selected-row-background-color, opacity /15
   },
+  isInFooter: 'gray-200',
   forcedColors: {
     default: 'Background'
   },
@@ -1767,10 +1767,11 @@ const rowTextColor = {
     default: 'disabled',
     forcedColors: 'GrayText'
   },
+  isInFooter: 'neutral',
   forcedColors: 'ButtonText'
 } as const;
 
-const row = style<RowRenderProps & S2TableProps>({
+const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean}>({
   height: 'full',
   position: 'relative',
   boxSizing: 'border-box',
@@ -1807,6 +1808,10 @@ const row = style<RowRenderProps & S2TableProps>({
     default: 'gray-300',
     forcedColors: 'ButtonBorder'
   },
+  fontWeight: {
+    default: 'normal',
+    isInFooter: 'bold'
+  },
   forcedColorAdjust: 'none'
 });
 
@@ -1826,6 +1831,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
   let tableVisualOptions = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
+  let isInFooter = useContext(FooterContext);
 
   return (
     (<RACRow
@@ -1833,9 +1839,12 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       ref={domRef}
       id={id}
       dependencies={[...dependencies, columns]}
+      isDisabled={isInFooter}
+      disabledBehavior="selection"
       className={renderProps => row({
         ...renderProps,
-        ...tableVisualOptions
+        ...tableVisualOptions,
+        isInFooter
       }) + (renderProps.isFocusVisible || renderProps.isDropTarget ? ' ' + css('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')}
       {...otherProps}>
       {allowsDragging  && (
@@ -1863,5 +1872,24 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         {children}
       </Collection>
     </RACRow>)
+  );
+});
+
+export interface TableFooterProps<T> extends Omit<RACTableFooterProps<T>, 'style' | 'className' | 'render' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | keyof GlobalDOMAttributes> {}
+
+const FooterContext = createContext(false);
+
+/**
+ * A footer within a `<Table>`, containing summary rows.
+ */
+export const TableFooter = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableFooter<T extends object>(props: TableFooterProps<T>, ref: DOMRef<HTMLDivElement>) {
+  let domRef = useDOMRef(ref);
+
+  return (
+    <FooterContext.Provider value>
+      <RACTableFooter
+        {...props}
+        ref={domRef} />
+    </FooterContext.Provider>
   );
 });

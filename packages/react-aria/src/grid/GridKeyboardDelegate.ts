@@ -59,7 +59,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   }
 
   private isDisabled(item: Node<unknown>) {
-    return this.disabledBehavior === 'all' && (item.props?.isDisabled || this.disabledKeys.has(item.key));
+    return this.disabledBehavior === 'all' && (item.props?.isDisabled || this.disabledKeys.has(item.key)) && item.props?.disabledBehavior !== 'selection';
   }
 
   protected findPreviousKey(fromKey?: Key, pred?: (item: Node<T>) => boolean, includeDisabled = false): Key | null {

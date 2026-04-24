@@ -597,7 +597,9 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       this.validRect[heightProperty] = Math.min(this.validRect[heightProperty], layoutInfo.rect[offsetProperty] - this.validRect[offsetProperty]);
 
       // The requestedRect also needs to be adjusted to account for the height difference.
-      this.requestedRect[heightProperty] += newLayoutInfo.rect[heightProperty] - layoutInfo.rect[heightProperty];
+      if (layoutNode.node?.type === 'item') {
+        this.requestedRect[heightProperty] += newLayoutInfo.rect[heightProperty] - layoutInfo.rect[heightProperty];
+      }
 
       // Invalidate layout for this layout node and all parents
       this.updateLayoutNode(key, layoutInfo, newLayoutInfo);

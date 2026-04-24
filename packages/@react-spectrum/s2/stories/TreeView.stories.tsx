@@ -46,9 +46,9 @@ import {useListData} from 'react-stately/useListData';
 import {useTreeData} from 'react-stately/useTreeData';
 
 let onActionFunc = action('onAction');
-let noOnAction = null;
+let noOnAction = undefined;
 const onActionOptions = {onActionFunc, noOnAction};
-const events = ['onSelectionChange', 'onAction'];
+const events = ['onSelectionChange'];
 
 const meta: Meta<typeof TreeView> = {
   component: TreeView,
@@ -58,7 +58,7 @@ const meta: Meta<typeof TreeView> = {
   tags: ['autodocs'],
   args: {...getActionArgs(events)},
   argTypes: {
-    ...categorizeArgTypes('Events', events),
+    ...categorizeArgTypes('Events', ['onAction', ...events]),
     children: {table: {disable: true}},
     onAction: {
       options: Object.keys(onActionOptions), // An array of serializable values
