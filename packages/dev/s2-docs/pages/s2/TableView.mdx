@@ -936,11 +936,12 @@ function subscribe(fn) {
 
 Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. See the [drag and drop guide](../react-aria/dnd?component=Table) to learn more.
 
-You can customize the drag preview content by providing that content to `TableViewDragPreview`, and then passing that to `useDragAndDrop`'s `renderDragPreview`.
+You can customize the drag preview by passing <TypeLink links={docs.links} type={docs.exports.TableViewDragPreview} /> to `useDragAndDrop`'s `renderDragPreview` with custom content.
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, TableBody, Column, Row, Cell, Collection} from '@react-spectrum/s2/TableView';
+import {TableView, TableHeader, TableBody, Column, Row, Cell, Collection, TableViewDragPreview} from '@react-spectrum/s2/TableView';
+import {Text} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
 import {useTreeData} from '@react-spectrum/s2/useTreeData';
@@ -963,7 +964,7 @@ function ReorderableTable() {
 
   ///- begin highlight -///
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys, items: typeof tree.items) => items.map(item => ({'text/plain': item.value.title})),
+    getItems: (keys, items: typeof tree.items) => items.map(item => ({'text/plain': item.value.title, type: item.value.type})),
     onMove(e) {
       if (e.target.dropPosition === 'before') {
         tree.moveBefore(e.target.key, e.keys);
@@ -979,7 +980,12 @@ function ReorderableTable() {
           }
         }
       }
-    }
+    },
+    renderDragPreview: (items) => (
+      <TableViewDragPreview items={items}>
+        <Text>{`${items[0]['text/plain']} (${items[0].type})`}</Text>
+      </TableViewDragPreview>
+    )
   });
   ///- end highlight -///
 

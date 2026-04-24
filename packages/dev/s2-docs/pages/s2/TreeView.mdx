@@ -389,16 +389,19 @@ function Example(props) {
 ## Drag and drop
 
 TreeView supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the tree as a whole, on individual items, insert new items between existing ones, or reorder items. The insertion indicator is level-aware, so drop positions reflect the target item's nesting depth. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](../react-aria/dnd?component=Tree) to learn more.
-Pass custom preview content to the exported `TreeViewDragPreview` from `renderDragPreview` to match the default visual.
+
+You can customize the drag preview by passing <TypeLink links={docs.links} type={docs.exports.TreeViewDragPreview} /> to `useDragAndDrop`'s `renderDragPreview` with custom content.
 
 ```tsx render type="s2"
 "use client";
 import {Text} from '@react-spectrum/s2';
-import {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/s2/TreeView';
+import {TreeView, TreeViewItem, TreeViewItemContent, TreeViewDragPreview} from '@react-spectrum/s2/TreeView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
 import {useTreeData} from '@react-spectrum/s2/useTreeData';
 import {Collection} from '@react-spectrum/s2';
+import Folder from '@react-spectrum/s2/icons/Folder';
+import File from '@react-spectrum/s2/icons/File';
 
 function ReorderableTree() {
   let tree = useTreeData({
@@ -434,24 +437,30 @@ function ReorderableTree() {
           }
         }
       }
-    }
+    },
+    renderDragPreview: (items) => (
+      <TreeViewDragPreview items={items}>
+        <Folder />
+        <Text>{items[0]['text/plain']}</Text>
+      </TreeViewDragPreview>
+    )
   });
   ///- end highlight -///
 
   return (
     <TreeView
-      aria-label="Reorderable folders"
+      aria-label="Tree with hierarchical drag and drop"
       selectionMode="multiple"
       items={tree.items}
-      defaultExpandedKeys={['1', '5']}
       ///- begin highlight -///
       dragAndDropHooks={dragAndDropHooks}
       ///- end highlight -///
-      styles={style({width: 'full', maxWidth: 320, height: 320})}>
+      styles={style({width: 'full', maxWidth: 320})}>
       {function renderItem(item) {
         return (
           <TreeViewItem id={item.key} textValue={item.value.title}>
             <TreeViewItemContent>
+              {item.children && item.children.length > 0 ? <Folder /> : <File />}
               <Text>{item.value.title}</Text>
             </TreeViewItemContent>
             {item.children && <Collection items={item.children}>
