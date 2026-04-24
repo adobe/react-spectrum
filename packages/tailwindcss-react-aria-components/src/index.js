@@ -86,14 +86,25 @@ let getSelector = (prefix, attributeName, attributeValue) => {
   let baseSelector = attributeValue ? `[data-${attributeName}="${attributeValue}"]` : `[data-${attributeName}]`;
   let nativeSelector = nativeVariantSelectors.get(attributeName);
   if (prefix === '' && nativeSelector) {
-    let wrappedNativeSelector = `&:where(:not([data-rac]))${nativeSelector}`;
-    let nativeSelectorGenerator = wrappedNativeSelector;
+    // Collapse the RAC and native branches into a single `:is()` so `not-*`
+    // works — Tailwind's `not` walker bails on a dual-selector (array) shape.
+    // `:where()` keeps specificity at (0,1,0).
+    let unifiedSelector = `&:is(:where([data-rac])${baseSelector}, :where(:not([data-rac]))${nativeSelector})`;
+    // Hover needs `@media (hover: hover)` to avoid sticky styles on touch.
+    // Emitted as CSS-in-JS (not `@media ... { & }`) so Tailwind reports
+    // compounds as `StyleRules | AtRules`, keeping `group-hover:`/`peer-hover:`
+    // composable while still letting `not-hover:` invert cleanly.
     if (nativeSelector === ':hover') {
-      nativeSelectorGenerator = wrap => `@media (hover: hover) { ${wrap(wrappedNativeSelector)} }`;
+      return {
+        '@media (hover: hover)': {
+          [unifiedSelector]: '@slot'
+        }
+      };
     }
-    return [`&:where([data-rac])${baseSelector}`, nativeSelectorGenerator];
+    return unifiedSelector;
   } else if (prefix === '' && nativeMergeSelectors.has(attributeName)) {
-    return [`&${baseSelector}`, `&${nativeMergeSelectors.get(attributeName)}`];
+    // Same `:is()` collapse for merge selectors (e.g. placeholder).
+    return `&:is(${baseSelector}, ${nativeMergeSelectors.get(attributeName)})`;
   } else {
     return `&${baseSelector}`;
   }
@@ -102,6 +113,9 @@ let getSelector = (prefix, attributeName, attributeValue) => {
 let mapSelector = (selector, fn) => {
   if (Array.isArray(selector)) {
     return selector.map(fn);
+  } else if (selector && typeof selector === 'object') {
+    // CSS-in-JS object form (hover). Pass through unchanged.
+    return selector;
   } else {
     return fn(selector);
   }
