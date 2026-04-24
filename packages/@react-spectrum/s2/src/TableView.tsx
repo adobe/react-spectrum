@@ -345,9 +345,11 @@ export class S2TableLayout<T> extends TableLayout<T> {
     return layoutNode;
   }
 
-  // y is the height of the headers
-  protected buildBody(y: number): LayoutNode {
-    let layoutNode = super.buildBody(y);
+  protected buildRowGroup(y: number, node: GridNode<T>): LayoutNode {
+    let layoutNode = super.buildRowGroup(y, node);
+    if (node.type !== 'tablebody') {
+      return layoutNode;
+    }
     let {layoutInfo} = layoutNode;
     // Needs overflow for sticky loader
     layoutInfo.allowOverflow = true;
