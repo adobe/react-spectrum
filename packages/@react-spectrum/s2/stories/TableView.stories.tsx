@@ -2281,4 +2281,4 @@ export const TableFooterExample: StoryObj<typeof TableView> = {
       </TableView>
     );
   }
-}
+};

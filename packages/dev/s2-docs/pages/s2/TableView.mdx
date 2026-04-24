@@ -1026,7 +1026,7 @@ function ReorderableTable() {
               <Cell>{item.value.title}</Cell>
               <Cell>{item.value.type}</Cell>
               <Cell>{item.value.date}</Cell>
-              <Collection items={item.children}>
+              <Collection items={item.children ?? []}>
                 {renderItem}
               </Collection>
             </Row>

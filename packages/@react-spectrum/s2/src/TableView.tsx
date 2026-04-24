@@ -248,7 +248,7 @@ export interface TableViewDragPreviewProps {
   /** The currently dragged items, sourced from renderDragPreview. */
   items: DragItem[],
   /** The overflow mode to be applied on the drag preview. */
-  overflowMode: S2TableProps['overflowMode'],
+  overflowMode?: S2TableProps['overflowMode'],
   /**
    * The contents of the drag preview. Supports the default text slot.
    * If no children are provided, defaults to the first drag item's plain text content.
