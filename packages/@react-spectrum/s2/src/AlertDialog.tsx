@@ -11,13 +11,14 @@
  */
 
 import AlertTriangle from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
+import {AriaLabelingProps, DOMProps, DOMRef} from '@react-types/shared';
 import {Button} from './Button';
 import {ButtonGroup} from './ButtonGroup';
 import {CenterBaseline} from './CenterBaseline';
 import {chain} from 'react-aria/chain';
 import {Content, Heading} from './Content';
 import {Dialog} from './Dialog';
-import {DOMProps, DOMRef} from '@react-types/shared';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -26,10 +27,9 @@ import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
 import {Provider} from 'react-aria-components/slots';
 import {style} from '../style' with {type: 'macro'};
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {useId} from 'react-aria/useId';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
-export interface AlertDialogProps extends DOMProps, UnsafeStyles {
+export interface AlertDialogProps extends AriaLabelingProps, DOMProps, UnsafeStyles {
   /**
    * The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.
    * @default 'confirmation'
@@ -97,7 +97,6 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
     children,
     variant = 'confirmation'
   } = props;
-  let contentId = useId();
 
   let buttonVariant = 'primary';
   if (variant === 'confirmation') {
@@ -106,12 +105,14 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
     buttonVariant = 'negative';
   }
 
+  let domProps = filterDOMProps(props, {labelable: true});
+
   return (
     <Dialog
+      {...domProps}
       role="alertdialog"
       ref={ref}
       size={props.size}
-      aria-describedby={contentId}
       UNSAFE_style={props.UNSAFE_style}
       UNSAFE_className={(props.UNSAFE_className || '')}>
       {({close}) => (
@@ -128,7 +129,7 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
               </CenterBaseline>
             </Heading>
           </Provider>
-          <Content id={contentId}>{children}</Content>
+          <Content>{children}</Content>
           <ButtonGroup>
             {cancelLabel &&
               <Button

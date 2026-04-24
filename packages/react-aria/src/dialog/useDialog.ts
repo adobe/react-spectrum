@@ -113,8 +113,8 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
       ...filterDOMProps(props, {labelable: true}),
       role,
       tabIndex: -1,
-      'aria-labelledby': props['aria-labelledby'] || titleId,
-      'aria-describedby': props['aria-describedby'] || contentId,
+      'aria-labelledby': props['aria-labelledby'] ?? titleId,
+      'aria-describedby': props['aria-describedby'] ?? contentId,
       // Prevent blur events from reaching useOverlay, which may cause
       // popovers to close. Since focus is contained within the dialog,
       // we don't want this to occur due to the above useEffect.
