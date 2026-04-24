@@ -1013,12 +1013,7 @@ const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean, isTreeC
   width: 'full',
   fontSize: controlFont(),
   alignItems: 'center',
-  display: 'flex',
-  boxShadow: {
-    isDivider: {
-      default: '[inset -1px 0 0 var(--borderColorGray)]'
-    }
-  }
+  display: 'flex'
 });
 
 const stickyCell = {
@@ -1077,7 +1072,12 @@ const cellContent = style({
 });
 
 const divider = style({
-
+  display: 'block',
+  position: 'absolute',
+  width: '[1px]',
+  height: 'full',
+  insetEnd: 0,
+  backgroundColor: 'var(--borderColorGray)'
 });
 
 export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, Pick<ColumnProps, 'align' | 'showDivider'> {
@@ -1119,7 +1119,7 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       {...otherProps}>
       {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
-          <div className={divider} />
+          {showDivider && <div className={divider} />}
           {hasChildItems && isTreeColumn &&
             <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
           }
@@ -1561,7 +1561,7 @@ const rowTextColor = {
   forcedColors: 'ButtonText'
 } as const;
 
-const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextSelected?: boolean, isPrevSelected?: boolean, isFirstItem?: boolean}>({
+const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextSelected?: boolean, isPrevSelected?: boolean, isFirstItem?: boolean, isLastItem?: boolean}>({
   height: 'full',
   position: 'relative',
   boxSizing: 'border-box',
@@ -1616,10 +1616,6 @@ const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextS
   //   }
   // },
   outlineStyle: 'none',
-  // Another issue with not being able to absolute position a div inside of Row is that we 
-  // can't have rounded borders on all four edges when you hover over a row that is within a selected group.
-  // We want straight edges when the next or previous row is selected, while simultaneously wanting rounded borders
-  // so that when you hover over a row, you get the colored background with rounded border
   '--borderBottomRadius': {
     type: 'borderBottomStartRadius',
     value: {
@@ -1694,17 +1690,6 @@ const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextS
       forcedColors: 'ButtonBorder'
     }
   },
-
-  // So actually...I kinda like this route of creating variables like this and then just setting them on the pseudo element. Is it ideal? Probably not...but hey, I don't have a better solution
-  // So if this is the case and I can do it like this, then maybe I can proceed to use borders. The main reason for using boxShadows is because I needed both the blue border on the sides and
-  // gray border on the bottom. If I used borders, then it would render a weird diagonal line so then I opted for box shadows. But if we do update the highlight selection design to better align
-  // with ListView and TreeView, then it should be possible to do this with just borders. Just define everything here as a variable and set it on the pseudo element...
-  // That said, if they still want the gray borders in between...then we might be out of luck. But we didn't have them in ListView so maybe they can be convinced...
-
-  // In order to prevent layout shifts, we use box shadows to render the borders since we can't add an absolute position div (it messes up the cell count due to the way Table collections are built)
-  // In highlight mode, selected groups also have gray borders between the items in addition to having a blue outer border
-  // Having a border have two colors is possible, the issue is that the browser will render a diagonal line where the two borders meet
-  // Using box shadows gives us a bit more control on how the border colors appear
   '--boxShadowBorder': {
     type: 'borderColor',
     value: {
@@ -1723,34 +1708,14 @@ const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextS
               default: '[inset 0px -1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]'
             },
             isNextSelected: {
-              default: '[inset 0px 1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]',
-              isPrevSelected: '[inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]'
+              default: '[inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue), inset 0px -1px 0px var(--borderColorGray), inset 0px 1px 0px var(--borderColorBlue)]',
+              isPrevSelected: '[inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue), inset 0px -1px 0px var(--borderColorGray)]'
             }
           }
         }
       }
     }
   },
-  // boxShadow: {
-  //   selectionStyle: {
-  //     highlight: {
-  //       default: '[inset 0px 1px 0px var(--borderColorGray)]',
-  //       isFirstItem: '[inset 0 0 0]',
-  //       isPrevSelected: '[inset 0 0 0]',
-  //       isLastItem: '[inset 0px 1px 0px var(--borderColorGray), inset 0 -1px 0 var(--borderColorGray)]',
-  //       isSelected: {
-  //         default: '[inset 0px -1px 0px var(--borderColorBlue), inset 0px 1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]',
-  //         isPrevSelected: {
-  //           default: '[inset 0px -1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]'
-  //         },
-  //         isNextSelected: {
-  //           default: '[inset 0px 1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]',
-  //           isPrevSelected: '[inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]'
-  //         }
-  //       }
-  //     }
-  //   }
-  // },
   '--focusIndicatorHeight': {
     type: 'top',
     value: {
@@ -1766,29 +1731,6 @@ const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextS
   forcedColorAdjust: 'none'
 });
 
-// Unlike the other rows, the first row needs to render a border on top when it is selected in highlight mode
-// Unfortunately, we can't add a position: absolute div to <Row> because it messes up the cell count
-// As a result, we rely on adding a css pseudo element when the row is selected + first item + highlight selection
-// const border = css(
-//   `&:after {
-//     content: "";
-//     width: 100%;
-//     height: 100%;
-//     top: 0;
-//     inset-inline-start: 0;
-//     z-index: 3;
-//     position: absolute;
-//     box-sizing: border-box;
-//     border-top-width: 1px;
-//     border-bottom-width: 0px;
-//     border-inline-start-width: 0px;
-//     border-inline-end-width: 0px;
-//     border-style: solid;
-//     border-color: var(--borderColorBlue);
-//     }
-//   `
-// );
-
 const focusIndicator = css(
   `&:after {
     content: "";
@@ -1796,7 +1738,7 @@ const focusIndicator = css(
     height: 100%;
     top: 0;
     inset-inline-start: 0;
-    z-index: 3;
+    z-index: 4;
     border-radius: 5px;
     position: absolute;
     outline-style: solid;
@@ -1815,7 +1757,7 @@ const boxShadowBorder = css(
     position: absolute;
     box-shadow: var(--boxShadowBorder);
     inset: 0;
-    z-index: 1;
+    z-index: 2;
     border-bottom-left-radius: var(--borderBottomRadius);
     border-bottom-right-radius: var(--borderBottomRadius);
     border-top-left-radius: var(--borderTopRadius);
