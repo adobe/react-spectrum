@@ -1004,7 +1004,7 @@ describe('GridList', () => {
 
     it('should not skip drop positions before/after a disabled item', async () => {
       let onReorder = jest.fn();
-      render(<DraggableGridList disabledKeys={['dog']} onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
+      render(<DraggableGridList disabledKeys={['dog']} onReorder={onReorder} />);
       await user.tab();
       await user.keyboard('{ArrowRight}');
       await user.keyboard('{Enter}');

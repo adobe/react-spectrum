@@ -201,6 +201,35 @@ let DraggableTable = (props) => {
   return <TestTable tableProps={{dragAndDropHooks}} />;
 };
 
+let DisabledRowDraggableTable = () => {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map((key) => ({'text/plain': String(key)})),
+    onReorder: () => {}
+  });
+  return (
+    <Table aria-label="Files" dragAndDropHooks={dragAndDropHooks}>
+      <MyTableHeader>
+        <MyColumn id="name" isRowHeader>Name</MyColumn>
+        <MyColumn>Type</MyColumn>
+      </MyTableHeader>
+      <TableBody>
+        <MyRow id="1" textValue="Games">
+          <Cell>Games</Cell>
+          <Cell>File folder</Cell>
+        </MyRow>
+        <MyRow id="2" textValue="Program Files" isDisabled>
+          <Cell>Program Files</Cell>
+          <Cell>File folder</Cell>
+        </MyRow>
+        <MyRow id="3" textValue="bootmgr">
+          <Cell>bootmgr</Cell>
+          <Cell>System file</Cell>
+        </MyRow>
+      </TableBody>
+    </Table>
+  );
+};
+
 let DraggableTableWithSelection = (props) => {
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
@@ -1383,8 +1412,7 @@ describe('Table', () => {
     });
 
     it('should not skip drop positions before/after a disabled item', async () => {
-      let onReorder = jest.fn();
-      render(<DraggableTable tableProps={{disabledKeys: ['2'], disabledBehavior: 'all'}} onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
+      render(<DisabledRowDraggableTable />);
       await user.tab();
       await user.keyboard('{ArrowRight}');
       await user.keyboard('{Enter}');
@@ -1394,7 +1422,6 @@ describe('Table', () => {
       expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Program Files and bootmgr');
       await user.keyboard('{ArrowDown}');
       expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after bootmgr');
-
       await user.keyboard('{Escape}');
       act(() => jest.runAllTimers());
     });

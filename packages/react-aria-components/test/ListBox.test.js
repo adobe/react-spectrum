@@ -1153,7 +1153,7 @@ describe('ListBox', () => {
 
     it('should not skip drop positions before/after a disabled item', async () => {
       let onReorder = jest.fn();
-      let {getAllByRole} = render(<DraggableListBox disabledKeys={['dog']} onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
+      let {getAllByRole} = render(<DraggableListBox disabledKeys={['dog']} onReorder={onReorder} />);
       let option = getAllByRole('option')[0];
       fireEvent.keyDown(option, {key: 'Enter'});
       fireEvent.keyUp(option, {key: 'Enter'});

@@ -566,7 +566,7 @@ describe('Tree', () => {
       let {getAllByRole} = render(
         <DraggableTree  />
       );
-      let row = getAllByRole('row')[0];
+      let row = getAllByRole('row')[1];
       expect(row).not.toHaveAttribute('data-hovered');
       await user.hover(row);
       expect(row).toHaveAttribute('data-hovered', 'true');

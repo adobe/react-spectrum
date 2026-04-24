@@ -100,6 +100,8 @@ export {useLocale} from 'react-aria/I18nProvider';
 export {useListData} from 'react-stately/useListData';
 export {useTreeData} from 'react-stately/useTreeData';
 export {useAsyncList} from 'react-stately/useAsyncList';
+export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem} from 'react-aria/useDrop';
+export {useDragAndDrop} from 'react-aria-components/useDragAndDrop';
 
 export type {AccordionProps, AccordionItemProps, AccordionItemHeaderProps, AccordionItemTitleProps, AccordionItemPanelProps, AccordionItemState, AccordionItemRenderProps} from '../src/Accordion';
 export type {ActionBarProps} from '../src/ActionBar';
@@ -184,6 +186,8 @@ export type {ColorSpace, ColorChannel, Color, ColorFormat, ColorAxes, ColorChann
 export type {ListOptions, ListData} from 'react-stately/useListData';
 export type {TreeOptions, TreeData} from 'react-stately/useTreeData';
 export type {AsyncListOptions, AsyncListData, AsyncListLoadFunction, AsyncListLoadOptions, AsyncListStateUpdate} from 'react-stately/useAsyncList';
+export type {DragAndDropHooks, DragAndDropOptions} from 'react-aria-components/useDragAndDrop';
+export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-types/shared';
 
 export type {
   StylesProp,

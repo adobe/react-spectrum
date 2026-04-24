@@ -386,6 +386,85 @@ function Example(props) {
 }
 ```
 
+## Drag and drop
+
+TreeView supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the tree as a whole, on individual items, insert new items between existing ones, or reorder items. The insertion indicator is level-aware, so drop positions reflect the target item's nesting depth. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](../react-aria/dnd?component=Tree) to learn more.
+Pass custom preview content to the exported `TreeViewDragPreview` from `renderDragPreview` to match the default visual.
+
+```tsx render type="s2"
+"use client";
+import {Text} from '@react-spectrum/s2';
+import {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/s2/TreeView';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
+import {useTreeData} from '@react-spectrum/s2/useTreeData';
+import {Collection} from '@react-spectrum/s2';
+
+function ReorderableTree() {
+  let tree = useTreeData({
+    initialItems: [
+      {id: '1', title: 'Documents', children: [
+        {id: '2', title: 'Project', children: [
+          {id: '3', title: 'Weekly Report', children: []},
+          {id: '4', title: 'Budget', children: []}
+        ]}
+      ]},
+      {id: '5', title: 'Photos', children: [
+        {id: '6', title: 'Image 1', children: []},
+        {id: '7', title: 'Image 2', children: []}
+      ]}
+    ]
+  });
+
+  ///- begin highlight -///
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys, items: typeof tree.items) => items.map(item => ({'text/plain': item.value.title})),
+    onMove(e) {
+      if (e.target.dropPosition === 'before') {
+        tree.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        tree.moveAfter(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'on') {
+        let targetNode = tree.getItem(e.target.key);
+        if (targetNode) {
+          let targetIndex = targetNode.children ? targetNode.children.length : 0;
+          let keyArray = Array.from(e.keys);
+          for (let i = 0; i < keyArray.length; i++) {
+            tree.move(keyArray[i], e.target.key, targetIndex + i);
+          }
+        }
+      }
+    }
+  });
+  ///- end highlight -///
+
+  return (
+    <TreeView
+      aria-label="Reorderable folders"
+      selectionMode="multiple"
+      items={tree.items}
+      defaultExpandedKeys={['1', '5']}
+      ///- begin highlight -///
+      dragAndDropHooks={dragAndDropHooks}
+      ///- end highlight -///
+      styles={style({width: 'full', maxWidth: 320, height: 320})}>
+      {function renderItem(item) {
+        return (
+          <TreeViewItem id={item.key} textValue={item.value.title}>
+            <TreeViewItemContent>
+              <Text>{item.value.title}</Text>
+            </TreeViewItemContent>
+            {item.children && <Collection items={item.children}>
+              {renderItem}
+            </Collection>}
+          </TreeViewItem>
+        );
+      }}
+    </TreeView>
+  );
+}
+```
+
 ## API
 
 ```tsx links={{TreeView: '#treeview', TreeViewItem: '#treeviewitem', TreeViewItemContent: '#treeviewitemcontent', TreeViewLoadMoreItem: '#treeviewloadmoreitem', ActionMenu: 'ActionMenu', ActionButtonGroup: 'ActionButtonGroup', Icon: 'icons', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span'}}
