@@ -27,10 +27,13 @@ import {
   Table as RACTable,
   TableBody as RACTableBody,
   TableBodyProps as RACTableBodyProps,
+  TableFooter as RACTableFooter,
+  TableFooterProps as RACTableFooterProps,
   TableHeader as RACTableHeader,
   TableHeaderProps as RACTableHeaderProps,
   TableProps as RACTableProps,
   ResizableTableContainer,
+  RowRenderProps,
   TableBodyRenderProps,
   TableLoadMoreItem,
   TableRenderProps,
@@ -210,11 +213,11 @@ export class S2TableLayout<T> extends TableLayout<T> {
   }
 
   protected buildCollection(): LayoutNode[] {
-    let [header, body] = super.buildCollection();
-    if (!header) {
+    let rowGroups = super.buildCollection();
+    if (rowGroups.length < 2) {
       return [];
     }
-    let {layoutInfo} = body;
+    let {layoutInfo} = rowGroups[1];
     // TableLayout's buildCollection always sets the body width to the max width between the header width, but
     // we want the body to be sticky and only as wide as the table so it is always in view if loading/empty
     let isEmptyOrLoading = this.virtualizer?.collection.size === 0;
@@ -222,10 +225,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
       layoutInfo.rect.width = this.virtualizer!.size.width - 80;
     }
 
-    return [
-      header,
-      body
-    ];
+    return rowGroups;
   }
 
   protected buildLoader(node: Node<T>, x: number, y: number): LayoutNode {
@@ -1544,6 +1544,7 @@ const rowBackgroundColor = {
       }
     }
   },
+  isInFooter: 'gray-200',
   forcedColors: {
     default: 'Background'
   }
@@ -1556,12 +1557,11 @@ const rowTextColor = {
     default: 'disabled',
     forcedColors: 'GrayText'
   },
+  isInFooter: 'neutral',
   forcedColors: 'ButtonText'
 } as const;
 
-const row = style({
-  // ...focusRing(),
-  // outlineOffset: -2,
+const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextSelected?: boolean, isPrevSelected?: boolean, isFirstItem?: boolean}>({
   height: 'full',
   position: 'relative',
   boxSizing: 'border-box',
@@ -1757,6 +1757,10 @@ const row = style({
       default: 'calc(self(height))'
     }
   },
+  fontWeight: {
+    default: 'normal',
+    isInFooter: 'bold'
+  },
   isolation: 'isolate',
   zIndex: 3,
   forcedColorAdjust: 'none'
@@ -1838,6 +1842,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
 
   } = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
+  let isInFooter = useContext(FooterContext);
 
   return (
     (<RACRow
@@ -1845,10 +1850,13 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       ref={domRef}
       id={id}
       dependencies={[...dependencies, columns]}
+      isDisabled={isInFooter}
+      disabledBehavior="selection"
       className={renderProps => row({
         ...renderProps,
         ...tableVisualOptions,
         selectionStyle,
+        isInFooter,
         isNextSelected: isNextSelected(id, renderProps.state),
         isFirstItem: isFirstItem(id, renderProps.state),
         isPrevSelected: isPrevSelected(id, renderProps.state),
@@ -1868,5 +1876,24 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         {children}
       </Collection>
     </RACRow>)
+  );
+});
+
+export interface TableFooterProps<T> extends Omit<RACTableFooterProps<T>, 'style' | 'className' | 'render' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | keyof GlobalDOMAttributes> {}
+
+const FooterContext = createContext(false);
+
+/**
+ * A footer within a `<Table>`, containing summary rows.
+ */
+export const TableFooter = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableFooter<T extends object>(props: TableFooterProps<T>, ref: DOMRef<HTMLDivElement>) {
+  let domRef = useDOMRef(ref);
+
+  return (
+    <FooterContext.Provider value>
+      <RACTableFooter
+        {...props}
+        ref={domRef} />
+    </FooterContext.Provider>
   );
 });

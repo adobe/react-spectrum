@@ -1,6 +1,6 @@
 {
   "name": "@react-types/link",
-  "version": "3.6.7",
+  "version": "3.7.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -9,8 +9,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/link": "^3.8.9",
-    "@react-spectrum/link": "^3.6.25"
+    "@react-aria/link": "^3.9.0",
+    "@react-spectrum/link": "^3.7.0"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0",

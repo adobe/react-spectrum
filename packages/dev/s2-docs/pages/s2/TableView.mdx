@@ -89,7 +89,7 @@ In this example, both the columns and the rows are provided to the table via a r
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, TableFooter} from '@react-spectrum/s2/TableView';
 import {CheckboxGroup, Checkbox} from '@react-spectrum/s2/CheckboxGroup';
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {useState} from 'react';
@@ -97,39 +97,40 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
 const columns = [
-  {name: 'Name', id: 'name', isRowHeader: true},
-  {name: 'Type', id: 'type'},
-  {name: 'Date Modified', id: 'date'}
+  {name: 'Title', id: 'title', isRowHeader: true},
+  {name: 'Status', id: 'status'},
+  {name: 'Payment Method', id: 'paymentMethod'},
+  {name: 'Price', id: 'price'}
 ];
 ///- end collapse -///
 
 ///- begin collapse -///
 const initialRows = [
-  {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
-  {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
-  {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
-  {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+  {id: 1, title: 'Website Design', status: 'Paid', paymentMethod: 'Credit Card', price: 1200},
+  {id: 2, title: 'Logo Creation', status: 'Pending', paymentMethod: 'PayPal', price: 350},
+  {id: 3, title: 'SEO Optimization', status: 'Overdue', paymentMethod: 'Bank Transfer', price: 800},
+  {id: 4, title: 'Social Media Setup', status: 'Paid', paymentMethod: 'Debit Card', price: 450},
+  {id: 5, title: 'Content Writing', status: 'Pending', paymentMethod: 'Credit Card', price: 600}
 ];
 ///- end collapse -///
 
 function FileTable() {
-  let [showColumns, setShowColumns] = useState(['name', 'type', 'date']);
+  let [showColumns, setShowColumns] = useState(['title', 'status', 'paymentMethod', 'price']);
   let visibleColumns = columns.filter(column => showColumns.includes(column.id));
 
   let [rows, setRows] = useState(initialRows);
   let addRow = () => {
-    let date = new Date().toLocaleDateString();
     setRows(rows => [
       ...rows,
-      {id: rows.length + 1, name: 'file.txt', date, type: 'Text Document'}
+      {id: rows.length + 1, title: 'New Invoice', status: 'Pending', paymentMethod: 'Credit Card', price: 250}
     ]);
   };
 
   return (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'start', width: 'full'})}>
       <CheckboxGroup aria-label="Show columns" value={showColumns} onChange={setShowColumns} orientation="horizontal">
-        <Checkbox value="type">Type</Checkbox>
-        <Checkbox value="date">Date Modified</Checkbox>
+        <Checkbox value="status">Status</Checkbox>
+        <Checkbox value="paymentMethod">Payment Method</Checkbox>
       </CheckboxGroup>
       <TableView aria-label="Files" styles={style({width: 'full'})}>
         <TableHeader columns={visibleColumns}>
@@ -144,10 +145,22 @@ function FileTable() {
           {item => (
             /*- end highlight -*/
             <Row columns={visibleColumns}>
-              {column => <Cell>{item[column.id]}</Cell>}
+              {column => (
+                <Cell>
+                  {column.id === 'price' 
+                    ? item.price.toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})
+                    : item[column.id]}
+                </Cell>
+              )}
             </Row>
           )}
         </TableBody>
+        <TableFooter>
+          <Row>
+            <Cell colSpan={showColumns.length - 1}>Total</Cell>
+            <Cell>{rows.reduce((p, row) => p + row.price, 0).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})}</Cell>
+          </Row>
+        </TableFooter>
       </TableView>
       <ActionButton onPress={addRow}>Add row</ActionButton>
     </div>
@@ -370,7 +383,7 @@ Use the `align` prop on a Column and Cell to set the text alignment. `showDivide
 
 ```tsx render hideImports type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, Collection} from '@react-spectrum/s2/TableView';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, Collection, TableFooter} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
@@ -421,13 +434,15 @@ function TableWithDividers() {
             </Row>
           )}
         </Collection>
+      </TableBody>
+      <TableFooter>
         <Row>
           {/*- begin highlight -*/}
           <Cell colSpan={2} align="end" showDivider>Total:</Cell>
           {/*- end highlight -*/}
           <Cell align="end">{rows.reduce((p, v) => p + v.level, 0)}</Cell>
         </Row>
-      </TableBody>
+      </TableFooter>
     </TableView>
   );
 }
@@ -934,7 +949,7 @@ function subscribe(fn) {
 
 ## API
 
-```tsx links={{TableView: '#tableview', TableHeader: '#tableheader', Column: '#column', TableBody: '#tablebody', Row: '#row', Cell: '#cell', 'EditableCell': '#editablecell'}}
+```tsx links={{TableView: '#tableview', TableHeader: '#tableheader', Column: '#column', TableBody: '#tablebody', Row: '#row', Cell: '#cell', TableFooter: '#tablefooter', 'EditableCell': '#editablecell'}}
 <TableView>
   <TableHeader>
     <Column />
@@ -945,6 +960,11 @@ function subscribe(fn) {
       <EditableCell />
     </Row>
   </TableBody>
+  <TableFooter>
+    <Row>
+      <Cell />
+    </Row>
+  </TableFooter>
 </TableView>
 ```
 
@@ -971,6 +991,10 @@ function subscribe(fn) {
 ### Cell
 
 <PropTable component={docs.exports.Cell} links={docs.links} showDescription />
+
+### TableFooter
+
+<PropTable component={docs.exports.TableFooter} links={docs.links} showDescription />
 
 ### EditableCell
 
