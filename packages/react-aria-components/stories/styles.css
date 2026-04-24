@@ -221,6 +221,14 @@
   }
 }
 
+:global(.react-aria-Row) {
+  &[data-drop-target] {
+    outline: 2px solid purple;
+    background: rgb(from purple r g b / 20%);
+    z-index: 4;
+  }
+}
+
 :global(.react-aria-Cell) {
   overflow: hidden;
   white-space: nowrap;

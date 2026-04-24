@@ -520,3 +520,11 @@ input {
   top: 50%;
   left: 50%;
 }
+
+.treeGridTable {
+  overflow: clip;
+
+  :global(.react-aria-DropIndicator)[data-drop-target] {
+    translate: calc(50px + (var(--table-row-level) - 1) * 15px) 0;
+  }
+}
