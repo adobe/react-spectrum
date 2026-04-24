@@ -1,4 +1,4 @@
-const { normalizeStories } = require("storybook/internal/common");
+import { normalizeStories } from "storybook/internal/common";
 
 const TEMPLATE = `<!DOCTYPE html>
 <html lang="en">
@@ -22,12 +22,26 @@ const TEMPLATE = `<!DOCTYPE html>
     <!-- [BODY HTML SNIPPET HERE] -->
     <div id="storybook-root"></div>
     <div id="storybook-docs"></div>
+    <script>
+      (function(){
+        var noop = function(){};
+        var placeholderChannel = { on: noop, emit: noop, removeListener: noop, off: noop };
+        window.__STORYBOOK_ADDONS_CHANNEL__ = placeholderChannel;
+        window.__STORYBOOK_ADDONS_PREVIEW = {
+          _channel: null,
+          setChannel: function(c){ this._channel = c; window.__STORYBOOK_ADDONS_CHANNEL__ = c; },
+          getChannel: function(){ return this._channel || placeholderChannel; },
+          ready: function(){ return Promise.resolve(this.getChannel()); },
+          hasChannel: function(){ return !!this._channel; }
+        };
+      })();
+    </script>
     <script type="module" src="preview.js"></script>
   </body>
 </html>
 `;
 
-module.exports.generateIframeModern = async function generateIframeModern(options) {
+export async function generateIframeModern(options) {
   const { configType, features, presets, serverChannelUrl, title } = options;
   const frameworkOptions = await presets.apply("frameworkOptions");
   const headHtmlSnippet = await presets.apply("previewHead");
@@ -38,10 +52,7 @@ module.exports.generateIframeModern = async function generateIframeModern(option
   const coreOptions = await presets.apply("core");
   const stories = normalizeStories(
     await options.presets.apply("stories", [], options),
-    {
-      configDir: options.configDir,
-      workingDir: process.cwd(),
-    }
+    { configDir: options.configDir, workingDir: process.cwd() }
   ).map((specifier) => ({
     ...specifier,
     importPathMatcher: specifier.importPathMatcher.source,
@@ -54,11 +65,7 @@ module.exports.generateIframeModern = async function generateIframeModern(option
     .replace(`'[FRAMEWORK_OPTIONS HERE]'`, JSON.stringify(frameworkOptions))
     .replace(
       `'[CHANNEL_OPTIONS HERE]'`,
-      JSON.stringify(
-        coreOptions && coreOptions.channelOptions
-          ? coreOptions.channelOptions
-          : {}
-      )
+      JSON.stringify(coreOptions?.channelOptions ?? {})
     )
     .replace(`'[FEATURES HERE]'`, JSON.stringify(features || {}))
     .replace(`'[STORIES HERE]'`, JSON.stringify(stories || {}))
@@ -66,4 +73,4 @@ module.exports.generateIframeModern = async function generateIframeModern(option
     .replace(`'[SERVER_CHANNEL_URL HERE]'`, JSON.stringify(serverChannelUrl))
     .replace("<!-- [HEAD HTML SNIPPET HERE] -->", headHtmlSnippet || "")
     .replace("<!-- [BODY HTML SNIPPET HERE] -->", bodyHtmlSnippet || "");
-};
+}
