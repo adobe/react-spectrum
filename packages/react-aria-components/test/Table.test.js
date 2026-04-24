@@ -23,7 +23,6 @@ import {
   TableBody,
   TableFooter,
   TableHeader,
-  TableLayout,
   TableLoadMoreItem,
   useTableOptions
 } from '../src/Table';
@@ -40,6 +39,7 @@ import React, {useMemo, useState} from 'react';
 import {resizingTests} from 'react-aria/test/table/tableResizingTests.tsx';
 import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import * as stories from '../stories/Table.stories';
+import {TableLayout} from '../src/TableLayout';
 import {Tag, TagGroup, TagList} from '../src/TagGroup';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
