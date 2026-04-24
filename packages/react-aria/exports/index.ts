@@ -133,6 +133,7 @@ export {useTree} from '../src/tree/useTree';
 export {useTreeItem} from '../src/tree/useTreeItem';
 export {chain} from '../src/utils/chain';
 export {mergeProps} from '../src/utils/mergeProps';
+export {mergeRefs} from '../src/utils/mergeRefs';
 export {useId} from '../src/utils/useId';
 export {useObjectRef} from '../src/utils/useObjectRef';
 export {RouterProvider} from '../src/utils/openLink';
