@@ -2,18 +2,33 @@
 @import "./utilities.css";
 
 .react-aria-Calendar {
-  width: calc(var(--spacing-9) * 7);
-  max-width: 100%;
-  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  overflow: auto;
+  width: 100%;
+  max-width: fit-content;
   color: var(--text-color);
   font: var(--font-size) system-ui;
+
+  .months {
+    display: flex;
+    gap: var(--spacing-3);
+  }
+
+  .month {
+    width: calc(var(--spacing-9) * 7);
+    min-width: calc(var(--spacing-7) * 7);
+    container-type: inline-size;
+  }
 
   header {
     display: flex;
     align-items: center;
     margin: 0 var(--spacing-1) var(--spacing-4) var(--spacing-1);
+    min-height: var(--spacing-8);
 
-    .react-aria-Heading {
+    .react-aria-CalendarHeading {
       flex: 1;
       margin: 0;
       text-align: center;
@@ -58,8 +73,8 @@
     }
   }
 
-  &[data-outside-month] {
-    display: none;
+  &[data-disabled] {
+    opacity: 0.5;
   }
 
   &[data-pressed] {

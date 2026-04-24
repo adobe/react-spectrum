@@ -55,7 +55,7 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
   const commitBehaviorMapping = {
     clear: () => state.clearSelection(),
     reset: () => state.setAnchorDate(null),
-    select: () => state.selectFocusedDate()
+    select: () => state.commitSelection()
   };
 
   // Execute method corresponding to `commitBehavior` when pressing or releasing a pointer outside the calendar body,
