@@ -121,44 +121,40 @@ async function generatePreviewModern(
     ),
   ].filter(Boolean);
 
+  const importFnCode = await generateImportFnScriptCode(options, generatedEntries);
+
   /**
    * Main preview module (loaded by preview.js bootstrap via dynamic import).
    * Addon setup first, then runtime/setup(). See storybook builder-vite codegen-modern-iframe-script.ts
    */
   const code = `
-  import './setup-addons.js';
-  import { setup } from 'storybook/internal/preview/runtime';
-  setup();
+${importFnCode.imports}
+import './setup-addons.js';
+import { setup } from 'storybook/internal/preview/runtime';
+import { composeConfigs, PreviewWeb } from 'storybook/internal/preview-api';
+import { isPreview } from 'storybook/internal/csf';
 
-  import { composeConfigs, PreviewWeb } from 'storybook/internal/preview-api';
-  import { isPreview } from 'storybook/internal/csf';
+setup();
 
-  ${await generateImportFnScriptCode(options, generatedEntries)}
+${importFnCode.body}
 
-  const getProjectAnnotations = async () => {
-    const configs = await Promise.all([${relativePreviewAnnotations
-      .map((previewAnnotation) => `import('${previewAnnotation}')`)
-      .join(",\n")}])
-    return composeConfigs(configs);
-  }
+const getProjectAnnotations = async () => {
+  const configs = await Promise.all([${relativePreviewAnnotations
+    .map((previewAnnotation) => `import('${previewAnnotation}')`)
+    .join(",\n")}]);
+  return composeConfigs(configs);
+};
 
+window.__STORYBOOK_PREVIEW__ = window.__STORYBOOK_PREVIEW__ || new PreviewWeb(importFn, getProjectAnnotations);
+window.__STORYBOOK_STORY_STORE__ = window.__STORYBOOK_STORY_STORE__ || window.__STORYBOOK_PREVIEW__.storyStore;
 
-  window.__STORYBOOK_PREVIEW__ = window.__STORYBOOK_PREVIEW__ || new PreviewWeb(importFn, getProjectAnnotations);
-
-  window.__STORYBOOK_STORY_STORE__ = window.__STORYBOOK_STORY_STORE__ || window.__STORYBOOK_PREVIEW__.storyStore;
-
-
-  if (import.meta.hot) {
-    import.meta.hot.hot.accept(() => {
-      // importFn has changed so we need to patch the new one in
-      window.__STORYBOOK_PREVIEW__.onStoriesChanged({ importFn });
-
-      // getProjectAnnotations has changed so we need to patch the new one in
-      window.__STORYBOOK_PREVIEW__.onGetProjectAnnotationsChanged({ getProjectAnnotations });
-    });
-  }
- `;
-  // ${generateHMRHandler(frameworkName)};
+if (import.meta.hot) {
+  import.meta.hot.accept(() => {
+    window.__STORYBOOK_PREVIEW__.onStoriesChanged({ importFn });
+    window.__STORYBOOK_PREVIEW__.onGetProjectAnnotationsChanged({ getProjectAnnotations });
+  });
+}
+`;
   return code;
 }
 
@@ -174,7 +170,7 @@ function processPreviewAnnotation(annotationPath) {
   }
   // resolve relative paths into absolute paths, but don't resolve "bare" imports
   if (annotationPath?.startsWith("./") || annotationPath?.startsWith("../")) {
-    return /*slash*/ annotationPath.resolve(annotationPath);
+    return annotationPath;
   }
   // This should not occur, since we use `.filter(Boolean)` prior to
   // calling this function, but this makes typescript happy
@@ -197,43 +193,34 @@ function processPreviewAnnotation(annotationPath) {
  * This file is largely based on https://github.com/storybookjs/storybook/blob/d1195cbd0c61687f1720fefdb772e2f490a46584/lib/core-common/src/utils/to-importFn.ts
  */
 
-// TODO(Task 3.1): toImportFn, generateImportFnScriptCode, and listStories are
-// INTENTIONALLY BROKEN at this stage. toImportFn emits `...import('story:...')`
-// which spreads a Promise into an object literal and yields an empty importers
-// map. listStories returns glob patterns rather than resolved file paths. Both
-// are rewritten in Task 3.1 to use static top-level imports plus a proper glob
-// expansion. Do not attempt to "fix" these in isolation — see the plan at
-// docs/superpowers/plans/2026-04-24-storybook-10-migration.md Phase 3.
-
 /**
- * This function takes an array of stories and creates a mapping between the stories' relative paths
- * to the working directory and their dynamic imports. The import is done in an asynchronous function
- * to delay loading. It then creates a function, `importFn(path)`, which resolves a path to an import
- * function and this is called by Storybook to fetch a story dynamically when needed.
- * @param stories An array of absolute story paths.
+ * Emit top-level static imports for each story glob resolved via the `story:`
+ * pipeline. Each virtual module's default export is a map of
+ * `{ relativePathFromCwd: () => import(storyFile) }`. Merge those maps into
+ * a single importers object and expose importFn(path).
  */
 async function toImportFn(stories, generatedEntries) {
-  const entries = stories.map(glob => {
-    return `...import(${JSON.stringify('story:' + btoa(relativePath(generatedEntries, glob)))})`;
+  const importLines = stories.map((glob, i) => {
+    const specifier = 'story:' + btoa(relativePath(generatedEntries, glob));
+    return `import stories_${i} from ${JSON.stringify(specifier)};`;
   });
+  const mergeArgs = stories.map((_, i) => `stories_${i}`).join(', ');
 
-  return `
-    const importers = {
-      ${entries.join(',\n')}
-    };
+  return {
+    imports: importLines.join('\n'),
+    body: `
+const importers = Object.assign({}, ${mergeArgs});
 
-    async function importFn(path) {
-      return importers[path]();
-    }
-  `;
+async function importFn(path) {
+  return importers[path]();
+}
+`.trim(),
+  };
 }
 
 async function generateImportFnScriptCode(options, generatedEntries) {
-  // First we need to get an array of stories and their absolute paths.
-  let stories = await listStories(options);
-
-  // We can then call toImportFn to create a function that can be used to load each story dynamically.
-  return (await toImportFn(stories, generatedEntries)).trim();
+  const stories = await listStories(options);
+  return toImportFn(stories, generatedEntries);
 }
 
 async function listStories(options) {
