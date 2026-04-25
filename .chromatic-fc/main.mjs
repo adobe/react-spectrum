@@ -1,9 +1,5 @@
 
-module.exports = {
-  framework: {
-    name: "storybook-react-parcel",
-    options: {},
-  },
+export default {
   stories: [
     '../packages/**/chromatic-fc/**/*.stories.{js,jsx,ts,tsx}',
     '../packages/@react-spectrum/s2/chromatic/*.stories.@(js|jsx|mjs|ts|tsx)'
@@ -12,8 +8,7 @@ module.exports = {
     'storybook/actions',
     '@storybook/addon-a11y'
   ],
-  typescript: {
-    check: false,
-    reactDocgen: false
-  }
+  typescript: { check: false, reactDocgen: false },
+  framework: { name: 'storybook-react-parcel', options: {} },
+  core: { disableWhatsNewNotifications: true },
 };

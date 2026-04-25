@@ -1,4 +1,6 @@
+import {addons} from 'storybook/preview-api';
 import {configureActions} from 'storybook/actions';
+import {DARK_MODE_EVENT_NAME} from '@vueless/storybook-dark-mode';
 import React from 'react';
 import {withProviderSwitcher} from './custom-addons/provider';
 import {withScrollingSwitcher} from './custom-addons/scrolling';
@@ -9,6 +11,29 @@ import {withStrictModeSwitcher} from './custom-addons/strictmode';
 configureActions({
   depth: 2,
 });
+
+// Reflect storybook-dark-mode state on the document root so global CSS / consumers
+// can react. Mirrors the .storybook-s2 setup. Initial value comes from the addon's
+// localStorage key so the very first paint is correct.
+const DARK_MODE_STORAGE_KEY = 'sb-addon-themes-3';
+function getInitialColorScheme() {
+  if (typeof window === 'undefined') return 'light';
+  try {
+    const stored = window.localStorage.getItem(DARK_MODE_STORAGE_KEY);
+    if (stored) {
+      const {current} = JSON.parse(stored);
+      return current === 'dark' ? 'dark' : 'light';
+    }
+  } catch (e) {}
+  return 'light';
+}
+
+if (typeof document !== 'undefined') {
+  document.documentElement.dataset.colorScheme = getInitialColorScheme();
+  addons.getChannel().on(DARK_MODE_EVENT_NAME, (isDark) => {
+    document.documentElement.dataset.colorScheme = isDark ? 'dark' : 'light';
+  });
+}
 
 export const parameters = {
   options: {
