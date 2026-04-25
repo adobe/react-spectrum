@@ -1,0 +1,16 @@
+diff --git a/node_modules/storybook/dist/csf/index.js b/node_modules/storybook/dist/csf/index.js
+index 1234567..abcdefg 100644
+--- a/node_modules/storybook/dist/csf/index.js
++++ b/node_modules/storybook/dist/csf/index.js
+@@ -913,7 +913,10 @@ var useHighlights = (channel) => {
+ };
+ 
+ // src/highlight/preview.ts
+-globalThis?.FEATURES?.highlight && addons?.ready && addons.ready().then(useHighlights);
++// PATCHED: defer past Parcel CJS circular-dep init so addons getter never throws
++globalThis?.FEATURES?.highlight && Promise.resolve().then(() => {
++  try { addons?.ready && addons.ready().then(useHighlights); } catch (e) {}
++});
+ var preview_default4 = () => definePreviewAddon5({});
+ 
+ // src/measure/preview.ts

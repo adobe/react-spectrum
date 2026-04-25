@@ -23,6 +23,5 @@ export default {
   ],
   typescript: { check: false, reactDocgen: false },
   framework: { name: 'storybook-react-parcel', options: {} },
-  features: { highlight: false },   // workaround: avoids circular-dep crash in Parcel-bundled preview
   core: { disableWhatsNewNotifications: true },
 };
