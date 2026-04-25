@@ -1,3 +1,14 @@
+// Storybook 10 Builder API entrypoint.
+// Contract: https://storybook.js.org/docs/builders/builder-api
+//   - `start({ options, router })`  -> dev mode; returns { bail, stats, totalTime }
+//   - `build({ options })`          -> production build
+//   - `bail()`                      -> top-level cleanup hook called by Storybook on error/SIGINT
+//   - `corePresets` / `overridePresets` -> arrays of preset paths Storybook merges in
+//
+// Reference implementations:
+//   - code/builders/builder-vite/src/index.ts
+//   - code/builders/builder-webpack5/src/index.ts
+
 import { Parcel } from "@parcel/core";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -14,11 +25,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const generatedEntries = path.join(__dirname, "generated-entries");
 
+// Module-scope so the top-level `bail()` can reach it. Aligns with
+// builder-webpack5's pattern of holding a single watcher handle on the module.
 let watcherSubscription;
 
 export async function start({ options, router }) {
   const parcel = await createParcel(options, true);
 
+  // Storybook's CLI runs an Express-style server on :9003 (the user-facing
+  // dev URL). Parcel's own dev server runs on :3000 to serve iframe.html and
+  // the bundle assets. We mount a reverse proxy on Storybook's router so that
+  // any request that isn't the manager's own /index.html falls through to
+  // Parcel. If Parcel returns 404 or HTML for a non-iframe URL we hand the
+  // request back to next() so Storybook's manager middleware can handle it.
   router.use(async (req, res, next) => {
     if (req.url === "/" || req.url === "/index.html") return next();
 
@@ -68,12 +87,24 @@ export async function build({ options }) {
   await parcel.run();
 }
 
+// No core presets to register; previewAnnotations come transitively from
+// @storybook/react via core.renderer (see storybook-react-parcel/preset.mjs).
 export const corePresets = [];
 
+// Top-level bail() must close the Parcel watcher; otherwise the dev process
+// keeps a file-watcher alive after Storybook errors out. Hoisting
+// `watcherSubscription` to module scope (above) lets this work even when
+// start() returned successfully but a later error triggers cleanup.
 export async function bail() {
   await watcherSubscription?.unsubscribe();
 }
 
+// Builder is driven by FIVE generated files (under ./generated-entries):
+//   - iframe.html       <- Parcel's bundle entry point (HTML asset)
+//   - preview-main.js   <- ESM script loaded by iframe.html (the preview entry)
+//   - setup-addons.js   <- ESM module imported by preview-main.js
+//   - stories.js        <- written by parcel-resolver-storybook for `story:` glob deps
+//   - sb-parcel-externals/*.js <- written by parcel-resolver-storybook for runtime externals
 async function createParcel(options, isDev = false) {
   fs.mkdirSync(generatedEntries, { recursive: true });
   fs.writeFileSync(

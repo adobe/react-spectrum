@@ -16,6 +16,13 @@ const btoa = (s) => Buffer.from(s, "utf8").toString("base64");
 /**
  * Strip absolute path prefix up to and including node_modules, returning a bare
  * specifier for the bundler. (Storybook 10 no longer exports this from internal/common.)
+ *
+ * Background: addons advertise their preview entries as absolute
+ * `node_modules/@storybook/foo/dist/preview.js` paths in the `previewAnnotations`
+ * preset, but each package's `exports` map only exposes the bare subpath (e.g.
+ * `./preview`) -- not the dist file. Parcel's resolver honors `exports`, so we
+ * must rewrite absolute paths into bare specifiers before handing them off.
+ * Plan task 2.4 documents this rationale.
  */
 function stripAbsNodeModulesPath(absPath) {
   const sep = path.sep;
@@ -88,11 +95,19 @@ async function generatePreviewModern(
 
   /**
    * Main preview module loaded directly by iframe.html as <script type="module">.
-   * runtime MUST be the first import so its top-level setup() call populates
-   * __STORYBOOK_MODULE_* globals (and __STORYBOOK_ADDONS_PREVIEW /
-   * __STORYBOOK_ADDONS_CHANNEL__) before setup-addons.js (or any other externalized
-   * specifier) evaluates. Matches upstream Vite/webpack5 ordering.
-   * See storybook builder-vite codegen-modern-iframe-script.ts
+   *
+   * Import order is load-bearing:
+   *   1. `storybook/internal/preview/runtime` MUST evaluate first. Its file-level
+   *      `setup()` side-effect populates `__STORYBOOK_MODULE_PREVIEW_API__`,
+   *      `__STORYBOOK_MODULE_CHANNELS__`, etc. on globalThis.
+   *   2. `./setup-addons.js` then imports from `storybook/preview-api`, which
+   *      parcel-resolver-storybook redirects to a cache file that reads
+   *      `globalThis.__STORYBOOK_MODULE_PREVIEW_API__`. The globals are now
+   *      populated, so the destructure succeeds.
+   *   3. `setup()` is called explicitly to match upstream Vite, but in practice
+   *      the import-time side-effect of step 1 has already done the work.
+   *
+   * See code/builders/builder-vite/src/codegen-modern-iframe-script.ts.
    */
   const code = `
 import { setup } from 'storybook/internal/preview/runtime';
@@ -125,6 +140,11 @@ if (import.meta.hot) {
   return code;
 }
 
+// Rewrite absolute `node_modules/@storybook/foo/dist/preview.js` previewAnnotation
+// paths into bare specifiers Parcel can resolve through `exports`. Upstream Vite
+// (`processPreviewAnnotation`) and webpack5 (`slash(entry)`) sidestep this
+// because their resolvers accept absolute paths against package exports;
+// Parcel's does not. Plan task 2.4 has the full rationale.
 function processPreviewAnnotation(annotationPath) {
   // If entry is an object, take the first, which is the
   // bare (non-absolute) specifier.
@@ -165,6 +185,14 @@ function processPreviewAnnotation(annotationPath) {
  * pipeline. Each virtual module's default export is a map of
  * `{ relativePathFromCwd: () => import(storyFile) }`. Merge those maps into
  * a single importers object and expose importFn(path).
+ *
+ * Why static imports + Object.assign instead of dynamic-import + spread?
+ * Earlier (v9) we used `Promise.all([import('story:...'), ...]).then(mods =>
+ * Object.assign({}, ...mods.map(m => m.default)))`. Under Parcel's CJS dev
+ * wrappers that pattern raced runtime initialization and would intermittently
+ * lose stories. Static imports place the virtual modules on the module graph
+ * so Parcel sequences them deterministically before the importFn closure runs.
+ * See plan docs/superpowers/plans/2026-04-24-storybook-10-migration.md task 3.1.
  */
 async function toImportFn(stories, generatedEntries) {
   const importLines = stories.map((glob, i) => {

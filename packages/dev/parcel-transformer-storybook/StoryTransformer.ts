@@ -1,3 +1,14 @@
+// CSF transformer: enriches *.stories.{ts,tsx,js,...} files using
+// storybook/internal/csf-tools (loadCsf -> enrichCsf -> formatCsf), wraps
+// stories for React Fast Refresh, and injects react-docgen-typescript output
+// as `Component.__docgenInfo` for the Storybook docs panel.
+//
+// react-docgen-typescript runs out-of-process via an IPC client (see
+// ./react-docgen-typescript.ts) so a single TS server is shared across the
+// whole Parcel build instead of one-per-file. This is a Parcel-specific
+// performance optimization; upstream Vite/webpack5 use different docgen
+// mechanisms (vite-plugin-checker, ts-loader, etc).
+
 import { Transformer } from '@parcel/plugin';
 import { enrichCsf, formatCsf, loadCsf } from 'storybook/internal/csf-tools';
 import * as t from '@babel/types';

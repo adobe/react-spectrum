@@ -1,3 +1,8 @@
+<!--
+  Mirrors upstream code/builders/builder-vite/input/iframe.html.
+  Placeholder strings (e.g. '[CONFIG_TYPE HERE]', '[FEATURES HERE]') are
+  substituted at build time by gen-iframe-modern.mjs via String.replace.
+-->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -17,8 +22,9 @@
 
       ('[OTHER_GLOBALS HERE]');
 
-      // We do this so that "module && module.hot" etc. in Storybook source code
-      // doesn't fail (it will simply be disabled)
+      // Preserves Storybook code paths that path-sniff `module && module.hot`
+      // (treated as "no HMR available") and code that expects a `global`
+      // reference (legacy node-style). Matches upstream Vite's iframe.html.
       window.module = undefined;
       window.global = window;
     </script>

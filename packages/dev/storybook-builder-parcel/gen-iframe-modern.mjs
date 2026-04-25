@@ -1,3 +1,7 @@
+// Template extracted verbatim from upstream Vite's
+// code/builders/builder-vite/input/iframe.html (Task 2.2 of the upstream-
+// alignment plan). Placeholder strings are filled in below via String.replace.
+
 import { normalizeStories } from "storybook/internal/common";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -37,6 +41,10 @@ export async function generateIframeModern(options) {
     .replace(`'[DOCS_OPTIONS HERE]'`, JSON.stringify(docsOptions || {}))
     .replace(`'[TAGS_OPTIONS HERE]'`, JSON.stringify(tagsOptions || {}))
     .replace(`'[SERVER_CHANNEL_URL HERE]'`, JSON.stringify(serverChannelUrl))
+    // OTHER_GLOBALS is a Vite-only injection point used by their externalize
+    // plugin to splat extra globals into the inline script. We don't use it;
+    // the placeholder must be replaced with a syntactically-valid expression
+    // (we use empty string `''`) -- leaving bare `()` would crash the parser.
     .replace(`'[OTHER_GLOBALS HERE]'`, `''`)
     .replace("<!-- [HEAD HTML SNIPPET HERE] -->", headHtmlSnippet || "")
     .replace("<!-- [BODY HTML SNIPPET HERE] -->", bodyHtmlSnippet || "");

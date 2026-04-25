@@ -1,3 +1,29 @@
+// Parcel resolver implementing the upstream "externalize the runtime" pattern that
+// both @storybook/builder-vite and @storybook/builder-webpack5 use.
+//
+// Upstream references:
+//   - code/builders/builder-vite/src/plugins/storybook-external-globals-plugin.ts
+//   - code/builders/builder-webpack5/src/preview/iframe-webpack.config.ts
+//     (`const externals: Record<string, string> = globalsNameReferenceMap`)
+//   - node_modules/storybook/dist/preview/globals.js (source of `globalsNameReferenceMap`)
+//
+// The map is read at resolver startup (not hardcoded) so any future Storybook
+// version that adds entries is picked up automatically. For each (specifier ->
+// __STORYBOOK_MODULE_*__) pair we emit one cache file under
+// `node_modules/.cache/sb-parcel-externals/<key>.js` -- mirroring Vite's
+// `node_modules/.cache/sb-vite-plugin-externals/` layout -- so the synthetic
+// module is a real on-disk file Parcel's graph can hash and watch.
+//
+// Why this matters: without externalization, Parcel's CJS dev bundle ends up
+// with `storybook/preview-api` <-> chunk-SZQXB3JV <-> `storybook/internal/csf`
+// in a real cycle. csf/index.js (line ~916) reads `addons` at top level, but
+// `addons` is still undefined when csf evaluates inside the cycle, throwing
+// `TypeError: Cannot read properties of undefined (reading 'addons')` during
+// Storybook init. See plan docs/superpowers/plans/2026-04-25-parcel-builder-
+// upstream-alignment.md "Starting Context" for the full diagnosis. Routing
+// every preview-runtime specifier to a leaf module that just reads from
+// globalThis breaks the back-edge and removes the cycle entirely.
+
 import path from 'path';
 import fs from 'fs';
 import { createRequire } from 'module';
@@ -9,13 +35,10 @@ import { isGlob, glob, normalizeSeparators, relativePath } from '@parcel/utils';
 
 const REACT_MAJOR_VERSION = parseInt(reactVersion.split('.')[0], 10);
 
-// --- Storybook globals externals (Approach B: codegen-time enumeration) ---
-// Match upstream Vite's behavior: at resolver-startup, read storybook's
-// `globalsNameReferenceMap` from `node_modules/storybook/dist/preview/globals.js`,
-// then for each (specifier -> globalName) pair generate a synthetic ESM module
-// that re-exports the named bindings from `globalThis.__STORYBOOK_MODULE_*__`.
-// The synthetic file is written once to `node_modules/.cache/sb-parcel-externals/`
-// so it is visible in the network tab and is re-used across resolve() calls.
+// Approach B = enumerate named exports at codegen and emit
+// `const { x, y } = globalThis.__STORYBOOK_MODULE_*__; export { x, y };`.
+// Approach A fallback = `module.exports = globalThis.__STORYBOOK_MODULE_*__;`,
+// used only when require() can't enumerate the source module's exports.
 
 const _require = createRequire(__filename);
 
@@ -118,12 +141,16 @@ function buildExternalsCache(): Record<string, ExternalEntry> {
 }
 
 // Generate cache files ONCE at module load (resolver-instance creation).
+// The runtime's setup() side-effect (in storybook/internal/preview/runtime)
+// populates the globals BEFORE any externalized cache file evaluates, so the
+// `const { x } = globalThis.__STORYBOOK_MODULE_*__` lines see the real exports.
 const STORYBOOK_EXTERNALS = buildExternalsCache();
 
 module.exports = new Resolver({
   async resolve({ dependency, options, specifier, pipeline, logger }) {
-    // Storybook globals: externalize runtime modules to globalThis.__STORYBOOK_MODULE_*__
-    // Runs before the other branches when using the default pipeline.
+    // Branch 1 - externalize storybook runtime specifiers (the patch-removal fix).
+    // Equivalent to webpack5's `externals: globalsNameReferenceMap` and Vite's
+    // alias-to-cache-file in storybook-external-globals-plugin.ts.
     if (pipeline == null && Object.prototype.hasOwnProperty.call(STORYBOOK_EXTERNALS, specifier)) {
       const entry = STORYBOOK_EXTERNALS[specifier];
       return {
@@ -133,7 +160,9 @@ module.exports = new Resolver({
       };
     }
 
-    // Workaround for interop issue
+    // Branch 2 - React 17/18 interop shim. react-dom/client only exists from
+    // React 18 onwards; for React 17 we re-export react-dom so consumer code
+    // that does `import { createRoot } from 'react-dom/client'` still resolves.
     if (specifier === "react-dom/client" && REACT_MAJOR_VERSION < 18) {
       return {
         filePath: __dirname + "/react.js",
@@ -144,8 +173,13 @@ module.exports = new Resolver({
       };
     }
 
-    // Resolve story entry globs. Storybook expects an object with relative paths from the process cwd as keys.
-    // We do this in a resolver so that it invalidates the watcher when new stories are created.
+    // Branch 3 - the `story:` pipeline. The specifier is a base64-encoded glob
+    // (relative to the importing file's dir). We expand the glob and emit a
+    // synthetic ESM module whose default export maps cwd-relative paths to
+    // dynamic-import factories. Doing this in a resolver (rather than a
+    // transformer) lets Parcel's watcher invalidate when matching files appear
+    // or disappear -- see `invalidateOnFileCreate` below. Storybook's importFn
+    // expects keys relative to process.cwd().
     if (pipeline === 'story') {
       let sourceFile = dependency.resolveFrom ?? dependency.sourcePath!;
       let normalized = normalizeSeparators(path.resolve(path.dirname(sourceFile), atob(specifier)));
