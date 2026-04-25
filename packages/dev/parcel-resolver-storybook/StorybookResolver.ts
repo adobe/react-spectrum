@@ -166,7 +166,7 @@ module.exports = new Resolver({
           dir,
           'stories.js'
         ),
-        code: `module.exports = {\n${results.join('\n')}\n};\n`,
+        code: `export default {\n${results.join('\n')}\n};\n`,
         invalidateOnFileCreate: [
           {glob: normalized}
         ],
