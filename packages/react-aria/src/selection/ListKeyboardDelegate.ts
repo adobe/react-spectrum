@@ -272,7 +272,8 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     let collection = this.collection;
-    let key = fromKey || this.getFirstKey();
+    let key = fromKey != null ? this.getNextKey(fromKey) : this.getFirstKey();
+    let hasWrapped = false;
     while (key != null) {
       let item = collection.getItem(key);
       if (!item) {
@@ -284,6 +285,11 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       }
 
       key = this.getNextKey(key);
+      
+      if (key == null && !hasWrapped) {
+        key = this.getFirstKey();
+        hasWrapped = true;
+      }
     }
 
     return null;
