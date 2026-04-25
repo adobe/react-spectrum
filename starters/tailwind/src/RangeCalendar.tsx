@@ -17,7 +17,7 @@ import { Button } from './Button';
 import { CalendarGridHeader } from './Calendar';
 import { composeTailwindRenderProps, focusRing } from './utils';
 
-export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeCalendarProps<T>, 'visibleDuration'> {
+export interface RangeCalendarProps<T extends DateValue> extends AriaRangeCalendarProps<T> {
   errorMessage?: string;
 }
 
