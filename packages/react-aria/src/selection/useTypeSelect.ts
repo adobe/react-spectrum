@@ -69,7 +69,11 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
       }
     }
 
-    state.search += character;
+    if (state.search.length > 0 && state.search.split('').every(c => c === character)) {
+      state.search = character;
+    } else {
+      state.search += character;
+    }
 
     if (keyboardDelegate.getKeyForSearch != null) {
       // Use the delegate to find a key to focus.
