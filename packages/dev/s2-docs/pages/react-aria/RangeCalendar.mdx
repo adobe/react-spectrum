@@ -207,7 +207,8 @@ function Example(props) {
       ///- begin highlight -///
       /* PROPS */
       minValue={today(getLocalTimeZone())}
-      isDateUnavailable={date => (
+      isDateUnavailable={(date, anchorDate) => (
+        (anchorDate && Math.abs(date.compare(anchorDate)) > 7) ||
         disabledRanges.some((interval) =>
           date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
         )
@@ -221,23 +222,14 @@ function Example(props) {
 
 ## Display options
 
-Set the `visibleDuration` prop and render multiple `CalendarGrid` elements to display more than one month at a time. The `pageBehavior` prop controls whether pagination advances by a single month or multiple. The `firstDayOfWeek` prop overrides the locale-specified first day of the week.
+Set the `visibleDuration` prop and render multiple `CalendarGrid` elements to display more than one month at a time. The `pageBehavior` prop controls whether pagination advances by a single month or multiple. The `firstDayOfWeek` and `weeksInMonth` props override the locale-specified defaults.
 
-```tsx render docs={docs.exports.RangeCalendar} links={docs.links} props={['visibleDuration', 'pageBehavior', 'firstDayOfWeek']} initialProps={{visibleDuration: {months: 2}}} wide
+```tsx render docs={docs.exports.RangeCalendar} links={docs.links} props={['visibleDuration', 'pageBehavior', 'firstDayOfWeek', 'weeksInMonth']} initialProps={{visibleDuration: {months: 2}}} wide
 "use client";
-import {RangeCalendar, Heading} from 'react-aria-components/RangeCalendar';
-import {CalendarGrid, CalendarCell} from 'vanilla-starter/RangeCalendar';
-import {Button} from 'vanilla-starter/Button';
-import {useDateFormatter} from 'react-aria/useDateFormatter';
-import {ChevronLeft, ChevronRight} from 'lucide-react';
+import {RangeCalendar} from 'vanilla-starter/RangeCalendar';
 
 // TODO: move this into the starter example.
 function Example(props) {
-  let monthFormatter = useDateFormatter({
-    month: 'long',
-    year: 'numeric',
-  });
-
   return (
     <RangeCalendar
       {...props}
@@ -245,31 +237,7 @@ function Example(props) {
       ///- begin highlight -///
       /* PROPS */
       ///- end highlight -///
-      style={{display: 'flex', gap: 12, overflow: 'auto'}}
-    >
-      {({state}) => (
-        [...Array(props.visibleDuration.months).keys()].map(i => (
-          <div key={i} style={{flex: 1}}>
-            <header style={{minHeight: 32}}>
-              {i === 0 &&
-                <Button slot="previous" variant="quiet">
-                  <ChevronLeft />
-                </Button>
-              }
-              <Heading>{monthFormatter.format(state.visibleRange.start.add({months: i}).toDate(state.timeZone))}</Heading>
-              {i === props.visibleDuration.months - 1 &&
-                <Button slot="next" variant="quiet">
-                  <ChevronRight />
-                </Button>
-              }
-            </header>
-            <CalendarGrid offset={{months: i}}>
-              {date => <CalendarCell date={date} />}
-            </CalendarGrid>
-          </div>
-        ))
-      )}
-    </RangeCalendar>
+    />
   );
 }
 ```
@@ -309,33 +277,48 @@ function Example() {
 
 ### Month and year pickers
 
-You can also control the focused date via `CalendarStateContext`. This example shows month and year dropdown components that work inside any `<RangeCalendar>`.
+Use the `<CalendarMonthPicker>` and `<CalendarYearPicker>` components to allow the user to jump to a different month or year. This example uses the render prop function to render a [Select](Select).
 
-```tsx render files={['packages/dev/s2-docs/pages/react-aria/MonthDropdown.tsx', 'packages/dev/s2-docs/pages/react-aria/YearDropdown.tsx']}
+```tsx render
 "use client";
-import {RangeCalendar} from 'react-aria-components/RangeCalendar';
+import {RangeCalendar, CalendarMonthPicker, CalendarYearPicker} from 'react-aria-components/RangeCalendar';
 import {CalendarGrid, CalendarCell} from 'vanilla-starter/RangeCalendar';
-import {MonthDropdown} from './MonthDropdown';
-import {YearDropdown} from './YearDropdown';
 import {Button} from 'vanilla-starter/Button';
+import {Select, SelectItem} from 'vanilla-starter/Select';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 
 <RangeCalendar>
-  <header style={{display: 'flex', gap: 4}}>
-    <Button slot="previous" variant="quiet">
-      <ChevronLeft />
-    </Button>
-    {/*- begin highlight -*/}
-    <MonthDropdown />
-    <YearDropdown />
-    {/*- end highlight -*/}
-    <Button slot="next" variant="quiet">
-      <ChevronRight />
-    </Button>
-  </header>
-  <CalendarGrid>
-    {(date) => <CalendarCell date={date} />}
-  </CalendarGrid>
+  <div className="months">
+    <div className="month">
+      <header style={{display: 'flex', gap: 4}}>
+        <Button slot="previous" variant="quiet">
+          <ChevronLeft />
+        </Button>
+        {/*- begin highlight -*/}
+        <CalendarMonthPicker>
+          {(props) => (
+            <Select {...props}>
+              {item => <SelectItem>{item.formatted}</SelectItem>}
+            </Select>
+          )}
+        </CalendarMonthPicker>
+        <CalendarYearPicker>
+          {(props) => (
+            <Select {...props}>
+              {item => <SelectItem>{item.formatted}</SelectItem>}
+            </Select>
+          )}
+        </CalendarYearPicker>
+        {/*- end highlight -*/}
+        <Button slot="next" variant="quiet">
+          <ChevronRight />
+        </Button>
+      </header>
+      <CalendarGrid>
+        {(date) => <CalendarCell date={date} />}
+      </CalendarGrid>
+    </div>
+  </div>
 </RangeCalendar>
 ```
 
@@ -345,10 +328,12 @@ import {ChevronLeft, ChevronRight} from 'lucide-react';
   role="img"
   aria-label="Anatomy diagram of a range calendar component, which consists of a heading, grid of cells, previous, and next buttons." />
 
-```tsx links={{RangeCalendar: '#rangecalendar', Button: 'Button', CalendarGrid: '#calendargrid', CalendarGridHeader: '#calendargridheader', CalendarHeaderCell: '#calendarheadercell', CalendarGridBody: '#calendargridbody', CalendarCell: '#calendarcell'}}
+```tsx links={{RangeCalendar: '#rangecalendar', Button: 'Button', CalendarHeading: '#calendarheading', CalendarMonthPicker: '#calendarmonthpicker', CalendarYearPicker: '#calendaryearpicker', CalendarGrid: '#calendargrid', CalendarGridHeader: '#calendargridheader', CalendarHeaderCell: '#calendarheadercell', CalendarGridBody: '#calendargridbody', CalendarCell: '#calendarcell'}}
 <RangeCalendar>
+  <CalendarHeading />
+  <CalendarMonthPicker />
+  <CalendarYearPicker />
   <Button slot="previous" />
-  <Heading />
   <Button slot="next" />
   <CalendarGrid>
     <CalendarGridHeader>
@@ -385,3 +370,15 @@ import {ChevronLeft, ChevronRight} from 'lucide-react';
 ### CalendarCell
 
 <PropTable component={docs.exports.CalendarCell} links={docs.links} showDescription />
+
+### CalendarHeading
+
+<PropTable component={docs.exports.CalendarHeading} links={docs.links} showDescription />
+
+### CalendarMonthPicker
+
+<PropTable component={docs.exports.CalendarMonthPicker} links={docs.links} showDescription />
+
+### CalendarYearPicker
+
+<PropTable component={docs.exports.CalendarYearPicker} links={docs.links} showDescription />

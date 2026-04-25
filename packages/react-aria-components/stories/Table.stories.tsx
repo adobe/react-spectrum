@@ -12,9 +12,9 @@
 
 import {action} from 'storybook/actions';
 import {Button} from '../src/Button';
-
 import {
   Cell,
+  CellProps,
   Column,
   ColumnProps,
   ColumnResizer,
@@ -24,10 +24,8 @@ import {
   TableBody,
   TableFooter,
   TableHeader,
-  TableLayout
+  TableLoadMoreItem
 } from '../src/Table';
-
-import {CellProps, TableLoadMoreItem} from '../src/Table';
 import {Checkbox, CheckboxProps} from '../src/Checkbox';
 import {Collection} from 'react-aria/Collection';
 import {Dialog, DialogTrigger} from '../src/Dialog';
@@ -41,6 +39,7 @@ import {Popover} from '../src/Popover';
 import React, {JSX, startTransition, Suspense, useState} from 'react';
 import {Selection} from '@react-types/shared';
 import styles from '../example/index.css';
+import {TableLayout} from '../src/TableLayout';
 import {useAsyncList} from 'react-stately/useAsyncList';
 import {useListData} from 'react-stately/useListData';
 import {Virtualizer} from '../src/Virtualizer';

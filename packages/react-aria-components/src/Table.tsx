@@ -80,8 +80,6 @@ import {
 } from 'react-aria/useTable';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
-export {TableLayout} from './TableLayout';
-
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
   columns: GridNode<T>[] = [];
