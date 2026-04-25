@@ -14,6 +14,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const generatedEntries = path.join(__dirname, "generated-entries");
 
+let watcherSubscription;
+
 export async function start({ options, router }) {
   const parcel = await createParcel(options, true);
 
@@ -48,14 +50,14 @@ export async function start({ options, router }) {
     req.connection = connection;
   });
 
-  const subscription = await parcel.watch();
+  watcherSubscription = await parcel.watch();
   process.on("SIGINT", async () => {
-    await subscription.unsubscribe();
+    await watcherSubscription?.unsubscribe();
     process.exit();
   });
 
   return {
-    async bail() { await subscription.unsubscribe(); },
+    async bail() { await watcherSubscription?.unsubscribe(); },
     stats: {},
     totalTime: 0,
   };
@@ -67,8 +69,10 @@ export async function build({ options }) {
 }
 
 export const corePresets = [];
-export const previewPresets = [];
-export async function bail() {}
+
+export async function bail() {
+  await watcherSubscription?.unsubscribe();
+}
 
 async function createParcel(options, isDev = false) {
   fs.mkdirSync(generatedEntries, { recursive: true });
