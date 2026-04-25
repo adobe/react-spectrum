@@ -1008,21 +1008,27 @@ function LocaleControl({control, value, onChange}: ControlProps) {
 }
 
 function DurationControl({control, value, onChange}: ControlProps) {
-  // For now we only care about months.
+  let key = Object.keys(value)[0];
   return (
-    <NumberField
-      label={control.name}
-      placeholder="–"
-      contextualHelp={<PropContextualHelp control={control} />}
-      value={value.months}
-      minValue={1}
-      onChange={months => onChange({months})}
-      styles={style({width: controlWidth})}
-      formatOptions={{
-        style: 'unit',
-        unit: 'month',
-        unitDisplay: 'long'
-      }} />
+    <Wrapper control={control} styles={style({gridColumnStart: 1, gridColumnEnd: -1})}>
+      <div className={style({display: 'flex', flexDirection: 'column', gap: 4, width: controlWidth})}>
+        <NumberField
+          aria-label={control.name}
+          placeholder="–"
+          contextualHelp={<PropContextualHelp control={control} />}
+          value={value[key]}
+          minValue={1}
+          onChange={value => onChange({[key]: value})} />
+        <Picker
+          aria-label={`${control.name} unit`}
+          value={key}
+          onChange={k => onChange({[String(k)]: value[key]})}>
+          <PickerItem id="days">Days</PickerItem>
+          <PickerItem id="weeks">Weeks</PickerItem>
+          <PickerItem id="months">Months</PickerItem>
+        </Picker>
+      </div>
+    </Wrapper>
   );
 }
 

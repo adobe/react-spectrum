@@ -72,12 +72,14 @@ interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayT
 
 export interface DatePickerProps<T extends DateValue> extends DatePickerBase<T>, ValueBase<T | null, MappedDateValue<T> | null> {}
 
-export interface DateRangePickerProps<T extends DateValue> extends Omit<DatePickerBase<T>, 'validate'>, Validation<RangeValue<MappedDateValue<T>>>, ValueBase<RangeValue<T> | null, RangeValue<MappedDateValue<T>> | null> {
+export interface DateRangePickerProps<T extends DateValue> extends Omit<DatePickerBase<T>, 'validate' | 'isDateUnavailable'>, Validation<RangeValue<MappedDateValue<T>>>, ValueBase<RangeValue<T> | null, RangeValue<MappedDateValue<T>> | null> {
   /**
    * When combined with `isDateUnavailable`, determines whether non-contiguous ranges,
    * i.e. ranges containing unavailable dates, may be selected.
    */
   allowsNonContiguousRanges?: boolean,
+  /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
+  isDateUnavailable?: (date: DateValue, anchorDate: CalendarDate | null) => boolean,
   /**
    * The name of the start date input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */

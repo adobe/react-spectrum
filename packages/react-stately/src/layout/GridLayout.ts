@@ -122,22 +122,22 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     this.dropIndicatorThickness = dropIndicatorThickness;
     this.direction = direction;
 
-    let visibleWidth = this.virtualizer!.visibleRect.width;
+    let virtualizerWidth = this.virtualizer!.size.width;
 
     // The max item width is always the entire viewport.
     // If the max item height is infinity, scale in proportion to the max width.
-    let maxItemWidth = Math.min(maxItemSize.width, visibleWidth);
+    let maxItemWidth = Math.min(maxItemSize.width, virtualizerWidth);
     let maxItemHeight = Number.isFinite(maxItemSize.height)
       ? maxItemSize.height
       : Math.floor((minItemSize.height / minItemSize.width) * maxItemWidth);
 
     // Compute the number of rows and columns needed to display the content
-    let columns = Math.floor(visibleWidth / (minItemSize.width + minSpace.width));
+    let columns = Math.floor(virtualizerWidth / (minItemSize.width + minSpace.width));
     let numColumns = Math.max(1, Math.min(maxColumns, columns));
     this.numColumns = numColumns;
 
     // Compute the available width (minus the space between items)
-    let width = visibleWidth - (minSpace.width * Math.max(0, numColumns));
+    let width = virtualizerWidth - (minSpace.width * Math.max(0, numColumns));
 
     // Compute the item width based on the space available
     let itemWidth = Math.floor(width / numColumns);
@@ -149,9 +149,9 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     itemHeight = Math.max(minItemSize.height, Math.min(maxItemHeight, itemHeight));
 
     // Compute the horizontal spacing, content height and horizontal margin
-    let horizontalSpacing = Math.min(Math.max(maxHorizontalSpace, minSpace.width), Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1)));
+    let horizontalSpacing = Math.min(Math.max(maxHorizontalSpace, minSpace.width), Math.floor((virtualizerWidth - numColumns * itemWidth) / (numColumns + 1)));
     this.gap = new Size(horizontalSpacing, minSpace.height);
-    this.margin = Math.floor((visibleWidth - numColumns * itemWidth - horizontalSpacing * (numColumns + 1)) / 2);
+    this.margin = Math.floor((virtualizerWidth - numColumns * itemWidth - horizontalSpacing * (numColumns + 1)) / 2);
 
     // If there is a skeleton loader within the last 2 items in the collection, increment the collection size
     // so that an additional row is added for the skeletons.
@@ -224,7 +224,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       y += maxHeight + minSpace.height;
 
       // Keep adding skeleton rows until we fill the viewport
-      if (skeleton && row === rows - 1 && y < this.virtualizer!.visibleRect.height) {
+      if (skeleton && row === rows - 1 && y < this.virtualizer!.size.height) {
         rows++;
       }
     }
@@ -235,7 +235,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       if (skeletonCount > 0 || !lastNode.props.isLoading) {
         loaderHeight = 0;
       }
-      const loaderWidth = visibleWidth - horizontalSpacing * 2;
+      const loaderWidth = virtualizerWidth - horizontalSpacing * 2;
       // Note that if the user provides isLoading to their sentinel during a case where they only want to render the emptyState, this will reserve
       // room for the loader alongside rendering the emptyState
       let rect = new Rect(horizontalSpacing, y, loaderWidth, loaderHeight);
@@ -245,7 +245,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     }
 
     this.layoutInfos = newLayoutInfos;
-    this.contentSize = new Size(this.virtualizer!.visibleRect.width, y);
+    this.contentSize = new Size(this.virtualizer!.size.width, y);
   }
 
   getLayoutInfo(key: Key): LayoutInfo | null {
