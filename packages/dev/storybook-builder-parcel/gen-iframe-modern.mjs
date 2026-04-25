@@ -1,41 +1,11 @@
 import { normalizeStories } from "storybook/internal/common";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
-const TEMPLATE = `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title><!-- [TITLE HERE] --></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script>
-      window.CONFIG_TYPE = '[CONFIG_TYPE HERE]';
-      window.LOGLEVEL = '[LOGLEVEL HERE]';
-      window.FRAMEWORK_OPTIONS = '[FRAMEWORK_OPTIONS HERE]';
-      window.CHANNEL_OPTIONS = '[CHANNEL_OPTIONS HERE]';
-      window.FEATURES = '[FEATURES HERE]';
-      window.STORIES = '[STORIES HERE]';
-      window.DOCS_OPTIONS = '[DOCS_OPTIONS HERE]';
-      window.TAGS_OPTIONS = '[TAGS_OPTIONS HERE]';
-      window.SERVER_CHANNEL_URL = '[SERVER_CHANNEL_URL HERE]';
-
-      ('[OTHER_GLOBALS HERE]');
-
-      // We do this so that "module && module.hot" etc. in Storybook source code
-      // doesn't fail (it will simply be disabled)
-      window.module = undefined;
-      window.global = window;
-    </script>
-    <!-- [HEAD HTML SNIPPET HERE] -->
-  </head>
-  <body>
-    <!-- [BODY HTML SNIPPET HERE] -->
-    <div id="storybook-root"></div>
-    <div id="storybook-docs"></div>
-    <script type="module" src="preview-main.js"></script>
-  </body>
-</html>
-`;
+const TEMPLATE_PATH = fileURLToPath(new URL("./templates/iframe.html", import.meta.url));
 
 export async function generateIframeModern(options) {
+  const TEMPLATE = readFileSync(TEMPLATE_PATH, "utf8");
   const { configType, features, presets, serverChannelUrl, title } = options;
   const frameworkOptions = await presets.apply("frameworkOptions");
   const headHtmlSnippet = await presets.apply("previewHead");
