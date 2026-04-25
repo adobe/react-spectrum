@@ -1,5 +1,4 @@
 import type { StorybookConfig } from "storybook/internal/types";
-import { fileURLToPath } from "node:url";
 
 // const excludedProps = new Set([
 //   'id',
@@ -15,15 +14,13 @@ import { fileURLToPath } from "node:url";
 //   'onInput'
 // ]);
 
-const localAddon = (rel: string) => fileURLToPath(import.meta.resolve(rel));
-
 const config: StorybookConfig = {
   stories: [
     './docs/*.mdx',
     "../packages/@react-spectrum/s2/stories/*.stories.@(js|jsx|mjs|ts|tsx)",
   ],
   addons: [
-    localAddon('./custom-addons/provider/preset.ts'),
+    './custom-addons/provider/register',
     // "@storybook/addon-styling-webpack",
     "@storybook/addon-docs",
     "@vueless/storybook-dark-mode",

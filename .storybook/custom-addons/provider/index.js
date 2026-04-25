@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {addons} from 'storybook/preview-api';
 import {makeDecorator} from 'storybook/preview-api';
-import {useDarkMode} from '@vueless/storybook-dark-mode';
 import {Provider} from '@react-spectrum/provider';
 import {expressThemes, themes, defaultTheme} from '../../constants';
 
@@ -18,13 +17,10 @@ function ProviderUpdater(props) {
   let expressParam = params.get("providerSwitcher-express") || undefined;
   let [expressValue, setExpress] = useState(expressParam === 'true');
   let [storyReady, setStoryReady] = useState(window.parent === window || window.parent !== window.top); // reduce content flash because it takes a moment to get the provider details
-  let isDark = useDarkMode();
   // Typically themes are provided with both light + dark, and both scales.
   // To build our selector to see all themes, we need to hack it a bit.
   let theme = (expressValue ? expressThemes : themes)[themeValue || 'light'] || defaultTheme;
-  // When the providerSwitcher theme is set explicitly use it, otherwise follow
-  // the storybook-dark-mode toolbar toggle.
-  let colorScheme = themeValue ? themeValue.replace(/est$/, '') : (isDark ? 'dark' : 'light');
+  let colorScheme = themeValue && themeValue.replace(/est$/, '');
   useEffect(() => {
     let channel = addons.getChannel();
     let providerUpdate = (event) => {
