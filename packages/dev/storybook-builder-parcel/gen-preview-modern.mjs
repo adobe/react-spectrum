@@ -125,15 +125,19 @@ async function generatePreviewModern(
 
   /**
    * Main preview module (loaded by preview.js bootstrap via dynamic import).
-   * Addon setup first, then runtime/setup(). See storybook builder-vite codegen-modern-iframe-script.ts
+   * runtime MUST be the first import so its top-level setup() call populates
+   * __STORYBOOK_MODULE_* globals before setup-addons.js (or any other externalized
+   * specifier) evaluates. Matches upstream Vite/webpack5 ordering.
+   * See storybook builder-vite codegen-modern-iframe-script.ts
    */
   const code = `
-${importFnCode.imports}
-import './setup-addons.js';
 import { setup } from 'storybook/internal/preview/runtime';
-import { composeConfigs, PreviewWeb } from 'storybook/internal/preview-api';
+import './setup-addons.js';
 
 setup();
+
+${importFnCode.imports}
+import { composeConfigs, PreviewWeb } from 'storybook/preview-api';
 
 ${importFnCode.body}
 
