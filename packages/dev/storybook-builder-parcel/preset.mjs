@@ -7,9 +7,7 @@ import fs from "node:fs";
 import { generateIframeModern } from "./gen-iframe-modern.mjs";
 import {
   generatePreviewModern,
-  generatePreviewBootstrap,
   generateSetupAddons,
-  generateInitAddonsGlobal,
 } from "./gen-preview-modern.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -79,16 +77,8 @@ async function createParcel(options, isDev = false) {
     await generateIframeModern(options, generatedEntries)
   );
   fs.writeFileSync(
-    path.join(generatedEntries, "init-addons-global.js"),
-    generateInitAddonsGlobal()
-  );
-  fs.writeFileSync(
     path.join(generatedEntries, "setup-addons.js"),
     generateSetupAddons()
-  );
-  fs.writeFileSync(
-    path.join(generatedEntries, "preview.js"),
-    generatePreviewBootstrap()
   );
   fs.writeFileSync(
     path.join(generatedEntries, "preview-main.js"),

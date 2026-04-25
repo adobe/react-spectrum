@@ -14,7 +14,15 @@ const TEMPLATE = `<!DOCTYPE html>
       window.FEATURES = '[FEATURES HERE]';
       window.STORIES = '[STORIES HERE]';
       window.DOCS_OPTIONS = '[DOCS_OPTIONS HERE]';
+      window.TAGS_OPTIONS = '[TAGS_OPTIONS HERE]';
       window.SERVER_CHANNEL_URL = '[SERVER_CHANNEL_URL HERE]';
+
+      ('[OTHER_GLOBALS HERE]');
+
+      // We do this so that "module && module.hot" etc. in Storybook source code
+      // doesn't fail (it will simply be disabled)
+      window.module = undefined;
+      window.global = window;
     </script>
     <!-- [HEAD HTML SNIPPET HERE] -->
   </head>
@@ -22,21 +30,7 @@ const TEMPLATE = `<!DOCTYPE html>
     <!-- [BODY HTML SNIPPET HERE] -->
     <div id="storybook-root"></div>
     <div id="storybook-docs"></div>
-    <script>
-      (function(){
-        var noop = function(){};
-        var placeholderChannel = { on: noop, emit: noop, removeListener: noop, off: noop };
-        window.__STORYBOOK_ADDONS_CHANNEL__ = placeholderChannel;
-        window.__STORYBOOK_ADDONS_PREVIEW = {
-          _channel: null,
-          setChannel: function(c){ this._channel = c; window.__STORYBOOK_ADDONS_CHANNEL__ = c; },
-          getChannel: function(){ return this._channel || placeholderChannel; },
-          ready: function(){ return Promise.resolve(this.getChannel()); },
-          hasChannel: function(){ return !!this._channel; }
-        };
-      })();
-    </script>
-    <script type="module" src="preview.js"></script>
+    <script type="module" src="preview-main.js"></script>
   </body>
 </html>
 `;
@@ -48,6 +42,7 @@ export async function generateIframeModern(options) {
   const bodyHtmlSnippet = await presets.apply("previewBody");
   const logLevel = await presets.apply("logLevel", undefined);
   const docsOptions = await presets.apply("docs");
+  const tagsOptions = await presets.apply("tags", {});
 
   const coreOptions = await presets.apply("core");
   const stories = normalizeStories(
@@ -70,7 +65,9 @@ export async function generateIframeModern(options) {
     .replace(`'[FEATURES HERE]'`, JSON.stringify(features || {}))
     .replace(`'[STORIES HERE]'`, JSON.stringify(stories || {}))
     .replace(`'[DOCS_OPTIONS HERE]'`, JSON.stringify(docsOptions || {}))
+    .replace(`'[TAGS_OPTIONS HERE]'`, JSON.stringify(tagsOptions || {}))
     .replace(`'[SERVER_CHANNEL_URL HERE]'`, JSON.stringify(serverChannelUrl))
+    .replace(`'[OTHER_GLOBALS HERE]'`, `''`)
     .replace("<!-- [HEAD HTML SNIPPET HERE] -->", headHtmlSnippet || "")
     .replace("<!-- [BODY HTML SNIPPET HERE] -->", bodyHtmlSnippet || "");
 }

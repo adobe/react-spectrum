@@ -46,43 +46,6 @@ function toPackageExportSpecifier(barePath) {
 }
 
 /**
- * Inline IIFE that sets __STORYBOOK_ADDONS_PREVIEW on globalThis. Run this as the
- * first synchronous code in the preview entry so no Storybook chunk can run before it.
- */
-function getInitAddonsGlobalIIFE() {
-  return `(function() {
-  var g = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : {};
-  if (g.__STORYBOOK_ADDONS_PREVIEW) return;
-  var noop = function(){};
-  var placeholderChannel = { on: noop, emit: noop, removeListener: noop, off: noop };
-  g.__STORYBOOK_ADDONS_CHANNEL__ = placeholderChannel;
-  g.__STORYBOOK_ADDONS_PREVIEW = {
-    _channel: null,
-    setChannel: function(c){ this._channel = c; g.__STORYBOOK_ADDONS_CHANNEL__ = c; },
-    getChannel: function(){ return this._channel || placeholderChannel; },
-    ready: function(){ return Promise.resolve(this.getChannel()); },
-    hasChannel: function(){ return !!this._channel; }
-  };
-})();`;
-}
-
-/**
- * Generate the preview entry bootstrap: runs init IIFE first, then dynamic-imports
- * preview-main.js so __STORYBOOK_ADDONS_PREVIEW exists before any other module runs.
- */
-function generatePreviewBootstrap() {
-  return getInitAddonsGlobalIIFE() + "\nimport('./preview-main.js');";
-}
-
-/**
- * Generate a zero-dependency module that sets __STORYBOOK_ADDONS_PREVIEW (kept for
- * backwards compatibility; bootstrap approach is preferred).
- */
-function generateInitAddonsGlobal() {
-  return getInitAddonsGlobalIIFE();
-}
-
-/**
  * Generate the addon setup module (like Vite's VIRTUAL_ADDON_SETUP_FILE).
  * Must be imported before the runtime so the channel and addons store exist
  * before any runtime code runs. See storybook builder-vite codegen-modern-iframe-script.ts
@@ -124,9 +87,10 @@ async function generatePreviewModern(
   const importFnCode = await generateImportFnScriptCode(options, generatedEntries);
 
   /**
-   * Main preview module (loaded by preview.js bootstrap via dynamic import).
+   * Main preview module loaded directly by iframe.html as <script type="module">.
    * runtime MUST be the first import so its top-level setup() call populates
-   * __STORYBOOK_MODULE_* globals before setup-addons.js (or any other externalized
+   * __STORYBOOK_MODULE_* globals (and __STORYBOOK_ADDONS_PREVIEW /
+   * __STORYBOOK_ADDONS_CHANNEL__) before setup-addons.js (or any other externalized
    * specifier) evaluates. Matches upstream Vite/webpack5 ordering.
    * See storybook builder-vite codegen-modern-iframe-script.ts
    */
@@ -243,8 +207,6 @@ async function listStories(options) {
 }
 
 export {
-  generateInitAddonsGlobal,
-  generatePreviewBootstrap,
   generateSetupAddons,
   generatePreviewModern,
 };
