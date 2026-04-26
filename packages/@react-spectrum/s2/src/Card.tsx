@@ -24,6 +24,10 @@ import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/s
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
+import {mergeProps} from 'react-aria/mergeProps';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {usePress} from 'react-aria/usePress';
 import {IllustrationContext} from './Icon';
 import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
@@ -396,9 +400,51 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
   [props] = useSpectrumContextProps(props, ref, CardContext);
   let {ElementType, layout} = useContext(InternalCardViewContext);
   let domRef = useDOMRef(ref);
-  let {density = 'regular', size = 'M', variant = 'primary', UNSAFE_className = '', UNSAFE_style, styles, id, ...otherProps} = props;
+  let {
+    density = 'regular',
+    size = 'M',
+    variant = 'primary',
+    UNSAFE_className = '',
+    UNSAFE_style,
+    styles,
+    id,
+    onPress,
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPressUp,
+    onAction,
+    isDisabled,
+    ...otherProps
+  } = props;
   let isQuiet = variant === 'quiet';
   let isSkeleton = useIsSkeleton();
+
+  // True when the card is used standalone (not inside CardView) and the caller
+  // has provided at least one press/action callback.
+  let isInteractiveStandalone = ElementType === 'div' && !isSkeleton && !props.href &&
+    !!(onPress || onPressStart || onPressEnd || onPressChange || onPressUp || onAction);
+
+  // Hooks must be called unconditionally (React rules of hooks).
+  // isDisabled is set to true when not in interactive standalone mode so the
+  // hooks are effectively no-ops in those code paths.
+  let {pressProps, isPressed: isInteractivePressed} = usePress({
+    ref: domRef,
+    onPress: (e) => {
+      onPress?.(e);
+      onAction?.();
+    },
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPressUp,
+    isDisabled: isDisabled || !isInteractiveStandalone
+  });
+  let {hoverProps, isHovered: isInteractiveHovered} = useHover({
+    isDisabled: isDisabled || !isInteractiveStandalone
+  });
+  let {focusProps, isFocusVisible: isInteractiveFocusVisible} = useFocusRing();
+
   let children = (
     <Provider
       values={[
@@ -452,6 +498,42 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
   }
 
   if (ElementType === 'div' || isSkeleton) {
+    if (isInteractiveStandalone) {
+      return (
+        <div
+          {...mergeProps(filterDOMProps(otherProps), pressProps, hoverProps, focusProps)}
+          id={id != null ? String(id) : undefined}
+          ref={domRef}
+          role="button"
+          tabIndex={isDisabled ? undefined : 0}
+          aria-disabled={isDisabled ? true : undefined}
+          className={
+            UNSAFE_className + card({
+              size,
+              density,
+              variant,
+              isCardView: false,
+              isHovered: isInteractiveHovered,
+              isFocusVisible: isInteractiveFocusVisible,
+              isSelected: false
+            }, styles)
+          }
+          style={variant === 'quiet' ? UNSAFE_style : press({isPressed: isInteractivePressed})}>
+          <InternalCardContext.Provider value={{
+            size,
+            isQuiet,
+            isCheckboxSelection: false,
+            isHovered: isInteractiveHovered,
+            isFocusVisible: isInteractiveFocusVisible,
+            isSelected: false,
+            isPressed: isInteractivePressed
+          }}>
+            {children}
+          </InternalCardContext.Provider>
+        </div>
+      );
+    }
+
     return (
       <div
         {...filterDOMProps(otherProps)}
