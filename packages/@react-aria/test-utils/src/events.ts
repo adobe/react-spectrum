@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent} from '@testing-library/react';
+import {act} from './act';
+import {fireEvent} from '@testing-library/dom';
 import {UserOpts} from './types';
 
 export const DEFAULT_LONG_PRESS_TIME = 500;
@@ -59,33 +60,50 @@ export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer
   // util before first render. Will need to document it well
   let {element, advanceTimer, pointerOpts = {}} = opts;
   let pointerType = pointerOpts.pointerType ?? 'mouse';
-  let shouldFireCompatibilityEvents = fireEvent.pointerDown(element, {pointerType, ...pointerOpts});
+  let shouldFireCompatibilityEvents = false;
+  act(() => {
+    shouldFireCompatibilityEvents = fireEvent.pointerDown(element, {pointerType, ...pointerOpts});
+  });
   let shouldFocus = true;
   if (shouldFireCompatibilityEvents) {
     if (pointerType === 'touch') {
-      shouldFocus = shouldFireCompatibilityEvents = fireEvent.touchStart(element, {targetTouches: [{identifier: pointerOpts.pointerId, clientX: pointerOpts.clientX, clientY: pointerOpts.clientY}]});
+      act(() => {
+        shouldFocus = shouldFireCompatibilityEvents = fireEvent.touchStart(element, {targetTouches: [{identifier: pointerOpts.pointerId, clientX: pointerOpts.clientX, clientY: pointerOpts.clientY}]});
+      });
     } else if (pointerType === 'mouse') {
-      shouldFocus = fireEvent.mouseDown(element, pointerOpts);
+      act(() => {
+        shouldFocus = fireEvent.mouseDown(element, pointerOpts);
+      });
       if (shouldFocus) {
         act(() => element.focus());
       }
     }
   }
   await act(async () => await advanceTimer(DEFAULT_LONG_PRESS_TIME));
-  fireEvent.pointerUp(element, {pointerType, ...pointerOpts});
+  act(() => {
+    fireEvent.pointerUp(element, {pointerType, ...pointerOpts});
+  });
   if (shouldFireCompatibilityEvents) {
     if (pointerType === 'touch') {
-      shouldFocus = fireEvent.touchEnd(element, {targetTouches: [{identifier: pointerOpts.pointerId, clientX: pointerOpts.clientX, clientY: pointerOpts.clientY}]});
-      shouldFocus = fireEvent.mouseDown(element, pointerOpts);
+      act(() => {
+        shouldFocus = fireEvent.touchEnd(element, {targetTouches: [{identifier: pointerOpts.pointerId, clientX: pointerOpts.clientX, clientY: pointerOpts.clientY}]});
+        shouldFocus = fireEvent.mouseDown(element, pointerOpts);
+      });
       if (shouldFocus) {
         act(() => element.focus());
       }
-      fireEvent.mouseUp(element, pointerOpts);
+      act(() => {
+        fireEvent.mouseUp(element, pointerOpts);
+      });
     } else if (pointerType === 'mouse') {
-      fireEvent.mouseUp(element, pointerOpts);
+      act(() => {
+        fireEvent.mouseUp(element, pointerOpts);
+      });
     }
   }
-  fireEvent.click(element, {detail: 1, ...pointerOpts});
+  act(() => {
+    fireEvent.click(element, {detail: 1, ...pointerOpts});
+  });
 }
 
 // Docs cannot handle the types that userEvent actually declares, so hopefully this sub set is okay
