@@ -31,10 +31,11 @@ export class TreeTester {
     this._interactionType = interactionType || 'mouse';
     this._advanceTimer = advanceTimer;
     this._tree = root;
-    // TODO: should all helpers do this?
-    let tree = within(root).queryByRole('treegrid');
-    if (root.getAttribute('role') !== 'treegrid' && tree) {
-      this._tree = tree;
+    if (root.getAttribute('role') !== 'treegrid') {
+      let tree = within(root).queryByRole('treegrid');
+      if (tree) {
+        this._tree = tree;
+      }
     }
   }
 

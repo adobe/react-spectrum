@@ -46,6 +46,13 @@ export class TableTester {
     this._interactionType = interactionType || 'mouse';
     this._advanceTimer = advanceTimer;
     this._table = root;
+    let role = root.getAttribute('role');
+    if (role !== 'grid' && role !== 'treegrid') {
+      let table = within(root).queryByRole('grid') || within(root).queryByRole('treegrid');
+      if (table) {
+        this._table = table;
+      }
+    }
   }
 
   /**

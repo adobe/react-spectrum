@@ -1530,8 +1530,8 @@ describe('Table', () => {
       const DndTableExample = stories.DndTableExample;
       let {getAllByRole} = render(<DndTableExample />);
       let tableTester = testUtilUser.createTester('Table', {root: getAllByRole('grid')[1]});
-      expect(tableTester.rows).toHaveLength(7);
-      expect(tableTester.selectedRows).toHaveLength(0);
+      expect(tableTester.rows()).toHaveLength(7);
+      expect(tableTester.selectedRows()).toHaveLength(0);
       await user.tab();
       await user.keyboard('{ArrowRight}');
       await user.keyboard('{Enter}');
@@ -1546,8 +1546,8 @@ describe('Table', () => {
       // run onInsert promise in DnDTableExample first, otherwise updateFocusAfterDrop doesn't run properly
       await act(async () => {});
       act(() => jest.runAllTimers());
-      expect(tableTester.rows).toHaveLength(8);
-      expect(tableTester.selectedRows).toHaveLength(1);
+      expect(tableTester.rows()).toHaveLength(8);
+      expect(tableTester.selectedRows()).toHaveLength(1);
     });
   });
 
@@ -2934,20 +2934,20 @@ describe('Table', () => {
 
     let tableTester = testUtilUser.createTester('Table', {root});
 
-    let groups = tableTester.rowGroups;
+    let groups = tableTester.rowGroups();
     expect(groups).toHaveLength(3);
     expect(groups[0].tagName).toBe('THEAD');
     expect(groups[1].tagName).toBe('TBODY');
     expect(groups[2].tagName).toBe('TFOOT');
-    expect(tableTester.rows).toHaveLength(8);
+    expect(tableTester.rows()).toHaveLength(8);
 
     await user.tab();
-    for (let row of tableTester.rows) {
+    for (let row of tableTester.rows()) {
       expect(document.activeElement).toBe(row);
       await user.keyboard('{ArrowDown}');
     }
 
-    for (let row of tableTester.rows.toReversed().slice(1)) {
+    for (let row of tableTester.rows().toReversed().slice(1)) {
       await user.keyboard('{ArrowUp}');
       expect(document.activeElement).toBe(row);
     }
@@ -2998,17 +2998,17 @@ describe('Table', () => {
 
     let tableTester = testUtilUser.createTester('Table', {root});
 
-    let groups = tableTester.rowGroups;
+    let groups = tableTester.rowGroups();
     expect(groups).toHaveLength(3);
-    expect(tableTester.rows).toHaveLength(8);
+    expect(tableTester.rows()).toHaveLength(8);
 
     await user.tab();
-    for (let row of tableTester.rows) {
+    for (let row of tableTester.rows()) {
       expect(document.activeElement).toBe(row);
       await user.keyboard('{ArrowDown}');
     }
 
-    for (let row of tableTester.rows.toReversed().slice(1)) {
+    for (let row of tableTester.rows().toReversed().slice(1)) {
       await user.keyboard('{ArrowUp}');
       expect(document.activeElement).toBe(row);
     }
@@ -3058,21 +3058,21 @@ describe('Table', () => {
 
     let tableTester = testUtilUser.createTester('Table', {root});
 
-    let groups = tableTester.rowGroups;
+    let groups = tableTester.rowGroups();
     expect(groups).toHaveLength(4);
     expect(groups[0].tagName).toBe('THEAD');
     expect(groups[1].tagName).toBe('TBODY');
     expect(groups[2].tagName).toBe('TBODY');
     expect(groups[3].tagName).toBe('TBODY');
-    expect(tableTester.rows).toHaveLength(10);
+    expect(tableTester.rows()).toHaveLength(10);
 
     await user.tab();
-    for (let row of tableTester.rows) {
+    for (let row of tableTester.rows()) {
       expect(document.activeElement).toBe(row);
       await user.keyboard('{ArrowDown}');
     }
 
-    for (let row of tableTester.rows.toReversed().slice(1)) {
+    for (let row of tableTester.rows().toReversed().slice(1)) {
       await user.keyboard('{ArrowUp}');
       expect(document.activeElement).toBe(row);
     }

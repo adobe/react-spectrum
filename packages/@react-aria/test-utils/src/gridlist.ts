@@ -29,6 +29,12 @@ export class GridListTester {
     this._interactionType = interactionType || 'mouse';
     this._advanceTimer = advanceTimer;
     this._gridlist = root;
+    if (root.getAttribute('role') !== 'grid') {
+      let gridlist = within(root).queryByRole('grid');
+      if (gridlist) {
+        this._gridlist = gridlist;
+      }
+    }
   }
 
   /**

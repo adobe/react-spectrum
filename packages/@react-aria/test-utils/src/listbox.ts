@@ -60,8 +60,14 @@ export class ListBoxTester {
     let {root, user, interactionType, advanceTimer} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
-    this._listbox = root;
     this._advanceTimer = advanceTimer;
+    this._listbox = root;
+    if (root.getAttribute('role') !== 'listbox') {
+      let listbox = within(root).queryByRole('listbox');
+      if (listbox) {
+        this._listbox = listbox;
+      }
+    }
   }
 
   /**
