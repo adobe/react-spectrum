@@ -179,6 +179,9 @@ async function generateBundle(libraryName, config) {
       }
     }, null, 2) + '\n');
 
+    fs.copyFileSync(path.join(config.packageDir, 'README.md'), path.join(tempDir, 'README.md'));
+    fs.copyFileSync(path.join(repoRoot, 'LICENSE'), path.join(tempDir, 'LICENSE'));
+
     fs.mkdirSync(config.outputDir, {recursive: true});
     const outputPath = path.join(config.outputDir, config.outputFile);
     runMcpbCli(['validate', tempDir]);
