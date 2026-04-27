@@ -91,8 +91,8 @@ export class ComboBoxTester {
       } else {
         await this.user.click(trigger);
       }
-    } else if (interactionType === 'keyboard' && this._trigger != null) {
-      act(() => this._trigger!.focus());
+    } else if (interactionType === 'keyboard') {
+      act(() => combobox.focus());
       if (triggerBehavior !== 'focus') {
         await this.user.keyboard('{ArrowDown}');
       }
@@ -142,6 +142,38 @@ export class ComboBoxTester {
     return option;
   }
 
+  private async keyboardNavigateToOption(opts: {option: HTMLElement}) {
+    let {option} = opts;
+    let combobox = this.combobox;
+    let options = this.options();
+    let targetIndex = options.findIndex(opt => (opt === option) || opt.contains(option));
+    if (targetIndex === -1) {
+      throw new Error('Option provided is not in the combobox listbox.');
+    }
+
+    let getCurrentIndex = () => {
+      let id = combobox.getAttribute('aria-activedescendant');
+      if (!id) {
+        return -1;
+      }
+      return options.findIndex(opt => opt.id === id);
+    };
+
+    if (getCurrentIndex() === -1) {
+      await this.user.keyboard('[ArrowDown]');
+    }
+
+    let currIndex = getCurrentIndex();
+    if (currIndex === -1) {
+      throw new Error('Could not determine the current option in the combobox listbox.');
+    }
+
+    let direction = targetIndex > currIndex ? 'down' : 'up';
+    for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
+      await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+    }
+  }
+
   /**
    * Selects the desired combobox option. Defaults to using the interaction type set on the combobox tester. If necessary, will open the combobox dropdown beforehand.
    * The desired option can be targeted via the option's node, the option's text, or the option's index.
@@ -166,9 +198,10 @@ export class ComboBoxTester {
         throw new Error('Target option not found in the listbox.');
       }
 
-      // TODO: keyboard method of selecting the the option is a bit tricky unless I simply simulate the user pressing the down arrow
-      // the required amount of times to reach the option. For now just click the option even in keyboard mode
-      if (interactionType === 'mouse' || interactionType === 'keyboard') {
+      if (interactionType === 'keyboard') {
+        await this.keyboardNavigateToOption({option});
+        await this.user.keyboard('[Enter]');
+      } else if (interactionType === 'mouse') {
         await this.user.click(option);
       } else {
         await this.user.pointer({target: option, keys: '[TouchA]'});

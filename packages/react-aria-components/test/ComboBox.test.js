@@ -274,6 +274,30 @@ describe('ComboBox', () => {
     expect(document.querySelector('input[type=hidden]')).toBeNull();
   });
 
+  it('should support selecting an option via keyboard', async () => {
+    let onSelectionChange = jest.fn();
+    let tree = render(
+      <ComboBox onSelectionChange={onSelectionChange}>
+        <Label>Favorite Animal</Label>
+        <Input />
+        <Button />
+        <Popover>
+          <ListBox>
+            <ListBoxItem id="1">Cat</ListBoxItem>
+            <ListBoxItem id="2">Dog</ListBoxItem>
+            <ListBoxItem id="3">Kangaroo</ListBoxItem>
+          </ListBox>
+        </Popover>
+      </ComboBox>
+    );
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container, interactionType: 'keyboard'});
+
+    await comboboxTester.selectOption({option: 'Dog'});
+    expect(onSelectionChange).toHaveBeenCalledWith('2');
+    expect(comboboxTester.combobox).toHaveValue('Dog');
+    expect(comboboxTester.listbox).toBeNull();
+  });
+
   it.each(['click', 'tab'])('should not fire extra onSelectionChange calls after focus moves away in fully controlled mode via %s', async (focusMove) => {
     let onSelectionChange = jest.fn();
     let keyToText = {
@@ -857,11 +881,11 @@ describe('ComboBox', () => {
     act(() => {getByTestId('form').checkValidity();});
     expect(combobox).toHaveAttribute('aria-describedby');
     expect(container.querySelector('.react-aria-ComboBox')).toHaveAttribute('data-invalid');
-    
+
     await comboboxTester.open();
     let options = comboboxTester.options();
     await user.click(options[0]);
-    
+
     act(() => combobox.blur());
     expect(combobox).not.toHaveAttribute('required');
     expect(combobox.validity.valid).toBe(true);
