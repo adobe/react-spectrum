@@ -4,10 +4,8 @@
 // as `Component.__docgenInfo` for the Storybook docs panel.
 //
 // react-docgen-typescript runs out-of-process via an IPC client (see
-// ./react-docgen-typescript.ts) so a single TS server is shared across the
-// whole Parcel build instead of one-per-file. This is a Parcel-specific
-// performance optimization; upstream Vite/webpack5 use different docgen
-// mechanisms (vite-plugin-checker, ts-loader, etc).
+// ./react-docgen-typescript.ts) so a single TypeScript server instance is
+// shared across the whole Parcel build instead of being spun up per-file.
 
 import { Transformer } from '@parcel/plugin';
 import { enrichCsf, formatCsf, loadCsf } from 'storybook/internal/csf-tools';

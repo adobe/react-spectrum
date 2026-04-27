@@ -91,20 +91,23 @@ export async function build({ options }) {
 // @storybook/react via core.renderer (see storybook-react-parcel/preset.mjs).
 export const corePresets = [];
 
-// Top-level bail() must close the Parcel watcher; otherwise the dev process
-// keeps a file-watcher alive after Storybook errors out. Hoisting
-// `watcherSubscription` to module scope (above) lets this work even when
-// start() returned successfully but a later error triggers cleanup.
+// Storybook calls this top-level `bail` on errors and SIGINT; closing the
+// Parcel watcher here prevents the dev process from leaving a file watcher
+// alive after Storybook has already torn down.
 export async function bail() {
   await watcherSubscription?.unsubscribe();
 }
 
-// Builder is driven by FIVE generated files (under ./generated-entries):
-//   - iframe.html       <- Parcel's bundle entry point (HTML asset)
-//   - preview-main.js   <- ESM script loaded by iframe.html (the preview entry)
-//   - setup-addons.js   <- ESM module imported by preview-main.js
-//   - stories.js        <- written by parcel-resolver-storybook for `story:` glob deps
-//   - sb-parcel-externals/*.js <- written by parcel-resolver-storybook for runtime externals
+// Builder is driven by three files this preset writes into ./generated-entries:
+//   - iframe.html      <- Parcel's bundle entry point (HTML asset)
+//   - preview-main.js  <- ESM script loaded by iframe.html (the preview entry)
+//   - setup-addons.js  <- ESM module imported by preview-main.js
+//
+// Two more sources of input come from parcel-resolver-storybook:
+//   - a synthetic `stories.js` virtual module emitted for each `story:` glob
+//     dependency (lives in Parcel's module graph, not on disk)
+//   - per-runtime cache files in `node_modules/.cache/sb-parcel-externals/*.js`
+//     that re-export `globalThis.__STORYBOOK_MODULE_*__` (see StorybookResolver.ts)
 async function createParcel(options, isDev = false) {
   fs.mkdirSync(generatedEntries, { recursive: true });
   fs.writeFileSync(

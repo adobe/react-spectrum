@@ -1,6 +1,7 @@
-// Template extracted verbatim from upstream Vite's
-// code/builders/builder-vite/input/iframe.html (Task 2.2 of the upstream-
-// alignment plan). Placeholder strings are filled in below via String.replace.
+// Mirrors upstream code/builders/builder-vite/input/iframe.html.
+// Placeholder strings (e.g. '[CONFIG_TYPE HERE]') are filled in below via
+// String.replace -- one substitution per placeholder, matching the upstream
+// templating approach.
 
 import { normalizeStories } from "storybook/internal/common";
 import { readFileSync } from "node:fs";
