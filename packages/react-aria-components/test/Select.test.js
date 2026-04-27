@@ -681,6 +681,30 @@ describe('Select', () => {
     expect(formData.getAll('select')).toEqual(['cat', 'dog']);
   });
 
+  it('should support deselection if multiple selection is enabled', async () => {
+    let onChange = jest.fn();
+    let {getByTestId} = render(<TestSelect selectionMode="multiple" onChange={onChange} />);
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+
+    await selectTester.toggleOptionSelection({option: 'Cat'});
+    await selectTester.toggleOptionSelection({option: 'Dog'});
+    expect(selectTester.options()[0]).toHaveAttribute('aria-selected', 'true');
+    expect(selectTester.options()[1]).toHaveAttribute('aria-selected', 'true');
+    expect(onChange).toHaveBeenLastCalledWith(['cat', 'dog']);
+
+    await selectTester.toggleOptionSelection({option: 'Cat'});
+    expect(selectTester.options()[0]).toHaveAttribute('aria-selected', 'false');
+    expect(selectTester.options()[1]).toHaveAttribute('aria-selected', 'true');
+    expect(onChange).toHaveBeenLastCalledWith(['dog']);
+
+    await selectTester.toggleOptionSelection({option: 'Dog'});
+    expect(selectTester.options()[0]).toHaveAttribute('aria-selected', 'false');
+    expect(selectTester.options()[1]).toHaveAttribute('aria-selected', 'false');
+    expect(onChange).toHaveBeenLastCalledWith([]);
+
+    await selectTester.close();
+  });
+
   it('should support multiple selection form integration with many items', async () => {
     let items = [];
     for (let i = 0; i < 320; i++) {

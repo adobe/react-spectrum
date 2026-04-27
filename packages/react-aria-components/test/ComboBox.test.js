@@ -768,6 +768,32 @@ describe('ComboBox', () => {
     expect(formData.getAll('combobox')).toEqual(['']);
   });
 
+  it('should support deselection if multiple selection is enabled', async () => {
+    let onChange = jest.fn();
+    let {container} = render(
+      <TestComboBox name="combobox" selectionMode="multiple" defaultInputValue="" onChange={onChange} />
+    );
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+
+    await comboboxTester.toggleOptionSelection({option: 'Cat'});
+    await comboboxTester.toggleOptionSelection({option: 'Dog'});
+    expect(comboboxTester.options()[0]).toHaveAttribute('aria-selected', 'true');
+    expect(comboboxTester.options()[1]).toHaveAttribute('aria-selected', 'true');
+    expect(onChange).toHaveBeenLastCalledWith(['1', '2']);
+
+    await comboboxTester.toggleOptionSelection({option: 'Cat'});
+    expect(comboboxTester.options()[0]).toHaveAttribute('aria-selected', 'false');
+    expect(comboboxTester.options()[1]).toHaveAttribute('aria-selected', 'true');
+    expect(onChange).toHaveBeenLastCalledWith(['2']);
+
+    await comboboxTester.toggleOptionSelection({option: 'Dog'});
+    expect(comboboxTester.options()[0]).toHaveAttribute('aria-selected', 'false');
+    expect(comboboxTester.options()[1]).toHaveAttribute('aria-selected', 'false');
+    expect(onChange).toHaveBeenLastCalledWith([]);
+
+    await comboboxTester.close();
+  });
+
   it('should support controlled multi-selection', async () => {
     let {container} = render(<TestComboBox selectionMode="multiple" defaultInputValue={undefined} value={['2', '3']} />);
 
