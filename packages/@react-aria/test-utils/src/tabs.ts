@@ -65,7 +65,7 @@ export class TabsTester {
     } = opts;
 
     let tab;
-    let tabs = this.tabs;
+    let tabs = this.tabs();
     if (typeof tabIndexOrText === 'number') {
       tab = tabs[tabIndexOrText];
     } else if (typeof tabIndexOrText === 'string') {
@@ -78,7 +78,7 @@ export class TabsTester {
   // TODO: also quite similar across more utils albeit with orientation, refactor to make generic
   private async keyboardNavigateToTab(opts: {tab: HTMLElement, orientation?: Orientation}) {
     let {tab, orientation = 'vertical'} = opts;
-    let tabs = this.tabs;
+    let tabs = this.tabs();
     tabs = tabs.filter(tab => !(tab.hasAttribute('disabled') || tab.getAttribute('aria-disabled') === 'true'));
     if (tabs.length === 0) {
       throw new Error('Tablist doesnt have any non-disabled tabs. Please double check your tabs implementation.');
@@ -90,7 +90,7 @@ export class TabsTester {
     }
 
     if (!this._tablist.contains(document.activeElement)) {
-      let selectedTab = this.selectedTab;
+      let selectedTab = this.selectedTab();
       if (selectedTab != null) {
         act(() => selectedTab.focus());
       } else {
@@ -159,16 +159,16 @@ export class TabsTester {
   /**
    * Returns the tablist.
    */
-  get tablist(): HTMLElement {
+  tablist(): HTMLElement {
     return this._tablist;
   }
 
   /**
    * Returns the tabpanels.
    */
-  get tabpanels(): HTMLElement[] {
+  tabpanels(): HTMLElement[] {
     let tabpanels = [] as HTMLElement[];
-    for (let tab of this.tabs) {
+    for (let tab of this.tabs()) {
       let controlId = tab.getAttribute('aria-controls');
       let panel = controlId != null ? document.getElementById(controlId) : null;
       if (panel != null) {
@@ -182,22 +182,22 @@ export class TabsTester {
   /**
    * Returns the tabs in the tablist.
    */
-  get tabs(): HTMLElement[] {
-    return within(this.tablist).queryAllByRole('tab');
+  tabs(): HTMLElement[] {
+    return within(this.tablist()).queryAllByRole('tab');
   }
 
   /**
    * Returns the currently selected tab in the tablist if any.
    */
-  get selectedTab(): HTMLElement | null {
-    return this.tabs.find(tab => tab.getAttribute('aria-selected') === 'true') || null;
+  selectedTab(): HTMLElement | null {
+    return this.tabs().find(tab => tab.getAttribute('aria-selected') === 'true') || null;
   }
 
   /**
    * Returns the currently active tabpanel if any.
    */
-  get activeTabpanel(): HTMLElement | null {
-    let activeTabpanelId = this.selectedTab?.getAttribute('aria-controls');
+  activeTabpanel(): HTMLElement | null {
+    let activeTabpanelId = this.selectedTab()?.getAttribute('aria-controls');
     return activeTabpanelId ? document.getElementById(activeTabpanelId) : null;
   }
 }

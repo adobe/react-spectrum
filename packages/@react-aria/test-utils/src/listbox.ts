@@ -86,7 +86,7 @@ export class ListBoxTester {
     if (typeof optionIndexOrText === 'number') {
       option = options[optionIndexOrText];
     } else if (typeof optionIndexOrText === 'string') {
-      option = (within(this.listbox!).getByText(optionIndexOrText).closest('[role=option]'))! as HTMLElement;
+      option = (within(this.listbox()!).getByText(optionIndexOrText).closest('[role=option]'))! as HTMLElement;
     }
 
     return option;
@@ -211,7 +211,7 @@ export class ListBoxTester {
   /**
    * Returns the listbox.
    */
-  get listbox(): HTMLElement {
+  listbox(): HTMLElement {
     return this._listbox;
   }
 
@@ -231,14 +231,14 @@ export class ListBoxTester {
   /**
    * Returns the listbox's selected options if any.
    */
-  get selectedOptions(): HTMLElement[] {
+  selectedOptions(): HTMLElement[] {
     return this.options().filter(row => row.getAttribute('aria-selected') === 'true');
   }
 
   /**
    * Returns the listbox's sections if any.
    */
-  get sections(): HTMLElement[] {
+  sections(): HTMLElement[] {
     return within(this._listbox).queryAllByRole('group');
   }
 }

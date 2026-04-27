@@ -61,9 +61,9 @@ export class RadioGroupTester {
 
     let radio;
     if (typeof radioIndexOrText === 'number') {
-      radio = this.radios[radioIndexOrText];
+      radio = this.radios()[radioIndexOrText];
     } else if (typeof radioIndexOrText === 'string') {
-      let label = within(this.radiogroup).getByText(radioIndexOrText);
+      let label = within(this.radiogroup()).getByText(radioIndexOrText);
       // Label may wrap the radio, or the actual label may be a sibling span, or the radio div could have the label within it
       if (label) {
         radio = within(label).queryByRole('radio');
@@ -83,7 +83,7 @@ export class RadioGroupTester {
 
   private async keyboardNavigateToRadio(opts: {radio: HTMLElement, orientation?: Orientation}) {
     let {radio, orientation = 'vertical'} = opts;
-    let radios = this.radios;
+    let radios = this.radios();
     radios = radios.filter(radio => !(radio.hasAttribute('disabled') || radio.getAttribute('aria-disabled') === 'true'));
     if (radios.length === 0) {
       throw new Error('Radio group doesnt have any non-disabled radios. Please double check your radio group.');
@@ -94,8 +94,8 @@ export class RadioGroupTester {
       throw new Error('Radio provided is not in the radio group.');
     }
 
-    if (!this.radiogroup.contains(document.activeElement)) {
-      let selectedRadio = this.selectedRadio;
+    if (!this.radiogroup().contains(document.activeElement)) {
+      let selectedRadio = this.selectedRadio();
       if (selectedRadio != null) {
         act(() => selectedRadio.focus());
       } else {
@@ -156,21 +156,21 @@ export class RadioGroupTester {
   /**
    * Returns the radiogroup.
    */
-  get radiogroup(): HTMLElement {
+  radiogroup(): HTMLElement {
     return this._radiogroup;
   }
 
   /**
    * Returns the radios.
    */
-  get radios(): HTMLElement[] {
-    return within(this.radiogroup).queryAllByRole('radio');
+  radios(): HTMLElement[] {
+    return within(this.radiogroup()).queryAllByRole('radio');
   }
 
   /**
    * Returns the currently selected radio in the radiogroup if any.
    */
-  get selectedRadio(): HTMLElement | null {
-    return this.radios.find(radio => (radio as HTMLInputElement).checked) || null;
+  selectedRadio(): HTMLElement | null {
+    return this.radios().find(radio => (radio as HTMLInputElement).checked) || null;
   }
 }

@@ -68,7 +68,7 @@ export class SelectTester {
     let {
       interactionType = this._interactionType
     } = opts;
-    let trigger = this.trigger;
+    let trigger = this.trigger();
     let isDisabled = trigger.hasAttribute('disabled');
 
     if (interactionType === 'mouse') {
@@ -101,7 +101,7 @@ export class SelectTester {
    * Closes the select.
    */
   async close(): Promise<void> {
-    let listbox = this.listbox;
+    let listbox = this.listbox();
     if (listbox) {
       act(() => listbox.focus());
       await this.user.keyboard('[Escape]');
@@ -130,7 +130,7 @@ export class SelectTester {
 
     let option;
     let options = this.options();
-    let listbox = this.listbox;
+    let listbox = this.listbox();
 
     if (typeof optionIndexOrText === 'number') {
       option = options[optionIndexOrText];
@@ -148,7 +148,7 @@ export class SelectTester {
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the listbox');
     }
-    if (document.activeElement === this.listbox) {
+    if (document.activeElement === this.listbox()) {
       await this.user.keyboard('[ArrowDown]');
     }
     let currIndex = options.indexOf(document.activeElement as HTMLElement);
@@ -172,11 +172,11 @@ export class SelectTester {
       closesOnSelect,
       interactionType = this._interactionType
     } = opts || {};
-    let trigger = this.trigger;
+    let trigger = this.trigger();
     if (!trigger.getAttribute('aria-controls')) {
       await this.open();
     }
-    let listbox = this.listbox;
+    let listbox = this.listbox();
     if (!listbox) {
       throw new Error('Select\'s listbox not found.');
     }
@@ -233,7 +233,7 @@ export class SelectTester {
    * Returns the select's options if present. Can be filtered to a subsection of the listbox if provided via `element`.
    */
   options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
-    let {element = this.listbox} = opts;
+    let {element = this.listbox()} = opts;
     let options = [];
     if (element) {
       options = within(element).queryAllByRole('option');
@@ -245,23 +245,23 @@ export class SelectTester {
   /**
    * Returns the select's trigger.
    */
-  get trigger(): HTMLElement {
+  trigger(): HTMLElement {
     return this._trigger;
   }
 
   /**
    * Returns the select's listbox if present.
    */
-  get listbox(): HTMLElement | null {
-    let listBoxId = this.trigger.getAttribute('aria-controls');
+  listbox(): HTMLElement | null {
+    let listBoxId = this.trigger().getAttribute('aria-controls');
     return listBoxId ? document.getElementById(listBoxId) : null;
   }
 
   /**
    * Returns the select's sections if present.
    */
-  get sections(): HTMLElement[] {
-    let listbox = this.listbox;
+  sections(): HTMLElement[] {
+    let listbox = this.listbox();
     return listbox ? within(listbox).queryAllByRole('group') : [];
   }
 }

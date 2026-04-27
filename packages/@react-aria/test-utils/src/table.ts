@@ -59,7 +59,7 @@ export class TableTester {
   private async keyboardNavigateToRow(opts: {row: HTMLElement, selectionOnNav?: 'default' | 'none'}) {
     let {row, selectionOnNav = 'default'} = opts;
     let altKey = getAltKey();
-    let rows = this.rows;
+    let rows = this.rows();
     let targetIndex = rows.indexOf(row);
     if (targetIndex === -1) {
       throw new Error('Row provided is not in the table');
@@ -74,15 +74,16 @@ export class TableTester {
       await this.user.keyboard('[ArrowDown]');
     }
 
+    let rowGroups = this.rowGroups();
     // If focus is currently somewhere in the first row group (aka on a column), we want to keyboard navigate downwards till we reach the rows
-    if (this.rowGroups[0].contains(document.activeElement)) {
+    if (rowGroups[0].contains(document.activeElement)) {
       do {
         await this.user.keyboard('[ArrowDown]');
-      } while (!this.rowGroups[1].contains(document.activeElement));
+      } while (!rowGroups[1].contains(document.activeElement));
     }
 
     // Move focus onto the row itself
-    if (this.rowGroups[1].contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
+    if (rowGroups[1].contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
       do {
         await this.user.keyboard('[ArrowLeft]');
       } while (document.activeElement!.getAttribute('role') !== 'row');
@@ -167,9 +168,9 @@ export class TableTester {
       row,
       interactionType = this._interactionType
     } = opts;
-    if (!this.table.contains(document.activeElement)) {
+    if (!this.table().contains(document.activeElement)) {
       await act(async () => {
-        this.table.focus();
+        this.table().focus();
       });
     }
 
@@ -214,9 +215,9 @@ export class TableTester {
 
     let columnheader;
     if (typeof column === 'number') {
-      columnheader = this.columns[column];
+      columnheader = this.columns()[column];
     } else if (typeof column === 'string') {
-      columnheader = within(this.rowGroups[0]).getByText(column);
+      columnheader = within(this.rowGroups()[0]).getByText(column);
       while (columnheader && !/columnheader/.test(columnheader.getAttribute('role'))) {
         columnheader = columnheader.parentElement;
       }
@@ -301,9 +302,9 @@ export class TableTester {
 
     let columnheader;
     if (typeof column === 'number') {
-      columnheader = this.columns[column];
+      columnheader = this.columns()[column];
     } else if (typeof column === 'string') {
-      columnheader = within(this.rowGroups[0]).getByText(column);
+      columnheader = within(this.rowGroups()[0]).getByText(column);
       while (columnheader && !/columnheader/.test(columnheader.getAttribute('role'))) {
         columnheader = columnheader.parentElement;
       }
@@ -413,12 +414,13 @@ export class TableTester {
     } = opts;
     if (interactionType === 'keyboard') {
       let metaKey = getMetaKey();
-      if (document.activeElement !== this.table && !this.table.contains(document.activeElement)) {
-        act(() => this.table.focus());
+      let table = this.table();
+      if (document.activeElement !== table && !table.contains(document.activeElement)) {
+        act(() => table.focus());
       }
       await this.user.keyboard(`[${metaKey}>]a[/${metaKey}]`);
     } else {
-      let checkbox = within(this.table).getByLabelText('Select All');
+      let checkbox = within(this.table()).getByLabelText('Select All');
       await pressElement(this.user, checkbox, interactionType);
     }
   }
@@ -432,8 +434,8 @@ export class TableTester {
     } = opts;
 
     let row;
-    let rows = this.rows;
-    let bodyRowGroup = this.rowGroups[1];
+    let rows = this.rows();
+    let bodyRowGroup = this.rowGroups()[1];
     if (typeof rowIndexOrText === 'number') {
       row = rows[rowIndexOrText];
     } else if (typeof rowIndexOrText === 'string') {
@@ -454,7 +456,7 @@ export class TableTester {
       text
     } = opts;
 
-    let cell = within(this.table).getByText(text);
+    let cell = within(this.table()).getByText(text);
     if (cell) {
       while (cell && !/gridcell|rowheader|columnheader/.test(cell.getAttribute('role') || '')) {
         if (cell.parentElement) {
@@ -471,14 +473,14 @@ export class TableTester {
   /**
    * Returns the table.
    */
-  get table(): HTMLElement {
+  table(): HTMLElement {
     return this._table;
   }
 
   /**
    * Returns the row groups within the table.
    */
-  get rowGroups(): HTMLElement[] {
+  rowGroups(): HTMLElement[] {
     let table = this._table;
     return table ? within(table).queryAllByRole('rowgroup') : [];
   }
@@ -486,37 +488,37 @@ export class TableTester {
   /**
    * Returns the columns within the table.
    */
-  get columns(): HTMLElement[] {
-    let headerRowGroup = this.rowGroups[0];
+  columns(): HTMLElement[] {
+    let headerRowGroup = this.rowGroups()[0];
     return headerRowGroup ? within(headerRowGroup).queryAllByRole('columnheader') : [];
   }
 
   /**
    * Returns the rows within the table if any.
    */
-  get rows(): HTMLElement[] {
-    return this.rowGroups.slice(1).flatMap(rowGroup => within(rowGroup).queryAllByRole('row'));
+  rows(): HTMLElement[] {
+    return this.rowGroups().slice(1).flatMap(rowGroup => within(rowGroup).queryAllByRole('row'));
   }
 
   /**
    * Returns the currently selected rows within the table if any.
    */
-  get selectedRows(): HTMLElement[] {
-    return this.rows.filter(row => row.getAttribute('aria-selected') === 'true');
+  selectedRows(): HTMLElement[] {
+    return this.rows().filter(row => row.getAttribute('aria-selected') === 'true');
   }
 
   /**
    * Returns the row headers within the table if any.
    */
-  get rowHeaders(): HTMLElement[] {
-    return within(this.table).queryAllByRole('rowheader');
+  rowHeaders(): HTMLElement[] {
+    return within(this.table()).queryAllByRole('rowheader');
   }
 
   /**
    * Returns the cells within the table if any. Can be filtered against a specific row if provided via `element`.
    */
   cells(opts: {element?: HTMLElement} = {}): HTMLElement[] {
-    let {element = this.table} = opts;
+    let {element = this.table()} = opts;
     return within(element).queryAllByRole('gridcell');
   }
 }

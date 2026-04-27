@@ -48,9 +48,9 @@ export class GridListTester {
 
     let row;
     if (typeof rowIndexOrText === 'number') {
-      row = this.rows[rowIndexOrText];
+      row = this.rows()[rowIndexOrText];
     } else if (typeof rowIndexOrText === 'string') {
-      row = (within(this.gridlist!).getByText(rowIndexOrText).closest('[role=row]'))! as HTMLElement;
+      row = (within(this.gridlist()!).getByText(rowIndexOrText).closest('[role=row]'))! as HTMLElement;
     }
 
     return row;
@@ -60,7 +60,7 @@ export class GridListTester {
   private async keyboardNavigateToRow(opts: {row: HTMLElement, selectionOnNav?: 'default' | 'none'}) {
     let {row, selectionOnNav = 'default'} = opts;
     let altKey = getAltKey();
-    let rows = this.rows;
+    let rows = this.rows();
     let targetIndex = rows.indexOf(row);
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the gridlist');
@@ -195,29 +195,29 @@ export class GridListTester {
   /**
    * Returns the gridlist.
    */
-  get gridlist(): HTMLElement {
+  gridlist(): HTMLElement {
     return this._gridlist;
   }
 
   /**
    * Returns the gridlist's rows if any.
    */
-  get rows(): HTMLElement[] {
-    return within(this?.gridlist).queryAllByRole('row');
+  rows(): HTMLElement[] {
+    return within(this.gridlist()).queryAllByRole('row');
   }
 
   /**
    * Returns the gridlist's selected rows if any.
    */
-  get selectedRows(): HTMLElement[] {
-    return this.rows.filter(row => row.getAttribute('aria-selected') === 'true');
+  selectedRows(): HTMLElement[] {
+    return this.rows().filter(row => row.getAttribute('aria-selected') === 'true');
   }
 
   /**
    * Returns the gridlist's cells if any. Can be filtered against a specific row if provided via `element`.
    */
   cells(opts: {element?: HTMLElement} = {}): HTMLElement[] {
-    let {element = this.gridlist} = opts;
+    let {element = this.gridlist()} = opts;
     return within(element).queryAllByRole('gridcell');
   }
 }

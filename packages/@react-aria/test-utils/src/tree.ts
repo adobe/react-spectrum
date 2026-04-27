@@ -55,9 +55,9 @@ export class TreeTester {
 
     let row;
     if (typeof rowIndexOrText === 'number') {
-      row = this.rows[rowIndexOrText];
+      row = this.rows()[rowIndexOrText];
     } else if (typeof rowIndexOrText === 'string') {
-      row = (within(this.tree!).getByText(rowIndexOrText).closest('[role=row]'))! as HTMLElement;
+      row = (within(this.tree()!).getByText(rowIndexOrText).closest('[role=row]'))! as HTMLElement;
     }
 
     return row;
@@ -67,7 +67,7 @@ export class TreeTester {
   private async keyboardNavigateToRow(opts: {row: HTMLElement, selectionOnNav?: 'default' | 'none'}) {
     let {row, selectionOnNav = 'default'} = opts;
     let altKey = getAltKey();
-    let rows = this.rows;
+    let rows = this.rows();
     let targetIndex = rows.indexOf(row);
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the tree');
@@ -77,7 +77,7 @@ export class TreeTester {
       act(() => this._tree.focus());
     }
 
-    if (document.activeElement === this.tree) {
+    if (document.activeElement === this.tree()) {
       await this.user.keyboard(`${selectionOnNav === 'none' ? `[${altKey}>]` : ''}[ArrowDown]${selectionOnNav === 'none' ? `[/${altKey}]` : ''}`);
     } else if (this._tree.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
       do {
@@ -174,9 +174,9 @@ export class TreeTester {
       row,
       interactionType = this._interactionType
     } = opts;
-    if (!this.tree.contains(document.activeElement)) {
+    if (!this.tree().contains(document.activeElement)) {
       await act(async () => {
-        this.tree.focus();
+        this.tree().focus();
       });
     }
 
@@ -247,29 +247,29 @@ export class TreeTester {
   /**
    * Returns the tree.
    */
-  get tree():  HTMLElement {
+  tree(): HTMLElement {
     return this._tree;
   }
 
   /**
    * Returns the tree's rows if any.
    */
-  get rows(): HTMLElement[] {
-    return within(this?.tree).queryAllByRole('row');
+  rows(): HTMLElement[] {
+    return within(this.tree()).queryAllByRole('row');
   }
 
   /**
    * Returns the tree's selected rows if any.
    */
-  get selectedRows(): HTMLElement[] {
-    return this.rows.filter(row => row.getAttribute('aria-selected') === 'true');
+  selectedRows(): HTMLElement[] {
+    return this.rows().filter(row => row.getAttribute('aria-selected') === 'true');
   }
 
   /**
    * Returns the tree's cells if any. Can be filtered against a specific row if provided via `element`.
    */
   cells(opts: {element?: HTMLElement} = {}): HTMLElement[] {
-    let {element = this.tree} = opts;
+    let {element = this.tree()} = opts;
     return within(element).queryAllByRole('gridcell');
   }
 }

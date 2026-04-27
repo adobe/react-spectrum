@@ -107,7 +107,7 @@ export class MenuTester {
       interactionType = this._interactionType,
       direction
     } = opts;
-    let trigger = this.trigger;
+    let trigger = this.trigger();
     let isDisabled = trigger.hasAttribute('disabled');
     if (interactionType === 'mouse' || interactionType === 'touch') {
       if (needsLongPress) {
@@ -160,7 +160,7 @@ export class MenuTester {
 
     let option;
     let options = this.options();
-    let menu = this.menu;
+    let menu = this.menu();
 
     if (typeof optionIndexOrText === 'number') {
       option = options[optionIndexOrText];
@@ -184,13 +184,13 @@ export class MenuTester {
       interactionType = this._interactionType,
       keyboardActivation = 'Enter'
     } = opts;
-    let trigger = this.trigger;
+    let trigger = this.trigger();
 
     if (!trigger.getAttribute('aria-controls') && !trigger.hasAttribute('aria-expanded')) {
       await this.open({needsLongPress});
     }
 
-    let menu = this.menu;
+    let menu = this.menu();
 
     if (!menu) {
       throw new Error('Menu not found.');
@@ -257,7 +257,7 @@ export class MenuTester {
         // close. In React 16, focus actually makes it all the way to the root menu's submenu trigger so we need check the root menu
         if (this._isSubmenu) {
           await waitFor(() => {
-            if (document.activeElement === this.trigger || this._rootMenu?.contains(document.activeElement)) {
+            if (document.activeElement === this.trigger() || this._rootMenu?.contains(document.activeElement)) {
               throw new Error('Expected focus after selecting an submenu option to move away from the original submenu trigger.');
             } else {
               return true;
@@ -290,13 +290,13 @@ export class MenuTester {
       interactionType = this._interactionType
     } = opts;
 
-    let trigger = this.trigger;
+    let trigger = this.trigger();
     let isDisabled = trigger.hasAttribute('disabled');
     if (!trigger.getAttribute('aria-controls') && !isDisabled) {
       await this.open({needsLongPress});
     }
     if (!isDisabled) {
-      let menu = this.menu;
+      let menu = this.menu();
       if (menu) {
         if (typeof submenuTrigger === 'string') {
           submenuTrigger = (within(menu!).getByText(submenuTrigger).closest('[role=menuitem]'))! as HTMLElement;
@@ -308,7 +308,7 @@ export class MenuTester {
           root: submenuTrigger,
           isSubmenu: true,
           advanceTimer: this._advanceTimer,
-          rootMenu: (this._isSubmenu ? this._rootMenu : this.menu) || undefined
+          rootMenu: (this._isSubmenu ? this._rootMenu : this.menu()) || undefined
         });
         if (interactionType === 'mouse') {
           await this.user.pointer({target: submenuTrigger});
@@ -342,7 +342,7 @@ export class MenuTester {
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the menu');
     }
-    if (document.activeElement === this.menu) {
+    if (document.activeElement === this.menu()) {
       await this.user.keyboard('[ArrowDown]');
     }
     let currIndex = options.indexOf(document.activeElement as HTMLElement);
@@ -360,13 +360,13 @@ export class MenuTester {
    * Closes the menu.
    */
   async close(): Promise<void> {
-    let menu = this.menu;
+    let menu = this.menu();
     if (menu) {
       act(() => menu.focus());
       await this.user.keyboard('[Escape]');
 
       await waitFor(() => {
-        if (document.activeElement !== this.trigger) {
+        if (document.activeElement !== this.trigger()) {
           throw new Error(`Expected the document.activeElement after closing the menu to be the menu trigger but got ${document.activeElement}`);
         } else {
           return true;
@@ -382,7 +382,7 @@ export class MenuTester {
   /**
    * Returns the menu's trigger.
    */
-  get trigger(): HTMLElement {
+  trigger(): HTMLElement {
     if (!this._trigger) {
       throw new Error('No trigger element found for menu.');
     }
@@ -393,16 +393,16 @@ export class MenuTester {
   /**
    * Returns the menu if present.
    */
-  get menu(): HTMLElement | null {
-    let menuId = this.trigger.getAttribute('aria-controls');
+  menu(): HTMLElement | null {
+    let menuId = this.trigger().getAttribute('aria-controls');
     return menuId ? document.getElementById(menuId) : null;
   }
 
   /**
    * Returns the menu's sections if any.
    */
-  get sections(): HTMLElement[] {
-    let menu = this.menu;
+  sections(): HTMLElement[] {
+    let menu = this.menu();
     if (menu) {
       return within(menu).queryAllByRole('group');
     } else {
@@ -414,7 +414,7 @@ export class MenuTester {
    * Returns the menu's options if present. Can be filtered to a subsection of the menu if provided via `element`.
    */
   options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
-    let {element = this.menu} = opts;
+    let {element = this.menu()} = opts;
     let options: HTMLElement[] = [];
     if (element) {
       options = within(element).queryAllByRole('menuitem');
@@ -432,7 +432,7 @@ export class MenuTester {
   /**
    * Returns the menu's submenu triggers if any.
    */
-  get submenuTriggers(): HTMLElement[] {
+  submenuTriggers(): HTMLElement[] {
     let options = this.options();
     if (options.length > 0) {
       return options.filter(item => item.getAttribute('aria-haspopup') != null);
