@@ -151,12 +151,8 @@ export class TreeTester {
     } else {
       let cell = within(row).getAllByRole('gridcell')[0];
       if (needsLongPress && interactionType === 'touch') {
-        if (this._advanceTimer == null) {
-          throw new Error('No advanceTimers provided for long press.');
-        }
-
         // Note that long press interactions with rows is strictly touch only for grid rows
-        await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
+        await triggerLongPress({element: cell, advanceTimer: this._advanceTimer!, pointerOpts: {pointerType: 'touch'}});
       } else {
         // TODO add modifiers here? Maybe move into pressElement if we get more cases for different types of modifier keys
         if (selectionBehavior === 'replace' && interactionType !== 'touch') {

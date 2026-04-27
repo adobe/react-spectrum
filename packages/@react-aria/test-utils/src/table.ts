@@ -145,12 +145,8 @@ export class TableTester {
     } else {
       let cell = within(row).getAllByRole('gridcell')[0];
       if (needsLongPress && interactionType === 'touch') {
-        if (this._advanceTimer == null) {
-          throw new Error('No advanceTimers provided for long press.');
-        }
-
         // Note that long press interactions with rows is strictly touch only for grid rows
-        await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
+        await triggerLongPress({element: cell, advanceTimer: this._advanceTimer!, pointerOpts: {pointerType: 'touch'}});
       } else {
         if (selectionBehavior === 'replace' && interactionType !== 'touch') {
           await this.user.keyboard(`[${metaKey}>]`);
@@ -277,12 +273,8 @@ export class TableTester {
       }
 
       // Handle cases where the table may transition in response to the row selection/deselection
-      if (!this._advanceTimer) {
-        throw new Error('No advanceTimers provided for table transition.');
-      }
-
       await act(async () => {
-        await this._advanceTimer?.(200);
+        await this._advanceTimer!(200);
       });
 
       await waitFor(() => {
@@ -363,12 +355,8 @@ export class TableTester {
       }
 
       // Handle cases where the table may transition in response to the row selection/deselection
-      if (!this._advanceTimer) {
-        throw new Error('No advanceTimers provided for table transition.');
-      }
-
       await act(async () => {
-        await this._advanceTimer?.(200);
+        await this._advanceTimer!(200);
       });
 
       await waitFor(() => {

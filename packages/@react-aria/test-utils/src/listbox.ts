@@ -163,11 +163,7 @@ export class ListBoxTester {
       }
     } else {
       if (needsLongPress && interactionType === 'touch') {
-        if (this._advanceTimer == null) {
-          throw new Error('No advanceTimers provided for long press.');
-        }
-
-        await triggerLongPress({element: option, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
+        await triggerLongPress({element: option, advanceTimer: this._advanceTimer!, pointerOpts: {pointerType: 'touch'}});
       } else {
         if (selectionBehavior === 'replace' && interactionType !== 'touch') {
           await this.user.keyboard(`[${metaKey}>]`);
