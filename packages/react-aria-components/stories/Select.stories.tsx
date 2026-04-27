@@ -57,11 +57,8 @@ export const SelectExample: SelectStory = (args) => (
       <SelectValue />
       <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
     </Button>
-    <Popover>
-      <OverlayArrow>
-        <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
-      </OverlayArrow>
-      <ListBox className={styles.menu}>
+    <Popover style={{width: 'var(--trigger-width)', boxSizing: 'border-box'}}>
+      <ListBox className={styles.menu} style={{minWidth: 0, width: '100%'}}>
         <MyListBoxItem>Foo</MyListBoxItem>
         <MyListBoxItem>Bar</MyListBoxItem>
         <MyListBoxItem>Baz</MyListBoxItem>

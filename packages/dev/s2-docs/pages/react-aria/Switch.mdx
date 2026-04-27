@@ -2,6 +2,7 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/Switch';
 import {Switch as VanillaSwitch} from 'vanilla-starter/Switch';
 import {Switch as TailwindSwitch} from 'tailwind-starter/Switch';
 import '../../tailwind/tailwind.css';
@@ -18,17 +19,17 @@ export const description = 'Allows a user to turn a setting on or off.';
 <ExampleSwitcher>
   <VisualExample
     component={VanillaSwitch}
-    docs={docs.exports.Switch}
-    links={docs.links}
-    props={['children', 'isDisabled']}
+    docs={vanillaDocs.exports.Switch}
+    links={vanillaDocs.links}
+    props={['children', 'description', 'isDisabled']}
     initialProps={{children: 'Low power mode'}}
     type="vanilla"
     files={["starters/docs/src/Switch.tsx", "starters/docs/src/Switch.css"]} />
   <VisualExample
     component={TailwindSwitch}
-    docs={docs.exports.Switch}
-    links={docs.links}
-    props={['children', 'isDisabled']}
+    docs={vanillaDocs.exports.Switch}
+    links={vanillaDocs.links}
+    props={['children', 'description', 'isDisabled']}
     initialProps={{children: 'Low power mode'}}
     type="tailwind"
     files={["starters/tailwind/src/Switch.tsx"]} />
@@ -65,7 +66,7 @@ function Example(props) {
 
 ## Forms
 
-Use the `name` and `value` props to submit the switch to the server. See the [Forms](forms) guide to learn more.
+Use the `name` and `value` props to submit the switch to the server. Set the `isRequired` prop to validate the user selects the switch, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
 ```tsx render
 "use client";
@@ -75,7 +76,12 @@ import {Form} from 'vanilla-starter/Form';
 
 <Form>
   {/*- begin highlight -*/}
-  <Switch name="wifi">Wi-Fi</Switch>
+  <Switch
+    name="two-factor"
+    isRequired
+    description="Your organization requires two-factor authentication.">
+    Two-factor authentication
+  </Switch>
   {/*- end highlight -*/}
   <Button type="submit" style={{marginTop: 8}}>Submit</Button>
 </Form>
@@ -85,10 +91,18 @@ import {Form} from 'vanilla-starter/Form';
 
 <Anatomy />
 
-```tsx links={{Switch: '#switch'}}
-<Switch>Label</Switch>
+```tsx links={{SwitchField: '#switchfield', SwitchButton: '#switchbutton'}}
+<SwitchField>
+  <SwitchButton>Label</SwitchButton>
+  <Text slot="description" />
+  <FieldError />
+</SwitchField>
 ```
 
-### Switch
+### SwitchField
 
-<PropTable component={docs.exports.Switch} links={docs.links} />
+<PropTable component={docs.exports.SwitchField} links={docs.links} showDescription />
+
+### SwitchButton
+
+<PropTable component={docs.exports.SwitchButton} links={docs.links} showDescription />
