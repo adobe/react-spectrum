@@ -11,6 +11,7 @@ export default {
     '../packages/react-stately/stories/*/*.stories.{js,jsx,ts,tsx}',
     '../packages/react-aria-components/stories/*.stories.{js,jsx,ts,tsx}'
   ],
+
   addons: [
     'storybook/actions',
     '@storybook/addon-a11y',
@@ -21,7 +22,22 @@ export default {
     localAddon('./custom-addons/strictmode'),
     localAddon('./custom-addons/scrolling'),
   ],
-  typescript: { check: false, reactDocgen: false },
-  framework: { name: 'storybook-react-parcel', options: {} },
-  core: { disableWhatsNewNotifications: true },
+
+  typescript: {
+    check: false,
+    reactDocgen: false
+  },
+
+  framework: {
+    name: 'storybook-react-parcel',
+    options: {}
+  },
+
+  core: {
+    disableWhatsNewNotifications: true
+  },
+
+  features: {
+    sidebarOnboardingChecklist: false
+  }
 };

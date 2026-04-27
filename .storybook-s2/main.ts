@@ -35,6 +35,9 @@ const config: StorybookConfig = {
   },
   core: {
     disableWhatsNewNotifications: true
+  },
+  features: {
+    sidebarOnboardingChecklist: false
   }
   // typescript: {
   //   reactDocgen: 'react-docgen-typescript',

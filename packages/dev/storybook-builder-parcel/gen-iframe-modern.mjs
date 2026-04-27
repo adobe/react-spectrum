@@ -21,7 +21,10 @@ export async function generateIframeModern(options) {
   const coreOptions = await presets.apply("core");
   const stories = normalizeStories(
     await options.presets.apply("stories", [], options),
-    { configDir: options.configDir, workingDir: process.cwd() }
+    {
+      configDir: options.configDir,
+      workingDir: process.cwd(),
+    }
   ).map((specifier) => ({
     ...specifier,
     importPathMatcher: specifier.importPathMatcher.source,

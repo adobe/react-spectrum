@@ -121,7 +121,6 @@
     "@spectrum-css/vars": "^2.3.0",
     "@storybook/addon-a11y": "^10.0.0",
     "@storybook/addon-docs": "^10.0.0",
-    "@storybook/addon-jest": "10.0.0-beta.12",
     "@storybook/addon-themes": "^10.0.0",
     "@storybook/react": "^10.0.0",
     "@storybook/test-runner": "^0.24.0",

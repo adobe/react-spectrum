@@ -148,7 +148,7 @@ const STORYBOOK_EXTERNALS = buildExternalsCache();
 
 module.exports = new Resolver({
   async resolve({ dependency, options, specifier, pipeline, logger }) {
-    // Branch 1 - externalize storybook runtime specifiers (the patch-removal fix).
+    // Branch 1 - externalize storybook runtime specifiers.
     // Equivalent to webpack5's `externals: globalsNameReferenceMap` and Vite's
     // alias-to-cache-file in storybook-external-globals-plugin.ts.
     if (pipeline == null && Object.prototype.hasOwnProperty.call(STORYBOOK_EXTERNALS, specifier)) {
