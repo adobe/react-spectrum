@@ -124,7 +124,7 @@ describe('MenuTrigger', function () {
     await triggerEvent(triggerButton);
     act(() => {jest.runAllTimers();});
 
-    let menu = menuTester.menu;
+    let menu = menuTester.menu();
     expect(menu).toBeInTheDocument();
     expect(menu).toHaveAttribute('aria-labelledby', triggerButton.id);
 
@@ -245,13 +245,13 @@ describe('MenuTrigger', function () {
         expect(onSelect).toBeCalledTimes(1);
       }
 
-      expect(menuTester.menu).toBeInTheDocument();
+      expect(menuTester.menu()).toBeInTheDocument();
 
       if (Component === MenuTrigger) {
-        expect(menuTester.trigger).toHaveAttribute('aria-expanded', 'true');
+        expect(menuTester.trigger()).toHaveAttribute('aria-expanded', 'true');
         expect(onOpenChange).toBeCalledTimes(1);
       } else {
-        expect(menuTester.trigger).toHaveAttribute('aria-expanded');
+        expect(menuTester.trigger()).toHaveAttribute('aria-expanded');
         expect(onOpen).toBeCalledTimes(1);
         expect(onClose).toBeCalledTimes(0);
       }
@@ -271,8 +271,8 @@ describe('MenuTrigger', function () {
       menuTester.setInteractionType('keyboard');
       await menuTester.toggleOptionSelection({option: 'Foo', menuSelectionMode: 'single', closesOnSelect: false});
 
-      expect(menuTester.menu).toBeInTheDocument();
-      expect(menuTester.trigger).toHaveAttribute('aria-expanded', 'true');
+      expect(menuTester.menu()).toBeInTheDocument();
+      expect(menuTester.trigger()).toHaveAttribute('aria-expanded', 'true');
       expect(onOpenChange).toBeCalledTimes(1);
     });
 
@@ -296,7 +296,7 @@ describe('MenuTrigger', function () {
       expect(onSelectionChange.mock.calls[1][0].has('Bar')).toBeTruthy();
 
       await menuTester.close();
-      expect(menuTester.menu).not.toBeInTheDocument();
+      expect(menuTester.menu()).not.toBeInTheDocument();
       expect(onOpenChange).toBeCalledTimes(2);
     });
 
@@ -875,7 +875,7 @@ describe('MenuTrigger', function () {
     await menuTester.open();
     act(() => {jest.runAllTimers();});
 
-    let menu = menuTester.menu;
+    let menu = menuTester.menu();
 
     await user.tab();
     act(() => {jest.runAllTimers();});

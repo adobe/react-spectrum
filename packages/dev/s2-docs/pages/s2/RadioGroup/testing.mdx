@@ -46,14 +46,14 @@ it('RadioGroup can switch the selected radio', async function () {
   );
 
   let radioGroupTester = testUtilUser.createTester('RadioGroup', {root: getByRole('radiogroup')});
-  let radios = radioGroupTester.radios;
-  expect(radioGroupTester.selectedRadio).toBeFalsy();
+  let radios = radioGroupTester.radios();
+  expect(radioGroupTester.selectedRadio()).toBeFalsy();
 
   await radioGroupTester.triggerRadio({radio: radios[0]});
-  expect(radioGroupTester.selectedRadio).toBe(radios[0]);
+  expect(radioGroupTester.selectedRadio()).toBe(radios[0]);
 
   await radioGroupTester.triggerRadio({radio: radios[1]});
-  expect(radioGroupTester.selectedRadio).toBe(radios[1]);
+  expect(radioGroupTester.selectedRadio()).toBe(radios[1]);
 });
 ```
 

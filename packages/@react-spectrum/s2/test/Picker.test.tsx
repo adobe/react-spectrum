@@ -68,7 +68,7 @@ describe('Picker', () => {
     );
 
     let selectTester = testUtilUser.createTester('Select', {root: tree.container});
-    expect(selectTester.listbox).toBeFalsy();
+    expect(selectTester.listbox()).toBeFalsy();
     selectTester.setInteractionType('mouse');
     await selectTester.open();
 
@@ -230,7 +230,7 @@ describe('Picker', () => {
     let selectTester = testUtilUser.createTester('Select', {root: tree.getByTestId('testpicker')});
     let buttons = tree.getAllByRole('button');
     expect(buttons).toHaveLength(2);
-    expect(buttons[1]).toBe(selectTester.trigger);
+    expect(buttons[1]).toBe(selectTester.trigger());
 
     await user.click(buttons[0]);
 

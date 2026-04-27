@@ -971,7 +971,7 @@ describe('Radios', function () {
       );
       let direction = props.locale === 'ar-AE' ? 'rtl' : 'ltr';
       let radioGroupTester = testUtilUser.createTester('RadioGroup', {root: getByRole('radiogroup'), direction});
-      let radios = radioGroupTester.radios;
+      let radios = radioGroupTester.radios();
       await radioGroupTester.triggerRadio({radio: radios[0]});
       expect(radios[0]).toBeChecked();
 

@@ -835,11 +835,11 @@ it('Tabs can change selection via keyboard', async function () {
   );
   let tabsTester = testUtilUser.createTester('Tabs', {root: getByTestId('test-tabs'), interactionType: 'keyboard'});
 
-  let tabs = tabsTester.tabs;
-  expect(tabsTester.selectedTab).toBe(tabs[0]);
+  let tabs = tabsTester.tabs();
+  expect(tabsTester.selectedTab()).toBe(tabs[0]);
 
   await tabsTester.triggerTab({tab: 1});
-  expect(tabsTester.selectedTab).toBe(tabs[1]);
+  expect(tabsTester.selectedTab()).toBe(tabs[1]);
 });
 ```
 

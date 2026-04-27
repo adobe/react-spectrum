@@ -93,8 +93,8 @@ describe('ListBox', () => {
     );
 
     let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
-    expect(listboxTester.listbox).toHaveAttribute('data-rac');
-    let sections = listboxTester.sections;
+    expect(listboxTester.listbox()).toHaveAttribute('data-rac');
+    let sections = listboxTester.sections();
     for (let section of sections) {
       expect(section).toHaveAttribute('data-rac');
     }
@@ -592,12 +592,12 @@ describe('ListBox', () => {
 
     let options = listboxTester.options();
     await listboxTester.triggerOptionAction({option: options[0]});
-    let selectedOptions = listboxTester.selectedOptions;
+    let selectedOptions = listboxTester.selectedOptions();
     expect(selectedOptions).toHaveLength(1);
     expect(onAction).not.toHaveBeenCalled();
 
     await listboxTester.triggerOptionAction({option: options[1], needsDoubleClick: true});
-    selectedOptions = listboxTester.selectedOptions;
+    selectedOptions = listboxTester.selectedOptions();
     expect(selectedOptions).toHaveLength(1);
     expect(onAction).toHaveBeenCalledTimes(1);
   });
@@ -623,8 +623,8 @@ describe('ListBox', () => {
           expect(onSelectionChange).toHaveBeenCalledTimes(1);
         }
         expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['kangaroo']));
-        expect(listboxTester.selectedOptions).toHaveLength(1);
-        expect(listboxTester.selectedOptions[0]).toBe(option2);
+        expect(listboxTester.selectedOptions()).toHaveLength(1);
+        expect(listboxTester.selectedOptions()[0]).toBe(option2);
 
         let option1 = options[1];
         await listboxTester.toggleOptionSelection({option: option1, selectionBehavior: 'replace'});
@@ -638,8 +638,8 @@ describe('ListBox', () => {
           expect(onSelectionChange).toHaveBeenCalledTimes(2);
         }
         expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['dog']));
-        expect(listboxTester.selectedOptions).toHaveLength(1);
-        expect(listboxTester.selectedOptions[0]).toBe(option1);
+        expect(listboxTester.selectedOptions()).toHaveLength(1);
+        expect(listboxTester.selectedOptions()[0]).toBe(option1);
 
         await listboxTester.toggleOptionSelection({option: option1, selectionBehavior: 'replace'});
         expect(option1).toHaveAttribute('aria-selected', 'false');
@@ -652,7 +652,7 @@ describe('ListBox', () => {
           expect(onSelectionChange).toHaveBeenCalledTimes(3);
         }
         expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set([]));
-        expect(listboxTester.selectedOptions).toHaveLength(0);
+        expect(listboxTester.selectedOptions()).toHaveLength(0);
       });
 
       it('should perform toggle selection in highlight mode when using modifier keys', async () => {
@@ -668,13 +668,13 @@ describe('ListBox', () => {
           // Called twice because initial focus will select the first keyboard focused row, meaning we have two items selected
           expect(onSelectionChange).toHaveBeenCalledTimes(2);
           expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['cat', 'kangaroo']));
-          expect(listboxTester.selectedOptions).toHaveLength(2);
-          expect(listboxTester.selectedOptions[1]).toBe(option2);
+          expect(listboxTester.selectedOptions()).toHaveLength(2);
+          expect(listboxTester.selectedOptions()[1]).toBe(option2);
         } else {
           expect(onSelectionChange).toHaveBeenCalledTimes(1);
           expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['kangaroo']));
-          expect(listboxTester.selectedOptions).toHaveLength(1);
-          expect(listboxTester.selectedOptions[0]).toBe(option2);
+          expect(listboxTester.selectedOptions()).toHaveLength(1);
+          expect(listboxTester.selectedOptions()[0]).toBe(option2);
         }
 
         let option1 = options[1];
@@ -686,15 +686,15 @@ describe('ListBox', () => {
         if (type === 'keyboard') {
           expect(onSelectionChange).toHaveBeenCalledTimes(3);
           expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['cat', 'dog', 'kangaroo']));
-          expect(listboxTester.selectedOptions).toHaveLength(3);
-          expect(listboxTester.selectedOptions[1]).toBe(option1);
-          expect(listboxTester.selectedOptions[2]).toBe(option2);
+          expect(listboxTester.selectedOptions()).toHaveLength(3);
+          expect(listboxTester.selectedOptions()[1]).toBe(option1);
+          expect(listboxTester.selectedOptions()[2]).toBe(option2);
         } else {
           expect(onSelectionChange).toHaveBeenCalledTimes(2);
           expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['dog', 'kangaroo']));
-          expect(listboxTester.selectedOptions).toHaveLength(2);
-          expect(listboxTester.selectedOptions[0]).toBe(option1);
-          expect(listboxTester.selectedOptions[1]).toBe(option2);
+          expect(listboxTester.selectedOptions()).toHaveLength(2);
+          expect(listboxTester.selectedOptions()[0]).toBe(option1);
+          expect(listboxTester.selectedOptions()[1]).toBe(option2);
         }
 
         // With modifier key, you should be able to deselect on press of the same row
@@ -706,13 +706,13 @@ describe('ListBox', () => {
         if (type === 'keyboard') {
           expect(onSelectionChange).toHaveBeenCalledTimes(4);
           expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['cat', 'kangaroo']));
-          expect(listboxTester.selectedOptions).toHaveLength(2);
-          expect(listboxTester.selectedOptions[1]).toBe(option2);
+          expect(listboxTester.selectedOptions()).toHaveLength(2);
+          expect(listboxTester.selectedOptions()[1]).toBe(option2);
         } else {
           expect(onSelectionChange).toHaveBeenCalledTimes(3);
           expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['kangaroo']));
-          expect(listboxTester.selectedOptions).toHaveLength(1);
-          expect(listboxTester.selectedOptions[0]).toBe(option2);
+          expect(listboxTester.selectedOptions()).toHaveLength(1);
+          expect(listboxTester.selectedOptions()[0]).toBe(option2);
         }
       });
 
@@ -732,8 +732,8 @@ describe('ListBox', () => {
           expect(onSelectionChange).toHaveBeenCalledTimes(1);
         }
         expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['kangaroo']));
-        expect(listboxTester.selectedOptions).toHaveLength(1);
-        expect(listboxTester.selectedOptions[0]).toBe(option2);
+        expect(listboxTester.selectedOptions()).toHaveLength(1);
+        expect(listboxTester.selectedOptions()[0]).toBe(option2);
 
         let option1 = options[1];
         await listboxTester.toggleOptionSelection({option: option1});
@@ -748,8 +748,8 @@ describe('ListBox', () => {
             expect(onSelectionChange).toHaveBeenCalledTimes(2);
           }
           expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['dog']));
-          expect(listboxTester.selectedOptions).toHaveLength(1);
-          expect(listboxTester.selectedOptions[0]).toBe(option1);
+          expect(listboxTester.selectedOptions()).toHaveLength(1);
+          expect(listboxTester.selectedOptions()[0]).toBe(option1);
           // pressing without modifier keys won't deselect the row
           await listboxTester.toggleOptionSelection({option: option1});
           expect(option1).toHaveAttribute('aria-selected', 'true');
@@ -759,7 +759,7 @@ describe('ListBox', () => {
           } else {
             expect(onSelectionChange).toHaveBeenCalledTimes(2);
           }
-          expect(listboxTester.selectedOptions).toHaveLength(1);
+          expect(listboxTester.selectedOptions()).toHaveLength(1);
         } else {
           // touch always behaves as toggle
           expect(option1).toHaveAttribute('aria-selected', 'true');
@@ -768,16 +768,16 @@ describe('ListBox', () => {
           expect(option2).toHaveAttribute('data-selected', 'true');
           expect(onSelectionChange).toHaveBeenCalledTimes(2);
           expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['dog', 'kangaroo']));
-          expect(listboxTester.selectedOptions).toHaveLength(2);
-          expect(listboxTester.selectedOptions[0]).toBe(option1);
+          expect(listboxTester.selectedOptions()).toHaveLength(2);
+          expect(listboxTester.selectedOptions()[0]).toBe(option1);
 
           await listboxTester.toggleOptionSelection({option: option1});
           expect(option1).toHaveAttribute('aria-selected', 'false');
           expect(option1).not.toHaveAttribute('data-selected');
           expect(onSelectionChange).toHaveBeenCalledTimes(3);
           expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['kangaroo']));
-          expect(listboxTester.selectedOptions).toHaveLength(1);
-          expect(listboxTester.selectedOptions[0]).toBe(option2);
+          expect(listboxTester.selectedOptions()).toHaveLength(1);
+          expect(listboxTester.selectedOptions()[0]).toBe(option2);
         }
       });
     });
@@ -797,17 +797,17 @@ describe('ListBox', () => {
       let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox'), advanceTimer: jest.advanceTimersByTime, interactionType: 'touch'});
 
       await listboxTester.toggleOptionSelection({option: listboxTester.options()[0]});
-      expect(listboxTester.selectedOptions).toHaveLength(0);
+      expect(listboxTester.selectedOptions()).toHaveLength(0);
       expect(onAction).toHaveBeenCalledTimes(1);
 
       await listboxTester.toggleOptionSelection({option: listboxTester.options()[0], needsLongPress: true});
-      expect(listboxTester.selectedOptions).toHaveLength(1);
-      expect(listboxTester.selectedOptions[0]).toBe(listboxTester.options()[0]);
+      expect(listboxTester.selectedOptions()).toHaveLength(1);
+      expect(listboxTester.selectedOptions()[0]).toBe(listboxTester.options()[0]);
       expect(onAction).toHaveBeenCalledTimes(1);
 
       await listboxTester.toggleOptionSelection({option: listboxTester.options()[1]});
-      expect(listboxTester.selectedOptions).toHaveLength(2);
-      expect(listboxTester.selectedOptions[1]).toBe(listboxTester.options()[1]);
+      expect(listboxTester.selectedOptions()).toHaveLength(2);
+      expect(listboxTester.selectedOptions()[1]).toBe(listboxTester.options()[1]);
     });
   });
 
@@ -1882,9 +1882,9 @@ describe('ListBox', () => {
         let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
         let options = listboxTester.options();
         expect(options).toHaveLength(7);
-        expect(within(listboxTester.listbox).queryByText('Loading...')).toBeFalsy();
+        expect(within(listboxTester.listbox()).queryByText('Loading...')).toBeFalsy();
 
-        let sentinel = within(listboxTester.listbox).getByTestId('loadMoreSentinel');
+        let sentinel = within(listboxTester.listbox()).getByTestId('loadMoreSentinel');
         let sentinelParentStyles = sentinel.parentElement.parentElement.style;
         expect(sentinelParentStyles.top).toBe('1250px');
         expect(sentinelParentStyles.height).toBe('0px');
@@ -1895,9 +1895,9 @@ describe('ListBox', () => {
         expect(options).toHaveLength(1);
         let emptyStateRow = options[0];
         expect(emptyStateRow).toHaveTextContent('empty state');
-        expect(within(listboxTester.listbox).queryByText('Loading...')).toBeFalsy();
+        expect(within(listboxTester.listbox()).queryByText('Loading...')).toBeFalsy();
 
-        sentinel = within(listboxTester.listbox).getByTestId('loadMoreSentinel');
+        sentinel = within(listboxTester.listbox()).getByTestId('loadMoreSentinel');
         sentinelParentStyles = sentinel.parentElement.parentElement.style;
         expect(sentinelParentStyles.top).toBe('0px');
         expect(sentinelParentStyles.height).toBe('0px');
@@ -1912,7 +1912,7 @@ describe('ListBox', () => {
         let loadingRow = options[0];
         expect(loadingRow).toHaveTextContent('Loading...');
 
-        sentinel = within(listboxTester.listbox).getByTestId('loadMoreSentinel');
+        sentinel = within(listboxTester.listbox()).getByTestId('loadMoreSentinel');
         sentinelParentStyles = sentinel.parentElement.parentElement.style;
         expect(sentinelParentStyles.top).toBe('0px');
         expect(sentinelParentStyles.height).toBe('30px');

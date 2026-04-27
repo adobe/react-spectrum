@@ -52,17 +52,17 @@ it('ListView can toggle row selection', async function () {
   );
   let gridListTester = testUtilUser.createTester('GridList', {root: getByTestId('test-listview'), interactionType: 'keyboard'});
 
-  let row = gridListTester.rows[0];
+  let row = gridListTester.rows()[0];
   expect(within(row).getByRole('checkbox')).not.toBeChecked();
-  expect(gridListTester.selectedRows).toHaveLength(0);
+  expect(gridListTester.selectedRows()).toHaveLength(0);
 
   await gridListTester.toggleRowSelection({row: 0});
   expect(within(row).getByRole('checkbox')).toBeChecked();
-  expect(gridListTester.selectedRows).toHaveLength(1);
+  expect(gridListTester.selectedRows()).toHaveLength(1);
 
   await gridListTester.toggleRowSelection({row: 0});
   expect(within(row).getByRole('checkbox')).not.toBeChecked();
-  expect(gridListTester.selectedRows).toHaveLength(0);
+  expect(gridListTester.selectedRows()).toHaveLength(0);
 });
 ```
 

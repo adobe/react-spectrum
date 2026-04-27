@@ -1247,16 +1247,16 @@ it('Menu can open its submenu via keyboard', async function () {
   let menuTester = testUtilUser.createTester('Menu', {root: getByTestId('test-menutrigger'), interactionType: 'keyboard'});
 
   await menuTester.open();
-  expect(menuTester.menu).toBeInTheDocument();
-  let submenuTriggers = menuTester.submenuTriggers;
+  expect(menuTester.menu()).toBeInTheDocument();
+  let submenuTriggers = menuTester.submenuTriggers();
   expect(submenuTriggers).toHaveLength(1);
 
   let submenuTester = await menuTester.openSubmenu({submenuTrigger: 'Share…'});
-  expect(submenuTester.menu).toBeInTheDocument();
+  expect(submenuTester.menu()).toBeInTheDocument();
 
   await submenuTester.toggleOptionSelection({option: submenuTester.options()[0]});
-  expect(submenuTester.menu).not.toBeInTheDocument();
-  expect(menuTester.menu).not.toBeInTheDocument();
+  expect(submenuTester.menu()).not.toBeInTheDocument();
+  expect(menuTester.menu()).not.toBeInTheDocument();
 });
 ```
 

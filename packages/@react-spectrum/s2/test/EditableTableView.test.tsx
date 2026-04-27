@@ -257,7 +257,7 @@ describe('TableView', () => {
       let dialogTrigger = document.activeElement! as HTMLElement;
       let dialogTester = testUtilUser.createTester('Dialog', {root: dialogTrigger, interactionType: 'keyboard', overlayType: 'modal'});
       await dialogTester.open();
-      let dialog = dialogTester.dialog;
+      let dialog = dialogTester.dialog();
       expect(dialog).toBeVisible();
 
       let input = within(dialog!).getByRole('textbox');
@@ -279,12 +279,12 @@ describe('TableView', () => {
       dialogTrigger = document.activeElement!  as HTMLElement;
       dialogTester = testUtilUser.createTester('Dialog', {root: dialogTrigger, interactionType: 'keyboard', overlayType: 'modal'});
       await dialogTester.open();
-      dialog = dialogTester.dialog;
+      dialog = dialogTester.dialog();
       // TODO: also weird that it is dialog.dialog?
       expect(dialog).toBeVisible();
 
       let selectTester = testUtilUser.createTester('Select', {root: dialog!});
-      expect(selectTester.trigger).toHaveFocus();
+      expect(selectTester.trigger()).toHaveFocus();
       await selectTester.toggleOptionSelection({option: 'Steven'});
       act(() => {jest.runAllTimers();});
       await user.tab();
@@ -629,7 +629,7 @@ describe('TableView', () => {
           let dialogTrigger = document.activeElement! as HTMLElement;
           let dialogTester = testUtilUser.createTester('Dialog', {root: dialogTrigger, interactionType: 'keyboard', overlayType: 'modal'});
           await dialogTester.open();
-          let dialog = dialogTester.dialog;
+          let dialog = dialogTester.dialog();
           expect(dialog).toBeVisible();
 
           let input = within(dialog!).getByRole('textbox');
@@ -651,12 +651,12 @@ describe('TableView', () => {
           dialogTrigger = document.activeElement!  as HTMLElement;
           dialogTester = testUtilUser.createTester('Dialog', {root: dialogTrigger, interactionType: 'keyboard', overlayType: 'modal'});
           await dialogTester.open();
-          dialog = dialogTester.dialog;
+          dialog = dialogTester.dialog();
           // TODO: also weird that it is dialog.dialog?
           expect(dialog).toBeVisible();
 
           let selectTester = testUtilUser.createTester('Select', {root: dialog!});
-          expect(selectTester.trigger).toHaveFocus();
+          expect(selectTester.trigger()).toHaveFocus();
           await selectTester.toggleOptionSelection({option: 'Steven'});
           act(() => {jest.runAllTimers();});
           await user.tab();

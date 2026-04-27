@@ -1405,7 +1405,7 @@ describe('Tree', () => {
       let tree = render(<LoadingSentinelTree isLoading expandedKeys={[]} />);
 
       let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
-      let rows = treeTester.rows;
+      let rows = treeTester.rows();
       expect(rows).toHaveLength(3);
       let loaderRow = rows[2];
       expect(loaderRow).toHaveTextContent('Loading...');
@@ -1415,7 +1415,7 @@ describe('Tree', () => {
 
       // Should render the second sentinel if the row is expanded
       tree.rerender(<LoadingSentinelTree expandedKeys={new Set(['projects', 'projects-1'])} isLoading />);
-      rows = treeTester.rows;
+      rows = treeTester.rows();
       expect(rows).toHaveLength(8);
       let newLoaderRow = rows[4];
       expect(newLoaderRow).toHaveTextContent('Loading...');
@@ -1430,7 +1430,7 @@ describe('Tree', () => {
       let tree = render(<LoadingSentinelTree />);
 
       let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
-      let rows = treeTester.rows;
+      let rows = treeTester.rows();
       expect(rows).toHaveLength(2);
       expect(tree.queryByText('Loading...')).toBeFalsy();
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
@@ -1580,7 +1580,7 @@ describe('Tree', () => {
             documentsIsLoading />
         );
         let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
-        let rows = treeTester.rows;
+        let rows = treeTester.rows();
         expect(rows).toHaveLength(8);
         let rootLoaderRow = rows[7];
         expect(rootLoaderRow).toHaveTextContent('Loading...');
@@ -1605,7 +1605,7 @@ describe('Tree', () => {
             documentsIsLoading />
         );
 
-        rows = treeTester.rows;
+        rows = treeTester.rows();
         expect(rows).toHaveLength(9);
         rootLoaderRow = rows[8];
         rootLoaderParentStyles = rootLoaderRow.parentElement!.style;
@@ -1635,7 +1635,7 @@ describe('Tree', () => {
             documentsIsLoading />
         );
 
-        rows = treeTester.rows;
+        rows = treeTester.rows();
         expect(rows).toHaveLength(10);
         rootLoaderRow = rows[9];
         rootLoaderParentStyles = rootLoaderRow.parentElement!.style;
@@ -1672,7 +1672,7 @@ describe('Tree', () => {
             documentsIsLoading />
         );
 
-        rows = treeTester.rows;
+        rows = treeTester.rows();
         expect(rows).toHaveLength(11);
         rootLoaderRow = rows[10];
         rootLoaderParentStyles = rootLoaderRow.parentElement!.style;
@@ -1716,7 +1716,7 @@ describe('Tree', () => {
         );
 
         let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
-        let rows = treeTester.rows;
+        let rows = treeTester.rows();
         expect(rows).toHaveLength(9);
         let rootLoaderRow = rows[8];
         let rootLoaderParentStyles = rootLoaderRow.parentElement!.style;
@@ -1752,7 +1752,7 @@ describe('Tree', () => {
           <VirtualizedLoadingSentinelTree rootIsLoading />
         );
         let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
-        let rows = treeTester.rows;
+        let rows = treeTester.rows();
         expect(rows).toHaveLength(8);
         let rootLoaderRow = rows[7];
         expect(rootLoaderRow).toHaveTextContent('Loading...');
@@ -1765,7 +1765,7 @@ describe('Tree', () => {
           <VirtualizedLoadingSentinelTree />
         );
 
-        expect(document.activeElement).toBe(treeTester.tree);
+        expect(document.activeElement).toBe(treeTester.tree());
       });
     });
   });

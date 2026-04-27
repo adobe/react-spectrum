@@ -45,15 +45,15 @@ it('CheckboxGroup can select multiple checkboxes', async function () {
     </CheckboxGroup>
   );
   let checkboxGroupTester = testUtilUser.createTester('CheckboxGroup', {root: getByTestId('test-checkboxgroup')});
-  expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(0);
+  expect(checkboxGroupTester.selectedCheckboxes()).toHaveLength(0);
 
   await checkboxGroupTester.toggleCheckbox({checkbox: 0});
-  expect(checkboxGroupTester.checkboxes[0]).toBeChecked();
-  expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(1);
+  expect(checkboxGroupTester.checkboxes()[0]).toBeChecked();
+  expect(checkboxGroupTester.selectedCheckboxes()).toHaveLength(1);
 
   await checkboxGroupTester.toggleCheckbox({checkbox: 4});
-  expect(checkboxGroupTester.checkboxes[4]).toBeChecked();
-  expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(2);
+  expect(checkboxGroupTester.checkboxes()[4]).toBeChecked();
+  expect(checkboxGroupTester.selectedCheckboxes()).toHaveLength(2);
 });
 ```
 

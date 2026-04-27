@@ -800,29 +800,29 @@ describe('CheckboxGroup', () => {
       );
 
       let checkboxGroupTester = testUtilUser.createTester('CheckboxGroup', {root: getByRole('group')});
-      expect(checkboxGroupTester.checkboxgroup).toHaveAttribute('role');
-      let checkboxes = checkboxGroupTester.checkboxes;
+      expect(checkboxGroupTester.checkboxgroup()).toHaveAttribute('role');
+      let checkboxes = checkboxGroupTester.checkboxes();
       await checkboxGroupTester.toggleCheckbox({checkbox: checkboxes[0]});
       expect(checkboxes[0]).toBeChecked();
-      expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(1);
+      expect(checkboxGroupTester.selectedCheckboxes()).toHaveLength(1);
 
       await checkboxGroupTester.toggleCheckbox({checkbox: 4, interactionType: 'keyboard'});
       expect(checkboxes[4]).toBeChecked();
-      expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(2);
+      expect(checkboxGroupTester.selectedCheckboxes()).toHaveLength(2);
 
       let checkbox4 = checkboxGroupTester.findCheckbox({checkboxIndexOrText: 3});
       await checkboxGroupTester.toggleCheckbox({checkbox: checkbox4, interactionType: 'keyboard'});
       expect(checkboxes[3]).toBeChecked();
-      expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(3);
+      expect(checkboxGroupTester.selectedCheckboxes()).toHaveLength(3);
 
       await checkboxGroupTester.toggleCheckbox({checkbox: 'Soccer', interactionType: 'keyboard'});
       expect(checkboxes[0]).not.toBeChecked();
-      expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(2);
+      expect(checkboxGroupTester.selectedCheckboxes()).toHaveLength(2);
 
       let checkbox5 = checkboxGroupTester.findCheckbox({checkboxIndexOrText: 'Rugby'});
       await checkboxGroupTester.toggleCheckbox({checkbox: checkbox5, interactionType: 'mouse'});
       expect(checkboxes[4]).not.toBeChecked();
-      expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(1);
+      expect(checkboxGroupTester.selectedCheckboxes()).toHaveLength(1);
     });
   });
 });
