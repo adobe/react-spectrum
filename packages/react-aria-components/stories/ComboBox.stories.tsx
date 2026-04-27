@@ -14,6 +14,8 @@ import {Button} from '../src/Button';
 
 import {Collection} from 'react-aria/Collection';
 import {ComboBox, ComboBoxProps, ComboBoxStateContext} from '../src/ComboBox';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {Group} from '../src/Group';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {ListBox} from '../src/ListBox';
@@ -21,6 +23,7 @@ import {ListBoxLoadMoreItem} from '../src/ListBox';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Modal, ModalOverlay} from '../src/Modal';
 import {Popover} from '../src/Popover';
 import React, {JSX, useMemo, useState} from 'react';
 import styles from '../example/index.css';
@@ -47,11 +50,12 @@ export const ComboBoxExample: ComboBoxStory = () => (
         <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
       </Button>
     </div>
-    <Popover placement="bottom end">
+    <Popover>
       <ListBox
         renderEmptyState={renderEmptyState}
         data-testid="combo-box-list-box"
-        className={styles.menu}>
+        className={styles.menu}
+        style={{width: 'var(--trigger-width)'}}>
         <MyListBoxItem>Foo</MyListBoxItem>
         <MyListBoxItem>Bar</MyListBoxItem>
         <MyListBoxItem>Baz</MyListBoxItem>
@@ -404,33 +408,33 @@ export const ComboBoxListBoxItemWithAriaLabel: ComboBoxStory = () => (
 export const MultiSelectComboBox: ComboBoxStory = () => (
   <ComboBox allowsEmptyCollection selectionMode="multiple" defaultItems={usStateOptions}>
     <Label style={{display: 'block'}}>Test</Label>
-    <div style={{display: 'flex'}}>
-      <Input placeholder="Select an item" />
+    <Group style={{display: 'flex', width: 300, flexWrap: 'wrap', border: '1px solid gray'}}>
+      <ComboBoxStateContext.Consumer>
+        {state => state && (
+          <TagGroup
+            aria-label="Selected states"
+            items={state.selectedItems.map(item => item.value)}
+            onRemove={(keys) => {
+              // Remove keys from ComboBox state.
+              if (Array.isArray(state.value)) {
+                state.setValue(state.value.filter(k => !keys.has(k)));
+              }
+            }}>
+            {item => <Tag>{item.name}</Tag>}
+          </TagGroup>
+        )}
+      </ComboBoxStateContext.Consumer>
+      <Input placeholder="Select an item" style={{border: 'none', width: 80, flex: 1}} />
       <Button>
         <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
       </Button>
-    </div>
-    <ComboBoxStateContext.Consumer>
-      {state => state && (
-        <TagGroup
-          aria-label="Selected states"
-          items={state.selectedItems.map(item => item.value)}
-          renderEmptyState={() => 'No selected items'}
-          onRemove={(keys) => {
-            // Remove keys from ComboBox state.
-            if (Array.isArray(state.value)) {
-              state.setValue(state.value.filter(k => !keys.has(k)));
-            }
-          }}>
-          {item => <Tag>{item.name}</Tag>}
-        </TagGroup>
-      )}
-    </ComboBoxStateContext.Consumer>
-    <Popover placement="bottom end">
+    </Group>
+    <Popover>
       <ListBox<{name: string}>
         renderEmptyState={renderEmptyState}
         data-testid="combo-box-list-box"
-        className={styles.menu}>
+        className={styles.menu}
+        style={{width: 'var(--trigger-width)'}}>
         {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
       </ListBox>
     </Popover>
@@ -498,3 +502,58 @@ const usStateOptions = [
   {id: 'WI', name: 'Wisconsin'},
   {id: 'WY', name: 'Wyoming'}
 ];
+
+export const InModal: ComboBoxStory = () => (
+  <DialogTrigger>
+    <Button>Open modal</Button>
+    <ModalOverlay
+      style={{
+        position: 'fixed',
+        zIndex: 100,
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        background: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+      <Modal
+        style={({isEntering}) => ({
+          background: 'Canvas',
+          color: 'CanvasText',
+          border: '1px solid gray',
+          padding: 30,
+          transform: isEntering ? 'scale(0.8)' : 'scale(1)',
+          transition: 'transform 400ms'
+        })}>
+        <Dialog>
+          <ComboBox name="combo-box-example" data-testid="combo-box-example" allowsEmptyCollection>
+            <Label style={{display: 'block'}}>Test</Label>
+            <Group style={{display: 'flex'}}>
+              <Input />
+              <Button>
+                <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+              </Button>
+            </Group>
+            <Popover>
+              <ListBox
+                renderEmptyState={renderEmptyState}
+                data-testid="combo-box-list-box"
+                className={styles.menu}
+                style={{width: 'var(--trigger-width)'}}>
+                <MyListBoxItem>Foo</MyListBoxItem>
+                <MyListBoxItem>Bar</MyListBoxItem>
+                <MyListBoxItem>Baz</MyListBoxItem>
+                <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+                <MyListBoxLoaderIndicator />
+              </ListBox>
+            </Popover>
+          </ComboBox>
+          <Button slot="close">Close</Button>
+        </Dialog>
+      </Modal>
+    </ModalOverlay>
+  </DialogTrigger>
+);

@@ -11,13 +11,10 @@
  */
 
 import {AriaToggleProps, useToggle} from '../toggle/useToggle';
-import {InputDOMProps, RefObject, ValidationResult} from '@react-types/shared';
+import {DOMAttributesWithRef, InputDOMProps, RefObject, ValidationResult} from '@react-types/shared';
 import {InputHTMLAttributes, LabelHTMLAttributes, useEffect, useMemo} from 'react';
 import {mergeProps} from '../utils/mergeProps';
-import {privateValidationStateProp, useFormValidationState} from 'react-stately/private/form/useFormValidationState';
 import {ToggleProps, ToggleState} from 'react-stately/useToggleState';
-import {useFormValidation} from '../form/useFormValidation';
-import {usePress} from '../interactions/usePress';
 
 export interface CheckboxProps extends ToggleProps {
   /**
@@ -34,6 +31,10 @@ export interface CheckboxAria extends ValidationResult {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Props for the checkbox description element, if any. */
+  descriptionProps: DOMAttributesWithRef<HTMLElement>,
+  /** Props for the checkbox error message element, if any. */
+  errorMessageProps: DOMAttributesWithRef<HTMLElement>,
   /** Whether the checkbox is selected. */
   isSelected: boolean,
   /** Whether the checkbox is in a pressed state. */
@@ -53,17 +54,9 @@ export interface CheckboxAria extends ValidationResult {
  * @param inputRef - A ref for the HTML input element.
  */
 export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement | null>): CheckboxAria {
-  // Create validation state here because it doesn't make sense to add to general useToggleState.
-  let validationState = useFormValidationState({...props, value: state.isSelected});
-  let {isInvalid, validationErrors, validationDetails} = validationState.displayValidation;
-  let {labelProps, inputProps, isSelected, isPressed, isDisabled, isReadOnly} = useToggle({
-    ...props,
-    isInvalid
-  }, state, inputRef);
+  let {labelProps, inputProps, descriptionProps, errorMessageProps, isSelected, isPressed, isDisabled, isReadOnly, isInvalid, validationErrors, validationDetails} = useToggle(props, state, inputRef);
 
-  useFormValidation(props, validationState, inputRef);
-
-  let {isIndeterminate, isRequired, validationBehavior = 'aria'} = props;
+  let {isIndeterminate} = props;
   useEffect(() => {
     // indeterminate is a property, but it can only be set via javascript
     // https://css-tricks.com/indeterminate-checkboxes/
@@ -72,36 +65,18 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
     }
   });
 
-  // Reset validation state on label press for checkbox with a hidden input.
-  let {pressProps} = usePress({
-    isDisabled: isDisabled || isReadOnly,
-    onPress() {
-      // @ts-expect-error
-      let {[privateValidationStateProp]: groupValidationState} = props;
-
-      let {commitValidation} = groupValidationState
-      ? groupValidationState
-      : validationState;
-
-      commitValidation();
-    }
-  });
-
   return {
     labelProps: mergeProps(
       labelProps,
-      pressProps,
       useMemo(() => ({
         // Prevent label from being focused when mouse down on it.
         // Note, this does not prevent the input from being focused in the `click` event.
         onMouseDown: e => e.preventDefault()
-      }), [])),
-    inputProps: {
-      ...inputProps,
-      checked: isSelected,
-      'aria-required': (isRequired && validationBehavior === 'aria') || undefined,
-      required: isRequired && validationBehavior === 'native'
-    },
+      }), [])
+    ),
+    inputProps,
+    descriptionProps,
+    errorMessageProps,
     isSelected,
     isPressed,
     isDisabled,
