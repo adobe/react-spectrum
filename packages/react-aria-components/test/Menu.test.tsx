@@ -1633,7 +1633,7 @@ describe('Menu', () => {
 
     let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
     await menuTester.open();
-    await menuTester.selectOption({option: 'Cat'});
+    await menuTester.toggleOptionSelection({option: 'Cat'});
 
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(onPressStart).toHaveBeenCalledTimes(1);
@@ -1660,7 +1660,7 @@ describe('Menu', () => {
 
     let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
     await menuTester.open();
-    await menuTester.selectOption({option: 'Cat', closesOnSelect: false});
+    await menuTester.toggleOptionSelection({option: 'Cat', closesOnSelect: false});
 
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(onPressStart).toHaveBeenCalledTimes(1);
@@ -1712,7 +1712,7 @@ describe('Menu', () => {
 
     let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
     await menuTester.open();
-    await menuTester.selectOption({option: 'Cat', interactionType: 'keyboard'});
+    await menuTester.toggleOptionSelection({option: 'Cat', interactionType: 'keyboard'});
 
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(onPressStart).toHaveBeenCalledTimes(1);
@@ -1741,7 +1741,7 @@ describe('Menu', () => {
 
     let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
     await menuTester.open();
-    await menuTester.selectOption({option: 'Cat', interactionType: 'keyboard', closesOnSelect: false});
+    await menuTester.toggleOptionSelection({option: 'Cat', interactionType: 'keyboard', closesOnSelect: false});
 
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(onPressStart).toHaveBeenCalledTimes(1);
@@ -1804,7 +1804,7 @@ describe('Menu', () => {
       let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button'), interactionType: 'keyboard'});
       await menuTester.open();
       await findByRole('menu');
-      await menuTester.selectOption({option: 0});
+      await menuTester.toggleOptionSelection({option: 0});
       expect(await findByText('Contact your administrator for permissions to delete.')).toBeInTheDocument();
       expect(onAction).not.toHaveBeenCalled();
       let dialogs = getAllByRole('dialog');

@@ -324,7 +324,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
 
           let options = menuTester.options();
 
-          await menuTester.selectOption({option: options[1], menuSelectionMode: 'single'});
+          await menuTester.toggleOptionSelection({option: options[1], menuSelectionMode: 'single'});
 
           act(() => {jest.runAllTimers();});
           expect(menu).not.toBeInTheDocument();
@@ -352,7 +352,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
           let options = menuTester.options();
           expect(options[0]).toHaveFocus();
 
-          await menuTester.selectOption({option: options[1], menuSelectionMode: 'single'});
+          await menuTester.toggleOptionSelection({option: options[1], menuSelectionMode: 'single'});
 
           act(() => {jest.runAllTimers();});
           expect(menu).not.toBeInTheDocument();
@@ -431,8 +431,8 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
           let menu = menuTester.menu;
           let options = menuTester.options();
 
-          await menuTester.selectOption({option: options[2], menuSelectionMode: 'multiple'});
-          await menuTester.selectOption({option: options[1], menuSelectionMode: 'multiple'});
+          await menuTester.toggleOptionSelection({option: options[2], menuSelectionMode: 'multiple'});
+          await menuTester.toggleOptionSelection({option: options[1], menuSelectionMode: 'multiple'});
 
           expect(options[1]).toHaveAttribute('aria-checked', 'true');
           expect(options[2]).toHaveAttribute('aria-checked', 'true');
@@ -598,7 +598,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
           let submenu = submenuUtil.menu;
           expect(submenu).toBeInTheDocument();
 
-          await submenuUtil.selectOption({option: submenuUtil.options().filter(item => item.getAttribute('aria-haspopup') == null)[0]});
+          await submenuUtil.toggleOptionSelection({option: submenuUtil.options().filter(item => item.getAttribute('aria-haspopup') == null)[0]});
           expect(menu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();
           expect(document.activeElement).toBe(menuTester.trigger);
@@ -627,7 +627,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
           let nestedSubmenu = nestedSubmenuUtil.menu;
           expect(nestedSubmenu).toBeInTheDocument();
 
-          await nestedSubmenuUtil.selectOption({option: nestedSubmenuUtil.options().filter(item => item.getAttribute('aria-haspopup') == null)[0]});
+          await nestedSubmenuUtil.toggleOptionSelection({option: nestedSubmenuUtil.options().filter(item => item.getAttribute('aria-haspopup') == null)[0]});
           expect(menu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();
           expect(nestedSubmenu).not.toBeInTheDocument();

@@ -252,7 +252,7 @@ describe('Select', () => {
     await selectTester.open();
     expect(trigger).toHaveAttribute('data-pressed', 'true');
 
-    await selectTester.selectOption({option: 'Dog', closesOnSelect: false});
+    await selectTester.toggleOptionSelection({option: 'Dog', closesOnSelect: false});
     expect(trigger).toHaveTextContent('Dog');
     expect(trigger).toHaveAttribute('data-pressed', 'true');
   });
@@ -280,7 +280,7 @@ describe('Select', () => {
     await selectTester.open();
     expect(trigger).toHaveAttribute('data-pressed', 'true');
 
-    await selectTester.selectOption({option: 'Dog', closesOnSelect: true});
+    await selectTester.toggleOptionSelection({option: 'Dog', closesOnSelect: true});
     expect(trigger).toHaveTextContent('Dog');
     expect(trigger).not.toHaveAttribute('data-pressed', 'true');
   });
@@ -338,7 +338,7 @@ describe('Select', () => {
     expect(select).toHaveAttribute('data-invalid');
     expect(document.activeElement).toBe(trigger);
 
-    await selectTester.selectOption({option: 'Cat'});
+    await selectTester.toggleOptionSelection({option: 'Cat'});
     expect(selectTester.trigger).not.toHaveAttribute('aria-describedby');
     expect(select).not.toHaveAttribute('data-invalid');
   });
@@ -437,7 +437,7 @@ describe('Select', () => {
     expect(document.activeElement).toBe(beforeInput);
 
     await user.tab();
-    await selectTester.selectOption({option: 'Dog'});
+    await selectTester.toggleOptionSelection({option: 'Dog'});
 
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenLastCalledWith('dog');
@@ -458,7 +458,7 @@ describe('Select', () => {
     expect(trigger).toHaveTextContent('Select an item');
     expect(trigger).not.toHaveAttribute('data-pressed');
 
-    await selectTester.selectOption({option: 'Kangaroo'});
+    await selectTester.toggleOptionSelection({option: 'Kangaroo'});
     expect(trigger).toHaveTextContent('Kangaroo');
   });
 
@@ -637,7 +637,7 @@ describe('Select', () => {
     const submit = getByTestId('submit');
 
     expect(trigger).toHaveTextContent('Select an item');
-    await selectTester.selectOption({option: 'Cat'});
+    await selectTester.toggleOptionSelection({option: 'Cat'});
     expect(trigger).toHaveTextContent('Cat');
     await user.click(submit);
     expect(onSubmit).toHaveBeenCalledTimes(1);
@@ -669,8 +669,8 @@ describe('Select', () => {
     let options = selectTester.options();
     expect(options).toHaveLength(3);
 
-    await user.click(options[0]);
-    await user.click(options[1]);
+    await selectTester.toggleOptionSelection({option: options[0]});
+    await selectTester.toggleOptionSelection({option: options[1]});
     expect(trigger).toHaveTextContent('Cat and Dog');
     await selectTester.close();
 
@@ -777,7 +777,7 @@ describe('Select', () => {
     let trigger = selectTester.trigger;
     expect(trigger).toHaveTextContent('Cat');
 
-    await selectTester.selectOption({option: 'Dog'});
+    await selectTester.toggleOptionSelection({option: 'Dog'});
     expect(trigger).toHaveTextContent('2 selected items');
   });
 

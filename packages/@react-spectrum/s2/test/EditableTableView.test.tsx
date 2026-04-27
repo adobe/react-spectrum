@@ -285,7 +285,7 @@ describe('TableView', () => {
 
       let selectTester = testUtilUser.createTester('Select', {root: dialog!});
       expect(selectTester.trigger).toHaveFocus();
-      await selectTester.selectOption({option: 'Steven'});
+      await selectTester.toggleOptionSelection({option: 'Steven'});
       act(() => {jest.runAllTimers();});
       await user.tab();
       await user.tab();
@@ -657,7 +657,7 @@ describe('TableView', () => {
 
           let selectTester = testUtilUser.createTester('Select', {root: dialog!});
           expect(selectTester.trigger).toHaveFocus();
-          await selectTester.selectOption({option: 'Steven'});
+          await selectTester.toggleOptionSelection({option: 'Steven'});
           act(() => {jest.runAllTimers();});
           await user.tab();
           await user.tab();

@@ -423,11 +423,14 @@ export class TableTester {
     let {
       interactionType = this._interactionType
     } = opts;
-    let checkbox = within(this.table).getByLabelText('Select All');
     if (interactionType === 'keyboard') {
-      // TODO: using the .focus -> trigger keyboard Enter approach doesn't work for some reason, for now just trigger select all with click.
-      await this.user.click(checkbox);
+      let metaKey = getMetaKey();
+      if (document.activeElement !== this.table && !this.table.contains(document.activeElement)) {
+        act(() => this.table.focus());
+      }
+      await this.user.keyboard(`[${metaKey}>]a[/${metaKey}]`);
     } else {
+      let checkbox = within(this.table).getByLabelText('Select All');
       await pressElement(this.user, checkbox, interactionType);
     }
   }

@@ -29,7 +29,12 @@ interface ComboBoxSelectOpts extends ComboBoxOpenOpts {
   /**
    * The index, text, or node of the option to select. Option nodes can be sourced via `options()`.
    */
-  option: number | string | HTMLElement
+  option: number | string | HTMLElement,
+  /**
+   * Whether or not the combobox closes on selection. Defaults to `true` for single select comboboxes
+   * and `false` for multi-select comboboxes.
+   */
+  closesOnSelect?: boolean
 }
 
 export class ComboBoxTester {
@@ -175,11 +180,11 @@ export class ComboBoxTester {
   }
 
   /**
-   * Selects the desired combobox option. Defaults to using the interaction type set on the combobox tester. If necessary, will open the combobox dropdown beforehand.
+   * Toggles the selection of the desired combobox option if possible. Defaults to using the interaction type set on the combobox tester. If necessary, will open the combobox dropdown beforehand.
    * The desired option can be targeted via the option's node, the option's text, or the option's index.
    */
-  async selectOption(opts: ComboBoxSelectOpts): Promise<void> {
-    let {option, triggerBehavior, interactionType = this._interactionType} = opts;
+  async toggleOptionSelection(opts: ComboBoxSelectOpts): Promise<void> {
+    let {option, triggerBehavior, interactionType = this._interactionType, closesOnSelect} = opts;
     if (!this.combobox.getAttribute('aria-controls')) {
       await this.open({triggerBehavior});
     }
@@ -189,35 +194,34 @@ export class ComboBoxTester {
       throw new Error('Combobox\'s listbox not found.');
     }
 
-    if (listbox) {
-      if (typeof option === 'string' || typeof option === 'number') {
-        option = this.findOption({optionIndexOrText: option});
-      }
+    if (typeof option === 'string' || typeof option === 'number') {
+      option = this.findOption({optionIndexOrText: option});
+    }
 
-      if (!option) {
-        throw new Error('Target option not found in the listbox.');
-      }
+    if (!option) {
+      throw new Error('Target option not found in the listbox.');
+    }
 
-      if (interactionType === 'keyboard') {
-        await this.keyboardNavigateToOption({option});
-        await this.user.keyboard('[Enter]');
-      } else if (interactionType === 'mouse') {
-        await this.user.click(option);
-      } else {
-        await this.user.pointer({target: option, keys: '[TouchA]'});
-      }
+    let isMultiSelect = listbox.getAttribute('aria-multiselectable') === 'true';
+    closesOnSelect = closesOnSelect ?? !isMultiSelect;
 
-      if (option.getAttribute('href') == null) {
-        await waitFor(() => {
-          if (document.contains(listbox)) {
-            throw new Error('Expected listbox element to not be in the document after selecting an option');
-          } else {
-            return true;
-          }
-        });
-      }
+    if (interactionType === 'keyboard') {
+      await this.keyboardNavigateToOption({option});
+      await this.user.keyboard('[Enter]');
+    } else if (interactionType === 'mouse') {
+      await this.user.click(option);
     } else {
-      throw new Error("Attempted to select a option in the combobox, but the listbox wasn't found.");
+      await this.user.pointer({target: option, keys: '[TouchA]'});
+    }
+
+    if (closesOnSelect && option.getAttribute('href') == null) {
+      await waitFor(() => {
+        if (document.contains(listbox)) {
+          throw new Error('Expected listbox element to not be in the document after selecting an option');
+        } else {
+          return true;
+        }
+      });
     }
   }
 

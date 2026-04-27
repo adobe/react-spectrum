@@ -163,10 +163,10 @@ export class SelectTester {
   };
 
   /**
-   * Selects the desired select option. Defaults to using the interaction type set on the select tester. If necessary, will open the select dropdown beforehand.
+   * Toggles the selection of the desired select option if possible. Defaults to using the interaction type set on the select tester. If necessary, will open the select dropdown beforehand.
    * The desired option can be targeted via the option's node, the option's text, or the option's index.
    */
-  async selectOption(opts: SelectTriggerOptionOpts): Promise<void> {
+  async toggleOptionSelection(opts: SelectTriggerOptionOpts): Promise<void> {
     let {
       option,
       closesOnSelect,

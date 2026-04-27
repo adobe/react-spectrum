@@ -950,7 +950,7 @@ describe('Picker', function () {
 
       expect(document.activeElement).toBe(listbox);
 
-      await selectTester.selectOption({option: 'Three'});
+      await selectTester.toggleOptionSelection({option: 'Three'});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('three');
 
@@ -982,19 +982,19 @@ describe('Picker', function () {
 
       expect(document.activeElement).toBe(listbox);
 
-      await selectTester.selectOption({option: 'Empty'});
+      await selectTester.toggleOptionSelection({option: 'Empty'});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('');
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Empty');
 
-      await selectTester.selectOption({option: 'Zero'});
+      await selectTester.toggleOptionSelection({option: 'Zero'});
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(onSelectionChange).toHaveBeenLastCalledWith('0');
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Zero');
 
-      await selectTester.selectOption({option: 'False'});
+      await selectTester.toggleOptionSelection({option: 'False'});
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
       expect(onSelectionChange).toHaveBeenLastCalledWith('false');
       expect(document.activeElement).toBe(picker);
@@ -1071,7 +1071,7 @@ describe('Picker', function () {
       expect(items[1]).toHaveTextContent('Two');
       expect(items[2]).toHaveTextContent('Three');
 
-      await selectTester.selectOption({option: 'Two'});
+      await selectTester.toggleOptionSelection({option: 'Two'});
 
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('two');
@@ -1152,7 +1152,7 @@ describe('Picker', function () {
       expect(items[1]).toHaveTextContent('Two');
       expect(items[2]).toHaveTextContent('Three');
 
-      await selectTester.selectOption({option: 'Three'});
+      await selectTester.toggleOptionSelection({option: 'Three'});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onOpenChangeSpy).toHaveBeenCalledTimes(2);
 
@@ -1509,7 +1509,7 @@ describe('Picker', function () {
       let items = selectTester.options();
       expect(document.activeElement).toBe(items[1]);
 
-      await selectTester.selectOption({option: 'Two'});
+      await selectTester.toggleOptionSelection({option: 'Two'});
       expect(onSelectionChange).not.toHaveBeenCalled();
 
       expect(document.activeElement).toBe(picker);
@@ -2092,7 +2092,7 @@ describe('Picker', function () {
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
           expect(document.activeElement).toBe(picker);
 
-          await selectTester.selectOption({option: 'One'});
+          await selectTester.toggleOptionSelection({option: 'One'});
           expect(picker).not.toHaveAttribute('aria-describedby');
         });
 
@@ -2120,7 +2120,7 @@ describe('Picker', function () {
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
           expect(document.activeElement).toBe(picker);
 
-          await selectTester.selectOption({option: 'One'});
+          await selectTester.toggleOptionSelection({option: 'One'});
           expect(picker).not.toHaveAttribute('aria-describedby');
         });
 
@@ -2160,7 +2160,7 @@ describe('Picker', function () {
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value.');
           expect(input.validity.valid).toBe(false);
 
-          await selectTester.selectOption({option: 'One'});
+          await selectTester.toggleOptionSelection({option: 'One'});
           expect(picker).not.toHaveAttribute('aria-describedby');
           expect(input.validity.valid).toBe(true);
         });
@@ -2211,7 +2211,7 @@ describe('Picker', function () {
           expect(picker).toHaveAttribute('aria-describedby');
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
 
-          await selectTester.selectOption({option: 'One'});
+          await selectTester.toggleOptionSelection({option: 'One'});
           expect(picker).not.toHaveAttribute('aria-describedby');
 
           await user.click(getByTestId('reset'));
@@ -2239,7 +2239,7 @@ describe('Picker', function () {
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
           expect(input.validity.valid).toBe(true);
 
-          await selectTester.selectOption({option: 'One'});
+          await selectTester.toggleOptionSelection({option: 'One'});
           expect(picker).not.toHaveAttribute('aria-describedby');
         });
 
@@ -2260,7 +2260,7 @@ describe('Picker', function () {
           expect(picker).toHaveAttribute('aria-describedby');
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
 
-          await selectTester.selectOption({option: 'One'});
+          await selectTester.toggleOptionSelection({option: 'One'});
           expect(picker).not.toHaveAttribute('aria-describedby');
         });
       });

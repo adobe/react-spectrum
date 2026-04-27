@@ -61,7 +61,7 @@ it('Menu can open its submenu via keyboard', async function () {
   let submenuTester = await menuTester.openSubmenu({submenuTrigger: 'Share…'});
   expect(submenuTester.menu).toBeInTheDocument();
 
-  await submenuTester.selectOption({option: submenuTester.options()[0]});
+  await submenuTester.toggleOptionSelection({option: submenuTester.options()[0]});
   expect(submenuTester.menu).not.toBeInTheDocument();
   expect(menuTester.menu).not.toBeInTheDocument();
 });

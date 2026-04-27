@@ -157,8 +157,8 @@ describe('Picker', () => {
 
     let selectTester = testUtilUser.createTester('Select', {root: tree.container, interactionType: 'mouse'});
     await selectTester.open();
-    await selectTester.selectOption({option: 0});
-    await selectTester.selectOption({option: 2});
+    await selectTester.toggleOptionSelection({option: 0});
+    await selectTester.toggleOptionSelection({option: 2});
     await selectTester.close();
 
     // check that the clicked items are rendered in the custom renderValue output
@@ -194,8 +194,8 @@ describe('Picker', () => {
 
     let selectTester = testUtilUser.createTester('Select', {root: tree.container, interactionType: 'mouse'});
     await selectTester.open();
-    await selectTester.selectOption({option: 0});
-    await selectTester.selectOption({option: 2});
+    await selectTester.toggleOptionSelection({option: 0});
+    await selectTester.toggleOptionSelection({option: 2});
     await selectTester.close();
 
     expect(spy).toHaveBeenCalledWith('Picker\'s value should not have interactive children for accessibility.');

@@ -603,7 +603,7 @@ it('Picker can select an option via keyboard', async function () {
   let trigger = selectTester.trigger;
   expect(trigger).toHaveTextContent('Select…');
 
-  await selectTester.selectOption({option: 'Cat'});
+  await selectTester.toggleOptionSelection({option: 'Cat'});
   expect(trigger).toHaveTextContent('Cat');
 });
 ```

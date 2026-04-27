@@ -292,7 +292,7 @@ describe('ComboBox', () => {
     );
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container, interactionType: 'keyboard'});
 
-    await comboboxTester.selectOption({option: 'Dog'});
+    await comboboxTester.toggleOptionSelection({option: 'Dog'});
     expect(onSelectionChange).toHaveBeenCalledWith('2');
     expect(comboboxTester.combobox).toHaveValue('Dog');
     expect(comboboxTester.listbox).toBeNull();
@@ -340,7 +340,7 @@ describe('ComboBox', () => {
     let tree = render(<ControlledComboBox />);
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
 
-    await comboboxTester.selectOption({option: 'Dog'});
+    await comboboxTester.toggleOptionSelection({option: 'Dog'});
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
 
     if (focusMove === 'click') {
@@ -638,7 +638,7 @@ describe('ComboBox', () => {
     expect(comboboxTester.combobox).toHaveValue('');
 
     // Repeat with an option selected.
-    await comboboxTester.selectOption({option: 'Cat'});
+    await comboboxTester.toggleOptionSelection({option: 'Cat'});
 
     await user.keyboard('s');
 
@@ -744,12 +744,12 @@ describe('ComboBox', () => {
     let options = comboboxTester.options();
     expect(options).toHaveLength(3);
 
-    await user.click(options[0]);
+    await comboboxTester.toggleOptionSelection({option: options[0]});
     expect(options[0]).toHaveAttribute('aria-selected', 'true');
     expect(comboboxTester.combobox).toHaveValue('');
     expect(comboboxTester.listbox).toBeInTheDocument();
     expect(value).toHaveTextContent('Cat');
-    await user.click(options[1]);
+    await comboboxTester.toggleOptionSelection({option: options[1]});
     expect(options[1]).toHaveAttribute('aria-selected', 'true');
     expect(comboboxTester.combobox).toHaveValue('');
     expect(comboboxTester.listbox).toBeInTheDocument();

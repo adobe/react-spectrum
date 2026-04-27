@@ -174,13 +174,11 @@ export class MenuTester {
     return option;
   }
 
-  // TODO: also very similar to select, barring potential long press support
-  // Close on select is also kinda specific?
   /**
-   * Selects the desired menu option. Defaults to using the interaction type set on the menu tester. If necessary, will open the menu dropdown beforehand.
+   * Toggles the selection of the desired menu option if possible. Defaults to using the interaction type set on the menu tester. If necessary, will open the menu dropdown beforehand.
    * The desired option can be targeted via the option's node, the option's text, or the option's index.
    */
-  async selectOption(opts: MenuSelectOpts): Promise<void> {
+  async toggleOptionSelection(opts: MenuSelectOpts): Promise<void> {
     let {
       menuSelectionMode = 'single',
       needsLongPress,

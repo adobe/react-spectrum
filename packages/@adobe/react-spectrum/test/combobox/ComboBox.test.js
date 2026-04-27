@@ -517,7 +517,7 @@ describe('ComboBox', function () {
         expect(comboboxTester.combobox).not.toHaveAttribute('aria-activedescendant');
 
         let options = comboboxTester.options();
-        await comboboxTester.selectOption({option: options[0]});
+        await comboboxTester.toggleOptionSelection({option: options[0]});
 
         expect(comboboxTester.combobox.value).toBe('One');
 
@@ -876,7 +876,7 @@ describe('ComboBox', function () {
       expect(combobox.value).toBe('Tw');
       expect(comboboxTester.options().length).toBe(1);
 
-      await comboboxTester.selectOption({option: 'Two'});
+      await comboboxTester.toggleOptionSelection({option: 'Two'});
       expect(comboboxTester.listbox).toBeFalsy();
       expect(combobox.value).toBe('Two');
       // selectionManager.select from useSingleSelectListState always calls onSelectionChange even if the key is the same

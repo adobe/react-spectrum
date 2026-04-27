@@ -1602,7 +1602,7 @@ it('ComboBox can select an option via keyboard', async function () {
   expect(comboboxTester.listbox).toBeInTheDocument();
 
   let options = comboboxTester.options();
-  await comboboxTester.selectOption({option: options[0]});
+  await comboboxTester.toggleOptionSelection({option: options[0]});
   expect(comboboxTester.combobox.value).toBe('One');
   expect(comboboxTester.listbox).not.toBeInTheDocument();
 });
