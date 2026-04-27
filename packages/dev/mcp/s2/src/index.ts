@@ -22,7 +22,7 @@ import {z} from 'zod';
           title: 'Search S2 icons',
           description: 'Searches the S2 workflow icon set by one or more terms; returns matching icon names.',
           inputSchema: {terms: z.union([z.string(), z.array(z.string())])},
-          annotations: {readOnlyHint: true}
+          annotations: {readOnlyHint: true, openWorldHint: true}
         },
         async ({terms}) => {
           const allNames = listIconNames();
@@ -59,7 +59,7 @@ import {z} from 'zod';
           title: 'Search S2 illustrations',
           description: 'Searches the S2 illustrations set by one or more terms; returns matching illustration names.',
           inputSchema: {terms: z.union([z.string(), z.array(z.string())])},
-          annotations: {readOnlyHint: true}
+          annotations: {readOnlyHint: true, openWorldHint: true}
         },
         async ({terms}) => {
           const allNames = listIllustrationNames();
@@ -96,7 +96,7 @@ import {z} from 'zod';
           title: 'Get style macro property values',
           description: 'Returns the allowed values for a given S2 style macro property (including expanded color/spacing value lists where applicable).',
           inputSchema: {propertyName: z.string()},
-          annotations: {readOnlyHint: true}
+          annotations: {readOnlyHint: true, openWorldHint: true}
         },
         async ({propertyName}) => {
           const name = String(propertyName ?? '').trim();
