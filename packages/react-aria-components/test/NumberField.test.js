@@ -505,7 +505,7 @@ describe('NumberField', () => {
       act(() => {jest.runAllTimers();});
     });
 
-    it.only('stops spinning if the associated button is disabled', async () => {
+    it('stops spinning if the associated button is disabled', async () => {
       function NumberFieldDisabledButtons({label}) {
         const [value, setValue] = useState(4);
 
