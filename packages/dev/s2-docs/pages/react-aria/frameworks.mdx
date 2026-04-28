@@ -8,6 +8,7 @@ import {Tabs, TabList, Tab, TabPanel, Text} from '@react-spectrum/s2';
 import {StepList, Step, Counter} from '../../src/Step';
 import Nextjs from '../../src/icons/Nextjs';
 import ReactRouter from '../../src/icons/ReactRouter';
+import TanStackRouter from '../../src/icons/TanStackRouter';
 import Vite from '../../src/icons/Vite';
 import Parcel from '../../src/icons/Parcel';
 import Webpack from '../../src/icons/Webpack';
@@ -24,21 +25,9 @@ export const description = 'How to integrate with your framework.';
 
 ## Client side routing
 
-Many React Aria components support rendering as HTML links. This section covers how to set up your app to integrate React Aria links with your framework or client side router.
+Many React Aria components such as [Link](Link), [Menu](Menu), [Tabs](Tabs), and [Table](Table) support rendering as HTML links via the `href` prop. By default these perform native browser navigation, but you can integrate your client side router so that links navigate without a full page reload.
 
-### Introduction
-
-React Aria components such as [Link](Link), [Menu](Menu), [Tabs](Tabs), [Table](Table), and many others support rendering elements as links that perform navigation when the user interacts with them. Each component that supports link behavior accepts the `href` prop, which causes the component to render an `<a>` element. Other link DOM props such as `target` and `download` are also supported.
-
-Depending on the component, users may interact with links in different ways. For example, users can navigate between tabs using the arrow keys, or open a link in a ComboBox using the enter key. Because React Aria components accept the `href` prop rather than supporting arbitrary element overrides, they can ensure that link navigation occurs when it is appropriate for the component.
-
-By default, links perform native browser navigation when they are interacted with. However, many apps and frameworks use client side routers to avoid a full page reload when navigating between pages. The `RouterProvider` component configures all React Aria components within it to navigate using the client side router you provide. Set this up once in the root of your app, and any React Aria component with the `href` prop will automatically navigate using your router.
-
-Note that external links to different origins will not trigger client side routing, and will use native browser navigation. Additionally, if the link has a [target](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#target) other than `"_self"`, uses the [download](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#download) attribute, or the user presses modifier keys such as Command or Alt to change the default behavior, browser native navigation will occur instead of client side routing.
-
-### RouterProvider
-
-The `RouterProvider` component accepts two props: `navigate` and `useHref`. `navigate` should be set to a function received from your router for performing a client side navigation programmatically. `useHref` is an optional prop that converts a router-specific href to a native HTML href, e.g. prepending a base path. The following example shows the general pattern. Framework-specific examples are shown below.
+The `RouterProvider` component configures all React Aria components within it to navigate using the router you provide. Set this up once at the root of your app, and any React Aria component with the `href` prop will automatically navigate using your router.
 
 ```tsx
 import {RouterProvider} from 'react-aria-components';
@@ -55,17 +44,19 @@ function App() {
 }
 ```
 
-Note: if you are using React Aria hooks rather than components, you can import `RouterProvider` from `react-aria` instead.
+`navigate` should be a function received from your router for performing a client side navigation programmatically. `useHref` is an optional prop that converts a router-specific href to a native HTML href, e.g. prepending a base path. Note: if you are using React Aria hooks rather than components, you can import `RouterProvider` from `react-aria` instead.
+
+External links to different origins, links with a `target` other than `"_self"`, links using the `download` attribute, and clicks with modifier keys (e.g. Cmd/Alt) all fall back to native browser navigation.
 
 ### Router options
 
-All React Aria link components accept a `routerOptions` prop, which is an object that is passed through to the client side router's `navigate` function as the second argument. This can be used to control any router-specific behaviors, such as scrolling, replacing instead of pushing to the history, etc.
+All React Aria link components accept a `routerOptions` prop, which is passed through to the client side router's `navigate` function as the second argument. Use it to control router-specific behaviors, e.g. scrolling or replacing instead of pushing to the history.
 
 ```tsx
 <MenuItem href="/login" routerOptions={{replace: true}}>{/* ...*/}</MenuItem>
 ```
 
-When using TypeScript, you can configure the `RouterConfig` type globally so that all link components have auto complete and type safety using a type provided by your router.
+When using TypeScript, configure the `RouterConfig` type globally so all link components have auto complete and type safety using a type provided by your router.
 
 ```tsx
 import type {RouterOptions} from 'your-router';
@@ -77,224 +68,12 @@ declare module 'react-aria-components' {
 }
 ```
 
-### React Router
-
-The [useNavigate](https://reactrouter.com/en/main/hooks/use-navigate) hook from `react-router-dom` returns a `navigate` function you can pass to `RouterProvider`. The [useHref](https://reactrouter.com/en/main/hooks/use-href) hook can also be provided if you're using React Router's `basename` option. Ensure that the component that calls `useNavigate` and renders `RouterProvider` is inside the router component (e.g. `BrowserRouter`) so that it has access to React Router's internal context. The React Router `<Routes>` element should also be defined inside React Aria's `<RouterProvider>` so that links inside the rendered routes have access to the router.
-
-```tsx
-import {BrowserRouter, useNavigate, useHref, type NavigateOptions} from 'react-router-dom';
-import {RouterProvider} from 'react-aria-components';
-
-declare module 'react-aria-components' {
-  interface RouterConfig {
-    routerOptions: NavigateOptions
-  }
-}
-
-function App() {
-  let navigate = useNavigate();
-
-  return (
-    <RouterProvider navigate={navigate} useHref={useHref}>
-      {/* Your app here... */}
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        {/* ... */}
-      </Routes>
-    </RouterProvider>
-  );
-}
-
-<BrowserRouter>
-  <App />
-</BrowserRouter>
-```
-
-### Next.js
-
-#### App router
-
-The [useRouter](https://nextjs.org/docs/app/api-reference/functions/use-router) hook from `next/navigation` returns a router object that can be used to perform navigation. `RouterProvider` should be rendered from a client component at the root of each page or layout that includes React Aria links. You can create a new client component for this, or combine it with other top-level providers as described in the [Next.js docs](https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#using-context-providers).
-
-```tsx
-// app/provider.tsx
-"use client";
-
-import {useRouter} from 'next/navigation';
-import {RouterProvider} from 'react-aria-components';
-
-declare module 'react-aria-components' {
-  interface RouterConfig {
-    routerOptions: NonNullable<Parameters<ReturnType<typeof useRouter>['push']>[1]>
-  }
-}
-
-export function ClientProviders({children}) {
-  let router = useRouter();
-
-  return (
-    <RouterProvider navigate={router.push}>
-      {children}
-    </RouterProvider>
-  );
-}
-```
-
-Then, in your page or layout server component, wrap your app in the `ClientProviders` component that you defined.
-
-```tsx
-// app/layout.tsx
-import {ClientProviders} from './provider';
-
-export default function RootLayout({children}) {
-  return (
-    <html>
-      <body>
-        <ClientProviders>{children}</ClientProviders>
-      </body>
-    </html>
-  );
-}
-```
-
-If you are using the Next.js [basePath](https://nextjs.org/docs/app/api-reference/next-config-js/basePath) setting, you'll need to configure an environment variable to access it. Then, provide a custom `useHref` function to prepend it to the href for all links.
-
-```tsx
-// next.config.js
-const basePath = '...';
-const nextConfig = {
-  basePath,
-  env: {
-    BASE_PATH: basePath
-  }
-};
-```
-
-```tsx
-// app/provider.tsx
-// ...
-
-export function ClientProviders({children}) {
-  let router = useRouter();
-  /*- begin highlight -*/
-  let useHref = (href: string) => process.env.BASE_PATH + href;
-  /*- end highlight -*/
-
-  return (
-    <RouterProvider navigate={router.push} useHref={useHref}>
-      {children}
-    </RouterProvider>
-  );
-}
-```
-
-#### Pages router
-
-The [useRouter](https://nextjs.org/docs/pages/api-reference/functions/use-router) hook from `next/router` returns a router object that can be used to perform navigation. `RouterProvider` should be rendered at the root of each page that includes React Aria links, or in `pages/_app.tsx` to add it to all pages.
-
-```tsx
-// pages/_app.tsx
-import type {AppProps} from 'next/app';
-import {useRouter, type NextRouter} from 'next/router';
-import {RouterProvider} from 'react-aria-components';
-
-declare module 'react-aria-components' {
-  interface RouterConfig {
-    routerOptions: NonNullable<Parameters<NextRouter['push']>[2]>
-  }
-}
-
-export default function MyApp({Component, pageProps}: AppProps) {
-  let router = useRouter();
-
-  return (
-    <RouterProvider navigate={(href, opts) => router.push(href, undefined, opts)}>
-      <Component {...pageProps} />
-    </RouterProvider>
-  );
-}
-```
-
-When using the [basePath](https://nextjs.org/docs/app/api-reference/next-config-js/basePath) configuration option, provide a `useHref` prop to `RouterProvider` to prepend it to links automatically.
-
-```tsx
-// pages/_app.tsx
-// ...
-
-export default function MyApp({Component, pageProps}: AppProps) {
-  let router = useRouter();
-
-  return (
-    <RouterProvider
-      navigate={(href, opts) => router.push(href, undefined, opts)}
-      /*- begin highlight -*/
-      useHref={(href: string) => router.basePath + href}
-      /*- end highlight -*/
-    >
-      <Component {...pageProps} />
-    </RouterProvider>
-  );
-}
-```
-
-### Remix
-
-Remix uses React Router under the hood, so the same [useNavigate](https://reactrouter.com/en/main/hooks/use-navigate) and [useHref](https://reactrouter.com/en/main/hooks/use-href) hooks described above also work in Remix apps. `RouterProvider` should be rendered at the root of each page that includes React Aria links, or in `app/root.tsx` to add it to all pages. See the [Remix docs](https://remix.run/docs/en/main/file-conventions/root) for more details.
-
-```tsx
-// app/root.tsx
-import {useNavigate, useHref, Outlet} from '@remix-run/react';
-import type {NavigateOptions} from 'react-router-dom';
-import {RouterProvider} from 'react-aria-components';
-
-declare module 'react-aria-components' {
-  interface RouterConfig {
-    routerOptions: NavigateOptions
-  }
-}
-
-export default function App() {
-  let navigate = useNavigate();
-
-  return (
-    <html lang="en">
-      <head>
-        {/* ... */}
-      </head>
-      <body>
-        <RouterProvider navigate={navigate} useHref={useHref}>
-          <Outlet />
-        </RouterProvider>
-        {/* ... */}
-      </body>
-    </html>
-  );
-}
-```
-
-### TanStack Router
-
-To use [TanStack Router](https://tanstack.com/router) with React Aria Components v1.11.0 or later, use the [createLink](https://tanstack.com/router/latest/docs/framework/react/guide/custom-link) function to wrap each React Aria component as a link. `RouterProvider` is not needed.
-
-```tsx
-// src/Link.tsx
-import {createLink} from '@tanstack/react-router';
-import {Link as ReactAriaLink, MenuItem} from 'react-aria-components';
-
-export const Link = createLink(ReactAriaLink);
-export const MenuItemLink = createLink(MenuItem);
-```
-
-In your app, use these components instead of importing directly from `react-aria-components`.
-
-## Locale and bundler setup
-
-To configure internationalization and optimize your bundle for your framework, follow the instructions for your framework or bundler below.
+Choose your framework or router below for setup instructions, including locale and bundler configuration.
 
 <Tabs aria-label="Frameworks" density="compact">
-  <TabList><Tab id="next"><Nextjs /><Text>Next.js</Text></Tab><Tab id="react-router"><ReactRouter /><Text>React Router</Text></Tab><Tab id="parcel"><Parcel /><Text>Parcel</Text></Tab><Tab id="vite"><Vite /><Text>Vite</Text></Tab><Tab id="webpack"><Webpack /><Text>webpack</Text></Tab><Tab id="rollup"><Rollup /><Text>Rollup</Text></Tab><Tab id="esbuild"><ESBuild /><Text>ESBuild</Text></Tab></TabList>
+  <TabList><Tab id="next"><Nextjs /><Text>Next.js</Text></Tab><Tab id="react-router"><ReactRouter /><Text>React Router</Text></Tab><Tab id="tanstack-router"><TanStackRouter /><Text>TanStack Router</Text></Tab><Tab id="parcel"><Parcel /><Text>Parcel</Text></Tab><Tab id="vite"><Vite /><Text>Vite</Text></Tab><Tab id="webpack"><Webpack /><Text>webpack</Text></Tab><Tab id="rollup"><Rollup /><Text>Rollup</Text></Tab><Tab id="esbuild"><ESBuild /><Text>ESBuild</Text></Tab></TabList>
   <TabPanel id="next">
-    To integrate with Next.js (app router), ensure the locale on the server matches the client.
+    To integrate with Next.js (app router), ensure the locale on the server matches the client and configure `RouterProvider` so React Aria links use the Next.js router.
 
     <StepList>
       <Step>
@@ -325,18 +104,62 @@ To configure internationalization and optimize your bundle for your framework, f
         ```
       </Step>
       <Step>
-        <Counter />Create `app/provider.tsx`. This should render an `I18nProvider` to set the locale used by React Aria.
+        <Counter />Create `app/provider.tsx`. This should render an `I18nProvider` to set the locale used by React Aria, and a `RouterProvider` so that React Aria components with `href` use the Next.js client side router. The [useRouter](https://nextjs.org/docs/app/api-reference/functions/use-router) hook from `next/navigation` returns a router object whose `push` function can be passed as `navigate`.
 
         ```tsx
         // app/provider.tsx
         "use client";
 
+        import {useRouter} from 'next/navigation';
         import {I18nProvider} from 'react-aria-components/I18nProvider';
+        import {RouterProvider} from 'react-aria-components';
+
+        declare module 'react-aria-components' {
+          interface RouterConfig {
+            routerOptions: NonNullable<Parameters<ReturnType<typeof useRouter>['push']>[1]>
+          }
+        }
 
         export function ClientProviders({lang, children}) {
+          let router = useRouter();
           return (
             <I18nProvider locale={lang}>
-              {children}
+              <RouterProvider navigate={router.push}>
+                {children}
+              </RouterProvider>
+            </I18nProvider>
+          );
+        }
+        ```
+      </Step>
+      <Step>
+        <Counter />If you are using the Next.js [basePath](https://nextjs.org/docs/app/api-reference/next-config-js/basePath) setting, expose it as an environment variable and provide a custom `useHref` function so React Aria prepends it to link hrefs.
+
+        ```tsx
+        // next.config.js
+        const basePath = '...';
+        const nextConfig = {
+          basePath,
+          env: {
+            BASE_PATH: basePath
+          }
+        };
+        ```
+
+        ```tsx
+        // app/provider.tsx
+        // ...
+
+        export function ClientProviders({lang, children}) {
+          let router = useRouter();
+          /*- begin highlight -*/
+          let useHref = (href: string) => process.env.BASE_PATH + href;
+          /*- end highlight -*/
+          return (
+            <I18nProvider locale={lang}>
+              <RouterProvider navigate={router.push} useHref={useHref}>
+                {children}
+              </RouterProvider>
             </I18nProvider>
           );
         }
@@ -346,9 +169,58 @@ To configure internationalization and optimize your bundle for your framework, f
         <Counter />If you are using a [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) (CSP) with a nonce, add a `<meta property="csp-nonce">` tag to your document head, setting the `content` attribute to the generated nonce value. React Aria automatically reads the nonce from this tag.
       </Step>
     </StepList>
+
+    ### Pages router
+
+    If you're using the Next.js Pages router instead, render `RouterProvider` in `pages/_app.tsx`. The [useRouter](https://nextjs.org/docs/pages/api-reference/functions/use-router) hook from `next/router` returns a router object whose `push` function performs client side navigation.
+
+    ```tsx
+    // pages/_app.tsx
+    import type {AppProps} from 'next/app';
+    import {useRouter, type NextRouter} from 'next/router';
+    import {RouterProvider} from 'react-aria-components';
+
+    declare module 'react-aria-components' {
+      interface RouterConfig {
+        routerOptions: NonNullable<Parameters<NextRouter['push']>[2]>
+      }
+    }
+
+    export default function MyApp({Component, pageProps}: AppProps) {
+      let router = useRouter();
+
+      return (
+        <RouterProvider navigate={(href, opts) => router.push(href, undefined, opts)}>
+          <Component {...pageProps} />
+        </RouterProvider>
+      );
+    }
+    ```
+
+    When using the [basePath](https://nextjs.org/docs/app/api-reference/next-config-js/basePath) configuration option, provide a `useHref` prop so it's prepended to all links automatically.
+
+    ```tsx
+    // pages/_app.tsx
+    // ...
+
+    export default function MyApp({Component, pageProps}: AppProps) {
+      let router = useRouter();
+
+      return (
+        <RouterProvider
+          navigate={(href, opts) => router.push(href, undefined, opts)}
+          /*- begin highlight -*/
+          useHref={(href: string) => router.basePath + href}
+          /*- end highlight -*/
+        >
+          <Component {...pageProps} />
+        </RouterProvider>
+      );
+    }
+    ```
   </TabPanel>
   <TabPanel id="react-router">
-    To integrate with React Router (framework mode), ensure the locale on the server matches the client, and exclude localized strings from the client bundle. If you're using declarative mode, choose your bundler above.
+    To integrate with React Router (framework mode), ensure the locale on the server matches the client, and exclude localized strings from the client bundle. If you're using declarative mode, see the section below or choose your bundler tab.
 
     <StepList>
       <Step>
@@ -403,15 +275,28 @@ To configure internationalization and optimize your bundle for your framework, f
         ```
       </Step>
       <Step>
-        <Counter />In your root layout, set the `lang` and `dir` attributes on the `<html>` element, and render a `RouterProvider` to configure React Aria links to use React Router.
+        <Counter />In your root layout, set the `lang` and `dir` attributes on the `<html>` element, and render a `RouterProvider` to configure React Aria links to use React Router. The [useNavigate](https://reactrouter.com/en/main/hooks/use-navigate) and [useHref](https://reactrouter.com/en/main/hooks/use-href) hooks come from `react-router`.
 
         ```tsx
         // app/root.tsx
+        /*- begin highlight -*/
+        import {useNavigate, useHref, Outlet, type NavigateOptions} from 'react-router';
+        import {RouterProvider} from 'react-aria-components';
+        /*- end highlight -*/
         import {useLocale} from 'react-aria-components/I18nProvider';
+
+        /*- begin highlight -*/
+        declare module 'react-aria-components' {
+          interface RouterConfig {
+            routerOptions: NavigateOptions
+          }
+        }
+        /*- end highlight -*/
 
         export function Layout({children}) {
           /*- begin highlight -*/
           let {locale, direction} = useLocale();
+          let navigate = useNavigate();
           /*- end highlight -*/
 
           return (
@@ -422,7 +307,11 @@ To configure internationalization and optimize your bundle for your framework, f
                 {/* ... */}
               </head>
               <body>
-                {children}
+                {/*- begin highlight -*/}
+                <RouterProvider navigate={navigate} useHref={useHref}>
+                  {children}
+                </RouterProvider>
+                {/*- end highlight -*/}
                 {/* ... */}
               </body>
             </html>
@@ -460,6 +349,88 @@ To configure internationalization and optimize your bundle for your framework, f
         <Counter />If you are using a [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) (CSP) with a nonce, add a `<meta property="csp-nonce">` tag to your document head, setting the `content` attribute to the generated nonce value. React Aria automatically reads the nonce from this tag.
       </Step>
     </StepList>
+
+    ### Declarative mode
+
+    If you're using React Router in declarative mode (e.g. with `BrowserRouter`), render `RouterProvider` inside the router so it has access to React Router's context. The React Router `<Routes>` element should be defined inside React Aria's `<RouterProvider>` so that links inside the rendered routes have access to the router. Then choose your bundler tab below for locale and CSP setup.
+
+    ```tsx
+    import {BrowserRouter, Routes, Route, useNavigate, useHref, type NavigateOptions} from 'react-router-dom';
+    import {RouterProvider} from 'react-aria-components';
+
+    declare module 'react-aria-components' {
+      interface RouterConfig {
+        routerOptions: NavigateOptions
+      }
+    }
+
+    function App() {
+      let navigate = useNavigate();
+
+      return (
+        <RouterProvider navigate={navigate} useHref={useHref}>
+          {/* Your app here... */}
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            {/* ... */}
+          </Routes>
+        </RouterProvider>
+      );
+    }
+
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+    ```
+
+    ### Remix
+
+    Remix uses React Router under the hood, so the same `useNavigate` and `useHref` hooks work. Render `RouterProvider` in `app/root.tsx` to add it to all pages.
+
+    ```tsx
+    // app/root.tsx
+    import {useNavigate, useHref, Outlet} from '@remix-run/react';
+    import type {NavigateOptions} from 'react-router-dom';
+    import {RouterProvider} from 'react-aria-components';
+
+    declare module 'react-aria-components' {
+      interface RouterConfig {
+        routerOptions: NavigateOptions
+      }
+    }
+
+    export default function App() {
+      let navigate = useNavigate();
+
+      return (
+        <html lang="en">
+          <head>
+            {/* ... */}
+          </head>
+          <body>
+            <RouterProvider navigate={navigate} useHref={useHref}>
+              <Outlet />
+            </RouterProvider>
+            {/* ... */}
+          </body>
+        </html>
+      );
+    }
+    ```
+  </TabPanel>
+  <TabPanel id="tanstack-router">
+    To use [TanStack Router](https://tanstack.com/router) with React Aria Components v1.11.0 or later, use the [createLink](https://tanstack.com/router/latest/docs/framework/react/guide/custom-link) function to wrap each React Aria component as a link. `RouterProvider` is not needed.
+
+    ```tsx
+    // src/Link.tsx
+    import {createLink} from '@tanstack/react-router';
+    import {Link as ReactAriaLink, MenuItem} from 'react-aria-components';
+
+    export const Link = createLink(ReactAriaLink);
+    export const MenuItemLink = createLink(MenuItem);
+    ```
+
+    In your app, use these wrapped components instead of importing directly from `react-aria-components`. For locale optimization and CSP setup, choose your bundler tab below.
   </TabPanel>
   <TabPanel id="parcel">
     To integrate with a client-only Parcel SPA, and optimize the client bundle to include localized strings for your supported languages.
