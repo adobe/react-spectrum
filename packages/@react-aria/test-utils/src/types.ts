@@ -36,7 +36,12 @@ export interface BaseTesterOpts extends UserOpts {
   /** @private */
   user?: any,
   /** The base element for the given tester (e.g. the table, menu trigger button, etc). */
-  root: HTMLElement
+  root: HTMLElement,
+  /**
+   * The horizontal layout direction, typically affected by locale.
+   * @default 'ltr'
+   */
+  direction?: Direction
 }
 
 export interface CheckboxGroupTesterOpts extends BaseTesterOpts {}
@@ -89,13 +94,7 @@ export interface MenuTesterOpts extends BaseTesterOpts {
   rootMenu?: HTMLElement
 }
 
-export interface RadioGroupTesterOpts extends BaseTesterOpts {
-  /**
-   * The horizontal layout direction, typically affected by locale.
-   * @default 'ltr'
-   */
-  direction?: Direction
-}
+export interface RadioGroupTesterOpts extends BaseTesterOpts {}
 
 export interface SelectTesterOpts extends BaseTesterOpts {
   /**
@@ -112,13 +111,7 @@ export interface TableTesterOpts extends BaseTesterOpts {
   advanceTimer?: UserOpts['advanceTimer']
 }
 
-export interface TabsTesterOpts extends BaseTesterOpts {
-  /**
-   * The horizontal layout direction, typically affected by locale.
-   * @default 'ltr'
-   */
-  direction?: Direction
-}
+export interface TabsTesterOpts extends BaseTesterOpts {}
 
 export interface TreeTesterOpts extends BaseTesterOpts {
   /**

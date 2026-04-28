@@ -11,7 +11,7 @@
  */
 
 import {act} from './act';
-import {BaseGridRowInteractionOpts, GridRowActionOpts, ToggleGridRowOpts, TreeTesterOpts, UserOpts} from './types';
+import {BaseGridRowInteractionOpts, Direction, GridRowActionOpts, ToggleGridRowOpts, TreeTesterOpts, UserOpts} from './types';
 import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
 import {within} from '@testing-library/dom';
 
@@ -24,13 +24,15 @@ export class TreeTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
+  private _direction: Direction;
   private _tree: HTMLElement;
 
   constructor(opts: TreeTesterOpts) {
-    let {root, user, interactionType, advanceTimer} = opts;
+    let {root, user, interactionType, advanceTimer, direction} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
     this._advanceTimer = advanceTimer;
+    this._direction = direction || 'ltr';
     this._tree = root;
     if (root.getAttribute('role') !== 'treegrid') {
       let tree = within(root).queryByRole('treegrid');
@@ -65,7 +67,6 @@ export class TreeTester {
     return row;
   }
 
-  // TODO: RTL
   private async keyboardNavigateToRow(opts: {row: HTMLElement, selectionOnNav?: 'default' | 'none'}) {
     let {row, selectionOnNav = 'default'} = opts;
     let altKey = getAltKey();
@@ -79,11 +80,12 @@ export class TreeTester {
       act(() => this._tree.focus());
     }
 
+    let focusPrevKey = this._direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
     if (document.activeElement === this.tree()) {
       await this.user.keyboard(`${selectionOnNav === 'none' ? `[${altKey}>]` : ''}[ArrowDown]${selectionOnNav === 'none' ? `[/${altKey}]` : ''}`);
     } else if (this._tree.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
       do {
-        await this.user.keyboard('[ArrowLeft]');
+        await this.user.keyboard(`[${focusPrevKey}]`);
       } while (document.activeElement!.getAttribute('role') !== 'row');
     }
     let currIndex = rows.indexOf(document.activeElement as HTMLElement);
@@ -204,10 +206,12 @@ export class TreeTester {
       // in selectionmode="replace"/highlight selection when navigating to the row that the user wants
       // to expand. Discuss if this is useful or not
       await this.keyboardNavigateToRow({row});
+      let collapseKey = this._direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
+      let expandKey = this._direction === 'rtl' ? 'ArrowLeft' : 'ArrowRight';
       if (row.getAttribute('aria-expanded') === 'true') {
-        await this.user.keyboard('[ArrowLeft]');
+        await this.user.keyboard(`[${collapseKey}]`);
       } else {
-        await this.user.keyboard('[ArrowRight]');
+        await this.user.keyboard(`[${expandKey}]`);
       }
     }
   };

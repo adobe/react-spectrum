@@ -15,6 +15,7 @@ import {Cell as AriaCell, Column, Row, Table, TableBody, TableHeader} from '../s
 import {Button} from '../src/Button';
 import {Collection} from 'react-aria/Collection';
 import {composeRenderProps} from '../src/utils';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import React from 'react';
 import {useDragAndDrop} from '../src/useDragAndDrop';
 import {User} from '@react-aria/test-utils';
@@ -239,9 +240,21 @@ describe('Treeble', () => {
     expect(tester.rowHeaders()[3]).toHaveTextContent('Job Posting');
   });
 
-  it.each(['mouse', 'touch', 'keyboard'])('should expand a row with %s', async (interactionType) => {
-    let tree = render(<Example />);
-    let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
+  it.each`
+    interactionType | locale     | direction
+    ${'mouse'}      | ${'en-US'} | ${'ltr'}
+    ${'touch'}      | ${'en-US'} | ${'ltr'}
+    ${'keyboard'}   | ${'en-US'} | ${'ltr'}
+    ${'mouse'}      | ${'ar-AE'} | ${'rtl'}
+    ${'touch'}      | ${'ar-AE'} | ${'rtl'}
+    ${'keyboard'}   | ${'ar-AE'} | ${'rtl'}
+  `('should expand a row with $interactionType ($direction)', async ({interactionType, locale, direction}) => {
+    let tree = render(
+      <I18nProvider locale={locale}>
+        <Example />
+      </I18nProvider>
+    );
+    let tester = utils.createTester('Table', {root: tree.getByTestId('treeble'), direction});
 
     await tester.toggleRowExpansion({row: 0, interactionType});
 

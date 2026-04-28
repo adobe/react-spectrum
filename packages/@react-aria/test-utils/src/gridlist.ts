@@ -11,8 +11,8 @@
  */
 
 import {act} from './act';
+import {Direction, GridListTesterOpts, GridRowActionOpts, ToggleGridRowOpts, UserOpts} from './types';
 import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
-import {GridListTesterOpts, GridRowActionOpts, ToggleGridRowOpts, UserOpts} from './types';
 import {within} from '@testing-library/dom';
 
 interface GridListToggleRowOpts extends ToggleGridRowOpts {}
@@ -22,13 +22,15 @@ export class GridListTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
+  private _direction: Direction;
   private _gridlist: HTMLElement;
 
   constructor(opts: GridListTesterOpts) {
-    let {root, user, interactionType, advanceTimer} = opts;
+    let {root, user, interactionType, advanceTimer, direction} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
     this._advanceTimer = advanceTimer;
+    this._direction = direction || 'ltr';
     this._gridlist = root;
     if (root.getAttribute('role') !== 'grid') {
       let gridlist = within(root).queryByRole('grid');
@@ -63,7 +65,6 @@ export class GridListTester {
     return row;
   }
 
-  // TODO: RTL
   private async keyboardNavigateToRow(opts: {row: HTMLElement, selectionOnNav?: 'default' | 'none'}) {
     let {row, selectionOnNav = 'default'} = opts;
     let altKey = getAltKey();
@@ -77,11 +78,12 @@ export class GridListTester {
       act(() => this._gridlist.focus());
     }
 
+    let focusPrevKey = this._direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
     if (document.activeElement === this._gridlist) {
       await this.user.keyboard(`${selectionOnNav === 'none' ? `[${altKey}>]` : ''}[ArrowDown]${selectionOnNav === 'none' ? `[/${altKey}]` : ''}`);
     } else if (this._gridlist.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
       do {
-        await this.user.keyboard('[ArrowLeft]');
+        await this.user.keyboard(`[${focusPrevKey}]`);
       } while (document.activeElement!.getAttribute('role') !== 'row');
     }
     let currIndex = rows.indexOf(document.activeElement as HTMLElement);
