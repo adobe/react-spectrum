@@ -301,14 +301,18 @@ describe('GridList', () => {
     expect(gridListTester.selectedRows()).toHaveLength(2);
   });
 
-  it('should support disabled state', () => {
-    let {getAllByRole} = renderGridList({selectionMode: 'multiple', disabledKeys: ['cat']}, {className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
+  it('should support disabled state', async () => {
+    let {getAllByRole, getByRole} = renderGridList({selectionMode: 'multiple', disabledKeys: ['cat']}, {className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
     let row = getAllByRole('row')[0];
 
     expect(row).toHaveAttribute('aria-disabled', 'true');
     expect(row).toHaveClass('disabled');
 
     expect(within(row).getByRole('checkbox')).toBeDisabled();
+
+    let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+    await expect(gridListTester.toggleRowSelection({row: 0})).rejects.toThrow();
+    await expect(gridListTester.triggerRowAction({row: 0})).rejects.toThrow();
   });
 
   it('should support isDisabled prop on items', async () => {
@@ -1503,7 +1507,7 @@ describe('GridList', () => {
       let {getByRole} = renderGridList({}, {onAction, onPressStart, onPressEnd, onPress, onClick});
       let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
       await gridListTester.triggerRowAction({row: 1, interactionType});
-  
+
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onPressStart).toHaveBeenCalledTimes(1);
       expect(onPressEnd).toHaveBeenCalledTimes(1);

@@ -1980,6 +1980,26 @@ AriaMenuTests({
           </Menu>
         </Popover>
       </MenuTrigger>
+    ),
+    disabledSubmenuTrigger: () => render(
+      <MenuTrigger>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu disabledKeys={['share']}>
+            <MenuItem id="open">Open</MenuItem>
+            <SubmenuTrigger>
+              <MenuItem id="share">Share…</MenuItem>
+              <Popover>
+                <Menu>
+                  <MenuItem id="sms">SMS</MenuItem>
+                  <MenuItem id="email">Email</MenuItem>
+                </Menu>
+              </Popover>
+            </SubmenuTrigger>
+            <MenuItem id="delete">Delete…</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
     )
   }
 });

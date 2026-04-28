@@ -57,7 +57,9 @@ interface AriaMenuTestProps extends AriaBaseTestProps {
     // Menu should only open on long press
     longPress?: (props?: {name: string}) => ReturnType<typeof render>,
     // Menu must have two levels of submenus
-    submenus?: (props?: {name: string}) => ReturnType<typeof render>
+    submenus?: (props?: {name: string}) => ReturnType<typeof render>,
+    // Menu must have a disabled submenu trigger
+    disabledSubmenuTrigger?: (props?: {name: string}) => ReturnType<typeof render>
   }
 }
 export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): void => {
@@ -633,6 +635,17 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
           expect(nestedSubmenu).not.toBeInTheDocument();
           expect(document.activeElement).toBe(menuTester.trigger());
         });
+
+        if (renderers.disabledSubmenuTrigger) {
+          it('doesnt open a submenu if its trigger is disabled', async () => {
+            let tree = (renderers.disabledSubmenuTrigger!)();
+            let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container, interactionType});
+            await expect(menuTester.openSubmenu({submenuTrigger: 'Share…'})).rejects.toThrow();
+            expect(menuTester.menu()).toBeInTheDocument();
+            expect(menuTester.submenuTriggers()[0]).toHaveAttribute('aria-disabled');
+            expect(tree.getAllByRole('menu', {hidden: true})).toHaveLength(1);
+          });
+        }
       });
 
       describe('submenu specific interaction tests', function () {

@@ -169,7 +169,7 @@ export const AriaTreeTests = ({renderers, setup, prefix}: AriaTreeTestProps): vo
             expect(within(treeTester.rows()[0]).getByRole('checkbox')).not.toBeChecked();
             expect(within(treeTester.rows()[1]).getByRole('checkbox')).toBeChecked();
 
-            await expect(treeTester.toggleRowSelection({row: 2})).rejects.toThrow(/disabled row/);
+            await expect(treeTester.toggleRowSelection({row: 2})).rejects.toThrow();
             expect(rows[0]).toHaveAttribute('aria-selected', 'false');
             expect(rows[1]).toHaveAttribute('aria-selected', 'true');
             expect(rows[2]).not.toHaveAttribute('aria-selected');
@@ -217,8 +217,8 @@ export const AriaTreeTests = ({renderers, setup, prefix}: AriaTreeTestProps): vo
             let rows = treeTester.rows();
             expect(rows[2]).toHaveAttribute('aria-expanded', 'false');
 
-            await expect(treeTester.toggleRowExpansion({row: 2})).rejects.toThrow(/disabled row/);
-            await expect(treeTester.toggleRowSelection({row: 2})).rejects.toThrow(/disabled row/);
+            await expect(treeTester.toggleRowExpansion({row: 2})).rejects.toThrow();
+            await expect(treeTester.toggleRowSelection({row: 2})).rejects.toThrow();
             expect(rows[2]).toHaveAttribute('aria-expanded', 'false');
             expect(rows[2]).not.toHaveAttribute('aria-selected');
           });

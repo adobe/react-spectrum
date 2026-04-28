@@ -675,22 +675,23 @@ describe('Table', () => {
   });
 
   it('should support disabled state', async () => {
-    let {getAllByRole} = renderTable({
+    let {getByRole} = renderTable({
       tableProps: {selectionMode: 'multiple', disabledKeys: ['2'], disabledBehavior: 'all'},
       rowProps: {className: ({isDisabled}) => isDisabled ? 'disabled' : ''}
     });
-    let rows = getAllByRole('row');
-    let row = rows[2];
-
-    expect(row).toHaveAttribute('aria-disabled', 'true');
-    expect(row).toHaveClass('disabled');
-    expect(within(row).getByRole('checkbox')).toBeDisabled();
+    let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+    let disabledRow = tableTester.rows()[1];
+    expect(disabledRow).toHaveAttribute('aria-disabled', 'true');
+    expect(disabledRow).toHaveClass('disabled');
+    expect(within(disabledRow).getByRole('checkbox')).toBeDisabled();
 
     await user.tab();
-    expect(document.activeElement).toBe(rows[1]);
+    expect(document.activeElement).toBe(tableTester.rows()[0]);
     fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
-    expect(document.activeElement).toBe(rows[3]);
+    expect(document.activeElement).toBe(tableTester.rows()[2]);
+    await expect(tableTester.toggleRowSelection({row: 1})).rejects.toThrow();
+    await expect(tableTester.triggerRowAction({row: 1})).rejects.toThrow();
   });
 
   it('should support isDisabled prop on rows', async () => {
@@ -3051,7 +3052,7 @@ describe('Table', () => {
               )}
             </Collection>
           </TableBody>
-  
+
         ))}
       </Table>
     );
