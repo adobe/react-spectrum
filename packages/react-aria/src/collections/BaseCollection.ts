@@ -331,7 +331,7 @@ function filterChildren<T>(collection: BaseCollection<T>, newCollection: BaseCol
       lastNode = newNode;
     }
 
-    currentNode = currentNode.nextKey ? collection.getItem(currentNode.nextKey) : null;
+    currentNode = currentNode.nextKey != null ? collection.getItem(currentNode.nextKey) : null;
   }
 
   // TODO: this is pretty specific to dividers but doesn't feel like there is a good way to get around it since we only can know
@@ -341,7 +341,7 @@ function filterChildren<T>(collection: BaseCollection<T>, newCollection: BaseCol
     let prevKey = lastNode.prevKey;
     newCollection.removeNode(lastNode.key);
 
-    if (prevKey) {
+    if (prevKey != null) {
       lastNode = newCollection.getItem(prevKey) as Mutable<CollectionNode<T>>;
       lastNode.nextKey = null;
     } else {
