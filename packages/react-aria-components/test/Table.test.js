@@ -468,6 +468,39 @@ describe('Table', () => {
     expect(getAllByRole('row')).toHaveLength(5);
   });
 
+  it('should support rows with a falsy key', () => {
+    let falsyKeyRows = [
+      {id: 1, name: 'One', date: '4/7/2021', type: 'File folder'},
+      {id: 0, name: 'Zero', date: '6/7/2020', type: 'File folder'},
+      {id: 2, name: 'Two', date: '11/20/2010', type: 'System file'}
+    ];
+
+    let {getAllByRole} = render(
+      <Table aria-label="Files">
+        <MyTableHeader columns={columns}>
+          {column => (
+            <MyColumn isRowHeader={column.isRowHeader} childColumns={column.children}>
+              {column.name}
+            </MyColumn>
+          )}
+        </MyTableHeader>
+        <TableBody items={falsyKeyRows}>
+          {item => (
+            <MyRow columns={columns}>
+              {column => <Cell>{item[column.id]}</Cell>}
+            </MyRow>
+          )}
+        </TableBody>
+      </Table>
+    );
+
+    let rows = getAllByRole('row');
+    expect(rows).toHaveLength(4);
+    expect(rows[1]).toHaveTextContent('One');
+    expect(rows[2]).toHaveTextContent('Zero');
+    expect(rows[3]).toHaveTextContent('Two');
+  });
+
   it('should support column hover when sorting is allowed', async () => {
     let {getAllByRole} = renderTable({
       columnProps: {allowsSorting: true, className: ({isHovered}) => isHovered ? 'hover' : ''}
@@ -3051,7 +3084,7 @@ describe('Table', () => {
               )}
             </Collection>
           </TableBody>
-  
+
         ))}
       </Table>
     );
