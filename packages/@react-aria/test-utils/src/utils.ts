@@ -47,6 +47,13 @@ export function getMetaKey(): 'MetaLeft' | 'ControlLeft' {
   return isMac() ? 'MetaLeft' : 'ControlLeft';
 }
 
+export function formatTargetNode(value: number | string | HTMLElement): string {
+  if (typeof HTMLElement !== 'undefined' && value instanceof HTMLElement) {
+    return value.outerHTML;
+  }
+  return String(value);
+}
+
 /**
  * Simulates a "long press" event on a element.
  * @param opts - Options for the long press.

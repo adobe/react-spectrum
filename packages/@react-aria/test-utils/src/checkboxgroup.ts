@@ -12,7 +12,7 @@
 
 import {act} from './act';
 import {CheckboxGroupTesterOpts, UserOpts} from './types';
-import {pressElement} from './events';
+import {formatTargetNode, pressElement} from './utils';
 import {within} from '@testing-library/dom';
 
 interface TriggerCheckboxOptions {
@@ -123,9 +123,9 @@ export class CheckboxGroupTester {
     }
 
     if (!checkbox) {
-      throw new Error('Target checkbox not found in the checkboxgroup.');
+      throw new Error(`Target checkbox "${formatTargetNode(opts.checkbox)}" not found in the checkboxgroup.`);
     } else if (checkbox.hasAttribute('disabled')) {
-      throw new Error('Target checkbox is disabled.');
+      throw new Error(`Target checkbox "${formatTargetNode(opts.checkbox)}" is disabled.`);
     }
 
     if (interactionType === 'keyboard') {

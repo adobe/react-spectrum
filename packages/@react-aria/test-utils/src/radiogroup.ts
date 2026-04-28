@@ -12,7 +12,7 @@
 
 import {act} from './act';
 import {Direction, Orientation, RadioGroupTesterOpts, UserOpts} from './types';
-import {pressElement} from './events';
+import {formatTargetNode, pressElement} from './utils';
 import {within} from '@testing-library/dom';
 
 interface TriggerRadioOptions {
@@ -141,9 +141,9 @@ export class RadioGroupTester {
     }
 
     if (!radio) {
-      throw new Error('Target radio not found in the radio group.');
+      throw new Error(`Target radio "${formatTargetNode(opts.radio)}" not found in the radio group.`);
     } else if (radio.hasAttribute('disabled')) {
-      throw new Error('Target radio is disabled.');
+      throw new Error(`Target radio "${formatTargetNode(opts.radio)}" is disabled.`);
     }
 
     if (interactionType === 'keyboard') {

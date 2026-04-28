@@ -12,14 +12,13 @@
 
 import {act} from './act';
 import {BaseGridRowInteractionOpts, Direction, GridRowActionOpts, ToggleGridRowOpts, TreeTesterOpts, UserOpts} from './types';
-import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
+import {formatTargetNode, getAltKey, getMetaKey, pressElement, triggerLongPress} from './utils';
 import {within} from '@testing-library/dom';
 
 interface TreeToggleExpansionOpts extends BaseGridRowInteractionOpts {}
 interface TreeToggleRowOpts extends ToggleGridRowOpts {}
 interface TreeRowActionOpts extends GridRowActionOpts {}
 
-// TODO: this ended up being pretty much the same as gridlist, refactor so it extends from gridlist
 export class TreeTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
@@ -126,15 +125,13 @@ export class TreeTester {
     }
 
     if (!row) {
-      throw new Error('Target row not found in the tree.');
+      throw new Error(`Target row "${formatTargetNode(opts.row)}" not found in the tree.`);
     }
 
     let rowCheckbox = within(row).queryByRole('checkbox');
 
-    // TODO: we early return here because the checkbox can't be keyboard navigated to if the row is disabled usually
-    // but we may to check for disabledBehavior (aka if the disable row gets skipped when keyboard navigating or not)
-    if (interactionType === 'keyboard' && (rowCheckbox?.getAttribute('disabled') === '' || row?.getAttribute('aria-disabled') === 'true')) {
-      return;
+    if (rowCheckbox?.getAttribute('disabled') === '' || row?.getAttribute('aria-disabled') === 'true') {
+      throw new Error(`Cannot toggle selection on disabled row "${formatTargetNode(opts.row)}".`);
     }
 
     // this would be better than the check to do nothing in events.ts
@@ -179,9 +176,7 @@ export class TreeTester {
       interactionType = this._interactionType
     } = opts;
     if (!this.tree().contains(document.activeElement)) {
-      await act(async () => {
-        this.tree().focus();
-      });
+      act(() => this.tree().focus());
     }
 
     if (typeof row === 'string' || typeof row === 'number') {
@@ -189,19 +184,19 @@ export class TreeTester {
     }
 
     if (!row) {
-      throw new Error('Target row not found in the tree.');
+      throw new Error(`Target row "${formatTargetNode(opts.row)}" not found in the tree.`);
     } else if (row.getAttribute('aria-expanded') == null) {
-      throw new Error('Target row is not expandable.');
+      throw new Error(`Target row "${formatTargetNode(opts.row)}" is not expandable.`);
+    }
+
+    if (row.getAttribute('aria-disabled') === 'true') {
+      throw new Error(`Cannot toggle expansion on disabled row "${formatTargetNode(opts.row)}".`);
     }
 
     if (interactionType === 'mouse' || interactionType === 'touch') {
       let rowExpander = within(row).getAllByRole('button')[0]; // what happens if the button is not first? how can we differentiate?
       await pressElement(this.user, rowExpander, interactionType);
     } else if (interactionType === 'keyboard') {
-      if (row?.getAttribute('aria-disabled') === 'true') {
-        return;
-      }
-
       // TODO: We always Use Option/Ctrl when keyboard navigating so selection isn't changed
       // in selectionmode="replace"/highlight selection when navigating to the row that the user wants
       // to expand. Discuss if this is useful or not
@@ -231,16 +226,16 @@ export class TreeTester {
     }
 
     if (!row) {
-      throw new Error('Target row not found in the tree.');
+      throw new Error(`Target row "${formatTargetNode(opts.row)}" not found in the tree.`);
+    }
+
+    if (row.getAttribute('aria-disabled') === 'true') {
+      throw new Error(`Cannot trigger row action on disabled row "${formatTargetNode(opts.row)}".`);
     }
 
     if (needsDoubleClick) {
       await this.user.dblClick(row);
     } else if (interactionType === 'keyboard') {
-      if (row?.getAttribute('aria-disabled') === 'true') {
-        return;
-      }
-
       // TODO: same as above, uses the modifier key to make sure we don't modify selection state on row focus
       // as we keyboard navigate to the row we want activate
       await this.keyboardNavigateToRow({row});

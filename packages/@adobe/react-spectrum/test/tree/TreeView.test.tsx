@@ -673,7 +673,7 @@ describe('Tree', () => {
       // Due to disabledBehavior being set to 'all' this expandable row has its action disabled
       let disabledRow = rows[1];
       expect(disabledRow).toHaveAttribute('data-disabled', 'true');
-      await treeTester.triggerRowAction({row: disabledRow});
+      await expect(treeTester.triggerRowAction({row: disabledRow})).rejects.toThrow();
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
 

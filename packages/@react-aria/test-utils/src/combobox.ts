@@ -12,6 +12,7 @@
 
 import {act} from './act';
 import {ComboBoxTesterOpts, UserOpts} from './types';
+import {formatTargetNode} from './utils';
 import {waitFor, within} from '@testing-library/dom';
 
 interface ComboBoxOpenOpts {
@@ -200,7 +201,7 @@ export class ComboBoxTester {
     }
 
     if (!option) {
-      throw new Error('Target option not found in the listbox.');
+      throw new Error(`Target option "${formatTargetNode(opts.option)}" not found in the listbox.`);
     }
 
     let isMultiSelect = listbox.getAttribute('aria-multiselectable') === 'true';

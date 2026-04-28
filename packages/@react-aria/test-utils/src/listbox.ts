@@ -11,7 +11,7 @@
  */
 
 import {act} from './act';
-import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
+import {formatTargetNode, getAltKey, getMetaKey, pressElement, triggerLongPress} from './utils';
 import {ListBoxTesterOpts, UserOpts} from './types';
 import {within} from '@testing-library/dom';
 
@@ -152,7 +152,7 @@ export class ListBoxTester {
     }
 
     if (!option) {
-      throw new Error('Target option not found in the listbox.');
+      throw new Error(`Target option "${formatTargetNode(opts.option)}" not found in the listbox.`);
     }
 
     if (interactionType === 'keyboard') {
@@ -198,7 +198,7 @@ export class ListBoxTester {
     }
 
     if (!option) {
-      throw new Error('Target option not found in the listbox.');
+      throw new Error(`Target option "${formatTargetNode(opts.option)}" not found in the listbox.`);
     }
 
     if (needsDoubleClick) {

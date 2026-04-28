@@ -12,7 +12,7 @@
 
 import {act} from './act';
 import {Direction, Orientation, TabsTesterOpts, UserOpts} from './types';
-import {pressElement} from './events';
+import {formatTargetNode, pressElement} from './utils';
 import {within} from '@testing-library/dom';
 
 interface TriggerTabOptions {
@@ -137,9 +137,9 @@ export class TabsTester {
     }
 
     if (!tab) {
-      throw new Error('Target tab not found in the tablist.');
+      throw new Error(`Target tab "${formatTargetNode(opts.tab)}" not found in the tablist.`);
     } else if (tab.hasAttribute('disabled')) {
-      throw new Error('Target tab is disabled.');
+      throw new Error(`Target tab "${formatTargetNode(opts.tab)}" is disabled.`);
     }
 
     if (interactionType === 'keyboard') {

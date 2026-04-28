@@ -12,7 +12,7 @@
 
 import {act} from './act';
 import {Direction, GridListTesterOpts, GridRowActionOpts, ToggleGridRowOpts, UserOpts} from './types';
-import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
+import {formatTargetNode, getAltKey, getMetaKey, pressElement, triggerLongPress} from './utils';
 import {within} from '@testing-library/dom';
 
 interface GridListToggleRowOpts extends ToggleGridRowOpts {}
@@ -124,15 +124,13 @@ export class GridListTester {
     }
 
     if (!row) {
-      throw new Error('Target row not found in the gridlist.');
+      throw new Error(`Target row "${formatTargetNode(opts.row)}" not found in the gridlist.`);
     }
 
     let rowCheckbox = within(row).queryByRole('checkbox');
 
-    // TODO: we early return here because the checkbox/row can't be keyboard navigated to if the row is disabled usually
-    // but we may to check for disabledBehavior (aka if the disable row gets skipped when keyboard navigating or not)
-    if (interactionType === 'keyboard' && (rowCheckbox?.getAttribute('disabled') === '' || row?.getAttribute('aria-disabled') === 'true')) {
-      return;
+    if (rowCheckbox?.getAttribute('disabled') === '' || row?.getAttribute('aria-disabled') === 'true') {
+      throw new Error(`Cannot toggle selection on disabled row "${formatTargetNode(opts.row)}".`);
     }
 
     // this would be better than the check to do nothing in events.ts
@@ -184,16 +182,16 @@ export class GridListTester {
     }
 
     if (!row) {
-      throw new Error('Target row not found in the gridlist.');
+      throw new Error(`Target row "${formatTargetNode(opts.row)}" not found in the gridlist.`);
+    }
+
+    if (row.getAttribute('aria-disabled') === 'true') {
+      throw new Error(`Cannot trigger row action on disabled row "${formatTargetNode(opts.row)}".`);
     }
 
     if (needsDoubleClick) {
       await this.user.dblClick(row);
     } else if (interactionType === 'keyboard') {
-      if (row?.getAttribute('aria-disabled') === 'true') {
-        return;
-      }
-
       await this.keyboardNavigateToRow({row, selectionOnNav: 'none'});
       await this.user.keyboard('[Enter]');
     } else {

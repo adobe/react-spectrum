@@ -12,7 +12,7 @@
 
 import {act} from './act';
 import {MenuTesterOpts, UserOpts} from './types';
-import {triggerLongPress} from './events';
+import {formatTargetNode, triggerLongPress} from './utils';
 import {waitFor, within} from '@testing-library/dom';
 
 interface MenuOpenOpts {
@@ -203,7 +203,7 @@ export class MenuTester {
       }
 
       if (!option) {
-        throw new Error('Target option not found in the menu.');
+        throw new Error(`Target option "${formatTargetNode(opts.option)}" not found in the menu.`);
       }
 
       if (interactionType === 'keyboard') {
@@ -284,7 +284,7 @@ export class MenuTester {
   /**
    * Opens the submenu. Defaults to using the interaction type set on the menu tester. The submenu trigger can be targeted via the trigger's node or the trigger's text.
    */
-  async openSubmenu(opts: MenuOpenSubmenuOpts): Promise<MenuTester | null> {
+  async openSubmenu(opts: MenuOpenSubmenuOpts): Promise<MenuTester> {
     let {
       submenuTrigger,
       needsLongPress,
@@ -293,46 +293,46 @@ export class MenuTester {
 
     let trigger = this.trigger();
     let isDisabled = trigger.hasAttribute('disabled');
-    if (!trigger.getAttribute('aria-controls') && !isDisabled) {
+    if (isDisabled) {
+      throw new Error(`Cannot open submenu because its parent menu's trigger "${formatTargetNode(trigger)}" is disabled.`);
+    }
+    if (!trigger.getAttribute('aria-controls')) {
       await this.open({needsLongPress});
     }
-    if (!isDisabled) {
-      let menu = this.menu();
-      if (menu) {
-        if (typeof submenuTrigger === 'string') {
-          submenuTrigger = (within(menu!).getByText(submenuTrigger).closest('[role=menuitem]'))! as HTMLElement;
-        }
-
-        let submenuTriggerTester = new MenuTester({
-          user: this.user,
-          interactionType: this._interactionType,
-          root: submenuTrigger,
-          isSubmenu: true,
-          advanceTimer: this._advanceTimer,
-          rootMenu: (this._isSubmenu ? this._rootMenu : this.menu()) || undefined
-        });
-        if (interactionType === 'mouse') {
-          await this.user.pointer({target: submenuTrigger});
-        } else if (interactionType === 'keyboard') {
-          await this.keyboardNavigateToOption({option: submenuTrigger});
-          await this.user.keyboard('[ArrowRight]');
-        } else {
-          await submenuTriggerTester.open();
-        }
-
-        await waitFor(() => {
-          if (submenuTriggerTester._trigger?.getAttribute('aria-expanded') !== 'true') {
-            throw new Error('aria-expanded for the submenu trigger wasn\'t changed to "true", unable to confirm the existance of the submenu');
-          } else {
-            return true;
-          }
-        });
-
-        return submenuTriggerTester;
-      }
+    let menu = this.menu();
+    if (!menu) {
+      throw new Error('Cannot open submenu, parent menu didn\'t open on trigger "${formatTargetNode(trigger)}" press.');
+    }
+    if (typeof submenuTrigger === 'string') {
+      submenuTrigger = (within(menu!).getByText(submenuTrigger).closest('[role=menuitem]'))! as HTMLElement;
     }
 
-    return null;
+    let submenuTriggerTester = new MenuTester({
+      user: this.user,
+      interactionType: this._interactionType,
+      root: submenuTrigger,
+      isSubmenu: true,
+      advanceTimer: this._advanceTimer,
+      rootMenu: (this._isSubmenu ? this._rootMenu : this.menu()) || undefined
+    });
+    if (interactionType === 'mouse') {
+      await this.user.pointer({target: submenuTrigger});
+    } else if (interactionType === 'keyboard') {
+      await this.keyboardNavigateToOption({option: submenuTrigger});
+      await this.user.keyboard('[ArrowRight]');
+    } else {
+      await submenuTriggerTester.open();
+    }
+
+    await waitFor(() => {
+      if (submenuTriggerTester._trigger?.getAttribute('aria-expanded') !== 'true') {
+        throw new Error('aria-expanded for the submenu trigger wasn\'t changed to "true", unable to confirm the existance of the submenu');
+      } else {
+        return true;
+      }
+    });
+
+    return submenuTriggerTester;
   }
 
   private async keyboardNavigateToOption(opts: {option: HTMLElement}) {

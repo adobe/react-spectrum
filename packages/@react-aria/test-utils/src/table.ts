@@ -12,7 +12,7 @@
 
 import {act} from './act';
 import {BaseGridRowInteractionOpts, Direction, GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
-import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
+import {formatTargetNode, getAltKey, getMetaKey, pressElement, triggerLongPress} from './utils';
 import {waitFor, within} from '@testing-library/dom';
 
 interface TableToggleRowOpts extends ToggleGridRowOpts {}
@@ -135,10 +135,14 @@ export class TableTester {
     }
 
     if (!row) {
-      throw new Error('Target row not found in the table.');
+      throw new Error(`Target row "${formatTargetNode(opts.row)}" not found in the table.`);
     }
 
     let rowCheckbox = within(row).queryByRole('checkbox');
+
+    if (rowCheckbox?.getAttribute('disabled') === '' || row.getAttribute('aria-disabled') === 'true') {
+      throw new Error(`Cannot toggle selection on disabled row "${formatTargetNode(opts.row)}".`);
+    }
 
     if (interactionType === 'keyboard' && (!checkboxSelection || !rowCheckbox)) {
       await this.keyboardNavigateToRow({row, selectionOnNav: selectionBehavior === 'replace' ? 'none' : 'default'});
@@ -189,19 +193,19 @@ export class TableTester {
     }
 
     if (!row) {
-      throw new Error('Target row not found in the table.');
+      throw new Error(`Target row "${formatTargetNode(opts.row)}" not found in the table.`);
     } else if (row.getAttribute('aria-expanded') == null) {
-      throw new Error('Target row is not expandable.');
+      throw new Error(`Target row "${formatTargetNode(opts.row)}" is not expandable.`);
+    }
+
+    if (row.getAttribute('aria-disabled') === 'true') {
+      throw new Error(`Cannot toggle expansion on disabled row "${formatTargetNode(opts.row)}".`);
     }
 
     if (interactionType === 'mouse' || interactionType === 'touch') {
       let rowExpander = within(row).getAllByRole('button')[0]; // what happens if the button is not first? how can we differentiate?
       await pressElement(this.user, rowExpander, interactionType);
     } else if (interactionType === 'keyboard') {
-      if (row?.getAttribute('aria-disabled') === 'true') {
-        return;
-      }
-
       // TODO: We always Use Option/Ctrl when keyboard navigating so selection isn't changed
       // in selectionmode="replace"/highlight selection when navigating to the row that the user wants
       // to expand. Discuss if this is useful or not
@@ -399,7 +403,11 @@ export class TableTester {
     }
 
     if (!row) {
-      throw new Error('Target row not found in the table.');
+      throw new Error(`Target row "${formatTargetNode(opts.row)}" not found in the table.`);
+    }
+
+    if (row.getAttribute('aria-disabled') === 'true') {
+      throw new Error(`Cannot trigger row action on disabled row "${formatTargetNode(opts.row)}".`);
     }
 
     if (needsDoubleClick) {

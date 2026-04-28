@@ -11,6 +11,7 @@
  */
 
 import {act} from './act';
+import {formatTargetNode} from './utils';
 import {SelectTesterOpts, UserOpts} from './types';
 import {waitFor, within} from '@testing-library/dom';
 
@@ -188,7 +189,7 @@ export class SelectTester {
       }
 
       if (!option) {
-        throw new Error('Target option not found in the listbox.');
+        throw new Error(`Target option "${formatTargetNode(opts.option)}" not found in the listbox.`);
       }
 
       let isMultiSelect = listbox.getAttribute('aria-multiselectable') === 'true';
