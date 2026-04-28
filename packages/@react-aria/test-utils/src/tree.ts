@@ -52,16 +52,16 @@ export class TreeTester {
   /**
    * Returns a row matching the specified index or text content.
    */
-  findRow(opts: {rowIndexOrText: number | string}): HTMLElement {
+  findRow(opts: {indexOrText: number | string}): HTMLElement {
     let {
-      rowIndexOrText
+      indexOrText
     } = opts;
 
     let row;
-    if (typeof rowIndexOrText === 'number') {
-      row = this.rows()[rowIndexOrText];
-    } else if (typeof rowIndexOrText === 'string') {
-      row = (within(this.tree()!).getByText(rowIndexOrText).closest('[role=row]'))! as HTMLElement;
+    if (typeof indexOrText === 'number') {
+      row = this.rows()[indexOrText];
+    } else if (typeof indexOrText === 'string') {
+      row = (within(this.tree()!).getByText(indexOrText).closest('[role=row]'))! as HTMLElement;
     }
 
     return row;
@@ -122,7 +122,7 @@ export class TreeTester {
     let metaKey = getMetaKey();
 
     if (typeof row === 'string' || typeof row === 'number') {
-      row = this.findRow({rowIndexOrText: row});
+      row = this.findRow({indexOrText: row});
     }
 
     if (!row) {
@@ -185,7 +185,7 @@ export class TreeTester {
     }
 
     if (typeof row === 'string' || typeof row === 'number') {
-      row = this.findRow({rowIndexOrText: row});
+      row = this.findRow({indexOrText: row});
     }
 
     if (!row) {
@@ -227,7 +227,7 @@ export class TreeTester {
     } = opts;
 
     if (typeof row === 'string' || typeof row === 'number') {
-      row = this.findRow({rowIndexOrText: row});
+      row = this.findRow({indexOrText: row});
     }
 
     if (!row) {

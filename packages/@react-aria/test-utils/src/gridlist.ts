@@ -50,16 +50,16 @@ export class GridListTester {
   /**
    * Returns a row matching the specified index or text content.
    */
-  findRow(opts: {rowIndexOrText: number | string}): HTMLElement {
+  findRow(opts: {indexOrText: number | string}): HTMLElement {
     let {
-      rowIndexOrText
+      indexOrText
     } = opts;
 
     let row;
-    if (typeof rowIndexOrText === 'number') {
-      row = this.rows()[rowIndexOrText];
-    } else if (typeof rowIndexOrText === 'string') {
-      row = (within(this.gridlist()!).getByText(rowIndexOrText).closest('[role=row]'))! as HTMLElement;
+    if (typeof indexOrText === 'number') {
+      row = this.rows()[indexOrText];
+    } else if (typeof indexOrText === 'string') {
+      row = (within(this.gridlist()!).getByText(indexOrText).closest('[role=row]'))! as HTMLElement;
     }
 
     return row;
@@ -120,7 +120,7 @@ export class GridListTester {
     let metaKey = getMetaKey();
 
     if (typeof row === 'string' || typeof row === 'number') {
-      row = this.findRow({rowIndexOrText: row});
+      row = this.findRow({indexOrText: row});
     }
 
     if (!row) {
@@ -180,7 +180,7 @@ export class GridListTester {
     } = opts;
 
     if (typeof row === 'string' || typeof row === 'number') {
-      row = this.findRow({rowIndexOrText: row});
+      row = this.findRow({indexOrText: row});
     }
 
     if (!row) {

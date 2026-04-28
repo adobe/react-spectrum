@@ -810,7 +810,7 @@ describe('CheckboxGroup', () => {
       expect(checkboxes[4]).toBeChecked();
       expect(checkboxGroupTester.selectedCheckboxes()).toHaveLength(2);
 
-      let checkbox4 = checkboxGroupTester.findCheckbox({checkboxIndexOrText: 3});
+      let checkbox4 = checkboxGroupTester.findCheckbox({indexOrText: 3});
       await checkboxGroupTester.toggleCheckbox({checkbox: checkbox4, interactionType: 'keyboard'});
       expect(checkboxes[3]).toBeChecked();
       expect(checkboxGroupTester.selectedCheckboxes()).toHaveLength(3);
@@ -819,7 +819,7 @@ describe('CheckboxGroup', () => {
       expect(checkboxes[0]).not.toBeChecked();
       expect(checkboxGroupTester.selectedCheckboxes()).toHaveLength(2);
 
-      let checkbox5 = checkboxGroupTester.findCheckbox({checkboxIndexOrText: 'Rugby'});
+      let checkbox5 = checkboxGroupTester.findCheckbox({indexOrText: 'Rugby'});
       await checkboxGroupTester.toggleCheckbox({checkbox: checkbox5, interactionType: 'mouse'});
       expect(checkboxes[4]).not.toBeChecked();
       expect(checkboxGroupTester.selectedCheckboxes()).toHaveLength(1);

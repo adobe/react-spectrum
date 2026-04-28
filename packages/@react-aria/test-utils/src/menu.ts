@@ -154,19 +154,19 @@ export class MenuTester {
   /**
    * Returns a option matching the specified index or text content.
    */
-  findOption(opts: {optionIndexOrText: number | string}): HTMLElement {
+  findOption(opts: {indexOrText: number | string}): HTMLElement {
     let {
-      optionIndexOrText
+      indexOrText
     } = opts;
 
     let option;
     let options = this.options();
     let menu = this.menu();
 
-    if (typeof optionIndexOrText === 'number') {
-      option = options[optionIndexOrText];
-    } else if (typeof optionIndexOrText === 'string' && menu != null) {
-      option = (within(menu!).getByText(optionIndexOrText).closest('[role=menuitem], [role=menuitemradio], [role=menuitemcheckbox]'))! as HTMLElement;
+    if (typeof indexOrText === 'number') {
+      option = options[indexOrText];
+    } else if (typeof indexOrText === 'string' && menu != null) {
+      option = (within(menu!).getByText(indexOrText).closest('[role=menuitem], [role=menuitemradio], [role=menuitemcheckbox]'))! as HTMLElement;
     }
 
     return option;
@@ -199,7 +199,7 @@ export class MenuTester {
 
     if (menu) {
       if (typeof option === 'string' || typeof option === 'number') {
-        option = this.findOption({optionIndexOrText: option});
+        option = this.findOption({indexOrText: option});
       }
 
       if (!option) {

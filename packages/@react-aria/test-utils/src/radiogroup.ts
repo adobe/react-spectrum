@@ -55,16 +55,16 @@ export class RadioGroupTester {
   /**
    * Returns a radio matching the specified index or text content.
    */
-  findRadio(opts: {radioIndexOrText: number | string}): HTMLElement {
+  findRadio(opts: {indexOrText: number | string}): HTMLElement {
     let {
-      radioIndexOrText
+      indexOrText
     } = opts;
 
     let radio;
-    if (typeof radioIndexOrText === 'number') {
-      radio = this.radios()[radioIndexOrText];
-    } else if (typeof radioIndexOrText === 'string') {
-      let label = within(this.radiogroup()).getByText(radioIndexOrText);
+    if (typeof indexOrText === 'number') {
+      radio = this.radios()[indexOrText];
+    } else if (typeof indexOrText === 'string') {
+      let label = within(this.radiogroup()).getByText(indexOrText);
       // Label may wrap the radio, or the actual label may be a sibling span, or the radio div could have the label within it
       if (label) {
         radio = within(label).queryByRole('radio');
@@ -137,7 +137,7 @@ export class RadioGroupTester {
     } = opts;
 
     if (typeof radio === 'string' || typeof radio === 'number') {
-      radio = this.findRadio({radioIndexOrText: radio});
+      radio = this.findRadio({indexOrText: radio});
     }
 
     if (!radio) {

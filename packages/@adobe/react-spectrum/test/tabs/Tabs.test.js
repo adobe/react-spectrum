@@ -1341,14 +1341,14 @@ describe('Tabs', function () {
 
       await tabsTester.triggerTab({tab: 4, interactionType: 'keyboard'});
       expect(tabsTester.selectedTab()).toBe(tabs[4]);
-      let tab4 = tabsTester.findTab({tabIndexOrText: 3});
+      let tab4 = tabsTester.findTab({indexOrText: 3});
       await tabsTester.triggerTab({tab: tab4, interactionType: 'keyboard'});
       expect(tabsTester.selectedTab()).toBe(tabs[3]);
 
       await tabsTester.triggerTab({tab: 'Tab 1', interactionType: 'mouse'});
       expect(tabsTester.selectedTab()).toBe(tabs[0]);
 
-      let tab5 = tabsTester.findTab({tabIndexOrText: 'Tab 5'});
+      let tab5 = tabsTester.findTab({indexOrText: 'Tab 5'});
       await tabsTester.triggerTab({tab: tab5, interactionType: 'mouse'});
       expect(tabsTester.selectedTab()).toBe(tabs[4]);
     });

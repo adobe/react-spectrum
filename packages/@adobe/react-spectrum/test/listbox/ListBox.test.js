@@ -126,11 +126,11 @@ describe('ListBox', function () {
       expect(option).toHaveAttribute('aria-setsize');
     }
 
-    expect(listboxTester.findOption({optionIndexOrText: 'Foo'})).toBeTruthy();
-    expect(listboxTester.findOption({optionIndexOrText: 'Bar'})).toBeTruthy();
-    expect(listboxTester.findOption({optionIndexOrText: 'Baz'})).toBeTruthy();
-    expect(listboxTester.findOption({optionIndexOrText: 'Blah'})).toBeTruthy();
-    expect(listboxTester.findOption({optionIndexOrText: 'Bleh'})).toBeTruthy();
+    expect(listboxTester.findOption({indexOrText: 'Foo'})).toBeTruthy();
+    expect(listboxTester.findOption({indexOrText: 'Bar'})).toBeTruthy();
+    expect(listboxTester.findOption({indexOrText: 'Baz'})).toBeTruthy();
+    expect(listboxTester.findOption({indexOrText: 'Blah'})).toBeTruthy();
+    expect(listboxTester.findOption({indexOrText: 'Bleh'})).toBeTruthy();
   });
 
   it('renders with falsy id', function () {
@@ -819,7 +819,7 @@ describe('ListBox', function () {
 
     let {rerender, getByRole, getByLabelText} = render(<Example sections={sections} />);
     let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
-    let item = listboxTester.findOption({optionIndexOrText: 'Foo 1'});
+    let item = listboxTester.findOption({indexOrText: 'Foo 1'});
     let listboxSections = listboxTester.sections();
     expect(listboxTester.options({element: listboxSections[0]})).toContain(item);
     expect(listboxSections[0]).toBe(getByLabelText('Section 1'));
@@ -837,7 +837,7 @@ describe('ListBox', function () {
 
     rerender(<Example sections={sections2} />);
     listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
-    item = listboxTester.findOption({optionIndexOrText: 'Foo 1'});
+    item = listboxTester.findOption({indexOrText: 'Foo 1'});
     listboxSections = listboxTester.sections();
     expect(listboxTester.options({element: listboxSections[1]})).toContain(item);
     expect(listboxSections[1]).toBe(getByLabelText('Section 2'));

@@ -54,16 +54,16 @@ export class CheckboxGroupTester {
   /**
    * Returns a checkbox matching the specified index or text content.
    */
-  findCheckbox(opts: {checkboxIndexOrText: number | string}): HTMLElement {
+  findCheckbox(opts: {indexOrText: number | string}): HTMLElement {
     let {
-      checkboxIndexOrText
+      indexOrText
     } = opts;
 
     let checkbox;
-    if (typeof checkboxIndexOrText === 'number') {
-      checkbox = this.checkboxes()[checkboxIndexOrText];
-    } else if (typeof checkboxIndexOrText === 'string') {
-      let label = within(this.checkboxgroup()).getByText(checkboxIndexOrText);
+    if (typeof indexOrText === 'number') {
+      checkbox = this.checkboxes()[indexOrText];
+    } else if (typeof indexOrText === 'string') {
+      let label = within(this.checkboxgroup()).getByText(indexOrText);
 
       // Label may wrap the checkbox, or the actual label may be a sibling span, or the checkbox div could have the label within it
       if (label) {
@@ -119,7 +119,7 @@ export class CheckboxGroupTester {
     } = opts;
 
     if (typeof checkbox === 'string' || typeof checkbox === 'number') {
-      checkbox = this.findCheckbox({checkboxIndexOrText: checkbox});
+      checkbox = this.findCheckbox({indexOrText: checkbox});
     }
 
     if (!checkbox) {

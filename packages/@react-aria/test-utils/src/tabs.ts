@@ -60,17 +60,17 @@ export class TabsTester {
   /**
    * Returns a tab matching the specified index or text content.
    */
-  findTab(opts: {tabIndexOrText: number | string}): HTMLElement {
+  findTab(opts: {indexOrText: number | string}): HTMLElement {
     let {
-      tabIndexOrText
+      indexOrText
     } = opts;
 
     let tab;
     let tabs = this.tabs();
-    if (typeof tabIndexOrText === 'number') {
-      tab = tabs[tabIndexOrText];
-    } else if (typeof tabIndexOrText === 'string') {
-      tab = (within(this._tablist).getByText(tabIndexOrText).closest('[role=tab]'))! as HTMLElement;
+    if (typeof indexOrText === 'number') {
+      tab = tabs[indexOrText];
+    } else if (typeof indexOrText === 'string') {
+      tab = (within(this._tablist).getByText(indexOrText).closest('[role=tab]'))! as HTMLElement;
     }
 
     return tab;
@@ -133,7 +133,7 @@ export class TabsTester {
     } = opts;
 
     if (typeof tab === 'string' || typeof tab === 'number') {
-      tab = this.findTab({tabIndexOrText: tab});
+      tab = this.findTab({indexOrText: tab});
     }
 
     if (!tab) {

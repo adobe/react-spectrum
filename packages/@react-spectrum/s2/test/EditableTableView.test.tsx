@@ -270,7 +270,7 @@ describe('TableView', () => {
 
       expect(dialog).not.toBeInTheDocument();
 
-      expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+      expect(tableTester.findRow({indexOrText: 'Apples Crisp'})).toBeInTheDocument();
 
       // navigate to Farmer column
       await user.keyboard('{ArrowRight}');
@@ -295,13 +295,13 @@ describe('TableView', () => {
       act(() => {jest.runAllTimers();});
 
       expect(dialog).not.toBeInTheDocument();
-      expect(within(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).getByText('Steven')).toBeInTheDocument();
+      expect(within(tableTester.findRow({indexOrText: 'Apples Crisp'})).getByText('Steven')).toBeInTheDocument();
 
       await user.tab();
       expect(getByRole('button', {name: 'After'})).toHaveFocus();
 
       await user.tab({shift: true});
-      expect(within(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).getByRole('button', {name: 'Edit farmer'})).toHaveFocus();
+      expect(within(tableTester.findRow({indexOrText: 'Apples Crisp'})).getByRole('button', {name: 'Edit farmer'})).toHaveFocus();
     });
 
     it('should perform validation when editing text in a cell', async () => {
@@ -338,7 +338,7 @@ describe('TableView', () => {
 
       expect(dialog).not.toBeInTheDocument();
 
-      expect(tableTester.findRow({rowIndexOrText: 'Peaches'})).toBeInTheDocument();
+      expect(tableTester.findRow({indexOrText: 'Peaches'})).toBeInTheDocument();
     });
 
     it('should be cancellable through the buttons in the dialog', async () => {
@@ -366,7 +366,7 @@ describe('TableView', () => {
 
       expect(dialog).not.toBeInTheDocument();
 
-      expect(tableTester.findRow({rowIndexOrText: 'Apples'})).toBeInTheDocument();
+      expect(tableTester.findRow({indexOrText: 'Apples'})).toBeInTheDocument();
       expect(onCancel).toHaveBeenCalled();
     });
 
@@ -393,7 +393,7 @@ describe('TableView', () => {
       act(() => {jest.runAllTimers();});
 
       expect(dialog).not.toBeInTheDocument();
-      expect(tableTester.findRow({rowIndexOrText: 'Apples'})).toBeInTheDocument();
+      expect(tableTester.findRow({indexOrText: 'Apples'})).toBeInTheDocument();
       expect(onCancel).toHaveBeenCalled();
     });
   });
@@ -419,7 +419,7 @@ describe('TableView', () => {
       act(() => {jest.runAllTimers();});
 
       expect(dialog).not.toBeInTheDocument();
-      expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+      expect(tableTester.findRow({indexOrText: 'Apples Crisp'})).toBeInTheDocument();
     });
   });
 
@@ -446,7 +446,7 @@ describe('TableView', () => {
       act(() => {jest.advanceTimersByTime(5000);});
 
       expect(dialog).not.toBeInTheDocument();
-      expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+      expect(tableTester.findRow({indexOrText: 'Apples Crisp'})).toBeInTheDocument();
       let button = within(tableTester.findCell({text: 'Apples Crisp'})).getByRole('button');
       expect(button).toHaveAttribute('aria-disabled', 'true');
       expect(button).toHaveFocus();
@@ -479,7 +479,7 @@ describe('TableView', () => {
       act(() => {jest.advanceTimersByTime(5000);});
 
       expect(dialog).not.toBeInTheDocument();
-      expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+      expect(tableTester.findRow({indexOrText: 'Apples Crisp'})).toBeInTheDocument();
       let button = within(tableTester.findCell({text: 'Apples Crisp'})).getByRole('button');
       expect(button).toHaveAttribute('aria-disabled', 'true');
       expect(button).toHaveFocus();
@@ -642,7 +642,7 @@ describe('TableView', () => {
 
           expect(dialog).not.toBeInTheDocument();
 
-          expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+          expect(tableTester.findRow({indexOrText: 'Apples Crisp'})).toBeInTheDocument();
 
           // navigate to Farmer column
           await user.keyboard('{ArrowRight}');
@@ -667,13 +667,13 @@ describe('TableView', () => {
           act(() => {jest.runAllTimers();});
 
           expect(dialog).not.toBeInTheDocument();
-          expect(within(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).getByText('Steven')).toBeInTheDocument();
+          expect(within(tableTester.findRow({indexOrText: 'Apples Crisp'})).getByText('Steven')).toBeInTheDocument();
 
           await user.tab();
           expect(getByRole('button', {name: 'After'})).toHaveFocus();
 
           await user.tab({shift: true});
-          expect(within(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).getByRole('button', {name: 'Edit farmer'})).toHaveFocus();
+          expect(within(tableTester.findRow({indexOrText: 'Apples Crisp'})).getByRole('button', {name: 'Edit farmer'})).toHaveFocus();
         });
 
         it('should perform validation when editing text in a cell', async () => {
@@ -710,7 +710,7 @@ describe('TableView', () => {
 
           expect(dialog).not.toBeInTheDocument();
 
-          expect(tableTester.findRow({rowIndexOrText: 'Peaches'})).toBeInTheDocument();
+          expect(tableTester.findRow({indexOrText: 'Peaches'})).toBeInTheDocument();
         });
 
         it('should be cancellable through the buttons in the dialog', async () => {
@@ -738,7 +738,7 @@ describe('TableView', () => {
 
           expect(dialog).not.toBeInTheDocument();
 
-          expect(tableTester.findRow({rowIndexOrText: 'Apples'})).toBeInTheDocument();
+          expect(tableTester.findRow({indexOrText: 'Apples'})).toBeInTheDocument();
           expect(onCancel).toHaveBeenCalled();
         });
 
@@ -765,7 +765,7 @@ describe('TableView', () => {
           act(() => {jest.runAllTimers();});
 
           expect(dialog).not.toBeInTheDocument();
-          expect(tableTester.findRow({rowIndexOrText: 'Apples'})).toBeInTheDocument();
+          expect(tableTester.findRow({indexOrText: 'Apples'})).toBeInTheDocument();
           expect(onCancel).toHaveBeenCalled();
         });
       });
@@ -791,7 +791,7 @@ describe('TableView', () => {
           act(() => {jest.runAllTimers();});
 
           expect(dialog).not.toBeInTheDocument();
-          expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+          expect(tableTester.findRow({indexOrText: 'Apples Crisp'})).toBeInTheDocument();
         });
       });
 
@@ -818,7 +818,7 @@ describe('TableView', () => {
           act(() => {jest.advanceTimersByTime(5000);});
 
           expect(dialog).not.toBeInTheDocument();
-          expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+          expect(tableTester.findRow({indexOrText: 'Apples Crisp'})).toBeInTheDocument();
           let button = within(tableTester.findCell({text: 'Apples Crisp'})).getByRole('button');
           expect(button).toHaveAttribute('aria-disabled', 'true');
           expect(button).toHaveFocus();
@@ -851,7 +851,7 @@ describe('TableView', () => {
           act(() => {jest.advanceTimersByTime(5000);});
 
           expect(dialog).not.toBeInTheDocument();
-          expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+          expect(tableTester.findRow({indexOrText: 'Apples Crisp'})).toBeInTheDocument();
           let button = within(tableTester.findCell({text: 'Apples Crisp'})).getByRole('button');
           expect(button).toHaveAttribute('aria-disabled', 'true');
           expect(button).toHaveFocus();

@@ -82,18 +82,18 @@ export class ListBoxTester {
   /**
    * Returns a option matching the specified index or text content.
    */
-  findOption(opts: {optionIndexOrText: number | string}): HTMLElement {
+  findOption(opts: {indexOrText: number | string}): HTMLElement {
     let {
-      optionIndexOrText
+      indexOrText
     } = opts;
 
     let option;
     let options = this.options();
 
-    if (typeof optionIndexOrText === 'number') {
-      option = options[optionIndexOrText];
-    } else if (typeof optionIndexOrText === 'string') {
-      option = (within(this.listbox()!).getByText(optionIndexOrText).closest('[role=option]'))! as HTMLElement;
+    if (typeof indexOrText === 'number') {
+      option = options[indexOrText];
+    } else if (typeof indexOrText === 'string') {
+      option = (within(this.listbox()!).getByText(indexOrText).closest('[role=option]'))! as HTMLElement;
     }
 
     return option;
@@ -148,7 +148,7 @@ export class ListBoxTester {
     let metaKey = getMetaKey();
 
     if (typeof option === 'string' || typeof option === 'number') {
-      option = this.findOption({optionIndexOrText: option});
+      option = this.findOption({indexOrText: option});
     }
 
     if (!option) {
@@ -194,7 +194,7 @@ export class ListBoxTester {
     } = opts;
 
     if (typeof option === 'string' || typeof option === 'number') {
-      option = this.findOption({optionIndexOrText: option});
+      option = this.findOption({indexOrText: option});
     }
 
     if (!option) {

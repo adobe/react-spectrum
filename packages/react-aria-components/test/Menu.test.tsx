@@ -1686,7 +1686,7 @@ describe('Menu', () => {
 
     let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
     await user.pointer({target: menuTester.trigger(), keys: '[MouseLeft>]'});
-    await user.pointer({target: menuTester.findOption({optionIndexOrText: 'Cat'}), keys: '[/MouseLeft]'});
+    await user.pointer({target: menuTester.findOption({indexOrText: 'Cat'}), keys: '[/MouseLeft]'});
 
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(onPressStart).not.toHaveBeenCalled();

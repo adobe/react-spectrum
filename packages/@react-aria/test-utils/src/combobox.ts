@@ -130,19 +130,19 @@ export class ComboBoxTester {
   /**
    * Returns an option matching the specified index or text content.
    */
-  findOption(opts: {optionIndexOrText: number | string}): HTMLElement {
+  findOption(opts: {indexOrText: number | string}): HTMLElement {
     let {
-      optionIndexOrText
+      indexOrText
     } = opts;
 
     let option;
     let options = this.options();
     let listbox = this.listbox();
 
-    if (typeof optionIndexOrText === 'number') {
-      option = options[optionIndexOrText];
-    } else if (typeof optionIndexOrText === 'string' && listbox != null) {
-      option = (within(listbox!).getByText(optionIndexOrText).closest('[role=option]'))! as HTMLElement;
+    if (typeof indexOrText === 'number') {
+      option = options[indexOrText];
+    } else if (typeof indexOrText === 'string' && listbox != null) {
+      option = (within(listbox!).getByText(indexOrText).closest('[role=option]'))! as HTMLElement;
     }
 
     return option;
@@ -196,7 +196,7 @@ export class ComboBoxTester {
     }
 
     if (typeof option === 'string' || typeof option === 'number') {
-      option = this.findOption({optionIndexOrText: option});
+      option = this.findOption({indexOrText: option});
     }
 
     if (!option) {

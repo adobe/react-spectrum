@@ -131,7 +131,7 @@ export class TableTester {
     let metaKey = getMetaKey();
 
     if (typeof row === 'string' || typeof row === 'number') {
-      row = this.findRow({rowIndexOrText: row});
+      row = this.findRow({indexOrText: row});
     }
 
     if (!row) {
@@ -185,7 +185,7 @@ export class TableTester {
     }
 
     if (typeof row === 'string' || typeof row === 'number') {
-      row = this.findRow({rowIndexOrText: row});
+      row = this.findRow({indexOrText: row});
     }
 
     if (!row) {
@@ -395,7 +395,7 @@ export class TableTester {
     } = opts;
 
     if (typeof row === 'string' || typeof row === 'number') {
-      row = this.findRow({rowIndexOrText: row});
+      row = this.findRow({indexOrText: row});
     }
 
     if (!row) {
@@ -440,18 +440,18 @@ export class TableTester {
   /**
    * Returns a row matching the specified index or text content.
    */
-  findRow(opts: {rowIndexOrText: number | string}): HTMLElement {
+  findRow(opts: {indexOrText: number | string}): HTMLElement {
     let {
-      rowIndexOrText
+      indexOrText
     } = opts;
 
     let row;
     let rows = this.rows();
     let bodyRowGroup = this.rowGroups()[1];
-    if (typeof rowIndexOrText === 'number') {
-      row = rows[rowIndexOrText];
-    } else if (typeof rowIndexOrText === 'string') {
-      row = within(bodyRowGroup).getByText(rowIndexOrText);
+    if (typeof indexOrText === 'number') {
+      row = rows[indexOrText];
+    } else if (typeof indexOrText === 'string') {
+      row = within(bodyRowGroup).getByText(indexOrText);
       while (row && row.getAttribute('role') !== 'row') {
         row = row.parentElement;
       }
