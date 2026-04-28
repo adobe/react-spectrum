@@ -71,7 +71,7 @@ export class GridListTester {
     let rows = this.rows();
     let targetIndex = rows.indexOf(row);
     if (targetIndex === -1) {
-      throw new Error('Option provided is not in the gridlist');
+      throw new Error('Row provided is not in the gridlist');
     }
 
     if (document.activeElement !== this._gridlist && !this._gridlist.contains(document.activeElement)) {

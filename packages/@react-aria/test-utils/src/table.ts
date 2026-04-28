@@ -127,7 +127,7 @@ export class TableTester {
       selectionBehavior = 'toggle'
     } = opts;
 
-    let altKey = getMetaKey();
+    let altKey = getAltKey();
     let metaKey = getMetaKey();
 
     if (typeof row === 'string' || typeof row === 'number') {

@@ -72,7 +72,7 @@ export class TreeTester {
     let rows = this.rows();
     let targetIndex = rows.indexOf(row);
     if (targetIndex === -1) {
-      throw new Error('Option provided is not in the tree');
+      throw new Error('Row provided is not in the tree');
     }
 
     if (document.activeElement !== this._tree && !this._tree.contains(document.activeElement)) {

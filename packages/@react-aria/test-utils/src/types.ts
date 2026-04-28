@@ -72,12 +72,7 @@ export interface DialogTesterOpts extends BaseTesterOpts {
 
 export interface GridListTesterOpts extends BaseTesterOpts {}
 
-export interface ListBoxTesterOpts extends BaseTesterOpts {
-  /**
-   * A function used by the test utils to advance timers during interactions.
-   */
-  advanceTimer?: UserOpts['advanceTimer']
-}
+export interface ListBoxTesterOpts extends BaseTesterOpts {}
 
 export interface MenuTesterOpts extends BaseTesterOpts {
   /**
@@ -104,21 +99,11 @@ export interface SelectTesterOpts extends BaseTesterOpts {
   root: HTMLElement
 }
 
-export interface TableTesterOpts extends BaseTesterOpts {
-  /**
-   * A function used by the test utils to advance timers during interactions.
-   */
-  advanceTimer?: UserOpts['advanceTimer']
-}
+export interface TableTesterOpts extends BaseTesterOpts {}
 
 export interface TabsTesterOpts extends BaseTesterOpts {}
 
-export interface TreeTesterOpts extends BaseTesterOpts {
-  /**
-   * A function used by the test utils to advance timers during interactions.
-   */
-  advanceTimer?: UserOpts['advanceTimer']
-}
+export interface TreeTesterOpts extends BaseTesterOpts {}
 
 export interface BaseGridRowInteractionOpts {
   /**
@@ -141,12 +126,11 @@ export interface ToggleGridRowOpts extends BaseGridRowInteractionOpts {
    * @default 'true'
    */
   checkboxSelection?: boolean,
-  // TODO: this api feels a bit confusing tbh...
   /**
    * Whether the grid has a selectionBehavior of "toggle" or "replace" (aka highlight selection). This affects the user operations
    * required to toggle row selection by adding modifier keys during user actions, useful when performing multi-row selection in a "selectionBehavior: 'replace'" grid.
    * If you would like to still simulate user actions (aka press) without these modifiers keys for a "selectionBehavior: replace" grid, simply omit this option.
-   * See the "Selection Behavior" section of the appropriate React Aria Component docs for more information (e.g. https://react-spectrum.adobe.com/react-aria/Tree.html#selection-behavior).
+   * See the "Selection Behavior" section of the appropriate React Aria Component docs for more information (e.g. https://react-aria.adobe.com/Tree#selection-and-actions).
    *
    * @default 'toggle'
    */

@@ -183,50 +183,48 @@ export class SelectTester {
       throw new Error('Select\'s listbox not found.');
     }
 
-    if (listbox) {
-      if (typeof option === 'string' || typeof option === 'number') {
-        option = this.findOption({indexOrText: option});
+    if (typeof option === 'string' || typeof option === 'number') {
+      option = this.findOption({indexOrText: option});
+    }
+
+    if (!option) {
+      throw new Error(`Target option "${formatTargetNode(opts.option)}" not found in the listbox.`);
+    }
+
+    let isMultiSelect = listbox.getAttribute('aria-multiselectable') === 'true';
+    let isSingleSelect = !isMultiSelect;
+    closesOnSelect = closesOnSelect ?? isSingleSelect;
+
+    if (interactionType === 'keyboard') {
+      if (option?.getAttribute('aria-disabled') === 'true') {
+        return;
       }
 
-      if (!option) {
-        throw new Error(`Target option "${formatTargetNode(opts.option)}" not found in the listbox.`);
+      if (document.activeElement !== listbox && !listbox.contains(document.activeElement)) {
+        act(() => listbox.focus());
       }
-
-      let isMultiSelect = listbox.getAttribute('aria-multiselectable') === 'true';
-      let isSingleSelect = !isMultiSelect;
-      closesOnSelect = closesOnSelect ?? isSingleSelect;
-
-      if (interactionType === 'keyboard') {
-        if (option?.getAttribute('aria-disabled') === 'true') {
-          return;
-        }
-
-        if (document.activeElement !== listbox && !listbox.contains(document.activeElement)) {
-          act(() => listbox.focus());
-        }
-        await this.keyboardNavigateToOption({option});
-        await this.user.keyboard('[Enter]');
+      await this.keyboardNavigateToOption({option});
+      await this.user.keyboard('[Enter]');
+    } else {
+      // TODO: what if the user needs to scroll the list to find the option? What if there are multiple matches for text (hopefully the picker options are pretty unique)
+      if (interactionType === 'mouse') {
+        await this.user.click(option);
       } else {
-        // TODO: what if the user needs to scroll the list to find the option? What if there are multiple matches for text (hopefully the picker options are pretty unique)
-        if (interactionType === 'mouse') {
-          await this.user.click(option);
-        } else {
-          await this.user.pointer({target: option, keys: '[TouchA]'});
-        }
+        await this.user.pointer({target: option, keys: '[TouchA]'});
       }
+    }
 
-      if (closesOnSelect && option?.getAttribute('href') == null) {
-        await waitFor(() => {
-          if (document.activeElement !== this._trigger) {
-            throw new Error(`Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`);
-          } else {
-            return true;
-          }
-        });
-
-        if (document.contains(listbox)) {
-          throw new Error('Expected select element listbox to not be in the document after selecting an option');
+    if (closesOnSelect && option?.getAttribute('href') == null) {
+      await waitFor(() => {
+        if (document.activeElement !== this._trigger) {
+          throw new Error(`Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`);
+        } else {
+          return true;
         }
+      });
+
+      if (document.contains(listbox)) {
+        throw new Error('Expected select element listbox to not be in the document after selecting an option');
       }
     }
   }
