@@ -51,7 +51,7 @@ export function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: G
     let parentKey = column.parentKey;
     let col = [column];
 
-    while (parentKey) {
+    while (parentKey != null) {
       let parent: GridNode<T> | undefined = keyMap.get(parentKey);
       if (!parent) {
         break;
