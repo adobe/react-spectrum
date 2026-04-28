@@ -1,6 +1,6 @@
 {
   "name": "react-stately",
-  "version": "3.45.0",
+  "version": "3.46.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "./dist/exports/index.cjs",
@@ -23,8 +23,13 @@
   "types": "./dist/types/exports/index.d.ts",
   "source": "exports/index.ts",
   "files": [
-    "dist",
-    "*.js"
+    "*",
+    "!docs/**",
+    "!exports/**",
+    "!intl/**",
+    "!src/**",
+    "!stories/**",
+    "!test/**"
   ],
   "sideEffects": false,
   "repository": {
@@ -32,10 +37,10 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/date": "^3.12.0",
-    "@internationalized/number": "^3.6.5",
-    "@internationalized/string": "^3.2.7",
-    "@react-types/shared": "^3.33.1",
+    "@internationalized/date": "^3.12.1",
+    "@internationalized/number": "^3.6.6",
+    "@internationalized/string": "^3.2.8",
+    "@react-types/shared": "^3.34.0",
     "@swc/helpers": "^0.5.0",
     "use-sync-external-store": "^1.6.0"
   },
@@ -70,6 +75,22 @@
       "isLibrary": true,
       "outputFormat": "commonjs",
       "includeNodeModules": false
+    },
+    "legacy-module": {
+      "source": [
+        "exports/**/*.ts"
+      ],
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false,
+      "engines": {
+        "browsers": [
+          "chrome >= 79",
+          "firefox >= 85",
+          "safari >= 13"
+        ]
+      }
     }
   }
 }

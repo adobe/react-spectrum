@@ -1,5 +1,4 @@
 import {ColorSwatch} from '../src/ColorSwatch';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ColorSwatch> = {

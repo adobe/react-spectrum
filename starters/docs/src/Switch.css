@@ -1,7 +1,17 @@
 @import "./theme.css";
 @import "./utilities.css";
 
-.react-aria-Switch {
+.react-aria-SwitchField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+
+  &[data-disabled] [slot=description] {
+    color: var(--text-color-disabled);
+  }
+}
+
+.react-aria-SwitchButton {
   display: flex;
   /* This is needed so the HiddenInput is positioned correctly */
   position: relative;
@@ -36,6 +46,16 @@
     scale: 1.2 1;
     border-radius: var(--height) / calc(var(--height) * 1.2);
     background: var(--button-background-pressed);
+  }
+
+  &[data-invalid] {
+    .handle {
+      --indicator-color: var(--invalid-color);
+    }
+
+    &[data-pressed] .handle {
+      background: transparent
+    }
   }
 
   &[data-selected] {

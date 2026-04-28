@@ -1,6 +1,11 @@
 'use client';
 import React from 'react';
-import { FieldErrorProps, Group, GroupProps, InputProps, LabelProps, FieldError as RACFieldError, Input as RACInput, Label as RACLabel, Text, TextProps, composeRenderProps } from "react-aria-components";
+import { type FieldErrorProps, FieldError as RACFieldError } from 'react-aria-components/FieldError';
+import { Group, type GroupProps } from 'react-aria-components/Group';
+import { type InputProps, Input as RACInput } from 'react-aria-components/Input';
+import { type LabelProps, Label as RACLabel } from 'react-aria-components/Label';
+import { Text, type TextProps } from 'react-aria-components/Text';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import { twMerge } from 'tailwind-merge';
 import { tv } from 'tailwind-variants';
 import { composeTailwindRenderProps, focusRing } from "./utils";
@@ -10,11 +15,11 @@ export function Label(props: LabelProps) {
 }
 
 export function Description(props: TextProps) {
-  return <Text {...props} slot="description" className={twMerge('text-sm text-neutral-600', props.className)} />;
+  return <Text {...props} slot="description" className={twMerge('text-xs text-neutral-600 dark:text-neutral-400 group-disabled:text-neutral-200 dark:group-disabled:text-neutral-700 contain-inline-size', props.className)} />;
 }
 
 export function FieldError(props: FieldErrorProps) {
-  return <RACFieldError {...props} className={composeTailwindRenderProps(props.className, 'text-sm text-red-600 forced-colors:text-[Mark]')} />
+  return <RACFieldError {...props} className={composeTailwindRenderProps(props.className, 'text-xs text-red-600 contain-inline-size forced-colors:text-[Mark]')} />
 }
 
 export const fieldBorderStyles = tv({

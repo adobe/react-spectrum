@@ -99,3 +99,20 @@ export const ContextualHelpExample: Story = {
     )
   }
 };
+
+export const HelpText: Story = {
+  render(args) {
+    return (
+      <CheckboxGroup {...args}>
+        <Checkbox value="soccer" description="Get notified about new features and improvements">Product update</Checkbox>
+        <Checkbox value="baseball" description="Important notifications about your account safety">Security alerts</Checkbox>
+        <Checkbox value="basketball" description="Receive promotions, offers, and newsletters">Marketing emails</Checkbox>
+      </CheckboxGroup>
+    );
+  },
+  args: {
+    label: 'Email notification preferences',
+    description: 'Optional checkbox group description',
+    errorMessage: 'Please choose notification preferences'
+  }
+};

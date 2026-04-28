@@ -10,7 +10,7 @@ import {
   useRenderProps
 } from './utils';
 import {ColorAreaState, useColorAreaState} from 'react-stately/useColorAreaState';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {InternalColorThumbContext} from './ColorThumb';
 import {mergeProps} from 'react-aria/mergeProps';

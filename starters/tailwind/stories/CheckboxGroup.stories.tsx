@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form } from 'react-aria-components';
+import { Form } from 'react-aria-components/Form';
 import { Button } from '../src/Button';
 import { Checkbox } from '../src/Checkbox';
 import { CheckboxGroup } from '../src/CheckboxGroup';

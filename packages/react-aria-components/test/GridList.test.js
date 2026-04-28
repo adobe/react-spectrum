@@ -11,9 +11,9 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
+import {Checkbox as AriaCheckbox, CheckboxButton, CheckboxField} from '../src/Checkbox';
 import {Button} from '../src/Button';
-import {Checkbox} from '../src/Checkbox';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {getFocusableTreeWalker} from 'react-aria/private/focus/FocusScope';
@@ -21,7 +21,7 @@ import {GridList, GridListContext, GridListHeader, GridListItem, GridListSection
 import {GridListLoadMoreItem} from '../src/GridList';
 import {installPointerEvent, User} from '@react-aria/test-utils';
 import {Label} from '../src/Label';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {Modal} from '../src/Modal';
 import React from 'react';
 import {RouterProvider} from 'react-aria/private/utils/openLink';
@@ -29,11 +29,21 @@ import {Tag, TagGroup, TagList} from '../src/TagGroup';
 import userEvent from '@testing-library/user-event';
 import {Virtualizer} from '../src/Virtualizer';
 
+let Checkbox = ({comp}) => (
+  comp === 'CheckboxField'
+    ? (
+      <CheckboxField slot="selection">
+        <CheckboxButton />
+      </CheckboxField>
+    )
+    : <AriaCheckbox slot="selection" />
+);
+
 let TestGridList = ({listBoxProps, itemProps}) => (
   <GridList aria-label="Test" {...listBoxProps}>
-    <GridListItem {...itemProps} id="cat" textValue="Cat"><Checkbox slot="selection" /> Cat</GridListItem>
-    <GridListItem {...itemProps} id="dog" textValue="Dog"><Checkbox slot="selection" /> Dog</GridListItem>
-    <GridListItem {...itemProps} id="kangaroo" textValue="Kangaroo"><Checkbox slot="selection" /> Kangaroo</GridListItem>
+    <GridListItem {...itemProps} id="cat" textValue="Cat"><Checkbox slot="selection" comp={itemProps?.checkboxComponent} /> Cat</GridListItem>
+    <GridListItem {...itemProps} id="dog" textValue="Dog"><Checkbox slot="selection" comp={itemProps?.checkboxComponent} /> Dog</GridListItem>
+    <GridListItem {...itemProps} id="kangaroo" textValue="Kangaroo"><Checkbox slot="selection" comp={itemProps?.checkboxComponent} /> Kangaroo</GridListItem>
   </GridList>
 );
 
@@ -254,8 +264,8 @@ describe('GridList', () => {
     expect(row).not.toHaveClass('pressed');
   });
 
-  it('should support selection state', async () => {
-    let {getByRole} = renderGridList({selectionMode: 'multiple'}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
+  it.each(['Checkbox', 'CheckboxField'])('should support selection state with %s', async (comp) => {
+    let {getByRole} = renderGridList({selectionMode: 'multiple'}, {checkboxComponent: comp, className: ({isSelected}) => isSelected ? 'selected' : ''});
     let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
 
     let row = gridListTester.rows[0];

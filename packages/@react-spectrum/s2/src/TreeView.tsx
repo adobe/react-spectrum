@@ -24,9 +24,9 @@ import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-u
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {isFirstItem, isPrevSelected} from './ListView';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {ProgressCircle} from './ProgressCircle';
-import {Provider, useContextProps} from 'react-aria-components/utils';
+import {Provider, useContextProps} from 'react-aria-components/slots';
 // @ts-ignore
 import {
   TreeItemProps as RACTreeItemProps,
@@ -86,6 +86,7 @@ const TreeRendererContext = createContext<TreeRendererContextValue>({});
 
 const treeViewWrapper = style({
   minHeight: 0,
+  height: 'full',
   minWidth: 160,
   display: 'flex',
   isolation: 'isolate',
@@ -378,18 +379,21 @@ const treeActionMenu = style({
 
 let treeRowFocusRing = style({
   ...focusRing(),
-  outlineOffset: -2,
+  outlineOffset: {
+    default: -2,
+    forcedColors: -3
+  },
+  outlineWidth: {
+    default: 2,
+    forcedColors: '[3px]'
+  },
   outlineColor: {
     default: 'focus-ring',
     forcedColors: 'Highlight',
     selectionStyle: {
       highlight: {
         default: 'focus-ring',
-        forcedColors: 'Highlight',
-        isSelected: {
-          default: 'focus-ring',
-          forcedColors: 'ButtonBorder'
-        }
+        forcedColors: 'ButtonBorder'
       }
     }
   },

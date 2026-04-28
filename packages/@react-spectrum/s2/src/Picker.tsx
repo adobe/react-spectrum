@@ -16,11 +16,10 @@ import {
   ListBoxItem,
   ListBoxItemProps,
   ListBoxLoadMoreItem,
-  ListBoxProps
+  ListBoxProps,
+  ListBoxSectionProps
 } from 'react-aria-components/ListBox';
-
 import {PopoverProps as AriaPopoverProps} from 'react-aria-components/Popover';
-
 import {
   Select as AriaSelect,
   SelectProps as AriaSelectProps,
@@ -28,7 +27,6 @@ import {
   SelectStateContext,
   SelectValue
 } from 'react-aria-components/Select';
-
 import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
@@ -46,8 +44,8 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
-import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/utils';
+import {Collection} from 'react-aria/Collection';
+import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {control, controlBorderRadius, controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createHideableComponent} from 'react-aria/private/collections/Hidden';
 import {createShadowTreeWalker} from 'react-aria/private/utils/shadowdom/ShadowTreeWalker';
@@ -72,16 +70,15 @@ import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {mergeStyles} from '../style/runtime';
-import {Placement} from 'react-aria/private/overlays/useOverlayPosition';
+import {Placement} from 'react-aria-components/Popover';
 import {Popover} from './Popover';
 // @ts-ignore
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import React, {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {SectionProps} from 'react-aria-components/Collection';
 import {useFocusableRef} from './useDOMRef';
 import {useGlobalListeners} from 'react-aria/private/utils/useGlobalListeners';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -743,7 +740,7 @@ function DefaultProvider({context, value, children}: {context: React.Context<any
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 
-export interface PickerSectionProps<T extends object> extends Omit<SectionProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, StyleProps {}
+export interface PickerSectionProps<T extends object> extends Omit<ListBoxSectionProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes> {}
 export function PickerSection<T extends object>(props: PickerSectionProps<T>): ReactNode {
   let {size} = useContext(InternalPickerContext);
   return (

@@ -120,6 +120,18 @@ describe('NumberField', () => {
     expect(group).not.toHaveClass('focus');
   });
 
+  it('should support read-only state', async () => {
+    let {getByRole, rerender} = render(
+      <TestNumberField />
+    );
+
+    let input = getByRole('textbox');
+
+    expect(input.closest('.react-aria-NumberField')).not.toHaveAttribute('data-readonly');
+    rerender(<TestNumberField isReadOnly />);
+    expect(input.closest('.react-aria-NumberField')).toHaveAttribute('data-readonly');
+  });
+
   it('should support render props', () => {
     let {getByRole} = render(
       <NumberField defaultValue={1024} minValue={300} maxValue={1400}>

@@ -37,8 +37,10 @@ let excludedPackages = new Set([
 
 let monopackages = new Set([
   '@adobe/react-spectrum',
+  '@react-spectrum/s2',
   'react-aria',
-  'react-stately'
+  'react-stately',
+  'react-aria-components'
 ]);
 
 // Should be able to replace a lot of this file with yarns versioning plugin
@@ -180,11 +182,6 @@ class VersionManager {
           this.changedPackages.add(name);
         }
       }
-    }
-
-    // Always bump monopackages
-    for (let pkg of monopackages) {
-      this.changedPackages.add(pkg);
     }
   }
 
@@ -429,7 +426,9 @@ class VersionManager {
       for (let dep in pkg.dependencies) {
         if (versions.has(dep)) {
           let {status} = this.releasedPackages.get(dep);
-          pkg.dependencies[dep] = (status === 'released' ? '^' : '') + versions.get(dep)[1];
+          // Pin dependencies on monopackages.
+          // Individual packages are left as caret dependencies since they only exist for backward compatibility.
+          pkg.dependencies[dep] = (status === 'released' && !monopackages.has(dep) ? '^' : '') + versions.get(dep)[1];
         }
       }
 

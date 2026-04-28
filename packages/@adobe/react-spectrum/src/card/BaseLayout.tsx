@@ -14,12 +14,8 @@
 import {Direction, Key, KeyboardDelegate, Node} from '@react-types/shared';
 import {getChildNodes, getFirstItem} from 'react-stately/private/collections/getChildNodes';
 import {GridCollection} from 'react-stately/private/grid/GridCollection';
-import {InvalidationContext} from 'react-stately/private/virtualizer/types';
-import {Layout} from 'react-stately/private/virtualizer/Layout';
-import {LayoutInfo} from 'react-stately/private/virtualizer/LayoutInfo';
-import {Rect} from 'react-stately/private/virtualizer/Rect';
+import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from 'react-stately/useVirtualizerState';
 import {Scale} from '../provider/types';
-import {Size} from 'react-stately/private/virtualizer/Size';
 
 export interface BaseLayoutOptions {
   collator?: Intl.Collator,

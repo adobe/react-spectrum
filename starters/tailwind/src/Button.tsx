@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
-import { composeRenderProps, Button as RACButton, ButtonProps as RACButtonProps } from 'react-aria-components';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
+import { Button as RACButton, type ButtonProps as RACButtonProps } from 'react-aria-components/Button';
 import { tv } from 'tailwind-variants';
 import { focusRing } from './utils';
 

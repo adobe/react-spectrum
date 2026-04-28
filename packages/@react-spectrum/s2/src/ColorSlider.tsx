@@ -13,7 +13,7 @@
 import {ColorSlider as AriaColorSlider, ColorSliderProps as AriaColorSliderProps} from 'react-aria-components/ColorSlider';
 
 import {ColorHandle} from './ColorHandle';
-import {ContextValue} from 'react-aria-components/utils';
+import {ContextValue} from 'react-aria-components/slots';
 import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, useRef} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, SpectrumLabelableProps} from '@react-types/shared';

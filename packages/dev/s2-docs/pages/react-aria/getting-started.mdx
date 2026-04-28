@@ -88,7 +88,7 @@ In this tutorial, we'll build a custom [Select](Select) component.
     Each React Aria component renders a single DOM element. Complex components like `Select` compose together multiple parts to build a complete pattern.
 
     ```tsx
-    import {Button, Label, ListBox, ListBoxItem, Popover, Select, SelectValue} from 'react-aria-components';
+    import {Button, Label, ListBox, ListBoxItem, Popover, Select, SelectValue} from 'react-aria-components/Select';
 
     <Select>
       <Label>Favorite Animal</Label>
@@ -132,8 +132,8 @@ In this tutorial, we'll build a custom [Select](Select) component.
     To reuse styles throughout your project, wrap all of the parts into a reusable component. Create your own API by extending React Aria's types with additional props. Components such as Popover can also be shared with other patterns so they don't need be styled separately each time.
 
     ```tsx
-    import type {SelectProps as AriaSelectProps, ListBoxItemProps} from 'react-aria-components';
-    import {Select as AriaSelect, Button, Label, ListBox, ListBoxItem, SelectValue} from 'react-aria-components';
+    import type {SelectProps as AriaSelectProps, ListBoxItemProps} from 'react-aria-components/Select';
+    import {Select as AriaSelect, Button, Label, ListBox, ListBoxItem, SelectValue} from 'react-aria-components/Select';
     import {Popover} from './Popover';
     import './Select.css';
 

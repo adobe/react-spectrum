@@ -3,7 +3,7 @@ import {CodeFold} from './CodeFold';
 import {CodeLink} from './Link';
 import {CodeProps} from './VisualExampleClient';
 import {HastNode, HastTextNode, highlightHast, Language} from 'tree-sitter-highlight';
-import React, {cache} from 'react';
+import React, {cache, ReactNode} from 'react';
 import {style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {TabLink} from './FileTabs';
 import {Token, TokenType} from './CodeToken';
@@ -74,6 +74,14 @@ export function Code({children, lang, isFencedBlock, hideImports = true, links, 
     return (
       <code className={styles} style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}}>
         <CodeClient tokens={highlightCode(children, lang, hideImports, links)} />
+      </code>
+    );
+  }
+
+  if (lang === 'diff') {
+    return (
+      <code className={styles} style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}}>
+        {highlightDiff(children)}
       </code>
     );
   }
@@ -370,4 +378,20 @@ function text(node) {
   } else {
     return node.children.map(c => text(c)).join('');
   }
+}
+
+function highlightDiff(code: string) {
+  let lines = code.split('\n');
+  let result: ReactNode[] = [];
+  for (let line of lines) {
+    if (line[0] === '-') {
+      result.push(<span key={result.length} className={style({color: 'red-1000'})}>{line}</span>);
+    } else if (line[0] === '+') {
+      result.push(<span key={result.length} className={style({color: 'green-1000'})}>{line}</span>);
+    } else {
+      result.push(line);
+    }
+    result.push('\n');
+  }
+  return result;
 }

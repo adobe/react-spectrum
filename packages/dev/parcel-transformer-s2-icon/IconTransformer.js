@@ -59,10 +59,10 @@ module.exports = new Transformer({
           ]
         },
         replaceAttrValues: {
-          'var(--iconPrimary, #222)': `var(--iconPrimary, var(--lightningcss-light, ${tokens['gray-800'].sets.light.value}) var(--lightningcss-dark, ${tokens['gray-800'].sets.dark.value}))`,
-          'var(--iconPrimary, #222222)': `var(--iconPrimary, var(--lightningcss-light, ${tokens['gray-800'].sets.light.value}) var(--lightningcss-dark, ${tokens['gray-800'].sets.dark.value}))`,
-          'var(--iconPrimary, #292929)': `var(--iconPrimary, var(--lightningcss-light, ${tokens['gray-800'].sets.light.value}) var(--lightningcss-dark, ${tokens['gray-800'].sets.dark.value}))`,
-          'var(--spectrum-global-color-gray-800, #292929)': `var(--iconPrimary, var(--lightningcss-light, ${tokens['gray-800'].sets.light.value}) var(--lightningcss-dark, ${tokens['gray-800'].sets.dark.value}))`
+          'var(--iconPrimary, #222)': `var(--iconPrimary, light-dark(${tokens['gray-800'].sets.light.value}, ${tokens['gray-800'].sets.dark.value}))`,
+          'var(--iconPrimary, #222222)': `var(--iconPrimary, light-dark(${tokens['gray-800'].sets.light.value}, ${tokens['gray-800'].sets.dark.value}))`,
+          'var(--iconPrimary, #292929)': `var(--iconPrimary, light-dark(${tokens['gray-800'].sets.light.value}, ${tokens['gray-800'].sets.dark.value}))`,
+          'var(--spectrum-global-color-gray-800, #292929)': `var(--iconPrimary, light-dark(${tokens['gray-800'].sets.light.value}, ${tokens['gray-800'].sets.dark.value}))`
         },
         typescript: true,
         ref: true,

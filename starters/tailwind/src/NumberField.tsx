@@ -3,11 +3,11 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import React from 'react';
 import {
   NumberField as AriaNumberField,
-  NumberFieldProps as AriaNumberFieldProps,
+  type NumberFieldProps as AriaNumberFieldProps,
   Button,
-  ButtonProps,
-  ValidationResult
-} from 'react-aria-components';
+  type ButtonProps,
+  type ValidationResult,
+} from 'react-aria-components/NumberField';
 import { Description, FieldError, FieldGroup, Input, Label, fieldBorderStyles } from './Field';
 import { composeTailwindRenderProps } from './utils';
 

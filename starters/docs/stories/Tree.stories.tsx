@@ -1,5 +1,4 @@
 import {Tree, TreeItem} from '../src/Tree';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Tree> = {

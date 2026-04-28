@@ -18,6 +18,7 @@ import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, Fil
 import {Draggable, Droppable} from './examples';
 import {DragTypes} from '../../src/dnd/utils';
 import React, {useEffect} from 'react';
+import ReactDOM from 'react-dom';
 import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {
@@ -395,6 +396,53 @@ describe('useDrag and useDrop', function () {
         fireEvent(droppable, new DragEvent('dragleave', {dataTransfer, clientX: 1, clientY: 1}));
         expect(onDropEnter).toHaveBeenCalledTimes(1);
         expect(onDropExit).toHaveBeenCalledTimes(1);
+      });
+
+      it('does not fire onDropEnter and onDropExit repeatedly for portal children', () => {
+        let onDropEnter = jest.fn();
+        let onDropExit = jest.fn();
+        let portalContainer = document.createElement('div');
+        document.body.appendChild(portalContainer);
+
+        try {
+          let tree = render(
+            <Droppable onDropEnter={onDropEnter} onDropExit={onDropExit}>
+              <>
+                <div>Drop here</div>
+                {ReactDOM.createPortal(
+                  <>
+                    <div>Portal child 1</div>
+                    <div>Portal child 2</div>
+                  </>,
+                  portalContainer
+                )}
+              </>
+            </Droppable>
+          );
+
+          let portalChild1 = tree.getByText('Portal child 1');
+          let portalChild2 = tree.getByText('Portal child 2');
+
+          let dataTransfer = new DataTransfer();
+          fireEvent(portalChild1, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          expect(onDropEnter).toHaveBeenCalledTimes(1);
+          expect(onDropExit).not.toHaveBeenCalled();
+
+          fireEvent(portalChild2, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1, relatedTarget: portalChild1}));
+          fireEvent(portalChild1, new DragEvent('dragleave', {dataTransfer, clientX: 1, clientY: 1, relatedTarget: portalChild2}));
+          expect(onDropEnter).toHaveBeenCalledTimes(1);
+          expect(onDropExit).not.toHaveBeenCalled();
+
+          fireEvent(portalChild1, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1, relatedTarget: portalChild2}));
+          fireEvent(portalChild2, new DragEvent('dragleave', {dataTransfer, clientX: 1, clientY: 1, relatedTarget: portalChild1}));
+          expect(onDropEnter).toHaveBeenCalledTimes(1);
+          expect(onDropExit).not.toHaveBeenCalled();
+
+          fireEvent(portalChild1, new DragEvent('dragleave', {dataTransfer, clientX: 1, clientY: 1}));
+          expect(onDropExit).toHaveBeenCalledTimes(1);
+        } finally {
+          portalContainer.remove();
+        }
       });
 
       describe('nested drag targets', () => {

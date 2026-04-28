@@ -1,6 +1,6 @@
 import {action} from 'storybook/actions';
 import {ActionMenu} from '../../src/menu/ActionMenu';
-import {chain} from 'react-aria/private/utils/chain';
+import {chain} from 'react-aria/chain';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {DragAndDropOptions, useDragAndDrop} from '../../src/dnd/useDragAndDrop';
 import Edit from '@spectrum-icons/workflow/Edit';

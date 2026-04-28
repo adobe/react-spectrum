@@ -32,12 +32,15 @@ interface VirtualizerProps<T extends object, V, O> {
   collection: Collection<T>,
   onVisibleRectChange(rect: Rect): void,
   persistedKeys?: Set<Key> | null,
-  layoutOptions?: O
+  layoutOptions?: O,
+  allowsWindowScrolling?: boolean
 }
 
 export interface VirtualizerState<T extends object, V> {
   visibleViews: ReusableView<T, V>[],
   setVisibleRect: (rect: Rect) => void,
+  size: Size,
+  setSize: (size: Size) => void,
   contentSize: Size,
   virtualizer: Virtualizer<T, V>,
   isScrolling: boolean,
@@ -47,6 +50,7 @@ export interface VirtualizerState<T extends object, V> {
 
 export function useVirtualizerState<T extends object, V, O = any>(opts: VirtualizerProps<T, V, O>): VirtualizerState<T, V> {
   let [visibleRect, setVisibleRect] = useState(new Rect(0, 0, 0, 0));
+  let [size, setSize] = useState(new Size());
   let [isScrolling, setScrolling] = useState(false);
   let [invalidationContext, setInvalidationContext] = useState<InvalidationContext>({});
   let visibleRectChanged = useRef(false);
@@ -85,6 +89,7 @@ export function useVirtualizerState<T extends object, V, O = any>(opts: Virtuali
     persistedKeys: opts.persistedKeys,
     layoutOptions: opts.layoutOptions,
     visibleRect,
+    size: opts.allowsWindowScrolling ? size : visibleRect,
     invalidationContext: mergedInvalidationContext,
     isScrolling
   });
@@ -102,6 +107,8 @@ export function useVirtualizerState<T extends object, V, O = any>(opts: Virtuali
     virtualizer,
     visibleViews,
     setVisibleRect,
+    size,
+    setSize,
     contentSize,
     isScrolling,
     startScrolling,
@@ -110,6 +117,8 @@ export function useVirtualizerState<T extends object, V, O = any>(opts: Virtuali
     virtualizer,
     visibleViews,
     setVisibleRect,
+    size,
+    setSize,
     contentSize,
     isScrolling,
     startScrolling,

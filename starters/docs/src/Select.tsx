@@ -1,12 +1,12 @@
 'use client';
 import {
-  ListBoxItemProps,
+  type ListBoxItemProps,
   Select as AriaSelect,
-  SelectProps as AriaSelectProps,
+  type SelectProps as AriaSelectProps,
   SelectValue,
-  ValidationResult,
-  ListBoxProps
-} from 'react-aria-components';
+  type ValidationResult,
+  type ListBoxProps,
+} from 'react-aria-components/Select';
 import {Button} from './Button';
 import {DropdownItem, DropdownListBox} from './ListBox';
 import {ChevronDown} from 'lucide-react';

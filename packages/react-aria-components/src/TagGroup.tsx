@@ -27,9 +27,10 @@ import {
   useRenderProps,
   useSlot
 } from './utils';
-import {Collection, CollectionBuilder, createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
+import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuilder';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusEvents, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {ItemNode} from 'react-aria/private/collections/BaseCollection';
 import {LabelContext} from './Label';
@@ -243,7 +244,12 @@ export interface TagProps extends RenderProps<TagRenderProps, 'div'>, LinkDOMPro
    */
   textValue?: string,
   /** Whether the tag is disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /**
+   * Handler that is called when a user performs an action on the item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: () => void
 }
 
 /**

@@ -11,24 +11,21 @@
  */
 
 import {action} from 'storybook/actions';
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 import {DragAndDropHooks, DropIndicator, isTextDropItem, useDragAndDrop} from '../exports/useDragAndDrop';
-import {GridLayout} from 'react-stately/private/layout/GridLayout';
+import {GridLayout, ListLayout, Size, WaterfallLayout} from 'react-stately/useVirtualizerState';
 import {Header} from '../src/Header';
 import {ListBox, ListBoxItem, ListBoxProps, ListBoxSection} from '../src/ListBox';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
 import {LoadingSpinner, MyHeader, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, useState} from 'react';
 import {Separator} from '../src/Separator';
-import {Size} from 'react-stately/private/virtualizer/Size';
 import styles from '../example/index.css';
 import {Text} from '../src/Text';
 import {useAsyncList} from 'react-stately/useAsyncList';
 import {useListData} from 'react-stately/useListData';
 import {Virtualizer} from '../src/Virtualizer';
-import {WaterfallLayout} from 'react-stately/private/layout/WaterfallLayout';
 import './styles.css';
 
 export default {
@@ -356,6 +353,8 @@ function generateRandomString(minLength: number, maxLength: number): string {
 
 function VirtualizedListBoxRender(args): JSX.Element {
   let {variableHeight, isLoading, orientation} = args;
+  let estimatedRowHeight = orientation === 'horizontal' ? 117 : 25;
+  let estimatedHeadingHeight = orientation === 'horizontal' ? 63 : 26;
   let heightProperty = orientation === 'horizontal' ? 'width' : 'height';
   let widthProperty = orientation === 'horizontal' ? 'height' : 'width';
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
@@ -372,8 +371,8 @@ function VirtualizedListBoxRender(args): JSX.Element {
     <Virtualizer
       layout={new ListLayout({
         orientation,
-        estimatedRowHeight: 25,
-        estimatedHeadingHeight: 26,
+        estimatedRowHeight,
+        estimatedHeadingHeight,
         loaderHeight: 30
       })}>
       <ListBox orientation={orientation} className={styles.menu} style={{[heightProperty]: 400, [widthProperty]: 200}} aria-label="virtualized listbox">

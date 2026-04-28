@@ -15,14 +15,12 @@ import {
   RangeCalendarProps as AriaRangeCalendarProps,
   DateValue
 } from 'react-aria-components/RangeCalendar';
-import {CalendarButton, CalendarGrid, CalendarHeading} from './Calendar';
-import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
-import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
-import {ContextValue, Provider} from 'react-aria-components/utils';
-import {createContext, ForwardedRef, forwardRef, ReactNode} from 'react';
+import {CalendarGrid, CalendarHeader} from './Calendar';
+import {ContextValue, Provider} from 'react-aria-components/slots';
+import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode} from 'react';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {Header, HeaderContext, HeadingContext} from './Content';
+import {HeaderContext, HeadingContext} from './Content';
 import {helpTextStyles} from './Field';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -31,9 +29,8 @@ import {Text} from 'react-aria-components/Text';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-
 export interface RangeCalendarProps<T extends DateValue>
-  extends Omit<AriaRangeCalendarProps<T>, 'visibleDuration' | 'style' | 'className' | 'render' | 'children' | 'styles' | keyof GlobalDOMAttributes>,
+  extends Omit<AriaRangeCalendarProps<T>, 'visibleDuration' | 'weeksInMonth' | 'style' | 'className' | 'render' | 'children' | 'styles' | keyof GlobalDOMAttributes>,
   StyleProps {
   /**
    * The error message to display when the calendar is invalid.
@@ -48,20 +45,39 @@ export interface RangeCalendarProps<T extends DateValue>
 
 export const RangeCalendarContext = createContext<ContextValue<Partial<RangeCalendarProps<any>>, HTMLDivElement>>(null);
 
-
-const calendarStyles = style({
+const calendarStyles = style<{isMultiMonth?: boolean}>({
   display: 'flex',
+  containerType: {
+    default: 'inline-size',
+    isMultiMonth: 'unset'
+  },
   flexDirection: 'column',
   gap: 24,
-  width: 'fit'
+  disableTapHighlight: true,
+  '--cell-gap': {
+    type: 'paddingStart',
+    value: 4
+  },
+  '--cell-max-width': {
+    type: 'width',
+    value: 32
+  },
+  '--cell-responsive-size': {
+    type: 'width',
+    value: {
+      default: '[min(var(--cell-max-width), (100cqw - (var(--cell-gap) * 12)) / 7)]',
+      isMultiMonth: '--cell-max-width'
+    }
+  },
+  width: {
+    default: 'calc(7 * var(--cell-max-width) + var(--cell-gap) * 12)',
+    isMultiMonth: 'fit'
+  },
+  maxWidth: {
+    default: 'full',
+    isMultiMonth: 'unset'
+  }
 }, getAllowedOverrides());
-
-const headerStyles = style({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  width: 'full'
-});
 
 /**
  * RangeCalendars display a grid of days in one or more months and allow users to select a contiguous range of dates.
@@ -78,13 +94,14 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
+  let isMultiMonth = visibleMonths > 1;
   return (
     <AriaRangeCalendar
       {...otherProps}
       ref={ref}
       visibleDuration={{months: visibleMonths}}
-      style={UNSAFE_style}
-      className={(UNSAFE_className || '') + calendarStyles(null, styles)}>
+      style={{...UNSAFE_style, '--num-calendars': visibleMonths} as CSSProperties}
+      className={(UNSAFE_className || '') + calendarStyles({isMultiMonth}, styles)}>
       {({isInvalid, isDisabled}) => {
         return (
           <>
@@ -93,22 +110,17 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
                 [HeaderContext, null],
                 [HeadingContext, null]
               ]}>
-              <Header styles={headerStyles}>
-                <CalendarButton slot="previous"><ChevronLeftIcon /></CalendarButton>
-                <CalendarHeading />
-                <CalendarButton slot="next"><ChevronRightIcon /></CalendarButton>
-              </Header>
+              <CalendarHeader visibleMonths={visibleMonths} />
             </Provider>
             <div
               className={style({
                 display: 'flex',
                 flexDirection: 'row',
                 gap: 24,
-                width: 'full',
                 alignItems: 'start'
               })}>
               {Array.from({length: visibleMonths}).map((_, i) => (
-                <CalendarGrid months={i} key={i} />
+                <CalendarGrid key={i} months={i} />
               ))}
             </div>
             {isInvalid && (

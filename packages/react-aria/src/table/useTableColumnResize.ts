@@ -11,7 +11,7 @@
  */
 
 import {ChangeEvent, useCallback, useEffect, useRef} from 'react';
-import {ColumnSize} from 'react-stately/Column';
+import {ColumnSize} from 'react-stately/useTableState';
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {focusSafely} from '../interactions/focusSafely';
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';

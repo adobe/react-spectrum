@@ -14,6 +14,19 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {RadioGroup, Radio, RadioGroupContext, RadioContext, RadioGroupStateContext} from '../src/RadioGroup';
-export type {RadioGroupProps, RadioGroupRenderProps, RadioProps, RadioRenderProps} from '../src/RadioGroup';
+export {RadioGroup, Radio, RadioField, RadioButton, RadioGroupContext, RadioContext, RadioFieldContext, RadioGroupStateContext} from '../src/RadioGroup';
+export type {RadioGroupProps, RadioGroupRenderProps, RadioProps, RadioFieldProps, RadioButtonProps, RadioRenderProps, RadioFieldRenderProps, RadioButtonRenderProps} from '../src/RadioGroup';
 export type {RadioGroupState} from 'react-stately/useRadioGroupState';
+
+export {Label} from '../src/Label';
+export type {LabelProps} from '../src/Label';
+
+export {Text} from '../src/Text';
+export type {TextProps} from '../src/Text';
+
+export {FieldError} from '../src/FieldError';
+export type {FieldErrorProps, FieldErrorRenderProps} from '../src/FieldError';
+export type {ValidationResult} from '@react-types/shared';
+
+export {SelectionIndicator} from '../src/SelectionIndicator';
+export type {SelectionIndicatorProps} from '../src/SelectionIndicator';

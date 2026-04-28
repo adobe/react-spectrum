@@ -1,6 +1,6 @@
 {
   "name": "@react-types/breadcrumbs",
-  "version": "3.7.19",
+  "version": "3.8.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -9,8 +9,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/breadcrumbs": "^3.5.32",
-    "@react-spectrum/breadcrumbs": "^3.9.27"
+    "@react-aria/breadcrumbs": "^3.6.0",
+    "@react-spectrum/breadcrumbs": "^3.10.0"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0",

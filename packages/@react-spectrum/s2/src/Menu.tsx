@@ -29,7 +29,7 @@ import {box, iconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
-import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/utils';
+import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, JSX, ReactElement, ReactNode, useContext, useRef, useState} from 'react';
 import {divider} from './Divider';
@@ -45,7 +45,7 @@ import intlMessages from '../intl/*.json';
 // @ts-ignore
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
-import {Placement} from 'react-aria/private/overlays/useOverlayPosition';
+import {Placement} from 'react-aria/useOverlayPosition';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {pressScale} from './pressScale';
 import {Separator, SeparatorProps} from 'react-aria-components/Separator';
@@ -200,7 +200,7 @@ export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> &
     default: 'default',
     isLink: 'pointer'
   },
-  transition: 'default',
+  transition: 'transform',
   forcedColorAdjust: 'none'
 }, getAllowedOverrides());
 
@@ -296,8 +296,7 @@ export let description = style<{size: 'S' | 'M' | 'L' | 'XL', isFocused: boolean
     forcedColors: {
       default: 'inherit'
     }
-  },
-  transition: 'default'
+  }
 });
 
 let value = style({
@@ -409,7 +408,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
         hideArrow>
         <div
           style={UNSAFE_style}
-          className={(UNSAFE_className || '') + wrappingDiv}>
+          className={(UNSAFE_className || '') + mergeStyles(wrappingDiv, styles)}>
           {content}
         </div>
       </Popover>

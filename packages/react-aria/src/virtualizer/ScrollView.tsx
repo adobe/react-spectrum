@@ -14,7 +14,7 @@
 import {flushSync} from 'react-dom';
 import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getScrollLeft} from './utils';
-import {Point} from 'react-stately/private/virtualizer/Point';
+import {Point, Rect, Size} from 'react-stately/useVirtualizerState';
 import React, {
   CSSProperties,
   ForwardedRef,
@@ -26,8 +26,6 @@ import React, {
   useRef,
   useState
 } from 'react';
-import {Rect} from 'react-stately/private/virtualizer/Rect';
-import {Size} from 'react-stately/private/virtualizer/Size';
 import {useEffectEvent} from '../utils/useEffectEvent';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
@@ -37,12 +35,14 @@ import {useResizeObserver} from '../utils/useResizeObserver';
 interface ScrollViewProps extends Omit<HTMLAttributes<HTMLElement>, 'onScroll'> {
   contentSize: Size,
   onVisibleRectChange: (rect: Rect) => void,
+  onSizeChange?: (size: Size) => void,
   children?: ReactNode,
   innerStyle?: CSSProperties,
   onScrollStart?: () => void,
   onScrollEnd?: () => void,
   scrollDirection?: 'horizontal' | 'vertical' | 'both',
-  onScroll?: (e: Event) => void
+  onScroll?: (e: Event) => void,
+  allowsWindowScrolling?: boolean
 }
 
 function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | null>) {
@@ -73,11 +73,13 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   let {
     contentSize,
     onVisibleRectChange,
+    onSizeChange,
     innerStyle,
     onScrollStart,
     onScrollEnd,
     scrollDirection = 'both',
     onScroll: onScrollProp,
+    allowsWindowScrolling,
     ...otherProps
   } = props;
 
@@ -92,7 +94,8 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     viewportSize: new Size(),
     scrollEndTime: 0,
     scrollTimeout: null as ReturnType<typeof setTimeout> | null,
-    isScrolling: false
+    isScrolling: false,
+    lastVisibleRect: new Rect()
   }).current;
   let {direction} = useLocale();
 
@@ -103,14 +106,20 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     // their sizes into account for performance reasons. Their scroll positions are accounted for in viewportOffset
     // though (due to getBoundingClientRect). This may result in more rows than absolutely necessary being rendered,
     // but no more than the entire height of the viewport which is good enough for virtualization use cases.
-    let visibleRect = new Rect(
-      state.viewportOffset.x + state.scrollPosition.x,
-      state.viewportOffset.y + state.scrollPosition.y,
-      Math.max(0, Math.min(state.size.width - state.viewportOffset.x, state.viewportSize.width)),
-      Math.max(0, Math.min(state.size.height - state.viewportOffset.y, state.viewportSize.height))
-    );
-    onVisibleRectChange(visibleRect);
-  }, [state, onVisibleRectChange]);
+    let visibleRect = allowsWindowScrolling
+      ? new Rect(
+        state.viewportOffset.x + state.scrollPosition.x,
+        state.viewportOffset.y + state.scrollPosition.y,
+        Math.max(0, Math.min(state.size.width - state.viewportOffset.x, state.viewportSize.width)),
+        Math.max(0, Math.min(state.size.height - state.viewportOffset.y, state.viewportSize.height))
+      )
+      : new Rect(state.scrollPosition.x, state.scrollPosition.y, state.size.width, state.size.height);
+    // Don't emit updates if the visible area is zero and the last emitted area was also zero.
+    if (visibleRect.area > 0 || state.lastVisibleRect.area > 0) {
+      onVisibleRectChange(visibleRect);
+      state.lastVisibleRect = visibleRect;
+    }
+  }, [state, allowsWindowScrolling, onVisibleRectChange]);
 
   let [isScrolling, setScrolling] = useState(false);
 
@@ -234,6 +243,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
       state.size = new Size(w, h);
       flush(() => {
         updateVisibleRect();
+        onSizeChange?.(state.size);
       });
 
       // If the clientWidth or clientHeight changed, scrollbars appeared or disappeared as
@@ -245,12 +255,13 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
         state.size = new Size(dom.clientWidth, dom.clientHeight);
         flush(() => {
           updateVisibleRect();
+          onSizeChange?.(state.size);
         });
       }
     }
 
     isUpdatingSize.current = false;
-  }, [ref, state, updateVisibleRect]);
+  }, [ref, state, updateVisibleRect, onSizeChange]);
   let updateSizeEvent = useEffectEvent(updateSize);
 
   // Track the size of the entire window viewport, which is used to bound the size of the virtualizer's visible rectangle.

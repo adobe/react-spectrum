@@ -3,11 +3,14 @@ import {
   Button,
   GridList as AriaGridList,
   GridListItem as AriaGridListItem,
-  GridListItemProps,
-  GridListProps,
   GridListLoadMoreItem as AriaGridListLoadMoreItem,
-  GridListLoadMoreItemProps
-} from 'react-aria-components';
+  Text,
+  GridListSection,
+  GridListHeader,
+  type GridListItemProps,
+  type GridListProps,
+  type GridListLoadMoreItemProps,
+} from 'react-aria-components/GridList';
 import {Checkbox} from './Checkbox';
 import {GripVertical} from 'lucide-react';
 import {ProgressCircle} from './ProgressCircle';
@@ -56,3 +59,5 @@ export function GridListLoadMoreItem(props: GridListLoadMoreItemProps) {
     </AriaGridListLoadMoreItem>
   );
 }
+
+export {GridListSection, GridListHeader, Text};

@@ -11,7 +11,7 @@
  */
 
 
-import {Collection} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
 
 import {fn} from 'storybook/test';
 import {Header, Heading} from '../src/Content';

@@ -12,7 +12,7 @@ export const description = 'Displays a list of items, with support for keyboard 
 
 ```tsx render docs={docs.exports.TagGroup} links={docs.links} props={['label', 'selectionMode', 'size', 'labelPosition', 'maxRows', 'description', 'contextualHelp', 'isEmphasized']} initialProps={{label: 'Ice cream flavors', selectionMode: 'multiple', maxRows: 2}} controlOptions={{maxRows: {minValue: 1}}} type="s2"
 "use client";
-import {TagGroup, Tag} from '@react-spectrum/s2';
+import {TagGroup, Tag} from '@react-spectrum/s2/TagGroup';
 
 <TagGroup/* PROPS */>
   <Tag>Chocolate</Tag>
@@ -42,7 +42,8 @@ import {TagGroup, Tag} from '@react-spectrum/s2';
 
 ```tsx render type="s2"
 "use client";
-import {TagGroup, Tag, useListData} from '@react-spectrum/s2';
+import {TagGroup, Tag} from '@react-spectrum/s2/TagGroup';
+import {useListData} from '@react-spectrum/s2/useListData';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function PhotoCategories() {
@@ -78,7 +79,7 @@ function PhotoCategories() {
 
 ```tsx render type="s2"
 "use client";
-import {TagGroup, Tag, Text} from '@react-spectrum/s2';
+import {TagGroup, Tag, Text} from '@react-spectrum/s2/TagGroup';
 import FileText from '@react-spectrum/s2/icons/FileText';
 import Camera from '@react-spectrum/s2/icons/Camera';
 import Filmstrip from '@react-spectrum/s2/icons/Filmstrip';
@@ -108,7 +109,8 @@ import VectorDraw from '@react-spectrum/s2/icons/VectorDraw';
 
 ```tsx render type="s2"
 "use client";
-import {TagGroup, Tag, Avatar, Text} from '@react-spectrum/s2';
+import {TagGroup, Tag, Text} from '@react-spectrum/s2/TagGroup';
+import {Avatar} from '@react-spectrum/s2/Avatar';
 
 <TagGroup label="Users">
   <Tag textValue="Abraham Baker">
@@ -134,7 +136,8 @@ import {TagGroup, Tag, Avatar, Text} from '@react-spectrum/s2';
 
 ```tsx render type="s2"
 "use client";
-import {TagGroup, Tag, Image, Text} from '@react-spectrum/s2';
+import {TagGroup, Tag, Text} from '@react-spectrum/s2/TagGroup';
+import {Image} from '@react-spectrum/s2/Image';
 
 <TagGroup label="Dogs">
   <Tag textValue="Golden Retriever">
@@ -166,7 +169,7 @@ Use the `href` prop on a `<Tag>` to create a link. See the [getting started guid
 
 ```tsx render type="s2"
 "use client";
-import {TagGroup, Tag} from '@react-spectrum/s2';
+import {TagGroup, Tag} from '@react-spectrum/s2/TagGroup';
 
 <TagGroup label="Photo categories">
   {/*- begin highlight -*/}
@@ -186,7 +189,8 @@ Use `renderEmptyState` to render placeholder content when the TagGroup is empty.
 
 ```tsx render type="s2"
 "use client";
-import {TagGroup, Link} from '@react-spectrum/s2';
+import {TagGroup} from '@react-spectrum/s2/TagGroup';
+import {Link} from '@react-spectrum/s2/Link';
 
 <TagGroup
   label="Photo categories"
@@ -197,13 +201,13 @@ import {TagGroup, Link} from '@react-spectrum/s2';
 </TagGroup>
 ```
 
-## Selection
+## Selection and actions
 
 Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=TagGroup) for more details.
 
 ```tsx render docs={docs.exports.TagGroup} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
-import {TagGroup, Tag, type Selection} from '@react-spectrum/s2';
+import {TagGroup, Tag, type Selection} from '@react-spectrum/s2/TagGroup';
 import {useState} from 'react';
 
 function Example(props) {
@@ -231,6 +235,30 @@ function Example(props) {
 }
 ```
 
+Use the `onAction` prop to handle item actions.
+
+```tsx render wide
+"use client";
+import {TagGroup, Tag} from '@react-spectrum/s2/TagGroup';
+
+function Example() {
+  return (
+    <TagGroup
+      label="Music genre"
+      ///- begin highlight -///
+      onAction={key => alert(`Clicked ${key}`)}
+      ///- end highlight -///
+    >
+      <Tag id="rock">Rock</Tag>
+      <Tag id="jazz">Jazz</Tag>
+      <Tag id="pop">Pop</Tag>
+      <Tag id="classical">Classical</Tag>
+      <Tag id="edm">EDM</Tag>
+    </TagGroup>
+  );
+}
+```
+
 
 ## Group actions
 
@@ -238,7 +266,7 @@ Use the `groupActionLabel` and `onGroupAction` props to add an action button at 
 
 ```tsx render type="s2"
 "use client";
-import {TagGroup, Tag} from '@react-spectrum/s2';
+import {TagGroup, Tag} from '@react-spectrum/s2/TagGroup';
 
 <TagGroup
   label="Interests"

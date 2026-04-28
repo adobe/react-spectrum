@@ -22,7 +22,7 @@ import {FocusRing} from 'react-aria/FocusRing';
 import React, {forwardRef, useContext, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/checkbox/vars.css';
 import {useCheckboxGroupItem} from 'react-aria/useCheckboxGroup';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 import {useFocusableRef} from '../utils/useDOMRef';
 import {useFormProps} from '../form/Form';
 import {useHover} from 'react-aria/useHover';
@@ -68,7 +68,7 @@ export const Checkbox = forwardRef(function Checkbox(props: SpectrumCheckboxProp
   // This is a bit unorthodox. Typically, hooks cannot be called in a conditional,
   // but since the checkbox won't move in and out of a group, it should be safe.
   let groupState = useContext(CheckboxGroupContext);
-  let {inputProps, isInvalid, isDisabled} = groupState
+  let {labelProps, inputProps, isInvalid, isDisabled} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({
       ...props,
@@ -104,6 +104,7 @@ export const Checkbox = forwardRef(function Checkbox(props: SpectrumCheckboxProp
 
   return (
     <label
+      {...labelProps}
       {...styleProps}
       {...hoverProps}
       ref={domRef}

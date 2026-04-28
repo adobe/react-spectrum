@@ -39,7 +39,7 @@ clean_dist:
 	rm -rf packages/@adobe/react-spectrum/i18n
 	rm -rf packages/@react-aria/i18n/server
 	rm -rf packages/@react-spectrum/s2/style/dist packages/@react-spectrum/s2/page.css packages/@react-spectrum/s2/icons packages/@react-spectrum/s2/illustrations
-	rm -rf packages/{@adobe/react-spectrum,@react-spectrum/s2,react-aria,react-stately,react-aria-components}/*.js
+	git clean -Xdf packages/{@adobe/react-spectrum,@react-spectrum/s2,react-aria,react-stately,react-aria-components}
 
 clean_parcel:
 	rm -rf .parcel-cache
@@ -129,7 +129,7 @@ website-production:
 
 check-examples:
 	node scripts/extractExamplesS2.mjs
-	yarn tsc --project dist/docs-examples/tsconfig.json
+	yarn tsgo --project dist/docs-examples/tsconfig.json
 
 starter:
 	cd starters/docs && yarn --no-immutable && yarn up react-aria-components && yarn tsc
@@ -189,8 +189,8 @@ build-s2-docs:
 
 	# Build old docs pages, which get inter-mixed with the new pages
 	# TODO: We probably don't need to build this on every PR
-	yarn parcel build 'packages/@react-spectrum/*/docs/*.mdx' 'packages/dev/docs/pages/{react-spectrum,releases}/**/*.mdx' --dist-dir dist/s2-docs/s2/$(PUBLIC_URL) --public-url $(PUBLIC_URL)
-	yarn parcel build 'packages/@react-{aria,stately}/*/docs/*.mdx'  --dist-dir dist/s2-docs/react-aria/$(PUBLIC_URL) --public-url $(PUBLIC_URL)
+	yarn parcel build 'packages/@adobe/react-spectrum/docs/**/*.mdx' 'packages/dev/docs/pages/{react-spectrum,releases}/**/*.mdx' --dist-dir dist/s2-docs/s2/$(PUBLIC_URL) --public-url $(PUBLIC_URL)
+	yarn parcel build 'packages/{react-aria,react-stately}/docs/**/*.mdx' --dist-dir dist/s2-docs/react-aria/$(PUBLIC_URL) --public-url $(PUBLIC_URL)
 
 build-starters:
 	$(MAKE) starter-zip

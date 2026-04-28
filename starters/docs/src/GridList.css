@@ -58,6 +58,26 @@
     display: grid;
     grid-template-columns: auto;
     align-items: center;
+
+    &[data-orientation=horizontal] {
+      display: flex;
+      flex-direction: row;
+      justify-content: normal;
+
+      .react-aria-GridListItem {
+        flex-shrink: 0;
+        width: var(--grid-item-size);
+      }
+    }
+  }
+
+  &[data-layout=grid][data-orientation=horizontal] {
+    grid-auto-flow: column;
+    grid-template-rows: auto auto;
+    grid-template-columns: none;
+    grid-auto-columns: var(--grid-item-size);
+    justify-content: normal;
+    max-height: none;
   }
 
   &[data-focus-visible] {
@@ -147,38 +167,41 @@
     color: var(--text-color-disabled);
   }
 
-  .react-aria-Checkbox {
+  .react-aria-CheckboxField {
     position: absolute;
     top: var(--spacing-4);
     inset-inline-start: var(--spacing-4);
-    --focus-ring-color: var(--highlight-foreground);
-    --checkmark-color: light-dark(white, black);
 
-    .indicator {
-      --indicator-border: light-dark(rgb(0 0 0 / 0.9), rgb(255 255 255 / 0.7));
+    .react-aria-CheckboxButton {
+      --focus-ring-color: var(--highlight-foreground);
+      --checkmark-color: light-dark(white, black);
 
-      @media (forced-colors: active) {
-        --indicator-border: ButtonBorder;
+      .indicator {
+        --indicator-border: light-dark(rgb(0 0 0 / 0.9), rgb(255 255 255 / 0.7));
+
+        @media (forced-colors: active) {
+          --indicator-border: ButtonBorder;
+        }
       }
-    }
 
-    &[data-selected] .indicator {
-      --indicator-color: light-dark(black, var(--highlight-foreground));
-      --indicator-shadow: transparent;
+      &[data-selected] .indicator {
+        --indicator-color: light-dark(black, var(--highlight-foreground));
+        --indicator-shadow: transparent;
 
-      @media (forced-colors: active) {
-        --indicator-color: Highlight;
-        --checkmark-color: HighlightText;
+        @media (forced-colors: active) {
+          --indicator-color: Highlight;
+          --checkmark-color: HighlightText;
+        }
       }
-    }
 
-    &::before {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      background: light-dark(rgb(255 255 255 / 0.51), rgb(0 0 0 / 0.56));
-      box-shadow: rgba(0, 0, 0, 0.24) 0px 2px 8px 0px;
-      border-radius: var(--radius);
+      &::before {
+        content: '';
+        position: absolute;
+        inset: -4px;
+        background: light-dark(rgb(255 255 255 / 0.51), rgb(0 0 0 / 0.56));
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 2px 8px 0px;
+        border-radius: var(--radius);
+      }
     }
   }
 

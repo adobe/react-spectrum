@@ -13,7 +13,7 @@
 import {action} from 'storybook/actions';
 import {ActionButton} from '../../src/button/ActionButton';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseAbsolute, parseAbsoluteToLocal, parseDate, parseDateTime, parseZonedDateTime, today, toZoned} from '@internationalized/date';
-import {chain} from 'react-aria/private/utils/chain';
+import {chain} from 'react-aria/chain';
 import {Content} from '../../src/view/Content';
 import {ContextualHelp} from '../../src/contextualhelp/ContextualHelp';
 import {Custom454Calendar} from '/packages/@internationalized/date/tests/customCalendarImpl';

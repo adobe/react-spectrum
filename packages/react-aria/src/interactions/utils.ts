@@ -109,7 +109,7 @@ export let ignoreFocusEvent = false;
  */
 export function preventFocus(target: FocusableElement | null): (() => void) | undefined {
   // The browser will focus the nearest focusable ancestor of our target.
-  while (target && !isFocusable(target)) {
+  while (target && !isFocusable(target, {skipVisibilityCheck: true})) {
     target = target.parentElement;
   }
 

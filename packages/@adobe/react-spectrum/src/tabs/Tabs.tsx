@@ -13,7 +13,7 @@
 import {AriaLabelingProps, CollectionChildren, DOMProps, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject, SingleSelection, StyleProps} from '@react-types/shared';
 import {AriaTabPanelProps, useTab, useTabList, useTabPanel} from 'react-aria/useTabList';
 import {classNames} from '../utils/classNames';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusRing} from 'react-aria/FocusRing';
 import {Item} from 'react-stately/Item';
 import {ListCollection} from 'react-stately/private/list/ListCollection';

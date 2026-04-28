@@ -18,7 +18,6 @@ import {
   useMenuTrigger,
   useSubmenuTrigger
 } from 'react-aria/useMenu';
-
 import {BaseCollection, CollectionNode, ItemNode, SectionNode} from 'react-aria/private/collections/BaseCollection';
 import {
   MenuTriggerProps as BaseMenuTriggerProps,
@@ -42,19 +41,18 @@ import {
   useSlot,
   useSlottedContext
 } from './utils';
-import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from 'react-aria/private/collections/CollectionBuilder';
+import {Collection} from 'react-aria/Collection';
+import {CollectionBuilder, createBranchComponent, createLeafComponent} from 'react-aria/CollectionBuilder';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
-
 import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
-
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusEvents, FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents} from '@react-types/shared';
 import {FocusScope} from 'react-aria/FocusScope';
 import {HeaderContext} from './Header';
 import {Collection as ICollection, Node} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';
 import {mergeProps} from 'react-aria/mergeProps';
-import {MultipleSelectionState} from 'react-stately/private/selection/types';
+import {MultipleSelectionState} from 'react-stately/useMultipleSelectionState';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
@@ -66,11 +64,9 @@ import React, {
   ReactElement,
   ReactNode,
   RefObject,
-  useCallback,
   useContext,
   useMemo,
-  useRef,
-  useState
+  useRef
 } from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SelectionManager} from 'react-stately/private/selection/SelectionManager';
@@ -81,7 +77,6 @@ import {TreeState, useTreeState} from 'react-stately/useTreeState';
 import {useHover} from 'react-aria/useHover';
 import {useMultipleSelectionState} from 'react-stately/useMultipleSelectionState';
 import {useObjectRef} from 'react-aria/useObjectRef';
-import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<any> | null>(null);
@@ -99,18 +94,6 @@ export function MenuTrigger(props: MenuTriggerProps): JSX.Element {
     ...props,
     type: 'menu'
   }, state, ref);
-  // Allows menu width to match button
-  let [buttonWidth, setButtonWidth] = useState<string | null>(null);
-  let onResize = useCallback(() => {
-    if (ref.current) {
-      setButtonWidth(ref.current.offsetWidth + 'px');
-    }
-  }, [ref]);
-
-  useResizeObserver({
-    ref: ref,
-    onResize: onResize
-  });
   let scrollRef = useRef(null);
 
   return (
@@ -124,7 +107,6 @@ export function MenuTrigger(props: MenuTriggerProps): JSX.Element {
           triggerRef: ref,
           scrollRef,
           placement: 'bottom start',
-          style: {'--trigger-width': buttonWidth} as React.CSSProperties,
           'aria-labelledby': menuProps['aria-labelledby']
         }]
       ]}>

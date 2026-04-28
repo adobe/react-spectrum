@@ -77,7 +77,7 @@ export {Skeleton, useIsSkeleton} from '../src/Skeleton';
 export {SkeletonCollection} from '../src/SkeletonCollection';
 export {StatusLight, StatusLightContext} from '../src/StatusLight';
 export {Switch, SwitchContext} from '../src/Switch';
-export {TableView, TableHeader, TableBody, Row, Cell, Column, TableContext, EditableCell} from '../src/TableView';
+export {TableView, TableHeader, TableBody, Row, Cell, Column, TableContext, EditableCell, TableFooter} from '../src/TableView';
 export {Tabs, TabList, Tab, TabPanel, TabsContext} from '../src/Tabs';
 export {TagGroup, Tag, TagGroupContext} from '../src/TagGroup';
 export {TextArea, TextField, TextAreaContext, TextFieldContext} from '../src/TextField';
@@ -93,7 +93,7 @@ export {pressScale} from '../src/pressScale';
 export {mergeStyles} from '../style/runtime';
 
 export {Autocomplete} from 'react-aria-components/Autocomplete';
-export {Collection} from 'react-aria/private/collections/CollectionBuilder';
+export {Collection} from 'react-aria/Collection';
 export {FileTrigger} from 'react-aria-components/FileTrigger';
 export {parseColor, getColorChannels} from 'react-stately/Color';
 export {useLocale} from 'react-aria/I18nProvider';
@@ -164,7 +164,7 @@ export type {SkeletonProps} from '../src/Skeleton';
 export type {SkeletonCollectionProps} from '../src/SkeletonCollection';
 export type {StatusLightProps} from '../src/StatusLight';
 export type {SwitchProps} from '../src/Switch';
-export type {TableViewProps, TableHeaderProps, TableBodyProps, RowProps, CellProps, ColumnProps} from '../src/TableView';
+export type {TableViewProps, TableHeaderProps, TableBodyProps, RowProps, CellProps, ColumnProps, TableFooterProps} from '../src/TableView';
 export type {TabsProps, TabProps, TabListProps, TabPanelProps} from '../src/Tabs';
 export type {TagGroupProps, TagProps} from '../src/TagGroup';
 export type {TextFieldProps, TextAreaProps, TextFieldRef} from '../src/TextField';
@@ -179,11 +179,11 @@ export type {DateValue, DateRange} from 'react-aria-components/RangeCalendar';
 export type {TimeValue} from 'react-aria-components/TimeField';
 export type {FileTriggerProps} from 'react-aria-components/FileTrigger';
 export type {TooltipTriggerComponentProps as TooltipTriggerProps} from 'react-aria-components/Tooltip';
-export type {SortDescriptor, Key, Selection, RouterConfig, PressEvent} from '@react-types/shared';
+export type {SortDescriptor, SortDirection, Key, Selection, RouterConfig, PressEvent, RangeValue} from '@react-types/shared';
 export type {ColorSpace, ColorChannel, Color, ColorFormat, ColorAxes, ColorChannelRange} from 'react-stately/Color';
-export type {ListData} from 'react-stately/useListData';
-export type {TreeData} from 'react-stately/useTreeData';
-export type {AsyncListData} from 'react-stately/useAsyncList';
+export type {ListOptions, ListData} from 'react-stately/useListData';
+export type {TreeOptions, TreeData} from 'react-stately/useTreeData';
+export type {AsyncListOptions, AsyncListData, AsyncListLoadFunction, AsyncListLoadOptions, AsyncListStateUpdate} from 'react-stately/useAsyncList';
 
 export type {
   StylesProp,

@@ -21,7 +21,7 @@ module.exports = new Namer({
       return bundle.target.distEntry;
     }
     let ext = '.' + bundle.type;
-    if (bundle.type === 'js') {
+    if (bundle.type === 'js' && bundle.target.name !== 'legacy-module' && bundle.target.name !== 'module') {
       ext = bundle.env.outputFormat === 'esmodule' ? '.mjs' : '.cjs';
     }
     let originalExt = path.extname(mainAsset.filePath);

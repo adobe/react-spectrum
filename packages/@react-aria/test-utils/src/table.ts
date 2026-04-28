@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act} from './act';
+import {act, waitFor, within} from '@testing-library/react';
 import {BaseGridRowInteractionOpts, GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
 import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
-import {waitFor, within} from '@testing-library/dom';
 
 interface TableToggleRowOpts extends ToggleGridRowOpts {}
 interface TableToggleExpansionOpts extends BaseGridRowInteractionOpts {}
@@ -505,8 +504,7 @@ export class TableTester {
    * Returns the rows within the table if any.
    */
   get rows(): HTMLElement[] {
-    let bodyRowGroup = this.rowGroups[1];
-    return bodyRowGroup ? within(bodyRowGroup).queryAllByRole('row') : [];
+    return this.rowGroups.slice(1).flatMap(rowGroup => within(rowGroup).queryAllByRole('row'));
   }
 
   /**

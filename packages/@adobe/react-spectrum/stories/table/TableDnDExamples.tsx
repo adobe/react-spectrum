@@ -1,7 +1,7 @@
 
 import {action} from 'storybook/actions';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../../src/table/TableView';
-import {chain} from 'react-aria/private/utils/chain';
+import {chain} from 'react-aria/chain';
 import {DragEndEvent, DragStartEvent, DropEvent, ItemDropTarget, Key} from '@react-types/shared';
 import {Flex} from '../../src/layout/Flex';
 import React, {JSX} from 'react';

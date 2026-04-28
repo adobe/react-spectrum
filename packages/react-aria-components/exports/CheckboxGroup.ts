@@ -17,3 +17,13 @@ import 'client-only';
 export {Checkbox, CheckboxGroup, CheckboxContext, CheckboxGroupContext, CheckboxGroupStateContext} from '../src/Checkbox';
 export type {CheckboxGroupProps, CheckboxGroupRenderProps, CheckboxRenderProps, CheckboxProps} from '../src/Checkbox';
 export type {CheckboxGroupState} from 'react-stately/useCheckboxGroupState';
+
+export {Label} from '../src/Label';
+export type {LabelProps} from '../src/Label';
+
+export {Text} from '../src/Text';
+export type {TextProps} from '../src/Text';
+
+export {FieldError} from '../src/FieldError';
+export type {FieldErrorProps, FieldErrorRenderProps} from '../src/FieldError';
+export type {ValidationResult} from '@react-types/shared';

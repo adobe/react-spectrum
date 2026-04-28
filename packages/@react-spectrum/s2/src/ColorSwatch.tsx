@@ -11,7 +11,7 @@
  */
 
 import {ColorSwatch as AriaColorSwatch, ColorSwatchProps as AriaColorSwatchProps, Color, parseColor} from 'react-aria-components/ColorSwatch';
-import {ContextValue} from 'react-aria-components/utils';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, JSX, ReactElement, useContext, useMemo} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};

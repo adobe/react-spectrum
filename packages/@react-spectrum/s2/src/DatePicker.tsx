@@ -15,7 +15,7 @@ import {baseColor, focusRing, fontRelative, space, style} from '../style' with {
 import {Button, ButtonRenderProps} from 'react-aria-components/Button';
 import {Calendar, CalendarProps} from './Calendar';
 import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
-import {ContextValue, Provider} from 'react-aria-components/utils';
+import {ContextValue, Provider} from 'react-aria-components/slots';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactElement, ReactNode, Ref, useContext, useRef, useState} from 'react';
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
@@ -52,11 +52,7 @@ export interface DatePickerProps<T extends DateValue> extends
      * The maximum number of months to display at once in the calendar popover, if screen space permits.
      * @default 1
      */
-    maxVisibleMonths?: number,
-    /**
-     * The error message to display when the calendar is invalid.
-     */
-    errorMessage?: ReactNode
+    maxVisibleMonths?: number
 }
 
 export const DatePickerContext = createContext<ContextValue<Partial<DatePickerProps<any>>, HTMLDivElement>>(null);
@@ -167,6 +163,10 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         let timeMaxValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : undefined;
         let timeGranularity = state.granularity === 'hour' || state.granularity === 'minute' || state.granularity === 'second' ? state.granularity : undefined;
         let showTimeField = !!timeGranularity;
+
+        // Ideally, we could omit errorMessage here and let S2 Calendar read it from RAC's CalendarContext which already contains the resolved value via calendarProps from useDatePicker.
+        // However, RAC's CalendarProps omits errorMessage, so reading it back from the context would require an unsafe cast. Instead, we resolve it here using the same logic as useDatePicker.
+        let resolvedErrorMessage = typeof errorMessage === 'function' ? errorMessage(state.displayValidation) : (errorMessage || state.displayValidation.validationErrors.join(' '));
         return (
           <>
             <FieldLabel
@@ -208,7 +208,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
               <Calendar
                 visibleMonths={maxVisibleMonths}
                 createCalendar={createCalendar}
-                errorMessage={errorMessage} />
+                errorMessage={resolvedErrorMessage} />
               {showTimeField && (
                 <div className={style({display: 'flex', gap: 16, contain: 'inline-size'})}>
                   <TimeField
@@ -231,7 +231,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
               isDisabled={isDisabled}
               isInvalid={isInvalid}
               description={descriptionMessage}>
-              {errorMessage}
+              {resolvedErrorMessage}
             </HelpText>
           </>
         );

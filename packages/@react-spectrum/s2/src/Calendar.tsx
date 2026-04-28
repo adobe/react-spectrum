@@ -11,7 +11,6 @@
  */
 
 import {ActionButton} from './ActionButton';
-
 import {
   Calendar as AriaCalendar,
   CalendarCell as AriaCalendarCell,
@@ -24,6 +23,9 @@ import {
   CalendarGridBody,
   CalendarGridHeader,
   CalendarHeaderCellProps,
+  CalendarHeading,
+  CalendarSelectionMode,
+  CalendarState,
   CalendarStateContext,
   DateValue
 } from 'react-aria-components/Calendar';
@@ -34,30 +36,28 @@ import {
   getDayOfWeek,
   startOfMonth
 } from '@internationalized/date';
-import {CalendarState} from 'react-stately/useCalendarState';
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
-import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/utils';
+import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {Header, HeaderContext, Heading, HeadingContext} from './Content';
+import {Header, HeaderContext, HeadingContext} from './Content';
 import {helpTextStyles} from './Field';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {RangeCalendarContext, RangeCalendarStateContext} from 'react-aria-components/RangeCalendar';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
-import React, {createContext, ForwardedRef, forwardRef, Fragment, PropsWithChildren, ReactElement, ReactNode, useContext, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, PropsWithChildren, ReactElement, ReactNode, useContext, useMemo, useRef} from 'react';
 import {Text} from 'react-aria-components/Text';
-import {useDateFormatter} from 'react-aria/useDateFormatter';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
-export interface CalendarProps<T extends DateValue>
-  extends Omit<AriaCalendarProps<T>, 'visibleDuration' | 'style' | 'className' | 'render' | 'styles' | 'children' | keyof GlobalDOMAttributes>,
+export interface CalendarProps<T extends DateValue, M extends CalendarSelectionMode = 'single'>
+  extends Omit<AriaCalendarProps<T, M>, 'visibleDuration' | 'weeksInMonth' | 'style' | 'className' | 'render' | 'styles' | 'children' | keyof GlobalDOMAttributes>,
   StyleProps {
   /**
    * The error message to display when the calendar is invalid.
@@ -70,21 +70,47 @@ export interface CalendarProps<T extends DateValue>
   visibleMonths?: number
 }
 
-export const CalendarContext = createContext<ContextValue<Partial<CalendarProps<any>>, HTMLDivElement>>(null);
+export const CalendarContext = createContext<ContextValue<Partial<CalendarProps<any, CalendarSelectionMode>>, HTMLDivElement>>(null);
 
-const calendarStyles = style({
+const calendarStyles = style<{isMultiMonth?: boolean}>({
   display: 'flex',
+  containerType: {
+    default: 'inline-size',
+    isMultiMonth: 'unset'
+  },
   flexDirection: 'column',
   gap: 24,
-  width: 'fit',
-  disableTapHighlight: true
+  disableTapHighlight: true,
+  '--cell-gap': {
+    type: 'paddingStart',
+    value: 4
+  },
+  '--cell-max-width': {
+    type: 'width',
+    value: 32
+  },
+  '--cell-responsive-size': {
+    type: 'width',
+    value: {
+      default: '[min(var(--cell-max-width), (100cqw - (var(--cell-gap) * 12)) / 7)]',
+      isMultiMonth: '--cell-max-width'
+    }
+  },
+  width: {
+    default: 'calc(7 * var(--cell-max-width) + var(--cell-gap) * 12)',
+    isMultiMonth: 'fit'
+  },
+  maxWidth: {
+    default: 'full',
+    isMultiMonth: 'unset'
+  }
 }, getAllowedOverrides());
 
 const headerStyles = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  width: 'full'
+  columnGap: 24
 });
 
 const headingStyles = style({
@@ -92,6 +118,7 @@ const headingStyles = style({
   alignItems: 'center',
   justifyContent: 'space-between',
   margin: 0,
+  flexGrow: 1,
   width: 'full'
 });
 
@@ -99,9 +126,7 @@ const titleStyles = style({
   font: 'title-lg',
   textAlign: 'center',
   flexGrow: 1,
-  flexShrink: 0,
-  flexBasis: '0%',
-  minWidth: 0
+  flexShrink: 0
 });
 
 const headerCellStyles = style({
@@ -121,10 +146,7 @@ const headerCellStyles = style({
 
 const cellStyles = style({
   outlineStyle: 'none',
-  '--cell-gap': {
-    type: 'paddingStart',
-    value: 4
-  },
+  boxSizing: 'content-box',
   paddingStart: {
     default: 4,
     isFirstChild: 0
@@ -142,15 +164,15 @@ const cellStyles = style({
     isLastWeek: 0
   },
   position: 'relative',
-  width: 32,
-  height: 32,
   display: {
     default: 'flex',
     isOutsideMonth: 'none'
   },
   alignItems: 'center',
   justifyContent: 'center',
-  disableTapHighlight: true
+  disableTapHighlight: true,
+  width: '--cell-responsive-size',
+  height: '--cell-responsive-size'
 });
 
 const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single' | 'range'}>({
@@ -174,7 +196,7 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
   font: 'body-sm',
   cursor: 'default',
   width: 'full',
-  height: 32,
+  height: 'full',
   borderRadius: 'full',
   display: 'flex',
   alignItems: 'center',
@@ -291,7 +313,7 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
 
 const todayStyles = style({
   position: 'absolute',
-  bottom: 4,
+  bottom: '12.5%',
   left: '50%',
   transform: 'translateX(-50%)',
   width: 4,
@@ -409,7 +431,7 @@ const selectionBorderStyles = style<{isInvalid?: boolean, isFirstDayInWeek?: boo
 /**
  * Calendars display a grid of days in one or more months and allow users to select a single date.
  */
-export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Calendar<T extends DateValue, M extends CalendarSelectionMode = 'single'>(props: CalendarProps<T, M>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CalendarContext);
   let {
     visibleMonths = 1,
@@ -420,13 +442,14 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
     ...otherProps
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let isMultiMonth = visibleMonths > 1;
   return (
     <AriaCalendar
       {...otherProps}
       ref={ref}
       visibleDuration={{months: visibleMonths}}
       style={UNSAFE_style}
-      className={(UNSAFE_className || '') + calendarStyles(null, styles)}>
+      className={(UNSAFE_className || '') + calendarStyles({isMultiMonth}, styles)}>
       {({isInvalid, isDisabled}) => {
         return (
           <>
@@ -435,11 +458,7 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                 [HeaderContext, null],
                 [HeadingContext, null]
               ]}>
-              <Header styles={headerStyles}>
-                <CalendarButton slot="previous"><ChevronLeftIcon /></CalendarButton>
-                <CalendarHeading />
-                <CalendarButton slot="next"><ChevronRightIcon /></CalendarButton>
-              </Header>
+              <CalendarHeader visibleMonths={visibleMonths} />
             </Provider>
             <div
               className={style({
@@ -450,7 +469,7 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                 alignItems: 'start'
               })}>
               {Array.from({length: visibleMonths}).map((_, i) => (
-                <CalendarGrid months={i} key={i} />
+                <CalendarGrid key={i} months={i} />
               ))}
             </div>
             {isInvalid && (
@@ -464,6 +483,20 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
     </AriaCalendar>
   );
 });
+
+export const CalendarHeader = ({visibleMonths}: {visibleMonths: number}): ReactElement => {
+  return (
+    <Header styles={headerStyles}>
+      {Array.from({length: visibleMonths}).map((_, i) => (
+        <div key={i} className={headingStyles}>
+          {i === 0 && <CalendarButton slot="previous"><ChevronLeftIcon /></CalendarButton>}
+          <CalendarHeading offset={{months: i}} className={titleStyles} />
+          {i === visibleMonths - 1 && <CalendarButton slot="next"><ChevronRightIcon /></CalendarButton>}
+        </div>
+      ))}
+    </Header>
+  );
+};
 
 export const CalendarGrid = (props: Omit<AriaCalendarGridProps, 'children'> & PropsWithChildren & {months: number}): ReactElement => {
   let rangeCalendarProps = useSlottedContext(RangeCalendarContext);
@@ -492,61 +525,6 @@ export const CalendarGrid = (props: Omit<AriaCalendarGridProps, 'children'> & Pr
         )}
       </CalendarGridBody>
     </AriaCalendarGrid>
-  );
-};
-
-// Ordinarily the heading is a formatted date range, ie January 2025 - February 2025.
-// However, we want to show each month individually.
-export const CalendarHeading = (): ReactElement => {
-  let calendarStateContext = useContext(CalendarStateContext);
-  let rangeCalendarStateContext = useContext(RangeCalendarStateContext);
-  let {visibleRange, timeZone} = calendarStateContext ?? rangeCalendarStateContext ?? {};
-  let currentMonth = visibleRange?.start ?? visibleRange?.end;
-  let monthFormatter = useDateFormatter({
-    month: 'long',
-    year: 'numeric',
-    era: currentMonth && currentMonth.calendar.identifier === 'gregory' && currentMonth.era === 'BC' ? 'short' : undefined,
-    calendar: visibleRange?.start.calendar.identifier,
-    timeZone
-  });
-  let months = useMemo(() => {
-    if (!visibleRange) {
-      return [];
-    }
-    let months: string[] = [];
-    for (let i = visibleRange.start; i.compare(visibleRange.end) <= 0; i = i.add({months: 1})) {
-      // TODO: account for the first week possibly overlapping, like with a custom 454 calendar.
-      // there has to be a better way to do this...
-      if (i.month === visibleRange.start.month) {
-        i = i.add({weeks: 1});
-      }
-      months.push(monthFormatter.format(i.toDate(timeZone!)));
-    }
-    return months;
-  }, [visibleRange, monthFormatter, timeZone]);
-
-  return (
-    <Heading styles={headingStyles}>
-      {months.map((month, i) => {
-        if (i === 0) {
-          return (
-            <Fragment key={month}>
-              <div className={titleStyles}>{month}</div>
-            </Fragment>
-          );
-        } else {
-          return (
-            <Fragment key={month}>
-              {/* Spacers to account for Next/Previous buttons and gap, spelled out to show the math */}
-              <div className={style({visibility: 'hidden', width: 32})} />
-              <div className={style({visibility: 'hidden', width: 24})} />
-              <div className={style({visibility: 'hidden', width: 32})} />
-              <div className={titleStyles}>{month}</div>
-            </Fragment>
-          );
-        }
-      })}
-    </Heading>
   );
 };
 
@@ -605,7 +583,7 @@ const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {firstDayOfWe
   );
 };
 
-const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRangeSelection: boolean, state: CalendarState | RangeCalendarState, weekIndex: number, dayIndex: number, renderProps?: CalendarCellRenderProps, date: DateValue}): ReactElement => {
+const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRangeSelection: boolean, state: CalendarState<CalendarSelectionMode> | RangeCalendarState, weekIndex: number, dayIndex: number, renderProps?: CalendarCellRenderProps, date: DateValue}): ReactElement => {
   let {dayIndex, date, renderProps, state, isRangeSelection} = props;
   let ref = useRef<HTMLDivElement>(null);
   let {isUnavailable, formattedDate, isSelected, isSelectionStart, isSelectionEnd, isInvalid} = renderProps!;
@@ -648,11 +626,8 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRange
     <div
       className={style({
         position: 'relative',
-        width: 32,
-        '--cell-width': {
-          type: 'width',
-          value: '[self(width)]'
-        }
+        width: 'full',
+        height: 'full'
       })}>
       <div
         ref={ref}

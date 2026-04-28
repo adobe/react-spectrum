@@ -41,13 +41,16 @@
     "@react-spectrum/s2": "^1.0.0",
     "@react-spectrum/utils": "^3.12.6",
     "@react-types/shared": "^3.30.0",
-    "emojibase-data": "^16.0.3",
+    "emojibase": "^17.0.0",
+    "emojibase-data": "^17.0.0",
     "fast-glob": "^3.3.3",
     "globals-docs": "^2.4.1",
     "gray-matter": "^4.0.3",
     "json5": "^2.2.3",
     "lz-string": "^1.5.0",
     "markdown-to-jsx": "^6.11.0",
+    "mdast-util-mdx": "^1.0.0",
+    "mdast-util-to-markdown": "^1.0.0",
     "react": "^19.2.0",
     "react-aria": "^3.40.0",
     "react-aria-components": "^1.7.1",
@@ -70,5 +73,8 @@
   "devDependencies": {
     "axe-playwright": "^2.2.2",
     "playwright": "^1.57.0"
+  },
+  "peerDependencies": {
+    "@react-spectrum/provider": "*"
   }
 }

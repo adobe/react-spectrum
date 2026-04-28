@@ -12,9 +12,7 @@
  */
 
 import {BaseLayout, BaseLayoutOptions} from './BaseLayout';
-import {LayoutInfo} from 'react-stately/private/virtualizer/LayoutInfo';
-import {Rect} from 'react-stately/private/virtualizer/Rect';
-import {Size} from 'react-stately/private/virtualizer/Size';
+import {LayoutInfo, Rect, Size} from 'react-stately/useVirtualizerState';
 
 export interface GalleryLayoutOptions extends BaseLayoutOptions {
   // /**
