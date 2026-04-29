@@ -163,9 +163,9 @@ export class TreeDropTargetDelegate<T> {
     let parentKey = currentItem?.parentKey;
     let ancestorTargets: ItemDropTarget[] = [];
 
-    while (parentKey) {
+    while (parentKey != null) {
       let parentItem = collection.getItem(parentKey);
-      let nextItem = parentItem?.nextKey ? collection.getItem(parentItem.nextKey) : null;
+      let nextItem = parentItem?.nextKey != null ? collection.getItem(parentItem.nextKey) : null;
       let isLastChildAtLevel = !nextItem || nextItem.parentKey !== parentKey;
 
       if (isLastChildAtLevel) {
@@ -193,7 +193,7 @@ export class TreeDropTargetDelegate<T> {
     // Handle converting "after" to "before next" for non-ambiguous cases
     if (potentialTargets.length === 1) {
       let nextKey = collection.getKeyAfter(target.key);
-      let nextNode = nextKey ? collection.getItem(nextKey) : null;
+      let nextNode = nextKey != null ? collection.getItem(nextKey) : null;
       if (nextKey != null && nextNode && currentItem && nextNode.level != null && currentItem.level != null && nextNode.level > currentItem.level) {
         let beforeTarget = {
           type: 'item',
@@ -225,7 +225,7 @@ export class TreeDropTargetDelegate<T> {
     let currentItem = this.state!.collection.getItem(originalTarget.key);
     let parentKey = currentItem?.parentKey;
 
-    if (!parentKey) {
+    if (parentKey == null) {
       return potentialTargets[0];
     }
 
