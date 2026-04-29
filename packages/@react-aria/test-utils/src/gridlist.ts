@@ -24,13 +24,15 @@ export class GridListTester {
   private _advanceTimer: UserOpts['advanceTimer'];
   private _direction: Direction;
   private _gridlist: HTMLElement;
+  private _layout: GridListTesterOpts['layout'];
 
   constructor(opts: GridListTesterOpts) {
-    let {root, user, interactionType, advanceTimer, direction} = opts;
+    let {root, user, interactionType, advanceTimer, direction, layout} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
     this._advanceTimer = advanceTimer;
     this._direction = direction || 'ltr';
+    this._layout = layout || 'stack';
     this._gridlist = root;
     if (root.getAttribute('role') !== 'grid') {
       let gridlist = within(root).queryByRole('grid');
@@ -90,13 +92,33 @@ export class GridListTester {
     if (currIndex === -1) {
       throw new Error('ActiveElement is not in the gridlist');
     }
-    let direction = targetIndex > currIndex ? 'down' : 'up';
 
     if (selectionOnNav === 'none') {
       await this.user.keyboard(`[${altKey}>]`);
     }
-    for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
-      await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+    if (this._layout === 'grid') {
+      while (document.activeElement !== row) {
+        let curr = (document.activeElement as HTMLElement).getBoundingClientRect();
+        let target = row.getBoundingClientRect();
+        let key: string;
+        // basically compare current position with desired position to determine if we need to go up/down/left/right
+        // use 1 in the comparison here for subpixels since getBoundingClientRect returns subpixels precision
+        if (Math.abs(curr.top - target.top) > 1) {
+          key = curr.top < target.top ? 'ArrowDown' : 'ArrowUp';
+        } else if (Math.abs(curr.left - target.left) > 1) {
+          key = curr.left < target.left ? 'ArrowRight' : 'ArrowLeft';
+        } else {
+          // if the diff in current vs desired is < 1 but it is claiming we arent focused on the target
+          // then we might be in a case where getBoundingClientRect isnt mocked
+          throw new Error('Could not navigate to target row in grid layout. Did the test mock getBoundingClientRect?');
+        }
+        await this.user.keyboard(`[${key}]`);
+      }
+    } else {
+      let direction = targetIndex > currIndex ? 'down' : 'up';
+      for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
+        await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+      }
     }
     if (selectionOnNav === 'none') {
       await this.user.keyboard(`[/${altKey}]`);

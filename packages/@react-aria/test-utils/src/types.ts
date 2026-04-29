@@ -70,7 +70,13 @@ export interface DialogTesterOpts extends BaseTesterOpts {
   overlayType?: 'modal' | 'popover'
 }
 
-export interface GridListTesterOpts extends BaseTesterOpts {}
+export interface GridListTesterOpts extends BaseTesterOpts {
+  /**
+   * The layout of the gridlist.
+   * @default 'stack'
+   */
+  layout?: 'stack' | 'grid'
+}
 
 export interface ListBoxTesterOpts extends BaseTesterOpts {
   /**

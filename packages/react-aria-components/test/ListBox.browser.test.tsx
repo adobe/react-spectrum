@@ -44,7 +44,14 @@ it('can do grid navigation in browser test', async () => {
   expect(options).toHaveLength(9);
 
   await tester.toggleOptionSelection({option: options[5]});
-
   expect(options[5].getAttribute('aria-selected')).toBe('true');
   expect(document.activeElement).toBe(options[5]);
+
+  await tester.toggleOptionSelection({option: options[0]});
+  expect(options[0].getAttribute('aria-selected')).toBe('true');
+  expect(document.activeElement).toBe(options[0]);
+
+  await tester.toggleOptionSelection({option: options[8]});
+  expect(options[8].getAttribute('aria-selected')).toBe('true');
+  expect(document.activeElement).toBe(options[8]);
 });
