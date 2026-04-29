@@ -70,7 +70,7 @@ describe('Dialog', () => {
     let button = getByRole('button');
     let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'modal'});
     await dialogTester.open();
-    let dialog = dialogTester.dialog;
+    let dialog = dialogTester.dialog();
     expect(dialog).toHaveAttribute('role', 'alertdialog');
     let heading = getByRole('heading');
     expect(dialog).toHaveAttribute('aria-labelledby', heading.id);
@@ -172,7 +172,7 @@ describe('Dialog', () => {
     await dialogTester.open();
     expect(button).toHaveAttribute('data-pressed');
 
-    let dialog = dialogTester.dialog;
+    let dialog = dialogTester.dialog();
     let heading = getByRole('heading');
     expect(dialog).toHaveAttribute('aria-labelledby', heading.id);
     expect(dialog).toHaveAttribute('data-test', 'dialog');

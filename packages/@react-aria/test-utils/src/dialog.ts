@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, waitFor, within} from '@testing-library/react';
+import {act} from './act';
 import {DialogTesterOpts, UserOpts} from './types';
+import {waitFor, within} from '@testing-library/dom';
 
 interface DialogOpenOpts {
   /**
@@ -56,7 +57,7 @@ export class DialogTester {
     let {
       interactionType = this._interactionType
     } = opts;
-    let trigger = this.trigger;
+    let trigger = this.trigger();
     if (!trigger.hasAttribute('disabled')) {
       if (interactionType === 'mouse') {
         await this.user.click(trigger);
@@ -126,7 +127,7 @@ export class DialogTester {
   /**
    * Returns the dialog's trigger.
    */
-  get trigger(): HTMLElement {
+  trigger(): HTMLElement {
     if (!this._trigger) {
       throw new Error('No trigger element found for dialog.');
     }
@@ -137,7 +138,7 @@ export class DialogTester {
   /**
    * Returns the dialog if present.
    */
-  get dialog(): HTMLElement | null {
+  dialog(): HTMLElement | null {
     return this._dialog && document.contains(this._dialog) ? this._dialog : null;
   }
 }

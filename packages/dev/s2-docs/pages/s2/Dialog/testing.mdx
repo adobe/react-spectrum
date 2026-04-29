@@ -50,7 +50,7 @@ it('Dialog can be opened and closed', async function () {
   let button = getByRole('button');
   let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'modal'});
   await dialogTester.open();
-  let dialog = dialogTester.dialog;
+  let dialog = dialogTester.dialog();
   expect(dialog).toBeVisible();
   await dialogTester.close();
   expect(dialog).not.toBeInTheDocument();

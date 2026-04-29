@@ -94,11 +94,11 @@ describe('ListBox', function () {
   it('renders properly', function () {
     let tree = renderComponent();
     let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
-    let listbox = listboxTester.listbox;
+    let listbox = listboxTester.listbox();
     expect(listbox).toBeTruthy();
     expect(listbox).toHaveAttribute('aria-labelledby', 'label');
 
-    let sections = listboxTester.sections;
+    let sections = listboxTester.sections();
     expect(sections.length).toBe(withSection.length);
 
     for (let section of sections) {
@@ -126,11 +126,11 @@ describe('ListBox', function () {
       expect(option).toHaveAttribute('aria-setsize');
     }
 
-    expect(listboxTester.findOption({optionIndexOrText: 'Foo'})).toBeTruthy();
-    expect(listboxTester.findOption({optionIndexOrText: 'Bar'})).toBeTruthy();
-    expect(listboxTester.findOption({optionIndexOrText: 'Baz'})).toBeTruthy();
-    expect(listboxTester.findOption({optionIndexOrText: 'Blah'})).toBeTruthy();
-    expect(listboxTester.findOption({optionIndexOrText: 'Bleh'})).toBeTruthy();
+    expect(listboxTester.findOption({indexOrText: 'Foo'})).toBeTruthy();
+    expect(listboxTester.findOption({indexOrText: 'Bar'})).toBeTruthy();
+    expect(listboxTester.findOption({indexOrText: 'Baz'})).toBeTruthy();
+    expect(listboxTester.findOption({indexOrText: 'Blah'})).toBeTruthy();
+    expect(listboxTester.findOption({indexOrText: 'Bleh'})).toBeTruthy();
   });
 
   it('renders with falsy id', function () {
@@ -194,7 +194,7 @@ describe('ListBox', function () {
       let tree = renderComponent({onSelectionChange, defaultSelectedKeys: ['Blah'], autoFocus: 'first', selectionMode: 'single'});
       let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
 
-      let selectedOptions = listboxTester.selectedOptions;
+      let selectedOptions = listboxTester.selectedOptions();
       expect(selectedOptions).toHaveLength(1);
       expect(selectedOptions[0]).toBe(document.activeElement);
       expect(selectedOptions[0]).toHaveAttribute('aria-selected', 'true');
@@ -206,7 +206,7 @@ describe('ListBox', function () {
 
       // Select a different listbox item via enter
       await listboxTester.toggleOptionSelection({option: 4, interactionType: 'keyboard'});
-      selectedOptions = listboxTester.selectedOptions;
+      selectedOptions = listboxTester.selectedOptions();
       expect(selectedOptions[0]).toHaveAttribute('aria-selected', 'true');
       itemText = within(selectedOptions[0]).getByText('Bleh');
       expect(itemText).toBeTruthy();
@@ -819,8 +819,8 @@ describe('ListBox', function () {
 
     let {rerender, getByRole, getByLabelText} = render(<Example sections={sections} />);
     let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
-    let item = listboxTester.findOption({optionIndexOrText: 'Foo 1'});
-    let listboxSections = listboxTester.sections;
+    let item = listboxTester.findOption({indexOrText: 'Foo 1'});
+    let listboxSections = listboxTester.sections();
     expect(listboxTester.options({element: listboxSections[0]})).toContain(item);
     expect(listboxSections[0]).toBe(getByLabelText('Section 1'));
 
@@ -837,8 +837,8 @@ describe('ListBox', function () {
 
     rerender(<Example sections={sections2} />);
     listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
-    item = listboxTester.findOption({optionIndexOrText: 'Foo 1'});
-    listboxSections = listboxTester.sections;
+    item = listboxTester.findOption({indexOrText: 'Foo 1'});
+    listboxSections = listboxTester.sections();
     expect(listboxTester.options({element: listboxSections[1]})).toContain(item);
     expect(listboxSections[1]).toBe(getByLabelText('Section 2'));
   });

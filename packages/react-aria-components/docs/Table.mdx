@@ -2695,22 +2695,22 @@ it('Table can toggle row selection', async function () {
     </Table>
   );
   let tableTester = testUtilUser.createTester('Table', {root: getByTestId('test-table')});
-  expect(tableTester.selectedRows).toHaveLength(0);
+  expect(tableTester.selectedRows()).toHaveLength(0);
 
   await tableTester.toggleSelectAll();
-  expect(tableTester.selectedRows).toHaveLength(10);
+  expect(tableTester.selectedRows()).toHaveLength(10);
 
   await tableTester.toggleRowSelection({row: 2});
-  expect(tableTester.selectedRows).toHaveLength(9);
-  let checkbox = within(tableTester.rows[2]).getByRole('checkbox');
+  expect(tableTester.selectedRows()).toHaveLength(9);
+  let checkbox = within(tableTester.rows()[2]).getByRole('checkbox');
   expect(checkbox).not.toBeChecked();
 
   await tableTester.toggleSelectAll();
-  expect(tableTester.selectedRows).toHaveLength(10);
+  expect(tableTester.selectedRows()).toHaveLength(10);
   expect(checkbox).toBeChecked();
 
   await tableTester.toggleSelectAll();
-  expect(tableTester.selectedRows).toHaveLength(0);
+  expect(tableTester.selectedRows()).toHaveLength(0);
 });
 ```
 

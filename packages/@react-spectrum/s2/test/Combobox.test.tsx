@@ -66,15 +66,15 @@ describe('Combobox', () => {
     );
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
-    expect(comboboxTester.listbox).toBeFalsy();
+    expect(comboboxTester.listbox()).toBeFalsy();
     comboboxTester.setInteractionType('mouse');
     await comboboxTester.open();
 
     let options = comboboxTester.options();
     expect(options).toHaveLength(1);
-    expect(comboboxTester.listbox).toBeTruthy();
+    expect(comboboxTester.listbox()).toBeTruthy();
     expect(options[0]).toHaveTextContent('No results');
-    expect(within(comboboxTester.listbox!).getByTestId('loadMoreSentinel')).toBeInTheDocument();
+    expect(within(comboboxTester.listbox()!).getByTestId('loadMoreSentinel')).toBeInTheDocument();
   });
 
   it('should only call loadMore whenever intersection is detected', async () => {
@@ -95,7 +95,7 @@ describe('Combobox', () => {
     );
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
-    expect(comboboxTester.listbox).toBeFalsy();
+    expect(comboboxTester.listbox()).toBeFalsy();
     comboboxTester.setInteractionType('mouse');
     await comboboxTester.open();
 
@@ -140,7 +140,7 @@ describe('Combobox', () => {
     await comboboxTester.open();
 
     expect(announce).toHaveBeenLastCalledWith('5 options available.');
-    expect(within(comboboxTester.listbox!).getByRole('progressbar', {hidden: true})).toBeInTheDocument();
+    expect(within(comboboxTester.listbox()!).getByRole('progressbar', {hidden: true})).toBeInTheDocument();
 
     await user.keyboard('C');
     expect(announce).toHaveBeenLastCalledWith('2 options available.');
@@ -202,7 +202,7 @@ describe('Combobox', () => {
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.getByTestId('testcombobox')});
     let buttons = tree.getAllByRole('button');
     expect(buttons).toHaveLength(2);
-    expect(buttons[1]).toBe(comboboxTester.trigger);
+    expect(buttons[1]).toBe(comboboxTester.trigger());
 
     await user.click(buttons[0]);
 
@@ -241,22 +241,22 @@ describe('Combobox', () => {
 
     let dialogTester = testUtilUser.createTester('Dialog', {root: tree.container, interactionType: 'mouse'});
     await dialogTester.open();
-    expect(dialogTester.dialog).toBeVisible();
+    expect(dialogTester.dialog()).toBeVisible();
     act(() => {
       jest.runAllTimers();
     });
-    let comboboxTester = testUtilUser.createTester('ComboBox', {root: dialogTester.dialog!, interactionType: 'mouse'});
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: dialogTester.dialog()!, interactionType: 'mouse'});
     await comboboxTester.open();
 
-    expect(comboboxTester.listbox).toBeVisible();
+    expect(comboboxTester.listbox()).toBeVisible();
     act(() => {
       jest.runAllTimers();
     });
     let backdrop = document.querySelector('[style*="--visual-viewport-height"]');
     await user.click(backdrop!);
 
-    await waitFor(() => expect(comboboxTester.listbox).toBeNull());
+    await waitFor(() => expect(comboboxTester.listbox()).toBeNull());
     await user.click(backdrop!);
-    expect(dialogTester.dialog).toBeNull();
+    expect(dialogTester.dialog()).toBeNull();
   });
 });

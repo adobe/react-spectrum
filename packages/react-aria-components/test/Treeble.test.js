@@ -15,6 +15,7 @@ import {Cell as AriaCell, Column, Row, Table, TableBody, TableHeader} from '../s
 import {Button} from '../src/Button';
 import {Collection} from 'react-aria/Collection';
 import {composeRenderProps} from '../src/utils';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import React from 'react';
 import {useDragAndDrop} from '../src/useDragAndDrop';
 import {User} from '@react-aria/test-utils';
@@ -181,123 +182,135 @@ describe('Treeble', () => {
     let tree = render(<Example />);
     let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
 
-    expect(tester.table).toHaveAttribute('role', 'treegrid');
+    expect(tester.table()).toHaveAttribute('role', 'treegrid');
 
-    expect(tester.rows).toHaveLength(4);
-    expect(tester.rows[0]).toHaveAttribute('aria-expanded', 'false');
-    expect(tester.rows[0]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows[0]).toHaveAttribute('aria-posinset', '1');
-    expect(tester.rows[0]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rows[0]).not.toHaveAttribute('data-expanded');
-    expect(tester.rows[0]).toHaveAttribute('data-has-child-items', 'true');
-    expect(tester.rows[0]).toHaveAttribute('data-level', '1');
-    expect(tester.rows[0]).toHaveAttribute('style', '--table-row-level: 1;');
-    expect(tester.rowHeaders[0]).toHaveTextContent('Games');
-    expect(tester.rowHeaders[0]).toHaveAttribute('data-tree-column');
+    expect(tester.rows()).toHaveLength(4);
+    expect(tester.rows()[0]).toHaveAttribute('aria-expanded', 'false');
+    expect(tester.rows()[0]).toHaveAttribute('aria-level', '1');
+    expect(tester.rows()[0]).toHaveAttribute('aria-posinset', '1');
+    expect(tester.rows()[0]).toHaveAttribute('aria-setsize', '4');
+    expect(tester.rows()[0]).not.toHaveAttribute('data-expanded');
+    expect(tester.rows()[0]).toHaveAttribute('data-has-child-items', 'true');
+    expect(tester.rows()[0]).toHaveAttribute('data-level', '1');
+    expect(tester.rows()[0]).toHaveAttribute('style', '--table-row-level: 1;');
+    expect(tester.rowHeaders()[0]).toHaveTextContent('Games');
+    expect(tester.rowHeaders()[0]).toHaveAttribute('data-tree-column');
     for (let cell of tester.cells()) {
       expect(cell).not.toHaveAttribute('data-tree-column');
     }
-    for (let cell of tester.cells({element: tester.rows[0]})) {
+    for (let cell of tester.cells({element: tester.rows()[0]})) {
       expect(cell).not.toHaveAttribute('data-expanded');
       expect(cell).toHaveAttribute('data-has-child-items', 'true');
       expect(cell).toHaveAttribute('data-level', '1');
     }
 
-    let button = within(tester.rowHeaders[0]).getByRole('button');
+    let button = within(tester.rowHeaders()[0]).getByRole('button');
     expect(button).toHaveAttribute('aria-label', 'Expand');
-    expect(button).toHaveAttribute('aria-labelledby', `${button.id} ${tester.rowHeaders[0].id}`);
+    expect(button).toHaveAttribute('aria-labelledby', `${button.id} ${tester.rowHeaders()[0].id}`);
     expect(button).toHaveAttribute('tabindex', '-1');
 
-    expect(tester.rows[1]).toHaveAttribute('aria-expanded', 'false');
-    expect(tester.rows[1]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows[1]).toHaveAttribute('aria-posinset', '2');
-    expect(tester.rows[1]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rows[1]).not.toHaveAttribute('data-expanded');
-    expect(tester.rows[1]).toHaveAttribute('data-has-child-items', 'true');
-    expect(tester.rows[1]).toHaveAttribute('data-level', '1');
-    expect(tester.rows[1]).toHaveAttribute('style', '--table-row-level: 1;');
-    expect(tester.rowHeaders[1]).toHaveTextContent('Applications');
+    expect(tester.rows()[1]).toHaveAttribute('aria-expanded', 'false');
+    expect(tester.rows()[1]).toHaveAttribute('aria-level', '1');
+    expect(tester.rows()[1]).toHaveAttribute('aria-posinset', '2');
+    expect(tester.rows()[1]).toHaveAttribute('aria-setsize', '4');
+    expect(tester.rows()[1]).not.toHaveAttribute('data-expanded');
+    expect(tester.rows()[1]).toHaveAttribute('data-has-child-items', 'true');
+    expect(tester.rows()[1]).toHaveAttribute('data-level', '1');
+    expect(tester.rows()[1]).toHaveAttribute('style', '--table-row-level: 1;');
+    expect(tester.rowHeaders()[1]).toHaveTextContent('Applications');
 
-    expect(tester.rows[2]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[2]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows[2]).toHaveAttribute('aria-posinset', '3');
-    expect(tester.rows[2]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rows[2]).not.toHaveAttribute('data-expanded');
-    expect(tester.rows[2]).not.toHaveAttribute('data-has-child-items');
-    expect(tester.rows[2]).toHaveAttribute('data-level', '1');
-    expect(tester.rows[2]).toHaveAttribute('style', '--table-row-level: 1;');
-    expect(tester.rowHeaders[2]).toHaveTextContent('2024 Financial Report');
+    expect(tester.rows()[2]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[2]).toHaveAttribute('aria-level', '1');
+    expect(tester.rows()[2]).toHaveAttribute('aria-posinset', '3');
+    expect(tester.rows()[2]).toHaveAttribute('aria-setsize', '4');
+    expect(tester.rows()[2]).not.toHaveAttribute('data-expanded');
+    expect(tester.rows()[2]).not.toHaveAttribute('data-has-child-items');
+    expect(tester.rows()[2]).toHaveAttribute('data-level', '1');
+    expect(tester.rows()[2]).toHaveAttribute('style', '--table-row-level: 1;');
+    expect(tester.rowHeaders()[2]).toHaveTextContent('2024 Financial Report');
 
-    expect(tester.rows[3]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[3]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows[3]).toHaveAttribute('aria-posinset', '4');
-    expect(tester.rows[3]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rows[3]).not.toHaveAttribute('data-expanded');
-    expect(tester.rows[3]).not.toHaveAttribute('data-has-child-items');
-    expect(tester.rows[3]).toHaveAttribute('data-level', '1');
-    expect(tester.rows[3]).toHaveAttribute('style', '--table-row-level: 1;');
-    expect(tester.rowHeaders[3]).toHaveTextContent('Job Posting');
+    expect(tester.rows()[3]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[3]).toHaveAttribute('aria-level', '1');
+    expect(tester.rows()[3]).toHaveAttribute('aria-posinset', '4');
+    expect(tester.rows()[3]).toHaveAttribute('aria-setsize', '4');
+    expect(tester.rows()[3]).not.toHaveAttribute('data-expanded');
+    expect(tester.rows()[3]).not.toHaveAttribute('data-has-child-items');
+    expect(tester.rows()[3]).toHaveAttribute('data-level', '1');
+    expect(tester.rows()[3]).toHaveAttribute('style', '--table-row-level: 1;');
+    expect(tester.rowHeaders()[3]).toHaveTextContent('Job Posting');
   });
 
-  it.each(['mouse', 'touch', 'keyboard'])('should expand a row with %s', async (interactionType) => {
-    let tree = render(<Example />);
-    let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
+  it.each`
+    interactionType | locale     | direction
+    ${'mouse'}      | ${'en-US'} | ${'ltr'}
+    ${'touch'}      | ${'en-US'} | ${'ltr'}
+    ${'keyboard'}   | ${'en-US'} | ${'ltr'}
+    ${'mouse'}      | ${'ar-AE'} | ${'rtl'}
+    ${'touch'}      | ${'ar-AE'} | ${'rtl'}
+    ${'keyboard'}   | ${'ar-AE'} | ${'rtl'}
+  `('should expand a row with $interactionType ($direction)', async ({interactionType, locale, direction}) => {
+    let tree = render(
+      <I18nProvider locale={locale}>
+        <Example />
+      </I18nProvider>
+    );
+    let tester = utils.createTester('Table', {root: tree.getByTestId('treeble'), direction});
 
     await tester.toggleRowExpansion({row: 0, interactionType});
 
-    expect(tester.rows).toHaveLength(7);
-    expect(tester.rows[0]).toHaveAttribute('aria-expanded', 'true');
-    expect(tester.rows[0]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows[0]).toHaveAttribute('aria-posinset', '1');
-    expect(tester.rows[0]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rows[0]).toHaveAttribute('data-expanded', 'true');
-    expect(tester.rows[0]).toHaveAttribute('data-has-child-items', 'true');
-    expect(tester.rows[0]).toHaveAttribute('data-level', '1');
-    expect(tester.rows[0]).toHaveAttribute('style', '--table-row-level: 1;');
-    expect(tester.rowHeaders[0]).toHaveTextContent('Games');
-    for (let cell of tester.cells({element: tester.rows[0]})) {
+    expect(tester.rows()).toHaveLength(7);
+    expect(tester.rows()[0]).toHaveAttribute('aria-expanded', 'true');
+    expect(tester.rows()[0]).toHaveAttribute('aria-level', '1');
+    expect(tester.rows()[0]).toHaveAttribute('aria-posinset', '1');
+    expect(tester.rows()[0]).toHaveAttribute('aria-setsize', '4');
+    expect(tester.rows()[0]).toHaveAttribute('data-expanded', 'true');
+    expect(tester.rows()[0]).toHaveAttribute('data-has-child-items', 'true');
+    expect(tester.rows()[0]).toHaveAttribute('data-level', '1');
+    expect(tester.rows()[0]).toHaveAttribute('style', '--table-row-level: 1;');
+    expect(tester.rowHeaders()[0]).toHaveTextContent('Games');
+    for (let cell of tester.cells({element: tester.rows()[0]})) {
       expect(cell).toHaveAttribute('data-expanded');
       expect(cell).toHaveAttribute('data-has-child-items', 'true');
       expect(cell).toHaveAttribute('data-level', '1');
     }
 
-    expect(tester.rows[1]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[1]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows[1]).toHaveAttribute('aria-posinset', '1');
-    expect(tester.rows[1]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rows[1]).toHaveAttribute('style', '--table-row-level: 2;');
-    expect(tester.rowHeaders[1]).toHaveTextContent('Mario Kart');
+    expect(tester.rows()[1]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[1]).toHaveAttribute('aria-level', '2');
+    expect(tester.rows()[1]).toHaveAttribute('aria-posinset', '1');
+    expect(tester.rows()[1]).toHaveAttribute('aria-setsize', '3');
+    expect(tester.rows()[1]).toHaveAttribute('style', '--table-row-level: 2;');
+    expect(tester.rowHeaders()[1]).toHaveTextContent('Mario Kart');
 
-    expect(tester.rows[2]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[2]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows[2]).toHaveAttribute('aria-posinset', '2');
-    expect(tester.rows[2]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rows[2]).toHaveAttribute('style', '--table-row-level: 2;');
-    expect(tester.rowHeaders[2]).toHaveTextContent('Tetris');
+    expect(tester.rows()[2]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[2]).toHaveAttribute('aria-level', '2');
+    expect(tester.rows()[2]).toHaveAttribute('aria-posinset', '2');
+    expect(tester.rows()[2]).toHaveAttribute('aria-setsize', '3');
+    expect(tester.rows()[2]).toHaveAttribute('style', '--table-row-level: 2;');
+    expect(tester.rowHeaders()[2]).toHaveTextContent('Tetris');
 
-    expect(tester.rows[3]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[3]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows[3]).toHaveAttribute('aria-posinset', '3');
-    expect(tester.rows[3]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rows[3]).toHaveAttribute('style', '--table-row-level: 2;');
-    expect(tester.rowHeaders[3]).toHaveTextContent('Pac-Man');
+    expect(tester.rows()[3]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[3]).toHaveAttribute('aria-level', '2');
+    expect(tester.rows()[3]).toHaveAttribute('aria-posinset', '3');
+    expect(tester.rows()[3]).toHaveAttribute('aria-setsize', '3');
+    expect(tester.rows()[3]).toHaveAttribute('style', '--table-row-level: 2;');
+    expect(tester.rowHeaders()[3]).toHaveTextContent('Pac-Man');
 
-    expect(tester.rows[4]).toHaveAttribute('aria-expanded', 'false');
-    expect(tester.rows[4]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows[4]).toHaveAttribute('aria-posinset', '2');
-    expect(tester.rows[4]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rows[4]).toHaveAttribute('style', '--table-row-level: 1;');
-    expect(tester.rowHeaders[4]).toHaveTextContent('Applications');
+    expect(tester.rows()[4]).toHaveAttribute('aria-expanded', 'false');
+    expect(tester.rows()[4]).toHaveAttribute('aria-level', '1');
+    expect(tester.rows()[4]).toHaveAttribute('aria-posinset', '2');
+    expect(tester.rows()[4]).toHaveAttribute('aria-setsize', '4');
+    expect(tester.rows()[4]).toHaveAttribute('style', '--table-row-level: 1;');
+    expect(tester.rowHeaders()[4]).toHaveTextContent('Applications');
 
-    expect(tester.rows[5]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[5]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows[5]).toHaveAttribute('aria-posinset', '3');
-    expect(tester.rows[5]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rows[5]).toHaveAttribute('style', '--table-row-level: 1;');
-    expect(tester.rowHeaders[5]).toHaveTextContent('2024 Financial Report');
+    expect(tester.rows()[5]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[5]).toHaveAttribute('aria-level', '1');
+    expect(tester.rows()[5]).toHaveAttribute('aria-posinset', '3');
+    expect(tester.rows()[5]).toHaveAttribute('aria-setsize', '4');
+    expect(tester.rows()[5]).toHaveAttribute('style', '--table-row-level: 1;');
+    expect(tester.rowHeaders()[5]).toHaveTextContent('2024 Financial Report');
 
     await tester.toggleRowExpansion({row: 0, interactionType});
-    expect(tester.rows).toHaveLength(4);
+    expect(tester.rows()).toHaveLength(4);
   });
 
   it('should support defaultExpandedKeys', async () => {
@@ -305,109 +318,109 @@ describe('Treeble', () => {
     let tree = render(<Example defaultExpandedKeys={['games']} onExpandedChange={onExpandedChange} />);
     let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
 
-    expect(tester.rows).toHaveLength(7);
-    expect(tester.rows[0]).toHaveAttribute('aria-expanded', 'true');
-    expect(tester.rows[0]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows[0]).toHaveAttribute('aria-posinset', '1');
-    expect(tester.rows[0]).toHaveAttribute('aria-setsize', '4');
+    expect(tester.rows()).toHaveLength(7);
+    expect(tester.rows()[0]).toHaveAttribute('aria-expanded', 'true');
+    expect(tester.rows()[0]).toHaveAttribute('aria-level', '1');
+    expect(tester.rows()[0]).toHaveAttribute('aria-posinset', '1');
+    expect(tester.rows()[0]).toHaveAttribute('aria-setsize', '4');
 
-    expect(tester.rowHeaders[0]).toHaveTextContent('Games');
+    expect(tester.rowHeaders()[0]).toHaveTextContent('Games');
 
-    expect(tester.rows[1]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[1]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows[1]).toHaveAttribute('aria-posinset', '1');
-    expect(tester.rows[1]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rowHeaders[1]).toHaveTextContent('Mario Kart');
+    expect(tester.rows()[1]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[1]).toHaveAttribute('aria-level', '2');
+    expect(tester.rows()[1]).toHaveAttribute('aria-posinset', '1');
+    expect(tester.rows()[1]).toHaveAttribute('aria-setsize', '3');
+    expect(tester.rowHeaders()[1]).toHaveTextContent('Mario Kart');
 
-    expect(tester.rows[2]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[2]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows[2]).toHaveAttribute('aria-posinset', '2');
-    expect(tester.rows[2]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rowHeaders[2]).toHaveTextContent('Tetris');
+    expect(tester.rows()[2]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[2]).toHaveAttribute('aria-level', '2');
+    expect(tester.rows()[2]).toHaveAttribute('aria-posinset', '2');
+    expect(tester.rows()[2]).toHaveAttribute('aria-setsize', '3');
+    expect(tester.rowHeaders()[2]).toHaveTextContent('Tetris');
 
-    expect(tester.rows[3]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[3]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows[3]).toHaveAttribute('aria-posinset', '3');
-    expect(tester.rows[3]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rowHeaders[3]).toHaveTextContent('Pac-Man');
+    expect(tester.rows()[3]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[3]).toHaveAttribute('aria-level', '2');
+    expect(tester.rows()[3]).toHaveAttribute('aria-posinset', '3');
+    expect(tester.rows()[3]).toHaveAttribute('aria-setsize', '3');
+    expect(tester.rowHeaders()[3]).toHaveTextContent('Pac-Man');
 
-    expect(tester.rows[4]).toHaveAttribute('aria-expanded', 'false');
-    expect(tester.rows[4]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows[4]).toHaveAttribute('aria-posinset', '2');
-    expect(tester.rows[4]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rowHeaders[4]).toHaveTextContent('Applications');
+    expect(tester.rows()[4]).toHaveAttribute('aria-expanded', 'false');
+    expect(tester.rows()[4]).toHaveAttribute('aria-level', '1');
+    expect(tester.rows()[4]).toHaveAttribute('aria-posinset', '2');
+    expect(tester.rows()[4]).toHaveAttribute('aria-setsize', '4');
+    expect(tester.rowHeaders()[4]).toHaveTextContent('Applications');
 
-    expect(tester.rows[5]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[5]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows[5]).toHaveAttribute('aria-posinset', '3');
-    expect(tester.rows[5]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rowHeaders[5]).toHaveTextContent('2024 Financial Report');
+    expect(tester.rows()[5]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[5]).toHaveAttribute('aria-level', '1');
+    expect(tester.rows()[5]).toHaveAttribute('aria-posinset', '3');
+    expect(tester.rows()[5]).toHaveAttribute('aria-setsize', '4');
+    expect(tester.rowHeaders()[5]).toHaveTextContent('2024 Financial Report');
 
     await tester.toggleRowExpansion({row: 4});
 
     expect(onExpandedChange).toHaveBeenCalledTimes(1);
     expect(onExpandedChange).toHaveBeenCalledWith(new Set(['games', 'apps']));
 
-    expect(tester.rows).toHaveLength(10);
-    expect(tester.rows[0]).toHaveAttribute('aria-expanded', 'true');
-    expect(tester.rows[0]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows[0]).toHaveAttribute('aria-posinset', '1');
-    expect(tester.rows[0]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rows[0]).toHaveAttribute('data-expanded', 'true');
-    expect(tester.rows[0]).toHaveAttribute('data-has-child-items', 'true');
-    expect(tester.rows[0]).toHaveAttribute('data-level', '1');
-    expect(tester.rowHeaders[0]).toHaveTextContent('Games');
+    expect(tester.rows()).toHaveLength(10);
+    expect(tester.rows()[0]).toHaveAttribute('aria-expanded', 'true');
+    expect(tester.rows()[0]).toHaveAttribute('aria-level', '1');
+    expect(tester.rows()[0]).toHaveAttribute('aria-posinset', '1');
+    expect(tester.rows()[0]).toHaveAttribute('aria-setsize', '4');
+    expect(tester.rows()[0]).toHaveAttribute('data-expanded', 'true');
+    expect(tester.rows()[0]).toHaveAttribute('data-has-child-items', 'true');
+    expect(tester.rows()[0]).toHaveAttribute('data-level', '1');
+    expect(tester.rowHeaders()[0]).toHaveTextContent('Games');
 
-    expect(tester.rows[1]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[1]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows[1]).toHaveAttribute('aria-posinset', '1');
-    expect(tester.rows[1]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rowHeaders[1]).toHaveTextContent('Mario Kart');
+    expect(tester.rows()[1]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[1]).toHaveAttribute('aria-level', '2');
+    expect(tester.rows()[1]).toHaveAttribute('aria-posinset', '1');
+    expect(tester.rows()[1]).toHaveAttribute('aria-setsize', '3');
+    expect(tester.rowHeaders()[1]).toHaveTextContent('Mario Kart');
 
-    expect(tester.rows[2]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[2]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows[2]).toHaveAttribute('aria-posinset', '2');
-    expect(tester.rows[2]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rowHeaders[2]).toHaveTextContent('Tetris');
+    expect(tester.rows()[2]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[2]).toHaveAttribute('aria-level', '2');
+    expect(tester.rows()[2]).toHaveAttribute('aria-posinset', '2');
+    expect(tester.rows()[2]).toHaveAttribute('aria-setsize', '3');
+    expect(tester.rowHeaders()[2]).toHaveTextContent('Tetris');
 
-    expect(tester.rows[3]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[3]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows[3]).toHaveAttribute('aria-posinset', '3');
-    expect(tester.rows[3]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rowHeaders[3]).toHaveTextContent('Pac-Man');
+    expect(tester.rows()[3]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[3]).toHaveAttribute('aria-level', '2');
+    expect(tester.rows()[3]).toHaveAttribute('aria-posinset', '3');
+    expect(tester.rows()[3]).toHaveAttribute('aria-setsize', '3');
+    expect(tester.rowHeaders()[3]).toHaveTextContent('Pac-Man');
 
-    expect(tester.rows[4]).toHaveAttribute('aria-expanded', 'true');
-    expect(tester.rows[4]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows[4]).toHaveAttribute('aria-posinset', '2');
-    expect(tester.rows[4]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rowHeaders[4]).toHaveTextContent('Applications');
+    expect(tester.rows()[4]).toHaveAttribute('aria-expanded', 'true');
+    expect(tester.rows()[4]).toHaveAttribute('aria-level', '1');
+    expect(tester.rows()[4]).toHaveAttribute('aria-posinset', '2');
+    expect(tester.rows()[4]).toHaveAttribute('aria-setsize', '4');
+    expect(tester.rowHeaders()[4]).toHaveTextContent('Applications');
 
-    expect(tester.rows[5]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[5]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows[5]).toHaveAttribute('aria-posinset', '1');
-    expect(tester.rows[5]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rowHeaders[5]).toHaveTextContent('Photoshop');
+    expect(tester.rows()[5]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[5]).toHaveAttribute('aria-level', '2');
+    expect(tester.rows()[5]).toHaveAttribute('aria-posinset', '1');
+    expect(tester.rows()[5]).toHaveAttribute('aria-setsize', '3');
+    expect(tester.rowHeaders()[5]).toHaveTextContent('Photoshop');
 
-    expect(tester.rows[6]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[6]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows[6]).toHaveAttribute('aria-posinset', '2');
-    expect(tester.rows[6]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rowHeaders[6]).toHaveTextContent('Premiere');
+    expect(tester.rows()[6]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[6]).toHaveAttribute('aria-level', '2');
+    expect(tester.rows()[6]).toHaveAttribute('aria-posinset', '2');
+    expect(tester.rows()[6]).toHaveAttribute('aria-setsize', '3');
+    expect(tester.rowHeaders()[6]).toHaveTextContent('Premiere');
 
-    expect(tester.rows[7]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[7]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows[7]).toHaveAttribute('aria-posinset', '3');
-    expect(tester.rows[7]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rowHeaders[7]).toHaveTextContent('Lightroom');
+    expect(tester.rows()[7]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[7]).toHaveAttribute('aria-level', '2');
+    expect(tester.rows()[7]).toHaveAttribute('aria-posinset', '3');
+    expect(tester.rows()[7]).toHaveAttribute('aria-setsize', '3');
+    expect(tester.rowHeaders()[7]).toHaveTextContent('Lightroom');
 
-    expect(tester.rows[8]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[8]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows[8]).toHaveAttribute('aria-posinset', '3');
-    expect(tester.rows[8]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rowHeaders[8]).toHaveTextContent('2024 Financial Report');
+    expect(tester.rows()[8]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[8]).toHaveAttribute('aria-level', '1');
+    expect(tester.rows()[8]).toHaveAttribute('aria-posinset', '3');
+    expect(tester.rows()[8]).toHaveAttribute('aria-setsize', '4');
+    expect(tester.rowHeaders()[8]).toHaveTextContent('2024 Financial Report');
 
     await tester.toggleRowExpansion({row: 4});
-    expect(tester.rows).toHaveLength(7);
+    expect(tester.rows()).toHaveLength(7);
 
     expect(onExpandedChange).toHaveBeenCalledTimes(2);
     expect(onExpandedChange).toHaveBeenLastCalledWith(new Set(['games']));
@@ -418,49 +431,49 @@ describe('Treeble', () => {
     let tree = render(<Example expandedKeys={['games']} onExpandedChange={onExpandedChange} />);
     let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
 
-    expect(tester.rows).toHaveLength(7);
-    expect(tester.rows[0]).toHaveAttribute('aria-expanded', 'true');
-    expect(tester.rows[0]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows[0]).toHaveAttribute('aria-posinset', '1');
-    expect(tester.rows[0]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rowHeaders[0]).toHaveTextContent('Games');
+    expect(tester.rows()).toHaveLength(7);
+    expect(tester.rows()[0]).toHaveAttribute('aria-expanded', 'true');
+    expect(tester.rows()[0]).toHaveAttribute('aria-level', '1');
+    expect(tester.rows()[0]).toHaveAttribute('aria-posinset', '1');
+    expect(tester.rows()[0]).toHaveAttribute('aria-setsize', '4');
+    expect(tester.rowHeaders()[0]).toHaveTextContent('Games');
 
-    expect(tester.rows[1]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[1]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows[1]).toHaveAttribute('aria-posinset', '1');
-    expect(tester.rows[1]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rowHeaders[1]).toHaveTextContent('Mario Kart');
+    expect(tester.rows()[1]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[1]).toHaveAttribute('aria-level', '2');
+    expect(tester.rows()[1]).toHaveAttribute('aria-posinset', '1');
+    expect(tester.rows()[1]).toHaveAttribute('aria-setsize', '3');
+    expect(tester.rowHeaders()[1]).toHaveTextContent('Mario Kart');
 
-    expect(tester.rows[2]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[2]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows[2]).toHaveAttribute('aria-posinset', '2');
-    expect(tester.rows[2]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rowHeaders[2]).toHaveTextContent('Tetris');
+    expect(tester.rows()[2]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[2]).toHaveAttribute('aria-level', '2');
+    expect(tester.rows()[2]).toHaveAttribute('aria-posinset', '2');
+    expect(tester.rows()[2]).toHaveAttribute('aria-setsize', '3');
+    expect(tester.rowHeaders()[2]).toHaveTextContent('Tetris');
 
-    expect(tester.rows[3]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[3]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows[3]).toHaveAttribute('aria-posinset', '3');
-    expect(tester.rows[3]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rowHeaders[3]).toHaveTextContent('Pac-Man');
+    expect(tester.rows()[3]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[3]).toHaveAttribute('aria-level', '2');
+    expect(tester.rows()[3]).toHaveAttribute('aria-posinset', '3');
+    expect(tester.rows()[3]).toHaveAttribute('aria-setsize', '3');
+    expect(tester.rowHeaders()[3]).toHaveTextContent('Pac-Man');
 
-    expect(tester.rows[4]).toHaveAttribute('aria-expanded', 'false');
-    expect(tester.rows[4]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows[4]).toHaveAttribute('aria-posinset', '2');
-    expect(tester.rows[4]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rowHeaders[4]).toHaveTextContent('Applications');
+    expect(tester.rows()[4]).toHaveAttribute('aria-expanded', 'false');
+    expect(tester.rows()[4]).toHaveAttribute('aria-level', '1');
+    expect(tester.rows()[4]).toHaveAttribute('aria-posinset', '2');
+    expect(tester.rows()[4]).toHaveAttribute('aria-setsize', '4');
+    expect(tester.rowHeaders()[4]).toHaveTextContent('Applications');
 
-    expect(tester.rows[5]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows[5]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows[5]).toHaveAttribute('aria-posinset', '3');
-    expect(tester.rows[5]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rowHeaders[5]).toHaveTextContent('2024 Financial Report');
+    expect(tester.rows()[5]).not.toHaveAttribute('aria-expanded');
+    expect(tester.rows()[5]).toHaveAttribute('aria-level', '1');
+    expect(tester.rows()[5]).toHaveAttribute('aria-posinset', '3');
+    expect(tester.rows()[5]).toHaveAttribute('aria-setsize', '4');
+    expect(tester.rowHeaders()[5]).toHaveTextContent('2024 Financial Report');
 
     await tester.toggleRowExpansion({row: 4});
 
     expect(onExpandedChange).toHaveBeenCalledTimes(1);
     expect(onExpandedChange).toHaveBeenCalledWith(new Set(['games', 'apps']));
 
-    expect(tester.rows).toHaveLength(7); // controlled
+    expect(tester.rows()).toHaveLength(7); // controlled
   });
 
   it('supports keyboard navigation of flattened rows', async () => {
@@ -469,16 +482,16 @@ describe('Treeble', () => {
 
     await user.tab();
 
-    for (let i = 0; i < tester.rows.length; i++) {
-      expect(document.activeElement).toBe(tester.rows[i]);
+    for (let i = 0; i < tester.rows().length; i++) {
+      expect(document.activeElement).toBe(tester.rows()[i]);
       await user.keyboard('{ArrowDown}');
     }
 
     await user.keyboard('{Home}');
-    expect(document.activeElement).toBe(tester.rows[0]);
+    expect(document.activeElement).toBe(tester.rows()[0]);
 
     await user.keyboard('{End}');
-    expect(document.activeElement).toBe(tester.rows[tester.rows.length - 1]);
+    expect(document.activeElement).toBe(tester.rows()[tester.rows().length - 1]);
   });
 
   it('supports keyboard navigation of cells', async () => {
@@ -486,25 +499,25 @@ describe('Treeble', () => {
     let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
 
     await user.tab();
-    expect(document.activeElement).toBe(tester.rows[0]);
-    expect(tester.rows[0]).toHaveAttribute('aria-expanded', 'false');
+    expect(document.activeElement).toBe(tester.rows()[0]);
+    expect(tester.rows()[0]).toHaveAttribute('aria-expanded', 'false');
 
     await user.keyboard('{ArrowRight}');
-    expect(document.activeElement).toBe(tester.rows[0]);
-    expect(tester.rows[0]).toHaveAttribute('aria-expanded', 'true');
+    expect(document.activeElement).toBe(tester.rows()[0]);
+    expect(tester.rows()[0]).toHaveAttribute('aria-expanded', 'true');
 
-    let cells = [tester.rowHeaders[0], ...tester.cells({element: tester.rows[0]})];
+    let cells = [tester.rowHeaders()[0], ...tester.cells({element: tester.rows()[0]})];
     for (let cell of cells) {
       await user.keyboard('{ArrowRight}');
       expect(document.activeElement).toBe(cell);
     }
 
     await user.keyboard('{ArrowRight}');
-    expect(document.activeElement).toBe(tester.rows[0]);
+    expect(document.activeElement).toBe(tester.rows()[0]);
 
     await user.keyboard('{ArrowLeft}');
-    expect(document.activeElement).toBe(tester.rows[0]);
-    expect(tester.rows[0]).toHaveAttribute('aria-expanded', 'false');
+    expect(document.activeElement).toBe(tester.rows()[0]);
+    expect(tester.rows()[0]).toHaveAttribute('aria-expanded', 'false');
 
     for (let cell of cells.reverse()) {
       await user.keyboard('{ArrowLeft}');
@@ -512,7 +525,7 @@ describe('Treeble', () => {
     }
 
     await user.keyboard('{ArrowLeft}');
-    expect(document.activeElement).toBe(tester.rows[0]);
+    expect(document.activeElement).toBe(tester.rows()[0]);
   });
 
   it('supports selection', async () => {
@@ -522,7 +535,7 @@ describe('Treeble', () => {
 
     await tester.toggleRowSelection({row: 0});
     await user.keyboard('{Shift>}');
-    await user.click(tester.rows[2]);
+    await user.click(tester.rows()[2]);
     await user.keyboard('{/Shift}');
 
     expect(onSelectionChange).toHaveBeenCalledTimes(2);
@@ -582,7 +595,7 @@ describe('Treeble', () => {
     await user.keyboard('{Enter}');
     act(() => jest.runAllTimers());
 
-    expect(tester.rowHeaders.map(r => r.textContent)).toEqual([
+    expect(tester.rowHeaders().map(r => r.textContent)).toEqual([
       '>Documents',
       '>Project',
       'Image 2',

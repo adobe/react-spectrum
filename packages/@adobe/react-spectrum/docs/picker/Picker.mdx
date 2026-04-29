@@ -600,10 +600,10 @@ it('Picker can select an option via keyboard', async function () {
     </Provider>
   );
   let selectTester = testUtilUser.createTester('Select', {root: getByTestId('test-select'), interactionType: 'keyboard'});
-  let trigger = selectTester.trigger;
+  let trigger = selectTester.trigger();
   expect(trigger).toHaveTextContent('Select…');
 
-  await selectTester.selectOption({option: 'Cat'});
+  await selectTester.toggleOptionSelection({option: 'Cat'});
   expect(trigger).toHaveTextContent('Cat');
 });
 ```

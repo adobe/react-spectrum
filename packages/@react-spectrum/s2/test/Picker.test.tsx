@@ -68,7 +68,7 @@ describe('Picker', () => {
     );
 
     let selectTester = testUtilUser.createTester('Select', {root: tree.container});
-    expect(selectTester.listbox).toBeFalsy();
+    expect(selectTester.listbox()).toBeFalsy();
     selectTester.setInteractionType('mouse');
     await selectTester.open();
 
@@ -157,8 +157,8 @@ describe('Picker', () => {
 
     let selectTester = testUtilUser.createTester('Select', {root: tree.container, interactionType: 'mouse'});
     await selectTester.open();
-    await selectTester.selectOption({option: 0});
-    await selectTester.selectOption({option: 2});
+    await selectTester.toggleOptionSelection({option: 0});
+    await selectTester.toggleOptionSelection({option: 2});
     await selectTester.close();
 
     // check that the clicked items are rendered in the custom renderValue output
@@ -194,8 +194,8 @@ describe('Picker', () => {
 
     let selectTester = testUtilUser.createTester('Select', {root: tree.container, interactionType: 'mouse'});
     await selectTester.open();
-    await selectTester.selectOption({option: 0});
-    await selectTester.selectOption({option: 2});
+    await selectTester.toggleOptionSelection({option: 0});
+    await selectTester.toggleOptionSelection({option: 2});
     await selectTester.close();
 
     expect(spy).toHaveBeenCalledWith('Picker\'s value should not have interactive children for accessibility.');
@@ -230,7 +230,7 @@ describe('Picker', () => {
     let selectTester = testUtilUser.createTester('Select', {root: tree.getByTestId('testpicker')});
     let buttons = tree.getAllByRole('button');
     expect(buttons).toHaveLength(2);
-    expect(buttons[1]).toBe(selectTester.trigger);
+    expect(buttons[1]).toBe(selectTester.trigger());
 
     await user.click(buttons[0]);
 

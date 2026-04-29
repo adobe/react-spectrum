@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, within} from '@testing-library/react';
-import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
-import {GridListTesterOpts, GridRowActionOpts, ToggleGridRowOpts, UserOpts} from './types';
+import {act} from './act';
+import {Direction, GridListTesterOpts, GridRowActionOpts, ToggleGridRowOpts, UserOpts} from './types';
+import {formatTargetNode, getAltKey, getMetaKey, pressElement, triggerLongPress} from './utils';
+import {within} from '@testing-library/dom';
 
 interface GridListToggleRowOpts extends ToggleGridRowOpts {}
 interface GridListRowActionOpts extends GridRowActionOpts {}
@@ -21,14 +22,24 @@ export class GridListTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
+  private _direction: Direction;
   private _gridlist: HTMLElement;
+  private _layout: GridListTesterOpts['layout'];
 
   constructor(opts: GridListTesterOpts) {
-    let {root, user, interactionType, advanceTimer} = opts;
+    let {root, user, interactionType, advanceTimer, direction, layout} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
     this._advanceTimer = advanceTimer;
+    this._direction = direction || 'ltr';
+    this._layout = layout || 'stack';
     this._gridlist = root;
+    if (root.getAttribute('role') !== 'grid') {
+      let gridlist = within(root).queryByRole('grid');
+      if (gridlist) {
+        this._gridlist = gridlist;
+      }
+    }
   }
 
   /**
@@ -41,53 +52,73 @@ export class GridListTester {
   /**
    * Returns a row matching the specified index or text content.
    */
-  findRow(opts: {rowIndexOrText: number | string}): HTMLElement {
+  findRow(opts: {indexOrText: number | string}): HTMLElement {
     let {
-      rowIndexOrText
+      indexOrText
     } = opts;
 
     let row;
-    if (typeof rowIndexOrText === 'number') {
-      row = this.rows[rowIndexOrText];
-    } else if (typeof rowIndexOrText === 'string') {
-      row = (within(this.gridlist!).getByText(rowIndexOrText).closest('[role=row]'))! as HTMLElement;
+    if (typeof indexOrText === 'number') {
+      row = this.rows()[indexOrText];
+    } else if (typeof indexOrText === 'string') {
+      row = (within(this.gridlist()!).getByText(indexOrText).closest('[role=row]'))! as HTMLElement;
     }
 
     return row;
   }
 
-  // TODO: RTL
   private async keyboardNavigateToRow(opts: {row: HTMLElement, selectionOnNav?: 'default' | 'none'}) {
     let {row, selectionOnNav = 'default'} = opts;
     let altKey = getAltKey();
-    let rows = this.rows;
+    let rows = this.rows();
     let targetIndex = rows.indexOf(row);
     if (targetIndex === -1) {
-      throw new Error('Option provided is not in the gridlist');
+      throw new Error('Row provided is not in the gridlist');
     }
 
     if (document.activeElement !== this._gridlist && !this._gridlist.contains(document.activeElement)) {
       act(() => this._gridlist.focus());
     }
 
+    let focusPrevKey = this._direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
     if (document.activeElement === this._gridlist) {
       await this.user.keyboard(`${selectionOnNav === 'none' ? `[${altKey}>]` : ''}[ArrowDown]${selectionOnNav === 'none' ? `[/${altKey}]` : ''}`);
     } else if (this._gridlist.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
       do {
-        await this.user.keyboard('[ArrowLeft]');
+        await this.user.keyboard(`[${focusPrevKey}]`);
       } while (document.activeElement!.getAttribute('role') !== 'row');
     }
     let currIndex = rows.indexOf(document.activeElement as HTMLElement);
     if (currIndex === -1) {
       throw new Error('ActiveElement is not in the gridlist');
     }
-    let direction = targetIndex > currIndex ? 'down' : 'up';
 
     if (selectionOnNav === 'none') {
       await this.user.keyboard(`[${altKey}>]`);
     }
-    for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
-      await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+    if (this._layout === 'grid') {
+      while (document.activeElement !== row) {
+        let curr = (document.activeElement as HTMLElement).getBoundingClientRect();
+        let target = row.getBoundingClientRect();
+        let key: string;
+        // basically compare current position with desired position to determine if we need to go up/down/left/right
+        // use 1 in the comparison here for subpixels since getBoundingClientRect returns subpixels precision
+        if (Math.abs(curr.top - target.top) > 1) {
+          key = curr.top < target.top ? 'ArrowDown' : 'ArrowUp';
+        } else if (Math.abs(curr.left - target.left) > 1) {
+          key = curr.left < target.left ? 'ArrowRight' : 'ArrowLeft';
+        } else {
+          // if the diff in current vs desired is < 1 but it is claiming we arent focused on the target
+          // then we might be in a case where getBoundingClientRect isnt mocked
+          throw new Error('Could not navigate to target row in grid layout. Did the test mock getBoundingClientRect?');
+        }
+        await this.user.keyboard(`[${key}]`);
+      }
+    } else {
+      let direction = targetIndex > currIndex ? 'down' : 'up';
+      for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
+        await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+      }
     }
     if (selectionOnNav === 'none') {
       await this.user.keyboard(`[/${altKey}]`);
@@ -111,19 +142,17 @@ export class GridListTester {
     let metaKey = getMetaKey();
 
     if (typeof row === 'string' || typeof row === 'number') {
-      row = this.findRow({rowIndexOrText: row});
+      row = this.findRow({indexOrText: row});
     }
 
     if (!row) {
-      throw new Error('Target row not found in the gridlist.');
+      throw new Error(`Target row "${formatTargetNode(opts.row)}" not found in the gridlist.`);
     }
 
     let rowCheckbox = within(row).queryByRole('checkbox');
 
-    // TODO: we early return here because the checkbox/row can't be keyboard navigated to if the row is disabled usually
-    // but we may to check for disabledBehavior (aka if the disable row gets skipped when keyboard navigating or not)
-    if (interactionType === 'keyboard' && (rowCheckbox?.getAttribute('disabled') === '' || row?.getAttribute('aria-disabled') === 'true')) {
-      return;
+    if (rowCheckbox?.getAttribute('disabled') === '' || row?.getAttribute('aria-disabled') === 'true') {
+      throw new Error(`Cannot toggle selection on disabled row "${formatTargetNode(opts.row)}".`);
     }
 
     // this would be better than the check to do nothing in events.ts
@@ -144,12 +173,8 @@ export class GridListTester {
     } else {
       let cell = within(row).getAllByRole('gridcell')[0];
       if (needsLongPress && interactionType === 'touch') {
-        if (this._advanceTimer == null) {
-          throw new Error('No advanceTimers provided for long press.');
-        }
-
         // Note that long press interactions with rows is strictly touch only for grid rows
-        await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
+        await triggerLongPress({element: cell, advanceTimer: this._advanceTimer!, pointerOpts: {pointerType: 'touch'}});
       } else {
         if (selectionBehavior === 'replace' && interactionType !== 'touch') {
           await this.user.keyboard(`[${metaKey}>]`);
@@ -162,8 +187,6 @@ export class GridListTester {
     }
   }
 
-  // TODO: There is a more difficult use case where the row has/behaves as link, don't think we have a good way to determine that unless the
-  // user specificlly tells us
   /**
    * Triggers the action for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
    */
@@ -175,20 +198,20 @@ export class GridListTester {
     } = opts;
 
     if (typeof row === 'string' || typeof row === 'number') {
-      row = this.findRow({rowIndexOrText: row});
+      row = this.findRow({indexOrText: row});
     }
 
     if (!row) {
-      throw new Error('Target row not found in the gridlist.');
+      throw new Error(`Target row "${formatTargetNode(opts.row)}" not found in the gridlist.`);
+    }
+
+    if (row.getAttribute('aria-disabled') === 'true') {
+      throw new Error(`Cannot trigger row action on disabled row "${formatTargetNode(opts.row)}".`);
     }
 
     if (needsDoubleClick) {
       await this.user.dblClick(row);
     } else if (interactionType === 'keyboard') {
-      if (row?.getAttribute('aria-disabled') === 'true') {
-        return;
-      }
-
       await this.keyboardNavigateToRow({row, selectionOnNav: 'none'});
       await this.user.keyboard('[Enter]');
     } else {
@@ -199,29 +222,29 @@ export class GridListTester {
   /**
    * Returns the gridlist.
    */
-  get gridlist(): HTMLElement {
+  gridlist(): HTMLElement {
     return this._gridlist;
   }
 
   /**
    * Returns the gridlist's rows if any.
    */
-  get rows(): HTMLElement[] {
-    return within(this?.gridlist).queryAllByRole('row');
+  rows(): HTMLElement[] {
+    return within(this.gridlist()).queryAllByRole('row');
   }
 
   /**
    * Returns the gridlist's selected rows if any.
    */
-  get selectedRows(): HTMLElement[] {
-    return this.rows.filter(row => row.getAttribute('aria-selected') === 'true');
+  selectedRows(): HTMLElement[] {
+    return this.rows().filter(row => row.getAttribute('aria-selected') === 'true');
   }
 
   /**
    * Returns the gridlist's cells if any. Can be filtered against a specific row if provided via `element`.
    */
   cells(opts: {element?: HTMLElement} = {}): HTMLElement[] {
-    let {element = this.gridlist} = opts;
+    let {element = this.gridlist()} = opts;
     return within(element).queryAllByRole('gridcell');
   }
 }

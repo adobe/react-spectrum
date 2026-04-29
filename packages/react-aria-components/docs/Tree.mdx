@@ -2193,16 +2193,16 @@ it('Tree can select a item via keyboard', async function () {
   let treeTester = testUtilUser.createTester('Tree', {root: getByTestId('test-tree'), interactionType: 'keyboard'});
 
   await treeTester.toggleRowSelection({row: 0});
-  expect(treeTester.selectedRows).toHaveLength(1);
-  expect(within(treeTester.rows[0]).getByRole('checkbox')).toBeChecked();
+  expect(treeTester.selectedRows()).toHaveLength(1);
+  expect(within(treeTester.rows()[0]).getByRole('checkbox')).toBeChecked();
 
   await treeTester.toggleRowSelection({row: 1});
-  expect(treeTester.selectedRows).toHaveLength(2);
-  expect(within(treeTester.rows[1]).getByRole('checkbox')).toBeChecked();
+  expect(treeTester.selectedRows()).toHaveLength(2);
+  expect(within(treeTester.rows()[1]).getByRole('checkbox')).toBeChecked();
 
   await treeTester.toggleRowSelection({row: 0});
-  expect(treeTester.selectedRows).toHaveLength(1);
-  expect(within(treeTester.rows[0]).getByRole('checkbox')).not.toBeChecked();
+  expect(treeTester.selectedRows()).toHaveLength(1);
+  expect(within(treeTester.rows()[0]).getByRole('checkbox')).not.toBeChecked();
 });
 ```
 

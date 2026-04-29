@@ -1446,7 +1446,7 @@ describe('Tree', () => {
       let tree = render(<LoadingSentinelTree isLoading expandedKeys={[]} />);
 
       let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
-      let rows = treeTester.rows;
+      let rows = treeTester.rows();
       expect(rows).toHaveLength(3);
       let loaderRow = rows[2];
       expect(loaderRow).toHaveTextContent('Loading...');
@@ -1456,7 +1456,7 @@ describe('Tree', () => {
 
       // Should render the second sentinel if the row is expanded
       tree.rerender(<LoadingSentinelTree expandedKeys={new Set(['projects', 'projects-1'])} isLoading />);
-      rows = treeTester.rows;
+      rows = treeTester.rows();
       expect(rows).toHaveLength(8);
       let newLoaderRow = rows[4];
       expect(newLoaderRow).toHaveTextContent('Loading...');
@@ -1471,7 +1471,7 @@ describe('Tree', () => {
       let tree = render(<LoadingSentinelTree />);
 
       let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
-      let rows = treeTester.rows;
+      let rows = treeTester.rows();
       expect(rows).toHaveLength(2);
       expect(tree.queryByText('Loading...')).toBeFalsy();
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
@@ -1621,7 +1621,7 @@ describe('Tree', () => {
             documentsIsLoading />
         );
         let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
-        let rows = treeTester.rows;
+        let rows = treeTester.rows();
         expect(rows).toHaveLength(8);
         let rootLoaderRow = rows[7];
         expect(rootLoaderRow).toHaveTextContent('Loading...');
@@ -1646,7 +1646,7 @@ describe('Tree', () => {
             documentsIsLoading />
         );
 
-        rows = treeTester.rows;
+        rows = treeTester.rows();
         expect(rows).toHaveLength(9);
         rootLoaderRow = rows[8];
         rootLoaderParentStyles = rootLoaderRow.parentElement!.style;
@@ -1676,7 +1676,7 @@ describe('Tree', () => {
             documentsIsLoading />
         );
 
-        rows = treeTester.rows;
+        rows = treeTester.rows();
         expect(rows).toHaveLength(10);
         rootLoaderRow = rows[9];
         rootLoaderParentStyles = rootLoaderRow.parentElement!.style;
@@ -1713,7 +1713,7 @@ describe('Tree', () => {
             documentsIsLoading />
         );
 
-        rows = treeTester.rows;
+        rows = treeTester.rows();
         expect(rows).toHaveLength(11);
         rootLoaderRow = rows[10];
         rootLoaderParentStyles = rootLoaderRow.parentElement!.style;
@@ -1757,7 +1757,7 @@ describe('Tree', () => {
         );
 
         let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
-        let rows = treeTester.rows;
+        let rows = treeTester.rows();
         expect(rows).toHaveLength(9);
         let rootLoaderRow = rows[8];
         let rootLoaderParentStyles = rootLoaderRow.parentElement!.style;
@@ -1793,7 +1793,7 @@ describe('Tree', () => {
           <VirtualizedLoadingSentinelTree rootIsLoading />
         );
         let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
-        let rows = treeTester.rows;
+        let rows = treeTester.rows();
         expect(rows).toHaveLength(8);
         let rootLoaderRow = rows[7];
         expect(rootLoaderRow).toHaveTextContent('Loading...');
@@ -1806,7 +1806,7 @@ describe('Tree', () => {
           <VirtualizedLoadingSentinelTree />
         );
 
-        expect(document.activeElement).toBe(treeTester.tree);
+        expect(document.activeElement).toBe(treeTester.tree());
       });
     });
   });
@@ -2099,9 +2099,9 @@ describe('Tree', () => {
 
       let firstTreeTester = testUtilUser.createTester('Tree', {root: trees[0]});
       let secondTreeTester = testUtilUser.createTester('Tree', {root: trees[1]});
-      expect(firstTreeTester.rows).toHaveLength(2);
+      expect(firstTreeTester.rows()).toHaveLength(2);
       // has the empty state row
-      expect(secondTreeTester.rows).toHaveLength(1);
+      expect(secondTreeTester.rows()).toHaveLength(1);
       await user.tab();
       // selects and drops first row onto second tree
       await user.keyboard('{ArrowRight}');
@@ -2116,13 +2116,13 @@ describe('Tree', () => {
         fireEvent.keyUp(document.activeElement as Element, {key: 'Enter'});
       });
       act(() => jest.runAllTimers());
-      expect(secondTreeTester.rows).toHaveLength(1);
+      expect(secondTreeTester.rows()).toHaveLength(1);
       // expands tree row children
       await user.keyboard('{ArrowRight}');
       await user.keyboard('{ArrowDown}');
       await user.keyboard('{ArrowDown}');
       await user.keyboard('{ArrowRight}');
-      expect(secondTreeTester.selectedRows).toHaveLength(9);
+      expect(secondTreeTester.selectedRows()).toHaveLength(9);
     });
 
     it('should focus the parent row when dropped on if it isnt expanded', async () => {
@@ -2131,9 +2131,9 @@ describe('Tree', () => {
 
       let firstTreeTester = testUtilUser.createTester('Tree', {root: trees[0]});
       let secondTreeTester = testUtilUser.createTester('Tree', {root: trees[1]});
-      expect(firstTreeTester.rows).toHaveLength(2);
+      expect(firstTreeTester.rows()).toHaveLength(2);
       // has the empty state row
-      expect(secondTreeTester.rows).toHaveLength(1);
+      expect(secondTreeTester.rows()).toHaveLength(1);
       await user.tab();
       // selects and drops first row onto second tree
       await user.keyboard('{ArrowRight}');
@@ -2147,12 +2147,12 @@ describe('Tree', () => {
         fireEvent.keyUp(document.activeElement as Element, {key: 'Enter'});
       });
       act(() => jest.runAllTimers());
-      expect(secondTreeTester.rows).toHaveLength(1);
+      expect(secondTreeTester.rows()).toHaveLength(1);
       await user.keyboard('{ArrowRight}');
-      expect(secondTreeTester.rows).toHaveLength(6);
+      expect(secondTreeTester.rows()).toHaveLength(6);
       // tab back to the first tree and drop a new row onto one of the 2nd tree's child rows as it is expanded
       await user.tab({shift: true});
-      expect(document.activeElement).toBe(firstTreeTester.rows[0]);
+      expect(document.activeElement).toBe(firstTreeTester.rows()[0]);
       await user.keyboard('{ArrowRight}');
       await user.keyboard('{Enter}');
       act(() => jest.runAllTimers());
@@ -2166,7 +2166,7 @@ describe('Tree', () => {
         fireEvent.keyUp(document.activeElement as Element, {key: 'Enter'});
       });
       act(() => jest.runAllTimers());
-      expect(document.activeElement).toBe(secondTreeTester.rows[2]);
+      expect(document.activeElement).toBe(secondTreeTester.rows()[2]);
     });
 
     it('should focus the dropped row when dropped on a parent that is expanded', async () => {
@@ -2175,9 +2175,9 @@ describe('Tree', () => {
 
       let firstTreeTester = testUtilUser.createTester('Tree', {root: trees[0]});
       let secondTreeTester = testUtilUser.createTester('Tree', {root: trees[1]});
-      expect(firstTreeTester.rows).toHaveLength(2);
+      expect(firstTreeTester.rows()).toHaveLength(2);
       // has the empty state row
-      expect(secondTreeTester.rows).toHaveLength(1);
+      expect(secondTreeTester.rows()).toHaveLength(1);
       await user.tab();
       // selects and drops first row onto second tree
       await user.keyboard('{ArrowRight}');
@@ -2192,16 +2192,16 @@ describe('Tree', () => {
         fireEvent.keyUp(document.activeElement as Element, {key: 'Enter'});
       });
       act(() => jest.runAllTimers());
-      expect(secondTreeTester.rows).toHaveLength(1);
+      expect(secondTreeTester.rows()).toHaveLength(1);
       // expands tree row children
       await user.keyboard('{ArrowRight}');
       await user.keyboard('{ArrowDown}');
       await user.keyboard('{ArrowDown}');
       await user.keyboard('{ArrowRight}');
-      expect(secondTreeTester.rows).toHaveLength(9);
+      expect(secondTreeTester.rows()).toHaveLength(9);
       // tab back to the first tree and drop a new row onto one of the 2nd tree's child rows as it is expanded
       await user.tab({shift: true});
-      expect(document.activeElement).toBe(firstTreeTester.rows[0]);
+      expect(document.activeElement).toBe(firstTreeTester.rows()[0]);
       await user.keyboard('{ArrowRight}');
       await user.keyboard('{Enter}');
 
@@ -2217,7 +2217,7 @@ describe('Tree', () => {
       });
       act(() => jest.runAllTimers());
       expect(document.activeElement).toHaveTextContent('Projects');
-      expect(document.activeElement).toBe(secondTreeTester.rows[3]);
+      expect(document.activeElement).toBe(secondTreeTester.rows()[3]);
 
     });
   });

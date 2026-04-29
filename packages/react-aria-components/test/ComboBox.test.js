@@ -152,11 +152,11 @@ describe('ComboBox', () => {
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
     act(() => {
-      comboboxTester.combobox.focus();
+      comboboxTester.combobox().focus();
     });
     await user.keyboard('p');
 
-    let groups = comboboxTester.sections;
+    let groups = comboboxTester.sections();
     expect(groups).toHaveLength(1);
     expect(groups[0]).toHaveAttribute('aria-labelledby');
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Fruit');
@@ -190,11 +190,11 @@ describe('ComboBox', () => {
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
     act(() => {
-      comboboxTester.combobox.focus();
+      comboboxTester.combobox().focus();
     });
     await user.keyboard('p');
 
-    let groups = comboboxTester.sections;
+    let groups = comboboxTester.sections();
     expect(groups).toHaveLength(1);
     expect(groups[0]).toHaveAttribute('aria-labelledby');
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Fruit');
@@ -226,7 +226,7 @@ describe('ComboBox', () => {
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
     act(() => {
-      comboboxTester.combobox.focus();
+      comboboxTester.combobox().focus();
     });
     await user.keyboard('c');
     let options = comboboxTester.options();
@@ -274,6 +274,30 @@ describe('ComboBox', () => {
     expect(document.querySelector('input[type=hidden]')).toBeNull();
   });
 
+  it('should support selecting an option via keyboard', async () => {
+    let onSelectionChange = jest.fn();
+    let tree = render(
+      <ComboBox onSelectionChange={onSelectionChange}>
+        <Label>Favorite Animal</Label>
+        <Input />
+        <Button />
+        <Popover>
+          <ListBox>
+            <ListBoxItem id="1">Cat</ListBoxItem>
+            <ListBoxItem id="2">Dog</ListBoxItem>
+            <ListBoxItem id="3">Kangaroo</ListBoxItem>
+          </ListBox>
+        </Popover>
+      </ComboBox>
+    );
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container, interactionType: 'keyboard'});
+
+    await comboboxTester.toggleOptionSelection({option: 'Dog'});
+    expect(onSelectionChange).toHaveBeenCalledWith('2');
+    expect(comboboxTester.combobox()).toHaveValue('Dog');
+    expect(comboboxTester.listbox()).toBeNull();
+  });
+
   it.each(['click', 'tab'])('should not fire extra onSelectionChange calls after focus moves away in fully controlled mode via %s', async (focusMove) => {
     let onSelectionChange = jest.fn();
     let keyToText = {
@@ -316,14 +340,14 @@ describe('ComboBox', () => {
     let tree = render(<ControlledComboBox />);
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
 
-    await comboboxTester.selectOption({option: 'Dog'});
+    await comboboxTester.toggleOptionSelection({option: 'Dog'});
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
 
     if (focusMove === 'click') {
       await user.click(tree.getByRole('button', {name: 'Next'}));
     } else {
       act(() => {
-        comboboxTester.combobox.focus();
+        comboboxTester.combobox().focus();
       });
       await user.tab();
     }
@@ -352,7 +376,7 @@ describe('ComboBox', () => {
     );
 
     const comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
-    const combobox = comboboxTester.combobox;
+    const combobox = comboboxTester.combobox();
 
     expect(combobox).toHaveValue('Dog');
     await comboboxTester.open();
@@ -395,7 +419,7 @@ describe('ComboBox', () => {
     );
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
-    let combobox = comboboxTester.combobox;
+    let combobox = comboboxTester.combobox();
 
     expect(combobox).toHaveAttribute('required');
     expect(combobox).not.toHaveAttribute('aria-required');
@@ -412,7 +436,7 @@ describe('ComboBox', () => {
     expect(comboboxWrapper).toHaveAttribute('data-invalid');
 
     act(() => {
-      comboboxTester.combobox.focus();
+      comboboxTester.combobox().focus();
     });
     await user.keyboard('C');
 
@@ -491,7 +515,7 @@ describe('ComboBox', () => {
 
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
-    expect(comboboxTester.listbox).toBeFalsy();
+    expect(comboboxTester.listbox()).toBeFalsy();
     comboboxTester.setInteractionType('mouse');
     await comboboxTester.open();
 
@@ -547,13 +571,13 @@ describe('ComboBox', () => {
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
     act(() => {
-      comboboxTester.combobox.focus();
+      comboboxTester.combobox().focus();
     });
     await user.keyboard('p');
 
     let options = comboboxTester.options();
     expect(options).toHaveLength(1);
-    expect(comboboxTester.listbox).toBeTruthy();
+    expect(comboboxTester.listbox()).toBeTruthy();
     expect(options[0]).toHaveTextContent('No results');
   });
 
@@ -596,7 +620,7 @@ describe('ComboBox', () => {
     let tree = render(<WithCreateOption />);
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
     act(() => {
-      comboboxTester.combobox.focus();
+      comboboxTester.combobox().focus();
     });
 
     await user.keyboard('L');
@@ -611,10 +635,10 @@ describe('ComboBox', () => {
       await user.click(options[0]);
     }
     expect(onAction).toHaveBeenCalledTimes(1);
-    expect(comboboxTester.combobox).toHaveValue('');
+    expect(comboboxTester.combobox()).toHaveValue('');
 
     // Repeat with an option selected.
-    await comboboxTester.selectOption({option: 'Cat'});
+    await comboboxTester.toggleOptionSelection({option: 'Cat'});
 
     await user.keyboard('s');
 
@@ -628,7 +652,7 @@ describe('ComboBox', () => {
       await user.click(options[0]);
     }
     expect(onAction).toHaveBeenCalledTimes(2);
-    expect(comboboxTester.combobox).toHaveValue('Cat');
+    expect(comboboxTester.combobox()).toHaveValue('Cat');
   });
 
   it('should not close the combobox when clicking on a section header', async () => {
@@ -694,7 +718,7 @@ describe('ComboBox', () => {
 
     // Verify the combobox is closed and the value is updated
     expect(tree.queryByRole('listbox')).toBeNull();
-    expect(comboboxTester.combobox).toHaveValue('Apple');
+    expect(comboboxTester.combobox()).toHaveValue('Apple');
   });
 
   it('should support multiple selection', async () => {
@@ -709,26 +733,26 @@ describe('ComboBox', () => {
     let value = container.querySelector('.react-aria-ComboBoxValue');
 
     expect(value).toHaveTextContent('No items selected');
-    expect(comboboxTester.combobox.getAttribute('aria-describedby')).toContain(value.id);
+    expect(comboboxTester.combobox().getAttribute('aria-describedby')).toContain(value.id);
 
-    expect(comboboxTester.combobox).toHaveValue('');
+    expect(comboboxTester.combobox()).toHaveValue('');
     await comboboxTester.open();
 
-    let listbox = comboboxTester.listbox;
+    let listbox = comboboxTester.listbox();
     expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
 
     let options = comboboxTester.options();
     expect(options).toHaveLength(3);
 
-    await user.click(options[0]);
+    await comboboxTester.toggleOptionSelection({option: options[0]});
     expect(options[0]).toHaveAttribute('aria-selected', 'true');
-    expect(comboboxTester.combobox).toHaveValue('');
-    expect(comboboxTester.listbox).toBeInTheDocument();
+    expect(comboboxTester.combobox()).toHaveValue('');
+    expect(comboboxTester.listbox()).toBeInTheDocument();
     expect(value).toHaveTextContent('Cat');
-    await user.click(options[1]);
+    await comboboxTester.toggleOptionSelection({option: options[1]});
     expect(options[1]).toHaveAttribute('aria-selected', 'true');
-    expect(comboboxTester.combobox).toHaveValue('');
-    expect(comboboxTester.listbox).toBeInTheDocument();
+    expect(comboboxTester.combobox()).toHaveValue('');
+    expect(comboboxTester.listbox()).toBeInTheDocument();
     expect(value).toHaveTextContent('Cat and Dog');
     await comboboxTester.close();
 
@@ -739,16 +763,42 @@ describe('ComboBox', () => {
     expect(formData.getAll('combobox')).toEqual(['1', '2']);
 
     await user.click(document.querySelector('input[type="reset"]'));
-    expect(comboboxTester.combobox).toHaveValue('');
+    expect(comboboxTester.combobox()).toHaveValue('');
     formData = new FormData(getByTestId('form'));
     expect(formData.getAll('combobox')).toEqual(['']);
+  });
+
+  it('should support deselection if multiple selection is enabled', async () => {
+    let onChange = jest.fn();
+    let {container} = render(
+      <TestComboBox name="combobox" selectionMode="multiple" defaultInputValue="" onChange={onChange} />
+    );
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+
+    await comboboxTester.toggleOptionSelection({option: 'Cat'});
+    await comboboxTester.toggleOptionSelection({option: 'Dog'});
+    expect(comboboxTester.options()[0]).toHaveAttribute('aria-selected', 'true');
+    expect(comboboxTester.options()[1]).toHaveAttribute('aria-selected', 'true');
+    expect(onChange).toHaveBeenLastCalledWith(['1', '2']);
+
+    await comboboxTester.toggleOptionSelection({option: 'Cat'});
+    expect(comboboxTester.options()[0]).toHaveAttribute('aria-selected', 'false');
+    expect(comboboxTester.options()[1]).toHaveAttribute('aria-selected', 'true');
+    expect(onChange).toHaveBeenLastCalledWith(['2']);
+
+    await comboboxTester.toggleOptionSelection({option: 'Dog'});
+    expect(comboboxTester.options()[0]).toHaveAttribute('aria-selected', 'false');
+    expect(comboboxTester.options()[1]).toHaveAttribute('aria-selected', 'false');
+    expect(onChange).toHaveBeenLastCalledWith([]);
+
+    await comboboxTester.close();
   });
 
   it('should support controlled multi-selection', async () => {
     let {container} = render(<TestComboBox selectionMode="multiple" defaultInputValue={undefined} value={['2', '3']} />);
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
-    expect(comboboxTester.combobox).toHaveValue('');
+    expect(comboboxTester.combobox()).toHaveValue('');
     await comboboxTester.open();
 
     let options = comboboxTester.options();
@@ -763,7 +813,7 @@ describe('ComboBox', () => {
     let {container} = render(<TestComboBox selectionMode="multiple" defaultInputValue={undefined} inputValue="C" onInputChange={onInputChange} value={['2', '3']} onChange={onChange} />);
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
-    let combobox = comboboxTester.combobox;
+    let combobox = comboboxTester.combobox();
     expect(combobox).toHaveValue('C');
     await comboboxTester.open();
 
@@ -792,10 +842,10 @@ describe('ComboBox', () => {
 
     await user.tab();
     await user.keyboard('Test');
-    expect(comboboxTester.combobox).toHaveValue('Test');
+    expect(comboboxTester.combobox()).toHaveValue('Test');
 
     await user.tab();
-    expect(comboboxTester.combobox).toHaveValue('Test');
+    expect(comboboxTester.combobox()).toHaveValue('Test');
   });
 
   it('should allow the user to deselect items with keyboard when multiselect (uncontrolled)', async () => {
@@ -849,7 +899,7 @@ describe('ComboBox', () => {
       </Form>
     );
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
-    let combobox = comboboxTester.combobox;
+    let combobox = comboboxTester.combobox();
 
     expect(combobox).toHaveAttribute('required');
     expect(combobox.validity.valid).toBe(false);
@@ -857,11 +907,11 @@ describe('ComboBox', () => {
     act(() => {getByTestId('form').checkValidity();});
     expect(combobox).toHaveAttribute('aria-describedby');
     expect(container.querySelector('.react-aria-ComboBox')).toHaveAttribute('data-invalid');
-    
+
     await comboboxTester.open();
     let options = comboboxTester.options();
     await user.click(options[0]);
-    
+
     act(() => combobox.blur());
     expect(combobox).not.toHaveAttribute('required');
     expect(combobox.validity.valid).toBe(true);
@@ -894,8 +944,8 @@ describe('ComboBox', () => {
     act(() => {
       jest.runAllTimers();
     });
-    expect(comboboxTester.listbox).toBeVisible();
-    expect(comboboxTester.combobox).toHaveFocus();
+    expect(comboboxTester.listbox()).toBeVisible();
+    expect(comboboxTester.combobox()).toHaveFocus();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     onOpenChange.mockClear();
 
@@ -903,8 +953,8 @@ describe('ComboBox', () => {
     act(() => {
       jest.runAllTimers();
     });
-    expect(comboboxTester.listbox).toBeVisible();
-    expect(comboboxTester.combobox).toHaveFocus();
+    expect(comboboxTester.listbox()).toBeVisible();
+    expect(comboboxTester.combobox()).toHaveFocus();
     expect(onOpenChange).toHaveBeenCalledTimes(0);
   });
 
@@ -916,7 +966,7 @@ describe('ComboBox', () => {
     act(() => {
       jest.runAllTimers();
     });
-    expect(comboboxTester.listbox).toBeVisible();
+    expect(comboboxTester.listbox()).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     onOpenChange.mockClear();
 
@@ -924,8 +974,8 @@ describe('ComboBox', () => {
     act(() => {
       jest.runAllTimers();
     });
-    expect(comboboxTester.listbox).toBeNull();
-    expect(comboboxTester.combobox).toHaveFocus();
+    expect(comboboxTester.listbox()).toBeNull();
+    expect(comboboxTester.combobox()).toHaveFocus();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     onOpenChange.mockClear();
 
@@ -933,8 +983,8 @@ describe('ComboBox', () => {
     act(() => {
       jest.runAllTimers();
     });
-    expect(comboboxTester.listbox).toBeVisible();
-    expect(comboboxTester.combobox).toHaveFocus();
+    expect(comboboxTester.listbox()).toBeVisible();
+    expect(comboboxTester.combobox()).toHaveFocus();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
   });
 

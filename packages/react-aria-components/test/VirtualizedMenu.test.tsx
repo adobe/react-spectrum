@@ -73,7 +73,7 @@ describe('virtualized menu', () => {
     tester.setInteractionType('mouse');
     await tester.open();
     let items = getAllByRole('menuitem');
-    let menu = tester.menu;
+    let menu = tester.menu();
     expect(menu).toBeInTheDocument();
     expect(items[0]).toHaveAttribute('aria-posinset', '1');
     expect(items[0]).toHaveAttribute('aria-setsize', '50');

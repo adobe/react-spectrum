@@ -971,21 +971,21 @@ describe('Radios', function () {
       );
       let direction = props.locale === 'ar-AE' ? 'rtl' : 'ltr';
       let radioGroupTester = testUtilUser.createTester('RadioGroup', {root: getByRole('radiogroup'), direction});
-      let radios = radioGroupTester.radios;
+      let radios = radioGroupTester.radios();
       await radioGroupTester.triggerRadio({radio: radios[0]});
       expect(radios[0]).toBeChecked();
 
       await radioGroupTester.triggerRadio({radio: 4, interactionType: 'keyboard'});
       expect(radios[4]).toBeChecked();
 
-      let radio4 = radioGroupTester.findRadio({radioIndexOrText: 3});
+      let radio4 = radioGroupTester.findRadio({indexOrText: 3});
       await radioGroupTester.triggerRadio({radio: radio4, interactionType: 'keyboard'});
       expect(radios[3]).toBeChecked();
 
       await radioGroupTester.triggerRadio({radio: 'Dogs', interactionType: 'mouse'});
       expect(radios[0]).toBeChecked();
 
-      let radio5 = radioGroupTester.findRadio({radioIndexOrText: 'Chocobo'});
+      let radio5 = radioGroupTester.findRadio({indexOrText: 'Chocobo'});
       await radioGroupTester.triggerRadio({radio: radio5, interactionType: 'mouse'});
       expect(radios[4]).toBeChecked();
     });
