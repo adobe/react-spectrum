@@ -56,7 +56,6 @@ export class TabsTester {
     this._interactionType = type;
   }
 
-  // TODO: This is pretty similar across most the utils, refactor to make it generic?
   /**
    * Returns a tab matching the specified index or text content.
    */
@@ -76,7 +75,6 @@ export class TabsTester {
     return tab;
   }
 
-  // TODO: also quite similar across more utils albeit with orientation, refactor to make generic
   private async keyboardNavigateToTab(opts: {tab: HTMLElement, orientation?: Orientation}) {
     let {tab, orientation = 'vertical'} = opts;
     let tabs = this.tabs();

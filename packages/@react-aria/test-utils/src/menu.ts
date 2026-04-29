@@ -97,8 +97,6 @@ export class MenuTester {
     this._interactionType = type;
   }
 
-  // TODO: this has been common to select as well, maybe make select use it? Or make a generic method. Will need to make error messages generic
-  // One difference will be that it supports long press as well
   /**
    * Opens the menu. Defaults to using the interaction type set on the menu tester.
    */
@@ -280,7 +278,6 @@ export class MenuTester {
     }
   }
 
-  // TODO: update this to remove needsLongPress if we wanna make the user call open first always
   /**
    * Opens the submenu. Defaults to using the interaction type set on the menu tester. The submenu trigger can be targeted via the trigger's node or the trigger's text.
    */

@@ -78,7 +78,6 @@ export class ListBoxTester {
     this._interactionType = type;
   }
 
-  // TODO: now that we have listbox, perhaps select can make use of this tester internally
   /**
    * Returns a option matching the specified index or text content.
    */
@@ -99,7 +98,6 @@ export class ListBoxTester {
     return option;
   }
 
-  // TODO: this is basically the same as menu except for the error message, refactor later so that they share
   // TODO: this also doesn't support grid layout yet
   private async keyboardNavigateToOption(opts: {option: HTMLElement, selectionOnNav?: 'default' | 'none'}) {
     let {option, selectionOnNav = 'default'} = opts;

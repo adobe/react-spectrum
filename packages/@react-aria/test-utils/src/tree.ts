@@ -155,7 +155,6 @@ export class TreeTester {
         // Note that long press interactions with rows is strictly touch only for grid rows
         await triggerLongPress({element: cell, advanceTimer: this._advanceTimer!, pointerOpts: {pointerType: 'touch'}});
       } else {
-        // TODO add modifiers here? Maybe move into pressElement if we get more cases for different types of modifier keys
         if (selectionBehavior === 'replace' && interactionType !== 'touch') {
           await this.user.keyboard(`[${metaKey}>]`);
         }
@@ -197,9 +196,6 @@ export class TreeTester {
       let rowExpander = within(row).getAllByRole('button')[0]; // what happens if the button is not first? how can we differentiate?
       await pressElement(this.user, rowExpander, interactionType);
     } else if (interactionType === 'keyboard') {
-      // TODO: We always Use Option/Ctrl when keyboard navigating so selection isn't changed
-      // in selectionmode="replace"/highlight selection when navigating to the row that the user wants
-      // to expand. Discuss if this is useful or not
       await this.keyboardNavigateToRow({row});
       let collapseKey = this._direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
       let expandKey = this._direction === 'rtl' ? 'ArrowLeft' : 'ArrowRight';
@@ -236,8 +232,6 @@ export class TreeTester {
     if (needsDoubleClick) {
       await this.user.dblClick(row);
     } else if (interactionType === 'keyboard') {
-      // TODO: same as above, uses the modifier key to make sure we don't modify selection state on row focus
-      // as we keyboard navigate to the row we want activate
       await this.keyboardNavigateToRow({row});
       await this.user.keyboard('[Enter]');
     } else {

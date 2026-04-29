@@ -62,9 +62,6 @@ export function formatTargetNode(value: number | string | HTMLElement): string {
  * @param opts.pointeropts - Options to pass to the simulated event. Defaults to mouse. See https://testing-library.com/docs/dom-testing-library/api-events/#fireevent for more info.
  */
 export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer: (time: number) => unknown | Promise<unknown>, pointerOpts?: Record<string, any>}): Promise<void> {
-  // TODO: note that this only works if the code from installPointerEvent is called somewhere in the test BEFORE the
-  // render. Perhaps we should rely on the user setting that up since I'm not sure there is a great way to set that up here in the
-  // util before first render. Will need to document it well
   let {element, advanceTimer, pointerOpts = {}} = opts;
   let pointerType = pointerOpts.pointerType ?? 'mouse';
   let shouldFireCompatibilityEvents = false;
@@ -119,9 +116,6 @@ export async function pressElement(user: {click: (element: Element) => Promise<v
     // Add coords with pressure so this isn't detected as a virtual click
     await user.pointer({target: element, keys: '[MouseLeft]', coords: {pressure: .5}});
   } else if (interactionType === 'keyboard') {
-    // TODO: For the keyboard flow, I wonder if it would be reasonable to just do fireEvent directly on the obtained row node or if we should
-    // stick to simulting an actual user's keyboard operations as closely as possible
-    // There are problems when using this approach though, actions like trying to trigger the select all checkbox and stuff behave oddly.
     act(() => element.focus());
     await user.keyboard('[Space]');
   } else if (interactionType === 'touch') {

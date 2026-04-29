@@ -206,9 +206,7 @@ export class TableTester {
       let rowExpander = within(row).getAllByRole('button')[0]; // what happens if the button is not first? how can we differentiate?
       await pressElement(this.user, rowExpander, interactionType);
     } else if (interactionType === 'keyboard') {
-      // TODO: We always Use Option/Ctrl when keyboard navigating so selection isn't changed
-      // in selectionmode="replace"/highlight selection when navigating to the row that the user wants
-      // to expand. Discuss if this is useful or not
+      // note that our keyboard navigation makes sure selection isn't changes
       await this.keyboardNavigateToRow({row});
       let collapseKey = this._direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
       let expandKey = this._direction === 'rtl' ? 'ArrowLeft' : 'ArrowRight';
@@ -420,9 +418,6 @@ export class TableTester {
     }
   }
 
-  // TODO: should there be utils for drag and drop and column resizing? For column resizing, I'm not entirely convinced that users will be doing that in their tests.
-  // For DnD, it might be tricky to do for keyboard DnD since we wouldn't know what valid drop zones there are... Similarly, for simulating mouse drag and drop the coordinates depend
-  // on the mocks the user sets up for their row height/etc.
   // Additionally, should we also support keyboard navigation/typeahead? Those felt like they could be very easily replicated by the user via user.keyboard already and don't really
   // add much value if we provide that to them
   /**

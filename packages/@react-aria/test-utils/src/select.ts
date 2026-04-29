@@ -206,7 +206,6 @@ export class SelectTester {
       await this.keyboardNavigateToOption({option});
       await this.user.keyboard('[Enter]');
     } else {
-      // TODO: what if the user needs to scroll the list to find the option? What if there are multiple matches for text (hopefully the picker options are pretty unique)
       if (interactionType === 'mouse') {
         await this.user.click(option);
       } else {

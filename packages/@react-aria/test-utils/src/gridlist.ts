@@ -165,8 +165,6 @@ export class GridListTester {
     }
   }
 
-  // TODO: There is a more difficult use case where the row has/behaves as link, don't think we have a good way to determine that unless the
-  // user specificlly tells us
   /**
    * Triggers the action for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
    */
