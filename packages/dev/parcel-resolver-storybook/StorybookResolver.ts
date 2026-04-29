@@ -50,12 +50,7 @@ module.exports = new Resolver({
           dir,
           'stories.js'
         ),
-        code:
-          `const importMap = {\n${entries.join('\n')}\n};\n` +
-          `export const importer = async (path) => {\n` +
-          `  const fn = importMap[path];\n` +
-          `  return fn ? fn() : undefined;\n` +
-          `};\n`,
+        code: `module.exports = {\n${entries.join('\n')}\n};\n`,
         invalidateOnFileCreate: [
           {glob: normalized}
         ],

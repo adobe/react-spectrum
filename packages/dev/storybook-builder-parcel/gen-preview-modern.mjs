@@ -114,12 +114,11 @@ async function generatePreviewModern(
   const code = `
 import { setup } from 'storybook/internal/preview/runtime';
 import './setup-addons.js';
-${importFnCode.imports}
 import { composeConfigs, PreviewWeb } from 'storybook/preview-api';
 
 setup();
 
-${importFnCode.body}
+${importFnCode}
 
 const getProjectAnnotations = async () => {
   const configs = await Promise.all([${relativePreviewAnnotations
@@ -171,8 +170,9 @@ function processPreviewAnnotation(annotationPath) {
 
   return /*slash*/ annotationPath;
 }
+
 /**
- * This file is largely based on storybook's core-common's to-importFn.ts
+ * This file is largely based on https://github.com/storybookjs/storybook/blob/d1195cbd0c61687f1720fefdb772e2f490a46584/lib/core-common/src/utils/to-importFn.ts
  */
 
 /**
@@ -180,34 +180,30 @@ function processPreviewAnnotation(annotationPath) {
  * to the working directory and their dynamic imports. The import is done in an asynchronous function
  * to delay loading. It then creates a function, `importFn(path)`, which resolves a path to an import
  * function and this is called by Storybook to fetch a story dynamically when needed.
- *
- * @param stories An array of functions that return a promise of a module.
+ * @param stories An array of absolute story paths.
  */
 async function toImportFn(stories, generatedEntries) {
-  const importLines = stories.map((glob, i) => {
-    const specifier = 'story:' + btoa(relativePath(generatedEntries, glob));
-    return `import { importer as importer_${i} } from ${JSON.stringify(specifier)};`;
+  const entries = stories.map(glob => {
+    return `...import(${JSON.stringify('story:' + btoa(relativePath(generatedEntries, glob)))})`;
   });
-  const arrayItems = stories.map((_, i) => `importer_${i}`).join(', ');
 
-  return {
-    imports: importLines.join('\n'),
-    body: `
-const importers = [${arrayItems}];
+  return `
+    const importers = {
+      ${entries.join(',\n')}
+    };
 
-async function importFn(path) {
-  for (const fn of importers) {
-    const mod = await fn(path);
-    if (mod) return mod;
-  }
-}
-`.trim(),
-  };
+    async function importFn(path) {
+      return importers[path]();
+    }
+  `;
 }
 
 async function generateImportFnScriptCode(options, generatedEntries) {
-  const stories = await listStories(options);
-  return toImportFn(stories, generatedEntries);
+  // First we need to get an array of stories and their absolute paths.
+  let stories = await listStories(options);
+
+  // We can then call toImportFn to create a function that can be used to load each story dynamically.
+  return (await toImportFn(stories, generatedEntries)).trim();
 }
 
 async function listStories(options) {
