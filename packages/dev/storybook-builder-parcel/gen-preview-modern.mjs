@@ -54,16 +54,8 @@ function toPackageExportSpecifier(barePath) {
 }
 
 /**
- * Generate the addon setup module (analogous to Vite's VIRTUAL_ADDON_SETUP_FILE
+ * Generate the addon setup module (similar to Vite's VIRTUAL_ADDON_SETUP_FILE
  * in code/builders/builder-vite/src/codegen-modern-iframe-script.ts).
- *
- * Creates the browser channel, registers it with the addons store, and
- * exposes it on `window.__STORYBOOK_ADDONS_CHANNEL__` (and the server-channel
- * alias in dev). Must be imported AFTER `storybook/internal/preview/runtime`
- * so the externalized `storybook/preview-api` specifier already has access to
- * `globalThis.__STORYBOOK_MODULE_PREVIEW_API__` (populated by the runtime's
- * import-time `setup()`), and BEFORE `new PreviewWeb(...)` is constructed,
- * since PreviewWeb relies on the channel and addons store being in place.
  */
 function generateSetupAddons() {
   return `
@@ -109,22 +101,23 @@ async function generatePreviewModern(
    *      `setup()` side-effect populates `__STORYBOOK_MODULE_PREVIEW_API__`,
    *      `__STORYBOOK_MODULE_CHANNELS__`, etc. on globalThis.
    *   2. `./setup-addons.js` then imports from `storybook/preview-api`, which
-   *      parcel-resolver-storybook redirects to a cache file that reads
-   *      `globalThis.__STORYBOOK_MODULE_PREVIEW_API__`. The globals are now
-   *      populated, so the destructure succeeds.
-   *   3. `setup()` is called explicitly to match upstream Vite, but in practice
-   *      the import-time side-effect of step 1 has already done the work.
+   *      parcel-resolver-storybook redirects to a global-reading shim. The
+   *      globals are populated by step 1, so the read succeeds.
+   *   3. The `story:` synthetic modules are static-imported (one named
+   *      `importer` per stories glob). They live in Parcel's module graph,
+   *      so file additions trigger StorybookResolver's invalidateOnFileCreate.
    *
-   * See code/builders/builder-vite/src/codegen-modern-iframe-script.ts.
+   * See code/builders/builder-vite/src/codegen-modern-iframe-script.ts and
+   * code/lib/core-webpack/src/to-importFn.ts for the upstream patterns this
+   * mirrors.
    */
   const code = `
 import { setup } from 'storybook/internal/preview/runtime';
 import './setup-addons.js';
-
-setup();
-
 ${importFnCode.imports}
 import { composeConfigs, PreviewWeb } from 'storybook/preview-api';
+
+setup();
 
 ${importFnCode.body}
 
@@ -148,11 +141,6 @@ if (import.meta.hot) {
   return code;
 }
 
-// Rewrite absolute `node_modules/@storybook/foo/dist/preview.js`
-// previewAnnotation paths into bare specifiers Parcel can resolve through
-// `package.json#exports`. Upstream Vite (`processPreviewAnnotation`) and
-// webpack5 (`slash(entry)`) sidestep this because their resolvers accept
-// absolute paths against package exports; Parcel's resolver does not.
 function processPreviewAnnotation(annotationPath) {
   // If entry is an object, take the first, which is the
   // bare (non-absolute) specifier.
@@ -183,51 +171,35 @@ function processPreviewAnnotation(annotationPath) {
 
   return /*slash*/ annotationPath;
 }
+/**
+ * This file is largely based on storybook's core-common's to-importFn.ts
+ */
 
 /**
- * Emit top-level static imports for each story glob resolved via the `story:`
- * pipeline. Each virtual module's default export is a map of
- * `{ relativePathFromCwd: () => import(storyFile) }`. We merge those maps into
- * a single `importers` object and expose `importFn(path)` for Storybook to
- * call when it needs to load a story.
+ * This function takes an array of stories and creates a mapping between the stories' relative paths
+ * to the working directory and their dynamic imports. The import is done in an asynchronous function
+ * to delay loading. It then creates a function, `importFn(path)`, which resolves a path to an import
+ * function and this is called by Storybook to fetch a story dynamically when needed.
  *
- * Why static imports + Object.assign instead of dynamic import + spread?
- * Concretely, instead of:
- *
- *     const mods = await Promise.all([
- *       import('story:abc...'),
- *       import('story:def...'),
- *     ]);
- *     const importers = Object.assign({}, ...mods.map(m => m.default));
- *
- * we emit:
- *
- *     import stories_0 from 'story:abc...';
- *     import stories_1 from 'story:def...';
- *     const importers = Object.assign({}, stories_0, stories_1);
- *
- * Under Parcel's CJS dev-mode wrappers the dynamic-import pattern raced
- * runtime initialization and would intermittently drop stories. Static
- * imports put the virtual modules on the module graph so Parcel sequences
- * them deterministically before the `importFn` closure ever runs.
- *
- * Conceptually similar to Storybook's own `to-importFn` helper (originally
- * in `lib/core-common`, now under `code/core/src/core-common` in SB10).
+ * @param stories An array of functions that return a promise of a module.
  */
 async function toImportFn(stories, generatedEntries) {
   const importLines = stories.map((glob, i) => {
     const specifier = 'story:' + btoa(relativePath(generatedEntries, glob));
-    return `import stories_${i} from ${JSON.stringify(specifier)};`;
+    return `import { importer as importer_${i} } from ${JSON.stringify(specifier)};`;
   });
-  const mergeArgs = stories.map((_, i) => `stories_${i}`).join(', ');
+  const arrayItems = stories.map((_, i) => `importer_${i}`).join(', ');
 
   return {
     imports: importLines.join('\n'),
     body: `
-const importers = Object.assign({}, ${mergeArgs});
+const importers = [${arrayItems}];
 
 async function importFn(path) {
-  return importers[path]();
+  for (const fn of importers) {
+    const mod = await fn(path);
+    if (mod) return mod;
+  }
 }
 `.trim(),
   };
