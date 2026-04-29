@@ -20,7 +20,7 @@ import {
   useTableOptions,
   type TableBodyProps,
   TableFooter as AriaTableFooter,
-  TableFooterProps
+  type TableFooterProps
 } from 'react-aria-components/Table';
 import { Group } from 'react-aria-components/Group';
 import { composeRenderProps } from 'react-aria-components/composeRenderProps';

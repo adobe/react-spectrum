@@ -343,6 +343,31 @@ describe('Select', () => {
     expect(select).not.toHaveAttribute('data-invalid');
   });
 
+  it('should support arrow key navigation to a falsy key', async () => {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <Select onSelectionChange={onSelectionChange} aria-label="Pick a number">
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover>
+          <ListBox
+            items={Array.from({length: 3}).map((_, i) => ({id: i, label: `${i}`}))}>
+            {item => <ListBoxItem id={item.id} textValue={item.label}>{item.label}</ListBoxItem>}
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+
+    let button = getByRole('button');
+    act(() => button.focus());
+
+    await user.keyboard('{ArrowRight}');
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenLastCalledWith(0);
+    expect(button).toHaveTextContent('0');
+  });
+
   it('should support falsy (0) as a valid default value', async () => {
     let {getByRole} = render(
       <Select placeholder="pick a number">

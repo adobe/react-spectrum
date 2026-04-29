@@ -203,7 +203,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     let rect = new Rect(layoutInfo.rect.maxX + 1, layoutInfo.rect.y, layoutInfo.rect.width + this.horizontalSpacing, layoutInfo.rect.height);
     key = this._findClosest(layoutInfo.rect, rect)?.key;
 
-    if (!key) {
+    if (key == null) {
       rect = new Rect(layoutInfo.rect.maxX + 1, 0, layoutInfo.rect.width + this.horizontalSpacing, this.virtualizer.contentSize.height);
       key = this._findClosest(layoutInfo.rect, rect)?.key;
     }
@@ -218,7 +218,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     let rect = new Rect(layoutInfo.rect.x - layoutInfo.rect.width - this.horizontalSpacing - 1, layoutInfo.rect.y, layoutInfo.rect.width + this.horizontalSpacing, layoutInfo.rect.height);
     key = this._findClosest(layoutInfo.rect, rect)?.key;
 
-    if (!key) {
+    if (key == null) {
       rect = new Rect(layoutInfo.rect.x - layoutInfo.rect.width - this.horizontalSpacing - 1, 0, layoutInfo.rect.width + this.horizontalSpacing, this.virtualizer.contentSize.height);
       key = this._findClosest(layoutInfo.rect, rect)?.key;
     }
