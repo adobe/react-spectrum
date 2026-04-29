@@ -106,8 +106,6 @@ export async function bail() {
 // Two more sources of input come from parcel-resolver-storybook:
 //   - a synthetic `stories.js` virtual module emitted for each `story:` glob
 //     dependency (lives in Parcel's module graph, not on disk)
-//   - per-runtime cache files in `node_modules/.cache/sb-parcel-externals/*.js`
-//     that re-export `globalThis.__STORYBOOK_MODULE_*__` (see StorybookResolver.ts)
 async function createParcel(options, isDev = false) {
   fs.mkdirSync(generatedEntries, { recursive: true });
   fs.writeFileSync(
