@@ -39,10 +39,10 @@ module.exports = new Resolver({
 
       let cwd = process.cwd();
       let dir = path.dirname(sourceFile);
-      let entries = files.map(file => {
+      let results = files.map(file => {
         let key = relativePath(cwd, file);
         let relative = relativePath(dir, file);
-        return `  ${JSON.stringify(key)}: () => import(${JSON.stringify(relative)}),`;
+        return `  ${JSON.stringify(key)}: () => import(${JSON.stringify(relative)}),\n`;
       });
 
       return {
@@ -50,7 +50,7 @@ module.exports = new Resolver({
           dir,
           'stories.js'
         ),
-        code: `module.exports = {\n${entries.join('\n')}\n};\n`,
+        code: `module.exports = {\n${results.join('\n')}\n};\n`,
         invalidateOnFileCreate: [
           {glob: normalized}
         ],

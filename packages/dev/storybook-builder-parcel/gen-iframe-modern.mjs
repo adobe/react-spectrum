@@ -1,8 +1,3 @@
-// Mirrors upstream code/builders/builder-vite/input/iframe.html.
-// Placeholder strings (e.g. '[CONFIG_TYPE HERE]') are filled in below via
-// String.replace -- one substitution per placeholder, matching the upstream
-// templating approach.
-
 import { normalizeStories } from "storybook/internal/common";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -38,18 +33,17 @@ export async function generateIframeModern(options) {
     .replace(`'[FRAMEWORK_OPTIONS HERE]'`, JSON.stringify(frameworkOptions))
     .replace(
       `'[CHANNEL_OPTIONS HERE]'`,
-      JSON.stringify(coreOptions?.channelOptions ?? {})
+      JSON.stringify(
+        coreOptions && coreOptions.channelOptions
+          ? coreOptions.channelOptions
+          : {}
+      )
     )
     .replace(`'[FEATURES HERE]'`, JSON.stringify(features || {}))
     .replace(`'[STORIES HERE]'`, JSON.stringify(stories || {}))
     .replace(`'[DOCS_OPTIONS HERE]'`, JSON.stringify(docsOptions || {}))
     .replace(`'[TAGS_OPTIONS HERE]'`, JSON.stringify(tagsOptions || {}))
     .replace(`'[SERVER_CHANNEL_URL HERE]'`, JSON.stringify(serverChannelUrl))
-    // OTHER_GLOBALS is a Vite-only injection point used by their externalize
-    // plugin to splat extra globals into the inline script. We don't use it;
-    // the placeholder must be replaced with a syntactically-valid expression
-    // (we use empty string `''`) -- leaving bare `()` would crash the parser.
-    .replace(`'[OTHER_GLOBALS HERE]'`, `''`)
     .replace("<!-- [HEAD HTML SNIPPET HERE] -->", headHtmlSnippet || "")
     .replace("<!-- [BODY HTML SNIPPET HERE] -->", bodyHtmlSnippet || "");
 }
