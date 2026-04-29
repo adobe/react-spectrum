@@ -56,12 +56,14 @@ export class ListBoxTester {
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
   private _listbox: HTMLElement;
+  private _layout: ListBoxTesterOpts['layout'];
 
   constructor(opts: ListBoxTesterOpts) {
-    let {root, user, interactionType, advanceTimer} = opts;
+    let {root, user, interactionType, advanceTimer, layout} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
     this._advanceTimer = advanceTimer;
+    this._layout = layout || 'stack';
     this._listbox = root;
     if (root.getAttribute('role') !== 'listbox') {
       let listbox = within(root).queryByRole('listbox');
@@ -98,7 +100,6 @@ export class ListBoxTester {
     return option;
   }
 
-  // TODO: this also doesn't support grid layout yet
   private async keyboardNavigateToOption(opts: {option: HTMLElement, selectionOnNav?: 'default' | 'none'}) {
     let {option, selectionOnNav = 'default'} = opts;
     let altKey = getAltKey();
@@ -118,12 +119,32 @@ export class ListBoxTester {
       throw new Error('ActiveElement is not in the listbox');
     }
 
-    let direction = targetIndex > currIndex ? 'down' : 'up';
     if (selectionOnNav === 'none') {
       await this.user.keyboard(`[${altKey}>]`);
     }
-    for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
-      await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+    if (this._layout === 'grid') {
+      while (document.activeElement !== option) {
+        let curr = (document.activeElement as HTMLElement).getBoundingClientRect();
+        let target = option.getBoundingClientRect();
+        let key: string;
+        // basically compare current position with desired position to determine if we need to go up/down/left/right
+        // use 1 in the comparison here for subpixels since getBoundingClientRect returns subpixels precision
+        if (Math.abs(curr.top - target.top) > 1) {
+          key = curr.top < target.top ? 'ArrowDown' : 'ArrowUp';
+        } else if (Math.abs(curr.left - target.left) > 1) {
+          key = curr.left < target.left ? 'ArrowRight' : 'ArrowLeft';
+        } else {
+          // if the diff in current vs desired is < 1 but it is claiming we arent focused on the target
+          // then we might be in a case where getBoundingClientRect isnt mocked
+          throw new Error('Could not navigate to target option in grid layout. Did the test mock getBoundingClientRect?');
+        }
+        await this.user.keyboard(`[${key}]`);
+      }
+    } else {
+      let direction = targetIndex > currIndex ? 'down' : 'up';
+      for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
+        await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+      }
     }
     if (selectionOnNav === 'none') {
       await this.user.keyboard(`[/${altKey}]`);

@@ -20,4 +20,11 @@ if (typeof React.act === 'function') {
   actImpl = ReactDOMTestUtils.act;
 }
 
-export const act = actImpl;
+export const act: typeof actImpl = ((fn: any) => {
+  // only wrap in act if in test environment, breaks vite browser test if test utils are used otherwise
+  // @ts-ignore
+  if (typeof IS_REACT_ACT_ENVIRONMENT === 'boolean' ? IS_REACT_ACT_ENVIRONMENT : typeof jest !== 'undefined') {
+    return actImpl(fn);
+  }
+  return fn();
+}) as typeof actImpl;

@@ -72,7 +72,13 @@ export interface DialogTesterOpts extends BaseTesterOpts {
 
 export interface GridListTesterOpts extends BaseTesterOpts {}
 
-export interface ListBoxTesterOpts extends BaseTesterOpts {}
+export interface ListBoxTesterOpts extends BaseTesterOpts {
+  /**
+   * The layout of the listbox.
+   * @default 'stack'
+   */
+  layout?: 'stack' | 'grid'
+}
 
 export interface MenuTesterOpts extends BaseTesterOpts {
   /**
