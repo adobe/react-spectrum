@@ -28,7 +28,7 @@ export type {StyleString} from './types';
  *
  * @example
  * ```tsx
- * import {space} from '@react-spectrum/s2/style' with {type: 'macro'};
+ * import {space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
  * const styles = style({
  *   gap: space(12) // 12/16 = 0.75rem
@@ -49,7 +49,7 @@ export function space(px: number): `[${string}]` {
  *
  * @example
  * ```tsx
- * import {fontRelative} from '@react-spectrum/s2/style' with {type: 'macro'};
+ * import {fontRelative, style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
  * const styles = style({
  *   gap: fontRelative(2)  // 2/14 = ~0.143em
@@ -135,7 +135,7 @@ const iconSizes = {
  * ```tsx
  * import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
  * import Edit from '@react-spectrum/s2/icons/Edit';
- * 
+ *
  * <Edit styles={iconStyle({size: 'XL', color: 'positive'})} />
  * ```
  */

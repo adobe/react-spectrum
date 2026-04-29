@@ -717,6 +717,54 @@ describe('Tabs', () => {
     expect(tabPanels).toHaveStyle({width: '100px'});
   });
 
+  it('should detect block-size in transition for TabPanels', async () => {
+    let originalGetComputedStyle = window.getComputedStyle;
+    window.getComputedStyle = (el) => ({...originalGetComputedStyle(el), transition: 'block-size 400ms ease'});
+
+    let {getByTestId} = render(
+      <Tabs>
+        <TabList aria-label="test">
+          <Tab id="a">A</Tab>
+          <Tab id="b">B</Tab>
+        </TabList>
+        <TabPanels data-testid="tabpanels">
+          <TabPanel id="a">A</TabPanel>
+          <TabPanel id="b">B</TabPanel>
+        </TabPanels>
+      </Tabs>
+    );
+
+    let tabs = document.querySelectorAll('[role="tab"]');
+    await user.click(tabs[1]);
+
+    expect(getByTestId('tabpanels').style.getPropertyValue('--tab-panel-height')).not.toBe('');
+    window.getComputedStyle = originalGetComputedStyle;
+  });
+
+  it('should detect inline-size in transition for TabPanels', async () => {
+    let originalGetComputedStyle = window.getComputedStyle;
+    window.getComputedStyle = (el) => ({...originalGetComputedStyle(el), transition: 'inline-size 400ms ease'});
+
+    let {getByTestId} = render(
+      <Tabs>
+        <TabList aria-label="test">
+          <Tab id="a">A</Tab>
+          <Tab id="b">B</Tab>
+        </TabList>
+        <TabPanels data-testid="tabpanels">
+          <TabPanel id="a">A</TabPanel>
+          <TabPanel id="b">B</TabPanel>
+        </TabPanels>
+      </Tabs>
+    );
+
+    let tabs = document.querySelectorAll('[role="tab"]');
+    await user.click(tabs[1]);
+
+    expect(getByTestId('tabpanels').style.getPropertyValue('--tab-panel-width')).not.toBe('');
+    window.getComputedStyle = originalGetComputedStyle;
+  });
+
   it('supports tooltips', async function () {
     let {getByRole, getAllByRole} = render(
       <Tabs>

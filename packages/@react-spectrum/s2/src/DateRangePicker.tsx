@@ -17,7 +17,7 @@ import {
 } from 'react-aria-components/DateRangePicker';
 import {CalendarButton, CalendarPopover, timeField} from './DatePicker';
 import {ContextValue} from 'react-aria-components/slots';
-import {createContext, forwardRef, ReactElement, ReactNode, Ref, useContext, useState} from 'react';
+import {createContext, forwardRef, ReactElement, Ref, useContext, useState} from 'react';
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText} from './Field';
@@ -35,7 +35,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface DateRangePickerProps<T extends DateValue> extends
   Omit<AriaDateRangePickerProps<T>, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
-  Pick<RangeCalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'firstDayOfWeek' | 'isDateUnavailable' | 'interactOutsideBehavior'>,
+  Pick<RangeCalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'firstDayOfWeek' | 'isDateUnavailable' | 'commitBehavior'>,
   Pick<PopoverProps, 'shouldFlip'>,
   StyleProps,
   SpectrumLabelableProps,
@@ -50,11 +50,7 @@ export interface DateRangePickerProps<T extends DateValue> extends
      * The maximum number of months to display at once in the calendar popover, if screen space permits.
      * @default 1
      */
-    maxVisibleMonths?: number,
-    /**
-     * The error message to display when the calendar is invalid.
-     */
-    errorMessage?: ReactNode
+    maxVisibleMonths?: number
 }
 
 export const DateRangePickerContext = createContext<ContextValue<Partial<DateRangePickerProps<any>>, HTMLDivElement>>(null);
@@ -84,7 +80,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
     placeholderValue,
     maxVisibleMonths = 1,
     createCalendar,
-    interactOutsideBehavior,
+    commitBehavior,
     ...dateFieldProps
   } = props;
   let formContext = useContext(FormContext);
@@ -111,6 +107,10 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
           || state.granularity === 'second'
             ? state.granularity : undefined;
         let showTimeField = !!timeGranularity;
+
+        // Ideally, we could omit errorMessage here and let S2 Calendar read it from RAC's CalendarContext which already contains the resolved value via calendarProps from useDatePicker.
+        // However, RAC's CalendarProps omits errorMessage, so reading it back from the context would require an unsafe cast. Instead, we resolve it here using the same logic as useDatePicker.
+        let resolvedErrorMessage = typeof errorMessage === 'function' ? errorMessage(state.displayValidation) : (errorMessage || state.displayValidation.validationErrors.join(' '));
         return (
           <>
             <FieldLabel
@@ -155,8 +155,8 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
               <RangeCalendar
                 visibleMonths={maxVisibleMonths}
                 createCalendar={createCalendar}
-                interactOutsideBehavior={interactOutsideBehavior}
-                errorMessage={errorMessage} />
+                commitBehavior={commitBehavior}
+                errorMessage={resolvedErrorMessage} />
               {showTimeField && (
                 <div className={style({display: 'flex', gap: 16, contain: 'inline-size', marginTop: 24})}>
                   <TimeField
@@ -189,7 +189,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
               isDisabled={isDisabled}
               isInvalid={isInvalid}
               description={descriptionMessage}>
-              {errorMessage}
+              {resolvedErrorMessage}
             </HelpText>
           </>
         );

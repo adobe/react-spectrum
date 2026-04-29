@@ -86,6 +86,7 @@ const TreeRendererContext = createContext<TreeRendererContextValue>({});
 
 const treeViewWrapper = style({
   minHeight: 0,
+  height: 'full',
   minWidth: 160,
   display: 'flex',
   isolation: 'isolate',
@@ -593,10 +594,10 @@ function isNextSelected(id: Key | undefined, state: TreeState<unknown>) {
   let keyAfter = state.collection.getKeyAfter(id);
 
   // We need to skip non-item nodes because the selection manager will map non-item nodes to their parent before checking selection
-  let node = keyAfter ? state.collection.getItem(keyAfter) : null;
-  while (node && node.type !== 'item' && keyAfter) {
+  let node = keyAfter != null ? state.collection.getItem(keyAfter) : null;
+  while (node && node.type !== 'item' && keyAfter != null) {
     keyAfter = state.collection.getKeyAfter(keyAfter);
-    node = keyAfter ? state.collection.getItem(keyAfter) : null;
+    node = keyAfter != null ? state.collection.getItem(keyAfter) : null;
   }
 
   return keyAfter != null && state.selectionManager.isSelected(keyAfter);

@@ -15,7 +15,7 @@ import {AriaTreeItemOptions, useTreeItem} from 'react-aria/useTree';
 import {AriaTreeProps, useTree} from 'react-aria/useTree';
 import {BaseCollection, CollectionNode, LoaderNode, SectionNode} from 'react-aria/private/collections/BaseCollection';
 import {ButtonContext} from './Button';
-import {CheckboxContext} from './Checkbox';
+import {CheckboxContext, CheckboxFieldContext} from './Checkbox';
 import {
   ChildrenOrFunction,
   ClassNameOrFunction,
@@ -109,12 +109,12 @@ class TreeCollection<T> extends BaseCollection<T> {
     while (node) {
       yield node as Node<T>;
       if (node.type === 'section') {
-        node = node.nextKey ? this.getItem(node.nextKey) : null;
+        node = node.nextKey != null ? this.getItem(node.nextKey) : null;
       } else {
         // This will include both item and content nodes
         // We handle the content nodes in useCollectionRenderer and ListLayout
         let key = this.getKeyAfter(node.key);
-        node = key ? this.getItem(key) : null;
+        node = key != null ? this.getItem(key) : null;
       }
     }
   }
@@ -783,6 +783,11 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
         <Provider
           values={[
             [CheckboxContext, {
+              slots: {
+                selection: checkboxProps
+              }
+            }],
+            [CheckboxFieldContext, {
               slots: {
                 selection: checkboxProps
               }
