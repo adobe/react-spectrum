@@ -19,11 +19,13 @@ import {
 } from '../src/Accordion';
 
 import {ActionButton} from '../src/ActionButton';
+import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
 import {Key} from '@react-types/shared';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';
 import {style} from '../style' with { type: 'macro' };
+import {Text} from '../src/Content';
 import {TextField} from '../src/TextField';
 
 
@@ -49,7 +51,8 @@ export const Example: Story = {
         <Accordion {...args}>
           <AccordionItem id="files">
             <AccordionItemTitle>
-              Files
+              <File />
+              <Text>Files</Text>
             </AccordionItemTitle>
             <AccordionItemPanel>
               Files content
@@ -57,7 +60,8 @@ export const Example: Story = {
           </AccordionItem>
           <AccordionItem id="people">
             <AccordionItemTitle>
-              People
+              <File />
+              <Text>People</Text>
             </AccordionItemTitle>
             <AccordionItemPanel>
               <TextField label="Name" styles={style({maxWidth: 176})} placeholder="Enter your name" />
@@ -76,7 +80,8 @@ export const WithLongTitle: Story = {
         <Accordion styles={style({maxWidth: 224})} {...args}>
           <AccordionItem>
             <AccordionItemTitle>
-              Files
+              <File />
+              <Text>Files</Text>
             </AccordionItemTitle>
             <AccordionItemPanel>
               Files content
@@ -84,7 +89,8 @@ export const WithLongTitle: Story = {
           </AccordionItem>
           <AccordionItem>
             <AccordionItemTitle>
-              People
+              <File />
+              <Text>People</Text>
             </AccordionItemTitle>
             <AccordionItemPanel>
               People content
@@ -92,7 +98,8 @@ export const WithLongTitle: Story = {
           </AccordionItem>
           <AccordionItem>
             <AccordionItemTitle>
-              Very very very very very long title that wraps
+              <File />
+              <Text>Very very very very very long title that wraps</Text>
             </AccordionItemTitle>
             <AccordionItemPanel>
               Accordion content
@@ -224,7 +231,8 @@ export const WithActionButton: Story = {
           <AccordionItem id="files">
             <AccordionItemHeader>
               <AccordionItemTitle>
-                Files
+                <File />
+                <Text>Files</Text>
               </AccordionItemTitle>
               <ActionButton aria-label="Add new file"><NewIcon /></ActionButton>
             </AccordionItemHeader>
@@ -235,7 +243,8 @@ export const WithActionButton: Story = {
           <AccordionItem id="people">
             <AccordionItemHeader>
               <AccordionItemTitle>
-                People
+                <File />
+                <Text>People</Text>
               </AccordionItemTitle>
               <ActionButton aria-label="Add new person"><NewIcon /></ActionButton>
             </AccordionItemHeader>
