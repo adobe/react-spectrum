@@ -18,7 +18,18 @@ const meta: Meta<typeof ScrollIntoViewExample> = {
   component: ScrollIntoViewExample,
   parameters: {
     layout: 'fullscreen',
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
+    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true},
+    viewport: {
+      options: {
+        scrollTest: {
+          name: 'Scroll Test',
+          styles: {width: '800px', height: '600px'}
+        }
+      }
+    }
+  },
+  globals: {
+    viewport: {value: 'scrollTest'}
   },
   title: 'S2 Chromatic/ScrollIntoView'
 };
