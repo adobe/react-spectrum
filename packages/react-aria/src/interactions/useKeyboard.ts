@@ -11,11 +11,18 @@
  */
 
 import {createEventHandler} from './createEventHandler';
+import {createKeyboardShortcutHandler, KeyboardShortcutBindings} from './createKeyboardShortcutHandler';
 import {DOMAttributes, KeyboardEvents} from '@react-types/shared';
+import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 
 export interface KeyboardProps extends KeyboardEvents {
   /** Whether the keyboard events should be disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /** Keyboard shortcuts to handle. */
+  shortcuts?: KeyboardShortcutBindings,
+  /** A ref to the element to ignore portal events. */
+  ignorePortalRef?: RefObject<Element> | null
 }
 
 export interface KeyboardResult {
@@ -27,10 +34,38 @@ export interface KeyboardResult {
  * Handles keyboard interactions for a focusable element.
  */
 export function useKeyboard(props: KeyboardProps): KeyboardResult {
+  let {shortcuts, ignorePortalRef = null} = props;
+  let onKeyDown;
+  let onKeyUp;
+  if (shortcuts) {
+    let shortcutHandler = createKeyboardShortcutHandler(shortcuts);
+    onKeyDown = createEventHandler<ReactKeyboardEvent<any>>((e) => {
+      // should be built in more somehow? or turn it off per matched handler?
+
+      if (ignorePortalRef && ignorePortalRef.current && !nodeContains(ignorePortalRef.current, getEventTarget(e) as Element)) {
+        e.continuePropagation();
+        return;
+      }
+      shortcutHandler(e);
+      props.onKeyDown?.(e);
+    });
+    onKeyUp = createEventHandler<ReactKeyboardEvent<any>>((e) => {
+      if (ignorePortalRef && ignorePortalRef.current && !nodeContains(ignorePortalRef.current, getEventTarget(e) as Element)) {
+        e.continuePropagation();
+        return;
+      }
+      // implement shortcut handler on keyup
+      e.continuePropagation();
+      props.onKeyUp?.(e);
+    });
+  } else {
+    onKeyDown = createEventHandler(props.onKeyDown);
+    onKeyUp = createEventHandler(props.onKeyUp);
+  }
   return {
     keyboardProps: props.isDisabled ? {} : {
-      onKeyDown: createEventHandler(props.onKeyDown),
-      onKeyUp: createEventHandler(props.onKeyUp)
+      onKeyDown,
+      onKeyUp
     }
   };
 }
