@@ -528,6 +528,65 @@ describe('Select', () => {
       expect(trigger).toHaveTextContent('Northern Territory');
       expect(trigger).not.toHaveAttribute('data-pressed');
     });
+
+    it('should move to the next matching item when the same letter is typed again after timeout', async function () {
+      let {getByTestId} = render(
+        <Select data-testid="select">
+          <Label>Favorite Fruit</Label>
+          <Button>
+            <SelectValue />
+          </Button>
+          <Popover>
+            <ListBox>
+              <ListBoxItem>Banana</ListBoxItem>
+              <ListBoxItem>Blackberry</ListBoxItem>
+              <ListBoxItem>Blueberry</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+      );
+
+      let wrapper = getByTestId('select');
+      await user.tab();
+      await user.keyboard('B');
+
+      let selectTester = testUtilUser.createTester('Select', {root: wrapper, interactionType: 'keyboard'});
+      let trigger = selectTester.trigger;
+      expect(trigger).toHaveTextContent('Banana');
+
+      act(() => {
+        jest.advanceTimersByTime(1001);
+      });
+
+      await user.keyboard('B');
+      expect(trigger).toHaveTextContent('Blackberry');
+    });
+
+    it('should cycle to the next matching item when the same letter is typed twice quickly', async function () {
+      let {getByTestId} = render(
+        <Select data-testid="select">
+          <Label>Favorite Fruit</Label>
+          <Button>
+            <SelectValue />
+          </Button>
+          <Popover>
+            <ListBox>
+              <ListBoxItem>Banana</ListBoxItem>
+              <ListBoxItem>Blackberry</ListBoxItem>
+              <ListBoxItem>Blueberry</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+      );
+
+      let wrapper = getByTestId('select');
+      await user.tab();
+      await user.keyboard('bb');
+
+      let selectTester = testUtilUser.createTester('Select', {root: wrapper, interactionType: 'keyboard'});
+      let trigger = selectTester.trigger;
+      expect(trigger).toHaveTextContent('Blackberry');
+    });
   });
 
   it('should support autoFocus', () => {
