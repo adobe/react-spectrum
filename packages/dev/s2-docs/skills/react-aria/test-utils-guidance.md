@@ -44,11 +44,12 @@ afterEach(() => {
 ```
 
 ### Tips and Tricks
+- The testers typically offers these things: a way to simulate common user interactions for the given component via a specified user modality (e.g. using mouse vs keyboard to toggle a menu), a way to get the various common elements that make up the component (e.g. the rows in a table), and a way to query the state of the component (e.g. get the selected rows in a table). Prefer using the testers for these use cases so that the user doesn't need to know what specific roles/elements/etc to target in their tests.
 - You can still simulate interactions manually in your test alongside the utilities provided by the tester. This can come in handy if you find that the tester doesn't cover a specific user flow or if one of its utilities isn't quite working as expected. After simulating your interaction, you can still
 use the tester to query for the component's state or trigger a different interaction utility.
 - Mouse drag interactions, simulated scrolling, and other mock reliant interactions are not available in these test utils since they depend heavily on how the user mocks things like clientHeight/Width/etc in their tests. These interactions need to be simulated manually by the user.
 - Some testers may support the notion of "long press" for certain interactions (e.g. long pressing a button to trigger its menu). To simulate this, you will need mock PointerEvent globally (see the installPointerEvent util) and provide a way to advance timers to the User via `advanceTimer`.
-- These test utils are compatible with not only JSDOM unit tests but browser tests as well (e.g. vitest-browser-react)
+- These test utils are compatible with not only JSDOM unit tests but browser tests as well (e.g. vitest-browser-react).
 
 ### Draggable handle components
 
