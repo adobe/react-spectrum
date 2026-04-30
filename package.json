@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
-  "packageManager": "yarn@4.2.2",
+  "packageManager": "yarn@4.13.0",
   "scripts": {
     "tsgo": "tsgo",
     "check-types": "tsgo --noEmit",
@@ -187,6 +187,7 @@
     "postcss": "^8.4.24",
     "postcss-custom-properties": "^13.2.0",
     "postcss-import": "^15.1.0",
+    "prop-types": "^15.8.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-frame-component": "^5.0.0",
@@ -208,6 +209,7 @@
     "typescript-eslint": "^8.38.0",
     "unplugin-parcel-macros": "^0.1.1",
     "verdaccio": "^6.0.0",
+    "vite": "^7.3.2",
     "vite-plugin-svgr": "^4.5.0",
     "vitest": "^4.0.17",
     "vitest-browser-react": "^2.0.2",
@@ -244,7 +246,9 @@
     "react-server-dom-parcel": "canary",
     "react-test-renderer": "19.1.0",
     "@parcel/packager-react-static": "^2.16.3",
-    "@sinclair/typebox": "0.27.10"
+    "@sinclair/typebox": "0.27.10",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
   },
   "@parcel/transformer-css": {
     "cssModules": {
