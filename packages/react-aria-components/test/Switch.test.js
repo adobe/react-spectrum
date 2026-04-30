@@ -359,4 +359,20 @@ describe.each(['Switch', 'SwitchField'])('%s', (comp) => {
       expect(checkbox).not.toHaveAttribute('aria-describedby');
     });
   }
+
+  it('should support implicit form submission from a focused switch on Enter', async () => {
+    let onSubmit = jest.fn(e => e.preventDefault());
+    let {getByRole} = render(
+      <form onSubmit={onSubmit}>
+        <Switch>Test</Switch>
+        <button type="submit">Submit</button>
+      </form>
+    );
+
+    let s = getByRole('switch');
+    await user.click(s);
+    await user.keyboard('{Enter}');
+
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
 });
