@@ -167,6 +167,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
   let [showAllItems, setShowAllItems] = useState(false);
   let [isFocused, setFocusedState] = useState(false);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
+  let closedDueToEmpty = useRef(false);
 
   let defaultValue = useMemo(() => {
     return props.defaultValue !== undefined ? props.defaultValue : (selectionMode === 'single' ? props.defaultSelectedKey ?? null : []) as ValueType<M>;
@@ -359,7 +360,23 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
       triggerState.isOpen &&
       filteredCollection.size === 0
     ) {
+      closedDueToEmpty.current = true;
       closeMenu();
+    }
+
+    // Re-open the menu when items become non-empty after being auto-closed due to
+    // an empty collection (e.g. async load completed with results after a previous empty response).
+    // This works for both controlled items on ComboBox and Collection patterns
+    // (where items are provided on the ListBox rather than the ComboBox).
+    if (
+      isFocused &&
+      closedDueToEmpty.current &&
+      filteredCollection.size > 0 &&
+      !triggerState.isOpen &&
+      menuTrigger !== 'manual'
+    ) {
+      closedDueToEmpty.current = false;
+      open(null, 'input');
     }
 
     // Close when an item is selected.
@@ -418,6 +435,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
 
   // Revert input value and close menu
   let revert = () => {
+    closedDueToEmpty.current = false;
     if (allowsCustomValue && selectedKey == null) {
       commitCustomValue();
     } else {
@@ -457,6 +475,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
   };
 
   const commitValue = () => {
+    closedDueToEmpty.current = false;
     if (allowsCustomValue) {
       const itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
       (inputValue === itemText) ? commitSelection() : commitCustomValue();
