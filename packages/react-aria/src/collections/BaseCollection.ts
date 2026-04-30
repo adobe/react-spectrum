@@ -47,7 +47,8 @@ export class CollectionNode<T> implements Node<T> {
   }
 
   get childNodes(): Iterable<Node<T>> {
-    throw new Error('childNodes is not supported');
+    console.warn('childNodes is not supported. Use collection.getChildren(key) instead.');
+    return [];
   }
 
   clone(): this {

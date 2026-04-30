@@ -147,7 +147,24 @@ export interface ComboBoxStateOptions<T, M extends SelectionMode = 'single'> ext
   shouldCloseOnBlur?: boolean
 }
 
-const EMPTY_VALUE: Key[] = [];
+function createCustomNode<T>(key: Key): Node<T> {
+  return {
+    type: 'item',
+    key,
+    value: null,
+    level: 0,
+    hasChildNodes: false,
+    childNodes: [],
+    rendered: String(key),
+    textValue: String(key),
+    'aria-label': undefined,
+    index: -1,
+    parentKey: null,
+    prevKey: null,
+    nextKey: null,
+    props: {isCustomValue: true}
+  };
+}
 
 /**
  * Provides state management for a combo box component. Handles building a collection
@@ -167,6 +184,10 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
   let [showAllItems, setShowAllItems] = useState(false);
   let [isFocused, setFocusedState] = useState(false);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
+  // Tracks keys that were added via commitCustomValue so we can distinguish them
+  // from real item keys that happen to have the same string (e.g. typing "NY" when
+  // there is an item with id "NY" and textValue "New York").
+  let [customKeys, setCustomKeys] = useState<Set<Key>>(() => new Set());
 
   let defaultValue = useMemo(() => {
     return props.defaultValue !== undefined ? props.defaultValue : (selectionMode === 'single' ? props.defaultSelectedKey ?? null : []) as ValueType<M>;
@@ -226,15 +247,32 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
           setValue(key);
         }
       } else {
-        setValue([...keys]);
+        let newKeys = [...keys];
+        let prevKeys = Array.isArray(displayValue) ? displayValue as Key[] : [];
+        setValue(newKeys);
+        // Clear input when an item is added (not when deselected)
+        if (newKeys.length > prevKeys.length) {
+          setInputValue('');
+        }
       }
     }
   });
 
   let selectedKey = selectionMode === 'single' ? selectionManager.firstSelectedKey : null;
   let selectedItems = useMemo(() => {
-    return [...selectionManager.selectedKeys].map(key => collection.getItem(key)).filter(item => item != null);
-  }, [selectionManager.selectedKeys, collection]);
+    return [...selectionManager.selectedKeys].map(key => {
+      // If the key was added as a custom value, render it as custom even if the
+      // collection happens to contain an item with the same key.
+      if (customKeys.has(key)) {
+        return createCustomNode<T>(key);
+      }
+      let item = collection.getItem(key);
+      if (item == null) {
+        return allowsCustomValue ? createCustomNode<T>(key) : null;
+      }
+      return item;
+    }).filter(item => item != null);
+  }, [selectionManager.selectedKeys, collection, allowsCustomValue, customKeys]);
 
   let [inputValue, setInputValue] = useControlledState(
     props.inputValue,
@@ -418,7 +456,11 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
 
   // Revert input value and close menu
   let revert = () => {
-    if (allowsCustomValue && selectedKey == null) {
+    if (selectionMode === 'multiple') {
+      // In multi-select, revert just clears input without changing selection
+      setInputValue('');
+      closeMenu();
+    } else if (allowsCustomValue && selectedKey == null) {
       commitCustomValue();
     } else {
       commitSelection();
@@ -426,9 +468,36 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
   };
 
   let commitCustomValue = () => {
-    let value = selectionMode === 'multiple' ? EMPTY_VALUE : null;
-    lastValueRef.current = value as any;
-    setValue(value);
+    lastValueRef.current = null as any;
+    if (selectionMode === 'single') {
+      setValue(null);
+    } else {
+      let trimmed = inputValue.trim();
+      if (trimmed === '') {
+        closeMenu();
+        return;
+      }
+      let current: Key[] = Array.isArray(displayValue) ? displayValue as Key[] : [];
+      if (current.includes(trimmed)) {
+        setValue(current.filter(v => v !== trimmed));
+        setCustomKeys(prev => {
+          if (!prev.has(trimmed)) {
+            return prev;
+          }
+          let next = new Set(prev);
+          next.delete(trimmed);
+          return next;
+        });
+      } else {
+        setValue([...current, trimmed]);
+        setCustomKeys(prev => {
+          let next = new Set(prev);
+          next.add(trimmed);
+          return next;
+        });
+      }
+      setInputValue('');
+    }
     closeMenu();
   };
 
@@ -456,13 +525,42 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     }
   };
 
+  let findItemCaseInsensitive = (text: string): Node<T> | undefined => {
+    let lower = text.toLowerCase();
+    return [...collection].find(item => item.textValue?.toLowerCase() === lower);
+  };
+
   const commitValue = () => {
     if (allowsCustomValue) {
-      const itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
-      (inputValue === itemText) ? commitSelection() : commitCustomValue();
+      if (selectionMode === 'single') {
+        let matchingItem = inputValue ? findItemCaseInsensitive(inputValue) : undefined;
+        if (matchingItem) {
+          selectionManager.select(matchingItem.key);
+          closeMenu();
+        } else {
+          commitCustomValue();
+        }
+      } else {
+        // In multi-select, check if input matches any item's textValue (case insensitive)
+        let trimmedInput = inputValue.trim();
+        let matchingItem = trimmedInput ? findItemCaseInsensitive(trimmedInput) : undefined;
+        if (matchingItem) {
+          selectionManager.select(matchingItem.key);
+          setInputValue('');
+          closeMenu();
+        } else {
+          commitCustomValue();
+        }
+      }
     } else {
-      // Reset inputValue and close menu
-      commitSelection();
+      // Check if input matches an existing item case-insensitively
+      let matchingItem = inputValue ? findItemCaseInsensitive(inputValue) : undefined;
+      if (matchingItem) {
+        selectionManager.select(matchingItem.key);
+        closeMenu();
+      } else {
+        commitSelection();
+      }
     }
   };
 

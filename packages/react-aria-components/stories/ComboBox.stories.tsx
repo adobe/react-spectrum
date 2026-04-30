@@ -22,6 +22,7 @@ import {ListBox} from '../src/ListBox';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {LoadingSpinner, MyListBoxItem} from './utils';
+import {Key} from '@react-types/shared';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {Modal, ModalOverlay} from '../src/Modal';
 import {Popover} from '../src/Popover';
@@ -440,6 +441,159 @@ export const MultiSelectComboBox: ComboBoxStory = () => (
     </Popover>
   </ComboBox>
 );
+
+export const MultiSelectComboBoxAllowsCustomValue: ComboBoxStory = () => (
+  <ComboBox allowsEmptyCollection allowsCustomValue selectionMode="multiple" defaultItems={usStateOptions}>
+    <Label style={{display: 'block'}}>Test</Label>
+    <div style={{display: 'flex'}}>
+      <Input placeholder="Select or type a custom value" />
+      <Button>
+        <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+      </Button>
+    </div>
+    <ComboBoxStateContext.Consumer>
+      {state => state && (
+        <TagGroup
+          aria-label="Selected states"
+          items={state.selectedItems.map(item => item.value ?? {id: item.key, name: item.textValue})}
+          renderEmptyState={() => 'No selected items'}
+          onRemove={(keys) => {
+            if (Array.isArray(state.value)) {
+              state.setValue(state.value.filter(k => !keys.has(k)));
+            }
+          }}>
+          {item => <Tag>{item.name}</Tag>}
+        </TagGroup>
+      )}
+    </ComboBoxStateContext.Consumer>
+    <Popover placement="bottom end">
+      <ListBox<{name: string}>
+        renderEmptyState={renderEmptyState}
+        data-testid="combo-box-list-box"
+        className={styles.menu}>
+        {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+      </ListBox>
+    </Popover>
+  </ComboBox>
+);
+
+export function MultiSelectComboBoxAllowsCustomValueControlled() {
+  let [selectedKeys, setSelectedKeys] = useState<Key[]>([]);
+  let [inputValue, setInputValue] = useState('');
+  let {contains} = useFilter({sensitivity: 'base'});
+  let filteredItems = useMemo(() => usStateOptions.filter(item => contains(item.name, inputValue)), [inputValue, contains]);
+
+  return (
+    <div>
+      <div style={{marginBottom: 12, fontSize: 12, fontFamily: 'monospace'}}>
+        <div>inputValue: {JSON.stringify(inputValue)}</div>
+        <div>selectedKeys: {JSON.stringify(selectedKeys)}</div>
+      </div>
+      <ComboBox
+        allowsEmptyCollection
+        allowsCustomValue
+        selectionMode="multiple"
+        items={filteredItems}
+        value={selectedKeys}
+        onChange={setSelectedKeys}
+        inputValue={inputValue}
+        onInputChange={setInputValue}>
+        <Label style={{display: 'block'}}>Test</Label>
+        <div style={{display: 'flex'}}>
+          <Input placeholder="Select or type a custom value" />
+          <Button>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+          </Button>
+        </div>
+        <ComboBoxStateContext.Consumer>
+          {state => state && (
+            <TagGroup
+              aria-label="Selected states"
+              items={state.selectedItems.map(item => item.value ?? {id: item.key, name: item.textValue})}
+              renderEmptyState={() => 'No selected items'}
+              onRemove={(keys) => {
+                setSelectedKeys(prev => prev.filter(k => !keys.has(k)));
+              }}>
+              {item => <Tag>{item.name}</Tag>}
+            </TagGroup>
+          )}
+        </ComboBoxStateContext.Consumer>
+        <Popover placement="bottom end">
+          <ListBox<{id: string, name: string}>
+            renderEmptyState={renderEmptyState}
+            className={styles.menu}>
+            {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+          </ListBox>
+        </Popover>
+      </ComboBox>
+    </div>
+  );
+}
+
+export function MultiSelectComboBoxAllowsCustomValueForm() {
+  let [submittedData, setSubmittedData] = useState<string | null>(null);
+
+  return (
+    <div>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          let formData = new FormData(e.currentTarget);
+          let entries: Record<string, FormDataEntryValue[]> = {};
+          for (let [key, value] of formData.entries()) {
+            if (!entries[key]) {
+              entries[key] = [];
+            }
+            entries[key].push(value);
+          }
+          setSubmittedData(JSON.stringify(entries, null, 2));
+        }}>
+        <ComboBox
+          name="states"
+          allowsEmptyCollection
+          allowsCustomValue
+          selectionMode="multiple"
+          defaultItems={usStateOptions}>
+          <Label style={{display: 'block'}}>States</Label>
+          <div style={{display: 'flex'}}>
+            <Input placeholder="Select or type a custom value" />
+            <Button>
+              <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+            </Button>
+          </div>
+          <ComboBoxStateContext.Consumer>
+            {state => state && (
+              <TagGroup
+                aria-label="Selected states"
+                items={state.selectedItems.map(item => item.value ?? {id: item.key, name: item.textValue})}
+                renderEmptyState={() => 'No selected items'}
+                onRemove={(keys) => {
+                  if (Array.isArray(state.value)) {
+                    state.setValue(state.value.filter(k => !keys.has(k)));
+                  }
+                }}>
+                {item => <Tag>{item.name}</Tag>}
+              </TagGroup>
+            )}
+          </ComboBoxStateContext.Consumer>
+          <Popover placement="bottom end">
+            <ListBox<{name: string}>
+              renderEmptyState={renderEmptyState}
+              className={styles.menu}>
+              {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+            </ListBox>
+          </Popover>
+        </ComboBox>
+        <button type="submit" style={{marginTop: 8}}>Submit</button>
+      </form>
+      {submittedData && (
+        <pre style={{marginTop: 12, fontSize: 12, fontFamily: 'monospace', background: '#f5f5f5', padding: 8, color: '#000'}}>
+          {submittedData}
+        </pre>
+      )}
+    </div>
+  );
+}
 
 const usStateOptions = [
   {id: 'AL', name: 'Alabama'},

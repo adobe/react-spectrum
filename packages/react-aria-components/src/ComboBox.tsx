@@ -140,7 +140,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     formValue = 'key',
     allowsCustomValue
   } = props;
-  if (allowsCustomValue) {
+  if (allowsCustomValue && props.selectionMode !== 'multiple') {
     formValue = 'text';
   }
 
