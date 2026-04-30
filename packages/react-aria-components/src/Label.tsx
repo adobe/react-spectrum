@@ -12,18 +12,28 @@
 
 import {ContextValue, dom, DOMRenderProps, useContextProps} from './utils';
 import {createHideableComponent} from 'react-aria/private/collections/Hidden';
+import {HoverEvents} from '@react-types/shared';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, LabelHTMLAttributes} from 'react';
+import {useHover} from 'react-aria/useHover';
 
-export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement>, DOMRenderProps<'label', undefined> {
+export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement>, HoverEvents, DOMRenderProps<'label', undefined> {
   elementType?: string
 }
 
 export const LabelContext = createContext<ContextValue<LabelProps, HTMLLabelElement>>({});
 
+let filterHoverProps = (props: LabelProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
+  return otherProps;
+};
+
 export const Label = /*#__PURE__*/ createHideableComponent(function Label(props: LabelProps, ref: ForwardedRef<HTMLLabelElement>) {
   [props, ref] = useContextProps(props, ref, LabelContext);
   let {elementType = 'label', ...labelProps} = props;
+  let {hoverProps} = useHover(props);
   let ElementType = dom[elementType];
   // @ts-ignore
-  return <ElementType className="react-aria-Label" {...labelProps} ref={ref} />;
+  return <ElementType className="react-aria-Label" {...mergeProps(filterHoverProps(labelProps), hoverProps)} ref={ref} />;
 });
