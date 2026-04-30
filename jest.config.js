@@ -214,10 +214,13 @@ module.exports = {
     ]
   },
 
-  // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
-  // transformIgnorePatterns: [
-  //   "/node_modules/"
-  // ],
+  // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation.
+  // Storybook 10 ships pure ESM in `storybook` and `@storybook/*`, so we need to let
+  // @swc/jest transform them instead of the default behavior of skipping all node_modules.
+  transformIgnorePatterns: [
+    '/node_modules/(?!(?:storybook|@storybook)/)',
+    '\\.pnp\\.[^\\/]+$'
+  ],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
   // unmockedModulePathPatterns: undefined,
