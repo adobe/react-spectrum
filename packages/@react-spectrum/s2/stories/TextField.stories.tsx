@@ -103,6 +103,27 @@ export const TextAreaExample: StoryTextArea = {
   }
 };
 
+export const TextAreaContextualHelpExample: StoryTextArea = {
+  render: (args) => (
+    <TextArea
+      {...args}
+      contextualHelp={
+        <ContextualHelp>
+          <Heading>Share your thoughts!</Heading>
+          <Content>
+            <Text>
+              Your comment will be visible to other users.
+            </Text>
+          </Content>
+        </ContextualHelp>
+      } />
+  ),
+  args: {
+    label: 'Comment',
+    placeholder: 'Enter a comment'
+  }
+};
+
 export const CustomWidth: StoryTextField = {
   render: (args) => <TextField {...args} styles={style({width: 384})} />,
   args: {
