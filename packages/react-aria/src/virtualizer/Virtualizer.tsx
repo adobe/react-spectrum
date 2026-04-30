@@ -26,7 +26,7 @@ type RenderWrapper<T extends object, V> = (
   renderChildren: (views: ReusableView<T, V>[]) => ReactElement[]
 ) => ReactElement | null;
 
-interface VirtualizerProps<T extends object, V, O> extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'onScroll'> {
+export interface VirtualizerProps<T extends object, V, O> extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'onScroll'> {
   children: (type: string, content: T) => V,
   renderWrapper?: RenderWrapper<T, V>,
   layout: Layout<T, O>,
