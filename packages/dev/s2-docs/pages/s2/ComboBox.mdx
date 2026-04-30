@@ -118,6 +118,24 @@ const users = Array.from({length: 5}, (_, i) => ({
   <Content>Interactive elements (e.g. buttons) within ComboBox items are not allowed. This will break keyboard and screen reader navigation. Only add textual or decorative graphics (e.g. icons) as children.</Content>
 </InlineAlert>
 
+### Prefix
+
+Use the `prefix` prop to display a prefix in the combobox.
+
+```tsx render
+"use client";
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
+
+<ComboBox label="Phone number" placeholder="(000) 000-0000" prefix="#">
+  <ComboBoxItem>(123) 456-7890</ComboBoxItem>
+  <ComboBoxItem>(123) 456-7891</ComboBoxItem>
+  <ComboBoxItem>(123) 456-7892</ComboBoxItem>
+  <ComboBoxItem>(123) 456-7893</ComboBoxItem>
+  <ComboBoxItem>(123) 456-7894</ComboBoxItem>
+  <ComboBoxItem>(123) 456-7895</ComboBoxItem>
+</ComboBox>
+```
+
 ### Sections
 
 Use the `<ComboBoxSection>` component to group options. A `<Header>` element, with a `<Heading>` and optional `description` slot can be included to label a section. Sections without a header must have an `aria-label`.

@@ -29,7 +29,7 @@ import {PopoverProps as AriaPopoverProps, Placement} from 'react-aria-components
 import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SingleSelection, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {BaseCollection, CollectionNode} from 'react-aria/private/collections/BaseCollection';
-import {baseColor, centerPadding, focusRing, space, style} from '../style' with {type: 'macro'};
+import {baseColor, centerPadding, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonRenderProps} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {
@@ -43,7 +43,7 @@ import {
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {Collection} from 'react-aria/Collection';
-import {ContextValue, Provider} from 'react-aria-components/slots';
+import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {createFocusableRef} from './useDOMRef';
@@ -63,6 +63,7 @@ import {Node} from '@react-types/shared';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
+import {TextContext as AriaTextContext} from 'react-aria-components/Text';
 import {TextFieldRef} from './TextField';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
@@ -77,7 +78,11 @@ export interface ComboboxStyleProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * The prefix to display in the combobox. Either a string or workflow icon.
+   */
+  prefix?: ReactNode
 }
 export interface ComboBoxProps<T extends object> extends
   Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'render' | 'defaultFilter' | 'allowsEmptyCollection' | 'selectionMode' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange' | 'value' | 'defaultValue' | 'onChange' | keyof GlobalDOMAttributes>,
@@ -626,6 +631,34 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
             // [9, 4], [12, 6], [15, 8], [18, 8]
             paddingEnd: 'calc(self(height, self(minHeight)) * 3 / 16 - self(borderEndWidth, 2px))'
           })({size})}>
+          {props.prefix ? (
+            <Provider 
+              values={[
+                [IconContext, {
+                  render: centerBaseline({}),
+                  styles: style({
+                    size: fontRelative(20),
+                    '--iconPrimary': {
+                      type: 'fill',
+                      value: 'currentColor'
+                    }
+                  })
+                }],
+                [AriaTextContext, {}],
+                [TextContext, {
+                  slots: {
+                    [DEFAULT_SLOT]: {
+                      styles: style({minWidth: 20, display: 'flex', alignItems: 'center', justifyContent: 'center'})
+                    }
+                  }
+                }]
+              ]}>
+              <div className={style({color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
+                {typeof props.prefix === 'string' ? <Text>{props.prefix}</Text> : props.prefix}
+              </div>
+            </Provider>
+            ) : null
+          }
           <InputContext.Consumer>
             {ctx => (
               <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
