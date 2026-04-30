@@ -1,0 +1,79 @@
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+export const hideNav = true;
+export const isSubpage = true;
+export const section = 'Examples';
+export const keywords = ['react-spectrum', 's2', 'example', 'custom', 'style macro'];
+export const description = 'TODO: Replace this with better examples.';
+
+# Placeholder Card
+
+<PageDescription>TODO: Replace this with better examples.</PageDescription>
+
+```tsx render expanded
+"use client";
+import {Link} from 'react-aria-components/Link';
+import {style, focusRing, baseColor} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const cardStyles = style({
+  ...focusRing(),
+  display: 'flex',
+  flexDirection: 'column',
+  rowGap: 4,
+  padding: 24,
+  borderRadius: 'xl',
+  backgroundColor: baseColor('gray-50'),
+  borderWidth: 1,
+  borderStyle: 'solid',
+  borderColor: {
+    default: 'gray-200',
+    isHovered: 'gray-300',
+    isFocusVisible: 'gray-300'
+  },
+  boxShadow: {
+    default: 'elevated',
+    isHovered: 'emphasized'
+  },
+  textDecoration: 'none',
+  cursor: 'pointer',
+  transition: 'default',
+  width: 'full',
+  maxWidth: 320
+});
+
+const titleStyles = style({font: 'title-sm', color: 'neutral'});
+const descriptionStyles = style({font: 'body-sm', color: 'neutral-subdued'});
+const metaStyles = style({font: 'ui-xs', color: 'neutral-subdued', marginTop: 8});
+
+function Card({title, description, meta, href}: {title: string, description: string, meta?: string, href: string}) {
+  return (
+    <Link href={href} className={cardStyles}>
+      <span className={titleStyles}>{title}</span>
+      <span className={descriptionStyles}>{description}</span>
+      {meta && <span className={metaStyles}>{meta}</span>}
+    </Link>
+  );
+}
+
+<div className={style({display: 'flex', columnGap: 16, rowGap: 16, flexWrap: 'wrap'})}>
+  <Card
+    title="Getting Started"
+    description="Install React Spectrum and set up your project."
+    meta="5 min read"
+    href="#" />
+  <Card
+    title="Styling Guide"
+    description="Learn how to use the style macro with design tokens."
+    meta="10 min read"
+    href="#" />
+</div>
+```
+
+This example shows several patterns for building interactive custom components:
+
+- **React Aria Link** – Wrapping the card in a `Link` provides keyboard navigation, focus management, and screen reader announcements. All hover, press, and focus states are handled automatically.
+- **`focusRing()`** – Spreads the standard Spectrum 2 focus ring into the style, ensuring keyboard users see a visible indicator.
+- **`baseColor()`** – Generates hover, focus, and press color variations from a single token. Here it's used for the background, so the card subtly shifts color on interaction.
+- **`boxShadow`** – Spectrum tokens like `elevated` and `emphasized` provide consistent depth across the design system.
+- **Typography tokens** – `title-sm`, `body-sm`, and `ui-xs` apply the correct font family, size, weight, and line height in one property.
