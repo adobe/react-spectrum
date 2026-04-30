@@ -1582,6 +1582,44 @@ describe('Table', () => {
       expect(tableTester.rows).toHaveLength(8);
       expect(tableTester.selectedRows).toHaveLength(1);
     });
+
+    it('should focus the item after moving it to a different level', async () => {
+      const TreeGridTableDnd = stories.TreeGridTableDnd;
+      let {getAllByRole} = render(<TreeGridTableDnd />);
+      let tableTester = testUtilUser.createTester('Table', {root: getAllByRole('treegrid')[0]});
+      expect(tableTester.rows).toHaveLength(7);
+      await user.tab();
+      for (let i = 0; i < 3; i++) {
+        await user.keyboard('{ArrowDown}');
+      }
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Budget');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Project');
+      await act(async () => {
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      });
+      act(() => jest.runAllTimers());
+      expect(tableTester.rows).toHaveLength(7);
+      expect(document.activeElement).toBe(tableTester.rows[3]);
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      for (let i = 0; i < 3; i++) {
+        await user.keyboard('{ArrowDown}');
+      }
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Image 1');
+      await act(async () => {
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      });
+      act(() => jest.runAllTimers());
+      expect(tableTester.rows).toHaveLength(7);
+      expect(document.activeElement).toBe(tableTester.rows[4]);
+    });
   });
 
   describe('column resizing', () => {
