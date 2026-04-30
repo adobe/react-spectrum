@@ -21,12 +21,24 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover, useLocalizedStringFormatter, VisuallyHidden} from 'react-aria';
-import {filterDOMProps, getEventTarget, isFocusable, nodeContains, useLabels, useObjectRef, useSlotId} from '@react-aria/utils';
-// @ts-ignore
+import {DropOptions, useDrop} from 'react-aria/useDrop';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {getEventTarget, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import intlMessages from '../intl/*.json';
+import {isFocusable} from 'react-aria/private/utils/isFocusable';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
+import {useButton} from 'react-aria/useButton';
+import {useClipboard} from 'react-aria/useClipboard';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {useLabels} from 'react-aria/private/utils/useLabels';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+// @ts-ignore
+import {useObjectRef} from 'react-aria/useObjectRef';
+import {useSlotId} from 'react-aria/private/utils/useId';
+import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
 export interface DropZoneRenderProps {
   /**

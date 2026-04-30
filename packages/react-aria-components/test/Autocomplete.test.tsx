@@ -13,10 +13,30 @@
 import './installPointerEvent';
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Autocomplete, Breadcrumb, Breadcrumbs, Button, Cell, Collection, Column, Dialog, DialogTrigger, GridList, GridListItem, Header, Input, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Tag, TagGroup, TagList, Text, TextField, Tree, TreeItem, TreeItemContent} from '..';
+import {Autocomplete} from '../src/Autocomplete';
+import {Breadcrumb, Breadcrumbs} from '../src/Breadcrumbs';
+import {Button} from '../src/Button';
+import {Cell, Column, Row, Table, TableBody, TableHeader} from '../src/Table';
+import {Collection} from 'react-aria/Collection';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {GridList, GridListItem} from '../src/GridList';
+import {Header} from '../src/Header';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
+import {ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection} from '../src/ListBox';
+import {Menu, MenuItem, MenuSection, SubmenuTrigger} from '../src/Menu';
+import {Popover} from '../src/Popover';
 import React, {ReactNode, useState} from 'react';
-import {useAsyncList} from 'react-stately';
-import {useFilter} from '@react-aria/i18n';
+import {SearchField} from '../src/SearchField';
+import {Select, SelectValue} from '../src/Select';
+import {Separator} from '../src/Separator';
+import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
+import {Tag, TagGroup, TagList} from '../src/TagGroup';
+import {Text} from '../src/Text';
+import {TextField} from '../src/TextField';
+import {Tree, TreeItem, TreeItemContent} from '../src/Tree';
+import {useAsyncList} from 'react-stately/useAsyncList';
+import {useFilter} from 'react-aria/useFilter';
 import userEvent from '@testing-library/user-event';
 
 interface AutocompleteItem {
@@ -494,6 +514,100 @@ describe('Autocomplete', () => {
     act(() => jest.runAllTimers());
     expect(input).not.toHaveAttribute('aria-activedescendant');
     expect(input).toHaveAttribute('data-focus-visible');
+  });
+
+  it('should restore focused styles to the input when clicking it after hovering an option', async () => {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.click(input);
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focused');
+
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    await user.hover(options[1]);
+
+    expect(options[1]).toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
+
+    await user.click(input);
+
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(options[1]).not.toHaveAttribute('data-focused');
+  });
+
+  it('should restore the input state after clicking outside the autocomplete and then back into the input', async () => {
+    let {getByRole} = render(
+      <>
+        <button type="button">Outside</button>
+        <AutocompleteWrapper>
+          <StaticMenu />
+        </AutocompleteWrapper>
+      </>
+    );
+
+    let input = getByRole('searchbox');
+    await user.click(input);
+
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    await user.hover(options[1]);
+
+    expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
+    expect(options[1]).toHaveAttribute('data-focused');
+
+    await user.click(getByRole('button', {name: 'Outside'}));
+    expect(document.activeElement).toHaveTextContent('Outside');
+    expect(input).not.toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+
+    await user.click(input);
+
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(options[1]).not.toHaveAttribute('data-focused');
+  });
+
+  it('should restore focused styles to the input when clicking it after keyboard focusing an option', async () => {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.click(input);
+    expect(document.activeElement).toBe(input);
+
+    await user.keyboard('{ArrowDown}');
+    act(() => jest.runAllTimers());
+
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    expect(options[0]).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+
+    await user.click(input);
+    act(() => jest.runAllTimers());
+
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(options[0]).not.toHaveAttribute('data-focused');
+    expect(options[0]).not.toHaveAttribute('data-focus-visible');
   });
 
   it('should not display focus in the virtually focused menu if focus isn\'t in the autocomplete input', async function () {

@@ -406,22 +406,23 @@ function renderValue(value: any, indent = '') {
 function renderImports(name: string, importSource: string, props: Props) {
   let imports: ReactNode[] = [];
   let components = [name];
-  if (props.children?.avatar) {
-    components.push('Avatar');
-  }
   if (props.children?.badge) {
     components.push('NotificationBadge');
   }
 
-  if (components.length > 1 || props.children?.icon) {
+  if (components.length > 1 || ((props.children?.icon || props.children?.avatar) && props.children?.text)) {
     components.push('Text');
   }
 
-  if (props.contextualHelp) {
-    components.push('ContextualHelp', 'Heading', 'Content');
+  imports.push(renderImport(components.join(', '), importSource));
+
+  if (props.children?.avatar) {
+    imports.push('\n', renderImport('Avatar', '@react-spectrum/s2/Avatar'));
   }
 
-  imports.push(renderImport(components.join(', '), importSource));
+  if (props.contextualHelp) {
+    imports.push('\n', renderImport('ContextualHelp, Heading, Content', '@react-spectrum/s2/ContextualHelp'));
+  }
 
   if (props.children?.icon && !props.children?.avatar) {
     imports.push('\n', renderImport(props.children.icon.replace(/^(\d)/, '_$1'), `@react-spectrum/s2/icons/${props.children.icon}`, true));
@@ -1007,21 +1008,27 @@ function LocaleControl({control, value, onChange}: ControlProps) {
 }
 
 function DurationControl({control, value, onChange}: ControlProps) {
-  // For now we only care about months.
+  let key = Object.keys(value)[0];
   return (
-    <NumberField
-      label={control.name}
-      placeholder="–"
-      contextualHelp={<PropContextualHelp control={control} />}
-      value={value.months}
-      minValue={1}
-      onChange={months => onChange({months})}
-      styles={style({width: controlWidth})}
-      formatOptions={{
-        style: 'unit',
-        unit: 'month',
-        unitDisplay: 'long'
-      }} />
+    <Wrapper control={control} styles={style({gridColumnStart: 1, gridColumnEnd: -1})}>
+      <div className={style({display: 'flex', flexDirection: 'column', gap: 4, width: controlWidth})}>
+        <NumberField
+          aria-label={control.name}
+          placeholder="–"
+          contextualHelp={<PropContextualHelp control={control} />}
+          value={value[key]}
+          minValue={1}
+          onChange={value => onChange({[key]: value})} />
+        <Picker
+          aria-label={`${control.name} unit`}
+          value={key}
+          onChange={k => onChange({[String(k)]: value[key]})}>
+          <PickerItem id="days">Days</PickerItem>
+          <PickerItem id="weeks">Weeks</PickerItem>
+          <PickerItem id="months">Months</PickerItem>
+        </Picker>
+      </div>
+    </Wrapper>
   );
 }
 

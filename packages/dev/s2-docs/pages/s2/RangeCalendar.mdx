@@ -15,7 +15,7 @@ export const description = 'Allows a user to select a contiguous range of dates.
   component={RangeCalendar}
   docs={docs.exports.RangeCalendar}
   links={docs.links}
-  props={['visibleMonths', 'pageBehavior', 'firstDayOfWeek', 'isDisabled']}
+  props={['visibleMonths', 'pageBehavior', 'firstDayOfWeek', 'isDisabled', 'commitBehavior']}
   initialProps={{'aria-label': 'Trip dates'}}
   controlOptions={{
     visibleMonths: {
@@ -23,7 +23,7 @@ export const description = 'Allows a user to select a contiguous range of dates.
       maxValue: 3
     }
   }}
-  importSource="@react-spectrum/s2"
+  importSource="@react-spectrum/s2/RangeCalendar"
   type="s2"
   wide />
 
@@ -34,8 +34,8 @@ Use the `value` or `defaultValue` prop to set the selected date range, using obj
 ```tsx render
 "use client";
 import {parseDate, getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from 'react-aria';
-import {RangeCalendar} from '@react-spectrum/s2';
+import {useDateFormatter} from 'react-aria/useDateFormatter';
+import {RangeCalendar} from '@react-spectrum/s2/RangeCalendar';
 import {useState} from 'react';
 
 function Example() {
@@ -44,7 +44,7 @@ function Example() {
     end: parseDate('2025-02-12')
   });
   let formatter = useDateFormatter({ dateStyle: 'long' });
-  
+
   return (
     <>
       <RangeCalendar
@@ -68,7 +68,8 @@ By default, `RangeCalendar` displays the value using the calendar system for the
 
 ```tsx render wide docs={docs.exports.Provider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-ca-indian'}} type="s2"
 "use client";
-import {Provider, RangeCalendar} from '@react-spectrum/s2';
+import {Provider} from '@react-spectrum/s2/Provider';
+import {RangeCalendar} from '@react-spectrum/s2/RangeCalendar';
 import {parseDate} from '@internationalized/date';
 
 <Provider/* PROPS */>
@@ -88,7 +89,7 @@ import {parseDate} from '@internationalized/date';
 "use client";
 import type {AnyCalendarDate, Calendar} from '@internationalized/date';
 import {CalendarDate, startOfWeek, GregorianCalendar} from '@internationalized/date';
-import {RangeCalendar} from '@react-spectrum/s2';
+import {RangeCalendar} from '@react-spectrum/s2/RangeCalendar';
 
 export default function Example() {
   return (
@@ -175,7 +176,7 @@ Use the `minValue` and `maxValue` props to set the valid date range. The `isDate
 ```tsx render docs={docs.exports.RangeCalendar} links={docs.links} props={['allowsNonContiguousRanges']} wide type="s2"
 "use client";
 import {today, getLocalTimeZone} from '@internationalized/date';
-import {RangeCalendar} from '@react-spectrum/s2';
+import {RangeCalendar} from '@react-spectrum/s2/RangeCalendar';
 import {useState} from 'react';
 
 function Example(props) {
@@ -200,7 +201,8 @@ function Example(props) {
       ///- begin highlight -///
       /* PROPS */
       minValue={today(getLocalTimeZone())}
-      isDateUnavailable={date => (
+      isDateUnavailable={(date, anchorDate) => (
+        (anchorDate && Math.abs(date.compare(anchorDate)) > 7) ||
         disabledRanges.some((interval) =>
           date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
         )
@@ -218,7 +220,8 @@ Use the `focusedValue` or `defaultFocusedValue` prop to control which date is fo
 
 ```tsx render
 "use client";
-import {RangeCalendar, ActionButton} from '@react-spectrum/s2';
+import {RangeCalendar} from '@react-spectrum/s2/RangeCalendar';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {CalendarDate, today, getLocalTimeZone} from '@internationalized/date';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';

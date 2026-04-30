@@ -11,10 +11,15 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Cell as AriaCell, Button, Collection, Column, composeRenderProps, Row, Table, TableBody, TableHeader, useDragAndDrop, useTreeData} from '../src';
+import {Cell as AriaCell, Column, Row, Table, TableBody, TableHeader} from '../src/Table';
+import {Button} from '../src/Button';
+import {Collection} from 'react-aria/Collection';
+import {composeRenderProps} from '../src/utils';
 import React from 'react';
+import {useDragAndDrop} from '../src/useDragAndDrop';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
+import {useTreeData} from 'react-stately/useTreeData';
 
 export function Cell(props) {
   return (

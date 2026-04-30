@@ -10,4 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-export {useFormValidation} from './useFormValidation';
+export {useFormValidation} from 'react-aria/private/form/useFormValidation';

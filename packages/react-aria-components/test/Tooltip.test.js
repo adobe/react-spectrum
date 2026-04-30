@@ -11,9 +11,13 @@
  */
 
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, Focusable, OverlayArrow, Pressable, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button} from '../src/Button';
+import {Focusable} from 'react-aria/Focusable';
+import {OverlayArrow} from '../src/OverlayArrow';
+import {Pressable} from 'react-aria/Pressable';
 import React, {useRef} from 'react';
-import {UNSAFE_PortalProvider} from '@react-aria/overlays';
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
+import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import userEvent from '@testing-library/user-event';
 
 function TestTooltip(props) {

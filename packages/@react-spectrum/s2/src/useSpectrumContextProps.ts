@@ -11,11 +11,12 @@
  */
 
 import {Context, ForwardedRef, useMemo} from 'react';
-import {ContextValue, SlotProps, useSlottedContext} from 'react-aria-components';
-import {mergeProps, useObjectRef} from 'react-aria';
-import {mergeRefs} from '@react-aria/utils';
+import {ContextValue, SlotProps, useSlottedContext} from 'react-aria-components/slots';
+import {mergeProps} from 'react-aria/mergeProps';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import {mergeStyles} from '../style/runtime';
 import {RefObject} from '@react-types/shared';
+import {useObjectRef} from 'react-aria/useObjectRef';
 
 export function useSpectrumContextProps<T, U extends SlotProps, E>(props: T & SlotProps, ref: ForwardedRef<E>, context: Context<ContextValue<U, E>>): [T, RefObject<E | null>] {
   let ctx = useSlottedContext(context, props.slot) || {};

@@ -11,8 +11,15 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, FieldError, Form, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, Popover, Select, SelectContext, SelectStateContext, SelectValue, Text} from '../';
+import {Button} from '../src/Button';
+import {FieldError} from '../src/FieldError';
+import {Form} from '../src/Form';
+import {Label} from '../src/Label';
+import {ListBox, ListBoxItem, ListBoxLoadMoreItem} from '../src/ListBox';
+import {Popover} from '../src/Popover';
 import React, {useEffect, useRef, useState} from 'react';
+import {Select, SelectContext, SelectStateContext, SelectValue} from '../src/Select';
+import {Text} from '../src/Text';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -334,6 +341,31 @@ describe('Select', () => {
     await selectTester.selectOption({option: 'Cat'});
     expect(selectTester.trigger).not.toHaveAttribute('aria-describedby');
     expect(select).not.toHaveAttribute('data-invalid');
+  });
+
+  it('should support arrow key navigation to a falsy key', async () => {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <Select onSelectionChange={onSelectionChange} aria-label="Pick a number">
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover>
+          <ListBox
+            items={Array.from({length: 3}).map((_, i) => ({id: i, label: `${i}`}))}>
+            {item => <ListBoxItem id={item.id} textValue={item.label}>{item.label}</ListBoxItem>}
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+
+    let button = getByRole('button');
+    act(() => button.focus());
+
+    await user.keyboard('{ArrowRight}');
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenLastCalledWith(0);
+    expect(button).toHaveTextContent('0');
   });
 
   it('should support falsy (0) as a valid default value', async () => {

@@ -75,8 +75,8 @@ module.exports = new Namer({
 
       // move @react-spectrum pages under /v3 aka components and stuff
       let namespace = parts[1].replace(/^@/, '');
-      if (namespace === 'react-spectrum') {
-        namespace = 'v3';
+      if (namespace === 'adobe' || namespace === 'react-spectrum') {
+        return `v3/${basename}`;
       }
 
       if (namespace === 'react-aria') {

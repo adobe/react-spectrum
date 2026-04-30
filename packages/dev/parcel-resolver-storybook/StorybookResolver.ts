@@ -4,11 +4,19 @@ const reactVersion = require("react-dom/package.json").version;
 import { default as NodeResolver } from "@parcel/node-resolver-core";
 // @ts-ignore
 import { isGlob, glob, normalizeSeparators, relativePath } from '@parcel/utils';
+import { globalsNameReferenceMap } from 'storybook/internal/preview/globals';
 
 const REACT_MAJOR_VERSION = parseInt(reactVersion.split('.')[0], 10);
 
 module.exports = new Resolver({
   async resolve({ dependency, options, specifier, pipeline, logger }) {
+    if (specifier in globalsNameReferenceMap) {
+      return {
+        filePath: __dirname + "/globals.js",
+        code: `module.exports = ${globalsNameReferenceMap[specifier]};`
+      };
+    }
+
     // Workaround for interop issue
     if (specifier === "react-dom/client" && REACT_MAJOR_VERSION < 18) {
       return {

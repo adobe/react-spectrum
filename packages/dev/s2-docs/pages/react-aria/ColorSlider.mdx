@@ -6,7 +6,7 @@ import vanillaDocs from 'docs:vanilla-starter/ColorSlider';
 import {ColorSlider as VanillaColorSlider} from 'vanilla-starter/ColorSlider';
 import {ColorSlider as TailwindColorSlider} from 'tailwind-starter/ColorSlider';
 import '../../tailwind/tailwind.css';
-import Anatomy from '@react-aria/color/docs/ColorSliderAnatomy.svg';
+import Anatomy from '/packages/react-aria/docs/color/ColorSliderAnatomy.svg';
 
 export const tags = ['input'];
 export const relatedPages = [{'title': 'useColorSlider', 'url': 'ColorSlider/useColorSlider.html'}];
@@ -43,7 +43,7 @@ The `onChange` event is called as the user drags, and `onChangeEnd` is called wh
 
 ```tsx render
 "use client";
-import {parseColor} from 'react-aria-components';
+import {parseColor} from 'react-aria-components/ColorSlider';
 import {ColorSlider} from 'vanilla-starter/ColorSlider';
 import {useState} from 'react';
 

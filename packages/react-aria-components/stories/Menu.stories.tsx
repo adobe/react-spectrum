@@ -11,13 +11,35 @@
  */
 
 import {action} from 'storybook/actions';
-import {Button, Header, Heading, Input, Keyboard, Label, ListLayout, Menu, MenuItem, MenuItemProps, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, SubmenuTriggerProps, Text, TextField, Virtualizer} from 'react-aria-components';
-import {classNames} from '@react-spectrum/utils';
-import {mergeProps} from 'react-aria';
+import {Button} from '../src/Button';
+import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
+import {Header} from '../src/Header';
+import {Heading} from '../src/Heading';
+import {Input} from '../src/Input';
+import {Keyboard} from '../src/Keyboard';
+import {Label} from '../src/Label';
+
+import {ListLayout} from 'react-stately/useVirtualizerState';
+
+import {
+  Menu,
+  MenuItem,
+  MenuItemProps,
+  MenuSection,
+  MenuTrigger,
+  SubmenuTrigger,
+  SubmenuTriggerProps
+} from '../src/Menu';
+import {mergeProps} from 'react-aria/mergeProps';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {MyMenuItem} from './utils';
+import {Popover} from '../src/Popover';
 import React, {createContext, JSX, ReactElement, useContext} from 'react';
+import {Separator} from '../src/Separator';
 import styles from '../example/index.css';
+import {Text} from '../src/Text';
+import {TextField} from '../src/TextField';
+import {Virtualizer} from '../src/Virtualizer';
 import './styles.css';
 
 export default {

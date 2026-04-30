@@ -1,0 +1,109 @@
+/*
+ * Copyright 2021 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {classNames} from '../utils/classNames';
+
+import {dimensionValue, useStyleProps} from '../utils/styleProps';
+import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
+import React, {forwardRef} from 'react';
+import styles from '@adobe/spectrum-css-temp/components/avatar/vars.css';
+import {useDOMRef} from '../utils/useDOMRef';
+import {useProviderProps} from '../provider/Provider';
+import {useSlotProps} from '../utils/Slots';
+
+const DEFAULT_SIZE = 'avatar-size-100';
+const SIZE_RE = /^size-\d+/;
+
+export interface AvatarProps {
+  /**
+   * Text description of the avatar.
+   *
+   * @default null
+   */
+  alt?: string,
+  /**
+   * The image URL for the avatar.
+   */
+  src: string
+}
+
+export interface SpectrumAvatarProps extends AvatarProps, DOMProps, Omit<StyleProps, 'width' | 'height'> {
+  /**
+   * Whether the avatar is disabled.
+   */
+  isDisabled?: boolean,
+  /**
+   * Size of the avatar. Affects both height and width.
+   *
+   * @default avatar-size-100
+   */
+  size?:
+    | 'avatar-size-50'
+    | 'avatar-size-75'
+    | 'avatar-size-100'
+    | 'avatar-size-200'
+    | 'avatar-size-300'
+    | 'avatar-size-400'
+    | 'avatar-size-500'
+    | 'avatar-size-600'
+    | 'avatar-size-700'
+    // This allows autocomplete to work properly and not collapse the above options into just `string`.
+    // See https://github.com/microsoft/TypeScript/issues/29729.
+    | (string & {})
+    | number
+}
+
+/**
+ * An avatar is a thumbnail representation of an entity, such as a user or an organization.
+ */
+export const Avatar = forwardRef(function Avatar(props: SpectrumAvatarProps, ref: DOMRef<HTMLImageElement>) {
+  props = useSlotProps(props, 'avatar');
+  const {
+    alt = '',
+    isDisabled,
+    size = DEFAULT_SIZE,
+    src,
+    ...otherProps
+  } = useProviderProps(props);
+
+  const {styleProps} = useStyleProps(otherProps);
+  const domRef = useDOMRef(ref);
+
+  const domProps = filterDOMProps(otherProps);
+
+  // Casting `size` as `any` since `isNaN` expects a `number`, but we want it
+  // to handle `string` numbers; e.g. '300' as opposed to 300
+  const sizeValue = typeof size !== 'number' && (SIZE_RE.test(size) || !isNaN(size as any))
+    ? dimensionValue(DEFAULT_SIZE) // override disallowed size values
+    : dimensionValue(size || DEFAULT_SIZE);
+
+  return (
+    <img
+      {...styleProps}
+      {...domProps}
+      alt={alt}
+      className={classNames(
+        styles,
+        'spectrum-Avatar',
+        {
+          'is-disabled': isDisabled
+        },
+        styleProps.className)}
+      ref={domRef}
+      src={src}
+      style={{
+        ...styleProps.style,
+        ...(sizeValue && {height: sizeValue, width: sizeValue})
+      }} />
+  );
+});

@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
+import {AriaTagGroupProps, useTag, useTagGroup} from 'react-aria/useTagGroup';
+
 import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
@@ -26,18 +27,25 @@ import {
   useRenderProps,
   useSlot
 } from './utils';
-import {Collection, CollectionBuilder, createLeafComponent, ItemNode} from '@react-aria/collections';
+import {Collection} from 'react-aria/Collection';
+import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuilder';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
-import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusEvents, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
+import {ItemNode} from 'react-aria/private/collections/BaseCollection';
 import {LabelContext} from './Label';
-import {ListState, Node, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
+import {ListState, UNSTABLE_useFilteredListState, useListState} from 'react-stately/useListState';
 import {ListStateContext} from './ListBox';
+import {mergeProps} from 'react-aria/mergeProps';
+import {Node} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useRef} from 'react';
-import {SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
+import {SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {useObjectRef} from 'react-aria/useObjectRef';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps, DOMRenderProps<'div', undefined>, GlobalDOMAttributes<HTMLDivElement> {
   /**
@@ -236,7 +244,12 @@ export interface TagProps extends RenderProps<TagRenderProps, 'div'>, LinkDOMPro
    */
   textValue?: string,
   /** Whether the tag is disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /**
+   * Handler that is called when a user performs an action on the item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: () => void
 }
 
 /**

@@ -9,7 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue, useDatePicker, useDateRangePicker, useFocusRing} from 'react-aria';
+import {AriaDatePickerProps, useDatePicker} from 'react-aria/useDatePicker';
+import {AriaDateRangePickerProps, useDateRangePicker} from 'react-aria/useDateRangePicker';
 import {ButtonContext} from './Button';
 import {CalendarContext, RangeCalendarContext} from './Calendar';
 import {
@@ -27,18 +28,21 @@ import {
   useSlottedContext
 } from './utils';
 import {DateFieldContext} from './DateField';
-import {DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, useDatePickerState, useDateRangePickerState} from 'react-stately';
+import {DatePickerState, DatePickerStateOptions, DateValue, useDatePickerState} from 'react-stately/useDatePickerState';
+import {DateRangePickerState, DateRangePickerStateOptions, useDateRangePickerState} from 'react-stately/useDateRangePickerState';
 import {DialogContext, OverlayTriggerStateContext} from './Dialog';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {HiddenDateInput} from './HiddenDateInput';
 import {LabelContext} from './Label';
+import {mergeProps} from 'react-aria/mergeProps';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
+import {useFocusRing} from 'react-aria/useFocusRing';
 
 export interface DatePickerRenderProps {
   /**
@@ -143,19 +147,6 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     validationBehavior
   }, state, groupRef);
 
-  // Allows calendar width to match input group
-  let [groupWidth, setGroupWidth] = useState<string | null>(null);
-  let onResize = useCallback(() => {
-    if (groupRef.current) {
-      setGroupWidth(groupRef.current.offsetWidth + 'px');
-    }
-  }, []);
-
-  useResizeObserver({
-    ref: groupRef,
-    onResize: onResize
-  });
-
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let renderProps = useRenderProps({
     ...props,
@@ -183,13 +174,12 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         [DateFieldContext, fieldProps],
         [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [CalendarContext, calendarProps],
+        [CalendarContext, calendarProps as any],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
           trigger: 'DatePicker',
           triggerRef: groupRef,
           placement: 'bottom start',
-          style: {'--trigger-width': groupWidth} as React.CSSProperties,
           clearContexts: CLEAR_CONTEXTS
         }],
         [DialogContext, dialogProps],
@@ -255,19 +245,6 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
     validationBehavior
   }, state, groupRef);
 
-  // Allows calendar width to match input group
-  let [groupWidth, setGroupWidth] = useState<string | null>(null);
-  let onResize = useCallback(() => {
-    if (groupRef.current) {
-      setGroupWidth(groupRef.current.offsetWidth + 'px');
-    }
-  }, []);
-
-  useResizeObserver({
-    ref: groupRef,
-    onResize: onResize
-  });
-
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let renderProps = useRenderProps({
     ...props,
@@ -300,7 +277,6 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
           trigger: 'DateRangePicker',
           triggerRef: groupRef,
           placement: 'bottom start',
-          style: {'--trigger-width': groupWidth} as React.CSSProperties,
           clearContexts: CLEAR_CONTEXTS
         }],
         [DialogContext, dialogProps],

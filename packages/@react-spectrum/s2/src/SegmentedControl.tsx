@@ -13,14 +13,18 @@
 import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef, Key} from '@react-types/shared';
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, SelectionIndicator, SlotProps, ToggleButton, ToggleButtonGroup, ToggleButtonRenderProps, ToggleGroupStateContext} from 'react-aria-components';
+import {ContextValue, DEFAULT_SLOT, Provider, SlotProps} from 'react-aria-components/slots';
 import {control, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useRef} from 'react';
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
+import {TextContext as RACTextContext} from 'react-aria-components/Text';
+import {SelectionIndicator} from 'react-aria-components/SelectionIndicator';
 import {Text, TextContext} from './Content';
-import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
-import {useLayoutEffect} from '@react-aria/utils';
+import {ToggleButton, ToggleButtonRenderProps} from 'react-aria-components/ToggleButton';
+import {ToggleButtonGroup, ToggleGroupStateContext} from 'react-aria-components/ToggleButtonGroup';
+import {useDOMRef, useFocusableRef} from './useDOMRef';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SegmentedControlProps extends AriaLabelingProps, StyleProps, SlotProps {

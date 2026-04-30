@@ -12,7 +12,7 @@
 
 import {BlendModes, DynamicExample, Example, KeyboardShortcuts, PublishAndExport, UnavailableMenuItem} from '../stories/Menu.stories';
 import {expect} from '@storybook/jest';
-import {Menu} from '../src';
+import {Menu} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import {userEvent, within} from 'storybook/test';
 

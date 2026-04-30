@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorArea, ColorAreaProps, ColorThumb} from '../src';
+import {ColorArea, ColorAreaProps} from '../src/ColorArea';
+
 import {ColorSliderExampleRender} from './ColorSlider.stories';
+import {ColorThumb} from '../src/ColorThumb';
 import {Meta, StoryObj} from '@storybook/react';
-import {parseColor} from 'react-stately';
+import {parseColor} from 'react-stately/Color';
 import React, {JSX, useState} from 'react';
 import './styles.css';
 

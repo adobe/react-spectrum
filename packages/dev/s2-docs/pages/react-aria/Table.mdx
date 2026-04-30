@@ -159,7 +159,7 @@ In this example, both the columns and the rows are provided to the table via a r
 
 ```tsx render
 "use client";
-import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+import {Table, TableHeader, Column, Row, TableBody, Cell, TableFooter} from 'vanilla-starter/Table';
 import {CheckboxGroup} from 'vanilla-starter/CheckboxGroup';
 import {Checkbox} from 'vanilla-starter/Checkbox';
 import {Button} from 'vanilla-starter/Button';
@@ -167,39 +167,40 @@ import {useState} from 'react';
 
 ///- begin collapse -///
 const columns = [
-  {name: 'Name', id: 'name', isRowHeader: true},
-  {name: 'Type', id: 'type'},
-  {name: 'Date Modified', id: 'date'}
+  {name: 'Title', id: 'title', isRowHeader: true},
+  {name: 'Status', id: 'status'},
+  {name: 'Payment Method', id: 'paymentMethod'},
+  {name: 'Price', id: 'price'}
 ];
 ///- end collapse -///
 
 ///- begin collapse -///
 const initialRows = [
-  {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
-  {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
-  {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
-  {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+  {id: 1, title: 'Website Design', status: 'Paid', paymentMethod: 'Credit Card', price: 1200},
+  {id: 2, title: 'Logo Creation', status: 'Pending', paymentMethod: 'PayPal', price: 350},
+  {id: 3, title: 'SEO Optimization', status: 'Overdue', paymentMethod: 'Bank Transfer', price: 800},
+  {id: 4, title: 'Social Media Setup', status: 'Paid', paymentMethod: 'Debit Card', price: 450},
+  {id: 5, title: 'Content Writing', status: 'Pending', paymentMethod: 'Credit Card', price: 600}
 ];
 ///- end collapse -///
 
 function FileTable() {
-  let [showColumns, setShowColumns] = useState(['name', 'type', 'date']);
+  let [showColumns, setShowColumns] = useState(['title', 'status', 'paymentMethod', 'price']);
   let visibleColumns = columns.filter(column => showColumns.includes(column.id));
 
   let [rows, setRows] = useState(initialRows);
   let addRow = () => {
-    let date = new Date().toLocaleDateString();
     setRows(rows => [
       ...rows,
-      {id: rows.length + 1, name: 'file.txt', date, type: 'Text Document'}
+      {id: rows.length + 1, title: 'New Invoice', status: 'Pending', paymentMethod: 'Credit Card', price: 250}
     ]);
   };
 
   return (
     <div style={{display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'start', width: '100%'}}>
       <CheckboxGroup aria-label="Show columns" value={showColumns} onChange={setShowColumns} orientation="horizontal">
-        <Checkbox value="type">Type</Checkbox>
-        <Checkbox value="date">Date Modified</Checkbox>
+        <Checkbox value="status">Status</Checkbox>
+        <Checkbox value="paymentMethod">Payment Method</Checkbox>
       </CheckboxGroup>
       <Table aria-label="Files" style={{width: '100%'}}>
         <TableHeader columns={visibleColumns}>
@@ -214,10 +215,22 @@ function FileTable() {
           {item => (
             /*- end highlight -*/
             <Row columns={visibleColumns}>
-              {column => <Cell>{item[column.id]}</Cell>}
+              {column => (
+                <Cell>
+                  {column.id === 'price' 
+                    ? item.price.toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})
+                    : item[column.id]}
+                </Cell>
+              )}
             </Row>
           )}
         </TableBody>
+        <TableFooter>
+          <Row>
+            <Cell colSpan={showColumns.length - 1}>Total</Cell>
+            <Cell>{rows.reduce((p, row) => p + row.price, 0).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})}</Cell>
+          </Row>
+        </TableFooter>
       </Table>
       <Button onPress={addRow}>Add row</Button>
     </div>
@@ -238,7 +251,7 @@ Rows can be nested to display hierarchical data. Use the `treeColumn` prop to de
 ```tsx render
 "use client";
 import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
-import {Collection, type Key} from 'react-aria-components';
+import {Collection, type Key} from 'react-aria-components/Collection';
 import {useState} from 'react';
 
 /*- begin collapse -*/
@@ -300,7 +313,8 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 
 ```tsx render
 "use client";
-import {Collection, useAsyncList} from 'react-aria-components';
+import {Collection} from 'react-aria-components/Collection';
+import {useAsyncList} from 'react-aria-components/useAsyncList';
 import {Table, TableHeader, Column, Row, TableBody, Cell, TableLoadMoreItem} from 'vanilla-starter/Table';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
 
@@ -449,7 +463,7 @@ Use the `selectionMode` prop to enable single or multiple selection. The selecte
 
 ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
-import type {Selection} from 'react-aria-components';
+import type {Selection} from 'react-aria-components/Table';
 import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
 import {useState} from 'react';
 
@@ -508,7 +522,7 @@ Set the `allowsSorting` prop on a `<Column>` to make it sortable. When the colum
 
 ```tsx render
 "use client";
-import {type SortDescriptor} from 'react-aria-components';
+import {type SortDescriptor} from 'react-aria-components/Table';
 import {Table, TableHeader, Column, TableBody, Row, Cell} from 'vanilla-starter/Table';
 import {useState} from 'react';
 
@@ -574,7 +588,7 @@ Wrap the `<Table>` with a `<ResizableTableContainer>`, and add a `<ColumnResizer
 ```tsx render
 "use client";
 import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
-import {ResizableTableContainer} from 'react-aria-components';
+import {ResizableTableContainer} from 'react-aria-components/Table';
 
 ///- begin collapse -///
 const rows = [
@@ -614,7 +628,7 @@ The ResizableTableContainer's `onResize` event is called when a column resizer i
 ```tsx render
 "use client";
 import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
-import {ResizableTableContainer} from 'react-aria-components';
+import {ResizableTableContainer} from 'react-aria-components/Table';
 import {useSyncExternalStore} from 'react';
 
 ///- begin collapse -///
@@ -718,7 +732,9 @@ Table supports drag and drop interactions when the `dragAndDropHooks` prop is pr
 ```tsx render
 "use client";
 import {Table, TableHeader, TableBody, Column, Row, Cell} from 'vanilla-starter/Table';
-import {useDragAndDrop, useTreeData, Collection} from 'react-aria-components';
+import {useDragAndDrop} from 'react-aria-components/useDragAndDrop';
+import {useTreeData} from 'react-aria-components/useTreeData';
+import {Collection} from 'react-aria-components/Collection';
 
 function ReorderableTable() {
   let tree = useTreeData({
@@ -801,7 +817,7 @@ function ReorderableTable() {
 
 <Anatomy role="img" aria-label="Anatomy diagram of a table, consisting of multiple rows and columns. The table header includes a select all checkbox, file name and size columns, and a column resizer. Each row in the table body contains a drag button, a selection checkbox, and file name and size cells." />
 
-```tsx links={{ResizableTableContainer: '#resizabletablecontainer', Table: '#table', TableHeader: '#tableheader', Column: '#column', Checkbox: 'Checkbox', ColumnResizer: '#columnresizer', TableBody: '#tablebody', Row: '#row', Cell: '#cell', Button: 'Button', TableLoadMoreItem: '#tableloadmoreitem', SelectionIndicator: 'selection#animated-selectionindicator'}}
+```tsx links={{ResizableTableContainer: '#resizabletablecontainer', Table: '#table', TableHeader: '#tableheader', Column: '#column', Checkbox: 'Checkbox', ColumnResizer: '#columnresizer', TableBody: '#tablebody', Row: '#row', Cell: '#cell', TableFooter: '#tablefooter', Button: 'Button', TableLoadMoreItem: '#tableloadmoreitem', SelectionIndicator: 'selection#animated-selectionindicator'}}
 <ResizableTableContainer>
   <Table>
     <TableHeader>
@@ -826,6 +842,11 @@ function ReorderableTable() {
       </Row>
       <TableLoadMoreItem />
     </TableBody>
+    <TableFooter>
+      <Row>
+        <Cell />
+      </Row>
+    </TableFooter>
   </Table>
 </ResizableTableContainer>
 ```
@@ -859,6 +880,10 @@ function ReorderableTable() {
 ### Cell
 
 <PropTable component={docs.exports.Cell} links={docs.links} showDescription />
+
+### TableFooter
+
+<PropTable component={docs.exports.TableFooter} links={docs.links} showDescription />
 
 ### ResizableTableContainer
 

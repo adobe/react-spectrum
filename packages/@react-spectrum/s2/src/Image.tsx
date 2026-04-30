@@ -1,5 +1,5 @@
 import {ColorSchemeContext} from './Provider';
-import {ContextValue, SlotProps} from 'react-aria-components';
+import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {createContext, ForwardedRef, forwardRef, HTMLAttributeReferrerPolicy, JSX, ReactNode, useCallback, useContext, useMemo, useReducer, useRef, version} from 'react';
 import {DefaultImageGroup, ImageGroup} from './ImageCoordinator';
 import {loadingStyle, useIsSkeleton, useLoadingAnimation} from './Skeleton';
@@ -7,7 +7,7 @@ import {mergeStyles} from '../style/runtime';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 import {UnsafeStyles} from './style-utils';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ImageSource {

@@ -14,7 +14,7 @@
   forced-color-adjust: none;
   font: var(--font-size) system-ui;
 
-  &div {
+  div& {
     padding: 0;
   }
 
@@ -56,7 +56,7 @@
   transition-duration: 200ms;
   -webkit-tap-highlight-color: transparent;
 
-  &tr:last-child {
+  tr:last-child& {
     border-radius: 0 0 var(--radius) var(--radius);
   }
 
@@ -143,7 +143,7 @@
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 
-  &div {
+  div& {
     display: flex;
     align-items: center;
     height: 100%;
@@ -313,7 +313,7 @@
   translate: calc(68px + (var(--table-row-level) - 1) * var(--spacing-4)) 0;
 }
 
-:where(.react-aria-Row) .react-aria-Checkbox {
+.react-aria-Row .react-aria-CheckboxButton {
   --checkmark-color: var(--highlight-background);
   &[data-selected] .indicator {
     --indicator-color: var(--highlight-foreground);
@@ -361,4 +361,9 @@
 .react-aria-TableLoadingIndicator {
   height: 32px;
   position: relative;
+}
+
+.react-aria-TableFooter {
+  font-weight: bold;
+  background: var(--gray-200);
 }

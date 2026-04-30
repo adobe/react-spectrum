@@ -1,5 +1,8 @@
-import {classNames} from '@react-spectrum/utils';
-import {Header, ListBoxItem, ListBoxItemProps, MenuItem, MenuItemProps, ProgressBar} from 'react-aria-components';
+import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
+import {Header} from '../src/Header';
+import {ListBoxItem, ListBoxItemProps} from '../src/ListBox';
+import {MenuItem, MenuItemProps} from '../src/Menu';
+import {ProgressBar} from '../src/ProgressBar';
 import React, {HTMLAttributes, JSX} from 'react';
 import styles from '../example/index.css';
 
@@ -11,7 +14,7 @@ export const MyListBoxItem = (props: ListBoxItemProps) => {
   return (
     <ListBoxItem
       {...props}
-      style={{wordBreak: 'break-word', width: 'max-content', ...props.style}}
+      style={{wordBreak: 'break-word', minWidth: 'max-content', ...props.style}}
       className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'item', {
         focused: isFocused,
         selected: isSelected,

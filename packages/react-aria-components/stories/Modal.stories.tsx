@@ -10,14 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ComboBox, Dialog, DialogTrigger, Heading, Input, Label, ListBox, Modal, ModalOverlay, Popover, TextField} from 'react-aria-components';
-import {Meta, StoryFn} from '@storybook/react';
-import React from 'react';
-import './styles.css';
-import {DateRangePickerExample} from './DatePicker.stories';
-import {MyListBoxItem} from './utils';
-import styles from '../example/index.css';
+import {Button} from '../src/Button';
 
+import {ComboBox} from '../src/ComboBox';
+import {DateRangePickerExample} from './DatePicker.stories';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {Heading} from '../src/Heading';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
+import {ListBox} from '../src/ListBox';
+import {Meta, StoryFn} from '@storybook/react';
+import {Modal, ModalOverlay} from '../src/Modal';
+import {MyListBoxItem} from './utils';
+import {Popover} from '../src/Popover';
+import React from 'react';
+import styles from '../example/index.css';
+import {TextField} from '../src/TextField';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Modal',
@@ -68,6 +77,63 @@ export const ModalExample: ModalStory = () => (
       </Modal>
     </ModalOverlay>
   </DialogTrigger>
+);
+
+export const SheetExample: ModalStory = () => (
+  <div style={{display: 'flex', flexDirection: 'column'}}>
+    <div style={{display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center'}}>
+      <DialogTrigger>
+        <Button>Open modal</Button>
+        <ModalOverlay
+          style={{
+            position: 'fixed',
+            zIndex: 100,
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            background: 'rgba(0, 0, 0, 0.5)'
+          }}>
+          <Modal
+            style={{
+              position: 'sticky',
+              left: 0,
+              width: '300px',
+              /* Extra padding to account for iOS floating browser UI. */
+              top: '-100px',
+              height: 'calc(100dvh + 200px)',
+              padding: '100px 0',
+              marginLeft: 'auto',
+              background: 'white',
+              outline: 'none',
+              backgroundColor: 'lightgray',
+              borderLeft: '1px solid black',
+              boxShadow: '-8px 0 20px rgba(0, 0, 0, 0.1)',
+              fontFamily: 'system-ui',
+              fontSize: '0.875rem'
+            }}>
+            <Dialog>
+              {({close}) => (
+                <form style={{display: 'flex', flexDirection: 'column'}}>
+                  <Heading slot="title" style={{marginTop: 0}}>Sign up</Heading>
+                  <label>
+                    First Name: <input placeholder="John" />
+                  </label>
+                  <label>
+                    Last Name: <input placeholder="Smith" />
+                  </label>
+                  <Button onPress={close} style={{marginTop: 10}}>
+                    Submit
+                  </Button>
+                </form>
+              )}
+            </Dialog>
+          </Modal>
+        </ModalOverlay>
+      </DialogTrigger>
+    </div>
+    <div style={{height: '100vh'}} />
+  </div>
 );
 
 function InertTest() {

@@ -11,8 +11,13 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, FieldError, Input, Label, SearchField, SearchFieldContext, Text} from '../';
+import {Button} from '../src/Button';
+import {FieldError} from '../src/FieldError';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
 import React from 'react';
+import {SearchField, SearchFieldContext} from '../src/SearchField';
+import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
 let TestSearchField = (props) => (

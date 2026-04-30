@@ -9,7 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaComboBoxProps, useComboBox, useFilter, useListFormatter} from 'react-aria';
+import {AriaComboBoxProps, useComboBox} from 'react-aria/useComboBox';
+
 import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
@@ -25,10 +26,12 @@ import {
   useSlot,
   useSlottedContext
 } from './utils';
-import {Collection, ComboBoxState, Node, useComboBoxState} from 'react-stately';
-import {CollectionBuilder, createHideableComponent} from '@react-aria/collections';
+import {Collection, Node} from '@react-types/shared';
+import {CollectionBuilder} from 'react-aria/CollectionBuilder';
+import {ComboBoxState, useComboBoxState} from 'react-stately/useComboBoxState';
+import {createHideableComponent} from 'react-aria/private/collections/Hidden';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes, Key, RefObject} from '@react-types/shared';
 import {GroupContext} from './Group';
@@ -39,6 +42,9 @@ import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
+import {useFilter} from 'react-aria/useFilter';
+import {useListFormatter} from 'react-aria/useListFormatter';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 
 type SelectionMode = 'single' | 'multiple';
 
@@ -62,7 +68,12 @@ export interface ComboBoxRenderProps {
    * Whether the combobox is required.
    * @selector [data-required]
    */
-  isRequired: boolean
+  isRequired: boolean,
+  /**
+   * Whether the combobox is read only.
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean
 }
 
 export interface ComboBoxProps<T extends object, M extends SelectionMode = 'single'> extends Omit<AriaComboBoxProps<T, M>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<ComboBoxRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
@@ -91,7 +102,7 @@ export const ComboBoxStateContext = createContext<ComboBoxState<any, SelectionMo
  */
 export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T extends object, M extends SelectionMode = 'single'>(props: ComboBoxProps<T, M>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
-  let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
+  let {children, isDisabled = false, isInvalid = false, isRequired = false, isReadOnly = false} = props;
   let content = useMemo(() => (
     <ListBoxContext.Provider value={{items: props.items ?? props.defaultItems}}>
       {typeof children === 'function'
@@ -100,11 +111,12 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
           isDisabled,
           isInvalid,
           isRequired,
-          defaultChildren: null
+          defaultChildren: null,
+          isReadOnly
         })
         : children}
     </ListBoxContext.Provider>
-  ), [children, isDisabled, isInvalid, isRequired, props.items, props.defaultItems]);
+  ), [children, isDisabled, isInvalid, isRequired, isReadOnly, props.items, props.defaultItems]);
 
   return (
     <CollectionBuilder content={content}>
@@ -147,6 +159,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
 
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
+  let groupRef = useRef<HTMLDivElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);
   let popoverRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot(
@@ -173,9 +186,10 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
   }, state);
 
   // Make menu width match input + button
+  // Left for backward compatibility in case a <Group> is not rendered.
   let [menuWidth, setMenuWidth] = useState<string | null>(null);
   let onResize = useCallback(() => {
-    if (inputRef.current) {
+    if (inputRef.current && !groupRef.current) {
       let buttonRect = buttonRef.current?.getBoundingClientRect();
       let inputRect = inputRef.current.getBoundingClientRect();
       let minX = buttonRect ? Math.min(buttonRect.left, inputRect.left) : inputRect.left;
@@ -189,13 +203,21 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     onResize: onResize
   });
 
+  // Position popover relative to group if available, otherwise input.
+  let triggerRef = useMemo(() => ({
+    get current() {
+      return groupRef.current || inputRef.current;
+    }
+  }), [groupRef, inputRef]);
+
   // Only expose a subset of state to renderProps function to avoid infinite render loop
   let renderPropsState = useMemo(() => ({
     isOpen: state.isOpen,
     isDisabled: props.isDisabled || false,
     isInvalid: validation.isInvalid || false,
-    isRequired: props.isRequired || false
-  }), [state.isOpen, props.isDisabled, validation.isInvalid, props.isRequired]);
+    isRequired: props.isRequired || false,
+    isReadOnly: props.isReadOnly || false
+  }), [state.isOpen, props.isDisabled, validation.isInvalid, props.isRequired, props.isReadOnly]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -228,7 +250,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
           ref: popoverRef,
-          triggerRef: inputRef,
+          triggerRef,
           scrollRef: listBoxRef,
           placement: 'bottom start',
           isNonModal: true,
@@ -244,7 +266,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
             errorMessage: errorMessageProps
           }
         }],
-        [GroupContext, {isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
+        [GroupContext, {ref: groupRef, isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
         [FieldErrorContext, validation],
         [ComboBoxValueContext, valueProps]
       ]}>
@@ -256,6 +278,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         data-focused={state.isFocused || undefined}
         data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}
+        data-readonly={props.isReadOnly || undefined}
         data-invalid={validation.isInvalid || undefined}
         data-required={props.isRequired || undefined}>
         {renderProps.children}

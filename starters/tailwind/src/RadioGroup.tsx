@@ -1,6 +1,14 @@
 'use client';
-import React, { ReactNode } from 'react';
-import { composeRenderProps, Radio as RACRadio, RadioGroup as RACRadioGroup, RadioGroupProps as RACRadioGroupProps, RadioProps, ValidationResult } from 'react-aria-components';
+import React, { type ReactNode } from 'react';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
+import {
+  RadioField,
+  RadioButton,
+  RadioGroup as RACRadioGroup,
+  type RadioGroupProps as RACRadioGroupProps,
+  type RadioFieldProps,
+  type ValidationResult,
+} from 'react-aria-components/RadioGroup';
 import { tv } from 'tailwind-variants';
 import { Description, FieldError, Label } from './Field';
 import { composeTailwindRenderProps, focusRing } from './utils';
@@ -27,7 +35,7 @@ export function RadioGroup(props: RadioGroupProps) {
 
 const styles = tv({
   extend: focusRing,
-  base: 'w-4.5 h-4.5 box-border rounded-full border bg-white dark:bg-neutral-900 transition-all',
+  base: 'w-4.5 h-4.5 flex-shrink-0 box-border rounded-full border bg-white dark:bg-neutral-900 transition-all',
   variants: {
     isSelected: {
       false: 'border-neutral-400 dark:border-neutral-400 group-pressed:border-neutral-500 dark:group-pressed:border-neutral-300',
@@ -42,13 +50,20 @@ const styles = tv({
   }
 });
 
+export interface RadioProps extends RadioFieldProps {
+  description?: string;
+}
+
 export function Radio(props: RadioProps) {
   return (
-    <RACRadio {...props} className={composeTailwindRenderProps(props.className, 'flex relative gap-2 items-center group text-neutral-800 disabled:text-neutral-300 dark:text-neutral-200 dark:disabled:text-neutral-600 forced-colors:disabled:text-[GrayText] text-sm transition [-webkit-tap-highlight-color:transparent]')}>
-      {composeRenderProps(props.children, (children, renderProps) => <>
-        <div className={styles(renderProps)} />
-        {children}
-      </>)}
-    </RACRadio>
+    <RadioField {...props} className="flex flex-col gap-1 group">
+      <RadioButton className={composeTailwindRenderProps(props.className, 'flex relative gap-2 items-center group text-neutral-800 disabled:text-neutral-300 dark:text-neutral-200 dark:disabled:text-neutral-600 forced-colors:disabled:text-[GrayText] text-sm transition [-webkit-tap-highlight-color:transparent]')}>
+        {composeRenderProps(props.children, (children, renderProps) => <>
+          <div className={styles(renderProps)} />
+          {children}
+        </>)}
+      </RadioButton>
+      {props.description && <Description className="ms-6.5">{props.description}</Description>}
+    </RadioField>
   );
 }

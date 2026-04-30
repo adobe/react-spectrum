@@ -11,28 +11,22 @@
  */
 
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
-import {
-  Button,
-  Collection,
-  Dialog,
-  DialogTrigger,
-  DropIndicator,
-  Header, Heading,
-  ListBox,
-  ListBoxContext,
-  ListBoxItem,
-  ListBoxSection,
-  ListLayout,
-  Modal,
-  Text,
-  useDragAndDrop,
-  Virtualizer
-} from '../';
-import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
+import {Button} from '../src/Button';
+import {Collection} from 'react-aria/Collection';
+import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
+import {Header} from '../src/Header';
+import {Heading} from '../src/Heading';
+import {ListBox, ListBoxContext, ListBoxItem, ListBoxSection} from '../src/ListBox';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
+import {ListLayout} from 'react-stately/useVirtualizerState';
+import {Modal} from '../src/Modal';
 import React, {useEffect, useState} from 'react';
+import {Text} from '../src/Text';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
+import {Virtualizer} from '../src/Virtualizer';
 
 let TestListBox = ({listBoxProps, itemProps}) => (
   <ListBox aria-label="Test" {...listBoxProps}>

@@ -10,8 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Content, ContextualHelp, DateRangePicker, Footer, Form, Heading, Link, Text} from '../src';
+import {Button} from '../src/Button';
+
 import {CalendarSwitcher, categorizeArgTypes, getActionArgs} from './utils';
+import {Content, Footer, Heading, Text} from '../src/Content';
+import {ContextualHelp} from '../src/ContextualHelp';
+import {DateRangePicker} from '../src/DateRangePicker';
+import {Form} from '../src/Form';
+import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 import {parseDate, toZoned} from '@internationalized/date';
 import {style} from '../style' with {type: 'macro'};

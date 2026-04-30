@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../src/Icon';
 import Update_L from 'illustration:./S2_lin_update_160.svg';
 import Update_M from 'illustration:./S2_lin_update_96.svg';
 import Update_S from 'illustration:./S2_lin_update_48.svg';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Update(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

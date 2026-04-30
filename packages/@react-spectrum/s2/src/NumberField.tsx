@@ -11,29 +11,26 @@
  */
 
 import Add from '../ui-icons/Add';
-import {
-  ButtonProps as AriaButtonProps,
-  NumberField as AriaNumberField,
-  NumberFieldProps as AriaNumberFieldProps,
-  ButtonContext,
-  ButtonRenderProps,
-  ContextValue,
-  InputContext,
-  InputProps,
-  useContextProps
-} from 'react-aria-components';
+import {ButtonProps as AriaButtonProps, ButtonContext, ButtonRenderProps} from 'react-aria-components/Button';
+import {NumberField as AriaNumberField, NumberFieldProps as AriaNumberFieldProps} from 'react-aria-components/NumberField';
 import {baseColor, space, style} from '../style' with {type: 'macro'};
+import {ContextValue, useContextProps} from 'react-aria-components/slots';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useMemo, useRef} from 'react';
-import {createFocusableRef} from '@react-spectrum/utils';
+import {createFocusableRef} from './useDOMRef';
 import Dash from '../ui-icons/Dash';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {filterDOMProps, mergeProps, mergeRefs} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext, useFormProps} from './Form';
 import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {InputContext, InputProps} from 'react-aria-components/Input';
+import {mergeProps} from 'react-aria/mergeProps';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import {pressScale} from './pressScale';
-import {TextFieldRef} from '@react-types/textfield';
-import {useButton, useFocusRing, useHover} from 'react-aria';
+import {TextFieldRef} from './TextField';
+import {useButton} from 'react-aria/useButton';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 

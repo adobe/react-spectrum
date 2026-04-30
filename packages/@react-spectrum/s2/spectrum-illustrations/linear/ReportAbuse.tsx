@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../src/Icon';
 import ReportAbuse_L from 'illustration:./S2_lin_reportAbuse_160.svg';
 import ReportAbuse_M from 'illustration:./S2_lin_reportAbuse_96.svg';
 import ReportAbuse_S from 'illustration:./S2_lin_reportAbuse_48.svg';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function ReportAbuse(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

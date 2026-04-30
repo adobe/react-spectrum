@@ -11,7 +11,20 @@
  */
 
 import {AriaMenuTests} from '../../../react-aria-components/test/AriaMenu.test-util';
-import {Button, Collection, Content, ContextualHelpPopover, Header, Heading, Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger, UnavailableMenuItemTrigger} from '../src';
+import {Button} from '../src/Button';
+import {Collection} from 'react-aria/Collection';
+import {Content, Header, Heading} from '../src/Content';
+import {ContextualHelpPopover} from '../src/ContextualHelp';
+
+import {
+  Menu,
+  MenuItem,
+  MenuSection,
+  MenuTrigger,
+  SubmenuTrigger,
+  UnavailableMenuItemTrigger
+} from '../src/Menu';
+
 import {pointerMap} from '@react-aria/test-utils';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';

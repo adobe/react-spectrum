@@ -12,31 +12,26 @@
 
 import {
   ListBoxSection as AriaListBoxSection,
-  PopoverProps as AriaPopoverProps,
-  Select as AriaSelect,
-  SelectProps as AriaSelectProps,
-  SelectRenderProps as AriaSelectRenderProps,
-  Button,
-  ButtonRenderProps,
-  Collection,
-  ContextValue,
-  DEFAULT_SLOT,
   ListBox,
   ListBoxItem,
   ListBoxItemProps,
   ListBoxLoadMoreItem,
   ListBoxProps,
-  ListLayout,
-  Provider,
-  SectionProps,
+  ListBoxSectionProps
+} from 'react-aria-components/ListBox';
+import {PopoverProps as AriaPopoverProps} from 'react-aria-components/Popover';
+import {
+  Select as AriaSelect,
+  SelectProps as AriaSelectProps,
+  SelectRenderProps as AriaSelectRenderProps,
   SelectStateContext,
-  SelectValue,
-  Virtualizer
-} from 'react-aria-components';
+  SelectValue
+} from 'react-aria-components/Select';
 import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {box, iconStyles as checkboxIconStyles} from './Checkbox';
+import {Button, ButtonRenderProps} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {
   checkbox,
@@ -49,9 +44,11 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
+import {Collection} from 'react-aria/Collection';
+import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {control, controlBorderRadius, controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createHideableComponent} from '@react-aria/collections';
-import {createShadowTreeWalker, getOwnerDocument, isFocusable, useGlobalListeners, useSlotId} from '@react-aria/utils';
+import {createHideableComponent} from 'react-aria/private/collections/Hidden';
+import {createShadowTreeWalker} from 'react-aria/private/utils/shadowdom/ShadowTreeWalker';
 import {css} from '../style/style-macro' with {type: 'macro'};
 import {
   Divider,
@@ -68,21 +65,28 @@ import {
 } from './Field';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
+import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
+import {isFocusable} from 'react-aria/private/utils/isFocusable';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {mergeStyles} from '../style/runtime';
-import {Placement} from 'react-aria';
+import {Placement} from 'react-aria-components/Popover';
 import {Popover} from './Popover';
-import {PressResponder} from '@react-aria/interactions';
+// @ts-ignore
+import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import React, {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {useFocusableRef} from '@react-spectrum/utils';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useFocusableRef} from './useDOMRef';
+import {useGlobalListeners} from 'react-aria/private/utils/useGlobalListeners';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
+import {useSlotId} from 'react-aria/private/utils/useId';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 export interface PickerStyleProps {
   /**
@@ -736,7 +740,7 @@ function DefaultProvider({context, value, children}: {context: React.Context<any
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 
-export interface PickerSectionProps<T extends object> extends Omit<SectionProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, StyleProps {}
+export interface PickerSectionProps<T extends object> extends Omit<ListBoxSectionProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes> {}
 export function PickerSection<T extends object>(props: PickerSectionProps<T>): ReactNode {
   let {size} = useContext(InternalPickerContext);
   return (

@@ -11,9 +11,12 @@
  */
 
 import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
-import {Button, Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip, TooltipTrigger} from '../';
+import {Button} from '../src/Button';
 import React, {useState} from 'react';
+import {RouterProvider} from 'react-aria/private/utils/openLink';
+import {Tab, TabList, TabPanel, TabPanels, Tabs} from '../src/Tabs';
 import {TabsExample} from '../stories/Tabs.stories';
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -495,6 +498,35 @@ describe('Tabs', () => {
     expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
   });
 
+  it('should navigate linked tabs on click rather than mouse down', async function () {
+    let navigate = jest.fn();
+    let {getAllByRole} = render(
+      <RouterProvider navigate={navigate}>
+        <Tabs selectedKey="/a">
+          <TabList aria-label="Test">
+            <Tab id="/a" href="/a">A</Tab>
+            <Tab id="/b" href="/b">B</Tab>
+          </TabList>
+          <TabPanel id="/a">A</TabPanel>
+          <TabPanel id="/b">B</TabPanel>
+        </Tabs>
+      </RouterProvider>
+    );
+
+    let tabs = getAllByRole('tab');
+    fireEvent.mouseDown(tabs[1], {button: 0, detail: 1});
+    expect(navigate).not.toHaveBeenCalled();
+
+    fireEvent.mouseLeave(tabs[1]);
+    fireEvent.mouseEnter(tabs[1]);
+    expect(navigate).not.toHaveBeenCalled();
+
+    fireEvent.mouseUp(tabs[1], {button: 0, detail: 1});
+    fireEvent.click(tabs[1], {button: 0, detail: 1});
+    expect(navigate).toHaveBeenCalledTimes(1);
+    expect(navigate).toHaveBeenCalledWith('/b', undefined);
+  });
+
   it('should render tab with aria-label', () => {
     let {getAllByRole} = render(
       <Tabs>
@@ -683,6 +715,54 @@ describe('Tabs', () => {
 
     let tabPanels = getByTestId('tabpanels');
     expect(tabPanels).toHaveStyle({width: '100px'});
+  });
+
+  it('should detect block-size in transition for TabPanels', async () => {
+    let originalGetComputedStyle = window.getComputedStyle;
+    window.getComputedStyle = (el) => ({...originalGetComputedStyle(el), transition: 'block-size 400ms ease'});
+
+    let {getByTestId} = render(
+      <Tabs>
+        <TabList aria-label="test">
+          <Tab id="a">A</Tab>
+          <Tab id="b">B</Tab>
+        </TabList>
+        <TabPanels data-testid="tabpanels">
+          <TabPanel id="a">A</TabPanel>
+          <TabPanel id="b">B</TabPanel>
+        </TabPanels>
+      </Tabs>
+    );
+
+    let tabs = document.querySelectorAll('[role="tab"]');
+    await user.click(tabs[1]);
+
+    expect(getByTestId('tabpanels').style.getPropertyValue('--tab-panel-height')).not.toBe('');
+    window.getComputedStyle = originalGetComputedStyle;
+  });
+
+  it('should detect inline-size in transition for TabPanels', async () => {
+    let originalGetComputedStyle = window.getComputedStyle;
+    window.getComputedStyle = (el) => ({...originalGetComputedStyle(el), transition: 'inline-size 400ms ease'});
+
+    let {getByTestId} = render(
+      <Tabs>
+        <TabList aria-label="test">
+          <Tab id="a">A</Tab>
+          <Tab id="b">B</Tab>
+        </TabList>
+        <TabPanels data-testid="tabpanels">
+          <TabPanel id="a">A</TabPanel>
+          <TabPanel id="b">B</TabPanel>
+        </TabPanels>
+      </Tabs>
+    );
+
+    let tabs = document.querySelectorAll('[role="tab"]');
+    await user.click(tabs[1]);
+
+    expect(getByTestId('tabpanels').style.getPropertyValue('--tab-panel-width')).not.toBe('');
+    window.getComputedStyle = originalGetComputedStyle;
   });
 
   it('supports tooltips', async function () {

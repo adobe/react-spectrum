@@ -10,12 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  ProgressBar as AriaProgressBar,
-  ProgressBarProps as AriaProgressBarProps,
-  ContextValue
-} from 'react-aria-components';
+import {ProgressBar as AriaProgressBar, ProgressBarProps as AriaProgressBarProps} from 'react-aria-components/ProgressBar';
+
 import {bar, track} from './bar-utils'  with {type: 'macro'};
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
@@ -23,8 +21,8 @@ import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
 import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
-import {useLocale} from '@react-aria/i18n';
+import {useDOMRef} from './useDOMRef';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ProgressBarStyleProps {

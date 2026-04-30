@@ -11,15 +11,39 @@
  */
 
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, TableLoadMoreItem, Tag, TagGroup, TagList, useDragAndDrop, useTableOptions, Virtualizer} from '../';
+import {Button} from '../src/Button';
+
+import {
+  Cell,
+  Column,
+  ColumnResizer,
+  ResizableTableContainer,
+  Row,
+  Table,
+  TableBody,
+  TableFooter,
+  TableHeader,
+  TableLoadMoreItem,
+  useTableOptions
+} from '../src/Table';
+
+import {Checkbox, CheckboxButton, CheckboxField} from '../src/Checkbox';
+import {Collection} from 'react-aria/Collection';
 import {composeStories} from '@storybook/react';
-import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
+import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
+import {Label} from '../src/Label';
+import {Modal} from '../src/Modal';
 import React, {useMemo, useState} from 'react';
-import {resizingTests} from '@react-aria/table/test/tableResizingTests';
-import {setInteractionModality} from '@react-aria/interactions';
+import {resizingTests} from 'react-aria/test/table/tableResizingTests.tsx';
+import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import * as stories from '../stories/Table.stories';
+import {TableLayout} from '../src/TableLayout';
+import {Tag, TagGroup, TagList} from '../src/TagGroup';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
+import {Virtualizer} from '../src/Virtualizer';
 
 let {
   RenderEmptyStateStory: EmptyLoadingTable,
@@ -79,7 +103,7 @@ function MyTableHeader({columns, children, ...otherProps}) {
   );
 }
 
-function MyRow({id, columns, children, ...otherProps}) {
+function MyRow({id, columns, children, checkboxComponent, ...otherProps}) {
   let {selectionBehavior, allowsDragging} = useTableOptions();
 
   return (
@@ -91,7 +115,7 @@ function MyRow({id, columns, children, ...otherProps}) {
       )}
       {selectionBehavior === 'toggle' && (
         <Cell>
-          <MyCheckbox />
+          <MyCheckbox comp={checkboxComponent} />
         </Cell>
       )}
       <Collection items={columns}>
@@ -101,7 +125,15 @@ function MyRow({id, columns, children, ...otherProps}) {
   );
 }
 
-function MyCheckbox() {
+function MyCheckbox({comp}) {
+  if (comp === 'CheckboxField') {
+    return (
+      <CheckboxField slot="selection">
+        <CheckboxButton />
+      </CheckboxField>
+    );
+  }
+
   return (
     <Checkbox slot="selection">
       {({isIndeterminate}) => (
@@ -368,9 +400,10 @@ describe('Table', () => {
     }
   });
 
-  it('should render checkboxes for selection', async () => {
+  it.each(['Checkbox', 'CheckboxField'])('should render checkboxes for selection using %s', async (comp) => {
     let {getAllByRole} = renderTable({
-      tableProps: {selectionMode: 'multiple'}
+      tableProps: {selectionMode: 'multiple'},
+      rowProps: {checkboxComponent: comp}
     });
 
     for (let row of getAllByRole('row')) {
@@ -433,6 +466,39 @@ describe('Table', () => {
   it('should support dynamic collections', () => {
     let {getAllByRole} = render(<DynamicTable />);
     expect(getAllByRole('row')).toHaveLength(5);
+  });
+
+  it('should support rows with a falsy key', () => {
+    let falsyKeyRows = [
+      {id: 1, name: 'One', date: '4/7/2021', type: 'File folder'},
+      {id: 0, name: 'Zero', date: '6/7/2020', type: 'File folder'},
+      {id: 2, name: 'Two', date: '11/20/2010', type: 'System file'}
+    ];
+
+    let {getAllByRole} = render(
+      <Table aria-label="Files">
+        <MyTableHeader columns={columns}>
+          {column => (
+            <MyColumn isRowHeader={column.isRowHeader} childColumns={column.children}>
+              {column.name}
+            </MyColumn>
+          )}
+        </MyTableHeader>
+        <TableBody items={falsyKeyRows}>
+          {item => (
+            <MyRow columns={columns}>
+              {column => <Cell>{item[column.id]}</Cell>}
+            </MyRow>
+          )}
+        </TableBody>
+      </Table>
+    );
+
+    let rows = getAllByRole('row');
+    expect(rows).toHaveLength(4);
+    expect(rows[1]).toHaveTextContent('One');
+    expect(rows[2]).toHaveTextContent('Zero');
+    expect(rows[3]).toHaveTextContent('Two');
   });
 
   it('should support column hover when sorting is allowed', async () => {
@@ -1491,6 +1557,30 @@ describe('Table', () => {
       expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
       await user.keyboard('{Escape}');
       act(() => jest.runAllTimers());
+    });
+
+    it('should select dropped item', async () => {
+      const DndTableExample = stories.DndTableExample;
+      let {getAllByRole} = render(<DndTableExample />);
+      let tableTester = testUtilUser.createTester('Table', {root: getAllByRole('grid')[1]});
+      expect(tableTester.rows).toHaveLength(7);
+      expect(tableTester.selectedRows).toHaveLength(0);
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Adobe Photoshop and Adobe XD');
+      await user.tab();
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      // run onInsert promise in DnDTableExample first, otherwise updateFocusAfterDrop doesn't run properly
+      await act(async () => {});
+      act(() => jest.runAllTimers());
+      expect(tableTester.rows).toHaveLength(8);
+      expect(tableTester.selectedRows).toHaveLength(1);
     });
   });
 
@@ -2835,6 +2925,190 @@ describe('Table', () => {
       expect(onPress).toHaveBeenCalledTimes(1);
       expect(onClick).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it('should support table footer', async () => {
+    const invoices = [
+      {title: 'Website Design', status: 'Paid', paymentMethod: 'Credit Card', price: '$1,200'},
+      {title: 'Logo Creation', status: 'Pending', paymentMethod: 'PayPal', price: '$350'},
+      {title: 'SEO Optimization', status: 'Overdue', paymentMethod: 'Bank Transfer', price: '$800'},
+      {title: 'Social Media Setup', status: 'Paid', paymentMethod: 'Debit Card', price: '$450'},
+      {title: 'Content Writing', status: 'Pending', paymentMethod: 'Credit Card', price: '$600'},
+      {title: 'App Development', status: 'Paid', paymentMethod: 'Wire Transfer', price: '$5,000'},
+      {title: 'Maintenance Plan', status: 'Overdue', paymentMethod: 'PayPal', price: '$200'}
+    ];
+
+    let {container: root} = render(
+      <Table aria-label="Files" selectionMode="multiple">
+        <TableHeader style={{background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+          <Column isRowHeader>Title</Column>
+          <Column>Status</Column>
+          <Column>Payment Method</Column>
+          <Column>Price</Column>
+        </TableHeader>
+        <TableBody items={invoices}>
+          {item => (
+            <Row id={item.title}>
+              <Cell>{item.title}</Cell>
+              <Cell>{item.status}</Cell>
+              <Cell>{item.paymentMethod}</Cell>
+              <Cell>{item.price}</Cell>
+            </Row>
+          )}
+        </TableBody>
+        <TableFooter style={{background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+          <Row>
+            <Cell colSpan={3} style={{textAlign: 'end'}}>Total:</Cell>
+            <Cell>{invoices.reduce((p, item) => p + Number(item.price.replace(/[$,]/g, '')), 0).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})}</Cell>
+          </Row>
+        </TableFooter>
+      </Table>
+    );
+
+    let tableTester = testUtilUser.createTester('Table', {root});
+
+    let groups = tableTester.rowGroups;
+    expect(groups).toHaveLength(3);
+    expect(groups[0].tagName).toBe('THEAD');
+    expect(groups[1].tagName).toBe('TBODY');
+    expect(groups[2].tagName).toBe('TFOOT');
+    expect(tableTester.rows).toHaveLength(8);
+
+    await user.tab();
+    for (let row of tableTester.rows) {
+      expect(document.activeElement).toBe(row);
+      await user.keyboard('{ArrowDown}');
+    }
+
+    for (let row of tableTester.rows.toReversed().slice(1)) {
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(row);
+    }
+  });
+
+  it('should support table footer with virtualizer', async () => {
+    const invoices = [
+      {title: 'Website Design', status: 'Paid', paymentMethod: 'Credit Card', price: '$1,200'},
+      {title: 'Logo Creation', status: 'Pending', paymentMethod: 'PayPal', price: '$350'},
+      {title: 'SEO Optimization', status: 'Overdue', paymentMethod: 'Bank Transfer', price: '$800'},
+      {title: 'Social Media Setup', status: 'Paid', paymentMethod: 'Debit Card', price: '$450'},
+      {title: 'Content Writing', status: 'Pending', paymentMethod: 'Credit Card', price: '$600'},
+      {title: 'App Development', status: 'Paid', paymentMethod: 'Wire Transfer', price: '$5,000'},
+      {title: 'Maintenance Plan', status: 'Overdue', paymentMethod: 'PayPal', price: '$200'}
+    ];
+
+    let clientWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    let clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+
+    let {container: root} = render(
+      <Virtualizer layout={TableLayout}>
+        <Table aria-label="Files" selectionMode="multiple">
+          <TableHeader style={{background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+            <Column isRowHeader>Title</Column>
+            <Column>Status</Column>
+            <Column>Payment Method</Column>
+            <Column>Price</Column>
+          </TableHeader>
+          <TableBody items={invoices}>
+            {item => (
+              <Row id={item.title}>
+                <Cell>{item.title}</Cell>
+                <Cell>{item.status}</Cell>
+                <Cell>{item.paymentMethod}</Cell>
+                <Cell>{item.price}</Cell>
+              </Row>
+            )}
+          </TableBody>
+          <TableFooter style={{background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+            <Row>
+              <Cell colSpan={3} style={{textAlign: 'end'}}>Total:</Cell>
+              <Cell>{invoices.reduce((p, item) => p + Number(item.price.replace(/[$,]/g, '')), 0).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})}</Cell>
+            </Row>
+          </TableFooter>
+        </Table>
+      </Virtualizer>
+    );
+
+    let tableTester = testUtilUser.createTester('Table', {root});
+
+    let groups = tableTester.rowGroups;
+    expect(groups).toHaveLength(3);
+    expect(tableTester.rows).toHaveLength(8);
+
+    await user.tab();
+    for (let row of tableTester.rows) {
+      expect(document.activeElement).toBe(row);
+      await user.keyboard('{ArrowDown}');
+    }
+
+    for (let row of tableTester.rows.toReversed().slice(1)) {
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(row);
+    }
+
+    clientWidth.mockRestore();
+    clientHeight.mockRestore();
+  });
+
+  it('should support multiple table bodies', async () => {
+    let sections = ['Overdue', 'Pending', 'Paid'];
+    let invoices = [
+      {title: 'Website Design', status: 'Paid', paymentMethod: 'Credit Card', price: '$1,200'},
+      {title: 'Logo Creation', status: 'Pending', paymentMethod: 'PayPal', price: '$350'},
+      {title: 'SEO Optimization', status: 'Overdue', paymentMethod: 'Bank Transfer', price: '$800'},
+      {title: 'Social Media Setup', status: 'Paid', paymentMethod: 'Debit Card', price: '$450'},
+      {title: 'Content Writing', status: 'Pending', paymentMethod: 'Credit Card', price: '$600'},
+      {title: 'App Development', status: 'Paid', paymentMethod: 'Wire Transfer', price: '$5,000'},
+      {title: 'Maintenance Plan', status: 'Overdue', paymentMethod: 'PayPal', price: '$200'}
+    ];
+
+    let {container: root} = render(
+      <Table aria-label="Files" selectionMode="multiple">
+        <TableHeader>
+          <Column isRowHeader>Title</Column>
+          <Column>Payment Method</Column>
+          <Column>Price</Column>
+        </TableHeader>
+        {sections.map(section => (
+          <TableBody key={section}>
+            <Row>
+              <Cell colSpan={3}>{section}</Cell>
+            </Row>
+            <Collection items={invoices.filter(invoice => invoice.status === section)}>
+              {item => (
+                <Row id={item.title}>
+                  <Cell>{item.title}</Cell>
+                  <Cell>{item.paymentMethod}</Cell>
+                  <Cell>{item.price}</Cell>
+                </Row>
+              )}
+            </Collection>
+          </TableBody>
+
+        ))}
+      </Table>
+    );
+
+    let tableTester = testUtilUser.createTester('Table', {root});
+
+    let groups = tableTester.rowGroups;
+    expect(groups).toHaveLength(4);
+    expect(groups[0].tagName).toBe('THEAD');
+    expect(groups[1].tagName).toBe('TBODY');
+    expect(groups[2].tagName).toBe('TBODY');
+    expect(groups[3].tagName).toBe('TBODY');
+    expect(tableTester.rows).toHaveLength(10);
+
+    await user.tab();
+    for (let row of tableTester.rows) {
+      expect(document.activeElement).toBe(row);
+      await user.keyboard('{ArrowDown}');
+    }
+
+    for (let row of tableTester.rows.toReversed().slice(1)) {
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(row);
+    }
   });
 });
 

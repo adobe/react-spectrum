@@ -14,8 +14,8 @@ import {createCalendar, parseDate} from '@internationalized/date';
 import {HiddenDateInput} from '../src/HiddenDateInput';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import {useDateFieldState} from 'react-stately';
-import {useLocale} from 'react-aria';
+import {useDateFieldState} from 'react-stately/useDateFieldState';
+import {useLocale} from 'react-aria/I18nProvider';
 import userEvent from '@testing-library/user-event';
 
 const HiddenDateInputExample = (props) => {

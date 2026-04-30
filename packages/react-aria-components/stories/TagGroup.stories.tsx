@@ -11,9 +11,13 @@
  */
 
 import {action} from 'storybook/actions';
-import {Button, Label, OverlayArrow, Tag, TagGroup, TagGroupProps, TagList, TagProps, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button} from '../src/Button';
+import {Label} from '../src/Label';
 import {Meta, StoryObj} from '@storybook/react';
+import {OverlayArrow} from '../src/OverlayArrow';
 import React from 'react';
+import {Tag, TagGroup, TagGroupProps, TagList, TagProps} from '../src/TagGroup';
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import './styles.css';
 
 const meta: Meta<typeof TagGroup> = {

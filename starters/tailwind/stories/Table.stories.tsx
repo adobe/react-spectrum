@@ -1,6 +1,6 @@
-import { Meta } from '@storybook/react';
+import { type Meta } from '@storybook/react';
 import React, { useMemo, useState } from 'react';
-import { TableBody } from 'react-aria-components';
+import { TableBody } from 'react-aria-components/Table';
 import { Cell, Column, Row, Table, TableHeader } from '../src/Table';
 
 const meta: Meta<typeof Table> = {

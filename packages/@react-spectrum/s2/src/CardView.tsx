@@ -12,26 +12,26 @@
 
 import {
   GridList as AriaGridList,
-  Collection,
-  ContextValue,
-  GridLayout,
   GridListItem,
   GridListLoadMoreItem,
   GridListProps,
-  GridListRenderProps,
-  Size,
-  Virtualizer,
-  WaterfallLayout
-} from 'react-aria-components';
+  GridListRenderProps
+} from 'react-aria-components/GridList';
+
 import {CardContext, InternalCardViewContext} from './Card';
+import {Collection} from 'react-aria/Collection';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactElement, useCallback, useMemo, useRef, useState} from 'react';
 import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {GridLayout, Size, Virtualizer, WaterfallLayout} from 'react-aria-components/Virtualizer';
 import {ImageCoordinator} from './ImageCoordinator';
 import {useActionBarContainer} from './ActionBar';
-import {useDOMRef} from '@react-spectrum/utils';
-import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {useDOMRef} from './useDOMRef';
+import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style' | 'render' | 'isLoading' | keyof GlobalDOMAttributes>, UnsafeStyles {

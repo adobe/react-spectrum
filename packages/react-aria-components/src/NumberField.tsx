@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaNumberFieldProps, useLocale, useNumberField} from 'react-aria';
+import {AriaNumberFieldProps, useNumberField} from 'react-aria/useNumberField';
+
 import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
@@ -27,15 +28,16 @@ import {
   useSlottedContext
 } from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes, InputDOMProps} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import {NumberFieldState, useNumberFieldState} from 'react-stately';
+import {NumberFieldState, useNumberFieldState} from 'react-stately/useNumberFieldState';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
+import {useLocale} from 'react-aria/I18nProvider';
 
 export interface NumberFieldRenderProps {
   /**
@@ -48,6 +50,11 @@ export interface NumberFieldRenderProps {
    * @selector [data-invalid]
    */
   isInvalid: boolean,
+  /**
+   * Whether the number field is read only.
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean,
   /**
    * Whether the number field is required.
    * @selector [data-required]
@@ -109,7 +116,8 @@ export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       state,
       isDisabled: props.isDisabled || false,
       isInvalid: validation.isInvalid || false,
-      isRequired: props.isRequired || false
+      isRequired: props.isRequired || false,
+      isReadOnly: props.isReadOnly || false
     },
     defaultClassName: 'react-aria-NumberField'
   });
@@ -144,6 +152,7 @@ export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function
         ref={ref}
         slot={props.slot || undefined}
         data-disabled={props.isDisabled || undefined}
+        data-readonly={props.isReadOnly || undefined}
         data-required={props.isRequired || undefined}
         data-invalid={validation.isInvalid || undefined} />
       {props.name && <input type="hidden" name={props.name} form={props.form} value={isNaN(state.numberValue) ? '' : state.numberValue} disabled={props.isDisabled || undefined} />}

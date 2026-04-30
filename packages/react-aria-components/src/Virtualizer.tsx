@@ -12,9 +12,10 @@
 
 import {CollectionBranchProps, CollectionRenderer, CollectionRendererContext, CollectionRootProps, renderAfterDropIndicators} from './Collection';
 import {DropTargetDelegate, ItemDropTarget, Node} from '@react-types/shared';
-import {Layout, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
+import {Layout, ReusableView, useVirtualizerState, VirtualizerState} from 'react-stately/useVirtualizerState';
 import React, {createContext, JSX, ReactNode, useContext, useMemo} from 'react';
-import {useScrollView, VirtualizerItem} from '@react-aria/virtualizer';
+import {useScrollView} from 'react-aria/private/virtualizer/ScrollView';
+import {VirtualizerItem} from 'react-aria/private/virtualizer/VirtualizerItem';
 
 type View = ReusableView<Node<unknown>, ReactNode>;
 
@@ -74,6 +75,7 @@ function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicat
   let {layout, layoutOptions} = useContext(LayoutContext)!;
   let layoutOptions2 = layout.useLayoutOptions?.();
   let state = useVirtualizerState({
+    allowsWindowScrolling: true,
     layout,
     collection,
     renderView: (type, item) => {
@@ -97,9 +99,11 @@ function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicat
 
   let {contentProps} = useScrollView({
     onVisibleRectChange: state.setVisibleRect,
+    onSizeChange: state.setSize,
     contentSize: state.contentSize,
     onScrollStart: state.startScrolling,
-    onScrollEnd: state.endScrolling
+    onScrollEnd: state.endScrolling,
+    allowsWindowScrolling: true
   }, scrollRef!);
 
   return (

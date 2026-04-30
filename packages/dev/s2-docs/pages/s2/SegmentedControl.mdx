@@ -13,7 +13,7 @@ export const description = 'A mutually exclusive group of buttons used for view 
 
 ```tsx render docs={docs.exports.SegmentedControl} links={docs.links} props={['isJustified', 'isDisabled']} initialProps={{'aria-label': 'Time granularity'}} type="s2" wide
 "use client";
-import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
+import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2/SegmentedControl';
 
 <SegmentedControl/* PROPS */>
   <SegmentedControlItem id="day">Day</SegmentedControlItem>
@@ -31,7 +31,7 @@ SegmentedControlItem supports icons and text as children. When a visible label i
 
 ```tsx render
 "use client";
-import {SegmentedControl, SegmentedControlItem, Text} from '@react-spectrum/s2';
+import {SegmentedControl, SegmentedControlItem, Text} from '@react-spectrum/s2/SegmentedControl';
 import AlignLeft from '@react-spectrum/s2/icons/AlignLeft';
 import AlignCenter from '@react-spectrum/s2/icons/AlignCenter';
 import AlignRight from '@react-spectrum/s2/icons/AlignRight';
@@ -56,7 +56,7 @@ import AlignRight from '@react-spectrum/s2/icons/AlignRight';
 
 ```tsx render
 "use client";
-import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
+import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2/SegmentedControl';
 import AlignLeft from '@react-spectrum/s2/icons/AlignLeft';
 import AlignCenter from '@react-spectrum/s2/icons/AlignCenter';
 import AlignRight from '@react-spectrum/s2/icons/AlignRight';
@@ -84,7 +84,7 @@ Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The
 
 ```tsx render
 "use client";
-import {SegmentedControl, SegmentedControlItem, type Key} from '@react-spectrum/s2';
+import {SegmentedControl, SegmentedControlItem, type Key} from '@react-spectrum/s2/SegmentedControl';
 import {useState} from 'react';
 
 function Example() {

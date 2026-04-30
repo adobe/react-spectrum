@@ -11,17 +11,17 @@
  */
 
 import {ButtonContext, LinkButtonContext} from './Button';
-import {ContextValue, Provider, SlotProps} from 'react-aria-components';
+import {ContextValue, Provider, SlotProps} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactNode, useCallback, useRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
-import {filterDOMProps, useLayoutEffect, useValueEffect} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
-import {
-  useDOMRef,
-  useResizeObserver
-} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+import {useValueEffect} from 'react-aria/private/utils/useValueEffect';
 
 interface ButtonGroupStyleProps {
   /**

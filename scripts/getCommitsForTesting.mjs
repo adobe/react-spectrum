@@ -144,15 +144,23 @@ async function listCommits() {
   let startDate = new Date(start).toISOString();
   let endDate = new Date(end).toISOString();
 
-  let res = await octokit.request(`GET /repos/adobe/react-spectrum/commits?sha=main&since=${startDate}&until=${endDate}`, {
-    owner: 'adobe',
-    repo: 'react-spectrum',
-    headers: {
-      'X-GitHub-Api-Version': '2022-11-28'
-    }
-  });
+  let allCommits = [];
+  let page = 1;
+  let lastPageSize;
+  do {
+    let res = await octokit.request(`GET /repos/adobe/react-spectrum/commits?sha=main&since=${startDate}&until=${endDate}&per_page=100&page=${page}`, {
+      owner: 'adobe',
+      repo: 'react-spectrum',
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    });
+    allCommits.push(...res.data);
+    lastPageSize = res.data.length;
+    page++;
+  } while (lastPageSize === 100);
 
-  return res.data;
+  return allCommits;
 }
 
 async function getPR(num) {

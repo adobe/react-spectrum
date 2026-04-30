@@ -11,7 +11,7 @@
  */
 
 import {AsyncComboBoxStory, AsyncComboBoxStoryType, ContextualHelpExample, CustomWidth, Dynamic, EmptyCombobox, Example, Sections, WithAvatars, WithIcons} from '../stories/ComboBox.stories';
-import {ComboBox} from '../src';
+import {ComboBox} from '../src/ComboBox';
 import {expect} from '@storybook/jest';
 import type {Meta, StoryObj} from '@storybook/react';
 import {userEvent, waitFor, within} from 'storybook/test';

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Link} from '../src';
+import {Link} from '../src/Link';
 import type {Meta} from '@storybook/react';
 import React, {ReactElement} from 'react';
 import {style} from '../style' with {type: 'macro'};

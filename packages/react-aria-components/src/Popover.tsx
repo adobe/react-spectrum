@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
-import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, useLocale, usePopover} from 'react-aria';
+import {AriaPopoverProps, usePopover} from 'react-aria/usePopover';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -21,13 +21,22 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {filterDOMProps, isFocusWithin, mergeProps, useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
-import {focusSafely, getInteractionModality} from '@react-aria/interactions';
+import {DismissButton, Overlay} from 'react-aria/Overlay';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {focusSafely} from 'react-aria/private/interactions/focusSafely';
+import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
+import {isFocusWithin} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {mergeProps} from 'react-aria/mergeProps';
 import {OverlayArrowContext} from './OverlayArrow';
-import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
+import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 import {OverlayTriggerStateContext} from './Dialog';
-import React, {Context, createContext, ForwardedRef, forwardRef, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {useIsHidden} from '@react-aria/collections';
+import {PlacementAxis, PositionProps} from 'react-aria/useOverlayPosition';
+import React, {Context, createContext, ForwardedRef, forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
+import {useIsHidden} from 'react-aria/private/collections/Hidden';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 
 export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'groupRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
@@ -214,10 +223,24 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
     return children;
   }, [renderProps.children, clearContexts]);
 
+  let [triggerWidth, setTriggerWidth] = useState<string | null>(null);
+  let onResize = useCallback(() => {
+    if (props.triggerRef.current) {
+      setTriggerWidth(props.triggerRef.current.getBoundingClientRect().width + 'px');
+    }
+  }, [props.triggerRef]);
+
+  useLayoutEffect(onResize, [onResize]);
+  useResizeObserver({
+    ref: renderProps.style?.['--trigger-width'] ? undefined : props.triggerRef,
+    onResize: onResize
+  });
+
   let style = {
     ...popoverProps.style,
     '--trigger-anchor-point': triggerAnchorPoint ? `${triggerAnchorPoint.x}px ${triggerAnchorPoint.y}px` : undefined,
-    ...renderProps.style
+    ...renderProps.style,
+    '--trigger-width': renderProps.style?.['--trigger-width'] || triggerWidth
   };
 
   let overlay = (

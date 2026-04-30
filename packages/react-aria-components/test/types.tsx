@@ -15,7 +15,7 @@
 // This file is intended to test the TypeScript types of the components.
 
 import React from 'react';
-import * as RAC from '../';
+import * as RAC from 'react-aria-components';
 
 // Small version of framer motion's types for testing forwardRef compatibility.
 interface MotionProps {

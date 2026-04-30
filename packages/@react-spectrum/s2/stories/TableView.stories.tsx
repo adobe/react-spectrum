@@ -11,45 +11,46 @@
  */
 
 import {action} from 'storybook/actions';
+import {ActionButton} from '../src/ActionButton';
+
+import {categorizeArgTypes, getActionArgs} from './utils';
+
 import {
-  ActionButton,
   Cell,
-  Collection,
   Column,
   ColumnProps,
-  Content,
   EditableCell,
-  Heading,
-  IllustratedMessage,
-  Link,
-  MenuItem,
-  MenuSection,
-  Picker,
-  PickerItem,
   Row,
-  SortDescriptor,
-  StatusLight,
   TableBody,
+  TableFooter,
   TableHeader,
   TableView,
-  TableViewProps,
-  Text,
-  TextField
-} from '../src';
-import {categorizeArgTypes, getActionArgs} from './utils';
+  TableViewProps
+} from '../src/TableView';
+import {Collection} from 'react-aria/Collection';
+import {Content, Heading, Text} from '../src/Content';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
+import {IllustratedMessage} from '../src/IllustratedMessage';
 import {Key} from '@react-types/shared';
+import {Link} from '../src/Link';
+import {MenuItem, MenuSection} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
+import {Picker, PickerItem} from '../src/Picker';
 import React, {ReactElement, useCallback, useEffect, useRef, useState} from 'react';
+import {SortDescriptor} from '@react-types/shared';
+import {StatusLight} from '../src/StatusLight';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
-import {useEffectEvent} from '@react-aria/utils';
+import {TextField} from '../src/TextField';
+import {useAsyncList} from 'react-stately/useAsyncList';
+import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
+import {useListData} from 'react-stately/useListData';
 import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
+import {useTreeData} from 'react-stately/useTreeData';
 
 let onActionFunc = action('onAction');
-let noOnAction = null;
+let noOnAction = undefined;
 const onActionOptions = {onActionFunc, noOnAction};
 
 const events = ['onResizeStart', 'onResize', 'onResizeEnd', 'onSelectionChange', 'onSortChange'];
@@ -63,7 +64,7 @@ const meta: Meta<typeof TableView> = {
   tags: ['autodocs'],
   args: {...getActionArgs(events)},
   argTypes: {
-    ...categorizeArgTypes('Events', ['onAction', 'onLoadMore', 'onResizeStart', 'onResize', 'onResizeEnd', 'onSelectionChange', 'onSortChange']),
+    ...categorizeArgTypes('Events', ['onAction', 'onLoadMore', ...events]),
     children: {table: {disable: true}},
     onAction: {
       options: Object.keys(onActionOptions), // An array of serializable values
@@ -1886,4 +1887,45 @@ function NestedInlineEditExample(args) {
 
 export const TableWithNestedRowsAndInlineEditing: StoryObj<typeof TableView> = {
   render: (args) => <NestedInlineEditExample {...args} />
+};
+
+const invoices = [
+  {title: 'Website Design', status: 'Paid', paymentMethod: 'Credit Card', price: '$1,200'},
+  {title: 'Logo Creation', status: 'Pending', paymentMethod: 'PayPal', price: '$350'},
+  {title: 'SEO Optimization', status: 'Overdue', paymentMethod: 'Bank Transfer', price: '$800'},
+  {title: 'Social Media Setup', status: 'Paid', paymentMethod: 'Debit Card', price: '$450'},
+  {title: 'Content Writing', status: 'Pending', paymentMethod: 'Credit Card', price: '$600'},
+  {title: 'App Development', status: 'Paid', paymentMethod: 'Wire Transfer', price: '$5,000'},
+  {title: 'Maintenance Plan', status: 'Overdue', paymentMethod: 'PayPal', price: '$200'}
+];
+
+export const TableFooterExample: StoryObj<typeof TableView> = {
+  render: (args) => {
+    return (
+      <TableView aria-label="Files" selectionMode="multiple"  styles={style({width: 700})} {...args}>
+        <TableHeader>
+          <Column isRowHeader allowsResizing>Title</Column>
+          <Column allowsResizing>Status</Column>
+          <Column allowsResizing>Payment Method</Column>
+          <Column>Price</Column>
+        </TableHeader>
+        <TableBody items={invoices}>
+          {item => (
+            <Row id={item.title}>
+              <Cell>{item.title}</Cell>
+              <Cell>{item.status}</Cell>
+              <Cell>{item.paymentMethod}</Cell>
+              <Cell>{item.price}</Cell>
+            </Row>
+          )}
+        </TableBody>
+        <TableFooter>
+          <Row>
+            <Cell colSpan={3} align="end">Total:</Cell>
+            <Cell>{invoices.reduce((p, item) => p + Number(item.price.replace(/[$,]/g, '')), 0).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})}</Cell>
+          </Row>
+        </TableFooter>
+      </TableView>
+    );
+  }
 };

@@ -5,7 +5,7 @@ import docs from 'docs:react-aria-components';
 import {ColorArea as VanillaColorArea} from 'vanilla-starter/ColorArea';
 import {ColorArea as TailwindColorArea} from 'tailwind-starter/ColorArea';
 import '../../tailwind/tailwind.css';
-import Anatomy from '@react-aria/color/docs/ColorAreaAnatomy.svg';
+import Anatomy from '/packages/react-aria/docs/color/ColorAreaAnatomy.svg';
 
 export const tags = [];
 export const relatedPages = [{'title': 'useColorArea', 'url': 'ColorArea/useColorArea.html'}];
@@ -42,7 +42,7 @@ The `onChange` event is called as the user drags, and `onChangeEnd` is called wh
 
 ```tsx render
 "use client";
-import {parseColor} from 'react-aria-components';
+import {parseColor} from 'react-aria-components/ColorArea';
 import {ColorArea} from 'vanilla-starter/ColorArea';
 import {useState} from 'react';
 

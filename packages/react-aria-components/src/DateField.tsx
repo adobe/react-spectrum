@@ -9,7 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaDateFieldProps, AriaTimeFieldProps, DateValue, HoverEvents, mergeProps, TimeValue, useDateField, useDateSegment, useFocusRing, useHover, useLocale, useTimeField} from 'react-aria';
+import {
+  AriaDateFieldProps,
+  useDateField,
+  useDateSegment
+} from 'react-aria/useDateField';
+import {AriaTimeFieldProps, useTimeField} from 'react-aria/useTimeField';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -26,17 +31,31 @@ import {
   useSlottedContext
 } from './utils';
 import {createCalendar} from '@internationalized/date';
-import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, TimeFieldState, useDateFieldState, useTimeFieldState} from 'react-stately';
+import {
+  DateFieldState,
+  DateSegmentType,
+  DateValue,
+  DateSegment as IDateSegment,
+  useDateFieldState
+} from 'react-stately/useDateFieldState';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {Group, GroupContext} from './Group';
 import {HiddenDateInput} from './HiddenDateInput';
+import {HoverEvents} from '@react-types/shared';
 import {Input, InputContext} from './Input';
 import {LabelContext} from './Label';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, JSX, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
+import {TimeFieldState, useTimeFieldState} from 'react-stately/useTimeFieldState';
+import {TimeValue} from 'react-stately/useTimeFieldState';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useObjectRef} from 'react-aria/useObjectRef';
 
 export interface DateFieldRenderProps {
   /**

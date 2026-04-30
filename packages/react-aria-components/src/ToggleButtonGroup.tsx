@@ -9,7 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaToggleButtonGroupProps, useToggleButtonGroup} from 'react-aria';
+import {AriaToggleButtonGroupProps, useToggleButtonGroup} from 'react-aria/useToggleButtonGroup';
+
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -19,11 +20,12 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes, Orientation} from '@react-types/shared';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {SharedElementTransition} from './SharedElementTransition';
-import {ToggleGroupState, useToggleGroupState} from 'react-stately';
+import {ToggleGroupState, useToggleGroupState} from 'react-stately/useToggleGroupState';
 
 export interface ToggleButtonGroupRenderProps {
   /**

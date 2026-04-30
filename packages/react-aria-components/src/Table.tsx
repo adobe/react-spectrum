@@ -1,8 +1,8 @@
 import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
-import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, FilterableNode, LoaderNode, useCachedChildren} from '@react-aria/collections';
-import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
+import {BaseCollection, CollectionNode, FilterableNode, LoaderNode} from 'react-aria/private/collections/BaseCollection';
+import {buildHeaderRows} from 'react-stately/private/table/TableCollection';
 import {ButtonContext} from './Button';
-import {CheckboxContext, FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
+import {CheckboxContext, CheckboxFieldContext} from './Checkbox';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -18,22 +18,67 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
+import {Collection} from 'react-aria/Collection';
+import {CollectionBuilder, createBranchComponent, createLeafComponent} from 'react-aria/CollectionBuilder';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
-import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
-import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, MultipleSelectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, UNSTABLE_useFilteredTableState, useMultipleSelectionState, useTableColumnResizeState, useTableState} from 'react-stately';
+import {ColumnSize, ColumnStaticSize} from 'react-stately/useTableState';
+import {DisabledBehavior, Node, SelectionBehavior, SelectionMode, SortDirection} from '@react-types/shared';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
-import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {filterDOMProps, inertValue, isScrollable, LoadMoreSentinelProps, mergeRefs, useLayoutEffect, useLoadMoreSentinel, useObjectRef, useResizeObserver} from '@react-aria/utils';
-import {GridNode} from '@react-types/grid';
-// @ts-ignore
+import {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
+import {DraggableItemResult} from 'react-aria/useDraggableCollection';
+import {DragPreviewRenderer} from '@react-types/shared';
+import {DropIndicatorAria, DroppableCollectionResult} from 'react-aria/useDroppableCollection';
+import {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
+import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {FocusScope} from 'react-aria/FocusScope';
+import {GridNode} from 'react-stately/private/grid/GridCollection';
+import {inertValue} from 'react-aria/private/utils/inertValue';
 import intlMessages from '../intl/*.json';
+import {isScrollable} from 'react-aria/private/utils/isScrollable';
+import {ITableCollection} from 'react-stately/private/table/TableCollection';
+import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
+import {LoadMoreSentinelProps, useLoadMoreSentinel} from 'react-aria/private/utils/useLoadMoreSentinel';
+import {mergeProps} from 'react-aria/mergeProps';
+import {mergeRefs} from 'react-aria/mergeRefs';
+import {MultipleSelectionState} from 'react-stately/useMultipleSelectionState';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
+import {
+  TableProps as SharedTableProps,
+  TableState,
+  UNSTABLE_useFilteredTableState,
+  useTableColumnResizeState,
+  useTableState
+} from 'react-stately/useTableState';
+import {TableColumnResizeState} from 'react-stately/useTableState';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
-import {useControlledState} from '@react-stately/utils';
+import {useCachedChildren} from 'react-aria/private/collections/useCachedChildren';
+import {useControlledState} from 'react-stately/useControlledState';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+// @ts-ignore
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useMultipleSelectionState} from 'react-stately/useMultipleSelectionState';
+import {useObjectRef} from 'react-aria/useObjectRef';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
+import {
+  useTable,
+  useTableCell,
+  useTableColumnHeader,
+  useTableColumnResize,
+  useTableHeaderRow,
+  useTableRow,
+  useTableRowGroup,
+  useTableSelectAllCheckbox,
+  useTableSelectionCheckbox
+} from 'react-aria/useTable';
+import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
@@ -41,7 +86,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   rows: GridNode<T>[] = [];
   rowHeaderColumnKeys: Set<Key> = new Set();
   head = new TableHeaderNode<T>(-1);
-  body = new TableBodyNode<T>(-2);
   columnsDirty = true;
   expandedKeys: Set<Key> = new Set();
 
@@ -49,7 +93,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     let collection = this.clone();
     collection.expandedKeys = expandedKeys;
     collection.frozen = this.frozen;
-    collection.rows = Array.from(collection.getChildren(collection.body.key));
+    collection.rows = Array.from(collection.getRows());
     return collection;
   }
 
@@ -60,22 +104,40 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     if (node.type === 'tableheader') {
       this.head = node;
     }
+  }
 
-    if (node.type === 'tablebody') {
-      this.body = node;
+  private getRows(): GridNode<T>[] {
+    let rows: GridNode<T>[] = [];
+    for (let child of this) {
+      if (child.type === 'tablebody' || child.type === 'tablefooter') {
+        rows.push(...this.getChildren(child.key));
+      }
     }
+    return rows;
+  }
+
+  // backward compatibility
+  get body() {
+    for (let child of this) {
+      if (child.type === 'tablebody') {
+        return child;
+      }
+    }
+    return new TableBodyNode<T>(-2);
   }
 
   commit(firstKey: Key, lastKey: Key, isSSR = false) {
     this.updateColumns(isSSR);
 
+    this.firstKey = firstKey;
+    this.lastKey = lastKey;
     this.rows = [];
-    for (let row of this.getChildren(this.body.key)) {
+    for (let row of this.getRows()) {
       let lastChildKey = (row as CollectionNode<T>).lastChildKey;
       if (lastChildKey != null) {
         let lastCell = this.getItem(lastChildKey) as GridNode<T> | null;
         while (lastCell && lastCell.type !== 'cell') {
-          lastCell = lastCell.prevKey ? this.getItem(lastCell.prevKey) as GridNode<T> | null : null;
+          lastCell = lastCell.prevKey != null ? this.getItem(lastCell.prevKey) as GridNode<T> | null : null;
         }
         if (lastCell) {
           let numberOfCellsInRow = (lastCell.colIndex ?? lastCell.index) + (lastCell.colSpan ?? 1);
@@ -133,20 +195,27 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   }
 
   *[Symbol.iterator]() {
-    // Wait until the collection is initialized.
-    if (this.head.key === -1) {
-      return;
+    let key = this.firstKey;
+    while (key != null) {
+      let node = this.getItem(key);
+      if (node) {
+        yield node;
+      }
+      key = node?.nextKey ?? null;
     }
-    yield this.head;
-    yield this.body;
   }
 
   getFirstKey() {
-    return this.body.firstChildKey;
+    for (let child of this) {
+      if (child.type === 'tablebody') {
+        return child.firstChildKey ?? null;
+      }
+    }
+    return null;
   }
 
   getLastKey() {
-    let key = this.body.lastChildKey;
+    let key = this.lastKey;
     if (key == null) {
       return null;
     }
@@ -210,8 +279,8 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     if (k == null) {
       k = node.parentKey;
     }
-    
-    if (k != null && this.getItem(k)?.type === 'tablebody') {
+
+    if (k != null && this.getItem(k)?.type === 'tableheader') {
       return null;
     }
 
@@ -219,7 +288,8 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   }
 
   getChildren(key: Key): Iterable<Node<T>> {
-    if (!this.getItem(key)) {
+    let item = this.getItem(key);
+    if (!item) {
       for (let row of this.headerRows) {
         if (row.key === key) {
           return row.childNodes;
@@ -229,16 +299,19 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
     // Flatten all rows into the body.
     let self = this;
-    if (key === this.body.key) {
+    if (item?.type === 'tablebody' || item?.type === 'tablefooter') {
       return {
         *[Symbol.iterator]() {
-          let firstKey = self.getFirstKey();
+          let firstKey = item.firstChildKey;
           let node: Node<T> | null = firstKey != null ? self.getItem(firstKey) : null;
 
           while (node) {
             yield node as Node<T>;
             let key = self.getKeyAfter(node.key);
-            node = key ? self.getItem(key) : null;
+            node = key != null ? self.getItem(key) : null;
+            if (node && node.parentKey === item.parentKey) {
+              break;
+            }
           }
         }
       };
@@ -268,7 +341,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     collection.rows = this.rows;
     collection.rowHeaderColumnKeys = this.rowHeaderColumnKeys;
     collection.head = this.head;
-    collection.body = this.body;
     return collection;
   }
 
@@ -640,7 +712,9 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       style = {
         ...style,
         tableLayout: 'fixed',
-        width: 'fit-content'
+        // due to https://bugzilla.mozilla.org/show_bug.cgi?id=1959353, we can't use "fit-content".
+        // Causes the table columns to grow to fill the available space in Firefox, ignoring user set column widths
+        width: 'min-content'
       };
     }
   }
@@ -807,6 +881,11 @@ function TableHeaderRow({item}: {item: GridNode<any>}) {
       <Provider
         values={[
           [CheckboxContext, {
+            slots: {
+              selection: checkboxProps
+            }
+          }],
+          [CheckboxFieldContext, {
             slots: {
               selection: checkboxProps
             }
@@ -1162,7 +1241,7 @@ let TableBodyElementType = forwardRef(function TableBodyElementType(props: any, 
 /**
  * The body of a `<Table>`, containing the table rows.
  */
-export const TableBody = /*#__PURE__*/ createBranchComponent(TableBodyNode, <T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>) => {
+export const TableBody = /*#__PURE__*/ createBranchComponent(TableBodyNode, <T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>, node: Node<T>) => {
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let collection = state.collection;
@@ -1221,10 +1300,60 @@ export const TableBody = /*#__PURE__*/ createBranchComponent(TableBodyNode, <T e
       {isDroppable && <RootDropIndicator />}
       <CollectionBranch
         collection={collection}
-        parent={collection.body}
+        parent={node}
         renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
       {emptyState}
     </TableBodyElementType>
+  );
+});
+
+class TableFooterNode<T> extends FilterableNode<T> {
+  static readonly type = 'tablefooter';
+}
+
+export interface TableFooterProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleProps, GlobalDOMAttributes<HTMLTableSectionElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-TableFooter'
+   */
+  className?: string
+}
+
+let TableFooterElementType = forwardRef(function TableFooterElementType(props: any, ref: ForwardedRef<Element>) {
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  if (isVirtualized) {
+    return <dom.div {...props} ref={ref} />;
+  }
+  return <dom.tfoot {...props} ref={ref} />;
+});
+
+/**
+ * The footer of a `<Table>`, containing table rows.
+ */
+export const TableFooter = /*#__PURE__*/ createBranchComponent(TableFooterNode, <T extends object>(props: TableFooterProps<T>, ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>, node: Node<T>) => {
+  let state = useContext(TableStateContext)!;
+  let collection = state.collection as TableCollection<T>;
+  let {CollectionBranch} = useContext(CollectionRendererContext);
+  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
+
+  let {rowGroupProps} = useTableRowGroup();
+  let DOMProps = filterDOMProps(props, {global: true});
+  let renderProps = useRenderProps({
+    style: props.style,
+    className: props.className,
+    defaultClassName: 'react-aria-TableFooter',
+    values: {}
+  });
+
+  return (
+    <TableFooterElementType
+      {...mergeProps(DOMProps, renderProps, rowGroupProps)}
+      ref={ref as any}>
+      <CollectionBranch
+        collection={collection}
+        parent={node}
+        renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+    </TableFooterElementType>
   );
 });
 
@@ -1268,6 +1397,8 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps, 'tr' | 'di
   textValue?: string,
   /** Whether the row is disabled. */
   isDisabled?: boolean,
+  /** Whether `disabledKeys` applies to all interactions, or only selection. */
+  disabledBehavior?: DisabledBehavior,
   /**
    * Handler that is called when a user performs an action on the row. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
@@ -1424,6 +1555,12 @@ export const Row = /*#__PURE__*/ createBranchComponent(
           <Provider
             values={[
               [CheckboxContext, {
+                slots: {
+                  [DEFAULT_SLOT]: {},
+                  selection: checkboxProps
+                }
+              }],
+              [CheckboxFieldContext, {
                 slots: {
                   [DEFAULT_SLOT]: {},
                   selection: checkboxProps

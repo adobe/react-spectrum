@@ -4,15 +4,15 @@ import {
   Tree as AriaTree,
   TreeItem as AriaTreeItem,
   TreeItemContent as AriaTreeItemContent,
-  TreeItemContentProps,
-  TreeItemContentRenderProps,
-  TreeItemProps as AriaTreeItemProps,
-  TreeProps,
+  type TreeItemContentProps,
+  type TreeItemContentRenderProps,
+  type TreeItemProps as AriaTreeItemProps,
+  type TreeProps,
   TreeLoadMoreItem as AriaTreeLoadMoreItem,
-  TreeLoadMoreItemProps,
+  type TreeLoadMoreItemProps,
   TreeSection as AriaTreeSection,
-  TreeHeader as AriaTreeHeader
-} from 'react-aria-components';
+  TreeHeader as AriaTreeHeader,
+} from 'react-aria-components/Tree';
 import {ChevronRight, GripVertical} from 'lucide-react';
 import {Checkbox} from './Checkbox';
 import {ProgressCircle} from './ProgressCircle';

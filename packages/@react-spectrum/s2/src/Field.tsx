@@ -15,18 +15,25 @@ import {Alignment, DOMRef, NecessityIndicator} from '@react-types/shared';
 import AsteriskIcon from '../ui-icons/Asterisk';
 import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {CenterBaseline, centerBaseline, centerBaselineBefore} from './CenterBaseline';
-import {composeRenderProps, FieldError, FieldErrorProps, Group, GroupProps, Label, LabelProps, Provider, Input as RACInput, InputProps as RACInputProps, Text} from 'react-aria-components';
+import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContextualHelpContext} from './ContextualHelp';
 import {control, controlFont, fieldInput, fieldLabel, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {FieldError, FieldErrorProps} from 'react-aria-components/FieldError';
 import {ForwardedRef, forwardRef, ReactNode} from 'react';
-import {getEventTarget, useId} from '@react-aria/utils';
+import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {Group, GroupProps} from 'react-aria-components/Group';
 import {IconContext} from './Icon';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
+import {Label, LabelProps} from 'react-aria-components/Label';
 import {mergeStyles} from '../style/runtime';
+import {Provider} from 'react-aria-components/slots';
+import {Input as RACInput, InputProps as RACInputProps} from 'react-aria-components/Input';
+// @ts-ignore
 import {StyleString} from '../style/types';
-import {useDOMRef} from '@react-spectrum/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {Text} from 'react-aria-components/Text';
+import {useDOMRef} from './useDOMRef';
+import {useId} from 'react-aria/useId';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'render' | 'children'>, StyleProps {
   isDisabled?: boolean,
@@ -266,11 +273,12 @@ export const Input = forwardRef(function Input(props: InputProps, ref: Forwarded
 });
 
 interface HelpTextProps extends FieldErrorProps {
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
   isDisabled?: boolean,
   isInvalid?: boolean, // TODO: export FieldErrorContext from RAC to get this.
   description?: ReactNode,
-  showErrorIcon?: boolean
+  showErrorIcon?: boolean,
+  styles?: StyleString
 }
 
 export const helpTextStyles = style({
@@ -311,21 +319,37 @@ export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDiv
       <Text
         slot="description"
         ref={domDescriptionRef}
-        className={helpTextStyles({size: props.size || 'M', isDisabled: props.isDisabled})}>
+        className={mergeStyles(helpTextStyles({size: props.size || 'M', isDisabled: props.isDisabled}), props.styles)}>
         {props.description}
       </Text>
     );
+  }
+
+  if (!props.isInvalid) {
+    return null;
   }
 
   return (
     <FieldError
       {...props}
       ref={domErrorRef}
-      className={renderProps => helpTextStyles({...renderProps, size: props.size || 'M', isDisabled: props.isDisabled})}>
+      className={renderProps => mergeStyles(helpTextStyles({...renderProps, size: props.size || 'M', isDisabled: props.isDisabled}), props.styles)}>
       {composeRenderProps(props.children, (children, {validationErrors}) => (<>
         {props.showErrorIcon &&
           <CenterBaseline>
-            <AlertIcon />
+            <AlertIcon
+              // @ts-ignore - ts doesn't know that AlertIcon is an icon and not a raw SVG
+              styles={style({
+                size: {
+                  size: {
+                    XS: 14,
+                    S: 16,
+                    M: 20,
+                    L: 22,
+                    XL: 26
+                  }
+                }
+              })({size: props.size || 'M'})} />
           </CenterBaseline>
         }
         <span>{children || validationErrors.join(' ')}</span>

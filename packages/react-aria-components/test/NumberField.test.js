@@ -10,11 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/live-announcer');
+jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {announce} from '@react-aria/live-announcer';
-import {Button, FieldError, Form, Group, I18nProvider, Input, Label, NumberField, NumberFieldContext, Text} from '../';
+import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
+import {Button} from '../src/Button';
+import {FieldError} from '../src/FieldError';
+import {Form} from '../src/Form';
+import {Group} from '../src/Group';
+import {I18nProvider} from 'react-aria/I18nProvider';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
+import {NumberField, NumberFieldContext} from '../src/NumberField';
 import React from 'react';
+import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
 let TestNumberField = (props) => (
@@ -110,6 +118,18 @@ describe('NumberField', () => {
     await user.tab();
     expect(group).not.toHaveAttribute('data-focus-visible');
     expect(group).not.toHaveClass('focus');
+  });
+
+  it('should support read-only state', async () => {
+    let {getByRole, rerender} = render(
+      <TestNumberField />
+    );
+
+    let input = getByRole('textbox');
+
+    expect(input.closest('.react-aria-NumberField')).not.toHaveAttribute('data-readonly');
+    rerender(<TestNumberField isReadOnly />);
+    expect(input.closest('.react-aria-NumberField')).toHaveAttribute('data-readonly');
   });
 
   it('should support render props', () => {

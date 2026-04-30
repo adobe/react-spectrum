@@ -10,10 +10,19 @@
  * governing permissions and limitations under the License.
  */
 import {CollectionBase, DropTargetDelegate, GlobalDOMAttributes, ItemDropTarget, Key, LayoutDelegate, RefObject} from '@react-types/shared';
-import {createBranchComponent, useCachedChildren} from '@react-aria/collections';
-import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, SectionProps as SharedSectionProps} from 'react-stately';
+import {createBranchComponent} from 'react-aria/CollectionBuilder';
+import {
+  Collection as ICollection,
+  Node,
+  SelectionBehavior,
+  SelectionMode,
+  SectionProps as SharedSectionProps
+} from '@react-types/shared';
+
 import React, {cloneElement, createContext, ForwardedRef, HTMLAttributes, isValidElement, JSX, ReactElement, ReactNode, useContext, useMemo} from 'react';
+
 import {StyleProps} from './utils';
+import {useCachedChildren} from 'react-aria/private/collections/useCachedChildren';
 
 export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> {
   /** The contents of the collection. */

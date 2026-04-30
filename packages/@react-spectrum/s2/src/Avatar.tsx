@@ -11,15 +11,15 @@
  */
 
 import {centerBaselineBefore} from './CenterBaseline';
-import {ContextValue, SlotProps} from 'react-aria-components';
+import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {createContext, forwardRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getAllowedOverrides, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Image} from './Image';
 import {isDocsEnv} from './macros' with {type: 'macro'};
 import {style} from '../style' with { type: 'macro' };
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface AvatarProps extends UnsafeStyles, DOMProps, SlotProps {

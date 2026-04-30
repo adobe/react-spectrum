@@ -1,5 +1,4 @@
 import {ColorSlider} from '../src/ColorSlider';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ColorSlider> = {

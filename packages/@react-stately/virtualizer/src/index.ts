@@ -10,14 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-export type {InvalidationContext} from './types';
-export type {VirtualizerState} from './useVirtualizerState';
-export type {RectCorner} from './Rect';
-
-export {Layout} from './Layout';
-export {LayoutInfo} from './LayoutInfo';
-export {Point} from './Point';
-export {Rect} from './Rect';
-export {Size} from './Size';
-export {ReusableView} from './ReusableView';
-export {useVirtualizerState} from './useVirtualizerState';
+export {Layout, LayoutInfo, Point, Rect, Size, ReusableView, useVirtualizerState} from 'react-stately/useVirtualizerState';
+export type {InvalidationContext, VirtualizerState, RectCorner} from 'react-stately/useVirtualizerState';

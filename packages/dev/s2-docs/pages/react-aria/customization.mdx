@@ -18,7 +18,7 @@ Use the `render` prop on any React Aria component to render a custom component i
 For example, you can render a [Motion](https://motion.dev) button and use the state to drive an animation.
 
 ```tsx
-import {Button} from 'react-aria-components';
+import {Button} from 'react-aria-components/Button';
 import {motion} from 'motion/react';
 
 <Button
@@ -70,7 +70,7 @@ Each React Aria Component exports a corresponding context that you can use to bu
 This example shows a `FieldGroup` component that renders a group of text fields. The entire group can be marked as disabled via the `isDisabled` prop, which is passed to all child text fields via the `TextFieldContext` provider.
 
 ```tsx
-import {TextFieldContext} from 'react-aria-components';
+import {TextFieldContext} from 'react-aria-components/TextField';
 
 interface FieldGroupProps {
   children?: React.ReactNode,
@@ -136,7 +136,8 @@ function Stepper({children}) {
 The default slot is used to provide props to a component without specifying a slot name. This is used by children without a `slot` prop. This example passes a specific class name to a standard button child and to a button child with a slot named "end".
 
 ```tsx
-import {Button, ButtonContext, DEFAULT_SLOT} from 'react-aria-components';
+import {Button, ButtonContext} from 'react-aria-components/Button';
+import {DEFAULT_SLOT} from 'react-aria-components/slots';
 
 function MyCustomComponent({children}) {
   return (
@@ -169,7 +170,9 @@ function MyCustomComponent({children}) {
 The `Provider` component is a utility that makes it easier to provide multiple React contexts without manually nesting them. This can be achieved by passing pairs of contexts and values as an array to the `values` prop.
 
 ```tsx
-import {Provider, ButtonContext, InputContext} from 'react-aria-components';
+import {Provider} from 'react-aria-components/slots';
+import {ButtonContext} from 'react-aria-components/Button';
+import {InputContext} from 'react-aria-components/Input';
 
 <Provider
   values={[
@@ -199,8 +202,8 @@ You can also consume from contexts provided by React Aria Components in your own
 The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props with the ones provided via context by a parent component. The local props always take precedence over the context values (see [mergeProps](mergeProps)). `useContextProps` supports the [slot](#slots) prop to indicate which value to consume from context.
 
 ```tsx
-import type {LabelProps} from 'react-aria-components';
-import {LabelContext, useContextProps} from 'react-aria-components';
+import {LabelContext, type LabelProps} from 'react-aria-components/Label';
+import {useContextProps} from 'react-aria-components/slots';
 
 const MyCustomLabel = React.forwardRef(
   (props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
@@ -231,7 +234,7 @@ Since it consumes from `LabelContext`, `MyCustomLabel` can be used within any Re
 To consume a context without merging with existing props, use the <TypeLink links={docs.links} type={docs.exports.useSlottedContext} /> hook. This works like React's `useContext`, and also accepts an optional slot argument to identify which slot name to consume.
 
 ```tsx
-import {useSlottedContext} from 'react-aria-components';
+import {useSlottedContext} from 'react-aria-components/slots';
 
 // Consume the un-slotted value.
 let buttonContext = useSlottedContext(ButtonContext);
@@ -247,8 +250,8 @@ Most React Aria components compose other components in their children to build l
 You can access the state from a parent component via the same contexts in order to build your own custom children. This example shows a `CalendarValue` component that displays the currently selected date from a calendar as a formatted string.
 
 ```tsx
-import {CalendarStateContext} from 'react-aria-components';
-import {useDateFormatter} from 'react-aria';
+import {CalendarStateContext} from 'react-aria-components/Calendar';
+import {useDateFormatter} from 'react-aria/useDateFormatter';
 import {getLocalTimeZone} from '@internationalized/date';
 
 function CalendarValue() {
@@ -294,10 +297,10 @@ As described [above](#contexts), each React Aria component exports a correspondi
 This example shows how a custom checkbox could be set up using `CheckboxContext` from `react-aria-components` and the [useCheckbox](Checkbox/useCheckbox.html) hook from `react-aria`.
 
 ```tsx
-import type {CheckboxProps} from 'react-aria-components';
-import {CheckboxContext, useContextProps} from 'react-aria-components';
-import {useToggleState} from 'react-stately';
-import {useCheckbox} from 'react-aria';
+import {CheckboxContext, type CheckboxProps} from 'react-aria-components/Checkbox';
+import {useContextProps} from 'react-aria-components/slots';
+import {useToggleState} from 'react-stately/useToggleState';
+import {useCheckbox} from 'react-aria/useCheckbox';
 
 const MyCheckbox = React.forwardRef((props: CheckboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
   // Merge the local props and ref with the ones provided via context.
@@ -332,10 +335,15 @@ You can also provide values for React Aria Components from a Hook-based implemen
 This example shows how a custom number field could be set up. First, follow the docs for [useNumberField](NumberField/useNumberField.html), and then use [Provider](#provider) to send values returned by the hook to each of the child elements via their corresponding contexts.
 
 ```tsx
-import type {NumberFieldProps} from 'react-aria-components';
-import {Provider, GroupContext, InputContext, LabelContext, ButtonContext} from 'react-aria-components';
-import {useNumberFieldState} from 'react-stately';
-import {useNumberField, useLocale} from 'react-aria';
+import type {NumberFieldProps} from 'react-aria-components/NumberField';
+import {Provider} from 'react-aria-components/slots';
+import {GroupContext} from 'react-aria-components/Group';
+import {InputContext} from 'react-aria-components/Input';
+import {LabelContext} from 'react-aria-components/Label';
+import {ButtonContext} from 'react-aria-components/Button';
+import {useNumberFieldState} from 'react-stately/useNumberFieldState';
+import {useNumberField} from 'react-aria/useNumberField';
+import {useLocale} from 'react-aria/I18nProvider';
 
 function CustomNumberField(props: NumberFieldProps) {
   // Follow the hook docs...

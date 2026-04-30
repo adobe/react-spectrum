@@ -1,12 +1,13 @@
 'use client';
 import {
   RadioGroup as AriaRadioGroup,
-  RadioGroupProps as AriaRadioGroupProps,
-  ValidationResult,
-  RadioProps,
-  Radio as AriaRadio,
-  composeRenderProps
-} from 'react-aria-components';
+  RadioField,
+  RadioButton,
+  type RadioGroupProps as AriaRadioGroupProps,
+  type ValidationResult,
+  type RadioFieldProps,
+} from 'react-aria-components/RadioGroup';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import {Label, FieldError, Description} from './Form';
 import './RadioGroup.css';
 import './utilities.css';
@@ -39,15 +40,20 @@ export function RadioGroup(
   );
 }
 
+export interface RadioProps extends RadioFieldProps {
+  description?: string;
+}
+
 export function Radio(props: RadioProps) {
   return (
-    <AriaRadio {...props}>
-      {composeRenderProps(props.children, (children) => (
-        <>
+    <RadioField {...props}>
+      <RadioButton>
+        {composeRenderProps(props.children, (children) => (<>
           <div className="indicator" />
           {children}
-        </>
-      ))}
-    </AriaRadio>
+        </>))}
+      </RadioButton>
+      {props.description && <Description>{props.description}</Description>}
+    </RadioField>
   )
 }

@@ -11,11 +11,22 @@
  */
 
 import {act} from '@testing-library/react';
-import {Button, ComboBox, ComboBoxContext, ComboBoxValue, FieldError, Form, Header, Input, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection, ListLayout, Popover, Text, Virtualizer} from '../';
+import {Button} from '../src/Button';
+import {ComboBox, ComboBoxContext, ComboBoxValue} from '../src/ComboBox';
+import {FieldError} from '../src/FieldError';
 import {fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {Form} from '../src/Form';
+import {Header} from '../src/Header';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
+import {ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection} from '../src/ListBox';
+import {ListLayout} from 'react-stately/useVirtualizerState';
+import {Popover} from '../src/Popover';
 import React, {useState} from 'react';
+import {Text} from '../src/Text';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
+import {Virtualizer} from '../src/Virtualizer';
 
 let renderEmptyState = () => {
   return  (
@@ -819,6 +830,62 @@ describe('ComboBox', () => {
     expect(onChange).toHaveBeenLastCalledWith(['1']);
   });
 
+  it('should support isRequired with multiple selection', async () => {
+    let {container, getByTestId} = render(
+      <Form data-testid="form">
+        <ComboBox name="combobox" selectionMode="multiple" isRequired>
+          <Label>Favorite Animal</Label>
+          <Input />
+          <Button />
+          <FieldError />
+          <Popover>
+            <ListBox>
+              <ListBoxItem id="1">Cat</ListBoxItem>
+              <ListBoxItem id="2">Dog</ListBoxItem>
+              <ListBoxItem id="3">Kangaroo</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </ComboBox>
+      </Form>
+    );
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    let combobox = comboboxTester.combobox;
+
+    expect(combobox).toHaveAttribute('required');
+    expect(combobox.validity.valid).toBe(false);
+
+    act(() => {getByTestId('form').checkValidity();});
+    expect(combobox).toHaveAttribute('aria-describedby');
+    expect(container.querySelector('.react-aria-ComboBox')).toHaveAttribute('data-invalid');
+    
+    await comboboxTester.open();
+    let options = comboboxTester.options();
+    await user.click(options[0]);
+    
+    act(() => combobox.blur());
+    expect(combobox).not.toHaveAttribute('required');
+    expect(combobox.validity.valid).toBe(true);
+    expect(container.querySelector('.react-aria-ComboBox')).not.toHaveAttribute('data-invalid');
+
+    let hiddenInputs = container.querySelectorAll('input[type="hidden"]');
+    expect(hiddenInputs).toHaveLength(1);
+    expect(hiddenInputs[0]).toHaveAttribute('name', 'combobox');
+    expect(hiddenInputs[0]).toHaveAttribute('value', '1');
+
+    await comboboxTester.open();
+    options = comboboxTester.options();
+    await user.click(options[0]);
+    act(() => combobox.blur());
+    expect(combobox).toHaveAttribute('required');
+    expect(combobox.validity.valid).toBe(false);
+    expect(combobox).toHaveAttribute('aria-describedby');
+
+    hiddenInputs = container.querySelectorAll('input[type="hidden"]');
+    expect(hiddenInputs).toHaveLength(1);
+    expect(hiddenInputs[0]).toHaveAttribute('name', 'combobox');
+    expect(hiddenInputs[0]).toHaveAttribute('value', '');
+  });
+
   it('should not close the combobox when clicking on the input', async () => {
     let onOpenChange = jest.fn();
     let {container, getByRole} = render(<TestComboBox onOpenChange={onOpenChange} />);
@@ -869,5 +936,17 @@ describe('ComboBox', () => {
     expect(comboboxTester.listbox).toBeVisible();
     expect(comboboxTester.combobox).toHaveFocus();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support read-only state', async () => {
+    let {getByRole, rerender} = render(
+      <TestComboBox />
+    );
+
+    let input = getByRole('combobox');
+
+    expect(input.closest('.react-aria-ComboBox')).not.toHaveAttribute('data-readonly');
+    rerender(<TestComboBox isReadOnly />);
+    expect(input.closest('.react-aria-ComboBox')).toHaveAttribute('data-readonly');
   });
 });

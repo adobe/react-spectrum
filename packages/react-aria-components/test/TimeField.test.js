@@ -11,8 +11,11 @@
  */
 
 import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {DateInput, DateSegment, FieldError, Label, Text, TimeField, TimeFieldContext} from '../';
+import {DateInput, DateSegment, TimeField, TimeFieldContext} from '../src/DateField';
+import {FieldError} from '../src/FieldError';
+import {Label} from '../src/Label';
 import React from 'react';
+import {Text} from '../src/Text';
 import {Time} from '@internationalized/date';
 import userEvent from '@testing-library/user-event';
 

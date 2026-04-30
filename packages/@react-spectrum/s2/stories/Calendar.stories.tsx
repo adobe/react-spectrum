@@ -10,11 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Calendar, CalendarProps} from '../src';
+import {ActionButton} from '../src/ActionButton';
+
+import {Calendar, CalendarProps, DateValue} from '../exports/Calendar';
 import {CalendarDate, getLocalTimeZone, today} from '@internationalized/date';
+import {CalendarSelectionMode} from 'react-stately/useCalendarState';
 import {CalendarSwitcher, categorizeArgTypes, getActionArgs} from './utils';
-import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
-import {DateValue} from 'react-aria';
+import {Custom454Calendar} from '/packages/@internationalized/date/tests/customCalendarImpl';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
@@ -74,7 +76,7 @@ export const MinValue: Story = {
   }
 };
 
-function ControlledFocus(props: CalendarProps<DateValue>): ReactElement {
+function ControlledFocus(props: CalendarProps<DateValue, CalendarSelectionMode>): ReactElement {
   const defaultFocusedDate = props.focusedValue ?? new CalendarDate(2019, 6, 5);
   let [focusedDate, setFocusedDate] = useState(defaultFocusedDate);
   return (
@@ -91,7 +93,7 @@ function ControlledFocus(props: CalendarProps<DateValue>): ReactElement {
   );
 }
 
-function CustomCalendar(props: CalendarProps<DateValue>): ReactElement {
+function CustomCalendar(props: CalendarProps<DateValue, CalendarSelectionMode>): ReactElement {
   return (
     <ControlledFocus {...props} createCalendar={() => new Custom454Calendar()} focusedValue={new CalendarDate(2023, 2, 5)} />
   );

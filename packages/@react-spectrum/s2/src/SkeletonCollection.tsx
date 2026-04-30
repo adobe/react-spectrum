@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionNode, createLeafComponent} from '@react-aria/collections';
+import {CollectionNode} from 'react-aria/private/collections/BaseCollection';
+import {createLeafComponent} from 'react-aria/CollectionBuilder';
 import {ReactNode} from 'react';
 import {Skeleton} from './Skeleton';
 

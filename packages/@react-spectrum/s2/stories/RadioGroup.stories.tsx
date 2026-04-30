@@ -10,17 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Content,
-  ContextualHelp,
-  Footer,
-  Heading,
-  Link,
-  Radio,
-  RadioGroup,
-  Text
-} from '../src';
+import {Content, Footer, Heading, Text} from '../src/Content';
+
+import {ContextualHelp} from '../src/ContextualHelp';
+import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
+import {Radio, RadioGroup} from '../src/RadioGroup';
 import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof RadioGroup> = {
@@ -73,16 +68,15 @@ export const LongLabel: Story = {
 export const ErrorAndDescription: Story = {
   render: (args) => (
     <RadioGroup {...args}>
-      <Radio value="soccer">Soccer</Radio>
-      <Radio value="baseball">Baseball</Radio>
-      <Radio value="football" isDisabled>Football</Radio>
-      <Radio value="basketball">Basketball</Radio>
+      <Radio value="standard" description="Delivers in 5-7 business days">Standard Shipping (Free)</Radio>
+      <Radio value="expedited" description="Delivers in 2-3 business days">Expedited Shipping ($9.99)</Radio>
+      <Radio value="overnight" description="Next day delivery">Overnight Shipping ($19.99)</Radio>
     </RadioGroup>
   ),
   args: {
-    label: 'Favorite sport',
-    description: 'A long description to test help text wrapping.',
-    errorMessage: 'A long error message to test help text wrapping. Only shows when invalid is set which makes it red too!'
+    label: 'Shipping options',
+    description: 'Optional radio group description',
+    errorMessage: 'Please choose a shipping option'
   },
   parameters: {
     docs: {

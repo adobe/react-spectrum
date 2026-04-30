@@ -2,7 +2,6 @@ import {
   ColorSwatchPicker,
   ColorSwatchPickerItem
 } from '../src/ColorSwatchPicker';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ColorSwatchPicker> = {

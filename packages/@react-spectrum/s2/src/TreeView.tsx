@@ -13,11 +13,22 @@
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
 import {baseColor, colorMix, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
+import {Button, ButtonContext} from 'react-aria-components/Button';
+import {centerBaseline} from './CenterBaseline';
+import {Checkbox} from './Checkbox';
+
+import Chevron from '../ui-icons/Chevron';
+
+import {DOMRef, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
+import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {IconContext} from './Icon';
+import intlMessages from '../intl/*.json';
+import {isFirstItem, isPrevSelected} from './ListView';
+import {ListLayout} from 'react-stately/useVirtualizerState';
+import {ProgressCircle} from './ProgressCircle';
+import {Provider, useContextProps} from 'react-aria-components/slots';
+// @ts-ignore
 import {
-  Button,
-  ButtonContext,
-  ListLayout,
-  Provider,
   TreeItemProps as RACTreeItemProps,
   TreeProps as RACTreeProps,
   Tree,
@@ -25,27 +36,17 @@ import {
   TreeItemContent,
   TreeItemContentProps,
   TreeLoadMoreItem,
-  TreeLoadMoreItemProps,
-  TreeState,
-  useContextProps,
-  Virtualizer
-} from 'react-aria-components';
-import {centerBaseline} from './CenterBaseline';
-import {Checkbox} from './Checkbox';
-import Chevron from '../ui-icons/Chevron';
-import {DOMRef, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
-import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {IconContext} from './Icon';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
-import {isFirstItem, isPrevSelected} from './ListView';
-import {ProgressCircle} from './ProgressCircle';
+  TreeLoadMoreItemProps
+} from 'react-aria-components/Tree';
 import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {Text, TextContext} from './Content';
+import {TreeState} from 'react-stately/useTreeState';
 import {useActionBarContainer} from './ActionBar';
-import {useDOMRef} from '@react-spectrum/utils';
-import {useLocale, useLocalizedStringFormatter} from 'react-aria';
+import {useDOMRef} from './useDOMRef';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
+import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 interface S2TreeProps {
   /** Handler that is called when a user performs an action on a row. */
@@ -85,6 +86,7 @@ const TreeRendererContext = createContext<TreeRendererContextValue>({});
 
 const treeViewWrapper = style({
   minHeight: 0,
+  height: 'full',
   minWidth: 160,
   display: 'flex',
   isolation: 'isolate',
@@ -377,18 +379,21 @@ const treeActionMenu = style({
 
 let treeRowFocusRing = style({
   ...focusRing(),
-  outlineOffset: -2,
+  outlineOffset: {
+    default: -2,
+    forcedColors: -3
+  },
+  outlineWidth: {
+    default: 2,
+    forcedColors: '[3px]'
+  },
   outlineColor: {
     default: 'focus-ring',
     forcedColors: 'Highlight',
     selectionStyle: {
       highlight: {
         default: 'focus-ring',
-        forcedColors: 'Highlight',
-        isSelected: {
-          default: 'focus-ring',
-          forcedColors: 'ButtonBorder'
-        }
+        forcedColors: 'ButtonBorder'
       }
     }
   },
@@ -448,17 +453,17 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
   let {selectionStyle} = useContext(InternalTreeViewContext);
   
   return (
-    <TreeItemContent>
+    (<TreeItemContent>
       {({isExpanded, hasChildItems, selectionMode, selectionBehavior, isDisabled, isSelected, id, state, isHovered, isFocusVisible}) => {
         return (
-          <div className={treeCellGrid({isDisabled, isNextSelected: isNextSelected(id, state), isSelected, selectionStyle})}>
+          (<div className={treeCellGrid({isDisabled, isNextSelected: isNextSelected(id, state), isSelected, selectionStyle})}>
             <div className={treeRowBackground({isHovered, isFocusVisible, isSelected, selectionStyle, isNextSelected: isNextSelected(id, state), isPreviousSelected: isPrevSelected(id, state)})} />
             {isFocusVisible && <div className={treeRowFocusRing({isFocusVisible, selectionStyle, isSelected, isNextSelected: isNextSelected(id, state), isFirstItem: isFirstItem(id, state)})} />}
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && selectionStyle !== 'highlight' && (
               // TODO: add transition?
-              <div className={treeCheckbox({isDisabled: isDisabled || !state.selectionManager.canSelectItem(id) || state.disabledKeys.has(id)})}>
+              (<div className={treeCheckbox({isDisabled: isDisabled || !state.selectionManager.canSelectItem(id) || state.disabledKeys.has(id)})}>
                 <Checkbox slot="selection" />
-              </div>
+              </div>)
             )}
             <div
               className={style({
@@ -478,10 +483,10 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
               ]}>
               {typeof children === 'string' ? <Text>{children}</Text> : children}
             </Provider>
-          </div>
+          </div>)
         );
       }}
-    </TreeItemContent>
+    </TreeItemContent>)
   );
 };
 
@@ -589,10 +594,10 @@ function isNextSelected(id: Key | undefined, state: TreeState<unknown>) {
   let keyAfter = state.collection.getKeyAfter(id);
 
   // We need to skip non-item nodes because the selection manager will map non-item nodes to their parent before checking selection
-  let node = keyAfter ? state.collection.getItem(keyAfter) : null;
-  while (node && node.type !== 'item' && keyAfter) {
+  let node = keyAfter != null ? state.collection.getItem(keyAfter) : null;
+  while (node && node.type !== 'item' && keyAfter != null) {
     keyAfter = state.collection.getKeyAfter(keyAfter);
-    node = keyAfter ? state.collection.getItem(keyAfter) : null;
+    node = keyAfter != null ? state.collection.getItem(keyAfter) : null;
   }
 
   return keyAfter != null && state.selectionManager.isSelected(keyAfter);

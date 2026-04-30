@@ -15,7 +15,7 @@ import _3Dasset_M from 'illustration:./S2_fill_3Dasset_generic1_96.svg';
 import _3Dasset_S from 'illustration:./S2_fill_3Dasset_generic1_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function _3Dasset(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
