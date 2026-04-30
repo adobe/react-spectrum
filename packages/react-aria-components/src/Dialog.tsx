@@ -22,6 +22,7 @@ import {PopoverContext} from './Popover';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useRef} from 'react';
 import {RootMenuTriggerStateContext} from './Menu';
+import {TextContext} from './Text';
 import {useId} from 'react-aria/useId';
 import {useMenuTriggerState} from 'react-stately/useMenuTriggerState';
 import {useOverlayTrigger} from 'react-aria/useOverlayTrigger';
@@ -90,7 +91,7 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
 export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
   let originalAriaLabelledby = props['aria-labelledby'];
   [props, ref] = useContextProps(props, ref, DialogContext);
-  let {dialogProps, titleProps} = useDialog({
+  let {dialogProps, titleProps, contentProps} = useDialog({
     ...props,
     // Only pass aria-labelledby from props, not context.
     // Context is used as a fallback below.
@@ -105,6 +106,12 @@ export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dial
       dialogProps['aria-labelledby'] = props['aria-labelledby'];
     } else if (process.env.NODE_ENV !== 'production') {
       console.warn('If a Dialog does not contain a <Heading slot="title">, it must have an aria-label or aria-labelledby attribute for accessibility.');
+    }
+  }
+  
+  if (!dialogProps['aria-describedby'] && dialogProps['role'] === 'alertdialog') {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('If a Dialog does not contain a <Text slot="description">, it must have an aria-describedby for accessibility');
     }
   }
 
@@ -132,6 +139,12 @@ export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dial
             slots: {
               [DEFAULT_SLOT]: {},
               title: {...titleProps, level: 2}
+            }
+          }],
+          [TextContext, {
+            slots: {
+              [DEFAULT_SLOT]: {},
+              description: contentProps
             }
           }],
           [ButtonContext, {

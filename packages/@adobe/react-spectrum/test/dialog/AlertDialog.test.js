@@ -203,4 +203,33 @@ describe('AlertDialog', function () {
     let primaryBtn = getByTestId('rsp-AlertDialog-confirmButton');
     expect(primaryBtn).toBeDefined();
   });
+
+  it('should have aria-describedby pointing to the content', function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm">
+          Content body
+        </AlertDialog>
+      </Provider>
+    );
+
+    let dialog = getByRole('alertdialog');
+    expect(dialog).toHaveAttribute('aria-describedby');
+    let contentId = dialog.getAttribute('aria-describedby');
+    let content = document.getElementById(contentId);
+    expect(content).not.toBeNull();
+    expect(content.textContent).toBe('Content body');
+  });
+
+  it('accepts custom aria-describedby', function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <AlertDialog aria-describedby="content-id" variant="confirmation" title="the title" primaryActionLabel="confirm">
+          Content body
+        </AlertDialog>
+      </Provider>
+    );
+
+    expect(getByRole('alertdialog')).toHaveAttribute('aria-describedby', 'content-id');
+  });
 });

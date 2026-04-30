@@ -73,7 +73,7 @@ export const Dialog = React.forwardRef(function Dialog(props: SpectrumDialogProp
   let domRef = useDOMRef(ref);
   let gridRef = useRef(null);
   let sizeVariant = sizeMap[type] || sizeMap[size];
-  let {dialogProps, titleProps} = useDialog(mergeProps(contextProps, props), domRef);
+  let {dialogProps, titleProps, contentProps} = useDialog(mergeProps(contextProps, props), domRef);
 
   let hasHeader = useHasChild(`.${styles['spectrum-Dialog-header']}`, unwrapDOMRef(gridRef));
   let hasHeading = useHasChild(`.${styles['spectrum-Dialog-heading']}`, unwrapDOMRef(gridRef));
@@ -86,11 +86,11 @@ export const Dialog = React.forwardRef(function Dialog(props: SpectrumDialogProp
     header: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-header', {'spectrum-Dialog-header--noHeading': !hasHeading, 'spectrum-Dialog-header--noTypeIcon': !hasTypeIcon})},
     typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
     divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
-    content: {UNSAFE_className: styles['spectrum-Dialog-content']},
+    content: {UNSAFE_className: styles['spectrum-Dialog-content'], ...contentProps},
     footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
     buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !hasFooter}), align: 'end'}
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [hasFooter, hasHeader, titleProps]);
+  }), [hasFooter, hasHeader, titleProps, contentProps]);
 
   return (
     <section

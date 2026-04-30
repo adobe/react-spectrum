@@ -31,7 +31,10 @@ export interface DialogAria {
   dialogProps: DOMAttributes,
 
   /** Props for the dialog title element. */
-  titleProps: DOMAttributes
+  titleProps: DOMAttributes,
+
+  /** Props for the dialog content/description element. Used for aria-describedby on alertdialogs. */
+  contentProps: DOMAttributes
 }
 
 /**
@@ -44,6 +47,9 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
   } = props;
   let titleId: string | undefined = useSlotId();
   titleId = props['aria-label'] ? undefined : titleId;
+
+  let contentId: string | undefined = useSlotId();
+  contentId = role === 'alertdialog' ? contentId : undefined;
 
   let isRefocusing = useRef(false);
 
@@ -107,7 +113,8 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
       ...filterDOMProps(props, {labelable: true}),
       role,
       tabIndex: -1,
-      'aria-labelledby': props['aria-labelledby'] || titleId,
+      'aria-labelledby': props['aria-labelledby'] ?? titleId,
+      'aria-describedby': props['aria-describedby'] ?? contentId,
       // Prevent blur events from reaching useOverlay, which may cause
       // popovers to close. Since focus is contained within the dialog,
       // we don't want this to occur due to the above useEffect.
@@ -119,6 +126,9 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
     },
     titleProps: {
       id: titleId
+    },
+    contentProps: {
+      id: contentId
     }
   };
 }

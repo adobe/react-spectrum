@@ -11,6 +11,7 @@
  */
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
+import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {Button, SpectrumButtonProps} from '../button/Button';
 import {ButtonGroup} from '../buttongroup/ButtonGroup';
 import {chain} from 'react-aria/chain';
@@ -19,7 +20,6 @@ import {Content} from '../view/Content';
 import {Dialog} from './Dialog';
 import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '../divider/Divider';
-import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {Heading} from '../text/Heading';
 import intlMessages from '../../intl/dialog/*.json';
@@ -29,7 +29,7 @@ import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useStyleProps} from '../utils/styleProps';
 
-export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
+export interface SpectrumAlertDialogProps extends AriaLabelingProps, DOMProps, StyleProps {
   /** The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.  */
   variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning',
   /** The title of the AlertDialog. */
@@ -100,7 +100,7 @@ export const AlertDialog = forwardRef(function AlertDialog(props: SpectrumAlertD
       size="M"
       role="alertdialog"
       ref={ref}
-      {...filterDOMProps(props)}>
+      {...filterDOMProps(props, {labelable: true})}>
       <Heading>{title}</Heading>
       {(variant === 'error' || variant === 'warning') &&
         <AlertMedium
