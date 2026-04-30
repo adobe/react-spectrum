@@ -23,7 +23,7 @@ import {DOMRef, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@r
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
-import {isFirstItem, isPrevSelected} from './ListView';
+import {isFirstItem, isPrevSelected, useScale} from './utils';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {ProgressCircle} from './ProgressCircle';
 import {Provider, useContextProps} from 'react-aria-components/slots';
@@ -45,7 +45,6 @@ import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-import {useScale} from './utils';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 interface S2TreeProps {

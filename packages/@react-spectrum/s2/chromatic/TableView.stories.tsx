@@ -34,7 +34,7 @@ const meta: Meta<typeof TableView> = {
 export default meta;
 
 const StaticTable = (args: TableViewProps): ReactElement => (
-  <TableView aria-label="Files" {...args} styles={style({width: 320, height: 320})}>
+  <TableView aria-label="Files" styles={style({width: 320, height: 320})} {...args}>
     <TableHeader>
       <Column isRowHeader>Name</Column>
       <Column>Type</Column>
@@ -106,6 +106,34 @@ let items = [
   {id: 9, foo: 'Foo 9', bar: 'Bar 9', baz: 'Baz 9', yah: 'Yah long long long 9'},
   {id: 10, foo: 'Foo 10', bar: 'Bar 10', baz: 'Baz 10', yah: 'Yah long long long 10'}
 ];
+
+export const CheckboxSelection: StoryObj<typeof StaticTable> = {
+  render: StaticTable,
+  args: {
+    selectionMode: 'multiple',
+    selectionStyle: 'checkbox',
+    selectedKeys: ['1', '2'],
+    styles: style({width: 500}),
+    onResize: undefined,
+    onResizeStart: undefined,
+    onResizeEnd: undefined,
+    onLoadMore: undefined
+  }
+};
+
+export const HighlightSelection: StoryObj<typeof StaticTable> = {
+  ...Example,
+  args: {
+    selectionMode: 'multiple',
+    selectionStyle: 'highlight',
+    selectedKeys: ['1', '2'],
+    styles: style({width: 500}),
+    onResize: undefined,
+    onResizeStart: undefined,
+    onResizeEnd: undefined,
+    onLoadMore: undefined
+  }
+};
 
 const DynamicTable = (args: TableViewProps): ReactElement => (
   <TableView aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>

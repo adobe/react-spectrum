@@ -1376,7 +1376,11 @@ export interface RowRenderProps extends ItemRenderProps {
    * What level the row has within the table.
    * @selector [data-level]
    */
-  level: number
+  level: number,
+  /**
+   * State of the table.
+   */
+  state: TableState<unknown>
 }
 
 export interface RowProps<T> extends StyleRenderProps<RowRenderProps, 'tr' | 'div'>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLTableRowElement>, 'onClick'> {
@@ -1508,6 +1512,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       },
       values: {
         ...states,
+        state,
         isHovered,
         isFocused,
         isFocusVisible,
