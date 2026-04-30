@@ -140,6 +140,7 @@ export {mergeRefs} from '../src/utils/mergeRefs';
 export {useId} from '../src/utils/useId';
 export {useObjectRef} from '../src/utils/useObjectRef';
 export {RouterProvider} from '../src/utils/openLink';
+export {Virtualizer} from '../src/virtualizer/Virtualizer';
 export {VisuallyHidden, useVisuallyHidden} from '../src/visually-hidden/VisuallyHidden';
 
 export type {AriaAutocompleteProps, AriaAutocompleteOptions, AutocompleteAria, CollectionOptions, InputProps} from '../src/autocomplete/useAutocomplete';
@@ -268,5 +269,6 @@ export type {TooltipTriggerAria} from '../src/tooltip/useTooltipTrigger';
 export type {TooltipTriggerProps} from 'react-stately/useTooltipTriggerState';
 export type {AriaTreeProps, TreeProps, TreeAria, AriaTreeOptions} from '../src/tree/useTree';
 export type {AriaTreeItemOptions, TreeItemAria} from '../src/tree/useTreeItem';
+export type {VirtualizerProps} from '../src/virtualizer/Virtualizer';
 export type {VisuallyHiddenAria, VisuallyHiddenProps} from '../src/visually-hidden/VisuallyHidden';
 export type {Key, Orientation, RangeValue} from '@react-types/shared';
