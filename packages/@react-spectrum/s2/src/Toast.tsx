@@ -179,7 +179,12 @@ const toastRegion = style({
   bottom: {
     placement: {
       bottom: {
-        default: 16,
+        // On mobile, when the on-screen keyboard is open the dynamic viewport
+        // (dvh) shrinks while the layout viewport (vh) stays the same.
+        // calc(100vh - 100dvh + 16px) equals the keyboard height + 16px,
+        // keeping the toast above the keyboard on any browser that supports dvh.
+        // On desktop (no keyboard) 100vh === 100dvh so this reduces to 16px.
+        default: '[calc(100vh - 100dvh + 16px)]',
         isExpanded: 0
       }
     }
