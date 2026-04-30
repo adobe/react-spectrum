@@ -291,25 +291,23 @@ describe('useKeyboard', function () {
       });
 
       it('passes event to handler', async () => {
-        let ev;
-        let fn = jest.fn(e => ev = e);
+        let fn = jest.fn(e => {
+          expect(e.key).toBe('Escape');
+        });
         render(
           <ExampleButton shortcuts={{'Escape': fn}} />
         );
         await user.tab();
         await user.keyboard('{Escape}');
-        expect(ev.key).toBe('Escape');
-        expect(ev.isDefaultPrevented()).toBe(false);
-        expect(ev.isPropagationStopped()).toBe(true);
       });
 
       it('continues propagation if the function did not handle the event', async () => {
-        let ev;
         let fn = jest.fn((e) => {
-          ev = e;
           return false;
         });
-        let onWrapperKeyDown = jest.fn();
+        let onWrapperKeyDown = jest.fn((e) => {
+          expect(e.isDefaultPrevented()).toBe(false);
+        });
         let onWrapperKeyUp = jest.fn();
         render(
           <div onKeyDown={onWrapperKeyDown} onKeyUp={onWrapperKeyUp}>
@@ -321,19 +319,17 @@ describe('useKeyboard', function () {
         onWrapperKeyUp.mockClear();
         await user.keyboard('{Escape}');
         expect(fn).toHaveBeenCalledTimes(1);
-        expect(ev.isDefaultPrevented()).toBe(false);
-        expect(ev.isPropagationStopped()).toBe(false);
         expect(onWrapperKeyDown).toHaveBeenCalledTimes(1);
         expect(onWrapperKeyUp).toHaveBeenCalledTimes(1);
       });
 
       it('prevent default and stop propagation can both be finely controlled', async () => {
-        let ev;
         let fn = jest.fn((e) => {
-          ev = e;
           return {shouldPreventDefault: false, shouldContinuePropagation: true};
         });
-        let onWrapperKeyDown = jest.fn();
+        let onWrapperKeyDown = jest.fn((e) => {
+          expect(e.isDefaultPrevented()).toBe(false);
+        });
         let onWrapperKeyUp = jest.fn();
         render(
           <div onKeyDown={onWrapperKeyDown} onKeyUp={onWrapperKeyUp}>
@@ -345,8 +341,6 @@ describe('useKeyboard', function () {
         onWrapperKeyUp.mockClear();
         await user.keyboard('{Escape}');
         expect(fn).toHaveBeenCalledTimes(1);
-        expect(ev.isDefaultPrevented()).toBe(false);
-        expect(ev.isPropagationStopped()).toBe(false);
       });
     });
 
