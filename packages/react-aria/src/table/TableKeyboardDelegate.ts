@@ -21,7 +21,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableColl
     return node.type === 'cell' || node.type === 'rowheader' || node.type === 'column';
   }
 
-  getKeyBelow(key: Key): Key | null {
+  getKeyBelow(key: Key, options?: {includeDisabled?: boolean}): Key | null {
     let startItem = this.collection.getItem(key);
     if (!startItem) {
       return null;
@@ -48,10 +48,10 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableColl
       return super.getKeyForItemInRowByIndex(firstKey, startItem.index);
     }
 
-    return super.getKeyBelow(key);
+    return super.getKeyBelow(key, options);
   }
 
-  getKeyAbove(key: Key): Key | null {
+  getKeyAbove(key: Key, options?: {includeDisabled?: boolean}): Key | null {
     let startItem = this.collection.getItem(key);
     if (!startItem) {
       return null;
@@ -68,7 +68,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableColl
     }
 
     // only return above row key if not header row
-    let superKey = super.getKeyAbove(key);
+    let superKey = super.getKeyAbove(key, options);
     let superItem = superKey != null ? this.collection.getItem(superKey) : null;
     if (superItem && superItem.type !== 'headerrow') {
       return superKey;

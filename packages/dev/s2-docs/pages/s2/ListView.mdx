@@ -380,6 +380,70 @@ function NavigationExample() {
 }
 ```
 
+## Drag and drop
+
+ListView supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. See the [drag and drop guide](../react-aria/dnd?component=GridList) to learn more.
+
+You can customize the drag preview by passing <TypeLink links={docs.links} type={docs.exports.ListViewDragPreview} /> to `useDragAndDrop`'s `renderDragPreview` with custom content.
+
+```tsx render type="s2"
+"use client";
+import {ListView, ListViewItem, ListViewDragPreview} from '@react-spectrum/s2/ListView';
+import {Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
+import {useListData} from '@react-spectrum/s2/useListData';
+import File from '@react-spectrum/s2/icons/File';
+
+function ReorderableList() {
+  let list = useListData({
+    initialItems: [
+      {id: '1', name: 'Adobe Photoshop'},
+      {id: '2', name: 'Adobe XD'},
+      {id: '3', name: 'Adobe InDesign'},
+      {id: '4', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  ///- begin highlight -///
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys, items: typeof list.items) => items.map(item => ({'text/plain': item.name})),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDragPreview: (items) => (
+      <ListViewDragPreview items={items}>
+        <File />
+        <Text>{items[0]['text/plain']}</Text>
+      </ListViewDragPreview>
+    )
+  });
+  ///- end highlight -///
+
+  return (
+    <ListView
+      aria-label="Reorderable files"
+      selectionMode="multiple"
+      items={list.items}
+      ///- begin highlight -///
+      dragAndDropHooks={dragAndDropHooks}
+      ///- end highlight -///
+      styles={style({width: 'full', maxWidth: 320})}>
+      {item => (
+        <ListViewItem textValue={item.name}>
+          <File />
+          <Text>{item.name}</Text>
+        </ListViewItem>
+      )}
+    </ListView>
+  );
+}
+```
+
 ## API
 
 ```tsx links={{ListView: '#listview', ListViewItem: '#listviewitem', ActionMenu: 'ActionMenu', ActionButtonGroup: 'ActionButtonGroup', Icon: 'icons', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span', Image: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img'}}

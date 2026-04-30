@@ -74,7 +74,7 @@ class TreeCollection<T> extends BaseCollection<T> {
     // Clone ancestor section nodes so React knows to re-render since the same item won't cause a new render but a clone creating a new object with the same value will
     // Without this change, the items won't expand and collapse when virtualized inside a section
     TreeCollection.cloneAncestorSections(expandedKeys, lastExpandedKeys, collection);
-    TreeCollection.cloneAncestorSections(lastExpandedKeys, expandedKeys, collection);   
+    TreeCollection.cloneAncestorSections(lastExpandedKeys, expandedKeys, collection);
 
     collection.frozen = this.frozen;
     return collection;
@@ -238,6 +238,11 @@ export interface TreeRenderProps {
    * @selector [data-allows-dragging]
    */
   allowsDragging: boolean,
+  /**
+   * Whether the tree is currently the active drop target.
+   * @selector [data-drop-target]
+   */
+  isDropTarget: boolean,
   /**
    * State of the tree.
    */
@@ -608,6 +613,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
   let state = useContext(TreeStateContext)!;
   ref = useObjectRef<HTMLDivElement>(ref);
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
+  let isDraggable = dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
 
   // TODO: remove this when we support description in tree row
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -620,7 +626,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
   let level = rowProps['aria-level'] || 1;
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection && !states.hasAction,
+    isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
     onHoverStart: props.onHoverStart,
     onHoverChange: props.onHoverChange,
     onHoverEnd: props.onHoverEnd

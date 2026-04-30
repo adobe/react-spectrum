@@ -11,7 +11,7 @@
  */
 
 import {ActionButton, ActionButtonContext} from './ActionButton';
-import {baseColor, centerPadding, colorMix, focusRing, fontRelative, lightDark, setColorScheme, space, style} from '../style' with {type: 'macro'};
+import {baseColor, centerPadding, color, colorMix, focusRing, fontRelative, lightDark, setColorScheme, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {ButtonGroup} from './ButtonGroup';
 import {
@@ -51,27 +51,32 @@ import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} fr
 import {css} from '../style/style-macro' with {type: 'macro'};
 import {CustomDialog} from './CustomDialog';
 import {DialogContainer} from './DialogContainer';
-import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue, DragItem, forwardRefType, GlobalDOMAttributes, ItemDropTarget, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
+import DragHandle from '../ui-icons/DragHandle';
+import {dragPreviewBadge, dragPreviewCardBack, dragPreviewWrapper, InsertionIndicator, label} from './ListView';
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {Form} from 'react-aria-components/Form';
 import {getActiveElement, isFocusWithin, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
+import {LayoutInfo, Rect, TableLayout,  Virtualizer} from 'react-aria-components/Virtualizer';
 import {LayoutNode} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {ProgressCircle} from './ProgressCircle';
-import {CheckboxContext as RACCheckboxContext} from 'react-aria-components/Checkbox';
 // @ts-ignore
+import {CheckboxContext as RACCheckboxContext} from 'react-aria-components/Checkbox';
 import {Popover as RACPopover} from 'react-aria-components/Popover';
 import React, {createContext, CSSProperties, FormEvent, FormHTMLAttributes, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {Rect, TableLayout, Virtualizer} from 'react-aria-components/Virtualizer';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {Button as SpectrumButton} from './Button';
+import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from './useDOMRef';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
@@ -123,7 +128,7 @@ interface S2TableProps {
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
-export interface TableViewProps extends Omit<RACTableProps, 'style' | 'className' | 'render' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, S2TableProps {
+export interface TableViewProps extends Omit<RACTableProps, 'style' | 'className' | 'render' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, S2TableProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
@@ -141,7 +146,27 @@ const tableWrapper = style({
   overflow: 'clip'
 }, getAllowedOverrides({height: true}));
 
-const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boolean}>({
+// due to the overflow: clip for actionbar, render the outline via a psudo element so it isn't
+// clipped. 6px radius matches the table's border radius
+const rootDropOutline = css(`
+  &:has([role="grid"][data-drop-target])::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border: 2px solid ${color('blue-800')};
+    border-radius: 6px;
+    z-index: 2;
+  }
+  @media (forced-colors: active) {
+    &:has([role="grid"][data-drop-target])::after {
+      border-color: Highlight;
+    }
+  }
+`);
+
+const dropTargetBackground = colorMix('gray-25', 'blue-900', 10);
+const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boolean, isDragAndDrop?: boolean}>({
   width: 'full',
   height: 'full',
   boxSizing: 'border-box',
@@ -154,16 +179,22 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
   backgroundColor: {
     default: 'gray-25',
     isQuiet: 'transparent',
+    isDropTarget: dropTargetBackground,
     forcedColors: 'Background'
   },
-  borderColor: 'gray-300',
+  borderColor: {
+    default: 'gray-300',
+    isDropTarget: 'blue-800',
+    forcedColors: {
+      isDropTarget: 'Highlight'
+    }
+  },
   borderStyle: 'solid',
   borderWidth: {
     default: 1,
     isQuiet: 0
   },
   ...focusRing(),
-  outlineOffset: -1, // Cover the border
   borderRadius: {
     default: '[6px]',
     isQuiet: 'none'
@@ -177,9 +208,87 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
   // Base reproduction: https://codepen.io/lfdanlu/pen/zYVVGPW
   scrollPaddingTop: 32,
   scrollPaddingStart: {
-    isCheckboxSelection: 40
-  }
+    isCheckboxSelection: 40,
+    isDragAndDrop: {
+      default: 16,
+      isCheckboxSelection: 56
+    }
+  },
+  forcedColorAdjust: 'none'
 });
+
+let dragPreviewCard = style<{scale?: 'medium' | 'large'}>({
+  boxSizing: 'border-box',
+  paddingX: 0,
+  paddingY: 8,
+  backgroundColor: 'gray-25',
+  color: baseColor('neutral'),
+  position: 'relative',
+  display: 'grid',
+  gridTemplateAreas: [
+    '. label  badge .'
+  ],
+  gridTemplateColumns: [edgeToText(40), 'minmax(0, 1fr)', 'auto', edgeToText(40)],
+  gridTemplateRows: 'auto',
+  alignItems: 'baseline',
+  minHeight: {
+    default: 40,
+    scale: {
+      large: 50
+    }
+  },
+  width: 200,
+  borderRadius: 'default',
+  borderWidth: 1,
+  borderStyle: 'solid',
+  borderColor: 'blue-900'
+});
+
+export interface TableViewDragPreviewProps {
+  /** The currently dragged items, sourced from renderDragPreview. */
+  items: DragItem[],
+  /** The overflow mode to be applied on the drag preview. */
+  overflowMode?: S2TableProps['overflowMode'],
+  /**
+   * The contents of the drag preview. Supports the default text slot.
+   * If no children are provided, defaults to the first drag item's plain text content.
+   */
+  children?: ReactNode
+}
+
+/**
+ * The default drag preview rendered by TableView during drag and drop. Pass this to
+ * a your drag hooks `renderDragPreview` to match the default visual. Provide your own
+ * children to customize the drag preview's contents.
+ */
+export function TableViewDragPreview(props: TableViewDragPreviewProps) {
+  let {items, overflowMode} = props;
+  let isDraggingMultiple = items.length > 1;
+  let itemLabel = items[0]?.['text/plain'] ?? '';
+  let scale = useScale();
+
+  return (
+    <div
+      className={dragPreviewWrapper}>
+      {isDraggingMultiple && <div className={dragPreviewCardBack} />}
+      <div className={dragPreviewCard({scale})}>
+        <Provider
+          values={[
+            [TextContext, {
+              slots: {
+                [DEFAULT_SLOT]: {styles: label({overflowMode})}
+              }
+            }]
+          ]}>
+          {props.children ?? <Text>{itemLabel}</Text>}
+          {isDraggingMultiple && (
+            <div className={dragPreviewBadge}>{items.length}</div>
+          )}
+        </Provider>
+      </div>
+    </div>
+  );
+}
 
 // component-height-100
 const DEFAULT_HEADER_HEIGHT = {
@@ -274,6 +383,12 @@ export class S2TableLayout<T> extends TableLayout<T> {
     layoutNode.layoutInfo.allowOverflow = true;
     return layoutNode;
   }
+
+  getDropTargetLayoutInfo(target: ItemDropTarget): LayoutInfo {
+    let layoutInfo = super.getDropTargetLayoutInfo(target);
+    layoutInfo.zIndex = 1;
+    return layoutInfo;
+  }
 }
 
 export const TableContext = createContext<ContextValue<Partial<TableViewProps>, DOMRefValue<HTMLDivElement>>>(null);
@@ -297,11 +412,23 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     onAction,
     onLoadMore,
     selectionMode = 'none',
+    dragAndDropHooks,
+    disabledBehavior = 'all',
     ...otherProps
   } = props;
 
+  if (dragAndDropHooks && dragAndDropHooks.renderDragPreview == null) {
+    dragAndDropHooks.renderDragPreview = (items) => <TableViewDragPreview items={items} overflowMode={overflowMode} />;
+  }
+
+  if (dragAndDropHooks) {
+    dragAndDropHooks.renderDropIndicator = (target) => <InsertionIndicator target={target as ItemDropTarget} />;
+  }
+
   let domRef = useDOMRef(ref);
   let scale = useScale();
+  // 8px circle + 2px top + 2px bottom padding
+  let dropIndicatorThickness = scale === 'large' ? 15 : 12;
 
   // Starts when the user selects resize from the menu, ends when resizing ends
   // used to control the visibility of the resizer Nubbin
@@ -322,11 +449,13 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     onLoadMore,
     isInResizeMode,
     setIsInResizeMode,
-    selectionMode
-  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode, selectionMode]);
+    selectionMode,
+    disabledBehavior
+  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode, selectionMode, disabledBehavior]);
 
   let scrollRef = useRef<HTMLElement | null>(null);
   let isCheckboxSelection = selectionMode === 'multiple' || selectionMode === 'single';
+  let isDragAndDrop = !!dragAndDropHooks?.useDraggableCollectionState;
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
 
@@ -337,7 +466,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
       onResize={propsOnResize}
       onResizeEnd={onResizeEnd}
       onResizeStart={onResizeStart}
-      className={(UNSAFE_className || '') + tableWrapper(null, styles)}
+      className={(UNSAFE_className || '') + tableWrapper(null, styles) + ' ' + rootDropOutline}
       style={UNSAFE_style}>
       <Virtualizer
         layout={S2TableLayout}
@@ -350,7 +479,8 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
           : undefined,
           // No need for estimated headingHeight since the headers aren't affected by overflow mode: wrap
           headingHeight: DEFAULT_HEADER_HEIGHT[scale],
-          loaderHeight: 60
+          loaderHeight: 60,
+          dropIndicatorThickness
         }}>
         <InternalTableContext.Provider value={context}>
           <RACTable
@@ -366,11 +496,14 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
             className={renderProps => table({
               ...renderProps,
               isCheckboxSelection,
+              isDragAndDrop,
               isQuiet
             })}
             selectionBehavior="toggle"
             selectionMode={selectionMode}
             onRowAction={onAction}
+            dragAndDropHooks={dragAndDropHooks}
+            disabledBehavior={disabledBehavior}
             {...otherProps}
             selectedKeys={selectedKeys}
             defaultSelectedKeys={undefined}
@@ -909,15 +1042,27 @@ export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style
  */
 export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableHeader<T extends object>({columns, dependencies, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
   let scale = useScale();
-  let {selectionBehavior, selectionMode} = useTableOptions();
+  let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
   let {isQuiet} = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   return (
     (<RACTableHeader
       // @ts-ignore
       ref={domRef}
       className={tableHeader}>
+      {allowsDragging && (
+        // @ts-ignore
+        <RACColumn isSticky width={scale === 'medium' ? 16 : 20} minWidth={scale === 'medium' ? 16 : 20} className={selectAllCheckboxColumn({isQuiet})}>
+          {({isFocusVisible}) => (
+            <>
+              {isFocusVisible && <CellFocusRing />}
+              <VisuallyHidden>{stringFormatter.format('table.drag')}</VisuallyHidden>
+            </>
+          )}
+        </RACColumn>
+      )}
       {/* Add extra columns for selection. */}
       {selectionBehavior === 'toggle' && (
         // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
@@ -1017,9 +1162,26 @@ const stickyCell = {
   backgroundColor: 'gray-25'
 } as const;
 
+// Bit gross but this is needed because the sticky cells currently cover/partially cover styles that the row applies so that
+// they don't appear when the table is scrolled. The below basically just continues the inset box-shadow that the row has when
+// it is focused as a drop target
+const rowDropTargetStickyOutline = {
+  boxShadow: {
+    default: 'none',
+    ':is([role="row"][data-drop-target] *)': {
+      default: `[inset 0 2px 0 0 ${color('blue-800')}, inset 0 -2px 0 0 ${color('blue-800')}]`,
+      forcedColors: '[inset 0 2px 0 0 Highlight, inset 0 -2px 0 0 Highlight]'
+    },
+    ':is([role="row"][data-focus-visible] *)': {
+      forcedColors: '[inset 0 2px 0 0 Highlight, inset 0 -2px 0 0 Highlight]'
+    }
+  }
+} as const;
+
 const checkboxCellStyle = style({
   ...commonCellStyles,
   ...stickyCell,
+  ...rowDropTargetStickyOutline,
   display: 'flex',
   paddingStart: 16,
   paddingEnd: 8,
@@ -1029,6 +1191,67 @@ const checkboxCellStyle = style({
   height: 'calc(100% - 1px)',
   borderBottomWidth: 0,
   backgroundColor: '--rowBackgroundColor'
+});
+
+const dragCellStyle = style({
+  ...commonCellStyles,
+  ...stickyCell,
+  ...rowDropTargetStickyOutline,
+  paddingStart: 4,
+  paddingEnd: 4,
+  alignContent: 'center',
+  height: 'calc(100% - 1px)',
+  borderBottomWidth: 0,
+  backgroundColor: '--rowBackgroundColor'
+});
+
+const dragButton = style({
+  color: 'inherit',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: 0,
+  backgroundColor: 'transparent',
+  borderStyle: 'none',
+  borderRadius: 'sm',
+  outlineStyle: {
+    default: 'none',
+    isFocusVisible: 'solid'
+  },
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  },
+  outlineWidth: 2,
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  },
+  // note that this doesn't have clip or clipPath, but this seems to be sufficient
+  height: {
+    default: 1,
+    ':is([role="row"][data-focus-visible-within] *)': 22
+  },
+  width: {
+    default: 1,
+    ':is([role="row"][data-focus-visible-within] *)': 10
+  },
+  margin: {
+    default: '[-1]',
+    ':is([role="row"][data-focus-visible-within] *)': 0
+  },
+  overflow: {
+    default: 'hidden',
+    ':is([role="row"][data-focus-visible-within] *)': 'visible'
+  },
+  position: {
+    default: 'absolute',
+    ':is([role="row"][data-focus-visible-within] *)': 'relative'
+  },
+  whiteSpace: {
+    default: 'nowrap',
+    ':is([role="row"][data-focus-visible-within] *)': 'normal'
+  }
 });
 
 const cellContent = style({
@@ -1498,6 +1721,25 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
 // Use color-mix instead of transparency so sticky cells work correctly.
 const selectedBackground = colorMix('gray-25', 'gray-900', 7);
 const selectedActiveBackground = colorMix('gray-25', 'gray-900', 10);
+// TODO: I made these up, not sure if there is a great way to go from v3 values to
+// S2. Overally the root drop color should be lighter than the row color during a root drop
+// which should be lighter than a selected row during root drop. Those root drop row colors should also be darker
+// than if the row is the drop target itself
+const rootDropRowBackground = colorMix('gray-25', 'blue-900', 17);
+const rootDropSelectedRowBackground = colorMix('gray-25', 'blue-900', 28);
+const rowDropBackground = colorMix('gray-25', 'blue-900', 10);
+const rowDropSelectedBackground = colorMix('gray-25', 'blue-900', 15);
+const rootRowDropStyles = {
+  default: rootDropRowBackground,
+  isSelected: rootDropSelectedRowBackground,
+  forcedColors: 'Background'
+} as const;
+const rowDropStyles = {
+  default: rowDropBackground,
+  isSelected: rowDropSelectedBackground,
+  forcedColors: 'Background'
+} as const;
+
 const rowBackgroundColor = {
   default: {
     default: 'gray-25',
@@ -1515,7 +1757,9 @@ const rowBackgroundColor = {
   isInFooter: 'gray-200',
   forcedColors: {
     default: 'Background'
-  }
+  },
+  ':is([role="grid"][data-drop-target] *)': rootRowDropStyles,
+  isDropTarget: rowDropStyles
 } as const;
 
 const rowTextColor = {
@@ -1549,31 +1793,14 @@ const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean}>({
       forcedColors: 'Highlight'
     }
   },
-  // TODO: outline here is to emulate v3 forcedColors experience but runs into the same problem where the sticky column covers the outline
-  // This doesn't quite work because it gets cut off by the checkbox cell background masking element, figure out another way. Could shrink the checkbox cell's content even more
-  // and offset it by margin top but that messes up the checkbox centering a bit
-  // outlineWidth: {
-  //   forcedColors: {
-  //     isFocusVisible: 2
-  //   }
-  // },
-  // outlineOffset: {
-  //   forcedColors: {
-  //     isFocusVisible: -1
-  //   }
-  // },
-  // outlineColor: {
-  //   forcedColors: {
-  //     isFocusVisible: 'ButtonBorder'
-  //   }
-  // },
-  // outlineStyle: {
-  //   default: 'none',
-  //   forcedColors: {
-  //     isFocusVisible: 'solid'
-  //   }
-  // },
   outlineStyle: 'none',
+  boxShadow: {
+    isDropTarget: `[inset 0 0 0 2px ${color('blue-800')}]`,
+    forcedColors: {
+      isDropTarget: '[inset 0 0 0 2px Highlight]',
+      isFocusVisible: '[inset 0 0 0 2px Highlight]'
+    }
+  },
   borderTopWidth: 0,
   borderBottomWidth: 1,
   borderStartWidth: 0,
@@ -1603,7 +1830,7 @@ export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'is
  * A row within a `<Table>`.
  */
 export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T extends object>({id, columns, children, dependencies = [], ...otherProps}: RowProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {selectionBehavior, selectionMode} = useTableOptions();
+  let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
   let tableVisualOptions = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
   let isInFooter = useContext(FooterContext);
@@ -1620,8 +1847,21 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         ...renderProps,
         ...tableVisualOptions,
         isInFooter
-      }) + (renderProps.isFocusVisible ? ' ' + css('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')}
+      }) + (renderProps.isFocusVisible || renderProps.isDropTarget ? ' ' + css('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')}
       {...otherProps}>
+      {allowsDragging  && (
+        // @ts-ignore
+        <Cell isSticky className={dragCellStyle}>
+          {!(otherProps.isDisabled && tableVisualOptions.disabledBehavior === 'all') && (
+            <Button
+              slot="drag"
+              className={dragButton}>
+              <DragHandle size="M" />
+            </Button>
+          )
+        }
+        </Cell>
+      )}
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
         // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
         // The `spread` otherProps must be after className in Cell.

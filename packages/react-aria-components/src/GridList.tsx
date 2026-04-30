@@ -361,6 +361,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {isVirtualized} = useContext(CollectionRendererContext);
+  let isDraggable = dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
     {
       node: item,
@@ -372,7 +373,10 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
   );
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection && !states.hasAction,
+    // TODO: bit iffy about needing to calculate if it is draggable yourself, alternative would
+    // be to pass the drag state enitrely to useGridListItem. I had initially passed isDraggable to useGridListItem but
+    // that kinda defeats the point since you could just do the below instead
+    isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
     onHoverStart: item.props.onHoverStart,
     onHoverChange: item.props.onHoverChange,
     onHoverEnd: item.props.onHoverEnd

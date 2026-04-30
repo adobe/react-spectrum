@@ -96,16 +96,16 @@ export type SortDirection = 'ascending' | 'descending';
 
 export interface KeyboardDelegate {
   /** Returns the key visually below the given one, or `null` for none. */
-  getKeyBelow?(key: Key): Key | null,
+  getKeyBelow?(key: Key, options?: {includeDisabled?: boolean}): Key | null,
 
   /** Returns the key visually above the given one, or `null` for none. */
-  getKeyAbove?(key: Key): Key | null,
+  getKeyAbove?(key: Key, options?: {includeDisabled?: boolean}): Key | null,
 
   /** Returns the key visually to the left of the given one, or `null` for none. */
-  getKeyLeftOf?(key: Key): Key | null,
+  getKeyLeftOf?(key: Key, options?: {includeDisabled?: boolean}): Key | null,
 
   /** Returns the key visually to the right of the given one, or `null` for none. */
-  getKeyRightOf?(key: Key): Key | null,
+  getKeyRightOf?(key: Key, options?: {includeDisabled?: boolean}): Key | null,
 
   /** Returns the key visually one page below the given one, or `null` for none. */
   getKeyPageBelow?(key: Key): Key | null,

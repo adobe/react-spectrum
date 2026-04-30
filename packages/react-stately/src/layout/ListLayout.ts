@@ -696,8 +696,9 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let rect: Rect;
     if (target.dropPosition === 'before') {
       rect = this.orientation === 'horizontal' ?
-        new Rect(Math.max(0, layoutInfo.rect.x - this.dropIndicatorThickness / 2), layoutInfo.rect.y, this.dropIndicatorThickness, layoutInfo.rect.height)
-        : new Rect(layoutInfo.rect.x, Math.max(0, layoutInfo.rect.y - this.dropIndicatorThickness / 2), layoutInfo.rect.width, this.dropIndicatorThickness);
+        new Rect(layoutInfo.rect.x - this.dropIndicatorThickness / 2, layoutInfo.rect.y, this.dropIndicatorThickness, layoutInfo.rect.height)
+        : new Rect(layoutInfo.rect.x, layoutInfo.rect.y - this.dropIndicatorThickness / 2, layoutInfo.rect.width, this.dropIndicatorThickness);
+
     } else if (target.dropPosition === 'after') {
       // Render after last visible descendant of the drop target.
       let targetNode = this.collection.getItem(target.key);
@@ -715,6 +716,12 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
           currentKey = this.collection.getKeyAfter(currentKey);
         }
       }
+
+      // TODO: ideally the last drop indicator rect's "end" needs to match the virtualizer's height/width so that the appearance/disappearance of the drop indicator
+      // doesn't cause the height/width of the collection to increase
+      // Additionally, we'd only want to do this if the collection's height is flush with the scroll container, if you
+      // have ListView whose contents don't completely fill the height of the container, we are actually fine with having the full height drop indicator...
+      // Not a great way to do this it feels though...
       rect = this.orientation === 'horizontal' ?
         new Rect(layoutInfo.rect.maxX - this.dropIndicatorThickness / 2, layoutInfo.rect.y, this.dropIndicatorThickness, layoutInfo.rect.height)
         : new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY - this.dropIndicatorThickness / 2, layoutInfo.rect.width, this.dropIndicatorThickness);

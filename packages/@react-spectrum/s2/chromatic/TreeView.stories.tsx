@@ -15,7 +15,9 @@ import {ActionMenu} from '../src/ActionMenu';
 import {Collection} from 'react-aria/Collection';
 import {Content, Heading, Text} from '../src/Content';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
+import {DragBetweenTrees, Reorderable} from '../stories/TreeView.stories';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
+import {expect, userEvent} from 'storybook/test';
 import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
@@ -300,5 +302,45 @@ export const Empty: StoryObj<typeof TreeExampleDynamic> = {
   args: {
     renderEmptyState,
     items: []
+  }
+};
+
+type TreeStory = StoryObj<typeof TreeView>;
+
+export const InsertionIndicator: TreeStory = {
+  ...Reorderable,
+  play: async () => {
+    await userEvent.tab();
+    await userEvent.keyboard('[ArrowRight]');
+    await userEvent.keyboard('[ArrowRight]');
+    await userEvent.keyboard('[Enter]');
+    expect(document.activeElement).toHaveRole('button');
+    expect(document.activeElement).toHaveAttribute('aria-label', expect.stringContaining('Insert'));
+  }
+};
+
+export const RootDrop: TreeStory = {
+  ...DragBetweenTrees,
+  play: async () => {
+    await userEvent.tab();
+    await userEvent.keyboard('[ArrowRight]');
+    await userEvent.keyboard('[ArrowRight]');
+    await userEvent.keyboard('[Enter]');
+    await userEvent.keyboard('[Tab]');
+    expect(document.activeElement).toHaveRole('button');
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+  }
+};
+
+export const OnFolderDrop: TreeStory = {
+  ...Reorderable,
+  play: async () => {
+    await userEvent.tab();
+    await userEvent.keyboard('[ArrowRight]');
+    await userEvent.keyboard('[ArrowRight]');
+    await userEvent.keyboard('[Enter]');
+    await userEvent.keyboard('[ArrowDown]');
+    expect(document.activeElement).toHaveRole('button');
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Reports');
   }
 };

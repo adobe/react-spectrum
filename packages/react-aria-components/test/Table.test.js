@@ -210,6 +210,35 @@ let DraggableTable = (props) => {
   return <TestTable tableProps={{dragAndDropHooks}} />;
 };
 
+let DisabledRowDraggableTable = () => {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map((key) => ({'text/plain': String(key)})),
+    onReorder: () => {}
+  });
+  return (
+    <Table aria-label="Files" dragAndDropHooks={dragAndDropHooks}>
+      <MyTableHeader>
+        <MyColumn id="name" isRowHeader>Name</MyColumn>
+        <MyColumn>Type</MyColumn>
+      </MyTableHeader>
+      <TableBody>
+        <MyRow id="1" textValue="Games">
+          <Cell>Games</Cell>
+          <Cell>File folder</Cell>
+        </MyRow>
+        <MyRow id="2" textValue="Program Files" isDisabled>
+          <Cell>Program Files</Cell>
+          <Cell>File folder</Cell>
+        </MyRow>
+        <MyRow id="3" textValue="bootmgr">
+          <Cell>bootmgr</Cell>
+          <Cell>System file</Cell>
+        </MyRow>
+      </TableBody>
+    </Table>
+  );
+};
+
 let DraggableTableWithSelection = (props) => {
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
@@ -557,6 +586,18 @@ describe('Table', () => {
     expect(row).not.toHaveClass('hover');
     expect(onHoverEnd).toHaveBeenCalledTimes(1);
     expect(onHoverChange).toHaveBeenCalledTimes(2);
+  });
+
+  it('should show hover state on draggable rows even when not selectable/actionable', async () => {
+    let {getAllByRole} = render(
+      <DraggableTable />
+    );
+    let row = getAllByRole('row')[1];
+    expect(row).not.toHaveAttribute('data-hovered');
+    await user.hover(row);
+    expect(row).toHaveAttribute('data-hovered', 'true');
+    await user.unhover(row);
+    expect(row).not.toHaveAttribute('data-hovered');
   });
 
   it('should not show hover state when item is not interactive', async () => {
@@ -1411,6 +1452,21 @@ describe('Table', () => {
       act(() => jest.runAllTimers());
 
       expect(onReorder).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not skip drop positions before/after a disabled item', async () => {
+      render(<DisabledRowDraggableTable />);
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Games and Program Files');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Program Files and bootmgr');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after bootmgr');
+      await user.keyboard('{Escape}');
+      act(() => jest.runAllTimers());
     });
 
     it('should support dropping on rows', async () => {

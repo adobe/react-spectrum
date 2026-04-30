@@ -609,6 +609,18 @@ describe('Tree', () => {
       expect(row).not.toHaveClass('hover');
     });
 
+    it('should show hover state on draggable rows even when not selectable/actionable', async () => {
+      let {getAllByRole} = render(
+        <DraggableTree  />
+      );
+      let row = getAllByRole('row')[1];
+      expect(row).not.toHaveAttribute('data-hovered');
+      await user.hover(row);
+      expect(row).toHaveAttribute('data-hovered', 'true');
+      await user.unhover(row);
+      expect(row).not.toHaveAttribute('data-hovered');
+    });
+
     it('should not update the hover state if the row is not interactive', async () => {
       let onHoverStart = jest.fn();
       let onHoverChange = jest.fn();
@@ -1922,6 +1934,43 @@ describe('Tree', () => {
       act(() => jest.runAllTimers());
 
       expect(onReorder).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not skip drop positions before/after a disabled item', async () => {
+      let siblings = [
+        {id: 'cat', name: 'Cat'},
+        {id: 'dog', name: 'Dog'},
+        {id: 'kangaroo', name: 'Kangaroo'}
+      ];
+      let onReorder = jest.fn();
+      let FlatDraggableTree = () => {
+        let {dragAndDropHooks} = useDragAndDrop({
+          getItems: (keys) => [...keys].map((key) => ({'text/plain': key as string})),
+          onReorder
+        });
+        return (
+          <Tree aria-label="flat draggable tree" items={siblings} disabledKeys={['dog']} disabledBehavior="all" dragAndDropHooks={dragAndDropHooks}>
+            {(item: any) => (
+              <DynamicTreeItem supportsDragging childItems={item.childItems} textValue={item.name}>
+                {item.name}
+              </DynamicTreeItem>
+            )}
+          </Tree>
+        );
+      };
+      render(<FlatDraggableTree />);
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Dog and Kangaroo');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Kangaroo');
+      await user.keyboard('{Escape}');
+      act(() => jest.runAllTimers());
     });
 
     it('should support dropping on items', async () => {

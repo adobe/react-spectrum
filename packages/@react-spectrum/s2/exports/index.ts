@@ -56,7 +56,7 @@ export {Image, ImageContext} from '../src/Image';
 export {ImageCoordinator} from '../src/ImageCoordinator';
 export {InlineAlert, InlineAlertContext} from '../src/InlineAlert';
 export {Link, LinkContext} from '../src/Link';
-export {ListView, ListViewContext, ListViewItem} from '../src/ListView';
+export {ListView, ListViewContext, ListViewItem, ListViewDragPreview} from '../src/ListView';
 export {MenuItem, MenuTrigger, Menu, MenuSection, SubmenuTrigger, UnavailableMenuItemTrigger, MenuContext} from '../src/Menu';
 export {Meter, MeterContext} from '../src/Meter';
 export {NotificationBadge, NotificationBadgeContext} from '../src/NotificationBadge';
@@ -77,7 +77,7 @@ export {Skeleton, useIsSkeleton} from '../src/Skeleton';
 export {SkeletonCollection} from '../src/SkeletonCollection';
 export {StatusLight, StatusLightContext} from '../src/StatusLight';
 export {Switch, SwitchContext} from '../src/Switch';
-export {TableView, TableHeader, TableBody, Row, Cell, Column, TableContext, EditableCell, TableFooter} from '../src/TableView';
+export {TableView, TableHeader, TableBody, Row, Cell, Column, TableContext, EditableCell, TableViewDragPreview, TableFooter} from '../src/TableView';
 export {Tabs, TabList, Tab, TabPanel, TabsContext} from '../src/Tabs';
 export {TagGroup, Tag, TagGroupContext} from '../src/TagGroup';
 export {TextArea, TextField, TextAreaContext, TextFieldContext} from '../src/TextField';
@@ -86,7 +86,7 @@ export {ToastContainer, ToastQueue} from '../src/Toast';
 export {ToggleButton, ToggleButtonContext} from '../src/ToggleButton';
 export {ToggleButtonGroup, ToggleButtonGroupContext} from '../src/ToggleButtonGroup';
 export {Tooltip, TooltipTrigger} from '../src/Tooltip';
-export {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem} from '../src/TreeView';
+export {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem, TreeViewDragPreview} from '../src/TreeView';
 
 export {pressScale} from '../src/pressScale';
 
@@ -100,6 +100,8 @@ export {useLocale} from 'react-aria/I18nProvider';
 export {useListData} from 'react-stately/useListData';
 export {useTreeData} from 'react-stately/useTreeData';
 export {useAsyncList} from 'react-stately/useAsyncList';
+export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem} from 'react-aria/useDrop';
+export {useDragAndDrop} from 'react-aria-components/useDragAndDrop';
 
 export type {AccordionProps, AccordionItemProps, AccordionItemHeaderProps, AccordionItemTitleProps, AccordionItemPanelProps, AccordionItemState, AccordionItemRenderProps} from '../src/Accordion';
 export type {ActionBarProps} from '../src/ActionBar';
@@ -144,7 +146,7 @@ export type {InlineAlertProps} from '../src/InlineAlert';
 export type {ImageProps} from '../src/Image';
 export type {ImageCoordinatorProps} from '../src/ImageCoordinator';
 export type {LinkProps} from '../src/Link';
-export type {ListViewProps, ListViewItemProps} from '../src/ListView';
+export type {ListViewProps, ListViewItemProps, ListViewDragPreviewProps} from '../src/ListView';
 export type {MenuTriggerProps, MenuProps, MenuItemProps, MenuSectionProps, SubmenuTriggerProps, UnavailableMenuItemTriggerProps} from '../src/Menu';
 export type {MeterProps} from '../src/Meter';
 export type {NotificationBadgeProps} from '../src/NotificationBadge';
@@ -164,7 +166,7 @@ export type {SkeletonProps} from '../src/Skeleton';
 export type {SkeletonCollectionProps} from '../src/SkeletonCollection';
 export type {StatusLightProps} from '../src/StatusLight';
 export type {SwitchProps} from '../src/Switch';
-export type {TableViewProps, TableHeaderProps, TableBodyProps, RowProps, CellProps, ColumnProps, TableFooterProps} from '../src/TableView';
+export type {TableViewProps, TableHeaderProps, TableBodyProps, RowProps, CellProps, ColumnProps, TableViewDragPreviewProps, TableFooterProps} from '../src/TableView';
 export type {TabsProps, TabProps, TabListProps, TabPanelProps} from '../src/Tabs';
 export type {TagGroupProps, TagProps} from '../src/TagGroup';
 export type {TextFieldProps, TextAreaProps, TextFieldRef} from '../src/TextField';
@@ -173,7 +175,7 @@ export type {ToastOptions, ToastContainerProps} from '../src/Toast';
 export type {ToggleButtonProps} from '../src/ToggleButton';
 export type {ToggleButtonGroupProps} from '../src/ToggleButtonGroup';
 export type {TooltipProps} from '../src/Tooltip';
-export type {TreeViewProps, TreeViewItemProps, TreeViewItemContentProps, TreeViewLoadMoreItemProps} from '../src/TreeView';
+export type {TreeViewProps, TreeViewItemProps, TreeViewItemContentProps, TreeViewLoadMoreItemProps, TreeViewDragPreviewProps} from '../src/TreeView';
 export type {AutocompleteProps} from 'react-aria-components/Autocomplete';
 export type {DateValue, DateRange} from 'react-aria-components/RangeCalendar';
 export type {TimeValue} from 'react-aria-components/TimeField';
@@ -184,6 +186,8 @@ export type {ColorSpace, ColorChannel, Color, ColorFormat, ColorAxes, ColorChann
 export type {ListOptions, ListData} from 'react-stately/useListData';
 export type {TreeOptions, TreeData} from 'react-stately/useTreeData';
 export type {AsyncListOptions, AsyncListData, AsyncListLoadFunction, AsyncListLoadOptions, AsyncListStateUpdate} from 'react-stately/useAsyncList';
+export type {DragAndDropHooks, DragAndDropOptions} from 'react-aria-components/useDragAndDrop';
+export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-types/shared';
 
 export type {
   StylesProp,

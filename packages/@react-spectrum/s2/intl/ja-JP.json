@@ -31,6 +31,7 @@
   "slider.maximum": "最大",
   "slider.minimum": "最小",
   "table.cancel": "キャンセル",
+  "table.drag": "ドラッグ",
   "table.editCell": "セルを編集",
   "table.loading": "読み込み中...",
   "table.loadingMore": "さらに読み込み中...",

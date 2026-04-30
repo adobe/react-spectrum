@@ -19,14 +19,13 @@ import {Collection} from 'react-aria/Collection';
 import {Content, Heading, Text} from '../src/Content';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
-
+import {DroppableCollectionReorderEvent, Key} from '@react-types/shared';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
-
 import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {IllustratedMessage} from '../src/IllustratedMessage';
-import {Key} from '@react-types/shared';
+import {isTextDropItem, useDragAndDrop} from 'react-aria-components/useDragAndDrop';
 import {Link} from '../src/Link';
 import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -34,6 +33,7 @@ import React, {ReactElement, useCallback, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {
   TreeView,
+  TreeViewDragPreview,
   TreeViewItem,
   TreeViewItemContent,
   TreeViewItemProps,
@@ -43,6 +43,7 @@ import {
 } from '../src/TreeView';
 import {useAsyncList} from 'react-stately/useAsyncList';
 import {useListData} from 'react-stately/useListData';
+import {useTreeData} from 'react-stately/useTreeData';
 
 let onActionFunc = action('onAction');
 let noOnAction = undefined;
@@ -398,7 +399,7 @@ let rows: TreeViewItemType[] = [
       {id: 'reports-1C', name: 'Reports 1C', icon: <FileTxt />}
     ]},
     {id: 'reports-2', name: 'Reports 2', icon: <FileTxt />},
-    ...Array.from({length: 100}, (_, i) => ({id: `reports-repeat-${i}`, name: `Reports ${i}`, icon: <FileTxt />}))
+    ...Array.from({length: 100}, (_, i) => ({id: `reports-repeat-${i + 3}`, name: `Reports ${i + 3}`, icon: <FileTxt />}))
   ]}
 ];
 
@@ -926,4 +927,275 @@ export const WithActionBarEmphasized: StoryObj<typeof ActionBarEmphasizedExample
     selectionMode: 'multiple'
   },
   name: 'with ActionBar (emphasized)'
+};
+
+function CustomDragPreview(props) {
+  let {items, parentList} = props;
+  let id = items[0].id;
+  let item = parentList.getItem(id);
+  return (
+    <TreeViewDragPreview {...props}>
+      {item.value.icon}
+      <Text>{item.value.name}</Text>
+    </TreeViewDragPreview>
+  );
+}
+
+function ReorderableTree(props: TreeViewProps<any>) {
+  let treeData = useTreeData<TreeViewItemType>({
+    initialItems: rows,
+    getKey: item => item.id as Key,
+    getChildren: item => item.childItems as TreeViewItemType[]
+  });
+
+  let processItem = (item) => ({
+    ...item.value,
+    id: item.key,
+    childItems: item.children ? item.children.map(processItem) : []
+  });
+
+  let items = treeData.items.map(processItem);
+
+  let getItems = (keys) => [...keys].map(key => {
+    let item = treeData.getItem(key)!;
+
+    let serializeItem = (nodeItem) => ({
+      ...nodeItem.value,
+      childItems: nodeItem.children ? [...nodeItem.children].map(serializeItem) : []
+    });
+
+    return {
+      id: item.value.id!.toString(),
+      'text/plain': item.value.name,
+      'tree-item': JSON.stringify(serializeItem(item))
+    };
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems,
+    getAllowedDropOperations: () => ['move'],
+    onMove(e: DroppableCollectionReorderEvent) {
+      try {
+        if (e.target.dropPosition === 'before') {
+          treeData.moveBefore(e.target.key, e.keys);
+        } else if (e.target.dropPosition === 'after') {
+          treeData.moveAfter(e.target.key, e.keys);
+        } else if (e.target.dropPosition === 'on') {
+          let targetNode = treeData.getItem(e.target.key);
+          if (targetNode) {
+            let targetIndex = targetNode.children ? targetNode.children.length : 0;
+            let keyArray = Array.from(e.keys);
+            for (let i = 0; i < keyArray.length; i++) {
+              treeData.move(keyArray[i], e.target.key, targetIndex + i);
+            }
+          } else {
+            console.error('Target node not found for drop on:', e.target.key);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    renderDragPreview: (items) => <CustomDragPreview parentList={treeData} items={items} />
+  });
+
+  return (
+    <TreeView
+      {...props}
+      styles={style({width: 300, height: 300})}
+      aria-label="Reorderable tree"
+      items={items}
+      dragAndDropHooks={dragAndDropHooks}>
+      {(item) => (
+        <DynamicTreeItem
+          id={item.id}
+          icon={item.icon}
+          childItems={item.childItems}
+          textValue={item.name}
+          name={item.name} />
+      )}
+    </TreeView>
+  );
+}
+
+export const Reorderable: StoryObj<typeof ReorderableTree> = {
+  render: (args) => <ReorderableTree {...args} />,
+  name: 'Drag and drop reordering'
+};
+
+function BetweenTrees(props: TreeViewProps<any>) {
+  let treeData1 = useTreeData<TreeViewItemType>({
+    initialItems: rows,
+    getKey: item => item.id as Key,
+    getChildren: item => item.childItems as TreeViewItemType[]
+  });
+
+  let treeData2 = useTreeData<TreeViewItemType>({
+    initialItems: [],
+    getKey: item => item.id as Key,
+    getChildren: item => item.childItems as TreeViewItemType[]
+  });
+
+  let processItem = (item) => ({
+    ...item.value,
+    id: item.key,
+    childItems: item.children ? item.children.map(processItem) : []
+  });
+
+  let serializeNode = (node) => ({
+    ...node.value,
+    // can't serialize icons so need to do this approach
+    icon: undefined,
+    iconType: node.value.icon?.type === Folder ? 'folder' : 'file',
+    childItems: node.children ? [...node.children].map(serializeNode) : []
+  });
+
+  let processIncomingItems = async (e) => {
+    let convertItem = (i) => ({
+      ...i,
+      id: Math.random().toString(36),
+      icon: i.iconType === 'folder' ? <Folder /> : <FileTxt />,
+      childItems: i.childItems?.map(convertItem)
+    });
+    let textItems = e.items.filter(isTextDropItem);
+    let parsedItems: any[] = [];
+    for (let item of textItems) {
+      if (item.types.has('tree-item')) {
+        parsedItems.push(JSON.parse(await item.getText('tree-item')));
+      } else if (item.types.size === 1 && item.types.has('text/plain')) {
+        // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+        // Multiple drag items are contained in a single string so we need to split them out
+        let text = await item.getText('text/plain');
+        parsedItems = text.split('\n').map(val => JSON.parse(val));
+        break;
+      }
+    }
+    return parsedItems.map(convertItem);
+  };
+
+  let makeOnMove = (treeData) => (e: DroppableCollectionReorderEvent) => {
+    try {
+      if (e.target.dropPosition === 'before') {
+        treeData.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        treeData.moveAfter(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'on') {
+        let targetNode = treeData.getItem(e.target.key);
+        if (targetNode) {
+          let targetIndex = targetNode.children ? targetNode.children.length : 0;
+          let keyArray = Array.from(e.keys);
+          for (let i = 0; i < keyArray.length; i++) {
+            treeData.move(keyArray[i], e.target.key, targetIndex + i);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  let makeDropHandlers = (treeData) => ({
+    acceptedDragTypes: ['tree-item', 'text/plain'] as string[],
+    async onInsert(e) {
+      let items = await processIncomingItems(e);
+      if (e.target.dropPosition === 'before') {
+        treeData.insertBefore(e.target.key, ...items);
+      } else if (e.target.dropPosition === 'after') {
+        treeData.insertAfter(e.target.key, ...items);
+      }
+    },
+    async onItemDrop(e) {
+      let items = await processIncomingItems(e);
+      treeData.insert(e.target.key, 0, ...items);
+    },
+    async onRootDrop(e) {
+      let items = await processIncomingItems(e);
+      treeData.insert(null, 0, ...items);
+    }
+  });
+
+  let makeGetItems = (treeData) => (keys) => [...keys].map(key => {
+    let item = treeData.getItem(key)!;
+    let serialized = JSON.stringify(serializeNode(item));
+    return {
+      id: item.value.id!.toString(),
+      'text/plain': serialized,
+      'tree-item': serialized
+    };
+  });
+
+  let {dragAndDropHooks: dragHooksTree1} = useDragAndDrop({
+    getItems: makeGetItems(treeData1),
+    getAllowedDropOperations: () => ['move', 'copy'],
+    onDragEnd(e) {
+      if (e.dropOperation === 'move' && !e.isInternal) {
+        treeData1.remove(...e.keys);
+      }
+    },
+    onMove: makeOnMove(treeData1),
+    ...makeDropHandlers(treeData1),
+    renderDragPreview: (items) => <CustomDragPreview parentList={treeData1} items={items} />
+  });
+
+  let {dragAndDropHooks: dragHooksTree2} = useDragAndDrop({
+    getItems: makeGetItems(treeData2),
+    getAllowedDropOperations: () => ['move', 'copy'],
+    onDragEnd(e) {
+      if (e.dropOperation === 'move' && !e.isInternal) {
+        treeData2.remove(...e.keys);
+      }
+    },
+    onMove: makeOnMove(treeData2),
+    ...makeDropHandlers(treeData2),
+    renderDragPreview: (items) => <CustomDragPreview parentList={treeData2} items={items} />
+  });
+
+  let items1 = treeData1.items.map(processItem);
+  let items2 = treeData2.items.map(processItem);
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <TreeView
+        {...props}
+        styles={style({width: 300, height: 300})}
+        aria-label="first draggable tree"
+        items={items1}
+        dragAndDropHooks={dragHooksTree1}>
+        {(item) => (
+          <DynamicTreeItem
+            id={item.id}
+            icon={item.icon}
+            childItems={item.childItems}
+            textValue={item.name}
+            name={item.name} />
+        )}
+      </TreeView>
+      <TreeView
+        {...props}
+        styles={style({width: 300, height: 300})}
+        renderEmptyState={renderEmptyState}
+        aria-label="second draggable tree"
+        items={items2}
+        dragAndDropHooks={dragHooksTree2}>
+        {(item) => (
+          <DynamicTreeItem
+            id={item.id}
+            icon={item.icon}
+            childItems={item.childItems}
+            textValue={item.name}
+            name={item.name} />
+        )}
+      </TreeView>
+    </div>
+  );
+}
+
+export const DragBetweenTrees: StoryObj<typeof BetweenTrees> = {
+  render: (args) => <BetweenTrees {...args} />,
+  name: 'Drag between trees',
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
 };

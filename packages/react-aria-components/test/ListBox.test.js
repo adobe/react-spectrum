@@ -443,6 +443,18 @@ describe('ListBox', () => {
     expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
   });
 
+  it('should show hover state on draggable options even when not selectable/actionable', async () => {
+    let {getAllByRole} = render(
+      <DraggableListBox selectionMode="none" />
+    );
+    let option = getAllByRole('option')[0];
+    expect(option).not.toHaveAttribute('data-hovered');
+    await user.hover(option);
+    expect(option).toHaveAttribute('data-hovered', 'true');
+    await user.unhover(option);
+    expect(option).not.toHaveAttribute('data-hovered');
+  });
+
   it('should not show hover state when item is not interactive', async () => {
     let onHoverStart = jest.fn();
     let onHoverChange = jest.fn();
@@ -1137,6 +1149,28 @@ describe('ListBox', () => {
       act(() => jest.runAllTimers());
 
       expect(onReorder).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not skip drop positions before/after a disabled item', async () => {
+      let onReorder = jest.fn();
+      let {getAllByRole} = render(<DraggableListBox disabledKeys={['dog']} onReorder={onReorder} />);
+      let option = getAllByRole('option')[0];
+      fireEvent.keyDown(option, {key: 'Enter'});
+      fireEvent.keyUp(option, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Cat');
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Dog and Kangaroo');
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Kangaroo');
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+      act(() => jest.runAllTimers());
     });
 
     it('should support dropping on options', () => {

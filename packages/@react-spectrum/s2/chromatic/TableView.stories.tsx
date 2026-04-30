@@ -13,6 +13,8 @@
 import {action} from 'storybook/actions';
 import {Cell, Column, Row, TableBody, TableHeader, TableView, TableViewProps} from '../src/TableView';
 import {Content, Heading} from '../src/Content';
+import {DragAndDropReorder, DragBetweenTables} from '../stories/TableView.stories';
+import {expect, userEvent} from 'storybook/test';
 import {FixedColumnWidths} from '../../../react-aria-components/stories/Table.stories';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {IllustratedMessage} from '../src/IllustratedMessage';
@@ -511,5 +513,44 @@ export const RACFixedWidth = {
       scales: ['medium'],
       colorSchemes: ['light']
     }
+  }
+};
+
+type TableStory = StoryObj<typeof TableView>;
+
+export const InsertionIndicator: TableStory = {
+  ...DragAndDropReorder,
+  play: async () => {
+    await userEvent.tab();
+    await userEvent.keyboard('[ArrowRight]');
+    await userEvent.keyboard('[Enter]');
+    expect(document.activeElement).toHaveRole('button');
+    expect(document.activeElement).toHaveAttribute('aria-label', expect.stringContaining('Insert between'));
+  }
+};
+
+export const RootDrop: TableStory = {
+  ...DragBetweenTables,
+  play: async () => {
+    await userEvent.tab();
+    await userEvent.keyboard('[ArrowRight]');
+    await userEvent.keyboard('[Enter]');
+    await userEvent.keyboard('[Tab]');
+    expect(document.activeElement).toHaveRole('button');
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+  }
+};
+
+export const OnFolderDrop: TableStory = {
+  ...DragBetweenTables,
+  play: async () => {
+    await userEvent.tab();
+    await userEvent.keyboard('[ArrowRight]');
+    await userEvent.keyboard('[Enter]');
+    await userEvent.keyboard('[Tab]');
+    await userEvent.keyboard('[ArrowDown]');
+    await userEvent.keyboard('[ArrowDown]');
+    expect(document.activeElement).toHaveRole('button');
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Pictures');
   }
 };
