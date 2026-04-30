@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {isMac} from './platform';
+import {isMac} from '@react-aria/utils';
 import {KeyboardEvent} from '@react-types/shared';
 
 export type KeyboardShortcutAction = (e: KeyboardEvent) => (boolean | Partial<{shouldContinuePropagation?: boolean, shouldPreventDefault?: boolean}>);
@@ -25,8 +25,8 @@ const MODIFIER_NAMES = new Set([
   'ctrl',
   'control',
   'meta',
-  'mod',
-  'sel'
+  'mod', // OS dependent - Cmd on Mac, Ctrl on Windows/Linux
+  'sel' // OS dependent - Alt on Mac, Ctrl on Windows/Linux
 ]);
 
 /** Canonical modifier order for stable keys (sorted, fixed order). */
@@ -42,14 +42,6 @@ export interface ParsedKeyboardShortcut {
   /** Platform secondary: Alt on Mac, Ctrl on Windows/Linux. */
   sel: boolean,
   key: string
-}
-
-function addModExpansion(set: Set<string>): void {
-  set.add(isMac() ? 'Meta' : 'Ctrl');
-}
-
-function addSelExpansion(set: Set<string>): void {
-  set.add(isMac() ? 'Alt' : 'Ctrl');
 }
 
 /**
@@ -71,10 +63,10 @@ export function modifierSetFromParsed(parsed: ParsedKeyboardShortcut): Set<strin
     set.add('Meta');
   }
   if (parsed.mod) {
-    addModExpansion(set);
+    set.add(isMac() ? 'Meta' : 'Ctrl');
   }
-  if (parsed.sel) {
-    addSelExpansion(set);
+  if (parsed.sel) { // Todo: I think there was a conflict or difference in behaviour in the original code based on this.
+    set.add(isMac() ? 'Alt' : 'Ctrl');
   }
   return set;
 }
@@ -85,14 +77,14 @@ export function modifierSetFromEvent(e: KeyboardEvent): Set<string> {
   if (e.altKey) {
     set.add('Alt');
   }
-  if (e.shiftKey) {
-    set.add('Shift');
-  }
   if (e.ctrlKey) {
     set.add('Ctrl');
   }
   if (e.metaKey) {
     set.add('Meta');
+  }
+  if (e.shiftKey) {
+    set.add('Shift');
   }
   return set;
 }
@@ -101,60 +93,36 @@ function sortedModifierTokens(set: Set<string>): string[] {
   return CANONICAL_MODIFIER_ORDER.filter(name => set.has(name));
 }
 
-function setsEqual(a: Set<string>, b: Set<string>): boolean {
-  if (a.size !== b.size) {
-    return false;
-  }
-  for (let x of a) {
-    if (!b.has(x)) {
-      return false;
-    }
-  }
-  return true;
-}
-
 /**
  * Parses a shortcut like `"Mod+Shift+z"`, `"Ctrl+Alt+Enter"`, or `"Escape"`.
  * Modifiers are case-insensitive; order does not matter. `control` is an alias for `ctrl`.
  */
 export function parseKeyboardShortcut(spec: string): ParsedKeyboardShortcut {
-  let parts = spec.split('+').map(p => p.trim()).filter(Boolean);
-  if (parts.length === 0) {
-    throw new Error(`Invalid keyboard shortcut: "${spec}"`);
-  }
-  let shift = false;
-  let alt = false;
-  let ctrl = false;
-  let meta = false;
-  let mod = false;
-  let sel = false;
-  let keySegments: string[] = [];
-  for (let part of parts) {
+  let parts = spec.split('+').reduce<ParsedKeyboardShortcut>((prev, part) => {
     let lower = part.toLowerCase();
     if (MODIFIER_NAMES.has(lower)) {
       if (lower === 'shift') {
-        shift = true;
+        prev.shift = true;
       } else if (lower === 'alt') {
-        alt = true;
+        prev.alt = true;
       } else if (lower === 'ctrl' || lower === 'control') {
-        ctrl = true;
+        prev.ctrl = true;
       } else if (lower === 'meta') {
-        meta = true;
+        prev.meta = true;
       } else if (lower === 'mod') {
-        mod = true;
+        prev.mod = true;
       } else if (lower === 'sel') {
-        sel = true;
+        prev.sel = true;
       }
     } else {
-      keySegments.push(part);
+      prev.key = part;
     }
+    return prev;
+  }, {shift: false, alt: false, ctrl: false, meta: false, mod: false, sel: false, key: ''});
+  if (parts.key === '') {
+    throw new Error(`Invalid keyboard shortcut: "${spec}". Must include exactly one non-modifier key (e.g. "a", "Enter", "ArrowDown"). Combine any of Shift, Alt, Ctrl, Meta, and Mod.`);
   }
-  if (keySegments.length !== 1) {
-    throw new Error(
-      `Invalid keyboard shortcut "${spec}": include exactly one non-modifier key (e.g. "a", "Enter", "ArrowDown"). Combine any of Shift, Alt, Ctrl, Meta, and Mod.`
-    );
-  }
-  return {shift, alt, ctrl, meta, mod, sel, key: keySegments[0]};
+  return parts;
 }
 
 function normalizeEventKey(key: string): string {
@@ -195,26 +163,6 @@ export function keyboardEventToCanonicalShortcut(e: KeyboardEvent): string {
   let key = normalizeEventKey(e.key);
   let prefix = mods.length > 0 ? `${mods.join('+')}+` : '';
   return prefix + key;
-}
-
-/**
- * True if the event’s modifiers and key exactly match the parsed shortcut.
- * `Mod` in the shortcut is satisfied by the platform primary key (Meta on Mac, Ctrl elsewhere).
- */
-export function keyboardEventMatchesShortcut(
-  e: KeyboardEvent,
-  parsed: ParsedKeyboardShortcut
-): boolean {
-  if (!setsEqual(modifierSetFromEvent(e), modifierSetFromParsed(parsed))) {
-    return false;
-  }
-  let k = canonicalKeyFromSpecKey(parsed.key);
-  let ev = normalizeEventKey(e.key);
-  let aliased = KEY_ALIASES[k];
-  if (aliased != null) {
-    return ev === aliased;
-  }
-  return ev === k;
 }
 
 /**

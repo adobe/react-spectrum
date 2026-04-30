@@ -11,8 +11,9 @@
  */
 
 import {createEventHandler} from './createEventHandler';
-import {createKeyboardShortcutHandler, getEventTarget, KeyboardShortcutBindings, nodeContains} from '@react-aria/utils';
+import {createKeyboardShortcutHandler, KeyboardShortcutBindings} from './createKeyboardShortcutHandler';
 import {DOMAttributes, KeyboardEvents} from '@react-types/shared';
+import {getEventTarget, nodeContains} from '@react-aria/utils';
 import {KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 
 export interface KeyboardProps extends KeyboardEvents {
