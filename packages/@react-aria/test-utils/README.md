@@ -62,6 +62,7 @@ Below is a list of the ARIA patterns supported by `createTester`. See the accomp
 
 - [CheckboxGroup](https://react-aria.adobe.com/CheckboxGroup/testing)
 - [ComboBox](https://react-aria.adobe.com/ComboBox/testing)
+- Dialog via [Modal](https://react-aria.adobe.com/Modal/testing) / [Popover](https://react-aria.adobe.com/Popover/testing)
 - [GridList](https://react-aria.adobe.com/GridList/testing)
 - [ListBox](https://react-aria.adobe.com/ListBox/testing)
 - [Menu](https://react-aria.adobe.com/Menu/testing)
