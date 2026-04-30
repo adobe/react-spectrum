@@ -83,6 +83,10 @@ const CUSTOM_SKILL_CONTENT = {
       path.join(
         REPO_ROOT,
         'packages/dev/s2-docs/skills/react-spectrum-s2/implementation-guidance.md'
+      ),
+      path.join(
+        REPO_ROOT,
+        'packages/dev/s2-docs/skills/react-spectrum-s2/test-utils-guidance.md'
       )
     ],
     guideEntries: [
@@ -96,6 +100,14 @@ const CUSTOM_SKILL_CONTENT = {
         description:
           'How to choose the right S2 component when requirements do not name one explicitly.'
       }
+    ]
+  },
+  'react-aria': {
+    embeddedMarkdownPaths: [
+      path.join(
+        REPO_ROOT,
+        'packages/dev/s2-docs/skills/react-aria/test-utils-guidance.md'
+      )
     ]
   }
 };
@@ -384,7 +396,8 @@ function generateDocsSkillMd(skillConfig, categories, isS2) {
   const customSkillNotesMarkdown = getCustomSkillNotesMarkdown(skillConfig.name);
   const embeddedCustomMarkdown = readCustomEmbeddedMarkdown(skillConfig.name, {
     '{{guidesBase}}': 'references/guides/',
-    '{{componentsBase}}': 'references/components/'
+    '{{componentsBase}}': 'references/components/',
+    '{{testingBase}}': 'references/testing/'
   });
 
   let content = generateFrontmatter(skillConfig);
