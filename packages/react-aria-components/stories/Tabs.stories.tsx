@@ -28,12 +28,12 @@ export default {
 
 export type TabsStory = StoryFn<typeof Tabs>;
 
-export const TabsExample: TabsStory = () => {
+export const TabsExample: TabsStory = (props) => {
   let [url, setUrl] = useState('/FoR');
 
   return (
     <RouterProvider navigate={setUrl}>
-      <Tabs selectedKey={url}>
+      <Tabs selectedKey={url} onSelectionChange={console.log} {...props}>
         <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
           <CustomTab id="/FoR" href="/FoR">Founding of Rome</CustomTab>
           <CustomTab id="/MaR" href="/MaR">Monarchy and Republic</CustomTab>

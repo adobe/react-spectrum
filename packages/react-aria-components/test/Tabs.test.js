@@ -480,7 +480,8 @@ describe('Tabs', () => {
   });
 
   it('should support tabs as links', async function () {
-    let {getAllByRole} = render(<TabsExample />);
+    let onSelectionChange = jest.fn();
+    let {getAllByRole} = render(<TabsExample onSelectionChange={onSelectionChange} />);
 
     let tabs = getAllByRole('tab');
     expect(tabs[0].tagName).toBe('A');
@@ -496,6 +497,7 @@ describe('Tabs', () => {
 
     fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
     expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
+    expect(onSelectionChange).toHaveBeenCalledTimes(0);
   });
 
   it('should navigate linked tabs on click rather than mouse down', async function () {

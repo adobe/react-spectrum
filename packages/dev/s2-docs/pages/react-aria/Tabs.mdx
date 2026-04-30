@@ -187,6 +187,8 @@ function Example() {
 ### Links
 
 Use the `href` prop on a `<Tab>` to create a link. By default, links are rendered as an `<a>` element. Use the `render` prop to integrate your framework's link component.
+By default, links perform native browser navigation. However, you'll usually want to synchronize the selected tab with the URL from your client side router or the `window.location`.
+Tabs that are links do not participate in selection, so onSelectionChange will not be called when a link is selected.
 
 ```tsx
 <Tab
