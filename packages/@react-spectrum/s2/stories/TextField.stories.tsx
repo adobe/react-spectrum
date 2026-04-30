@@ -11,11 +11,11 @@
  */
 
 import {Button} from '../src/Button';
-
 import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
 import {Form} from '../src/Form';
 import {Link} from '../src/Link';
+import MentionIcon from '../s2wf-icons/S2_Icon_Mention_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 import {TextArea, TextField} from '../src/TextField';
@@ -172,5 +172,34 @@ export const FormCustomWidth: StoryTextField = {
     docs: {
       disable: true
     }
+  }
+};
+
+export const TextFieldWithAddons: StoryTextField = {
+  render: (args) => (
+    <Form>
+      <TextField {...args} label="Phone Number" prefix="#" placeholder="(000) 000-0000" />
+      <TextField {...args} label="URL" prefix="https://" placeholder="example.com" />
+      <TextField {...args} label="Mention" prefix={<MentionIcon />} placeholder="username" />
+      <Button type="submit" variant="primary">Submit</Button>
+    </Form>
+  ),
+  args: {
+    ...Example.args,
+    isRequired: true
+  }
+};
+
+export const TextAreaWithAddons: StoryTextArea = {
+  render: (args) => (
+    <Form>
+      <TextArea {...args} label="Phone Number" prefix="#" placeholder="(000) 000-0000" />
+      <TextArea {...args} label="Mention" prefix={<MentionIcon />} placeholder="username" />
+      <Button type="submit" variant="primary">Submit</Button>
+    </Form>
+  ),
+  args: {
+    ...TextAreaExample.args,
+    isRequired: true
   }
 };
