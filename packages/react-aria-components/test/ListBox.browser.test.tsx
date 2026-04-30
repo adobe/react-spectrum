@@ -16,10 +16,8 @@ import React from 'react';
 import {render} from 'vitest-browser-react';
 import {User} from '@react-aria/test-utils';
 
-it('can do grid navigation in browser test', async () => {
-  let testUtilUser = new User({interactionType: 'keyboard'});
-
-  let {container} = await render(
+function GridListBox() {
+  return (
     <ListBox
       layout="grid"
       aria-label="Test"
@@ -36,13 +34,20 @@ it('can do grid navigation in browser test', async () => {
       <ListBoxItem>2,2</ListBoxItem>
     </ListBox>
   );
+}
+
+it.each`
+  interactionType
+  ${'mouse'}
+  ${'keyboard'}
+`('selects an option via $interactionType in real browser grid layout', async ({interactionType}) => {
+  let testUtilUser = new User();
+  let {container} = await render(<GridListBox />);
 
   let listbox = container.querySelector('[role=listbox]') as HTMLElement;
-  let tester = testUtilUser.createTester('ListBox', {root: listbox, interactionType: 'keyboard', layout: 'grid'});
+  let tester = testUtilUser.createTester('ListBox', {root: listbox, layout: 'grid', interactionType});
 
   let options = tester.options();
-  expect(options).toHaveLength(9);
-
   await tester.toggleOptionSelection({option: options[5]});
   expect(options[5].getAttribute('aria-selected')).toBe('true');
   expect(document.activeElement).toBe(options[5]);

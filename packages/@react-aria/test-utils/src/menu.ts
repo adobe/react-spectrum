@@ -11,8 +11,8 @@
  */
 
 import {act} from './act';
-import {MenuTesterOpts, UserOpts} from './types';
 import {formatTargetNode, triggerLongPress} from './utils';
+import {MenuTesterOpts, UserOpts} from './types';
 import {waitFor, within} from '@testing-library/dom';
 
 interface MenuOpenOpts {

@@ -10,43 +10,53 @@
  * governing permissions and limitations under the License.
  */
 
-import {describe, expect, it} from 'vitest';
+import {expect, it} from 'vitest';
 import {GridList, GridListItem} from '../src/GridList';
 import React from 'react';
 import {render} from 'vitest-browser-react';
 import {User} from '@react-aria/test-utils';
 
-describe('GridList grid keyboard navigation in real browser', () => {
-  it('navigates to a target row using real CSS grid layout', async () => {
-    let testUtilUser = new User({interactionType: 'keyboard'});
+function Grid() {
+  return (
+    <GridList
+      layout="grid"
+      aria-label="Test"
+      selectionMode="single"
+      style={{display: 'grid', gridTemplateColumns: 'repeat(3, 100px)', gridAutoRows: '40px'}}>
+      <GridListItem>0,0</GridListItem>
+      <GridListItem>0,1</GridListItem>
+      <GridListItem>0,2</GridListItem>
+      <GridListItem>1,0</GridListItem>
+      <GridListItem>1,1</GridListItem>
+      <GridListItem>1,2</GridListItem>
+      <GridListItem>2,0</GridListItem>
+      <GridListItem>2,1</GridListItem>
+      <GridListItem>2,2</GridListItem>
+    </GridList>
+  );
+}
 
-    let {container} = await render(
-      <GridList
-        layout="grid"
-        aria-label="Test"
-        selectionMode="single"
-        style={{display: 'grid', gridTemplateColumns: 'repeat(3, 100px)', gridAutoRows: '40px'}}>
-        <GridListItem id="0,0">0,0</GridListItem>
-        <GridListItem id="0,1">0,1</GridListItem>
-        <GridListItem id="0,2">0,2</GridListItem>
-        <GridListItem id="1,0">1,0</GridListItem>
-        <GridListItem id="1,1">1,1</GridListItem>
-        <GridListItem id="1,2">1,2</GridListItem>
-        <GridListItem id="2,0">2,0</GridListItem>
-        <GridListItem id="2,1">2,1</GridListItem>
-        <GridListItem id="2,2">2,2</GridListItem>
-      </GridList>
-    );
+it.each`
+  interactionType
+  ${'mouse'}
+  ${'keyboard'}
+`('selects a row via $interactionType in real browser grid layout', async ({interactionType}) => {
+  let testUtilUser = new User();
+  let {container} = await render(<Grid />);
 
-    let gridlist = container.querySelector('[role=grid]') as HTMLElement;
-    let tester = testUtilUser.createTester('GridList', {root: gridlist, interactionType: 'keyboard', layout: 'grid'});
+  let gridlist = container.querySelector('[role=grid]') as HTMLElement;
+  let tester = testUtilUser.createTester('GridList', {root: gridlist, layout: 'grid', interactionType});
 
-    let rows = tester.rows();
-    expect(rows).toHaveLength(9);
+  let rows = tester.rows();
+  await tester.toggleRowSelection({row: rows[5]});
+  expect(rows[5].getAttribute('aria-selected')).toBe('true');
+  expect(document.activeElement).toBe(rows[5]);
 
-    await tester.toggleRowSelection({row: rows[5], checkboxSelection: false});
+  await tester.toggleRowSelection({row: rows[0]});
+  expect(rows[0].getAttribute('aria-selected')).toBe('true');
+  expect(document.activeElement).toBe(rows[0]);
 
-    expect(rows[5].getAttribute('aria-selected')).toBe('true');
-    expect(document.activeElement).toBe(rows[5]);
-  });
+  await tester.toggleRowSelection({row: rows[8]});
+  expect(rows[8].getAttribute('aria-selected')).toBe('true');
+  expect(document.activeElement).toBe(rows[8]);
 });
