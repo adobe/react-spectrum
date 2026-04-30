@@ -15,3 +15,316 @@ v3:
   - changed-files:
     - any-glob-to-any-file: '**/@react-spectrum/**'
     - all-globs-to-all-files: '!**/@react-spectrum/s2/**'
+
+Accordion:
+- changed-files:
+  - any-glob-to-any-file: '**/Accordion.tsx'
+
+ActionBar:
+- changed-files:
+  - any-glob-to-any-file: '**/ActionBar.tsx'
+
+ActionButton:
+- changed-files:
+  - any-glob-to-any-file: '**/ActionButton.tsx'
+
+ActionButtonGroup:
+- changed-files:
+  - any-glob-to-any-file: '**/ActionButtonGroup.tsx'
+
+ActionMenu:
+- changed-files:
+  - any-glob-to-any-file: '**/ActionMenu.tsx'
+
+Autocomplete:
+- changed-files:
+  - any-glob-to-any-file: '**/Autocomplete.tsx'
+
+Avatar:
+- changed-files:
+  - any-glob-to-any-file: '**/Avatar.tsx'
+
+AvatarGroup:
+- changed-files:
+  - any-glob-to-any-file: '**/AvatarGroup.tsx'
+
+Badge:
+- changed-files:
+  - any-glob-to-any-file: '**/Badge.tsx'
+
+Breadcrumbs:
+- changed-files:
+  - any-glob-to-any-file: '**/Breadcrumbs.tsx'
+
+Button:
+- changed-files:
+  - any-glob-to-any-file: '**/Button.tsx'
+
+ButtonGroup:
+- changed-files:
+  - any-glob-to-any-file: '**/ButtonGroup.tsx'
+
+Calendar:
+- changed-files:
+  - any-glob-to-any-file: '**/Calendar.tsx'
+
+Card:
+- changed-files:
+  - any-glob-to-any-file: '**/Card.tsx'
+
+CardView:
+- changed-files:
+  - any-glob-to-any-file: '**/CardView.tsx'
+
+Checkbox:
+- changed-files:
+  - any-glob-to-any-file: '**/Checkbox.tsx'
+
+CheckboxGroup:
+- changed-files:
+  - any-glob-to-any-file: '**/CheckboxGroup.tsx'
+
+ColorArea:
+- changed-files:
+  - any-glob-to-any-file: '**/ColorArea.tsx'
+
+ColorField:
+- changed-files:
+  - any-glob-to-any-file: '**/ColorField.tsx'
+
+ColorPicker:
+- changed-files:
+  - any-glob-to-any-file: '**/ColorPicker.tsx'
+
+ColorSlider:
+- changed-files:
+  - any-glob-to-any-file: '**/ColorSlider.tsx'
+
+ColorSwatch:
+- changed-files:
+  - any-glob-to-any-file: '**/ColorSwatch.tsx'
+
+ColorSwatchPicker:
+- changed-files:
+  - any-glob-to-any-file: '**/ColorSwatchPicker.tsx'
+
+ColorWheel:
+- changed-files:
+  - any-glob-to-any-file: '**/ColorWheel.tsx'
+
+ComboBox:
+- changed-files:
+  - any-glob-to-any-file: '**/ComboBox.tsx'
+
+ContextualHelp:
+- changed-files:
+  - any-glob-to-any-file: '**/ContextualHelp.tsx'
+
+DateField:
+- changed-files:
+  - any-glob-to-any-file: '**/DateField.tsx'
+
+DatePicker:
+- changed-files:
+  - any-glob-to-any-file: '**/DatePicker.tsx'
+
+DateRangePicker:
+- changed-files:
+  - any-glob-to-any-file: '**/DateRangePicker.tsx'
+
+Dialog:
+- changed-files:
+  - any-glob-to-any-file: '**/Dialog.tsx'
+
+Disclosure:
+- changed-files:
+  - any-glob-to-any-file: '**/Disclosure.tsx'
+
+DisclosureGroup:
+- changed-files:
+  - any-glob-to-any-file: '**/DisclosureGroup.tsx'
+
+Divider:
+- changed-files:
+  - any-glob-to-any-file: '**/Divider.tsx'
+
+DropZone:
+- changed-files:
+  - any-glob-to-any-file: '**/DropZone.tsx'
+
+FileTrigger:
+- changed-files:
+  - any-glob-to-any-file: '**/FileTrigger.tsx'
+
+Form:
+- changed-files:
+  - any-glob-to-any-file: '**/Form.tsx'
+
+GridList:
+- changed-files:
+  - any-glob-to-any-file: '**/GridList.tsx'
+
+Group:
+- changed-files:
+  - any-glob-to-any-file: '**/Group.tsx'
+
+I18nProvider:
+- changed-files:
+  - any-glob-to-any-file: '**/I18nProvider.tsx'
+
+IllustratedMessage:
+- changed-files:
+  - any-glob-to-any-file: '**/IllustratedMessage.tsx'
+
+Image:
+- changed-files:
+  - any-glob-to-any-file: '**/Image.tsx'
+
+InlineAlert:
+- changed-files:
+  - any-glob-to-any-file: '**/InlineAlert.tsx'
+
+Link:
+- changed-files:
+  - any-glob-to-any-file: '**/Link.tsx'
+
+LinkButton:
+- changed-files:
+  - any-glob-to-any-file: '**/LinkButton.tsx'
+
+ListBox:
+- changed-files:
+  - any-glob-to-any-file: '**/ListBox.tsx'
+
+Menu:
+- changed-files:
+  - any-glob-to-any-file: '**/Menu.tsx'
+
+Meter:
+- changed-files:
+  - any-glob-to-any-file: '**/Meter.tsx'
+
+Modal:
+- changed-files:
+  - any-glob-to-any-file: '**/Modal.tsx'
+
+NumberField:
+- changed-files:
+  - any-glob-to-any-file: '**/NumberField.tsx'
+
+Picker:
+- changed-files:
+  - any-glob-to-any-file: '**/Picker.tsx'
+
+Popover:
+- changed-files:
+  - any-glob-to-any-file: '**/Popover.tsx'
+
+ProgressBar:
+- changed-files:
+  - any-glob-to-any-file: '**/ProgressBar.tsx'
+
+ProgressCircle:
+- changed-files:
+  - any-glob-to-any-file: '**/ProgressCircle.tsx'
+
+RadioGroup:
+- changed-files:
+  - any-glob-to-any-file: '**/RadioGroup.tsx'
+
+RangeCalendar:
+- changed-files:
+  - any-glob-to-any-file: '**/RangeCalendar.tsx'
+
+RangeSlider:
+- changed-files:
+  - any-glob-to-any-file: '**/RangeSlider.tsx'
+
+SearchField:
+- changed-files:
+  - any-glob-to-any-file: '**/SearchField.tsx'
+
+SegmentedControl:
+- changed-files:
+  - any-glob-to-any-file: '**/SegmentedControl.tsx'
+
+Select:
+- changed-files:
+  - any-glob-to-any-file: '**/Select.tsx'
+
+SelectBoxGroup:
+- changed-files:
+  - any-glob-to-any-file: '**/SelectBoxGroup.tsx'
+
+Separator:
+- changed-files:
+  - any-glob-to-any-file: '**/Separator.tsx'
+
+Slider:
+- changed-files:
+  - any-glob-to-any-file: '**/Slider.tsx'
+
+StatusLight:
+- changed-files:
+  - any-glob-to-any-file: '**/StatusLight.tsx'
+
+Switch:
+- changed-files:
+  - any-glob-to-any-file: '**/Switch.tsx'
+
+Table:
+- changed-files:
+  - any-glob-to-any-file: '**/Table.tsx'
+
+TableView:
+- changed-files:
+  - any-glob-to-any-file: '**/TableView.tsx'
+
+Tabs:
+- changed-files:
+  - any-glob-to-any-file: '**/Tabs.tsx'
+
+TagGroup:
+- changed-files:
+  - any-glob-to-any-file: '**/TagGroup.tsx'
+
+TextArea:
+- changed-files:
+  - any-glob-to-any-file: '**/TextArea.tsx'
+
+TextField:
+- changed-files:
+  - any-glob-to-any-file: '**/TextField.tsx'
+
+TimeField:
+- changed-files:
+  - any-glob-to-any-file: '**/TimeField.tsx'
+
+Toast:
+- changed-files:
+  - any-glob-to-any-file: '**/Toast.tsx'
+
+ToggleButton:
+- changed-files:
+  - any-glob-to-any-file: '**/ToggleButton.tsx'
+
+ToggleButtonGroup:
+- changed-files:
+  - any-glob-to-any-file: '**/ToggleButtonGroup.tsx'
+
+Toolbar:
+- changed-files:
+  - any-glob-to-any-file: '**/Toolbar.tsx'
+
+Tooltip:
+- changed-files:
+  - any-glob-to-any-file: '**/Tooltip.tsx'
+
+Tree:
+- changed-files:
+  - any-glob-to-any-file: '**/Tree.tsx'
+
+TreeView:
+- changed-files:
+  - any-glob-to-any-file: '**/TreeView.tsx'
+
