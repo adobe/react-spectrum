@@ -34,13 +34,17 @@ export class DialogTester {
     this._interactionType = interactionType || 'mouse';
     this._overlayType = overlayType || 'modal';
 
-    // Handle case where element provided is a wrapper of the trigger button
-    let trigger = within(root).queryByRole('button');
-    if (trigger) {
-      this._trigger = trigger;
+    // Handle case where element provided is a wrapper of the trigger button.
+    let buttons = within(root).queryAllByRole('button');
+    let triggerButton: HTMLElement | undefined;
+    if (buttons.length === 0) {
+      triggerButton = root;
+    } else if (buttons.length === 1) {
+      triggerButton = buttons[0];
     } else {
-      this._trigger = root;
+      triggerButton = buttons.find(button => button.hasAttribute('aria-haspopup'));
     }
+    this._trigger = triggerButton ?? root;
   }
 
   /**

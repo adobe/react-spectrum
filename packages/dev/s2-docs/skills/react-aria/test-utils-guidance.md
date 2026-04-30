@@ -10,6 +10,11 @@ npm install @react-aria/test-utils --save-dev
 
 ### Core pattern
 
+External consumers should import from `@react-aria/test-utils`. Tests inside the `packages/` monorepo should import everything from `@react-spectrum/test-utils-internal`, which re-exports `User` and all other test utilities:
+```ts
+import {act, render, User} from '@react-spectrum/test-utils-internal';
+```
+
 Initialize a `User` once per test file. Call `createTester` to get a tester for a specific ARIA pattern, then call tester methods to simulate interactions.
 
 ```ts
@@ -50,6 +55,15 @@ use the tester to query for the component's state or trigger a different interac
 - Mouse drag interactions, simulated scrolling, and other mock reliant interactions are not available in these test utils since they depend heavily on how the user mocks things like clientHeight/Width/etc in their tests. These interactions need to be simulated manually by the user.
 - Some testers may support the notion of "long press" for certain interactions (e.g. long pressing a button to trigger its menu). To simulate this, you will need mock PointerEvent globally (see the installPointerEvent util) and provide a way to advance timers to the User via `advanceTimer`.
 - These test utils are compatible with not only JSDOM unit tests but browser tests as well (e.g. vitest-browser-react).
+
+### When not to use the testers
+
+Skip the testers and write manual interactions for the following cases:
+
+- When testing a Menu or Dialog rendered without a trigger. The testers assumes a trigger exists.
+- tests that verify exact focus order, arrow key cycling, or specific modifier key behavior. Use `fireEvent.keyDown` or `userEvent.keyboard` directly so the test is actually testing the desired keyboard flow.
+- when `isOpen` or `defaultOpen` is set, `open()` will no-op but the tester's `root` must still resolve to the trigger element. Use `getByLabelText` or `getByTestId` rather than `getByRole('button')` to avoid ambiguity when multiple buttons are in the DOM.
+- testing `isDismissible`, `isKeyboardDismissDisabled`, or outside-click behavior. Use `userEvent.click(document.body)` or `user.keyboard('[Escape]')` directly and assert the expected state afterwards.
 
 ### Draggable handle components
 

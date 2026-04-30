@@ -77,13 +77,17 @@ export class MenuTester {
     if (root.getAttribute('role') === 'menuitem') {
       this._trigger = root;
     } else {
-      // Handle case where element provided is a wrapper of the trigger button
-      let trigger = within(root).queryByRole('button');
-      if (trigger) {
-        this._trigger = trigger;
+      // Handle case where element provided is a wrapper of the trigger button.
+      let buttons = within(root).queryAllByRole('button');
+      let triggerButton: HTMLElement | undefined;
+      if (buttons.length === 0) {
+        triggerButton = root;
+      } else if (buttons.length === 1) {
+        triggerButton = buttons[0];
       } else {
-        this._trigger = root;
+        triggerButton = buttons.find(button => button.hasAttribute('aria-haspopup'));
       }
+      this._trigger = triggerButton ?? root;
     }
 
     this._isSubmenu = isSubmenu || false;
@@ -413,18 +417,13 @@ export class MenuTester {
    */
   options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this.menu()} = opts;
-    let options: HTMLElement[] = [];
-    if (element) {
-      options = within(element).queryAllByRole('menuitem');
-      if (options.length === 0) {
-        options = within(element).queryAllByRole('menuitemradio');
-        if (options.length === 0) {
-          options = within(element).queryAllByRole('menuitemcheckbox');
-        }
-      }
+    if (!element) {
+      return [];
     }
 
-    return options;
+    return Array.from(
+      element.querySelectorAll('[role=menuitem], [role=menuitemradio], [role=menuitemcheckbox]')
+    ) as HTMLElement[];
   }
 
   /**
