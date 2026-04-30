@@ -34,9 +34,33 @@ export const description = 'Allows a user to navigate to another page or resourc
     files={["starters/tailwind/src/Link.tsx"]} />
 </ExampleSwitcher>
 
+## Client side routing
+
+By default, links with an `href` are handled by the browser as regular page navigations. To integrate with a client side router, use the `render` prop to delegate to your router's link component. This supports features like prefetching on hover and avoids full page reloads.
+
+```tsx
+import {Link} from 'react-aria-components/Link';
+import NextLink from 'next/link';
+
+<Link href="/about" render={props => <NextLink {...props} />}>
+  About
+</Link>
+```
+
+```tsx
+import {Link} from 'react-aria-components/Link';
+import {Link as RouterLink} from 'react-router';
+
+<Link href="/about" render={props => <RouterLink {...props} to={props.href} />}>
+  About
+</Link>
+```
+
+See the [customization](customization#dom-elements) guide for more details on the `render` prop.
+
 ## Events
 
-Links with an `href` will be handled by the browser, or via a [client side router](./frameworks). Links without an `href` will be rendered as a `<span role="link">` instead of an `<a>`. Use the `onPress` event to handle user interaction.
+Links without an `href` will be rendered as a `<span role="link">` instead of an `<a>`. Use the `onPress` event to handle user interaction.
 
 ```tsx render
 "use client";
