@@ -20,6 +20,7 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {useEffectEvent} from '../utils/useEffectEvent';
 import {useGlobalListeners} from '../utils/useGlobalListeners';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
+import { useKeyboard } from '../interactions/useKeyboard';
 
 
 const noop = () => {};
@@ -74,54 +75,78 @@ export function useSpinButton(
     return () => clearAsyncEvent();
   }, []);
 
-  let onKeyDown = (e) => {
-    if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || isReadOnly || e.nativeEvent.isComposing) {
-      return;
-    }
-
-    switch (e.key) {
-      case 'PageUp':
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      'PageUp': (e) => {
+        if (isReadOnly || e.nativeEvent.isComposing) {
+          return false;
+        }
         if (onIncrementPage) {
-          e.preventDefault();
-          onIncrementPage?.();
-          break;
+          onIncrementPage();
+          return true;
         }
-      // fallthrough!
-      case 'ArrowUp':
-      case 'Up':
         if (onIncrement) {
-          e.preventDefault();
-          onIncrement?.();
+          onIncrement();
+          return true;
         }
-        break;
-      case 'PageDown':
+        return false;
+      },
+      'ArrowUp': (e) => {
+        if (isReadOnly || e.nativeEvent.isComposing) {
+          return false;
+        }
+        if (onIncrement) {
+          onIncrement();
+          return true;
+        }
+        return false;
+      },
+      'PageDown': (e) => {
+        if (isReadOnly || e.nativeEvent.isComposing) {
+          return false;
+        }
         if (onDecrementPage) {
-          e.preventDefault();
-          onDecrementPage?.();
-          break;
+          onDecrementPage();
+          return true;
         }
-      // fallthrough
-      case 'ArrowDown':
-      case 'Down':
         if (onDecrement) {
-          e.preventDefault();
-          onDecrement?.();
+          onDecrement();
+          return true;
         }
-        break;
-      case 'Home':
+        return false;
+      },
+      'ArrowDown': (e) => {
+        if (isReadOnly || e.nativeEvent.isComposing) {
+          return false;
+        }
+        if (onDecrement) {
+          onDecrement();
+          return true;
+        }
+        return false;
+      },
+      'Home': (e) => {
+        if (isReadOnly || e.nativeEvent.isComposing) {
+          return false;
+        }
         if (onDecrementToMin) {
-          e.preventDefault();
-          onDecrementToMin?.();
+          onDecrementToMin();
+          return true;
         }
-        break;
-      case 'End':
+        return false;
+      },
+      'End': (e) => {
+        if (isReadOnly || e.nativeEvent.isComposing) {
+          return false;
+        }
         if (onIncrementToMax) {
-          e.preventDefault();
-          onIncrementToMax?.();
+          onIncrementToMax();
+          return true;
         }
-        break;
+        return false;
+      },
     }
-  };
+  });
 
   let isFocused = useRef(false);
   let onFocus = () => {
@@ -221,7 +246,7 @@ export function useSpinButton(
       'aria-disabled': isDisabled || undefined,
       'aria-readonly': isReadOnly || undefined,
       'aria-required': isRequired || undefined,
-      onKeyDown,
+      ...keyboardProps,
       onFocus,
       onBlur
     },

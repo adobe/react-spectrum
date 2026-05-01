@@ -24,6 +24,7 @@ import {useId} from '../utils/useId';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
 import {useSafelyMouseToSubmenu} from './useSafelyMouseToSubmenu';
+import { useKeyboard } from '../interactions/useKeyboard';
 
 export interface AriaSubmenuTriggerProps {
   /**
@@ -102,6 +103,55 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
     };
   }, [cancelOpenTimeout]);
 
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      'ArrowLeft': (e) => {
+        // If focus is not within the menu, assume virtual focus is being used.
+        // This means some other input element is also within the popover, so we shouldn't close the menu.
+        if (!isFocusWithin(e.currentTarget)) {
+          return false;
+        }
+        if (direction === 'ltr' && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
+          onSubmenuClose();
+          if (!shouldUseVirtualFocus && ref.current) {
+            focusWithoutScrolling(ref.current);
+          }
+          return true;
+        }
+        return false;
+      },
+      'ArrowRight': (e) => {
+        // If focus is not within the menu, assume virtual focus is being used.
+        // This means some other input element is also within the popover, so we shouldn't close the menu.
+        if (!isFocusWithin(e.currentTarget)) {
+          return false;
+        }
+        if (direction === 'rtl' && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
+          onSubmenuClose();
+          if (!shouldUseVirtualFocus && ref.current) {
+            focusWithoutScrolling(ref.current);
+          }
+          return true;
+        }
+        return false;
+      },
+      'Escape': (e) => {
+        // If focus is not within the menu, assume virtual focus is being used.
+        // This means some other input element is also within the popover, so we shouldn't close the menu.
+        if (!isFocusWithin(e.currentTarget)) {
+          return false;
+        }
+        if (nodeContains(submenuRef.current, getEventTarget(e) as Element)) {
+          onSubmenuClose();
+          if (!shouldUseVirtualFocus && ref.current) {
+            focusWithoutScrolling(ref.current);
+          }
+          return true;
+        }
+        return false;
+      }
+    }
+  });
   let submenuKeyDown = (e: KeyboardEvent) => {
     // If focus is not within the menu, assume virtual focus is being used.
     // This means some other input element is also within the popover, so we shouldn't close the menu.
@@ -150,16 +200,15 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
     ...(type === 'menu' && {
       onClose: state.closeAll,
       autoFocus: state.focusStrategy ?? undefined,
-      onKeyDown: submenuKeyDown
+      ...keyboardProps
     })
   };
 
-  let submenuTriggerKeyDown = (e: KeyboardEvent) => {
-    switch (e.key) {
-      case 'ArrowRight':
+  let {keyboardProps: submenuTriggerKeyboardProps} = useKeyboard({
+    shortcuts: {
+      'ArrowRight': (e) => {
         if (!isDisabled) {
           if (direction === 'ltr') {
-            e.preventDefault();
             if (!state.isOpen) {
               onSubmenuOpen('first');
             }
@@ -167,18 +216,19 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
             if (type === 'menu' && !!submenuRef?.current && getActiveElement() === ref?.current) {
               focusWithoutScrolling(submenuRef.current);
             }
+            return true;
           } else if (state.isOpen) {
             onSubmenuClose();
+            return true;
           } else {
-            e.continuePropagation();
+            return false;
           }
         }
-
-        break;
-      case 'ArrowLeft':
+        return false;
+      },
+      'ArrowLeft': (e) => {
         if (!isDisabled) {
           if (direction === 'rtl') {
-            e.preventDefault();
             if (!state.isOpen) {
               onSubmenuOpen('first');
             }
@@ -186,18 +236,18 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
             if (type === 'menu' && !!submenuRef?.current && getActiveElement() === ref?.current) {
               focusWithoutScrolling(submenuRef.current);
             }
+            return true;
           } else if (state.isOpen) {
             onSubmenuClose();
+            return true;
           } else {
-            e.continuePropagation();
+            return false;
           }
         }
-        break;
-      default:
-        e.continuePropagation();
-        break;
+        return false;
+      }
     }
-  };
+  });
 
   let onPressStart = (e: PressEvent) => {
     if (!isDisabled && (e.pointerType === 'virtual' || e.pointerType === 'keyboard')) {
@@ -248,6 +298,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
 
   return {
     submenuTriggerProps: {
+      ...submenuTriggerKeyboardProps,
       id: submenuTriggerId,
       'aria-controls': state.isOpen ? overlayId : undefined,
       'aria-haspopup': !isDisabled ? type : undefined,
@@ -255,7 +306,6 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
       onPressStart,
       onPress,
       onHoverChange,
-      onKeyDown: submenuTriggerKeyDown,
       isOpen: state.isOpen
     },
     submenuProps,

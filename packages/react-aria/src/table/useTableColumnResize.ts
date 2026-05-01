@@ -116,20 +116,37 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   }, [state, triggerRef, onResizeEnd]);
 
   let {keyboardProps} = useKeyboard({
-    onKeyDown: (e) => {
-      if (editModeEnabled) {
-        if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Tab') {
-          e.preventDefault();
+    shortcuts: {
+      'Escape': (e) => {
+        if (editModeEnabled) {
           endResize(item);
+          return true;
         }
-      } else {
-        // Continue propagation on keydown events so they still bubbles to useSelectableCollection and are handled there
-        e.continuePropagation();
-
-        if (e.key === 'Enter') {
+        return false;
+      },
+      'Enter': (e) => {
+        if (editModeEnabled) {
+          endResize(item);
+          return true;
+        } else {
           startResize(item);
+          return true;
         }
-      }
+      },
+      ' ': (e) => {
+        if (editModeEnabled) {
+          endResize(item);
+          return true;
+        }
+        return false;
+      },
+      'Tab': (e) => {
+        if (editModeEnabled) {
+          endResize(item);
+          return true;
+        }
+        return false;
+      },
     }
   });
 

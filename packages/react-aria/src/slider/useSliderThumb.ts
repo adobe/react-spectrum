@@ -118,40 +118,55 @@ export function useSliderThumb(
   let currentPosition = useRef<number>(null);
 
   let {keyboardProps} = useKeyboard({
-    onKeyDown(e) {
-      let {
-        getThumbMaxValue,
-        getThumbMinValue,
-        decrementThumb,
-        incrementThumb,
-        setThumbValue,
-        setThumbDragging,
-        pageSize
-      } = state;
-      // these are the cases that useMove or useSlider don't handle
-      if (!/^(PageUp|PageDown|Home|End)$/.test(e.key)) {
-        e.continuePropagation();
-        return;
+    shortcuts: {
+      'PageUp': () => {
+        let {
+          incrementThumb,
+          setThumbDragging,
+          pageSize
+        } = state;
+        // remember to set this so that onChangeEnd is fired
+        setThumbDragging(index, true);
+        incrementThumb(index, pageSize);
+        setThumbDragging(index, false);
+        return true;
+      },
+      'PageDown': () => {
+        let {
+          decrementThumb,
+          setThumbDragging,
+          pageSize
+        } = state;
+        // remember to set this so that onChangeEnd is fired
+        setThumbDragging(index, true);
+        decrementThumb(index, pageSize);
+        setThumbDragging(index, false);
+        return true;
+      },
+      'Home': () => {
+        let {
+          getThumbMinValue,
+          setThumbValue,
+          setThumbDragging,
+        } = state;
+        // remember to set this so that onChangeEnd is fired
+        setThumbDragging(index, true);
+        setThumbValue(index, getThumbMinValue(index));
+        setThumbDragging(index, false);
+        return true;
+      },
+      'End': () => {
+        let {
+          getThumbMaxValue,
+          setThumbValue,
+          setThumbDragging
+        } = state;
+        // remember to set this so that onChangeEnd is fired
+        setThumbDragging(index, true);
+        setThumbValue(index, getThumbMaxValue(index));
+        setThumbDragging(index, false);
+        return true;
       }
-      // same handling as useMove, stopPropagation to prevent useSlider from handling the event as well.
-      e.preventDefault();
-      // remember to set this so that onChangeEnd is fired
-      setThumbDragging(index, true);
-      switch (e.key) {
-        case 'PageUp':
-          incrementThumb(index, pageSize);
-          break;
-        case 'PageDown':
-          decrementThumb(index, pageSize);
-          break;
-        case 'Home':
-          setThumbValue(index, getThumbMinValue(index));
-          break;
-        case 'End':
-          setThumbValue(index, getThumbMaxValue(index));
-          break;
-      }
-      setThumbDragging(index, false);
     }
   });
 

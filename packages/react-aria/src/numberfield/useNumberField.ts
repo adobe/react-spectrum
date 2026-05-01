@@ -14,7 +14,6 @@ import {announce} from '../live-announcer/LiveAnnouncer';
 
 import {AriaButtonProps} from '../button/useButton';
 import {AriaLabelingProps, DOMAttributes, DOMProps, GroupDOMAttributes, TextInputDOMEvents, TextInputDOMProps, ValidationResult} from '@react-types/shared';
-import {chain} from '../utils/chain';
 import {
   type ClipboardEvent,
   type ClipboardEventHandler,
@@ -44,6 +43,7 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useNumberFormatter} from '../i18n/useNumberFormatter';
 import {useScrollWheel} from '../interactions/useScrollWheel';
 import {useSpinButton} from '../spinbutton/useSpinButton';
+import {useKeyboard} from '../interactions/useKeyboard';
 
 export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps, TextInputDOMEvents {
   /** A custom aria-label for the decrement button. If not provided, the localized string "Decrement" is used. */
@@ -231,23 +231,26 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   };
 
   let domProps = filterDOMProps(props);
-  let onKeyDownEnter = useCallback((e) => {
-    if (e.nativeEvent.isComposing) {
-      return;
-    }
-
-    if (e.key === 'Enter') {
-      flushSync(() => {
-        commit();
-      });
-      commitValidation();
-    } else {
-      e.continuePropagation();
-    }
-  }, [commit, commitValidation]);
+  let {keyboardProps} = useKeyboard({
+    isDisabled: isDisabled || isReadOnly,
+    shortcuts: {
+      'Enter': (e) => {
+        if (e.nativeEvent.isComposing) {
+          return false;
+        }
+        flushSync(() => {
+          commit();
+        });
+        commitValidation();
+        return true;
+      }
+    },
+    onKeyDown,
+    onKeyUp
+  });
 
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
-  let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({
+  let {labelProps, inputProps: textFieldPropsFromHook, descriptionProps, errorMessageProps} = useFormattedTextField({
     ...otherProps,
     ...domProps,
     // These props are added to a hidden input rather than the formatted textfield.
@@ -272,12 +275,15 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     onBlur,
     onFocus,
     onFocusChange,
-    onKeyDown: useMemo(() => chain(onKeyDownEnter, onKeyDown), [onKeyDownEnter, onKeyDown]),
-    onKeyUp,
     onPaste,
     description,
     errorMessage
   }, state, inputRef);
+
+  // Merge outside useFormattedTextField so useKeyboard's createEventHandler is not nested inside
+  // useTextField/useFocusable's createEventHandler (avoids redundant stopPropagation on RS events).
+  // Shortcuts run first (mergeProps chains the second argument after the first).
+  let textFieldProps = mergeProps(keyboardProps, textFieldPropsFromHook);
 
   useFormReset(inputRef, state.defaultNumberValue, state.setNumberValue);
   useNativeValidation(state, props.validationBehavior, props.commitBehavior, inputRef, state.minValue, state.maxValue, props.step, state.numberValue);

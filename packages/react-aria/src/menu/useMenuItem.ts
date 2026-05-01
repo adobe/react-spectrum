@@ -27,6 +27,7 @@ import {useKeyboard} from '../interactions/useKeyboard';
 import {usePress} from '../interactions/usePress';
 import {useSelectableItem} from '../selection/useSelectableItem';
 import {useSlotId} from '../utils/useId';
+import { useLocale } from '../i18n/I18nProvider';
 
 export interface MenuItemAria {
   /** Props for the menu item element. */
@@ -284,46 +285,44 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     onHoverChange,
     onHoverEnd
   });
+  let {direction} = useLocale();
 
   let {keyboardProps} = useKeyboard({
-    onKeyDown: (e) => {
-      // Ignore repeating events, which may have started on the menu trigger before moving
-      // focus to the menu item. We want to wait for a second complete key press sequence.
-      if (e.repeat) {
-        e.continuePropagation();
-        return;
-      }
+    shortcuts: {
+      ' ': (e) => {
+        if (e.repeat) {
+          return false;
+        }
+        interaction.current = {pointerType: 'keyboard', key: ' '};
+        (getEventTarget(e) as HTMLElement).click();
 
-      switch (e.key) {
-        case ' ':
-          interaction.current = {pointerType: 'keyboard', key: ' '};
-          (getEventTarget(e) as HTMLElement).click();
+        // click above sets modality to "virtual", need to set interaction modality back to 'keyboard' so focusSafely calls properly move focus
+        // to the newly opened submenu's first item.
+        setInteractionModality('keyboard');
+        return true;
+      },
+      'Enter': (e) => {
+        if (e.repeat) {
+          return false;
+        }
+        interaction.current = {pointerType: 'keyboard', key: 'Enter'};
+        let target = getEventTarget(e) as HTMLElement;
 
-          // click above sets modality to "virtual", need to set interaction modality back to 'keyboard' so focusSafely calls properly move focus
-          // to the newly opened submenu's first item.
+        // Trigger click unless this is a link. Links with real DOM focus activate on Enter natively.
+        // With virtual focus (e.g. Autocomplete) focus stays on the input and useAutocomplete dispatches
+        // keydown here then follows with a synthetic click only if dispatchEvent was not canceled—so
+        // links must not preventDefault on that keydown.
+        if (target.tagName !== 'A') {
+          target.click();
           setInteractionModality('keyboard');
-          break;
-        case 'Enter':
-          interaction.current = {pointerType: 'keyboard', key: 'Enter'};
+          return true;
+        }
 
-          // Trigger click unless this is a link. Links trigger click natively.
-          if ((getEventTarget(e) as HTMLElement).tagName !== 'A') {
-            (getEventTarget(e) as HTMLElement).click();
-          }
-
-          // click above sets modality to "virtual", need to set interaction modality back to 'keyboard' so focusSafely calls properly move focus
-          // to the newly opened submenu's first item.
-          setInteractionModality('keyboard');
-          break;
-        default:
-          if (!isTrigger) {
-            e.continuePropagation();
-          }
-
-          onKeyDown?.(e);
-          break;
+        setInteractionModality('keyboard');
+        return {shouldPreventDefault: false, shouldContinuePropagation: false};
       }
     },
+    onKeyDown,
     onKeyUp
   });
 

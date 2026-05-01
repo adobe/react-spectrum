@@ -48,7 +48,8 @@ export function createEventHandler<T extends SyntheticEvent>(handler?: (e: BaseE
 
     handler(event);
 
-    if (shouldStopPropagation) {
+    // nested createEventHandler calls may already have stopped propagation
+    if (shouldStopPropagation && !(typeof e.isPropagationStopped === 'function' && e.isPropagationStopped())) {
       e.stopPropagation();
     }
   };

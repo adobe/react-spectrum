@@ -107,41 +107,42 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
   let currentPosition = useRef<{x: number, y: number} | null>(null);
 
   let {keyboardProps} = useKeyboard({
-    onKeyDown(e) {
-      // these are the cases that useMove doesn't handle
-      if (!/^(PageUp|PageDown|Home|End)$/.test(e.key)) {
-        e.continuePropagation();
-        return;
-      }
-      // same handling as useMove, don't need to stop propagation, useKeyboard will do that for us
-      e.preventDefault();
-      // remember to set this and unset it so that onChangeEnd is fired
-      state.setDragging(true);
-      setValueChangedViaKeyboard(true);
-      let dir;
-      switch (e.key) {
-        case 'PageUp':
-          state.incrementY(state.yChannelPageStep);
-          dir = 'y';
-          break;
-        case 'PageDown':
-          state.decrementY(state.yChannelPageStep);
-          dir = 'y';
-          break;
-        case 'Home':
-          direction === 'rtl' ? state.incrementX(state.xChannelPageStep) : state.decrementX(state.xChannelPageStep);
-          dir = 'x';
-          break;
-        case 'End':
-          direction === 'rtl' ? state.decrementX(state.xChannelPageStep) : state.incrementX(state.xChannelPageStep);
-          dir = 'x';
-          break;
-      }
-      state.setDragging(false);
-      if (dir) {
-        let input = dir === 'x' ? inputXRef : inputYRef;
-        focusInput(input);
-        setFocusedInput(dir);
+    shortcuts: {
+      'PageUp': () => {
+        state.setDragging(true);
+        setValueChangedViaKeyboard(true);
+        state.incrementY(state.yChannelPageStep);
+        state.setDragging(false);
+        focusInput(inputYRef);
+        setFocusedInput('y');
+        return true;
+      },
+      'PageDown': () => {
+        state.setDragging(true);
+        setValueChangedViaKeyboard(true);
+        state.decrementY(state.yChannelPageStep);
+        state.setDragging(false);
+        focusInput(inputYRef);
+        setFocusedInput('y');
+        return true;
+      },
+      'Home': () => {
+        state.setDragging(true);
+        setValueChangedViaKeyboard(true);
+        direction === 'rtl' ? state.incrementX(state.xChannelPageStep) : state.decrementX(state.xChannelPageStep);
+        state.setDragging(false);
+        focusInput(inputXRef);
+        setFocusedInput('x');
+        return true;
+      },
+      'End': () => {
+        state.setDragging(true);
+        setValueChangedViaKeyboard(true);
+        direction === 'rtl' ? state.decrementX(state.xChannelPageStep) : state.incrementX(state.xChannelPageStep);
+        state.setDragging(false);
+        focusInput(inputXRef);
+        setFocusedInput('x');
+        return true;
       }
     }
   });

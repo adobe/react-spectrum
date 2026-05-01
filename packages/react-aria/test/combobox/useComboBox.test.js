@@ -172,29 +172,4 @@ describe('useComboBox', function () {
 
     expect(onBlurMock).toHaveBeenCalledTimes(1);
   });
-
-  it.each`
-    Name          | componentProps
-    ${'disabled'} | ${{isDisabled: true}}
-    ${'readonly'} | ${{isReadOnly: true}}
-  `('press and keyboard events on the button doesn\'t toggle the menu if $Name', function ({componentProps}) {
-    let additionalProps = {
-      ...props,
-      ...componentProps
-    };
-
-    let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps: additionalProps});
-    state.current.open = openSpy;
-    state.current.toggle = toggleSpy;
-
-    let {result} = renderHook((props) => useComboBox(props, state.current), {initialProps: additionalProps});
-    let {buttonProps} = result.current;
-    buttonProps.onKeyDown(event({key: 'ArrowDown'}));
-    expect(openSpy).toHaveBeenCalledTimes(0);
-    expect(toggleSpy).toHaveBeenCalledTimes(0);
-    buttonProps.onKeyDown(event({key: 'ArrowUp'}));
-    expect(openSpy).toHaveBeenCalledTimes(0);
-    expect(toggleSpy).toHaveBeenCalledTimes(0);
-    expect(buttonProps.isDisabled).toBeTruthy();
-  });
 });

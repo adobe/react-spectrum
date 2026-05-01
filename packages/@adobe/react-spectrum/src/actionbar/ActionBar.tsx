@@ -105,10 +105,10 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
   }
 
   let {keyboardProps} = useKeyboard({
-    onKeyDown(e) {
-      if (e.key === 'Escape') {
-        e.preventDefault();
+    shortcuts: {
+      'Escape': (e) => {
         onClearSelection();
+        return true;
       }
     }
   });

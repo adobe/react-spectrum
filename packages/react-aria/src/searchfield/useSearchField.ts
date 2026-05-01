@@ -12,13 +12,14 @@
 
 import {AriaButtonProps} from '../button/useButton';
 import {AriaTextFieldProps, useTextField} from '../textfield/useTextField';
-import {chain} from '../utils/chain';
 import {DOMAttributes, RefObject, ValidationResult} from '@react-types/shared';
+import {mergeProps} from '../utils/mergeProps';
 import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../../intl/searchfield/*.json';
 import {SearchFieldProps, SearchFieldState} from 'react-stately/useSearchFieldState';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
+import {useKeyboard} from '../interactions/useKeyboard';
 
 export interface AriaSearchFieldProps extends SearchFieldProps, Omit<AriaTextFieldProps, 'type'> {
   /**
@@ -65,38 +66,36 @@ export function useSearchField(
     type = 'search'
   } = props;
 
-  let onKeyDown = (e) => {
-    const key = e.key;
-
-    if (key === 'Enter' && (isDisabled || isReadOnly)) {
-      e.preventDefault();
-    }
-
-    if (isDisabled || isReadOnly) {
-      return;
-    }
-
-    // for backward compatibility;
-    // otherwise, "Enter" on an input would trigger a form submit, the default browser behavior
-    if (key === 'Enter' && onSubmit) {
-      e.preventDefault();
-      onSubmit(state.value);
-    }
-
-    if (key === 'Escape') {
-      // Also check the inputRef value for the case where the value was set directly on the input element instead of going through
-      // the hook
-      if (state.value === '' && (!inputRef.current || inputRef.current.value === '')) {
-        e.continuePropagation();
-      } else {
-        e.preventDefault();
-        state.setValue('');
-        if (onClear) {
-          onClear();
+  let {keyboardProps} = useKeyboard({
+    isDisabled: isDisabled || isReadOnly,
+    shortcuts: {
+      'Enter': () => {
+        if (isDisabled || isReadOnly) {
+          return true;
+        } else if (onSubmit) {
+          // for backward compatibility;
+          // otherwise, "Enter" on an input would trigger a form submit, the default browser behavior
+          onSubmit(state.value);
+          return true;
+        }
+        return false;
+      },
+      'Escape': () => {
+        if (isDisabled || isReadOnly) {
+          return false;
+        }
+        // Also check the inputRef value for the case where the value was set directly on the input element instead of going through
+        // the hook
+        if (state.value === '' && (!inputRef.current || inputRef.current.value === '')) {
+          return false;
+        } else {
+          state.setValue('');
+          onClear?.();
+          return true;
         }
       }
     }
-  };
+  });
 
   let onClearButtonClick = () => {
     state.setValue('');
@@ -116,17 +115,24 @@ export function useSearchField(
     ...props,
     value: state.value,
     onChange: state.setValue,
-    onKeyDown: !isReadOnly ? chain(onKeyDown, props.onKeyDown) : props.onKeyDown,
+    onKeyDown: props.onKeyDown,
+    onKeyUp: props.onKeyUp,
     type
   }, inputRef);
 
   return {
     labelProps,
-    inputProps: {
-      ...inputProps,
-      // already handled by useSearchFieldState
-      defaultValue: undefined
-    },
+    // An edge case, in Autocomplete, if the keyboard hanlders are not in this order, then
+    // Escape runs autocomplete/listbox first, then the search-field shortcut returns false and
+    // continues propagation, leaking Escape to a parent Dialog.
+    inputProps: mergeProps(
+      keyboardProps,
+      {
+        ...inputProps,
+        // already handled by useSearchFieldState
+        defaultValue: undefined
+      }
+    ),
     clearButtonProps: {
       'aria-label': stringFormatter.format('Clear search'),
       excludeFromTabOrder: true,

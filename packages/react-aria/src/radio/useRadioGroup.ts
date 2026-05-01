@@ -22,6 +22,7 @@ import {useField} from '../label/useField';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useId} from '../utils/useId';
 import {useLocale} from '../i18n/I18nProvider';
+import { useKeyboard } from '../interactions/useKeyboard';
 
 export interface AriaRadioGroupProps extends RadioGroupProps, InputDOMProps, DOMProps, AriaLabelingProps, AriaValidationProps {}
 
@@ -80,33 +81,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     onFocusWithinChange: props.onFocusChange
   });
 
-  let onKeyDown = (e) => {
-    let nextDir;
-    switch (e.key) {
-      case 'ArrowRight':
-        if (direction === 'rtl' && orientation !== 'vertical') {
-          nextDir = 'prev';
-        } else {
-          nextDir = 'next';
-        }
-        break;
-      case 'ArrowLeft':
-        if (direction === 'rtl' && orientation !== 'vertical') {
-          nextDir = 'next';
-        } else {
-          nextDir = 'prev';
-        }
-        break;
-      case 'ArrowDown':
-        nextDir = 'next';
-        break;
-      case 'ArrowUp':
-        nextDir = 'prev';
-        break;
-      default:
-        return;
-    }
-    e.preventDefault();
+  function getNextElement(nextDir: 'next' | 'prev', e) {
     let walker = getFocusableTreeWalker(e.currentTarget, {
       from: getEventTarget(e) as Element,
       accept: (node) => node instanceof getOwnerWindow(node).HTMLInputElement && node.type === 'radio'
@@ -125,12 +100,63 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
         nextElem = walker.lastChild();
       }
     }
-    if (nextElem) {
-      // Call focus on nextElem so that keyboard navigation scrolls the radio into view
-      nextElem.focus();
-      state.setSelectedValue(nextElem.value);
+    return nextElem;
+  }
+
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      'ArrowRight': (e) => {
+        let nextDir;
+        if (direction === 'rtl' && orientation !== 'vertical') {
+          nextDir = 'prev';
+        } else {
+          nextDir = 'next';
+        }
+
+        let nextElem = getNextElement(nextDir, e);
+        if (nextElem) {
+          // Call focus on nextElem so that keyboard navigation scrolls the radio into view
+          nextElem.focus();
+          state.setSelectedValue(nextElem.value);
+        }
+        return true;
+      },
+      'ArrowLeft': (e) => {
+        let nextDir;
+        if (direction === 'rtl' && orientation !== 'vertical') {
+          nextDir = 'next';
+        } else {
+          nextDir = 'prev';
+        }
+
+        let nextElem = getNextElement(nextDir, e);
+        if (nextElem) {
+          // Call focus on nextElem so that keyboard navigation scrolls the radio into view
+          nextElem.focus();
+          state.setSelectedValue(nextElem.value);
+        }
+        return true;
+      },
+      'ArrowDown': (e) => {
+        let nextElem = getNextElement('next', e);
+        if (nextElem) {
+          // Call focus on nextElem so that keyboard navigation scrolls the radio into view
+          nextElem.focus();
+          state.setSelectedValue(nextElem.value);
+        }
+        return true;
+      },
+      'ArrowUp': (e) => {
+        let nextElem = getNextElement('prev', e);
+        if (nextElem) {
+          // Call focus on nextElem so that keyboard navigation scrolls the radio into view
+          nextElem.focus();
+          state.setSelectedValue(nextElem.value);
+        }
+        return true;
+      }
     }
-  };
+  });
 
   let groupName = useId(name);
   radioGroupData.set(state, {
@@ -145,7 +171,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     radioGroupProps: mergeProps(domProps, {
       // https://www.w3.org/TR/wai-aria-1.2/#radiogroup
       role: 'radiogroup',
-      onKeyDown,
+      ...keyboardProps,
       'aria-invalid': state.isInvalid || undefined,
       'aria-errormessage': props['aria-errormessage'],
       'aria-readonly': isReadOnly || undefined,
