@@ -68,12 +68,12 @@ jobs:
           git commit -m "weekly api diff $TODAY"
           git push
 
-      # Summarize with Claude API and post to Slack
+      # Summarize with GitHub Models (free via GITHUB_TOKEN) and post to Slack
       - name: Summarize and post to Slack
         env:
           SLACK_TSDIFF_CHROMATIC_BOT_TOKEN: ${{ secrets.SLACK_TSDIFF_CHROMATIC_BOT_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           python3 << 'PYEOF'
           import json, os, urllib.request, subprocess
@@ -82,7 +82,7 @@ jobs:
           channel = os.environ['SLACK_CHANNEL_ID']
           snapshots_repo = os.environ['SNAPSHOTS_REPO']
           slack_token = os.environ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN']
-          anthropic_key = os.environ['ANTHROPIC_API_KEY']
+          github_token = os.environ['GITHUB_TOKEN']
           workspace = os.environ['GITHUB_WORKSPACE']
           diff_url = f"https://github.com/{snapshots_repo}/blob/main/diffs/{today}.txt"
 
@@ -100,7 +100,7 @@ jobs:
             rules = prompt_md[rules_start:rules_end].strip() if rules_start != -1 else ""
 
             payload = {
-              "model": "claude-opus-4-7",
+              "model": "gpt-4o-mini",
               "max_tokens": 600,
               "messages": [{
                 "role": "user",
@@ -109,15 +109,14 @@ jobs:
             }
 
             req = urllib.request.Request(
-              'https://api.anthropic.com/v1/messages',
+              'https://models.inference.ai.azure.com/chat/completions',
               data=json.dumps(payload).encode(),
               headers={
-                'x-api-key': anthropic_key,
-                'anthropic-version': '2023-06-01',
-                'content-type': 'application/json'
+                'Authorization': f'Bearer {github_token}',
+                'Content-Type': 'application/json'
               }
             )
-            summary = json.loads(urllib.request.urlopen(req).read())['content'][0]['text']
+            summary = json.loads(urllib.request.urlopen(req).read())['choices'][0]['message']['content']
             message = f"📊 Weekly API Diff — {today}\n\n{summary}\n\nFull diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
 
           req = urllib.request.Request(
