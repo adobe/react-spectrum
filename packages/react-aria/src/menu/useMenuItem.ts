@@ -27,7 +27,6 @@ import {useKeyboard} from '../interactions/useKeyboard';
 import {usePress} from '../interactions/usePress';
 import {useSelectableItem} from '../selection/useSelectableItem';
 import {useSlotId} from '../utils/useId';
-import { useLocale } from '../i18n/I18nProvider';
 
 export interface MenuItemAria {
   /** Props for the menu item element. */
@@ -285,7 +284,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     onHoverChange,
     onHoverEnd
   });
-  let {direction} = useLocale();
 
   let {keyboardProps} = useKeyboard({
     shortcuts: {

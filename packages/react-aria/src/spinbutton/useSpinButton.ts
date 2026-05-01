@@ -19,8 +19,8 @@ import intlMessages from '../../intl/spinbutton/*.json';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useEffectEvent} from '../utils/useEffectEvent';
 import {useGlobalListeners} from '../utils/useGlobalListeners';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
-import { useKeyboard } from '../interactions/useKeyboard';
 
 
 const noop = () => {};
@@ -144,7 +144,7 @@ export function useSpinButton(
           return true;
         }
         return false;
-      },
+      }
     }
   });
 

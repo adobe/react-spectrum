@@ -38,12 +38,12 @@ import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useFormattedTextField} from '../textfield/useFormattedTextField';
 import {useFormReset} from '../utils/useFormReset';
 import {useId} from '../utils/useId';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useNumberFormatter} from '../i18n/useNumberFormatter';
 import {useScrollWheel} from '../interactions/useScrollWheel';
 import {useSpinButton} from '../spinbutton/useSpinButton';
-import {useKeyboard} from '../interactions/useKeyboard';
 
 export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps, TextInputDOMEvents {
   /** A custom aria-label for the decrement button. If not provided, the localized string "Decrement" is used. */

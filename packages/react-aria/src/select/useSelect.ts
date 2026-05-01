@@ -26,9 +26,9 @@ import {setInteractionModality} from '../interactions/useFocusVisible';
 import {useCollator} from '../i18n/useCollator';
 import {useField} from '../label/useField';
 import {useId} from '../utils/useId';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useMenuTrigger} from '../menu/useMenuTrigger';
 import {useTypeSelect} from '../selection/useTypeSelect';
-import { useKeyboard } from '../interactions/useKeyboard';
 
 export interface AriaSelectProps<T, M extends SelectionMode = 'single'> extends SelectProps<T, M>, DOMProps, AriaLabelingProps, FocusableDOMProps {
   /**
@@ -120,7 +120,7 @@ export function useSelect<T, M extends SelectionMode = 'single'>(props: AriaSele
 
   let {keyboardProps} = useKeyboard({
     shortcuts: {
-      'ArrowLeft': (e) => {
+      'ArrowLeft': () => {
         if (state.selectionManager.selectionMode === 'multiple') {
           return false;
         }
@@ -130,7 +130,7 @@ export function useSelect<T, M extends SelectionMode = 'single'>(props: AriaSele
         }
         return true;
       },
-      'ArrowRight': (e) => {
+      'ArrowRight': () => {
         if (state.selectionManager.selectionMode === 'multiple') {
           return false;
         }

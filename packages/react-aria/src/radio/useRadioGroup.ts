@@ -21,8 +21,8 @@ import {RadioGroupProps, RadioGroupState} from 'react-stately/useRadioGroupState
 import {useField} from '../label/useField';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useId} from '../utils/useId';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLocale} from '../i18n/I18nProvider';
-import { useKeyboard } from '../interactions/useKeyboard';
 
 export interface AriaRadioGroupProps extends RadioGroupProps, InputDOMProps, DOMProps, AriaLabelingProps, AriaValidationProps {}
 

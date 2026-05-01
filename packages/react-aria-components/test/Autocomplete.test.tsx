@@ -968,7 +968,7 @@ describe('Autocomplete', () => {
     expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
   });
 
-    it('should close the Dialog on the second press of Escape if the inner ListBox has escapeKeyBehavior: "none" ', async () => {
+  it('should close the Dialog on the second press of Escape if the inner ListBox has escapeKeyBehavior: "none" ', async () => {
     const DialogExample = (props) => {
       let {contains} = useFilter({sensitivity: 'base'});
 

@@ -115,16 +115,20 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     lastSize.current = null;
   }, [state, triggerRef, onResizeEnd]);
 
+  let endResizeEvent = () => {
+    if (editModeEnabled) {
+      endResize(item);
+      return true;
+    }
+    return false;
+  };
+
   let {keyboardProps} = useKeyboard({
     shortcuts: {
-      'Escape': (e) => {
-        if (editModeEnabled) {
-          endResize(item);
-          return true;
-        }
-        return false;
+      'Escape': () => {
+        return endResizeEvent();
       },
-      'Enter': (e) => {
+      'Enter': () => {
         if (editModeEnabled) {
           endResize(item);
           return true;
@@ -133,20 +137,12 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
           return true;
         }
       },
-      ' ': (e) => {
-        if (editModeEnabled) {
-          endResize(item);
-          return true;
-        }
-        return false;
+      ' ': () => {
+        return endResizeEvent();
       },
-      'Tab': (e) => {
-        if (editModeEnabled) {
-          endResize(item);
-          return true;
-        }
-        return false;
-      },
+      'Tab': () => {
+        return endResizeEvent();
+      }
     }
   });
 

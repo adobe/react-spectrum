@@ -20,10 +20,10 @@ import intlMessages from '../../intl/menu/*.json';
 import {MenuTriggerState, MenuTriggerType} from 'react-stately/useMenuTriggerState';
 import {PressProps} from '../interactions/usePress';
 import {useId} from '../utils/useId';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useLongPress} from '../interactions/useLongPress';
 import {useOverlayTrigger} from '../overlays/useOverlayTrigger';
-import {useKeyboard} from '../interactions/useKeyboard';
 
 export interface AriaMenuTriggerProps {
   /** The type of menu that the menu trigger opens. */

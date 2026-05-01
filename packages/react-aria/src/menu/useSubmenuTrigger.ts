@@ -13,7 +13,7 @@
 import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps} from '../overlays/usePopover';
-import {FocusableElement, FocusStrategy, KeyboardEvent, Node, PressEvent, RefObject} from '@react-types/shared';
+import {FocusableElement, FocusStrategy, Node, PressEvent, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import {getActiveElement, getEventTarget, isFocusWithin, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import type {OverlayProps} from '../overlays/Overlay';
@@ -21,10 +21,10 @@ import type {SubmenuTriggerState} from 'react-stately/useMenuTriggerState';
 import {useCallback, useRef} from 'react';
 import {useEvent} from '../utils/useEvent';
 import {useId} from '../utils/useId';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
 import {useSafelyMouseToSubmenu} from './useSafelyMouseToSubmenu';
-import { useKeyboard } from '../interactions/useKeyboard';
 
 export interface AriaSubmenuTriggerProps {
   /**
@@ -121,8 +121,6 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
         return false;
       },
       'ArrowRight': (e) => {
-        // If focus is not within the menu, assume virtual focus is being used.
-        // This means some other input element is also within the popover, so we shouldn't close the menu.
         if (!isFocusWithin(e.currentTarget)) {
           return false;
         }
@@ -136,8 +134,6 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
         return false;
       },
       'Escape': (e) => {
-        // If focus is not within the menu, assume virtual focus is being used.
-        // This means some other input element is also within the popover, so we shouldn't close the menu.
         if (!isFocusWithin(e.currentTarget)) {
           return false;
         }
@@ -152,46 +148,6 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
       }
     }
   });
-  let submenuKeyDown = (e: KeyboardEvent) => {
-    // If focus is not within the menu, assume virtual focus is being used.
-    // This means some other input element is also within the popover, so we shouldn't close the menu.
-    if (!isFocusWithin(e.currentTarget)) {
-      return;
-    }
-
-    switch (e.key) {
-      case 'ArrowLeft':
-        if (direction === 'ltr' && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
-          e.preventDefault();
-          e.stopPropagation();
-          onSubmenuClose();
-          if (!shouldUseVirtualFocus && ref.current) {
-            focusWithoutScrolling(ref.current);
-          }
-        }
-        break;
-      case 'ArrowRight':
-        if (direction === 'rtl' && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
-          e.preventDefault();
-          e.stopPropagation();
-          onSubmenuClose();
-          if (!shouldUseVirtualFocus && ref.current) {
-            focusWithoutScrolling(ref.current);
-          }
-        }
-        break;
-      case 'Escape':
-        // TODO: can remove this when we fix collection event leaks
-        if (nodeContains(submenuRef.current, getEventTarget(e) as Element)) {
-          e.stopPropagation();
-          onSubmenuClose();
-          if (!shouldUseVirtualFocus && ref.current) {
-            focusWithoutScrolling(ref.current);
-          }
-        }
-        break;
-    }
-  };
 
   let submenuProps = {
     id: overlayId,
@@ -206,7 +162,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
 
   let {keyboardProps: submenuTriggerKeyboardProps} = useKeyboard({
     shortcuts: {
-      'ArrowRight': (e) => {
+      'ArrowRight': () => {
         if (!isDisabled) {
           if (direction === 'ltr') {
             if (!state.isOpen) {
@@ -226,7 +182,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
         }
         return false;
       },
-      'ArrowLeft': (e) => {
+      'ArrowLeft': () => {
         if (!isDisabled) {
           if (direction === 'rtl') {
             if (!state.isOpen) {
@@ -298,7 +254,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
 
   return {
     submenuTriggerProps: {
-      ...submenuTriggerKeyboardProps,
+      ...submenuTriggerKeyboardProps as any, // TODO: fix this
       id: submenuTriggerId,
       'aria-controls': state.isOpen ? overlayId : undefined,
       'aria-haspopup': !isDisabled ? type : undefined,

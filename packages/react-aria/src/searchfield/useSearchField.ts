@@ -13,13 +13,13 @@
 import {AriaButtonProps} from '../button/useButton';
 import {AriaTextFieldProps, useTextField} from '../textfield/useTextField';
 import {DOMAttributes, RefObject, ValidationResult} from '@react-types/shared';
-import {mergeProps} from '../utils/mergeProps';
 import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
-// @ts-ignore
 import intlMessages from '../../intl/searchfield/*.json';
+// @ts-ignore
+import {mergeProps} from '../utils/mergeProps';
 import {SearchFieldProps, SearchFieldState} from 'react-stately/useSearchFieldState';
-import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useKeyboard} from '../interactions/useKeyboard';
+import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
 export interface AriaSearchFieldProps extends SearchFieldProps, Omit<AriaTextFieldProps, 'type'> {
   /**

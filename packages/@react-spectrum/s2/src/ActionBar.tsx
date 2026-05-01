@@ -137,7 +137,7 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
 
   let {keyboardProps} = useKeyboard({
     shortcuts: {
-      'Escape': (e) => {
+      'Escape': () => {
         onClearSelection?.();
         return true;
       }

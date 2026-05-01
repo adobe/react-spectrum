@@ -147,7 +147,7 @@ export function useSliderThumb(
         let {
           getThumbMinValue,
           setThumbValue,
-          setThumbDragging,
+          setThumbDragging
         } = state;
         // remember to set this so that onChangeEnd is fired
         setThumbDragging(index, true);

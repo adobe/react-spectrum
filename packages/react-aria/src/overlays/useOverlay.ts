@@ -16,7 +16,7 @@ import {isElementInChildOfActiveScope} from '../focus/FocusScope';
 import {useEffect, useRef} from 'react';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useInteractOutside} from '../interactions/useInteractOutside';
-import { useKeyboard } from '../interactions/useKeyboard';
+import {useKeyboard} from '../interactions/useKeyboard';
 
 export interface AriaOverlayProps {
   /** Whether the overlay is currently open. */
