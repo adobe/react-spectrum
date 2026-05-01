@@ -71,7 +71,7 @@ jobs:
       # Summarize with Claude API and post to Slack
       - name: Summarize and post to Slack
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_TSDIFF_CHROMATIC_BOT_TOKEN: ${{ secrets.SLACK_TSDIFF_CHROMATIC_BOT_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
@@ -81,7 +81,7 @@ jobs:
           today = os.environ['TODAY']
           channel = os.environ['SLACK_CHANNEL_ID']
           snapshots_repo = os.environ['SNAPSHOTS_REPO']
-          slack_token = os.environ['SLACK_BOT_TOKEN']
+          slack_token = os.environ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN']
           anthropic_key = os.environ['ANTHROPIC_API_KEY']
           workspace = os.environ['GITHUB_WORKSPACE']
           diff_url = f"https://github.com/{snapshots_repo}/blob/main/diffs/{today}.txt"

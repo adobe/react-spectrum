@@ -6,10 +6,8 @@ You are running the weekly react-spectrum API diff workflow. Follow ALL steps be
 - react-spectrum repo: $HOME/dev/react-spectrum
 - snapshots repo: $HOME/dev/react-spectrum-api-snapshots
 - Slack channel: <SLACK_CHANNEL_ID>
-- Slack token env var: SLACK_BOT_TOKEN (already in environment)
+- Slack token env var: SLACK_TSDIFF_CHROMATIC_BOT_TOKEN (already in environment)
 - Snapshots GitHub URL: https://github.com/<YOUR_GITHUB_USERNAME>/react-spectrum-api-snapshots
-- Release baseline commit: ca748178f7975b914f689dd6d0f164622109b0b9
-  (eventually replace with yarn build:api-published once that script is fixed)
 
 ## Step 1: Get today's date
 
@@ -49,7 +47,7 @@ ls $HOME/dev/react-spectrum/dist/base-api/ 2>/dev/null | head -5
 
 ```bash
 cd $HOME/dev/react-spectrum
-yarn build:api-branch --githash=ca748178f7975b914f689dd6d0f164622109b0b9 --output=base-api
+yarn build:api-published
 ```
 
 This also takes 10-30 minutes.
@@ -115,7 +113,7 @@ If EMPTY_DIFF=true, post this message:
 
 ```bash
 curl -s -X POST https://slack.com/api/chat.postMessage \
-  -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+  -H "Authorization: Bearer $SLACK_TSDIFF_CHROMATIC_BOT_TOKEN" \
   -H "Content-Type: application/json" \
   -d "{\"channel\": \"<SLACK_CHANNEL_ID>\", \"text\": \"📊 Weekly API Diff — $TODAY\n\nNo API changes vs release baseline this week — either nothing new has landed on main yet, or all pending changes were included in a release.\"}"
 ```
@@ -124,7 +122,7 @@ Otherwise, post the summary. Fill in the actual counts and package names from St
 
 ```bash
 curl -s -X POST https://slack.com/api/chat.postMessage \
-  -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+  -H "Authorization: Bearer $SLACK_TSDIFF_CHROMATIC_BOT_TOKEN" \
   -H "Content-Type: application/json" \
   -d "{\"channel\": \"<SLACK_CHANNEL_ID>\", \"text\": \"📊 Weekly API Diff — $TODAY\n\n<summary of weekly delta>\n\nFull diff vs release: https://github.com/<YOUR_GITHUB_USERNAME>/react-spectrum-api-snapshots/blob/main/diffs/$TODAY.txt\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong.\"}"
 ```

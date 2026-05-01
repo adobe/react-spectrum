@@ -10,7 +10,7 @@ Runs weekly on a local machine via macOS launchd. Compares the current `main` AP
 | Prompt (live) | `~/weekly-tsdiffer.md` | What launchd actually reads each run |
 | launchd plist (reference) | `scripts/weekly-api-diff/launchd.plist` | Reference copy — install instructions in comments |
 | launchd plist (live) | `~/Library/LaunchAgents/com.<username>.weekly-tsdiffer.plist` | What macOS scheduler reads |
-| Secrets | `~/.secrets` | Contains `SLACK_BOT_TOKEN` (chmod 600, never commit) |
+| Secrets | `~/.secrets` | Contains `SLACK_TSDIFF_CHROMATIC_BOT_TOKEN` (chmod 600, never commit) |
 | Snapshots repo | `~/dev/react-spectrum-api-snapshots` | Stores weekly diff text files |
 | Snapshots repo (GitHub) | https://github.com/\<YOUR_GITHUB_USERNAME\>/react-spectrum-api-snapshots | Public record of weekly diffs |
 | Run log | `/tmp/weekly-tsdiffer.log` | stdout/stderr from each run |
@@ -41,7 +41,7 @@ Eventually switch to `yarn build:api-published` once that script is fixed (track
 
 The `prompt.md` logic can be translated into a GitHub Actions workflow at `.github/workflows/weekly-api-diff.yml`. The main differences:
 - Replace `launchd` schedule with `on: schedule: cron`
-- Replace `SLACK_BOT_TOKEN` from `~/.secrets` with a GitHub Actions secret
+- Replace `SLACK_TSDIFF_CHROMATIC_BOT_TOKEN` from `~/.secrets` with a GitHub Actions secret
 - Replace `$HOME` paths with `$GITHUB_WORKSPACE`
 - The `dist/base-api` baseline would need to be cached or rebuilt each run
 
@@ -56,7 +56,7 @@ cp scripts/weekly-api-diff/launchd.plist ~/Library/LaunchAgents/com.<username>.w
 launchctl load ~/Library/LaunchAgents/com.<username>.weekly-tsdiffer.plist
 
 # 3. Add Slack bot token to ~/.secrets (chmod 600)
-echo 'export SLACK_BOT_TOKEN=xoxb-...' >> ~/.secrets
+echo 'export SLACK_TSDIFF_CHROMATIC_BOT_TOKEN=xoxb-...' >> ~/.secrets
 chmod 600 ~/.secrets
 
 # 4. Clone snapshots repo
