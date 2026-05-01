@@ -18,7 +18,7 @@
     <array>
         <string>/bin/zsh</string>
         <string>-c</string>
-        <string>source $HOME/.nvm/nvm.sh &amp;&amp; source $HOME/.secrets &amp;&amp; claude -p "$(cat $HOME/weekly-tsdiffer.md)" --allowedTools "Bash,Read,Write,Edit" --dangerously-skip-permissions</string>
+        <string>source $HOME/.nvm/nvm.sh &amp;&amp; source $HOME/.secrets &amp;&amp; claude -p "$(cat $HOME/weekly-tsdiffer.md)" --allowedTools "Bash,Read" --dangerously-skip-permissions</string>
     </array>
     <key>StartCalendarInterval</key>
     <dict>
