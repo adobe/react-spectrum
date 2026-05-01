@@ -523,6 +523,14 @@ export class TableTester {
   }
 
   /**
+   * Returns the footer rows within the table if any.
+   */
+  footerRows(): HTMLElement[] {
+    let footerRowGroup = this.rowGroups()[2];
+    return footerRowGroup ? within(footerRowGroup).queryAllByRole('row') : [];
+  }
+
+  /**
    * Returns the row headers within the table if any.
    */
   rowHeaders(): HTMLElement[] {

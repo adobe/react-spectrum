@@ -95,7 +95,7 @@ beforeAll(() => {
 | `'Menu'` | Menu | `trigger()`, `menu()`, `options()`, `open()`, `toggleOptionSelection({option})`, `openSubmenu({submenuTrigger})`, `close()` |
 | `'RadioGroup'` | RadioGroup | `radiogroup()`, `radios()`, `selectedRadio()`, `triggerRadio({radio})` |
 | `'Select'` | Select | `trigger()`, `listbox()`, `options()`, `toggleOptionSelection({option})` |
-| `'Table'` | Table | `table()`, `rows()`, `columns()`, `selectedRows()`, `toggleRowSelection({row})`, `toggleSort({column})`, `triggerRowAction({row})` |
+| `'Table'` | Table | `table()`, `rows()`, `footerRows()`, `columns()`, `selectedRows()`, `toggleRowSelection({row})`, `toggleSort({column})`, `triggerRowAction({row})` |
 | `'Tabs'` | Tabs | `tablist()`, `tabs()`, `tabpanels()`, `selectedTab()`, `triggerTab({tab})` |
 | `'Tree'` | Tree | `tree()`, `rows()`, `selectedRows()`, `toggleRowSelection({row})`, `toggleRowExpansion({row})`, `triggerRowAction({row})` |
 

@@ -95,7 +95,7 @@ The pattern name passed to `createTester` is the ARIA pattern name — not the S
 | `'Menu'` | Menu | `trigger()`, `menu()`, `options()`, `open()`, `toggleOptionSelection({option})`, `openSubmenu({submenuTrigger})`, `close()` |
 | `'RadioGroup'` | RadioGroup | `radiogroup()`, `radios()`, `selectedRadio()`, `triggerRadio({radio})` |
 | `'Select'` | Picker | `trigger()`, `listbox()`, `options()`, `toggleOptionSelection({option})` |
-| `'Table'` | TableView | `table()`, `rows()`, `columns()`, `selectedRows()`, `toggleRowSelection({row})`, `toggleSort({column})`, `triggerRowAction({row})` |
+| `'Table'` | TableView | `table()`, `rows()`, `footerRows()`, `columns()`, `selectedRows()`, `toggleRowSelection({row})`, `toggleSort({column})`, `triggerRowAction({row})` |
 | `'Tabs'` | Tabs | `tablist()`, `tabs()`, `tabpanels()`, `selectedTab()`, `triggerTab({tab})` |
 | `'Tree'` | TreeView | `tree()`, `rows()`, `selectedRows()`, `toggleRowSelection({row})`, `toggleRowExpansion({row})`, `triggerRowAction({row})` |
 
