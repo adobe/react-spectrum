@@ -14,10 +14,11 @@ import {CalendarDate, startOfWeek, today} from '@internationalized/date';
 import {CalendarSelectionMode, CalendarState} from 'react-stately/useCalendarState';
 import {DOMAttributes} from '@react-types/shared';
 import {hookData, useVisibleRangeDescription} from './utils';
-import {KeyboardEvent, useMemo} from 'react';
+import {useMemo} from 'react';
 import {mergeProps} from '../utils/mergeProps';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {useDateFormatter} from '../i18n/useDateFormatter';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLabels} from '../utils/useLabels';
 import {useLocale} from '../i18n/I18nProvider';
 
@@ -71,70 +72,73 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
 
   let {direction} = useLocale();
 
-  let onKeyDown = (e: KeyboardEvent) => {
-    switch (e.key) {
-      case 'Enter':
-      case ' ':
-        e.preventDefault();
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      'Enter': () => {
         state.selectFocusedDate();
-        break;
-      case 'PageUp':
-        e.preventDefault();
-        e.stopPropagation();
-        state.focusPreviousSection(e.shiftKey);
-        break;
-      case 'PageDown':
-        e.preventDefault();
-        e.stopPropagation();
-        state.focusNextSection(e.shiftKey);
-        break;
-      case 'End':
-        e.preventDefault();
-        e.stopPropagation();
+        return true;
+      },
+      ' ': () => {
+        state.selectFocusedDate();
+        return true;
+      },
+      'PageUp': () => {
+        state.focusPreviousSection();
+        return true;
+      },
+      'Shift+PageUp': () => {
+        state.focusPreviousSection(true);
+        return true;
+      },
+      'PageDown': () => {
+        state.focusNextSection();
+        return true;
+      },
+      'Shift+PageDown': () => {
+        state.focusNextSection(true);
+        return true;
+      },
+      'End': () => {
         state.focusSectionEnd();
-        break;
-      case 'Home':
-        e.preventDefault();
-        e.stopPropagation();
+        return true;
+      },
+      'Home': () => {
         state.focusSectionStart();
-        break;
-      case 'ArrowLeft':
-        e.preventDefault();
-        e.stopPropagation();
+        return true;
+      },
+      'ArrowLeft': () => {
         if (direction === 'rtl') {
           state.focusNextDay();
         } else {
           state.focusPreviousDay();
         }
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        e.stopPropagation();
+        return true;
+      },
+      'ArrowUp': () => {
         state.focusPreviousRow();
-        break;
-      case 'ArrowRight':
-        e.preventDefault();
-        e.stopPropagation();
+        return true;
+      },
+      'ArrowRight': () => {
         if (direction === 'rtl') {
           state.focusPreviousDay();
         } else {
           state.focusNextDay();
         }
-        break;
-      case 'ArrowDown':
-        e.preventDefault();
-        e.stopPropagation();
+        return true;
+      },
+      'ArrowDown': () => {
         state.focusNextRow();
-        break;
-      case 'Escape':
+        return true;
+      },
+      'Escape': () => {
         // Cancel the selection.
         if ('setAnchorDate' in state) {
-          e.preventDefault();
           state.setAnchorDate(null);
         }
-        break;
+        return false; // TODO: is this really correct? or should it return true when we cancel and only propagate if there's nothing to do
+      }
     }
-  };
+  });
 
   let visibleRangeDescription = useVisibleRangeDescription(startDate, endDate, state.timeZone, true);
 
@@ -164,7 +168,7 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
       'aria-readonly': state.isReadOnly || undefined,
       'aria-disabled': state.isDisabled || undefined,
       'aria-multiselectable': ('highlightedRange' in state) || state.selectionMode === 'multiple' || undefined,
-      onKeyDown,
+      ...keyboardProps,
       onFocus: () => state.setFocused(true),
       onBlur: () => state.setFocused(false)
     }),

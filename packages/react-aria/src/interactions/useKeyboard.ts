@@ -22,7 +22,7 @@ export interface KeyboardProps extends KeyboardEvents {
   /** Keyboard shortcuts to handle. */
   shortcuts?: KeyboardShortcutBindings,
   /** A ref to the element to ignore portal events. */
-  ignorePortalRef?: RefObject<Element> | null
+  ignorePortalRef?: RefObject<Element | null> | null
 }
 
 export interface KeyboardResult {
