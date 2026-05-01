@@ -127,4 +127,15 @@ describe('Card', () => {
     );
     expect(queryByRole('button')).toBeNull();
   });
+
+  it('has pointer cursor and no user-select when interactive', async () => {
+    let onPress = jest.fn();
+    let {getByRole} = render(
+      <Card onPress={onPress}>
+        <Content><Text slot="title">Interactive Card</Text></Content>
+      </Card>
+    );
+    let card = getByRole('button');
+    expect(card).toHaveStyle({cursor: 'pointer', userSelect: 'none'});
+  });
 });

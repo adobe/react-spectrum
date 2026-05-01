@@ -125,10 +125,12 @@ let card = style({
   contain: 'layout',
   disableTapHighlight: true,
   userSelect: {
-    isCardView: 'none'
+    isCardView: 'none',
+    isInteractive: 'none'
   },
   cursor: {
-    isLink: 'pointer'
+    isLink: 'pointer',
+    isInteractive: 'pointer'
   },
   width: {
     size: {
@@ -513,6 +515,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
               density,
               variant,
               isCardView: false,
+              isInteractive: true,
               isHovered: isInteractiveHovered,
               isFocusVisible: isInteractiveFocusVisible,
               isSelected: false
