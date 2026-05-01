@@ -106,43 +106,37 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
 
   let currentPosition = useRef<{x: number, y: number} | null>(null);
 
+  let keyboardUpdate = (cb, inputRef: RefObject<HTMLInputElement | null>, input: 'x' | 'y') => {
+    state.setDragging(true);
+    setValueChangedViaKeyboard(true);
+    cb();
+    state.setDragging(false);
+    focusInput(inputRef);
+    setFocusedInput(input);
+    return true;
+  }
+
   let {keyboardProps} = useKeyboard({
     shortcuts: {
       'PageUp': () => {
-        state.setDragging(true);
-        setValueChangedViaKeyboard(true);
-        state.incrementY(state.yChannelPageStep);
-        state.setDragging(false);
-        focusInput(inputYRef);
-        setFocusedInput('y');
-        return true;
+        return keyboardUpdate(() => {
+          state.incrementY(state.yChannelPageStep);
+        }, inputYRef, 'y');
       },
       'PageDown': () => {
-        state.setDragging(true);
-        setValueChangedViaKeyboard(true);
-        state.decrementY(state.yChannelPageStep);
-        state.setDragging(false);
-        focusInput(inputYRef);
-        setFocusedInput('y');
-        return true;
+        return keyboardUpdate(() => {
+          state.decrementY(state.yChannelPageStep);
+        }, inputYRef, 'y');
       },
       'Home': () => {
-        state.setDragging(true);
-        setValueChangedViaKeyboard(true);
-        direction === 'rtl' ? state.incrementX(state.xChannelPageStep) : state.decrementX(state.xChannelPageStep);
-        state.setDragging(false);
-        focusInput(inputXRef);
-        setFocusedInput('x');
-        return true;
+        return keyboardUpdate(() => {
+          direction === 'rtl' ? state.incrementX(state.xChannelPageStep) : state.decrementX(state.xChannelPageStep);
+        }, inputXRef, 'x');
       },
       'End': () => {
-        state.setDragging(true);
-        setValueChangedViaKeyboard(true);
-        direction === 'rtl' ? state.decrementX(state.xChannelPageStep) : state.incrementX(state.xChannelPageStep);
-        state.setDragging(false);
-        focusInput(inputXRef);
-        setFocusedInput('x');
-        return true;
+        return keyboardUpdate(() => {
+          direction === 'rtl' ? state.decrementX(state.xChannelPageStep) : state.incrementX(state.xChannelPageStep);
+        }, inputXRef, 'x');
       }
     }
   });

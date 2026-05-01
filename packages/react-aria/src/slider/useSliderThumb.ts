@@ -117,55 +117,35 @@ export function useSliderThumb(
   let reverseX = direction === 'rtl';
   let currentPosition = useRef<number>(null);
 
+  let keyboardUpdate = (cb) => {
+    // remember to set this so that onChangeEnd is fired
+    state.setThumbDragging(index, true);
+    cb();
+    state.setThumbDragging(index, false);
+    return true;
+  }
+
   let {keyboardProps} = useKeyboard({
     shortcuts: {
       'PageUp': () => {
-        let {
-          incrementThumb,
-          setThumbDragging,
-          pageSize
-        } = state;
-        // remember to set this so that onChangeEnd is fired
-        setThumbDragging(index, true);
-        incrementThumb(index, pageSize);
-        setThumbDragging(index, false);
-        return true;
+        return keyboardUpdate(() => {
+          state.incrementThumb(index, state.pageSize);
+        });
       },
       'PageDown': () => {
-        let {
-          decrementThumb,
-          setThumbDragging,
-          pageSize
-        } = state;
-        // remember to set this so that onChangeEnd is fired
-        setThumbDragging(index, true);
-        decrementThumb(index, pageSize);
-        setThumbDragging(index, false);
-        return true;
+        return keyboardUpdate(() => {
+          state.decrementThumb(index, state.pageSize);
+        });
       },
       'Home': () => {
-        let {
-          getThumbMinValue,
-          setThumbValue,
-          setThumbDragging
-        } = state;
-        // remember to set this so that onChangeEnd is fired
-        setThumbDragging(index, true);
-        setThumbValue(index, getThumbMinValue(index));
-        setThumbDragging(index, false);
-        return true;
+        return keyboardUpdate(() => {
+          state.setThumbValue(index, state.getThumbMinValue(index));
+        });
       },
       'End': () => {
-        let {
-          getThumbMaxValue,
-          setThumbValue,
-          setThumbDragging
-        } = state;
-        // remember to set this so that onChangeEnd is fired
-        setThumbDragging(index, true);
-        setThumbValue(index, getThumbMaxValue(index));
-        setThumbDragging(index, false);
-        return true;
+        return keyboardUpdate(() => {
+          state.setThumbValue(index, state.getThumbMaxValue(index));
+        });
       }
     }
   });

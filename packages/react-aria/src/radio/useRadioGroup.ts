@@ -100,60 +100,31 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
         nextElem = walker.lastChild();
       }
     }
-    return nextElem;
+    
+    if (nextElem) {
+      // Call focus on nextElem so that keyboard navigation scrolls the radio into view
+      nextElem.focus();
+      state.setSelectedValue(nextElem.value);
+      return true;
+    }
+    return false;
   }
 
   let {keyboardProps} = useKeyboard({
     shortcuts: {
       'ArrowRight': (e) => {
-        let nextDir;
-        if (direction === 'rtl' && orientation !== 'vertical') {
-          nextDir = 'prev';
-        } else {
-          nextDir = 'next';
-        }
-
-        let nextElem = getNextElement(nextDir, e);
-        if (nextElem) {
-          // Call focus on nextElem so that keyboard navigation scrolls the radio into view
-          nextElem.focus();
-          state.setSelectedValue(nextElem.value);
-        }
-        return true;
+        let nextDir: 'next' | 'prev' = direction === 'rtl' && orientation !== 'vertical' ? 'prev' : 'next';
+        return getNextElement(nextDir, e);
       },
       'ArrowLeft': (e) => {
-        let nextDir;
-        if (direction === 'rtl' && orientation !== 'vertical') {
-          nextDir = 'next';
-        } else {
-          nextDir = 'prev';
-        }
-
-        let nextElem = getNextElement(nextDir, e);
-        if (nextElem) {
-          // Call focus on nextElem so that keyboard navigation scrolls the radio into view
-          nextElem.focus();
-          state.setSelectedValue(nextElem.value);
-        }
-        return true;
+        let nextDir: 'next' | 'prev' = direction === 'rtl' && orientation !== 'vertical' ? 'next' : 'prev';
+        return getNextElement(nextDir, e);
       },
       'ArrowDown': (e) => {
-        let nextElem = getNextElement('next', e);
-        if (nextElem) {
-          // Call focus on nextElem so that keyboard navigation scrolls the radio into view
-          nextElem.focus();
-          state.setSelectedValue(nextElem.value);
-        }
-        return true;
+        return getNextElement('next', e);
       },
       'ArrowUp': (e) => {
-        let nextElem = getNextElement('prev', e);
-        if (nextElem) {
-          // Call focus on nextElem so that keyboard navigation scrolls the radio into view
-          nextElem.focus();
-          state.setSelectedValue(nextElem.value);
-        }
-        return true;
+        return getNextElement('prev', e);
       }
     }
   });
