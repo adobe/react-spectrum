@@ -14,12 +14,12 @@ import {announce} from '../live-announcer/LiveAnnouncer';
 
 import {AriaButtonProps} from '../button/useButton';
 import {ariaHideOutside} from '../overlays/ariaHideOutside';
-import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, InputDOMProps, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps, InputDOMProps, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
 import {AriaListBoxOptions} from '../listbox/useListBox';
 import {chain} from '../utils/chain';
 import {ComboBoxProps, ComboBoxState, SelectionMode} from 'react-stately/useComboBoxState';
 import {dispatchVirtualFocus} from '../focus/virtualFocus';
-import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef, useState} from 'react';
+import {FocusEvent, InputHTMLAttributes, TouchEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getChildNodes} from 'react-stately/private/collections/getChildNodes';
 import {getItemCount} from 'react-stately/private/collections/getItemCount';
@@ -34,6 +34,7 @@ import {useEvent} from '../utils/useEvent';
 import {useFormReset} from '../utils/useFormReset';
 import {useId} from '../utils/useId';
 // @ts-ignore
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLabels} from '../utils/useLabels';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useMenuTrigger} from '../menu/useMenuTrigger';
@@ -145,61 +146,102 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
 
   let router = useRouter();
 
-  // For textfield specific keydown operations
-  let onKeyDown = (e: BaseEvent<KeyboardEvent<any>>) => {
-    if (e.nativeEvent.isComposing) {
-      return;
-    }
-    switch (e.key) {
-      case 'Enter':
-      case 'Tab':
-        // Prevent form submission if menu is open since we may be selecting a option
-        if (state.isOpen && e.key === 'Enter') {
-          e.preventDefault();
+  // for textfield specific operations
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      'Enter': (e) => {
+        if (e.nativeEvent.isComposing) {
+          return false;
+        }
+        // Prevent default form submission if menu is open since we may be selecting a option
+        let shouldPreventDefault = state.isOpen;
+        // If the focused item is a link, trigger opening it. Items that are links are not selectable.
+        if (state.isOpen && listBoxRef.current && state.selectionManager.focusedKey != null) {
+          let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
+          if (collectionItem?.props.href) {
+            let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
+            if (item instanceof HTMLAnchorElement) {
+              router.open(item, e, collectionItem.props.href, collectionItem.props.routerOptions as RouterOptions);
+            }
+            state.close();
+            return {shouldPreventDefault};
+          } else if (collectionItem?.props.onAction) {
+            collectionItem.props.onAction();
+            state.close();
+            return {shouldPreventDefault};
+          }
+        }
+        state.commit();
+        return {shouldPreventDefault};
+      },
+      'Tab': (e) => {
+        if (e.nativeEvent.isComposing) {
+          return false;
         }
 
         // If the focused item is a link, trigger opening it. Items that are links are not selectable.
         if (state.isOpen && listBoxRef.current && state.selectionManager.focusedKey != null) {
           let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
           if (collectionItem?.props.href) {
-            let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
-            if (e.key === 'Enter' && item instanceof HTMLAnchorElement) {
-              router.open(item, e, collectionItem.props.href, collectionItem.props.routerOptions as RouterOptions);
-            }
             state.close();
-            break;
+            return {shouldPreventDefault: false};
           } else if (collectionItem?.props.onAction) {
             collectionItem.props.onAction();
             state.close();
-            break;
+            return {shouldPreventDefault: false};
           }
         }
-        if (e.key === 'Enter' || state.isOpen) {
+        if (state.isOpen) {
           state.commit();
         }
-        break;
-      case 'Escape':
+        return {shouldPreventDefault: false};
+      },
+      'Escape': (e) => {
+        if (e.nativeEvent.isComposing) {
+          return false;
+        }
+        let shouldContinuePropagation = false;
         if (
           !state.selectionManager.isEmpty ||
           state.inputValue === '' ||
           props.allowsCustomValue
         ) {
-          e.continuePropagation();
+          shouldContinuePropagation = true;
         }
         state.revert();
-        break;
-      case 'ArrowDown':
+        return {shouldContinuePropagation};
+      },
+      'ArrowDown': (e) => {
+        if (e.nativeEvent.isComposing) {
+          return false;
+        }
         state.open('first', 'manual');
-        break;
-      case 'ArrowUp':
+        return true;
+      },
+      'ArrowUp': (e) => {
+        if (e.nativeEvent.isComposing) {
+          return false;
+        }
         state.open('last', 'manual');
-        break;
-      case 'ArrowLeft':
-      case 'ArrowRight':
+        return true;
+      },
+      'ArrowLeft': (e) => {
+        if (e.nativeEvent.isComposing) {
+          return false;
+        }
         state.selectionManager.setFocusedKey(null);
-        break;
+        return true;
+      },
+      'ArrowRight': (e) => {
+        if (e.nativeEvent.isComposing) {
+          return false;
+        }
+        state.selectionManager.setFocusedKey(null);
+        return true;
+      }
     }
-  };
+
+  });
 
   let onBlur = (e: FocusEvent<HTMLInputElement>) => {
     let blurFromButton = buttonRef?.current && buttonRef.current === e.relatedTarget;
@@ -235,7 +277,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
     // In multi-select mode, only set required if the selection is empty.
     isRequired: props.selectionMode === 'multiple' ? props.isRequired && state.selectionManager.isEmpty : props.isRequired,
     onChange: state.setInputValue,
-    onKeyDown: !isReadOnly ? chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown) : props.onKeyDown,
+    onKeyDown: !isReadOnly ? chain(state.isOpen && collectionProps.onKeyDown, keyboardProps.onKeyDown, props.onKeyDown) : props.onKeyDown,
     onBlur,
     value: state.inputValue,
     defaultValue: state.defaultInputValue,
