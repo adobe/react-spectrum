@@ -376,9 +376,11 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   }
 
   return {
+    // @ts-expect-error - TODO: fix this
     segmentProps: mergeProps(spinButtonProps, labelProps, {
       id,
       ...touchPropOverrides,
+      ...keyboardProps,
       'aria-invalid': state.isInvalid ? 'true' : undefined,
       'aria-describedby': ariaDescribedBy,
       'aria-readonly': state.isReadOnly || !segment.isEditable ? 'true' : undefined,
@@ -391,7 +393,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: isEditable ? 'next' : undefined,
       inputMode: state.isDisabled || segment.type === 'dayPeriod' || segment.type === 'era' || !isEditable ? undefined : 'numeric',
       tabIndex: state.isDisabled ? undefined : 0,
-      ...keyboardProps,
       onFocus,
       style: segmentStyle,
       // Prevent pointer events from reaching useDatePickerGroup, and allow native browser behavior to focus the segment.
