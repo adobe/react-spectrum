@@ -15,7 +15,7 @@ import {DateFieldState, DateSegment} from 'react-stately/useDateFieldState';
 import {getActiveElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getScrollParent} from '../utils/getScrollParent';
 import {hookData} from './useDateField';
-import {isIOS, isMac} from '../utils/platform';
+import {isIOS} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
 import {NumberParser} from '@internationalized/number';
 import React, {CSSProperties, useMemo, useRef} from 'react';
@@ -26,6 +26,7 @@ import {useDisplayNames} from './useDisplayNames';
 import {useEvent} from '../utils/useEvent';
 import {useFilter} from '../i18n/useFilter';
 import {useId} from '../utils/useId';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLabels} from '../utils/useLabels';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
@@ -121,28 +122,23 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     }
   };
 
-  let onKeyDown = (e) => {
-    // Firefox does not fire selectstart for Ctrl/Cmd + A
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=1742153
-    if (e.key === 'a' && (isMac() ? e.metaKey : e.ctrlKey)) {
-      e.preventDefault();
-    }
-
-    if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) {
-      return;
-    }
-
-    switch (e.key) {
-      case 'Backspace':
-      case 'Delete': {
-        // Safari on iOS does not fire beforeinput for the backspace key because the cursor is at the start.
-        e.preventDefault();
-        e.stopPropagation();
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      'Backspace': () => {
         backspace();
-        break;
+        return true;
+      },
+      'Delete': () => {
+        backspace();
+        return true;
+      },
+      'Mod+a': () => {
+        // Firefox does not fire selectstart for Ctrl/Cmd + A
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=1742153
+        return true;
       }
     }
-  };
+  });
 
   // Safari dayPeriod option doesn't work...
   let {startsWith} = useFilter({sensitivity: 'base'});
@@ -395,7 +391,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: isEditable ? 'next' : undefined,
       inputMode: state.isDisabled || segment.type === 'dayPeriod' || segment.type === 'era' || !isEditable ? undefined : 'numeric',
       tabIndex: state.isDisabled ? undefined : 0,
-      onKeyDown,
+      ...keyboardProps,
       onFocus,
       style: segmentStyle,
       // Prevent pointer events from reaching useDatePickerGroup, and allow native browser behavior to focus the segment.
