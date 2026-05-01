@@ -72,7 +72,6 @@
     "vanilla-starter": "../../../starters/docs/src"
   },
   "devDependencies": {
-    "@anthropic-ai/mcpb": "^2.1.2",
     "axe-playwright": "^2.2.2",
     "playwright": "^1.57.0"
   },

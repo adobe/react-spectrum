@@ -143,8 +143,15 @@ Update your MCP client configuration to use the local MCP server:
 
 ## Bundling
 
-To build an [MCP Bundle (MCPB)](https://github.com/modelcontextprotocol/mcpb), run:
+To build an [MCP Bundle (MCPB)](https://github.com/modelcontextprotocol/mcpb), first prepare the staging directory:
 
 ```bash
 yarn workspace @react-spectrum/s2-docs generate:mcpb
+```
+
+Then validate and pack using the [`@anthropic-ai/mcpb`](https://www.npmjs.com/package/@anthropic-ai/mcpb) CLI (paths are printed by the script above):
+
+```bash
+npx @anthropic-ai/mcpb validate <staging-dir>
+npx @anthropic-ai/mcpb pack <staging-dir> <output-path>
 ```

@@ -1,7 +1,5 @@
-import {execFileSync} from 'child_process';
 import {fileURLToPath} from 'url';
 import fs from 'fs';
-import os from 'os';
 import path from 'path';
 import sharp from 'sharp';
 
@@ -107,91 +105,88 @@ const requestedLibraries = process.argv.slice(2);
 async function generateBundle(libraryName, config) {
   const packageJsonPath = path.join(config.packageDir, 'package.json');
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `rsp-${libraryName}-mcpb-`));
+  const stagingDir = path.join(config.outputDir, config.extensionName);
 
-  try {
-    for (const dir of config.srcDirs) {
-      if (!fs.existsSync(dir.from)) {
-        throw new Error(`Missing built MCP output at ${dir.from}. Build ${config.packageName} first.`);
-      }
-      copyDirectory(dir.from, path.join(tempDir, dir.to));
+  fs.rmSync(stagingDir, {recursive: true, force: true});
+  fs.mkdirSync(stagingDir, {recursive: true});
+
+  for (const dir of config.srcDirs) {
+    if (!fs.existsSync(dir.from)) {
+      throw new Error(`Missing built MCP output at ${dir.from}. Build ${config.packageName} first.`);
     }
-
-    const bundledPackages = new Set();
-    for (const dependency of Object.keys(packageJson.dependencies || {})) {
-      copyDependencyTree(dependency, path.join(tempDir, 'node_modules'), bundledPackages);
-    }
-
-    // Convert SVG icon to 512x512 PNG for the bundle.
-    const iconFile = 'icon.png';
-    let svg = fs.readFileSync(config.iconSvg, 'utf8');
-    // The React Aria favicon uses light-dark() CSS which sharp doesn't support.
-    // Replace it with the dark-mode color so the icon works on any background.
-    svg = svg.replace(/light-dark\([^,]+,\s*([^)]+)\)/, '$1');
-    await sharp(Buffer.from(svg))
-      .resize(448, 448, {fit: 'contain', background: {r: 0, g: 0, b: 0, alpha: 0}})
-      .extend({top: 32, bottom: 32, left: 32, right: 32, background: {r: 0, g: 0, b: 0, alpha: 0}})
-      .png().toFile(path.join(tempDir, iconFile));
-
-    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
-      name: config.extensionName,
-      version: packageJson.version,
-      private: true,
-      type: 'module'
-    }, null, 2) + '\n');
-
-    fs.writeFileSync(path.join(tempDir, 'manifest.json'), JSON.stringify({
-      manifest_version: '0.3',
-      name: config.extensionName,
-      display_name: config.displayName,
-      version: packageJson.version,
-      description: config.description,
-      long_description: config.longDescription,
-      author: {
-        name: 'Adobe',
-        url: 'https://www.adobe.com'
-      },
-      repository: {
-        type: 'git',
-        url: 'https://github.com/adobe/react-spectrum'
-      },
-      homepage: config.homepage,
-      documentation: config.documentation,
-      support: 'https://github.com/adobe/react-spectrum/issues',
-      icon: iconFile,
-      license: 'Apache-2.0',
-      keywords: config.keywords,
-      privacy_policies: ['https://www.adobe.com/privacy/policy.html'],
-      tools: config.tools,
-      compatibility: {
-        platforms: ['darwin', 'win32', 'linux'],
-        runtimes: {
-          node: '>=18'
-        }
-      },
-      server: {
-        type: 'node',
-        entry_point: config.serverEntryPoint,
-        mcp_config: {
-          command: 'node',
-          args: [`\${__dirname}/${config.serverEntryPoint}`]
-        }
-      }
-    }, null, 2) + '\n');
-
-    fs.copyFileSync(path.join(config.packageDir, 'README.md'), path.join(tempDir, 'README.md'));
-    fs.copyFileSync(path.join(repoRoot, 'LICENSE'), path.join(tempDir, 'LICENSE'));
-
-    fs.mkdirSync(config.outputDir, {recursive: true});
-    const outputPath = path.join(config.outputDir, config.outputFile);
-    runMcpbCli(['validate', tempDir]);
-    runMcpbCli(['pack', tempDir, outputPath]);
-
-    const sizeKb = (fs.statSync(outputPath).size / 1024).toFixed(1);
-    console.log(`Generated ${config.outputFile} (${sizeKb} kB)`);
-  } finally {
-    fs.rmSync(tempDir, {recursive: true, force: true});
+    copyDirectory(dir.from, path.join(stagingDir, dir.to));
   }
+
+  const bundledPackages = new Set();
+  for (const dependency of Object.keys(packageJson.dependencies || {})) {
+    copyDependencyTree(dependency, path.join(stagingDir, 'node_modules'), bundledPackages);
+  }
+
+  // Convert SVG icon to 512x512 PNG for the bundle.
+  const iconFile = 'icon.png';
+  let svg = fs.readFileSync(config.iconSvg, 'utf8');
+  // The React Aria favicon uses light-dark() CSS which sharp doesn't support.
+  // Replace it with the dark-mode color so the icon works on any background.
+  svg = svg.replace(/light-dark\([^,]+,\s*([^)]+)\)/, '$1');
+  await sharp(Buffer.from(svg))
+    .resize(448, 448, {fit: 'contain', background: {r: 0, g: 0, b: 0, alpha: 0}})
+    .extend({top: 32, bottom: 32, left: 32, right: 32, background: {r: 0, g: 0, b: 0, alpha: 0}})
+    .png().toFile(path.join(stagingDir, iconFile));
+
+  fs.writeFileSync(path.join(stagingDir, 'package.json'), JSON.stringify({
+    name: config.extensionName,
+    version: packageJson.version,
+    private: true,
+    type: 'module'
+  }, null, 2) + '\n');
+
+  fs.writeFileSync(path.join(stagingDir, 'manifest.json'), JSON.stringify({
+    manifest_version: '0.3',
+    name: config.extensionName,
+    display_name: config.displayName,
+    version: packageJson.version,
+    description: config.description,
+    long_description: config.longDescription,
+    author: {
+      name: 'Adobe',
+      url: 'https://www.adobe.com'
+    },
+    repository: {
+      type: 'git',
+      url: 'https://github.com/adobe/react-spectrum'
+    },
+    homepage: config.homepage,
+    documentation: config.documentation,
+    support: 'https://github.com/adobe/react-spectrum/issues',
+    icon: iconFile,
+    license: 'Apache-2.0',
+    keywords: config.keywords,
+    privacy_policies: ['https://www.adobe.com/privacy/policy.html'],
+    tools: config.tools,
+    compatibility: {
+      platforms: ['darwin', 'win32', 'linux'],
+      runtimes: {
+        node: '>=18'
+      }
+    },
+    server: {
+      type: 'node',
+      entry_point: config.serverEntryPoint,
+      mcp_config: {
+        command: 'node',
+        args: [`\${__dirname}/${config.serverEntryPoint}`]
+      }
+    }
+  }, null, 2) + '\n');
+
+  fs.copyFileSync(path.join(config.packageDir, 'README.md'), path.join(stagingDir, 'README.md'));
+  fs.copyFileSync(path.join(repoRoot, 'LICENSE'), path.join(stagingDir, 'LICENSE'));
+
+  const outputPath = path.join(config.outputDir, config.outputFile);
+  console.log(`Bundle prepared at ${stagingDir}`);
+  console.log('To validate and pack, run:');
+  console.log(`  npx @anthropic-ai/mcpb validate ${stagingDir}`);
+  console.log(`  npx @anthropic-ai/mcpb pack ${stagingDir} ${outputPath}`);
 }
 
 function copyDependencyTree(packageName, outputNodeModulesDir, bundledPackages, fromDir = repoRoot) {
@@ -242,19 +237,6 @@ function copyDirectory(from, to) {
   fs.cpSync(from, to, {
     recursive: true,
     dereference: true
-  });
-}
-
-function runMcpbCli(args) {
-  const mcpbPackageDir = resolvePackageDir('@anthropic-ai/mcpb', repoRoot);
-  const cliPath = path.join(mcpbPackageDir, 'dist/cli/cli.js');
-  if (!fs.existsSync(cliPath)) {
-    throw new Error(`Could not find MCPB CLI at ${cliPath}`);
-  }
-
-  execFileSync(process.execPath, [cliPath, ...args], {
-    cwd: repoRoot,
-    stdio: 'inherit'
   });
 }
 
