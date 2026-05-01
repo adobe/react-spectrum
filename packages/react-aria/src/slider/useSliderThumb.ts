@@ -123,7 +123,7 @@ export function useSliderThumb(
     cb();
     state.setThumbDragging(index, false);
     return true;
-  }
+  };
 
   let {keyboardProps} = useKeyboard({
     shortcuts: {

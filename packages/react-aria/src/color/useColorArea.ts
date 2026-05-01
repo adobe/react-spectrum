@@ -114,7 +114,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     focusInput(inputRef);
     setFocusedInput(input);
     return true;
-  }
+  };
 
   let {keyboardProps} = useKeyboard({
     shortcuts: {
