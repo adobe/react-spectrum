@@ -54,15 +54,18 @@ afterEach(() => {
 - Mouse drag interactions and other mock reliant interactions are not available in these test utils since they depended heavily on how the user mocked various things in their test. These must still be simulated manually by the user.
 - Some testers may support the notion of "long press" for certain interactions (e.g. long pressing a button to trigger its menu). To simulate this, you will need to mock PointerEvent globally (see the `installPointerEvent` util) and provide a way to advance timers to the User via `advanceTimer`.
 - These test utils are compatible with not only JSDOM unit tests but browser tests as well (e.g. vitest-browser-react).
+- Methods that accept a target (`option`, `row`, `column`, `checkbox`, `radio`, `tab`) take a `number` (index), `string` (text content), or `HTMLElement`. Use the tester's own query methods (e.g. `rows()`, `options()`) to obtain an `HTMLElement` when you need one.
+- Link navigation assertions must be simulated manually. The testers do not assert navigation side effects.
 
 ### When not to use the testers
 
 Skip the testers and write manual interactions for the following cases:
 
-- When testing a Menu or Dialog rendered without a trigger. The testers assumes a trigger exists.
+- When testing a Menu or Dialog rendered without a trigger, or when testing interactive elements embedded inside rows or cells (e.g. an ActionMenu inside a TreeView row). The testers assume a trigger exists and do not reach into row/cell content.
 - tests that verify exact focus order, arrow key cycling, or specific modifier key behavior. Use `fireEvent.keyDown` or `userEvent.keyboard` directly so the test is actually testing the desired keyboard flow.
 - when `isOpen` or `defaultOpen` is set, `open()` will no-op but the tester's `root` must still resolve to the trigger element. Use `getByLabelText` or `getByTestId` rather than `getByRole('button')` to avoid ambiguity when multiple buttons are in the DOM.
 - testing `isDismissible`, `isKeyboardDismissDisabled`, or outside-click behavior. Use `userEvent.click(document.body)` or `user.keyboard('[Escape]')` directly and assert the expected state afterwards.
+- when a Dialog closes via an action button (not the explicit close/dismiss button) you should instead click that button manually, then use `dialogTester.dialog()` to assert whether the dialog is still present.
 
 ### Draggable handle components
 
