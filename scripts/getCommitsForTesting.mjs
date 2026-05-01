@@ -196,7 +196,7 @@ function extractTestInstructions(contents) {
     if (node.type === 'heading') {
       let text = getHeadingText(node).toLowerCase();
 
-      if (/testing? instructions?/.test(text)) {
+      if (/test(?:ing)? instructions?/.test(text)) {
         collecting = true;
         headingDepth = node.depth;
         continue;
