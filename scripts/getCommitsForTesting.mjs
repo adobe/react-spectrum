@@ -169,7 +169,7 @@ async function getPR(num) {
   let res = await octokit.pullRequests.get({
     owner: 'adobe',
     repo: 'react-spectrum',
-    number: Number(num)
+    pull_number: Number(num)
   });
   return res;
 }
