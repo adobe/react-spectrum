@@ -11,10 +11,10 @@
  */
 
 import {act as originalAct, renderHook as originalRenderHook, render} from '@testing-library/react';
-import {Provider, ProviderProps} from '@react-spectrum/provider';
+import {Provider, ProviderProps} from '@adobe/react-spectrum/Provider';
 import React from 'react';
 import {StrictModeWrapper} from './StrictModeWrapper';
-import {theme} from '@react-spectrum/theme-default';
+import {defaultTheme as theme} from '@adobe/react-spectrum/defaultTheme';
 
 export {act, fireEvent, within, screen, waitFor, getAllByRole, createEvent, waitForElementToBeRemoved} from '@testing-library/react';
 
