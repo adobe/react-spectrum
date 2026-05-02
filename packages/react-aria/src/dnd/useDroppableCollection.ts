@@ -245,8 +245,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         draggingKeys
       } = droppingState.current;
 
-      let prevFocusedItem = prevFocusedKey != null ? (state.collection.getItem(prevFocusedKey) ?? prevCollection.getItem(prevFocusedKey)) : null;
-
       // If an insert occurs during a drop, we want to immediately select these items to give
       // feedback to the user that a drop occurred. Only do this if the selection didn't change
       // since the drop started so we don't override if the user or application did something.
@@ -298,15 +296,15 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           }
         }
       } else if (
-        prevFocusedItem != null &&
+        prevFocusedKey != null &&
         state.selectionManager.focusedKey === prevFocusedKey &&
         isInternal &&
         target.type === 'item' &&
         target.dropPosition !== 'on' &&
-        draggingKeys.has(prevFocusedItem.parentKey)
+        draggingKeys.has(state.collection.getItem(prevFocusedKey)?.parentKey)
       ) {
         // Focus row instead of cell when reordering.
-        state.selectionManager.setFocusedKey(prevFocusedItem.parentKey ?? null);
+        state.selectionManager.setFocusedKey(state.collection.getItem(prevFocusedKey)?.parentKey ?? null);
         setInteractionModality('keyboard');
       } else if (
         state.selectionManager.focusedKey === prevFocusedKey &&
