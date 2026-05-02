@@ -47,9 +47,10 @@ export interface TypeSelectAria {
  */
 export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
   let {keyboardDelegate, selectionManager, onTypeSelect} = options;
-  let state = useRef<{search: string, timeout: ReturnType<typeof setTimeout> | undefined}>({
+  let state = useRef<{search: string, timeout: ReturnType<typeof setTimeout> | undefined, startKey: Key | null}>({
     search: '',
-    timeout: undefined
+    timeout: undefined,
+    startKey: null
   }).current;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -69,16 +70,18 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
       }
     }
 
-    if (state.search.length > 0 && state.search.split('').every(c => c === character)) {
+    if (state.search.length === 0 || (state.search.length > 0 && state.search.split('').every(c => c === character))) {
       state.search = character;
+      state.startKey = selectionManager.focusedKey;
     } else {
       state.search += character;
     }
 
     if (keyboardDelegate.getKeyForSearch != null) {
       // Use the delegate to find a key to focus.
-      // Prioritize items after the currently focused item, falling back to searching the whole list.
-      let key = keyboardDelegate.getKeyForSearch(state.search, selectionManager.focusedKey);
+      // Prioritize items after the starting focused item for the active search,
+      // falling back to searching the whole list.
+      let key = keyboardDelegate.getKeyForSearch(state.search, state.startKey ?? selectionManager.focusedKey);
 
       // If no key found, search from the top.
       if (key == null) {
@@ -96,6 +99,7 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
     clearTimeout(state.timeout);
     state.timeout = setTimeout(() => {
       state.search = '';
+      state.startKey = null;
     }, TYPEAHEAD_DEBOUNCE_WAIT_MS);
   };
 
