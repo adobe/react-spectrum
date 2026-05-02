@@ -1,16 +1,31 @@
 import '@react-spectrum/s2/page.css';
 import { themes } from 'storybook/theming';
-import { DARK_MODE_EVENT_NAME } from '@vueless/storybook-dark-mode';
-import { store } from '@vueless/storybook-dark-mode/dist/esm/Tool';
+import { DARK_MODE_EVENT_NAME, useDarkMode } from '@vueless/storybook-dark-mode';
 import { addons } from 'storybook/preview-api';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {withProviderSwitcher} from './custom-addons/provider';
 import {DocsContainer, Controls, Description, Primary, Stories, Subtitle, Title} from '@storybook/addon-docs/blocks';
 import './global.css';
 
+const DARK_MODE_STORAGE_KEY = 'sb-addon-themes-3';
+
+function getInitialColorScheme(): 'dark' | 'light' {
+  if (typeof window === 'undefined') return 'light';
+  try {
+    const stored = window.localStorage.getItem(DARK_MODE_STORAGE_KEY);
+    if (stored) {
+      const { current } = JSON.parse(stored);
+      return current === 'dark' ? 'dark' : 'light';
+    }
+  } catch {}
+  return 'light';
+}
+
 const channel = addons.getChannel();
-document.documentElement.dataset.colorScheme = store().current === 'dark' ? 'dark' : 'light';
-channel.on(DARK_MODE_EVENT_NAME, isDark => document.documentElement.dataset.colorScheme = isDark ? 'dark' : 'light');
+document.documentElement.dataset.colorScheme = getInitialColorScheme();
+channel.on(DARK_MODE_EVENT_NAME, (isDark: boolean) => {
+  document.documentElement.dataset.colorScheme = isDark ? 'dark' : 'light';
+});
 
 /** @type { import('@storybook/react').Preview } */
 const preview = {
@@ -21,12 +36,8 @@ const preview = {
     },
     docs: {
       container: (props) => {
-        let [dark, setDark] = useState(store().current === 'dark');
-        useEffect(() => {
-          channel.on(DARK_MODE_EVENT_NAME, setDark);
-          return () => channel.removeListener(DARK_MODE_EVENT_NAME, setDark);
-        }, []);
-        var style = getComputedStyle(document.body)
+        const dark = useDarkMode();
+        var style = getComputedStyle(document.body);
         return <DocsContainer {...props} theme={{...(dark ? themes.dark : themes.light), appContentBg: style.getPropertyValue('--s2-container-bg').trim()}} />;
       },
       codePanel: true,
