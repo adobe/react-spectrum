@@ -57,7 +57,7 @@ jobs:
             echo "NEW_RELEASE=true" >> $GITHUB_ENV
           else
             # Compare against the last diff in the snapshots repo
-            PREV=$(ls -t snapshots/diffs/*.txt 2>/dev/null | head -1)
+            PREV=$(ls snapshots/diffs/*.txt 2>/dev/null | sort -r | head -1)
             if [ -n "$PREV" ]; then
               diff "$PREV" /tmp/diff-current.txt > /tmp/weekly-delta.txt || true
             else
@@ -68,7 +68,7 @@ jobs:
           # Commit a diff if there is a new release (fresh baseline), or diff changed from last week
           # Skip if no difference from last diff (aka no change from last week/last run), or if the diff against the release code is empty
           NEW_RELEASE="${NEW_RELEASE:-false}"
-          if [ "$NEW_RELEASE" = "true" ] || ([ -s /tmp/diff-current.txt ] && [ -s /tmp/weekly-delta.txt ]); then
+          if [ -s /tmp/diff-current.txt ] && ([ "$NEW_RELEASE" = "true" ] || [ -s /tmp/weekly-delta.txt ]); then
             cp /tmp/diff-current.txt snapshots/diffs/$TODAY.txt
             cd snapshots
             git config user.email "github-actions@github.com"
@@ -87,7 +87,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           python3 << 'PYEOF'
-          import json, os, urllib.request, subprocess
+          import glob, json, os, urllib.request
 
           required = ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN', 'SLACK_CHANNEL_ID', 'GITHUB_TOKEN', 'TODAY', 'SNAPSHOTS_REPO', 'GITHUB_WORKSPACE']
           missing = [k for k in required if not os.environ.get(k)]
@@ -105,10 +105,7 @@ jobs:
           vs_release_size = os.path.getsize('/tmp/diff-current.txt')
           vs_last_week_size = os.path.getsize('/tmp/weekly-delta.txt') if os.path.exists('/tmp/weekly-delta.txt') else 0
 
-          prev_files = sorted(
-            [f for f in __import__('glob').glob(f"{workspace}/snapshots/diffs/*.txt")],
-            key=os.path.getmtime, reverse=True
-          )
+          prev_files = sorted(glob.glob(f"{workspace}/snapshots/diffs/*.txt"), reverse=True)
           prev_date = os.path.basename(prev_files[0]).replace('.txt', '') if prev_files else None
           prev_url = f"https://github.com/{snapshots_repo}/blob/main/diffs/{prev_date}.txt" if prev_date else None
 
