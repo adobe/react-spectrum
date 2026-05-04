@@ -1018,6 +1018,9 @@ workflows:
       - v-s2-parcel:
           requires:
             - verdaccio
+      - v-s2-vite:
+          requires:
+            - verdaccio
       - v-s2-webpack:
           requires:
             - verdaccio
