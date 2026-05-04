@@ -128,7 +128,7 @@ export function useSelect<T, M extends SelectionMode = 'single'>(props: AriaSele
         e.preventDefault();
 
         let key = state.selectedKey != null ? delegate.getKeyAbove?.(state.selectedKey) : delegate.getFirstKey?.();
-        if (key) {
+        if (key != null) {
           state.setSelectedKey(key);
         }
         break;
@@ -138,7 +138,7 @@ export function useSelect<T, M extends SelectionMode = 'single'>(props: AriaSele
         e.preventDefault();
 
         let key = state.selectedKey != null ? delegate.getKeyBelow?.(state.selectedKey) : delegate.getFirstKey?.();
-        if (key) {
+        if (key != null) {
           state.setSelectedKey(key);
         }
         break;

@@ -13,7 +13,7 @@
 import {action} from 'storybook/actions';
 import {Autocomplete} from '../src/Autocomplete';
 import {Button} from '../src/Button';
-import {Cell, Column, Row, Table, TableBody, TableHeader, TableLayout} from '../src/Table';
+import {Cell, Column, Row, Table, TableBody, TableHeader} from '../src/Table';
 import {Collection} from 'react-aria/Collection';
 import {DialogTrigger} from '../src/Dialog';
 import {GridList, GridListHeader, GridListSection} from '../src/GridList';
@@ -38,6 +38,7 @@ import {SearchField} from '../src/SearchField';
 import {Select, SelectValue} from '../src/Select';
 import {Separator} from '../src/Separator';
 import styles from '../example/index.css';
+import {TableLayout} from '../src/TableLayout';
 import {TagGroup, TagList} from '../src/TagGroup';
 import {Text} from '../src/Text';
 import {TextArea} from '../src/TextArea';
