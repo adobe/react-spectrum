@@ -405,7 +405,6 @@ export const ComboBoxListBoxItemWithAriaLabel: ComboBoxStory = () => (
   </ComboBox>
 );
 
-<<<<<<< HEAD
 function MultiSelectComboBox(props) {
   return (
     <ComboBox allowsEmptyCollection selectionMode="multiple" defaultItems={usStateOptions} {...props}>
@@ -416,21 +415,12 @@ function MultiSelectComboBox(props) {
           <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
         </Button>
       </div>
-=======
-export const MultiSelectComboBox: ComboBoxStory = () => (
-  <ComboBox allowsEmptyCollection selectionMode="multiple" defaultItems={usStateOptions}>
-    <Label style={{display: 'block'}}>Test</Label>
-    <Group style={{display: 'flex', width: 300, flexWrap: 'wrap', border: '1px solid gray'}}>
->>>>>>> 569946588ea19fcba4a31d7baa89655813e73d98
       <ComboBoxStateContext.Consumer>
         {state => state && (
           <TagGroup
             aria-label="Selected states"
             items={state.selectedItems.map(item => item.value)}
-<<<<<<< HEAD
             renderEmptyState={() => 'No selected items'}
-=======
->>>>>>> 569946588ea19fcba4a31d7baa89655813e73d98
             onRemove={(keys) => {
               // Remove keys from ComboBox state.
               if (Array.isArray(state.value)) {
@@ -441,7 +431,6 @@ export const MultiSelectComboBox: ComboBoxStory = () => (
           </TagGroup>
         )}
       </ComboBoxStateContext.Consumer>
-<<<<<<< HEAD
       <Popover placement="bottom end">
         <ListBox<{name: string}>
           renderEmptyState={renderEmptyState}
@@ -453,24 +442,6 @@ export const MultiSelectComboBox: ComboBoxStory = () => (
     </ComboBox>
   );
 }
-=======
-      <Input placeholder="Select an item" style={{border: 'none', width: 80, flex: 1}} />
-      <Button>
-        <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
-      </Button>
-    </Group>
-    <Popover>
-      <ListBox<{name: string}>
-        renderEmptyState={renderEmptyState}
-        data-testid="combo-box-list-box"
-        className={styles.menu}
-        style={{width: 'var(--trigger-width)'}}>
-        {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
-      </ListBox>
-    </Popover>
-  </ComboBox>
-);
->>>>>>> 569946588ea19fcba4a31d7baa89655813e73d98
 
 const usStateOptions = [
   {id: 'AL', name: 'Alabama'},
@@ -540,7 +511,6 @@ export const MultiSelectCombobBoxStory: StoryObj<typeof MultiSelectComboBox> = {
     allowsCustomValue: true
   }
 };
-
 export const InModal: ComboBoxStory = () => (
   <DialogTrigger>
     <Button>Open modal</Button>
