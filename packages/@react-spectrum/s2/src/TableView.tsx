@@ -963,14 +963,9 @@ function VisuallyHiddenSelectAllLabel() {
   );
 }
 
-
-// maybe for cell, i can add an absolute positioned div that only renders the divider (basically),
-// i can update the border width so that the divider won't lay on top of the blue border
-// updating the border width shouldn't cause any layout changes since it will be on a absolute positioned div
-
 const commonCellStyles = {
   borderColor: 'transparent',
-  borderBottomWidth: 0,
+  borderBottomWidth: 1,
   borderTopWidth: 0,
   borderXWidth: 0,
   borderStyle: 'solid',
@@ -1013,7 +1008,19 @@ const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean, isTreeC
   width: 'full',
   fontSize: controlFont(),
   alignItems: 'center',
-  display: 'flex'
+  display: 'flex',
+  borderStyle: {
+    default: 'none',
+    isDivider: 'solid'
+  },
+  borderEndWidth: {
+    default: 0,
+    isDivider: 1
+  },
+  borderColor: {
+    default: 'gray-300',
+    forcedColors: 'ButtonBorder'
+  }
 });
 
 const stickyCell = {
@@ -1071,15 +1078,6 @@ const cellContent = style({
   }
 });
 
-const divider = style({
-  display: 'block',
-  position: 'absolute',
-  width: '[1px]',
-  height: 'full',
-  insetEnd: 0,
-  backgroundColor: 'var(--borderColorGray)'
-});
-
 export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, Pick<ColumnProps, 'align' | 'showDivider'> {
   /** @private */
   isSticky?: boolean,
@@ -1119,7 +1117,6 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       {...otherProps}>
       {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
-          {showDivider && <div className={divider} />}
           {hasChildItems && isTreeColumn &&
             <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
           }
@@ -1642,24 +1639,45 @@ const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextS
       }
     }
   },
-  borderBottomRadius: {
-    selectionStyle: {
-      highlight: {
-        default: 'none',
-        isSelected: '[5px]',
-        isNextSelected: 'none'
+  borderBottomRadius: 'var(--borderBottomRadius)',
+  borderTopRadius: 'var(--borderTopRadius)',
+  // use these border values only for when it is highlight selection
+  '--borderTopWidth': {
+    type: 'width',
+    value: {
+      default: {
+        selectionStyle: {
+          checkbox: 0,
+          highlight: 1
+        }
+      },
+      isPrevSelected: 0
+    }
+  },
+  '--borderBottomWidth': {
+    type: 'width',
+    value: {
+      default: {
+        selectionStyle: {
+          checkbox: 0,
+          highlight: 1
+        }
+      },
+      isNextSelected: 0
+    }
+  },
+  '--borderStartEndWidth': {
+    type: 'width',
+    value: {
+      default: {
+        selectionStyle: {
+          checkbox: 0,
+          highlight: 1
+        }
       }
     }
   },
-  borderTopRadius: {
-    selectionStyle: {
-      highlight: {
-        default: 'none',
-        isSelected: '[5px]',
-        isPrevSelected: 'none'
-      }
-    }
-  },
+  // when checkbox selection, render the gray divider between rows as a border
   borderTopWidth: 0,
   borderBottomWidth: {
     selectionStyle: {
@@ -1690,28 +1708,21 @@ const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextS
       forcedColors: 'ButtonBorder'
     }
   },
-  '--boxShadowBorder': {
+  '--borderColor': {
     type: 'borderColor',
     value: {
-      selectionStyle: {
-        highlight: {
-          default: '[inset 0px 1px 0px var(--borderColorGray)]',
-          isFirstItem: '[inset 0 0 0]',
-          isPrevSelected: '[inset 0 0 0]',
-          isLastItem: {
-            default: '[inset 0px 1px 0px var(--borderColorGray), inset 0 -1px 0 var(--borderColorGray)]',
-            isPrevSelected: '[inset 0 -1px 0 var(--borderColorGray)]'
-          },
-          isSelected: {
-            default: '[inset 0px -1px 0px var(--borderColorBlue), inset 0px 1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]',
-            isPrevSelected: {
-              default: '[inset 0px -1px 0px var(--borderColorBlue), inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue)]'
-            },
-            isNextSelected: {
-              default: '[inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue), inset 0px -1px 0px var(--borderColorGray), inset 0px 1px 0px var(--borderColorBlue)]',
-              isPrevSelected: '[inset 1px 0px 0px var(--borderColorBlue), inset -1px 0px var(--borderColorBlue), inset 0px -1px 0px var(--borderColorGray)]'
-            }
-          }
+      default: 'transparent',
+      isSelected: 'blue-900'
+    }
+  },
+  // when highlight selection, render gray dividers as box shadow
+  boxShadow: {
+    selectionStyle: {
+      highlight: {
+        default: '[inset 0 -1px 0px var(--borderColorGray)]',
+        isNextSelected: '[inset 0 0 0 var(--borderColorGray)]',
+        isSelected: {
+          isNextSelected: '[inset 0 -1px 0px var(--borderColorGray)]'
         }
       }
     }
@@ -1755,9 +1766,15 @@ const boxShadowBorder = css(
     width: 100%;
     height: 100%;
     position: absolute;
-    box-shadow: var(--boxShadowBorder);
     inset: 0;
     z-index: 2;
+    box-sizing: border-box;
+    border-style: solid;
+    border-color: var(--borderColor);
+    border-top-width: var(--borderTopWidth);
+    border-bottom-width: var(--borderBottomWidth);
+    border-inline-start-width: var(--borderStartEndWidth);
+    border-inline-end-width: var(--borderStartEndWidth);
     border-bottom-left-radius: var(--borderBottomRadius);
     border-bottom-right-radius: var(--borderBottomRadius);
     border-top-left-radius: var(--borderTopRadius);
