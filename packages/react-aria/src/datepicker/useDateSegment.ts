@@ -376,7 +376,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   }
 
   return {
-    // @ts-expect-error - TODO: fix this
     segmentProps: mergeProps(spinButtonProps, labelProps, {
       id,
       ...touchPropOverrides,
@@ -387,11 +386,11 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       'data-placeholder': segment.isPlaceholder || undefined,
       contentEditable: isEditable,
       suppressContentEditableWarning: isEditable,
-      spellCheck: isEditable ? 'false' : undefined,
+      spellCheck: isEditable ? 'false' as const : undefined,
       autoCorrect: isEditable ? 'off' : undefined,
       // Capitalization was changed in React 17...
       [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: isEditable ? 'next' : undefined,
-      inputMode: state.isDisabled || segment.type === 'dayPeriod' || segment.type === 'era' || !isEditable ? undefined : 'numeric',
+      inputMode: state.isDisabled || segment.type === 'dayPeriod' || segment.type === 'era' || !isEditable ? undefined : 'numeric' as const,
       tabIndex: state.isDisabled ? undefined : 0,
       onFocus,
       style: segmentStyle,

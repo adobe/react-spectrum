@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, DOMProps, GroupDOMAttributes, InputDOMProps, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps, GroupDOMAttributes, InputDOMProps, RefObject, ValidationResult} from '@react-types/shared';
 import {createFocusManager, FocusManager} from '../focus/FocusScope';
 import {DateFieldProps, DateFieldState, DateValue} from 'react-stately/useDateFieldState';
 import {filterDOMProps} from '../utils/filterDOMProps';
