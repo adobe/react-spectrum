@@ -159,6 +159,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
 
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
+  let groupRef = useRef<HTMLDivElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);
   let popoverRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot(
@@ -185,9 +186,10 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
   }, state);
 
   // Make menu width match input + button
+  // Left for backward compatibility in case a <Group> is not rendered.
   let [menuWidth, setMenuWidth] = useState<string | null>(null);
   let onResize = useCallback(() => {
-    if (inputRef.current) {
+    if (inputRef.current && !groupRef.current) {
       let buttonRect = buttonRef.current?.getBoundingClientRect();
       let inputRect = inputRef.current.getBoundingClientRect();
       let minX = buttonRect ? Math.min(buttonRect.left, inputRect.left) : inputRect.left;
@@ -200,6 +202,13 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     ref: inputRef,
     onResize: onResize
   });
+
+  // Position popover relative to group if available, otherwise input.
+  let triggerRef = useMemo(() => ({
+    get current() {
+      return groupRef.current || inputRef.current;
+    }
+  }), [groupRef, inputRef]);
 
   // Only expose a subset of state to renderProps function to avoid infinite render loop
   let renderPropsState = useMemo(() => ({
@@ -241,7 +250,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
           ref: popoverRef,
-          triggerRef: inputRef,
+          triggerRef,
           scrollRef: listBoxRef,
           placement: 'bottom start',
           isNonModal: true,
@@ -257,7 +266,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
             errorMessage: errorMessageProps
           }
         }],
-        [GroupContext, {isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
+        [GroupContext, {ref: groupRef, isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
         [FieldErrorContext, validation],
         [ComboBoxValueContext, valueProps]
       ]}>

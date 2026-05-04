@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, CalendarDateTime, ZonedDateTime} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, DateDuration, ZonedDateTime} from '@internationalized/date';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {ReactNode} from 'react';
 
@@ -27,8 +27,6 @@ export interface CalendarPropsBase {
   minValue?: DateValue | null,
   /** The maximum allowed date that a user may select. */
   maxValue?: DateValue | null,
-  /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
-  isDateUnavailable?: (date: DateValue) => boolean,
   /**
    * Whether the calendar is disabled.
    * @default false
@@ -72,7 +70,11 @@ export interface CalendarPropsBase {
    * Determines the alignment of the visible months on initial render based on the current selection or current date if there is no selection. 
    * @default 'center'
    */
-  selectionAlignment?: 'start' | 'center' | 'end'
+  selectionAlignment?: 'start' | 'center' | 'end',
+  /**
+   * The number of weeks in a month. This overrides the default set by the locale.
+   */
+  weeksInMonth?: number
 }
 
 interface CalendarStateBase {
@@ -80,6 +82,8 @@ interface CalendarStateBase {
   readonly isDisabled: boolean,
   /** Whether the calendar is in a read only state. */
   readonly isReadOnly: boolean,
+  /** The visible duration in the calendar. */
+  readonly visibleDuration: DateDuration,
   /** The date range that is currently visible in the calendar. */
   readonly visibleRange: RangeValue<CalendarDate>,
   /** The minimum allowed date that a user may select. */
@@ -157,14 +161,21 @@ interface CalendarStateBase {
    * Returns an array of dates in the week index counted from the provided start date, or the first visible date if not given.
    * The returned array always has 7 elements, but may include null if the date does not exist according to the calendar system.
    */
-  getDatesInWeek(weekIndex: number, startDate?: CalendarDate): Array<CalendarDate | null>
+  getDatesInWeek(weekIndex: number, startDate?: CalendarDate): Array<CalendarDate | null>,
+  /** Returns the number of weeks in a month. */
+  getWeeksInMonth(startDate?: CalendarDate): number
 }
 
-export interface CalendarState extends CalendarStateBase {
+export type CalendarSelectionMode = 'single' | 'multiple';
+export type CalendarValueType<T, M extends CalendarSelectionMode> = M extends 'single' ? T : readonly T[];
+
+export interface CalendarState<M extends CalendarSelectionMode = 'single'> extends CalendarStateBase {
+  /** Whether single or multiple selection is enabled. */
+  readonly selectionMode: M,
   /** The currently selected date. */
-  readonly value: CalendarDate | null,
+  readonly value: CalendarValueType<CalendarDate | null, M>,
   /** Sets the currently selected date. */
-  setValue(value: CalendarDate | null): void
+  setValue(value: CalendarValueType<CalendarDate | null, M>): void
 }
 
 export interface RangeCalendarState<T extends DateValue = DateValue> extends CalendarStateBase {
@@ -185,5 +196,9 @@ export interface RangeCalendarState<T extends DateValue = DateValue> extends Cal
   /** Sets whether the user is dragging over the calendar. */
   setDragging(isDragging: boolean): void,
   /** Clears the current selection. */
-  clearSelection(): void
+  clearSelection(): void,
+  /** Commits the current selection. */
+  commitSelection(): void,
+  /** Focuses the next available day before or after the anchor date. */
+  focusNearestAvailableDate(anchorDate: CalendarDate): void
 }

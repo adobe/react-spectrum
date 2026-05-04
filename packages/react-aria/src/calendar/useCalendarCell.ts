@@ -11,20 +11,20 @@
  */
 
 import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
-import {CalendarState} from 'react-stately/useCalendarState';
+import {CalendarSelectionMode, CalendarState} from 'react-stately/useCalendarState';
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getEraFormat, hookData} from './utils';
 import {getInteractionModality} from '../interactions/useFocusVisible';
 import {getScrollParent} from '../utils/getScrollParent';
+// @ts-ignore
 import intlMessages from '../../intl/calendar/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {scrollIntoViewport} from '../utils/scrollIntoView';
 import {useDateFormatter} from '../i18n/useDateFormatter';
 import {useDeepMemo} from '../utils/useDeepMemo';
-// @ts-ignore
 import {useDescription} from '../utils/useDescription';
 import {useEffect, useMemo, useRef} from 'react';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
@@ -86,7 +86,7 @@ export interface CalendarCellAria {
  * Provides the behavior and accessibility implementation for a calendar cell component.
  * A calendar cell displays a date cell within a calendar grid which can be selected by the user.
  */
-export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarState | RangeCalendarState, ref: RefObject<HTMLElement | null>): CalendarCellAria {
+export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarState<CalendarSelectionMode> | RangeCalendarState, ref: RefObject<HTMLElement | null>): CalendarCellAria {
   let {date, isDisabled} = props;
   let {errorMessageId, selectedDateDescription} = hookData.get(state)!;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
@@ -98,18 +98,23 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     era: getEraFormat(date),
     timeZone: state.timeZone
   });
-  let isSelected = state.isSelected(date);
   let isFocused = state.isCellFocused(date) && !props.isOutsideMonth;
-  isDisabled = isDisabled || state.isCellDisabled(date);
+  isDisabled = isDisabled || state.isCellDisabled(date) || !!props.isOutsideMonth;
   let isUnavailable = state.isCellUnavailable(date);
   let isSelectable = !isDisabled && !isUnavailable;
-  let isInvalid = state.isValueInvalid && Boolean(
-    'highlightedRange' in state
-      ? !state.anchorDate && state.highlightedRange && date.compare(state.highlightedRange.start) >= 0 && date.compare(state.highlightedRange.end) <= 0
-      : state.value && isSameDay(state.value, date)
-  );
+  let isSelected = state.isSelected(date) && isSelectable;
+  let isInvalid = false;
+  if (state.isValueInvalid) {
+    if ('highlightedRange' in state) {
+      isInvalid = !state.anchorDate && state.highlightedRange != null && date.compare(state.highlightedRange.start) >= 0 && date.compare(state.highlightedRange.end) <= 0;
+    } else if (Array.isArray(state.value)) {
+      isInvalid = state.value.some(value => isSameDay(value, date));
+    } else if (state.value) {
+      isInvalid = isSameDay(state.value as CalendarDate, date);
+    }
+  }
 
-  if (isInvalid) {
+  if (isInvalid && !isDisabled) {
     isSelected = true;
   }
 
@@ -274,14 +279,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
           // For mouse, this is unnecessary because users will see the indication on hover. For screen readers,
           // there will be an announcement to "click to finish selecting range" (above).
           state.selectDate(date);
-          let nextDay = date.add({days: 1});
-          if (state.isInvalid(nextDay)) {
-            nextDay = date.subtract({days: 1});
-          }
-          if (!state.isInvalid(nextDay)) {
-            state.setFocusedDate(nextDay);
-            state.setFocused(true);
-          }
+          state.focusNearestAvailableDate(date);
         } else if (e.pointerType === 'virtual') {
           // For screen readers, just select the date on click.
           state.selectDate(date);

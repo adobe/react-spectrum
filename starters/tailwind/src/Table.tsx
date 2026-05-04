@@ -19,6 +19,8 @@ import {
   type TableProps as AriaTableProps,
   useTableOptions,
   type TableBodyProps,
+  TableFooter as AriaTableFooter,
+  type TableFooterProps
 } from 'react-aria-components/Table';
 import { Group } from 'react-aria-components/Group';
 import { composeRenderProps } from 'react-aria-components/composeRenderProps';
@@ -102,6 +104,10 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
       {...props}
       className="empty:italic empty:text-center empty:text-sm" />
   );
+}
+
+export function TableFooter<T extends object>(props: TableFooterProps<T>) {
+  return <AriaTableFooter {...props} className="bg-neutral-200 dark:bg-neutral-700 font-bold" />;
 }
 
 const rowStyles = tv({

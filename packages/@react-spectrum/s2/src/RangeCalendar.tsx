@@ -30,7 +30,7 @@ import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatte
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface RangeCalendarProps<T extends DateValue>
-  extends Omit<AriaRangeCalendarProps<T>, 'visibleDuration' | 'style' | 'className' | 'render' | 'children' | 'styles' | keyof GlobalDOMAttributes>,
+  extends Omit<AriaRangeCalendarProps<T>, 'visibleDuration' | 'weeksInMonth' | 'style' | 'className' | 'render' | 'children' | 'styles' | keyof GlobalDOMAttributes>,
   StyleProps {
   /**
    * The error message to display when the calendar is invalid.
@@ -110,7 +110,7 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
                 [HeaderContext, null],
                 [HeadingContext, null]
               ]}>
-              <CalendarHeader />
+              <CalendarHeader visibleMonths={visibleMonths} />
             </Provider>
             <div
               className={style({

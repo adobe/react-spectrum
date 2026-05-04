@@ -362,3 +362,8 @@
   height: 32px;
   position: relative;
 }
+
+.react-aria-TableFooter {
+  font-weight: bold;
+  background: var(--gray-200);
+}
