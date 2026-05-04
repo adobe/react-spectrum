@@ -24,7 +24,7 @@ jobs:
       - run: yarn --immutable
       - name: Run Chromatic
         id: chromatic
-        uses: chromatic/chromatic-action@v11
+        uses: chromaui/action@latest
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           buildScriptName: build:chromatic
@@ -49,7 +49,7 @@ jobs:
       - run: yarn --immutable
       - name: Run Chromatic FC
         id: chromatic
-        uses: chromatic/chromatic-action@v11
+        uses: chromaui/action@latest
         with:
           projectToken: ${{ secrets.CHROMATIC_FC_PROJECT_TOKEN }}
           buildScriptName: build:chromatic-fc
@@ -64,7 +64,7 @@ jobs:
     if: always()
     env:
       SLACK_TSDIFF_CHROMATIC_BOT_TOKEN: ${{ secrets.SLACK_TSDIFF_CHROMATIC_BOT_TOKEN }}
-      SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+      SLACK_CHANNEL_ID: TEST_SLACK_ID
       CHROMATIC_URL: ${{ needs.chromatic.outputs.build_url }}
       CHROMATIC_CODE: ${{ needs.chromatic.outputs.code }}
       CHROMATIC_FC_URL: ${{ needs.chromatic-fc.outputs.build_url }}
