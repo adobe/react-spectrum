@@ -7,7 +7,7 @@ You are running the weekly react-spectrum API diff workflow. Follow ALL steps be
 - snapshots repo: $HOME/dev/react-spectrum-api-snapshots
 - Slack channel: <SLACK_CHANNEL_ID>
 - Slack token env var: SLACK_TSDIFF_CHROMATIC_BOT_TOKEN (already in environment)
-- Snapshots GitHub URL: https://github.com/<YOUR_GITHUB_USERNAME>/react-spectrum-api-snapshots
+- Snapshots GitHub URL: https://github.com/LFDanLu/react-spectrum-api-snapshots
 
 ## Step 1: Get today's date
 
@@ -124,7 +124,7 @@ Otherwise, post the summary. Fill in the actual counts and package names from St
 curl -s -X POST https://slack.com/api/chat.postMessage \
   -H "Authorization: Bearer $SLACK_TSDIFF_CHROMATIC_BOT_TOKEN" \
   -H "Content-Type: application/json" \
-  -d "{\"channel\": \"<SLACK_CHANNEL_ID>\", \"text\": \"📊 Weekly API Diff — $TODAY\n\n<summary of weekly delta>\n\nFull diff vs release: https://github.com/<YOUR_GITHUB_USERNAME>/react-spectrum-api-snapshots/blob/main/diffs/$TODAY.txt\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong.\"}"
+  -d "{\"channel\": \"<SLACK_CHANNEL_ID>\", \"text\": \"📊 Weekly API Diff — $TODAY\n\n<summary of weekly delta>\n\nFull diff vs release: https://github.com/LFDanLu/react-spectrum-api-snapshots/blob/main/diffs/$TODAY.txt\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong.\"}"
 ```
 
 Verify the response contains "ok": true.
