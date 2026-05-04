@@ -445,11 +445,13 @@ import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 
 <Anatomy />
 
-```tsx links={{ComboBox: '#combobox', ComboBoxValue: '#comboboxvalue', Button: 'Button', Popover: 'Popover', ListBox: 'ListBox'}}
+```tsx links={{ComboBox: '#combobox', ComboBoxValue: '#comboboxvalue', Group: 'Group', Button: 'Button', Popover: 'Popover', ListBox: 'ListBox'}}
 <ComboBox>
   <Label />
-  <Input />
-  <Button />
+  <Group>
+    <Input />
+    <Button />
+  </Group>
   <ComboBoxValue />
   <Text slot="description" />
   <FieldError />

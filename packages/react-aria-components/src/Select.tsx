@@ -34,21 +34,20 @@ import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ItemRenderProps} from './Collection';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
 import {mergeProps} from 'react-aria/mergeProps';
 import {OverlayTriggerStateContext} from './Dialog';
-// @ts-ignore
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, Fragment, HTMLAttributes, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, Fragment, HTMLAttributes, ReactNode, useContext, useMemo, useRef} from 'react';
 import {SelectState, useSelectState} from 'react-stately/useSelectState';
 import {TextContext} from './Text';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useListFormatter} from 'react-aria/useListFormatter';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 
 type SelectionMode = 'single' | 'multiple';
 
@@ -169,19 +168,6 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
     validationBehavior
   }, state, buttonRef);
 
-  // Make menu width match input + button
-  let [buttonWidth, setButtonWidth] = useState<string | null>(null);
-  let onResize = useCallback(() => {
-    if (buttonRef.current) {
-      setButtonWidth(buttonRef.current.offsetWidth + 'px');
-    }
-  }, [buttonRef]);
-
-  useResizeObserver({
-    ref: buttonRef,
-    onResize: onResize
-  });
-
   // Only expose a subset of state to renderProps function to avoid infinite render loop
   let renderPropsState = useMemo(() => ({
     isOpen: state.isOpen,
@@ -217,7 +203,6 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
           triggerRef: buttonRef,
           scrollRef,
           placement: 'bottom start',
-          style: {'--trigger-width': buttonWidth} as React.CSSProperties,
           'aria-labelledby': menuProps['aria-labelledby'],
           clearContexts: CLEAR_CONTEXTS
         }],

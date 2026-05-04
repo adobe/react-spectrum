@@ -238,6 +238,21 @@ function enforceExports({Yarn}) {
   }
 }
 
+function enforceDevMirroringPeerDependencies({Yarn}) {
+  for (const workspace of Yarn.workspaces()) {
+    const peers = workspace.manifest.peerDependencies;
+    if (!peers) {
+      continue;
+    }
+    if (peers.react) {
+      workspace.set('devDependencies.react', peers.react);
+    }
+    if (peers['react-dom']) {
+      workspace.set('devDependencies.react-dom', peers['react-dom']);
+    }
+  }
+}
+
 module.exports = defineConfig({
   constraints: async ctx => {
     enforceWorkspaceDependencies(ctx);
@@ -246,5 +261,6 @@ module.exports = defineConfig({
     enforceExports(ctx);
     enforceNonPrivateDependencies(ctx);
     enforceNoCircularDependencies(ctx);
+    enforceDevMirroringPeerDependencies(ctx);
   }
 });

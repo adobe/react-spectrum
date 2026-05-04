@@ -250,6 +250,10 @@ function groupProps(
           continue;
         }
 
+        if (propName === 'offset' && !props.crossOffset) {
+          continue;
+        }
+
         groupProps[propName] = props[propName];
         delete props[propName];
       }

@@ -71,7 +71,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   private isDisabled(item: Node<unknown>) {
-    return this.disabledBehavior === 'all' && (item.props?.isDisabled || this.disabledKeys.has(item.key));
+    return this.disabledBehavior === 'all' && (item.props?.isDisabled || this.disabledKeys.has(item.key)) && item.props?.disabledBehavior !== 'selection';
   }
 
   private findNextNonDisabled(key: Key | null, getNext: (key: Key) => Key | null): Key | null {
