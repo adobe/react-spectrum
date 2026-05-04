@@ -29,7 +29,7 @@ A local fallback via macOS launchd is also available (see below).
 ## How It Works (Local Fallback)
 
 1. macOS launchd fires every Monday at 9am (catches up on wake if laptop was asleep)
-2. Invokes `claude -p "$(cat ~/weekly-tsdiffer.md)"` with bash/read/write/edit permissions
+2. Invokes `claude -p "$(cat ~/weekly-tsdiffer.md)"` with bash/read permissions
 3. Claude: pulls latest main → builds API snapshot → generates diff vs release baseline → commits diff text to snapshots repo → posts Slack summary
 
 ## GitHub Actions Secrets Required
@@ -52,9 +52,10 @@ A local fallback via macOS launchd is also available (see below).
 # 1. Copy prompt to home dir
 cp scripts/weekly-api-diff/prompt.md ~/weekly-tsdiffer.md
 
-# 2. Install launchd plist (replace <username> with your macOS username)
-cp scripts/weekly-api-diff/launchd.plist ~/Library/LaunchAgents/com.<username>.weekly-tsdiffer.plist
-launchctl load ~/Library/LaunchAgents/com.<username>.weekly-tsdiffer.plist
+# 2. Install launchd plist (substitutes your macOS username into the Label)
+sed "s/<username>/$USER/g" scripts/weekly-api-diff/launchd.plist > ~/Library/LaunchAgents/com.$USER.weekly-tsdiffer.plist
+launchctl bootout gui/$(id -u)/com.$USER.weekly-tsdiffer 2>/dev/null || true
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.$USER.weekly-tsdiffer.plist
 
 # 3. Add Slack bot token to ~/.secrets (chmod 600)
 echo 'export SLACK_TSDIFF_CHROMATIC_BOT_TOKEN=xoxb-...' >> ~/.secrets
