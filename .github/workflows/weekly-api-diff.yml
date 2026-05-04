@@ -34,7 +34,7 @@ jobs:
         run: yarn build:api-published
 
       - name: Generate diff
-        run: yarn --silent compare:apis --isCI > /tmp/diff-current.txt || true
+        run: yarn compare:apis --isCI > /tmp/diff-current.txt || true
 
       # Check out snapshots repo so we can read the previous diff and commit the new one
       - uses: actions/checkout@v4
