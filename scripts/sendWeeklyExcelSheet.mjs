@@ -29,8 +29,8 @@ function formatDateLabel(dateStr) {
   let d = new Date(dateStr + 'T12:00:00Z');
   let mm = String(d.getUTCMonth() + 1).padStart(2, '0');
   let dd = String(d.getUTCDate()).padStart(2, '0');
-  let yy = String(d.getUTCFullYear()).slice(-2);
-  return `${mm}.${dd}.${yy}`;
+  let yyyy = String(d.getUTCFullYear());
+  return `${yyyy}.${mm}.${dd}`;
 }
 
 async function uploadToSlack(buffer, filename, message) {
