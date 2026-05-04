@@ -34,7 +34,7 @@ jobs:
         run: yarn build:api-published
 
       - name: Generate diff
-        run: yarn compare:apis --isCI > /tmp/diff-current.txt 2>&1 || true
+        run: yarn compare:apis --isCI > /tmp/diff-current.txt || true
 
       # Check out snapshots repo so we can read the previous diff and commit the new one
       - uses: actions/checkout@v4
@@ -63,8 +63,7 @@ jobs:
             git config user.email "github-actions@github.com"
             git config user.name "GitHub Actions"
             git add diffs/$TODAY.txt
-            git commit -m "weekly api diff $TODAY"
-            git push
+            git diff --cached --quiet || (git commit -m "weekly api diff $TODAY" && git push)
           fi
 
       # Summarize with GitHub Models (free via GITHUB_TOKEN) and post to Slack
