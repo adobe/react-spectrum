@@ -1,8 +1,6 @@
 name: Weekly Chromatic
 
 on:
-  push:
-    branches: [tsdiff_script]  # temporary: remove before merging to main
   schedule:
     - cron: '0 17 * * 1'  # Monday 9am PST / 10am PDT (GH Actions cron is UTC)
   workflow_dispatch:        # manual trigger for testing
@@ -64,7 +62,7 @@ jobs:
     if: always()
     env:
       SLACK_TSDIFF_CHROMATIC_BOT_TOKEN: ${{ secrets.SLACK_TSDIFF_CHROMATIC_BOT_TOKEN }}
-      SLACK_CHANNEL_ID: ${{ secrets.TEST_SLACK_ID }}
+      SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
       CHROMATIC_URL: ${{ needs.chromatic.outputs.build_url }}
       CHROMATIC_CODE: ${{ needs.chromatic.outputs.code }}
       CHROMATIC_FC_URL: ${{ needs.chromatic-fc.outputs.build_url }}
