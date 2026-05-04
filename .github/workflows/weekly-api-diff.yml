@@ -34,7 +34,7 @@ jobs:
         run: yarn build:api-published
 
       - name: Generate diff
-        run: yarn compare:apis --isCI > /tmp/diff-current.txt || true
+        run: yarn --silent compare:apis --isCI > /tmp/diff-current.txt || true
 
       # Check out snapshots repo so we can read the previous diff and commit the new one
       - uses: actions/checkout@v4
@@ -49,16 +49,20 @@ jobs:
           TODAY=$(date +%Y-%m-%d)
           echo "TODAY=$TODAY" >> $GITHUB_ENV
 
-          cp /tmp/diff-current.txt snapshots/diffs/$TODAY.txt
-
-          PREV=$(ls -t snapshots/diffs/*.txt 2>/dev/null | sed -n '2p')
+          # Compare against most recent existing diff BEFORE writing the diff
+          # so that we dont report a diff if we run before a week passes and nothing has changed
+          PREV=$(ls -t snapshots/diffs/*.txt 2>/dev/null | head -1)
           if [ -n "$PREV" ]; then
-            diff "$PREV" snapshots/diffs/$TODAY.txt > /tmp/weekly-delta.txt || true
+            diff "$PREV" /tmp/diff-current.txt > /tmp/weekly-delta.txt || true
           else
             echo "(first run — no previous diff to compare against)" > /tmp/weekly-delta.txt
           fi
 
-          if [ -s /tmp/diff-current.txt ]; then
+          # Only commit if there are pending API changes and they differ from last week.
+          # If diff-current is empty (release landed), skip commit so the previous
+          # non-empty diff stays as the baseline for next week's comparison.
+          if [ -s /tmp/diff-current.txt ] && [ -s /tmp/weekly-delta.txt ]; then
+            cp /tmp/diff-current.txt snapshots/diffs/$TODAY.txt
             cd snapshots
             git config user.email "github-actions@github.com"
             git config user.name "GitHub Actions"
@@ -89,9 +93,10 @@ jobs:
           workspace = os.environ['GITHUB_WORKSPACE']
           diff_url = f"https://github.com/{snapshots_repo}/blob/main/diffs/{today}.txt"
 
-          diff_size = os.path.getsize('/tmp/diff-current.txt')
+          vs_release_size = os.path.getsize('/tmp/diff-current.txt')
+          vs_last_week_size = os.path.getsize('/tmp/weekly-delta.txt') if os.path.exists('/tmp/weekly-delta.txt') else 0
 
-          if diff_size == 0:
+          if vs_release_size == 0 or vs_last_week_size == 0:
             message = f"📊 Weekly API Diff — {today}\n\nNo API changes vs release baseline this week — either nothing new has landed on main yet, or all pending changes were included in a release."
           else:
             delta = open('/tmp/weekly-delta.txt').read()[:4000]
