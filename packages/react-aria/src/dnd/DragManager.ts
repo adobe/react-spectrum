@@ -225,7 +225,7 @@ class DragSession {
     this.restoreAriaHidden?.();
   }
 
-  onKeyDown(e: KeyboardEvent): void {
+  onKeyDown(e: KeyboardEvent): void { // TODO: should these be stopped?
     this.cancelEvent(e);
 
     if (e.key === 'Escape') {

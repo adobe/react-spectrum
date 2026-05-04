@@ -168,6 +168,7 @@ export function useGridListItem<T>(
     linkBehavior
   });
 
+  // TODO: move away from capturing
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
     let activeElement = getActiveElement();
     if (
