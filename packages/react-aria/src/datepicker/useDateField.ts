@@ -184,16 +184,8 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
       }
     },
     fieldProps: mergeProps(domProps, fieldDOMProps, groupProps, focusWithinProps, {
-      onKeyDown(e: KeyboardEvent) {
-        if (props.onKeyDown) {
-          props.onKeyDown(e);
-        }
-      },
-      onKeyUp(e: KeyboardEvent) {
-        if (props.onKeyUp) {
-          props.onKeyUp(e);
-        }
-      },
+      onKeyDown: props.onKeyDown,
+      onKeyUp: props.onKeyUp,
       style: {
         unicodeBidi: 'isolate'
       }
