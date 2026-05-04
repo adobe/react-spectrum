@@ -174,7 +174,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         [DateFieldContext, fieldProps],
         [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [CalendarContext, calendarProps],
+        [CalendarContext, calendarProps as any],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
           trigger: 'DatePicker',

@@ -1,11 +1,11 @@
 
-module.exports = {
+export default {
   framework: {
-    name: "storybook-react-parcel",
+    name: 'storybook-react-parcel',
     options: {},
   },
   stories: [
-    '../packages/**/chromatic-fc/**/*.stories.{js,jsx,ts,tsx}',
+    '../packages/**/chromatic/**/*.stories.@(js|jsx|ts|tsx)',
     '../packages/@react-spectrum/s2/chromatic/*.stories.@(js|jsx|mjs|ts|tsx)'
   ],
   addons: process.env.NODE_ENV === 'production' ? [] : [
@@ -15,5 +15,11 @@ module.exports = {
   typescript: {
     check: false,
     reactDocgen: false
+  },
+  core: {
+    disableWhatsNewNotifications: true 
+  },
+  features: {
+    sidebarOnboardingChecklist: false
   }
 };

@@ -80,8 +80,6 @@ import {
 } from 'react-aria/useTable';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
-export {TableLayout} from './TableLayout';
-
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
   columns: GridNode<T>[] = [];
@@ -139,7 +137,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
       if (lastChildKey != null) {
         let lastCell = this.getItem(lastChildKey) as GridNode<T> | null;
         while (lastCell && lastCell.type !== 'cell') {
-          lastCell = lastCell.prevKey ? this.getItem(lastCell.prevKey) as GridNode<T> | null : null;
+          lastCell = lastCell.prevKey != null ? this.getItem(lastCell.prevKey) as GridNode<T> | null : null;
         }
         if (lastCell) {
           let numberOfCellsInRow = (lastCell.colIndex ?? lastCell.index) + (lastCell.colSpan ?? 1);
@@ -310,7 +308,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
           while (node) {
             yield node as Node<T>;
             let key = self.getKeyAfter(node.key);
-            node = key ? self.getItem(key) : null;
+            node = key != null ? self.getItem(key) : null;
             if (node && node.parentKey === item.parentKey) {
               break;
             }

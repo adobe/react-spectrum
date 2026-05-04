@@ -11,18 +11,17 @@
  */
 
 import {announce} from '../live-announcer/LiveAnnouncer';
-
 import {AriaButtonProps} from '../button/useButton';
 import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
-import {CalendarPropsBase, CalendarState} from 'react-stately/useCalendarState';
+import {CalendarPropsBase, CalendarSelectionMode, CalendarState} from 'react-stately/useCalendarState';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
+// @ts-ignore
 import intlMessages from '../../intl/calendar/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {useLabels} from '../utils/useLabels';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
-// @ts-ignore
 import {useSlotId} from '../utils/useId';
 import {useState} from 'react';
 import {useUpdateEffect} from '../utils/useUpdateEffect';
@@ -40,7 +39,7 @@ export interface CalendarAria {
   title: string
 }
 
-export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabelingProps, state: CalendarState | RangeCalendarState): CalendarAria {
+export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabelingProps, state: CalendarState<CalendarSelectionMode> | RangeCalendarState): CalendarAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
   let domProps = filterDOMProps(props);
 
