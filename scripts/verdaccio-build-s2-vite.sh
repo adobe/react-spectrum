@@ -36,7 +36,7 @@ cd examples/s2-vite-project
 yarn config set npmRegistryServer $registry
 yarn install --no-immutable
 yarn up @react-spectrum/s2
-yarn build
+yarn build --base="./"
 mv dist ../../$verdaccio_path/s2-vite-project
 
 netstat -tpln | awk -F'[[:space:]/:]+' '$5 == 4000 {print $(NF-2)}' | xargs kill
