@@ -1,8 +1,6 @@
 name: Weekly API Diff
 
 on:
-  push:
-    branches: [tsdiff_script]  # temporary: remove before merging to main
   schedule:
     - cron: '0 17 * * 1'  # Monday 9am PST / 10am PDT (GH Actions cron is UTC)
   workflow_dispatch:        # manual trigger for testing
@@ -83,7 +81,7 @@ jobs:
       - name: Summarize and post to Slack
         env:
           SLACK_TSDIFF_CHROMATIC_BOT_TOKEN: ${{ secrets.SLACK_TSDIFF_CHROMATIC_BOT_TOKEN }}
-          SLACK_CHANNEL_ID: ${{ secrets.TEST_SLACK_ID }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           python3 << 'PYEOF'
