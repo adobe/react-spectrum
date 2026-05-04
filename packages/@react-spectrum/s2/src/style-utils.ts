@@ -162,7 +162,36 @@ export const setColorScheme = () => ({
       }
     }
   },
-  colorScheme: '--s2-color-scheme'
+  colorScheme: '--s2-color-scheme',
+  // For backward compatibility in two cases:
+  // 1. When a component compiled with an earlier version of S2 is embedded in a newer provider.
+  // 2. When S2 CSS is compiled with lightningcss, setting color-scheme via a variable does not work.
+  '--lightningcss-light': {
+    type: 'transform', // arbitrary string
+    value: {
+      colorScheme: {
+        'light dark': {
+          default: 'initial',
+          '@media (prefers-color-scheme: dark)': ' '
+        },
+        light: 'initial',
+        dark: ' '
+      }
+    }
+  },
+  '--lightningcss-dark': {
+    type: 'transform', // arbitrary string
+    value: {
+      colorScheme: {
+        'light dark': {
+          default: ' ',
+          '@media (prefers-color-scheme: dark)': 'initial'
+        },
+        light: ' ',
+        dark: 'initial'
+      }
+    }
+  }
 } as const);
 
 export function staticColor(): Record<string, any> {
