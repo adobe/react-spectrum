@@ -401,41 +401,43 @@ export const ComboBoxListBoxItemWithAriaLabel: ComboBoxStory = () => (
   </ComboBox>
 );
 
-export const MultiSelectComboBox: ComboBoxStory = () => (
-  <ComboBox allowsEmptyCollection selectionMode="multiple" defaultItems={usStateOptions}>
-    <Label style={{display: 'block'}}>Test</Label>
-    <div style={{display: 'flex'}}>
-      <Input placeholder="Select an item" />
-      <Button>
-        <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
-      </Button>
-    </div>
-    <ComboBoxStateContext.Consumer>
-      {state => state && (
-        <TagGroup
-          aria-label="Selected states"
-          items={state.selectedItems.map(item => item.value)}
-          renderEmptyState={() => 'No selected items'}
-          onRemove={(keys) => {
-            // Remove keys from ComboBox state.
-            if (Array.isArray(state.value)) {
-              state.setValue(state.value.filter(k => !keys.has(k)));
-            }
-          }}>
-          {item => <Tag>{item.name}</Tag>}
-        </TagGroup>
-      )}
-    </ComboBoxStateContext.Consumer>
-    <Popover placement="bottom end">
-      <ListBox<{name: string}>
-        renderEmptyState={renderEmptyState}
-        data-testid="combo-box-list-box"
-        className={styles.menu}>
-        {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
-      </ListBox>
-    </Popover>
-  </ComboBox>
-);
+function MultiSelectComboBox(props) {
+  return (
+    <ComboBox allowsEmptyCollection selectionMode="multiple" defaultItems={usStateOptions} {...props}>
+      <Label style={{display: 'block'}}>Test</Label>
+      <div style={{display: 'flex'}}>
+        <Input placeholder="Select an item" />
+        <Button>
+          <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+        </Button>
+      </div>
+      <ComboBoxStateContext.Consumer>
+        {state => state && (
+          <TagGroup
+            aria-label="Selected states"
+            items={state.selectedItems.map(item => item.value)}
+            renderEmptyState={() => 'No selected items'}
+            onRemove={(keys) => {
+              // Remove keys from ComboBox state.
+              if (Array.isArray(state.value)) {
+                state.setValue(state.value.filter(k => !keys.has(k)));
+              }
+            }}>
+            {item => <Tag>{item.name}</Tag>}
+          </TagGroup>
+        )}
+      </ComboBoxStateContext.Consumer>
+      <Popover placement="bottom end">
+        <ListBox<{name: string}>
+          renderEmptyState={renderEmptyState}
+          data-testid="combo-box-list-box"
+          className={styles.menu}>
+          {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+        </ListBox>
+      </Popover>
+    </ComboBox>
+  );
+}
 
 const usStateOptions = [
   {id: 'AL', name: 'Alabama'},
@@ -498,3 +500,10 @@ const usStateOptions = [
   {id: 'WI', name: 'Wisconsin'},
   {id: 'WY', name: 'Wyoming'}
 ];
+
+export const MultiSelectCombobBoxStory: StoryObj<typeof MultiSelectComboBox> = {
+  render: (args) => <MultiSelectComboBox {...args} />,
+  args: {
+    allowsCustomValue: true
+  }
+};
