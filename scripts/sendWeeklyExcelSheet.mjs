@@ -106,7 +106,7 @@ async function main() {
   let startLabel = formatDateLabel(startDate);
   let endLabel = formatDateLabel(endDate);
   let total = counts.v3 + counts.s2 + counts.rac + counts.other;
-  let filename = `RSP Testing ${startLabel} – ${endLabel}.xlsx`;
+  let filename = `${endLabel}.xlsx`;
   let message = `*Testing sheet for ${startLabel} – ${endLabel}*\nV3: ${counts.v3} | S2: ${counts.s2} | RAC: ${counts.rac} | Other: ${counts.other} | Off PR: ${counts.offPRs} | Total: ${total}`;
 
   await uploadToSlack(buffer, filename, message);
