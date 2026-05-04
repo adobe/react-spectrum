@@ -56,10 +56,7 @@ This also takes 10-30 minutes.
 
 ```bash
 cd $HOME/dev/react-spectrum
-yarn compare:apis \
-  --branch-api-dir=$HOME/dev/react-spectrum/dist/branch-api \
-  --base-api-dir=$HOME/dev/react-spectrum/dist/base-api \
-  --isCI 2>&1 | tee $HOME/dev/react-spectrum-api-snapshots/diffs/$TODAY.txt
+yarn compare:apis --isCI 2>&1 | tee $HOME/dev/react-spectrum-api-snapshots/diffs/$TODAY.txt
 ```
 
 Check if the output file is empty:
@@ -86,6 +83,8 @@ ls -t $HOME/dev/react-spectrum-api-snapshots/diffs/*.txt 2>/dev/null | sed -n '2
 
 ```bash
 cd $HOME/dev/react-spectrum-api-snapshots
+git checkout main
+git pull origin main
 git add diffs/$TODAY.txt
 git commit -m "weekly api diff $TODAY"
 git push

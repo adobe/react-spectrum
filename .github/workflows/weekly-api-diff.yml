@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # required for --auto-baseline to find the last Publish commit
+          fetch-depth: 0  # required for build:api-published to find the last Publish commit
 
       - uses: actions/setup-node@v4
         with:
@@ -31,13 +31,8 @@ jobs:
       - name: Build release baseline
         run: yarn build:api-published
 
-      # Generate diff — compareAPIs.js requires absolute paths
       - name: Generate diff
-        run: |
-          yarn compare:apis \
-            --branch-api-dir=$GITHUB_WORKSPACE/dist/branch-api \
-            --base-api-dir=$GITHUB_WORKSPACE/dist/base-api \
-            --isCI > /tmp/diff-current.txt 2>&1 || true
+        run: yarn compare:apis --isCI > /tmp/diff-current.txt 2>&1 || true
 
       # Check out snapshots repo so we can read the previous diff and commit the new one
       - uses: actions/checkout@v4
@@ -77,6 +72,11 @@ jobs:
         run: |
           python3 << 'PYEOF'
           import json, os, urllib.request, subprocess
+
+          required = ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN', 'SLACK_CHANNEL_ID', 'GITHUB_TOKEN', 'TODAY', 'SNAPSHOTS_REPO', 'GITHUB_WORKSPACE']
+          missing = [k for k in required if not os.environ.get(k)]
+          if missing:
+            raise SystemExit(f"Missing required environment variables: {', '.join(missing)}")
 
           today = os.environ['TODAY']
           channel = os.environ['SLACK_CHANNEL_ID']
@@ -129,4 +129,6 @@ jobs:
           )
           resp = json.loads(urllib.request.urlopen(req).read())
           print("Slack response:", resp.get('ok'), resp.get('error', ''))
+          if not resp.get('ok'):
+            raise SystemExit(f"Slack error: {resp.get('error')}")
           PYEOF

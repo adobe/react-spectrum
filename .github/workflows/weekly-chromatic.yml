@@ -74,6 +74,11 @@ jobs:
           import json, os, urllib.request
           from datetime import date
 
+          required = ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN', 'SLACK_CHANNEL_ID']
+          missing = [k for k in required if not os.environ.get(k)]
+          if missing:
+            raise SystemExit(f"Missing required environment variables: {', '.join(missing)}")
+
           today = date.today().isoformat()
           channel = os.environ['SLACK_CHANNEL_ID']
           slack_token = os.environ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN']
