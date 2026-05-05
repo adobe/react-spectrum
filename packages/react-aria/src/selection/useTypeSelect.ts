@@ -47,7 +47,11 @@ export interface TypeSelectAria {
  */
 export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
   let {keyboardDelegate, selectionManager, onTypeSelect} = options;
-  let state = useRef<{search: string, timeout: ReturnType<typeof setTimeout> | undefined, startKey: Key | null}>({
+  let state = useRef<{
+    search: string,
+    timeout: ReturnType<typeof setTimeout> | undefined,
+    startKey: Key | null
+  }>({
     search: '',
     timeout: undefined,
     startKey: null
@@ -70,7 +74,9 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
       }
     }
 
-    if (state.search.length === 0 || (state.search.length > 0 && state.search.split('').every(c => c === character))) {
+    let isFreshSearch = state.search.length === 0;
+
+    if (isFreshSearch || state.search.split('').every(c => c === character)) {
       state.search = character;
       state.startKey = selectionManager.focusedKey;
     } else {
@@ -81,7 +87,29 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
       // Use the delegate to find a key to focus.
       // Prioritize items after the starting focused item for the active search,
       // falling back to searching the whole list.
-      let key = keyboardDelegate.getKeyForSearch(state.search, state.startKey ?? selectionManager.focusedKey);
+      let key: Key | null = null;
+
+      if (
+        selectionManager.focusedKey != null &&
+        selectionManager.isFocused &&
+        (
+          state.search.length > 1 ||
+          isFreshSearch
+        )
+      ) {
+        let focusedItem = selectionManager.collection.getItem(selectionManager.focusedKey);
+        if (focusedItem?.textValue) {
+          let searchValue = state.search.toLowerCase();
+          let itemValue = focusedItem.textValue.slice(0, state.search.length).toLowerCase();
+          if (itemValue === searchValue) {
+            key = selectionManager.focusedKey;
+          }
+        }
+      }
+
+      if (key == null) {
+        key = keyboardDelegate.getKeyForSearch(state.search, state.startKey ?? selectionManager.focusedKey);
+      }
 
       // If no key found, search from the top.
       if (key == null) {

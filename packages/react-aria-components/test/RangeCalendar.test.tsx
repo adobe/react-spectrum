@@ -212,10 +212,10 @@ describe('RangeCalendar', () => {
     expect(grids).toHaveLength(2);
 
     let formatter = new Intl.DateTimeFormat('en-US', {month: 'long', year: 'numeric'});
-    let firstMonth = new CalendarDate(2026, 4, 1);
-    let tz = getLocalTimeZone();
-    expect(grids[0]).toHaveAttribute('aria-label', 'Trip dates, ' + formatter.format(firstMonth.toDate(tz)));
-    expect(grids[1]).toHaveAttribute('aria-label', 'Trip dates, ' + formatter.format(firstMonth.add({months: 1}).toDate(tz)));
+    let expectedStartDate = new CalendarDate(2026, 4, 1);
+    let expectedNextDate = expectedStartDate.add({months: 1});
+    expect(grids[0]).toHaveAttribute('aria-label', 'Trip dates, ' + formatter.format(expectedStartDate.toDate(getLocalTimeZone())));
+    expect(grids[1]).toHaveAttribute('aria-label', 'Trip dates, ' + formatter.format(expectedNextDate.toDate(getLocalTimeZone())));
 
     let headings = container.querySelectorAll('.react-aria-CalendarHeading');
     expect(headings).toHaveLength(2);
