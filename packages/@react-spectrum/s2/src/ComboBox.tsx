@@ -64,6 +64,7 @@ import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {TextFieldRef} from './TextField';
+import {useId} from 'react-aria/useId';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
 import {useSlotId} from 'react-aria/private/utils/useId';
@@ -585,6 +586,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
     );
   }
   let scale = useScale();
+  let prefixId = useId();
 
   return (
     <>
@@ -613,14 +615,18 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           })({size})}>
           {props.prefix ? (
             <Provider values={[[IconContext, {styles: style({size: fontRelative(20), '--iconPrimary': {type: 'fill', value: 'currentColor'}})}]]}>
-              <CenterBaseline styles={style({minWidth: 20, color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
+              <CenterBaseline id={prefixId} styles={style({minWidth: 20, color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
                 {props.prefix}
               </CenterBaseline>
             </Provider>
           ) : null}
           <InputContext.Consumer>
             {ctx => (
-              <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
+              <InputContext.Provider value={{
+                ...ctx, 
+                'aria-labelledby': ctx?.['aria-labelledby'] ? `${ctx?.['aria-labelledby']} ${prefixId}` : prefixId,
+                ref: mergeRefs((ctx as any)?.ref, 
+                inputRef)}}>
                 <Input aria-describedby={spinnerId} />
               </InputContext.Provider>
             )}

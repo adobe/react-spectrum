@@ -22,8 +22,10 @@ import {fontRelative, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {IconContext} from './Icon';
-import {InputProps} from 'react-aria-components/Input';
+import {InputContext, InputProps} from 'react-aria-components/Input';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import {TextFieldRef} from './TextField';
+import {useId} from 'react-aria/useId';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
@@ -76,6 +78,7 @@ export const ColorField = forwardRef(function ColorField(props: ColorFieldProps,
     }
   }));
 
+  let prefixId = useId();
   return (
     <AriaColorField
       {...fieldProps}
@@ -100,12 +103,22 @@ export const ColorField = forwardRef(function ColorField(props: ColorFieldProps,
         <FieldGroup size={props.size}>
           {props.prefix ? (
             <Provider values={[[IconContext, {styles: style({size: fontRelative(20), '--iconPrimary': {type: 'fill', value: 'currentColor'}})}]]}>
-              <CenterBaseline styles={style({minWidth: 20, color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
+              <CenterBaseline id={prefixId} styles={style({minWidth: 20, color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
                 {props.prefix}
               </CenterBaseline>
             </Provider>
           ) : null}
-          <Input ref={inputRef} />
+          <InputContext.Consumer>
+            {ctx => (
+              <InputContext.Provider value={{
+                ...ctx, 
+                'aria-labelledby': ctx?.['aria-labelledby'] ? `${ctx?.['aria-labelledby']} ${prefixId}` : prefixId,
+                ref: mergeRefs((ctx as any)?.ref, 
+                inputRef)}}>
+                <Input />
+              </InputContext.Provider>
+            )}
+          </InputContext.Consumer>
           {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
         </FieldGroup>
         <HelpText

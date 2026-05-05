@@ -28,6 +28,7 @@ import {mergeRefs} from 'react-aria/mergeRefs';
 import {StyleString} from '../style/types';
 import {TextContext} from './Content';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+import { useId } from 'react-aria/useId';
 
 export interface TextFieldRef<T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends FocusableRefValue<T, HTMLDivElement> {
   select(): void,
@@ -57,8 +58,10 @@ export const TextFieldContext = createContext<ContextValue<Partial<TextFieldProp
  */
 export const TextField = forwardRef(function TextField(props: TextFieldProps, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, TextFieldContext);
+  let prefixId = useId();
   return (
     <TextFieldBase
+      prefixId={prefixId}
       {...props}
       ref={ref}>
       <Input />
@@ -90,7 +93,7 @@ export const TextArea = forwardRef(function TextArea(props: TextAreaProps, ref: 
   );
 });
 
-export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupCss?: StyleString}, ref: Ref<TextFieldRef<HTMLInputElement | HTMLTextAreaElement>>) {
+export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupCss?: StyleString, prefixId?: string}, ref: Ref<TextFieldRef<HTMLInputElement | HTMLTextAreaElement>>) {
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useRef<HTMLDivElement>(null);
   let formContext = useContext(FormContext);
@@ -157,7 +160,7 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldP
                     })
                   }]
                 ]}>
-                <CenterBaseline styles={style({minWidth: 20, color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
+                <CenterBaseline id={props.prefixId} styles={style({minWidth: 20, color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
                   {props.prefix}
                 </CenterBaseline>
               </Provider>
@@ -165,7 +168,11 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldP
             }
             <InputContext.Consumer>
               {ctx => (
-                <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
+                <InputContext.Provider value={{
+                  ...ctx, 
+                  'aria-labelledby': ctx?.['aria-labelledby'] ? `${ctx?.['aria-labelledby']} ${props.prefixId}` : props.prefixId,
+                  ref: mergeRefs((ctx as any)?.ref, 
+                  inputRef)}}>
                   {children}
                 </InputContext.Provider>
               )}

@@ -33,6 +33,7 @@ import {TextFieldRef} from './TextField';
 import {useButton} from 'react-aria/useButton';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
+import {useId} from 'react-aria/useId';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
@@ -179,6 +180,7 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
     }
   }));
 
+  let prefixId = useId();
   return (
     <AriaNumberField
       ref={domRef}
@@ -216,14 +218,18 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
                   })({size, isStepperHidden: hideStepper})}>
                   {props.prefix ? (
                     <Provider values={[[IconContext, {styles: style({size: fontRelative(20), '--iconPrimary': {type: 'fill', value: 'currentColor'}})}]]}>
-                      <CenterBaseline styles={style({minWidth: 20, color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
+                      <CenterBaseline id={prefixId} styles={style({minWidth: 20, color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
                         {props.prefix}
                       </CenterBaseline>
                     </Provider>
                   ) : null}
                   <InputContext.Consumer>
                     {ctx => (
-                      <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
+                      <InputContext.Provider value={{
+                        ...ctx, 
+                        'aria-labelledby': ctx?.['aria-labelledby'] ? `${ctx?.['aria-labelledby']} ${prefixId}` : prefixId,
+                        ref: mergeRefs((ctx as any)?.ref, 
+                        inputRef)}}>
                         <Input />
                       </InputContext.Provider>
                     )}

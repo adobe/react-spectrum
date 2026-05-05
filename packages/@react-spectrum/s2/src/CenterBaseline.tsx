@@ -15,8 +15,10 @@ import {CSSProperties, ReactNode} from 'react';
 import {mergeStyles} from '../style/runtime';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
+import { DOMAttributes } from '@react-types/shared';
+import { filterDOMProps } from 'react-aria/filterDOMProps';
 
-interface CenterBaselineProps {
+interface CenterBaselineProps extends DOMAttributes {
   style?: CSSProperties,
   styles?: StyleString,
   children: ReactNode,
@@ -29,8 +31,10 @@ const styles = style({
 });
 
 export function CenterBaseline(props: CenterBaselineProps): ReactNode {
+  let domProps = filterDOMProps(props);
   return (
     <div
+      {...domProps}
       slot={props.slot}
       style={props.style}
       className={mergeStyles(styles, props.styles) + ' ' + centerBaselineBefore}>
