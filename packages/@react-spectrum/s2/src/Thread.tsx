@@ -12,14 +12,11 @@
 
 import {DOMRef, forwardRefType} from '@react-types/shared';
 import {forwardRef, ReactNode, useEffect} from 'react';
-import {GridList} from 'react-aria-components/GridList';
+import {GridList, GridListProps} from 'react-aria-components';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 
-interface ThreadProps {
-  // TODO: should take specific children (UserMessage/etc), but those are to come
-  children: ReactNode | ((item) => ReactNode)
-};
+interface ThreadProps<T extends object> extends Pick<GridListProps<T>, 'items' | 'children'> {}
 
 // TODO: things to look at
 // chatgpt, claude, other AI assistants to see their UX
@@ -33,11 +30,11 @@ interface ThreadProps {
 
 
 // TODO: things to handle later
-export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thread(
-  props: ThreadProps,
+export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thread<T extends object>(
+  props: ThreadProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {children} = props;
+  let {children, items} = props;
   let domRef = useDOMRef(ref);
 
   useEffect(() => {
@@ -52,6 +49,7 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
     <GridList
       aria-label="Chat thread"
       keyboardNavigationBehavior="tab"
+      items={items}
       ref={domRef}
       className={style({
         display: 'flex',

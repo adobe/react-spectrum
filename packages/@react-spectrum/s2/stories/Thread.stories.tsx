@@ -158,13 +158,77 @@ export function StaticThread() {
   );
 }
 
-// TODO: make a streaming example that adds something on end (make it a random reply)
-// function DynamicThread() {
+let dummyResponses = [
+  "Sure! Here's a summary of the key points based on the assets you shared. The main themes revolve around brand consistency, audience engagement, and clear calls to action across all touchpoints.",
+  'Great question. Based on the context provided, I recommend focusing on the narrative arc first, then layering in supporting visuals and data to reinforce the core message.',
+  "I've analyzed the content and identified three main opportunities: improving visual hierarchy, strengthening the headline, and adding a clearer value proposition in the opening section."
+];
 
-// }
+type Message =
+  | {id: number, type: 'user' | 'system', content: string}
+  | {id: number, type: 'status', status: 'pending' | 'complete'};
+
+export function DynamicThread() {
+  let [messages, setMessages] = useState<Message[]>([]);
+  let nextId = useRef(0);
+  let lastMessage = messages.at(-1);
+  let isPending = lastMessage?.type === 'status' && lastMessage.status === 'pending';
+
+  function handleSend(text: string) {
+    if (!text.trim()) {
+      return;
+    }
+    setMessages(prev => [
+      ...prev,
+      {id: nextId.current++, type: 'user', content: text},
+      {id: nextId.current++, type: 'status', status: 'pending'}
+    ]);
+    setTimeout(() => {
+      let response = dummyResponses[Math.floor(Math.random() * dummyResponses.length)];
+      setMessages(prev => [
+        ...prev.slice(0, -1),
+        {id: nextId.current++, type: 'system', content: response}
+      ]);
+    }, 1500);
+  }
+
+  return (
+    <div
+      className={style({
+        margin: 0,
+        maxWidth: 800,
+        marginX: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 32,
+        maxHeight: '100vh'
+      })}>
+      <Thread items={messages}>
+        {msg => {
+          if (msg.type === 'user') {
+            return <UserMessage>{msg.content}</UserMessage>;
+          }
+          if (msg.type === 'status') {
+            return <ResponseStatus status={msg.status} />;
+          }
+          return (
+            <SystemMessage>
+              <div role="document">
+                <p className={style({font: 'body'})}>{msg.content}</p>
+              </div>
+              <MessageFeedback />
+            </SystemMessage>
+          );
+        }}
+      </Thread>
+      <PromptField onSend={handleSend} isDisabled={isPending} />
+    </div>
+  );
+}
 
 // TODO: all of the below was copied from rsp-prototypes, just filler for now
-function PromptField() {
+function PromptField({onSend, isDisabled}: {onSend?: (text: string) => void, isDisabled?: boolean}) {
+  let [text, setText] = useState('');
   let [attachments, setAttachments] = useState([
     {
       image: 'https://react-spectrum.adobe.com/preview.c3b340d3.png',
@@ -223,7 +287,7 @@ function PromptField() {
               }} />
           ))}
         </AttachmentList>
-        <TextField>
+        <TextField value={text} onChange={(value) => setText(value)}>
           <Label
             className={style({
               display: 'block',
@@ -257,7 +321,14 @@ function PromptField() {
           <ActionButton isQuiet aria-label="Add">
             <Plus />
           </ActionButton>
-          <Button variant="accent" aria-label="Send">
+          <Button
+            variant="accent"
+            aria-label="Send"
+            isDisabled={isDisabled}
+            onPress={() => {
+              onSend?.(text);
+              setText('');
+            }}>
             <Send />
           </Button>
         </div>
@@ -315,6 +386,7 @@ function Attachment({id, image, title, description, onRemove}: {id: number, imag
 function UserMessage({children}: {children: ReactNode}) {
   return (
     <GridListItem
+      // TODO: will need a textValue
       textValue=" "
       className={style({
         ...focusRing(),
@@ -332,6 +404,7 @@ function UserMessage({children}: {children: ReactNode}) {
 
 function SystemMessage({children}: { children: ReactNode }) {
   return (
+    // TODO: will need a textValue
     <GridListItem textValue=" " className={style({...focusRing(), borderRadius: 'default'})}>
       {children}
     </GridListItem>
