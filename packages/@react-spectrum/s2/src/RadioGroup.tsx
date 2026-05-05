@@ -175,7 +175,10 @@ interface RenderProps extends RadioRenderProps, ContextProps {}
 
 const radioField = style({
   display: 'grid',
-  gridTemplateColumns: ['max-content', '1fr'],
+  gridTemplateColumns: {
+    default: ['max-content', '1fr'],
+    isNoVisibleLabel: ['max-content']
+  },
   columnGap: 'text-to-control',
   alignContent: 'start',
   font: controlFont(),
@@ -277,7 +280,7 @@ export const Radio = /*#__PURE__*/ forwardRef(function Radio(props: RadioProps, 
       ref={domRef}
       inputRef={inputRef}
       style={UNSAFE_style}
-      className={renderProps => UNSAFE_className + radioField({...renderProps, isInForm, size}, allProps.styles)}>
+      className={renderProps => UNSAFE_className + radioField({...renderProps, isInForm, size, isNoVisibleLabel: !children}, allProps.styles)}>
       {renderProps => (
         <>
           <RadioButton className={renderProps => wrapper({...renderProps, isInForm, size})}>
