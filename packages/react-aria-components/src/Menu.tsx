@@ -301,7 +301,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   );
 }
 
-export interface MenuSectionProps<T> extends SectionProps<T>, MultipleSelection, DOMRenderProps<'section', undefined> {
+export interface MenuSectionProps<T> extends SectionProps<T>, Omit<MultipleSelection, 'disabledKeys'>, DOMRenderProps<'section', undefined> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-MenuSection'

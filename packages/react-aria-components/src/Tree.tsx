@@ -109,12 +109,12 @@ class TreeCollection<T> extends BaseCollection<T> {
     while (node) {
       yield node as Node<T>;
       if (node.type === 'section') {
-        node = node.nextKey ? this.getItem(node.nextKey) : null;
+        node = node.nextKey != null ? this.getItem(node.nextKey) : null;
       } else {
         // This will include both item and content nodes
         // We handle the content nodes in useCollectionRenderer and ListLayout
         let key = this.getKeyAfter(node.key);
-        node = key ? this.getItem(key) : null;
+        node = key != null ? this.getItem(key) : null;
       }
     }
   }

@@ -11,19 +11,23 @@
  */
 
 import {TextArea as AriaTextArea, TextAreaContext as AriaTextAreaContext} from 'react-aria-components/TextArea';
+import {TextContext as AriaTextContext} from 'react-aria-components/Text';
 import {TextField as AriaTextField, TextFieldProps as AriaTextFieldProps} from 'react-aria-components/TextField';
-import {centerPadding, style} from '../style' with {type: 'macro'};
+import {centerBaseline} from './CenterBaseline';
+import {centerPadding, fontRelative, style} from '../style' with {type: 'macro'};
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
-import {ContextValue, useSlottedContext} from 'react-aria-components/slots';
+import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from './useDOMRef';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FocusableRefValue, GlobalDOMAttributes, HelpTextProps, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
+import {IconContext} from './Icon';
 import {InputContext, InputProps} from 'react-aria-components/Input';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import {StyleString} from '../style/types';
+import {Text, TextContext} from './Content';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface TextFieldRef<T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends FocusableRefValue<T, HTMLDivElement> {
@@ -37,7 +41,11 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'c
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * The prefix to display in the text field. Either a string or workflow icon.
+   */
+  prefix?: ReactNode
 }
 
 export const TextFieldContext = createContext<ContextValue<Partial<TextFieldProps>, TextFieldRef>>(null);
@@ -135,14 +143,44 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldP
           {label}
         </FieldLabel>
         <FieldGroup size={props.size} styles={fieldGroupCss}>
-          <InputContext.Consumer>
-            {ctx => (
-              <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
-                {children}
-              </InputContext.Provider>
-            )}
-          </InputContext.Consumer>
-          {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
+          <Provider values={[[TextContext, {}]]}>
+            {props.prefix ? (
+              <Provider 
+                values={[
+                  [IconContext, {
+                    render: centerBaseline({}),
+                    styles: style({
+                      size: fontRelative(20),
+                      '--iconPrimary': {
+                        type: 'fill',
+                        value: 'currentColor'
+                      }
+                    })
+                  }],
+                  [AriaTextContext, {}],
+                  [TextContext, {
+                    slots: {
+                      [DEFAULT_SLOT]: {
+                        styles: style({minWidth: 20, display: 'flex', alignItems: 'center', justifyContent: 'center'})
+                      }
+                    }
+                  }]
+                ]}>
+                <div className={style({color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
+                  {typeof props.prefix === 'string' ? <Text>{props.prefix}</Text> : props.prefix}
+                </div>
+              </Provider>
+              ) : null
+            }
+            <InputContext.Consumer>
+              {ctx => (
+                <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
+                  {children}
+                </InputContext.Provider>
+              )}
+            </InputContext.Consumer>
+            {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
+          </Provider>
         </FieldGroup>
         <HelpText
           size={props.size}

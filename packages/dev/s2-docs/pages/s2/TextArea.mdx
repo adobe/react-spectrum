@@ -50,6 +50,26 @@ function Example() {
 }
 ```
 
+## Prefix
+
+Use the `prefix` prop to display a prefix in the text area. Either a string or workflow icon.
+
+```tsx render
+"use client";
+import {TextArea} from '@react-spectrum/s2/TextArea';
+import MentionIcon from '@react-spectrum/s2/icons/Mention';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function Example() {
+  return (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
+      <TextArea label="Irrational number" prefix="#" placeholder="3.1415926535897932384626433832795028841971" />
+      <TextArea label="Mention" prefix={<MentionIcon />} placeholder="username" />
+    </div>
+  );
+}
+```
+
 ## Forms
 
 Use the `name` prop to submit the text value to the server. Set the `isRequired`, `minLength`, or `maxLength` props to validate the value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
