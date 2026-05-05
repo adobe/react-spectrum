@@ -24,6 +24,7 @@
     },
     "./page.css": {
       "source": "./src/page.ts",
+      "types": "./dist/types/src/page.d.ts",
       "default": "./page.css"
     },
     "./style": {
