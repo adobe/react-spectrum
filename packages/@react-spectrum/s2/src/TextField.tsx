@@ -42,7 +42,8 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'c
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /**
-   * The prefix to display in the text field. Either a string or workflow icon.
+   * The prefix to display in the text field. 
+   * A non-interactive element that appears before the input.
    */
   prefix?: ReactNode
 }
