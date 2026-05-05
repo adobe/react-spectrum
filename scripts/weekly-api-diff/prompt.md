@@ -5,7 +5,7 @@ You are running the weekly react-spectrum API diff workflow. Follow ALL steps be
 ## Configuration
 - react-spectrum repo: $HOME/dev/react-spectrum
 - snapshots repo: $HOME/dev/react-spectrum-api-snapshots
-- Slack channel: <SLACK_CHANNEL_ID>
+- Slack channel: GC5EV84UD
 - Slack token env var: SLACK_TSDIFF_CHROMATIC_BOT_TOKEN (already in environment)
 - Snapshots GitHub URL: https://github.com/LFDanLu/react-spectrum-api-snapshots
 
@@ -56,74 +56,94 @@ This also takes 10-30 minutes.
 
 ```bash
 cd $HOME/dev/react-spectrum
-yarn compare:apis --isCI 2>&1 | tee $HOME/dev/react-spectrum-api-snapshots/diffs/$TODAY.txt
+yarn compare:apis --isCI | tee /tmp/diff-current.txt
 ```
 
-Check if the output file is empty:
+Note: only capture stdout (no 2>&1), stderr from yarn should not end up in the diff file.
+
+## Step 6: Detect new release and compute week-to-week delta
+
+Get the current last Publish commit hash:
 
 ```bash
-wc -c < $HOME/dev/react-spectrum-api-snapshots/diffs/$TODAY.txt
+cd $HOME/dev/react-spectrum
+git log --grep='^Publish$' --oneline -1 | awk '{print $1}'
 ```
 
-- If the file is empty (0 bytes): set EMPTY_DIFF=true, skip Step 6 and Step 8, and go directly to Step 9 using the no-diff message format
-- Otherwise: continue to Step 6
-
-## Step 6: Compute week-to-week delta
-
-Find the most recent previous diff file in the snapshots repo:
+Save this as CURRENT_PUBLISH. Then read the previously recorded hash:
 
 ```bash
-ls -t $HOME/dev/react-spectrum-api-snapshots/diffs/*.txt 2>/dev/null | sed -n '2p'
+cat $HOME/dev/react-spectrum-api-snapshots/last-publish-hash.txt 2>/dev/null
 ```
 
-- If a previous file exists: run `diff <previous-file> $HOME/dev/react-spectrum-api-snapshots/diffs/$TODAY.txt` and save the output as the WEEKLY_DELTA
-- If no previous file exists (first run): set WEEKLY_DELTA to "(first run — no previous diff to compare against)"
+Save this as PREV_PUBLISH.
 
-## Step 7: Commit and push the new diff file
+- If PREV_PUBLISH is non-empty and CURRENT_PUBLISH != PREV_PUBLISH: set NEW_RELEASE=true. Skip delta computation and go directly to Step 7.
+- Otherwise: find the most recent previous diff file (sort alphabetically, not by mtime):
+
+```bash
+ls $HOME/dev/react-spectrum-api-snapshots/diffs/*.txt 2>/dev/null | sort -r | head -1
+```
+
+If a previous file exists: run `diff <previous-file> /tmp/diff-current.txt` and save the output as WEEKLY_DELTA.
+If no previous file exists (first run): set WEEKLY_DELTA to "(first run, no previous diff to compare against)".
+
+## Step 7: Commit and push
+
+Determine whether to commit:
+- If /tmp/diff-current.txt is empty (0 bytes): skip commit entirely
+- If NEW_RELEASE=true and /tmp/diff-current.txt is non-empty: commit (fresh baseline after release)
+- If WEEKLY_DELTA is non-empty and /tmp/diff-current.txt is non-empty: commit (new changes this week)
+- Otherwise (WEEKLY_DELTA is empty): skip commit (same as last week)
+
+If committing:
 
 ```bash
 cd $HOME/dev/react-spectrum-api-snapshots
 git checkout main
 git pull origin main
-git add diffs/$TODAY.txt
+cp /tmp/diff-current.txt diffs/$TODAY.txt
+echo "$CURRENT_PUBLISH" > last-publish-hash.txt
+git add diffs/$TODAY.txt last-publish-hash.txt
 git commit -m "weekly api diff $TODAY"
 git push
 ```
 
 ## Step 8: Summarize
 
-Read the WEEKLY_DELTA from Step 6 and produce a concise summary of what changed this week:
-- Lines added to the diff (new API changes vs release that weren't there last week)
-- Lines removed from the diff (API changes that were reverted or landed in a release)
-- Affected package names
+Choose the appropriate message based on the following cases:
 
-If first run, note that and link to the full diff instead.
+**Case 1 diff-current.txt is empty (no pending API changes vs release):**
+Go to Step 9 with message: "No API changes detected vs last release, all pending changes have been included in a release."
+
+**Case 2 NEW_RELEASE=true (release landed since last diff):**
+Go to Step 9 with message noting a new release landed, linking to the full diff.
+
+**Case 3 WEEKLY_DELTA is empty (same diff as last week):**
+Go to Step 9 with message: "No new API changes since last diff (PREV_DATE): PREV_URL"
+
+**Case 4 Normal (has changes vs last week):**
+Read WEEKLY_DELTA and produce a concise summary:
+- Lines added to the diff (new API changes not there last week)
+- Lines removed from the diff (API changes that were reverted or released)
+- Affected package names
 
 Apply these grouping and classification rules when writing the summary:
 - If multiple components in the same family (e.g. Checkbox, Radio, Switch) all gain the same new prop (e.g. `description`, `errorMessage`), call it out as a single feature rather than listing each component separately
 - If new wrapper components appear (e.g. CheckboxField, RadioField) alongside new props on their inner components, group them together and describe the feature they enable (e.g. "help text support") rather than just listing them as new exports
-- Always call out new props added to existing components explicitly — don't bury them under new export counts
+- Always call out new props added to existing components explicitly, don't bury them under new export counts
 - If a prop signature changes (e.g. a callback gains a new argument), flag it as a potential breaking change for consumers who implement that signature
 - Group Calendar-family changes together (Calendar, RangeCalendar, CalendarState, DateRangePicker) since they tend to change together
 
 ## Step 9: Post to Slack
 
-If EMPTY_DIFF=true, post this message:
+Post the appropriate message from Step 8:
 
 ```bash
 curl -s -X POST https://slack.com/api/chat.postMessage \
   -H "Authorization: Bearer $SLACK_TSDIFF_CHROMATIC_BOT_TOKEN" \
   -H "Content-Type: application/json" \
-  -d "{\"channel\": \"<SLACK_CHANNEL_ID>\", \"text\": \"📊 Weekly API Diff — $TODAY\n\nNo API changes vs release baseline this week — either nothing new has landed on main yet, or all pending changes were included in a release.\"}"
-```
-
-Otherwise, post the summary. Fill in the actual counts and package names from Step 8:
-
-```bash
-curl -s -X POST https://slack.com/api/chat.postMessage \
-  -H "Authorization: Bearer $SLACK_TSDIFF_CHROMATIC_BOT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d "{\"channel\": \"<SLACK_CHANNEL_ID>\", \"text\": \"📊 Weekly API Diff — $TODAY\n\n<summary of weekly delta>\n\nFull diff vs release: https://github.com/LFDanLu/react-spectrum-api-snapshots/blob/main/diffs/$TODAY.txt\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong.\"}"
+  -d "{\"channel\": \"GC5EV84UD\", \"text\": \"📊 Weekly API Diff — $TODAY\n\n<message>\"}"
 ```
 
 Verify the response contains "ok": true.

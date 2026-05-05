@@ -24,13 +24,21 @@ A local fallback via macOS launchd is also available (see below).
 1. GH Actions fires every Monday at 9am PT (`cron: '0 17 * * 1'`)
 2. Builds current `main` API snapshot via `yarn build:api-branch`
 3. Builds release baseline via `yarn build:api-published` (auto-detects last Publish commit)
-4. Generates diff, commits to snapshots repo, summarizes via GitHub Models, posts to Slack
+4. Generates diff via `yarn compare:apis --isCI`
+5. Detects if a new release landed since the last committed diff (via `last-publish-hash.txt` in snapshots repo)
+6. Computes week-to-week delta by comparing against the most recent committed diff
+7. Commits new diff + updated hash to snapshots repo (skipped if nothing changed or diff is empty)
+8. Summarizes via GitHub Models and posts one of four Slack messages:
+   - No pending API changes vs release (release consumed everything)
+   - New release since last diff: links to full diff as fresh baseline
+   - No new changes since last diff: links to previous diff
+   - Normal: LLM summary of week-to-week delta
 
 ## How It Works (Local Fallback)
 
 1. macOS launchd fires every Monday at 9am (catches up on wake if laptop was asleep)
 2. Invokes `claude -p "$(cat ~/weekly-tsdiffer.md)"` with bash/read permissions
-3. Claude: pulls latest main → builds API snapshot → generates diff vs release baseline → commits diff text to snapshots repo → posts Slack summary
+3. Claude follows the same logic as the GH Actions workflow (see `prompt.md` for full steps)
 
 ## GitHub Actions Secrets Required
 
