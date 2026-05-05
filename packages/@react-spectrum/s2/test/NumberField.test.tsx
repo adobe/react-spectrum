@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {render} from '@react-spectrum/test-utils-internal';
 import {NumberField} from '../src/NumberField';
+import {render} from '@react-spectrum/test-utils-internal';
 
 describe('NumberField', () => {
   it('should label the input with the prefix', () => {

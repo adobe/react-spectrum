@@ -27,8 +27,8 @@ import {InputContext, InputProps} from 'react-aria-components/Input';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import {StyleString} from '../style/types';
 import {TextContext} from './Content';
+import {useId} from 'react-aria/useId';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import { useId } from 'react-aria/useId';
 
 export interface TextFieldRef<T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends FocusableRefValue<T, HTMLDivElement> {
   select(): void,
@@ -168,10 +168,11 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldP
             }
             <InputContext.Consumer>
               {ctx => (
-                <InputContext.Provider value={{
-                  ...ctx, 
-                  'aria-labelledby': ctx?.['aria-labelledby'] ? `${ctx?.['aria-labelledby']} ${props.prefixId}` : props.prefixId,
-                  ref: mergeRefs((ctx as any)?.ref, 
+                <InputContext.Provider
+                  value={{
+                    ...ctx, 
+                    'aria-labelledby': ctx?.['aria-labelledby'] ? `${ctx?.['aria-labelledby']} ${props.prefixId}` : props.prefixId,
+                    ref: mergeRefs((ctx as any)?.ref, 
                   inputRef)}}>
                   {children}
                 </InputContext.Provider>

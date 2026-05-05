@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {render} from '@react-spectrum/test-utils-internal';
 import {ColorField} from '../src/ColorField';
+import {render} from '@react-spectrum/test-utils-internal';
 
 describe('ColorField', () => {
   it('should label the input with the prefix', () => {

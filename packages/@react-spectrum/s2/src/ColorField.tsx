@@ -110,10 +110,11 @@ export const ColorField = forwardRef(function ColorField(props: ColorFieldProps,
           ) : null}
           <InputContext.Consumer>
             {ctx => (
-              <InputContext.Provider value={{
-                ...ctx, 
-                'aria-labelledby': ctx?.['aria-labelledby'] ? `${ctx?.['aria-labelledby']} ${prefixId}` : prefixId,
-                ref: mergeRefs((ctx as any)?.ref, 
+              <InputContext.Provider
+                value={{
+                  ...ctx, 
+                  'aria-labelledby': ctx?.['aria-labelledby'] ? `${ctx?.['aria-labelledby']} ${prefixId}` : prefixId,
+                  ref: mergeRefs((ctx as any)?.ref, 
                 inputRef)}}>
                 <Input />
               </InputContext.Provider>

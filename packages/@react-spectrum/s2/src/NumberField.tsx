@@ -225,10 +225,11 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
                   ) : null}
                   <InputContext.Consumer>
                     {ctx => (
-                      <InputContext.Provider value={{
-                        ...ctx, 
-                        'aria-labelledby': ctx?.['aria-labelledby'] ? `${ctx?.['aria-labelledby']} ${prefixId}` : prefixId,
-                        ref: mergeRefs((ctx as any)?.ref, 
+                      <InputContext.Provider
+                        value={{
+                          ...ctx, 
+                          'aria-labelledby': ctx?.['aria-labelledby'] ? `${ctx?.['aria-labelledby']} ${prefixId}` : prefixId,
+                          ref: mergeRefs((ctx as any)?.ref, 
                         inputRef)}}>
                         <Input />
                       </InputContext.Provider>

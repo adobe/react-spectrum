@@ -12,11 +12,11 @@
 
 import {css} from '../style/style-macro' with {type: 'macro'};
 import {CSSProperties, ReactNode} from 'react';
+import {DOMAttributes} from '@react-types/shared';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {mergeStyles} from '../style/runtime';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
-import { DOMAttributes } from '@react-types/shared';
-import { filterDOMProps } from 'react-aria/filterDOMProps';
 
 interface CenterBaselineProps extends DOMAttributes {
   style?: CSSProperties,
