@@ -49,7 +49,7 @@ import {Modal} from '../src/Modal';
 import {Popover} from '../src/Popover';
 import React, {useMemo, useState} from 'react';
 import {resizingTests} from 'react-aria/test/table/tableResizingTests.tsx';
-import {Select, SelectValue } from '../src/Select';
+import {Select, SelectValue} from '../src/Select';
 import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import * as stories from '../stories/Table.stories';
 import {TableLayout} from '../src/TableLayout';
@@ -1175,7 +1175,7 @@ describe('Table', () => {
     expect(document.activeElement).toBe(rowElements[3]);
   });
 
-  it.only('should select inside a cell using typeahead before the table takes over typeahead', async () => {
+  it('should select inside a cell using typeahead before the table takes over typeahead', async () => {
     let rows = [
       {id: 1, name: '1. Games', date: '6/7/2020', type: 'File folder', textValue: 'Games'},
       {id: 2, name: '2. Program Files', date: '4/7/2021', type: 'File folder', textValue: 'Program Files'},
@@ -1193,7 +1193,7 @@ describe('Table', () => {
         </MyTableHeader>
         <TableBody items={rows}>
           {item => (
-            <MyRow columns={columns}>
+            <MyRow columns={columns} textValue={item.textValue}>
               {column => {
                 if (column.id !== 'name') {
                   return (
