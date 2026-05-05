@@ -11,12 +11,11 @@
  */
 
 import {TextArea as AriaTextArea, TextAreaContext as AriaTextAreaContext} from 'react-aria-components/TextArea';
-import {TextContext as AriaTextContext} from 'react-aria-components/Text';
 import {TextField as AriaTextField, TextFieldProps as AriaTextFieldProps} from 'react-aria-components/TextField';
-import {centerBaseline} from './CenterBaseline';
+import {CenterBaseline} from './CenterBaseline';
 import {centerPadding, fontRelative, style} from '../style' with {type: 'macro'};
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
-import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
+import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from './useDOMRef';
@@ -27,7 +26,7 @@ import {IconContext} from './Icon';
 import {InputContext, InputProps} from 'react-aria-components/Input';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import {StyleString} from '../style/types';
-import {Text, TextContext} from './Content';
+import {TextContext} from './Content';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface TextFieldRef<T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends FocusableRefValue<T, HTMLDivElement> {
@@ -148,7 +147,6 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldP
               <Provider 
                 values={[
                   [IconContext, {
-                    render: centerBaseline({}),
                     styles: style({
                       size: fontRelative(20),
                       '--iconPrimary': {
@@ -156,19 +154,11 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldP
                         value: 'currentColor'
                       }
                     })
-                  }],
-                  [AriaTextContext, {}],
-                  [TextContext, {
-                    slots: {
-                      [DEFAULT_SLOT]: {
-                        styles: style({minWidth: 20, display: 'flex', alignItems: 'center', justifyContent: 'center'})
-                      }
-                    }
                   }]
                 ]}>
-                <div className={style({color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
-                  {typeof props.prefix === 'string' ? <Text>{props.prefix}</Text> : props.prefix}
-                </div>
+                <CenterBaseline styles={style({minWidth: 20, color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
+                  {props.prefix}
+                </CenterBaseline>
               </Provider>
               ) : null
             }
