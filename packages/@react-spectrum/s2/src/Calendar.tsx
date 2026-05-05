@@ -126,7 +126,8 @@ const titleStyles = style({
   font: 'title-lg',
   textAlign: 'center',
   flexGrow: 1,
-  flexShrink: 0
+  flexShrink: 0,
+  marginY: 0
 });
 
 const headerCellStyles = style({
