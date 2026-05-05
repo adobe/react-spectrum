@@ -71,6 +71,7 @@ function setupGridLayout(options: GridLayoutOptions = {}, itemCount = 4, viewpor
   (layout as any).virtualizer = {
     collection,
     visibleRect: new Rect(0, 0, viewportWidth, 600),
+    size: new Size(viewportWidth, 600),
     isPersistedKey: () => false
   };
 
