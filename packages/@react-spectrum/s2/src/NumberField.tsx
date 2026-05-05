@@ -13,8 +13,9 @@
 import Add from '../ui-icons/Add';
 import {ButtonProps as AriaButtonProps, ButtonContext, ButtonRenderProps} from 'react-aria-components/Button';
 import {NumberField as AriaNumberField, NumberFieldProps as AriaNumberFieldProps} from 'react-aria-components/NumberField';
-import {baseColor, space, style} from '../style' with {type: 'macro'};
-import {ContextValue, useContextProps} from 'react-aria-components/slots';
+import {baseColor, fontRelative, space, style} from '../style' with {type: 'macro'};
+import {CenterBaseline} from './CenterBaseline';
+import {ContextValue, Provider, useContextProps} from 'react-aria-components/slots';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useMemo, useRef} from 'react';
 import {createFocusableRef} from './useDOMRef';
@@ -23,6 +24,7 @@ import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext, useFormProps} from './Form';
 import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {IconContext} from './Icon';
 import {InputContext, InputProps} from 'react-aria-components/Input';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
@@ -50,7 +52,11 @@ export interface NumberFieldProps extends
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * The prefix to display in the NumberField. A non-interactive element that appears before the input.
+   */
+  prefix?: ReactNode
 }
 
 export const NumberFieldContext = createContext<ContextValue<Partial<NumberFieldProps>, TextFieldRef>>(null);
@@ -208,6 +214,13 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
                       isStepperHidden: 'edge-to-text'
                     }
                   })({size, isStepperHidden: hideStepper})}>
+                  {props.prefix ? (
+                    <Provider values={[[IconContext, {styles: style({size: fontRelative(20), '--iconPrimary': {type: 'fill', value: 'currentColor'}})}]]}>
+                      <CenterBaseline styles={style({minWidth: 20, color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
+                        {props.prefix}
+                      </CenterBaseline>
+                    </Provider>
+                  ) : null}
                   <InputContext.Consumer>
                     {ctx => (
                       <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>

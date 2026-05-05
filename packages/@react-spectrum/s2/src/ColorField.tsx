@@ -12,15 +12,17 @@
 
 import {ColorField as AriaColorField, ColorFieldProps as AriaColorFieldProps} from 'react-aria-components/ColorField';
 
-import {ContextValue} from 'react-aria-components/slots';
-import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
+import {CenterBaseline} from './CenterBaseline';
+import {ContextValue, Provider} from 'react-aria-components/slots';
+import {createContext, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from './useDOMRef';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
+import {fontRelative, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {IconContext} from './Icon';
 import {InputProps} from 'react-aria-components/Input';
-import {style} from '../style' with {type: 'macro'};
 import {TextFieldRef} from './TextField';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -30,7 +32,11 @@ export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * The prefix to display in the ColorField. A non-interactive element that appears before the input.
+   */
+  prefix?: ReactNode
 }
 
 export const ColorFieldContext = createContext<ContextValue<Partial<ColorFieldProps>, TextFieldRef>>(null);
@@ -92,6 +98,13 @@ export const ColorField = forwardRef(function ColorField(props: ColorFieldProps,
           {label}
         </FieldLabel>
         <FieldGroup size={props.size}>
+          {props.prefix ? (
+            <Provider values={[[IconContext, {styles: style({size: fontRelative(20), '--iconPrimary': {type: 'fill', value: 'currentColor'}})}]]}>
+              <CenterBaseline styles={style({minWidth: 20, color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
+                {props.prefix}
+              </CenterBaseline>
+            </Provider>
+          ) : null}
           <Input ref={inputRef} />
           {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
         </FieldGroup>

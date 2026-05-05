@@ -102,3 +102,13 @@ export const ContextualHelpExample: Story = {
     label: 'Quantity'
   }
 };
+
+export const WithPrefix: Story = {
+  render: (args) => (
+    <NumberField {...args} />
+  ),
+  args: {
+    label: 'Quantity',
+    prefix: 'USD'
+  }
+};

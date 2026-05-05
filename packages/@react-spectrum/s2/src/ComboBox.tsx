@@ -29,9 +29,9 @@ import {PopoverProps as AriaPopoverProps, Placement} from 'react-aria-components
 import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SingleSelection, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {BaseCollection, CollectionNode} from 'react-aria/private/collections/BaseCollection';
-import {baseColor, centerPadding, focusRing, space, style} from '../style' with {type: 'macro'};
+import {baseColor, centerPadding, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonRenderProps} from 'react-aria-components/Button';
-import {centerBaseline} from './CenterBaseline';
+import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {
   checkmark,
   description,
@@ -76,7 +76,11 @@ export interface ComboboxStyleProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * The prefix to display in the ComboBox. A non-interactive element that appears before the input.
+   */
+  prefix?: ReactNode
 }
 export interface ComboBoxProps<T extends object> extends
   Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'render' | 'defaultFilter' | 'allowsEmptyCollection' | 'selectionMode' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange' | 'value' | 'defaultValue' | 'onChange' | keyof GlobalDOMAttributes>,
@@ -607,6 +611,13 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
             // [9, 4], [12, 6], [15, 8], [18, 8]
             paddingEnd: 'calc(self(height, self(minHeight)) * 3 / 16 - self(borderEndWidth, 2px))'
           })({size})}>
+          {props.prefix ? (
+            <Provider values={[[IconContext, {styles: style({size: fontRelative(20), '--iconPrimary': {type: 'fill', value: 'currentColor'}})}]]}>
+              <CenterBaseline styles={style({minWidth: 20, color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
+                {props.prefix}
+              </CenterBaseline>
+            </Provider>
+          ) : null}
           <InputContext.Consumer>
             {ctx => (
               <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
