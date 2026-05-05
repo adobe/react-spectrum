@@ -23,11 +23,11 @@ jobs:
 
       - run: yarn --immutable
 
-      # Build current main API (~20 min, always fresh)
+      # Build current main API (~2 min, always fresh)
       - name: Build current API snapshot
         run: yarn build:api-branch
 
-      # Build release baseline using the last Publish commit (~20 min, always fresh)
+      # Build release baseline using the last Publish commit (~2 min, always fresh)
       - name: Build release baseline
         run: yarn build:api-published
 

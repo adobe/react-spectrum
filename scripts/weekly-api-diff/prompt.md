@@ -5,7 +5,7 @@ You are running the weekly react-spectrum API diff workflow. Follow ALL steps be
 ## Configuration
 - react-spectrum repo: $HOME/dev/react-spectrum
 - snapshots repo: $HOME/dev/react-spectrum-api-snapshots
-- Slack channel: GC5EV84UD
+- Slack channel: SLACK_CHANNEL_ID
 - Slack token env var: SLACK_TSDIFF_CHROMATIC_BOT_TOKEN (already in environment)
 - Snapshots GitHub URL: https://github.com/LFDanLu/react-spectrum-api-snapshots
 
@@ -143,7 +143,7 @@ Post the appropriate message from Step 8:
 curl -s -X POST https://slack.com/api/chat.postMessage \
   -H "Authorization: Bearer $SLACK_TSDIFF_CHROMATIC_BOT_TOKEN" \
   -H "Content-Type: application/json" \
-  -d "{\"channel\": \"GC5EV84UD\", \"text\": \"📊 Weekly API Diff — $TODAY\n\n<message>\"}"
+  -d "{\"channel\": \"SLACK_CHANNEL_ID\", \"text\": \"📊 Weekly API Diff — $TODAY\n\n<message>\"}"
 ```
 
 Verify the response contains "ok": true.
