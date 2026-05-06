@@ -19,10 +19,13 @@ import {
 } from '../src/Accordion';
 
 import {ActionButton} from '../src/ActionButton';
+import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
+import People from '../s2wf-icons/S2_Icon_People_20_N.svg';
 import React from 'react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {Text} from '../src/Content';
 import {TextField} from '../src/TextField';
 
 const meta: Meta<typeof Accordion> = {
@@ -160,6 +163,35 @@ export const WithActionButton: Story = {
               </AccordionItemTitle>
               <ActionButton aria-label="Add new person"><NewIcon /></ActionButton>
             </AccordionItemHeader>
+            <AccordionItemPanel>
+              <TextField label="Name" styles={style({maxWidth: 176})} placeholder="Enter your name" />
+            </AccordionItemPanel>
+          </AccordionItem>
+        </Accordion>
+      </div>
+    );
+  }
+};
+
+export const WithIcon: Story = {
+  render: (args) => {
+    return (
+      <div className={style({minHeight: 240})}>
+        <Accordion {...args}>
+          <AccordionItem id="files">
+            <AccordionItemTitle>
+              <File />
+              <Text>Files</Text>
+            </AccordionItemTitle>
+            <AccordionItemPanel>
+              Files content
+            </AccordionItemPanel>
+          </AccordionItem>
+          <AccordionItem id="people">
+            <AccordionItemTitle>
+              <People />
+              <Text>People</Text>
+            </AccordionItemTitle>
             <AccordionItemPanel>
               <TextField label="Name" styles={style({maxWidth: 176})} placeholder="Enter your name" />
             </AccordionItemPanel>
