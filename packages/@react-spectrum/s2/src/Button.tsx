@@ -224,13 +224,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
             genai: 'white'
           }
         },
-        outline: {
-          variant: {
-            premium: 'white',
-            genai: 'white'
-          },
-          default: baseColor('transparent-overlay-800')
-        }
+        outline: 'white'
       },
       isDisabled: 'transparent-overlay-400'
     },
