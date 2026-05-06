@@ -131,11 +131,28 @@ export const WithActionButton: Story = {
         <Disclosure {...args}>
           <DisclosureHeader>
             <DisclosureTitle>
-              <File />
-              <Text>Files</Text>
+              Files
             </DisclosureTitle>
             <ActionButton><NewIcon aria-label="new icon " /></ActionButton>
           </DisclosureHeader>
+          <DisclosurePanel>
+            Files content
+          </DisclosurePanel>
+        </Disclosure>
+      </div>
+    );
+  }
+};
+
+export const WithIcon: Story = {
+  render: (args) => {
+    return (
+      <div className={style({minHeight: 240})}>
+        <Disclosure {...args}>
+          <DisclosureTitle>
+            <File />
+            <Text>Files</Text>
+          </DisclosureTitle>
           <DisclosurePanel>
             Files content
           </DisclosurePanel>
