@@ -195,6 +195,7 @@ export function DynamicThread() {
         height: '100%'
       })}>
       <Thread items={messages}>
+        {/* <Thread items={messages.reverse()}> */}
         {msg => {
           if (msg.type === 'user') {
             return <UserMessage>{msg.content}</UserMessage>;
