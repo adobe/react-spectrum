@@ -11,6 +11,7 @@
  */
 
 import { defineConfig } from 'vite'
+import optimizeLocales from '@react-aria/optimize-locales-plugin';
 import react from '@vitejs/plugin-react'
 import macros from 'unplugin-parcel-macros';
 
@@ -18,7 +19,13 @@ import macros from 'unplugin-parcel-macros';
 export default defineConfig({
   plugins: [
     macros.vite(),
-    react()
+    react(),
+    {
+      ...optimizeLocales.vite({
+        locales: ['en', 'pl'],
+      }),
+      enforce: 'pre',
+    }
   ],
   build: {
     target: ['es2022'],
