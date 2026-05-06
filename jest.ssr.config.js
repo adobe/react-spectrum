@@ -69,4 +69,11 @@ module.exports = {
       }
     ]
   },
+
+  // Storybook 10 ships pure ESM in `storybook` and `@storybook/*`, so we need
+  // to let @swc/jest transform them instead of skipping all of node_modules.
+  transformIgnorePatterns: [
+    '/node_modules/(?!(?:storybook|@storybook)/)',
+    '\\.pnp\\.[^\\/]+$'
+  ]
 };

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, getWeeksInMonth, startOfWeek, today} from '@internationalized/date';
-import {CalendarState} from 'react-stately/useCalendarState';
+import {CalendarDate, startOfWeek, today} from '@internationalized/date';
+import {CalendarSelectionMode, CalendarState} from 'react-stately/useCalendarState';
 import {DOMAttributes} from '@react-types/shared';
 import {hookData, useVisibleRangeDescription} from './utils';
 import {KeyboardEvent, useMemo} from 'react';
@@ -62,7 +62,7 @@ export interface CalendarGridAria {
  * A calendar grid displays a single grid of days within a calendar or range calendar which
  * can be keyboard navigated and selected by the user.
  */
-export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarState | RangeCalendarState): CalendarGridAria {
+export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarState<CalendarSelectionMode> | RangeCalendarState): CalendarGridAria {
   let {
     startDate = state.visibleRange.start,
     endDate = state.visibleRange.end,
@@ -147,21 +147,23 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
   let dayFormatter = useDateFormatter({weekday: props.weekdayStyle || 'narrow', timeZone: state.timeZone});
   let {locale} = useLocale();
   let weekDays = useMemo(() => {
-    let weekStart = startOfWeek(today(state.timeZone), locale, firstDayOfWeek);
-    return [...new Array(7).keys()].map((index) => {
+    let isDayView = state.visibleDuration.days && state.visibleDuration.days < 7;
+    let weekStart = isDayView ? startDate : startOfWeek(today(state.timeZone), locale, firstDayOfWeek);
+    let days = isDayView ? state.visibleDuration.days! : 7;
+    return [...new Array(days).keys()].map((index) => {
       let date = weekStart.add({days: index});
       let dateDay = date.toDate(state.timeZone);
       return dayFormatter.format(dateDay);
     });
-  }, [locale, state.timeZone, dayFormatter, firstDayOfWeek]);
-  let weeksInMonth = getWeeksInMonth(startDate, locale, firstDayOfWeek);
+  }, [locale, state.timeZone, dayFormatter, firstDayOfWeek, startDate, state.visibleDuration.days]);
+  let weeksInMonth = state.getWeeksInMonth(startDate);
 
   return {
     gridProps: mergeProps(labelProps, {
       role: 'grid',
       'aria-readonly': state.isReadOnly || undefined,
       'aria-disabled': state.isDisabled || undefined,
-      'aria-multiselectable': ('highlightedRange' in state) || undefined,
+      'aria-multiselectable': ('highlightedRange' in state) || state.selectionMode === 'multiple' || undefined,
       onKeyDown,
       onFocus: () => state.setFocused(true),
       onBlur: () => state.setFocused(false)

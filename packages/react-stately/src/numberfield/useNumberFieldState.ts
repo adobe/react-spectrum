@@ -155,7 +155,7 @@ export function useNumberFieldState(
   let [prevValue, setPrevValue] = useState(numberValue);
   let [prevLocale, setPrevLocale] = useState(locale);
   let [prevFormatOptions, setPrevFormatOptions] = useState(formatOptions);
-  if (!Object.is(numberValue, prevValue) || locale !== prevLocale || formatOptions !== prevFormatOptions) {
+  if (!Object.is(numberValue, prevValue) || locale !== prevLocale || !isEqualFormatOptions(formatOptions, prevFormatOptions)) {
     setInputValue(format(numberValue));
     setPrevValue(numberValue);
     setPrevLocale(locale);
@@ -302,6 +302,27 @@ export function useNumberFieldState(
     inputValue,
     commit
   };
+}
+
+// Shallow equality is sufficient here because all values in Intl.NumberFormatOptions are primitives.
+function isEqualFormatOptions(a: Intl.NumberFormatOptions | undefined, b: Intl.NumberFormatOptions | undefined) {
+  if (a === b) {
+    return true;
+  }
+  if (!a || !b) {
+    return false;
+  }
+  let aKeys = Object.keys(a);
+  let bKeys = Object.keys(b);
+  if (aKeys.length !== bKeys.length) {
+    return false;
+  }
+  for (let key of aKeys) {
+    if (b[key] !== a[key]) {
+      return false;
+    }
+  }
+  return true;
 }
 
 function handleDecimalOperation(operator: '-' | '+', value1: number, value2: number): number {

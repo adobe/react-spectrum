@@ -273,11 +273,12 @@ export const Input = forwardRef(function Input(props: InputProps, ref: Forwarded
 });
 
 interface HelpTextProps extends FieldErrorProps {
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
   isDisabled?: boolean,
   isInvalid?: boolean, // TODO: export FieldErrorContext from RAC to get this.
   description?: ReactNode,
-  showErrorIcon?: boolean
+  showErrorIcon?: boolean,
+  styles?: StyleString
 }
 
 export const helpTextStyles = style({
@@ -318,21 +319,37 @@ export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDiv
       <Text
         slot="description"
         ref={domDescriptionRef}
-        className={helpTextStyles({size: props.size || 'M', isDisabled: props.isDisabled})}>
+        className={mergeStyles(helpTextStyles({size: props.size || 'M', isDisabled: props.isDisabled}), props.styles)}>
         {props.description}
       </Text>
     );
+  }
+
+  if (!props.isInvalid) {
+    return null;
   }
 
   return (
     <FieldError
       {...props}
       ref={domErrorRef}
-      className={renderProps => helpTextStyles({...renderProps, size: props.size || 'M', isDisabled: props.isDisabled})}>
+      className={renderProps => mergeStyles(helpTextStyles({...renderProps, size: props.size || 'M', isDisabled: props.isDisabled}), props.styles)}>
       {composeRenderProps(props.children, (children, {validationErrors}) => (<>
         {props.showErrorIcon &&
           <CenterBaseline>
-            <AlertIcon />
+            <AlertIcon
+              // @ts-ignore - ts doesn't know that AlertIcon is an icon and not a raw SVG
+              styles={style({
+                size: {
+                  size: {
+                    XS: 14,
+                    S: 16,
+                    M: 20,
+                    L: 22,
+                    XL: 26
+                  }
+                }
+              })({size: props.size || 'M'})} />
           </CenterBaseline>
         }
         <span>{children || validationErrors.join(' ')}</span>

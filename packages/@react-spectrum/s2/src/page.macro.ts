@@ -33,6 +33,17 @@ export function generatePageStyles(this: MacroContext | void): void {
         --s2-scale: 1;
         --s2-font-size-base: 14;
 
+        /* For backward compatibility in two cases:
+         *   1. When a component compiled with an earlier version of S2 is embedded in a newer provider.
+         *   2. When S2 CSS is compiled with lightningcss, setting color-scheme via a variable does not work. */
+        --lightningcss-light: initial;
+        --lightningcss-dark: ;
+
+        @media (prefers-color-scheme: dark) {
+          --lightningcss-light: ;
+          --lightningcss-dark: initial;
+        }
+
         @media not ((hover: hover) and (pointer: fine)) {
           --s2-scale: 1.25;
           --s2-font-size-base: 17;
@@ -40,10 +51,14 @@ export function generatePageStyles(this: MacroContext | void): void {
 
         &[data-color-scheme=light] {
           --s2-color-scheme: light;
+          --lightningcss-light: initial;
+          --lightningcss-dark: ;
         }
 
         &[data-color-scheme=dark] {
           --s2-color-scheme: dark;
+          --lightningcss-light: ;
+          --lightningcss-dark: initial;
         }
 
         &[data-background=layer-1] {
@@ -73,6 +88,17 @@ export function generateDefaultColorSchemeStyles(this: MacroContext | void): voi
           --s2-color-scheme: light dark;
           --s2-scale: 1;
           --s2-font-size-base: 14;
+
+          /* For backward compatibility in two cases:
+           *   1. When a component compiled with an earlier version of S2 is embedded in a newer provider.
+           *   2. When S2 CSS is compiled with lightningcss, setting color-scheme via a variable does not work. */
+          --lightningcss-light: initial;
+          --lightningcss-dark: ;
+
+          @media (prefers-color-scheme: dark) {
+            --lightningcss-light: ;
+            --lightningcss-dark: initial;
+          }
 
           @media not ((hover: hover) and (pointer: fine)) {
             --s2-scale: 1.25;

@@ -89,7 +89,7 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
               if (hasChildRows && state.expandedKeys.has(treeNode.key)) {
                 state.toggleKey(treeNode.key);
                 e.stopPropagation();
-              } else if (!state.expandedKeys.has(treeNode.key) && treeNode.parentKey && treeNode.level > 0) {
+              } else if (!state.expandedKeys.has(treeNode.key) && treeNode.parentKey != null && treeNode.level > 0) {
                 // Item is a leaf or already collapsed, move focus to parent
                 state.selectionManager.setFocusedKey(treeNode.parentKey);
                 e.stopPropagation();

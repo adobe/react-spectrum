@@ -1,6 +1,6 @@
 /* eslint-disable max-depth */
 import {API, FileInfo} from 'jscodeshift';
-import {getSpecifiersByPackage} from './specifiers';
+import {getSpecifiersByPackage, MONOPACKAGE_ROOTS} from './specifiers';
 import {parse} from '@babel/parser';
 import {parse as recastParse} from 'recast';
 import * as t from '@babel/types';
@@ -64,6 +64,25 @@ function resolveTargetSource(
   return candidates[0];
 }
 
+function moduleAugmentsRouterConfig(body: t.TSModuleBlock): boolean {
+  for (let stmt of body.body) {
+    if (stmt.type === 'TSInterfaceDeclaration' && stmt.id.type === 'Identifier' && stmt.id.name === 'RouterConfig') {
+      return true;
+    }
+
+    if (
+      stmt.type === 'ExportNamedDeclaration' &&
+      stmt.declaration?.type === 'TSInterfaceDeclaration' &&
+      stmt.declaration.id.type === 'Identifier' &&
+      stmt.declaration.id.name === 'RouterConfig'
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 export default function transformer(file: FileInfo, api: API): string {
   let specifiersByPackage = getSpecifiersByPackage(file.path);
   let j = api.jscodeshift.withParser({
@@ -102,6 +121,7 @@ export default function transformer(file: FileInfo, api: API): string {
   let program = root.get().node.program as t.Program;
   let uniqueSources = new Set<string>();
   let existingImports = new Map<string, t.ImportDeclaration>();
+  let didChange = false;
 
   for (let node of program.body) {
     if (node.type === 'ImportDeclaration') {
@@ -128,9 +148,23 @@ export default function transformer(file: FileInfo, api: API): string {
         }
       }
     }
-  }
 
-  let didChange = false;
+    if (node.type === 'TSModuleDeclaration' && node.declare && node.id.type === 'StringLiteral') {
+      let mod = node.id.value;
+      if (!MONOPACKAGE_ROOTS.includes(mod) || node.body?.type !== 'TSModuleBlock' || !moduleAugmentsRouterConfig(node.body)) {
+        continue;
+      }
+
+      let target = `${mod}/Provider`;
+      let candidates = specifiersByPackage[mod]?.Provider;
+      if (!candidates?.includes(target)) {
+        continue;
+      }
+
+      node.id = t.stringLiteral(target);
+      didChange = true;
+    }
+  }
   
   program.body = program.body.flatMap(node => {
     if (node.type !== 'ImportDeclaration') {

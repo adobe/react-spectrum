@@ -45,7 +45,7 @@ import ChevronIcon from '../ui-icons/Chevron';
 import {Collection} from 'react-aria/Collection';
 import {ContextValue, Provider} from 'react-aria-components/slots';
 import {control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
+import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {createFocusableRef} from './useDOMRef';
 import {createLeafComponent} from 'react-aria/CollectionBuilder';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
@@ -55,17 +55,16 @@ import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
 import {InputContext, InputProps} from 'react-aria-components/Input';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {mergeRefs} from 'react-aria/mergeRefs';
-// @ts-ignore
 import {Node} from '@react-types/shared';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {TextFieldRef} from './TextField';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 import {useScale} from './utils';
 import {useSlotId} from 'react-aria/private/utils/useId';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -268,7 +267,7 @@ export let listboxItem = style({
     default: 'default',
     isLink: 'pointer'
   },
-  transition: 'default'
+  transition: 'transform'
 }, getAllowedOverrides());
 
 export let listboxHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
@@ -500,23 +499,6 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
     menuOffset = 8;
   }
 
-  let triggerRef = useRef<HTMLDivElement>(null);
-  // Make menu width match input + button
-  let [triggerWidth, setTriggerWidth] = useState<string | null>(null);
-  let onResize = useCallback(() => {
-    if (triggerRef.current) {
-      let inputRect = triggerRef.current.getBoundingClientRect();
-      let minX = inputRect.left;
-      let maxX = inputRect.right;
-      setTriggerWidth((maxX - minX) + 'px');
-    }
-  }, [triggerRef, setTriggerWidth]);
-
-  useResizeObserver({
-    ref: triggerRef,
-    onResize: onResize
-  });
-
   let state = useContext(ComboBoxStateContext);
   let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let [showLoading, setShowLoading] = useState(false);
@@ -614,7 +596,6 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           {label}
         </FieldLabel>
         <FieldGroup
-          ref={triggerRef}
           role="presentation"
           isDisabled={isDisabled}
           isInvalid={isInvalid}
@@ -667,12 +648,11 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
         </HelpText>
         <Popover
           hideArrow
-          triggerRef={triggerRef}
           offset={menuOffset}
           placement={`${direction} ${align}` as Placement}
           shouldFlip={shouldFlip}
           UNSAFE_style={{
-            '--trigger-width': (menuWidth ? menuWidth + 'px' : triggerWidth)
+            '--trigger-width': (menuWidth ? menuWidth + 'px' : undefined)
           } as CSSProperties}
           padding="none"
           styles={style({

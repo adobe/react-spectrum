@@ -307,7 +307,7 @@ Install React Spectrum with your preferred package manager.
         import {Provider} from '@react-spectrum/s2/Provider';
 
         // Configure the type of the `routerOptions` prop on all React Spectrum components.
-        declare module '@react-spectrum/s2' {
+        declare module '@react-spectrum/s2/Provider' {
           interface RouterConfig {
             routerOptions: NonNullable<Parameters<ReturnType<typeof useRouter>['push']>[1]>
           }
@@ -402,7 +402,7 @@ Install React Spectrum with your preferred package manager.
 
         /*- begin highlight -*/
         // Configure the type of the `routerOptions` prop on all React Spectrum components.
-        declare module '@react-spectrum/s2' {
+        declare module '@react-spectrum/s2/Provider' {
           interface RouterConfig {
             routerOptions: NavigateOptions
           }

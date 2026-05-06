@@ -47,7 +47,7 @@ export const Radio = forwardRef(function Radio(props: SpectrumRadioProps, ref: F
     state
   } = radioGroupProps;
 
-  let {inputProps} = useRadio({
+  let {labelProps, inputProps} = useRadio({
     ...props,
     ...radioGroupProps,
     isDisabled
@@ -55,6 +55,7 @@ export const Radio = forwardRef(function Radio(props: SpectrumRadioProps, ref: F
 
   return (
     <label
+      {...labelProps}
       {...styleProps}
       {...hoverProps}
       ref={domRef}

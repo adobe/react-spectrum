@@ -65,6 +65,7 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>): ReactNode 
   }
 
   let markerId = useId();
+  let stateId = useId();
   let labelId = useId();
 
   return (
@@ -78,7 +79,7 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>): ReactNode 
       <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>
         <a
           {...mergeProps(hoverProps, stepProps)}
-          aria-labelledby={`${markerId} ${labelId}`}
+          aria-labelledby={`${markerId} ${stateId} ${labelId}`}
           ref={ref}
           className={classNames(
             styles,
@@ -91,7 +92,7 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>): ReactNode 
               'is-selectable': state.isSelectable(key) && !isSelected
             }
           )}>
-          <VisuallyHidden {...stepStateProps}>{stepStateText}</VisuallyHidden>
+          <VisuallyHidden {...stepStateProps} id={stateId}>{stepStateText}</VisuallyHidden>
           <div id={labelId} aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-label')}>
             {item.rendered}
           </div>

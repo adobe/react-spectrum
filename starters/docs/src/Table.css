@@ -313,7 +313,7 @@
   translate: calc(68px + (var(--table-row-level) - 1) * var(--spacing-4)) 0;
 }
 
-:where(.react-aria-Row) .react-aria-Checkbox {
+.react-aria-Row .react-aria-CheckboxButton {
   --checkmark-color: var(--highlight-background);
   &[data-selected] .indicator {
     --indicator-color: var(--highlight-foreground);
@@ -361,4 +361,9 @@
 .react-aria-TableLoadingIndicator {
   height: 32px;
   position: relative;
+}
+
+.react-aria-TableFooter {
+  font-weight: bold;
+  background: var(--gray-200);
 }

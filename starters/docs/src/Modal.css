@@ -4,9 +4,10 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: var(--page-width);
   height: var(--page-height);
   background: rgba(0 0 0 / .5);
+  overflow: clip;
   z-index: 100;
   font-family: system-ui;
   font-size: var(--font-size);

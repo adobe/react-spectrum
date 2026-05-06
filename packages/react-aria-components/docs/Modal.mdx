@@ -82,7 +82,7 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: var(--page-width);
   height: var(--page-height);
   background: rgba(0 0 0 / .5);
   z-index: 100;
@@ -246,10 +246,11 @@ import {ModalOverlay} from 'react-aria-components';
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+  width: var(--page-width);
   height: var(--page-height);
   background: rgba(45 0 0 / .3);
   backdrop-filter: blur(10px);
+  overflow: clip;
 
   &[data-entering] {
     animation: mymodal-blur 300ms;
@@ -421,11 +422,12 @@ A `Modal` can be targeted with the `.react-aria-Modal` CSS selector, or by overr
 
 By default, `Modal` includes a builtin `ModalOverlay`, which renders a backdrop over the page when a modal is open. This can be targeted using the `.react-aria-ModalOverlay` CSS selector. To customize the `ModalOverlay` with a different class name or other attributes, render a `ModalOverlay` and place a `Modal` inside.
 
-The `--page-height` and `--visual-viewport-height` CSS custom property will be set on the `ModalOverlay`, the latter of which you can use to set the height of the Modal to account for the virtual keyboard on mobile.
+The `--page-height`, `--page-width`, `--visual-viewport-height` and `--visual-viewport-width` CSS custom properties will be set on the `ModalOverlay`, the latter of which you can use to set the size of the Modal to account for the virtual keyboard on mobile.
 
 ```css render=false
 .react-aria-ModalOverlay {
   position: absolute;
+  width: var(--page-width);
   height: var(--page-height);
 }
 

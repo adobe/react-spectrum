@@ -2,11 +2,12 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+  width: var(--page-width);
   height: var(--page-height);
   background: rgba(0 0 0 / .3);
   backdrop-filter: blur(10px);
   z-index: 100;
+  overflow: clip;
 
   &[data-entering] {
     animation: sheet-blur 300ms;

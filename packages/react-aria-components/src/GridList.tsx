@@ -18,7 +18,7 @@ import {
 } from 'react-aria/useGridList';
 
 import {ButtonContext} from './Button';
-import {CheckboxContext} from './Checkbox';
+import {CheckboxContext, CheckboxFieldContext} from './Checkbox';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -464,6 +464,12 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
           <Provider
             values={[
               [CheckboxContext, {
+                slots: {
+                  [DEFAULT_SLOT]: {},
+                  selection: checkboxProps
+                }
+              }],
+              [CheckboxFieldContext, {
                 slots: {
                   [DEFAULT_SLOT]: {},
                   selection: checkboxProps

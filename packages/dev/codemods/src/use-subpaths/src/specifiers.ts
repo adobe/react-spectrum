@@ -5,7 +5,7 @@ import {parse} from '@babel/parser';
 import path from 'path';
 import url from 'url';
 
-const PACKAGES = [
+export const MONOPACKAGE_ROOTS = [
   '@adobe/react-spectrum',
   '@react-spectrum/s2',
   'react-aria-components',
@@ -17,7 +17,7 @@ const specifiersByPackage: Record<string, Record<string, string[]>> = {};
 
 /** Builds a mapping of monopackage -> export -> subpaths that contain the export. */
 export function getSpecifiersByPackage(from: string) {    
-  for (let pkg of PACKAGES) {
+  for (let pkg of MONOPACKAGE_ROOTS) {
     if (specifiersByPackage[pkg]) {
       continue;
     }
