@@ -73,6 +73,32 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 </Disclosure>
 ```
 
+### Slots
+
+`DisclosureTitle` supports icons, `Text` as children.
+
+```tsx render
+"use client"
+
+import {Disclosure, DisclosureTitle, DisclosurePanel, DisclosureHeader, Text} from '@react-spectrum/s2/Disclosure';
+import Project from '@react-spectrum/s2/icons/Project';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<Disclosure styles={style({width: 250})}>
+  <DisclosureHeader>
+    {/*- begin highlight -*/}
+    <DisclosureTitle>
+      <Project />
+      <Text>Project Settings</Text>
+    </DisclosureTitle>
+    {/*- end highlight -*/}
+  </DisclosureHeader>
+  <DisclosurePanel>
+    Configure your project settings including name, description, and permissions.
+  </DisclosurePanel>
+</Disclosure>
+```
+
 ## API
 
 ```tsx links={{Disclosure: '#disclosure', DisclosureHeader: '#disclosureheader', DisclosureTitle: '#disclosuretitle', DisclosurePanel: '#disclosurepanel'}}

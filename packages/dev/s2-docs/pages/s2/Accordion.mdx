@@ -91,6 +91,42 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 </Accordion>
 ```
 
+### Slots
+
+`AccordionItemTitle` supports icons, `Text` as children.
+
+```tsx render
+"use client";
+import {Accordion, AccordionItem, AccordionItemTitle, AccordionItemPanel, AccordionItemHeader, Text} from '@react-spectrum/s2/Accordion';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
+import Project from '@react-spectrum/s2/icons/Project';
+import Settings from '@react-spectrum/s2/icons/Settings';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<Accordion>
+  <AccordionItem styles={style({width: 250})}>
+    <AccordionItemHeader>
+      {/*- begin highlight -*/}
+      <AccordionItemTitle>
+        <Project />
+        <Text>Project Settings</Text>
+      </AccordionItemTitle>
+      {/*- end highlight -*/}
+    </AccordionItemHeader>
+    <AccordionItemPanel>
+      Configure your project settings including name, description, and permissions.
+    </AccordionItemPanel>
+  </AccordionItem>
+  <AccordionItem id="preferences">
+    <AccordionItemTitle>
+      <Settings />
+      <Text>Preferences</Text>
+    </AccordionItemTitle>
+    <AccordionItemPanel>User preferences content</AccordionItemPanel>
+  </AccordionItem>
+</Accordion>
+```
+
 ## API
 
 ```tsx links={{Accordion: '#accordion', AccordionItem: '#accordionitem', AccordionItemHeader: '#accordionitemheader', AccordionItemTitle: '#accordionitemtitle', AccordionItemPanel: '#accordionitempanel'}}
