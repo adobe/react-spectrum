@@ -115,6 +115,9 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
     getThumbValueLabel() {
       return color.formatChannelValue(channel, locale);
     },
+    getFormattedValue() {
+      return color.formatChannelValue(channel, locale);
+    },
     step,
     pageSize,
     isDragging: sliderState.isThumbDragging(0)
