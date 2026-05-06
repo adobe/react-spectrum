@@ -11,8 +11,8 @@
  */
 
 import {DOMRef, forwardRefType} from '@react-types/shared';
-import {forwardRef, ReactNode, useEffect} from 'react';
-import {GridList, GridListProps} from 'react-aria-components';
+import {forwardRef, useEffect} from 'react';
+import {GridList, GridListProps} from 'react-aria-components/GridList';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 
@@ -27,9 +27,12 @@ interface ThreadProps<T extends object> extends Pick<GridListProps<T>, 'items' |
 // announcements for new messages
 // column reverse layout?
 // add to story some kind of mock streaming
-
+// fix the scroll to new content as it flows in, might be fixed by column reverse layout
 
 // TODO: things to handle later
+// virtualizer layout
+// weird behavior where the prompt field loses focus everytime you enter something
+
 export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thread<T extends object>(
   props: ThreadProps<T>,
   ref: DOMRef<HTMLDivElement>

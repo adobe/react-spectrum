@@ -41,22 +41,15 @@ const meta: Meta<typeof Thread> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
-  // argTypes: {
-  //   ...categorizeArgTypes('Events', ['onSelectionChange']),
-  //   children: {table: {disable: true}}
-  // },
-  // title: 'Thread',
-  // args: {
-  //   styles: style({height: 320})
-  // },
-  // decorators: [
-  //   (Story) => (
-  //     <div style={{width: '300px', resize: 'both', height: '320px', minHeight: '320px'}}>
-  //       <Story />
-  //     </div>
-  //   )
-  // ]
+  tags: ['autodocs'],
+  title: 'Thread',
+  decorators: [
+    (Story) => (
+      <div style={{width: '600px', height: '700px'}}>
+        <Story />
+      </div>
+    )
+  ]
 };
 
 export default meta;
@@ -67,12 +60,11 @@ export function StaticThread() {
     <div
       className={style({
         margin: 0,
-        maxWidth: 800,
         marginX: 'auto',
         display: 'flex',
         flexDirection: 'column',
         gap: 32,
-        maxHeight: '100vh'
+        height: '100%'
       })}>
       <Thread>
         <UserMessage>
@@ -196,12 +188,11 @@ export function DynamicThread() {
     <div
       className={style({
         margin: 0,
-        maxWidth: 800,
         marginX: 'auto',
         display: 'flex',
         flexDirection: 'column',
         gap: 32,
-        maxHeight: '100vh'
+        height: '100%'
       })}>
       <Thread items={messages}>
         {msg => {
