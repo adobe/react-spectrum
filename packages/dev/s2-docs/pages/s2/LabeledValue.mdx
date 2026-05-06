@@ -57,7 +57,10 @@ An object with `start` and `end` properties may also be provided to format a num
 "use client"
 import {LabeledValue} from '@react-spectrum/s2/LabeledValue';
 
-<LabeledValue label="Price range" value={{start: 150, end: 400}} formatOptions={{style: 'currency', currency: 'USD', minimumFractionDigits: 0}} />
+<LabeledValue 
+  label="Price range"
+  value={{start: 150, end: 400}}
+  formatOptions={{style: 'currency', currency: 'USD', minimumFractionDigits: 0}} />
 ```
 
 ### Dates and times
