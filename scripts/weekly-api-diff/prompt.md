@@ -129,6 +129,7 @@ Read WEEKLY_DELTA and produce a concise summary:
 - Affected package names
 
 Apply these grouping and classification rules when writing the summary:
+- The delta is a diff-of-diffs. A `+` prefix on an entire component section means that component wasn't in last week's diff but appears now — this does NOT mean the component is new. It means the component now has API changes vs the release baseline that weren't there last week (e.g. a prop was added or removed). Only call a component "new" if the diff itself contains a line like `+ ComponentName` indicating a new export.
 - If multiple components in the same family (e.g. Checkbox, Radio, Switch) all gain the same new prop (e.g. `description`, `errorMessage`), call it out as a single feature rather than listing each component separately
 - If new wrapper components appear (e.g. CheckboxField, RadioField) alongside new props on their inner components, group them together and describe the feature they enable (e.g. "help text support") rather than just listing them as new exports
 - Always call out new props added to existing components explicitly, don't bury them under new export counts
