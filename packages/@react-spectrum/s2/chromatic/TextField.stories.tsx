@@ -16,6 +16,7 @@ import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
 import {Form} from '../src/Form';
 import {Link} from '../src/Link';
+import Magnifier from '../s2wf-icons/S2_Icon_Search_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {TextArea, TextField} from '../src/TextField';
@@ -42,6 +43,21 @@ export const Example: Story = {
   }
 };
 
+export const ExampleWithPrefixText: Story = {
+  render: (args) => <TextField {...args} prefix="#" />,
+  args: {
+    label: 'Name',
+    placeholder: 'Enter your name'
+  }
+};
+
+export const ExampleWithPrefixIcon: Story = {
+  render: (args) => <TextField {...args} prefix={<Magnifier />} />,
+  args: {
+    label: 'Name',
+    placeholder: 'Enter your name'
+  }
+};
 export const Validation: Story = {
   render: (args) => (
     <Form>
@@ -84,6 +100,22 @@ export const ContextualHelpExample: Story = {
 
 export const TextAreaExample: StoryObj<typeof TextArea> = {
   render: (args) => <TextArea {...args} />,
+  args: {
+    label: 'Comment',
+    placeholder: 'Enter your name'
+  }
+};
+
+export const TextAreaExampleWithPrefixText: StoryObj<typeof TextArea> = {
+  render: (args) => <TextArea {...args} prefix="#" />,
+  args: {
+    label: 'Comment',
+    placeholder: 'Enter your name'
+  }
+};
+
+export const TextAreaExampleWithPrefixIcon: StoryObj<typeof TextArea> = {
+  render: (args) => <TextArea {...args} prefix={<Magnifier />} />,
   args: {
     label: 'Comment',
     placeholder: 'Enter your name'
