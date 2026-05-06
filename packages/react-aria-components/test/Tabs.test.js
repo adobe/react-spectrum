@@ -12,8 +12,15 @@
 
 import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
+import {ComboBox} from '../src/ComboBox';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
+import {ListBox, ListBoxItem} from '../src/ListBox';
+import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
+import {Popover} from '../src/Popover';
 import React, {useState} from 'react';
 import {RouterProvider} from 'react-aria/private/utils/openLink';
+import {Select, SelectValue} from '../src/Select';
 import {Tab, TabList, TabPanel, TabPanels, Tabs} from '../src/Tabs';
 import {TabsExample} from '../stories/Tabs.stories';
 import {Tooltip, TooltipTrigger} from '../src/Tooltip';
@@ -847,4 +854,120 @@ describe('Tabs', () => {
       expect(getAllByRole('tab')).toHaveLength(3);
     });
   }
+
+  it('supports Menu inside Tabs', async () => {
+    let tree = render(
+      <Tabs>
+        <div>
+          <TabList>
+            <Tab id="key1">First Tab</Tab>
+            <Tab id="key2">Second Tab</Tab>
+          </TabList>
+          <MenuTrigger>
+            <Button>Menu button</Button>
+            <Popover>
+              <Menu>
+                <MenuItem>Item 1</MenuItem>
+                <MenuItem>Item 2</MenuItem>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+        </div>
+        <TabPanel id="key1">
+          First Tab content
+        </TabPanel>
+        <TabPanel id="key2">
+          Second Tab content
+        </TabPanel>
+      </Tabs>
+    );
+
+    let tester = testUtilUser.createTester('Tabs', {root: tree.getByRole('tablist')});
+    expect(tester.tabs.length).toBe(2);
+
+    let trigger = tree.getByRole('button');
+    let menu = testUtilUser.createTester('Menu', {root: trigger});
+    await menu.open();
+    expect(menu.options()).toHaveLength(2);
+    await menu.close();
+  });
+
+  it('supports Select inside Tabs', async () => {
+    let tree = render(
+      <Tabs>
+        <div>
+          <TabList>
+            <Tab id="key1">First Tab</Tab>
+            <Tab id="key2">Second Tab</Tab>
+          </TabList>
+          <Select>
+            <Label>Favorite Animal</Label>
+            <Button>
+              <SelectValue />
+            </Button>
+            <Popover>
+              <ListBox>
+                <ListBoxItem id="cat">Cat</ListBoxItem>
+                <ListBoxItem id="dog">Dog</ListBoxItem>
+                <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+              </ListBox>
+            </Popover>
+          </Select>
+        </div>
+        <TabPanel id="key1">
+          First Tab content
+        </TabPanel>
+        <TabPanel id="key2">
+          Second Tab content
+        </TabPanel>
+      </Tabs>
+    );
+
+    let tester = testUtilUser.createTester('Tabs', {root: tree.getByRole('tablist')});
+    expect(tester.tabs.length).toBe(2);
+
+    let trigger = tree.getByRole('button');
+    let menu = testUtilUser.createTester('Select', {root: trigger});
+    await menu.open();
+    expect(menu.options()).toHaveLength(3);
+    await menu.close();
+  });
+
+  it('supports ComboBox inside Tabs', async () => {
+    let tree = render(
+      <Tabs>
+        <div>
+          <TabList>
+            <Tab id="key1">First Tab</Tab>
+            <Tab id="key2">Second Tab</Tab>
+          </TabList>
+          <ComboBox>
+            <Label>Favorite Animal</Label>
+            <Input />
+            <Popover>
+              <ListBox>
+                <ListBoxItem id="cat">Cat</ListBoxItem>
+                <ListBoxItem id="dog">Dog</ListBoxItem>
+                <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+              </ListBox>
+            </Popover>
+          </ComboBox>
+        </div>
+        <TabPanel id="key1">
+          First Tab content
+        </TabPanel>
+        <TabPanel id="key2">
+          Second Tab content
+        </TabPanel>
+      </Tabs>
+    );
+
+    let tester = testUtilUser.createTester('Tabs', {root: tree.getByRole('tablist')});
+    expect(tester.tabs.length).toBe(2);
+
+    let menu = testUtilUser.createTester('ComboBox', {interactionType: 'keyboard', root: tree.container.querySelector('.react-aria-ComboBox')});
+    await menu.open();
+    expect(menu.options()).toHaveLength(3);
+    await menu.close();
+  });
 });
