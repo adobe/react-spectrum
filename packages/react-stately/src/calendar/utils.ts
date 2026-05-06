@@ -46,7 +46,7 @@ export function alignStart(date: CalendarDate, duration: DateDuration, locale: s
     aligned = startOfYear(date);
   } else if (duration.months) {
     aligned = startOfMonth(date);
-  } else if (duration.weeks) {
+  } else if (duration.weeks || (duration.days && duration.days > 7)) {
     aligned = startOfWeek(date, locale);
   }
 
@@ -131,4 +131,17 @@ export function previousAvailableDate(date: CalendarDate, minValue: DateValue, i
     return date;
   }
   return null;
+}
+
+export function isEqualDuration(a: DateDuration, b: DateDuration): boolean {
+  if (a === b) {
+    return true;
+  }
+
+  return (
+    a.days === b.days &&
+    a.weeks === b.weeks &&
+    a.months === b.months &&
+    a.years === b.years
+  );
 }

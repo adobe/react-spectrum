@@ -49,11 +49,12 @@ export const Switch = forwardRef(function Switch(props: SpectrumSwitchProps, ref
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
   let state = useToggleState(props);
-  let {inputProps} = useSwitch(props, state, inputRef);
+  let {labelProps, inputProps} = useSwitch(props, state, inputRef);
 
 
   return (
     <label
+      {...labelProps}
       {...styleProps}
       {...hoverProps}
       ref={domRef}

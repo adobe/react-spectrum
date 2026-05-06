@@ -40,10 +40,9 @@ import {HiddenDateInput} from './HiddenDateInput';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 import {useFocusRing} from 'react-aria/useFocusRing';
-import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 
 export interface DatePickerRenderProps {
   /**
@@ -148,19 +147,6 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     validationBehavior
   }, state, groupRef);
 
-  // Allows calendar width to match input group
-  let [groupWidth, setGroupWidth] = useState<string | null>(null);
-  let onResize = useCallback(() => {
-    if (groupRef.current) {
-      setGroupWidth(groupRef.current.offsetWidth + 'px');
-    }
-  }, []);
-
-  useResizeObserver({
-    ref: groupRef,
-    onResize: onResize
-  });
-
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let renderProps = useRenderProps({
     ...props,
@@ -188,13 +174,12 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         [DateFieldContext, fieldProps],
         [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [CalendarContext, calendarProps],
+        [CalendarContext, calendarProps as any],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
           trigger: 'DatePicker',
           triggerRef: groupRef,
           placement: 'bottom start',
-          style: {'--trigger-width': groupWidth} as React.CSSProperties,
           clearContexts: CLEAR_CONTEXTS
         }],
         [DialogContext, dialogProps],
@@ -260,19 +245,6 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
     validationBehavior
   }, state, groupRef);
 
-  // Allows calendar width to match input group
-  let [groupWidth, setGroupWidth] = useState<string | null>(null);
-  let onResize = useCallback(() => {
-    if (groupRef.current) {
-      setGroupWidth(groupRef.current.offsetWidth + 'px');
-    }
-  }, []);
-
-  useResizeObserver({
-    ref: groupRef,
-    onResize: onResize
-  });
-
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let renderProps = useRenderProps({
     ...props,
@@ -305,7 +277,6 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
           trigger: 'DateRangePicker',
           triggerRef: groupRef,
           placement: 'bottom start',
-          style: {'--trigger-width': groupWidth} as React.CSSProperties,
           clearContexts: CLEAR_CONTEXTS
         }],
         [DialogContext, dialogProps],

@@ -39,3 +39,18 @@ export const Example: Story = {
 export const LongLabel: Story = {
   render: (args) => (<Checkbox {...args} styles={style({maxWidth: 128})}>Checkbox with very long label so we can see wrapping</Checkbox>)
 };
+
+export const HelpText: Story = {
+  render: (args) => (
+    <Checkbox {...args} styles={style({width: 300})}>Product updates</Checkbox>
+  ),
+  args: {
+    description: 'Get notified about new features and improvements',
+    errorMessage: 'You must agree to the terms'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};

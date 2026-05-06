@@ -1,11 +1,14 @@
 'use client';
 import React from 'react';
-import { Switch as AriaSwitch, type SwitchProps as AriaSwitchProps } from 'react-aria-components/Switch';
+import { SwitchField, SwitchButton, type SwitchFieldProps, type ValidationResult } from 'react-aria-components/Switch';
 import { tv } from 'tailwind-variants';
 import { composeTailwindRenderProps, focusRing } from './utils';
+import { Description, FieldError } from './Field';
 
-export interface SwitchProps extends Omit<AriaSwitchProps, 'children'> {
-  children: React.ReactNode;
+export interface SwitchProps extends Omit<SwitchFieldProps, 'children'> {
+  children: React.ReactNode,
+  description?: string,
+  errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
 const track = tv({
@@ -49,15 +52,19 @@ const handle = tv({
 
 export function Switch({ children, ...props }: SwitchProps) {
   return (
-    <AriaSwitch {...props} className={composeTailwindRenderProps(props.className, 'group relative flex gap-2 items-center text-neutral-800 disabled:text-neutral-300 dark:text-neutral-200 dark:disabled:text-neutral-600 forced-colors:disabled:text-[GrayText] text-sm transition [-webkit-tap-highlight-color:transparent]')}>
-      {(renderProps) => (
-        <>
-          <div className={track(renderProps)}>
-            <span className={handle(renderProps)} />
-          </div>
-          {children}
-        </>
-      )}
-    </AriaSwitch>
+    <SwitchField {...props} className="flex flex-col gap-1 group">
+      <SwitchButton className={composeTailwindRenderProps(props.className, 'group relative flex gap-2 items-center text-neutral-800 disabled:text-neutral-300 dark:text-neutral-200 dark:disabled:text-neutral-600 forced-colors:disabled:text-[GrayText] text-sm transition [-webkit-tap-highlight-color:transparent]')}>
+        {(renderProps) => (
+          <>
+            <div className={track(renderProps)}>
+              <span className={handle(renderProps)} />
+            </div>
+            {children}
+          </>
+        )}
+      </SwitchButton>
+      {props.description && <Description>{props.description}</Description>}
+      <FieldError>{props.errorMessage}</FieldError>
+    </SwitchField>
   );
 }

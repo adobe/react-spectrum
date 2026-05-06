@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, FocusableProps, PressEvents, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributesWithRef, DOMProps, FocusableProps, PressEvents, RefObject} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {InputHTMLAttributes, LabelHTMLAttributes, ReactNode, useMemo} from 'react';
 import {mergeProps} from '../utils/mergeProps';
@@ -20,6 +20,7 @@ import {useFocusable} from '../interactions/useFocusable';
 import {useFormReset} from '../utils/useFormReset';
 import {useFormValidation} from '../form/useFormValidation';
 import {usePress} from '../interactions/usePress';
+import {useSlotId2} from '../utils/useSlot';
 
 export interface RadioProps extends FocusableProps {
   /**
@@ -45,6 +46,8 @@ export interface RadioAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Props for the checkbox description element, if any. */
+  descriptionProps: DOMAttributesWithRef<HTMLElement>,
   /** Whether the radio is disabled. */
   isDisabled: boolean,
   /** Whether the radio is currently selected. */
@@ -136,6 +139,8 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
   useFormReset(ref, state.defaultSelectedValue, state.setSelectedValue);
   useFormValidation({validationBehavior}, state, ref);
 
+  let descriptionProps = useSlotId2();
+
   return {
     labelProps: mergeProps(
       labelProps,
@@ -159,10 +164,12 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
       onChange,
       'aria-describedby': [
         props['aria-describedby'],
+        descriptionProps.id,
         state.isInvalid ? errorMessageId : null,
         descriptionId
       ].filter(Boolean).join(' ') || undefined
     }),
+    descriptionProps,
     isDisabled,
     isSelected: checked,
     isPressed: isPressed || isLabelPressed

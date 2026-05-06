@@ -13,7 +13,7 @@
 import {act, fireEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
 import {AriaTreeTests} from './AriaTree.test-util';
 import {Button} from '../src/Button';
-import {Checkbox} from '../src/Checkbox';
+import {Checkbox, CheckboxButton, CheckboxField} from '../src/Checkbox';
 import {Collection} from 'react-aria/Collection';
 import {composeStories} from '@storybook/react';
 // @ts-ignore
@@ -46,7 +46,13 @@ let StaticTreeItem = (props) => {
         {({isExpanded, hasChildItems, selectionMode, selectionBehavior}) => (
           <>
             {(selectionMode !== 'none' || props.href != null) && selectionBehavior === 'toggle' && (
-              <Checkbox slot="selection" />
+              props.checkboxComponent === 'CheckboxField'
+                ? (
+                  <CheckboxField slot="selection">
+                    <CheckboxButton />
+                  </CheckboxField>
+                )
+                : <Checkbox slot="selection" />
             )}
             {hasChildItems && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
             <Text>{props.title || props.children}</Text>
@@ -440,8 +446,49 @@ describe('Tree', () => {
     expect(rows[16]).toHaveAttribute('aria-setsize', '1');
   });
 
-  it('should render checkboxes for selection', async () => {
-    let {getByRole, getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'single'}} rowProps={{href: 'https://google.com'}} />);
+  it('should support items with falsy keys', async () => {
+    let falsyKeyRows = [
+      {id: 0, name: 'Zero', childItems: [
+        {id: '', name: 'Empty'},
+        {id: 'zero-child', name: 'Zero child'}
+      ]},
+      {id: 1, name: 'One'}
+    ];
+
+    let {getAllByRole} = render(
+      <Tree
+        defaultExpandedKeys={new Set([0])}
+        aria-label="falsy keys tree"
+        items={falsyKeyRows}>
+        {(item: any) => (
+          <DynamicTreeItem childItems={item.childItems} textValue={item.name}>
+            {item.name}
+          </DynamicTreeItem>
+        )}
+      </Tree>
+    );
+
+    let rows = getAllByRole('row');
+    expect(rows).toHaveLength(4);
+    expect(rows[0]).toHaveTextContent('Zero');
+    expect(rows[1]).toHaveTextContent('Empty');
+    expect(rows[2]).toHaveTextContent('Zero child');
+    expect(rows[3]).toHaveTextContent('One');
+
+    await user.tab();
+    expect(document.activeElement).toBe(rows[0]);
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(rows[1]);
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(rows[2]);
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(rows[3]);
+    await user.keyboard('{ArrowUp}');
+    expect(document.activeElement).toBe(rows[2]);
+  });
+
+  it.each(['Checkbox', 'CheckboxField'])('should render checkboxes for selection using %s', async (comp) => {
+    let {getByRole, getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'single'}} rowProps={{href: 'https://google.com', checkboxComponent: comp}} />);
     let tree = getByRole('treegrid');
     expect(tree).not.toHaveAttribute('aria-multiselectable');
 

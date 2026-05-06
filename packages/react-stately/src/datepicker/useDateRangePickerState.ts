@@ -179,7 +179,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
     value,
     minValue,
     maxValue,
-    isDateUnavailable,
+    isDateUnavailable ? (date => isDateUnavailable(date, null)) : undefined,
     formatOpts
   ), [value, minValue, maxValue, isDateUnavailable, formatOpts]);
 

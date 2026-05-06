@@ -87,7 +87,7 @@ type TextFieldInputProps<T extends TextFieldIntrinsicElements> = TextFieldHTMLAt
 
 export interface TextFieldProps<T = HTMLInputElement> extends InputBase, Validation<string>, HelpTextProps, FocusableProps<T>, TextInputBase, ValueBase<string>, LabelableProps {}
 
-export interface AriaTextFieldProps<T = HTMLInputElement> extends TextFieldProps<T>, AriaLabelingProps, FocusableDOMProps, TextInputDOMProps, AriaValidationProps {
+export interface AriaTextFieldProps<T = HTMLInputElement> extends TextFieldProps<T>, AriaLabelingProps, FocusableDOMProps, TextInputDOMProps<T>, AriaValidationProps {
   // https://www.w3.org/TR/wai-aria-1.2/#textbox
   /** Identifies the currently active element when DOM focus is on a composite widget, textbox, group, or application. */
   'aria-activedescendant'?: string,

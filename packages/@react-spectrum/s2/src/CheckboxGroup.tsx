@@ -100,6 +100,7 @@ export const CheckboxGroup = forwardRef(function CheckboxGroup(props: CheckboxGr
           size={size}
           labelPosition={labelPosition}
           labelAlign={labelAlign}
+          isQuiet // Make the label affect the width of the group
           necessityIndicator={necessityIndicator}
           contextualHelp={props.contextualHelp}>
           {label}
@@ -119,7 +120,11 @@ export const CheckboxGroup = forwardRef(function CheckboxGroup(props: CheckboxGr
             // Spectrum uses a fixed spacing value for horizontal,
             // but the gap changes depending on t-shirt size in vertical.
             columnGap: 16,
-            flexWrap: 'wrap'
+            flexWrap: {
+              orientation: {
+                horizontal: 'wrap'
+              }
+            }
           })({orientation})}>
           <FormContext.Provider value={{...formContext, size, isRequired: undefined}}>
             <CheckboxContext.Provider value={{isEmphasized}}>

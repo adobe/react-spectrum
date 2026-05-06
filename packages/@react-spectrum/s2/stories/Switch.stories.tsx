@@ -37,3 +37,18 @@ export const Example: Story = {
 export const LongLabel: Story = {
   render: (args) => <Switch {...args} styles={style({maxWidth: 128})}>Switch with very long label so we can see wrapping</Switch>
 };
+
+export const HelpText: Story = {
+  render: (args) => (
+    <Switch {...args} styles={style({width: 300})}>Product updates</Switch>
+  ),
+  args: {
+    description: 'Your organization requires two-factor authentication.',
+    errorMessage: 'You must enable two-factor authentication.'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};

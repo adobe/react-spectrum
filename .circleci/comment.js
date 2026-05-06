@@ -52,6 +52,7 @@ async function run() {
       [NextJS Test App](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/next/index.html)
       [RAC Spectrum + Tailwind Example](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/rac-spectrum-tailwind/index.html)
       [S2 Parcel Example](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/s2-parcel-example/index.html)
+      [S2 Vite Example](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/s2-vite-project/index.html)
       [S2 Custom Icons](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/icon-builder-fixture/index.html)
       [S2 Webpack Example](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/s2-webpack-5-example/index.html)
       [S2 Next.js Example](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/s2-next-macros/index.html)
