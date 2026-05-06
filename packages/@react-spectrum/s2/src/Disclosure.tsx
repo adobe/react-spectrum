@@ -301,7 +301,7 @@ export const DisclosureTitle = forwardRef(function DisclosureTitle(props: Disclo
         <Provider
           values={[
             [IconContext, {
-              render: centerBaseline({slot: 'icon', styles: style({gridArea: 'icon', marginEnd: 'text-to-visual'})}),
+              render: centerBaseline({slot: 'icon', styles: style({gridArea: 'icon', marginEnd: 'text-to-visual', '--iconPrimary': {type: 'fill', value: 'currentColor'}})}),
               styles: style({size: fontRelative(16)})
             }],
             [TextContext, {styles: style({gridArea: 'label'})}]
