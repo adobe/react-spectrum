@@ -21,10 +21,16 @@ import {
   ProductCard,
   UserCard
 } from '../src/Card';
+import {
+  BasicHorizontalCard,
+  HorizontalCard,
+  CardPreview as HorizontalCardPreview
+} from '../src/HorizontalCard';
 
 import {Avatar} from '../src/Avatar';
 import {Badge} from '../src/Badge';
 import {Button} from '../src/Button';
+import ChevronRight from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
 import {Content, Footer, Text} from '../src/Content';
 import {Divider} from '../src/Divider';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
@@ -38,6 +44,7 @@ import Select from '../s2wf-icons/S2_Icon_Select_20_N.svg';
 import {Skeleton} from '../src/Skeleton';
 import {StatusLight} from '../src/StatusLight';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import { ActionButton } from '../src/ActionButton';
 
 const meta: Meta<CardProps & {isLoading?: boolean}> = {
   component: Card,
@@ -341,4 +348,79 @@ export const Custom: Story = {
       }
     }
   }
+};
+
+
+export const Horizontal: Story = {
+  render: (args) => (
+    <div style={{display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'start', justifyContent: 'center'}}>
+      <HorizontalCard {...args} styles={style({maxWidth: 600})}>
+        <HorizontalCardPreview>
+          <Image
+            slot="preview"
+            src={new URL('assets/preview.png', import.meta.url).toString()} />
+        </HorizontalCardPreview>
+        <Image
+          slot="thumbnail"
+          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+        <Content>
+          <Text slot="title">Card title</Text>
+          <Text slot="description">Card description. Give a concise overview of the context or functionality that's mentioned in the card title.</Text>
+        </Content>
+      </HorizontalCard>
+      <HorizontalCard {...args} styles={style({maxWidth: 600})}>
+        <HorizontalCardPreview>
+          <Image
+            slot="preview"
+            src={new URL('assets/preview.png', import.meta.url).toString()} />
+        </HorizontalCardPreview>
+        <Content>
+          <Text slot="title">
+            <Image
+              slot="thumbnail"
+              src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+              Card title
+          </Text>
+          <Text slot="description">Card description. Give a concise overview of the context or functionality that's mentioned in the card title.</Text>
+        </Content>
+      </HorizontalCard>
+      <BasicHorizontalCard {...args} styles={style({maxWidth: 400})}>
+        <Image
+          slot="thumbnail"
+          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+        <Content>
+          <Text slot="title">Card title</Text>
+          <Text slot="description">Card description.</Text>
+        </Content>
+        <Footer>
+          <ActionMenu>
+            <MenuItem>Test</MenuItem>
+          </ActionMenu>
+        </Footer>
+      </BasicHorizontalCard>
+      <BasicHorizontalCard {...args} styles={style({maxWidth: 400})}>
+        <Image
+          slot="thumbnail"
+          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+        <Content>
+          <Text slot="title">Card title</Text>
+          <Text slot="description">Card description.</Text>
+        </Content>
+        <Footer>
+          <ActionButton isQuiet>
+            <ChevronRight />
+          </ActionButton>
+        </Footer>
+      </BasicHorizontalCard>
+      <BasicHorizontalCard {...args} styles={style({maxWidth: 400})}>
+        <Image
+          slot="thumbnail"
+          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+        <Content>
+          <Text slot="title">Card title</Text>
+          <Text slot="description">Card description.</Text>
+        </Content>
+      </BasicHorizontalCard>
+    </div>
+  )
 };
