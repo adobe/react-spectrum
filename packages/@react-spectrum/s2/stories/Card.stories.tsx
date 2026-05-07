@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu} from '../src/ActionMenu';
+import {ActionButton} from '../src/ActionButton';
 
+import {ActionMenu} from '../src/ActionMenu';
 import {
   AssetCard,
   Card,
@@ -21,14 +22,14 @@ import {
   ProductCard,
   UserCard
 } from '../src/Card';
+
+import {Avatar} from '../src/Avatar';
+import {Badge} from '../src/Badge';
 import {
   BasicHorizontalCard,
   HorizontalCard,
   CardPreview as HorizontalCardPreview
 } from '../src/HorizontalCard';
-
-import {Avatar} from '../src/Avatar';
-import {Badge} from '../src/Badge';
 import {Button} from '../src/Button';
 import ChevronRight from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
 import {Content, Footer, Text} from '../src/Content';
@@ -44,7 +45,6 @@ import Select from '../s2wf-icons/S2_Icon_Select_20_N.svg';
 import {Skeleton} from '../src/Skeleton';
 import {StatusLight} from '../src/StatusLight';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import { ActionButton } from '../src/ActionButton';
 
 const meta: Meta<CardProps & {isLoading?: boolean}> = {
   component: Card,
@@ -379,7 +379,7 @@ export const Horizontal: Story = {
             <Image
               slot="thumbnail"
               src={new URL('assets/placeholder.png', import.meta.url).toString()} />
-              Card title
+            Card title
           </Text>
           <Text slot="description">Card description. Give a concise overview of the context or functionality that's mentioned in the card title.</Text>
         </Content>

@@ -11,27 +11,25 @@
  */
 
 import {ActionMenuContext} from './ActionMenu';
-import {AvatarContext} from './Avatar';
 import {ButtonContext, LinkButtonContext} from './Button';
 import {Checkbox} from './Checkbox';
 import {color, focusRing, lightDark, space, style} from '../style' with {type: 'macro'};
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContentContext, FooterContext, TextContext} from './Content';
 import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
-import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'react';
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {DividerContext} from './Divider';
 import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
-import {IllustrationContext} from './Icon';
 import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
 import {inertValue} from 'react-aria/private/utils/inertValue';
 import {Link} from 'react-aria-components/Link';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
-import {SkeletonContext, SkeletonWrapper, useIsSkeleton} from './Skeleton';
+import {SkeletonContext, useIsSkeleton} from './Skeleton';
 import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -146,7 +144,7 @@ let card = style({
         M: 200,
         L: 220,
         XL: 240
-      },
+      }
     },
     isBasic: 68,
     isCardView: 'full'
@@ -401,7 +399,7 @@ const actionButtonSize = {
 
 const Card = forwardRef(function Card(props: CardProps & {isBasic?: boolean}, ref: DOMRef<HTMLDivElement>) {
   [props] = useSpectrumContextProps(props, ref, CardContext);
-  let {ElementType, layout} = useContext(InternalCardViewContext);
+  let {ElementType} = useContext(InternalCardViewContext);
   let domRef = useDOMRef(ref);
   let {isBasic = false, density = 'regular', size = 'M', variant = 'primary', UNSAFE_className = '', UNSAFE_style, styles, id, ...otherProps} = props;
   let isQuiet = variant === 'quiet';
