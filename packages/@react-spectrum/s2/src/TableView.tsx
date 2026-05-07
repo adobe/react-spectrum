@@ -58,7 +58,7 @@ import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
-import {isFirstItem, isLastItem, isNextSelected, isPrevSelected, useScale} from './utils';
+import {isNextSelected, isPrevSelected, useScale} from './utils';
 import {Key} from '@react-types/shared';
 import {LayoutNode} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
@@ -1556,7 +1556,7 @@ const rowTextColor = {
   forcedColors: 'ButtonText'
 } as const;
 
-const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextSelected?: boolean, isPrevSelected?: boolean, isFirstItem?: boolean, isLastItem?: boolean}>({
+const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextSelected?: boolean, isPrevSelected?: boolean}>({
   height: 'full',
   position: 'relative',
   boxSizing: 'border-box',
@@ -1713,12 +1713,6 @@ const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextS
       }
     }
   },
-  '--focusIndicatorHeight': {
-    type: 'top',
-    value: {
-      default: 'calc(self(height))'
-    }
-  },
   fontWeight: {
     default: 'normal',
     isInFooter: 'bold'
@@ -1747,6 +1741,7 @@ const highlightSelectionBorder = css(
     border-bottom-right-radius: var(--borderBottomRadius);
     border-top-left-radius: var(--borderTopRadius);
     border-top-right-radius: var(--borderTopRadius);
+    pointer-events: none;
   }
   `
 );
@@ -1764,7 +1759,8 @@ const focusIndicator = css(
     outline-style: solid;
     outline-color: var(--borderColorBlue);
     outline-width: 2px;
-    outline-offset: -2px
+    outline-offset: -2px;
+    pointer-events: none;
     }
   `
 );
@@ -1802,10 +1798,8 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         ...tableVisualOptions,
         selectionStyle,
         isInFooter,
-        isNextSelected: isNextSelected(id, renderProps.state),
-        isFirstItem: isFirstItem(id, renderProps.state),
-        isPrevSelected: isPrevSelected(id, renderProps.state),
-        isLastItem: isLastItem(id, renderProps.state)
+        isNextSelected: isNextSelected(renderProps.id, renderProps.state),
+        isPrevSelected: isPrevSelected(renderProps.id, renderProps.state)
       }) + (renderProps.isFocusVisible ? ' ' + focusIndicator : '') + (' ' + highlightSelectionBorder)
       }
       {...otherProps}>

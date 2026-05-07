@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from '@react-types/shared';
-import {ListState} from 'react-stately/useListState';
-import {TableState} from 'react-stately/useTableState';
-import {TreeState} from 'react-stately/useTreeState';
+import type {Key} from '@react-types/shared';
+import type {ListState} from 'react-stately/useListState';
+import type {TableState} from 'react-stately/useTableState';
+import type {TreeState} from 'react-stately/useTreeState';
 import {useMediaQuery} from './useMediaQuery';
 
 export type Scale = 'large' | 'medium';
@@ -61,7 +61,7 @@ export function isLastItem(id: Key | undefined, state: ListState<unknown> | Tabl
   let key = state.collection.getLastKey();
   let node = key ? state.collection.getItem(key) : null;
 
-  // sometimes the last key is a loader node! so we check we the previous nodes 
+  // Sometimes the last key is a loader node, so we check the previous nodes 
   while (node && node.type !== 'item') {
     let prevKey = node.prevKey;
     node = prevKey ? state.collection.getItem(prevKey) : null;
