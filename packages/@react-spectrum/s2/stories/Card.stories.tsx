@@ -14,17 +14,6 @@ import {ActionButton} from '../src/ActionButton';
 
 import {ActionMenu} from '../src/ActionMenu';
 import {
-  Asset as AssetComponent,
-  AssetList,
-  BasicHorizontalCard,
-  HorizontalCard,
-  CardPreview as HorizontalCardPreview
-} from '../src/HorizontalCard';
-
-import {Avatar} from '../src/Avatar';
-import {Badge} from '../src/Badge';
-import {Button} from '../src/Button';
-import {
   AssetCard,
   Card,
   CardPreview,
@@ -33,6 +22,17 @@ import {
   ProductCard,
   UserCard
 } from '../src/Card';
+
+import {
+  Asset as AssetComponent,
+  AssetList,
+  BasicHorizontalCard,
+  HorizontalCard,
+  CardPreview as HorizontalCardPreview
+} from '../src/HorizontalCard';
+import {Avatar} from '../src/Avatar';
+import {Badge} from '../src/Badge';
+import {Button} from '../src/Button';
 import ChevronRight from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
 import {Content, Footer, Text} from '../src/Content';
 import {Divider} from '../src/Divider';
