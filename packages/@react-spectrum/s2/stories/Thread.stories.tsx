@@ -418,6 +418,7 @@ function ResponseStatus({status, thinking}: { status: 'pending' | 'complete', th
     case 'pending':
       return (
         // TODO: check announcement w/ and w/o the textValue
+        // It announces just fine w/o the text value but still useful for typeahead
         <GridListItem textValue="Generating response" className={style({...focusRing(), borderRadius: 'sm', display: 'flex', alignItems: 'center', gap: 8})}>
           <ProgressCircle isIndeterminate size="S" aria-label="Generating response" />
           <span className={style({font: 'ui', color: 'neutral-subdued'})}>Generating response...</span>

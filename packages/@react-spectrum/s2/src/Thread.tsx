@@ -107,6 +107,8 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
       <GridList
         onScroll={handleScroll}
         aria-label="Chat thread"
+        aria-live="polite"
+        aria-relevant="additions"
         keyboardNavigationBehavior="tab"
         items={items}
         ref={domRef}
