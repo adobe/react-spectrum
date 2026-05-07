@@ -75,6 +75,7 @@ import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
 import {TreeState, useTreeState} from 'react-stately/useTreeState';
 import {useHover} from 'react-aria/useHover';
+import {useIsHidden} from 'react-aria/private/collections/Hidden';
 import {useMultipleSelectionState} from 'react-stately/useMultipleSelectionState';
 import {useObjectRef} from 'react-aria/useObjectRef';
 
@@ -87,7 +88,7 @@ export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children: ReactNode
 }
 
-export function MenuTrigger(props: MenuTriggerProps): JSX.Element {
+export function MenuTrigger(props: MenuTriggerProps): JSX.Element | null {
   let state = useMenuTriggerState(props);
   let ref = useRef<HTMLButtonElement>(null);
   let {menuTriggerProps, menuProps} = useMenuTrigger({
@@ -95,6 +96,13 @@ export function MenuTrigger(props: MenuTriggerProps): JSX.Element {
     type: 'menu'
   }, state, ref);
   let scrollRef = useRef(null);
+
+  // If within a collection (e.g. Tabs), render nothing.
+  // Not using createHideableComponent for this because that also creates a forwardRef.
+  let isHidden = useIsHidden();
+  if (isHidden) {
+    return null;
+  }
 
   return (
     <Provider

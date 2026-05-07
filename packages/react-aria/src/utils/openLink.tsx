@@ -174,14 +174,15 @@ export function getSyntheticLinkProps(props: LinkDOMProps): DOMAttributes<HTMLEl
 export function useLinkProps(props?: LinkDOMProps): LinkDOMProps {
   let router = useRouter();
   const href = router.useHref(props?.href ?? '');
-  return {
-    href: props?.href ? href : undefined,
-    target: props?.target,
-    rel: props?.rel,
-    download: props?.download,
-    ping: props?.ping,
-    referrerPolicy: props?.referrerPolicy
-  };
+  let linkProps: LinkDOMProps = {};
+  if (props) {
+    for (let key of ['href', 'target', 'rel', 'download', 'ping', 'referrerPolicy']) {
+      if (key in props) {
+        linkProps[key] = key === 'href' ? href : props[key];
+      }
+    }
+  }
+  return linkProps;
 }
 
 export function handleLinkClick(e: ReactMouseEvent, router: Router, href: Href | undefined, routerOptions: RouterOptions | undefined): void {
