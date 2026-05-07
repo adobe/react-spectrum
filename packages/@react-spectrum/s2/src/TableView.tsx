@@ -486,18 +486,15 @@ const cellFocus = {
   outlineColor: {
     default: 'focus-ring',
     forcedColors: {
-      default: 'Highlight',
-      selectionStyle: {
-        highlight: 'ButtonBorder'
-      }
+      default: 'Highlight'
     }
   },
   borderRadius: '[5px]',
   zIndex: 5
 } as const;
 
-function CellFocusRing({selectionStyle} : {selectionStyle?: 'checkbox' | 'highlight'}) {
-  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0, pointerEvents: 'none', top: 0, bottom: 0})({isFocusVisible: true, selectionStyle})} />;
+function CellFocusRing() {
+  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0, pointerEvents: 'none', top: 0, bottom: 0})({isFocusVisible: true})} />;
 }
 
 const columnStyles = style({
@@ -574,7 +571,7 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
           {/* Note this is mainly for column's without a dropdown menu. If there is a dropdown menu, the button is styled to have a focus ring for simplicity
           (no need to juggle showing this focus ring if focus is on the menu button and not if it is on the resizer) */}
           {/* Separate absolutely positioned element because appyling the ring on the column directly via outline means the ring's required borderRadius will cause the bottom gray border to curve as well */}
-          {isFocusVisible && <CellFocusRing selectionStyle={selectionStyle} />}
+          {isFocusVisible && <CellFocusRing />}
           {isMenu ?
             (
               <ColumnWithMenu isColumnResizable={allowsResizing} menuItems={props.menuItems} allowsSorting={allowsSorting} sortDirection={sortDirection} sort={sort} startResize={startResize} align={align}>
@@ -967,7 +964,7 @@ function VisuallyHiddenSelectAllLabel() {
 
 const commonCellStyles = {
   borderColor: 'transparent',
-  borderBottomWidth: 1,
+  borderBottomWidth: 0,
   borderTopWidth: 0,
   borderXWidth: 0,
   borderStyle: 'solid',
@@ -1010,20 +1007,18 @@ const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean, isTreeC
   width: 'full',
   fontSize: controlFont(),
   alignItems: 'center',
-  display: 'flex',
-  borderStyle: {
-    default: 'none',
-    isDivider: 'solid'
-  },
-  borderEndWidth: {
-    default: 0,
-    isDivider: 1
-  },
-  borderColor: {
-    default: 'gray-300',
-    forcedColors: 'ButtonBorder'
-  }
+  display: 'flex'
 });
+
+const divider = style({
+  display: 'block',
+  position: 'absolute',
+  width: '[1px]',
+  height: 'full',
+  insetEnd: 0,
+  backgroundColor: 'var(--borderColorGray)'
+});
+
 
 const stickyCell = {
   backgroundColor: 'gray-25'
@@ -1119,11 +1114,12 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       {...otherProps}>
       {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
+          {showDivider && <div className={divider} />}
           {hasChildItems && isTreeColumn &&
             <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
           }
           <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
-          {isFocusVisible && <CellFocusRing selectionStyle={tableVisualOptions.selectionStyle} />}
+          {isFocusVisible && <CellFocusRing />}
         </>
       )}
     </RACCell>
@@ -1430,7 +1426,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
         }]
       ]}>
       <span className={cellContent({...tableVisualOptions, align: align || 'start'})}>{children}</span>
-      {isFocusVisible && <CellFocusRing selectionStyle={tableVisualOptions.selectionStyle} />}
+      {isFocusVisible && <CellFocusRing />}
 
       <Provider
         values={[
@@ -1575,21 +1571,6 @@ const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextS
     type: 'color',
     value: rowTextColor
   },
-  '--rowFocusIndicatorColor': {
-    type: 'outlineColor',
-    value: {
-      selectionStyle: {
-        checkbox: {
-          default: 'focus-ring',
-          forcedColors: 'Highlight'
-        },
-        highlight: {
-          default: 'focus-ring',
-          forcedColors: 'ButtonBorder'
-        }
-      }
-    }
-  },
   // TODO: outline here is to emulate v3 forcedColors experience but runs into the same problem where the sticky column covers the outline
   // This doesn't quite work because it gets cut off by the checkbox cell background masking element, figure out another way. Could shrink the checkbox cell's content even more
   // and offset it by margin top but that messes up the checkbox centering a bit
@@ -1643,7 +1624,7 @@ const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextS
   },
   borderBottomRadius: 'var(--borderBottomRadius)',
   borderTopRadius: 'var(--borderTopRadius)',
-  // use these border values only for when it is highlight selection
+  // We will only use these border values when it is highlight selection
   '--borderTopWidth': {
     type: 'width',
     value: {
@@ -1679,7 +1660,7 @@ const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextS
       }
     }
   },
-  // when checkbox selection, render the gray divider between rows as a border
+  // When checkbox selection, render the gray divider between rows as a border
   borderTopWidth: 0,
   borderBottomWidth: {
     selectionStyle: {
@@ -1700,24 +1681,27 @@ const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextS
     type: 'borderColor',
     value: {
       default: 'gray-300',
-      forcedColors: 'ButtonBorder'
+      forcedColors: {
+        default: 'ButtonBorder',
+        isSelected: 'Highlight'
+      }
     }
   },
   '--borderColorBlue': {
     type: 'borderColor',
     value: {
       default: 'blue-900',
-      forcedColors: 'ButtonBorder'
+      forcedColors: 'Highlight'
     }
   },
   '--borderColor': {
     type: 'borderColor',
     value: {
       default: 'transparent',
-      isSelected: 'blue-900'
+      isSelected: '--borderColorBlue'
     }
   },
-  // when highlight selection, render gray dividers as box shadow
+  // When highlight selection, render gray dividers as box shadow
   boxShadow: {
     selectionStyle: {
       highlight: {
@@ -1744,25 +1728,7 @@ const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextS
   forcedColorAdjust: 'none'
 });
 
-const focusIndicator = css(
-  `&:after {
-    content: "";
-    width: 100%;
-    height: 100%;
-    top: 0;
-    inset-inline-start: 0;
-    z-index: 4;
-    border-radius: 5px;
-    position: absolute;
-    outline-style: solid;
-    outline-color: var(--borderColorBlue);
-    outline-width: 2px;
-    outline-offset: -2px
-    }
-  `
-);
-
-const boxShadowBorder = css(
+const highlightSelectionBorder = css(
   `&:before {
     content: "";
     width: 100%;
@@ -1782,6 +1748,24 @@ const boxShadowBorder = css(
     border-top-left-radius: var(--borderTopRadius);
     border-top-right-radius: var(--borderTopRadius);
   }
+  `
+);
+
+const focusIndicator = css(
+  `&:after {
+    content: "";
+    width: 100%;
+    height: 100%;
+    top: 0;
+    inset-inline-start: 0;
+    z-index: 4;
+    border-radius: 5px;
+    position: absolute;
+    outline-style: solid;
+    outline-color: var(--borderColorBlue);
+    outline-width: 2px;
+    outline-offset: -2px
+    }
   `
 );
 
@@ -1822,7 +1806,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         isFirstItem: isFirstItem(id, renderProps.state),
         isPrevSelected: isPrevSelected(id, renderProps.state),
         isLastItem: isLastItem(id, renderProps.state)
-      }) + (renderProps.isFocusVisible ? ' ' + focusIndicator : '') + (' ' + boxShadowBorder)
+      }) + (renderProps.isFocusVisible ? ' ' + focusIndicator : '') + (' ' + highlightSelectionBorder)
       }
       {...otherProps}>
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
