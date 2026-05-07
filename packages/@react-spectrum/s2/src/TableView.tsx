@@ -146,7 +146,7 @@ const tableWrapper = style({
   overflow: 'clip'
 }, getAllowedOverrides({height: true}));
 
-// due to the overflow: clip for actionbar, render the outline via a psudo element so it isn't
+// due to the overflow: clip for actionbar, render the outline via a pseudo element so it isn't
 // clipped. 6px radius matches the table's border radius
 const rootDropOutline = css(`
   &:has([role="grid"][data-drop-target])::after {
@@ -1721,7 +1721,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
 const selectedBackground = colorMix('gray-25', 'gray-900', 7);
 const selectedActiveBackground = colorMix('gray-25', 'gray-900', 10);
 // TODO: I made these up, not sure if there is a great way to go from v3 values to
-// S2. Overally the root drop color should be lighter than the row color during a root drop
+// S2. Overall the root drop color should be lighter than the row color during a root drop
 // which should be lighter than a selected row during root drop. Those root drop row colors should also be darker
 // than if the row is the drop target itself
 const rootDropRowBackground = colorMix('gray-25', 'blue-900', 17);
@@ -1846,7 +1846,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         ...renderProps,
         ...tableVisualOptions,
         isInFooter
-      }) + (renderProps.isFocusVisible || renderProps.isDropTarget ? ' ' + css('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')}
+      }) + (renderProps.isFocusVisible || renderProps.isDropTarget ? ' ' + css('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)}') : '')}
       {...otherProps}>
       {allowsDragging  && (
         // @ts-ignore

@@ -511,8 +511,6 @@ const listRowBackground = style<GridListItemRenderProps & {
         }
       }
     },
-    // TODO: this causes the drop indicator for the root and the insertion drop indicator to be cut off in HCM,
-    // so we use transparent. Will need to check against a variet of HCM themes
     forcedColors: 'transparent',
     ':is([role="grid"][data-drop-target] *)': rootRowDropStyles,
     isDropTarget: rowDropStyles
@@ -834,10 +832,10 @@ export let dragPreviewCard = style<{scale?: 'medium' | 'large'}>({
   position: 'relative',
   display: 'grid',
   gridTemplateAreas: [
-    '. icon label       badge .',
-    '. .    description badge .'
+    '. icon label       . badge .',
+    '. .    description . badge .'
   ],
-  gridTemplateColumns: [12, 'auto', 'minmax(0, 1fr)', 'auto', 6],
+  gridTemplateColumns: [12, 'auto', 'minmax(0, 1fr)', 4, 'auto', 6],
   gridTemplateRows: '1fr auto',
   alignItems: 'baseline',
   minHeight: {

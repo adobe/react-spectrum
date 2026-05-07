@@ -76,11 +76,7 @@ export interface SelectableItemOptions extends DOMProps {
    * - 'none': links are disabled for both selection and actions (e.g. handled elsewhere).
    * @default 'action'
    */
-  linkBehavior?: 'action' | 'selection' | 'override' | 'none',
-  /**
-   * Whether this item is draggable.
-   */
-  isDraggable?: boolean
+  linkBehavior?: 'action' | 'selection' | 'override' | 'none'
 }
 
 export interface SelectableItemStates {

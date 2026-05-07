@@ -629,7 +629,7 @@ function CustomDragPreview(props) {
       {item.type === 'folder' &&
         <>
           <Folder />
-          {items.childNodes && <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>}
+          {item.childNodes && <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>}
         </>
       }
       {item.type === 'file' && <File />}
