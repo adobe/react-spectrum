@@ -19,7 +19,7 @@ import {chain} from 'react-aria/chain';
 import {Content, Heading} from './Content';
 import {Dialog} from './Dialog';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {forwardRef, ReactNode} from 'react';
+import {forwardRef, ReactNode, useId} from 'react';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -106,10 +106,14 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
   }
 
   let domProps = filterDOMProps(props, {labelable: true});
+  let generatedContentId = useId();
+  let userDescribedBy = props['aria-describedby'];
+  let contentId = userDescribedBy ? undefined : generatedContentId;
 
   return (
     <Dialog
       {...domProps}
+      aria-describedby={userDescribedBy ?? generatedContentId}
       role="alertdialog"
       ref={ref}
       size={props.size}
@@ -129,7 +133,7 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
               </CenterBaseline>
             </Heading>
           </Provider>
-          <Content>{children}</Content>
+          <Content id={contentId}>{children}</Content>
           <ButtonGroup>
             {cancelLabel &&
               <Button
