@@ -125,7 +125,6 @@
     "@storybook/addon-themes": "^10.0.0",
     "@storybook/react": "^10.0.0",
     "@storybook/test-runner": "^0.24.0",
-    "@stylistic/eslint-plugin-ts": "^2.9.0",
     "@swc/core": "^1.3.36",
     "@swc/jest": "^0.2.36",
     "@tailwindcss/postcss": "^4.0.17",
