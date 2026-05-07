@@ -97,6 +97,13 @@ describe('useDialog', function () {
       let el = res.getByTestId('test');
       expect(el).toHaveAttribute('aria-describedby', 'custom-id');
     });
+
+    it('should not generate contentProps.id when aria-describedby is provided', function () {
+      let res = render(<AlertDialogExample aria-label="Test" aria-describedby="custom-id" showContent />);
+      let el = res.getByTestId('test');
+      let contentEl = el.querySelector('p');
+      expect(contentEl).not.toHaveAttribute('id');
+    });
   });
 
   describe('dev warnings', function () {

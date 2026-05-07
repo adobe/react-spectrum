@@ -49,7 +49,7 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
   titleId = props['aria-label'] ? undefined : titleId;
 
   let contentId: string | undefined = useSlotId();
-  contentId = role === 'alertdialog' ? contentId : undefined;
+  contentId = (role === 'alertdialog' && !props['aria-describedby']) ? contentId : undefined;
 
   let isRefocusing = useRef(false);
 
