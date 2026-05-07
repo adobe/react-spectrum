@@ -494,7 +494,7 @@ const cellFocus = {
 } as const;
 
 function CellFocusRing() {
-  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0, pointerEvents: 'none', top: 0, bottom: 0})({isFocusVisible: true})} />;
+  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0, pointerEvents: 'none'})({isFocusVisible: true})} />;
 }
 
 const columnStyles = style({
@@ -1779,9 +1779,7 @@ export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'is
  */
 export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T extends object>({id, columns, children, dependencies = [], ...otherProps}: RowProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {selectionBehavior, selectionMode} = useTableOptions();
-  let {selectionStyle, ...tableVisualOptions
-
-  } = useContext(InternalTableContext);
+  let {selectionStyle, ...tableVisualOptions} = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
   let isInFooter = useContext(FooterContext);
 
@@ -1800,7 +1798,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         isInFooter,
         isNextSelected: isNextSelected(renderProps.id, renderProps.state),
         isPrevSelected: isPrevSelected(renderProps.id, renderProps.state)
-      }) + (renderProps.isFocusVisible ? ' ' + focusIndicator : '') + (' ' + highlightSelectionBorder)
+      }) + (renderProps.isFocusVisible ? ' ' + focusIndicator : '') + (selectionStyle === 'highlight' ? ' ' + highlightSelectionBorder : '')
       }
       {...otherProps}>
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
