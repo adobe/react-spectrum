@@ -28,7 +28,8 @@ import {Badge} from '../src/Badge';
 import {
   BasicHorizontalCard,
   HorizontalCard,
-  CardPreview as HorizontalCardPreview
+  CardPreview as HorizontalCardPreview,
+  PreviewOnlyHorizontalCard
 } from '../src/HorizontalCard';
 import {Button} from '../src/Button';
 import ChevronRight from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
@@ -420,6 +421,20 @@ export const Horizontal: Story = {
           <Text slot="title">Card title</Text>
           <Text slot="description">Card description.</Text>
         </Content>
+      </BasicHorizontalCard>
+      <BasicHorizontalCard {...args} styles={style({maxWidth: 400})} isRemovable>
+        <Image
+          slot="thumbnail"
+          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+        <Content>
+          <Text slot="title">Card title</Text>
+          <Text slot="description">Card description.</Text>
+        </Content>
+      </BasicHorizontalCard>
+      <BasicHorizontalCard {...args} isRemovable aria-label="Demo file.pdf">
+        <Image
+          slot="thumbnail"
+          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
       </BasicHorizontalCard>
     </div>
   )

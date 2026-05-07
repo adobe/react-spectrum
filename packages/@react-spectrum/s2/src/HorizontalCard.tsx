@@ -13,15 +13,15 @@
 import {ActionMenuContext} from './ActionMenu';
 import {ButtonContext, LinkButtonContext} from './Button';
 import {Checkbox} from './Checkbox';
-import {color, focusRing, lightDark, space, style} from '../style' with {type: 'macro'};
+import {baseColor, color, focusRing, lightDark, space, style} from '../style' with {type: 'macro'};
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContentContext, FooterContext, TextContext} from './Content';
 import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
-import {createContext, forwardRef, ReactNode, useContext} from 'react';
+import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {DividerContext} from './Divider';
-import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {controlSize, getAllowedOverrides, staticColor, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
 import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
@@ -32,6 +32,13 @@ import {pressScale} from './pressScale';
 import {SkeletonContext, useIsSkeleton} from './Skeleton';
 import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+
+import {Button} from 'react-aria-components/Button';
+import CrossIcon from '../ui-icons/Cross';
+import {useFocusableRef} from './useDOMRef';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 interface CardRenderProps {
   /** The size of the Card. */
@@ -74,6 +81,8 @@ const borderRadius = {
 // Max width on contents for horizontal cards? Doesn't appear to be one that includes the preview because the preview can have any ratio and that
 // causes the width grow.
 // (Max) height on cards? Maybe that makes more sense.
+
+const onlyPreview = ':not(:has([data-slot=content])):not(:has([data-slot=preview]))';
 
 let card = style({
   display: 'flex',
@@ -126,7 +135,8 @@ let card = style({
     default: 'clip',
     variant: {
       quiet: 'visible'
-    }
+    },
+    isBasic: 'visible'
   },
   contain: 'layout',
   disableTapHighlight: true,
@@ -147,9 +157,16 @@ let card = style({
       }
     },
     isBasic: 68,
-    isCardView: 'full'
+    isCardView: 'full',
+    [onlyPreview]: 'auto'
   },
-  width: 'full',
+  width: {
+    default: 'full',
+    [onlyPreview]: 'auto'
+  },
+  aspectRatio: {
+    [onlyPreview]: '1/1'
+  },
   '--card-spacing': {
     type: 'paddingTop',
     value: {
@@ -181,7 +198,8 @@ let card = style({
             XL: 28
           }
         }
-      }
+      },
+      [onlyPreview]: 0
     }
   },
   '--card-padding-y': {
@@ -415,8 +433,11 @@ const Card = forwardRef(function Card(props: CardProps & {isBasic?: boolean}, re
             description: {styles: description({size})}
           }
         }],
-        [ContentContext, {styles: content({size})}],
-        [DividerContext, {size: 'S'}],
+        [ContentContext, {
+          styles: content({size}),
+          // @ts-ignore
+          'data-slot': 'content'
+        }],
         [FooterContext, {styles: footer}],
         [ActionMenuContext, {
           isQuiet: true,
@@ -679,8 +700,9 @@ export const HorizontalCard = forwardRef(function HorizontalCard(props: CardProp
   );
 });
 
-export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(props: CardProps, ref: DOMRef<HTMLDivElement>) {
+export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(props: CardProps & {isRemovable?: boolean}, ref: DOMRef<HTMLDivElement>) {
   let {size = 'M'} = props;
+  let {isRemovable = false} = props;
   return (
     <Card {...props} ref={ref} isBasic>
       {composeRenderProps(props.children, children => (
@@ -733,8 +755,67 @@ export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(props
             [LinkButtonContext, {size: buttonSize[size]}]
           ]}>
           {children}
+          {/** definitely not a close button, though looks like one */}
+          {isRemovable && <div className={style({position: 'absolute', top: 0, insetEnd: 0, transform: 'translate(50%, -50%)'})}><CloseButton size='XS' /></div>}
         </Provider>
       ))}
     </Card>
   );
 });
+
+
+const hoverBackground = {
+  default: 'gray-200',
+  isStaticColor: 'transparent-overlay-200'
+} as const;
+
+const styles = style<{isDisabled: boolean, isHovered: boolean, isFocusVisible: boolean, isPressed: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
+  ...focusRing(),
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  size: controlSize(),
+  flexShrink: 0,
+  borderRadius: 'full',
+  padding: 0,
+  borderStyle: 'none',
+  transition: 'default',
+  backgroundColor: {
+    default: 'gray-200',
+    isHovered: hoverBackground,
+    isFocusVisible: hoverBackground,
+    isPressed: hoverBackground
+  },
+  '--iconPrimary': {
+    type: 'color',
+    value: {
+      default: baseColor('neutral'),
+      isDisabled: 'disabled',
+      forcedColors: {
+        default: 'ButtonText',
+        isDisabled: 'GrayText'
+      }
+    }
+  },
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  },
+  disableTapHighlight: true
+}, getAllowedOverrides());
+const CloseButton = function CloseButton(props) {
+  let ref = useRef<FocusableRefValue<HTMLButtonElement>>(null);
+  let domRef = useFocusableRef(ref);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  return (
+    <Button
+      {...props}
+      ref={domRef}
+      slot="close"
+      aria-label={props['aria-label'] || stringFormatter.format('dialog.dismiss')}
+      style={pressScale(domRef, {})}
+      className={renderProps => styles({...renderProps, size: props.size || 'M'}, props.styles)}>
+      <CrossIcon size={({XS: 'S', S: 'M', M: 'XL', L: 'XXL', XL: 'XXXL'} as const)[props.size || 'M']} />
+    </Button>
+  );
+};
