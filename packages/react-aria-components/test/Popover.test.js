@@ -10,13 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, createShadowRoot, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
 import {Dialog, DialogTrigger} from '../src/Dialog';
+import {enableShadowDOM} from 'react-stately/private/flags/flags';
+import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
 import {OverlayArrow} from '../src/OverlayArrow';
 import {Popover} from '../src/Popover';
 import {Pressable} from 'react-aria/Pressable';
 import React, {useRef} from 'react';
+import {screen} from 'shadow-dom-testing-library';
 import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import userEvent from '@testing-library/user-event';
 
@@ -289,4 +292,124 @@ describe('Popover', () => {
     let dialog = getByRole('dialog');
     expect(dialog).toBeInTheDocument();
   });
+
+  if (parseInt(React.version, 10) >= 17) {
+    // This one works outside shadow dom as well because everything is inside the same shadow root.
+    it('test overlay and overlay trigger inside the same shadow root to have interactable content', async function () {
+      const {shadowRoot, cleanup} = createShadowRoot();
+
+      const appContainer = document.createElement('div');
+      appContainer.setAttribute('id', 'appRoot');
+      shadowRoot.appendChild(appContainer);
+
+      const portal = document.createElement('div');
+      portal.id = 'shadow-dom-portal';
+      shadowRoot.appendChild(portal);
+
+      const onAction = jest.fn();
+
+      function ShadowApp() {
+        return (
+          <MenuTrigger>
+            <Button>
+              Open
+            </Button>
+            <Popover>
+              <Menu onAction={onAction}>
+                <MenuItem key="new">New…</MenuItem>
+                <MenuItem key="open">Open…</MenuItem>
+                <MenuItem key="save">Save</MenuItem>
+                <MenuItem key="save-as">Save as…</MenuItem>
+                <MenuItem key="print">Print…</MenuItem>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+        );
+      }
+      render(
+        <UNSAFE_PortalProvider getContainer={() => portal}> 1
+          <ShadowApp />
+        </UNSAFE_PortalProvider>,
+        {container: appContainer}
+      );
+
+      let button = await screen.findByShadowRole('button');
+      await user.click(button);
+      let menu = await screen.findByShadowRole('menu');
+      expect(menu).toBeVisible();
+      let items = await screen.findAllByShadowRole('menuitem');
+      let openItem = items.find(item => item.textContent?.trim() === 'Open…');
+      expect(openItem).toBeVisible();
+
+      await user.click(openItem);
+      expect(onAction).toHaveBeenCalledTimes(1);
+      cleanup();
+    });
+  }
 });
+
+if (parseInt(React.version, 10) >= 17) {
+  describe('Popover with Shadow DOM and UNSAFE_PortalProvider', () => {
+    let user;
+    beforeAll(() => {
+      enableShadowDOM();
+      user = userEvent.setup({delay: null, pointerMap});
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      act(() => jest.runAllTimers());
+    });
+
+
+    it('test overlay and overlay trigger inside the same shadow root to have interactable content', async function () {
+      const {shadowRoot, cleanup} = createShadowRoot();
+
+      const appContainer = document.createElement('div');
+      appContainer.setAttribute('id', 'appRoot');
+      shadowRoot.appendChild(appContainer);
+
+      const portal = document.createElement('div');
+      portal.id = 'shadow-dom-portal';
+      shadowRoot.appendChild(portal);
+
+      const onAction = jest.fn();
+      function ShadowApp() {
+        return (
+          <MenuTrigger>
+            <Button>
+              Open
+            </Button>
+            <Popover>
+              <Menu onAction={onAction}>
+                <MenuItem key="new">New…</MenuItem>
+                <MenuItem key="open">Open…</MenuItem>
+                <MenuItem key="save">Save</MenuItem>
+                <MenuItem key="save-as">Save as…</MenuItem>
+                <MenuItem key="print">Print…</MenuItem>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+        );
+      }
+      render(
+        <UNSAFE_PortalProvider getContainer={() => portal}> 1
+          <ShadowApp />
+        </UNSAFE_PortalProvider>,
+        {container: appContainer}
+      );
+
+      let button = await screen.findByShadowRole('button');
+      fireEvent.click(button); // not sure why user.click doesn't work here
+      let menu = await screen.findByShadowRole('menu');
+      expect(menu).toBeVisible();
+      let items = await screen.findAllByShadowRole('menuitem');
+      let openItem = items.find(item => item.textContent?.trim() === 'Open…');
+      expect(openItem).toBeVisible();
+
+      await user.click(openItem);
+      expect(onAction).toHaveBeenCalledTimes(1);
+      cleanup();
+    });
+  });
+}
