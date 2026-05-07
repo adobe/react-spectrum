@@ -128,4 +128,128 @@ describe('useOverlay', function () {
     fireEvent.keyDown(el, {key: 'Escape'});
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  describe('CloseWatcher', function () {
+    let closeWatcherInstances;
+    let MockCloseWatcher;
+
+    beforeEach(function () {
+      closeWatcherInstances = [];
+      MockCloseWatcher = class {
+        constructor() {
+          this.onclose = null;
+          closeWatcherInstances.push(this);
+        }
+        destroy() {
+          let index = closeWatcherInstances.indexOf(this);
+          if (index >= 0) {
+            closeWatcherInstances.splice(index, 1);
+          }
+        }
+      };
+      globalThis.CloseWatcher = MockCloseWatcher;
+    });
+
+    afterEach(function () {
+      delete globalThis.CloseWatcher;
+    });
+
+    it('should use CloseWatcher to dismiss overlay when available', function () {
+      let onClose = jest.fn();
+      render(<Example isOpen onClose={onClose} />);
+      expect(closeWatcherInstances.length).toBe(1);
+      closeWatcherInstances[0].onclose();
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not create CloseWatcher when isKeyboardDismissDisabled is true', function () {
+      let onClose = jest.fn();
+      render(<Example isOpen onClose={onClose} isKeyboardDismissDisabled />);
+      expect(closeWatcherInstances.length).toBe(0);
+    });
+
+    it('should not create CloseWatcher when overlay is not open', function () {
+      let onClose = jest.fn();
+      render(<Example isOpen={false} onClose={onClose} />);
+      expect(closeWatcherInstances.length).toBe(0);
+    });
+
+    it('should destroy CloseWatcher when overlay unmounts', function () {
+      let onClose = jest.fn();
+      let res = render(<Example isOpen onClose={onClose} />);
+      expect(closeWatcherInstances.length).toBe(1);
+      res.unmount();
+      expect(closeWatcherInstances.length).toBe(0);
+    });
+
+    it('should dismiss only the top-most overlay with nested overlays', function () {
+      let onCloseOuter = jest.fn();
+      let onCloseInner = jest.fn();
+      render(<Example isOpen onClose={onCloseOuter} data-testid="outer" />);
+      render(<Example isOpen onClose={onCloseInner} data-testid="inner" />);
+
+      // Each overlay gets its own CloseWatcher
+      expect(closeWatcherInstances.length).toBe(2);
+
+      // Browser fires close on the most recently created watcher (inner overlay)
+      closeWatcherInstances[1].onclose();
+      expect(onCloseInner).toHaveBeenCalledTimes(1);
+      expect(onCloseOuter).not.toHaveBeenCalled();
+    });
+
+    it('should not attach onKeyDown when CloseWatcher is supported', function () {
+      let onClose = jest.fn();
+      let res = render(<Example isOpen onClose={onClose} />);
+      let el = res.getByTestId('test');
+
+      // With CloseWatcher active, Escape keydown should not trigger onClose
+      // (the browser's CloseWatcher handles it instead)
+      fireEvent.keyDown(el, {key: 'Escape'});
+      expect(onClose).not.toHaveBeenCalled();
+
+      // But CloseWatcher still works
+      closeWatcherInstances[0].onclose();
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not double-dismiss nested overlays on Escape when CloseWatcher is active', function () {
+      let onCloseOuter = jest.fn();
+      let onCloseInner = jest.fn();
+      let outer = render(<Example isOpen onClose={onCloseOuter} data-testid="outer" />);
+      render(<Example isOpen onClose={onCloseInner} data-testid="inner" />);
+
+      let outerEl = outer.getByTestId('outer');
+
+      // Simulate browser behavior: CloseWatcher fires for inner overlay
+      closeWatcherInstances[1].onclose();
+      expect(onCloseInner).toHaveBeenCalledTimes(1);
+
+      // The Escape keydown event that triggered CloseWatcher also bubbles to the
+      // outer overlay's DOM. With the fix, onKeyDown is undefined so the outer
+      // overlay is NOT dismissed.
+      fireEvent.keyDown(outerEl, {key: 'Escape'});
+      expect(onCloseOuter).not.toHaveBeenCalled();
+    });
+
+    it('should dismiss inner then outer with per-overlay watchers', function () {
+      let onCloseOuter = jest.fn();
+      let onCloseInner = jest.fn();
+      render(<Example isOpen onClose={onCloseOuter} data-testid="outer" />);
+      let inner = render(<Example isOpen onClose={onCloseInner} data-testid="inner" />);
+
+      expect(closeWatcherInstances.length).toBe(2);
+
+      // Dismiss inner overlay via its watcher
+      closeWatcherInstances[1].onclose();
+      expect(onCloseInner).toHaveBeenCalledTimes(1);
+
+      // Unmount inner - its watcher is destroyed
+      inner.unmount();
+      expect(closeWatcherInstances.length).toBe(1);
+
+      // Dismiss outer via its watcher
+      closeWatcherInstances[0].onclose();
+      expect(onCloseOuter).toHaveBeenCalledTimes(1);
+    });
+  });
 });
