@@ -15,59 +15,66 @@ import Add from '../Add';
 import Alert from '../Alert';
 import Bell from '../Bell';
 import React from 'react';
-import { Meta, StoryFn } from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 
 export default {
   title: 'Icons/Workflow'
 } as Meta<typeof Add>;
 
-export const IconAddWithSizes: StoryFn<typeof Add> = () => renderIconSizes(Add, {'aria-label': 'Add'});
+export const IconAddWithSizes: StoryFn<typeof Add> = () =>
+  renderIconSizes(Add, {'aria-label': 'Add'});
 
 IconAddWithSizes.story = {
   name: 'icon: Add with sizes'
 };
 
-export const IconBellWithSizes: StoryFn<typeof Bell> = () => renderIconSizes(Bell, {'aria-label': 'Bell'});
+export const IconBellWithSizes: StoryFn<typeof Bell> = () =>
+  renderIconSizes(Bell, {'aria-label': 'Bell'});
 
 IconBellWithSizes.story = {
-  name: 'icon: Bell with sizes',
+  name: 'icon: Bell with sizes'
 };
 
-export const Icon3DMaterialsWithSizes: StoryFn<typeof Icon3DMaterials> = () => renderIconSizes(Icon3DMaterials, {'aria-label': '3D Materials'});
+export const Icon3DMaterialsWithSizes: StoryFn<typeof Icon3DMaterials> = () =>
+  renderIconSizes(Icon3DMaterials, {'aria-label': '3D Materials'});
 
 Icon3DMaterialsWithSizes.story = {
-  name: 'icon: _3DMaterials with sizes',
+  name: 'icon: _3DMaterials with sizes'
 };
 
-export const IconAlertNegative: StoryFn<typeof Alert> = () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'negative'});
+export const IconAlertNegative: StoryFn<typeof Alert> = () =>
+  renderIconSizes(Alert, {'aria-label': 'Alert', color: 'negative'});
 
 IconAlertNegative.story = {
-  name: 'icon: Alert negative',
+  name: 'icon: Alert negative'
 };
 
-export const IconAlertInformative: StoryFn<typeof Alert> = () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'informative'});
+export const IconAlertInformative: StoryFn<typeof Alert> = () =>
+  renderIconSizes(Alert, {'aria-label': 'Alert', color: 'informative'});
 
 IconAlertInformative.story = {
-  name: 'icon: Alert informative',
+  name: 'icon: Alert informative'
 };
 
-export const IconAlertPositive: StoryFn<typeof Alert> = () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'positive'});
+export const IconAlertPositive: StoryFn<typeof Alert> = () =>
+  renderIconSizes(Alert, {'aria-label': 'Alert', color: 'positive'});
 
 IconAlertPositive.story = {
-  name: 'icon: Alert positive',
+  name: 'icon: Alert positive'
 };
 
-export const IconAlertNotice: StoryFn<typeof Alert> = () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'notice'});
+export const IconAlertNotice: StoryFn<typeof Alert> = () =>
+  renderIconSizes(Alert, {'aria-label': 'Alert', color: 'notice'});
 
 IconAlertNotice.story = {
-  name: 'icon: Alert notice',
+  name: 'icon: Alert notice'
 };
 
 function renderIconSizes(Component, props) {
   let sizes = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'];
   return (
     <div>
-      {sizes.map((size) => {
+      {sizes.map(size => {
         return <Component margin="15px" size={size} {...props} />;
       })}
     </div>

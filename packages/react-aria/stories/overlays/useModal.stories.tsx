@@ -43,7 +43,9 @@ function App(props: {useAlternateContainer?: boolean}): JSX.Element {
     <>
       <ActionButton onPress={() => setShowModal(prev => !prev)}>Toggle</ActionButton>
       <div id="alternateContainer" data-testid="alternate-container">
-        <Example showModal={showModal} {...props}>The Modal</Example>
+        <Example showModal={showModal} {...props}>
+          The Modal
+        </Example>
       </div>
     </>
   );
@@ -51,37 +53,49 @@ function App(props: {useAlternateContainer?: boolean}): JSX.Element {
 
 function ModalDOM(props) {
   let {modalProps} = useModal();
-  return <div data-testid={props.modalId || 'modal'} {...modalProps}>{props.children}</div>;
+  return (
+    <div data-testid={props.modalId || 'modal'} {...modalProps}>
+      {props.children}
+    </div>
+  );
 }
 
 function Modal(props) {
   return (
-    <OverlayContainer portalContainer={props.container} data-testid={props.providerId || 'modal-provider'}>
+    <OverlayContainer
+      portalContainer={props.container}
+      data-testid={props.providerId || 'modal-provider'}>
       <ModalDOM modalId={props.modalId}>{props.children}</ModalDOM>
     </OverlayContainer>
   );
 }
 
 function Example(props) {
-  let container = props.useAlternateContainer ? document.getElementById('alternateContainer') : undefined;
+  let container = props.useAlternateContainer
+    ? document.getElementById('alternateContainer')
+    : undefined;
   return (
     <OverlayProvider data-testid="root-provider">
       This is the root provider.
-      {props.showModal &&
-      <Modal container={container}>{props.children}</Modal>
-      }
+      {props.showModal && <Modal container={container}>{props.children}</Modal>}
     </OverlayProvider>
   );
 }
 
 function ModalDOM2(props) {
   let {modalProps} = useModal();
-  return <div data-testid={props.modalId || 'modal'} {...modalProps}>{props.children}</div>;
+  return (
+    <div data-testid={props.modalId || 'modal'} {...modalProps}>
+      {props.children}
+    </div>
+  );
 }
 
 function Modal2(props) {
   return (
-    <OverlayContainer portalContainer={props.container} data-testid={props.providerId || 'modal-provider'}>
+    <OverlayContainer
+      portalContainer={props.container}
+      data-testid={props.providerId || 'modal-provider'}>
       <ModalDOM2 modalId={props.modalId}>{props.children}</ModalDOM2>
     </OverlayContainer>
   );

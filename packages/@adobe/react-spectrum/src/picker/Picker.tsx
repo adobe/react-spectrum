@@ -11,7 +11,18 @@
  */
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import {Alignment, AsyncLoadable, DimensionValue, DOMRef, DOMRefValue, FocusableRefValue, LabelPosition, SingleSelection, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
+import {
+  Alignment,
+  AsyncLoadable,
+  DimensionValue,
+  DOMRef,
+  DOMRefValue,
+  FocusableRefValue,
+  LabelPosition,
+  SingleSelection,
+  SpectrumLabelableProps,
+  StyleProps
+} from '@react-types/shared';
 import {AriaSelectProps, HiddenSelect, useSelect} from 'react-aria/useSelect';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames} from '../utils/classNames';
@@ -41,27 +52,43 @@ import {useProvider, useProviderProps} from '../provider/Provider';
 import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 import {useSelectState} from 'react-stately/useSelectState';
 
-export interface SpectrumPickerProps<T> extends Omit<AriaSelectProps<T>, 'selectionMode' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange' | 'value' | 'defaultValue' | 'onChange' | 'allowsEmptyCollection'>, Omit<SingleSelection, 'disallowEmptySelection'>, AsyncLoadable, SpectrumLabelableProps, StyleProps  {
+export interface SpectrumPickerProps<T>
+  extends
+    Omit<
+      AriaSelectProps<T>,
+      | 'selectionMode'
+      | 'selectedKey'
+      | 'defaultSelectedKey'
+      | 'onSelectionChange'
+      | 'value'
+      | 'defaultValue'
+      | 'onChange'
+      | 'allowsEmptyCollection'
+    >,
+    Omit<SingleSelection, 'disallowEmptySelection'>,
+    AsyncLoadable,
+    SpectrumLabelableProps,
+    StyleProps {
   /** Whether the textfield should be displayed with a quiet style. */
-  isQuiet?: boolean,
+  isQuiet?: boolean;
   /** Alignment of the menu relative to the input target.
    * @default 'start'
    */
-  align?: Alignment,
+  align?: Alignment;
   /**
    * Direction the menu will render relative to the Picker.
    * @default 'bottom'
    */
-  direction?: 'bottom' | 'top',
+  direction?: 'bottom' | 'top';
   /**
    * Whether the menu should automatically flip direction when space is limited.
    * @default true
    */
-  shouldFlip?: boolean,
+  shouldFlip?: boolean;
   /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
-  menuWidth?: DimensionValue,
+  menuWidth?: DimensionValue;
   /** Whether the element should receive focus on render. */
-  autoFocus?: boolean
+  autoFocus?: boolean;
 }
 
 /**
@@ -69,7 +96,10 @@ export interface SpectrumPickerProps<T> extends Omit<AriaSelectProps<T>, 'select
  */
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-export const Picker = React.forwardRef(function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const Picker = React.forwardRef(function Picker<T extends object>(
+  props: SpectrumPickerProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
   props = useSlotProps(props, 'picker');
   props = useProviderProps(props);
   props = useFormProps(props);
@@ -103,10 +133,25 @@ export const Picker = React.forwardRef(function Picker<T extends object>(props: 
   // so that the layout information can be cached even while the listbox is not mounted.
   // We also use the layout as the keyboard delegate for type to select.
   let layout = useListBoxLayout();
-  let {labelProps, triggerProps, valueProps, menuProps, hiddenSelectProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useSelect({
-    ...props,
-    'aria-describedby': (isLoadingInitial ? progressCircleId : undefined)
-  }, state, unwrappedTriggerRef);
+  let {
+    labelProps,
+    triggerProps,
+    valueProps,
+    menuProps,
+    hiddenSelectProps,
+    descriptionProps,
+    errorMessageProps,
+    isInvalid,
+    validationErrors,
+    validationDetails
+  } = useSelect(
+    {
+      ...props,
+      'aria-describedby': isLoadingInitial ? progressCircleId : undefined
+    },
+    state,
+    unwrappedTriggerRef
+  );
 
   let isMobile = useIsMobileDevice();
   let {hoverProps, isHovered} = useHover({isDisabled});
@@ -127,7 +172,8 @@ export const Picker = React.forwardRef(function Picker<T extends object>(props: 
       UNSAFE_style={{maxHeight: 'inherit'}}
       isLoading={props.isLoading}
       showLoadingSpinner={isLoadingMore}
-      onLoadMore={props.onLoadMore} />
+      onLoadMore={props.onLoadMore}
+    />
   );
 
   // Measure the width of the button to inform the width of the menu (below).
@@ -150,11 +196,7 @@ export const Picker = React.forwardRef(function Picker<T extends object>(props: 
 
   let overlay;
   if (isMobile) {
-    overlay = (
-      <Tray state={state}>
-        {listbox}
-      </Tray>
-    );
+    overlay = <Tray state={state}>{listbox}</Tray>;
   } else {
     // If quiet, use the default width, otherwise match the width of the button. This can be overridden by the menuWidth prop.
     // Always have a minimum width of the button width. When quiet, there is an extra offset to add.
@@ -162,13 +204,17 @@ export const Picker = React.forwardRef(function Picker<T extends object>(props: 
     let width = isQuiet ? undefined : buttonWidth;
     let style = {
       width: menuWidth ? dimensionValue(menuWidth) : width,
-      minWidth: isQuiet ? `calc(${buttonWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : buttonWidth
+      minWidth: isQuiet
+        ? `calc(${buttonWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))`
+        : buttonWidth
     };
 
     overlay = (
       <Popover
         UNSAFE_style={style}
-        UNSAFE_className={classNames(styles, 'spectrum-Dropdown-popover', {'spectrum-Dropdown-popover--quiet': isQuiet})}
+        UNSAFE_className={classNames(styles, 'spectrum-Dropdown-popover', {
+          'spectrum-Dropdown-popover--quiet': isQuiet
+        })}
         ref={popoverRef}
         placement={`${direction} ${align}`}
         shouldFlip={shouldFlip}
@@ -189,20 +235,12 @@ export const Picker = React.forwardRef(function Picker<T extends object>(props: 
 
   let picker = (
     <div
-      className={
-        classNames(
-          styles,
-          'spectrum-Dropdown',
-          {
-            'is-invalid': isInvalid && !isDisabled,
-            'is-disabled': isDisabled,
-            'spectrum-Dropdown--quiet': isQuiet
-          }
-        )
-      }>
-      <HiddenSelect
-        autoComplete={autoComplete}
-        {...hiddenSelectProps} />
+      className={classNames(styles, 'spectrum-Dropdown', {
+        'is-invalid': isInvalid && !isDisabled,
+        'is-disabled': isDisabled,
+        'spectrum-Dropdown--quiet': isQuiet
+      })}>
+      <HiddenSelect autoComplete={autoComplete} {...hiddenSelectProps} />
       <PressResponder {...mergeProps(hoverProps, triggerProps)}>
         <FieldButton
           ref={triggerRef}
@@ -211,18 +249,21 @@ export const Picker = React.forwardRef(function Picker<T extends object>(props: 
           isDisabled={isDisabled}
           isInvalid={isInvalid}
           autoFocus={autoFocus}
-          UNSAFE_className={classNames(styles, 'spectrum-Dropdown-trigger', {'is-hovered': isHovered})}>
+          UNSAFE_className={classNames(styles, 'spectrum-Dropdown-trigger', {
+            'is-hovered': isHovered
+          })}>
           <SlotProvider
             slots={{
               icon: {UNSAFE_className: classNames(styles, 'spectrum-Icon'), size: 'S'},
-              avatar: {UNSAFE_className: classNames(styles, 'spectrum-Dropdown-avatar'), size: 'avatar-size-100'},
+              avatar: {
+                UNSAFE_className: classNames(styles, 'spectrum-Dropdown-avatar'),
+                size: 'avatar-size-100'
+              },
               text: {
                 ...valueProps,
-                UNSAFE_className: classNames(
-                  styles,
-                  'spectrum-Dropdown-label',
-                  {'is-placeholder': !state.selectedItem}
-                )
+                UNSAFE_className: classNames(styles, 'spectrum-Dropdown-label', {
+                  'is-placeholder': !state.selectedItem
+                })
               },
               description: {
                 isHidden: true
@@ -230,17 +271,18 @@ export const Picker = React.forwardRef(function Picker<T extends object>(props: 
             }}>
             {contents}
           </SlotProvider>
-          {isLoadingInitial &&
+          {isLoadingInitial && (
             <ProgressCircle
               id={progressCircleId}
               isIndeterminate
               size="S"
               aria-label={stringFormatter.format('loading')}
-              UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
-          }
-          {isInvalid && !isLoadingInitial && !isDisabled &&
+              UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')}
+            />
+          )}
+          {isInvalid && !isLoadingInitial && !isDisabled && (
             <AlertMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-invalidIcon')} />
-          }
+          )}
           <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
         </FieldButton>
       </PressResponder>
@@ -248,14 +290,10 @@ export const Picker = React.forwardRef(function Picker<T extends object>(props: 
     </div>
   );
 
-  let wrapperClassName = classNames(
-    styles,
-    'spectrum-Field',
-    {
-      'spectrum-Dropdown-fieldWrapper--quiet': isQuiet,
-      'spectrum-Dropdown-fieldWrapper--positionSide': labelPosition === 'side'
-    }
-  );
+  let wrapperClassName = classNames(styles, 'spectrum-Field', {
+    'spectrum-Dropdown-fieldWrapper--quiet': isQuiet,
+    'spectrum-Dropdown-fieldWrapper--positionSide': labelPosition === 'side'
+  });
 
   return (
     <Field

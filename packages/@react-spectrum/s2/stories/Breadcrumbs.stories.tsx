@@ -44,22 +44,16 @@ type Story = StoryObj<typeof Breadcrumbs>;
 export const Example: Story = {
   render: (args: any) => (
     <Breadcrumbs {...args}>
-      <Breadcrumb href="/">
-        Home
-      </Breadcrumb>
-      <Breadcrumb href="/react-aria">
-        React Aria
-      </Breadcrumb>
-      <Breadcrumb href="/breadcrumbs">
-        Breadcrumbs
-      </Breadcrumb>
+      <Breadcrumb href="/">Home</Breadcrumb>
+      <Breadcrumb href="/react-aria">React Aria</Breadcrumb>
+      <Breadcrumb href="/breadcrumbs">Breadcrumbs</Breadcrumb>
     </Breadcrumbs>
   )
 };
 
 interface Item {
-  id: string,
-  name: string
+  id: string;
+  name: string;
 }
 let items: Item[] = [
   {id: 'home', name: 'Home'},
@@ -69,11 +63,7 @@ let items: Item[] = [
 
 const BreadcrumbsExampleDynamic = (args: BreadcrumbsProps<Item>) => (
   <Breadcrumbs onAction={action('onAction')} items={items} {...args}>
-    {item => (
-      <Breadcrumb>
-        {item.name}
-      </Breadcrumb>
-    )}
+    {item => <Breadcrumb>{item.name}</Breadcrumb>}
   </Breadcrumbs>
 );
 
@@ -95,18 +85,14 @@ export const Many: StoryObj<typeof BreadcrumbsExampleDynamic> = {
   render: (args: BreadcrumbsProps<Item>) => (
     <div style={{width: '400px', resize: 'horizontal', overflow: 'hidden', padding: '4px'}}>
       <Breadcrumbs items={manyItems} {...args}>
-        {item => (
-          <Breadcrumb>
-            {item.name}
-          </Breadcrumb>
-        )}
+        {item => <Breadcrumb>{item.name}</Breadcrumb>}
       </Breadcrumbs>
     </div>
   )
 };
 
 interface ItemWithLink extends Item {
-  href: string
+  href: string;
 }
 let manyItemsWithLinks: ItemWithLink[] = [
   {id: 'Folder 1', name: 'The quick brown fox jumps over', href: '/folder1'},
@@ -120,11 +106,7 @@ let manyItemsWithLinks: ItemWithLink[] = [
 
 const BreadcrumbsExampleDynamicWithLinks = (args: BreadcrumbsProps<ItemWithLink>) => (
   <Breadcrumbs onAction={action('onAction')} items={manyItemsWithLinks} {...args}>
-    {item => (
-      <Breadcrumb href={item.href}>
-        {item.name}
-      </Breadcrumb>
-    )}
+    {item => <Breadcrumb href={item.href}>{item.name}</Breadcrumb>}
   </Breadcrumbs>
 );
 

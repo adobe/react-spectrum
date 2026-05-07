@@ -2,13 +2,13 @@
   "name": "@react-aria/parcel-resolver-optimize-locales",
   "version": "1.3.0",
   "main": "LocalesResolver.js",
-  "engines": {
-    "parcel": "^2.0.0"
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "@parcel/plugin": "^2.0.0"
   },
-  "publishConfig": {
-    "access": "public"
+  "engines": {
+    "parcel": "^2.0.0"
   }
 }

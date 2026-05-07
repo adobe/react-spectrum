@@ -10,13 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes, getActionArgs, StaticColorDecorator, StaticColorProvider} from '../stories/utils';
+import {
+  categorizeArgTypes,
+  getActionArgs,
+  StaticColorDecorator,
+  StaticColorProvider
+} from '../stories/utils';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {ReactElement} from 'react';
 import {shortName} from './utils';
-import {style} from '../style' with { type: 'macro' };
+import {style} from '../style' with {type: 'macro'};
 import {Text} from '../src/Content';
 import {ToggleButton, ToggleButtonProps} from '../src/ToggleButton';
 
@@ -51,21 +56,33 @@ let combinations = generatePowerset(states);
 const Template = (args: ToggleButtonProps): ReactElement => {
   let {children, ...otherArgs} = args;
   return (
-    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '100vw'})}>
+    <div
+      className={style({
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, minmax(0, 250px))',
+        gridAutoFlow: 'row',
+        justifyItems: 'start',
+        gap: 24,
+        width: '100vw'
+      })}>
       {combinations.map(c => {
-        let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
-        let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+        let fullComboName = Object.keys(c)
+          .map(k => `${k}: ${c[k]}`)
+          .join(' ');
+        let key = Object.keys(c)
+          .map(k => shortName(k, c[k]))
+          .join(' ');
         if (!key) {
           key = 'default';
         }
 
-        let button = <ToggleButton key={key} data-testid={fullComboName} {...otherArgs} {...c}>{children ? children : key}</ToggleButton>;
+        let button = (
+          <ToggleButton key={key} data-testid={fullComboName} {...otherArgs} {...c}>
+            {children ? children : key}
+          </ToggleButton>
+        );
         if (c.staticColor != null) {
-          return (
-            <StaticColorProvider staticColor={c.staticColor}>
-              {button}
-            </StaticColorProvider>
-          );
+          return <StaticColorProvider staticColor={c.staticColor}>{button}</StaticColorProvider>;
         }
 
         return button;
@@ -75,29 +92,39 @@ const Template = (args: ToggleButtonProps): ReactElement => {
 };
 
 export const Default: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />
+  render: args => <Template {...args} />
 };
 
 export const WithIcon: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {
-    children: <><NewIcon /><Text>Press me</Text></>
+    children: (
+      <>
+        <NewIcon />
+        <Text>Press me</Text>
+      </>
+    )
   }
 };
 
 export const IconOnly: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {
     children: <NewIcon />
   }
 };
 
 export const Truncate: StoryObj<typeof Template> = {
-  render: (args) => (
+  render: args => (
     <div style={{display: 'flex', gap: 8, width: 160}}>
-      <ToggleButton aria-label="Press me" {...args}><NewIcon /></ToggleButton>
+      <ToggleButton aria-label="Press me" {...args}>
+        <NewIcon />
+      </ToggleButton>
       <ToggleButton {...args}>Press me</ToggleButton>
-      <ToggleButton {...args}><NewIcon /><Text>Press me</Text></ToggleButton>
+      <ToggleButton {...args}>
+        <NewIcon />
+        <Text>Press me</Text>
+      </ToggleButton>
     </div>
   )
 };

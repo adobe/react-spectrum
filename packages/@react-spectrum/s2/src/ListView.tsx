@@ -12,17 +12,45 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {baseColor, colorMix, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
+import {
+  baseColor,
+  colorMix,
+  focusRing,
+  fontRelative,
+  space,
+  style
+} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import {CheckboxContext} from 'react-aria-components/Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {Collection} from 'react-aria/Collection';
-import {CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-components/CollectionBuilder';
-import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, useSlottedContext} from 'react-aria-components/slots';
-import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {
+  CollectionRendererContext,
+  DefaultCollectionRenderer
+} from 'react-aria-components/CollectionBuilder';
+import {
+  ContextValue,
+  DEFAULT_SLOT,
+  Provider,
+  SlotProps,
+  useSlottedContext
+} from 'react-aria-components/slots';
+import {
+  controlFont,
+  getAllowedOverrides,
+  StylesPropWithHeight,
+  UnsafeStyles
+} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
-import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState} from '@react-types/shared';
+import {
+  DOMProps,
+  DOMRef,
+  DOMRefValue,
+  forwardRefType,
+  GlobalDOMAttributes,
+  LoadingState
+} from '@react-types/shared';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   GridList,
@@ -51,59 +79,90 @@ import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 
-export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | 'selectionBehavior' | 'dragAndDropHooks' | 'layout' | 'render' | 'keyboardNavigationBehavior' | 'orientation' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, ListViewStylesProps, SlotProps {
+export interface ListViewProps<T>
+  extends
+    Omit<
+      GridListProps<T>,
+      | 'className'
+      | 'style'
+      | 'children'
+      | 'selectionBehavior'
+      | 'dragAndDropHooks'
+      | 'layout'
+      | 'render'
+      | 'keyboardNavigationBehavior'
+      | 'orientation'
+      | keyof GlobalDOMAttributes
+    >,
+    DOMProps,
+    UnsafeStyles,
+    ListViewStylesProps,
+    SlotProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithHeight,
+  styles?: StylesPropWithHeight;
   /** The current loading state of the ListView. */
-  loadingState?: LoadingState,
+  loadingState?: LoadingState;
   /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
-  onLoadMore?: () => void,
+  onLoadMore?: () => void;
   /** The children of the ListView. */
-  children: ReactNode | ((item: T) => ReactNode),
+  children: ReactNode | ((item: T) => ReactNode);
   /** Provides the ActionBar to display when items are selected in the ListView. */
-  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement,
+  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement;
   /** Hides the default link out icons on items that open links in a new tab. */
-  hideLinkOutIcon?: boolean
+  hideLinkOutIcon?: boolean;
 }
 
 interface ListViewStylesProps {
   /** Whether the ListView should be displayed with a quiet style. */
-  isQuiet?: boolean,
+  isQuiet?: boolean;
   /**
    * How selection should be displayed.
    * @default 'checkbox'
    */
-  selectionStyle?: 'highlight' | 'checkbox',
+  selectionStyle?: 'highlight' | 'checkbox';
   /**
    * Sets the overflow behavior for item contents.
    * @default 'truncate'
    */
-  overflowMode?: 'wrap' | 'truncate'
+  overflowMode?: 'wrap' | 'truncate';
 }
 
-export interface ListViewItemProps extends Omit<GridListItemProps, 'children' | 'className' | 'style' | 'render' | 'onClick' | keyof GlobalDOMAttributes> {
+export interface ListViewItemProps extends Omit<
+  GridListItemProps,
+  'children' | 'className' | 'style' | 'render' | 'onClick' | keyof GlobalDOMAttributes
+> {
   /**
    * The contents of the item.
    */
-  children: ReactNode,
+  children: ReactNode;
   /** Whether the item has child items (renders a chevron indicator). */
-  hasChildItems?: boolean
+  hasChildItems?: boolean;
 }
 
-export const ListViewContext = createContext<ContextValue<Partial<ListViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
+export const ListViewContext =
+  createContext<ContextValue<Partial<ListViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
-let InternalListViewContext = createContext<{isQuiet?: boolean, selectionStyle?: 'highlight' | 'checkbox', overflowMode?: 'wrap' | 'truncate', scale?: 'medium' | 'large', hideLinkOutIcon?: boolean}>({});
+let InternalListViewContext = createContext<{
+  isQuiet?: boolean;
+  selectionStyle?: 'highlight' | 'checkbox';
+  overflowMode?: 'wrap' | 'truncate';
+  scale?: 'medium' | 'large';
+  hideLinkOutIcon?: boolean;
+}>({});
 
-const listViewWrapper = style({
-  minHeight: 0,
-  minWidth: 200,
-  display: 'flex',
-  isolation: 'isolate',
-  disableTapHighlight: true,
-  position: 'relative',
-  // Clip ActionBar animation.
-  overflow: 'clip'
-}, getAllowedOverrides({height: true}));
+const listViewWrapper = style(
+  {
+    minHeight: 0,
+    minWidth: 200,
+    display: 'flex',
+    isolation: 'isolate',
+    disableTapHighlight: true,
+    position: 'relative',
+    // Clip ActionBar animation.
+    overflow: 'clip'
+  },
+  getAllowedOverrides({height: true})
+);
 
 // When any row has a trailing icon, reserve space so actions align.
 const hasTrailingIconRows = ':has([data-has-trailing-icon]) [role="row"]';
@@ -149,12 +208,21 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
 /**
  * A ListView displays a list of interactive items, and allows a user to navigate, select, or perform an action.
  */
-export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListView<T extends object>(
-  props: ListViewProps<T>,
-  ref: DOMRef<HTMLDivElement>
-) {
+export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListView<
+  T extends object
+>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ListViewContext);
-  let {children, isQuiet, selectionStyle = 'checkbox', overflowMode = 'truncate', loadingState, onLoadMore, renderEmptyState: userRenderEmptyState, hideLinkOutIcon = false, ...otherProps} = props;
+  let {
+    children,
+    isQuiet,
+    selectionStyle = 'checkbox',
+    overflowMode = 'truncate',
+    loadingState,
+    onLoadMore,
+    renderEmptyState: userRenderEmptyState,
+    hideLinkOutIcon = false,
+    ...otherProps
+  } = props;
   let scale = useScale();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let rowHeight = scale === 'large' ? 50 : 40;
@@ -165,7 +233,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let renderEmptyState: ListViewProps<T>['renderEmptyState'] | undefined;
   if (userRenderEmptyState != null && !isLoading) {
-    renderEmptyState = (renderProps) => (
+    renderEmptyState = renderProps => (
       <div className={emptyStateWrapper}>
         <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
           {userRenderEmptyState!(renderProps)}
@@ -176,21 +244,23 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
     renderEmptyState = () => (
       <div className={centeredWrapper}>
         <div className={loadingSpinnerWrapper}>
-          <ProgressCircle
-            isIndeterminate
-            aria-label={stringFormatter.format('table.loading')} />
+          <ProgressCircle isIndeterminate aria-label={stringFormatter.format('table.loading')} />
         </div>
       </div>
     );
   }
 
   let loadMoreSpinner = onLoadMore ? (
-    <GridListLoadMoreItem isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full', paddingY: 8})}>
+    <GridListLoadMoreItem
+      isLoading={loadingState === 'loadingMore'}
+      onLoadMore={onLoadMore}
+      className={style({height: 'full', width: 'full', paddingY: 8})}>
       <div className={centeredWrapper}>
         <div className={loadingSpinnerWrapper}>
           <ProgressCircle
             isIndeterminate
-            aria-label={stringFormatter.format('table.loadingMore')} />
+            aria-label={stringFormatter.format('table.loadingMore')}
+          />
         </div>
       </div>
     </GridListLoadMoreItem>
@@ -218,7 +288,10 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
     );
   }
 
-  let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
+  let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({
+    ...props,
+    scrollRef
+  });
 
   return (
     <div
@@ -231,7 +304,8 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
           estimatedRowHeight: rowHeight,
           loaderHeight: 60
         }}>
-        <InternalListViewContext.Provider value={{isQuiet, selectionStyle, overflowMode, scale, hideLinkOutIcon}}>
+        <InternalListViewContext.Provider
+          value={{isQuiet, selectionStyle, overflowMode, scale, hideLinkOutIcon}}>
           <GridList
             ref={scrollRef as any}
             {...gridListProps}
@@ -242,10 +316,12 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
               paddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0,
               scrollPaddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0
             }}
-            className={(renderProps) => listView({
-              ...renderProps,
-              isQuiet
-            })}
+            className={renderProps =>
+              listView({
+                ...renderProps,
+                isQuiet
+              })
+            }
             selectedKeys={selectedKeys}
             defaultSelectedKeys={undefined}
             onSelectionChange={onSelectionChange}>
@@ -261,21 +337,23 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
 const selectedBackground = colorMix('gray-25', 'gray-900', 7);
 const selectedActiveBackground = colorMix('gray-25', 'gray-900', 10);
 
-const listitem = style<GridListItemRenderProps & {
-  isFocused: boolean,
-  isLink?: boolean,
-  isQuiet?: boolean,
-  isFirstItem?: boolean,
-  isLastItem?: boolean,
-  isSelected?: boolean,
-  isDisabled?: boolean,
-  isNextSelected?: boolean,
-  isPrevSelected?: boolean,
-  isPrevNotSelected?: boolean,
-  isNextNotSelected?: boolean,
-  selectionStyle?: 'highlight' | 'checkbox',
-  scale?: 'medium' | 'large'
-}>({
+const listitem = style<
+  GridListItemRenderProps & {
+    isFocused: boolean;
+    isLink?: boolean;
+    isQuiet?: boolean;
+    isFirstItem?: boolean;
+    isLastItem?: boolean;
+    isSelected?: boolean;
+    isDisabled?: boolean;
+    isNextSelected?: boolean;
+    isPrevSelected?: boolean;
+    isPrevNotSelected?: boolean;
+    isNextNotSelected?: boolean;
+    selectionStyle?: 'highlight' | 'checkbox';
+    scale?: 'medium' | 'large';
+  }
+>({
   outlineStyle: 'none',
   boxSizing: 'border-box',
   columnGap: 0,
@@ -304,7 +382,16 @@ const listitem = style<GridListItemRenderProps & {
     '. checkmark icon label       actions actionmenu trailing-icon .',
     '. .         .    description actions actionmenu trailing-icon .'
   ],
-  gridTemplateColumns: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'var(--trailing-icon-width)', edgeToText(40)],
+  gridTemplateColumns: [
+    edgeToText(40),
+    'auto',
+    'auto',
+    'minmax(0, 1fr)',
+    'auto',
+    'auto',
+    'var(--trailing-icon-width)',
+    edgeToText(40)
+  ],
   gridTemplateRows: '1fr auto',
   rowGap: {
     ':has([slot=description])': space(1)
@@ -360,16 +447,18 @@ const listitem = style<GridListItemRenderProps & {
 
 const insetBorderRadius = 'calc(var(--radius) - 1px)';
 
-const listRowBackground = style<GridListItemRenderProps & {
-  isFirstItem?: boolean,
-  isLastItem?: boolean,
-  isQuiet?: boolean,
-  isPrevSelected?: boolean,
-  isNextSelected?: boolean,
-  isPrevNotSelected?: boolean,
-  isNextNotSelected?: boolean,
-  selectionStyle?: 'highlight' | 'checkbox'
-}>({
+const listRowBackground = style<
+  GridListItemRenderProps & {
+    isFirstItem?: boolean;
+    isLastItem?: boolean;
+    isQuiet?: boolean;
+    isPrevSelected?: boolean;
+    isNextSelected?: boolean;
+    isPrevNotSelected?: boolean;
+    isNextNotSelected?: boolean;
+    selectionStyle?: 'highlight' | 'checkbox';
+  }
+>({
   position: 'absolute',
   zIndex: -1,
   top: {
@@ -523,16 +612,18 @@ const listRowBackground = style<GridListItemRenderProps & {
   }
 });
 
-let listRowFocusRing = style<GridListItemRenderProps & {
-  selectionStyle?: 'highlight' | 'checkbox',
-  isFirstItem?: boolean,
-  isPrevSelected?: boolean,
-  isPrevNotSelected?: boolean,
-  isNextSelected?: boolean,
-  isNextNotSelected?: boolean,
-  isLastItem?: boolean,
-  isQuiet?: boolean
-}>({
+let listRowFocusRing = style<
+  GridListItemRenderProps & {
+    selectionStyle?: 'highlight' | 'checkbox';
+    isFirstItem?: boolean;
+    isPrevSelected?: boolean;
+    isPrevNotSelected?: boolean;
+    isNextSelected?: boolean;
+    isNextNotSelected?: boolean;
+    isLastItem?: boolean;
+    isQuiet?: boolean;
+  }
+>({
   ...focusRing(),
   outlineOffset: {
     default: -2,
@@ -738,8 +829,15 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
   let {hasChildItems, ...otherProps} = props;
   let isLink = props.href != null;
   let isLinkOut = isLink && props.target === '_blank';
-  let {isQuiet, selectionStyle, overflowMode, scale, hideLinkOutIcon = false} = useContext(InternalListViewContext);
-  let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
+  let {
+    isQuiet,
+    selectionStyle,
+    overflowMode,
+    scale,
+    hideLinkOutIcon = false
+  } = useContext(InternalListViewContext);
+  let textValue =
+    props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
   let hasTrailingIcon = hasChildItems || (isLinkOut && !hideLinkOutIcon);
 
@@ -749,64 +847,80 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
       textValue={textValue}
       ref={ref}
       {...(hasTrailingIcon ? {'data-has-trailing-icon': ''} : {})}
-      className={renderProps => listitem({
-        ...renderProps,
-        isLink,
-        isQuiet,
-        scale,
-        selectionStyle,
-        isPrevNotSelected: !isPrevSelected(renderProps.id, renderProps.state),
-        isNextSelected: isNextSelected(renderProps.id, renderProps.state),
-        isNextNotSelected: !isNextSelected(renderProps.id, renderProps.state),
-        isFirstItem: isFirstItem(renderProps.id, renderProps.state),
-        isLastItem: isLastItem(renderProps.id, renderProps.state)
-      })}>
-      {(renderProps) => {
+      className={renderProps =>
+        listitem({
+          ...renderProps,
+          isLink,
+          isQuiet,
+          scale,
+          selectionStyle,
+          isPrevNotSelected: !isPrevSelected(renderProps.id, renderProps.state),
+          isNextSelected: isNextSelected(renderProps.id, renderProps.state),
+          isNextNotSelected: !isNextSelected(renderProps.id, renderProps.state),
+          isFirstItem: isFirstItem(renderProps.id, renderProps.state),
+          isLastItem: isLastItem(renderProps.id, renderProps.state)
+        })
+      }>
+      {renderProps => {
         let {children} = props;
         let {selectionMode, selectionBehavior, isDisabled, id, state} = renderProps;
         return (
           <Provider
             values={[
-              [TextContext, {
-                slots: {
-                  [DEFAULT_SLOT]: {styles: label({...renderProps, overflowMode})},
-                  label: {styles: label({...renderProps, overflowMode})},
-                  description: {styles: description({...renderProps, overflowMode})}
+              [
+                TextContext,
+                {
+                  slots: {
+                    [DEFAULT_SLOT]: {styles: label({...renderProps, overflowMode})},
+                    label: {styles: label({...renderProps, overflowMode})},
+                    description: {styles: description({...renderProps, overflowMode})}
+                  }
                 }
-              }],
-              [IconContext, {
-                slots: {
-                  icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
+              ],
+              [
+                IconContext,
+                {
+                  slots: {
+                    icon: {
+                      render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
+                      styles: icon
+                    }
+                  }
                 }
-              }],
+              ],
               [ImageContext, {styles: image}],
-              [ActionButtonGroupContext, {
-                styles: actionButtonGroup,
-                size: 'S',
-                isQuiet: true
-              }],
-              [ActionMenuContext, {
-                styles: listActionMenu,
-                isQuiet: true,
-                size: 'S',
-                isDisabled
-              }]
+              [
+                ActionButtonGroupContext,
+                {
+                  styles: actionButtonGroup,
+                  size: 'S',
+                  isQuiet: true
+                }
+              ],
+              [
+                ActionMenuContext,
+                {
+                  styles: listActionMenu,
+                  isQuiet: true,
+                  size: 'S',
+                  isDisabled
+                }
+              ]
             ]}>
             <div
-              className={
-                listRowBackground({
-                  ...renderProps,
-                  selectionStyle,
-                  isQuiet,
-                  isPrevSelected: isPrevSelected(id, state),
-                  isNextSelected: isNextSelected(id, state),
-                  isPrevNotSelected: !isPrevSelected(id, state),
-                  isNextNotSelected: !isNextSelected(id, state),
-                  isFirstItem: isFirstItem(id, state),
-                  isLastItem: isLastItem(id, state)
-                })
-              } />
-            {renderProps.isFocusVisible &&
+              className={listRowBackground({
+                ...renderProps,
+                selectionStyle,
+                isQuiet,
+                isPrevSelected: isPrevSelected(id, state),
+                isNextSelected: isNextSelected(id, state),
+                isPrevNotSelected: !isPrevSelected(id, state),
+                isNextNotSelected: !isNextSelected(id, state),
+                isFirstItem: isFirstItem(id, state),
+                isLastItem: isLastItem(id, state)
+              })}
+            />
+            {renderProps.isFocusVisible && (
               <div
                 className={listRowFocusRing({
                   ...renderProps,
@@ -818,8 +932,9 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                   isNextNotSelected: !isNextSelected(id, state),
                   isFirstItem: isFirstItem(id, state),
                   isLastItem: isLastItem(id, state)
-                })} />
-            }
+                })}
+              />
+            )}
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               <ListSelectionCheckbox isDisabled={isDisabled} />
             )}
@@ -838,7 +953,8 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                       type: 'fill',
                       value: 'currentColor'
                     }
-                  })({direction})} />
+                  })({direction})}
+                />
               </div>
             )}
             {hasChildItems && !isLinkOut && (
@@ -855,7 +971,8 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                       type: 'fill',
                       value: 'currentColor'
                     }
-                  })({direction})} />
+                  })({direction})}
+                />
               </div>
             )}
           </Provider>

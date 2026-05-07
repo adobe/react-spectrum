@@ -5,7 +5,7 @@ import json5 from 'json5';
 import path from 'path';
 import React, {ReactNode} from 'react';
 import {renderHTMLfromMarkdown, TComponent, TInterface, TProperty, Type} from './types';
-import {size, style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const exampleStyle = style({
   backgroundColor: 'layer-1',
@@ -20,21 +20,11 @@ const exampleStyle = style({
   borderRadius: 'xl',
   display: 'grid',
   gridTemplateAreas: {
-    default: [
-      'example',
-      'controls',
-      'files'
-    ],
+    default: ['example', 'controls', 'files'],
     lg: {
       layout: {
-        narrow: [
-          'example controls',
-          'files controls'
-        ],
-        wide: [
-          'example controls',
-          'files files'
-        ]
+        narrow: ['example controls', 'files controls'],
+        wide: ['example controls', 'files files']
       }
     }
   },
@@ -84,45 +74,65 @@ const controlsStyle = style({
 
 export interface VisualExampleProps {
   /** The name of the component. */
-  name?: string,
+  name?: string;
   /** The component to render. */
-  component: any,
+  component: any;
   /** The TS docs for this component. */
-  docs: TComponent | TInterface,
-  links: any,
+  docs: TComponent | TInterface;
+  links: any;
   /** The props to display as controls. */
-  props: string[],
+  props: string[];
   /** Component children slots that should have controls. */
-  slots?: {[slot: string]: boolean},
+  slots?: {[slot: string]: boolean};
   /** Initial values for the prop controls. */
-  initialProps?: {[prop: string]: any},
-  controlOptions?: {[prop: string]: any},
-  importSource?: string,
+  initialProps?: {[prop: string]: any};
+  controlOptions?: {[prop: string]: any};
+  importSource?: string;
   /** When provided, the source code for the listed filenames will be included as tabs. */
-  files?: string[],
-  downloadFiles?: DownloadFiles,
-  type?: 'vanilla' | 'tailwind' | 's2',
-  code?: ReactNode,
-  wide?: boolean,
-  align?: 'center' | 'start' | 'end',
-  acceptOrientation?: boolean,
-  propsObject?: string,
-  showCoachMark?: boolean,
-  hideShadcn?: boolean
+  files?: string[];
+  downloadFiles?: DownloadFiles;
+  type?: 'vanilla' | 'tailwind' | 's2';
+  code?: ReactNode;
+  wide?: boolean;
+  align?: 'center' | 'start' | 'end';
+  acceptOrientation?: boolean;
+  propsObject?: string;
+  showCoachMark?: boolean;
+  hideShadcn?: boolean;
 }
 
 export interface PropControl extends Omit<TProperty, 'description'> {
-  description: ReactNode,
-  default: any,
-  valueType: ReactNode,
-  slots?: {[slot: string]: boolean},
-  options?: any
+  description: ReactNode;
+  default: any;
+  valueType: ReactNode;
+  slots?: {[slot: string]: boolean};
+  options?: any;
 }
 
 /**
  * Displays a component example with controls for changing the props.
  */
-export function VisualExample({name, component, docs, links, importSource, props, initialProps, controlOptions, files, downloadFiles, code, wide, slots, align, acceptOrientation, type, propsObject, showCoachMark, hideShadcn}: VisualExampleProps) {
+export function VisualExample({
+  name,
+  component,
+  docs,
+  links,
+  importSource,
+  props,
+  initialProps,
+  controlOptions,
+  files,
+  downloadFiles,
+  code,
+  wide,
+  slots,
+  align,
+  acceptOrientation,
+  type,
+  propsObject,
+  showCoachMark,
+  hideShadcn
+}: VisualExampleProps) {
   let componentProps = docs.type === 'interface' ? docs : docs.props;
   if (componentProps?.type !== 'interface') {
     return null;
@@ -130,43 +140,45 @@ export function VisualExample({name, component, docs, links, importSource, props
 
   // Filter down the list of controls from the TS docs to only the ones we want to display.
   // This reduces the amount of data we need to send to the client.
-  let controls = Object.fromEntries(props.map(name => {
-    let prop = componentProps.properties[name];
-    if (prop.type === 'method') {
-      throw new Error('Unexpected method in props.');
-    }
-
-    // Resolve the value type if it is a type alias.
-    if (prop.value?.type === 'link' && links?.[prop.value.id]) {
-      let value = links[prop.value.id];
-      if (value?.type === 'alias') {
-        value = value.value;
+  let controls = Object.fromEntries(
+    props.map(name => {
+      let prop = componentProps.properties[name];
+      if (prop.type === 'method') {
+        throw new Error('Unexpected method in props.');
       }
-      prop = {...prop, value};
-    }
 
-    // Try to parse the default value from the JSDocs as JSON.
-    let defaultValue = prop.default ?? undefined;
-    if (typeof defaultValue === 'string') {
-      defaultValue = defaultValue.replace(/^['"](.+)['"].*$/, '"$1"');
-      try {
-        defaultValue = json5.parse(defaultValue);
-      } catch {
-        // ignore
+      // Resolve the value type if it is a type alias.
+      if (prop.value?.type === 'link' && links?.[prop.value.id]) {
+        let value = links[prop.value.id];
+        if (value?.type === 'alias') {
+          value = value.value;
+        }
+        prop = {...prop, value};
       }
-    }
 
-    let renderedProp: PropControl = {
-      ...prop,
-      description: renderHTMLfromMarkdown(prop.description, {forceInline: true}),
-      default: defaultValue,
-      valueType: <Type type={prop.value} />,
-      slots: name === 'children' ? slots : undefined,
-      options: controlOptions?.[name]
-    };
+      // Try to parse the default value from the JSDocs as JSON.
+      let defaultValue = prop.default ?? undefined;
+      if (typeof defaultValue === 'string') {
+        defaultValue = defaultValue.replace(/^['"](.+)['"].*$/, '"$1"');
+        try {
+          defaultValue = json5.parse(defaultValue);
+        } catch {
+          // ignore
+        }
+      }
 
-    return [name, renderedProp];
-  }));
+      let renderedProp: PropControl = {
+        ...prop,
+        description: renderHTMLfromMarkdown(prop.description, {forceInline: true}),
+        default: defaultValue,
+        valueType: <Type type={prop.value} />,
+        slots: name === 'children' ? slots : undefined,
+        options: controlOptions?.[name]
+      };
+
+      return [name, renderedProp];
+    })
+  );
 
   if (!importSource && files) {
     importSource = './' + path.basename(files[0], path.extname(files[0]));
@@ -180,25 +192,44 @@ export function VisualExample({name, component, docs, links, importSource, props
     }
   }
 
-  let output = (
-    <CodeOutput
-      code={code}
-      type={type}
-      showCoachMark={showCoachMark} />
-  );
+  let output = <CodeOutput code={code} type={type} showCoachMark={showCoachMark} />;
 
   // Render the corresponding client component to make the controls interactive.
   return (
-    <VisualExampleClient component={component} name={name ?? docs.name} importSource={importSource} controls={controls} initialProps={initialProps} propsObject={propsObject}>
+    <VisualExampleClient
+      component={component}
+      name={name ?? docs.name}
+      importSource={importSource}
+      controls={controls}
+      initialProps={initialProps}
+      propsObject={propsObject}>
       <FileProvider value={downloadFiles}>
-        <ShadcnProvider value={!type || type === 's2' || docs.type !== 'component' || hideShadcn ? null : {type, component: docs.name}}>
-          <div role="group" aria-label="Example" className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
+        <ShadcnProvider
+          value={
+            !type || type === 's2' || docs.type !== 'component' || hideShadcn
+              ? null
+              : {type, component: docs.name}
+          }>
+          <div
+            role="group"
+            aria-label="Example"
+            className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
             <Output align={align} acceptOrientation={acceptOrientation} />
-            {props.length > 0 && <div role="group" aria-label="Controls" className={controlsStyle}>
-              {Object.keys(controls).map(control => <Control key={control} name={control} />)}
-            </div>}
+            {props.length > 0 && (
+              <div role="group" aria-label="Controls" className={controlsStyle}>
+                {Object.keys(controls).map(control => (
+                  <Control key={control} name={control} />
+                ))}
+              </div>
+            )}
             <div style={{gridArea: 'files', overflow: 'hidden'}}>
-              {files ? <Files files={files} downloadFiles={downloadFiles.files} type={type}>{output}</Files> : output}
+              {files ? (
+                <Files files={files} downloadFiles={downloadFiles.files} type={type}>
+                  {output}
+                </Files>
+              ) : (
+                output
+              )}
             </div>
           </div>
         </ShadcnProvider>

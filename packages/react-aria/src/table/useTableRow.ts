@@ -32,14 +32,14 @@ const EXPANSION_KEYS = {
     ltr: 'ArrowRight',
     rtl: 'ArrowLeft'
   },
-  'collapse': {
+  collapse: {
     ltr: 'ArrowLeft',
     rtl: 'ArrowRight'
   }
 };
 
 export interface TableRowAria extends GridRowAria {
-  expandButtonProps: AriaButtonProps
+  expandButtonProps: AriaButtonProps;
 }
 
 /**
@@ -47,9 +47,17 @@ export interface TableRowAria extends GridRowAria {
  * @param props - Props for the row.
  * @param state - State of the table, as returned by `useTableState`.
  */
-export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | TreeGridState<T>, ref: RefObject<FocusableElement | null>): TableRowAria {
+export function useTableRow<T>(
+  props: GridRowProps<T>,
+  state: TableState<T> | TreeGridState<T>,
+  ref: RefObject<FocusableElement | null>
+): TableRowAria {
   let {node, isVirtualized} = props;
-  let {rowProps, ...states} = useGridRow<T, ITableCollection<T>, TableState<T>>(props, state as TableState<T>, ref);
+  let {rowProps, ...states} = useGridRow<T, ITableCollection<T>, TableState<T>>(
+    props,
+    state as TableState<T>,
+    ref
+  );
   let {direction} = useLocale();
 
   if (isVirtualized && state.treeColumn == null) {
@@ -58,10 +66,13 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
     delete rowProps['aria-rowindex'];
   }
 
-  let isExpanded = state.treeColumn != null && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key));
+  let isExpanded =
+    state.treeColumn != null && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key));
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
   let labelProps = useLabels({
-    'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
+    'aria-label': isExpanded
+      ? stringFormatter.format('collapse')
+      : stringFormatter.format('expand'),
     'aria-labelledby': getRowLabelledBy(state as TableState<T>, node.key)
   });
 
@@ -71,7 +82,10 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
     let treeNode = state.collection.getItem(node.key);
     if (treeNode != null) {
       let lastChild = getLastChild(state.collection, node);
-      let hasChildRows = treeNode.props?.hasChildRows || treeNode.props?.UNSTABLE_childItems || lastChild?.type !== 'cell';
+      let hasChildRows =
+        treeNode.props?.hasChildRows ||
+        treeNode.props?.UNSTABLE_childItems ||
+        lastChild?.type !== 'cell';
       let parent = state.collection.getItem(node.parentKey!)!;
       let isParentBody = parent.type === 'tablebody' || parent.type === 'body';
       let lastSibling = getLastChild(state.collection, parent)!;
@@ -80,16 +94,29 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
       }
 
       treeGridRowProps = {
-        onKeyDown: (e) => {
-          if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === treeNode.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(treeNode.key)) {
+        onKeyDown: e => {
+          if (
+            e.key === EXPANSION_KEYS['expand'][direction] &&
+            state.selectionManager.focusedKey === treeNode.key &&
+            hasChildRows &&
+            state.expandedKeys !== 'all' &&
+            !state.expandedKeys.has(treeNode.key)
+          ) {
             state.toggleKey(treeNode.key);
             e.stopPropagation();
-          } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === treeNode.key) {
+          } else if (
+            e.key === EXPANSION_KEYS['collapse'][direction] &&
+            state.selectionManager.focusedKey === treeNode.key
+          ) {
             if (state.expandedKeys !== 'all') {
               if (hasChildRows && state.expandedKeys.has(treeNode.key)) {
                 state.toggleKey(treeNode.key);
                 e.stopPropagation();
-              } else if (!state.expandedKeys.has(treeNode.key) && treeNode.parentKey != null && treeNode.level > 0) {
+              } else if (
+                !state.expandedKeys.has(treeNode.key) &&
+                treeNode.parentKey != null &&
+                treeNode.level > 0
+              ) {
                 // Item is a leaf or already collapsed, move focus to parent
                 state.selectionManager.setFocusedKey(treeNode.parentKey);
                 e.stopPropagation();
@@ -100,10 +127,12 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
             }
           }
         },
-        'aria-expanded': hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
+        'aria-expanded': hasChildRows
+          ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key)
+          : undefined,
         'aria-level': treeNode.level + 1,
         'aria-posinset': treeNode.index - (isParentBody ? 0 : state.collection.columnCount) + 1,
-        'aria-setsize': lastSibling.index - (isParentBody ? 0  : state.collection.columnCount) + 1
+        'aria-setsize': lastSibling.index - (isParentBody ? 0 : state.collection.columnCount) + 1
       };
 
       expandButtonProps = {

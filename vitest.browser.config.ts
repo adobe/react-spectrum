@@ -65,11 +65,11 @@ function illustrationResolverPlugin(): Plugin {
       if (source.startsWith('@react-spectrum/s2/illustrations/')) {
         const illustrationPath = source.replace('@react-spectrum/s2/illustrations/', '');
         const tsxPath = path.resolve(s2Dir, 'spectrum-illustrations', illustrationPath + '.tsx');
-        
+
         if (fs.existsSync(tsxPath)) {
           return tsxPath;
         }
-        
+
         return null;
       }
       return null;
@@ -79,7 +79,7 @@ function illustrationResolverPlugin(): Plugin {
 
 /**
  * Handle S2 illustrations
- * 
+ *
  * Resolves the SVG and wraps it with createIllustration from Icon.tsx.
  */
 function illustrationPlugin(): Plugin {
@@ -114,7 +114,7 @@ function illustrationPlugin(): Plugin {
 
 /**
  * Handle S2 workflow icons
- * 
+ *
  * Resolves the SVG and wraps it with createIcon from Icon.tsx.
  */
 function iconWrapperPlugin(): Plugin {

@@ -10,11 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, Time, toCalendarDateTime, today, ZonedDateTime} from '@internationalized/date';
+import {
+  CalendarDate,
+  CalendarDateTime,
+  getLocalTimeZone,
+  Time,
+  toCalendarDateTime,
+  today,
+  ZonedDateTime
+} from '@internationalized/date';
 import {ContextValue} from 'react-aria-components/slots';
-import {controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {
+  controlFont,
+  controlSize,
+  field,
+  fieldInput,
+  getAllowedOverrides,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, isValidElement, ReactElement, ReactNode} from 'react';
-import {DOMProps, DOMRef, DOMRefValue, RangeValue, SpectrumLabelableProps} from '@react-types/shared';
+import {
+  DOMProps,
+  DOMRef,
+  DOMRefValue,
+  RangeValue,
+  SpectrumLabelableProps
+} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext, useFormProps} from './Form';
@@ -29,9 +50,9 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 type NumberValue = number | RangeValue<number>;
 interface NumberProps<T extends NumberValue> {
   /** The value to display. */
-  value: T,
+  value: T;
   /** Formatting options for the value. */
-  formatOptions?: Intl.NumberFormatOptions
+  formatOptions?: Intl.NumberFormatOptions;
 }
 
 export type DateTime = Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time;
@@ -39,30 +60,30 @@ type RangeDateTime = RangeValue<DateTime>;
 type DateTimeValue = DateTime | RangeDateTime;
 interface DateProps<T extends DateTimeValue> {
   /** The value to display. */
-  value: T,
+  value: T;
   /** Formatting options for the value. */
-  formatOptions?: Intl.DateTimeFormatOptions
+  formatOptions?: Intl.DateTimeFormatOptions;
 }
 
 interface StringProps<T extends string> {
   /** The value to display. */
-  value: T,
+  value: T;
   /** Formatting options for the value. */
-  formatOptions?: never
+  formatOptions?: never;
 }
 
 interface StringListProps<T extends string[]> {
   /** The value to display. */
-  value: T,
+  value: T;
   /** Formatting options for the value. */
-  formatOptions?: Intl.ListFormatOptions
+  formatOptions?: Intl.ListFormatOptions;
 }
 
 interface ReactElementProps<T extends ReactElement> {
   /** The value to display. */
-  value: T,
+  value: T;
   /** Formatting options for the value. */
-  formatOptions?: never
+  formatOptions?: never;
 }
 
 export interface LabeledValueStyleProps {
@@ -70,28 +91,50 @@ export interface LabeledValueStyleProps {
    * The size of the component.
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL';
 }
-export interface LabeledValueBaseProps extends DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'> {
+export interface LabeledValueBaseProps
+  extends DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'> {
   /** The content to display as the label. */
-  label: ReactNode
+  label: ReactNode;
 }
-type LabeledValueTypeProps<T> =
-  T extends NumberValue ? NumberProps<T> :
-  T extends DateTimeValue ? DateProps<T> :
-  T extends string[] ? StringListProps<T> :
-  T extends string ? StringProps<T> :
-  T extends ReactElement ? ReactElementProps<T> :
-  never;
+type LabeledValueTypeProps<T> = T extends NumberValue
+  ? NumberProps<T>
+  : T extends DateTimeValue
+    ? DateProps<T>
+    : T extends string[]
+      ? StringListProps<T>
+      : T extends string
+        ? StringProps<T>
+        : T extends ReactElement
+          ? ReactElementProps<T>
+          : never;
 
-type LabeledValueTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateTime> | ReactElement;
-export type LabeledValueProps<T> = LabeledValueTypeProps<T> & LabeledValueBaseProps & LabeledValueStyleProps;
+type LabeledValueTypes =
+  | string[]
+  | string
+  | Date
+  | CalendarDate
+  | CalendarDateTime
+  | ZonedDateTime
+  | Time
+  | number
+  | RangeValue<number>
+  | RangeValue<DateTime>
+  | ReactElement;
+export type LabeledValueProps<T> = LabeledValueTypeProps<T> &
+  LabeledValueBaseProps &
+  LabeledValueStyleProps;
 
-export const LabeledValueContext = createContext<ContextValue<Partial<LabeledValueProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
+export const LabeledValueContext =
+  createContext<ContextValue<Partial<LabeledValueProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
-const fieldStyles = style({
-  ...field()
-}, getAllowedOverrides());
+const fieldStyles = style(
+  {
+    ...field()
+  },
+  getAllowedOverrides()
+);
 
 const valueStyles = style({
   ...fieldInput(),
@@ -107,7 +150,9 @@ const valueStyles = style({
  * A LabeledValue displays a non-editable value with a label. It formats numbers,
  * dates, times, and lists according to the user's locale.
  */
-export const LabeledValue = /*#__PURE__*/ forwardRef(function LabeledValue<T extends LabeledValueTypes>(props: LabeledValueProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const LabeledValue = /*#__PURE__*/ forwardRef(function LabeledValue<
+  T extends LabeledValueTypes
+>(props: LabeledValueProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props as any, ref, LabeledValueContext) as any;
   props = useFormProps(props);
   let {
@@ -129,8 +174,7 @@ export const LabeledValue = /*#__PURE__*/ forwardRef(function LabeledValue<T ext
   useEffect(() => {
     if (
       domRef?.current &&
-      domRef.current.querySelectorAll('input, [contenteditable], textarea')
-        .length > 0
+      domRef.current.querySelectorAll('input, [contenteditable], textarea').length > 0
     ) {
       throw new Error('LabeledValue cannot contain an editable value.');
     }
@@ -139,15 +183,45 @@ export const LabeledValue = /*#__PURE__*/ forwardRef(function LabeledValue<T ext
   let children: ReactNode;
 
   if (Array.isArray(value)) {
-    children = <FormattedStringList value={value as string[]} formatOptions={formatOptions as Intl.ListFormatOptions} />;
+    children = (
+      <FormattedStringList
+        value={value as string[]}
+        formatOptions={formatOptions as Intl.ListFormatOptions}
+      />
+    );
   } else if (typeof value === 'number') {
-    children = <FormattedNumber value={value} formatOptions={formatOptions as Intl.NumberFormatOptions} />;
-  } else if (typeof value === 'object' && value !== null && 'start' in value && typeof (value as RangeValue<number>).start === 'number') {
-    children = <FormattedNumber value={value as RangeValue<number>} formatOptions={formatOptions as Intl.NumberFormatOptions} />;
+    children = (
+      <FormattedNumber value={value} formatOptions={formatOptions as Intl.NumberFormatOptions} />
+    );
+  } else if (
+    typeof value === 'object' &&
+    value !== null &&
+    'start' in value &&
+    typeof (value as RangeValue<number>).start === 'number'
+  ) {
+    children = (
+      <FormattedNumber
+        value={value as RangeValue<number>}
+        formatOptions={formatOptions as Intl.NumberFormatOptions}
+      />
+    );
   } else if (typeof value === 'object' && value !== null && 'start' in value) {
-    children = <FormattedDate value={value as RangeDateTime} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />;
-  } else if (value instanceof Date || (typeof value === 'object' && value !== null && ('calendar' in value || 'hour' in value))) {
-    children = <FormattedDate value={value as DateTime} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />;
+    children = (
+      <FormattedDate
+        value={value as RangeDateTime}
+        formatOptions={formatOptions as Intl.DateTimeFormatOptions}
+      />
+    );
+  } else if (
+    value instanceof Date ||
+    (typeof value === 'object' && value !== null && ('calendar' in value || 'hour' in value))
+  ) {
+    children = (
+      <FormattedDate
+        value={value as DateTime}
+        formatOptions={formatOptions as Intl.DateTimeFormatOptions}
+      />
+    );
   } else if (typeof value === 'string') {
     children = value;
   } else if (isValidElement(value)) {
@@ -159,11 +233,17 @@ export const LabeledValue = /*#__PURE__*/ forwardRef(function LabeledValue<T ext
       {...filterDOMProps(otherProps)}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + fieldStyles({
-        isInForm: !!formContext,
-        labelPosition,
-        size
-      }, styles)} >
+      className={
+        UNSAFE_className +
+        fieldStyles(
+          {
+            isInForm: !!formContext,
+            labelPosition,
+            size
+          },
+          styles
+        )
+      }>
       <FieldLabel
         elementType="span"
         size={size}
@@ -179,12 +259,24 @@ export const LabeledValue = /*#__PURE__*/ forwardRef(function LabeledValue<T ext
   );
 });
 
-function FormattedStringList({value, formatOptions}: {value: string[], formatOptions?: Intl.ListFormatOptions}) {
+function FormattedStringList({
+  value,
+  formatOptions
+}: {
+  value: string[];
+  formatOptions?: Intl.ListFormatOptions;
+}) {
   let formatter = useListFormatter(formatOptions ?? {});
   return <>{formatter.format(value)}</>;
 }
 
-function FormattedNumber({value, formatOptions}: {value: NumberValue, formatOptions?: Intl.NumberFormatOptions}) {
+function FormattedNumber({
+  value,
+  formatOptions
+}: {
+  value: NumberValue;
+  formatOptions?: Intl.NumberFormatOptions;
+}) {
   let formatter = useNumberFormatter(formatOptions);
   if (typeof value === 'object') {
     return <>{formatter.formatRange(value.start, value.end)}</>;
@@ -192,9 +284,17 @@ function FormattedNumber({value, formatOptions}: {value: NumberValue, formatOpti
   return <>{formatter.format(value)}</>;
 }
 
-function FormattedDate<T extends DateTimeValue>({value, formatOptions}: {value: T, formatOptions?: Intl.DateTimeFormatOptions}) {
+function FormattedDate<T extends DateTimeValue>({
+  value,
+  formatOptions
+}: {
+  value: T;
+  formatOptions?: Intl.DateTimeFormatOptions;
+}) {
   if (!formatOptions) {
-    formatOptions = getDefaultFormatOptions('start' in value ? (value as RangeDateTime).start : value as DateTime);
+    formatOptions = getDefaultFormatOptions(
+      'start' in value ? (value as RangeDateTime).start : (value as DateTime)
+    );
   }
 
   let dateFormatter = useDateFormatter(formatOptions);
@@ -224,7 +324,15 @@ function getDefaultFormatOptions(value: DateTime): Intl.DateTimeFormatOptions {
   if (value instanceof Date) {
     return {dateStyle: 'long', timeStyle: 'short'};
   } else if ('timeZone' in value) {
-    return {year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', timeZone: (value as ZonedDateTime).timeZone, timeZoneName: 'short'};
+    return {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      timeZone: (value as ZonedDateTime).timeZone,
+      timeZoneName: 'short'
+    };
   } else if ('hour' in value && 'year' in value) {
     return {dateStyle: 'long', timeStyle: 'short'};
   } else if ('hour' in value) {

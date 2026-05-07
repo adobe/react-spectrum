@@ -37,7 +37,10 @@ export function focusSafely(element: FocusableElement): void {
     runAfterTransition(() => {
       const activeElement = getActiveElement(ownerDocument);
       // If focus did not move or focus was lost to the body, and the element is still in the document, focus it.
-      if ((activeElement === lastFocusedElement || activeElement === ownerDocument.body) && element.isConnected) {
+      if (
+        (activeElement === lastFocusedElement || activeElement === ownerDocument.body) &&
+        element.isConnected
+      ) {
         focusWithoutScrolling(element);
       }
     });

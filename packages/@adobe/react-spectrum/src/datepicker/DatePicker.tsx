@@ -34,7 +34,12 @@ import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css'; //
 import {TimeField} from './TimeField';
 import {useDatePickerState} from 'react-stately/useDatePickerState';
 import '@adobe/spectrum-css-temp/components/textfield/vars.css';
-import {useFocusManagerRef, useFormatHelpText, useFormattedDateWidth, useVisibleMonths} from './utils';
+import {
+  useFocusManagerRef,
+  useFormatHelpText,
+  useFormattedDateWidth,
+  useVisibleMonths
+} from './utils';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useFormProps} from '../form/Form';
 import {useHover} from 'react-aria/useHover';
@@ -42,47 +47,60 @@ import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useProviderProps} from '../provider/Provider';
 
-export interface SpectrumDatePickerBase<T extends DateValue> extends SpectrumDateFieldBase<T>, SpectrumLabelableProps, StyleProps {
+export interface SpectrumDatePickerBase<T extends DateValue>
+  extends SpectrumDateFieldBase<T>, SpectrumLabelableProps, StyleProps {
   /**
    * The maximum number of months to display at once in the calendar popover, if screen space permits.
    * @default 1
    */
-  maxVisibleMonths?: number,
+  maxVisibleMonths?: number;
   /**
    * Whether the calendar popover should automatically flip direction when space is limited.
    * @default true
    */
-  shouldFlip?: boolean,
+  shouldFlip?: boolean;
   /**
    * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
    * object for a given calendar identifier. This will be used for the popover calendar. If not provided, the
    * `createCalendar` function from `@internationalized/date` will be used.
    */
-  createCalendar?: (identifier: CalendarIdentifier) => ICalendar
+  createCalendar?: (identifier: CalendarIdentifier) => ICalendar;
 }
 
-export interface SpectrumDatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'isInvalid' | 'validationState' | 'autoComplete'>, SpectrumDatePickerBase<T> {}
+export interface SpectrumDatePickerProps<T extends DateValue>
+  extends
+    Omit<AriaDatePickerProps<T>, 'isInvalid' | 'validationState' | 'autoComplete'>,
+    SpectrumDatePickerBase<T> {}
 
 /**
  * DatePickers combine a DateField and a Calendar popover to allow users to enter or select a date and time value.
  */
-export const DatePicker = React.forwardRef(function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref: FocusableRef<HTMLElement>) {
+export const DatePicker = React.forwardRef(function DatePicker<T extends DateValue>(
+  props: SpectrumDatePickerProps<T>,
+  ref: FocusableRef<HTMLElement>
+) {
   props = useProviderProps(props);
   props = useFormProps(props);
-  let {
-    autoFocus,
-    isQuiet,
-    isDisabled,
-    placeholderValue,
-    maxVisibleMonths = 1
-  } = props;
+  let {autoFocus, isQuiet, isDisabled, placeholderValue, maxVisibleMonths = 1} = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement | null>(null);
   let state = useDatePickerState({
     ...props,
     shouldCloseOnSelect: () => !state.hasTime
   });
-  let {groupProps, labelProps, fieldProps, descriptionProps, errorMessageProps, buttonProps, dialogProps, calendarProps, isInvalid, validationErrors, validationDetails} = useDatePicker(props, state, targetRef);
+  let {
+    groupProps,
+    labelProps,
+    fieldProps,
+    descriptionProps,
+    errorMessageProps,
+    buttonProps,
+    dialogProps,
+    calendarProps,
+    isInvalid,
+    validationErrors,
+    validationDetails
+  } = useDatePicker(props, state, targetRef);
   let {isOpen, setOpen} = state;
   let {direction} = useLocale();
   let domRef = useFocusManagerRef(ref);
@@ -100,27 +118,19 @@ export const DatePicker = React.forwardRef(function DatePicker<T extends DateVal
     autoFocus
   });
 
-  let className = classNames(
-    styles,
-    'spectrum-InputGroup',
-    {
-      'spectrum-InputGroup--quiet': isQuiet,
-      'spectrum-InputGroup--invalid': isInvalid && !isDisabled,
-      'is-disabled': isDisabled,
-      'is-hovered': isHovered,
-      'is-focused': isFocused,
-      'focus-ring': isFocusVisible && !isFocusedButton
-    }
-  );
+  let className = classNames(styles, 'spectrum-InputGroup', {
+    'spectrum-InputGroup--quiet': isQuiet,
+    'spectrum-InputGroup--invalid': isInvalid && !isDisabled,
+    'is-disabled': isDisabled,
+    'is-hovered': isHovered,
+    'is-focused': isFocused,
+    'focus-ring': isFocusVisible && !isFocusedButton
+  });
 
-  let fieldClassName = classNames(
-    styles,
-    'spectrum-InputGroup-input',
-    {
-      'is-disabled': isDisabled,
-      'is-invalid': isInvalid && !isDisabled
-    }
-  );
+  let fieldClassName = classNames(styles, 'spectrum-InputGroup-input', {
+    'is-disabled': isDisabled,
+    'is-invalid': isInvalid && !isDisabled
+  });
 
   // Note: this description is intentionally not passed to useDatePicker.
   // The format help text is unnecessary for screen reader users because each segment already has a label.
@@ -133,7 +143,10 @@ export const DatePicker = React.forwardRef(function DatePicker<T extends DateVal
   let timePlaceholder = placeholder && 'hour' in placeholder ? placeholder : null;
   let timeMinValue = props.minValue && 'hour' in props.minValue ? props.minValue : null;
   let timeMaxValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : null;
-  let timeGranularity = state.granularity === 'hour' || state.granularity === 'minute' || state.granularity === 'second' ? state.granularity : null;
+  let timeGranularity =
+    state.granularity === 'hour' || state.granularity === 'minute' || state.granularity === 'second'
+      ? state.granularity
+      : null;
   let showTimeField = !!timeGranularity;
 
   let visibleMonths = useVisibleMonths(maxVisibleMonths);
@@ -167,10 +180,7 @@ export const DatePicker = React.forwardRef(function DatePicker<T extends DateVal
           inputClassName={fieldClassName}
           disableFocusRing
           minWidth={approximateWidth}>
-          <DatePickerField
-            {...fieldProps}
-            data-testid="date-field"
-            isQuiet={isQuiet} />
+          <DatePickerField {...fieldProps} data-testid="date-field" isQuiet={isQuiet} />
         </Input>
         <DialogTrigger
           type="popover"
@@ -188,16 +198,28 @@ export const DatePicker = React.forwardRef(function DatePicker<T extends DateVal
             validationState={validationState}>
             <CalendarIcon />
           </FieldButton>
-          <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
+          <Dialog
+            UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')}
+            {...dialogProps}>
             <Content>
-              <div className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialogContent')}>
+              <div
+                className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialogContent')}>
                 <Calendar
                   {...calendarProps}
                   visibleMonths={visibleMonths}
                   createCalendar={props.createCalendar}
-                  UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-calendar', {'is-invalid': isInvalid})} />
-                {showTimeField &&
-                  <div className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>
+                  UNSAFE_className={classNames(
+                    datepickerStyles,
+                    'react-spectrum-Datepicker-calendar',
+                    {'is-invalid': isInvalid}
+                  )}
+                />
+                {showTimeField && (
+                  <div
+                    className={classNames(
+                      datepickerStyles,
+                      'react-spectrum-Datepicker-timeFields'
+                    )}>
                     <TimeField
                       label={stringFormatter.format('time')}
                       value={state.timeValue}
@@ -208,9 +230,10 @@ export const DatePicker = React.forwardRef(function DatePicker<T extends DateVal
                       maxValue={timeMaxValue}
                       hourCycle={props.hourCycle}
                       hideTimeZone={props.hideTimeZone}
-                      marginTop="size-100" />
+                      marginTop="size-100"
+                    />
                   </div>
-                }
+                )}
               </div>
             </Content>
           </Dialog>
@@ -218,4 +241,6 @@ export const DatePicker = React.forwardRef(function DatePicker<T extends DateVal
       </div>
     </Field>
   );
-}) as <T extends DateValue>(props: SpectrumDatePickerProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+}) as <T extends DateValue>(
+  props: SpectrumDatePickerProps<T> & {ref?: FocusableRef<HTMLElement>}
+) => ReactElement;

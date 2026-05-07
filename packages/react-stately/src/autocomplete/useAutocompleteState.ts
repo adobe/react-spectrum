@@ -15,24 +15,24 @@ import {useControlledState} from '../utils/useControlledState';
 
 export interface AutocompleteState {
   /** The current value of the autocomplete input. */
-  inputValue: string,
+  inputValue: string;
   /** Sets the value of the autocomplete input. */
-  setInputValue(value: string): void,
+  setInputValue(value: string): void;
   /** The id of the current aria-activedescendant of the autocomplete input. */
-  focusedNodeId: string | null,
+  focusedNodeId: string | null;
   /** Sets the id of the current aria-activedescendant of the autocomplete input. */
-  setFocusedNodeId(value: string | null): void
+  setFocusedNodeId(value: string | null): void;
 }
 
 export interface AutocompleteProps {
   /** The value of the autocomplete input (controlled). */
-  inputValue?: string,
+  inputValue?: string;
   /** The default value of the autocomplete input (uncontrolled). */
-  defaultInputValue?: string,
+  defaultInputValue?: string;
   /** Handler that is called when the autocomplete input value changes. */
-  onInputChange?: (value: string) => void,
+  onInputChange?: (value: string) => void;
   /** The children wrapped by the autocomplete. Consists of at least an input element and a collection element to filter. */
-  children: ReactNode
+  children: ReactNode;
 }
 
 // Emulate our other stately hooks which accept all "base" props even if not used
@@ -48,7 +48,7 @@ export function useAutocompleteState(props: AutocompleteStateOptions): Autocompl
     defaultInputValue: propsDefaultInputValue = ''
   } = props;
 
-  let onInputChange = (value) => {
+  let onInputChange = value => {
     if (propsOnInputChange) {
       propsOnInputChange(value);
     }

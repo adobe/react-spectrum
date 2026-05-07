@@ -22,45 +22,45 @@ export interface GridLayoutOptions {
    * The minimum item size.
    * @default 200 x 200
    */
-  minItemSize?: Size,
+  minItemSize?: Size;
   /**
    * The maximum item size.
    * @default Infinity
    */
-  maxItemSize?: Size,
+  maxItemSize?: Size;
   /**
    * Whether to preserve the aspect ratio of the `minItemSize`.
    * By default, grid rows may have variable heights. When `preserveAspectRatio`
    * is true, all rows will have equal heights.
    * @default false
    */
-  preserveAspectRatio?: boolean,
+  preserveAspectRatio?: boolean;
   /**
    * The minimum space required between items.
    * @default 18 x 18
    */
-  minSpace?: Size,
+  minSpace?: Size;
   /**
    * The maximum allowed horizontal space between items.
    * @default Infinity
    */
-  maxHorizontalSpace?: number,
+  maxHorizontalSpace?: number;
   /**
    * The maximum number of columns.
    * @default Infinity
    */
-  maxColumns?: number,
+  maxColumns?: number;
   /**
    * The thickness of the drop indicator.
    * @default 2
    */
-  dropIndicatorThickness?: number,
+  dropIndicatorThickness?: number;
   /**
    * The fixed height of a loader element in px. This loader is specifically for
    * "load more" elements rendered when loading more rows at the root level or inside nested row/sections.
    * @default 48
    */
-  loaderHeight?: number
+  loaderHeight?: number;
 }
 
 const DEFAULT_OPTIONS = {
@@ -80,7 +80,10 @@ const DEFAULT_OPTIONS = {
  * The items are sized between a minimum and maximum size
  * depending on the width of the container.
  */
-export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> extends Layout<Node<T>, O> implements DropTargetDelegate {
+export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions>
+  extends Layout<Node<T>, O>
+  implements DropTargetDelegate
+{
   protected gap: Size = DEFAULT_OPTIONS.minSpace;
   protected dropIndicatorThickness = 2;
   protected numColumns: number = 0;
@@ -89,14 +92,22 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
   private margin: number = 0;
 
   shouldInvalidateLayoutOptions(newOptions: O, oldOptions: O): boolean {
-    return newOptions.maxColumns !== oldOptions.maxColumns
-      || newOptions.dropIndicatorThickness !== oldOptions.dropIndicatorThickness
-      || newOptions.preserveAspectRatio !== oldOptions.preserveAspectRatio
-      || (!(newOptions.minItemSize || DEFAULT_OPTIONS.minItemSize).equals(oldOptions.minItemSize || DEFAULT_OPTIONS.minItemSize))
-      || (!(newOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize).equals(oldOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize))
-      || (!(newOptions.minSpace || DEFAULT_OPTIONS.minSpace).equals(oldOptions.minSpace || DEFAULT_OPTIONS.minSpace))
-      || newOptions.maxHorizontalSpace !== oldOptions.maxHorizontalSpace
-      || newOptions.loaderHeight !== oldOptions.loaderHeight;
+    return (
+      newOptions.maxColumns !== oldOptions.maxColumns ||
+      newOptions.dropIndicatorThickness !== oldOptions.dropIndicatorThickness ||
+      newOptions.preserveAspectRatio !== oldOptions.preserveAspectRatio ||
+      !(newOptions.minItemSize || DEFAULT_OPTIONS.minItemSize).equals(
+        oldOptions.minItemSize || DEFAULT_OPTIONS.minItemSize
+      ) ||
+      !(newOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize).equals(
+        oldOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize
+      ) ||
+      !(newOptions.minSpace || DEFAULT_OPTIONS.minSpace).equals(
+        oldOptions.minSpace || DEFAULT_OPTIONS.minSpace
+      ) ||
+      newOptions.maxHorizontalSpace !== oldOptions.maxHorizontalSpace ||
+      newOptions.loaderHeight !== oldOptions.loaderHeight
+    );
   }
 
   update(invalidationContext: InvalidationContext<O>): void {
@@ -127,21 +138,26 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     this.numColumns = numColumns;
 
     // Compute the available width (minus the space between items)
-    let width = virtualizerWidth - (minSpace.width * Math.max(0, numColumns));
+    let width = virtualizerWidth - minSpace.width * Math.max(0, numColumns);
 
     // Compute the item width based on the space available
     let itemWidth = Math.floor(width / numColumns);
     itemWidth = Math.max(minItemSize.width, Math.min(maxItemWidth, itemWidth));
 
     // Compute the item height, which is proportional to the item width
-    let t = ((itemWidth - minItemSize.width) / Math.max(1, maxItemWidth - minItemSize.width));
+    let t = (itemWidth - minItemSize.width) / Math.max(1, maxItemWidth - minItemSize.width);
     let itemHeight = minItemSize.height + Math.floor((maxItemHeight - minItemSize.height) * t);
     itemHeight = Math.max(minItemSize.height, Math.min(maxItemHeight, itemHeight));
 
     // Compute the horizontal spacing, content height and horizontal margin
-    let horizontalSpacing = Math.min(Math.max(maxHorizontalSpace, minSpace.width), Math.floor((virtualizerWidth - numColumns * itemWidth) / (numColumns + 1)));
+    let horizontalSpacing = Math.min(
+      Math.max(maxHorizontalSpace, minSpace.width),
+      Math.floor((virtualizerWidth - numColumns * itemWidth) / (numColumns + 1))
+    );
     this.gap = new Size(horizontalSpacing, minSpace.height);
-    this.margin = Math.floor((virtualizerWidth - numColumns * itemWidth - horizontalSpacing * (numColumns + 1)) / 2);
+    this.margin = Math.floor(
+      (virtualizerWidth - numColumns * itemWidth - horizontalSpacing * (numColumns + 1)) / 2
+    );
 
     // If there is a skeleton loader within the last 2 items in the collection, increment the collection size
     // so that an additional row is added for the skeletons.
@@ -186,14 +202,21 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
         let oldLayoutInfo = this.layoutInfos.get(key);
         let content = node;
         if (skeleton) {
-          content = oldLayoutInfo && oldLayoutInfo.content.key === key ? oldLayoutInfo.content : {...skeleton, key};
+          content =
+            oldLayoutInfo && oldLayoutInfo.content.key === key
+              ? oldLayoutInfo.content
+              : {...skeleton, key};
         }
         let x = horizontalSpacing + col * (itemWidth + horizontalSpacing) + this.margin;
         let height = itemHeight;
         let estimatedSize = !preserveAspectRatio;
         if (oldLayoutInfo && estimatedSize) {
           height = oldLayoutInfo.rect.height;
-          estimatedSize = invalidationContext.layoutOptionsChanged || invalidationContext.sizeChanged || oldLayoutInfo.estimatedSize || (oldLayoutInfo.content !== content);
+          estimatedSize =
+            invalidationContext.layoutOptionsChanged ||
+            invalidationContext.sizeChanged ||
+            oldLayoutInfo.estimatedSize ||
+            oldLayoutInfo.content !== content;
         }
 
         let rect = new Rect(x, y, itemWidth, height);
@@ -249,7 +272,11 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
   getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
     let layoutInfos: LayoutInfo[] = [];
     for (let layoutInfo of this.layoutInfos.values()) {
-      if (layoutInfo.rect.intersects(rect) || this.virtualizer!.isPersistedKey(layoutInfo.key) || layoutInfo.type === 'loader') {
+      if (
+        layoutInfo.rect.intersects(rect) ||
+        this.virtualizer!.isPersistedKey(layoutInfo.key) ||
+        layoutInfo.type === 'loader'
+      ) {
         layoutInfos.push(layoutInfo);
       }
     }
@@ -273,7 +300,11 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     return false;
   }
 
-  getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget {
+  getDropTargetFromPoint(
+    x: number,
+    y: number,
+    isValidDropTarget: (target: DropTarget) => boolean
+  ): DropTarget {
     if (this.layoutInfos.size === 0) {
       return {type: 'root'};
     }
@@ -284,7 +315,12 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     // Find the closest item within on either side of the point using the gap width.
     let key: Key | null = null;
     if (this.numColumns === 1) {
-      let searchRect = new Rect(x, Math.max(0, y - this.gap.height), 1, Math.max(1, this.gap.height * 2));
+      let searchRect = new Rect(
+        x,
+        Math.max(0, y - this.gap.height),
+        1,
+        Math.max(1, this.gap.height * 2)
+      );
       let candidates = this.getVisibleLayoutInfos(searchRect);
       let minDistance = Infinity;
       for (let candidate of candidates) {
@@ -326,7 +362,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       return {type: 'root'};
     }
 
-    let target: DropTarget =  {
+    let target: DropTarget = {
       type: 'item',
       key: layoutInfo.key,
       dropPosition: 'on'

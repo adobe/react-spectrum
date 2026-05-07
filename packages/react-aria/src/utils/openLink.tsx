@@ -13,24 +13,37 @@
 import {focusWithoutScrolling} from './focusWithoutScrolling';
 import {Href, LinkDOMProps, RouterOptions} from '@react-types/shared';
 import {isFirefox, isIPad, isMac, isWebKit} from './platform';
-import React, {createContext, DOMAttributes, JSX, MouseEvent as ReactMouseEvent, ReactNode, useContext, useMemo} from 'react';
+import React, {
+  createContext,
+  DOMAttributes,
+  JSX,
+  MouseEvent as ReactMouseEvent,
+  ReactNode,
+  useContext,
+  useMemo
+} from 'react';
 
 interface Router {
-  isNative: boolean,
-  open: (target: Element, modifiers: Modifiers, href: Href, routerOptions: RouterOptions | undefined) => void,
-  useHref: (href: Href) => string
+  isNative: boolean;
+  open: (
+    target: Element,
+    modifiers: Modifiers,
+    href: Href,
+    routerOptions: RouterOptions | undefined
+  ) => void;
+  useHref: (href: Href) => string;
 }
 
 const RouterContext = createContext<Router>({
   isNative: true,
   open: openSyntheticLink,
-  useHref: (href) => href
+  useHref: href => href
 });
 
 interface RouterProviderProps {
-  navigate: (path: Href, routerOptions: RouterOptions | undefined) => void,
-  useHref?: (href: Href) => string,
-  children: ReactNode
+  navigate: (path: Href, routerOptions: RouterOptions | undefined) => void;
+  useHref?: (href: Href) => string;
+  children: ReactNode;
 }
 
 /**
@@ -40,25 +53,29 @@ interface RouterProviderProps {
 export function RouterProvider(props: RouterProviderProps): JSX.Element {
   let {children, navigate, useHref} = props;
 
-  let ctx = useMemo(() => ({
-    isNative: false,
-    open: (target: Element, modifiers: Modifiers, href: Href, routerOptions: RouterOptions | undefined) => {
-      getSyntheticLink(target, link => {
-        if (shouldClientNavigate(link, modifiers)) {
-          navigate(href, routerOptions);
-        } else {
-          openLink(link, modifiers);
-        }
-      });
-    },
-    useHref: useHref || ((href) => href)
-  }), [navigate, useHref]);
-
-  return (
-    <RouterContext.Provider value={ctx}>
-      {children}
-    </RouterContext.Provider>
+  let ctx = useMemo(
+    () => ({
+      isNative: false,
+      open: (
+        target: Element,
+        modifiers: Modifiers,
+        href: Href,
+        routerOptions: RouterOptions | undefined
+      ) => {
+        getSyntheticLink(target, link => {
+          if (shouldClientNavigate(link, modifiers)) {
+            navigate(href, routerOptions);
+          } else {
+            openLink(link, modifiers);
+          }
+        });
+      },
+      useHref: useHref || (href => href)
+    }),
+    [navigate, useHref]
   );
+
+  return <RouterContext.Provider value={ctx}>{children}</RouterContext.Provider>;
 }
 
 export function useRouter(): Router {
@@ -66,10 +83,10 @@ export function useRouter(): Router {
 }
 
 interface Modifiers {
-  metaKey?: boolean,
-  ctrlKey?: boolean,
-  altKey?: boolean,
-  shiftKey?: boolean
+  metaKey?: boolean;
+  ctrlKey?: boolean;
+  altKey?: boolean;
+  shiftKey?: boolean;
 }
 
 export function shouldClientNavigate(link: HTMLAnchorElement, modifiers: Modifiers): boolean {
@@ -103,10 +120,19 @@ export function openLink(target: HTMLAnchorElement, modifiers: Modifiers, setOpe
 
   // WebKit does not support firing click events with modifier keys, but does support keyboard events.
   // https://github.com/WebKit/WebKit/blob/c03d0ac6e6db178f90923a0a63080b5ca210d25f/Source/WebCore/html/HTMLAnchorElement.cpp#L184
-  let event = isWebKit() && isMac() && !isIPad() && process.env.NODE_ENV !== 'test'
-    // @ts-ignore - keyIdentifier is a non-standard property, but it's what webkit expects
-    ? new KeyboardEvent('keydown', {keyIdentifier: 'Enter', metaKey, ctrlKey, altKey, shiftKey})
-    : new MouseEvent('click', {metaKey, ctrlKey, altKey, shiftKey, detail: 1, bubbles: true, cancelable: true});
+  let event =
+    isWebKit() && isMac() && !isIPad() && process.env.NODE_ENV !== 'test'
+      ? // @ts-ignore - keyIdentifier is a non-standard property, but it's what webkit expects
+        new KeyboardEvent('keydown', {keyIdentifier: 'Enter', metaKey, ctrlKey, altKey, shiftKey})
+      : new MouseEvent('click', {
+          metaKey,
+          ctrlKey,
+          altKey,
+          shiftKey,
+          detail: 1,
+          bubbles: true,
+          cancelable: true
+        });
   (openLink as any).isOpening = setOpening;
   focusWithoutScrolling(target);
   target.dispatchEvent(event);
@@ -185,7 +211,12 @@ export function useLinkProps(props?: LinkDOMProps): LinkDOMProps {
   return linkProps;
 }
 
-export function handleLinkClick(e: ReactMouseEvent, router: Router, href: Href | undefined, routerOptions: RouterOptions | undefined): void {
+export function handleLinkClick(
+  e: ReactMouseEvent,
+  router: Router,
+  href: Href | undefined,
+  routerOptions: RouterOptions | undefined
+): void {
   // If a custom router is provided, prevent default and forward if this link should client navigate.
   if (
     !router.isNative &&

@@ -7,7 +7,7 @@ import {
   type CalendarProps as AriaCalendarProps,
   type DateValue,
   type CalendarCellProps,
-  type CalendarGridProps,
+  type CalendarGridProps
 } from 'react-aria-components/Calendar';
 import {Text} from './Content';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
@@ -18,33 +18,29 @@ export interface CalendarProps<T extends DateValue> extends AriaCalendarProps<T>
   errorMessage?: string;
 }
 
-export function Calendar<T extends DateValue>(
-  { errorMessage, ...props }: CalendarProps<T>
-) {
+export function Calendar<T extends DateValue>({errorMessage, ...props}: CalendarProps<T>) {
   let months = props.visibleDuration?.months || 1;
   return (
     <AriaCalendar {...props}>
       <div className="months">
         {Array.from({length: months}, (_, i) => (
           <div key={i} className="month">
-          <header>
-            {i === 0 &&
-              <Button slot="previous" variant="quiet">
-                <ChevronLeft />
-              </Button>
-            }
-            <CalendarHeading offset={{months: i}} />
-            {i === months - 1 &&
-              <Button slot="next" variant="quiet">
-                <ChevronRight />
-              </Button>
-            }
-          </header>
-          <CalendarGrid offset={{months: i}}>
-            {date => <CalendarCell date={date} />}
-          </CalendarGrid>
-        </div>
-      ))}
+            <header>
+              {i === 0 && (
+                <Button slot="previous" variant="quiet">
+                  <ChevronLeft />
+                </Button>
+              )}
+              <CalendarHeading offset={{months: i}} />
+              {i === months - 1 && (
+                <Button slot="next" variant="quiet">
+                  <ChevronRight />
+                </Button>
+              )}
+            </header>
+            <CalendarGrid offset={{months: i}}>{date => <CalendarCell date={date} />}</CalendarGrid>
+          </div>
+        ))}
       </div>
       {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
     </AriaCalendar>
@@ -53,7 +49,11 @@ export function Calendar<T extends DateValue>(
 
 export function CalendarCell(props: CalendarCellProps) {
   return (
-    <AriaCalendarCell {...props} className="react-aria-CalendarCell button-base" data-variant="quiet" />
+    <AriaCalendarCell
+      {...props}
+      className="react-aria-CalendarCell button-base"
+      data-variant="quiet"
+    />
   );
 }
 

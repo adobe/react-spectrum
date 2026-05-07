@@ -31,7 +31,8 @@ describe('Image', () => {
       <Image
         src="https://i.imgur.com/Z7AzH2c.png"
         alt="Sky and roof"
-        onError={mockOnErrorCallback} />
+        onError={mockOnErrorCallback}
+      />
     );
     fireEvent.error(screen.getByAltText('Sky and roof'));
 
@@ -41,10 +42,7 @@ describe('Image', () => {
   describe('crossorigin attribute', () => {
     test('anonymous', () => {
       const {container} = render(
-        <Image
-          src="https://i.imgur.com/Z7AzH2c.png"
-          alt="Sky and roof"
-          crossOrigin="anonymous" />
+        <Image src="https://i.imgur.com/Z7AzH2c.png" alt="Sky and roof" crossOrigin="anonymous" />
       );
 
       const img = container.querySelector('img');
@@ -56,18 +54,17 @@ describe('Image', () => {
         <Image
           src="https://i.imgur.com/Z7AzH2c.png"
           alt="Sky and roof"
-          crossOrigin="use-credentials" />
+          crossOrigin="use-credentials"
+        />
       );
 
       const img = container.querySelector('img');
       expect(img).toHaveAttribute('crossorigin', 'use-credentials');
     });
-    
+
     test('unset', () => {
       const {container} = render(
-        <Image
-          src="https://i.imgur.com/Z7AzH2c.png"
-          alt="Sky and roof" />
+        <Image src="https://i.imgur.com/Z7AzH2c.png" alt="Sky and roof" />
       );
 
       const img = container.querySelector('img');

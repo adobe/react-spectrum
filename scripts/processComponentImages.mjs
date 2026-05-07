@@ -59,7 +59,7 @@ async function processImages(sourceDir) {
 
   // Resolve the source directory
   sourceDir = path.resolve(sourceDir);
-  
+
   if (!fs.existsSync(sourceDir)) {
     console.error(`Error: Source directory "${sourceDir}" does not exist.`);
     process.exit(1);
@@ -82,7 +82,7 @@ async function processImages(sourceDir) {
 
   for (const mode of modes) {
     const modeDir = path.join(sourceDir, mode.srcFolder);
-    
+
     if (!fs.existsSync(modeDir)) {
       console.log(`Skipping ${mode.srcFolder} (directory not found)`);
       continue;
@@ -90,25 +90,23 @@ async function processImages(sourceDir) {
 
     // Process both Components and Guides subdirectories
     const subdirs = ['Components', 'Guides'];
-    
+
     for (const subdir of subdirs) {
       const fullSubdir = path.join(modeDir, subdir);
-      
+
       if (!fs.existsSync(fullSubdir)) {
         continue;
       }
 
       const files = fs.readdirSync(fullSubdir).filter(f => f.toLowerCase().endsWith('.png'));
-      
+
       for (const file of files) {
         const srcPath = path.join(fullSubdir, file);
         const newFilename = transformFilename(file);
         const destPath = path.join(OUTPUT_DIR, mode.destFolder, newFilename);
-        
+
         try {
-          await sharp(srcPath)
-            .avif({quality: 80})
-            .toFile(destPath);
+          await sharp(srcPath).avif({quality: 80}).toFile(destPath);
           console.log(`✓ ${mode.srcFolder}/${subdir}/${file} -> ${mode.destFolder}/${newFilename}`);
           processedCount++;
         } catch (err) {

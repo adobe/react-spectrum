@@ -15,7 +15,7 @@ import {animate} from '@react-spectrum/docs/pages/react-aria/home/utils';
 import React, {JSX, useEffect, useRef, useState} from 'react';
 import {useResizeObserver} from '@react-aria/utils';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import { ActionMenu, Menu, MenuItem, SubmenuTrigger } from '@react-spectrum/s2';
+import {ActionMenu, Menu, MenuItem, SubmenuTrigger} from '@react-spectrum/s2';
 
 export function SubmenuAnimation(): JSX.Element {
   let ref = useRef<HTMLDivElement>(null);
@@ -52,15 +52,18 @@ export function SubmenuAnimation(): JSX.Element {
           perform() {
             let option1Rect = option1Ref.current!.getBoundingClientRect();
             let option2Rect = option2Ref.current!.getBoundingClientRect();
-            let x = option1Rect.left + option1Rect.width / 2 - ref.current!.getBoundingClientRect().left;
-            let y = option1Rect.top + option1Rect.height / 2 - ref.current!.getBoundingClientRect().top;
-            let y_target = option2Rect.top + option2Rect.height / 2 - ref.current!.getBoundingClientRect().top;
-            mouseRef.current!.animate({
-              transform: [
-                `translate(${x}px, ${y}px)`,
-                `translate(${x}px, ${y_target}px)`
-              ]
-            }, {duration: 1000, fill: 'forwards', easing: 'ease-in-out'});
+            let x =
+              option1Rect.left + option1Rect.width / 2 - ref.current!.getBoundingClientRect().left;
+            let y =
+              option1Rect.top + option1Rect.height / 2 - ref.current!.getBoundingClientRect().top;
+            let y_target =
+              option2Rect.top + option2Rect.height / 2 - ref.current!.getBoundingClientRect().top;
+            mouseRef.current!.animate(
+              {
+                transform: [`translate(${x}px, ${y}px)`, `translate(${x}px, ${y_target}px)`]
+              },
+              {duration: 1000, fill: 'forwards', easing: 'ease-in-out'}
+            );
             setTimeout(() => {
               setHovered('Option 2');
               setIsSubmenuOpen(true);
@@ -77,16 +80,24 @@ export function SubmenuAnimation(): JSX.Element {
             let option1Rect = option1Ref.current!.getBoundingClientRect();
             let option2Rect = option2Ref.current!.getBoundingClientRect();
             let submenuOptionRect = submenuOptionRef.current!.getBoundingClientRect();
-            let x = option1Rect.left + option1Rect.width / 2 - ref.current!.getBoundingClientRect().left;
-            let y = option2Rect.top + option2Rect.height / 2 - ref.current!.getBoundingClientRect().top;
-            let x_target = submenuOptionRect.left + submenuOptionRect.width / 2 - ref.current!.getBoundingClientRect().left;
-            let y_target = submenuOptionRect.top + submenuOptionRect.height / 2 - ref.current!.getBoundingClientRect().top;
-            mouseRef.current!.animate({
-              transform: [
-                `translate(${x}px, ${y}px)`,
-                `translate(${x_target}px, ${y_target}px)`
-              ]
-            }, {duration: 1000, fill: 'forwards', easing: 'ease-in-out'});
+            let x =
+              option1Rect.left + option1Rect.width / 2 - ref.current!.getBoundingClientRect().left;
+            let y =
+              option2Rect.top + option2Rect.height / 2 - ref.current!.getBoundingClientRect().top;
+            let x_target =
+              submenuOptionRect.left +
+              submenuOptionRect.width / 2 -
+              ref.current!.getBoundingClientRect().left;
+            let y_target =
+              submenuOptionRect.top +
+              submenuOptionRect.height / 2 -
+              ref.current!.getBoundingClientRect().top;
+            mouseRef.current!.animate(
+              {
+                transform: [`translate(${x}px, ${y}px)`, `translate(${x_target}px, ${y_target}px)`]
+              },
+              {duration: 1000, fill: 'forwards', easing: 'ease-in-out'}
+            );
             setTimeout(() => {
               setHovered('Option 3');
               setIsSubmenuOpen(false);
@@ -115,20 +126,33 @@ export function SubmenuAnimation(): JSX.Element {
   }, []);
 
   return (
-    <div
-      role="group"
-      aria-label="Example">
-      <div ref={ref} role="img" aria-label="Animation showing a submenu closing when the cursor leaves the trigger item to go to the submenu">
+    <div role="group" aria-label="Example">
+      <div
+        ref={ref}
+        role="img"
+        aria-label="Animation showing a submenu closing when the cursor leaves the trigger item to go to the submenu">
         <svg
           ref={mouseRef}
           viewBox="0 0 12 19"
           width={mouseWidth}
           height={19}
           aria-hidden="true"
-          style={{position: 'absolute', filter: 'drop-shadow(0 1px 1px #aaa)', transform: 'translate(-1000px, -1000px)'}}>
+          style={{
+            position: 'absolute',
+            filter: 'drop-shadow(0 1px 1px #aaa)',
+            transform: 'translate(-1000px, -1000px)'
+          }}>
           <g transform="matrix(1, 0, 0, 1, -150, -63.406998)">
-            <path d="M150 79.422V63.407l11.591 11.619h-6.781l-.411.124Z" fill="#fff" fillRule="evenodd" />
-            <path d="m159.084 80.1-3.6 1.535-4.684-11.093 3.686-1.553Z" fill="#fff" fillRule="evenodd" />
+            <path
+              d="M150 79.422V63.407l11.591 11.619h-6.781l-.411.124Z"
+              fill="#fff"
+              fillRule="evenodd"
+            />
+            <path
+              d="m159.084 80.1-3.6 1.535-4.684-11.093 3.686-1.553Z"
+              fill="#fff"
+              fillRule="evenodd"
+            />
             <path d="m157.751 79.416-1.844.774-3.1-7.374 1.841-.775Z" fillRule="evenodd" />
             <path d="M151 65.814V77l2.969-2.866.431-.134h4.768Z" fillRule="evenodd" />
           </g>
@@ -149,7 +173,7 @@ export function SubmenuAnimation(): JSX.Element {
           </ActionMenu>
         </div>
 
-      {/* <svg
+        {/* <svg
         xmlns="http://www.w3.org/2000/svg"
         width={761}
         height={321}

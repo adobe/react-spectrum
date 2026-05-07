@@ -81,7 +81,9 @@ module.exports = new Packager({
       let keyStack = [];
       let fn = (t, k) => {
         if (t && t.type === 'reference') {
-          let dep = bundleGraph.getDependencies(asset).find(d => d.specifier === t.specifier && !bundleGraph.isDependencySkipped(d));
+          let dep = bundleGraph
+            .getDependencies(asset)
+            .find(d => d.specifier === t.specifier && !bundleGraph.isDependencySkipped(d));
           let res = bundleGraph.getResolvedAsset(dep, bundle);
           let result = res ? processAsset(res)[t.imported] : null;
           if (result) {
@@ -99,7 +101,13 @@ module.exports = new Packager({
         }
 
         let hasParams = false;
-        if (t && (t.type === 'alias' || t.type === 'interface') && t.typeParameters && application && shouldMerge(t, k, keyStack)) {
+        if (
+          t &&
+          (t.type === 'alias' || t.type === 'interface') &&
+          t.typeParameters &&
+          application &&
+          shouldMerge(t, k, keyStack)
+        ) {
           let params = Object.assign({}, paramStack[paramStack.length - 1]);
           t.typeParameters.forEach((p, i) => {
             let v = application[i] || p.default;
@@ -109,7 +117,12 @@ module.exports = new Packager({
           // so we don't replace the type parameters in the extended interface
           application = null;
           hasParams = true;
-        } else if (t && (t.type === 'alias' || t.type === 'interface' || t.type === 'component') && t.typeParameters && keyStack.length === 0) {
+        } else if (
+          t &&
+          (t.type === 'alias' || t.type === 'interface' || t.type === 'component') &&
+          t.typeParameters &&
+          keyStack.length === 0
+        ) {
           // If we are at a root export, replace type parameters with constraints if possible.
           // Seeing `DateValue` (as in `T extends DateValue`) is nicer than just `T`.
           let typeParameters = t.typeParameters.map(item => fn(item, 'typeParameters'));
@@ -209,7 +222,7 @@ module.exports = new Packager({
     walkLinks(result);
 
     function walkLinks(obj) {
-      let fn = (t) => {
+      let fn = t => {
         // don't follow the link if it's already in links, that's circular
         if (t && t.type === 'link' && !links[t.id]) {
           links[t.id] = nodes[t.id];

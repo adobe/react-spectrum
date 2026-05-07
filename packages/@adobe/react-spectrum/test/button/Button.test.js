@@ -47,10 +47,10 @@ describe('Button', function () {
   });
 
   it.each`
-    Name              | Component      | props
-    ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy}}
-    ${'Button'}       | ${Button}      | ${{onPress: onPressSpy}}
-    ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy}}
+    Name              | Component       | props
+    ${'ActionButton'} | ${ActionButton} | ${{onPress: onPressSpy}}
+    ${'Button'}       | ${Button}       | ${{onPress: onPressSpy}}
+    ${'LogicButton'}  | ${LogicButton}  | ${{onPress: onPressSpy}}
   `('$Name handles defaults', async function ({Component, props}) {
     let {getByRole, getByText} = render(<Component {...props}>Click Me</Component>);
 
@@ -63,10 +63,10 @@ describe('Button', function () {
   });
 
   it.each`
-    Name              | Component      | props
-    ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
-    ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
-    ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
+    Name              | Component       | props
+    ${'ActionButton'} | ${ActionButton} | ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
+    ${'Button'}       | ${Button}       | ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
+    ${'LogicButton'}  | ${LogicButton}  | ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
   `('$Name supports press events', async function ({Component, props}) {
     let {getByRole, getByText} = render(<Component {...props}>Click Me</Component>);
 
@@ -83,14 +83,18 @@ describe('Button', function () {
   });
 
   it.each`
-    Name              | Component      | props
-    ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
-    ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
-    ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
+    Name              | Component       | props
+    ${'ActionButton'} | ${ActionButton} | ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
+    ${'Button'}       | ${Button}       | ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
+    ${'LogicButton'}  | ${LogicButton}  | ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
   `('$Name keyboard press and key events', async function ({Component, props}) {
     let onKeyDownSpy = jest.fn();
     let onKeyUpSpy = jest.fn();
-    let {getByRole} = render(<Component {...props} onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy}>Click Me</Component>);
+    let {getByRole} = render(
+      <Component {...props} onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy}>
+        Click Me
+      </Component>
+    );
 
     let button = getByRole('button');
     await user.tab();
@@ -173,11 +177,11 @@ describe('Button', function () {
   });
 
   it.each`
-    Name              | Component         | props
-    ${'ActionButton'} | ${ActionButton}   | ${{UNSAFE_className: 'x-men-first-class'}}
-    ${'Button'}       | ${Button}         | ${{UNSAFE_className: 'x-men-first-class'}}
-    ${'ClearButton'}  | ${ClearButton}    | ${{UNSAFE_className: 'x-men-first-class'}}
-    ${'LogicButton'}  | ${LogicButton}    | ${{UNSAFE_className: 'x-men-first-class'}}
+    Name              | Component       | props
+    ${'ActionButton'} | ${ActionButton} | ${{UNSAFE_className: 'x-men-first-class'}}
+    ${'Button'}       | ${Button}       | ${{UNSAFE_className: 'x-men-first-class'}}
+    ${'ClearButton'}  | ${ClearButton}  | ${{UNSAFE_className: 'x-men-first-class'}}
+    ${'LogicButton'}  | ${LogicButton}  | ${{UNSAFE_className: 'x-men-first-class'}}
   `('$Name allows a custom classname on the button', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
@@ -186,10 +190,10 @@ describe('Button', function () {
   });
 
   it.each`
-    Name              | Component      | props
-    ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy, elementType: 'a'}}
-    ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, elementType: 'a'}}
-    ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, elementType: 'a'}}
+    Name              | Component       | props
+    ${'ActionButton'} | ${ActionButton} | ${{onPress: onPressSpy, elementType: 'a'}}
+    ${'Button'}       | ${Button}       | ${{onPress: onPressSpy, elementType: 'a'}}
+    ${'LogicButton'}  | ${LogicButton}  | ${{onPress: onPressSpy, elementType: 'a'}}
   `('$Name can have elementType=a', async function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
@@ -207,10 +211,10 @@ describe('Button', function () {
   });
 
   it.each`
-    Name              | Component      | props
-    ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
-    ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
-    ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
+    Name              | Component       | props
+    ${'ActionButton'} | ${ActionButton} | ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
+    ${'Button'}       | ${Button}       | ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
+    ${'LogicButton'}  | ${LogicButton}  | ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
   `('$Name can have elementType=a with an href', async function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
@@ -222,11 +226,11 @@ describe('Button', function () {
   });
 
   it.each`
-    Name              | Component      | props
-    ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy, isDisabled: true}}
-    ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, isDisabled: true}}
-    ${'ClearButton'}  | ${ClearButton} | ${{onPress: onPressSpy, isDisabled: true}}
-    ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, isDisabled: true}}
+    Name              | Component       | props
+    ${'ActionButton'} | ${ActionButton} | ${{onPress: onPressSpy, isDisabled: true}}
+    ${'Button'}       | ${Button}       | ${{onPress: onPressSpy, isDisabled: true}}
+    ${'ClearButton'}  | ${ClearButton}  | ${{onPress: onPressSpy, isDisabled: true}}
+    ${'LogicButton'}  | ${LogicButton}  | ${{onPress: onPressSpy, isDisabled: true}}
   `('$Name does not respond when disabled', async function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
@@ -237,17 +241,16 @@ describe('Button', function () {
   });
 
   it.each`
-    Name                | Component
-    ${'ActionButton'}   | ${ActionButton}
-    ${'Button'}         | ${Button}
-    ${'LogicButton'}    | ${LogicButton}
+    Name              | Component
+    ${'ActionButton'} | ${ActionButton}
+    ${'Button'}       | ${Button}
+    ${'LogicButton'}  | ${LogicButton}
   `('$Name supports autoFocus', function ({Component}) {
     let {getByRole} = render(<Component autoFocus>Click Me</Component>);
 
     let button = getByRole('button');
     expect(document.activeElement).toBe(button);
   });
-
 
   it('prevents default for non-submit types', async function () {
     let eventDown;
@@ -257,14 +260,16 @@ describe('Button', function () {
       <Provider theme={defaultTheme}>
         <Form>
           <Checkbox>An Input</Checkbox>
-          <Button variant="primary" ref={btn}>Click Me</Button>
+          <Button variant="primary" ref={btn}>
+            Click Me
+          </Button>
         </Form>
       </Provider>
     );
     // need to attach event listeners after instead of directly on Button because the ones directly on Button
     // will fire before the usePress ones
-    btn.current.UNSAFE_getDOMNode().addEventListener('keydown', e => eventDown = e);
-    btn.current.UNSAFE_getDOMNode().addEventListener('keyup', e => eventUp = e);
+    btn.current.UNSAFE_getDOMNode().addEventListener('keydown', e => (eventDown = e));
+    btn.current.UNSAFE_getDOMNode().addEventListener('keyup', e => (eventUp = e));
 
     let button = getByRole('button');
     act(() => button.focus());
@@ -286,11 +291,13 @@ describe('Button', function () {
       <Provider theme={defaultTheme}>
         <Form>
           <Checkbox>An Input</Checkbox>
-          <Button variant="primary" type="submit" ref={btn}>Click Me</Button>
+          <Button variant="primary" type="submit" ref={btn}>
+            Click Me
+          </Button>
         </Form>
       </Provider>
     );
-    btn.current.UNSAFE_getDOMNode().addEventListener('keyup', e => eventUp = e);
+    btn.current.UNSAFE_getDOMNode().addEventListener('keyup', e => (eventUp = e));
 
     let button = getByRole('button');
     act(() => button.focus());
@@ -306,7 +313,9 @@ describe('Button', function () {
       <Provider theme={defaultTheme}>
         <Form>
           <Checkbox>An Input</Checkbox>
-          <Button variant="primary" type="submit" ref={btn}>Click Me</Button>
+          <Button variant="primary" type="submit" ref={btn}>
+            Click Me
+          </Button>
         </Form>
       </Provider>
     );
@@ -328,7 +337,7 @@ describe('Button', function () {
       let [pending, setPending] = useState(false);
       return (
         <Button
-          onPress={(pending) => {
+          onPress={pending => {
             setPending(true);
             onPressSpy();
           }}

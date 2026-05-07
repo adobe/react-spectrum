@@ -12,21 +12,28 @@
 
 import {DOMAttributes} from '@react-types/shared';
 import {mergeProps} from '../utils/mergeProps';
-import React, {CSSProperties, JSX, JSXElementConstructor, ReactNode, useMemo, useState} from 'react';
+import React, {
+  CSSProperties,
+  JSX,
+  JSXElementConstructor,
+  ReactNode,
+  useMemo,
+  useState
+} from 'react';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 
 export interface VisuallyHiddenProps extends DOMAttributes {
   /** The content to visually hide. */
-  children?: ReactNode,
+  children?: ReactNode;
 
   /**
    * The element type for the container.
    * @default 'div'
    */
-  elementType?: string | JSXElementConstructor<any>,
+  elementType?: string | JSXElementConstructor<any>;
 
   /** Whether the element should become visible on focus, for example skip links. */
-  isFocusable?: boolean
+  isFocusable?: boolean;
 }
 
 const styles: CSSProperties = {
@@ -43,7 +50,7 @@ const styles: CSSProperties = {
 };
 
 export interface VisuallyHiddenAria {
-  visuallyHiddenProps: DOMAttributes
+  visuallyHiddenProps: DOMAttributes;
 }
 
 /**
@@ -51,15 +58,12 @@ export interface VisuallyHiddenAria {
  * but keeps content visible to assistive technology.
  */
 export function useVisuallyHidden(props: VisuallyHiddenProps = {}): VisuallyHiddenAria {
-  let {
-    style,
-    isFocusable
-  } = props;
+  let {style, isFocusable} = props;
 
   let [isFocused, setFocused] = useState(false);
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !isFocusable,
-    onFocusWithinChange: (val) => setFocused(val)
+    onFocusWithinChange: val => setFocused(val)
   });
 
   // If focused, don't hide the element.
@@ -71,7 +75,7 @@ export function useVisuallyHidden(props: VisuallyHiddenProps = {}): VisuallyHidd
     } else {
       return styles;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused]);
 
   return {
@@ -91,9 +95,5 @@ export function VisuallyHidden(props: VisuallyHiddenProps): JSX.Element {
   let {children, elementType: Element = 'div', isFocusable, style, ...otherProps} = props;
   let {visuallyHiddenProps} = useVisuallyHidden(props);
 
-  return (
-    <Element {...mergeProps(otherProps, visuallyHiddenProps)}>
-      {children}
-    </Element>
-  );
+  return <Element {...mergeProps(otherProps, visuallyHiddenProps)}>{children}</Element>;
 }

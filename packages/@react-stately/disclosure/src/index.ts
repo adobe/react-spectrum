@@ -14,4 +14,7 @@ export {useDisclosureState} from 'react-stately/useDisclosureState';
 
 export {useDisclosureGroupState} from 'react-stately/useDisclosureGroupState';
 export type {DisclosureState, DisclosureProps} from 'react-stately/useDisclosureState';
-export type {DisclosureGroupState, DisclosureGroupProps} from 'react-stately/useDisclosureGroupState';
+export type {
+  DisclosureGroupState,
+  DisclosureGroupProps
+} from 'react-stately/useDisclosureGroupState';

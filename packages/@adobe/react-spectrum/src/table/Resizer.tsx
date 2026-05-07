@@ -1,4 +1,3 @@
-
 import {classNames} from '../utils/classNames';
 import {ColumnSize, TableColumnResizeState} from 'react-stately/useTableState';
 import eCursor from 'bundle-text:./cursors/Cur_MoveToRight_9_9.svg';
@@ -34,12 +33,12 @@ function getCursor(svg: string, fallback: string) {
 }
 
 interface ResizerProps<T> {
-  column: GridNode<T>,
-  showResizer: boolean,
-  triggerRef: RefObject<HTMLDivElement | null>,
-  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
-  onResize?: (widths: Map<Key, ColumnSize>) => void,
-  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
+  column: GridNode<T>;
+  showResizer: boolean;
+  triggerRef: RefObject<HTMLDivElement | null>;
+  onResizeStart?: (widths: Map<Key, ColumnSize>) => void;
+  onResize?: (widths: Map<Key, ColumnSize>) => void;
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void;
 }
 
 const CURSORS = {
@@ -50,7 +49,10 @@ const CURSORS = {
 
 export const ResizeStateContext = createContext<TableColumnResizeState<unknown> | null>(null);
 
-export const Resizer = React.forwardRef(function Resizer<T>(props: ResizerProps<T>, ref: ForwardedRef<HTMLInputElement | null>) {
+export const Resizer = React.forwardRef(function Resizer<T>(
+  props: ResizerProps<T>,
+  ref: ForwardedRef<HTMLInputElement | null>
+) {
   let {column, showResizer} = props;
   let objectRef = useObjectRef(ref);
   let {isEmpty, onFocusedResizer} = useTableContext();
@@ -64,12 +66,12 @@ export const Resizer = React.forwardRef(function Resizer<T>(props: ResizerProps<
 
   let [isPointerDown, setIsPointerDown] = useState(false);
   useEffect(() => {
-    let setDown = (e) => {
+    let setDown = e => {
       if (e.pointerType === 'mouse') {
         setIsPointerDown(true);
       }
     };
-    let setUp = (e) => {
+    let setUp = e => {
       if (e.pointerType === 'mouse') {
         setIsPointerDown(false);
       }
@@ -86,7 +88,10 @@ export const Resizer = React.forwardRef(function Resizer<T>(props: ResizerProps<
     mergeProps(props, {
       'aria-label': stringFormatter.format('columnResizer'),
       isDisabled: isEmpty
-    }), layout, objectRef);
+    }),
+    layout,
+    objectRef
+  );
 
   let isEResizable = layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key);
   let isWResizable = layout.getColumnMaxWidth(column.key) <= layout.getColumnWidth(column.key);
@@ -115,16 +120,15 @@ export const Resizer = React.forwardRef(function Resizer<T>(props: ResizerProps<
           role="presentation"
           style={style}
           className={classNames(styles, 'spectrum-Table-columnResizer')}>
-          <input
-            ref={objectRef}
-            {...mergeProps(inputProps, {onFocus: onFocusedResizer})} />
+          <input ref={objectRef} {...mergeProps(inputProps, {onFocus: onFocusedResizer})} />
         </div>
       </FocusRing>
       {/* Placeholder so that the title doesn't intersect with space reserved by the resizer when it appears. */}
       <div
         aria-hidden
         role="presentation"
-        className={classNames(styles, 'spectrum-Table-columnResizerPlaceholder')} />
+        className={classNames(styles, 'spectrum-Table-columnResizerPlaceholder')}
+      />
       <CursorOverlay show={isResizing && isPointerDown}>
         <div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}} />
       </CursorOverlay>

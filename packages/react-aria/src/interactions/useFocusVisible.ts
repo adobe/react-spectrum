@@ -32,23 +32,26 @@ type Handler = (modality: Modality, e: HandlerEvent) => void;
 export type FocusVisibleHandler = (isFocusVisible: boolean) => void;
 export interface FocusVisibleProps {
   /** Whether the element is a text input. */
-  isTextInput?: boolean,
+  isTextInput?: boolean;
   /** Whether the element will be auto focused. */
-  autoFocus?: boolean
+  autoFocus?: boolean;
 }
 
 export interface FocusVisibleResult {
   /** Whether keyboard focus is visible globally. */
-  isFocusVisible: boolean
+  isFocusVisible: boolean;
 }
 
 let currentModality: null | Modality = null;
 let currentPointerType: PointerType = 'keyboard';
 export const changeHandlers = new Set<Handler>();
 interface GlobalListenerData {
-  focus: () => void
+  focus: () => void;
 }
-export let hasSetupGlobalListeners: Map<Window, GlobalListenerData> = new Map<Window, GlobalListenerData>(); // We use a map here to support setting event listeners across multiple document objects.
+export let hasSetupGlobalListeners: Map<Window, GlobalListenerData> = new Map<
+  Window,
+  GlobalListenerData
+>(); // We use a map here to support setting event listeners across multiple document objects.
 let hasEventBeforeFocus = false;
 let hasBlurredWindowRecently = false;
 
@@ -69,9 +72,15 @@ function triggerChangeHandlers(modality: Modality, e: HandlerEvent) {
  */
 function isValidKey(e: KeyboardEvent) {
   // Control and Shift keys trigger when navigating back to the tab with keyboard.
-  return !(e.metaKey || (!isMac() && e.altKey) || e.ctrlKey || e.key === 'Control' || e.key === 'Shift' || e.key === 'Meta');
+  return !(
+    e.metaKey ||
+    (!isMac() && e.altKey) ||
+    e.ctrlKey ||
+    e.key === 'Control' ||
+    e.key === 'Shift' ||
+    e.key === 'Meta'
+  );
 }
-
 
 function handleKeyboardEvent(e: KeyboardEvent) {
   hasEventBeforeFocus = true;
@@ -84,7 +93,7 @@ function handleKeyboardEvent(e: KeyboardEvent) {
 
 function handlePointerEvent(e: PointerEvent | MouseEvent) {
   currentModality = 'pointer';
-  currentPointerType = 'pointerType' in e ? e.pointerType as PointerType : 'mouse';
+  currentPointerType = 'pointerType' in e ? (e.pointerType as PointerType) : 'mouse';
   if (e.type === 'mousedown' || e.type === 'pointerdown') {
     hasEventBeforeFocus = true;
     triggerChangeHandlers('pointer', e);
@@ -105,7 +114,12 @@ function handleFocusEvent(e: FocusEvent) {
   // cause keyboard focus rings to appear.
   let ownerWindow = getOwnerWindow(getEventTarget(e) as Element);
   let ownerDocument = getOwnerDocument(getEventTarget(e) as Element);
-  if (getEventTarget(e) === ownerWindow || getEventTarget(e) === ownerDocument || ignoreFocusEvent || !e.isTrusted) {
+  if (
+    getEventTarget(e) === ownerWindow ||
+    getEventTarget(e) === ownerDocument ||
+    ignoreFocusEvent ||
+    !e.isTrusted
+  ) {
     return;
   }
 
@@ -178,9 +192,13 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
   }
 
   // Add unmount handler
-  windowObject.addEventListener('beforeunload', () => {
-    tearDownWindowFocusTracking(element);
-  }, {once: true});
+  windowObject.addEventListener(
+    'beforeunload',
+    () => {
+      tearDownWindowFocusTracking(element);
+    },
+    {once: true}
+  );
 
   hasSetupGlobalListeners.set(windowObject, {focus});
 }
@@ -314,22 +332,31 @@ const nonTextInputTypes = new Set([
  * focus visible style can be properly set.
  */
 function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
-  let eventTarget = e ? getEventTarget(e) as Element : undefined;
+  let eventTarget = e ? (getEventTarget(e) as Element) : undefined;
   let document = getOwnerDocument(eventTarget);
   let ownerWindow = getOwnerWindow(eventTarget);
-  const IHTMLInputElement = typeof ownerWindow !== 'undefined' ? ownerWindow.HTMLInputElement : HTMLInputElement;
-  const IHTMLTextAreaElement = typeof ownerWindow !== 'undefined' ? ownerWindow.HTMLTextAreaElement : HTMLTextAreaElement;
+  const IHTMLInputElement =
+    typeof ownerWindow !== 'undefined' ? ownerWindow.HTMLInputElement : HTMLInputElement;
+  const IHTMLTextAreaElement =
+    typeof ownerWindow !== 'undefined' ? ownerWindow.HTMLTextAreaElement : HTMLTextAreaElement;
   const IHTMLElement = typeof ownerWindow !== 'undefined' ? ownerWindow.HTMLElement : HTMLElement;
-  const IKeyboardEvent = typeof ownerWindow !== 'undefined' ? ownerWindow.KeyboardEvent : KeyboardEvent;
+  const IKeyboardEvent =
+    typeof ownerWindow !== 'undefined' ? ownerWindow.KeyboardEvent : KeyboardEvent;
 
   // For keyboard events that occur on a non-input element that will move focus into input element (aka ArrowLeft going from Datepicker button to the main input group)
   // we need to rely on the user passing isTextInput into here. This way we can skip toggling focus visiblity for said input element
   let activeElement = getActiveElement(document);
-  isTextInput = isTextInput ||
+  isTextInput =
+    isTextInput ||
     (activeElement instanceof IHTMLInputElement && !nonTextInputTypes.has(activeElement.type)) ||
     activeElement instanceof IHTMLTextAreaElement ||
     (activeElement instanceof IHTMLElement && activeElement.isContentEditable);
-  return !(isTextInput && modality === 'keyboard' && e instanceof IKeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]);
+  return !(
+    isTextInput &&
+    modality === 'keyboard' &&
+    e instanceof IKeyboardEvent &&
+    !FOCUS_VISIBLE_INPUT_KEYS[e.key]
+  );
 }
 
 /**
@@ -338,9 +365,13 @@ function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: Handl
 export function useFocusVisible(props: FocusVisibleProps = {}): FocusVisibleResult {
   let {isTextInput, autoFocus} = props;
   let [isFocusVisibleState, setFocusVisible] = useState(autoFocus || isFocusVisible());
-  useFocusVisibleListener((isFocusVisible) => {
-    setFocusVisible(isFocusVisible);
-  }, [isTextInput], {isTextInput});
+  useFocusVisibleListener(
+    isFocusVisible => {
+      setFocusVisible(isFocusVisible);
+    },
+    [isTextInput],
+    {isTextInput}
+  );
 
   return {isFocusVisible: isFocusVisibleState};
 }
@@ -348,7 +379,11 @@ export function useFocusVisible(props: FocusVisibleProps = {}): FocusVisibleResu
 /**
  * Listens for trigger change and reports if focus is visible (i.e., modality is not pointer).
  */
-export function useFocusVisibleListener(fn: FocusVisibleHandler, deps: ReadonlyArray<any>, opts?: {enabled?: boolean, isTextInput?: boolean}): void {
+export function useFocusVisibleListener(
+  fn: FocusVisibleHandler,
+  deps: ReadonlyArray<any>,
+  opts?: {enabled?: boolean; isTextInput?: boolean}
+): void {
   setupGlobalFocusEvents();
 
   useEffect(() => {
@@ -357,7 +392,7 @@ export function useFocusVisibleListener(fn: FocusVisibleHandler, deps: ReadonlyA
     }
     let handler = (modality: Modality, e: HandlerEvent) => {
       // We want to early return for any keyboard events that occur inside text inputs EXCEPT for Tab and Escape
-      if (!isKeyboardFocusEvent(!!(opts?.isTextInput), modality, e)) {
+      if (!isKeyboardFocusEvent(!!opts?.isTextInput, modality, e)) {
         return;
       }
       fn(isFocusVisible());
@@ -366,7 +401,6 @@ export function useFocusVisibleListener(fn: FocusVisibleHandler, deps: ReadonlyA
     return () => {
       changeHandlers.delete(handler);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }
-

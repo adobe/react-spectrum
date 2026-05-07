@@ -12,29 +12,26 @@ export default function DragAndDropExamples() {
       <Flex direction="column" gap="size-125">
         <Divider />
         <Draggable />
-        <DropZone
-        maxWidth="size-3000"
-        isFilled={isFilled}
-        onDrop={() => setIsFilled(true)}>
-        <IllustratedMessage>
-          <Upload />
-          <Heading>
-            {isFilled ? 'You dropped something!' : 'Drag and drop your file'}
-          </Heading>
-        </IllustratedMessage>
-      </DropZone>
+        <DropZone maxWidth="size-3000" isFilled={isFilled} onDrop={() => setIsFilled(true)}>
+          <IllustratedMessage>
+            <Upload />
+            <Heading>{isFilled ? 'You dropped something!' : 'Drag and drop your file'}</Heading>
+          </IllustratedMessage>
+        </DropZone>
       </Flex>
     </>
-  )
+  );
 }
 
 function Draggable() {
-  let { dragProps, isDragging } = useDrag({
+  let {dragProps, isDragging} = useDrag({
     getItems() {
-      return [{
-        'text/plain': 'hello world',
-        'my-app-custom-type': JSON.stringify({ message: 'hello world' })
-      }];
+      return [
+        {
+          'text/plain': 'hello world',
+          'my-app-custom-type': JSON.stringify({message: 'hello world'})
+        }
+      ];
     }
   });
 
@@ -43,8 +40,7 @@ function Draggable() {
       {...dragProps}
       role="button"
       tabIndex={0}
-      className={`draggable ${isDragging ? 'dragging' : ''}`}
-    >
+      className={`draggable ${isDragging ? 'dragging' : ''}`}>
       Drag me
     </div>
   );

@@ -46,14 +46,10 @@ export default {
 export const CardGrid: CardStory = {
   render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Horizontal.args, layout: 'grid'},
-  decorators: [(Story, context) => (
-    <CardGridDecorator
-      Story={Story}
-      context={context} />
-  )]
+  decorators: [(Story, context) => <CardGridDecorator Story={Story} context={context} />]
 };
 
-const CardGridDecorator = (props) => {
+const CardGridDecorator = props => {
   let {Story, context} = props;
   let {args} = context;
   return (
@@ -66,19 +62,17 @@ const CardGridDecorator = (props) => {
         gridTemplateColumns: 'repeat(auto-fit, 360px)',
         gridAutoRows: '104px'
       }}>
-      {
-        (new Array(15).fill(0)).map((_, index) => {
-          let url = getImage(index);
-          return (
-            <Story {...args} key={`${index}${url}`}>
-              <Image src={url} />
-              <Heading>Title {index}</Heading>
-              <Text slot="detail">PNG</Text>
-              <Content>Description</Content>
-            </Story>
-          );
-        })
-      }
+      {new Array(15).fill(0).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <Story {...args} key={`${index}${url}`}>
+            <Image src={url} />
+            <Heading>Title {index}</Heading>
+            <Text slot="detail">PNG</Text>
+            <Content>Description</Content>
+          </Story>
+        );
+      })}
     </div>
   );
 };
@@ -86,14 +80,10 @@ const CardGridDecorator = (props) => {
 export const CardFloat: CardStory = {
   render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Horizontal.args},
-  decorators: [(Story, context) => (
-    <CardFloatDecorator
-      Story={Story}
-      context={context} />
-  )]
+  decorators: [(Story, context) => <CardFloatDecorator Story={Story} context={context} />]
 };
 
-const CardFloatDecorator = (props) => {
+const CardFloatDecorator = props => {
   let {Story, context} = props;
   let {args} = context;
   return (
@@ -102,21 +92,19 @@ const CardFloatDecorator = (props) => {
         width: '100%',
         margin: '50px'
       }}>
-      {
-        (new Array(15).fill(0)).map((_, index) => {
-          let url = getImage(index);
-          return (
-            <div style={{float: 'left', margin: '10px'}} key={`${index}${url}`}>
-              <Story {...args}>
-                <Image src={url} />
-                <Heading>Title {index}</Heading>
-                <Text slot="detail">PNG</Text>
-                <Content>Description</Content>
-              </Story>
-            </div>
-          );
-        })
-      }
+      {new Array(15).fill(0).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{float: 'left', margin: '10px'}} key={`${index}${url}`}>
+            <Story {...args}>
+              <Image src={url} />
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>Description</Content>
+            </Story>
+          </div>
+        );
+      })}
     </div>
   );
 };
@@ -124,14 +112,10 @@ const CardFloatDecorator = (props) => {
 export const CardGridTall: CardStory = {
   render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Horizontal.args, layout: 'grid'},
-  decorators: [(Story, context) => (
-    <CardGridTallDecorator
-      Story={Story}
-      context={context} />
-  )]
+  decorators: [(Story, context) => <CardGridTallDecorator Story={Story} context={context} />]
 };
 
-const CardGridTallDecorator = (props) => {
+const CardGridTallDecorator = props => {
   let {Story, context} = props;
   let {args} = context;
   return (
@@ -144,19 +128,17 @@ const CardGridTallDecorator = (props) => {
         gridTemplateColumns: 'repeat(auto-fit, 360px)',
         gridAutoRows: '150px'
       }}>
-      {
-        (new Array(15).fill(0)).map((_, index) => {
-          let url = getImage(index);
-          return (
-            <Story {...args} key={`${index}${url}`}>
-              <Image src={url} />
-              <Heading>Title {index}</Heading>
-              <Text slot="detail">PNG</Text>
-              <Content>Description</Content>
-            </Story>
-          );
-        })
-      }
+      {new Array(15).fill(0).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <Story {...args} key={`${index}${url}`}>
+            <Image src={url} />
+            <Heading>Title {index}</Heading>
+            <Text slot="detail">PNG</Text>
+            <Content>Description</Content>
+          </Story>
+        );
+      })}
     </div>
   );
 };

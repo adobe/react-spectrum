@@ -17,10 +17,10 @@ import {useDateFormatter} from '../i18n/useDateFormatter';
 import {useMemo} from 'react';
 
 export interface CalendarHeadingFormatOptions {
-  day?: 'numeric' | '2-digit',
-  month?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow',
-  year?: 'numeric' | '2-digit',
-  era?: 'long' | 'short' | 'narrow'
+  day?: 'numeric' | '2-digit';
+  month?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
+  year?: 'numeric' | '2-digit';
+  era?: 'long' | 'short' | 'narrow';
 }
 
 export interface CalendarHeadingProps {
@@ -28,14 +28,17 @@ export interface CalendarHeadingProps {
    * The number of months from the start of the visible range to display.
    * @default 0
    */
-  offset?: DateDuration,
+  offset?: DateDuration;
   /**
    * The format of the month heading.
    */
-  format?: CalendarHeadingFormatOptions
+  format?: CalendarHeadingFormatOptions;
 }
 
-export function useCalendarHeading(props: CalendarHeadingProps, state: CalendarState<CalendarSelectionMode> | RangeCalendarState): string {
+export function useCalendarHeading(
+  props: CalendarHeadingProps,
+  state: CalendarState<CalendarSelectionMode> | RangeCalendarState
+): string {
   let startDate = useMemo(() => {
     let currentMonth = state.visibleRange.start;
     if (props.offset) {
@@ -43,20 +46,27 @@ export function useCalendarHeading(props: CalendarHeadingProps, state: CalendarS
     }
     return currentMonth;
   }, [state.visibleRange.start, props.offset]);
-  
+
   let isDays = state.visibleDuration.days || state.visibleDuration.weeks;
   let formatter = useDateFormatter({
     day: props.format?.day || (isDays ? 'numeric' : undefined),
     month: props.format?.month || 'long',
     year: props.format?.year || 'numeric',
-    era: props.format?.era || startDate && startDate.calendar.identifier === 'gregory' && startDate.era === 'BC' ? 'short' : undefined,
+    era:
+      props.format?.era ||
+      (startDate && startDate.calendar.identifier === 'gregory' && startDate.era === 'BC')
+        ? 'short'
+        : undefined,
     calendar: state.visibleRange?.start.calendar.identifier,
     timeZone: state.timeZone
   });
 
   return useMemo(() => {
     if (isDays) {
-      return formatter.formatRange(startDate.toDate(state.timeZone), state.visibleRange.end.toDate(state.timeZone));
+      return formatter.formatRange(
+        startDate.toDate(state.timeZone),
+        state.visibleRange.end.toDate(state.timeZone)
+      );
     }
 
     return formatter.format(startDate.toDate(state.timeZone));

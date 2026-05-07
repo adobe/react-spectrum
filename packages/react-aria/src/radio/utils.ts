@@ -13,11 +13,14 @@
 import {RadioGroupState} from 'react-stately/useRadioGroupState';
 
 interface RadioGroupData {
-  name: string,
-  form: string | undefined,
-  descriptionId: string | undefined,
-  errorMessageId: string | undefined,
-  validationBehavior: 'aria' | 'native'
+  name: string;
+  form: string | undefined;
+  descriptionId: string | undefined;
+  errorMessageId: string | undefined;
+  validationBehavior: 'aria' | 'native';
 }
 
-export const radioGroupData: WeakMap<RadioGroupState, RadioGroupData> = new WeakMap<RadioGroupState, RadioGroupData>();
+export const radioGroupData: WeakMap<RadioGroupState, RadioGroupData> = new WeakMap<
+  RadioGroupState,
+  RadioGroupData
+>();

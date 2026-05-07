@@ -15,8 +15,11 @@ function testUserAgent(re: RegExp) {
     return false;
   }
   let brands = window.navigator['userAgentData']?.brands;
-  return Array.isArray(brands) && brands.some((brand: {brand: string, version: string}) => re.test(brand.brand)) ||
-    re.test(window.navigator.userAgent);
+  return (
+    (Array.isArray(brands) &&
+      brands.some((brand: {brand: string; version: string}) => re.test(brand.brand))) ||
+    re.test(window.navigator.userAgent)
+  );
 }
 
 function testPlatform(re: RegExp) {
@@ -48,9 +51,11 @@ export const isIPhone: () => boolean = cached(function () {
 });
 
 export const isIPad: () => boolean = cached(function () {
-  return testPlatform(/^iPad/i) ||
+  return (
+    testPlatform(/^iPad/i) ||
     // iPadOS 13 lies and says it's a Mac, but we can distinguish by detecting touch support.
-    (isMac() && navigator.maxTouchPoints > 1);
+    (isMac() && navigator.maxTouchPoints > 1)
+  );
 });
 
 export const isIOS: () => boolean = cached(function () {

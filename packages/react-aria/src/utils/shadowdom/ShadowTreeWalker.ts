@@ -13,30 +13,21 @@ export class ShadowTreeWalker implements TreeWalker {
   private _currentNode: Node;
   private _currentSetFor: Set<TreeWalker> = new Set();
 
-  constructor(
-      doc: Document,
-      root: Node,
-      whatToShow?: number,
-      filter?: NodeFilter | null
-    ) {
+  constructor(doc: Document, root: Node, whatToShow?: number, filter?: NodeFilter | null) {
     this._doc = doc;
     this.root = root;
     this.filter = filter ?? null;
     this.whatToShow = whatToShow ?? NodeFilter.SHOW_ALL;
     this._currentNode = root;
 
-    this._walkerStack.unshift(
-      doc.createTreeWalker(root, whatToShow, this._acceptNode)
-    );
+    this._walkerStack.unshift(doc.createTreeWalker(root, whatToShow, this._acceptNode));
 
     const shadowRoot = (root as Element).shadowRoot;
 
     if (shadowRoot) {
-      const walker = this._doc.createTreeWalker(
-        shadowRoot,
-        this.whatToShow,
-        {acceptNode: this._acceptNode}
-      );
+      const walker = this._doc.createTreeWalker(shadowRoot, this.whatToShow, {
+        acceptNode: this._acceptNode
+      });
 
       this._walkerStack.unshift(walker);
     }
@@ -47,11 +38,9 @@ export class ShadowTreeWalker implements TreeWalker {
       const shadowRoot = (node as Element).shadowRoot;
 
       if (shadowRoot) {
-        const walker = this._doc.createTreeWalker(
-          shadowRoot,
-          this.whatToShow,
-          {acceptNode: this._acceptNode}
-        );
+        const walker = this._doc.createTreeWalker(shadowRoot, this.whatToShow, {
+          acceptNode: this._acceptNode
+        });
 
         this._walkerStack.unshift(walker);
 
@@ -76,9 +65,7 @@ export class ShadowTreeWalker implements TreeWalker {
 
   public set currentNode(node: Node) {
     if (!nodeContains(this.root, node)) {
-      throw new Error(
-        'Cannot set currentNode to a node that is not contained by the root node.'
-      );
+      throw new Error('Cannot set currentNode to a node that is not contained by the root node.');
     }
 
     const walkers: TreeWalker[] = [];
@@ -91,11 +78,9 @@ export class ShadowTreeWalker implements TreeWalker {
       if (curNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
         const shadowRoot = curNode as ShadowRoot;
 
-        const walker = this._doc.createTreeWalker(
-          shadowRoot,
-          this.whatToShow,
-          {acceptNode: this._acceptNode}
-        );
+        const walker = this._doc.createTreeWalker(shadowRoot, this.whatToShow, {
+          acceptNode: this._acceptNode
+        });
 
         walkers.push(walker);
 
@@ -109,11 +94,9 @@ export class ShadowTreeWalker implements TreeWalker {
       }
     }
 
-    const walker = this._doc.createTreeWalker(
-      this.root,
-      this.whatToShow,
-      {acceptNode: this._acceptNode}
-    );
+    const walker = this._doc.createTreeWalker(this.root, this.whatToShow, {
+      acceptNode: this._acceptNode
+    });
 
     walkers.push(walker);
 
@@ -269,9 +252,9 @@ export class ShadowTreeWalker implements TreeWalker {
     }
   }
 
-    /**
-     * @deprecated
-     */
+  /**
+   * @deprecated
+   */
   public nextSibling(): Node | null {
     // if (__DEV__) {
     //     throw new Error("Method not implemented.");
@@ -280,9 +263,9 @@ export class ShadowTreeWalker implements TreeWalker {
     return null;
   }
 
-    /**
-     * @deprecated
-     */
+  /**
+   * @deprecated
+   */
   public previousSibling(): Node | null {
     // if (__DEV__) {
     //     throw new Error("Method not implemented.");
@@ -291,9 +274,9 @@ export class ShadowTreeWalker implements TreeWalker {
     return null;
   }
 
-    /**
-     * @deprecated
-     */
+  /**
+   * @deprecated
+   */
   public parentNode(): Node | null {
     // if (__DEV__) {
     //     throw new Error("Method not implemented.");
@@ -307,10 +290,10 @@ export class ShadowTreeWalker implements TreeWalker {
  * ShadowDOM safe version of document.createTreeWalker.
  */
 export function createShadowTreeWalker(
-    doc: Document,
-    root: Node,
-    whatToShow?: number,
-    filter?: NodeFilter | null
+  doc: Document,
+  root: Node,
+  whatToShow?: number,
+  filter?: NodeFilter | null
 ): TreeWalker {
   if (shadowDOM()) {
     return new ShadowTreeWalker(doc, root, whatToShow, filter);

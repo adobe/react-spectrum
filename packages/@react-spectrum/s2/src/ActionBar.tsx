@@ -14,13 +14,25 @@ import {ActionButtonGroup} from './ActionButtonGroup';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {CloseButton} from './CloseButton';
 import {ContextValue, SlotProps} from 'react-aria-components/slots';
-import {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  ReactElement,
+  ReactNode,
+  RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import {DOMProps, DOMRef, DOMRefValue, Key} from '@react-types/shared';
 import {FocusScope} from 'react-aria/FocusScope';
 import intlMessages from '../intl/*.json';
 // @ts-ignore
 import {lightDark, style} from '../style' with {type: 'macro'};
-import {StyleProps} from './style-utils' with { type: 'macro' };
+import {StyleProps} from './style-utils' with {type: 'macro'};
 import {useControlledState} from 'react-stately/useControlledState';
 import {useDOMRef} from './useDOMRef';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
@@ -80,23 +92,27 @@ const actionBarStyles = style({
 
 export interface ActionBarProps extends SlotProps, StyleProps, DOMProps {
   /** A list of ActionButtons to display. */
-  children: ReactNode,
+  children: ReactNode;
   /** Whether the ActionBar should be displayed with a emphasized style. */
-  isEmphasized?: boolean,
+  isEmphasized?: boolean;
   /** The number of selected items that the ActionBar is currently linked to. If 0, the ActionBar is hidden. */
-  selectedItemCount?: number | 'all',
+  selectedItemCount?: number | 'all';
   /** Handler that is called when the ActionBar clear button is pressed. */
-  onClearSelection?: () => void,
+  onClearSelection?: () => void;
   /** A ref to the scrollable element the ActionBar appears above. */
-  scrollRef?: RefObject<HTMLElement | null>
+  scrollRef?: RefObject<HTMLElement | null>;
 }
 
-export const ActionBarContext = createContext<ContextValue<Partial<ActionBarProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const ActionBarContext =
+  createContext<ContextValue<Partial<ActionBarProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * Action bars are used for single and bulk selection patterns when a user needs to perform actions on one or more items at the same time.
  */
-export const ActionBar = forwardRef(function ActionBar(props: ActionBarProps, ref: DOMRef<HTMLDivElement>) {
+export const ActionBar = forwardRef(function ActionBar(
+  props: ActionBarProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionBarContext);
   let domRef = useDOMRef(ref);
 
@@ -109,9 +125,21 @@ export const ActionBar = forwardRef(function ActionBar(props: ActionBarProps, re
   return <ActionBarInner {...props} ref={domRef} isExiting={isExiting} />;
 });
 
-const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps & {isExiting: boolean}, ref: ForwardedRef<HTMLDivElement | null>) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {isEmphasized, selectedItemCount = 0, children, onClearSelection, isExiting, slot, scrollRef, ...otherProps} = props;
+const ActionBarInner = forwardRef(function ActionBarInner(
+  props: ActionBarProps & {isExiting: boolean},
+  ref: ForwardedRef<HTMLDivElement | null>
+) {
+  let {
+    isEmphasized,
+    selectedItemCount = 0,
+    children,
+    onClearSelection,
+    isExiting,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    slot,
+    scrollRef,
+    ...otherProps
+  } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   // Store the last count greater than zero so that we can retain it while rendering the fade-out animation.
@@ -164,8 +192,14 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
         ref={objectRef}
         {...otherProps}
         {...keyboardProps}
-        className={(props.UNSAFE_className || '') + actionBarStyles({isEmphasized, isInContainer: !!scrollRef, isEntering, isExiting})}
-        style={{insetInlineEnd: `calc(var(--insetEnd) + ${scrollbarWidth}px)`, ...props.UNSAFE_style}}>
+        className={
+          (props.UNSAFE_className || '') +
+          actionBarStyles({isEmphasized, isInContainer: !!scrollRef, isEntering, isExiting})
+        }
+        style={{
+          insetInlineEnd: `calc(var(--insetEnd) + ${scrollbarWidth}px)`,
+          ...props.UNSAFE_style
+        }}>
         <div className={style({order: 1, marginStart: 'auto'})}>
           <ActionButtonGroup
             staticColor={isEmphasized ? 'auto' : undefined}
@@ -178,8 +212,12 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
           <CloseButton
             staticColor={isEmphasized ? 'auto' : undefined}
             aria-label={stringFormatter.format('actionbar.clearSelection')}
-            onPress={() => onClearSelection?.()} />
-          <span className={style({font: 'ui', color: {default: 'neutral', isEmphasized: 'gray-25'}})({isEmphasized})}>
+            onPress={() => onClearSelection?.()}
+          />
+          <span
+            className={style({font: 'ui', color: {default: 'neutral', isEmphasized: 'gray-25'}})({
+              isEmphasized
+            })}>
             {lastCount === 'all'
               ? stringFormatter.format('actionbar.selectedAll')
               : stringFormatter.format('actionbar.selected', {count: lastCount})}
@@ -191,26 +229,38 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
 });
 
 interface ActionBarContainerHookProps {
-  selectedKeys?: 'all' | Iterable<Key>,
-  defaultSelectedKeys?: 'all' | Iterable<Key>,
-  onSelectionChange?: (keys: Set<Key>) => void,
-  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement,
-  scrollRef?: RefObject<HTMLElement | null>
+  selectedKeys?: 'all' | Iterable<Key>;
+  defaultSelectedKeys?: 'all' | Iterable<Key>;
+  onSelectionChange?: (keys: Set<Key>) => void;
+  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement;
+  scrollRef?: RefObject<HTMLElement | null>;
 }
 
 interface ActionBarContainerHookResult {
-  selectedKeys: 'all' | Iterable<Key>,
-  onSelectionChange: (keys: 'all' | Iterable<Key>) => void,
-  actionBar: ReactElement,
-  actionBarHeight: number
+  selectedKeys: 'all' | Iterable<Key>;
+  onSelectionChange: (keys: 'all' | Iterable<Key>) => void;
+  actionBar: ReactElement;
+  actionBarHeight: number;
 }
 
-export function useActionBarContainer(props: ActionBarContainerHookProps): ActionBarContainerHookResult {
+export function useActionBarContainer(
+  props: ActionBarContainerHookProps
+): ActionBarContainerHookResult {
   let {renderActionBar, scrollRef} = props;
-  let [selectedKeys, setSelectedKeys] = useControlledState(props.selectedKeys, props.defaultSelectedKeys || new Set(), props.onSelectionChange);
-  let selectedKeysSet = useMemo(() => selectedKeys === 'all' ? selectedKeys as 'all' : new Set(selectedKeys), [selectedKeys]);
-  let actionBar = useMemo(() => renderActionBar?.(selectedKeysSet), [renderActionBar, selectedKeysSet]);
-  let selectedItemCount = selectedKeysSet === 'all' ? 'all' as const : selectedKeysSet.size;
+  let [selectedKeys, setSelectedKeys] = useControlledState(
+    props.selectedKeys,
+    props.defaultSelectedKeys || new Set(),
+    props.onSelectionChange
+  );
+  let selectedKeysSet = useMemo(
+    () => (selectedKeys === 'all' ? (selectedKeys as 'all') : new Set(selectedKeys)),
+    [selectedKeys]
+  );
+  let actionBar = useMemo(
+    () => renderActionBar?.(selectedKeysSet),
+    [renderActionBar, selectedKeysSet]
+  );
+  let selectedItemCount = selectedKeysSet === 'all' ? ('all' as const) : selectedKeysSet.size;
   let [actionBarHeight, setActionBarHeight] = useState(0);
   let actionBarRef = useCallback((ref: DOMRefValue | null) => {
     let actionBar = ref?.UNSAFE_getDOMNode();
@@ -221,18 +271,22 @@ export function useActionBarContainer(props: ActionBarContainerHookProps): Actio
     }
   }, []);
 
-  let actionBarContext = useMemo(() => ({
-    ref: actionBarRef,
-    scrollRef,
-    selectedItemCount,
-    onClearSelection: () => setSelectedKeys(new Set())
-  }), [scrollRef, actionBarRef, selectedItemCount, setSelectedKeys]);
+  let actionBarContext = useMemo(
+    () => ({
+      ref: actionBarRef,
+      scrollRef,
+      selectedItemCount,
+      onClearSelection: () => setSelectedKeys(new Set())
+    }),
+    [scrollRef, actionBarRef, selectedItemCount, setSelectedKeys]
+  );
 
-  let wrappedActionBar = useMemo(() => (
-    <ActionBarContext.Provider value={actionBarContext}>
-      {actionBar}
-    </ActionBarContext.Provider>
-  ), [actionBarContext, actionBar]);
+  let wrappedActionBar = useMemo(
+    () => (
+      <ActionBarContext.Provider value={actionBarContext}>{actionBar}</ActionBarContext.Provider>
+    ),
+    [actionBarContext, actionBar]
+  );
 
   return {
     selectedKeys,

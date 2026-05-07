@@ -2,7 +2,8 @@
   "presets": [
     "@babel/preset-typescript",
     "@babel/preset-react",
-    ["@babel/preset-env",
+    [
+      "@babel/preset-env",
       {
         "loose": true
       }
@@ -27,9 +28,7 @@
         [
           "react-remove-properties",
           {
-            "properties": [
-              "data-testid"
-            ]
+            "properties": ["data-testid"]
           }
         ]
       ]

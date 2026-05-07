@@ -12,24 +12,6 @@
     "generate:og": "node scripts/generateOGImages.mjs",
     "generate:md": "node scripts/generateMarkdownDocs.mjs"
   },
-  "targets": {
-    "react-static": {
-      "context": "react-server",
-      "engines": {
-        "browsers": [
-          "last 2 Chrome versions",
-          "last 2 Safari versions",
-          "last 2 Firefox versions"
-        ]
-      },
-      "includeNodeModules": {
-        "tree-sitter-highlight": false,
-        "json5": false,
-        "globals-docs": false,
-        "@parcel/rust": false
-      }
-    }
-  },
   "dependencies": {
     "@babel/parser": "^7.26.3",
     "@parcel/plugin": "^2.16.3",
@@ -66,15 +48,33 @@
     "unified": "^11.0.5",
     "unist-util-visit": "^5.0.0"
   },
-  "alias": {
-    "tailwind-starter": "../../../starters/tailwind/src",
-    "vanilla-starter": "../../../starters/docs/src"
-  },
   "devDependencies": {
     "axe-playwright": "^2.2.2",
     "playwright": "^1.57.0"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "*"
+  },
+  "alias": {
+    "tailwind-starter": "../../../starters/tailwind/src",
+    "vanilla-starter": "../../../starters/docs/src"
+  },
+  "targets": {
+    "react-static": {
+      "context": "react-server",
+      "engines": {
+        "browsers": [
+          "last 2 Chrome versions",
+          "last 2 Safari versions",
+          "last 2 Firefox versions"
+        ]
+      },
+      "includeNodeModules": {
+        "tree-sitter-highlight": false,
+        "json5": false,
+        "globals-docs": false,
+        "@parcel/rust": false
+      }
+    }
   }
 }

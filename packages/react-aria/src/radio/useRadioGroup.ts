@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AriaValidationProps, DOMAttributes, DOMProps, InputDOMProps, ValidationResult} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  AriaValidationProps,
+  DOMAttributes,
+  DOMProps,
+  InputDOMProps,
+  ValidationResult
+} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getFocusableTreeWalker} from '../focus/FocusScope';
@@ -23,17 +30,18 @@ import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useId} from '../utils/useId';
 import {useLocale} from '../i18n/I18nProvider';
 
-export interface AriaRadioGroupProps extends RadioGroupProps, InputDOMProps, DOMProps, AriaLabelingProps, AriaValidationProps {}
+export interface AriaRadioGroupProps
+  extends RadioGroupProps, InputDOMProps, DOMProps, AriaLabelingProps, AriaValidationProps {}
 
 export interface RadioGroupAria extends ValidationResult {
   /** Props for the radio group wrapper element. */
-  radioGroupProps: DOMAttributes,
+  radioGroupProps: DOMAttributes;
   /** Props for the radio group's visible label (if any). */
-  labelProps: DOMAttributes,
+  labelProps: DOMAttributes;
   /** Props for the radio group description element, if any. */
-  descriptionProps: DOMAttributes,
+  descriptionProps: DOMAttributes;
   /** Props for the radio group error message element, if any. */
-  errorMessageProps: DOMAttributes
+  errorMessageProps: DOMAttributes;
 }
 
 /**
@@ -80,7 +88,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     onFocusWithinChange: props.onFocusChange
   });
 
-  let onKeyDown = (e) => {
+  let onKeyDown = e => {
     let nextDir;
     switch (e.key) {
       case 'ArrowRight':
@@ -109,7 +117,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     e.preventDefault();
     let walker = getFocusableTreeWalker(e.currentTarget, {
       from: getEventTarget(e) as Element,
-      accept: (node) => node instanceof getOwnerWindow(node).HTMLInputElement && node.type === 'radio'
+      accept: node => node instanceof getOwnerWindow(node).HTMLInputElement && node.type === 'radio'
     });
     let nextElem;
     if (nextDir === 'next') {

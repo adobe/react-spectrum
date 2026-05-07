@@ -10,7 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  mockClickDefault,
+  pointerMap,
+  render,
+  setupIntersectionObserverMock,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {AriaTreeTests} from './AriaTree.test-util';
 import {Button} from '../src/Button';
 import {Checkbox, CheckboxButton, CheckboxField} from '../src/Checkbox';
@@ -23,7 +31,14 @@ import {ListLayout} from 'react-stately/useVirtualizerState';
 import React from 'react';
 import * as stories from '../stories/Tree.stories';
 import {Text} from '../src/Text';
-import {Tree, TreeHeader, TreeItem, TreeItemContent, TreeLoadMoreItem, TreeSection} from '../src/Tree';
+import {
+  Tree,
+  TreeHeader,
+  TreeItem,
+  TreeItemContent,
+  TreeLoadMoreItem,
+  TreeSection
+} from '../src/Tree';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 import {useTreeData} from 'react-stately/useTreeData';
@@ -39,21 +54,21 @@ let onSelectionChange = jest.fn();
 let onAction = jest.fn();
 let onExpandedChange = jest.fn();
 
-let StaticTreeItem = (props) => {
+let StaticTreeItem = props => {
   return (
     <TreeItem {...props}>
       <TreeItemContent>
         {({isExpanded, hasChildItems, selectionMode, selectionBehavior}) => (
           <>
-            {(selectionMode !== 'none' || props.href != null) && selectionBehavior === 'toggle' && (
-              props.checkboxComponent === 'CheckboxField'
-                ? (
-                  <CheckboxField slot="selection">
-                    <CheckboxButton />
-                  </CheckboxField>
-                )
-                : <Checkbox slot="selection" />
-            )}
+            {(selectionMode !== 'none' || props.href != null) &&
+              selectionBehavior === 'toggle' &&
+              (props.checkboxComponent === 'CheckboxField' ? (
+                <CheckboxField slot="selection">
+                  <CheckboxButton />
+                </CheckboxField>
+              ) : (
+                <Checkbox slot="selection" />
+              ))}
             {hasChildItems && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
             <Text>{props.title || props.children}</Text>
             <Button aria-label="Info">ⓘ</Button>
@@ -67,8 +82,16 @@ let StaticTreeItem = (props) => {
 };
 
 let StaticTree = ({treeProps = {}, rowProps = {}}) => (
-  <Tree defaultExpandedKeys={new Set(['projects', 'projects-1'])} disabledBehavior="selection" aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
-    <StaticTreeItem id="Photos" textValue="Photos" {...rowProps}>Photos</StaticTreeItem>
+  <Tree
+    defaultExpandedKeys={new Set(['projects', 'projects-1'])}
+    disabledBehavior="selection"
+    aria-label="test tree"
+    onExpandedChange={onExpandedChange}
+    onSelectionChange={onSelectionChange}
+    {...treeProps}>
+    <StaticTreeItem id="Photos" textValue="Photos" {...rowProps}>
+      Photos
+    </StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects" {...rowProps}>
       <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1" {...rowProps}>
         <StaticTreeItem id="projects-1A" textValue="Projects-1A" {...rowProps}>
@@ -86,9 +109,17 @@ let StaticTree = ({treeProps = {}, rowProps = {}}) => (
 );
 
 let StaticSectionTree = ({treeProps = {}, rowProps = {}}) => (
-  <Tree defaultExpandedKeys={new Set(['projects', 'projects-1'])} disabledBehavior="selection" aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
+  <Tree
+    defaultExpandedKeys={new Set(['projects', 'projects-1'])}
+    disabledBehavior="selection"
+    aria-label="test tree"
+    onExpandedChange={onExpandedChange}
+    onSelectionChange={onSelectionChange}
+    {...treeProps}>
     <TreeSection aria-label="Section 1">
-      <StaticTreeItem id="Photos" textValue="Photos" {...rowProps}>Photos</StaticTreeItem>
+      <StaticTreeItem id="Photos" textValue="Photos" {...rowProps}>
+        Photos
+      </StaticTreeItem>
     </TreeSection>
     <TreeSection>
       <TreeHeader>Section 2</TreeHeader>
@@ -110,70 +141,130 @@ let StaticSectionTree = ({treeProps = {}, rowProps = {}}) => (
 );
 
 let rows = [
-  {id: 'projects', name: 'Projects', childItems: [
-    {id: 'project-1', name: 'Project 1'},
-    {id: 'project-2', name: 'Project 2', childItems: [
-      {id: 'project-2A', name: 'Project 2A'},
-      {id: 'project-2B', name: 'Project 2B'},
-      {id: 'project-2C', name: 'Project 2C'}
-    ]},
-    {id: 'project-3', name: 'Project 3'},
-    {id: 'project-4', name: 'Project 4'},
-    {id: 'project-5', name: 'Project 5', childItems: [
-      {id: 'project-5A', name: 'Project 5A'},
-      {id: 'project-5B', name: 'Project 5B'},
-      {id: 'project-5C', name: 'Project 5C'}
-    ]}
-  ]},
-  {id: 'reports', name: 'Reports', childItems: [
-    {id: 'reports-1', name: 'Reports 1', childItems: [
-      {id: 'reports-1A', name: 'Reports 1A', childItems: [
-        {id: 'reports-1AB', name: 'Reports 1AB', childItems: [
-          {id: 'reports-1ABC', name: 'Reports 1ABC'}
-        ]}
-      ]},
-      {id: 'reports-1B', name: 'Reports 1B'},
-      {id: 'reports-1C', name: 'Reports 1C'}
-    ]},
-    {id: 'reports-2', name: 'Reports 2'}
-  ]}
+  {
+    id: 'projects',
+    name: 'Projects',
+    childItems: [
+      {id: 'project-1', name: 'Project 1'},
+      {
+        id: 'project-2',
+        name: 'Project 2',
+        childItems: [
+          {id: 'project-2A', name: 'Project 2A'},
+          {id: 'project-2B', name: 'Project 2B'},
+          {id: 'project-2C', name: 'Project 2C'}
+        ]
+      },
+      {id: 'project-3', name: 'Project 3'},
+      {id: 'project-4', name: 'Project 4'},
+      {
+        id: 'project-5',
+        name: 'Project 5',
+        childItems: [
+          {id: 'project-5A', name: 'Project 5A'},
+          {id: 'project-5B', name: 'Project 5B'},
+          {id: 'project-5C', name: 'Project 5C'}
+        ]
+      }
+    ]
+  },
+  {
+    id: 'reports',
+    name: 'Reports',
+    childItems: [
+      {
+        id: 'reports-1',
+        name: 'Reports 1',
+        childItems: [
+          {
+            id: 'reports-1A',
+            name: 'Reports 1A',
+            childItems: [
+              {
+                id: 'reports-1AB',
+                name: 'Reports 1AB',
+                childItems: [{id: 'reports-1ABC', name: 'Reports 1ABC'}]
+              }
+            ]
+          },
+          {id: 'reports-1B', name: 'Reports 1B'},
+          {id: 'reports-1C', name: 'Reports 1C'}
+        ]
+      },
+      {id: 'reports-2', name: 'Reports 2'}
+    ]
+  }
 ];
 
 let rowsWithSections = [
-  {id: 'section_1', name: 'Section 1', childItems: [
-    {id: 'projects', name: 'Projects', childItems: [
-      {id: 'project-1', name: 'Project 1'},
-      {id: 'project-2', name: 'Project 2', childItems: [
-        {id: 'project-2A', name: 'Project 2A'},
-        {id: 'project-2B', name: 'Project 2B'},
-        {id: 'project-2C', name: 'Project 2C'}
-      ]},
-      {id: 'project-3', name: 'Project 3'},
-      {id: 'project-4', name: 'Project 4'},
-      {id: 'project-5', name: 'Project 5', childItems: [
-        {id: 'project-5A', name: 'Project 5A'},
-        {id: 'project-5B', name: 'Project 5B'},
-        {id: 'project-5C', name: 'Project 5C'}
-      ]}
-    ]}
-  ]},
-  {id: 'section_2', name: 'Section 2', childItems: [
-    {id: 'reports', name: 'Reports', childItems: [
-      {id: 'reports-1', name: 'Reports 1', childItems: [
-        {id: 'reports-1A', name: 'Reports 1A', childItems: [
-          {id: 'reports-1AB', name: 'Reports 1AB', childItems: [
-            {id: 'reports-1ABC', name: 'Reports 1ABC'}
-          ]}
-        ]},
-        {id: 'reports-1B', name: 'Reports 1B'},
-        {id: 'reports-1C', name: 'Reports 1C'}
-      ]},
-      {id: 'reports-2', name: 'Reports 2'}
-    ]}
-  ]}
+  {
+    id: 'section_1',
+    name: 'Section 1',
+    childItems: [
+      {
+        id: 'projects',
+        name: 'Projects',
+        childItems: [
+          {id: 'project-1', name: 'Project 1'},
+          {
+            id: 'project-2',
+            name: 'Project 2',
+            childItems: [
+              {id: 'project-2A', name: 'Project 2A'},
+              {id: 'project-2B', name: 'Project 2B'},
+              {id: 'project-2C', name: 'Project 2C'}
+            ]
+          },
+          {id: 'project-3', name: 'Project 3'},
+          {id: 'project-4', name: 'Project 4'},
+          {
+            id: 'project-5',
+            name: 'Project 5',
+            childItems: [
+              {id: 'project-5A', name: 'Project 5A'},
+              {id: 'project-5B', name: 'Project 5B'},
+              {id: 'project-5C', name: 'Project 5C'}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'section_2',
+    name: 'Section 2',
+    childItems: [
+      {
+        id: 'reports',
+        name: 'Reports',
+        childItems: [
+          {
+            id: 'reports-1',
+            name: 'Reports 1',
+            childItems: [
+              {
+                id: 'reports-1A',
+                name: 'Reports 1A',
+                childItems: [
+                  {
+                    id: 'reports-1AB',
+                    name: 'Reports 1AB',
+                    childItems: [{id: 'reports-1ABC', name: 'Reports 1ABC'}]
+                  }
+                ]
+              },
+              {id: 'reports-1B', name: 'Reports 1B'},
+              {id: 'reports-1C', name: 'Reports 1C'}
+            ]
+          },
+          {id: 'reports-2', name: 'Reports 2'}
+        ]
+      }
+    ]
+  }
 ];
 
-let DynamicTreeItem = (props) => {
+let DynamicTreeItem = props => {
   return (
     <TreeItem {...props}>
       <TreeItemContent>
@@ -182,9 +273,7 @@ let DynamicTreeItem = (props) => {
             {(selectionMode !== 'none' || props.href != null) && selectionBehavior === 'toggle' && (
               <Checkbox slot="selection" />
             )}
-            {allowsDragging && (
-              <Button slot="drag">≡</Button>
-            )}
+            {allowsDragging && <Button slot="drag">≡</Button>}
             {hasChildItems && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
             {props.supportsDragging && <Button slot="drag">≡</Button>}
             <Text>{props.title || props.children}</Text>
@@ -195,7 +284,11 @@ let DynamicTreeItem = (props) => {
       </TreeItemContent>
       <Collection items={props.childItems}>
         {(item: any) => (
-          <DynamicTreeItem supportsDragging={props.supportsDragging} childItems={item.childItems} textValue={item.name} href={props.href}>
+          <DynamicTreeItem
+            supportsDragging={props.supportsDragging}
+            childItems={item.childItems}
+            textValue={item.name}
+            href={props.href}>
             {item.name}
           </DynamicTreeItem>
         )}
@@ -205,7 +298,23 @@ let DynamicTreeItem = (props) => {
 };
 
 let DynamicTree = ({treeProps = {}, rowProps = {}}) => (
-  <Tree defaultExpandedKeys={new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])} aria-label="test dynamic tree" items={rows} onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
+  <Tree
+    defaultExpandedKeys={
+      new Set([
+        'projects',
+        'project-2',
+        'project-5',
+        'reports',
+        'reports-1',
+        'reports-1A',
+        'reports-1AB'
+      ])
+    }
+    aria-label="test dynamic tree"
+    items={rows}
+    onExpandedChange={onExpandedChange}
+    onSelectionChange={onSelectionChange}
+    {...treeProps}>
     {(item: any) => (
       <DynamicTreeItem childItems={item.childItems} textValue={item.name} {...rowProps}>
         {item.name}
@@ -215,14 +324,34 @@ let DynamicTree = ({treeProps = {}, rowProps = {}}) => (
 );
 
 let DynamicSectionTree = ({treeProps = {}, rowProps = {}}) => (
-  <Tree defaultExpandedKeys={new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])} aria-label="test dynamic tree" items={rowsWithSections} onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
+  <Tree
+    defaultExpandedKeys={
+      new Set([
+        'projects',
+        'project-2',
+        'project-5',
+        'reports',
+        'reports-1',
+        'reports-1A',
+        'reports-1AB'
+      ])
+    }
+    aria-label="test dynamic tree"
+    items={rowsWithSections}
+    onExpandedChange={onExpandedChange}
+    onSelectionChange={onSelectionChange}
+    {...treeProps}>
     <Collection items={rowsWithSections}>
       {section => (
         <TreeSection>
           <TreeHeader>{section.name}</TreeHeader>
           <Collection items={section.childItems}>
             {item => (
-              <DynamicTreeItem id={item.id} childItems={item.childItems} textValue={item.name} {...rowProps}>
+              <DynamicTreeItem
+                id={item.id}
+                childItems={item.childItems}
+                textValue={item.name}
+                {...rowProps}>
                 {item.name}
               </DynamicTreeItem>
             )}
@@ -233,18 +362,18 @@ let DynamicSectionTree = ({treeProps = {}, rowProps = {}}) => (
   </Tree>
 );
 
-let DraggableTree = (props) => {
+let DraggableTree = props => {
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
+    getItems: keys => [...keys].map(key => ({'text/plain': key})),
     ...props
   });
 
   return <DynamicTree treeProps={{dragAndDropHooks}} />;
 };
 
-let DraggableTreeWithSelection = (props) => {
+let DraggableTreeWithSelection = props => {
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
+    getItems: keys => [...keys].map(key => ({'text/plain': key})),
     ...props
   });
 
@@ -262,7 +391,9 @@ describe('Tree', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   afterAll(() => {
@@ -280,7 +411,9 @@ describe('Tree', () => {
   });
 
   it('should render a Tree with custom classes', () => {
-    let {getByRole, getAllByRole} = render(<StaticTree treeProps={{className: 'test-tree'}} rowProps={{className: 'test-row'}} />);
+    let {getByRole, getAllByRole} = render(
+      <StaticTree treeProps={{className: 'test-tree'}} rowProps={{className: 'test-row'}} />
+    );
     let tree = getByRole('treegrid');
     expect(tree).toHaveAttribute('class', 'test-tree');
 
@@ -290,7 +423,9 @@ describe('Tree', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByRole} = render(<StaticTree treeProps={{'data-testid': 'test-tree'}} rowProps={{'data-testid': 'test-row'}} />);
+    let {getByRole, getAllByRole} = render(
+      <StaticTree treeProps={{'data-testid': 'test-tree'}} rowProps={{'data-testid': 'test-row'}} />
+    );
     let tree = getByRole('treegrid');
     expect(tree).toHaveAttribute('data-testid', 'test-tree');
 
@@ -300,7 +435,12 @@ describe('Tree', () => {
   });
 
   it('should support custom render function', () => {
-    let {getByRole, getAllByRole} = render(<StaticTree treeProps={{render: props => <div {...props} data-custom="true" />}} rowProps={{render: props => <div {...props} data-custom="true" />}} />);
+    let {getByRole, getAllByRole} = render(
+      <StaticTree
+        treeProps={{render: props => <div {...props} data-custom="true" />}}
+        rowProps={{render: props => <div {...props} data-custom="true" />}}
+      />
+    );
     let tree = getByRole('treegrid');
     expect(tree).toHaveAttribute('data-custom', 'true');
 
@@ -317,7 +457,9 @@ describe('Tree', () => {
   });
 
   it('should have the base set of data attributes', () => {
-    let {getByRole, getAllByRole} = render(<StaticTree treeProps={{defaultExpandedKeys: 'none'}} />);
+    let {getByRole, getAllByRole} = render(
+      <StaticTree treeProps={{defaultExpandedKeys: 'none'}} />
+    );
     let tree = getByRole('treegrid');
     expect(tree).toHaveAttribute('data-rac');
     expect(tree).not.toHaveAttribute('data-empty');
@@ -448,18 +590,19 @@ describe('Tree', () => {
 
   it('should support items with falsy keys', async () => {
     let falsyKeyRows = [
-      {id: 0, name: 'Zero', childItems: [
-        {id: '', name: 'Empty'},
-        {id: 'zero-child', name: 'Zero child'}
-      ]},
+      {
+        id: 0,
+        name: 'Zero',
+        childItems: [
+          {id: '', name: 'Empty'},
+          {id: 'zero-child', name: 'Zero child'}
+        ]
+      },
       {id: 1, name: 'One'}
     ];
 
     let {getAllByRole} = render(
-      <Tree
-        defaultExpandedKeys={new Set([0])}
-        aria-label="falsy keys tree"
-        items={falsyKeyRows}>
+      <Tree defaultExpandedKeys={new Set([0])} aria-label="falsy keys tree" items={falsyKeyRows}>
         {(item: any) => (
           <DynamicTreeItem childItems={item.childItems} textValue={item.name}>
             {item.name}
@@ -487,33 +630,43 @@ describe('Tree', () => {
     expect(document.activeElement).toBe(rows[2]);
   });
 
-  it.each(['Checkbox', 'CheckboxField'])('should render checkboxes for selection using %s', async (comp) => {
-    let {getByRole, getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'single'}} rowProps={{href: 'https://google.com', checkboxComponent: comp}} />);
-    let tree = getByRole('treegrid');
-    expect(tree).not.toHaveAttribute('aria-multiselectable');
+  it.each(['Checkbox', 'CheckboxField'])(
+    'should render checkboxes for selection using %s',
+    async comp => {
+      let {getByRole, getAllByRole} = render(
+        <StaticTree
+          treeProps={{selectionMode: 'single'}}
+          rowProps={{href: 'https://google.com', checkboxComponent: comp}}
+        />
+      );
+      let tree = getByRole('treegrid');
+      expect(tree).not.toHaveAttribute('aria-multiselectable');
 
-    for (let row of getAllByRole('row')) {
+      for (let row of getAllByRole('row')) {
+        let checkbox = within(row).getByRole('checkbox');
+        expect(checkbox).not.toBeChecked();
+        expect(checkbox).toHaveAttribute('aria-label', 'Select');
+        expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${row.id}`);
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        expect(row).not.toHaveAttribute('data-selected');
+        expect(row).toHaveAttribute('data-selection-mode', 'single');
+      }
+
+      let row = getAllByRole('row')[2];
       let checkbox = within(row).getByRole('checkbox');
-      expect(checkbox).not.toBeChecked();
-      expect(checkbox).toHaveAttribute('aria-label', 'Select');
-      expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${row.id}`);
-      expect(row).toHaveAttribute('aria-selected', 'false');
-      expect(row).not.toHaveAttribute('data-selected');
-      expect(row).toHaveAttribute('data-selection-mode', 'single');
+      await user.click(checkbox);
+      expect(row).toHaveAttribute('aria-selected', 'true');
+      expect(row).toHaveAttribute('data-selected', 'true');
+      expect(checkbox).toBeChecked();
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['projects-1']));
     }
-
-    let row = getAllByRole('row')[2];
-    let checkbox = within(row).getByRole('checkbox');
-    await user.click(checkbox);
-    expect(row).toHaveAttribute('aria-selected', 'true');
-    expect(row).toHaveAttribute('data-selected', 'true');
-    expect(checkbox).toBeChecked();
-    expect(onSelectionChange).toHaveBeenCalledTimes(1);
-    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['projects-1']));
-  });
+  );
 
   it('should not render checkboxes for selection with selectionBehavior=replace ', async () => {
-    let {getByRole, getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', selectionBehavior: 'replace'}} />);
+    let {getByRole, getAllByRole} = render(
+      <StaticTree treeProps={{selectionMode: 'multiple', selectionBehavior: 'replace'}} />
+    );
     let tree = getByRole('treegrid');
     expect(tree).toHaveAttribute('aria-multiselectable', 'true');
 
@@ -554,7 +707,15 @@ describe('Tree', () => {
 
     let rows = getAllByRole('row');
     expect(rows).toHaveLength(7);
-    expect(rows.map(r => r.querySelector('span')!.textContent)).toEqual(['Projects', 'Project 1', 'Project 2', 'Project 2A', 'Project 2B', 'Project 2C', 'Project 3']);
+    expect(rows.map(r => r.querySelector('span')!.textContent)).toEqual([
+      'Projects',
+      'Project 1',
+      'Project 2',
+      'Project 2A',
+      'Project 2B',
+      'Project 2C',
+      'Project 3'
+    ]);
 
     let tree = getByRole('treegrid');
     tree.scrollTop = 200;
@@ -562,14 +723,33 @@ describe('Tree', () => {
 
     rows = getAllByRole('row');
     expect(rows).toHaveLength(8);
-    expect(rows.map(r => r.querySelector('span')!.textContent)).toEqual(['Project 4', 'Project 5', 'Project 5A', 'Project 5B', 'Project 5C', 'Reports', 'Reports 1', 'Reports 1A']);
+    expect(rows.map(r => r.querySelector('span')!.textContent)).toEqual([
+      'Project 4',
+      'Project 5',
+      'Project 5A',
+      'Project 5B',
+      'Project 5C',
+      'Reports',
+      'Reports 1',
+      'Reports 1A'
+    ]);
 
     await user.tab();
     await user.keyboard('{End}');
 
     rows = getAllByRole('row');
     expect(rows).toHaveLength(9);
-    expect(rows.map(r => r.querySelector('span')!.textContent)).toEqual(['Project 4', 'Project 5', 'Project 5A', 'Project 5B', 'Project 5C', 'Reports', 'Reports 1', 'Reports 1A', 'Reports 2']);
+    expect(rows.map(r => r.querySelector('span')!.textContent)).toEqual([
+      'Project 4',
+      'Project 5',
+      'Project 5A',
+      'Project 5B',
+      'Project 5C',
+      'Reports',
+      'Reports 1',
+      'Reports 1A',
+      'Reports 2'
+    ]);
   });
 
   describe('general interactions', () => {
@@ -577,7 +757,17 @@ describe('Tree', () => {
       let onHoverStart = jest.fn();
       let onHoverChange = jest.fn();
       let onHoverEnd = jest.fn();
-      let {getAllByRole, rerender} = render(<StaticTree treeProps={{selectionMode: 'multiple'}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd}} />);
+      let {getAllByRole, rerender} = render(
+        <StaticTree
+          treeProps={{selectionMode: 'multiple'}}
+          rowProps={{
+            className: ({isHovered}) => (isHovered ? 'hover' : ''),
+            onHoverStart,
+            onHoverChange,
+            onHoverEnd
+          }}
+        />
+      );
 
       let row = getAllByRole('row')[0];
       expect(row).not.toHaveAttribute('data-hovered');
@@ -595,7 +785,12 @@ describe('Tree', () => {
       expect(onHoverEnd).toHaveBeenCalledTimes(1);
       expect(onHoverChange).toHaveBeenCalledTimes(2);
 
-      rerender(<StaticTree treeProps={{selectionMode: 'none', onAction: jest.fn()}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
+      rerender(
+        <StaticTree
+          treeProps={{selectionMode: 'none', onAction: jest.fn()}}
+          rowProps={{className: ({isHovered}) => (isHovered ? 'hover' : '')}}
+        />
+      );
       row = getAllByRole('row')[0];
       expect(row).not.toHaveAttribute('data-hovered');
       expect(row).not.toHaveClass('hover');
@@ -613,7 +808,17 @@ describe('Tree', () => {
       let onHoverStart = jest.fn();
       let onHoverChange = jest.fn();
       let onHoverEnd = jest.fn();
-      let {getAllByRole, rerender} = render(<StaticTree treeProps={{selectionMode: 'none'}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd}} />);
+      let {getAllByRole, rerender} = render(
+        <StaticTree
+          treeProps={{selectionMode: 'none'}}
+          rowProps={{
+            className: ({isHovered}) => (isHovered ? 'hover' : ''),
+            onHoverStart,
+            onHoverChange,
+            onHoverEnd
+          }}
+        />
+      );
 
       let row = getAllByRole('row')[0];
       expect(row).not.toHaveAttribute('data-hovered');
@@ -651,7 +856,17 @@ describe('Tree', () => {
       let inertOnHoverStart = jest.fn();
       let inertOnHoverChange = jest.fn();
       let inertOnHoverEnd = jest.fn();
-      rerender(<StaticTree treeProps={{selectionMode: 'none', disabledBehavior: 'all', disabledKeys: ['projects']}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart: inertOnHoverStart, onHoverChange: inertOnHoverChange, onHoverEnd: inertOnHoverEnd}} />);
+      rerender(
+        <StaticTree
+          treeProps={{selectionMode: 'none', disabledBehavior: 'all', disabledKeys: ['projects']}}
+          rowProps={{
+            className: ({isHovered}) => (isHovered ? 'hover' : ''),
+            onHoverStart: inertOnHoverStart,
+            onHoverChange: inertOnHoverChange,
+            onHoverEnd: inertOnHoverEnd
+          }}
+        />
+      );
 
       expandableRow = getAllByRole('row')[1];
       expect(expandableRow).toHaveAttribute('data-disabled', 'true');
@@ -667,7 +882,12 @@ describe('Tree', () => {
     });
 
     it('should support press on rows', async () => {
-      let {getAllByRole, rerender} = render(<StaticTree treeProps={{selectionMode: 'multiple'}} rowProps={{className: ({isPressed}) => isPressed ? 'pressed' : ''}} />);
+      let {getAllByRole, rerender} = render(
+        <StaticTree
+          treeProps={{selectionMode: 'multiple'}}
+          rowProps={{className: ({isPressed}) => (isPressed ? 'pressed' : '')}}
+        />
+      );
 
       let row = getAllByRole('row')[0];
       expect(row).not.toHaveAttribute('data-pressed');
@@ -681,7 +901,12 @@ describe('Tree', () => {
       expect(row).not.toHaveAttribute('data-pressed');
       expect(row).not.toHaveClass('pressed');
 
-      rerender(<StaticTree treeProps={{selectionMode: 'none', onAction: jest.fn()}} rowProps={{className: ({isPressed}) => isPressed ? 'pressed' : ''}} />);
+      rerender(
+        <StaticTree
+          treeProps={{selectionMode: 'none', onAction: jest.fn()}}
+          rowProps={{className: ({isPressed}) => (isPressed ? 'pressed' : '')}}
+        />
+      );
       row = getAllByRole('row')[0];
       expect(row).not.toHaveAttribute('data-pressed');
       expect(row).not.toHaveClass('pressed');
@@ -696,7 +921,12 @@ describe('Tree', () => {
     });
 
     it('should not update the press state if the row is not interactive', async () => {
-      let {getAllByRole, rerender} = render(<StaticTree treeProps={{selectionMode: 'none', disabledBehavior: 'selection'}} rowProps={{className: ({isPressed}) => isPressed ? 'pressed' : ''}} />);
+      let {getAllByRole, rerender} = render(
+        <StaticTree
+          treeProps={{selectionMode: 'none', disabledBehavior: 'selection'}}
+          rowProps={{className: ({isPressed}) => (isPressed ? 'pressed' : '')}}
+        />
+      );
 
       let row = getAllByRole('row')[0];
       expect(row).not.toHaveAttribute('data-pressed');
@@ -720,7 +950,12 @@ describe('Tree', () => {
       expect(expandableRow).not.toHaveClass('pressed');
 
       // Test a completely inert expandable row
-      rerender(<StaticTree treeProps={{selectionMode: 'none', disabledBehavior: 'all',  disabledKeys: ['projects']}} rowProps={{className: ({isPressed}) => isPressed ? 'pressed' : ''}} />);
+      rerender(
+        <StaticTree
+          treeProps={{selectionMode: 'none', disabledBehavior: 'all', disabledKeys: ['projects']}}
+          rowProps={{className: ({isPressed}) => (isPressed ? 'pressed' : '')}}
+        />
+      );
       expandableRow = getAllByRole('row')[1];
       expect(expandableRow).toHaveAttribute('data-disabled', 'true');
       expect(expandableRow).not.toHaveAttribute('data-pressed');
@@ -733,7 +968,16 @@ describe('Tree', () => {
     });
 
     it('should support focus', async () => {
-      let {getAllByRole, rerender} = render(<StaticTree treeProps={{selectionMode: 'multiple', disabledKeys: ['projects'], disabledBehavior: 'selection'}} rowProps={{className: ({isFocused}) => isFocused ? 'focus' : ''}} />);
+      let {getAllByRole, rerender} = render(
+        <StaticTree
+          treeProps={{
+            selectionMode: 'multiple',
+            disabledKeys: ['projects'],
+            disabledBehavior: 'selection'
+          }}
+          rowProps={{className: ({isFocused}) => (isFocused ? 'focus' : '')}}
+        />
+      );
 
       let row = getAllByRole('row')[0];
       expect(row).not.toHaveAttribute('data-focused');
@@ -743,7 +987,16 @@ describe('Tree', () => {
       expect(row).toHaveAttribute('data-focused');
       expect(row).toHaveClass('focus');
 
-      rerender(<StaticTree treeProps={{selectionMode: 'multiple', disabledKeys: ['projects'], disabledBehavior: 'selection'}} rowProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus-visible' : ''}} />);
+      rerender(
+        <StaticTree
+          treeProps={{
+            selectionMode: 'multiple',
+            disabledKeys: ['projects'],
+            disabledBehavior: 'selection'
+          }}
+          rowProps={{className: ({isFocusVisible}) => (isFocusVisible ? 'focus-visible' : '')}}
+        />
+      );
       row = getAllByRole('row')[0];
       expect(row).not.toHaveAttribute('data-focus-visible');
       expect(row).not.toHaveClass('focus-visible');
@@ -771,7 +1024,16 @@ describe('Tree', () => {
     });
 
     it('should support actions on rows', async () => {
-      let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', disabledBehavior: 'all', onAction, disabledKeys: ['projects']}}  />);
+      let {getAllByRole} = render(
+        <StaticTree
+          treeProps={{
+            selectionMode: 'multiple',
+            disabledBehavior: 'all',
+            onAction,
+            disabledKeys: ['projects']
+          }}
+        />
+      );
 
       let row = getAllByRole('row')[0];
       await user.click(row);
@@ -799,7 +1061,9 @@ describe('Tree', () => {
     });
 
     it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
-      let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', escapeKeyBehavior: 'none'}}  />);
+      let {getAllByRole} = render(
+        <StaticTree treeProps={{selectionMode: 'multiple', escapeKeyBehavior: 'none'}} />
+      );
 
       let rows = getAllByRole('row');
       await user.click(rows[0]);
@@ -825,7 +1089,7 @@ describe('Tree', () => {
     });
 
     describe('links', function () {
-      describe.each(['mouse', 'keyboard'])('%s', (type) => {
+      describe.each(['mouse', 'keyboard'])('%s', type => {
         let trigger = async (item, key = 'Enter') => {
           if (type === 'mouse') {
             await user.click(item);
@@ -835,7 +1099,12 @@ describe('Tree', () => {
         };
 
         it('should support links with selectionMode="none"', async () => {
-          let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'none'}} rowProps={{href: 'https://google.com/'}} />);
+          let {getAllByRole} = render(
+            <StaticTree
+              treeProps={{selectionMode: 'none'}}
+              rowProps={{href: 'https://google.com/'}}
+            />
+          );
           let items = getAllByRole('row');
           for (let item of items) {
             expect(item.tagName).not.toBe('A');
@@ -853,75 +1122,88 @@ describe('Tree', () => {
           expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
         });
 
-        it.each(['single', 'multiple'])('should support links with selectionBehavior="toggle" selectionMode="%s"', async (selectionMode) => {
-          let {getAllByRole} = render(<StaticTree treeProps={{selectionMode}} rowProps={{href: 'https://google.com/'}} />);
-          let items = getAllByRole('row');
-          for (let item of items) {
-            expect(item.tagName).not.toBe('A');
-            expect(item).toHaveAttribute('data-href');
+        it.each(['single', 'multiple'])(
+          'should support links with selectionBehavior="toggle" selectionMode="%s"',
+          async selectionMode => {
+            let {getAllByRole} = render(
+              <StaticTree treeProps={{selectionMode}} rowProps={{href: 'https://google.com/'}} />
+            );
+            let items = getAllByRole('row');
+            for (let item of items) {
+              expect(item.tagName).not.toBe('A');
+              expect(item).toHaveAttribute('data-href');
+            }
+
+            if (type === 'keyboard') {
+              await user.tab();
+            }
+
+            let onClick = mockClickDefault();
+            await trigger(items[0]);
+            expect(onClick).toHaveBeenCalledTimes(1);
+            expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+            expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+
+            await user.click(within(items[0]).getByRole('checkbox'));
+            expect(items[0]).toHaveAttribute('aria-selected', 'true');
+
+            if (type === 'keyboard') {
+              await user.keyboard('{ArrowLeft}');
+              await user.keyboard('{ArrowDown}');
+            }
+            await trigger(items[1], ' ');
+            expect(onClick).toHaveBeenCalledTimes(1);
+            expect(items[1]).toHaveAttribute('aria-selected', 'true');
           }
+        );
 
-          if (type === 'keyboard') {
-            await user.tab();
+        it.each(['single', 'multiple'])(
+          'should support links with selectionBehavior="replace" selectionMode="%s"',
+          async selectionMode => {
+            let {getAllByRole} = render(
+              <StaticTree
+                treeProps={{selectionMode, selectionBehavior: 'replace'}}
+                rowProps={{href: 'https://google.com/'}}
+              />
+            );
+
+            let items = getAllByRole('row');
+            for (let item of items) {
+              expect(item.tagName).not.toBe('A');
+              expect(item).toHaveAttribute('data-href');
+            }
+
+            let onClick = mockClickDefault();
+            if (type === 'mouse') {
+              await user.click(items[0]);
+            } else {
+              await user.tab();
+              await user.keyboard('{Space}');
+            }
+            expect(onClick).not.toHaveBeenCalled();
+            expect(items[0]).toHaveAttribute('aria-selected', 'true');
+
+            if (type === 'mouse') {
+              await user.dblClick(items[0], {pointerType: 'mouse'});
+            } else {
+              await user.keyboard('{Enter}');
+            }
+            expect(onClick).toHaveBeenCalledTimes(1);
+            expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+            expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
           }
-
-          let onClick = mockClickDefault();
-          await trigger(items[0]);
-          expect(onClick).toHaveBeenCalledTimes(1);
-          expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
-          expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
-
-          await user.click(within(items[0]).getByRole('checkbox'));
-          expect(items[0]).toHaveAttribute('aria-selected', 'true');
-
-          if (type === 'keyboard') {
-            await user.keyboard('{ArrowLeft}');
-            await user.keyboard('{ArrowDown}');
-          }
-          await trigger(items[1], ' ');
-          expect(onClick).toHaveBeenCalledTimes(1);
-          expect(items[1]).toHaveAttribute('aria-selected', 'true');
-        });
-
-        it.each(['single', 'multiple'])('should support links with selectionBehavior="replace" selectionMode="%s"', async (selectionMode) => {
-          let {getAllByRole} = render(<StaticTree treeProps={{selectionMode, selectionBehavior: 'replace'}} rowProps={{href: 'https://google.com/'}} />);
-
-          let items = getAllByRole('row');
-          for (let item of items) {
-            expect(item.tagName).not.toBe('A');
-            expect(item).toHaveAttribute('data-href');
-          }
-
-          let onClick = mockClickDefault();
-          if (type === 'mouse') {
-            await user.click(items[0]);
-          } else {
-            await user.tab();
-            await user.keyboard('{Space}');
-          }
-          expect(onClick).not.toHaveBeenCalled();
-          expect(items[0]).toHaveAttribute('aria-selected', 'true');
-
-          if (type === 'mouse') {
-            await user.dblClick(items[0], {pointerType: 'mouse'});
-          } else {
-            await user.keyboard('{Enter}');
-          }
-          expect(onClick).toHaveBeenCalledTimes(1);
-          expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
-          expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
-        });
+        );
       });
     });
 
     describe('keyboard interactions', () => {
-      describe.each(['DynamicTree', 'DynamicSectionTree'])('%s', (comp) => {
+      describe.each(['DynamicTree', 'DynamicSectionTree'])('%s', comp => {
         const TreeExample = comp === 'DynamicSectionTree' ? DynamicSectionTree : DynamicTree;
 
         function getAllRows(tree: HTMLElement) {
           const rowGroups = within(tree).queryAllByRole('rowgroup');
           return rowGroups.length > 0
-            ? rowGroups.flatMap((rowGroup) => within(rowGroup).queryAllByRole('row').slice(1))
+            ? rowGroups.flatMap(rowGroup => within(rowGroup).queryAllByRole('row').slice(1))
             : within(tree).queryAllByRole('row');
         }
 
@@ -972,7 +1254,9 @@ describe('Tree', () => {
           await user.keyboard('Reports 1ABC');
           expect(document.activeElement).toBe(rows[16]);
 
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           await user.keyboard('Pro');
           expect(document.activeElement).toBe(rows[0]);
 
@@ -1074,7 +1358,7 @@ describe('Tree', () => {
   });
 
   describe('expanding and collapsing', () => {
-    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+    describe.each(['mouse', 'keyboard'])('%s', type => {
       let trigger = async (item, key = 'ArrowRight') => {
         if (type === 'mouse') {
           await user.click(item);
@@ -1101,7 +1385,9 @@ describe('Tree', () => {
         expect(rows[0]).toHaveAttribute('data-has-child-items', 'true');
         expect(onExpandedChange).toHaveBeenCalledTimes(1);
         // Note that the children of the parent row will still be in the "expanded" array
-        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
+        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(
+          new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])
+        );
         rows = getAllByRole('row');
         expect(rows).toHaveLength(9);
 
@@ -1110,7 +1396,17 @@ describe('Tree', () => {
         expect(rows[0]).toHaveAttribute('data-expanded', 'true');
         expect(rows[0]).toHaveAttribute('data-has-child-items', 'true');
         expect(onExpandedChange).toHaveBeenCalledTimes(2);
-        expect(new Set(onExpandedChange.mock.calls[1][0])).toEqual(new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
+        expect(new Set(onExpandedChange.mock.calls[1][0])).toEqual(
+          new Set([
+            'projects',
+            'project-2',
+            'project-5',
+            'reports',
+            'reports-1',
+            'reports-1A',
+            'reports-1AB'
+          ])
+        );
         rows = getAllByRole('row');
         expect(rows).toHaveLength(20);
 
@@ -1128,7 +1424,9 @@ describe('Tree', () => {
         expect(rows[0]).toHaveAttribute('data-expanded', 'true');
         expect(rows[0]).toHaveAttribute('data-has-child-items', 'true');
         expect(onExpandedChange).toHaveBeenCalledTimes(3);
-        expect(new Set(onExpandedChange.mock.calls[2][0])).toEqual(new Set(['projects', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
+        expect(new Set(onExpandedChange.mock.calls[2][0])).toEqual(
+          new Set(['projects', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])
+        );
         rows = getAllByRole('row');
         expect(rows).toHaveLength(17);
 
@@ -1138,7 +1436,9 @@ describe('Tree', () => {
         await trigger(rows[0], 'ArrowLeft');
         expect(document.activeElement).toBe(rows[0]);
         expect(onExpandedChange).toHaveBeenCalledTimes(4);
-        expect(new Set(onExpandedChange.mock.calls[3][0])).toEqual(new Set(['project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
+        expect(new Set(onExpandedChange.mock.calls[3][0])).toEqual(
+          new Set(['project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])
+        );
         rows = getAllByRole('row');
         expect(rows).toHaveLength(9);
 
@@ -1146,7 +1446,9 @@ describe('Tree', () => {
         await trigger(rows[0], 'ArrowRight');
         expect(document.activeElement).toBe(rows[0]);
         expect(onExpandedChange).toHaveBeenCalledTimes(5);
-        expect(new Set(onExpandedChange.mock.calls[4][0])).toEqual(new Set(['projects', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
+        expect(new Set(onExpandedChange.mock.calls[4][0])).toEqual(
+          new Set(['projects', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])
+        );
         rows = getAllByRole('row');
         expect(rows).toHaveLength(17);
       });
@@ -1182,7 +1484,9 @@ describe('Tree', () => {
         expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
         expect(rows[0]).not.toHaveAttribute('data-expanded');
         expect(onExpandedChange).toHaveBeenCalledTimes(1);
-        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
+        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(
+          new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])
+        );
         expect(onSelectionChange).toHaveBeenCalledTimes(2);
       });
 
@@ -1210,7 +1514,9 @@ describe('Tree', () => {
         expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
         expect(rows[0]).not.toHaveAttribute('data-expanded');
         expect(onExpandedChange).toHaveBeenCalledTimes(1);
-        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
+        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(
+          new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])
+        );
         expect(onAction).toHaveBeenCalledTimes(1);
       });
 
@@ -1241,7 +1547,9 @@ describe('Tree', () => {
         expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
         expect(rows[0]).not.toHaveAttribute('data-expanded');
         expect(onExpandedChange).toHaveBeenCalledTimes(1);
-        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
+        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(
+          new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])
+        );
       });
     });
 
@@ -1265,15 +1573,17 @@ describe('Tree', () => {
     it('should allow the user to tab to the empty tree', async () => {
       let {getAllByRole, getByRole} = render(
         <Tree
-          className={({isFocused, isFocusVisible}) => `isFocused: ${isFocused}, isFocusVisible: ${isFocusVisible}`}
+          className={({isFocused, isFocusVisible}) =>
+            `isFocused: ${isFocused}, isFocusVisible: ${isFocusVisible}`
+          }
           aria-label="test empty tree"
           items={[]}
-          renderEmptyState={({isFocused, isFocusVisible}) => <span>{`Nothing in tree, isFocused: ${isFocused}, isFocusVisible: ${isFocusVisible}`}</span>}>
+          renderEmptyState={({isFocused, isFocusVisible}) => (
+            <span>{`Nothing in tree, isFocused: ${isFocused}, isFocusVisible: ${isFocusVisible}`}</span>
+          )}>
           {() => (
             <TreeItem textValue="dummy value">
-              <TreeItemContent>
-                Dummy Value
-              </TreeItemContent>
+              <TreeItemContent>Dummy Value</TreeItemContent>
             </TreeItem>
           )}
         </Tree>
@@ -1290,7 +1600,9 @@ describe('Tree', () => {
       expect(row).not.toHaveAttribute('aria-posinset');
       expect(row).not.toHaveAttribute('aria-setsize');
       let gridCell = within(row).getByRole('gridcell');
-      expect(gridCell).toHaveTextContent('Nothing in tree, isFocused: false, isFocusVisible: false');
+      expect(gridCell).toHaveTextContent(
+        'Nothing in tree, isFocused: false, isFocusVisible: false'
+      );
 
       await user.tab();
       expect(document.activeElement).toBe(tree);
@@ -1308,21 +1620,27 @@ describe('Tree', () => {
       expect(row).toHaveAttribute('aria-level', '1');
       expect(row).not.toHaveAttribute('aria-posinset');
       expect(row).not.toHaveAttribute('aria-setsize');
-      expect(gridCell).toHaveTextContent('Nothing in tree, isFocused: false, isFocusVisible: false');
+      expect(gridCell).toHaveTextContent(
+        'Nothing in tree, isFocused: false, isFocusVisible: false'
+      );
     });
   });
 
   describe('load more', () => {
     let offsetHeight, scrollHeight;
     beforeAll(function () {
-      scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 880);
-      offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function (this: HTMLElement) {
-        if (this.getAttribute('role') === 'treegrid') {
-          return 880;
-        }
+      scrollHeight = jest
+        .spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
+        .mockImplementation(() => 880);
+      offsetHeight = jest
+        .spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get')
+        .mockImplementation(function (this: HTMLElement) {
+          if (this.getAttribute('role') === 'treegrid') {
+            return 880;
+          }
 
-        return 40;
-      });
+          return 40;
+        });
     });
 
     afterAll(function () {
@@ -1423,12 +1741,14 @@ describe('Tree', () => {
   });
 
   describe('loading sentinels', () => {
-    let LoadingSentinelTree = (props) => {
+    let LoadingSentinelTree = props => {
       let {isLoading, onLoadMore, ...treeProps} = props;
 
       return (
         <Tree aria-label="test tree" {...treeProps}>
-          <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
+          <StaticTreeItem id="Photos" textValue="Photos">
+            Photos
+          </StaticTreeItem>
           <StaticTreeItem id="projects" textValue="Projects" title="Projects">
             <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
               <StaticTreeItem id="projects-1A" textValue="Projects-1A">
@@ -1471,7 +1791,9 @@ describe('Tree', () => {
       expect(sentinel.closest('[inert]')).toBeTruthy;
 
       // Should render the second sentinel if the row is expanded
-      tree.rerender(<LoadingSentinelTree expandedKeys={new Set(['projects', 'projects-1'])} isLoading />);
+      tree.rerender(
+        <LoadingSentinelTree expandedKeys={new Set(['projects', 'projects-1'])} isLoading />
+      );
       rows = treeTester.rows;
       expect(rows).toHaveLength(8);
       let newLoaderRow = rows[4];
@@ -1503,7 +1825,9 @@ describe('Tree', () => {
       expect(observe).toHaveBeenLastCalledWith(sentinel);
       expect(onLoadMore).toHaveBeenCalledTimes(0);
 
-      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
+      act(() => {
+        observer.instance.triggerCallback([{isIntersecting: true}]);
+      });
       expect(onLoadMore).toHaveBeenCalledTimes(1);
       observe.mockClear();
 
@@ -1511,14 +1835,16 @@ describe('Tree', () => {
       expect(observe).toHaveBeenLastCalledWith(sentinel);
       expect(onLoadMore).toHaveBeenCalledTimes(1);
 
-      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
+      act(() => {
+        observer.instance.triggerCallback([{isIntersecting: true}]);
+      });
       expect(onLoadMore).toHaveBeenCalledTimes(2);
     });
 
     describe('virtualized', () => {
-      let projects: {id: string, value: string}[] = [];
-      let projectsLevel3: {id: string, value: string}[] = [];
-      let documents: {id: string, value: string}[] = [];
+      let projects: {id: string; value: string}[] = [];
+      let projectsLevel3: {id: string; value: string}[] = [];
+      let documents: {id: string; value: string}[] = [];
       for (let i = 0; i < 10; i++) {
         projects.push({id: `projects-${i}`, value: `Projects-${i}`});
         projectsLevel3.push({id: `project-1-${i}`, value: `Projects-1-${i}`});
@@ -1537,8 +1863,12 @@ describe('Tree', () => {
       let clientWidth, clientHeight;
 
       beforeAll(() => {
-        clientWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
-        clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+        clientWidth = jest
+          .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+          .mockImplementation(() => 100);
+        clientHeight = jest
+          .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+          .mockImplementation(() => 100);
       });
 
       afterAll(function () {
@@ -1546,7 +1876,7 @@ describe('Tree', () => {
         clientHeight.mockReset();
       });
 
-      let VirtualizedLoadingSentinelTree = (props) => {
+      let VirtualizedLoadingSentinelTree = props => {
         let {
           rootData = root,
           rootIsLoading,
@@ -1560,9 +1890,7 @@ describe('Tree', () => {
         } = props;
         return (
           <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25, loaderHeight: 30}}>
-            <Tree
-              {...treeProps}
-              aria-label="multi loader tree">
+            <Tree {...treeProps} aria-label="multi loader tree">
               <Collection items={rootData} dependencies={[projectsIsLoading, documentsIsLoading]}>
                 {(item: any) => {
                   if (item.id === 'projects') {
@@ -1570,27 +1898,28 @@ describe('Tree', () => {
                       <StaticTreeItem id="projects" textValue="Projects" title="Projects">
                         <Collection items={projectsData} dependencies={[projects3IsLoading]}>
                           {(item: any) => {
-                            return item.id !== 'projects-1' ?
-                              (
-                                <StaticTreeItem id={item.id} textValue={item.value}>
-                                  {item.value}
-                                </StaticTreeItem>
-                              ) : (
-                                <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
-                                  <Collection items={projects3Data}>
-                                    {(item: any) => (
-                                      <StaticTreeItem id={item.id} textValue={item.value}>
-                                        {item.value}
-                                      </StaticTreeItem>
-                                    )}
-                                  </Collection>
-                                  <TreeLoadMoreItem isLoading={projects3IsLoading}>
-                                    Loading...
-                                  </TreeLoadMoreItem>
-                                </StaticTreeItem>
-                              );
-                          }
-                        }
+                            return item.id !== 'projects-1' ? (
+                              <StaticTreeItem id={item.id} textValue={item.value}>
+                                {item.value}
+                              </StaticTreeItem>
+                            ) : (
+                              <StaticTreeItem
+                                id="projects-1"
+                                textValue="Projects-1"
+                                title="Projects-1">
+                                <Collection items={projects3Data}>
+                                  {(item: any) => (
+                                    <StaticTreeItem id={item.id} textValue={item.value}>
+                                      {item.value}
+                                    </StaticTreeItem>
+                                  )}
+                                </Collection>
+                                <TreeLoadMoreItem isLoading={projects3IsLoading}>
+                                  Loading...
+                                </TreeLoadMoreItem>
+                              </StaticTreeItem>
+                            );
+                          }}
                         </Collection>
                         <TreeLoadMoreItem isLoading={projectsIsLoading}>
                           Loading...
@@ -1614,14 +1943,14 @@ describe('Tree', () => {
                     );
                   } else {
                     return (
-                      <StaticTreeItem id={item.id} textValue={item.value}>{item.value}</StaticTreeItem>
+                      <StaticTreeItem id={item.id} textValue={item.value}>
+                        {item.value}
+                      </StaticTreeItem>
                     );
                   }
                 }}
               </Collection>
-              <TreeLoadMoreItem isLoading={rootIsLoading}>
-                Loading...
-              </TreeLoadMoreItem>
+              <TreeLoadMoreItem isLoading={rootIsLoading}>Loading...</TreeLoadMoreItem>
             </Tree>
           </Virtualizer>
         );
@@ -1634,7 +1963,8 @@ describe('Tree', () => {
             rootIsLoading
             projectsIsLoading
             projects3IsLoading
-            documentsIsLoading />
+            documentsIsLoading
+          />
         );
         let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
         let rows = treeTester.rows;
@@ -1659,7 +1989,8 @@ describe('Tree', () => {
             rootIsLoading
             projectsIsLoading
             projects3IsLoading
-            documentsIsLoading />
+            documentsIsLoading
+          />
         );
 
         rows = treeTester.rows;
@@ -1689,7 +2020,8 @@ describe('Tree', () => {
             rootIsLoading
             projectsIsLoading
             projects3IsLoading
-            documentsIsLoading />
+            documentsIsLoading
+          />
         );
 
         rows = treeTester.rows;
@@ -1726,7 +2058,8 @@ describe('Tree', () => {
             rootIsLoading
             projectsIsLoading
             projects3IsLoading
-            documentsIsLoading />
+            documentsIsLoading
+          />
         );
 
         rows = treeTester.rows;
@@ -1769,7 +2102,8 @@ describe('Tree', () => {
           <VirtualizedLoadingSentinelTree
             expandedKeys={['projects', 'projects-1', 'documents']}
             rootIsLoading
-            documentsIsLoading />
+            documentsIsLoading
+          />
         );
 
         let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
@@ -1805,9 +2139,7 @@ describe('Tree', () => {
 
       // TODO: bring this back when we enable keyboard focus on tree loaders again
       it.skip('should restore focus to the tree if the loader is keyboard focused when loading finishes', async () => {
-        let tree = render(
-          <VirtualizedLoadingSentinelTree rootIsLoading />
-        );
+        let tree = render(<VirtualizedLoadingSentinelTree rootIsLoading />);
         let treeTester = testUtilUser.createTester('Tree', {root: tree.getByRole('treegrid')});
         let rows = treeTester.rows;
         expect(rows).toHaveLength(8);
@@ -1818,9 +2150,7 @@ describe('Tree', () => {
         await user.keyboard('{End}');
         expect(document.activeElement).toBe(rootLoaderRow);
 
-        tree.rerender(
-          <VirtualizedLoadingSentinelTree />
-        );
+        tree.rerender(<VirtualizedLoadingSentinelTree />);
 
         expect(document.activeElement).toBe(treeTester.tree);
       });
@@ -1830,7 +2160,9 @@ describe('Tree', () => {
   describe('shouldSelectOnPressUp', () => {
     it('should select an item on pressing down when shouldSelectOnPressUp is not provided', async () => {
       let onSelectionChange = jest.fn();
-      let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'single', onSelectionChange}} />);
+      let {getAllByRole} = render(
+        <StaticTree treeProps={{selectionMode: 'single', onSelectionChange}} />
+      );
       let items = getAllByRole('row');
 
       await user.pointer({target: items[0], keys: '[MouseLeft>]'});
@@ -1842,7 +2174,11 @@ describe('Tree', () => {
 
     it('should select an item on pressing down when shouldSelectOnPressUp is false', async () => {
       let onSelectionChange = jest.fn();
-      let {getAllByRole} =  render(<StaticTree treeProps={{selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false}} />);
+      let {getAllByRole} = render(
+        <StaticTree
+          treeProps={{selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false}}
+        />
+      );
       let items = getAllByRole('row');
 
       await user.pointer({target: items[0], keys: '[MouseLeft>]'});
@@ -1854,7 +2190,11 @@ describe('Tree', () => {
 
     it('should select an item on pressing up when shouldSelectOnPressUp is true', async () => {
       let onSelectionChange = jest.fn();
-      let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true}} />);
+      let {getAllByRole} = render(
+        <StaticTree
+          treeProps={{selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true}}
+        />
+      );
       let items = getAllByRole('row');
 
       await user.pointer({target: items[0], keys: '[MouseLeft>]'});
@@ -1875,9 +2215,9 @@ describe('Tree', () => {
       });
 
       let {dragAndDropHooks} = useDragAndDrop({
-        getItems: (keys) => {
+        getItems: keys => {
           getItems(keys);
-          return [...keys].map((key) => ({
+          return [...keys].map(key => ({
             'text/plain': treeData.getItem(key)?.value.name
           }));
         },
@@ -1885,9 +2225,17 @@ describe('Tree', () => {
       });
 
       return (
-        <Tree dragAndDropHooks={dragAndDropHooks} aria-label="Tree with drag and drop" items={treeData.items} {...props}>
+        <Tree
+          dragAndDropHooks={dragAndDropHooks}
+          aria-label="Tree with drag and drop"
+          items={treeData.items}
+          {...props}>
           {(item: any) => (
-            <DynamicTreeItem id={item.key} childItems={item.children ?? []} textValue={item.value.name} supportsDragging>
+            <DynamicTreeItem
+              id={item.key}
+              childItems={item.children ?? []}
+              textValue={item.value.name}
+              supportsDragging>
               {item.value.name}
             </DynamicTreeItem>
           )}
@@ -1896,7 +2244,9 @@ describe('Tree', () => {
     }
 
     afterEach(() => {
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       jest.clearAllMocks();
     });
 
@@ -1908,7 +2258,12 @@ describe('Tree', () => {
 
     it('should render drop indicators', async () => {
       let onReorder = jest.fn();
-      let {getAllByRole} = render(<DraggableTree onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
+      let {getAllByRole} = render(
+        <DraggableTree
+          onReorder={onReorder}
+          renderDropIndicator={target => <DropIndicator target={target}>Test</DropIndicator>}
+        />
+      );
       await user.tab();
       await user.keyboard('{ArrowRight}');
       await user.keyboard('{Enter}');
@@ -1919,13 +2274,22 @@ describe('Tree', () => {
       expect(rows[0]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[0]).not.toHaveAttribute('data-drop-target', 'true');
       expect(rows[0]).toHaveTextContent('Test');
-      expect(within(rows[0]).getByRole('button')).toHaveAttribute('aria-label', 'Insert before Projects');
+      expect(within(rows[0]).getByRole('button')).toHaveAttribute(
+        'aria-label',
+        'Insert before Projects'
+      );
       expect(rows[2]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[2]).toHaveAttribute('data-drop-target');
-      expect(within(rows[2]).getByRole('button')).toHaveAttribute('aria-label', 'Insert between Projects and Reports');
+      expect(within(rows[2]).getByRole('button')).toHaveAttribute(
+        'aria-label',
+        'Insert between Projects and Reports'
+      );
       expect(rows[3]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[3]).not.toHaveAttribute('data-drop-target');
-      expect(within(rows[3]).getByRole('button')).toHaveAttribute('aria-label', 'Insert after Reports');
+      expect(within(rows[3]).getByRole('button')).toHaveAttribute(
+        'aria-label',
+        'Insert after Reports'
+      );
 
       await user.keyboard('{ArrowDown}');
 
@@ -1942,10 +2306,12 @@ describe('Tree', () => {
 
     it('should support dropping on items', async () => {
       let onItemDrop = jest.fn();
-      let {getAllByRole} = render(<>
-        <DraggableTree />
-        <DraggableTree onItemDrop={onItemDrop} />
-      </>);
+      let {getAllByRole} = render(
+        <>
+          <DraggableTree />
+          <DraggableTree onItemDrop={onItemDrop} />
+        </>
+      );
 
       await user.tab();
       await user.keyboard('{ArrowRight}');
@@ -1955,11 +2321,20 @@ describe('Tree', () => {
       let tree = getAllByRole('treegrid')[1];
       let rows = within(tree).getAllByRole('row');
       expect(rows).toHaveLength(20);
-      expect(within(rows[0]).getAllByRole('button')[0]).toHaveAttribute('aria-label', 'Drop on Projects');
+      expect(within(rows[0]).getAllByRole('button')[0]).toHaveAttribute(
+        'aria-label',
+        'Drop on Projects'
+      );
       expect(rows[0].nextElementSibling).toHaveAttribute('data-drop-target', 'true');
-      expect(within(rows[1]).getAllByRole('button')[0]).toHaveAttribute('aria-label', 'Drop on Project 1');
+      expect(within(rows[1]).getAllByRole('button')[0]).toHaveAttribute(
+        'aria-label',
+        'Drop on Project 1'
+      );
       expect(rows[1].nextElementSibling).not.toHaveAttribute('data-drop-target');
-      expect(within(rows[2]).getAllByRole('button')[0]).toHaveAttribute('aria-label', 'Drop on Project 2');
+      expect(within(rows[2]).getAllByRole('button')[0]).toHaveAttribute(
+        'aria-label',
+        'Drop on Project 2'
+      );
       expect(rows[2].nextElementSibling).not.toHaveAttribute('data-drop-target');
 
       expect(document.activeElement).toBe(within(rows[0]).getAllByRole('button')[0]);
@@ -1972,10 +2347,12 @@ describe('Tree', () => {
 
     it('should support dropping on the root', async () => {
       let onRootDrop = jest.fn();
-      let {getAllByRole} = render(<>
-        <DraggableTree />
-        <DraggableTree onRootDrop={onRootDrop} />
-      </>);
+      let {getAllByRole} = render(
+        <>
+          <DraggableTree />
+          <DraggableTree onRootDrop={onRootDrop} />
+        </>
+      );
 
       await user.tab();
       await user.keyboard('{ArrowRight}');
@@ -2002,7 +2379,10 @@ describe('Tree', () => {
       const firstTreeRows = within(trees[0]).getAllByRole('row');
       const dataTransfer = new DataTransfer();
 
-      fireEvent(firstTreeRows[1], new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
+      fireEvent(
+        firstTreeRows[1],
+        new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5})
+      );
       act(() => jest.runAllTimers());
 
       fireEvent(trees[1], new DragEvent('dragenter', {dataTransfer, clientX: 50, clientY: 50}));
@@ -2010,7 +2390,9 @@ describe('Tree', () => {
       expect(trees[1]).toHaveAttribute('data-drop-target', 'true');
 
       // ¯\_(ツ)_/¯
-      await act(async () => fireEvent(trees[1], new DragEvent('drop', {dataTransfer, clientX: 50, clientY: 50})));
+      await act(async () =>
+        fireEvent(trees[1], new DragEvent('drop', {dataTransfer, clientX: 50, clientY: 50}))
+      );
       act(() => jest.runAllTimers());
 
       let secondTreeRows = within(trees[1]).getAllByRole('row');
@@ -2033,12 +2415,18 @@ describe('Tree', () => {
 
       secondTreeRows = within(trees[1]).getAllByRole('row');
       expect(secondTreeRows).toHaveLength(4);
-      expect(within(secondTreeRows[3]).getAllByRole('button')[0]).toHaveAttribute('aria-label', 'Insert after Reports');
+      expect(within(secondTreeRows[3]).getAllByRole('button')[0]).toHaveAttribute(
+        'aria-label',
+        'Insert after Reports'
+      );
       expect(document.activeElement).toBe(within(secondTreeRows[3]).getAllByRole('button')[0]);
       expect(secondTreeRows[3]).toHaveAttribute('data-drop-target', 'true');
 
       await user.keyboard('{ArrowUp}');
-      expect(within(secondTreeRows[2]).getAllByRole('button')[0]).toHaveAttribute('aria-label', 'Drop on Reports');
+      expect(within(secondTreeRows[2]).getAllByRole('button')[0]).toHaveAttribute(
+        'aria-label',
+        'Drop on Reports'
+      );
       expect(document.activeElement).toBe(within(secondTreeRows[2]).getAllByRole('button')[0]);
 
       await user.keyboard('{Enter}');
@@ -2050,11 +2438,11 @@ describe('Tree', () => {
     });
 
     it('should support disabled drag and drop', async () => {
-      let {getByRole, queryAllByRole} = render(
-        <DraggableTree isDisabled />
-      );
+      let {getByRole, queryAllByRole} = render(<DraggableTree isDisabled />);
 
-      let dragButtons = queryAllByRole('button').filter(button => button.getAttribute('slot') === 'drag');
+      let dragButtons = queryAllByRole('button').filter(
+        button => button.getAttribute('slot') === 'drag'
+      );
       dragButtons.forEach(button => {
         expect(button).toBeDisabled();
       });
@@ -2070,9 +2458,7 @@ describe('Tree', () => {
     });
 
     it('should allow selection even when drag and drop is disabled', async () => {
-      let {getByRole, getAllByRole} = render(
-        <DraggableTreeWithSelection isDisabled />
-    );
+      let {getByRole, getAllByRole} = render(<DraggableTreeWithSelection isDisabled />);
 
       for (let row of getAllByRole('row')) {
         let checkbox = within(row).getByRole('checkbox');
@@ -2092,7 +2478,10 @@ describe('Tree', () => {
 
     it('should filter out selected child keys in getItems if a parent is also selected', async () => {
       let {getAllByRole} = render(
-        <DnDTree selectionMode="multiple" selectedKeys={new Set(['projects', 'project-1', 'reports', 'reports-1AB', 'reports-2'])} />
+        <DnDTree
+          selectionMode="multiple"
+          selectedKeys={new Set(['projects', 'project-1', 'reports', 'reports-1AB', 'reports-2'])}
+        />
       );
 
       let rows = getAllByRole('row');
@@ -2101,7 +2490,13 @@ describe('Tree', () => {
 
       let dataTransfer = new DataTransfer();
 
-      fireEvent.pointerDown(projectsRow, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 5, clientY: 5});
+      fireEvent.pointerDown(projectsRow, {
+        pointerType: 'mouse',
+        button: 0,
+        pointerId: 1,
+        clientX: 5,
+        clientY: 5
+      });
       fireEvent(projectsRow, new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
       fireEvent.pointerUp(projectsRow, {button: 0, pointerId: 1, clientX: 5, clientY: 5});
       fireEvent(projectsRow, new DragEvent('dragend', {dataTransfer, clientX: 5, clientY: 5}));
@@ -2234,7 +2629,6 @@ describe('Tree', () => {
       act(() => jest.runAllTimers());
       expect(document.activeElement).toHaveTextContent('Projects');
       expect(document.activeElement).toBe(secondTreeTester.rows[3]);
-
     });
   });
 
@@ -2243,22 +2637,27 @@ describe('Tree', () => {
       interactionType
       ${'mouse'}
       ${'keyboard'}
-    `('should support press events on items when using $interactionType', async function ({interactionType}) {
-      let onAction = jest.fn();
-      let onPressStart = jest.fn();
-      let onPressEnd = jest.fn();
-      let onPress = jest.fn();
-      let onClick = jest.fn();
-      let {getByRole} = render(<StaticTree rowProps={{onAction, onPressStart, onPressEnd, onPress, onClick}} />);
-      let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('treegrid')});
-      await gridListTester.triggerRowAction({row: 1, interactionType});
+    `(
+      'should support press events on items when using $interactionType',
+      async function ({interactionType}) {
+        let onAction = jest.fn();
+        let onPressStart = jest.fn();
+        let onPressEnd = jest.fn();
+        let onPress = jest.fn();
+        let onClick = jest.fn();
+        let {getByRole} = render(
+          <StaticTree rowProps={{onAction, onPressStart, onPressEnd, onPress, onClick}} />
+        );
+        let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('treegrid')});
+        await gridListTester.triggerRowAction({row: 1, interactionType});
 
-      expect(onAction).toHaveBeenCalledTimes(1);
-      expect(onPressStart).toHaveBeenCalledTimes(1);
-      expect(onPressEnd).toHaveBeenCalledTimes(1);
-      expect(onPress).toHaveBeenCalledTimes(1);
-      expect(onClick).toHaveBeenCalledTimes(1);
-    });
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onPressStart).toHaveBeenCalledTimes(1);
+        expect(onPressEnd).toHaveBeenCalledTimes(1);
+        expect(onPress).toHaveBeenCalledTimes(1);
+        expect(onClick).toHaveBeenCalledTimes(1);
+      }
+    );
   });
 
   describe('sections', () => {
@@ -2342,7 +2741,6 @@ describe('Tree', () => {
     let rows = getAllByRole('row');
     expect(rows).toHaveLength(22);
 
-
     let header = rows[0];
     expect(header).toHaveClass('react-aria-TreeHeader');
     expect(within(header).getByRole('rowheader')).toHaveTextContent('Section 1');
@@ -2351,7 +2749,7 @@ describe('Tree', () => {
     expect(rows[1]).toHaveAttribute('aria-label', 'Projects');
     expect(rows[1]).toHaveAttribute('aria-expanded', 'true');
     expect(rows[1]).toHaveAttribute('aria-level', '1');
-    expect(rows[1]).toHaveAttribute('aria-posinset', '1');  // aria-posinset value is relative to their section
+    expect(rows[1]).toHaveAttribute('aria-posinset', '1'); // aria-posinset value is relative to their section
     expect(rows[1]).toHaveAttribute('aria-setsize', '1'); // aria-setsize value is relative to their section
     expect(rows[1]).toHaveAttribute('data-has-child-items', 'true');
 
@@ -2385,128 +2783,147 @@ describe('Tree', () => {
     expect(rows[18]).toHaveAttribute('aria-posinset', '1');
     expect(rows[18]).toHaveAttribute('aria-setsize', '1');
   });
-
-
 });
 
 AriaTreeTests({
   prefix: 'rac-static',
   renderers: {
-    standard: () => render(
-      <Tree aria-label="test tree">
-        <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
-        <StaticTreeItem id="projects" textValue="Projects" title="Projects">
-          <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
-            <StaticTreeItem id="projects-1A" textValue="Projects-1A">
-              Projects-1A
+    standard: () =>
+      render(
+        <Tree aria-label="test tree">
+          <StaticTreeItem id="Photos" textValue="Photos">
+            Photos
+          </StaticTreeItem>
+          <StaticTreeItem id="projects" textValue="Projects" title="Projects">
+            <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
+              <StaticTreeItem id="projects-1A" textValue="Projects-1A">
+                Projects-1A
+              </StaticTreeItem>
+            </StaticTreeItem>
+            <StaticTreeItem id="projects-2" textValue="Projects-2">
+              Projects-2
+            </StaticTreeItem>
+            <StaticTreeItem id="projects-3" textValue="Projects-3">
+              Projects-3
             </StaticTreeItem>
           </StaticTreeItem>
-          <StaticTreeItem id="projects-2" textValue="Projects-2">
-            Projects-2
-          </StaticTreeItem>
-          <StaticTreeItem id="projects-3" textValue="Projects-3">
-            Projects-3
-          </StaticTreeItem>
-        </StaticTreeItem>
-        <StaticTreeItem id="school" textValue="School" title="School">
-          <StaticTreeItem id="homework-1" textValue="Homework-1" title="Homework-1">
-            <StaticTreeItem id="homework-1A" textValue="Homework-1A">
-              Homework-1A
+          <StaticTreeItem id="school" textValue="School" title="School">
+            <StaticTreeItem id="homework-1" textValue="Homework-1" title="Homework-1">
+              <StaticTreeItem id="homework-1A" textValue="Homework-1A">
+                Homework-1A
+              </StaticTreeItem>
+            </StaticTreeItem>
+            <StaticTreeItem id="homework-2" textValue="Homework-2">
+              Homework-2
+            </StaticTreeItem>
+            <StaticTreeItem id="homework-3" textValue="Homework-3">
+              Homework-3
             </StaticTreeItem>
           </StaticTreeItem>
-          <StaticTreeItem id="homework-2" textValue="Homework-2">
-            Homework-2
+        </Tree>
+      ),
+    singleSelection: () =>
+      render(
+        <Tree
+          aria-label="test tree"
+          selectionMode="single"
+          disabledKeys={['school']}
+          disabledBehavior="selection">
+          <StaticTreeItem id="Photos" textValue="Photos">
+            Photos
           </StaticTreeItem>
-          <StaticTreeItem id="homework-3" textValue="Homework-3">
-            Homework-3
-          </StaticTreeItem>
-        </StaticTreeItem>
-      </Tree>
-    ),
-    singleSelection: () => render(
-      <Tree aria-label="test tree" selectionMode="single" disabledKeys={['school']} disabledBehavior="selection">
-        <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
-        <StaticTreeItem id="projects" textValue="Projects" title="Projects">
-          <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
-            <StaticTreeItem id="projects-1A" textValue="Projects-1A">
-              Projects-1A
+          <StaticTreeItem id="projects" textValue="Projects" title="Projects">
+            <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
+              <StaticTreeItem id="projects-1A" textValue="Projects-1A">
+                Projects-1A
+              </StaticTreeItem>
+            </StaticTreeItem>
+            <StaticTreeItem id="projects-2" textValue="Projects-2">
+              Projects-2
+            </StaticTreeItem>
+            <StaticTreeItem id="projects-3" textValue="Projects-3">
+              Projects-3
             </StaticTreeItem>
           </StaticTreeItem>
-          <StaticTreeItem id="projects-2" textValue="Projects-2">
-            Projects-2
-          </StaticTreeItem>
-          <StaticTreeItem id="projects-3" textValue="Projects-3">
-            Projects-3
-          </StaticTreeItem>
-        </StaticTreeItem>
-        <StaticTreeItem id="school" textValue="School" title="School">
-          <StaticTreeItem id="homework-1" textValue="Homework-1" title="Homework-1">
-            <StaticTreeItem id="homework-1A" textValue="Homework-1A">
-              Homework-1A
+          <StaticTreeItem id="school" textValue="School" title="School">
+            <StaticTreeItem id="homework-1" textValue="Homework-1" title="Homework-1">
+              <StaticTreeItem id="homework-1A" textValue="Homework-1A">
+                Homework-1A
+              </StaticTreeItem>
+            </StaticTreeItem>
+            <StaticTreeItem id="homework-2" textValue="Homework-2">
+              Homework-2
+            </StaticTreeItem>
+            <StaticTreeItem id="homework-3" textValue="Homework-3">
+              Homework-3
             </StaticTreeItem>
           </StaticTreeItem>
-          <StaticTreeItem id="homework-2" textValue="Homework-2">
-            Homework-2
+        </Tree>
+      ),
+    allInteractionsDisabled: () =>
+      render(
+        <Tree
+          aria-label="test tree"
+          selectionMode="single"
+          disabledKeys={['school']}
+          disabledBehavior="all">
+          <StaticTreeItem id="Photos" textValue="Photos">
+            Photos
           </StaticTreeItem>
-          <StaticTreeItem id="homework-3" textValue="Homework-3">
-            Homework-3
-          </StaticTreeItem>
-        </StaticTreeItem>
-      </Tree>
-    ),
-    allInteractionsDisabled: () => render(
-      <Tree aria-label="test tree" selectionMode="single" disabledKeys={['school']} disabledBehavior="all">
-        <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
-        <StaticTreeItem id="projects" textValue="Projects" title="Projects">
-          <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
-            <StaticTreeItem id="projects-1A" textValue="Projects-1A">
-              Projects-1A
+          <StaticTreeItem id="projects" textValue="Projects" title="Projects">
+            <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
+              <StaticTreeItem id="projects-1A" textValue="Projects-1A">
+                Projects-1A
+              </StaticTreeItem>
+            </StaticTreeItem>
+            <StaticTreeItem id="projects-2" textValue="Projects-2">
+              Projects-2
+            </StaticTreeItem>
+            <StaticTreeItem id="projects-3" textValue="Projects-3">
+              Projects-3
             </StaticTreeItem>
           </StaticTreeItem>
-          <StaticTreeItem id="projects-2" textValue="Projects-2">
-            Projects-2
-          </StaticTreeItem>
-          <StaticTreeItem id="projects-3" textValue="Projects-3">
-            Projects-3
-          </StaticTreeItem>
-        </StaticTreeItem>
-        <StaticTreeItem id="school" textValue="School" title="School">
-          <StaticTreeItem id="homework-1" textValue="Homework-1" title="Homework-1">
-            <StaticTreeItem id="homework-1A" textValue="Homework-1A">
-              Homework-1A
+          <StaticTreeItem id="school" textValue="School" title="School">
+            <StaticTreeItem id="homework-1" textValue="Homework-1" title="Homework-1">
+              <StaticTreeItem id="homework-1A" textValue="Homework-1A">
+                Homework-1A
+              </StaticTreeItem>
+            </StaticTreeItem>
+            <StaticTreeItem id="homework-2" textValue="Homework-2">
+              Homework-2
+            </StaticTreeItem>
+            <StaticTreeItem id="homework-3" textValue="Homework-3">
+              Homework-3
             </StaticTreeItem>
           </StaticTreeItem>
-          <StaticTreeItem id="homework-2" textValue="Homework-2">
-            Homework-2
-          </StaticTreeItem>
-          <StaticTreeItem id="homework-3" textValue="Homework-3">
-            Homework-3
-          </StaticTreeItem>
-        </StaticTreeItem>
-      </Tree>
-    )
+        </Tree>
+      )
   }
 });
 
 let controlledRows = [
   {id: 'photos', name: 'Photos 1'},
-  {id: 'projects', name: 'Projects', childItems: [
-    {id: 'project-1', name: 'Project 1', childItems: [
-      {id: 'project-1A', name: 'Project 1A'}
-    ]},
-    {id: 'project-2', name: 'Project 2'},
-    {id: 'project-3', name: 'Project 3'}
-  ]},
-  {id: 'reports', name: 'Reports', childItems: [
-    {id: 'reports-1', name: 'Reports 1', childItems: [
-      {id: 'reports-1A', name: 'Reports 1A'}
-    ]},
-    {id: 'reports-2', name: 'Reports 2'},
-    {id: 'reports-3', name: 'Reports 3'}
-  ]}
+  {
+    id: 'projects',
+    name: 'Projects',
+    childItems: [
+      {id: 'project-1', name: 'Project 1', childItems: [{id: 'project-1A', name: 'Project 1A'}]},
+      {id: 'project-2', name: 'Project 2'},
+      {id: 'project-3', name: 'Project 3'}
+    ]
+  },
+  {
+    id: 'reports',
+    name: 'Reports',
+    childItems: [
+      {id: 'reports-1', name: 'Reports 1', childItems: [{id: 'reports-1A', name: 'Reports 1A'}]},
+      {id: 'reports-2', name: 'Reports 2'},
+      {id: 'reports-3', name: 'Reports 3'}
+    ]
+  }
 ];
 
-let ControlledDynamicTreeItem = (props) => {
+let ControlledDynamicTreeItem = props => {
   return (
     <TreeItem {...props}>
       <TreeItemContent>
@@ -2524,7 +2941,10 @@ let ControlledDynamicTreeItem = (props) => {
       </TreeItemContent>
       <Collection items={props.childItems}>
         {(item: any) => (
-          <ControlledDynamicTreeItem childItems={item.childItems} textValue={item.name} href={props.href}>
+          <ControlledDynamicTreeItem
+            childItems={item.childItems}
+            textValue={item.name}
+            href={props.href}>
             {item.name}
           </ControlledDynamicTreeItem>
         )}
@@ -2537,12 +2957,17 @@ function ControlledDynamicTree(props) {
   let [expanded, setExpanded] = React.useState(new Set([]));
 
   return (
-    <Tree {...props} items={controlledRows} aria-label="example dynamic tree" expandedKeys={expanded} onExpandedChange={setExpanded}>
+    <Tree
+      {...props}
+      items={controlledRows}
+      aria-label="example dynamic tree"
+      expandedKeys={expanded}
+      onExpandedChange={setExpanded}>
       {(item: any) => (
         <ControlledDynamicTreeItem childItems={item.childItems} textValue={item.name}>
           {item.name}
         </ControlledDynamicTreeItem>
-    )}
+      )}
     </Tree>
   );
 }
@@ -2550,14 +2975,16 @@ function ControlledDynamicTree(props) {
 AriaTreeTests({
   prefix: 'rac-controlled-dynamic',
   renderers: {
-    standard: () => render(
-      <ControlledDynamicTree />
-    ),
-    singleSelection: () => render(
-      <ControlledDynamicTree disabledKeys={['reports']} selectionMode="single" disabledBehavior="selection" />
-    ),
-    allInteractionsDisabled: () => render(
-      <ControlledDynamicTree disabledKeys={['reports']} selectionMode="single"  />
-    )
+    standard: () => render(<ControlledDynamicTree />),
+    singleSelection: () =>
+      render(
+        <ControlledDynamicTree
+          disabledKeys={['reports']}
+          selectionMode="single"
+          disabledBehavior="selection"
+        />
+      ),
+    allInteractionsDisabled: () =>
+      render(<ControlledDynamicTree disabledKeys={['reports']} selectionMode="single" />)
   }
 });

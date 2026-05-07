@@ -20,17 +20,43 @@ import TextAlignLeft from '@react-spectrum/s2/icons/TextAlignLeft';
 import TextAlignCenter from '@react-spectrum/s2/icons/TextAlignCenter';
 import TextAlignRight from '@react-spectrum/s2/icons/TextAlignRight';
 import TextAlignJustify from '@react-spectrum/s2/icons/TextAlignJustify';
-import {size, style} from "@react-spectrum/s2/style" with {type: 'macro'};
-import {Card, CardPreview, Content, Text, ActionButton, ToggleButton, Breadcrumbs, Breadcrumb, ToggleButtonGroup, Slider, Checkbox, TextArea, TreeView, TreeViewItem, TreeViewItemContent, ActionButtonGroup, Button, Form, ComboBoxItem, ComboBox, NumberField, Accordion, Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
+import {size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {
+  Card,
+  CardPreview,
+  Content,
+  Text,
+  ActionButton,
+  ToggleButton,
+  Breadcrumbs,
+  Breadcrumb,
+  ToggleButtonGroup,
+  Slider,
+  Checkbox,
+  TextArea,
+  TreeView,
+  TreeViewItem,
+  TreeViewItemContent,
+  ActionButtonGroup,
+  Button,
+  Form,
+  ComboBoxItem,
+  ComboBox,
+  NumberField,
+  Accordion,
+  Disclosure,
+  DisclosureTitle,
+  DisclosurePanel
+} from '@react-spectrum/s2';
 import {Key} from 'react-aria';
 import {createContext, useContext, useRef, useState} from 'react';
 import {ColorSchemeProvider} from './ExampleApp';
-import { useResizeObserver } from '@react-aria/utils';
-import { flushSync } from 'react-dom';
-import { Comment } from './Typography';
-import { HCMContext } from './HCM';
-import { AccountMenu } from './app/AccountMenu';
-import { Notifications } from './app/Notifications';
+import {useResizeObserver} from '@react-aria/utils';
+import {flushSync} from 'react-dom';
+import {Comment} from './Typography';
+import {HCMContext} from './HCM';
+import {AccountMenu} from './app/AccountMenu';
+import {Notifications} from './app/Notifications';
 
 export const FilterContext = createContext({
   brightness: 52,
@@ -67,7 +93,7 @@ export function ExampleApp2({onBack, children, showPanel, panel, onPanelChange}:
           setPanel(null);
         }
       });
-    },
+    }
   });
 
   return (
@@ -77,16 +103,8 @@ export function ExampleApp2({onBack, children, showPanel, panel, onPanelChange}:
         className={style({
           display: 'grid',
           gridTemplateAreas: {
-            default: [
-              'toolbar toolbar',
-              'content content',
-              'assets assets',
-              'panels panels'
-            ],
-            [SM]: [
-              'toolbar toolbar toolbar toolbar',
-              'sidebar content assets panels'
-            ]
+            default: ['toolbar toolbar', 'content content', 'assets assets', 'panels panels'],
+            [SM]: ['toolbar toolbar toolbar toolbar', 'sidebar content assets panels']
           },
           gridTemplateRows: {
             default: ['max-content', '1fr', 'auto', 'auto'],
@@ -270,7 +288,7 @@ export function ExampleApp2({onBack, children, showPanel, panel, onPanelChange}:
           onTransitionEnd={() => {
             setTransitioning(null);
           }}>
-          {displayPanel && 
+          {displayPanel && (
             <div
               className={style({
                 width: {
@@ -300,7 +318,7 @@ export function ExampleApp2({onBack, children, showPanel, panel, onPanelChange}:
               {displayPanel === 'comments' && <Comments />}
               {displayPanel === 'assets' && <Assets />}
             </div>
-          }
+          )}
         </div>
         <div
           className={style({
@@ -376,11 +394,16 @@ function SkeletonCard() {
             width: 'full',
             aspectRatio: '2/1',
             backgroundColor: 'gray-100'
-          })} />
+          })}
+        />
       </CardPreview>
       <Content>
-        <Text slot="title"><span className={text}>Placeholder title</span></Text>
-        <Text slot="description" UNSAFE_style={{WebkitTextFillColor: 'transparent'}}><span className={text}>Testing</span></Text>
+        <Text slot="title">
+          <span className={text}>Placeholder title</span>
+        </Text>
+        <Text slot="description" UNSAFE_style={{WebkitTextFillColor: 'transparent'}}>
+          <span className={text}>Testing</span>
+        </Text>
       </Content>
     </Card>
   );
@@ -388,7 +411,10 @@ function SkeletonCard() {
 
 function Layers() {
   return (
-    <TreeView aria-label="Layers" styles={style({height: 'full'})} defaultExpandedKeys={['g1', 'g2']}>
+    <TreeView
+      aria-label="Layers"
+      styles={style({height: 'full'})}
+      defaultExpandedKeys={['g1', 'g2']}>
       <Layer name="Group 1" id="g1">
         <Layer name="Layer 1" />
         <Layer name="Layer 2" />
@@ -400,7 +426,7 @@ function Layers() {
         <Layer name="Layer 3" />
       </Layer>
     </TreeView>
-  )
+  );
 }
 
 function Layer({id, name, children}: any) {
@@ -416,15 +442,46 @@ function Properties() {
   let {brightness, contrast, saturation, onChange} = useContext(FilterContext);
   let isHCM = 'style' in useContext(HCMContext);
   return (
-    <div role="group" aria-label="Properties" className={style({display: 'flex', flexDirection: 'column', gap: 8, padding: 8})}>
-      <Accordion density="compact" isQuiet allowsMultipleExpanded defaultExpandedKeys={['filters', 'text']}>
+    <div
+      role="group"
+      aria-label="Properties"
+      className={style({display: 'flex', flexDirection: 'column', gap: 8, padding: 8})}>
+      <Accordion
+        density="compact"
+        isQuiet
+        allowsMultipleExpanded
+        defaultExpandedKeys={['filters', 'text']}>
         <Disclosure id="filters">
           <DisclosureTitle>Filters</DisclosureTitle>
           <DisclosurePanel>
             <Form labelPosition="side" size="S" UNSAFE_style={{gap: 8}}>
-              <Slider label="Brightness" minValue={-100} maxValue={100} fillOffset={0} formatOptions={{signDisplay: 'exceptZero'}} defaultValue={brightness} onChange={brightness => onChange({brightness, contrast, saturation})} />
-              <Slider label="Contrast" minValue={-100} maxValue={100} fillOffset={0} formatOptions={{signDisplay: 'exceptZero'}} defaultValue={contrast} onChange={contrast => onChange({brightness, contrast, saturation})} />
-              <Slider label="Saturation" minValue={-100} maxValue={100} fillOffset={0} formatOptions={{signDisplay: 'exceptZero'}} defaultValue={saturation} onChange={saturation => onChange({brightness, contrast, saturation})} />
+              <Slider
+                label="Brightness"
+                minValue={-100}
+                maxValue={100}
+                fillOffset={0}
+                formatOptions={{signDisplay: 'exceptZero'}}
+                defaultValue={brightness}
+                onChange={brightness => onChange({brightness, contrast, saturation})}
+              />
+              <Slider
+                label="Contrast"
+                minValue={-100}
+                maxValue={100}
+                fillOffset={0}
+                formatOptions={{signDisplay: 'exceptZero'}}
+                defaultValue={contrast}
+                onChange={contrast => onChange({brightness, contrast, saturation})}
+              />
+              <Slider
+                label="Saturation"
+                minValue={-100}
+                maxValue={100}
+                fillOffset={0}
+                formatOptions={{signDisplay: 'exceptZero'}}
+                defaultValue={saturation}
+                onChange={saturation => onChange({brightness, contrast, saturation})}
+              />
             </Form>
           </DisclosurePanel>
         </Disclosure>
@@ -432,15 +489,28 @@ function Properties() {
           <DisclosureTitle>Text</DisclosureTitle>
           <DisclosurePanel>
             <Form size="S" UNSAFE_style={{gap: 8}}>
-              <div className={style({display: 'flex', gap: 8, alignItems: 'center', gridColumnStart: 'span 2'})}>
-              <ComboBox aria-label="Font family" defaultSelectedKey={2} styles={style({ flexGrow: 2 })}>
-                <ComboBoxItem>Open Sans</ComboBoxItem>
-                <ComboBoxItem id={2}>Adobe Clean</ComboBoxItem>
-                <ComboBoxItem>Helvetica</ComboBoxItem>
-                <ComboBoxItem>Times New Roman</ComboBoxItem>
-                <ComboBoxItem>Comic Sans</ComboBoxItem>
-              </ComboBox>
-              <NumberField aria-label="Font size" defaultValue={14} styles={style({ flexGrow: 1 })} />
+              <div
+                className={style({
+                  display: 'flex',
+                  gap: 8,
+                  alignItems: 'center',
+                  gridColumnStart: 'span 2'
+                })}>
+                <ComboBox
+                  aria-label="Font family"
+                  defaultSelectedKey={2}
+                  styles={style({flexGrow: 2})}>
+                  <ComboBoxItem>Open Sans</ComboBoxItem>
+                  <ComboBoxItem id={2}>Adobe Clean</ComboBoxItem>
+                  <ComboBoxItem>Helvetica</ComboBoxItem>
+                  <ComboBoxItem>Times New Roman</ComboBoxItem>
+                  <ComboBoxItem>Comic Sans</ComboBoxItem>
+                </ComboBox>
+                <NumberField
+                  aria-label="Font size"
+                  defaultValue={14}
+                  styles={style({flexGrow: 1})}
+                />
               </div>
               <div
                 className={style({
@@ -505,7 +575,9 @@ function Properties() {
                   </ToggleButton>
                 </ToggleButtonGroup>
               </div>
-              <Checkbox defaultSelected isDisabled={isHCM}>Wrap</Checkbox>
+              <Checkbox defaultSelected isDisabled={isHCM}>
+                Wrap
+              </Checkbox>
             </Form>
           </DisclosurePanel>
         </Disclosure>
@@ -537,8 +609,26 @@ function Comments() {
   ]);
 
   return (
-    <div role="group" aria-label="Comments" className={style({display: 'flex', flexDirection: 'column', gap: 16, padding: 16, height: 'full', boxSizing: 'border-box', contain: 'size'})}>
-      <h3 className={style({font: 'title-lg', color: {default: 'title', forcedColors: 'ButtonText'}, marginY: 0})}>Comments</h3>
+    <div
+      role="group"
+      aria-label="Comments"
+      className={style({
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 16,
+        padding: 16,
+        height: 'full',
+        boxSizing: 'border-box',
+        contain: 'size'
+      })}>
+      <h3
+        className={style({
+          font: 'title-lg',
+          color: {default: 'title', forcedColors: 'ButtonText'},
+          marginY: 0
+        })}>
+        Comments
+      </h3>
       <form
         className={style({
           display: 'flex',
@@ -567,8 +657,11 @@ function Comments() {
           placeholder="Add a comment"
           name="comment"
           isRequired
-          styles={style({width: 'full'})} />
-        <Button type="submit" size="S" variant="accent">Post</Button>
+          styles={style({width: 'full'})}
+        />
+        <Button type="submit" size="S" variant="accent">
+          Post
+        </Button>
       </form>
       <div
         className={style({
@@ -592,7 +685,16 @@ function Comments() {
 
 function Assets() {
   return (
-    <div role="group" aria-label="Assets" className={style({padding: 16, boxSizing: 'border-box', height: 'full', display: 'flex', flexDirection: 'column'})}>
+    <div
+      role="group"
+      aria-label="Assets"
+      className={style({
+        padding: 16,
+        boxSizing: 'border-box',
+        height: 'full',
+        display: 'flex',
+        flexDirection: 'column'
+      })}>
       <div className={style({font: 'title-lg'})}>Assets</div>
       <div
         className={style({

@@ -14,12 +14,23 @@ import {Button} from 'tailwind-starter/Button';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 import React, {ReactNode, RefObject, useEffect, useState} from 'react';
 
-export function Pagination({carouselRef, className}: {carouselRef: RefObject<HTMLDivElement | null>, className?: string}): ReactNode {
+export function Pagination({
+  carouselRef,
+  className
+}: {
+  carouselRef: RefObject<HTMLDivElement | null>;
+  className?: string;
+}): ReactNode {
   let scroll = (dir: number) => {
     let carousel = carouselRef.current!;
     let style = window.getComputedStyle(carousel);
     carousel.scrollBy({
-      left: dir * (carousel.clientWidth - parseInt(style.paddingLeft, 10) - parseInt(style.paddingRight, 10) + parseInt(style.columnGap, 10)),
+      left:
+        dir *
+        (carousel.clientWidth -
+          parseInt(style.paddingLeft, 10) -
+          parseInt(style.paddingRight, 10) +
+          parseInt(style.columnGap, 10)),
       behavior: 'smooth'
     });
   };

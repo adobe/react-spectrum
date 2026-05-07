@@ -12,54 +12,65 @@
 
 import {Collection, CollectionStateBase, Key, LayoutDelegate, Node} from '@react-types/shared';
 import {ListCollection} from './ListCollection';
-import {MultipleSelectionStateProps, useMultipleSelectionState} from '../selection/useMultipleSelectionState';
+import {
+  MultipleSelectionStateProps,
+  useMultipleSelectionState
+} from '../selection/useMultipleSelectionState';
 import {SelectionManager} from '../selection/SelectionManager';
 import {useCallback, useEffect, useMemo, useRef} from 'react';
 import {useCollection} from '../collections/useCollection';
 
 export interface ListProps<T> extends CollectionStateBase<T>, MultipleSelectionStateProps {
   /** Filter function to generate a filtered list of nodes. */
-  filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>,
+  filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>;
   /** @private */
-  suppressTextValueWarning?: boolean,
+  suppressTextValueWarning?: boolean;
   /**
    * A delegate object that provides layout information for items in the collection.
    * This can be used to override the behavior of shift selection.
    */
-  layoutDelegate?: LayoutDelegate
+  layoutDelegate?: LayoutDelegate;
 }
 
 export interface ListState<T> {
   /** A collection of items in the list. */
-  collection: Collection<Node<T>>,
+  collection: Collection<Node<T>>;
 
   /** A set of items that are disabled. */
-  disabledKeys: Set<Key>,
+  disabledKeys: Set<Key>;
 
   /** A selection manager to read and update multiple selection state. */
-  selectionManager: SelectionManager
+  selectionManager: SelectionManager;
 }
 
 /**
  * Provides state management for list-like components. Handles building a collection
  * of items from props, and manages multiple selection state.
  */
-export function useListState<T extends object>(props: ListProps<T>): ListState<T>  {
+export function useListState<T extends object>(props: ListProps<T>): ListState<T> {
   let {filter, layoutDelegate} = props;
 
   let selectionState = useMultipleSelectionState(props);
-  let disabledKeys = useMemo(() =>
-    props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
-  , [props.disabledKeys]);
+  let disabledKeys = useMemo(
+    () => (props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()),
+    [props.disabledKeys]
+  );
 
-  let factory = useCallback(nodes => filter ? new ListCollection(filter(nodes)) : new ListCollection(nodes as Iterable<Node<T>>), [filter]);
-  let context = useMemo(() => ({suppressTextValueWarning: props.suppressTextValueWarning}), [props.suppressTextValueWarning]);
+  let factory = useCallback(
+    nodes =>
+      filter ? new ListCollection(filter(nodes)) : new ListCollection(nodes as Iterable<Node<T>>),
+    [filter]
+  );
+  let context = useMemo(
+    () => ({suppressTextValueWarning: props.suppressTextValueWarning}),
+    [props.suppressTextValueWarning]
+  );
 
   let collection = useCollection(props, factory, context);
 
-  let selectionManager = useMemo(() =>
-    new SelectionManager(collection, selectionState, {layoutDelegate})
-    , [collection, selectionState, layoutDelegate]
+  let selectionManager = useMemo(
+    () => new SelectionManager(collection, selectionState, {layoutDelegate}),
+    [collection, selectionState, layoutDelegate]
   );
 
   useFocusedKeyReset(collection, selectionManager);
@@ -74,8 +85,14 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
 /**
  * Filters a collection using the provided filter function and returns a new ListState.
  */
-export function UNSTABLE_useFilteredListState<T extends object>(state: ListState<T>, filterFn: ((nodeValue: string, node: Node<T>) => boolean) | null | undefined): ListState<T> {
-  let collection = useMemo(() => filterFn ? state.collection.filter!(filterFn) : state.collection, [state.collection, filterFn]);
+export function UNSTABLE_useFilteredListState<T extends object>(
+  state: ListState<T>,
+  filterFn: ((nodeValue: string, node: Node<T>) => boolean) | null | undefined
+): ListState<T> {
+  let collection = useMemo(
+    () => (filterFn ? state.collection.filter!(filterFn) : state.collection),
+    [state.collection, filterFn]
+  );
   let selectionManager = state.selectionManager.withCollection(collection);
   useFocusedKeyReset(collection, selectionManager);
   return {
@@ -85,11 +102,18 @@ export function UNSTABLE_useFilteredListState<T extends object>(state: ListState
   };
 }
 
-function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager: SelectionManager) {
+function useFocusedKeyReset<T>(
+  collection: Collection<Node<T>>,
+  selectionManager: SelectionManager
+) {
   // Reset focused key if that item is deleted from the collection.
   const cachedCollection = useRef<Collection<Node<T>> | null>(null);
   useEffect(() => {
-    if (selectionManager.focusedKey != null && !collection.getItem(selectionManager.focusedKey) && cachedCollection.current) {
+    if (
+      selectionManager.focusedKey != null &&
+      !collection.getItem(selectionManager.focusedKey) &&
+      cachedCollection.current
+    ) {
       // Walk forward in the old collection to find the next key that still exists in the new collection.
       let key = cachedCollection.current.getKeyAfter(selectionManager.focusedKey);
       let nextFocusedKey: Key | null = null;

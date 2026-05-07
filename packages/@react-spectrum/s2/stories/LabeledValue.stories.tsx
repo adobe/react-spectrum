@@ -58,14 +58,17 @@ const meta: Meta<typeof LabeledValue> = {
 export default meta;
 type Story = StoryObj<typeof LabeledValue>;
 
-
 export const Default: Story = {
   args: {label: 'Name', value: 'Jane Smith'},
   name: 'String'
 };
 
 export const LongText: Story = {
-  args: {label: 'Test', value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
+  args: {
+    label: 'Test',
+    value:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  },
   name: 'Long text'
 };
 
@@ -85,12 +88,19 @@ export const CalendarDateTimeType: Story = {
 };
 
 export const CalendarDateTimeTypeFormatOptions: Story = {
-  args: {label: 'Meeting Time', value: new CalendarDateTime(2020, 2, 3, 12, 30, 24, 120), formatOptions: {dateStyle: 'short', timeStyle: 'short'}},
+  args: {
+    label: 'Meeting Time',
+    value: new CalendarDateTime(2020, 2, 3, 12, 30, 24, 120),
+    formatOptions: {dateStyle: 'short', timeStyle: 'short'}
+  },
   name: 'CalendarDateTime with formatOptions'
 };
 
 export const ZonedDateTimeType: Story = {
-  args: {label: 'Meeting Time', value: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000)},
+  args: {
+    label: 'Meeting Time',
+    value: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000)
+  },
   name: 'ZonedDateTime'
 };
 
@@ -105,17 +115,32 @@ export const TimeType: Story = {
 };
 
 export const CalendarDateRange: Story = {
-  args: {label: 'Vacation', value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}},
+  args: {
+    label: 'Vacation',
+    value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}
+  },
   name: 'RangeValue<CalendarDate>'
 };
 
 export const CalendarDateTimeRange: Story = {
-  args: {label: 'Sabbatical', value: {start: new CalendarDateTime(2020, 2, 3, 12, 30, 24, 120), end: new CalendarDateTime(2020, 3, 3, 12, 30, 24, 120)}},
+  args: {
+    label: 'Sabbatical',
+    value: {
+      start: new CalendarDateTime(2020, 2, 3, 12, 30, 24, 120),
+      end: new CalendarDateTime(2020, 3, 3, 12, 30, 24, 120)
+    }
+  },
   name: 'RangeValue<CalendarDateTime>'
 };
 
 export const ZonedDateTimeRange: Story = {
-  args: {label: 'Event Time', value: {start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}},
+  args: {
+    label: 'Event Time',
+    value: {
+      start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000),
+      end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)
+    }
+  },
   name: 'RangeValue<ZonedDateTime>'
 };
 
@@ -140,12 +165,22 @@ export const NumberRange: Story = {
 };
 
 export const CustomComponents: Story = {
-  render: (args) => {
+  render: args => {
     return (
-      <div style={{display: 'flex', gap: 36, padding: 8, justifyContent: 'center', flexDirection: 'column'}}>
-        <LabeledValue {...args as any} value={<Badge variant="positive">Licensed</Badge>} />
-        <LabeledValue {...args as any} value={<Link href="https://www.adobe.com">Adobe</Link>} />
-        <LabeledValue {...args as any} value={<StatusLight variant="positive">Ready</StatusLight>} />
+      <div
+        style={{
+          display: 'flex',
+          gap: 36,
+          padding: 8,
+          justifyContent: 'center',
+          flexDirection: 'column'
+        }}>
+        <LabeledValue {...(args as any)} value={<Badge variant="positive">Licensed</Badge>} />
+        <LabeledValue {...(args as any)} value={<Link href="https://www.adobe.com">Adobe</Link>} />
+        <LabeledValue
+          {...(args as any)}
+          value={<StatusLight variant="positive">Ready</StatusLight>}
+        />
       </div>
     );
   },
@@ -162,7 +197,10 @@ export const WithContextualHelp: Story = {
     contextualHelp: (
       <ContextualHelp>
         <Heading>What is a segment?</Heading>
-        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
       </ContextualHelp>
     )
   },
@@ -172,22 +210,35 @@ export const WithContextualHelp: Story = {
 const FormCustomLayout = (args): ReactElement => {
   return (
     <Form {...args}>
-      <div role="group" aria-labelledby="searchLabel" className={style({display: 'flex', alignItems: 'center', gap: 8, font: 'ui'})}>
+      <div
+        role="group"
+        aria-labelledby="searchLabel"
+        className={style({display: 'flex', alignItems: 'center', gap: 8, font: 'ui'})}>
         <TextField label="Query" styles={style({width: 144})} placeholder="Enter your name" />
         <ComboBox label="Search terms" styles={style({width: 144})}>
           <ComboBoxItem>search term 1</ComboBoxItem>
           <ComboBoxItem>search term 2</ComboBoxItem>
         </ComboBox>
-        <NumberField label="Number of results" placeholder="–" defaultValue={50} styles={style({width: 120})} />
+        <NumberField
+          label="Number of results"
+          placeholder="–"
+          defaultValue={50}
+          styles={style({width: 120})}
+        />
         <LabeledValue label="Name" value="Jane Smith" styles={style({width: 96})} />
       </div>
-      <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
+      <Button
+        type="submit"
+        variant="primary"
+        styles={style({gridColumnStart: 'field', width: 'fit'})}>
+        Submit
+      </Button>
     </Form>
   );
 };
 
 export const FormCustomLayoutExample: StoryObj<typeof FormCustomLayout> = {
-  render: (args) => <FormCustomLayout {...args} />,
+  render: args => <FormCustomLayout {...args} />,
   parameters: {
     docs: {
       disable: true
@@ -203,19 +254,28 @@ const FormLayoutExample = (args): ReactElement => {
         <ComboBoxItem>search term 1</ComboBoxItem>
         <ComboBoxItem>search term 2</ComboBoxItem>
       </ComboBox>
-      <NumberField label="Number of results" placeholder="–" defaultValue={50} styles={style({width: 120})} />
+      <NumberField
+        label="Number of results"
+        placeholder="–"
+        defaultValue={50}
+        styles={style({width: 120})}
+      />
       <LabeledValue label="Name" value="Jane Smith" styles={style({width: 96})} />
-      <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
+      <Button
+        type="submit"
+        variant="primary"
+        styles={style({gridColumnStart: 'field', width: 'fit'})}>
+        Submit
+      </Button>
     </Form>
   );
 };
 
 export const FormLayout: StoryObj<typeof FormLayoutExample> = {
-  render: (args) => <FormLayoutExample {...args} />,
+  render: args => <FormLayoutExample {...args} />,
   parameters: {
     docs: {
       disable: true
     }
   }
 };
-

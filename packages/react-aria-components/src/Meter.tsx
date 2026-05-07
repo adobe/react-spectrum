@@ -29,24 +29,29 @@ import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
-export interface MeterProps extends Omit<AriaMeterProps, 'label'>, RenderProps<MeterRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface MeterProps
+  extends
+    Omit<AriaMeterProps, 'label'>,
+    RenderProps<MeterRenderProps>,
+    SlotProps,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Meter'
    */
-  className?: ClassNameOrFunction<MeterRenderProps>
+  className?: ClassNameOrFunction<MeterRenderProps>;
 }
 
 export interface MeterRenderProps {
   /**
    * The value as a percentage between the minimum and maximum.
    */
-  percentage: number,
+  percentage: number;
   /**
    * A formatted version of the value.
    * @selector [aria-valuetext]
    */
-  valueText: string | undefined
+  valueText: string | undefined;
 }
 
 export const MeterContext = createContext<ContextValue<MeterProps, HTMLDivElement>>(null);
@@ -54,25 +59,19 @@ export const MeterContext = createContext<ContextValue<MeterProps, HTMLDivElemen
 /**
  * A meter represents a quantity within a known range, or a fractional value.
  */
-export const Meter = /*#__PURE__*/ (forwardRef as forwardRefType)(function Meter(props: MeterProps, ref: ForwardedRef<HTMLDivElement>) {
+export const Meter = /*#__PURE__*/ (forwardRef as forwardRefType)(function Meter(
+  props: MeterProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, MeterContext);
-  let {
-    value = 0,
-    minValue = 0,
-    maxValue = 100
-  } = props;
+  let {value = 0, minValue = 0, maxValue = 100} = props;
   value = clamp(value, minValue, maxValue);
 
-  let [labelRef, label] = useSlot(
-    !props['aria-label'] && !props['aria-labelledby']
-  );
-  let {
-    meterProps,
-    labelProps
-  } = useMeter({...props, label});
+  let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
+  let {meterProps, labelProps} = useMeter({...props, label});
 
   // Calculate the width of the progress bar as a percentage
-  let percentage = (value - minValue) / (maxValue - minValue) * 100;
+  let percentage = ((value - minValue) / (maxValue - minValue)) * 100;
 
   let renderProps = useRenderProps({
     ...props,
@@ -86,7 +85,10 @@ export const Meter = /*#__PURE__*/ (forwardRef as forwardRefType)(function Meter
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <dom.div {...mergeProps(DOMProps, renderProps, meterProps)} ref={ref} slot={props.slot || undefined}>
+    <dom.div
+      {...mergeProps(DOMProps, renderProps, meterProps)}
+      ref={ref}
+      slot={props.slot || undefined}>
       <LabelContext.Provider value={{...labelProps, ref: labelRef, elementType: 'span'}}>
         {renderProps.children}
       </LabelContext.Provider>

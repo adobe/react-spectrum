@@ -30,7 +30,16 @@ import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';
 import {QueuedToast, ToastQueue, ToastState, useToastQueue} from 'react-stately/useToastState';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, useContext} from 'react';
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  HTMLAttributes,
+  JSX,
+  ReactElement,
+  ReactNode,
+  useContext
+} from 'react';
 import {TextContext} from './Text';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
@@ -43,40 +52,47 @@ const ToastStateContext = createContext<ToastState<any> | null>(null);
 
 export interface ToastRegionRenderProps<T> {
   /** A list of all currently visible toasts. */
-  visibleToasts: QueuedToast<T>[],
+  visibleToasts: QueuedToast<T>[];
   /**
    * Whether the toast region is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean,
+  isHovered: boolean;
   /**
    * Whether the toast region is currently focused.
    * @selector [data-focused]
    */
-  isFocused: boolean,
+  isFocused: boolean;
   /**
    * Whether the toast region is keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean
+  isFocusVisible: boolean;
 }
 
-export interface ToastRegionProps<T> extends AriaToastRegionProps, StyleRenderProps<ToastRegionRenderProps<T>>, GlobalDOMAttributes<HTMLDivElement> {
+export interface ToastRegionProps<T>
+  extends
+    AriaToastRegionProps,
+    StyleRenderProps<ToastRegionRenderProps<T>>,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ToastRegion'
    */
-  className?: ClassNameOrFunction<ToastRegionRenderProps<T>>,
+  className?: ClassNameOrFunction<ToastRegionRenderProps<T>>;
   /** The queue of toasts to display. */
-  queue: ToastQueue<T>,
+  queue: ToastQueue<T>;
   /** A function to render each toast, or children containing a `<ToastList>`. */
-  children: ReactNode | ((renderProps: {toast: QueuedToast<T>}) => ReactElement)
+  children: ReactNode | ((renderProps: {toast: QueuedToast<T>}) => ReactElement);
 }
 
 /**
  * A ToastRegion displays one or more toast notifications.
  */
-const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastRegion<T>(props: ToastRegionProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
+const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastRegion<T>(
+  props: ToastRegionProps<T>,
+  ref: ForwardedRef<HTMLDivElement>
+): JSX.Element | null {
   let isSSR = useIsSSR();
   let state = useToastQueue(props.queue);
   let objectRef = useObjectRef(ref);
@@ -117,7 +133,17 @@ const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastR
         data-hovered={isHovered || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}>
-        {typeof props.children === 'function' ? <ToastList {...props} render={undefined} className={undefined} style={{display: 'contents'}}>{props.children}</ToastList> : props.children}
+        {typeof props.children === 'function' ? (
+          <ToastList
+            {...props}
+            render={undefined}
+            className={undefined}
+            style={{display: 'contents'}}>
+            {props.children}
+          </ToastList>
+        ) : (
+          props.children
+        )}
       </dom.div>
     </ToastStateContext.Provider>
   );
@@ -127,12 +153,18 @@ const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastR
     : null;
 });
 
-export interface ToastListProps<T> extends Omit<ToastRegionProps<T>, 'queue' | 'children' | 'render'>, DOMRenderProps<'ol', ToastRegionRenderProps<T>> {
+export interface ToastListProps<T>
+  extends
+    Omit<ToastRegionProps<T>, 'queue' | 'children' | 'render'>,
+    DOMRenderProps<'ol', ToastRegionRenderProps<T>> {
   /** A function to render each toast. */
-  children: (renderProps: {toast: QueuedToast<T>}) => ReactElement
+  children: (renderProps: {toast: QueuedToast<T>}) => ReactElement;
 }
 
-const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(props: ToastListProps<T>, ref: ForwardedRef<HTMLOListElement>) {
+const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(
+  props: ToastListProps<T>,
+  ref: ForwardedRef<HTMLOListElement>
+) {
   let state = useContext(ToastStateContext)!;
   let {hoverProps, isHovered} = useHover({});
   let renderProps = useRenderProps({
@@ -149,7 +181,7 @@ const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastLis
 
   return (
     <dom.ol {...hoverProps} {...renderProps} ref={ref}>
-      {state.visibleToasts.map((toast) => (
+      {state.visibleToasts.map(toast => (
         <li key={toast.key} style={{display: 'contents'}}>
           {props.children({toast})}
         </li>
@@ -162,31 +194,35 @@ export interface ToastRenderProps<T> {
   /**
    * The toast object to display.
    */
-  toast: QueuedToast<T>,
+  toast: QueuedToast<T>;
   /**
    * Whether the toast is currently focused.
    * @selector [data-focused]
    */
-  isFocused: boolean,
+  isFocused: boolean;
   /**
    * Whether the toast is keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean
+  isFocusVisible: boolean;
 }
 
-export interface ToastProps<T> extends AriaToastProps<T>, RenderProps<ToastRenderProps<T>>, GlobalDOMAttributes<HTMLDivElement> {
+export interface ToastProps<T>
+  extends AriaToastProps<T>, RenderProps<ToastRenderProps<T>>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Toast'
    */
-  className?: ClassNameOrFunction<ToastRenderProps<T>>
+  className?: ClassNameOrFunction<ToastRenderProps<T>>;
 }
 
 /**
  * A Toast displays a brief, temporary notification of actions, errors, or other events in an application.
  */
-const Toast = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toast<T>(props: ToastProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+const Toast = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toast<T>(
+  props: ToastProps<T>,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   let state = useContext(ToastStateContext)!;
   let objectRef = useObjectRef(ref);
   let {toastProps, contentProps, titleProps, descriptionProps, closeButtonProps} = useToast(
@@ -217,19 +253,25 @@ const Toast = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toast<T>(pro
       <Provider
         values={[
           [ToastContentContext, contentProps],
-          [TextContext, {
-            slots: {
-              [DEFAULT_SLOT]: {},
-              title: titleProps,
-              description: descriptionProps
+          [
+            TextContext,
+            {
+              slots: {
+                [DEFAULT_SLOT]: {},
+                title: titleProps,
+                description: descriptionProps
+              }
             }
-          }],
-          [ButtonContext, {
-            slots: {
-              [DEFAULT_SLOT]: {},
-              close: closeButtonProps
+          ],
+          [
+            ButtonContext,
+            {
+              slots: {
+                [DEFAULT_SLOT]: {},
+                close: closeButtonProps
+              }
             }
-          }]
+          ]
         ]}>
         {renderProps.children}
       </Provider>
@@ -237,14 +279,20 @@ const Toast = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toast<T>(pro
   );
 });
 
-export interface ToastContentProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<'div', undefined> {}
+export interface ToastContentProps
+  extends HTMLAttributes<HTMLElement>, DOMRenderProps<'div', undefined> {}
 
-export const ToastContentContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLDivElement>>({});
+export const ToastContentContext = createContext<
+  ContextValue<HTMLAttributes<HTMLElement>, HTMLDivElement>
+>({});
 
 /**
  * ToastContent wraps the main content of a toast notification.
  */
-export const ToastContent = /*#__PURE__*/ forwardRef(function ToastContent(props: ToastContentProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ToastContent = /*#__PURE__*/ forwardRef(function ToastContent(
+  props: ToastContentProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, ToastContentContext);
   return (
     <dom.div render={props.render} className="react-aria-ToastContent" {...props} ref={ref}>
@@ -253,4 +301,10 @@ export const ToastContent = /*#__PURE__*/ forwardRef(function ToastContent(props
   );
 });
 
-export {Toast as UNSTABLE_Toast, ToastList as UNSTABLE_ToastList, ToastRegion as UNSTABLE_ToastRegion, ToastContent as UNSTABLE_ToastContent, ToastStateContext as UNSTABLE_ToastStateContext};
+export {
+  Toast as UNSTABLE_Toast,
+  ToastList as UNSTABLE_ToastList,
+  ToastRegion as UNSTABLE_ToastRegion,
+  ToastContent as UNSTABLE_ToastContent,
+  ToastStateContext as UNSTABLE_ToastStateContext
+};

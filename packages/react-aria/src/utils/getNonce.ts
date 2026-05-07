@@ -12,9 +12,10 @@
 
 import {getOwnerWindow} from './domHelpers';
 
-type NonceWindow = Window & typeof globalThis & {
-  __webpack_nonce__?: string
-};
+type NonceWindow = Window &
+  typeof globalThis & {
+    __webpack_nonce__?: string;
+  };
 
 function getWebpackNonce(doc?: Document): string | undefined {
   let ownerWindow = doc?.defaultView as NonceWindow | null | undefined;
@@ -43,7 +44,12 @@ export function getNonce(doc?: Document): string | undefined {
   }
 
   let meta = d.querySelector('meta[property="csp-nonce"]');
-  let nonce = (meta && meta instanceof getOwnerWindow(meta).HTMLMetaElement && (meta.nonce || meta.content)) || getWebpackNonce(d) || undefined;
+  let nonce =
+    (meta &&
+      meta instanceof getOwnerWindow(meta).HTMLMetaElement &&
+      (meta.nonce || meta.content)) ||
+    getWebpackNonce(d) ||
+    undefined;
 
   if (nonce !== undefined) {
     nonceCache.set(d, nonce);

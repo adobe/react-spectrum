@@ -10,16 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import {defineConfig} from 'vite';
+import react from '@vitejs/plugin-react';
 import macros from 'unplugin-parcel-macros';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    macros.vite(),
-    react()
-  ],
+  plugins: [macros.vite(), react()],
   build: {
     target: ['es2022'],
     // Lightning CSS produces much a smaller CSS bundle than the default minifier.
@@ -37,4 +34,4 @@ export default defineConfig({
       }
     }
   }
-})
+});

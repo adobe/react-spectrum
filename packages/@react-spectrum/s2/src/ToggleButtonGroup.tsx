@@ -22,17 +22,28 @@ import {
 } from 'react-aria-components/ToggleButtonGroup';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ToggleButtonGroupProps extends ActionButtonGroupProps, Omit<RACToggleButtonGroupProps, 'children' | 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, DOMProps {
+export interface ToggleButtonGroupProps
+  extends
+    ActionButtonGroupProps,
+    Omit<
+      RACToggleButtonGroupProps,
+      'children' | 'style' | 'className' | 'render' | keyof GlobalDOMAttributes
+    >,
+    DOMProps {
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
-  isEmphasized?: boolean
+  isEmphasized?: boolean;
 }
 
-export const ToggleButtonGroupContext = createContext<ContextValue<Partial<ToggleButtonGroupProps>, HTMLDivElement>>(null);
+export const ToggleButtonGroupContext =
+  createContext<ContextValue<Partial<ToggleButtonGroupProps>, HTMLDivElement>>(null);
 
 /**
  * A ToggleButtonGroup is a grouping of related ToggleButtons, with single or multiple selection.
  */
-export const ToggleButtonGroup = forwardRef(function ToggleButtonGroup(props: ToggleButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ToggleButtonGroup = forwardRef(function ToggleButtonGroup(
+  props: ToggleButtonGroupProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, ToggleButtonGroupContext);
   let {
     density = 'regular',
@@ -50,7 +61,9 @@ export const ToggleButtonGroup = forwardRef(function ToggleButtonGroup(props: To
       {...props}
       ref={ref}
       style={UNSAFE_style}
-      className={UNSAFE_className + actionGroupStyle({size, density, orientation, isJustified}, styles)}>
+      className={
+        UNSAFE_className + actionGroupStyle({size, density, orientation, isJustified}, styles)
+      }>
       <ToggleButtonGroupContext.Provider value={props}>
         {children}
       </ToggleButtonGroupContext.Provider>

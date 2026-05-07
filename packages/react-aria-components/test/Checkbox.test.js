@@ -11,7 +11,13 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Checkbox as AriaCheckbox, CheckboxButton, CheckboxContext, CheckboxField, CheckboxFieldContext} from '../src/Checkbox';
+import {
+  Checkbox as AriaCheckbox,
+  CheckboxButton,
+  CheckboxContext,
+  CheckboxField,
+  CheckboxFieldContext
+} from '../src/Checkbox';
 import {FieldError} from '../src/FieldError';
 import {Form} from '../src/Form';
 import React, {forwardRef} from 'react';
@@ -38,14 +44,15 @@ const CheckboxLegacy = forwardRef(function CheckboxLegacy(props, ref) {
   return <AriaCheckbox {...props} ref={ref} className={props.className || props.buttonClassName} />;
 });
 
-describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
+describe.each(['Checkbox', 'CheckboxField'])('%s', comp => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
   let Checkbox = comp === 'CheckboxField' ? CheckboxExample : CheckboxLegacy;
-  let findRoot = el => comp === 'CheckboxField' ? el.closest('label').parentElement : el.closest('label');
+  let findRoot = el =>
+    comp === 'CheckboxField' ? el.closest('label').parentElement : el.closest('label');
 
   it('should render a checkbox with default class', () => {
     let {getByRole} = render(<Checkbox>Test</Checkbox>);
@@ -60,15 +67,26 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole} =  render(<Checkbox data-foo="bar">Test</Checkbox>);
+    let {getByRole} = render(<Checkbox data-foo="bar">Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
     expect(findRoot(checkbox)).toHaveAttribute('data-foo', 'bar');
     expect(getByRole('checkbox')).not.toHaveAttribute('data-foo', 'bar');
   });
 
   it('should support custom render function', () => {
-    // eslint-disable-next-line jsx-a11y/label-has-associated-control
-    let {getByRole} = render(<Checkbox render={props => comp === 'CheckboxField' ? <div {...props} data-custom="bar" /> : <label {...props} data-custom="bar" />}>Test</Checkbox>);
+    let {getByRole} = render(
+      <Checkbox
+        render={props =>
+          comp === 'CheckboxField' ? (
+            <div {...props} data-custom="bar" />
+          ) : (
+            // eslint-disable-next-line jsx-a11y/label-has-associated-control
+            <label {...props} data-custom="bar" />
+          )
+        }>
+        Test
+      </Checkbox>
+    );
     let checkbox = getByRole('checkbox').closest('label');
     expect(findRoot(checkbox)).toHaveAttribute('data-custom', 'bar');
   });
@@ -90,7 +108,15 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
     let hoverStartSpy = jest.fn();
     let hoverChangeSpy = jest.fn();
     let hoverEndSpy = jest.fn();
-    let {getByRole} = render(<Checkbox buttonClassName={({isHovered}) => isHovered ? 'hover' : ''} onHoverStart={hoverStartSpy} onHoverChange={hoverChangeSpy} onHoverEnd={hoverEndSpy}>Test</Checkbox>);
+    let {getByRole} = render(
+      <Checkbox
+        buttonClassName={({isHovered}) => (isHovered ? 'hover' : '')}
+        onHoverStart={hoverStartSpy}
+        onHoverChange={hoverChangeSpy}
+        onHoverEnd={hoverEndSpy}>
+        Test
+      </Checkbox>
+    );
     let checkbox = getByRole('checkbox').closest('label');
 
     expect(checkbox).not.toHaveAttribute('data-hovered');
@@ -110,7 +136,11 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
   });
 
   it('should support focus ring', async () => {
-    let {getByRole} = render(<Checkbox buttonClassName={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</Checkbox>);
+    let {getByRole} = render(
+      <Checkbox buttonClassName={({isFocusVisible}) => (isFocusVisible ? 'focus' : '')}>
+        Test
+      </Checkbox>
+    );
     let checkbox = getByRole('checkbox');
     let label = checkbox.closest('label');
 
@@ -133,7 +163,9 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
     let onFocusChange = jest.fn();
     let {getByRole, getByText} = render(
       <>
-        <Checkbox onFocus={onFocus} onFocusChange={onFocusChange} onBlur={onBlur}>Test</Checkbox>
+        <Checkbox onFocus={onFocus} onFocusChange={onFocusChange} onBlur={onBlur}>
+          Test
+        </Checkbox>
         <button>Steal focus</button>
       </>
     );
@@ -145,14 +177,14 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
     expect(document.activeElement).toBe(checkbox);
     expect(onBlur).not.toHaveBeenCalled();
     expect(onFocus).toHaveBeenCalledTimes(1);
-    expect(onFocusChange).toHaveBeenCalledTimes(1);  // triggered by onFocus
+    expect(onFocusChange).toHaveBeenCalledTimes(1); // triggered by onFocus
     expect(onFocusChange).toHaveBeenLastCalledWith(true);
 
     await user.tab();
     expect(document.activeElement).toBe(button);
     expect(onBlur).toHaveBeenCalled();
     expect(onFocus).toHaveBeenCalledTimes(1);
-    expect(onFocusChange).toHaveBeenCalledTimes(2);  // triggered by onBlur
+    expect(onFocusChange).toHaveBeenCalledTimes(2); // triggered by onBlur
     expect(onFocusChange).toHaveBeenLastCalledWith(false);
   });
 
@@ -160,7 +192,15 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
     let onPress = jest.fn();
     let onClick = jest.fn();
     let onClickCapture = jest.fn();
-    let {getByRole} = render(<Checkbox buttonClassName={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</Checkbox>);
+    let {getByRole} = render(
+      <Checkbox
+        buttonClassName={({isPressed}) => (isPressed ? 'pressed' : '')}
+        onPress={onPress}
+        onClick={onClick}
+        onClickCapture={onClickCapture}>
+        Test
+      </Checkbox>
+    );
     let checkbox = getByRole('checkbox').closest('label');
 
     expect(checkbox).not.toHaveAttribute('data-pressed');
@@ -182,7 +222,14 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
   it('should support press state with keyboard', async () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
-    let {getByRole} = render(<Checkbox buttonClassName={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick}>Test</Checkbox>);
+    let {getByRole} = render(
+      <Checkbox
+        buttonClassName={({isPressed}) => (isPressed ? 'pressed' : '')}
+        onPress={onPress}
+        onClick={onClick}>
+        Test
+      </Checkbox>
+    );
     let checkbox = getByRole('checkbox').closest('label');
 
     expect(checkbox).not.toHaveAttribute('data-pressed');
@@ -202,7 +249,11 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
   });
 
   it('should support disabled state', () => {
-    let {getByRole} = render(<Checkbox isDisabled className={({isDisabled}) => isDisabled ? 'disabled' : ''}>Test</Checkbox>);
+    let {getByRole} = render(
+      <Checkbox isDisabled className={({isDisabled}) => (isDisabled ? 'disabled' : '')}>
+        Test
+      </Checkbox>
+    );
     let checkbox = getByRole('checkbox');
     let label = checkbox.closest('label');
 
@@ -214,7 +265,13 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
 
   it('should support selected state', async () => {
     let onChange = jest.fn();
-    let {getByRole} = render(<Checkbox onChange={onChange} buttonClassName={({isSelected}) => isSelected ? 'selected' : ''}>Test</Checkbox>);
+    let {getByRole} = render(
+      <Checkbox
+        onChange={onChange}
+        buttonClassName={({isSelected}) => (isSelected ? 'selected' : '')}>
+        Test
+      </Checkbox>
+    );
     let checkbox = getByRole('checkbox');
     let label = checkbox.closest('label');
 
@@ -239,7 +296,13 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
   });
 
   it('should support indeterminate state', () => {
-    let {getByRole} = render(<Checkbox isIndeterminate buttonClassName={({isIndeterminate}) => isIndeterminate ? 'indeterminate' : ''}>Test</Checkbox>);
+    let {getByRole} = render(
+      <Checkbox
+        isIndeterminate
+        buttonClassName={({isIndeterminate}) => (isIndeterminate ? 'indeterminate' : '')}>
+        Test
+      </Checkbox>
+    );
     let checkbox = getByRole('checkbox');
     let label = checkbox.closest('label');
 
@@ -250,7 +313,11 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
   });
 
   it('should support read only state', () => {
-    let {getByRole} = render(<Checkbox isReadOnly buttonClassName={({isReadOnly}) => isReadOnly ? 'readonly' : ''}>Test</Checkbox>);
+    let {getByRole} = render(
+      <Checkbox isReadOnly buttonClassName={({isReadOnly}) => (isReadOnly ? 'readonly' : '')}>
+        Test
+      </Checkbox>
+    );
     let checkbox = getByRole('checkbox');
     let label = checkbox.closest('label');
 
@@ -261,7 +328,11 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
   });
 
   it('should support invalid state', () => {
-    let {getByRole} = render(<Checkbox isInvalid buttonClassName={({isInvalid}) => isInvalid ? 'invalid' : ''}>Test</Checkbox>);
+    let {getByRole} = render(
+      <Checkbox isInvalid buttonClassName={({isInvalid}) => (isInvalid ? 'invalid' : '')}>
+        Test
+      </Checkbox>
+    );
     let checkbox = getByRole('checkbox');
     let label = checkbox.closest('label');
 
@@ -276,7 +347,9 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
       let {getByRole} = render(<Checkbox description="hello">Test</Checkbox>);
       let checkbox = getByRole('checkbox');
       expect(checkbox).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(checkbox.getAttribute('aria-describedby'))).toHaveTextContent('hello');
+      expect(document.getElementById(checkbox.getAttribute('aria-describedby'))).toHaveTextContent(
+        'hello'
+      );
     });
 
     it('should update aria-describedby when changing description prop', () => {
@@ -295,7 +368,9 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
   it('should support required state', async () => {
     let {getByRole} = render(
       <Form>
-        <Checkbox isRequired buttonClassName={({isRequired}) => isRequired ? 'required' : ''}>Test</Checkbox>
+        <Checkbox isRequired buttonClassName={({isRequired}) => (isRequired ? 'required' : '')}>
+          Test
+        </Checkbox>
       </Form>
     );
     let checkbox = getByRole('checkbox');
@@ -311,7 +386,9 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
       act(() => checkbox.form.requestSubmit());
 
       expect(checkbox).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(checkbox.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+      expect(document.getElementById(checkbox.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Constraints not satisfied'
+      );
     }
 
     await user.click(label);
@@ -323,7 +400,9 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
   });
 
   it('should support render props', async () => {
-    let {getByRole} =  render(<Checkbox>{({isSelected}) => isSelected ? 'Selected' : 'Not Selected'}</Checkbox>);
+    let {getByRole} = render(
+      <Checkbox>{({isSelected}) => (isSelected ? 'Selected' : 'Not Selected')}</Checkbox>
+    );
     let checkbox = getByRole('checkbox').closest('label');
 
     expect(checkbox).toHaveTextContent('Not Selected');
@@ -363,12 +442,13 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', (comp) => {
     expect(checkbox).toHaveAttribute('form', 'test');
   });
 
-
   it('should not trigger onBlur/onFocus on sequential presses', async () => {
     let onBlur = jest.fn();
     let onFocus = jest.fn();
     let {getByRole} = render(
-      <Checkbox onFocus={onFocus} onBlur={onBlur}>Test</Checkbox>
+      <Checkbox onFocus={onFocus} onBlur={onBlur}>
+        Test
+      </Checkbox>
     );
 
     let checkbox = getByRole('checkbox');

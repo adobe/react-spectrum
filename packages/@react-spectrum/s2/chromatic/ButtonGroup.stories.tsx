@@ -18,7 +18,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {ReactNode} from 'react';
 import {shortName} from './utils';
-import {style} from '../style' with { type: 'macro' };
+import {style} from '../style' with {type: 'macro'};
 import {Text} from '../src/Content';
 
 const meta: Meta<typeof ButtonGroup> = {
@@ -31,12 +31,24 @@ const meta: Meta<typeof ButtonGroup> = {
 
 export default meta;
 
-const Template = ({combos, containerStyle, ...args}: {combos: any[], containerStyle: string, args: ButtonGroupProps}): ReactNode => {
+const Template = ({
+  combos,
+  containerStyle,
+  ...args
+}: {
+  combos: any[];
+  containerStyle: string;
+  args: ButtonGroupProps;
+}): ReactNode => {
   return (
     <div className={containerStyle}>
       {combos.map(c => {
-        let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
-        let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+        let fullComboName = Object.keys(c)
+          .map(k => `${k}: ${c[k]}`)
+          .join(' ');
+        let key = Object.keys(c)
+          .map(k => shortName(k, c[k]))
+          .join(' ');
         if (!key) {
           key = 'default';
         }
@@ -44,9 +56,16 @@ const Template = ({combos, containerStyle, ...args}: {combos: any[], containerSt
         return (
           <ButtonGroup data-testid={fullComboName} {...c} {...args}>
             <Button>Press me</Button>
-            <Button variant="accent"><NewIcon /><Text>Test</Text></Button>
-            <Button><NewIcon /></Button>
-            <Button variant="negative" styles={style({maxWidth: 128})}>{key}</Button>
+            <Button variant="accent">
+              <NewIcon />
+              <Text>Test</Text>
+            </Button>
+            <Button>
+              <NewIcon />
+            </Button>
+            <Button variant="negative" styles={style({maxWidth: 128})}>
+              {key}
+            </Button>
             <Button variant="secondary" styles={style({maxWidth: 128})}>
               <NewIcon />
               <Text>Very long button with wrapping text to see what happens</Text>
@@ -66,10 +85,18 @@ let horizontalStates = [
 
 let horizontalCombos = generatePowerset(horizontalStates);
 export const Horizontal: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {
     combos: horizontalCombos,
-    containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 600px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'})
+    containerStyle: style({
+      display: 'grid',
+      gridTemplateColumns: 'repeat(2, minmax(0, 600px))',
+      gridAutoFlow: 'row',
+      alignItems: 'center',
+      justifyItems: 'start',
+      gap: 24,
+      width: '100vw'
+    })
   }
 };
 
@@ -82,9 +109,17 @@ let verticalStates = [
 
 let verticalCombos = generatePowerset(verticalStates);
 export const Vertical: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {
     combos: verticalCombos,
-    containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'})
+    containerStyle: style({
+      display: 'grid',
+      gridTemplateColumns: 'repeat(5, minmax(0, 250px))',
+      gridAutoFlow: 'row',
+      alignItems: 'center',
+      justifyItems: 'start',
+      gap: 24,
+      width: '100vw'
+    })
   }
 };

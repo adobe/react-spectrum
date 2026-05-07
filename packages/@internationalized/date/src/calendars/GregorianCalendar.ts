@@ -18,7 +18,12 @@ import {CalendarDate} from '../CalendarDate';
 import {mod, Mutable} from '../utils';
 
 const EPOCH = 1721426; // 001/01/03 Julian C.E.
-export function gregorianToJulianDay(era: string, year: number, month: number, day: number): number {
+export function gregorianToJulianDay(
+  era: string,
+  year: number,
+  month: number,
+  day: number
+): number {
   year = getExtendedYear(era, year);
 
   let y1 = year - 1;
@@ -81,7 +86,8 @@ export class GregorianCalendar implements Calendar {
     let dquad = mod(dcent, 1461);
     let yindex = Math.floor(dquad / 365);
 
-    let extendedYear = quadricent * 400 + cent * 100 + quad * 4 + yindex + (cent !== 4 && yindex !== 4 ? 1 : 0);
+    let extendedYear =
+      quadricent * 400 + cent * 100 + quad * 4 + yindex + (cent !== 4 && yindex !== 4 ? 1 : 0);
     let [era, year] = fromExtendedYear(extendedYear);
     let yearDay = jd0 - gregorianToJulianDay(era, year, 1, 1);
     let leapAdj = 2;

@@ -11,7 +11,17 @@
  */
 
 import {AriaButtonProps} from '../button/useButton';
-import {AriaLabelingProps, CollectionBase, DOMAttributes, DOMProps, Key, KeyboardDelegate, LayoutDelegate, RefObject, ValidationResult} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  CollectionBase,
+  DOMAttributes,
+  DOMProps,
+  Key,
+  KeyboardDelegate,
+  LayoutDelegate,
+  RefObject,
+  ValidationResult
+} from '@react-types/shared';
 import {AriaListBoxOptions} from '../listbox/useListBox';
 import {AriaSearchFieldProps, useSearchField} from '../searchfield/useSearchField';
 import {ComboBoxState, MenuTriggerAction} from 'react-stately/useComboBoxState';
@@ -20,24 +30,27 @@ import {mergeProps} from '../utils/mergeProps';
 import {SearchFieldProps} from 'react-stately/useSearchFieldState';
 import {useComboBox} from '../combobox/useComboBox';
 
-export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<SearchFieldProps, 'onChange' | 'onSubmit' | 'defaultValue' | 'value'> {
+export interface SearchAutocompleteProps<T>
+  extends
+    CollectionBase<T>,
+    Omit<SearchFieldProps, 'onChange' | 'onSubmit' | 'defaultValue' | 'value'> {
   /** The list of SearchAutocomplete items (uncontrolled). */
-  defaultItems?: Iterable<T>,
+  defaultItems?: Iterable<T>;
   /** The list of SearchAutocomplete items (controlled). */
-  items?: Iterable<T>,
+  items?: Iterable<T>;
   /** Method that is called when the open state of the menu changes. Returns the new open state and the action that caused the opening of the menu. */
-  onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void,
+  onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void;
   /** The value of the SearchAutocomplete input (controlled). */
-  inputValue?: string,
+  inputValue?: string;
   /** The default value of the SearchAutocomplete input (uncontrolled). */
-  defaultInputValue?: string,
+  defaultInputValue?: string;
   /** Handler that is called when the SearchAutocomplete input value changes. */
-  onInputChange?: (value: string) => void,
+  onInputChange?: (value: string) => void;
   /**
    * The interaction required to display the SearchAutocomplete menu.
    * @default 'input'
    */
-  menuTrigger?: MenuTriggerAction,
+  menuTrigger?: MenuTriggerAction;
   /** Handler that is called when the SearchAutocomplete is submitted.
    *
    * A `value` will be passed if the submission is a custom value (e.g. a user types then presses enter).
@@ -46,41 +59,46 @@ export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<Sear
    * A `key` will be passed if the submission is a selected item (e.g. a user clicks or presses enter on an option).
    * If the input is a custom value, `key` will be null.
    */
-  onSubmit?: (value: string | null, key: Key | null) => void
+  onSubmit?: (value: string | null, key: Key | null) => void;
 }
 
-export interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T>, Omit<AriaSearchFieldProps, 'onChange' | 'onSubmit' | 'defaultValue' | 'value'>, DOMProps, AriaLabelingProps {}
+export interface AriaSearchAutocompleteProps<T>
+  extends
+    SearchAutocompleteProps<T>,
+    Omit<AriaSearchFieldProps, 'onChange' | 'onSubmit' | 'defaultValue' | 'value'>,
+    DOMProps,
+    AriaLabelingProps {}
 
 export interface SearchAutocompleteAria<T> extends ValidationResult {
   /** Props for the label element. */
-  labelProps: DOMAttributes,
+  labelProps: DOMAttributes;
   /** Props for the search input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>;
   /** Props for the list box, to be passed to `useListBox`. */
-  listBoxProps: AriaListBoxOptions<T>,
+  listBoxProps: AriaListBoxOptions<T>;
   /** Props for the search input's clear button. */
-  clearButtonProps: AriaButtonProps,
+  clearButtonProps: AriaButtonProps;
   /** Props for the search autocomplete description element, if any. */
-  descriptionProps: DOMAttributes,
+  descriptionProps: DOMAttributes;
   /** Props for the search autocomplete error message element, if any. */
-  errorMessageProps: DOMAttributes
+  errorMessageProps: DOMAttributes;
 }
 
 export interface AriaSearchAutocompleteOptions<T> extends AriaSearchAutocompleteProps<T> {
   /** The ref for the input element. */
-  inputRef: RefObject<HTMLInputElement | null>,
+  inputRef: RefObject<HTMLInputElement | null>;
   /** The ref for the list box popover. */
-  popoverRef: RefObject<HTMLDivElement | null>,
+  popoverRef: RefObject<HTMLDivElement | null>;
   /** The ref for the list box. */
-  listBoxRef: RefObject<HTMLElement | null>,
+  listBoxRef: RefObject<HTMLElement | null>;
   /** An optional keyboard delegate implementation, to override the default. */
-  keyboardDelegate?: KeyboardDelegate,
+  keyboardDelegate?: KeyboardDelegate;
   /**
    * A delegate object that provides layout information for items in the collection.
    * By default this uses the DOM, but this can be overridden to implement things like
    * virtualized scrolling.
    */
-  layoutDelegate?: LayoutDelegate
+  layoutDelegate?: LayoutDelegate;
 }
 
 /**
@@ -89,7 +107,10 @@ export interface AriaSearchAutocompleteOptions<T> extends AriaSearchAutocomplete
  * @param props - Props for the search autocomplete.
  * @param state - State for the search autocomplete, as returned by `useSearchAutocomplete`.
  */
-export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>, state: ComboBoxState<T>): SearchAutocompleteAria<T> {
+export function useSearchAutocomplete<T>(
+  props: AriaSearchAutocompleteOptions<T>,
+  state: ComboBoxState<T>
+): SearchAutocompleteAria<T> {
   let {
     popoverRef,
     inputRef,
@@ -107,32 +128,40 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
     ...otherProps
   } = props;
 
-  let {inputProps, clearButtonProps} = useSearchField({
-    ...otherProps,
-    value: state.inputValue,
-    onChange: state.setInputValue,
-    autoComplete: 'off',
-    onClear: () => {
-      state.setInputValue('');
-      if (onClear) {
-        onClear();
-      }
+  let {inputProps, clearButtonProps} = useSearchField(
+    {
+      ...otherProps,
+      value: state.inputValue,
+      onChange: state.setInputValue,
+      autoComplete: 'off',
+      onClear: () => {
+        state.setInputValue('');
+        if (onClear) {
+          onClear();
+        }
+      },
+      onSubmit: value => {
+        // Prevent submission from search field if menu item was selected
+        if (state.selectionManager.focusedKey === null) {
+          onSubmit(value, null);
+        }
+      },
+      onKeyDown,
+      onKeyUp
     },
-    onSubmit: (value) => {
-      // Prevent submission from search field if menu item was selected
-      if (state.selectionManager.focusedKey === null) {
-        onSubmit(value, null);
-      }
+    {
+      value: state.inputValue,
+      setValue: state.setInputValue
     },
-    onKeyDown,
-    onKeyUp
-  }, {
-    value: state.inputValue,
-    setValue: state.setInputValue
-  }, inputRef);
+    inputRef
+  );
 
-
-  let {listBoxProps, labelProps, inputProps: comboBoxInputProps, ...validation} = useComboBox(
+  let {
+    listBoxProps,
+    labelProps,
+    inputProps: comboBoxInputProps,
+    ...validation
+  } = useComboBox(
     {
       ...otherProps,
       keyboardDelegate,

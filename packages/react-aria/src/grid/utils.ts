@@ -16,15 +16,18 @@ import type {GridState} from 'react-stately/private/grid/useGridState';
 import type {Key, KeyboardDelegate} from '@react-types/shared';
 
 interface GridMapShared {
-  keyboardDelegate: KeyboardDelegate,
+  keyboardDelegate: KeyboardDelegate;
   actions: {
-    onRowAction?: (key: Key) => void,
-    onCellAction?: (key: Key) => void
-  },
-  shouldSelectOnPressUp?: boolean
+    onRowAction?: (key: Key) => void;
+    onCellAction?: (key: Key) => void;
+  };
+  shouldSelectOnPressUp?: boolean;
 }
 
 // Used to share:
 // keyboard delegate between useGrid and useGridCell
 // onRowAction/onCellAction across hooks
-export const gridMap: WeakMap<GridState<unknown, GridCollection<unknown>>, GridMapShared> = new WeakMap<GridState<unknown, GridCollection<unknown>>, GridMapShared>();
+export const gridMap: WeakMap<
+  GridState<unknown, GridCollection<unknown>>,
+  GridMapShared
+> = new WeakMap<GridState<unknown, GridCollection<unknown>>, GridMapShared>();

@@ -30,24 +30,33 @@ export interface AriaToastRegionProps extends AriaLabelingProps {
    * An accessibility label for the toast region.
    * @default "Notifications"
    */
-  'aria-label'?: string
+  'aria-label'?: string;
 }
 
 export interface ToastRegionAria {
   /** Props for the landmark region element. */
-  regionProps: DOMAttributes
+  regionProps: DOMAttributes;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a toast region containing one or more toasts.
  * Toasts display brief, temporary notifications of actions, errors, or other events in an application.
  */
-export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState<T>, ref: RefObject<HTMLElement | null>): ToastRegionAria {
+export function useToastRegion<T>(
+  props: AriaToastRegionProps,
+  state: ToastState<T>,
+  ref: RefObject<HTMLElement | null>
+): ToastRegionAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/toast');
-  let {landmarkProps} = useLandmark({
-    role: 'region',
-    'aria-label': props['aria-label'] || stringFormatter.format('notifications', {count: state.visibleToasts.length})
-  }, ref);
+  let {landmarkProps} = useLandmark(
+    {
+      role: 'region',
+      'aria-label':
+        props['aria-label'] ||
+        stringFormatter.format('notifications', {count: state.visibleToasts.length})
+    },
+    ref
+  );
 
   let isHovered = useRef(false);
   let isFocused = useRef(false);
@@ -82,22 +91,27 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
       prevVisibleToasts.current = state.visibleToasts;
       return;
     }
-    toasts.current = [...ref.current.querySelectorAll('[role="alertdialog"]')] as FocusableElement[];
+    toasts.current = [
+      ...ref.current.querySelectorAll('[role="alertdialog"]')
+    ] as FocusableElement[];
     // If the visible toasts haven't changed, we don't need to do anything.
-    if (prevVisibleToasts.current.length === state.visibleToasts.length
-      && state.visibleToasts.every((t, i) => t.key === prevVisibleToasts.current[i].key)) {
+    if (
+      prevVisibleToasts.current.length === state.visibleToasts.length &&
+      state.visibleToasts.every((t, i) => t.key === prevVisibleToasts.current[i].key)
+    ) {
       prevVisibleToasts.current = state.visibleToasts;
       return;
     }
     // Get a list of all toasts by index and add info if they are removed.
-    let allToasts = prevVisibleToasts.current
-      .map((t, i) => ({
-        ...t,
-        i,
-        isRemoved: !state.visibleToasts.some(t2 => t.key === t2.key)
-      }));
+    let allToasts = prevVisibleToasts.current.map((t, i) => ({
+      ...t,
+      i,
+      isRemoved: !state.visibleToasts.some(t2 => t.key === t2.key)
+    }));
 
-    let removedFocusedToastIndex = allToasts.findIndex(t => t.i === focusedToast.current && t.isRemoved);
+    let removedFocusedToastIndex = allToasts.findIndex(
+      t => t.i === focusedToast.current && t.isRemoved
+    );
 
     // If the focused toast was removed, focus the next or previous toast.
     if (removedFocusedToastIndex > -1) {
@@ -142,7 +156,7 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
 
   let lastFocused = useRef<FocusableElement | null>(null);
   let {focusWithinProps} = useFocusWithin({
-    onFocusWithin: (e) => {
+    onFocusWithin: e => {
       isFocused.current = true;
       lastFocused.current = e.relatedTarget as FocusableElement;
       updateTimers();
@@ -194,7 +208,7 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
       'data-react-aria-top-layer': true,
       // listen to focus events separate from focuswithin because that will only fire once
       // and we need to follow all focus changes
-      onFocus: (e) => {
+      onFocus: e => {
         let target = (getEventTarget(e) as Element).closest('[role="alertdialog"]');
         focusedToast.current = toasts.current.findIndex(t => t === target);
       },

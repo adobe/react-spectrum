@@ -19,16 +19,15 @@ import {render} from '@react-spectrum/test-utils-internal';
 let dataTestId = 'IMsvg1';
 
 function Image(props) {
-  return (<svg {...props} data-testid={dataTestId}><path /></svg>);
+  return (
+    <svg {...props} data-testid={dataTestId}>
+      <path />
+    </svg>
+  );
 }
 
 function renderIllustratedMessage(Component, props) {
-  let {
-    heading,
-    description,
-    illustration,
-    ...otherProps
-  } = props;
+  let {heading, description, illustration, ...otherProps} = props;
   if (Component === IllustratedMessage) {
     return render(
       <Component {...otherProps}>
@@ -44,8 +43,8 @@ function renderIllustratedMessage(Component, props) {
 
 describe('IllustratedMessage', function () {
   it.each`
-    Name                       | Component               | props
-    ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{heading: 'foo', description: 'bar', illustration: <Image />}}
+    Name                    | Component             | props
+    ${'IllustratedMessage'} | ${IllustratedMessage} | ${{heading: 'foo', description: 'bar', illustration: <Image />}}
   `('$Name should render all parts of an IllustratedMessage', function ({Component, props}) {
     let {getByTestId, getByText} = renderIllustratedMessage(Component, props);
 
@@ -55,8 +54,8 @@ describe('IllustratedMessage', function () {
   });
 
   it.each`
-    Name                       | Component               | props
-    ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{illustration: <Image />}}
+    Name                    | Component             | props
+    ${'IllustratedMessage'} | ${IllustratedMessage} | ${{illustration: <Image />}}
   `('$Name should render only an svg', function ({Component, props}) {
     let {queryAllByText, getByTestId} = renderIllustratedMessage(Component, props);
 
@@ -66,8 +65,8 @@ describe('IllustratedMessage', function () {
   });
 
   it.each`
-    Name                       | Component               | props
-    ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{heading: 'foo', description: 'bar'}}
+    Name                    | Component             | props
+    ${'IllustratedMessage'} | ${IllustratedMessage} | ${{heading: 'foo', description: 'bar'}}
   `('$Name should render heading and description without an svg', function ({Component, props}) {
     let {queryAllByTestId, getByText} = renderIllustratedMessage(Component, props);
 

@@ -7,7 +7,7 @@ import {unified} from 'unified';
 
 /**
  * Instructions:
- * 
+ *
  * 1. Run the following script: node scripts/getCommitsForTesting.mjs 2026-10-07 2026-10-18
  * 2. Go to output.csv, copy it to Google sheets, highlight the rows, go to "Data" in the toolbar -> split text to columns -> separator: comma
  */
@@ -68,7 +68,7 @@ async function writeTestingCSV() {
       // If there is no component label, use the title of the PR
       if (matches.length === 0) {
         row.push(removePRNumber(title));
-      } 
+      }
 
       // Get testing instructions if it exists
       let content = info.data.body;
@@ -148,13 +148,16 @@ async function listCommits() {
   let page = 1;
   let lastPageSize;
   do {
-    let res = await octokit.request(`GET /repos/adobe/react-spectrum/commits?sha=main&since=${startDate}&until=${endDate}&per_page=100&page=${page}`, {
-      owner: 'adobe',
-      repo: 'react-spectrum',
-      headers: {
-        'X-GitHub-Api-Version': '2022-11-28'
+    let res = await octokit.request(
+      `GET /repos/adobe/react-spectrum/commits?sha=main&since=${startDate}&until=${endDate}&per_page=100&page=${page}`,
+      {
+        owner: 'adobe',
+        repo: 'react-spectrum',
+        headers: {
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
       }
-    });
+    );
     allCommits.push(...res.data);
     lastPageSize = res.data.length;
     page++;
@@ -212,12 +215,15 @@ function extractTestInstructions(contents) {
     if (collecting) {
       collected.push(node);
     }
-
   }
 
-  return collected.map(node => toString(node)).join(' ').replace(/\r\n/g, '\n').replace(/\s+/g, ' ').trim();
+  return collected
+    .map(node => toString(node))
+    .join(' ')
+    .replace(/\r\n/g, '\n')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
-
 
 function escapeCSV(value) {
   if (!value) {

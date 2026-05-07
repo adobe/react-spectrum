@@ -23,24 +23,24 @@ export interface TooltipTriggerAria {
   /**
    * Props for the trigger element.
    */
-  triggerProps: DOMAttributes,
+  triggerProps: DOMAttributes;
 
   /**
    * Props for the overlay container element.
    */
-  tooltipProps: DOMAttributes
+  tooltipProps: DOMAttributes;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a tooltip trigger, e.g. a button
  * that shows a description when focused or hovered.
  */
-export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTriggerState, ref: RefObject<FocusableElement | null>) : TooltipTriggerAria {
-  let {
-    isDisabled,
-    trigger,
-    shouldCloseOnPress = true
-  } = props;
+export function useTooltipTrigger(
+  props: TooltipTriggerProps,
+  state: TooltipTriggerState,
+  ref: RefObject<FocusableElement | null>
+): TooltipTriggerAria {
+  let {isDisabled, trigger, shouldCloseOnPress = true} = props;
 
   let tooltipId = useId();
 
@@ -60,7 +60,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
   };
 
   useEffect(() => {
-    let onKeyDown = (e) => {
+    let onKeyDown = e => {
       if (ref && ref.current) {
         // Escape after clicking something can give it keyboard focus
         // dismiss tooltip on esc key press
@@ -135,11 +135,14 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
     onHoverEnd
   });
 
-  let {focusableProps} = useFocusable({
-    isDisabled,
-    onFocus,
-    onBlur
-  }, ref);
+  let {focusableProps} = useFocusable(
+    {
+      isDisabled,
+      onFocus,
+      onBlur
+    },
+    ref
+  );
 
   return {
     triggerProps: {

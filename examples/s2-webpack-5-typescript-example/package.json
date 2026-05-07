@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "./src/index.tsx",
-  "packageManager": "yarn@4.2.2",
   "scripts": {
     "dev": "webpack serve",
     "build": "webpack --mode production"
@@ -30,5 +29,6 @@
     "webpack": "^5.91.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.4"
-  }
+  },
+  "packageManager": "yarn@4.2.2"
 }

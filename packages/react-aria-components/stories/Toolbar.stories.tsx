@@ -48,9 +48,15 @@ export const ToolbarExample: ToolbarStory = {
         <input id="before" type="text" />
         <Toolbar {...props}>
           <div role="group" aria-label="Text style">
-            <ToggleButton className={classNames(styles, 'toggleButtonExample')}><strong>B</strong></ToggleButton>
-            <ToggleButton className={classNames(styles, 'toggleButtonExample')}><div style={{textDecoration: 'underline'}}>U</div></ToggleButton>
-            <ToggleButton className={classNames(styles, 'toggleButtonExample')}><i>I</i></ToggleButton>
+            <ToggleButton className={classNames(styles, 'toggleButtonExample')}>
+              <strong>B</strong>
+            </ToggleButton>
+            <ToggleButton className={classNames(styles, 'toggleButtonExample')}>
+              <div style={{textDecoration: 'underline'}}>U</div>
+            </ToggleButton>
+            <ToggleButton className={classNames(styles, 'toggleButtonExample')}>
+              <i>I</i>
+            </ToggleButton>
           </div>
           <Checkbox>
             <div className="checkbox">

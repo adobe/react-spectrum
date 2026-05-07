@@ -11,7 +11,7 @@ import {
   TreeLoadMoreItem as AriaTreeLoadMoreItem,
   type TreeLoadMoreItemProps,
   TreeSection as AriaTreeSection,
-  TreeHeader as AriaTreeHeader,
+  TreeHeader as AriaTreeHeader
 } from 'react-aria-components/Tree';
 import {ChevronRight, GripVertical} from 'lucide-react';
 import {Checkbox} from './Checkbox';
@@ -23,16 +23,17 @@ export function Tree<T extends object>(props: TreeProps<T>) {
 }
 
 export function TreeItemContent(
-  props: Omit<TreeItemContentProps, 'children'> & { children?: React.ReactNode }
+  props: Omit<TreeItemContentProps, 'children'> & {children?: React.ReactNode}
 ) {
   return (
     <AriaTreeItemContent>
-      {(
-        { selectionBehavior, selectionMode, allowsDragging }:
-          TreeItemContentRenderProps
-      ) => (
+      {({selectionBehavior, selectionMode, allowsDragging}: TreeItemContentRenderProps) => (
         <>
-          {allowsDragging && <Button slot="drag"><GripVertical size={16} /></Button>}
+          {allowsDragging && (
+            <Button slot="drag">
+              <GripVertical size={16} />
+            </Button>
+          )}
           {selectionBehavior === 'toggle' && selectionMode !== 'none' && (
             <Checkbox slot="selection" />
           )}
@@ -54,9 +55,7 @@ export function TreeItem(props: TreeItemProps) {
   let textValue = typeof props.title === 'string' ? props.title : '';
   return (
     <AriaTreeItem textValue={textValue} {...props}>
-      <TreeItemContent>
-        {props.title}
-      </TreeItemContent>
+      <TreeItemContent>{props.title}</TreeItemContent>
       {props.children}
     </AriaTreeItem>
   );
@@ -70,14 +69,10 @@ export function TreeLoadMoreItem(props: TreeLoadMoreItemProps) {
   );
 }
 
-export function TreeSection<T extends object>(
-  props: React.ComponentProps<typeof AriaTreeSection>
-) {
+export function TreeSection<T extends object>(props: React.ComponentProps<typeof AriaTreeSection>) {
   return <AriaTreeSection {...props} />;
 }
 
-export function TreeHeader(
-  props: React.ComponentProps<typeof AriaTreeHeader>
-) {
+export function TreeHeader(props: React.ComponentProps<typeof AriaTreeHeader>) {
   return <AriaTreeHeader {...props} />;
 }
