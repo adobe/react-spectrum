@@ -193,20 +193,30 @@ export function useSpinButton(
   // an increment or decrement.
   let isUp = useRef(false);
 
-  let [isIncrementPressed, setIsIncrementPressed] = useState<'touch' | 'mouse' | null>(null);
+  let [isIncrementPressed, _setIsIncrementPressed] = useState<'touch' | 'mouse' | null>(null);
+  let isIncrementPressedRef = useRef<'touch' | 'mouse' | null>(null);
+  let setIsIncrementPressed = (value: 'touch' | 'mouse' | null) => {
+    isIncrementPressedRef.current = value;
+    _setIsIncrementPressed(value);
+  };
   useEffect(() => {
-    if (isIncrementPressed === 'touch') {
+    if (isIncrementPressedRef.current === 'touch') {
       onIncrementPressStartEvent(600);
-    } else if (isIncrementPressed) {
+    } else if (isIncrementPressedRef.current) {
       onIncrementPressStartEvent(400);
     }
   }, [isIncrementPressed]);
 
-  let [isDecrementPressed, setIsDecrementPressed] = useState<'touch' | 'mouse' | null>(null);
+  let [isDecrementPressed, _setIsDecrementPressed] = useState<'touch' | 'mouse' | null>(null);
+  let isDecrementPressedRef = useRef<'touch' | 'mouse' | null>(null);
+  let setIsDecrementPressed = (value: 'touch' | 'mouse' | null) => {
+    isDecrementPressedRef.current = value;
+    _setIsDecrementPressed(value);
+  };
   useEffect(() => {
-    if (isDecrementPressed === 'touch') {
+    if (isDecrementPressedRef.current === 'touch') {
       onDecrementPressStartEvent(600);
-    } else if (isDecrementPressed) {
+    } else if (isDecrementPressedRef.current) {
       onDecrementPressStartEvent(400);
     }
   }, [isDecrementPressed]);

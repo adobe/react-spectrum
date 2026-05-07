@@ -196,10 +196,6 @@ export function usePress(props: PressHookProps): PressResult {
     pointerType: null,
     disposables: []
   });
-  let isDisabledRef = useRef(isDisabled);
-  useEffect(() => {
-    isDisabledRef.current = isDisabled;
-  }, [isDisabled]);
 
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
@@ -299,6 +295,18 @@ export function usePress(props: PressHookProps): PressResult {
     }
   }, [allowTextSelectionOnPress, removeAllGlobalListeners, triggerPressEnd]);
   let cancelEvent = useEffectEvent(cancel);
+
+  useEffect(() => {
+    if (isDisabled && ref.current.isPressed) {
+      cancelEvent({
+        currentTarget: ref.current.target,
+        shiftKey: false,
+        ctrlKey: false,
+        metaKey: false,
+        altKey: false,
+      });
+    }
+  }, [isDisabled]);
 
   let cancelOnPointerExit = useCallback((e: EventBase) => {
     if (shouldCancelOnPointerExit) {
@@ -577,7 +585,7 @@ export function usePress(props: PressHookProps): PressResult {
             let clicked = false;
             let timeout = setTimeout(() => {
               if (state.isPressed && state.target instanceof HTMLElement) {
-                if (clicked || (state.isPressed && isDisabledRef.current)) {
+                if (clicked) {
                   // eslint-disable-next-line react-hooks/rules-of-hooks
                   cancelEvent(e);
                 } else {
@@ -708,11 +716,6 @@ export function usePress(props: PressHookProps): PressResult {
         if (state.target && nodeContains(state.target, getEventTarget(e) as Element) && state.pointerType != null) {
           // Wait for onClick to fire onPress. This avoids browser issues when the DOM
           // is mutated between onMouseUp and onClick, and is more compatible with third party libraries.
-          if (state.isPressed && isDisabledRef.current) {
-            // eslint-disable-next-line react-hooks/rules-of-hooks
-            cancelEvent(e);
-            return;
-          }
         } else {
           // eslint-disable-next-line react-hooks/rules-of-hooks
           cancelEvent(e);
