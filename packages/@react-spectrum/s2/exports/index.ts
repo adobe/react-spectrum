@@ -55,6 +55,7 @@ export {IllustratedMessage, IllustratedMessageContext} from '../src/IllustratedM
 export {Image, ImageContext} from '../src/Image';
 export {ImageCoordinator} from '../src/ImageCoordinator';
 export {InlineAlert, InlineAlertContext} from '../src/InlineAlert';
+export {LabeledValue, LabeledValueContext} from '../src/LabeledValue';
 export {Link, LinkContext} from '../src/Link';
 export {ListView, ListViewContext, ListViewItem} from '../src/ListView';
 export {MenuItem, MenuTrigger, Menu, MenuSection, SubmenuTrigger, UnavailableMenuItemTrigger, MenuContext} from '../src/Menu';
@@ -143,6 +144,7 @@ export type {IconProps, IconContextValue, IllustrationProps, IllustrationContext
 export type {InlineAlertProps} from '../src/InlineAlert';
 export type {ImageProps} from '../src/Image';
 export type {ImageCoordinatorProps} from '../src/ImageCoordinator';
+export type {LabeledValueProps} from '../src/LabeledValue';
 export type {LinkProps} from '../src/Link';
 export type {ListViewProps, ListViewItemProps} from '../src/ListView';
 export type {MenuTriggerProps, MenuProps, MenuItemProps, MenuSectionProps, SubmenuTriggerProps, UnavailableMenuItemTriggerProps} from '../src/Menu';

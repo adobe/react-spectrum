@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/s2",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Spectrum 2 UI components in React",
   "license": "Apache-2.0",
   "repository": {
@@ -24,6 +24,7 @@
     },
     "./page.css": {
       "source": "./src/page.ts",
+      "types": "./dist/types/src/page.d.ts",
       "default": "./page.css"
     },
     "./style": {

@@ -147,8 +147,6 @@ export interface ComboBoxStateOptions<T, M extends SelectionMode = 'single'> ext
   shouldCloseOnBlur?: boolean
 }
 
-const EMPTY_VALUE: Key[] = [];
-
 /**
  * Provides state management for a combo box component. Handles building a collection
  * of items from props and manages the option selection state of the combo box. In addition, it tracks the input value,
@@ -426,7 +424,15 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
   };
 
   let commitCustomValue = () => {
-    let value = selectionMode === 'multiple' ? EMPTY_VALUE : null;
+    if (selectionMode === 'multiple') {
+      // In multi-select mode, the input's custom text is independent from the selected items.
+      // Closing or committing the field should not clear the existing selection.
+      setLastValue(inputValue);
+      closeMenu();
+      return;
+    }
+
+    let value = null;
     lastValueRef.current = value as any;
     setValue(value);
     closeMenu();

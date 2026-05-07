@@ -53,7 +53,10 @@ export const CheckboxContext = createContext<ContextValue<Partial<CheckboxProps>
 
 const field = style({
   display: 'grid',
-  gridTemplateColumns: ['max-content', '1fr'],
+  gridTemplateColumns: {
+    default: ['max-content', '1fr'],
+    isNoVisibleLabel: ['max-content']
+  },
   columnGap: 'text-to-control',
   alignContent: 'start',
   width: {
@@ -182,7 +185,7 @@ export const Checkbox = forwardRef(function Checkbox({children, ...props}: Check
       ref={domRef}
       inputRef={inputRef}
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + field({size: props.size || 'M', isInCheckboxGroup}, props.styles)}>
+      className={(props.UNSAFE_className || '') + field({size: props.size || 'M', isInCheckboxGroup, isNoVisibleLabel: !children}, props.styles)}>
       {({isDisabled, isInvalid}) => (<>
         <CheckboxButton className={renderProps => wrapper({...renderProps, isInForm, size: props.size || 'M'})}>
           {renderProps => {

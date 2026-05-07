@@ -137,7 +137,10 @@ describe('Menu', () => {
   it('should support custom render function', () => {
     let {getAllByRole, getByRole} = renderMenu(
       {render: props => <div {...props} data-custom="true" />},
-      {render: props => <div {...props} data-custom="true" />}
+      {render: props => {
+        expect('href' in props).toBe(false);
+        return <div {...props} data-custom="true" />;
+      }}
     );
     let menu = getByRole('menu');
     expect(menu).toHaveAttribute('data-custom', 'true');
@@ -150,8 +153,11 @@ describe('Menu', () => {
   it('should support custom render function as a link', () => {
     let {getAllByRole, getByRole} = renderMenu(
       {render: props => <div {...props} data-custom="true" />},
-      // eslint-disable-next-line jsx-a11y/anchor-has-content
-      {href: '#foo', render: props => <a {...props} data-custom="true" />}
+      {href: '#foo', render: props => {
+        expect(props.href).toBe('#foo');
+        // eslint-disable-next-line jsx-a11y/anchor-has-content
+        return <a {...props} data-custom="true" />;
+      }}
     );
     let menu = getByRole('menu');
     expect(menu).toHaveAttribute('data-custom', 'true');

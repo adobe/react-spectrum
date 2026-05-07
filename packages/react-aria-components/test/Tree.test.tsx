@@ -915,144 +915,160 @@ describe('Tree', () => {
     });
 
     describe('keyboard interactions', () => {
-      it('left and right arrows should navigate between interactive elements in the row', async () => {
-        let {getAllByRole} = render(<DynamicTree treeProps={{selectionMode: 'multiple'}} />);
-        let expandableRow = getAllByRole('row')[0];
-        let buttons = within(expandableRow).getAllByRole('button');
-        let checkbox = within(expandableRow).getByRole('checkbox');
+      describe.each(['DynamicTree', 'DynamicSectionTree'])('%s', (comp) => {
+        const TreeExample = comp === 'DynamicSectionTree' ? DynamicSectionTree : DynamicTree;
 
-        await user.tab();
-        expect(expandableRow).toHaveAttribute('aria-expanded', 'true');
-        expect(document.activeElement).toBe(expandableRow);
-        await user.keyboard('{ArrowRight}');
-        expect(document.activeElement).toBe(checkbox);
-        await user.keyboard('{ArrowRight}');
-        expect(document.activeElement).toBe(buttons[1]);
-        await user.keyboard('{ArrowRight}');
-        expect(document.activeElement).toBe(buttons[2]);
-        await user.keyboard('{ArrowRight}');
-        expect(document.activeElement).toBe(expandableRow);
+        function getAllRows(tree: HTMLElement) {
+          const rowGroups = within(tree).queryAllByRole('rowgroup');
+          return rowGroups.length > 0
+            ? rowGroups.flatMap((rowGroup) => within(rowGroup).queryAllByRole('row').slice(1))
+            : within(tree).queryAllByRole('row');
+        }
 
-        // Test that if focus is on the row that right/left will expand/collapse if it isn't already
-        await user.keyboard('{ArrowLeft}');
-        expect(document.activeElement).toBe(expandableRow);
-        expect(expandableRow).toHaveAttribute('aria-expanded', 'false');
+        it('left and right arrows should navigate between interactive elements in the row', async () => {
+          let {getByRole} = render(<TreeExample treeProps={{selectionMode: 'multiple'}} />);
+          let tree = getByRole('treegrid');
+          let expandableRow = getAllRows(tree)[0];
+          let buttons = within(expandableRow).getAllByRole('button');
+          let checkbox = within(expandableRow).getByRole('checkbox');
 
-        await user.keyboard('{ArrowRight}');
-        expect(document.activeElement).toBe(expandableRow);
-        expect(expandableRow).toHaveAttribute('aria-expanded', 'true');
+          await user.tab();
+          expect(expandableRow).toHaveAttribute('aria-expanded', 'true');
+          expect(document.activeElement).toBe(expandableRow);
+          await user.keyboard('{ArrowRight}');
+          expect(document.activeElement).toBe(checkbox);
+          await user.keyboard('{ArrowRight}');
+          expect(document.activeElement).toBe(buttons[1]);
+          await user.keyboard('{ArrowRight}');
+          expect(document.activeElement).toBe(buttons[2]);
+          await user.keyboard('{ArrowRight}');
+          expect(document.activeElement).toBe(expandableRow);
 
-        // Resume testing navigation to interacive elements
-        await user.keyboard('{ArrowLeft}');
-        await user.keyboard('{ArrowLeft}');
-        expect(document.activeElement).toBe(buttons[2]);
-        await user.keyboard('{ArrowLeft}');
-        expect(document.activeElement).toBe(buttons[1]);
-        await user.keyboard('{ArrowLeft}');
-        expect(document.activeElement).toBe(checkbox);
-      });
+          // Test that if focus is on the row that right/left will expand/collapse if it isn't already
+          await user.keyboard('{ArrowLeft}');
+          expect(document.activeElement).toBe(expandableRow);
+          expect(expandableRow).toHaveAttribute('aria-expanded', 'false');
 
-      it('should support type ahead', async () => {
-        let {getAllByRole, queryByText} = render(<DynamicTree />);
-        await user.tab();
-        let rows = getAllByRole('row');
-        expect(document.activeElement).toBe(rows[0]);
-        await user.keyboard('Reports 1ABC');
-        expect(document.activeElement).toBe(rows[16]);
+          await user.keyboard('{ArrowRight}');
+          expect(document.activeElement).toBe(expandableRow);
+          expect(expandableRow).toHaveAttribute('aria-expanded', 'true');
 
-        act(() => {jest.runAllTimers();});
-        await user.keyboard('Pro');
-        expect(document.activeElement).toBe(rows[0]);
+          // Resume testing navigation to interacive elements
+          await user.keyboard('{ArrowLeft}');
+          await user.keyboard('{ArrowLeft}');
+          expect(document.activeElement).toBe(buttons[2]);
+          await user.keyboard('{ArrowLeft}');
+          expect(document.activeElement).toBe(buttons[1]);
+          await user.keyboard('{ArrowLeft}');
+          expect(document.activeElement).toBe(checkbox);
+        });
 
-        // Test typeahead doesn't match against hidden rows
-        await user.click(rows[12]);
-        expect(queryByText('Reports 1ABC')).toBeFalsy();
-        await user.keyboard('Reports 1ABC');
-        expect(document.activeElement).toBe(rows[12]);
-        expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
-      });
+        it('should support type ahead', async () => {
+          let {getByRole, queryByText} = render(<TreeExample />);
+          await user.tab();
+          let tree = getByRole('treegrid');
+          let rows = getAllRows(tree);
+          expect(document.activeElement).toBe(rows[0]);
+          await user.keyboard('Reports 1ABC');
+          expect(document.activeElement).toBe(rows[16]);
 
-      it('should support collapse key to navigate to parent', async () => {
-        let {getAllByRole} = render(<DynamicTree />);
-        await user.tab();
-        let rows = getAllByRole('row');
-        expect(rows).toHaveLength(20);
-        expect(document.activeElement).toBe(rows[0]);
-        expect(document.activeElement).toHaveAttribute('data-expanded', 'true');
+          act(() => {jest.runAllTimers();});
+          await user.keyboard('Pro');
+          expect(document.activeElement).toBe(rows[0]);
 
-        // Navigate down to Project 2B
-        await user.keyboard('{ArrowDown}');
-        await user.keyboard('{ArrowDown}');
-        await user.keyboard('{ArrowRight}');
-        await user.keyboard('{ArrowDown}');
-        await user.keyboard('{ArrowDown}');
-        expect(document.activeElement).toBe(rows[4]);
-        expect(document.activeElement).toHaveAttribute('aria-label', 'Project 2B');
+          // Test typeahead doesn't match against hidden rows
+          await user.click(rows[12]);
+          expect(queryByText('Reports 1ABC')).toBeFalsy();
+          await user.keyboard('Reports 1ABC');
+          expect(document.activeElement).toBe(rows[12]);
+          expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
+        });
 
-        // Collapse key on leaf node should move focus to parent (Projects)
-        await user.keyboard('{ArrowLeft}');
-        expect(document.activeElement).toBe(rows[2]);
-        expect(document.activeElement).toHaveAttribute('aria-label', 'Project 2');
-        expect(document.activeElement).toHaveAttribute('data-expanded', 'true');
+        it('should support collapse key to navigate to parent', async () => {
+          let {getByRole} = render(<TreeExample />);
+          await user.tab();
+          let tree = getByRole('treegrid');
+          let rows = getAllRows(tree);
+          expect(rows).toHaveLength(20);
+          expect(document.activeElement).toBe(rows[0]);
+          expect(document.activeElement).toHaveAttribute('data-expanded', 'true');
 
-        // Collapse key on expanded parent should collapse it
-        await user.keyboard('{ArrowLeft}');
-        // Projects should now be collapsed, so fewer rows visible
-        rows = getAllByRole('row');
-        expect(rows.length).toBeLessThan(20);
-        expect(document.activeElement).toBe(rows[2]);
-        expect(document.activeElement).toHaveAttribute('aria-label', 'Project 2');
-        expect(document.activeElement).not.toHaveAttribute('data-expanded');
+          // Navigate down to Project 2B
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowRight}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          expect(document.activeElement).toBe(rows[4]);
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Project 2B');
 
-        // Collapse key again on now-collapsed parent should move to its parent
-        await user.keyboard('{ArrowLeft}');
-        expect(document.activeElement).toBe(rows[0]);
-        expect(document.activeElement).toHaveAttribute('aria-label', 'Projects');
-      });
+          // Collapse key on leaf node should move focus to parent (Projects)
+          await user.keyboard('{ArrowLeft}');
+          expect(document.activeElement).toBe(rows[2]);
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Project 2');
+          expect(document.activeElement).toHaveAttribute('data-expanded', 'true');
 
-      it('should navigate between visible rows when using Arrow Up/Down', async () => {
-        let {getAllByRole} = render(<DynamicTree />);
-        await user.tab();
-        let rows = getAllByRole('row');
-        expect(rows).toHaveLength(20);
-        expect(document.activeElement).toBe(rows[0]);
-        await user.keyboard('{ArrowDown}');
-        expect(document.activeElement).toBe(rows[1]);
-        expect(rows[1]).toHaveAttribute('aria-label', 'Project 1');
-        await user.keyboard('{ArrowUp}');
+          // Collapse key on expanded parent should collapse it
+          await user.keyboard('{ArrowLeft}');
+          // Projects should now be collapsed, so fewer rows visible
+          rows = getAllRows(tree);
+          expect(rows.length).toBeLessThan(20);
+          expect(document.activeElement).toBe(rows[2]);
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Project 2');
+          expect(document.activeElement).not.toHaveAttribute('data-expanded');
 
-        // Collapse parent row and try arrow navigation again
-        await user.keyboard('{ArrowLeft}');
-        rows = getAllByRole('row');
-        expect(rows).toHaveLength(9);
-        await user.keyboard('{ArrowDown}');
-        expect(document.activeElement).toBe(rows[1]);
-        expect(rows[1]).toHaveAttribute('aria-label', 'Reports');
-        await user.keyboard('{ArrowUp}');
-        expect(document.activeElement).toBe(rows[0]);
-        expect(rows[0]).toHaveAttribute('aria-label', 'Projects');
-      });
+          // Collapse key again on now-collapsed parent should move to its parent
+          await user.keyboard('{ArrowLeft}');
+          expect(document.activeElement).toBe(rows[0]);
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Projects');
+        });
 
-      it('should navigate between visible rows when using Home/End', async () => {
-        let {getAllByRole} = render(<DynamicTree />);
-        await user.tab();
-        let rows = getAllByRole('row');
-        expect(rows).toHaveLength(20);
-        expect(document.activeElement).toBe(rows[0]);
-        await user.keyboard('{End}');
-        expect(document.activeElement).toBe(rows[19]);
-        expect(rows[19]).toHaveAttribute('aria-label', 'Reports 2');
-        await user.keyboard('{Home}');
-        expect(document.activeElement).toBe(rows[0]);
+        it('should navigate between visible rows when using Arrow Up/Down', async () => {
+          let {getByRole} = render(<TreeExample />);
+          await user.tab();
+          let tree = getByRole('treegrid');
+          let rows = getAllRows(tree);
+          expect(rows).toHaveLength(20);
+          expect(document.activeElement).toBe(rows[0]);
+          await user.keyboard('{ArrowDown}');
+          expect(document.activeElement).toBe(rows[1]);
+          expect(rows[1]).toHaveAttribute('aria-label', 'Project 1');
+          await user.keyboard('{ArrowUp}');
 
-        // Collapse the 2nd top level row and try End/Home again
-        await user.click(rows[12]);
-        rows = getAllByRole('row');
-        expect(rows).toHaveLength(13);
-        await user.keyboard('{Home}');
-        await user.keyboard('{End}');
-        expect(document.activeElement).toBe(rows[12]);
-        expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
+          // Collapse parent row and try arrow navigation again
+          await user.keyboard('{ArrowLeft}');
+          rows = getAllRows(tree);
+          expect(rows).toHaveLength(9);
+          await user.keyboard('{ArrowDown}');
+          expect(document.activeElement).toBe(rows[1]);
+          expect(rows[1]).toHaveAttribute('aria-label', 'Reports');
+          await user.keyboard('{ArrowUp}');
+          expect(document.activeElement).toBe(rows[0]);
+          expect(rows[0]).toHaveAttribute('aria-label', 'Projects');
+        });
+
+        it('should navigate between visible rows when using Home/End', async () => {
+          let {getByRole} = render(<TreeExample />);
+          await user.tab();
+          let tree = getByRole('treegrid');
+          let rows = getAllRows(tree);
+          expect(rows).toHaveLength(20);
+          expect(document.activeElement).toBe(rows[0]);
+          await user.keyboard('{End}');
+          expect(document.activeElement).toBe(rows[19]);
+          expect(rows[19]).toHaveAttribute('aria-label', 'Reports 2');
+          await user.keyboard('{Home}');
+          expect(document.activeElement).toBe(rows[0]);
+
+          // Collapse the 2nd top level row and try End/Home again
+          await user.click(rows[12]);
+          rows = getAllRows(tree);
+          expect(rows).toHaveLength(13);
+          await user.keyboard('{Home}');
+          await user.keyboard('{End}');
+          expect(document.activeElement).toBe(rows[12]);
+          expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
+        });
       });
     });
   });
