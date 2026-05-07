@@ -30,9 +30,9 @@ export const images: Record<string, [string, string]> = {
   'swipeable-tabs': [swipeableTabs, swipeableTabsDark]
 };
 
-export function ExampleList({tag, pages}) {
+export function ExampleList({tag, pages, prefix = 'react-aria/examples/'}) {
   let examples = pages
-    .filter(page => page.name.startsWith('react-aria/examples/') && !page.name.endsWith('index') && (!tag || page.exports?.keywords.includes(tag)))
+    .filter(page => page.name.startsWith(prefix) && !page.name.endsWith('index') && (!tag || page.exports?.keywords.includes(tag)))
     .sort((a, b) => getTitle(a).localeCompare(getTitle(b)));
 
   return (
@@ -66,9 +66,11 @@ export function ExampleList({tag, pages}) {
               itemType="https://schema.org/TechArticle">
               <meta itemProp="url" content={example.url} />
               <Card href={example.url}>
-                <CardPreview>
-                  <ExampleImage name={example.name} itemProp="image" />
-                </CardPreview>
+                {images[path.basename(example.name)] && (
+                  <CardPreview>
+                    <ExampleImage name={example.name} itemProp="image" />
+                  </CardPreview>
+                )}
                 <Content>
                   <Text slot="title" itemProp="headline">{getTitle(example)}</Text>
                   {example.exports?.description ? <Text slot="description" itemProp="description">{example.exports?.description}</Text> : null}
