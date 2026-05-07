@@ -387,6 +387,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
   getDropTargetLayoutInfo(target: ItemDropTarget): LayoutInfo {
     let layoutInfo = super.getDropTargetLayoutInfo(target);
     layoutInfo.zIndex = 1;
+    layoutInfo.allowOverflow = true;
     return layoutInfo;
   }
 }
@@ -427,8 +428,6 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
 
   let domRef = useDOMRef(ref);
   let scale = useScale();
-  // 8px circle + 2px top + 2px bottom padding
-  let dropIndicatorThickness = scale === 'large' ? 15 : 12;
 
   // Starts when the user selects resize from the menu, ends when resizing ends
   // used to control the visibility of the resizer Nubbin
@@ -480,7 +479,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
           // No need for estimated headingHeight since the headers aren't affected by overflow mode: wrap
           headingHeight: DEFAULT_HEADER_HEIGHT[scale],
           loaderHeight: 60,
-          dropIndicatorThickness
+          dropIndicatorThickness: 0
         }}>
         <InternalTableContext.Provider value={context}>
           <RACTable

@@ -717,11 +717,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
         }
       }
 
-      // TODO: ideally the last drop indicator rect's "end" needs to match the virtualizer's height/width so that the appearance/disappearance of the drop indicator
-      // doesn't cause the height/width of the collection to increase
-      // Additionally, we'd only want to do this if the collection's height is flush with the scroll container, if you
-      // have ListView whose contents don't completely fill the height of the container, we are actually fine with having the full height drop indicator...
-      // Not a great way to do this it feels though...
       rect = this.orientation === 'horizontal' ?
         new Rect(layoutInfo.rect.maxX - this.dropIndicatorThickness / 2, layoutInfo.rect.y, this.dropIndicatorThickness, layoutInfo.rect.height)
         : new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY - this.dropIndicatorThickness / 2, layoutInfo.rect.width, this.dropIndicatorThickness);
