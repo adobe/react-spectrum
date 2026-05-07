@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton} from './ActionButton';
+import ChevronDown from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import {DOMRef, forwardRefType} from '@react-types/shared';
-import {forwardRef, useEffect} from 'react';
+import {forwardRef, useCallback, useEffect, useRef, useState} from 'react';
 import {GridList, GridListProps} from 'react-aria-components/GridList';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
@@ -28,7 +30,9 @@ interface ThreadProps<T extends object> extends Pick<GridListProps<T>, 'items' |
 // announcements for new messages
 // column reverse layout? is it a problem that the expectation becomes that the first item in the items
 // array is now the most recent item in the stream? Also shift tabbing will move to the top of the list since that is the item
-// closest to the prompt field
+// closest to the prompt field (or actually might be because of useSelectableCollections tab handling)
+// will need to patch something to handle always moving to the newest item (aka the bottom) regarlsess if you are tabbing forward or
+// backwards into the thread
 
 // add to story some kind of mock streaming
 // fix the scroll to new content as it flows in, might be fixed by column reverse layout
@@ -37,40 +41,87 @@ interface ThreadProps<T extends object> extends Pick<GridListProps<T>, 'items' |
 // virtualizer layout
 // weird behavior where the prompt field loses focus everytime you enter something
 
+
 export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thread<T extends object>(
   props: ThreadProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {children, items} = props;
   let domRef = useDOMRef(ref);
+  let isNearBottomRef = useRef(true);
+  let [showScrollButton, setShowScrollButton] = useState(false);
 
-  // TODO: will need to do this whenever items changes
+  let handleScroll = useCallback(() => {
+    if (!domRef.current) {
+      return;
+    }
+    let {scrollTop, scrollHeight, clientHeight} = domRef.current;
+    let distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+    // if not within 100 px of the bottom show the scroll to bottom button
+    let nearBottom = distanceFromBottom < 100;
+    isNearBottomRef.current = nearBottom;
+    setShowScrollButton(!nearBottom);
+  }, [domRef]);
+
   useEffect(() => {
-    requestAnimationFrame(() => {
-      if (domRef.current) {
-        domRef.current.scrollTop = domRef.current.scrollHeight;
-      }
-    });
+    // scrolls to bottom on first render cuz we initialize isNearBottomRef to true,
+    // otherwise handles scrolling new prompts/etc into view unless you are scrolled up above
+    // 100px
+    if (isNearBottomRef.current) {
+      requestAnimationFrame(() => {
+        if (domRef.current) {
+          domRef.current.scrollTop = domRef.current.scrollHeight;
+        }
+      });
+    }
+  }, [items, domRef]);
+
+  let scrollToBottom = useCallback(() => {
+    if (domRef.current) {
+      domRef.current.scrollTo({top: domRef.current.scrollHeight, behavior: 'smooth'});
+    }
   }, [domRef]);
 
   return (
-    <GridList
-      aria-label="Chat thread"
-      keyboardNavigationBehavior="tab"
-      items={items}
-      ref={domRef}
+    <div
       className={style({
-        // flexDirection: 'column-reverse',
+        position: 'relative',
         display: 'flex',
         flexDirection: 'column',
-        rowGap: 16,
-        alignItems: 'start',
-        flexGrow: 1,
-        overflow: 'auto',
-        padding: 8,
-        scrollPadding: 8
+        overflow: 'hidden'
       })}>
-      {children}
-    </GridList>
+      {showScrollButton && (
+        <div
+          className={style({
+            position: 'absolute',
+            bottom: 16,
+            left: '50%'
+          })}>
+          <ActionButton
+            aria-label="Scroll to bottom"
+            onPress={scrollToBottom}>
+            <ChevronDown />
+          </ActionButton>
+        </div>
+      )}
+      <GridList
+        onScroll={handleScroll}
+        aria-label="Chat thread"
+        keyboardNavigationBehavior="tab"
+        items={items}
+        ref={domRef}
+        className={style({
+          display: 'flex',
+          flexDirection: 'column',
+          rowGap: 16,
+          alignItems: 'start',
+          flexGrow: 1,
+          overflow: 'auto',
+          padding: 8,
+          scrollPadding: 8
+        })}>
+        {children}
+      </GridList>
+    </div>
   );
 });

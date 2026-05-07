@@ -195,16 +195,15 @@ export function DynamicThread() {
         height: '100%'
       })}>
       <Thread items={messages}>
-        {/* <Thread items={messages.reverse()}> */}
         {msg => {
           if (msg.type === 'user') {
-            return <UserMessage>{msg.content}</UserMessage>;
+            return <UserMessage textValue={msg.content}>{msg.content}</UserMessage>;
           }
           if (msg.type === 'status') {
             return <ResponseStatus status={msg.status} />;
           }
           return (
-            <SystemMessage>
+            <SystemMessage textValue={msg.content}>
               <div role="document">
                 <p className={style({font: 'body'})}>{msg.content}</p>
               </div>
@@ -375,11 +374,10 @@ function Attachment({id, image, title, description, onRemove}: {id: number, imag
 }
 
 
-function UserMessage({children}: {children: ReactNode}) {
+function UserMessage({children, textValue = ' '}: {children: ReactNode, textValue?: string}) {
   return (
     <GridListItem
-      // TODO: will need a textValue
-      textValue=" "
+      textValue={textValue}
       className={style({
         ...focusRing(),
         backgroundColor: 'gray-50',
@@ -394,10 +392,9 @@ function UserMessage({children}: {children: ReactNode}) {
   );
 }
 
-function SystemMessage({children}: { children: ReactNode }) {
+function SystemMessage({children, textValue = ' '}: {children: ReactNode, textValue?: string}) {
   return (
-    // TODO: will need a textValue
-    <GridListItem textValue=" " className={style({...focusRing(), borderRadius: 'default'})}>
+    <GridListItem textValue={textValue} className={style({...focusRing(), borderRadius: 'default'})}>
       {children}
     </GridListItem>
   );
@@ -420,7 +417,8 @@ function ResponseStatus({status, thinking}: { status: 'pending' | 'complete', th
   switch (status) {
     case 'pending':
       return (
-        <GridListItem textValue=" " className={style({...focusRing(), borderRadius: 'sm', display: 'flex', alignItems: 'center', gap: 8})}>
+        // TODO: check announcement w/ and w/o the textValue
+        <GridListItem textValue="Generating response" className={style({...focusRing(), borderRadius: 'sm', display: 'flex', alignItems: 'center', gap: 8})}>
           <ProgressCircle isIndeterminate size="S" aria-label="Generating response" />
           <span className={style({font: 'ui', color: 'neutral-subdued'})}>Generating response...</span>
         </GridListItem>
@@ -428,7 +426,8 @@ function ResponseStatus({status, thinking}: { status: 'pending' | 'complete', th
     case 'complete':
       return (
         // TODO: maybe we need focusMode="child"?
-        <GridListItem textValue=" " className={style({...focusRing(), borderRadius: 'default', display: 'flex', alignItems: 'center', gap: 8})}>
+        // TODO: check announcement w/ and w/o the textValue, if it autofocused the child that would change behavior
+        <GridListItem textValue="Response generated" className={style({...focusRing(), borderRadius: 'default', display: 'flex', alignItems: 'center', gap: 8})}>
           {thinking
             ? (
               <Disclosure size="S" isQuiet>
