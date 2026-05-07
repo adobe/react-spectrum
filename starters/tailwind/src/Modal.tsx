@@ -27,11 +27,26 @@ const modalStyles = tv({
   }
 });
 
-export function Modal(props: ModalOverlayProps) {
+export function Modal({children, ...props}: ModalOverlayProps) {
+  let {
+    isDismissable,
+    isKeyboardDismissDisabled,
+    isOpen,
+    defaultOpen,
+    onOpenChange,
+    isEntering,
+    isExiting,
+    UNSTABLE_portalContainer,
+    shouldCloseOnInteractOutside,
+    ...modalProps
+  } = props;
+
   return (
     <ModalOverlay {...props} className={overlayStyles}>
       <div className="sticky top-0 left-0 w-full h-(--visual-viewport-height) flex items-center justify-center box-border">
-        <RACModal {...props} className={modalStyles} />
+        <RACModal {...modalProps} className={modalStyles}>
+          {children}
+        </RACModal>
       </div>
     </ModalOverlay>
   );
