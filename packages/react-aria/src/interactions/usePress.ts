@@ -303,7 +303,7 @@ export function usePress(props: PressHookProps): PressResult {
         shiftKey: false,
         ctrlKey: false,
         metaKey: false,
-        altKey: false,
+        altKey: false
       });
     }
   }, [isDisabled]);
