@@ -11,34 +11,32 @@
  */
 
 import {ActionMenuContext} from './ActionMenu';
+import {baseColor, color, focusRing, lightDark, space, style} from '../style' with {type: 'macro'};
+import {Button} from 'react-aria-components/Button';
 import {ButtonContext, LinkButtonContext} from './Button';
 import {Checkbox} from './Checkbox';
-import {baseColor, color, focusRing, lightDark, space, style} from '../style' with {type: 'macro'};
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContentContext, FooterContext, TextContext} from './Content';
 import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
+import {controlSize, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
-import {DividerContext} from './Divider';
+import CrossIcon from '../ui-icons/Cross';
 import {DOMProps, DOMRef, DOMRefValue, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {controlSize, getAllowedOverrides, staticColor, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
 import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
 import {inertValue} from 'react-aria/private/utils/inertValue';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Link} from 'react-aria-components/Link';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
 import {SkeletonContext, useIsSkeleton} from './Skeleton';
 import {useDOMRef} from './useDOMRef';
-import {useSpectrumContextProps} from './useSpectrumContextProps';
-
-import {Button} from 'react-aria-components/Button';
-import CrossIcon from '../ui-icons/Cross';
 import {useFocusableRef} from './useDOMRef';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface CardRenderProps {
   /** The size of the Card. */
@@ -755,8 +753,8 @@ export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(props
             [LinkButtonContext, {size: buttonSize[size]}]
           ]}>
           {children}
-          {/** definitely not a close button, though looks like one */}
-          {isRemovable && <div className={style({position: 'absolute', top: 0, insetEnd: 0, transform: 'translate(50%, -50%)'})}><CloseButton size='XS' /></div>}
+          {/** Definitely not a close button, though looks like one */}
+          {isRemovable && <div className={style({position: 'absolute', top: 0, insetEnd: 0, transform: 'translate(50%, -50%)'})}><CloseButton size="XS" /></div>}
         </Provider>
       ))}
     </Card>

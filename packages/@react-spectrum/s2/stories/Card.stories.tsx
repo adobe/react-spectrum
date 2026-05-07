@@ -28,8 +28,7 @@ import {Badge} from '../src/Badge';
 import {
   BasicHorizontalCard,
   HorizontalCard,
-  CardPreview as HorizontalCardPreview,
-  PreviewOnlyHorizontalCard
+  CardPreview as HorizontalCardPreview
 } from '../src/HorizontalCard';
 import {Button} from '../src/Button';
 import ChevronRight from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
