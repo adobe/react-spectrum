@@ -33,6 +33,7 @@ import {Link} from 'react-aria-components/Link';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
 import {SkeletonContext, useIsSkeleton} from './Skeleton';
+import {Tag, TagGroup, TagList} from 'react-aria-components/TagGroup';
 import {useDOMRef} from './useDOMRef';
 import {useFocusableRef} from './useDOMRef';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
@@ -133,8 +134,7 @@ let card = style({
     default: 'clip',
     variant: {
       quiet: 'visible'
-    },
-    isBasic: 'visible'
+    }
   },
   contain: 'layout',
   disableTapHighlight: true,
@@ -698,9 +698,8 @@ export const HorizontalCard = forwardRef(function HorizontalCard(props: CardProp
   );
 });
 
-export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(props: CardProps & {isRemovable?: boolean}, ref: DOMRef<HTMLDivElement>) {
+export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(props: CardProps, ref: DOMRef<HTMLDivElement>) {
   let {size = 'M'} = props;
-  let {isRemovable = false} = props;
   return (
     <Card {...props} ref={ref} isBasic>
       {composeRenderProps(props.children, children => (
@@ -753,8 +752,6 @@ export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(props
             [LinkButtonContext, {size: buttonSize[size]}]
           ]}>
           {children}
-          {/** Definitely not a close button, though looks like one */}
-          {isRemovable && <div className={style({position: 'absolute', top: 0, insetEnd: 0, transform: 'translate(50%, -50%)'})}><CloseButton size="XS" /></div>}
         </Provider>
       ))}
     </Card>
@@ -809,7 +806,7 @@ const CloseButton = function CloseButton(props) {
     <Button
       {...props}
       ref={domRef}
-      slot="close"
+      slot="remove"
       aria-label={props['aria-label'] || stringFormatter.format('dialog.dismiss')}
       style={pressScale(domRef, {})}
       className={renderProps => styles({...renderProps, size: props.size || 'M'}, props.styles)}>
@@ -817,3 +814,29 @@ const CloseButton = function CloseButton(props) {
     </Button>
   );
 };
+
+let assetListStyles = style({}, getAllowedOverrides());
+
+export const AssetList = forwardRef(function AssetList(props: any, ref: DOMRef<HTMLDivElement>) {
+  let domRef = useDOMRef(ref);
+  return (
+    <TagGroup {...props} className={assetListStyles(props.styles)} ref={domRef}>
+      <TagList className={style({display: 'flex', flexDirection: 'row', gap: 16, flexWrap: 'wrap', alignItems: 'center', width: 'full'})}>
+        {props.children}
+      </TagList>
+    </TagGroup>
+  );
+});
+
+export const Asset = forwardRef(function Asset(props: CardProps, ref: DOMRef<HTMLDivElement>) {
+  let domRef = useDOMRef(ref);
+  return (
+    <Tag ref={domRef} className={style({flexShrink: 0, flexGrow: 0, position: 'relative'})}>
+      <BasicHorizontalCard {...props}>
+        {props.children}
+      </BasicHorizontalCard>
+      {/** Definitely not a close button, though looks like one. */}
+      <div className={style({position: 'absolute', top: 0, insetEnd: 0, transform: 'translate(50%, -50%)'})}><CloseButton size="XS" /></div>
+    </Tag>
+  );
+});

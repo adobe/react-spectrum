@@ -14,6 +14,17 @@ import {ActionButton} from '../src/ActionButton';
 
 import {ActionMenu} from '../src/ActionMenu';
 import {
+  Asset as AssetComponent,
+  AssetList,
+  BasicHorizontalCard,
+  HorizontalCard,
+  CardPreview as HorizontalCardPreview
+} from '../src/HorizontalCard';
+
+import {Avatar} from '../src/Avatar';
+import {Badge} from '../src/Badge';
+import {Button} from '../src/Button';
+import {
   AssetCard,
   Card,
   CardPreview,
@@ -22,15 +33,6 @@ import {
   ProductCard,
   UserCard
 } from '../src/Card';
-
-import {Avatar} from '../src/Avatar';
-import {Badge} from '../src/Badge';
-import {
-  BasicHorizontalCard,
-  HorizontalCard,
-  CardPreview as HorizontalCardPreview
-} from '../src/HorizontalCard';
-import {Button} from '../src/Button';
 import ChevronRight from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
 import {Content, Footer, Text} from '../src/Content';
 import {Divider} from '../src/Divider';
@@ -421,7 +423,7 @@ export const Horizontal: Story = {
           <Text slot="description">Card description.</Text>
         </Content>
       </BasicHorizontalCard>
-      <BasicHorizontalCard {...args} styles={style({maxWidth: 400})} isRemovable>
+      <BasicHorizontalCard {...args} styles={style({maxWidth: 400})}>
         <Image
           slot="thumbnail"
           src={new URL('assets/placeholder.png', import.meta.url).toString()} />
@@ -430,11 +432,33 @@ export const Horizontal: Story = {
           <Text slot="description">Card description.</Text>
         </Content>
       </BasicHorizontalCard>
-      <BasicHorizontalCard {...args} isRemovable aria-label="Demo file.pdf">
+      <BasicHorizontalCard {...args} aria-label="Demo file.pdf">
         <Image
           slot="thumbnail"
           src={new URL('assets/placeholder.png', import.meta.url).toString()} />
       </BasicHorizontalCard>
     </div>
+  )
+};
+
+export const AIAssetList: Story = {
+  render: (args) => (
+    <AssetList {...args} styles={style({width: 400})}>
+      <AssetComponent aria-label="Demo file.pdf">
+        <Image
+          slot="thumbnail"
+          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+      </AssetComponent>
+      <AssetComponent aria-label="Alligator.pdf">
+        <Image
+          slot="thumbnail"
+          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+      </AssetComponent>
+      <AssetComponent aria-label="Rules.pdf">
+        <Image
+          slot="thumbnail"
+          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+      </AssetComponent>
+    </AssetList>
   )
 };
