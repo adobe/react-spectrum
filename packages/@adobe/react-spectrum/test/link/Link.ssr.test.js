@@ -14,9 +14,12 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('Link SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {Link} from '../../exports/index.ts';
       <Link>the link</Link>
-    `);
+    `
+    );
   });
 });

@@ -15,7 +15,7 @@ const styles = [
 ];
 
 interface CodeClientProps {
-  tokens: Token[]
+  tokens: Token[];
 }
 
 export function CodeClient({tokens}: CodeClientProps) {
@@ -28,7 +28,11 @@ export function CodeClient({tokens}: CodeClientProps) {
       let type = value;
       value = tokens[i++];
       let child = Array.isArray(value) ? <CodeClient tokens={value} /> : value;
-      children.push(<span key={i} className={styles[type]}>{child}</span>);
+      children.push(
+        <span key={i} className={styles[type]}>
+          {child}
+        </span>
+      );
     } else if (Array.isArray(value)) {
       // A nested array of tokens.
       children.push(<CodeClient key={i} tokens={value} />);

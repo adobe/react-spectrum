@@ -64,7 +64,12 @@ const meta: Meta = {
   title: 'ListView',
   component: ListView,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light', 'dark'], locales: ['en-US'], scales: ['medium', 'large'], disableAnimations: true},
+    chromaticProvider: {
+      colorSchemes: ['light', 'dark'],
+      locales: ['en-US'],
+      scales: ['medium', 'large'],
+      disableAnimations: true
+    },
     // noticed a small shifting before final layout, delaying so chromatic doesn't hit that
     chromatic: {delay: 10000}
   }
@@ -93,16 +98,28 @@ const renderActions = (
   </>
 );
 
-const Template = ({combos, ...args}: Omit<SpectrumListViewProps<any>, 'children'> & {combos: any[][]}): JSX.Element => (
+const Template = ({
+  combos,
+  ...args
+}: Omit<SpectrumListViewProps<any>, 'children'> & {combos: any[][]}): JSX.Element => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
     {combos.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c)
+        .map(k => shortName(k, c[k]))
+        .join(' ');
       if (!key) {
         key = 'empty';
       }
       return (
         <View flexGrow={1} maxWidth="size-5000" maxHeight={700} id={key}>
-          <ListView aria-label={key} width="size-3600" height="100%" selectedKeys={['a', 'd']} disabledKeys={['c']} {...args} {...c}>
+          <ListView
+            aria-label={key}
+            width="size-3600"
+            height="100%"
+            selectedKeys={['a', 'd']}
+            disabledKeys={['c']}
+            {...args}
+            {...c}>
             <Item key="a" textValue="Utilities" hasChildItems>
               <Folder />
               <Text>Utilities</Text>
@@ -153,24 +170,24 @@ const TemplateEmptyState = (props: Omit<SpectrumListViewProps<any>, 'children'>)
 );
 
 export const Default: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'all visual option combos 1 of 3',
   args: {combos: combinations.slice(0, chunkSize)}
 };
 
 export const ComboPt2: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {combos: combinations.slice(chunkSize, chunkSize * 2)},
   name: 'all visual option combos 2 of 3'
 };
 
 export const ComboPt3: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {combos: combinations.slice(chunkSize * 2, chunkSize * 3)},
   name: 'all visual option combos 3 of 3'
 };
 
 export const Empty: ListViewStory = {
-  render: (args) => <TemplateEmptyState {...args} />,
+  render: args => <TemplateEmptyState {...args} />,
   name: 'empty state'
 };

@@ -11,107 +11,133 @@
  */
 
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
-import {FocusableProps, HelpTextProps, InputBase, LabelableProps, RangeValue, Validation, ValueBase} from '@react-types/shared';
+import {
+  FocusableProps,
+  HelpTextProps,
+  InputBase,
+  LabelableProps,
+  RangeValue,
+  Validation,
+  ValueBase
+} from '@react-types/shared';
 import {OverlayTriggerProps} from '../overlays/useOverlayTriggerState';
 import {PageBehavior} from '../calendar/types';
 
 export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
 export type DateRange = RangeValue<DateValue>;
-export type MappedDateValue<T> =
-  T extends ZonedDateTime ? ZonedDateTime :
-  T extends CalendarDateTime ? CalendarDateTime :
-  T extends CalendarDate ? CalendarDate :
-  never;
+export type MappedDateValue<T> = T extends ZonedDateTime
+  ? ZonedDateTime
+  : T extends CalendarDateTime
+    ? CalendarDateTime
+    : T extends CalendarDate
+      ? CalendarDate
+      : never;
 
 export type TimeValue = Time | CalendarDateTime | ZonedDateTime;
-export type MappedTimeValue<T> =
-  T extends ZonedDateTime ? ZonedDateTime :
-  T extends CalendarDateTime ? CalendarDateTime :
-  T extends Time ? Time :
-  never;
+export type MappedTimeValue<T> = T extends ZonedDateTime
+  ? ZonedDateTime
+  : T extends CalendarDateTime
+    ? CalendarDateTime
+    : T extends Time
+      ? Time
+      : never;
 
 export type Granularity = 'day' | 'hour' | 'minute' | 'second';
-interface DateFieldBase<T extends DateValue> extends InputBase, Validation<MappedDateValue<T>>, FocusableProps, LabelableProps, HelpTextProps {
+interface DateFieldBase<T extends DateValue>
+  extends InputBase, Validation<MappedDateValue<T>>, FocusableProps, LabelableProps, HelpTextProps {
   /** The minimum allowed date that a user may select. */
-  minValue?: DateValue | null,
+  minValue?: DateValue | null;
   /** The maximum allowed date that a user may select. */
-  maxValue?: DateValue | null,
+  maxValue?: DateValue | null;
   /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
-  isDateUnavailable?: (date: DateValue) => boolean,
+  isDateUnavailable?: (date: DateValue) => boolean;
   /** A placeholder date that influences the format of the placeholder shown when no value is selected. Defaults to today's date at midnight. */
-  placeholderValue?: T | null,
+  placeholderValue?: T | null;
   /** Whether to display the time in 12 or 24 hour format. By default, this is determined by the user's locale. */
-  hourCycle?: 12 | 24,
+  hourCycle?: 12 | 24;
   /** Determines the smallest unit that is displayed in the date picker. By default, this is `"day"` for dates, and `"minute"` for times. */
-  granularity?: Granularity,
+  granularity?: Granularity;
   /**
    * Whether to hide the time zone abbreviation.
    * @default false
    */
-  hideTimeZone?: boolean,
+  hideTimeZone?: boolean;
   /**
    * Whether to always show leading zeros in the month, day, and hour fields.
    * By default, this is determined by the user's locale.
    */
-  shouldForceLeadingZeros?: boolean
+  shouldForceLeadingZeros?: boolean;
 }
 
-export interface DateFieldProps<T extends DateValue> extends DateFieldBase<T>, ValueBase<T | null, MappedDateValue<T> | null> {}
+export interface DateFieldProps<T extends DateValue>
+  extends DateFieldBase<T>, ValueBase<T | null, MappedDateValue<T> | null> {}
 
 interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayTriggerProps {
   /**
    * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
    * @default visible
    */
-  pageBehavior?: PageBehavior,
+  pageBehavior?: PageBehavior;
   /**
    * The day that starts the week.
    */
-  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
+  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
 }
 
-export interface DatePickerProps<T extends DateValue> extends DatePickerBase<T>, ValueBase<T | null, MappedDateValue<T> | null> {}
+export interface DatePickerProps<T extends DateValue>
+  extends DatePickerBase<T>, ValueBase<T | null, MappedDateValue<T> | null> {}
 
-export interface DateRangePickerProps<T extends DateValue> extends Omit<DatePickerBase<T>, 'validate' | 'isDateUnavailable'>, Validation<RangeValue<MappedDateValue<T>>>, ValueBase<RangeValue<T> | null, RangeValue<MappedDateValue<T>> | null> {
+export interface DateRangePickerProps<T extends DateValue>
+  extends
+    Omit<DatePickerBase<T>, 'validate' | 'isDateUnavailable'>,
+    Validation<RangeValue<MappedDateValue<T>>>,
+    ValueBase<RangeValue<T> | null, RangeValue<MappedDateValue<T>> | null> {
   /**
    * When combined with `isDateUnavailable`, determines whether non-contiguous ranges,
    * i.e. ranges containing unavailable dates, may be selected.
    */
-  allowsNonContiguousRanges?: boolean,
+  allowsNonContiguousRanges?: boolean;
   /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
-  isDateUnavailable?: (date: DateValue, anchorDate: CalendarDate | null) => boolean,
+  isDateUnavailable?: (date: DateValue, anchorDate: CalendarDate | null) => boolean;
   /**
    * The name of the start date input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
-  startName?: string,
+  startName?: string;
   /**
    * The name of the end date input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
-  endName?: string
+  endName?: string;
 }
 
-export interface TimePickerProps<T extends TimeValue> extends InputBase, Validation<MappedTimeValue<T>>, FocusableProps, LabelableProps, HelpTextProps, ValueBase<T | null, MappedTimeValue<T> | null> {
+export interface TimePickerProps<T extends TimeValue>
+  extends
+    InputBase,
+    Validation<MappedTimeValue<T>>,
+    FocusableProps,
+    LabelableProps,
+    HelpTextProps,
+    ValueBase<T | null, MappedTimeValue<T> | null> {
   /** Whether to display the time in 12 or 24 hour format. By default, this is determined by the user's locale. */
-  hourCycle?: 12 | 24,
+  hourCycle?: 12 | 24;
   /**
    * Determines the smallest unit that is displayed in the time picker.
    * @default 'minute'
    */
-  granularity?: 'hour' | 'minute' | 'second',
+  granularity?: 'hour' | 'minute' | 'second';
   /** Whether to hide the time zone abbreviation. */
-  hideTimeZone?: boolean,
+  hideTimeZone?: boolean;
   /**
    * Whether to always show leading zeros in the hour field.
    * By default, this is determined by the user's locale.
    */
-  shouldForceLeadingZeros?: boolean,
+  shouldForceLeadingZeros?: boolean;
   /**
    * A placeholder time that influences the format of the placeholder shown when no value is selected.
    * Defaults to 12:00 AM or 00:00 depending on the hour cycle.
    */
-  placeholderValue?: T,
+  placeholderValue?: T;
   /** The minimum allowed time that a user may select. */
-  minValue?: TimeValue | null,
+  minValue?: TimeValue | null;
   /** The maximum allowed time that a user may select. */
-  maxValue?: TimeValue | null
+  maxValue?: TimeValue | null;
 }

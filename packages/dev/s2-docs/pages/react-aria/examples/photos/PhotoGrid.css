@@ -34,7 +34,7 @@
       }
     }
 
-    [slot=drag] {
+    [slot='drag'] {
       all: unset;
       position: absolute;
       top: 10px;

@@ -21,22 +21,22 @@ export interface WaterfallLayoutOptions extends BaseLayoutOptions {
    * The minimum item size.
    * @default 240 x 136
    */
-  minItemSize?: Size,
+  minItemSize?: Size;
   /**
    * The maximum item size.
    * @default Infinity
    */
-  maxItemSize?: Size,
+  maxItemSize?: Size;
   /**
    * The minimum space required between items.
    * @default 18 x 18
    */
-  minSpace?: Size,
+  minSpace?: Size;
   /**
    * The maximum number of columns.
    * @default Infinity
    */
-  maxColumns?: number
+  maxColumns?: number;
 }
 
 // TODO: this didn't have any options that varied with card size, should it have?
@@ -74,12 +74,13 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     // Compute the number of columns needed to display the content
     let visibleWidth = this.virtualizer.visibleRect.width;
     let availableWidth = visibleWidth - this.margin * 2;
-    let columns = Math.floor((availableWidth + this.minSpace.width) / (this.minItemSize.width + this.minSpace.width));
+    let columns = Math.floor(
+      (availableWidth + this.minSpace.width) / (this.minItemSize.width + this.minSpace.width)
+    );
     this.numColumns = Math.max(1, Math.min(this.maxColumns, columns));
 
-
     // Compute the available width (minus the space between items)
-    let width = availableWidth - (this.minSpace.width * (this.numColumns - 1));
+    let width = availableWidth - this.minSpace.width * (this.numColumns - 1);
 
     // Compute the item width based on the space available
     let itemWidth = Math.round(width / this.numColumns);
@@ -88,7 +89,9 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
 
     // Compute the horizontal spacing
     // if only one column, we cannot divide by zero, so set it to 1
-    let horizontalSpacing = Math.round((availableWidth - this.numColumns * itemWidth) / Math.max(1, this.numColumns - 1));
+    let horizontalSpacing = Math.round(
+      (availableWidth - this.numColumns * itemWidth) / Math.max(1, this.numColumns - 1)
+    );
     this.horizontalSpacing = horizontalSpacing;
 
     // Setup an array of column heights
@@ -106,7 +109,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       } else if (node.props.width && node.props.height) {
         let nodeWidth = node.props.width;
         let nodeHeight = node.props.height;
-        let scaledHeight = Math.round(nodeHeight * ((itemWidth) / nodeWidth));
+        let scaledHeight = Math.round(nodeHeight * (itemWidth / nodeWidth));
         height = Math.max(this.minItemSize.height, Math.min(this.maxItemSize.height, scaledHeight));
       } else {
         height = itemWidth;
@@ -154,7 +157,12 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     }
 
     if (this.collection.size === 0 && !this.isLoading) {
-      let rect = new Rect(0, 0, this.virtualizer.visibleRect.width, this.virtualizer.visibleRect.height);
+      let rect = new Rect(
+        0,
+        0,
+        this.virtualizer.visibleRect.width,
+        this.virtualizer.visibleRect.height
+      );
       let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
       this.layoutInfos.set('placeholder', placeholder);
       y = placeholder.rect.maxY;
@@ -200,11 +208,21 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     // and thus the top corner to top corner distance was massive.
 
     // First look for a card to the immediate right of the current card. If we can't find any, look for the nearest card in the entire column to the right of the card
-    let rect = new Rect(layoutInfo.rect.maxX + 1, layoutInfo.rect.y, layoutInfo.rect.width + this.horizontalSpacing, layoutInfo.rect.height);
+    let rect = new Rect(
+      layoutInfo.rect.maxX + 1,
+      layoutInfo.rect.y,
+      layoutInfo.rect.width + this.horizontalSpacing,
+      layoutInfo.rect.height
+    );
     key = this._findClosest(layoutInfo.rect, rect)?.key;
 
     if (key == null) {
-      rect = new Rect(layoutInfo.rect.maxX + 1, 0, layoutInfo.rect.width + this.horizontalSpacing, this.virtualizer.contentSize.height);
+      rect = new Rect(
+        layoutInfo.rect.maxX + 1,
+        0,
+        layoutInfo.rect.width + this.horizontalSpacing,
+        this.virtualizer.contentSize.height
+      );
       key = this._findClosest(layoutInfo.rect, rect)?.key;
     }
 
@@ -214,12 +232,22 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
 
   getClosestLeft(key: Key): Node<T> | undefined {
     let layoutInfo = this.getLayoutInfo(key);
-     // First look for a card to the immediate left of the current card. If we can't find any, look for the nearest card in the entire column to the left of the card
-    let rect = new Rect(layoutInfo.rect.x - layoutInfo.rect.width - this.horizontalSpacing - 1, layoutInfo.rect.y, layoutInfo.rect.width + this.horizontalSpacing, layoutInfo.rect.height);
+    // First look for a card to the immediate left of the current card. If we can't find any, look for the nearest card in the entire column to the left of the card
+    let rect = new Rect(
+      layoutInfo.rect.x - layoutInfo.rect.width - this.horizontalSpacing - 1,
+      layoutInfo.rect.y,
+      layoutInfo.rect.width + this.horizontalSpacing,
+      layoutInfo.rect.height
+    );
     key = this._findClosest(layoutInfo.rect, rect)?.key;
 
     if (key == null) {
-      rect = new Rect(layoutInfo.rect.x - layoutInfo.rect.width - this.horizontalSpacing - 1, 0, layoutInfo.rect.width + this.horizontalSpacing, this.virtualizer.contentSize.height);
+      rect = new Rect(
+        layoutInfo.rect.x - layoutInfo.rect.width - this.horizontalSpacing - 1,
+        0,
+        layoutInfo.rect.width + this.horizontalSpacing,
+        this.virtualizer.contentSize.height
+      );
       key = this._findClosest(layoutInfo.rect, rect)?.key;
     }
 
@@ -230,12 +258,16 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
   getKeyRightOf(key: Key): Node<T> | undefined {
     // Expected key is the currently focused cell so we need the parent row key
     let parentRowKey = this.collection.getItem(key).parentKey;
-    return this.direction === 'rtl' ?  this.getClosestLeft(parentRowKey) : this.getClosestRight(parentRowKey);
+    return this.direction === 'rtl'
+      ? this.getClosestLeft(parentRowKey)
+      : this.getClosestRight(parentRowKey);
   }
 
   getKeyLeftOf(key: Key): Node<T> | undefined {
     // Expected key is the currently focused cell so we need the parent row key
     let parentRowKey = this.collection.getItem(key).parentKey;
-    return this.direction === 'rtl' ?  this.getClosestRight(parentRowKey) : this.getClosestLeft(parentRowKey);
+    return this.direction === 'rtl'
+      ? this.getClosestRight(parentRowKey)
+      : this.getClosestLeft(parentRowKey);
   }
 }

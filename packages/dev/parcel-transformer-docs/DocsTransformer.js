@@ -17,7 +17,6 @@ const t = require('@babel/types');
 const doctrine = require('doctrine');
 const v8 = require('v8');
 
-
 module.exports = new Transformer({
   async transform({asset, options}) {
     let nodeCache = new Map();
@@ -31,7 +30,17 @@ module.exports = new Transformer({
       allowReturnOutsideFunction: true,
       strictMode: false,
       sourceType: 'module',
-      plugins: ['classProperties', 'exportDefaultFrom', 'exportNamespaceFrom', 'dynamicImport', 'typescript', 'jsx', 'classPrivateProperties', 'classPrivateMethods', 'importAttributes']
+      plugins: [
+        'classProperties',
+        'exportDefaultFrom',
+        'exportNamespaceFrom',
+        'dynamicImport',
+        'typescript',
+        'jsx',
+        'classPrivateProperties',
+        'classPrivateMethods',
+        'importAttributes'
+      ]
     });
 
     let exports = {};
@@ -70,7 +79,9 @@ module.exports = new Transformer({
           } else {
             let identifiers = t.getBindingIdentifiers(path.node.declaration);
             for (let [index, id] of Object.keys(identifiers).entries()) {
-              exports[identifiers[id].name] = processExport(path.get('declaration.declarations')[index]);
+              exports[identifiers[id].name] = processExport(
+                path.get('declaration.declarations')[index]
+              );
               asset.symbols.set(identifiers[id].name, identifiers[id].name);
             }
           }
@@ -98,9 +109,7 @@ module.exports = new Transformer({
         });
       },
 
-      ExportDefaultDeclaration(path) {
-
-      }
+      ExportDefaultDeclaration(path) {}
     });
 
     function processPath(path, node) {
@@ -150,28 +159,42 @@ module.exports = new Transformer({
         let exts = path.node.superClass ? [processExport(path.get('superClass'))] : [];
         let docs = getJSDocs(path);
 
-        return Object.assign(node, addDocs({
-          type: 'interface',
-          id: `${asset.filePath}:${path.node.id.name}`,
-          name: path.node.id.name,
-          extends: exts,
-          properties,
-          typeParameters: path.node.typeParameters ? path.get('typeParameters.params').map(p => processExport(p)) : []
-        }, docs));
+        return Object.assign(
+          node,
+          addDocs(
+            {
+              type: 'interface',
+              id: `${asset.filePath}:${path.node.id.name}`,
+              name: path.node.id.name,
+              extends: exts,
+              properties,
+              typeParameters: path.node.typeParameters
+                ? path.get('typeParameters.params').map(p => processExport(p))
+                : []
+            },
+            docs
+          )
+        );
       }
 
       if (path.isClassProperty()) {
         let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
         let docs = getJSDocs(path);
-        return Object.assign(node, addDocs({
-          type: 'property',
-          name,
-          value: path.node.typeAnnotation
-            ? processExport(path.get('typeAnnotation.typeAnnotation'))
-            : {type: 'any'},
-          optional: path.node.optional || false,
-          access: path.node.accessibility
-        }, docs));
+        return Object.assign(
+          node,
+          addDocs(
+            {
+              type: 'property',
+              name,
+              value: path.node.typeAnnotation
+                ? processExport(path.get('typeAnnotation.typeAnnotation'))
+                : {type: 'any'},
+              optional: path.node.optional || false,
+              access: path.node.accessibility
+            },
+            docs
+          )
+        );
       }
 
       if (path.isObjectExpression()) {
@@ -196,12 +219,18 @@ module.exports = new Transformer({
       if (path.isObjectProperty()) {
         let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
         let docs = getJSDocs(path);
-        return Object.assign(node, addDocs({
-          type: 'property',
-          name,
-          value: processExport(path.get('value')),
-          optional: false
-        }, docs));
+        return Object.assign(
+          node,
+          addDocs(
+            {
+              type: 'property',
+              name,
+              value: processExport(path.get('value')),
+              optional: false
+            },
+            docs
+          )
+        );
       }
 
       if (path.isClassMethod() || path.isTSDeclareMethod() || path.isObjectMethod()) {
@@ -216,9 +245,10 @@ module.exports = new Transformer({
             ? processExport(path.get('returnType.typeAnnotation'))
             : {type: 'any'};
         } else if (path.node.kind === 'set') {
-          value = path.node.params[0] && path.node.params[0].typeAnnotation
-            ? processExport(path.get('params.0.typeAnnotation.typeAnnotation'))
-            : {type: 'any'};
+          value =
+            path.node.params[0] && path.node.params[0].typeAnnotation
+              ? processExport(path.get('params.0.typeAnnotation.typeAnnotation'))
+              : {type: 'any'};
         } else {
           value = {
             type: 'function',
@@ -232,14 +262,20 @@ module.exports = new Transformer({
           };
         }
 
-        return Object.assign(node, addDocs({
-          type: value.type === 'function' ? 'method' : 'property',
-          name,
-          value,
-          access: path.node.accessibility,
-          static: path.node.static,
-          abstract: path.node.abstract
-        }, docs));
+        return Object.assign(
+          node,
+          addDocs(
+            {
+              type: value.type === 'function' ? 'method' : 'property',
+              name,
+              value,
+              access: path.node.accessibility,
+              static: path.node.static,
+              abstract: path.node.abstract
+            },
+            docs
+          )
+        );
       }
 
       if (path.isFunction() || path.isTSDeclareFunction()) {
@@ -251,31 +287,39 @@ module.exports = new Transformer({
             type: 'component',
             id: path.node.id ? `${asset.filePath}:${path.node.id.name}` : null,
             name: path.node.id ? path.node.id.name : null,
-            props: props && props.typeAnnotation
-              ? processExport(path.get('params.0.typeAnnotation.typeAnnotation'))
-              : null,
+            props:
+              props && props.typeAnnotation
+                ? processExport(path.get('params.0.typeAnnotation.typeAnnotation'))
+                : null,
             typeParameters: path.node.typeParameters
               ? path.get('typeParameters.params').map(p => processExport(p))
               : [],
-            ref: ref && ref.typeAnnotation
-              ? processExport(path.get('params.1.typeAnnotation.typeAnnotation'))
-              : null,
+            ref:
+              ref && ref.typeAnnotation
+                ? processExport(path.get('params.1.typeAnnotation.typeAnnotation'))
+                : null,
             description: docs.description || null
           });
         } else {
           let docs = getJSDocs(path);
-          return Object.assign(node, addDocs({
-            type: 'function',
-            id: path.node.id ? `${asset.filePath}:${path.node.id.name}` : null,
-            name: path.node.id ? path.node.id.name : null,
-            parameters: path.get('params').map(processParameter),
-            return: path.node.returnType
-              ? processExport(path.get('returnType.typeAnnotation'))
-              : {type: 'any'},
-            typeParameters: path.node.typeParameters
-              ? path.get('typeParameters.params').map(p => processExport(p))
-              : []
-          }, docs));
+          return Object.assign(
+            node,
+            addDocs(
+              {
+                type: 'function',
+                id: path.node.id ? `${asset.filePath}:${path.node.id.name}` : null,
+                name: path.node.id ? path.node.id.name : null,
+                parameters: path.get('params').map(processParameter),
+                return: path.node.returnType
+                  ? processExport(path.get('returnType.typeAnnotation'))
+                  : {type: 'any'},
+                typeParameters: path.node.typeParameters
+                  ? path.get('typeParameters.params').map(p => processExport(p))
+                  : []
+              },
+              docs
+            )
+          );
         }
       }
 
@@ -340,7 +384,9 @@ module.exports = new Transformer({
           id: `${asset.filePath}:${path.node.id.name}`,
           name: path.node.id.name,
           value: processExport(path.get('typeAnnotation')),
-          typeParameters: path.node.typeParameters ? path.get('typeParameters.params').map(p => processExport(p)) : [],
+          typeParameters: path.node.typeParameters
+            ? path.get('typeParameters.params').map(p => processExport(p))
+            : [],
           description: docs.description || null,
           access: docs.access
         });
@@ -376,14 +422,22 @@ module.exports = new Transformer({
         let exts = path.node.extends ? path.get('extends').map(e => processExport(e)) : [];
         let docs = getJSDocs(path);
 
-        let res = Object.assign(node, addDocs({
-          type: 'interface',
-          id: `${asset.filePath}:${path.node.id.name}`,
-          name: path.node.id.name,
-          extends: exts,
-          properties,
-          typeParameters: path.node.typeParameters ? path.get('typeParameters.params').map(p => processExport(p)) : []
-        }, docs));
+        let res = Object.assign(
+          node,
+          addDocs(
+            {
+              type: 'interface',
+              id: `${asset.filePath}:${path.node.id.name}`,
+              name: path.node.id.name,
+              extends: exts,
+              properties,
+              typeParameters: path.node.typeParameters
+                ? path.get('typeParameters.params').map(p => processExport(p))
+                : []
+            },
+            docs
+          )
+        );
         if (res.access === 'private') {
           for (let prop in res.properties) {
             res.properties[prop].access = 'private';
@@ -438,42 +492,60 @@ module.exports = new Transformer({
 
         let docs = getJSDocs(path);
         let value = processExport(path.get('typeAnnotation.typeAnnotation'));
-        return Object.assign(node, addDocs({
-          type: 'property',
-          name,
-          value,
-          optional: path.node.optional || false
-        }, docs));
+        return Object.assign(
+          node,
+          addDocs(
+            {
+              type: 'property',
+              name,
+              value,
+              optional: path.node.optional || false
+            },
+            docs
+          )
+        );
       }
 
       if (path.isTSMethodSignature()) {
         let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
         let docs = getJSDocs(path);
-        return Object.assign(node, addDocs({
-          type: 'method',
-          name,
-          value: {
-            type: 'function',
-            parameters: path.get('parameters').map(processParameter),
-            return: path.node.typeAnnotation
-              ? processExport(path.get('typeAnnotation.typeAnnotation'))
-              : {type: 'any'},
-            typeParameters: path.node.typeParameters
-              ? path.get('typeParameters.params').map(p => processExport(p))
-              : []
-          }
-        }, docs));
+        return Object.assign(
+          node,
+          addDocs(
+            {
+              type: 'method',
+              name,
+              value: {
+                type: 'function',
+                parameters: path.get('parameters').map(processParameter),
+                return: path.node.typeAnnotation
+                  ? processExport(path.get('typeAnnotation.typeAnnotation'))
+                  : {type: 'any'},
+                typeParameters: path.node.typeParameters
+                  ? path.get('typeParameters.params').map(p => processExport(p))
+                  : []
+              }
+            },
+            docs
+          )
+        );
       }
 
       if (path.isTSIndexSignature()) {
         let name = path.node.parameters[0].name;
         let docs = getJSDocs(path);
-        return Object.assign(node, addDocs({
-          type: 'property',
-          name,
-          indexType: processExport(path.get('parameters.0.typeAnnotation.typeAnnotation')),
-          value: processExport(path.get('typeAnnotation.typeAnnotation'))
-        }, docs));
+        return Object.assign(
+          node,
+          addDocs(
+            {
+              type: 'property',
+              name,
+              indexType: processExport(path.get('parameters.0.typeAnnotation.typeAnnotation')),
+              value: processExport(path.get('typeAnnotation.typeAnnotation'))
+            },
+            docs
+          )
+        );
       }
 
       if (path.isTSExpressionWithTypeArguments()) {
@@ -596,8 +668,12 @@ module.exports = new Transformer({
         return Object.assign(node, {
           type: 'function',
           parameters: path.get('parameters').map(processParameter),
-          return: path.node.typeAnnotation ? processExport(path.get('typeAnnotation.typeAnnotation')) : {type: 'any'},
-          typeParameters: path.node.typeParameters ? path.get('typeParameters.params').map(p => processExport(p)) : []
+          return: path.node.typeAnnotation
+            ? processExport(path.get('typeAnnotation.typeAnnotation'))
+            : {type: 'any'},
+          typeParameters: path.node.typeParameters
+            ? path.get('typeParameters.params').map(p => processExport(p))
+            : []
         });
       }
 
@@ -666,7 +742,9 @@ module.exports = new Transformer({
       return {
         type: 'parameter',
         name: p.isRestElement() ? p.node.argument.name : p.node.name,
-        value: p.node.typeAnnotation ? processExport(p.get('typeAnnotation.typeAnnotation')) : {type: 'any'},
+        value: p.node.typeAnnotation
+          ? processExport(p.get('typeAnnotation.typeAnnotation'))
+          : {type: 'any'},
         optional: p.node.optional,
         rest: p.isRestElement()
       };
@@ -682,13 +760,19 @@ module.exports = new Transformer({
     }
 
     function isReactForwardRef(path) {
-      return isReactCall(path, 'forwardRef') || (path.isCallExpression() && path.get('callee').isIdentifier({name: 'createHideableComponent'}));
+      return (
+        isReactCall(path, 'forwardRef') ||
+        (path.isCallExpression() &&
+          path.get('callee').isIdentifier({name: 'createHideableComponent'}))
+      );
     }
 
     function isCollectionComponent(path) {
-      return path.isCallExpression() && t.isIdentifier(path.node.callee) && (
-        path.node.callee.name === 'createLeafComponent' ||
-        path.node.callee.name === 'createBranchComponent'
+      return (
+        path.isCallExpression() &&
+        t.isIdentifier(path.node.callee) &&
+        (path.node.callee.name === 'createLeafComponent' ||
+          path.node.callee.name === 'createBranchComponent')
       );
     }
 
@@ -730,7 +814,12 @@ module.exports = new Transformer({
         path.traverse({
           ReturnStatement(path) {
             let ret = path.node.argument;
-            if (t.isJSXElement(ret) || t.isJSXFragment(ret) || isReactCall(path.get('argument'), 'cloneElement') || isReactCall(path.get('argument'), 'createPortal', 'react-dom')) {
+            if (
+              t.isJSXElement(ret) ||
+              t.isJSXFragment(ret) ||
+              isReactCall(path.get('argument'), 'cloneElement') ||
+              isReactCall(path.get('argument'), 'createPortal', 'react-dom')
+            ) {
               returnsJSX = true;
             }
           }
@@ -745,11 +834,13 @@ module.exports = new Transformer({
     }
 
     function isJSXElementType(returnType) {
-      return returnType &&
+      return (
+        returnType &&
         t.isTSTypeReference(returnType) &&
         t.isTSQualifiedName(returnType.typeName) &&
         t.isIdentifier(returnType.typeName.left, {name: 'JSX'}) &&
-        t.isIdentifier(returnType.typeName.right, {name: 'Element'});
+        t.isIdentifier(returnType.typeName.right, {name: 'Element'})
+      );
     }
 
     function getJSDocs(path) {
@@ -805,7 +896,9 @@ module.exports = new Transformer({
         }
 
         if (result.examples) {
-          result.examples = [...new Set(result.examples.map(example => example.trim()).filter(Boolean))];
+          result.examples = [
+            ...new Set(result.examples.map(example => example.trim()).filter(Boolean))
+          ];
         }
 
         return result;
@@ -815,8 +908,7 @@ module.exports = new Transformer({
     }
 
     function extractExamples(comments) {
-      let lines = comments.split('\n')
-        .map(line => line.replace(/^\s*\*?\s?/, ''));
+      let lines = comments.split('\n').map(line => line.replace(/^\s*\*?\s?/, ''));
       let examples = [];
       let current = null;
 
@@ -863,11 +955,17 @@ module.exports = new Transformer({
 
     function getDocComments(path) {
       if (path.node.leadingComments) {
-        return path.node.leadingComments.filter(isJSDocComment).map(c => c.value).join('\n');
+        return path.node.leadingComments
+          .filter(isJSDocComment)
+          .map(c => c.value)
+          .join('\n');
       }
 
       if (path.parentPath.isExportDeclaration() && path.parent.leadingComments) {
-        return path.parent.leadingComments.filter(isJSDocComment).map(c => c.value).join('\n');
+        return path.parent.leadingComments
+          .filter(isJSDocComment)
+          .map(c => c.value)
+          .join('\n');
       }
 
       return null;
@@ -875,9 +973,7 @@ module.exports = new Transformer({
 
     function isJSDocComment(comment) {
       const asterisks = comment.value.match(/^(\*+)/);
-      return (
-        comment.type === 'CommentBlock' && asterisks && asterisks[1].length === 1
-      );
+      return comment.type === 'CommentBlock' && asterisks && asterisks[1].length === 1;
     }
 
     function addDocs(value, docs) {

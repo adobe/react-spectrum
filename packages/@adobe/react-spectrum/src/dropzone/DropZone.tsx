@@ -26,17 +26,31 @@ import {useId} from 'react-aria/useId';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useStyleProps} from '../utils/styleProps';
 
-export interface SpectrumDropZoneProps extends Omit<DropZoneProps, 'onHoverStart' | 'onHoverChange' | 'onHoverEnd' | 'isDisabled' | 'className' | 'style' | 'render'>, DOMProps, StyleProps, AriaLabelingProps {
+export interface SpectrumDropZoneProps
+  extends
+    Omit<
+      DropZoneProps,
+      | 'onHoverStart'
+      | 'onHoverChange'
+      | 'onHoverEnd'
+      | 'isDisabled'
+      | 'className'
+      | 'style'
+      | 'render'
+    >,
+    DOMProps,
+    StyleProps,
+    AriaLabelingProps {
   /** The content to display in the drop zone. */
-  children: ReactNode,
+  children: ReactNode;
   /** Whether the drop zone has been filled. */
-  isFilled?: boolean,
+  isFilled?: boolean;
   /** The message to replace the default banner message that is shown when the drop zone is filled. */
-  replaceMessage?: string
+  replaceMessage?: string;
 }
 
 // Filter out props used by RAC DropZone that we don't want in RSP DropZone for now.
-let filterProps = (props) => {
+let filterProps = props => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
   return otherProps;
@@ -45,7 +59,10 @@ let filterProps = (props) => {
 /**
  * A drop zone is an area into which one or multiple objects can be dragged and dropped.
  */
-export const DropZone = React.forwardRef(function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
+export const DropZone = React.forwardRef(function DropZone(
+  props: SpectrumDropZoneProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {children, isFilled, replaceMessage, ...otherProps} = props;
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
@@ -55,41 +72,27 @@ export const DropZone = React.forwardRef(function DropZone(props: SpectrumDropZo
   let ariaLabelledby = isFilled ? `${headingId} ${messageId}` : headingId;
 
   return (
-    <Provider
-      values={[
-        [HeadingContext, {id: headingId}]
-      ]}>
+    <Provider values={[[HeadingContext, {id: headingId}]]}>
       <RACDropZone
         {...mergeProps(filterProps(otherProps))}
-        {...styleProps as Omit<React.HTMLAttributes<HTMLElement>, 'onDrop'>}
+        {...(styleProps as Omit<React.HTMLAttributes<HTMLElement>, 'onDrop'>)}
         aria-labelledby={ariaLabelledby}
-        className={
-        classNames(
-          styles,
-          'spectrum-Dropzone',
-          styleProps.className,
-          {'spectrum-Dropzone--filled': isFilled}
-        )}
+        className={classNames(styles, 'spectrum-Dropzone', styleProps.className, {
+          'spectrum-Dropzone--filled': isFilled
+        })}
         ref={domRef}>
         <SlotProvider
           slots={{
-            illustration: {UNSAFE_className: classNames(
-              styles,
-              'spectrum-Dropzone-illustratedMessage'
-              )}
+            illustration: {
+              UNSAFE_className: classNames(styles, 'spectrum-Dropzone-illustratedMessage')
+            }
           }}>
           {children}
         </SlotProvider>
         <div className={classNames(styles, 'spectrum-Dropzone-backdrop')} />
         <div
           id={messageId}
-          className={
-            classNames(
-              styles,
-              'spectrum-Dropzone-banner',
-              styleProps.className
-            )
-          }>
+          className={classNames(styles, 'spectrum-Dropzone-banner', styleProps.className)}>
           {replaceMessage ? replaceMessage : stringFormatter.format('replaceMessage')}
         </div>
       </RACDropZone>

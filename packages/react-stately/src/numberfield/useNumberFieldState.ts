@@ -12,25 +12,43 @@
 
 import {clamp, snapValueToStep} from '../utils/number';
 
-import {FocusableProps, HelpTextProps, InputBase, LabelableProps, RangeInputBase, TextInputBase, Validation, ValueBase} from '@react-types/shared';
+import {
+  FocusableProps,
+  HelpTextProps,
+  InputBase,
+  LabelableProps,
+  RangeInputBase,
+  TextInputBase,
+  Validation,
+  ValueBase
+} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
 import {useCallback, useMemo, useState} from 'react';
 import {useControlledState} from '../utils/useControlledState';
 
-export interface NumberFieldProps extends InputBase, Validation<number>, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps, HelpTextProps {
+export interface NumberFieldProps
+  extends
+    InputBase,
+    Validation<number>,
+    FocusableProps,
+    TextInputBase,
+    ValueBase<number>,
+    RangeInputBase<number>,
+    LabelableProps,
+    HelpTextProps {
   /**
    * Formatting options for the value displayed in the number field.
    * This also affects what characters are allowed to be typed by the user.
    */
-  formatOptions?: Intl.NumberFormatOptions,
+  formatOptions?: Intl.NumberFormatOptions;
   /**
    * Controls the behavior of the number field when the user blurs the field after editing.
    * 'snap' will clamp the value to the min/max values, and snap to the nearest step value.
    * 'validate' will not clamp the value, and will validate that the value is within the min/max range and on a valid step.
    * @default 'snap'
    */
-  commitBehavior?: 'snap' | 'validate'
+  commitBehavior?: 'snap' | 'validate';
 }
 
 export interface NumberFieldState extends FormValidationState {
@@ -38,32 +56,32 @@ export interface NumberFieldState extends FormValidationState {
    * The current text value of the input. Updated as the user types,
    * and formatted according to `formatOptions` on blur.
    */
-  inputValue: string,
+  inputValue: string;
   /**
    * The currently parsed number value, or NaN if a valid number could not be parsed.
    * Updated based on the `inputValue` as the user types.
    */
-  numberValue: number,
+  numberValue: number;
   /** The default value of the input. */
-  defaultNumberValue: number,
+  defaultNumberValue: number;
   /** The minimum value of the number field. */
-  minValue?: number,
+  minValue?: number;
   /** The maximum value of the number field. */
-  maxValue?: number,
+  maxValue?: number;
   /** Whether the current value can be incremented according to the maximum value and step. */
-  canIncrement: boolean,
+  canIncrement: boolean;
   /** Whether the current value can be decremented according to the minimum value and step. */
-  canDecrement: boolean,
+  canDecrement: boolean;
   /**
    * Validates a user input string according to the current locale and format options.
    * Values can be partially entered, and may be valid even if they cannot currently be parsed to a number.
    * Can be used to implement validation as a user types.
    */
-  validate(value: string): boolean,
+  validate(value: string): boolean;
   /** Sets the current text value of the input. */
-  setInputValue(val: string): void,
+  setInputValue(val: string): void;
   /** Sets the number value. */
-  setNumberValue(val: number): void,
+  setNumberValue(val: number): void;
   /**
    * Commits the current input value. The value is parsed to a number, clamped according
    * to the minimum and maximum values of the field, and snapped to the nearest step value.
@@ -71,15 +89,15 @@ export interface NumberFieldState extends FormValidationState {
    * Typically this is called when the field is blurred.
    * @param value - The value to commit. If not provided, the current input value is used.
    */
-  commit(value?: string): void,
+  commit(value?: string): void;
   /** Increments the current input value to the next step boundary, and fires `onChange`. */
-  increment(): void,
+  increment(): void;
   /** Decrements the current input value to the next step boundary, and fires `onChange`. */
-  decrement(): void,
+  decrement(): void;
   /** Sets the current value to the `maxValue` if any, and fires `onChange`. */
-  incrementToMax(): void,
+  incrementToMax(): void;
   /** Sets the current value to the `minValue` if any, and fires `onChange`. */
-  decrementToMin(): void
+  decrementToMin(): void;
 }
 
 export interface NumberFieldStateOptions extends NumberFieldProps {
@@ -87,16 +105,14 @@ export interface NumberFieldStateOptions extends NumberFieldProps {
    * The locale that should be used for parsing.
    * @default 'en-US'
    */
-  locale: string
+  locale: string;
 }
 
 /**
  * Provides state management for a number field component. Number fields allow users to enter a number,
  * and increment or decrement the value using stepper buttons.
  */
-export function useNumberFieldState(
-  props: NumberFieldStateOptions
-): NumberFieldState {
+export function useNumberFieldState(props: NumberFieldStateOptions): NumberFieldState {
   let {
     minValue,
     maxValue,
@@ -115,11 +131,14 @@ export function useNumberFieldState(
     value = NaN;
   }
 
-  let snapValue = useCallback(value => {
-    return step === undefined || isNaN(step)
-      ? clamp(value, minValue, maxValue)
-      : snapValueToStep(value, minValue, maxValue, step);
-  }, [step, minValue, maxValue]);
+  let snapValue = useCallback(
+    value => {
+      return step === undefined || isNaN(step)
+        ? clamp(value, minValue, maxValue)
+        : snapValueToStep(value, minValue, maxValue, step);
+    },
+    [step, minValue, maxValue]
+  );
 
   if (value !== undefined && !isNaN(value) && commitBehavior === 'snap') {
     value = snapValue(value);
@@ -129,22 +148,40 @@ export function useNumberFieldState(
     defaultValue = snapValue(defaultValue);
   }
 
-  let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, onChange);
+  let [numberValue, setNumberValue] = useControlledState<number>(
+    value,
+    isNaN(defaultValue) ? NaN : defaultValue,
+    onChange
+  );
   let [initialValue] = useState(numberValue);
-  let [inputValue, setInputValue] = useState(() => isNaN(numberValue) ? '' : new NumberFormatter(locale, formatOptions).format(numberValue));
+  let [inputValue, setInputValue] = useState(() =>
+    isNaN(numberValue) ? '' : new NumberFormatter(locale, formatOptions).format(numberValue)
+  );
 
-  let numberParser = useMemo(() => new NumberParser(locale, formatOptions), [locale, formatOptions]);
-  let numberingSystem = useMemo(() => numberParser.getNumberingSystem(inputValue), [numberParser, inputValue]);
-  let formatter = useMemo(() => new NumberFormatter(locale, {...formatOptions, numberingSystem}), [locale, formatOptions, numberingSystem]);
+  let numberParser = useMemo(
+    () => new NumberParser(locale, formatOptions),
+    [locale, formatOptions]
+  );
+  let numberingSystem = useMemo(
+    () => numberParser.getNumberingSystem(inputValue),
+    [numberParser, inputValue]
+  );
+  let formatter = useMemo(
+    () => new NumberFormatter(locale, {...formatOptions, numberingSystem}),
+    [locale, formatOptions, numberingSystem]
+  );
   let intlOptions = useMemo(() => formatter.resolvedOptions(), [formatter]);
-  let format = useCallback((value: number) => (isNaN(value) || value === null) ? '' : formatter.format(value), [formatter]);
+  let format = useCallback(
+    (value: number) => (isNaN(value) || value === null ? '' : formatter.format(value)),
+    [formatter]
+  );
 
   let validation = useFormValidationState({
     ...props,
     value: numberValue
   });
 
-  let clampStep = (step !== undefined && !isNaN(step)) ? step : 1;
+  let clampStep = step !== undefined && !isNaN(step) ? step : 1;
   if (intlOptions.style === 'percent' && (step === undefined || isNaN(step))) {
     clampStep = 0.01;
   }
@@ -155,7 +192,11 @@ export function useNumberFieldState(
   let [prevValue, setPrevValue] = useState(numberValue);
   let [prevLocale, setPrevLocale] = useState(locale);
   let [prevFormatOptions, setPrevFormatOptions] = useState(formatOptions);
-  if (!Object.is(numberValue, prevValue) || locale !== prevLocale || !isEqualFormatOptions(formatOptions, prevFormatOptions)) {
+  if (
+    !Object.is(numberValue, prevValue) ||
+    locale !== prevLocale ||
+    !isEqualFormatOptions(formatOptions, prevFormatOptions)
+  ) {
     setInputValue(format(numberValue));
     setPrevValue(numberValue);
     setPrevLocale(locale);
@@ -260,27 +301,29 @@ export function useNumberFieldState(
     }
   };
 
-  let canIncrement = useMemo(() => (
-    !isDisabled &&
-    !isReadOnly &&
-    (
-      isNaN(parsedValue) ||
-      (maxValue === undefined || isNaN(maxValue)) ||
-      snapValueToStep(parsedValue, minValue, maxValue, clampStep) > parsedValue ||
-      handleDecimalOperation('+', parsedValue, clampStep) <= maxValue
-    )
-  ), [isDisabled, isReadOnly, minValue, maxValue, clampStep, parsedValue]);
+  let canIncrement = useMemo(
+    () =>
+      !isDisabled &&
+      !isReadOnly &&
+      (isNaN(parsedValue) ||
+        maxValue === undefined ||
+        isNaN(maxValue) ||
+        snapValueToStep(parsedValue, minValue, maxValue, clampStep) > parsedValue ||
+        handleDecimalOperation('+', parsedValue, clampStep) <= maxValue),
+    [isDisabled, isReadOnly, minValue, maxValue, clampStep, parsedValue]
+  );
 
-  let canDecrement = useMemo(() => (
-    !isDisabled &&
-    !isReadOnly &&
-    (
-      isNaN(parsedValue) ||
-      (minValue === undefined || isNaN(minValue)) ||
-      snapValueToStep(parsedValue, minValue, maxValue, clampStep) < parsedValue ||
-      handleDecimalOperation('-', parsedValue, clampStep) >= minValue
-    )
-  ), [isDisabled, isReadOnly, minValue, maxValue, clampStep, parsedValue]);
+  let canDecrement = useMemo(
+    () =>
+      !isDisabled &&
+      !isReadOnly &&
+      (isNaN(parsedValue) ||
+        minValue === undefined ||
+        isNaN(minValue) ||
+        snapValueToStep(parsedValue, minValue, maxValue, clampStep) < parsedValue ||
+        handleDecimalOperation('-', parsedValue, clampStep) >= minValue),
+    [isDisabled, isReadOnly, minValue, maxValue, clampStep, parsedValue]
+  );
 
   let validate = (value: string) => numberParser.isValidPartialNumber(value, minValue, maxValue);
 
@@ -305,7 +348,10 @@ export function useNumberFieldState(
 }
 
 // Shallow equality is sufficient here because all values in Intl.NumberFormatOptions are primitives.
-function isEqualFormatOptions(a: Intl.NumberFormatOptions | undefined, b: Intl.NumberFormatOptions | undefined) {
+function isEqualFormatOptions(
+  a: Intl.NumberFormatOptions | undefined,
+  b: Intl.NumberFormatOptions | undefined
+) {
   if (a === b) {
     return true;
   }

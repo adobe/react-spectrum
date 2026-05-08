@@ -10,7 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionBase, CollectionStateBase, FocusableProps, FocusStrategy, HelpTextProps, InputBase, Key, LabelableProps, Node, Selection, TextInputBase, Validation, ValueBase} from '@react-types/shared';
+import {
+  Collection,
+  CollectionBase,
+  CollectionStateBase,
+  FocusableProps,
+  FocusStrategy,
+  HelpTextProps,
+  InputBase,
+  Key,
+  LabelableProps,
+  Node,
+  Selection,
+  TextInputBase,
+  Validation,
+  ValueBase
+} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
 import {getChildNodes} from '../collections/getChildNodes';
 import {ListCollection} from '../list/ListCollection';
@@ -30,121 +45,132 @@ export interface ComboBoxValidationValue<M extends SelectionMode = 'single'> {
    * The selected key in the ComboBox.
    * @deprecated
    */
-  selectedKey: Key | null,
+  selectedKey: Key | null;
   /** The keys of the currently selected items. */
-  value: ValidationType<M>,
+  value: ValidationType<M>;
   /** The value of the ComboBox input. */
-  inputValue: string
+  inputValue: string;
 }
 
-export interface ComboBoxProps<T, M extends SelectionMode = 'single'> extends CollectionBase<T>, InputBase, ValueBase<ValueType<M>, ChangeValueType<M>>, TextInputBase, Validation<ComboBoxValidationValue<M>>, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
+export interface ComboBoxProps<T, M extends SelectionMode = 'single'>
+  extends
+    CollectionBase<T>,
+    InputBase,
+    ValueBase<ValueType<M>, ChangeValueType<M>>,
+    TextInputBase,
+    Validation<ComboBoxValidationValue<M>>,
+    FocusableProps<HTMLInputElement>,
+    LabelableProps,
+    HelpTextProps {
   /** The list of ComboBox items (uncontrolled). */
-  defaultItems?: Iterable<T>,
+  defaultItems?: Iterable<T>;
   /** The list of ComboBox items (controlled). */
-  items?: Iterable<T>,
+  items?: Iterable<T>;
   /** Method that is called when the open state of the menu changes. Returns the new open state and the action that caused the opening of the menu. */
-  onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void,
+  onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void;
   /**
    * Whether single or multiple selection is enabled.
    * @default 'single'
    */
-  selectionMode?: M,
+  selectionMode?: M;
   /**
    * The currently selected key in the collection (controlled).
    * @deprecated
    */
-  selectedKey?: Key | null,
+  selectedKey?: Key | null;
   /**
    * The initial selected key in the collection (uncontrolled).
    * @deprecated
    */
-  defaultSelectedKey?: Key | null,
+  defaultSelectedKey?: Key | null;
   /**
    * Handler that is called when the selection changes.
    * @deprecated
    */
-  onSelectionChange?: (key: Key | null) => void,
+  onSelectionChange?: (key: Key | null) => void;
   /** The value of the ComboBox input (controlled). */
-  inputValue?: string,
+  inputValue?: string;
   /** The default value of the ComboBox input (uncontrolled). */
-  defaultInputValue?: string,
+  defaultInputValue?: string;
   /** Handler that is called when the ComboBox input value changes. */
-  onInputChange?: (value: string) => void,
+  onInputChange?: (value: string) => void;
   /** Whether the ComboBox allows a non-item matching input value to be set. */
-  allowsCustomValue?: boolean,
+  allowsCustomValue?: boolean;
   // /**
   //  * Whether the Combobox should only suggest matching options or autocomplete the field with the nearest matching option.
   //  * @default 'suggest'
   //  */
   // completionMode?: 'suggest' | 'complete',
- /**
-  * The interaction required to display the ComboBox menu.
-  * @default 'input'
-  */
-  menuTrigger?: MenuTriggerAction
+  /**
+   * The interaction required to display the ComboBox menu.
+   * @default 'input'
+   */
+  menuTrigger?: MenuTriggerAction;
 }
 
-export interface ComboBoxState<T, M extends SelectionMode = 'single'> extends ListState<T>, OverlayTriggerState, FormValidationState {
+export interface ComboBoxState<T, M extends SelectionMode = 'single'>
+  extends ListState<T>, OverlayTriggerState, FormValidationState {
   /**
    * The key for the first selected item.
    * @deprecated
    */
-  readonly selectedKey: Key | null,
+  readonly selectedKey: Key | null;
 
   /**
    * The default selected key.
    * @deprecated
    */
-  readonly defaultSelectedKey: Key | null,
+  readonly defaultSelectedKey: Key | null;
   /**
    * Sets the selected key.
    * @deprecated
    */
-  setSelectedKey(key: Key | null): void,
+  setSelectedKey(key: Key | null): void;
   /** The current combobox value. */
-  readonly value: ValueType<M>,
+  readonly value: ValueType<M>;
   /** The default combobox value. */
-  readonly defaultValue: ValueType<M>,
+  readonly defaultValue: ValueType<M>;
   /** Sets the combobox value. */
-  setValue(value: Key | readonly Key[] | null): void,
+  setValue(value: Key | readonly Key[] | null): void;
   /**
    * The value of the first selected item.
    * @deprecated
    */
-  readonly selectedItem: Node<T> | null,
+  readonly selectedItem: Node<T> | null;
   /** The value of the selected items. */
-  readonly selectedItems: Node<T>[],
+  readonly selectedItems: Node<T>[];
   /** The current value of the combo box input. */
-  inputValue: string,
+  inputValue: string;
   /** The default value of the combo box input. */
-  defaultInputValue: string,
+  defaultInputValue: string;
   /** Sets the value of the combo box input. */
-  setInputValue(value: string): void,
+  setInputValue(value: string): void;
   /** Selects the currently focused item and updates the input value. */
-  commit(): void,
+  commit(): void;
   /** Controls which item will be auto focused when the menu opens. */
-  readonly focusStrategy: FocusStrategy | null,
+  readonly focusStrategy: FocusStrategy | null;
   /** Whether the select is currently focused. */
-  readonly isFocused: boolean,
+  readonly isFocused: boolean;
   /** Sets whether the select is focused. */
-  setFocused(isFocused: boolean): void,
+  setFocused(isFocused: boolean): void;
   /** Opens the menu. */
-  open(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void,
+  open(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void;
   /** Toggles the menu. */
-  toggle(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void,
+  toggle(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void;
   /** Resets the input value to the previously selected item's text if any and closes the menu.  */
-  revert(): void
+  revert(): void;
 }
 
 type FilterFn = (textValue: string, inputValue: string) => boolean;
 
-export interface ComboBoxStateOptions<T, M extends SelectionMode = 'single'> extends Omit<ComboBoxProps<T, M>, 'children'>, CollectionStateBase<T> {
+export interface ComboBoxStateOptions<T, M extends SelectionMode = 'single'>
+  extends Omit<ComboBoxProps<T, M>, 'children'>, CollectionStateBase<T> {
   /** The filter function used to determine if a option should be included in the combo box list. */
-  defaultFilter?: FilterFn,
+  defaultFilter?: FilterFn;
   /** Whether the combo box allows the menu to be open when the collection is empty. */
-  allowsEmptyCollection?: boolean,
+  allowsEmptyCollection?: boolean;
   /** Whether the combo box menu should close on blur. */
-  shouldCloseOnBlur?: boolean
+  shouldCloseOnBlur?: boolean;
 }
 
 /**
@@ -152,7 +178,9 @@ export interface ComboBoxStateOptions<T, M extends SelectionMode = 'single'> ext
  * of items from props and manages the option selection state of the combo box. In addition, it tracks the input value,
  * focus state, and other properties of the combo box.
  */
-export function useComboBoxState<T extends object, M extends SelectionMode = 'single'>(props: ComboBoxStateOptions<T, M>): ComboBoxState<T, M> {
+export function useComboBoxState<T extends object, M extends SelectionMode = 'single'>(
+  props: ComboBoxStateOptions<T, M>
+): ComboBoxState<T, M> {
   let {
     defaultFilter,
     menuTrigger = 'input',
@@ -167,18 +195,29 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
 
   let defaultValue = useMemo(() => {
-    return props.defaultValue !== undefined ? props.defaultValue : (selectionMode === 'single' ? props.defaultSelectedKey ?? null : []) as ValueType<M>;
+    return props.defaultValue !== undefined
+      ? props.defaultValue
+      : ((selectionMode === 'single' ? (props.defaultSelectedKey ?? null) : []) as ValueType<M>);
   }, [props.defaultValue, props.defaultSelectedKey, selectionMode]);
   let value = useMemo(() => {
-    return props.value !== undefined ? props.value : (selectionMode === 'single' ? props.selectedKey : undefined) as ValueType<M>;
+    return props.value !== undefined
+      ? props.value
+      : ((selectionMode === 'single' ? props.selectedKey : undefined) as ValueType<M>);
   }, [props.value, props.selectedKey, selectionMode]);
-  let [controlledValue, setControlledValue] = useControlledState<Key | readonly Key[] | null>(value, defaultValue, props.onChange as any);
+  let [controlledValue, setControlledValue] = useControlledState<Key | readonly Key[] | null>(
+    value,
+    defaultValue,
+    props.onChange as any
+  );
   // Only display the first selected item if in single selection mode but the value is an array.
-  let displayValue: ValueType<M> = selectionMode === 'single' && Array.isArray(controlledValue) ? controlledValue[0] : controlledValue;
+  let displayValue: ValueType<M> =
+    selectionMode === 'single' && Array.isArray(controlledValue)
+      ? controlledValue[0]
+      : controlledValue;
 
   let setValue = (value: Key | Key[] | null) => {
     if (selectionMode === 'single') {
-      let key = Array.isArray(value) ? value[0] ?? null : value;
+      let key = Array.isArray(value) ? (value[0] ?? null) : value;
       setControlledValue(key);
       if (key !== displayValue) {
         props.onSelectionChange?.(key);
@@ -195,11 +234,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     }
   };
 
-  let {
-    collection,
-    selectionManager,
-    disabledKeys
-  } = useListState({
+  let {collection, selectionManager, disabledKeys} = useListState({
     ...props,
     items: props.items ?? props.defaultItems,
     selectionMode,
@@ -231,7 +266,9 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
 
   let selectedKey = selectionMode === 'single' ? selectionManager.firstSelectedKey : null;
   let selectedItems = useMemo(() => {
-    return [...selectionManager.selectedKeys].map(key => collection.getItem(key)).filter(item => item != null);
+    return [...selectionManager.selectedKeys]
+      .map(key => collection.getItem(key))
+      .filter(item => item != null);
   }, [selectionManager.selectedKeys, collection]);
 
   let [inputValue, setInputValue] = useControlledState(
@@ -244,10 +281,14 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
 
   // Preserve original collection so we can show all items on demand
   let originalCollection = collection;
-  let filteredCollection = useMemo(() => (
-    // No default filter if items are controlled.
-    (props.items != null || !defaultFilter ? collection : filterCollection(collection, inputValue, defaultFilter))
-  ), [collection, inputValue, defaultFilter, props.items]);
+  let filteredCollection = useMemo(
+    () =>
+      // No default filter if items are controlled.
+      props.items != null || !defaultFilter
+        ? collection
+        : filterCollection(collection, inputValue, defaultFilter),
+    [collection, inputValue, defaultFilter, props.items]
+  );
   let [lastCollection, setLastCollection] = useState(filteredCollection);
 
   // Track what action is attempting to open the menu
@@ -263,13 +304,23 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     }
   };
 
-  let triggerState = useOverlayTriggerState({...props, onOpenChange, isOpen: undefined, defaultOpen: undefined});
+  let triggerState = useOverlayTriggerState({
+    ...props,
+    onOpenChange,
+    isOpen: undefined,
+    defaultOpen: undefined
+  });
   let open = (focusStrategy: FocusStrategy | null = null, trigger?: MenuTriggerAction) => {
-    let displayAllItems = (trigger === 'manual' || (trigger === 'focus' && menuTrigger === 'focus'));
+    let displayAllItems = trigger === 'manual' || (trigger === 'focus' && menuTrigger === 'focus');
     // Prevent open operations from triggering if there is nothing to display
     // Also prevent open operations from triggering if items are uncontrolled but defaultItems is empty, even if displayAllItems is true.
     // This is to prevent comboboxes with empty defaultItems from opening but allow controlled items comboboxes to open even if the inital list is empty (assumption is user will provide swap the empty list with a base list via onOpenChange returning `menuTrigger` manual)
-    if (allowsEmptyCollection || filteredCollection.size > 0 || (displayAllItems && originalCollection.size > 0) || props.items) {
+    if (
+      allowsEmptyCollection ||
+      filteredCollection.size > 0 ||
+      (displayAllItems && originalCollection.size > 0) ||
+      props.items
+    ) {
       if (displayAllItems && !triggerState.isOpen && props.items === undefined) {
         // Show all items if menu is manually opened. Only care about this if items are undefined
         setShowAllItems(true);
@@ -282,9 +333,17 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
   };
 
   let toggle = (focusStrategy: FocusStrategy | null = null, trigger?: MenuTriggerAction) => {
-    let displayAllItems = (trigger === 'manual' || (trigger === 'focus' && menuTrigger === 'focus'));
+    let displayAllItems = trigger === 'manual' || (trigger === 'focus' && menuTrigger === 'focus');
     // If the menu is closed and there is nothing to display, early return so toggle isn't called to prevent extraneous onOpenChange
-    if (!(allowsEmptyCollection || filteredCollection.size > 0 || (displayAllItems && originalCollection.size > 0) || props.items) && !triggerState.isOpen) {
+    if (
+      !(
+        allowsEmptyCollection ||
+        filteredCollection.size > 0 ||
+        (displayAllItems && originalCollection.size > 0) ||
+        props.items
+      ) &&
+      !triggerState.isOpen
+    ) {
       return;
     }
 
@@ -307,14 +366,17 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
 
   // If menu is going to close, save the current collection so we can freeze the displayed collection when the
   // user clicks outside the popover to close the menu. Prevents the menu contents from updating as the menu closes.
-  let toggleMenu = useCallback((focusStrategy: FocusStrategy | null = null) => {
-    if (triggerState.isOpen) {
-      updateLastCollection();
-    }
+  let toggleMenu = useCallback(
+    (focusStrategy: FocusStrategy | null = null) => {
+      if (triggerState.isOpen) {
+        updateLastCollection();
+      }
 
-    setFocusStrategy(focusStrategy);
-    triggerState.toggle();
-  }, [triggerState, updateLastCollection]);
+      setFocusStrategy(focusStrategy);
+      triggerState.toggle();
+    },
+    [triggerState, updateLastCollection]
+  );
 
   let closeMenu = useCallback(() => {
     if (triggerState.isOpen) {
@@ -325,14 +387,14 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
 
   let [lastValue, setLastValue] = useState(inputValue);
   let resetInputValue = () => {
-    let itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
+    let itemText = selectedKey != null ? (collection.getItem(selectedKey)?.textValue ?? '') : '';
     setLastValue(itemText);
     setInputValue(itemText);
   };
 
   let lastValueRef = useRef(displayValue);
   let lastSelectedKeyText = useRef(
-    selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : ''
+    selectedKey != null ? (collection.getItem(selectedKey)?.textValue ?? '') : ''
   );
   // intentional omit dependency array, want this to happen on every render
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -376,7 +438,11 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
 
       // Set value to null when the user clears the input.
       // If controlled, this is the application developer's responsibility.
-      if (selectionMode === 'single' && inputValue === '' && (props.inputValue === undefined || value === undefined)) {
+      if (
+        selectionMode === 'single' &&
+        inputValue === '' &&
+        (props.inputValue === undefined || value === undefined)
+      ) {
         setValue(null);
       }
     }
@@ -397,8 +463,14 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     // This is to handle cases where a selectedKey is specified but the items aren't available (async loading) or the selected item's text value updates.
     // Only reset if the user isn't currently within the field so we don't erroneously modify user input.
     // If inputValue is controlled, it is the user's responsibility to update the inputValue when items change.
-    let selectedItemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
-    if (!isFocused && selectedKey != null && props.inputValue === undefined && selectedKey === lastValueRef.current) {
+    let selectedItemText =
+      selectedKey != null ? (collection.getItem(selectedKey)?.textValue ?? '') : '';
+    if (
+      !isFocused &&
+      selectedKey != null &&
+      props.inputValue === undefined &&
+      selectedKey === lastValueRef.current
+    ) {
       if (lastSelectedKeyText.current !== selectedItemText) {
         setLastValue(selectedItemText);
         setInputValue(selectedItemText);
@@ -411,7 +483,13 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
 
   let validation = useFormValidationState({
     ...props,
-    value: useMemo(() => Array.isArray(displayValue) && displayValue.length === 0 ? null : ({inputValue, value: displayValue as any, selectedKey}), [inputValue, selectedKey, displayValue])
+    value: useMemo(
+      () =>
+        Array.isArray(displayValue) && displayValue.length === 0
+          ? null
+          : {inputValue, value: displayValue as any, selectedKey},
+      [inputValue, selectedKey, displayValue]
+    )
   });
 
   // Revert input value and close menu
@@ -442,12 +520,8 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     // If multiple things are controlled, call onSelectionChange only when selecting the focused item,
     // or when inputValue needs to be synced back to the selected item on commit/blur.
     if (value !== undefined && props.inputValue !== undefined) {
-      let itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
-      if (
-        shouldForceSelectionChange ||
-        selectionMode === 'multiple' ||
-        inputValue !== itemText
-      ) {
+      let itemText = selectedKey != null ? (collection.getItem(selectedKey)?.textValue ?? '') : '';
+      if (shouldForceSelectionChange || selectionMode === 'multiple' || inputValue !== itemText) {
         props.onSelectionChange?.(selectedKey);
         props.onChange?.(displayValue as ChangeValueType<M>);
       }
@@ -464,8 +538,9 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
 
   const commitValue = () => {
     if (allowsCustomValue) {
-      const itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
-      (inputValue === itemText) ? commitSelection() : commitCustomValue();
+      const itemText =
+        selectedKey != null ? (collection.getItem(selectedKey)?.textValue ?? '') : '';
+      inputValue === itemText ? commitSelection() : commitCustomValue();
     } else {
       // Reset inputValue and close menu
       commitSelection();
@@ -519,7 +594,8 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     }
   }, [triggerState.isOpen, originalCollection, filteredCollection, showAllItems, lastCollection]);
 
-  let defaultSelectedKey = props.defaultSelectedKey ?? (selectionMode === 'single' ? initialValue as Key : null);
+  let defaultSelectedKey =
+    props.defaultSelectedKey ?? (selectionMode === 'single' ? (initialValue as Key) : null);
 
   return {
     ...validation,
@@ -530,7 +606,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     close: commitValue,
     selectionManager,
     value: displayValue as any,
-    defaultValue: defaultValue ?? initialValue as any,
+    defaultValue: defaultValue ?? (initialValue as any),
     setValue,
     selectedKey,
     selectedItems,
@@ -542,18 +618,29 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     selectedItem: selectedItems[0] ?? null,
     collection: displayedCollection,
     inputValue,
-    defaultInputValue: getDefaultInputValue(props.defaultInputValue, defaultSelectedKey, collection) ?? initialInputValue,
+    defaultInputValue:
+      getDefaultInputValue(props.defaultInputValue, defaultSelectedKey, collection) ??
+      initialInputValue,
     setInputValue,
     commit,
     revert
   };
 }
 
-function filterCollection<T extends object>(collection: Collection<Node<T>>, inputValue: string, filter: FilterFn): Collection<Node<T>> {
+function filterCollection<T extends object>(
+  collection: Collection<Node<T>>,
+  inputValue: string,
+  filter: FilterFn
+): Collection<Node<T>> {
   return new ListCollection(filterNodes(collection, collection, inputValue, filter));
 }
 
-function filterNodes<T>(collection: Collection<Node<T>>, nodes: Iterable<Node<T>>, inputValue: string, filter: FilterFn): Iterable<Node<T>> {
+function filterNodes<T>(
+  collection: Collection<Node<T>>,
+  nodes: Iterable<Node<T>>,
+  inputValue: string,
+  filter: FilterFn
+): Iterable<Node<T>> {
   let filteredNode: Node<T>[] = [];
   for (let node of nodes) {
     if (node.type === 'section' && node.hasChildNodes) {
@@ -570,8 +657,11 @@ function filterNodes<T>(collection: Collection<Node<T>>, nodes: Iterable<Node<T>
   return filteredNode;
 }
 
-
-function getDefaultInputValue(defaultInputValue: string | null | undefined, selectedKey: Key | null, collection: Collection<Node<unknown>>) {
+function getDefaultInputValue(
+  defaultInputValue: string | null | undefined,
+  selectedKey: Key | null,
+  collection: Collection<Node<unknown>>
+) {
   if (defaultInputValue == null) {
     if (selectedKey != null) {
       return collection.getItem(selectedKey)?.textValue ?? '';

@@ -17,16 +17,20 @@ import React, {JSX, ReactElement} from 'react';
 
 export interface TableHeaderProps<T> {
   /** A list of table columns. */
-  columns?: readonly T[],
+  columns?: readonly T[];
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
-  children: ColumnElement<T> | ColumnElement<T>[] | ColumnRenderer<T>
+  children: ColumnElement<T> | ColumnElement<T>[] | ColumnRenderer<T>;
 }
 
-function TableHeader<T>(props: TableHeaderProps<T>): ReactElement | null { // eslint-disable-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function TableHeader<T>(props: TableHeaderProps<T>): ReactElement | null {
   return null;
 }
 
-TableHeader.getCollectionNode = function* getCollectionNode<T>(props: TableHeaderProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>, void, any> {
+TableHeader.getCollectionNode = function* getCollectionNode<T>(
+  props: TableHeaderProps<T>,
+  context: CollectionBuilderContext<T>
+): Generator<PartialNode<T>, void, any> {
   let {children, columns} = props;
 
   // Clear columns so they aren't double added in strict mode.

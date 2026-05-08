@@ -40,7 +40,18 @@ import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, HTMLAttributes, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {
+  createContext,
+  ForwardedRef,
+  HTMLAttributes,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import {TextContext} from './Text';
 import {useFilter} from 'react-aria/useFilter';
 import {useListFormatter} from 'react-aria/useListFormatter';
@@ -53,70 +64,98 @@ export interface ComboBoxRenderProps {
    * Whether the combobox is currently open.
    * @selector [data-open]
    */
-  isOpen: boolean,
+  isOpen: boolean;
   /**
    * Whether the combobox is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * Whether the combobox is invalid.
    * @selector [data-invalid]
    */
-  isInvalid: boolean,
+  isInvalid: boolean;
   /**
    * Whether the combobox is required.
    * @selector [data-required]
    */
-  isRequired: boolean,
+  isRequired: boolean;
   /**
    * Whether the combobox is read only.
    * @selector [data-readonly]
    */
-  isReadOnly: boolean
+  isReadOnly: boolean;
 }
 
-export interface ComboBoxProps<T extends object, M extends SelectionMode = 'single'> extends Omit<AriaComboBoxProps<T, M>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<ComboBoxRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ComboBoxProps<T extends object, M extends SelectionMode = 'single'>
+  extends
+    Omit<
+      AriaComboBoxProps<T, M>,
+      | 'children'
+      | 'placeholder'
+      | 'label'
+      | 'description'
+      | 'errorMessage'
+      | 'validationState'
+      | 'validationBehavior'
+    >,
+    RACValidation,
+    RenderProps<ComboBoxRenderProps>,
+    SlotProps,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ComboBox'
    */
-  className?: ClassNameOrFunction<ComboBoxRenderProps>,
+  className?: ClassNameOrFunction<ComboBoxRenderProps>;
   /** The filter function used to determine if a option should be included in the combo box list. */
-  defaultFilter?: (textValue: string, inputValue: string) => boolean,
+  defaultFilter?: (textValue: string, inputValue: string) => boolean;
   /**
    * Whether the text or key of the selected item is submitted as part of an HTML form.
    * When `allowsCustomValue` is `true`, this option does not apply and the text is always submitted.
    * @default 'key'
    */
-  formValue?: 'text' | 'key',
+  formValue?: 'text' | 'key';
   /** Whether the combo box allows the menu to be open when the collection is empty. */
-  allowsEmptyCollection?: boolean
+  allowsEmptyCollection?: boolean;
 }
 
-export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any, SelectionMode>, HTMLDivElement>>(null);
+export const ComboBoxContext =
+  createContext<ContextValue<ComboBoxProps<any, SelectionMode>, HTMLDivElement>>(null);
 export const ComboBoxStateContext = createContext<ComboBoxState<any, SelectionMode> | null>(null);
 
 /**
  * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
  */
-export const ComboBox = /*#__PURE__*/ createHideableComponent(function ComboBox<T extends object, M extends SelectionMode = 'single'>(props: ComboBoxProps<T, M>, ref: ForwardedRef<HTMLDivElement>) {
+export const ComboBox = /*#__PURE__*/ createHideableComponent(function ComboBox<
+  T extends object,
+  M extends SelectionMode = 'single'
+>(props: ComboBoxProps<T, M>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
-  let {children, isDisabled = false, isInvalid = false, isRequired = false, isReadOnly = false} = props;
-  let content = useMemo(() => (
-    <ListBoxContext.Provider value={{items: props.items ?? props.defaultItems}}>
-      {typeof children === 'function'
-        ? children({
-          isOpen: false,
-          isDisabled,
-          isInvalid,
-          isRequired,
-          defaultChildren: null,
-          isReadOnly
-        })
-        : children}
-    </ListBoxContext.Provider>
-  ), [children, isDisabled, isInvalid, isRequired, isReadOnly, props.items, props.defaultItems]);
+  let {
+    children,
+    isDisabled = false,
+    isInvalid = false,
+    isRequired = false,
+    isReadOnly = false
+  } = props;
+  let content = useMemo(
+    () => (
+      <ListBoxContext.Provider value={{items: props.items ?? props.defaultItems}}>
+        {typeof children === 'function'
+          ? children({
+              isOpen: false,
+              isDisabled,
+              isInvalid,
+              isRequired,
+              defaultChildren: null,
+              isReadOnly
+            })
+          : children}
+      </ListBoxContext.Provider>
+    ),
+    [children, isDisabled, isInvalid, isRequired, isReadOnly, props.items, props.defaultItems]
+  );
 
   return (
     <CollectionBuilder content={content}>
@@ -129,17 +168,17 @@ export const ComboBox = /*#__PURE__*/ createHideableComponent(function ComboBox<
 const CLEAR_CONTEXTS = [LabelContext, ButtonContext, InputContext, GroupContext, TextContext];
 
 interface ComboBoxInnerProps<T extends object> {
-  props: ComboBoxProps<T, SelectionMode>,
-  collection: Collection<Node<T>>,
-  comboBoxRef: RefObject<HTMLDivElement | null>
+  props: ComboBoxProps<T, SelectionMode>;
+  collection: Collection<Node<T>>;
+  comboBoxRef: RefObject<HTMLDivElement | null>;
 }
 
-function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: ComboBoxInnerProps<T>) {
-  let {
-    name,
-    formValue = 'key',
-    allowsCustomValue
-  } = props;
+function ComboBoxInner<T extends object>({
+  props,
+  collection,
+  comboBoxRef: ref
+}: ComboBoxInnerProps<T>) {
+  let {name, formValue = 'key', allowsCustomValue} = props;
   if (allowsCustomValue) {
     formValue = 'text';
   }
@@ -162,9 +201,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
   let groupRef = useRef<HTMLDivElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);
   let popoverRef = useRef<HTMLDivElement>(null);
-  let [labelRef, label] = useSlot(
-    !props['aria-label'] && !props['aria-labelledby']
-  );
+  let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
   let {
     buttonProps,
     inputProps,
@@ -174,16 +211,19 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     errorMessageProps,
     valueProps,
     ...validation
-  } = useComboBox({
-    ...removeDataAttributes(props),
-    label,
-    inputRef,
-    buttonRef,
-    listBoxRef,
-    popoverRef,
-    name: formValue === 'text' ? name : undefined,
-    validationBehavior
-  }, state);
+  } = useComboBox(
+    {
+      ...removeDataAttributes(props),
+      label,
+      inputRef,
+      buttonRef,
+      listBoxRef,
+      popoverRef,
+      name: formValue === 'text' ? name : undefined,
+      validationBehavior
+    },
+    state
+  );
 
   // Make menu width match input + button
   // Left for backward compatibility in case a <Group> is not rendered.
@@ -194,7 +234,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
       let inputRect = inputRef.current.getBoundingClientRect();
       let minX = buttonRect ? Math.min(buttonRect.left, inputRect.left) : inputRect.left;
       let maxX = buttonRect ? Math.max(buttonRect.right, inputRect.right) : inputRect.right;
-      setMenuWidth((maxX - minX) + 'px');
+      setMenuWidth(maxX - minX + 'px');
     }
   }, [buttonRef, inputRef, setMenuWidth]);
 
@@ -204,20 +244,26 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
   });
 
   // Position popover relative to group if available, otherwise input.
-  let triggerRef = useMemo(() => ({
-    get current() {
-      return groupRef.current || inputRef.current;
-    }
-  }), [groupRef, inputRef]);
+  let triggerRef = useMemo(
+    () => ({
+      get current() {
+        return groupRef.current || inputRef.current;
+      }
+    }),
+    [groupRef, inputRef]
+  );
 
   // Only expose a subset of state to renderProps function to avoid infinite render loop
-  let renderPropsState = useMemo(() => ({
-    isOpen: state.isOpen,
-    isDisabled: props.isDisabled || false,
-    isInvalid: validation.isInvalid || false,
-    isRequired: props.isRequired || false,
-    isReadOnly: props.isReadOnly || false
-  }), [state.isOpen, props.isDisabled, validation.isInvalid, props.isRequired, props.isReadOnly]);
+  let renderPropsState = useMemo(
+    () => ({
+      isOpen: state.isOpen,
+      isDisabled: props.isDisabled || false,
+      isInvalid: validation.isInvalid || false,
+      isRequired: props.isRequired || false,
+      isReadOnly: props.isReadOnly || false
+    }),
+    [state.isOpen, props.isDisabled, validation.isInvalid, props.isRequired, props.isReadOnly]
+  );
 
   let renderProps = useRenderProps({
     ...props,
@@ -248,25 +294,34 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
         [InputContext, {...inputProps, ref: inputRef}],
         [OverlayTriggerStateContext, state],
-        [PopoverContext, {
-          ref: popoverRef,
-          triggerRef,
-          scrollRef: listBoxRef,
-          placement: 'bottom start',
-          isNonModal: true,
-          trigger: 'ComboBox',
-          style: {'--trigger-width': menuWidth} as React.CSSProperties,
-          clearContexts: CLEAR_CONTEXTS
-        }],
+        [
+          PopoverContext,
+          {
+            ref: popoverRef,
+            triggerRef,
+            scrollRef: listBoxRef,
+            placement: 'bottom start',
+            isNonModal: true,
+            trigger: 'ComboBox',
+            style: {'--trigger-width': menuWidth} as React.CSSProperties,
+            clearContexts: CLEAR_CONTEXTS
+          }
+        ],
         [ListBoxContext, {...listBoxProps, ref: listBoxRef}],
         [ListStateContext, state],
-        [TextContext, {
-          slots: {
-            description: descriptionProps,
-            errorMessage: errorMessageProps
+        [
+          TextContext,
+          {
+            slots: {
+              description: descriptionProps,
+              errorMessage: errorMessageProps
+            }
           }
-        }],
-        [GroupContext, {ref: groupRef, isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
+        ],
+        [
+          GroupContext,
+          {ref: groupRef, isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}
+        ],
         [FieldErrorContext, validation],
         [ComboBoxValueContext, valueProps]
       ]}>
@@ -293,43 +348,58 @@ export interface ComboBoxValueRenderProps<T> {
    * Whether the value is a placeholder.
    * @selector [data-placeholder]
    */
-  isPlaceholder: boolean,
+  isPlaceholder: boolean;
   /** The object values of the currently selected items. */
-  selectedItems: (T | null)[],
+  selectedItems: (T | null)[];
   /** The textValue of the currently selected items. */
-  selectedText: string,
+  selectedText: string;
   /** The state of the ComboBox. */
-  state: ComboBoxState<T, 'single' | 'multiple'>
+  state: ComboBoxState<T, 'single' | 'multiple'>;
 }
 
-export interface ComboBoxValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<ComboBoxValueRenderProps<T>, 'div'> {
+export interface ComboBoxValueProps<T extends object>
+  extends
+    Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>,
+    RenderProps<ComboBoxValueRenderProps<T>, 'div'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ComboBoxValue'
    */
-  className?: ClassNameOrFunction<ComboBoxValueRenderProps<T>>,
+  className?: ClassNameOrFunction<ComboBoxValueRenderProps<T>>;
   /** A value to display when no items are selected. */
-  placeholder?: ReactNode
+  placeholder?: ReactNode;
 }
 
-export const ComboBoxValueContext = createContext<ContextValue<ComboBoxValueProps<any>, HTMLDivElement>>(null);
+export const ComboBoxValueContext =
+  createContext<ContextValue<ComboBoxValueProps<any>, HTMLDivElement>>(null);
 
 /**
  * ComboBoxValue renders the selected values of a ComboBox, or a placeholder if no value is selected.
  * By default, the items are rendered as a comma separated list. Use the render function to customize this.
  */
-export const ComboBoxValue = /*#__PURE__*/ createHideableComponent(function ComboBoxValue<T extends object>(props: ComboBoxValueProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const ComboBoxValue = /*#__PURE__*/ createHideableComponent(function ComboBoxValue<
+  T extends object
+>(props: ComboBoxValueProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxValueContext);
   let state = useContext(ComboBoxStateContext)!;
   let formatter = useListFormatter();
-  let selectedText = useMemo(() => formatter.format(state.selectedItems.map(item => item?.textValue || '').filter(v => v !== '')), [formatter, state.selectedItems]);
+  let selectedText = useMemo(
+    () =>
+      formatter.format(
+        state.selectedItems.map(item => item?.textValue || '').filter(v => v !== '')
+      ),
+    [formatter, state.selectedItems]
+  );
 
   let renderProps = useRenderProps({
     ...props,
     defaultChildren: selectedText || props.placeholder,
     defaultClassName: 'react-aria-ComboBoxValue',
     values: {
-      selectedItems: useMemo(() => state.selectedItems.map(item => item.value as T ?? null), [state.selectedItems]),
+      selectedItems: useMemo(
+        () => state.selectedItems.map(item => (item.value as T) ?? null),
+        [state.selectedItems]
+      ),
       selectedText,
       isPlaceholder: state.selectedItems.length === 0,
       state
@@ -343,6 +413,7 @@ export const ComboBoxValue = /*#__PURE__*/ createHideableComponent(function Comb
       ref={ref}
       {...DOMProps}
       {...renderProps}
-      data-placeholder={state.selectedItems.length === 0 || undefined} />
+      data-placeholder={state.selectedItems.length === 0 || undefined}
+    />
   );
 });

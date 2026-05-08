@@ -16,7 +16,7 @@ import {useLocale} from './I18nProvider';
 import {useMemo} from 'react';
 
 export interface DateFormatterOptions extends Intl.DateTimeFormatOptions {
-  calendar?: string
+  calendar?: string;
 }
 
 /**

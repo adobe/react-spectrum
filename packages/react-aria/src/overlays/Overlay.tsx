@@ -23,28 +23,33 @@ export interface OverlayProps {
    * The container element in which the overlay portal will be placed.
    * @default document.body
    */
-  portalContainer?: Element,
+  portalContainer?: Element;
   /** The overlay to render in the portal. */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * Disables default focus management for the overlay, including containment and restoration.
    * This option should be used very carefully. When focus management is disabled, you must
    * implement focus containment and restoration to ensure the overlay is keyboard accessible.
    */
-  disableFocusManagement?: boolean,
+  disableFocusManagement?: boolean;
   /**
    * Whether to contain focus within the overlay.
    */
-  shouldContainFocus?: boolean,
+  shouldContainFocus?: boolean;
   /**
    * Whether the overlay is currently performing an exit animation. When true,
    * focus is allowed to move outside.
    */
-  isExiting?: boolean
+  isExiting?: boolean;
 }
 
-export const OverlayContext: React.Context<{contain: boolean, setContain: React.Dispatch<React.SetStateAction<boolean>>} | null> =
-  React.createContext<{contain: boolean, setContain: React.Dispatch<React.SetStateAction<boolean>>} | null>(null);
+export const OverlayContext: React.Context<{
+  contain: boolean;
+  setContain: React.Dispatch<React.SetStateAction<boolean>>;
+} | null> = React.createContext<{
+  contain: boolean;
+  setContain: React.Dispatch<React.SetStateAction<boolean>>;
+} | null>(null);
 
 /**
  * A container which renders an overlay such as a popover or modal in a portal,
@@ -76,9 +81,7 @@ export function Overlay(props: OverlayProps): React.ReactPortal | null {
 
   contents = (
     <OverlayContext.Provider value={contextValue}>
-      <ClearPressResponder>
-        {contents}
-      </ClearPressResponder>
+      <ClearPressResponder>{contents}</ClearPressResponder>
     </OverlayContext.Provider>
   );
 

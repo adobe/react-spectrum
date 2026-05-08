@@ -43,19 +43,19 @@ export default meta;
 type Story = StoryObj<typeof NumberField>;
 
 export const Example: Story = {
-  render: (args) => (
-    <NumberField {...args} />
-  ),
+  render: args => <NumberField {...args} />,
   args: {
     label: 'Quantity'
   }
 };
 
 export const Validation: Story = {
-  render: (args) => (
+  render: args => (
     <Form>
       <NumberField {...args} />
-      <Button type="submit" variant="primary">Submit</Button>
+      <Button type="submit" variant="primary">
+        Submit
+      </Button>
     </Form>
   ),
   args: {
@@ -65,7 +65,7 @@ export const Validation: Story = {
 };
 
 export const CustomWidth: Story = {
-  render: (args) => <NumberField {...args} styles={style({width: 384})} />,
+  render: args => <NumberField {...args} styles={style({width: 384})} />,
   args: {
     label: 'Large quantity'
   },
@@ -76,27 +76,24 @@ export const CustomWidth: Story = {
   }
 };
 
-
 export const ContextualHelpExample: Story = {
-  render: (args) => (
+  render: args => (
     <NumberField
       {...args}
       contextualHelp={
         <ContextualHelp>
           <Heading>Quantity</Heading>
           <Content>
-            <Text>
-              Pick a number between negative infinity and positive infinity.
-            </Text>
+            <Text>Pick a number between negative infinity and positive infinity.</Text>
           </Content>
           <Footer>
-            <Link
-              isStandalone
-              href="https://en.wikipedia.org/wiki/Quantity"
-              target="_blank">Learn more about quantity</Link>
+            <Link isStandalone href="https://en.wikipedia.org/wiki/Quantity" target="_blank">
+              Learn more about quantity
+            </Link>
           </Footer>
         </ContextualHelp>
-      } />
+      }
+    />
   ),
   args: {
     label: 'Quantity'

@@ -42,7 +42,16 @@ import {ListBoxContext, ListStateContext} from './ListBox';
 import {mergeProps} from 'react-aria/mergeProps';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, Fragment, HTMLAttributes, ReactNode, useContext, useMemo, useRef} from 'react';
+import React, {
+  createContext,
+  ForwardedRef,
+  Fragment,
+  HTMLAttributes,
+  ReactNode,
+  useContext,
+  useMemo,
+  useRef
+} from 'react';
 import {SelectState, useSelectState} from 'react-stately/useSelectState';
 import {TextContext} from './Text';
 import {useFocusRing} from 'react-aria/useFocusRing';
@@ -56,69 +65,90 @@ export interface SelectRenderProps {
    * Whether the select is focused, either via a mouse or keyboard.
    * @selector [data-focused]
    */
-  isFocused: boolean,
+  isFocused: boolean;
   /**
    * Whether the select is keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean,
+  isFocusVisible: boolean;
   /**
    * Whether the select is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * Whether the select is currently open.
    * @selector [data-open]
    */
-  isOpen: boolean,
+  isOpen: boolean;
   /**
    * Whether the select is invalid.
    * @selector [data-invalid]
    */
-  isInvalid: boolean,
+  isInvalid: boolean;
   /**
    * Whether the select is required.
    * @selector [data-required]
    */
-  isRequired: boolean
+  isRequired: boolean;
 }
 
-export interface SelectProps<T extends object = {}, M extends SelectionMode = 'single'> extends Omit<AriaSelectProps<T, M>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface SelectProps<T extends object = {}, M extends SelectionMode = 'single'>
+  extends
+    Omit<
+      AriaSelectProps<T, M>,
+      | 'children'
+      | 'label'
+      | 'description'
+      | 'errorMessage'
+      | 'validationState'
+      | 'validationBehavior'
+      | 'items'
+    >,
+    RACValidation,
+    RenderProps<SelectRenderProps>,
+    SlotProps,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Select'
    */
-  className?: ClassNameOrFunction<SelectRenderProps>,
+  className?: ClassNameOrFunction<SelectRenderProps>;
   /**
    * Temporary text that occupies the select when it is empty.
    * @default 'Select an item' (localized)
    */
-  placeholder?: string
+  placeholder?: string;
 }
 
-export const SelectContext = createContext<ContextValue<SelectProps<any, SelectionMode>, HTMLDivElement>>(null);
+export const SelectContext =
+  createContext<ContextValue<SelectProps<any, SelectionMode>, HTMLDivElement>>(null);
 export const SelectStateContext = createContext<SelectState<unknown, SelectionMode> | null>(null);
 
 /**
  * A select displays a collapsible list of options and allows a user to select one of them.
  */
-export const Select = /*#__PURE__*/ createHideableComponent(function Select<T extends object = {}, M extends SelectionMode = 'single'>(props: SelectProps<T, M>, ref: ForwardedRef<HTMLDivElement>) {
+export const Select = /*#__PURE__*/ createHideableComponent(function Select<
+  T extends object = {},
+  M extends SelectionMode = 'single'
+>(props: SelectProps<T, M>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SelectContext);
   let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
-  let content = useMemo(() => (
-    typeof children === 'function'
-      ? children({
-        isOpen: false,
-        isDisabled,
-        isInvalid,
-        isRequired,
-        isFocused: false,
-        isFocusVisible: false,
-        defaultChildren: null
-      })
-      : children
-  ), [children, isDisabled, isInvalid, isRequired]);
+  let content = useMemo(
+    () =>
+      typeof children === 'function'
+        ? children({
+            isOpen: false,
+            isDisabled,
+            isInvalid,
+            isRequired,
+            isFocused: false,
+            isFocusVisible: false,
+            defaultChildren: null
+          })
+        : children,
+    [children, isDisabled, isInvalid, isRequired]
+  );
 
   return (
     <CollectionBuilder content={content}>
@@ -131,9 +161,9 @@ export const Select = /*#__PURE__*/ createHideableComponent(function Select<T ex
 const CLEAR_CONTEXTS = [LabelContext, ButtonContext, TextContext];
 
 interface SelectInnerProps<T extends object> {
-  props: SelectProps<T, SelectionMode>,
-  selectRef: ForwardedRef<HTMLDivElement>,
-  collection: Collection<Node<T>>
+  props: SelectProps<T, SelectionMode>;
+  selectRef: ForwardedRef<HTMLDivElement>;
+  collection: Collection<Node<T>>;
 }
 
 function SelectInner<T extends object>({props, selectRef: ref, collection}: SelectInnerProps<T>) {
@@ -150,9 +180,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
 
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);
-  let [labelRef, label] = useSlot(
-    !props['aria-label'] && !props['aria-labelledby']
-  );
+  let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
   let {
     labelProps,
     triggerProps,
@@ -162,21 +190,35 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
     errorMessageProps,
     hiddenSelectProps,
     ...validation
-  } = useSelect({
-    ...removeDataAttributes(props),
-    label,
-    validationBehavior
-  }, state, buttonRef);
+  } = useSelect(
+    {
+      ...removeDataAttributes(props),
+      label,
+      validationBehavior
+    },
+    state,
+    buttonRef
+  );
 
   // Only expose a subset of state to renderProps function to avoid infinite render loop
-  let renderPropsState = useMemo(() => ({
-    isOpen: state.isOpen,
-    isFocused: state.isFocused,
-    isFocusVisible,
-    isDisabled: props.isDisabled || false,
-    isInvalid: validation.isInvalid || false,
-    isRequired: props.isRequired || false
-  }), [state.isOpen, state.isFocused, isFocusVisible, props.isDisabled, validation.isInvalid, props.isRequired]);
+  let renderPropsState = useMemo(
+    () => ({
+      isOpen: state.isOpen,
+      isFocused: state.isFocused,
+      isFocusVisible,
+      isDisabled: props.isDisabled || false,
+      isInvalid: validation.isInvalid || false,
+      isRequired: props.isRequired || false
+    }),
+    [
+      state.isOpen,
+      state.isFocused,
+      isFocusVisible,
+      props.isDisabled,
+      validation.isInvalid,
+      props.isRequired
+    ]
+  );
 
   let renderProps = useRenderProps({
     ...props,
@@ -196,24 +238,33 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         [SelectStateContext, state],
         [SelectValueContext, valueProps],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen, autoFocus: props.autoFocus}],
+        [
+          ButtonContext,
+          {...triggerProps, ref: buttonRef, isPressed: state.isOpen, autoFocus: props.autoFocus}
+        ],
         [OverlayTriggerStateContext, state],
-        [PopoverContext, {
-          trigger: 'Select',
-          triggerRef: buttonRef,
-          scrollRef,
-          placement: 'bottom start',
-          'aria-labelledby': menuProps['aria-labelledby'],
-          clearContexts: CLEAR_CONTEXTS
-        }],
+        [
+          PopoverContext,
+          {
+            trigger: 'Select',
+            triggerRef: buttonRef,
+            scrollRef,
+            placement: 'bottom start',
+            'aria-labelledby': menuProps['aria-labelledby'],
+            clearContexts: CLEAR_CONTEXTS
+          }
+        ],
         [ListBoxContext, {...menuProps, ref: scrollRef}],
         [ListStateContext, state],
-        [TextContext, {
-          slots: {
-            description: descriptionProps,
-            errorMessage: errorMessageProps
+        [
+          TextContext,
+          {
+            slots: {
+              description: descriptionProps,
+              errorMessage: errorMessageProps
+            }
           }
-        }],
+        ],
         [FieldErrorContext, validation]
       ]}>
       <dom.div
@@ -227,9 +278,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         data-invalid={validation.isInvalid || undefined}
         data-required={props.isRequired || undefined}>
         {renderProps.children}
-        <HiddenSelect
-          {...hiddenSelectProps}
-          autoComplete={props.autoComplete} />
+        <HiddenSelect {...hiddenSelectProps} autoComplete={props.autoComplete} />
       </dom.div>
     </Provider>
   );
@@ -240,39 +289,45 @@ export interface SelectValueRenderProps<T> {
    * Whether the value is a placeholder.
    * @selector [data-placeholder]
    */
-  isPlaceholder: boolean,
+  isPlaceholder: boolean;
   /**
    * The object value of the first selected item.
    * @deprecated
    */
-  selectedItem: T | null,
+  selectedItem: T | null;
   /** The object values of the currently selected items. */
-  selectedItems: (T | null)[],
+  selectedItems: (T | null)[];
   /** The textValue of the currently selected items. */
-  selectedText: string,
+  selectedText: string;
   /** The state of the select. */
-  state: SelectState<T, 'single' | 'multiple'>
+  state: SelectState<T, 'single' | 'multiple'>;
 }
 
-export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps<T>, 'span'> {
+export interface SelectValueProps<T extends object>
+  extends
+    Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>,
+    RenderProps<SelectValueRenderProps<T>, 'span'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-SelectValue'
    */
-  className?: ClassNameOrFunction<SelectValueRenderProps<T>>
+  className?: ClassNameOrFunction<SelectValueRenderProps<T>>;
 }
 
-export const SelectValueContext = createContext<ContextValue<SelectValueProps<any>, HTMLSpanElement>>(null);
+export const SelectValueContext =
+  createContext<ContextValue<SelectValueProps<any>, HTMLSpanElement>>(null);
 
 /**
  * SelectValue renders the current value of a Select, or a placeholder if no value is selected.
  * It is usually placed within the button element.
  */
-export const SelectValue = /*#__PURE__*/ createHideableComponent(function SelectValue<T extends object>(props: SelectValueProps<T>, ref: ForwardedRef<HTMLSpanElement>) {
+export const SelectValue = /*#__PURE__*/ createHideableComponent(function SelectValue<
+  T extends object
+>(props: SelectValueProps<T>, ref: ForwardedRef<HTMLSpanElement>) {
   [props, ref] = useContextProps(props, ref, SelectValueContext);
   let state = useContext(SelectStateContext)! as SelectState<T, 'single' | 'multiple'>;
   let {placeholder} = useSlottedContext(SelectContext)!;
-  let rendered = state.selectedItems.map((item) => {
+  let rendered = state.selectedItems.map(item => {
     let rendered = item.props?.children;
     // If the selected item has a function as a child, we need to call it to render to React.JSX.
     if (typeof rendered === 'function') {
@@ -293,13 +348,15 @@ export const SelectValue = /*#__PURE__*/ createHideableComponent(function Select
   });
 
   let formatter = useListFormatter();
-  let textValue = useMemo(() => state.selectedItems.map(item => item?.textValue), [state.selectedItems]);
+  let textValue = useMemo(
+    () => state.selectedItems.map(item => item?.textValue),
+    [state.selectedItems]
+  );
   let selectionMode = state.selectionManager.selectionMode;
-  let selectedText = useMemo(() => (
-    selectionMode === 'single' 
-      ? textValue[0] ?? '' 
-      : formatter.format(textValue)
-  ), [selectionMode, formatter, textValue]);
+  let selectedText = useMemo(
+    () => (selectionMode === 'single' ? (textValue[0] ?? '') : formatter.format(textValue)),
+    [selectionMode, formatter, textValue]
+  );
 
   let defaultChildren = useMemo(() => {
     if (selectionMode === 'single') {
@@ -328,8 +385,11 @@ export const SelectValue = /*#__PURE__*/ createHideableComponent(function Select
     defaultChildren: defaultChildren ?? placeholder ?? stringFormatter.format('selectPlaceholder'),
     defaultClassName: 'react-aria-SelectValue',
     values: {
-      selectedItem: state.selectedItems[0]?.value as T ?? null,
-      selectedItems: useMemo(() => state.selectedItems.map(item => item.value as T ?? null), [state.selectedItems]),
+      selectedItem: (state.selectedItems[0]?.value as T) ?? null,
+      selectedItems: useMemo(
+        () => state.selectedItems.map(item => (item.value as T) ?? null),
+        [state.selectedItems]
+      ),
       selectedText,
       isPlaceholder: state.selectedItems.length === 0,
       state
@@ -339,11 +399,13 @@ export const SelectValue = /*#__PURE__*/ createHideableComponent(function Select
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <dom.span ref={ref} {...DOMProps} {...renderProps} data-placeholder={state.selectedItems.length === 0 || undefined}>
+    <dom.span
+      ref={ref}
+      {...DOMProps}
+      {...renderProps}
+      data-placeholder={state.selectedItems.length === 0 || undefined}>
       {/* clear description and error message slots */}
-      <TextContext.Provider value={undefined}>
-        {renderProps.children}
-      </TextContext.Provider>
+      <TextContext.Provider value={undefined}>{renderProps.children}</TextContext.Provider>
     </dom.span>
   );
 });

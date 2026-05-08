@@ -15,12 +15,12 @@ import {DOMAttributes, KeyboardEvents} from '@react-types/shared';
 
 export interface KeyboardProps extends KeyboardEvents {
   /** Whether the keyboard events should be disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 export interface KeyboardResult {
   /** Props to spread onto the target element. */
-  keyboardProps: DOMAttributes
+  keyboardProps: DOMAttributes;
 }
 
 /**
@@ -28,9 +28,11 @@ export interface KeyboardResult {
  */
 export function useKeyboard(props: KeyboardProps): KeyboardResult {
   return {
-    keyboardProps: props.isDisabled ? {} : {
-      onKeyDown: createEventHandler(props.onKeyDown),
-      onKeyUp: createEventHandler(props.onKeyUp)
-    }
+    keyboardProps: props.isDisabled
+      ? {}
+      : {
+          onKeyDown: createEventHandler(props.onKeyDown),
+          onKeyUp: createEventHandler(props.onKeyUp)
+        }
   };
 }

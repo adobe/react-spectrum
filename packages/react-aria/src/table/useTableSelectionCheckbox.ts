@@ -21,17 +21,17 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
 export interface AriaTableSelectionCheckboxProps {
   /** A unique key for the checkbox. */
-  key: Key
+  key: Key;
 }
 
 export interface TableSelectionCheckboxAria {
   /** Props for the row selection checkbox element. */
-  checkboxProps: AriaCheckboxProps
+  checkboxProps: AriaCheckboxProps;
 }
 
 export interface TableSelectAllCheckboxAria {
   /** Props for the select all checkbox element. */
-  checkboxProps: AriaCheckboxProps
+  checkboxProps: AriaCheckboxProps;
 }
 
 /**
@@ -39,7 +39,10 @@ export interface TableSelectAllCheckboxAria {
  * @param props - Props for the selection checkbox.
  * @param state - State of the table, as returned by `useTableState`.
  */
-export function useTableSelectionCheckbox<T>(props: AriaTableSelectionCheckboxProps, state: TableState<T>): TableSelectionCheckboxAria {
+export function useTableSelectionCheckbox<T>(
+  props: AriaTableSelectionCheckboxProps,
+  state: TableState<T>
+): TableSelectionCheckboxAria {
   let {key} = props;
   const {checkboxProps} = useGridSelectionCheckbox(props, state);
 
@@ -64,7 +67,10 @@ export function useTableSelectAllCheckbox<T>(state: TableState<T>): TableSelectA
     checkboxProps: {
       'aria-label': stringFormatter.format(selectionMode === 'single' ? 'select' : 'selectAll'),
       isSelected: isSelectAll,
-      isDisabled: selectionMode !== 'multiple' || (state.collection.size === 0 || (state.collection.rows.length === 1 && state.collection.rows[0].type === 'loader')),
+      isDisabled:
+        selectionMode !== 'multiple' ||
+        state.collection.size === 0 ||
+        (state.collection.rows.length === 1 && state.collection.rows[0].type === 'loader'),
       isIndeterminate: !isEmpty && !isSelectAll,
       onChange: () => state.selectionManager.toggleSelectAll()
     }

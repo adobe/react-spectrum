@@ -12,11 +12,7 @@
 
 import fs from 'fs';
 
-const RESTRICTED_PACKAGES = new Set([
-  'react-aria',
-  'react-stately',
-  'react-aria-components'
-]);
+const RESTRICTED_PACKAGES = new Set(['react-aria', 'react-stately', 'react-aria-components']);
 
 const plugin = {
   meta: {
@@ -33,10 +29,15 @@ const plugin = {
         if (typeof source !== 'string' || !RESTRICTED_PACKAGES.has(source)) {
           return;
         }
-        let matches = node.specifiers.filter(specifier => specifier.type === 'ImportSpecifier' && fs.existsSync(`packages/${source}/exports/${specifier.imported.name}.ts`));
-        let suggestion = matches.length > 0
-          ? matches.map(match => `'${source}/${match.imported.name}'`).join(', ')
-          : `'${source}/<subpath>'`;
+        let matches = node.specifiers.filter(
+          specifier =>
+            specifier.type === 'ImportSpecifier' &&
+            fs.existsSync(`packages/${source}/exports/${specifier.imported.name}.ts`)
+        );
+        let suggestion =
+          matches.length > 0
+            ? matches.map(match => `'${source}/${match.imported.name}'`).join(', ')
+            : `'${source}/<subpath>'`;
 
         context.report({
           node,

@@ -7,13 +7,24 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
+  "source": "exports/index.ts",
+  "files": [
+    "dist",
+    "style",
+    "page.css",
+    "page.css.map",
+    "icons",
+    "illustrations",
+    "src",
+    "exports",
+    "*.js"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
   "main": "./dist/exports/index.cjs",
   "module": "./dist/exports/index.mjs",
   "types": "./dist/types/exports/index.d.ts",
-  "page": "dist/page.cjs",
-  "style-module": "style/dist/module.mjs",
-  "style-main": "style/dist/main.cjs",
-  "source": "exports/index.ts",
   "exports": {
     ".": {
       "source": "./exports/index.ts",
@@ -65,6 +76,41 @@
     },
     "./private/*": null
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepublishOnly": "rm -rf dist/page.cjs* && mv dist/private/page*.css page.css && mv dist/private/page.css.map page.css.map || true",
+    "prepack": "npm pkg delete scripts devDependencies resolutions alias targets",
+    "postpack": "git checkout -- package.json"
+  },
+  "dependencies": {
+    "@internationalized/date": "^3.12.1",
+    "@internationalized/number": "^3.6.6",
+    "@parcel/macros": "^2.16.3",
+    "@react-types/shared": "^3.34.0",
+    "react-aria": "3.48.0",
+    "react-aria-components": "1.17.0",
+    "react-stately": "3.46.0"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-tokens": "14.0.0",
+    "@react-aria/test-utils": "^1.0.0-alpha.8",
+    "@storybook/jest": "^0.2.3",
+    "@testing-library/dom": "^10.1.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.0.0",
+    "react": "^19.0.0-rc.1",
+    "react-dom": "^19.0.0-rc.1"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0-rc.1",
+    "react-dom": "^19.0.0-rc.1"
+  },
+  "browserslist": "last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions",
+  "page": "dist/page.cjs",
+  "style-main": "style/dist/main.cjs",
+  "style-module": "style/dist/module.mjs",
   "targets": {
     "module": false,
     "main": false,
@@ -133,51 +179,5 @@
       "outputFormat": "commonjs",
       "includeNodeModules": false
     }
-  },
-  "browserslist": "last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions",
-  "sideEffects": [
-    "*.css"
-  ],
-  "files": [
-    "dist",
-    "style",
-    "page.css",
-    "page.css.map",
-    "icons",
-    "illustrations",
-    "src",
-    "exports",
-    "*.js"
-  ],
-  "scripts": {
-    "prepublishOnly": "rm -rf dist/page.cjs* && mv dist/private/page*.css page.css && mv dist/private/page.css.map page.css.map || true",
-    "prepack": "npm pkg delete scripts devDependencies resolutions alias targets",
-    "postpack": "git checkout -- package.json"
-  },
-  "devDependencies": {
-    "@adobe/spectrum-tokens": "14.0.0",
-    "@react-aria/test-utils": "^1.0.0-alpha.8",
-    "@storybook/jest": "^0.2.3",
-    "@testing-library/dom": "^10.1.0",
-    "@testing-library/react": "^16.0.0",
-    "@testing-library/user-event": "^14.0.0",
-    "react": "^19.0.0-rc.1",
-    "react-dom": "^19.0.0-rc.1"
-  },
-  "dependencies": {
-    "@internationalized/date": "^3.12.1",
-    "@internationalized/number": "^3.6.6",
-    "@parcel/macros": "^2.16.3",
-    "@react-types/shared": "^3.34.0",
-    "react-aria": "3.48.0",
-    "react-aria-components": "1.17.0",
-    "react-stately": "3.46.0"
-  },
-  "peerDependencies": {
-    "react": "^19.0.0-rc.1",
-    "react-dom": "^19.0.0-rc.1"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

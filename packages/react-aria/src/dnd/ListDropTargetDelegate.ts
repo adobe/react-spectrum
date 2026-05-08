@@ -1,22 +1,29 @@
-import {Direction, DropTarget, DropTargetDelegate, Node, Orientation, RefObject} from '@react-types/shared';
+import {
+  Direction,
+  DropTarget,
+  DropTargetDelegate,
+  Node,
+  Orientation,
+  RefObject
+} from '@react-types/shared';
 
 interface ListDropTargetDelegateOptions {
   /**
    * Whether the items are arranged in a stack or grid.
    * @default 'stack'
    */
-  layout?: 'stack' | 'grid',
+  layout?: 'stack' | 'grid';
   /**
    * The primary orientation of the items. Usually this is the
    * direction that the collection scrolls.
    * @default 'vertical'
    */
-  orientation?: Orientation,
+  orientation?: Orientation;
   /**
    * The horizontal layout direction.
    * @default 'ltr'
    */
-  direction?: Direction
+  direction?: Direction;
 }
 
 // Terms used in the below code:
@@ -35,7 +42,11 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
   private orientation: Orientation;
   protected direction: Direction;
 
-  constructor(collection: Iterable<Node<unknown>>, ref: RefObject<HTMLElement | null>, options?: ListDropTargetDelegateOptions) {
+  constructor(
+    collection: Iterable<Node<unknown>>,
+    ref: RefObject<HTMLElement | null>,
+    options?: ListDropTargetDelegateOptions
+  ) {
     this.collection = collection;
     this.ref = ref;
     this.layout = options?.layout || 'stack';
@@ -71,7 +82,11 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
     return this.getFlowEnd(rect) - this.getFlowStart(rect);
   }
 
-  getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget {
+  getDropTargetFromPoint(
+    x: number,
+    y: number,
+    isValidDropTarget: (target: DropTarget) => boolean
+  ): DropTarget {
     if (this.collection[Symbol.iterator]().next().done || !this.ref.current) {
       return {type: 'root'};
     }
@@ -84,11 +99,14 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
 
     let flow = this.layout === 'stack' ? primary : secondary;
     let isPrimaryRTL = this.orientation === 'horizontal' && this.direction === 'rtl';
-    let isSecondaryRTL = this.layout === 'grid' && this.orientation === 'vertical' && this.direction === 'rtl';
+    let isSecondaryRTL =
+      this.layout === 'grid' && this.orientation === 'vertical' && this.direction === 'rtl';
     let isFlowRTL = this.layout === 'stack' ? isPrimaryRTL : isSecondaryRTL;
 
     let collection = this.ref.current?.dataset.collection;
-    let elements = this.ref.current.querySelectorAll(collection ? `[data-collection="${CSS.escape(collection)}"]` : '[data-key]');
+    let elements = this.ref.current.querySelectorAll(
+      collection ? `[data-collection="${CSS.escape(collection)}"]` : '[data-key]'
+    );
     let elementMap = new Map<string, HTMLElement>();
     for (let item of elements) {
       if (item instanceof HTMLElement && item.dataset.key != null) {
@@ -142,9 +160,15 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
         if (isValidDropTarget(target)) {
           // Otherwise, if dropping on the item is accepted, try the before/after positions if within 5px
           // of the start or end of the item.
-          if (flow <= this.getFlowStart(rect) + 5 && isValidDropTarget({...target, dropPosition: 'before'})) {
+          if (
+            flow <= this.getFlowStart(rect) + 5 &&
+            isValidDropTarget({...target, dropPosition: 'before'})
+          ) {
             target.dropPosition = isFlowRTL ? 'after' : 'before';
-          } else if (flow >= this.getFlowEnd(rect) - 5 && isValidDropTarget({...target, dropPosition: 'after'})) {
+          } else if (
+            flow >= this.getFlowEnd(rect) - 5 &&
+            isValidDropTarget({...target, dropPosition: 'after'})
+          ) {
             target.dropPosition = isFlowRTL ? 'before' : 'after';
           }
         } else {
@@ -165,7 +189,11 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
     let element = elementMap.get(String(item.key));
     rect = element?.getBoundingClientRect();
 
-    if (rect && (primary < this.getPrimaryStart(rect) || Math.abs(flow - this.getFlowStart(rect)) < Math.abs(flow - this.getFlowEnd(rect)))) {
+    if (
+      rect &&
+      (primary < this.getPrimaryStart(rect) ||
+        Math.abs(flow - this.getFlowStart(rect)) < Math.abs(flow - this.getFlowEnd(rect)))
+    ) {
       return {
         type: 'item',
         key: item.key,

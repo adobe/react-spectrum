@@ -17,7 +17,13 @@ import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../../src/table/TableView';
 import {ColumnSize} from 'react-stately/useTableState';
 import {ControllingResize} from '../../stories/table/ControllingResize';
-import {fireEvent, installPointerEvent, pointerMap, simulateDesktop, triggerTouch} from '@react-spectrum/test-utils-internal';
+import {
+  fireEvent,
+  installPointerEvent,
+  pointerMap,
+  simulateDesktop,
+  triggerTouch
+} from '@react-spectrum/test-utils-internal';
 import {HidingColumns} from '../../stories/table/HidingColumns';
 import {Key} from '@react-types/shared';
 import {Provider} from '../../src/provider/Provider';
@@ -38,16 +44,22 @@ let columns = [
 
 let nestedColumns = [
   {name: 'Test', key: 'test'},
-  {name: 'Tiered One Header', key: 'tier1', children: [
-    {name: 'Tier Two Header A', key: 'tier2a', children: [
-      {name: 'Foo', key: 'foo'},
-      {name: 'Bar', key: 'bar'}
-    ]},
-    {name: 'Yay', key: 'yay'},
-    {name: 'Tier Two Header B', key: 'tier2b', children: [
-      {name: 'Baz', key: 'baz'}
-    ]}
-  ]}
+  {
+    name: 'Tiered One Header',
+    key: 'tier1',
+    children: [
+      {
+        name: 'Tier Two Header A',
+        key: 'tier2a',
+        children: [
+          {name: 'Foo', key: 'foo'},
+          {name: 'Bar', key: 'bar'}
+        ]
+      },
+      {name: 'Yay', key: 'yay'},
+      {name: 'Tier Two Header B', key: 'tier2b', children: [{name: 'Baz', key: 'baz'}]}
+    ]
+  }
 ];
 
 let items = [
@@ -55,8 +67,7 @@ let items = [
   {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
 
-
-let manyItems: {id: number, foo: string, bar: string, baz: string}[] = [];
+let manyItems: {id: number; foo: string; bar: string; baz: string}[] = [];
 for (let i = 1; i <= 100; i++) {
   manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
 }
@@ -68,7 +79,9 @@ let render = (children, scale: Scale = 'medium') => {
     </Provider>
   );
   // account for table column resizing to do initial pass due to relayout from useTableColumnResizeState render
-  act(() => {jest.runAllTimers();});
+  act(() => {
+    jest.runAllTimers();
+  });
   return tree;
 };
 
@@ -78,7 +91,9 @@ let rerender = (tree, children, scale: Scale = 'medium') => {
       {children}
     </Provider>
   );
-  act(() => {jest.runAllTimers();});
+  act(() => {
+    jest.runAllTimers();
+  });
   return newTree;
 };
 describe('TableViewSizing', function () {
@@ -87,8 +102,12 @@ describe('TableViewSizing', function () {
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    offsetWidth = jest
+      .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+      .mockImplementation(() => 1000);
+    offsetHeight = jest
+      .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+      .mockImplementation(() => 1000);
     jest.useFakeTimers();
   });
 
@@ -98,25 +117,23 @@ describe('TableViewSizing', function () {
   });
 
   afterEach(() => {
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   describe('layout', function () {
     describe('row heights', function () {
-      let renderTable = (props = {}, scale: Scale = 'medium') => render(
-        <TableView aria-label="Table" {...props}>
-          <TableHeader columns={columns}>
-            {column => <Column>{column.name}</Column>}
-          </TableHeader>
-          <TableBody items={items}>
-            {item =>
-              (<Row key={item.foo}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>)
-            }
-          </TableBody>
-        </TableView>
-        , scale);
+      let renderTable = (props = {}, scale: Scale = 'medium') =>
+        render(
+          <TableView aria-label="Table" {...props}>
+            <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
+            <TableBody items={items}>
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
+            </TableBody>
+          </TableView>,
+          scale
+        );
 
       it('should layout rows with default height', function () {
         let tree = renderTable();
@@ -130,7 +147,7 @@ describe('TableViewSizing', function () {
         expect(rows[2].style.top).toBe('41px');
         expect(rows[2].style.height).toBe('41px');
 
-        for (let cell of ([...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[])) {
+        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[]) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('40px');
         }
@@ -148,7 +165,7 @@ describe('TableViewSizing', function () {
         expect(rows[2].style.top).toBe('51px');
         expect(rows[2].style.height).toBe('51px');
 
-        for (let cell of ([...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[])) {
+        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[]) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('50px');
         }
@@ -166,7 +183,7 @@ describe('TableViewSizing', function () {
         expect(rows[2].style.top).toBe('33px');
         expect(rows[2].style.height).toBe('33px');
 
-        for (let cell of ([...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[])) {
+        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[]) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('32px');
         }
@@ -184,7 +201,7 @@ describe('TableViewSizing', function () {
         expect(rows[2].style.top).toBe('41px');
         expect(rows[2].style.height).toBe('41px');
 
-        for (let cell of ([...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[])) {
+        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[]) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('40px');
         }
@@ -202,7 +219,7 @@ describe('TableViewSizing', function () {
         expect(rows[2].style.top).toBe('49px');
         expect(rows[2].style.height).toBe('49px');
 
-        for (let cell of ([...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[])) {
+        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[]) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('48px');
         }
@@ -220,21 +237,24 @@ describe('TableViewSizing', function () {
         expect(rows[2].style.top).toBe('61px');
         expect(rows[2].style.height).toBe('61px');
 
-        for (let cell of ([...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[])) {
+        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[]) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('60px');
         }
       });
 
       it('should support variable row heights with overflowMode="wrap"', function () {
-        let scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
+        let scrollHeight = jest
+          .spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
           .mockImplementation(function (this: HTMLElement) {
             let row = this.closest('[role=row]');
             return row && row.textContent?.includes('Foo 1') ? 64 : 48;
           });
 
         let tree = renderTable({overflowMode: 'wrap'});
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         let rows = tree.getAllByRole('row');
         expect(rows).toHaveLength(3);
 
@@ -243,12 +263,12 @@ describe('TableViewSizing', function () {
         expect(rows[2].style.top).toBe('65px');
         expect(rows[2].style.height).toBe('49px');
 
-        for (let cell of ([...rows[1].childNodes] as HTMLElement[])) {
+        for (let cell of [...rows[1].childNodes] as HTMLElement[]) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('64px');
         }
 
-        for (let cell of ([...rows[2].childNodes] as HTMLElement[])) {
+        for (let cell of [...rows[2].childNodes] as HTMLElement[]) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('48px');
         }
@@ -257,7 +277,8 @@ describe('TableViewSizing', function () {
       });
 
       it('should support variable column header heights with overflowMode="wrap"', function () {
-        let scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
+        let scrollHeight = jest
+          .spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
           .mockImplementation(function (this: HTMLElement) {
             return this.textContent === 'Tier Two Header B' ? 48 : 34;
           });
@@ -268,15 +289,13 @@ describe('TableViewSizing', function () {
               {column => <Column childColumns={column.children}>{column.name}</Column>}
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         let rows = tree.getAllByRole('row');
         expect(rows).toHaveLength(5);
 
@@ -287,17 +306,17 @@ describe('TableViewSizing', function () {
         expect(rows[2].style.top).toBe('82px');
         expect(rows[2].style.height).toBe('34px');
 
-        for (let cell of ([...rows[0].childNodes] as HTMLElement[])) {
+        for (let cell of [...rows[0].childNodes] as HTMLElement[]) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('34px');
         }
 
-        for (let cell of ([...rows[1].childNodes] as HTMLElement[])) {
+        for (let cell of [...rows[1].childNodes] as HTMLElement[]) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('48px');
         }
 
-        for (let cell of ([...rows[2].childNodes] as HTMLElement[])) {
+        for (let cell of [...rows[2].childNodes] as HTMLElement[]) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('34px');
         }
@@ -310,32 +329,39 @@ describe('TableViewSizing', function () {
         function ControlledSelection(props) {
           let [selectedKeys, setSelectedKeys] = React.useState<Set<Key> | 'all'>(new Set([]));
           return (
-            <TableView aria-label="Table" overflowMode="wrap" selectionMode={props.selectionMode} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+            <TableView
+              aria-label="Table"
+              overflowMode="wrap"
+              selectionMode={props.selectionMode}
+              selectedKeys={selectedKeys}
+              onSelectionChange={setSelectedKeys}>
               <TableHeader columns={columns}>
                 {column => <Column>{column.name}</Column>}
               </TableHeader>
               <TableBody items={items}>
-                {item =>
-                  (<Row key={item.foo}>
-                    {key => <Cell>{item[key]}</Cell>}
-                  </Row>)
-                }
+                {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
               </TableBody>
             </TableView>
           );
         }
 
         let tree = render(<ControlledSelection selectionMode="multiple" />);
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         let row = tree.getAllByRole('row')[2];
         expect(row).toHaveAttribute('aria-selected', 'false');
         await user.click(within(row).getByRole('checkbox'));
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         expect(row).toHaveAttribute('aria-selected', 'true');
 
         // Without ListLayout fix, throws here with "TypeError: Cannot set property 'estimatedSize' of undefined"
         rerender(tree, <ControlledSelection selectionMode="none" />);
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         expect(tree.queryByRole('checkbox')).toBeNull();
       });
 
@@ -365,15 +391,9 @@ describe('TableViewSizing', function () {
       it('should divide the available width by default if no defaultWidth is provided', function () {
         let tree = render(
           <TableView aria-label="Table" selectionMode="multiple">
-            <TableHeader columns={columns}>
-              {column => <Column>{column.name}</Column>}
-            </TableHeader>
+            <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
@@ -389,20 +409,15 @@ describe('TableViewSizing', function () {
       });
 
       it('should divide the available width by default in large scale', function () {
-        let tree = render((
+        let tree = render(
           <TableView aria-label="Table" selectionMode="multiple">
-            <TableHeader columns={columns}>
-              {column => <Column>{column.name}</Column>}
-            </TableHeader>
+            <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
-          </TableView>
-        ), 'large');
+          </TableView>,
+          'large'
+        );
 
         let rows = tree.getAllByRole('row');
 
@@ -418,16 +433,18 @@ describe('TableViewSizing', function () {
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader>
-              <Column key="foo" width={200}>Foo</Column>
-              <Column key="bar" width={500}>Bar</Column>
-              <Column key="baz" width={300}>Baz</Column>
+              <Column key="foo" width={200}>
+                Foo
+              </Column>
+              <Column key="bar" width={500}>
+                Bar
+              </Column>
+              <Column key="baz" width={300}>
+                Baz
+              </Column>
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
@@ -445,16 +462,14 @@ describe('TableViewSizing', function () {
         let tree = render(
           <TableView aria-label="Table" selectionMode="multiple">
             <TableHeader>
-              <Column key="foo" width={200}>Foo</Column>
+              <Column key="foo" width={200}>
+                Foo
+              </Column>
               <Column key="bar">Bar</Column>
               <Column key="baz">Baz</Column>
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
@@ -473,16 +488,16 @@ describe('TableViewSizing', function () {
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader>
-              <Column key="foo" width="10%">Foo</Column>
-              <Column key="bar" width={500}>Bar</Column>
+              <Column key="foo" width="10%">
+                Foo
+              </Column>
+              <Column key="bar" width={500}>
+                Bar
+              </Column>
               <Column key="baz">Baz</Column>
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
@@ -500,16 +515,16 @@ describe('TableViewSizing', function () {
         let tree = render(
           <TableView aria-label="Table" selectionMode="multiple">
             <TableHeader>
-              <Column key="foo" width={200}>Foo</Column>
-              <Column key="bar" minWidth={500}>Bar</Column>
+              <Column key="foo" width={200}>
+                Foo
+              </Column>
+              <Column key="bar" minWidth={500}>
+                Bar
+              </Column>
               <Column key="baz">Baz</Column>
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
@@ -528,16 +543,16 @@ describe('TableViewSizing', function () {
         let tree = render(
           <TableView aria-label="Table" selectionMode="multiple">
             <TableHeader>
-              <Column key="foo" minWidth={200} width={100}>Foo</Column>
-              <Column key="bar" minWidth={500}>Bar</Column>
+              <Column key="foo" minWidth={200} width={100}>
+                Foo
+              </Column>
+              <Column key="bar" minWidth={500}>
+                Bar
+              </Column>
               <Column key="baz">Baz</Column>
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
@@ -556,16 +571,16 @@ describe('TableViewSizing', function () {
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader>
-              <Column key="foo" width={200}>Foo</Column>
-              <Column key="bar" maxWidth={300}>Bar</Column>
+              <Column key="foo" width={200}>
+                Foo
+              </Column>
+              <Column key="bar" maxWidth={300}>
+                Bar
+              </Column>
               <Column key="baz">Baz</Column>
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
@@ -583,16 +598,16 @@ describe('TableViewSizing', function () {
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader>
-              <Column key="foo" maxWidth={500} width={200}>Foo</Column>
-              <Column key="bar" maxWidth={300}>Bar</Column>
+              <Column key="foo" maxWidth={500} width={200}>
+                Foo
+              </Column>
+              <Column key="bar" maxWidth={300}>
+                Bar
+              </Column>
               <Column key="baz">Baz</Column>
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
@@ -611,16 +626,18 @@ describe('TableViewSizing', function () {
           let tree = render(
             <TableView aria-label="Table">
               <TableHeader>
-                <Column allowsResizing key="foo">Foo</Column>
-                <Column key="bar" maxWidth={200}>Bar</Column>
-                <Column key="baz" maxWidth={200}>Baz</Column>
+                <Column allowsResizing key="foo">
+                  Foo
+                </Column>
+                <Column key="bar" maxWidth={200}>
+                  Bar
+                </Column>
+                <Column key="baz" maxWidth={200}>
+                  Baz
+                </Column>
               </TableHeader>
               <TableBody items={items}>
-                {item =>
-                  (<Row key={item.foo}>
-                    {key => <Cell>{item[key]}</Cell>}
-                  </Row>)
-                }
+                {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
               </TableBody>
             </TableView>
           );
@@ -640,16 +657,18 @@ describe('TableViewSizing', function () {
           let tree = render(
             <TableView aria-label="Table">
               <TableHeader>
-                <Column allowsResizing key="foo" minWidth={100}>Foo</Column>
-                <Column key="bar" minWidth={500}>Bar</Column>
-                <Column key="baz" maxWidth={200}>Baz</Column>
+                <Column allowsResizing key="foo" minWidth={100}>
+                  Foo
+                </Column>
+                <Column key="bar" minWidth={500}>
+                  Bar
+                </Column>
+                <Column key="baz" maxWidth={200}>
+                  Baz
+                </Column>
               </TableHeader>
               <TableBody items={items}>
-                {item =>
-                  (<Row key={item.foo}>
-                    {key => <Cell>{item[key]}</Cell>}
-                  </Row>)
-                }
+                {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
               </TableBody>
             </TableView>
           );
@@ -671,11 +690,7 @@ describe('TableViewSizing', function () {
               {column => <Column childColumns={column.children}>{column.name}</Column>}
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
@@ -712,16 +727,18 @@ describe('TableViewSizing', function () {
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
-              <Column allowsResizing key="foo">Foo</Column>
-              <Column key="bar" maxWidth={200}>Bar</Column>
-              <Column key="baz" maxWidth={200}>Baz</Column>
+              <Column allowsResizing key="foo">
+                Foo
+              </Column>
+              <Column key="bar" maxWidth={200}>
+                Bar
+              </Column>
+              <Column key="baz" maxWidth={200}>
+                Baz
+              </Column>
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
@@ -758,7 +775,13 @@ describe('TableViewSizing', function () {
           expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
         }
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 595], ['bar', '1fr'], ['baz', '1fr']]));
+        expect(onResizeEnd).toHaveBeenCalledWith(
+          new Map<string, ColumnSize>([
+            ['foo', 595],
+            ['bar', '1fr'],
+            ['baz', '1fr']
+          ])
+        );
 
         // actual locations do not matter, the delta matters between events for the calculation of useMove
         fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 30});
@@ -772,11 +795,19 @@ describe('TableViewSizing', function () {
           expect((row.childNodes[2] as HTMLElement).style.width).toBe('190px');
         }
         expect(onResizeEnd).toHaveBeenCalledTimes(2);
-        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 595], ['bar', '1fr'], ['baz', '1fr']]));
+        expect(onResizeEnd).toHaveBeenCalledWith(
+          new Map<string, ColumnSize>([
+            ['foo', 595],
+            ['bar', '1fr'],
+            ['baz', '1fr']
+          ])
+        );
 
         fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         expect(tree.queryByRole('slider')).toBeNull();
       });
@@ -786,16 +817,18 @@ describe('TableViewSizing', function () {
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
-              <Column allowsResizing key="foo">Foo</Column>
-              <Column key="bar" maxWidth={200}>Bar</Column>
-              <Column key="baz" maxWidth={200}>Baz</Column>
+              <Column allowsResizing key="foo">
+                Foo
+              </Column>
+              <Column key="bar" maxWidth={200}>
+                Bar
+              </Column>
+              <Column key="baz" maxWidth={200}>
+                Baz
+              </Column>
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
@@ -832,7 +865,13 @@ describe('TableViewSizing', function () {
           expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
         }
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 595], ['bar', '1fr'], ['baz', '1fr']]));
+        expect(onResizeEnd).toHaveBeenCalledWith(
+          new Map<string, ColumnSize>([
+            ['foo', 595],
+            ['bar', '1fr'],
+            ['baz', '1fr']
+          ])
+        );
 
         // actual locations do not matter, the delta matters between events for the calculation of useMove
         fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 30});
@@ -846,11 +885,19 @@ describe('TableViewSizing', function () {
           expect((row.childNodes[2] as HTMLElement).style.width).toBe('190px');
         }
         expect(onResizeEnd).toHaveBeenCalledTimes(2);
-        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 595], ['bar', '1fr'], ['baz', '1fr']]));
+        expect(onResizeEnd).toHaveBeenCalledWith(
+          new Map<string, ColumnSize>([
+            ['foo', 595],
+            ['bar', '1fr'],
+            ['baz', '1fr']
+          ])
+        );
 
         fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         expect(tree.queryByRole('slider')).toBeNull();
       });
@@ -866,22 +913,26 @@ describe('TableViewSizing', function () {
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
-              <Column allowsResizing key="foo">Foo</Column>
-              <Column key="bar" maxWidth={200}>Bar</Column>
-              <Column key="baz" maxWidth={200}>Baz</Column>
+              <Column allowsResizing key="foo">
+                Foo
+              </Column>
+              <Column key="bar" maxWidth={200}>
+                Bar
+              </Column>
+              <Column key="baz" maxWidth={200}>
+                Baz
+              </Column>
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
 
         await user.pointer({target: document.body, keys: '[TouchA]'});
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         expect(tree.queryByRole('slider')).toBeNull();
 
@@ -897,12 +948,16 @@ describe('TableViewSizing', function () {
         let resizableHeader = within(header).getByRole('button');
 
         await user.pointer({target: resizableHeader, keys: '[TouchA]'});
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         let resizeMenuItem = tree.getAllByRole('menuitem')[0];
 
         await user.pointer({target: resizeMenuItem, keys: '[TouchA]'});
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         expect(tree.getByRole('slider')).toBeVisible();
         let resizer = tree.getByRole('slider');
@@ -924,7 +979,6 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'touch', pointerId: 1, pageX: 620, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
 
-
         expect(resizer).toHaveAttribute('value', '620');
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('620px');
@@ -934,10 +988,18 @@ describe('TableViewSizing', function () {
 
         // tapping on the document.body doesn't cause a blur in jest because the body isn't focusable, so just call blur
         act(() => resizer.blur());
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 620], ['bar', '1fr'], ['baz', '1fr']]));
+        expect(onResizeEnd).toHaveBeenCalledWith(
+          new Map<string, ColumnSize>([
+            ['foo', 620],
+            ['bar', '1fr'],
+            ['baz', '1fr']
+          ])
+        );
 
         expect(tree.queryByRole('slider')).toBeNull();
       });
@@ -948,23 +1010,27 @@ describe('TableViewSizing', function () {
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
-              <Column allowsResizing key="foo">Foo</Column>
-              <Column key="bar" maxWidth={200}>Bar</Column>
-              <Column key="baz" maxWidth={200}>Baz</Column>
+              <Column allowsResizing key="foo">
+                Foo
+              </Column>
+              <Column key="bar" maxWidth={200}>
+                Bar
+              </Column>
+              <Column key="baz" maxWidth={200}>
+                Baz
+              </Column>
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
 
         fireEvent.pointerDown(document.body, {pointerType: 'touch', pointerId: 1});
         fireEvent.pointerUp(document.body, {pointerType: 'touch', pointerId: 1});
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         expect(tree.queryByRole('slider')).toBeNull();
 
@@ -980,13 +1046,19 @@ describe('TableViewSizing', function () {
         let resizableHeader = within(header).getByRole('button');
 
         triggerTouch(resizableHeader);
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         let resizeMenuItem = tree.getAllByRole('menuitem')[0];
 
         triggerTouch(resizeMenuItem);
-        act(() => {jest.advanceTimersToNextTimer();});
-        act(() => {jest.advanceTimersToNextTimer();});
+        act(() => {
+          jest.advanceTimersToNextTimer();
+        });
+        act(() => {
+          jest.advanceTimersToNextTimer();
+        });
 
         let resizer = tree.getByRole('slider');
         expect(resizer).toBeVisible();
@@ -996,7 +1068,6 @@ describe('TableViewSizing', function () {
         fireEvent.pointerDown(resizer, {pointerType: 'touch', pointerId: 1, pageX: 600, pageY: 30});
         fireEvent.pointerMove(resizer, {pointerType: 'touch', pointerId: 1, pageX: 595, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
-
 
         expect(resizer).toHaveAttribute('value', '595');
         for (let row of rows) {
@@ -1010,7 +1081,6 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'touch', pointerId: 1, pageX: 620, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
 
-
         expect(resizer).toHaveAttribute('value', '620');
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('620px');
@@ -1020,55 +1090,68 @@ describe('TableViewSizing', function () {
 
         // tapping on the document.body doesn't cause a blur in jest because the body isn't focusable, so just call blur
         act(() => resizer.blur());
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 620], ['bar', '1fr'], ['baz', '1fr']]));
+        expect(onResizeEnd).toHaveBeenCalledWith(
+          new Map<string, ColumnSize>([
+            ['foo', 620],
+            ['bar', '1fr'],
+            ['baz', '1fr']
+          ])
+        );
 
         expect(tree.queryByRole('slider')).toBeNull();
       });
     });
 
     describe('keyboard', () => {
-      let plainRender = (props) => render(
-        <TableView aria-label="Table" onResizeEnd={props.onResizeEnd}>
-          <TableHeader>
-            <Column allowsResizing key="foo">Foo</Column>
-            <Column key="bar" maxWidth={200}>Bar</Column>
-            <Column key="baz" maxWidth={200}>Baz</Column>
-          </TableHeader>
-          <TableBody items={items}>
-            {item =>
-              (<Row key={item.foo}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>)
-            }
-          </TableBody>
-        </TableView>
-      );
-      let Example = (props) => {
+      let plainRender = props =>
+        render(
+          <TableView aria-label="Table" onResizeEnd={props.onResizeEnd}>
+            <TableHeader>
+              <Column allowsResizing key="foo">
+                Foo
+              </Column>
+              <Column key="bar" maxWidth={200}>
+                Bar
+              </Column>
+              <Column key="baz" maxWidth={200}>
+                Baz
+              </Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
+            </TableBody>
+          </TableView>
+        );
+      let Example = props => {
         let container = useRef(null);
         return (
           <UNSAFE_PortalProvider getContainer={() => container.current}>
             <TableView aria-label="Table" onResizeEnd={props.onResizeEnd}>
               <TableHeader>
-                <Column allowsResizing key="foo">Foo</Column>
-                <Column key="bar" maxWidth={200}>Bar</Column>
-                <Column key="baz" maxWidth={200}>Baz</Column>
+                <Column allowsResizing key="foo">
+                  Foo
+                </Column>
+                <Column key="bar" maxWidth={200}>
+                  Bar
+                </Column>
+                <Column key="baz" maxWidth={200}>
+                  Baz
+                </Column>
               </TableHeader>
               <TableBody items={items}>
-                {item =>
-                  (<Row key={item.foo}>
-                    {key => <Cell>{item[key]}</Cell>}
-                  </Row>)
-                }
+                {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
               </TableBody>
             </TableView>
             <div id="custom-portal-container" ref={container} />
           </UNSAFE_PortalProvider>
         );
       };
-      let customPortalRender = (props) => render(<Example {...props} />);
+      let customPortalRender = props => render(<Example {...props} />);
 
       it.each`
         Name                         | renderer              | getContainer
@@ -1102,8 +1185,12 @@ describe('TableViewSizing', function () {
         expect(menu.closest(getContainer)).not.toBeNull();
 
         await user.keyboard('{Enter}');
-        act(() => {jest.runAllTimers();});
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
         expect(menu).not.toBeInTheDocument();
 
         let resizer = tree.getByRole('slider');
@@ -1121,7 +1208,6 @@ describe('TableViewSizing', function () {
         }
         await user.keyboard('{ArrowLeft}');
         await user.keyboard('{ArrowLeft}');
-
 
         expect(resizer).toHaveAttribute('value', '600');
         for (let row of rows) {
@@ -1151,7 +1237,13 @@ describe('TableViewSizing', function () {
 
         await user.keyboard('{Escape}');
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
+        expect(onResizeEnd).toHaveBeenCalledWith(
+          new Map<string, ColumnSize>([
+            ['foo', 600],
+            ['bar', '1fr'],
+            ['baz', '1fr']
+          ])
+        );
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1163,16 +1255,18 @@ describe('TableViewSizing', function () {
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
-              <Column allowsResizing key="foo">Foo</Column>
-              <Column key="bar" maxWidth={200}>Bar</Column>
-              <Column key="baz" maxWidth={200}>Baz</Column>
+              <Column allowsResizing key="foo">
+                Foo
+              </Column>
+              <Column key="bar" maxWidth={200}>
+                Bar
+              </Column>
+              <Column key="baz" maxWidth={200}>
+                Baz
+              </Column>
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
@@ -1199,8 +1293,12 @@ describe('TableViewSizing', function () {
 
         fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
-        act(() => {jest.runAllTimers();});
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
 
         let resizer = tree.getByRole('slider');
 
@@ -1233,7 +1331,13 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement!, {key: 'Escape'});
         fireEvent.keyUp(document.activeElement!, {key: 'Escape'});
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
+        expect(onResizeEnd).toHaveBeenCalledWith(
+          new Map<string, ColumnSize>([
+            ['foo', 600],
+            ['bar', '1fr'],
+            ['baz', '1fr']
+          ])
+        );
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1245,16 +1349,18 @@ describe('TableViewSizing', function () {
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
-              <Column allowsResizing key="foo">Foo</Column>
-              <Column key="bar" maxWidth={200}>Bar</Column>
-              <Column key="baz" maxWidth={200}>Baz</Column>
+              <Column allowsResizing key="foo">
+                Foo
+              </Column>
+              <Column key="bar" maxWidth={200}>
+                Bar
+              </Column>
+              <Column key="baz" maxWidth={200}>
+                Baz
+              </Column>
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
@@ -1268,14 +1374,17 @@ describe('TableViewSizing', function () {
         expect(document.activeElement).toBe(resizableHeader);
         expect(tree.queryByRole('slider')).toBeNull();
 
-
         fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
 
         fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
-        act(() => {jest.runAllTimers();});
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
 
         let resizer = tree.getByRole('slider');
 
@@ -1284,7 +1393,13 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
+        expect(onResizeEnd).toHaveBeenCalledWith(
+          new Map<string, ColumnSize>([
+            ['foo', 600],
+            ['bar', '1fr'],
+            ['baz', '1fr']
+          ])
+        );
         expect(document.activeElement).toBe(resizableHeader);
 
         expect(tree.queryByRole('slider')).toBeNull();
@@ -1295,16 +1410,18 @@ describe('TableViewSizing', function () {
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
-              <Column allowsResizing key="foo">Foo</Column>
-              <Column key="bar" maxWidth={200}>Bar</Column>
-              <Column key="baz" maxWidth={200}>Baz</Column>
+              <Column allowsResizing key="foo">
+                Foo
+              </Column>
+              <Column key="bar" maxWidth={200}>
+                Bar
+              </Column>
+              <Column key="baz" maxWidth={200}>
+                Baz
+              </Column>
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
@@ -1323,8 +1440,12 @@ describe('TableViewSizing', function () {
 
         fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
-        act(() => {jest.runAllTimers();});
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
 
         let resizer = tree.getByRole('slider');
 
@@ -1334,7 +1455,13 @@ describe('TableViewSizing', function () {
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
         // TODO: should call with null or the currently calculated widths?
         // might be hard to call with current values
-        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
+        expect(onResizeEnd).toHaveBeenCalledWith(
+          new Map<string, ColumnSize>([
+            ['foo', 600],
+            ['bar', '1fr'],
+            ['baz', '1fr']
+          ])
+        );
         expect(document.activeElement).toBe(resizableHeader);
 
         expect(tree.queryByRole('slider')).toBeNull();
@@ -1345,16 +1472,18 @@ describe('TableViewSizing', function () {
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
-              <Column allowsResizing key="foo">Foo</Column>
-              <Column key="bar" maxWidth={200}>Bar</Column>
-              <Column key="baz" maxWidth={200}>Baz</Column>
+              <Column allowsResizing key="foo">
+                Foo
+              </Column>
+              <Column key="bar" maxWidth={200}>
+                Bar
+              </Column>
+              <Column key="baz" maxWidth={200}>
+                Baz
+              </Column>
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
@@ -1368,21 +1497,30 @@ describe('TableViewSizing', function () {
         expect(document.activeElement).toBe(resizableHeader);
         expect(tree.queryByRole('slider')).toBeNull();
 
-
         fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
 
         fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
-        act(() => {jest.runAllTimers();});
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
 
         let resizer = tree.getByRole('slider');
         expect(document.activeElement).toBe(resizer);
 
         await user.tab({shift: true});
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
+        expect(onResizeEnd).toHaveBeenCalledWith(
+          new Map<string, ColumnSize>([
+            ['foo', 600],
+            ['bar', '1fr'],
+            ['baz', '1fr']
+          ])
+        );
         expect(document.activeElement).toBe(resizableHeader);
 
         expect(tree.queryByRole('slider')).toBeNull();
@@ -1394,14 +1532,14 @@ describe('TableViewSizing', function () {
       let tree = render(
         <TableView aria-label="Table" selectionMode="multiple">
           <TableHeader columns={nestedColumns}>
-            {column => <Column allowsResizing childColumns={column.children}>{column.name}</Column>}
+            {column => (
+              <Column allowsResizing childColumns={column.children}>
+                {column.name}
+              </Column>
+            )}
           </TableHeader>
           <TableBody items={items}>
-            {item =>
-              (<Row key={item.foo}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>)
-            }
+            {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       );
@@ -1441,7 +1579,9 @@ describe('TableViewSizing', function () {
       await user.click(checkbox);
       expect(checkbox.checked).toBe(false);
 
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       columns = within(table).getAllByRole('columnheader');
       expect(columns).toHaveLength(5);
@@ -1465,7 +1605,9 @@ describe('TableViewSizing', function () {
       await user.click(checkbox);
       expect(checkbox.checked).toBe(false);
 
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       let table = tree.getByRole('grid');
       let columns = within(table).getAllByRole('columnheader');
@@ -1474,7 +1616,9 @@ describe('TableViewSizing', function () {
       await user.click(checkbox);
       expect(checkbox.checked).toBe(true);
 
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       columns = within(table).getAllByRole('columnheader');
       expect(columns).toHaveLength(6);
@@ -1498,7 +1642,9 @@ describe('TableViewSizing', function () {
       }
 
       let tree = render(<HidingColumns />);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       let table = tree.getByRole('grid');
       let columns = within(table).getAllByRole('columnheader');
       expect(columns).toHaveLength(6);
@@ -1513,24 +1659,32 @@ describe('TableViewSizing', function () {
 
       await user.click(audienceCheckbox);
       expect(audienceCheckbox.checked).toBe(false);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       oldWidth = compareWidths(rows[1], oldWidth);
 
       await user.click(budgetCheckbox);
       expect(budgetCheckbox.checked).toBe(false);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       oldWidth = compareWidths(rows[1], oldWidth);
 
       await user.click(targetCheckbox);
       expect(targetCheckbox.checked).toBe(false);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       oldWidth = compareWidths(rows[1], oldWidth);
 
       // This previously failed, the first column wouldn't update its width
       // when the 2nd to last column was removed
       await user.click(reachCheckbox);
       expect(reachCheckbox.checked).toBe(false);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       oldWidth = compareWidths(rows[1], oldWidth);
       columns = within(table).getAllByRole('columnheader');
       expect(columns).toHaveLength(2);
@@ -1538,33 +1692,38 @@ describe('TableViewSizing', function () {
       // Re-add the column and check that the width decreases
       await user.click(audienceCheckbox);
       expect(audienceCheckbox.checked).toBe(true);
-      act(() => {jest.runAllTimers();});
-      expect(parseInt((rows[1].childNodes[1] as HTMLElement).style.width, 10)).toBeLessThan(parseInt(oldWidth, 10));
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(parseInt((rows[1].childNodes[1] as HTMLElement).style.width, 10)).toBeLessThan(
+        parseInt(oldWidth, 10)
+      );
     });
   });
 
   describe('headerless columns', function () {
-
-    let renderTable = (props = {}, scale: Scale = 'medium', showDivider = false) => render(
-      <TableView aria-label="Table" data-testid="test" {...props}>
-        <TableHeader>
-          <Column key="foo">Foo</Column>
-          <Column key="addAction" hideHeader showDivider={showDivider}>
-            Add Item
-          </Column>
-        </TableHeader>
-        <TableBody>
-          <Row>
-            <Cell>Foo 1</Cell>
-            <Cell>
-              <ActionButton isQuiet>
-                <Add />
-              </ActionButton>
-            </Cell>
-          </Row>
-        </TableBody>
-      </TableView>
-      , scale);
+    let renderTable = (props = {}, scale: Scale = 'medium', showDivider = false) =>
+      render(
+        <TableView aria-label="Table" data-testid="test" {...props}>
+          <TableHeader>
+            <Column key="foo">Foo</Column>
+            <Column key="addAction" hideHeader showDivider={showDivider}>
+              Add Item
+            </Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>Foo 1</Cell>
+              <Cell>
+                <ActionButton isQuiet>
+                  <Add />
+                </ActionButton>
+              </Cell>
+            </Row>
+          </TableBody>
+        </TableView>,
+        scale
+      );
 
     it('renders  table with headerless column with default scale', function () {
       let {getByRole} = renderTable();
@@ -1592,7 +1751,6 @@ describe('TableViewSizing', function () {
       expect((headers[1].childNodes[0] as HTMLElement).style.width).toBe('1px');
       expect((headers[1].childNodes[0] as HTMLElement).style.height).toBe('1px');
       expect(headers[1]).not.toBeEmptyDOMElement();
-
 
       let rows = within(rowgroups[1]).getAllByRole('row');
       expect(rows).toHaveLength(1);
@@ -1647,7 +1805,6 @@ describe('TableViewSizing', function () {
   });
 });
 
-
 // I'd use tree.getByRole(role, {name: text}) here, but it's unbearably slow.
 function getColumn(tree, name) {
   // Find by text, then go up to the element with the cell role.
@@ -1663,7 +1820,9 @@ function resizeCol(tree, col, delta) {
   let column = getColumn(tree, col);
 
   // trigger pointer modality
-  act(() => {setInteractionModality('pointer');});
+  act(() => {
+    setInteractionModality('pointer');
+  });
   fireEvent.pointerMove(tree.container);
 
   fireEvent.pointerEnter(column);
@@ -1672,18 +1831,25 @@ function resizeCol(tree, col, delta) {
 
   // actual locations do not matter, the delta matters between events for the calculation of useMove
   fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 0, pageY: 30});
-  act(() => {jest.runAllTimers();});
+  act(() => {
+    jest.runAllTimers();
+  });
   fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: delta, pageY: 25});
-  act(() => {jest.runAllTimers();});
+  act(() => {
+    jest.runAllTimers();
+  });
   fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
-  act(() => {jest.runAllTimers();});
+  act(() => {
+    jest.runAllTimers();
+  });
 }
-
 
 function resizeTable(clientWidth, newValue) {
   clientWidth.mockImplementation(() => newValue);
   fireEvent(window, new Event('resize'));
-  act(() => {jest.runAllTimers();});
+  act(() => {
+    jest.runAllTimers();
+  });
 }
 
 describe('RSP TableView', () => {

@@ -14,15 +14,17 @@ const plugin = {
   meta: {
     type: 'suggestion',
     docs: {
-      description: 'Disallow using document.activeElement in favor of getActiveElement() for shadow DOM compatibility',
+      description:
+        'Disallow using document.activeElement in favor of getActiveElement() for shadow DOM compatibility',
       recommended: true
     },
     fixable: 'code',
     messages: {
-      useGetActiveElement: 'Use getActiveElement() instead of document.activeElement for shadow DOM compatibility.'
+      useGetActiveElement:
+        'Use getActiveElement() instead of document.activeElement for shadow DOM compatibility.'
     }
   },
-  create: (context) => {
+  create: context => {
     let hasGetActiveElementImport = false;
     let getActiveElementLocalName = 'getActiveElement';
     let existingReactAriaUtilsImport = null;
@@ -38,16 +40,18 @@ const plugin = {
           existingReactAriaUtilsImport = node;
           // Check if getActiveElement is already imported
           const hasGetActiveElement = node.specifiers.some(
-            spec => spec.type === 'ImportSpecifier' &&
-                    spec.imported.type === 'Identifier' &&
-                    spec.imported.name === 'getActiveElement'
+            spec =>
+              spec.type === 'ImportSpecifier' &&
+              spec.imported.type === 'Identifier' &&
+              spec.imported.name === 'getActiveElement'
           );
           if (hasGetActiveElement) {
             hasGetActiveElementImport = true;
             const getActiveElementSpec = node.specifiers.find(
-              spec => spec.type === 'ImportSpecifier' &&
-                      spec.imported.type === 'Identifier' &&
-                      spec.imported.name === 'getActiveElement'
+              spec =>
+                spec.type === 'ImportSpecifier' &&
+                spec.imported.type === 'Identifier' &&
+                spec.imported.name === 'getActiveElement'
             );
             getActiveElementLocalName = getActiveElementSpec.local.name;
           }
@@ -55,11 +59,11 @@ const plugin = {
       },
 
       // Detect document.activeElement usage
-      ['MemberExpression[object.name=\'document\'][property.name=\'activeElement\']'](node) {
+      ["MemberExpression[object.name='document'][property.name='activeElement']"](node) {
         context.report({
           node,
           messageId: 'useGetActiveElement',
-          fix: (fixer) => {
+          fix: fixer => {
             const fixes = [];
             const sourceCode = context.sourceCode;
 
@@ -72,10 +76,15 @@ const plugin = {
                 // Add getActiveElement to existing @react-aria/utils import
                 const specifiers = existingReactAriaUtilsImport.specifiers;
                 if (specifiers.length > 0) {
-                  fixes.push(fixer.insertTextAfter(
-                    sourceCode.getFirstToken(existingReactAriaUtilsImport, token => token.value === '{'),
-                    'getActiveElement, '
-                  ));
+                  fixes.push(
+                    fixer.insertTextAfter(
+                      sourceCode.getFirstToken(
+                        existingReactAriaUtilsImport,
+                        token => token.value === '{'
+                      ),
+                      'getActiveElement, '
+                    )
+                  );
                 }
               } else {
                 // No existing import from @react-aria/utils, create a new one
@@ -84,11 +93,11 @@ const plugin = {
 
                 if (imports.length > 0) {
                   const lastImport = imports[imports.length - 1];
-                  const importStatement = '\nimport {getActiveElement} from \'@react-aria/utils\';';
+                  const importStatement = "\nimport {getActiveElement} from '@react-aria/utils';";
                   fixes.push(fixer.insertTextAfter(lastImport, importStatement));
                 } else {
                   // No imports, add at the beginning
-                  const importStatement = 'import {getActiveElement} from \'@react-aria/utils\';\n';
+                  const importStatement = "import {getActiveElement} from '@react-aria/utils';\n";
                   fixes.push(fixer.insertTextBefore(programNode.body[0], importStatement));
                 }
               }

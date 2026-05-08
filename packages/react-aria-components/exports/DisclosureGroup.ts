@@ -14,8 +14,22 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {Disclosure, DisclosureGroup, DisclosureGroupStateContext, DisclosurePanel, DisclosureStateContext, DisclosureContext} from '../src/Disclosure';
-export type {DisclosureProps, DisclosureRenderProps, DisclosurePanelProps, DisclosurePanelRenderProps, DisclosureGroupProps, DisclosureGroupRenderProps} from '../src/Disclosure';
+export {
+  Disclosure,
+  DisclosureGroup,
+  DisclosureGroupStateContext,
+  DisclosurePanel,
+  DisclosureStateContext,
+  DisclosureContext
+} from '../src/Disclosure';
+export type {
+  DisclosureProps,
+  DisclosureRenderProps,
+  DisclosurePanelProps,
+  DisclosurePanelRenderProps,
+  DisclosureGroupProps,
+  DisclosureGroupRenderProps
+} from '../src/Disclosure';
 export type {DisclosureState} from 'react-stately/useDisclosureState';
 export type {DisclosureGroupState} from 'react-stately/useDisclosureGroupState';
 export type {Key} from '@react-types/shared';

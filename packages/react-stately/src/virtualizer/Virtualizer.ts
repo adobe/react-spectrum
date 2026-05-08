@@ -22,9 +22,9 @@ import {Rect} from './Rect';
 import {Size} from './Size';
 
 interface VirtualizerOptions<T extends object, V> {
-  delegate: VirtualizerDelegate<T, V>,
-  collection: Collection<T>,
-  layout: Layout<T>
+  delegate: VirtualizerDelegate<T, V>;
+  collection: Collection<T>;
+  layout: Layout<T>;
 }
 
 /**
@@ -74,9 +74,9 @@ export class Virtualizer<T extends object, V> {
     this.delegate = options.delegate;
     this.collection = options.collection;
     this.layout = options.layout;
-    this.contentSize = new Size;
-    this.visibleRect = new Rect;
-    this.size = new Size;
+    this.contentSize = new Size();
+    this.visibleRect = new Rect();
+    this.size = new Size();
     this.persistedKeys = new Set();
     this._visibleViews = new Map();
     this._renderedContent = new WeakMap();
@@ -113,7 +113,9 @@ export class Virtualizer<T extends object, V> {
   }
 
   private getParentView(layoutInfo: LayoutInfo): ReusableView<T, V> | undefined {
-    return layoutInfo.parentKey != null ? this._visibleViews.get(layoutInfo.parentKey) : this._rootView;
+    return layoutInfo.parentKey != null
+      ? this._visibleViews.get(layoutInfo.parentKey)
+      : this._rootView;
   }
 
   private getReusableView(layoutInfo: LayoutInfo): ChildView<T, V> {
@@ -173,8 +175,14 @@ export class Virtualizer<T extends object, V> {
     let visibleRect = this.visibleRect;
     let contentOffsetX = context.contentChanged ? 0 : visibleRect.x;
     let contentOffsetY = context.contentChanged ? 0 : visibleRect.y;
-    contentOffsetX = Math.max(0, Math.min(this.contentSize.width - visibleRect.width, contentOffsetX));
-    contentOffsetY = Math.max(0, Math.min(this.contentSize.height - visibleRect.height, contentOffsetY));
+    contentOffsetX = Math.max(
+      0,
+      Math.min(this.contentSize.width - visibleRect.width, contentOffsetX)
+    );
+    contentOffsetY = Math.max(
+      0,
+      Math.min(this.contentSize.height - visibleRect.height, contentOffsetY)
+    );
 
     if (contentOffsetX !== visibleRect.x || contentOffsetY !== visibleRect.y) {
       // If the offset changed, trigger a new re-render.
@@ -187,8 +195,14 @@ export class Virtualizer<T extends object, V> {
 
   getVisibleLayoutInfos(): Map<Key, LayoutInfo> {
     let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
-    let isClientWidthMocked = isTestEnv && typeof HTMLElement !== 'undefined' && Object.getOwnPropertyNames(HTMLElement.prototype).includes('clientWidth');
-    let isClientHeightMocked = isTestEnv && typeof HTMLElement !== 'undefined' && Object.getOwnPropertyNames(HTMLElement.prototype).includes('clientHeight');
+    let isClientWidthMocked =
+      isTestEnv &&
+      typeof HTMLElement !== 'undefined' &&
+      Object.getOwnPropertyNames(HTMLElement.prototype).includes('clientWidth');
+    let isClientHeightMocked =
+      isTestEnv &&
+      typeof HTMLElement !== 'undefined' &&
+      Object.getOwnPropertyNames(HTMLElement.prototype).includes('clientHeight');
 
     let rect: Rect;
     if (isTestEnv && !(isClientWidthMocked && isClientHeightMocked)) {
@@ -197,7 +211,7 @@ export class Virtualizer<T extends object, V> {
       rect = this._overscanManager.getOverscannedRect();
     }
     let layoutInfos = this.layout.getVisibleLayoutInfos(rect);
-    let map = new Map;
+    let map = new Map();
     for (let layoutInfo of layoutInfos) {
       map.set(layoutInfo.key, layoutInfo);
     }
@@ -296,8 +310,18 @@ export class Virtualizer<T extends object, V> {
 
       // Create a rectangle using the scroll position and layout size of the scroll view. This is not the same
       // as the visibleRect, whose width and height may change during window scrolling.
-      let oldRect = new Rect(this.visibleRect.x, this.visibleRect.y, this.size.width, this.size.height);
-      let newRect = new Rect(opts.visibleRect.x, opts.visibleRect.y, opts.size.width, opts.size.height);
+      let oldRect = new Rect(
+        this.visibleRect.x,
+        this.visibleRect.y,
+        this.size.width,
+        this.size.height
+      );
+      let newRect = new Rect(
+        opts.visibleRect.x,
+        opts.visibleRect.y,
+        opts.size.width,
+        opts.size.height
+      );
       let shouldInvalidate = this.layout.shouldInvalidate(newRect, oldRect);
 
       if (shouldInvalidate) {
@@ -317,10 +341,14 @@ export class Virtualizer<T extends object, V> {
         sizeChanged ||= opts.invalidationContext.sizeChanged || false;
         offsetChanged ||= opts.invalidationContext.offsetChanged || false;
         itemSizeChanged ||= opts.invalidationContext.itemSizeChanged || false;
-        layoutOptionsChanged ||= opts.invalidationContext.layoutOptions != null
-          && this._invalidationContext.layoutOptions != null
-          && opts.invalidationContext.layoutOptions !== this._invalidationContext.layoutOptions
-          && this.layout.shouldInvalidateLayoutOptions(opts.invalidationContext.layoutOptions, this._invalidationContext.layoutOptions);
+        layoutOptionsChanged ||=
+          opts.invalidationContext.layoutOptions != null &&
+          this._invalidationContext.layoutOptions != null &&
+          opts.invalidationContext.layoutOptions !== this._invalidationContext.layoutOptions &&
+          this.layout.shouldInvalidateLayoutOptions(
+            opts.invalidationContext.layoutOptions,
+            this._invalidationContext.layoutOptions
+          );
         needsLayout ||= itemSizeChanged || sizeChanged || offsetChanged || layoutOptionsChanged;
       }
       this._invalidationContext = opts.invalidationContext;

@@ -2,12 +2,12 @@
 const devtoolsConnections = new Map();
 
 // Listen for connections from DevTools
-chrome.runtime.onConnect.addListener((port) => {
+chrome.runtime.onConnect.addListener(port => {
   if (port.name === 'devtools-page') {
     let tabId;
 
     // Listen for messages from DevTools
-    const messageListener = (message) => {
+    const messageListener = message => {
       if (message.type === 'stylemacro-init') {
         tabId = message.tabId;
         devtoolsConnections.set(tabId, port);
@@ -37,7 +37,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   // Forward messages from content script to DevTools
   if (message.action === 'stylemacro-class-changed') {
-    console.log(`[Background] Forwarding ${message.action} from content script to DevTools, tabId: ${tabId}`);
+    console.log(
+      `[Background] Forwarding ${message.action} from content script to DevTools, tabId: ${tabId}`
+    );
     const devtoolsPort = devtoolsConnections.get(tabId);
     if (devtoolsPort) {
       devtoolsPort.postMessage(message);
@@ -48,4 +50,3 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   return false; // Don't keep channel open
 });
-

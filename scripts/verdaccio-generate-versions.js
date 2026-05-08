@@ -26,8 +26,18 @@ process.stdin.on('end', () => {
         if (location.startsWith('packages/dev/')) {
           const packageName = location.split('/').pop();
           // Only include specific dev tools
-          if (location.includes('mcp') || ['optimize-locales-plugin', 'parcel-resolver-optimize-locales', 'codemods',
-            'parcel-transformer-s2-icon', 's2-icon-builder', 'ts-plugin', 'parcel-namer-s2'].includes(packageName)) {
+          if (
+            location.includes('mcp') ||
+            [
+              'optimize-locales-plugin',
+              'parcel-resolver-optimize-locales',
+              'codemods',
+              'parcel-transformer-s2-icon',
+              's2-icon-builder',
+              'ts-plugin',
+              'parcel-namer-s2'
+            ].includes(packageName)
+          ) {
             acc[workspace.name] = 'patch';
           }
           return acc;
@@ -57,7 +67,9 @@ process.stdin.on('end', () => {
 
     // Convert to YAML format
     const yamlContent = `releases:
-${Object.entries(releases).map(([name, version]) => `  "${name}": ${version}`).join('\n')}
+${Object.entries(releases)
+  .map(([name, version]) => `  "${name}": ${version}`)
+  .join('\n')}
 
 undecided:
   - react-spectrum-monorepo

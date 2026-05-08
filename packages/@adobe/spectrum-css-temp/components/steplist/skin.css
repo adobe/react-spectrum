@@ -158,7 +158,8 @@ governing permissions and limitations under the License.
 
       &.focus-ring {
         .spectrum-Steplist-marker {
-          outline: solid 2px var(--spectrum-high-contrast-focus-ring-color, var(--spectrum-alias-focus-ring-color));
+          outline: solid 2px
+            var(--spectrum-high-contrast-focus-ring-color, var(--spectrum-alias-focus-ring-color));
           outline-offset: 2px;
         }
       }
@@ -182,10 +183,13 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Steplist--emphasized {
-  --spectrum-steplist-current-label-text-color: var(--spectrum-steplist-emphasized-current-label-text-color);
-  --spectrum-steplist-current-marker-color: var(--spectrum-steplist-emphasized-current-marker-color);
+  --spectrum-steplist-current-label-text-color: var(
+    --spectrum-steplist-emphasized-current-label-text-color
+  );
+  --spectrum-steplist-current-marker-color: var(
+    --spectrum-steplist-emphasized-current-marker-color
+  );
 }
-
 
 @media (forced-colors: active) {
   .spectrum-Steplist {
@@ -229,4 +233,3 @@ governing permissions and limitations under the License.
     }
   }
 }
-

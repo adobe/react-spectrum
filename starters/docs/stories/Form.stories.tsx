@@ -14,7 +14,7 @@ const meta: Meta<typeof Form> = {
 export default meta;
 type Story = StoryFn<typeof Form>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <Form {...args}>
     <TextField name="email" type="email" isRequired label="Email" placeholder="Enter your email" />
     <Button type="submit">Submit</Button>

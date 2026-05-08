@@ -14,7 +14,9 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('ToastContainer SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {Provider} from '@react-spectrum/provider';
       import {theme} from '@react-spectrum/theme-default';
       import {ToastContainer} from '../../exports/index.ts';
@@ -22,6 +24,7 @@ describe('ToastContainer SSR', function () {
       <Provider theme={theme}>
         <ToastContainer />
       </Provider>
-    `);
+    `
+    );
   });
 });

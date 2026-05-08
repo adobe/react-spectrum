@@ -3,21 +3,25 @@ const spawn = require('child_process').spawnSync;
 const fs = require('fs');
 
 let workspaceLookup = {};
-let packages = exec('yarn workspaces list --json -v').toString().split('\n')
+let packages = exec('yarn workspaces list --json -v')
+  .toString()
+  .split('\n')
   .map(line => {
     try {
       let result = JSON.parse(line);
       workspaceLookup[result.location] = result.name;
       return result;
     } catch (e) {
-      console.log(e)
+      console.log(e);
       // ignore empty lines
     }
   })
   .filter(Boolean)
   .reduce((acc, item) => {
     acc[item.name] = item;
-    acc[item.name].workspaceDependencies = item.workspaceDependencies.map(dep => workspaceLookup[dep]);
+    acc[item.name].workspaceDependencies = item.workspaceDependencies.map(
+      dep => workspaceLookup[dep]
+    );
     return acc;
   }, {});
 let uuid = require('uuid').v4();
@@ -49,13 +53,16 @@ for (let name in packages) {
     let args = [];
     if (ksdiff) {
       // Override Kaleidoscope difftool command to use UUID, so that we can group all changes across packages together.
-      args.push('-c', `difftool.Kaleidoscope.cmd=ksdiff --partial-changeset --UUID ${uuid} --relative-path "$MERGED" -- "$LOCAL" "$REMOTE"`);
+      args.push(
+        '-c',
+        `difftool.Kaleidoscope.cmd=ksdiff --partial-changeset --UUID ${uuid} --relative-path "$MERGED" -- "$LOCAL" "$REMOTE"`
+      );
       args.push('difftool');
     } else {
       args.push('diff');
     }
 
-    args.push('--exit-code', tag + '..HEAD',  packages[name].location);
+    args.push('--exit-code', tag + '..HEAD', packages[name].location);
 
     if (codeOnly) {
       args.push(':!**/docs/**', ':!**/test/**', ':!**/stories/**', ':!**/chromatic/**');

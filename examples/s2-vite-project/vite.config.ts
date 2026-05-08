@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import { defineConfig } from 'vite'
+import {defineConfig} from 'vite';
 import optimizeLocales from '@react-aria/optimize-locales-plugin';
-import react from '@vitejs/plugin-react'
+import react from '@vitejs/plugin-react';
 import macros from 'unplugin-parcel-macros';
 
 // https://vitejs.dev/config/
@@ -22,9 +22,9 @@ export default defineConfig({
     react(),
     {
       ...optimizeLocales.vite({
-        locales: ['en', 'pl'],
+        locales: ['en', 'pl']
       }),
-      enforce: 'pre',
+      enforce: 'pre'
     }
   ],
   build: {
@@ -44,4 +44,4 @@ export default defineConfig({
       }
     }
   }
-})
+});

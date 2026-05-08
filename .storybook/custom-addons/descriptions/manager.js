@@ -1,5 +1,5 @@
 import {addons, types, useParameter} from 'storybook/manager-api';
-import { AddonPanel } from 'storybook/internal/components';
+import {AddonPanel} from 'storybook/internal/components';
 import React from 'react';
 
 const ADDON_ID = 'descriptionAddon';
@@ -13,7 +13,7 @@ const MyPanel = () => {
   return <div style={{margin: '15px'}}>{item}</div>;
 };
 
-addons.register(ADDON_ID, (api) => {
+addons.register(ADDON_ID, api => {
   addons.add(PANEL_ID, {
     type: types.PANEL,
     title: 'Description',

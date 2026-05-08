@@ -32,7 +32,9 @@ Default.story = {
   name: 'default'
 };
 
-export const IsEmphasized: ActionBarStory = () => <Example isEmphasized defaultSelectedKeys={new Set(['Foo 1'])} />;
+export const IsEmphasized: ActionBarStory = () => (
+  <Example isEmphasized defaultSelectedKeys={new Set(['Foo 1'])} />
+);
 
 IsEmphasized.story = {
   name: 'isEmphasized'

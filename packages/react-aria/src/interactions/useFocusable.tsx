@@ -10,35 +10,52 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableDOMProps, FocusableElement, FocusableProps, RefObject} from '@react-types/shared';
+import {
+  DOMAttributes,
+  FocusableDOMProps,
+  FocusableElement,
+  FocusableProps,
+  RefObject
+} from '@react-types/shared';
 import {focusSafely} from './focusSafely';
 import {getOwnerWindow} from '../utils/domHelpers';
 import {isFocusable} from '../utils/isFocusable';
 import {mergeProps} from '../utils/mergeProps';
 import {mergeRefs} from '../utils/mergeRefs';
-import React, {ForwardedRef, forwardRef, MutableRefObject, ReactElement, ReactNode, useContext, useEffect, useRef} from 'react';
+import React, {
+  ForwardedRef,
+  forwardRef,
+  MutableRefObject,
+  ReactElement,
+  ReactNode,
+  useContext,
+  useEffect,
+  useRef
+} from 'react';
 import {useFocus} from './useFocus';
 import {useKeyboard} from './useKeyboard';
 import {useObjectRef} from '../utils/useObjectRef';
 import {useSyncRef} from '../utils/useSyncRef';
 
-export interface FocusableOptions<T = FocusableElement> extends FocusableProps<T>, FocusableDOMProps {
+export interface FocusableOptions<T = FocusableElement>
+  extends FocusableProps<T>, FocusableDOMProps {
   /** Whether focus should be disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 export interface FocusableProviderProps extends DOMAttributes {
   /** The child element to provide DOM props to. */
-  children?: ReactNode
+  children?: ReactNode;
 }
 
 interface FocusableContextValue extends FocusableProviderProps {
-  ref?: MutableRefObject<FocusableElement | null>
+  ref?: MutableRefObject<FocusableElement | null>;
 }
 
 // Exported for @react-aria/collections, which forwards this context.
 /** @private */
-export let FocusableContext: React.Context<FocusableContextValue | null> = React.createContext<FocusableContextValue | null>(null);
+export let FocusableContext: React.Context<FocusableContextValue | null> =
+  React.createContext<FocusableContextValue | null>(null);
 
 function useFocusableContext(ref: RefObject<FocusableElement | null>): FocusableContextValue {
   let context = useContext(FocusableContext) || {};
@@ -52,9 +69,12 @@ function useFocusableContext(ref: RefObject<FocusableElement | null>): Focusable
 /**
  * Provides DOM props to the nearest focusable child.
  */
-export const FocusableProvider:
-  React.ForwardRefExoticComponent<FocusableProviderProps & React.RefAttributes<FocusableElement>> =
-React.forwardRef(function FocusableProvider(props: FocusableProviderProps, ref: ForwardedRef<FocusableElement>) {
+export const FocusableProvider: React.ForwardRefExoticComponent<
+  FocusableProviderProps & React.RefAttributes<FocusableElement>
+> = React.forwardRef(function FocusableProvider(
+  props: FocusableProviderProps,
+  ref: ForwardedRef<FocusableElement>
+) {
   let {children, ...otherProps} = props;
   let objRef = useObjectRef(ref);
   let context = {
@@ -62,22 +82,21 @@ React.forwardRef(function FocusableProvider(props: FocusableProviderProps, ref: 
     ref: objRef
   };
 
-  return (
-    <FocusableContext.Provider value={context}>
-      {children}
-    </FocusableContext.Provider>
-  );
+  return <FocusableContext.Provider value={context}>{children}</FocusableContext.Provider>;
 });
 
 export interface FocusableAria {
   /** Props for the focusable element. */
-  focusableProps: DOMAttributes
+  focusableProps: DOMAttributes;
 }
 
 /**
  * Used to make an element focusable and capable of auto focus.
  */
-export function useFocusable<T extends FocusableElement = FocusableElement>(props: FocusableOptions<T>, domRef: RefObject<FocusableElement | null>): FocusableAria {
+export function useFocusable<T extends FocusableElement = FocusableElement>(
+  props: FocusableOptions<T>,
+  domRef: RefObject<FocusableElement | null>
+): FocusableAria {
   let {focusProps} = useFocus(props);
   let {keyboardProps} = useKeyboard(props);
   let interactions = mergeProps(focusProps, keyboardProps);
@@ -110,87 +129,88 @@ export function useFocusable<T extends FocusableElement = FocusableElement>(prop
 }
 
 export interface FocusableComponentProps extends FocusableOptions {
-  children: ReactElement<DOMAttributes, string>
+  children: ReactElement<DOMAttributes, string>;
 }
 
-export const Focusable:
-  React.ForwardRefExoticComponent<FocusableComponentProps & React.RefAttributes<FocusableElement>> =
-forwardRef(({children, ...props}: FocusableComponentProps, ref: ForwardedRef<FocusableElement>) => {
-  ref = useObjectRef(ref);
-  let {focusableProps} = useFocusable(props, ref);
-  let child = React.Children.only(children);
+export const Focusable: React.ForwardRefExoticComponent<
+  FocusableComponentProps & React.RefAttributes<FocusableElement>
+> = forwardRef(
+  ({children, ...props}: FocusableComponentProps, ref: ForwardedRef<FocusableElement>) => {
+    ref = useObjectRef(ref);
+    let {focusableProps} = useFocusable(props, ref);
+    let child = React.Children.only(children);
 
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'production') {
-      return;
-    }
-
-    let el = ref.current;
-    if (!el || !(el instanceof getOwnerWindow(el).Element)) {
-      console.error('<Focusable> child must forward its ref to a DOM element.');
-      return;
-    }
-
-    if (!props.isDisabled && !isFocusable(el)) {
-      console.warn('<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.');
-      return;
-    }
-
-    if (
-      el.localName !== 'button' &&
-      el.localName !== 'input' &&
-      el.localName !== 'select' &&
-      el.localName !== 'textarea' &&
-      el.localName !== 'a' &&
-      el.localName !== 'area' &&
-      el.localName !== 'summary' &&
-      el.localName !== 'img' &&
-      el.localName !== 'svg'
-    ) {
-      let role = el.getAttribute('role');
-      if (!role) {
-        console.warn('<Focusable> child must have an interactive ARIA role.');
-      } else if (
-        // https://w3c.github.io/aria/#widget_roles
-        role !== 'application' &&
-        role !== 'button' &&
-        role !== 'checkbox' &&
-        role !== 'combobox' &&
-        role !== 'gridcell' &&
-        role !== 'link' &&
-        role !== 'menuitem' &&
-        role !== 'menuitemcheckbox' &&
-        role !== 'menuitemradio' &&
-        role !== 'option' &&
-        role !== 'radio' &&
-        role !== 'searchbox' &&
-        role !== 'separator' &&
-        role !== 'slider' &&
-        role !== 'spinbutton' &&
-        role !== 'switch' &&
-        role !== 'tab' &&
-        role !== 'tabpanel' &&
-        role !== 'textbox' &&
-        role !== 'treeitem' &&
-        // aria-describedby is also announced on these roles
-        role !== 'img' &&
-        role !== 'meter' &&
-        role !== 'progressbar'
-      ) {
-        console.warn(`<Focusable> child must have an interactive ARIA role. Got "${role}".`);
+    useEffect(() => {
+      if (process.env.NODE_ENV === 'production') {
+        return;
       }
-    }
-  }, [ref, props.isDisabled]);
 
-  // @ts-ignore
-  let childRef = parseInt(React.version, 10) < 19 ? child.ref : child.props.ref;
+      let el = ref.current;
+      if (!el || !(el instanceof getOwnerWindow(el).Element)) {
+        console.error('<Focusable> child must forward its ref to a DOM element.');
+        return;
+      }
 
-  return React.cloneElement(
-    child,
-    {
+      if (!props.isDisabled && !isFocusable(el)) {
+        console.warn(
+          '<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.'
+        );
+        return;
+      }
+
+      if (
+        el.localName !== 'button' &&
+        el.localName !== 'input' &&
+        el.localName !== 'select' &&
+        el.localName !== 'textarea' &&
+        el.localName !== 'a' &&
+        el.localName !== 'area' &&
+        el.localName !== 'summary' &&
+        el.localName !== 'img' &&
+        el.localName !== 'svg'
+      ) {
+        let role = el.getAttribute('role');
+        if (!role) {
+          console.warn('<Focusable> child must have an interactive ARIA role.');
+        } else if (
+          // https://w3c.github.io/aria/#widget_roles
+          role !== 'application' &&
+          role !== 'button' &&
+          role !== 'checkbox' &&
+          role !== 'combobox' &&
+          role !== 'gridcell' &&
+          role !== 'link' &&
+          role !== 'menuitem' &&
+          role !== 'menuitemcheckbox' &&
+          role !== 'menuitemradio' &&
+          role !== 'option' &&
+          role !== 'radio' &&
+          role !== 'searchbox' &&
+          role !== 'separator' &&
+          role !== 'slider' &&
+          role !== 'spinbutton' &&
+          role !== 'switch' &&
+          role !== 'tab' &&
+          role !== 'tabpanel' &&
+          role !== 'textbox' &&
+          role !== 'treeitem' &&
+          // aria-describedby is also announced on these roles
+          role !== 'img' &&
+          role !== 'meter' &&
+          role !== 'progressbar'
+        ) {
+          console.warn(`<Focusable> child must have an interactive ARIA role. Got "${role}".`);
+        }
+      }
+    }, [ref, props.isDisabled]);
+
+    // @ts-ignore
+    let childRef = parseInt(React.version, 10) < 19 ? child.ref : child.props.ref;
+
+    return React.cloneElement(child, {
       ...mergeProps(focusableProps, child.props),
       // @ts-ignore
       ref: mergeRefs(childRef, ref)
-    }
-  );
-});
+    });
+  }
+);

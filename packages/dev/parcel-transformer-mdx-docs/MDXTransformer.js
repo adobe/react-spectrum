@@ -42,7 +42,7 @@ module.exports = new Transformer({
     let preRelease = preReleaseParts ? preReleaseParts[0] : '';
 
     let visit = (await import('unist-util-visit')).visit;
-    const extractExamples = () => (tree, file) => (
+    const extractExamples = () => (tree, file) =>
       flatMap(tree, node => {
         if (node.type === 'code') {
           let [meta, ...options] = (node.meta || '').split(' ');
@@ -52,7 +52,8 @@ module.exports = new Transformer({
             return [];
           }
 
-          let keepIndividualImports = meta === 'keepIndividualImports' || options.includes('keepIndividualImports');
+          let keepIndividualImports =
+            meta === 'keepIndividualImports' || options.includes('keepIndividualImports');
 
           if (meta === 'example' || meta === 'snippet') {
             let id = `example-${exampleCode.length}`;
@@ -70,7 +71,9 @@ module.exports = new Transformer({
 
             let provider = 'ExampleProvider';
             if (options.includes('themeSwitcher=true')) {
-              exampleCode.push('import {ExampleThemeSwitcher} from "@react-spectrum/docs/src/ExampleThemeSwitcher";\n');
+              exampleCode.push(
+                'import {ExampleThemeSwitcher} from "@react-spectrum/docs/src/ExampleThemeSwitcher";\n'
+              );
               provider = 'ExampleThemeSwitcher';
             }
 
@@ -80,7 +83,10 @@ module.exports = new Transformer({
                 let name = code.match(/function (.*?)\s*\(/)[1];
                 code = `${code}\nRENDER_FNS.push(() => ReactDOM.createRoot(document.getElementById("${id}")).render(<${provider} ${props}><${name} /></${provider}>));`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
-                code = code.replace(/^(<(.|\n)*>)$/m, `RENDER_FNS.push(() => ReactDOM.createRoot(document.getElementById("${id}")).render(<${provider} ${props}>$1</${provider}>));`);
+                code = code.replace(
+                  /^(<(.|\n)*>)$/m,
+                  `RENDER_FNS.push(() => ReactDOM.createRoot(document.getElementById("${id}")).render(<${provider} ${props}>$1</${provider}>));`
+                );
               }
             }
 
@@ -92,7 +98,12 @@ module.exports = new Transformer({
 
             // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actually
             // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
-            node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*?\/\/\/- end collapse -\/\/\/(\s*\n*(?=\s*(\/\/|\/\*)))?/g, () => '').trim();
+            node.value = node.value
+              .replace(
+                /\n*\/\/\/- begin collapse -\/\/\/(.|\n)*?\/\/\/- end collapse -\/\/\/(\s*\n*(?=\s*(\/\/|\/\*)))?/g,
+                () => ''
+              )
+              .trim();
 
             if (options.includes('render=false')) {
               node.meta = null;
@@ -136,16 +147,10 @@ module.exports = new Transformer({
                 name: 'className',
                 value: options.includes('standalone') ? 'standalone' : 'flip'
               });
-              return [
-                output,
-                ...highlightedCode
-              ];
+              return [output, ...highlightedCode];
             }
 
-            return [
-              ...highlightedCode,
-              output
-            ];
+            return [...highlightedCode, output];
           }
 
           if (node.lang === 'css') {
@@ -162,52 +167,53 @@ module.exports = new Transformer({
         }
 
         return [node];
-      })
-    );
+      });
 
-    let appendCSS = () => async (tree) => {
+    let appendCSS = () => async tree => {
       let css = await processCSS(cssCode, asset, options, minimal);
 
-      tree.children.push(
-        {
-          type: 'mdxJsxFlowElement',
-          name: 'style',
-          attributes: [
-            {
-              type: 'mdxJsxAttribute',
-              name: 'dangerouslySetInnerHTML',
-              value: {
-                type: 'mdxJsxAttributeValueExpression',
-                value: JSON.stringify({__html: css}),
-                data: {
-                  estree: {
-                    type: 'Program',
-                    body: [{
+      tree.children.push({
+        type: 'mdxJsxFlowElement',
+        name: 'style',
+        attributes: [
+          {
+            type: 'mdxJsxAttribute',
+            name: 'dangerouslySetInnerHTML',
+            value: {
+              type: 'mdxJsxAttributeValueExpression',
+              value: JSON.stringify({__html: css}),
+              data: {
+                estree: {
+                  type: 'Program',
+                  body: [
+                    {
                       type: 'ExpressionStatement',
                       expression: {
                         type: 'ObjectExpression',
-                        properties: [{
-                          type: 'Property',
-                          kind: 'init',
-                          key: {
-                            type: 'Identifier',
-                            name: '__html'
-                          },
-                          value: {
-                            type: 'Literal',
-                            value: css
+                        properties: [
+                          {
+                            type: 'Property',
+                            kind: 'init',
+                            key: {
+                              type: 'Identifier',
+                              name: '__html'
+                            },
+                            value: {
+                              type: 'Literal',
+                              value: css
+                            }
                           }
-                        }]
+                        ]
                       }
-                    }]
-                  }
+                    }
+                  ]
                 }
               }
             }
-          ],
-          children: []
-        }
-      );
+          }
+        ],
+        children: []
+      });
       return tree;
     };
 
@@ -225,7 +231,7 @@ module.exports = new Transformer({
     let minimal = false;
     let order;
     let util = (await import('mdast-util-toc')).toc;
-    const extractToc = (options) => {
+    const extractToc = options => {
       const settings = options || {};
       const depth = settings.maxDepth || 6;
       const tight = settings.tight;
@@ -321,19 +327,24 @@ module.exports = new Transformer({
      * there is a rendered example below.
      */
     function wrapExamples() {
-      return (tree) => (
+      return tree =>
         flatMap(tree, node => {
-          if (node.tagName === 'pre' && node.children && node.children.length > 0 && node.children[0].tagName === 'code' && node.children[0].data?.meta) {
+          if (
+            node.tagName === 'pre' &&
+            node.children &&
+            node.children.length > 0 &&
+            node.children[0].tagName === 'code' &&
+            node.children[0].data?.meta
+          ) {
             node.properties.className = node.children[0].data.meta.split(' ');
           }
 
           return [node];
-        })
-      );
+        });
     }
 
     function highlight(options) {
-      return (tree) => {
+      return tree => {
         visit(tree, 'code', node => {
           if (!node.lang) {
             return;
@@ -352,7 +363,10 @@ module.exports = new Transformer({
             let highlightParent = null;
             let highlightedNodes = [];
             flatMap(highlighted, (node, index, parent) => {
-              if (node.properties?.className === 'comment' && /- begin highlight -/.test(node.children[0].value)) {
+              if (
+                node.properties?.className === 'comment' &&
+                /- begin highlight -/.test(node.children[0].value)
+              ) {
                 // Handle JSX-style comments, e.g. {/* foo */}
                 let prev = parent.children[index - 1];
                 if (prev?.children?.[0]?.value === '{') {
@@ -368,13 +382,18 @@ module.exports = new Transformer({
                 highlightParent = parent;
                 highlightedNodes = [];
                 return [];
-              } else if (node.properties?.className === 'comment' && /- end highlight -/.test(node.children?.[0].value)) {
+              } else if (
+                node.properties?.className === 'comment' &&
+                /- end highlight -/.test(node.children?.[0].value)
+              ) {
                 highlightParent = null;
-                let res = [{
-                  type: 'element',
-                  tagName: 'mark',
-                  children: highlightedNodes
-                }];
+                let res = [
+                  {
+                    type: 'element',
+                    tagName: 'mark',
+                    children: highlightedNodes
+                  }
+                ];
 
                 // Remove closing brace from JSX-style starting comments, e.g. {/* foo */}
                 if (highlightedNodes[0]?.children?.[0]?.value === '}') {
@@ -382,7 +401,10 @@ module.exports = new Transformer({
                 }
 
                 // Remove extra newline after starting comment, but keep indentation.
-                if (highlightedNodes[0]?.type === 'text' && /^\s+/.test(highlightedNodes[0].value)) {
+                if (
+                  highlightedNodes[0]?.type === 'text' &&
+                  /^\s+/.test(highlightedNodes[0].value)
+                ) {
                   let node = highlightedNodes[0];
                   node.value = node.value.replace(/^\s*\n+(\s*)/, '$1');
                 }
@@ -442,9 +464,7 @@ module.exports = new Transformer({
         fragmentUnWrap,
         appendCSS
       ],
-      rehypePlugins: [
-        wrapExamples
-      ]
+      rehypePlugins: [wrapExamples]
     });
 
     asset.type = 'jsx';
@@ -469,9 +489,9 @@ module.exports = new Transformer({
     if (!minimal) {
       // Generate the client bundle. We always need the client script,
       // and the docs script when there's a TOC or an example on the page.
-      clientBundle = 'import \'@react-spectrum/docs/src/client\';\n';
+      clientBundle = "import '@react-spectrum/docs/src/client';\n";
       if (toc.length || exampleCode.length > 0) {
-        clientBundle += 'import \'@react-spectrum/docs/src/docs\';\n';
+        clientBundle += "import '@react-spectrum/docs/src/docs';\n";
       }
     }
 
@@ -480,7 +500,8 @@ module.exports = new Transformer({
       if (minimal) {
         clientBundle += 'const ExampleProvider = React.Fragment;\n';
       } else {
-        clientBundle += "import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';\n";
+        clientBundle +=
+          "import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';\n";
       }
       clientBundle += `import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -586,7 +607,11 @@ function transformExample(node, preRelease, keepIndividualImports) {
 
     traverse(ast, {
       ImportDeclaration(path) {
-        if (/^(@react-spectrum|@react-aria|@react-stately)/.test(path.node.source.value) && !/test-utils/.test(path.node.source.value) && !keepIndividualImports) {
+        if (
+          /^(@react-spectrum|@react-aria|@react-stately)/.test(path.node.source.value) &&
+          !/test-utils/.test(path.node.source.value) &&
+          !keepIndividualImports
+        ) {
           let lib = path.node.source.value.split('/')[0];
           let s = path.node.importKind === 'type' ? typeSpecifiers : specifiers;
           if (!s[lib]) {
@@ -616,8 +641,9 @@ function transformExample(node, preRelease, keepIndividualImports) {
             for (let lib in specifiers) {
               let names = specifiers[lib];
               if (names.length > 0) {
-                let monopackage = lib === '@react-spectrum' ? '@adobe/react-spectrum' : lib.slice(1);
-                let literal =  t.stringLiteral(monopackage);
+                let monopackage =
+                  lib === '@react-spectrum' ? '@adobe/react-spectrum' : lib.slice(1);
+                let literal = t.stringLiteral(monopackage);
 
                 let decl = t.importDeclaration(
                   names.map(s => t.importSpecifier(t.identifier(s), t.identifier(s))),
@@ -636,7 +662,9 @@ function transformExample(node, preRelease, keepIndividualImports) {
       }
     });
 
-    node.value = recast.print(ast, {objectCurlySpacing: false, quote: 'single'}).code.replace(/(<WRAPPER>(?:.|\n)*<\/WRAPPER>)/g, '\n($1)');
+    node.value = recast
+      .print(ast, {objectCurlySpacing: false, quote: 'single'})
+      .code.replace(/(<WRAPPER>(?:.|\n)*<\/WRAPPER>)/g, '\n($1)');
     force = true;
   }
 
@@ -671,11 +699,7 @@ function responsiveCode(node, force) {
     value: formatCode(node, medium.value, 25, force)
   };
 
-  return [
-    large,
-    medium,
-    small
-  ];
+  return [large, medium, small];
 }
 
 function formatCode(node, code, printWidth = 80, force = false) {

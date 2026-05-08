@@ -10,7 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Disclosure, DisclosurePanel, DisclosureTitle, SpectrumDisclosureProps} from '../../src/accordion/Accordion';
+import {
+  Disclosure,
+  DisclosurePanel,
+  DisclosureTitle,
+  SpectrumDisclosureProps
+} from '../../src/accordion/Accordion';
 import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
@@ -31,27 +36,22 @@ export default meta;
 type DisclosureStory = StoryObj<typeof Disclosure>;
 
 export const Default: DisclosureStory = {
-  render: (args) => (
+  render: args => (
     <Disclosure {...args}>
-      <DisclosureTitle>
-        Files
-      </DisclosureTitle>
-      <DisclosurePanel>
-        Files content
-      </DisclosurePanel>
+      <DisclosureTitle>Files</DisclosureTitle>
+      <DisclosurePanel>Files content</DisclosurePanel>
     </Disclosure>
   )
 };
 
 export const WrappingTitle: DisclosureStory = {
-  render: (args) => (
+  render: args => (
     <Disclosure maxWidth="size-3000" {...args}>
       <DisclosureTitle>
-        Long long long long long long long long long long long long long  long long long wrapping title 
+        Long long long long long long long long long long long long long long long long wrapping
+        title
       </DisclosureTitle>
-      <DisclosurePanel>
-        Files content
-      </DisclosurePanel>
+      <DisclosurePanel>Files content</DisclosurePanel>
     </Disclosure>
   )
 };

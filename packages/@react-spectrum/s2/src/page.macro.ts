@@ -13,11 +13,11 @@
 import {MacroContext} from '@parcel/macros';
 import tokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 
-function colorToken(token: typeof tokens['gray-25']) {
+function colorToken(token: (typeof tokens)['gray-25']) {
   return `light-dark(${token.sets.light.value}, ${token.sets.dark.value})`;
 }
 
-function weirdColorToken(token: typeof tokens['background-layer-2-color']) {
+function weirdColorToken(token: (typeof tokens)['background-layer-2-color']) {
   return `light-dark(${token.sets.light.sets.light.value}, ${token.sets.dark.sets.dark.value})`;
 }
 

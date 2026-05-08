@@ -27,14 +27,17 @@ import {StyleProps} from './style-utils';
 import {useDOMRef} from './useDOMRef';
 
 // TODO: what style overrides should be allowed?
-export interface FullscreenDialogProps extends Omit<RACDialogProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps {
+export interface FullscreenDialogProps
+  extends
+    Omit<RACDialogProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
+    StyleProps {
   /**
    * The variant of fullscreen dialog to display.
    * @default "fullscreen"
    */
-  variant?: 'fullscreen' | 'fullscreenTakeover',
+  variant?: 'fullscreen' | 'fullscreenTakeover';
   /** Whether pressing the escape key to close the dialog should be disabled. */
-  isKeyboardDismissDisabled?: boolean
+  isKeyboardDismissDisabled?: boolean;
 }
 
 const heading = style({
@@ -53,7 +56,7 @@ const header = style({
   font: 'body'
 });
 
-const content =  style({
+const content = style({
   gridArea: 'content',
   flexGrow: 1,
   overflowY: {
@@ -74,38 +77,16 @@ export const dialogInner = style({
   display: 'grid',
   gridTemplateAreas: {
     // Button group moves to the bottom on small screens.
-    default: [
-      'heading',
-      'header',
-      '.',
-      'content',
-      '.',
-      'buttons'
-    ],
-    sm: [
-      'heading header buttons',
-      '. . .',
-      'content content content'
-    ]
+    default: ['heading', 'header', '.', 'content', '.', 'buttons'],
+    sm: ['heading header buttons', '. . .', 'content content content']
   },
   gridTemplateColumns: {
     default: ['1fr'],
     sm: ['auto', '1fr', 'auto']
   },
   gridTemplateRows: {
-    default: [
-      'auto',
-      'auto',
-      24,
-      '1fr',
-      24,
-      'auto'
-    ],
-    sm: [
-      'auto',
-      32,
-      '1fr'
-    ]
+    default: ['auto', 'auto', 24, '1fr', 24, 'auto'],
+    sm: ['auto', 32, '1fr']
   },
   padding: {
     default: 24,
@@ -127,20 +108,23 @@ export const dialogInner = style({
 /**
  * Takeover dialogs are large types of dialogs. They use the totality of the screen and should be used for modal experiences with complex workflows.
  */
-export const FullscreenDialog = forwardRef(function FullscreenDialog(props: FullscreenDialogProps, ref: DOMRef) {
+export const FullscreenDialog = forwardRef(function FullscreenDialog(
+  props: FullscreenDialogProps,
+  ref: DOMRef
+) {
   let {variant = 'fullscreen', isKeyboardDismissDisabled} = props;
   let domRef = useDOMRef(ref);
 
   return (
-    (<Modal size={variant} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
+    <Modal size={variant} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
       <RACDialog
         {...props}
         ref={domRef}
         style={props.UNSAFE_style}
         className={(props.UNSAFE_className || '') + dialogInner}>
-        {composeRenderProps(props.children, (children) => (
+        {composeRenderProps(props.children, children => (
           // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
-          (<OverlayTriggerStateContext.Provider value={null}>
+          <OverlayTriggerStateContext.Provider value={null}>
             <Provider
               values={[
                 [HeadingContext, {styles: heading}],
@@ -150,10 +134,9 @@ export const FullscreenDialog = forwardRef(function FullscreenDialog(props: Full
               ]}>
               {children}
             </Provider>
-          </OverlayTriggerStateContext.Provider>)
+          </OverlayTriggerStateContext.Provider>
         ))}
       </RACDialog>
-    </Modal>)
+    </Modal>
   );
 });
-

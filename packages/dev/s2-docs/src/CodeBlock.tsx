@@ -61,16 +61,24 @@ export const standaloneCode = style({
 });
 
 interface CodeBlockProps extends VisualExampleProps {
-  render?: ReactNode,
-  children: string,
-  dir?: string,
-  files?: string[],
-  expanded?: boolean,
-  hidden?: boolean,
-  showCoachMark?: boolean
+  render?: ReactNode;
+  children: string;
+  dir?: string;
+  files?: string[];
+  expanded?: boolean;
+  hidden?: boolean;
+  showCoachMark?: boolean;
 }
 
-export function CodeBlock({render, children, dir, files, expanded, hidden, ...props}: CodeBlockProps) {
+export function CodeBlock({
+  render,
+  children,
+  dir,
+  files,
+  expanded,
+  hidden,
+  ...props
+}: CodeBlockProps) {
   if (hidden) {
     return null;
   }
@@ -80,12 +88,18 @@ export function CodeBlock({render, children, dir, files, expanded, hidden, ...pr
   if (!render) {
     return (
       <pre className={standaloneCode}>
-        <Code {...props} styles={style({display: 'block', width: 'fit', minWidth: 'full'})}>{displayCode}</Code>
+        <Code {...props} styles={style({display: 'block', width: 'fit', minWidth: 'full'})}>
+          {displayCode}
+        </Code>
       </pre>
     );
   }
 
-  let resolveFrom = path.resolve('pages', dir || (props.type === 's2' ? 's2' : 'react-aria'), 'index.tsx');
+  let resolveFrom = path.resolve(
+    'pages',
+    dir || (props.type === 's2' ? 's2' : 'react-aria'),
+    'index.tsx'
+  );
   let downloadFiles = getExampleFiles(resolveFrom, children, props.type);
 
   let code = (
@@ -101,15 +115,14 @@ export function CodeBlock({render, children, dir, files, expanded, hidden, ...pr
         component={render}
         files={files}
         downloadFiles={downloadFiles}
-        code={code} />
+        code={code}
+      />
     );
   }
 
   let content = (
     <FileProvider value={downloadFiles}>
-      <CodePlatter
-        type={props.type}
-        showCoachMark={props.showCoachMark}>
+      <CodePlatter type={props.type} showCoachMark={props.showCoachMark}>
         {code}
       </CodePlatter>
     </FileProvider>
@@ -117,11 +130,9 @@ export function CodeBlock({render, children, dir, files, expanded, hidden, ...pr
 
   return (
     <div role="group" aria-label="Example" className={example}>
-      <ExampleOutput
-        component={render}
-        align={props.align} />
+      <ExampleOutput component={render} align={props.align} />
       <div>
-        {files ?
+        {files ? (
           <Files
             files={files}
             downloadFiles={downloadFiles.files}
@@ -129,38 +140,42 @@ export function CodeBlock({render, children, dir, files, expanded, hidden, ...pr
             type={props.type}>
             {content}
           </Files>
-        : content}
+        ) : (
+          content
+        )}
       </div>
     </div>
   );
 }
 
-export function CodeBlockBase({children, lang}: {children: string, lang: string}) {
+export function CodeBlockBase({children, lang}: {children: string; lang: string}) {
   // @ts-ignore
   let highlighted = highlight(children, Language[lang.toUpperCase()]);
   return (
     <pre className="m-0">
-      <code className="source" style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}} dangerouslySetInnerHTML={{__html: highlighted}} />
+      <code
+        className="source"
+        style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}}
+        dangerouslySetInnerHTML={{__html: highlighted}}
+      />
     </pre>
   );
 }
 
 interface TruncatedCodeProps extends ICodeProps {
-  children: string,
-  maxLines?: number
+  children: string;
+  maxLines?: number;
 }
 
 function TruncatedCode({children, maxLines = 6, ...props}: TruncatedCodeProps) {
   let lines = children.split('\n');
-  return lines.length > maxLines
-  ? (
+  return lines.length > maxLines ? (
     <ExpandableCode hasHighlightedLine={/- begin (highlight|focus)/.test(children)}>
       <Pre>
         <Code {...props}>{children}</Code>
       </Pre>
     </ExpandableCode>
-  )
-  : (
+  ) : (
     <div
       className={style({
         overflow: 'auto',
@@ -177,15 +192,22 @@ function TruncatedCode({children, maxLines = 6, ...props}: TruncatedCodeProps) {
 }
 
 interface FilesProps {
-  children?: ReactNode,
-  files: string[],
-  downloadFiles?: DownloadFiles['files'],
-  type?: 'vanilla' | 'tailwind' | 's2',
-  defaultSelected?: string,
-  maxLines?: number
+  children?: ReactNode;
+  files: string[];
+  downloadFiles?: DownloadFiles['files'];
+  type?: 'vanilla' | 'tailwind' | 's2';
+  defaultSelected?: string;
+  maxLines?: number;
 }
 
-export function Files({children, files, downloadFiles, type, defaultSelected, maxLines}: FilesProps) {
+export function Files({
+  children,
+  files,
+  downloadFiles,
+  type,
+  defaultSelected,
+  maxLines
+}: FilesProps) {
   let fileMap: {[name: string]: ReactElement} = {};
   for (let file of files) {
     fileMap[path.basename(file)] = <File filename={file} maxLines={maxLines} type={type} />;
@@ -197,7 +219,12 @@ export function Files({children, files, downloadFiles, type, defaultSelected, ma
       if (!files[name]) {
         extraFiles[name] = (
           <CodePlatter type={type}>
-            <TruncatedCode lang={path.extname(name).slice(1)} hideImports={false} maxLines={maxLines}>{downloadFiles[name].contents}</TruncatedCode>
+            <TruncatedCode
+              lang={path.extname(name).slice(1)}
+              hideImports={false}
+              maxLines={maxLines}>
+              {downloadFiles[name].contents}
+            </TruncatedCode>
           </CodePlatter>
         );
       }
@@ -219,11 +246,23 @@ export function Files({children, files, downloadFiles, type, defaultSelected, ma
 
 const readFile = cache((file: string) => fs.readFileSync(file, 'utf8'));
 
-export function File({filename, maxLines, type}: {filename: string, maxLines?: number, type?: 'vanilla' | 'tailwind' | 's2'}) {
-  let contents = readFile(path.isAbsolute(filename) ? filename : path.resolve('../../../', filename)).replace(/(vanilla-starter|tailwind-starter)\//g, './');
+export function File({
+  filename,
+  maxLines,
+  type
+}: {
+  filename: string;
+  maxLines?: number;
+  type?: 'vanilla' | 'tailwind' | 's2';
+}) {
+  let contents = readFile(
+    path.isAbsolute(filename) ? filename : path.resolve('../../../', filename)
+  ).replace(/(vanilla-starter|tailwind-starter)\//g, './');
   return (
     <CodePlatter type={type}>
-      <TruncatedCode lang={path.extname(filename).slice(1)} hideImports={false} maxLines={maxLines}>{contents}</TruncatedCode>
+      <TruncatedCode lang={path.extname(filename).slice(1)} hideImports={false} maxLines={maxLines}>
+        {contents}
+      </TruncatedCode>
     </CodePlatter>
   );
 }
@@ -246,14 +285,16 @@ export function getFiles(files: string[], type: string | undefined, npmDeps = {}
   }
 
   if (type === 'tailwind' && !fileContents['index.css']) {
-    fileContents['index.css'] = readFileReplace(path.resolve('../../../starters/tailwind/src/index.css'));
+    fileContents['index.css'] = readFileReplace(
+      path.resolve('../../../starters/tailwind/src/index.css')
+    );
   }
 
   return {files: fileContents, deps: npmDeps};
 }
 
 function findAllFiles(files: string[], npmDeps = {}) {
-  files = files.map(file => path.isAbsolute(file) ? file : path.resolve('../../../', file));
+  files = files.map(file => (path.isAbsolute(file) ? file : path.resolve('../../../', file)));
 
   let queue: string[] = [...files];
   let allFiles = new Set<string>();
@@ -277,7 +318,10 @@ function findAllFiles(files: string[], npmDeps = {}) {
 function parseFile(file: string, contents: string, npmDeps = {}, urls = {}) {
   let deps = new Set<string>();
   for (let [, specifier] of contents.matchAll(/import (?:.|\n)*?['"](.+?)['"]/g)) {
-    specifier = specifier.replace(/(vanilla-starter|tailwind-starter)\//g, (m, s) => 'starters/' + (s === 'vanilla-starter' ? 'docs' : 'tailwind') + '/src/');
+    specifier = specifier.replace(
+      /(vanilla-starter|tailwind-starter)\//g,
+      (m, s) => 'starters/' + (s === 'vanilla-starter' ? 'docs' : 'tailwind') + '/src/'
+    );
 
     if (specifier.startsWith('url:')) {
       urls[specifier] = resolveUrl(specifier.slice(4), file);
@@ -285,12 +329,16 @@ function parseFile(file: string, contents: string, npmDeps = {}, urls = {}) {
     }
 
     if (!/^(\.|starters)/.test(specifier)) {
-      let dep = specifier.startsWith('@') ? specifier.split('/').slice(0, 2).join('/') : specifier.split('/')[0];
+      let dep = specifier.startsWith('@')
+        ? specifier.split('/').slice(0, 2).join('/')
+        : specifier.split('/')[0];
       npmDeps[dep] ??= '^' + getPackageVersion(dep);
       continue;
     }
 
-    let resolved = specifier.startsWith('.') ? path.resolve(path.dirname(file), specifier) : path.resolve('../../../' + specifier);
+    let resolved = specifier.startsWith('.')
+      ? path.resolve(path.dirname(file), specifier)
+      : path.resolve('../../../' + specifier);
     if (path.extname(resolved) === '') {
       if (fs.existsSync(resolved + '.tsx')) {
         resolved += '.tsx';
@@ -307,14 +355,14 @@ function parseFile(file: string, contents: string, npmDeps = {}, urls = {}) {
 
 export interface DownloadFiles {
   files: {
-    [name: string]: {contents: string}
-  },
+    [name: string]: {contents: string};
+  };
   deps: {
-    [name: string]: string
-  },
+    [name: string]: string;
+  };
   urls?: {
-    [url: string]: string
-  }
+    [url: string]: string;
+  };
 }
 
 function getExampleFiles(file: string, contents: string, type: string | undefined): DownloadFiles {

@@ -23,36 +23,35 @@ import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {useDOMRef} from '../utils/useDOMRef';
 import {useStyleProps} from '../utils/styleProps';
 
-export interface SpectrumColorSwatchPickerProps extends ValueBase<string | Color, Color>, StyleProps {
+export interface SpectrumColorSwatchPickerProps
+  extends ValueBase<string | Color, Color>, StyleProps {
   /** The ColorSwatches within the ColorSwatchPicker. */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * The amount of padding between the swatches.
    * @default "regular"
    */
-  density?: 'compact' | 'regular' | 'spacious',
+  density?: 'compact' | 'regular' | 'spacious';
   /**
    * The size of the color swatches.
    * @default "M"
    */
-  size?: 'XS' | 'S' | 'M' | 'L',
+  size?: 'XS' | 'S' | 'M' | 'L';
   /**
    * The corner rounding of the color swatches.
    * @default "none"
    */
-  rounding?: 'none' | 'default' | 'full'
+  rounding?: 'none' | 'default' | 'full';
 }
 
 /**
  * A ColorSwatchPicker displays a list of color swatches and allows a user to select one of them.
  */
-export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: SpectrumColorSwatchPickerProps, ref: DOMRef<HTMLDivElement>) {
-  let {
-    density = 'regular',
-    size = 'M',
-    rounding = 'none',
-    ...otherProps
-  } = props;
+export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(
+  props: SpectrumColorSwatchPickerProps,
+  ref: DOMRef<HTMLDivElement>
+) {
+  let {density = 'regular', size = 'M', rounding = 'none', ...otherProps} = props;
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
 
@@ -61,17 +60,20 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: Sp
       {...otherProps}
       style={styleProps.style}
       ref={domRef}
-      className={styleProps.className + style({
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: {
-          density: {
-            compact: 0.5,
-            regular: 1,
-            spacious: 2
+      className={
+        styleProps.className +
+        style({
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: {
+            density: {
+              compact: 0.5,
+              regular: 1,
+              spacious: 2
+            }
           }
-        }
-      })({density})}>
+        })({density})
+      }>
       <SpectrumColorSwatchContext.Provider value={{useWrapper, size, rounding}}>
         {props.children}
       </SpectrumColorSwatchContext.Provider>
@@ -79,42 +81,52 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: Sp
   );
 });
 
-function useWrapper(swatch: ReactElement, color: Color, rounding: SpectrumColorSwatchProps['rounding']) {
+function useWrapper(
+  swatch: ReactElement,
+  color: Color,
+  rounding: SpectrumColorSwatchProps['rounding']
+) {
   return (
     <AriaColorSwatchPickerItem
       color={color}
-      className={renderProps => style({
-        outlineStyle: {
-          default: 'none',
-          isFocusVisible: 'solid'
-        },
-        outlineColor: 'focus-ring',
-        outlineWidth: 2,
-        outlineOffset: 2,
-        position: 'relative',
-        borderRadius: {
-          rounding: {
-            none: 'none',
-            default: 'default',
-            full: 'full'
+      className={renderProps =>
+        style({
+          outlineStyle: {
+            default: 'none',
+            isFocusVisible: 'solid'
+          },
+          outlineColor: 'focus-ring',
+          outlineWidth: 2,
+          outlineOffset: 2,
+          position: 'relative',
+          borderRadius: {
+            rounding: {
+              none: 'none',
+              default: 'default',
+              full: 'full'
+            }
           }
-        }
-      })({...renderProps, rounding})}>
-      {({isSelected}) => (<>
-        {swatch}
-        {isSelected && (
-          <div
-            aria-hidden
-            className={style({
-              position: 'absolute',
-              pointerEvents: 'none',
-              inset: 0,
-              boxShadow: '[inset 0 0 0 2px var(--spectrum-gray-900), inset 0 0 0 4px var(--spectrum-gray-50)]',
-              forcedColorAdjust: 'none',
-              borderRadius: '[inherit]'
-            })()} />
-        )}
-      </>)}
+        })({...renderProps, rounding})
+      }>
+      {({isSelected}) => (
+        <>
+          {swatch}
+          {isSelected && (
+            <div
+              aria-hidden
+              className={style({
+                position: 'absolute',
+                pointerEvents: 'none',
+                inset: 0,
+                boxShadow:
+                  '[inset 0 0 0 2px var(--spectrum-gray-900), inset 0 0 0 4px var(--spectrum-gray-50)]',
+                forcedColorAdjust: 'none',
+                borderRadius: '[inherit]'
+              })()}
+            />
+          )}
+        </>
+      )}
     </AriaColorSwatchPickerItem>
   );
 }

@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  mockClickDefault,
+  pointerMap,
+  render,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {AriaMenuTests} from './AriaMenu.test-util';
 import {Button} from '../src/Button';
 import {Collection} from 'react-aria/Collection';
@@ -31,27 +38,59 @@ import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
-let TestMenu = ({menuProps = {}, itemProps = {}, hasSubmenu, hasNestedSubmenu}: {menuProps?: any, itemProps?: any, hasSubmenu?: boolean, hasNestedSubmenu?: any}) => (
+let TestMenu = ({
+  menuProps = {},
+  itemProps = {},
+  hasSubmenu,
+  hasNestedSubmenu
+}: {
+  menuProps?: any;
+  itemProps?: any;
+  hasSubmenu?: boolean;
+  hasNestedSubmenu?: any;
+}) => (
   <Menu aria-label="Test" {...menuProps}>
-    <MenuItem {...itemProps} id="cat">Cat</MenuItem>
-    <MenuItem {...itemProps} id="dog">Dog</MenuItem>
-    <MenuItem {...itemProps} id="kangaroo">Kangaroo</MenuItem>
+    <MenuItem {...itemProps} id="cat">
+      Cat
+    </MenuItem>
+    <MenuItem {...itemProps} id="dog">
+      Dog
+    </MenuItem>
+    <MenuItem {...itemProps} id="kangaroo">
+      Kangaroo
+    </MenuItem>
     {hasSubmenu && (
       <SubmenuTrigger>
-        <MenuItem {...itemProps} id="submenu-trigger">Submenu Trigger</MenuItem>
+        <MenuItem {...itemProps} id="submenu-trigger">
+          Submenu Trigger
+        </MenuItem>
         <Popover>
           <Menu>
-            <MenuItem {...itemProps} id="submenu-item-1">Submenu Item 1</MenuItem>
-            <MenuItem {...itemProps} id="submenu-item-2">Submenu Item 2</MenuItem>
-            <MenuItem {...itemProps} id="submenu-item-3">Submenu Item 3</MenuItem>
+            <MenuItem {...itemProps} id="submenu-item-1">
+              Submenu Item 1
+            </MenuItem>
+            <MenuItem {...itemProps} id="submenu-item-2">
+              Submenu Item 2
+            </MenuItem>
+            <MenuItem {...itemProps} id="submenu-item-3">
+              Submenu Item 3
+            </MenuItem>
             {hasNestedSubmenu && (
               <SubmenuTrigger>
-                <MenuItem {...itemProps} id="nested-submenu-trigger">Nested Submenu Trigger</MenuItem>
+                <MenuItem {...itemProps} id="nested-submenu-trigger">
+                  Nested Submenu Trigger
+                </MenuItem>
                 <Popover>
                   <Menu>
-                    <MenuItem {...itemProps} id="nested-submenu-item-1">Nested Submenu Item 1</MenuItem>
-                    <MenuItem {...itemProps} id="nested-submenu-item-2">Nested Submenu Item 2</MenuItem>
-                    <MenuItem {...itemProps} id="nested-submenu-item-3">Nested Submenu Item 3</MenuItem>
+                    <MenuItem {...itemProps} id="nested-submenu-item-1">
+                      Nested Submenu Item 1
+                    </MenuItem>
+                    <MenuItem {...itemProps} id="nested-submenu-item-2">
+                      Nested Submenu Item 2
+                    </MenuItem>
+                    <MenuItem {...itemProps} id="nested-submenu-item-3">
+                      Nested Submenu Item 3
+                    </MenuItem>
                   </Menu>
                 </Popover>
               </SubmenuTrigger>
@@ -63,7 +102,8 @@ let TestMenu = ({menuProps = {}, itemProps = {}, hasSubmenu, hasNestedSubmenu}: 
   </Menu>
 );
 
-let renderMenu = (menuProps = {}, itemProps = {}) => render(<TestMenu {...{menuProps, itemProps}} />);
+let renderMenu = (menuProps = {}, itemProps = {}) =>
+  render(<TestMenu {...{menuProps, itemProps}} />);
 
 describe('Menu', () => {
   let user;
@@ -75,7 +115,9 @@ describe('Menu', () => {
   });
 
   afterEach(() => {
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   it('should have the base set of aria and data attributes', () => {
@@ -137,10 +179,12 @@ describe('Menu', () => {
   it('should support custom render function', () => {
     let {getAllByRole, getByRole} = renderMenu(
       {render: props => <div {...props} data-custom="true" />},
-      {render: props => {
-        expect('href' in props).toBe(false);
-        return <div {...props} data-custom="true" />;
-      }}
+      {
+        render: props => {
+          expect('href' in props).toBe(false);
+          return <div {...props} data-custom="true" />;
+        }
+      }
     );
     let menu = getByRole('menu');
     expect(menu).toHaveAttribute('data-custom', 'true');
@@ -153,11 +197,14 @@ describe('Menu', () => {
   it('should support custom render function as a link', () => {
     let {getAllByRole, getByRole} = renderMenu(
       {render: props => <div {...props} data-custom="true" />},
-      {href: '#foo', render: props => {
-        expect(props.href).toBe('#foo');
-        // eslint-disable-next-line jsx-a11y/anchor-has-content
-        return <a {...props} data-custom="true" />;
-      }}
+      {
+        href: '#foo',
+        render: props => {
+          expect(props.href).toBe('#foo');
+          // eslint-disable-next-line jsx-a11y/anchor-has-content
+          return <a {...props} data-custom="true" />;
+        }
+      }
     );
     let menu = getByRole('menu');
     expect(menu).toHaveAttribute('data-custom', 'true');
@@ -201,7 +248,15 @@ describe('Menu', () => {
     let onHoverStart = jest.fn();
     let onHoverChange = jest.fn();
     let onHoverEnd = jest.fn();
-    let {getAllByRole} = renderMenu({}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
+    let {getAllByRole} = renderMenu(
+      {},
+      {
+        className: ({isHovered}) => (isHovered ? 'hover' : ''),
+        onHoverStart,
+        onHoverChange,
+        onHoverEnd
+      }
+    );
     let item = getAllByRole('menuitem')[0];
 
     expect(item).not.toHaveAttribute('data-hovered');
@@ -224,7 +279,15 @@ describe('Menu', () => {
     let onHoverStart = jest.fn();
     let onHoverChange = jest.fn();
     let onHoverEnd = jest.fn();
-    let {getAllByRole} = renderMenu({disabledKeys: ['cat', 'dog', 'kangaroo']}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
+    let {getAllByRole} = renderMenu(
+      {disabledKeys: ['cat', 'dog', 'kangaroo']},
+      {
+        className: ({isHovered}) => (isHovered ? 'hover' : ''),
+        onHoverStart,
+        onHoverChange,
+        onHoverEnd
+      }
+    );
     let item = getAllByRole('menuitem')[0];
 
     expect(item).not.toHaveAttribute('data-hovered');
@@ -254,10 +317,17 @@ describe('Menu', () => {
 
     let menuitem = getByRole('menuitem');
     expect(menuitem).toHaveAttribute('aria-labelledby');
-    expect(document.getElementById(menuitem.getAttribute('aria-labelledby')!)).toHaveTextContent('Copy');
+    expect(document.getElementById(menuitem.getAttribute('aria-labelledby')!)).toHaveTextContent(
+      'Copy'
+    );
     expect(menuitem).toHaveAttribute('aria-describedby');
-    expect((menuitem.getAttribute('aria-describedby')!).split(' ')
-      .map(o => (document.getElementById(o)!).textContent).join(' ')).toBe('Copy the selected text ⌘C');
+    expect(
+      menuitem
+        .getAttribute('aria-describedby')!
+        .split(' ')
+        .map(o => document.getElementById(o)!.textContent)
+        .join(' ')
+    ).toBe('Copy the selected text ⌘C');
   });
 
   it('should support separators', () => {
@@ -311,7 +381,9 @@ describe('Menu', () => {
     expect(groups[1]).toHaveClass('react-aria-MenuSection');
 
     expect(groups[0]).toHaveAttribute('aria-labelledby');
-    expect(document.getElementById(groups[0].getAttribute('aria-labelledby')!)).toHaveTextContent('Veggies');
+    expect(document.getElementById(groups[0].getAttribute('aria-labelledby')!)).toHaveTextContent(
+      'Veggies'
+    );
   });
 
   it('should support dynamic collections', () => {
@@ -322,15 +394,18 @@ describe('Menu', () => {
 
     let {getAllByRole} = render(
       <Menu aria-label="Test" items={items}>
-        {(item) => <MenuItem id={item.id}>{item.name}</MenuItem>}
+        {item => <MenuItem id={item.id}>{item.name}</MenuItem>}
       </Menu>
     );
 
-    expect(getAllByRole('menuitem').map((it) => it.textContent)).toEqual(['Cat', 'Dog']);
+    expect(getAllByRole('menuitem').map(it => it.textContent)).toEqual(['Cat', 'Dog']);
   });
 
   it('should support focus ring', async () => {
-    let {getAllByRole} = renderMenu({}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
+    let {getAllByRole} = renderMenu(
+      {},
+      {className: ({isFocusVisible}) => (isFocusVisible ? 'focus' : '')}
+    );
     let menuitem = getAllByRole('menuitem')[0];
 
     expect(menuitem).not.toHaveAttribute('data-focus-visible');
@@ -348,7 +423,7 @@ describe('Menu', () => {
   });
 
   it('should support press state', async () => {
-    let {getAllByRole} = renderMenu({}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
+    let {getAllByRole} = renderMenu({}, {className: ({isPressed}) => (isPressed ? 'pressed' : '')});
     let menuitem = getAllByRole('menuitem')[0];
 
     expect(menuitem).not.toHaveAttribute('data-pressed');
@@ -364,7 +439,10 @@ describe('Menu', () => {
   });
 
   it('should support selection state', async () => {
-    let {getAllByRole} = renderMenu({selectionMode: 'multiple'}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
+    let {getAllByRole} = renderMenu(
+      {selectionMode: 'multiple'},
+      {className: ({isSelected}) => (isSelected ? 'selected' : '')}
+    );
     let menuitem = getAllByRole('menuitemcheckbox')[0];
 
     expect(menuitem).not.toHaveAttribute('aria-checked', 'true');
@@ -388,8 +466,13 @@ describe('Menu', () => {
       let [protein, setProtein] = useState<Selection>(new Set(['ham']));
       return (
         <Menu aria-label="Sandwich contents" selectionMode="multiple">
-          <MenuSection selectionMode="multiple" selectedKeys={veggies} onSelectionChange={setVeggies}>
-            <MenuItem onFocus={onFocus} onFocusChange={onFocusChange} onBlur={onBlur} id="lettuce">Lettuce</MenuItem>
+          <MenuSection
+            selectionMode="multiple"
+            selectedKeys={veggies}
+            onSelectionChange={setVeggies}>
+            <MenuItem onFocus={onFocus} onFocusChange={onFocusChange} onBlur={onBlur} id="lettuce">
+              Lettuce
+            </MenuItem>
             <MenuItem id="tomato">Tomato</MenuItem>
             <MenuItem id="onion">Onion</MenuItem>
           </MenuSection>
@@ -465,7 +548,10 @@ describe('Menu', () => {
   });
 
   it('should support disabled state', () => {
-    let {getAllByRole} = renderMenu({disabledKeys: ['cat']}, {className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
+    let {getAllByRole} = renderMenu(
+      {disabledKeys: ['cat']},
+      {className: ({isDisabled}) => (isDisabled ? 'disabled' : '')}
+    );
     let menuitem = getAllByRole('menuitem')[0];
 
     expect(menuitem).toHaveAttribute('aria-disabled', 'true');
@@ -476,7 +562,9 @@ describe('Menu', () => {
     let {getAllByRole} = render(
       <Menu aria-label="Test">
         <MenuItem id="cat">Cat</MenuItem>
-        <MenuItem id="dog" isDisabled>Dog</MenuItem>
+        <MenuItem id="dog" isDisabled>
+          Dog
+        </MenuItem>
         <MenuItem id="kangaroo">Kangaroo</MenuItem>
       </Menu>
     );
@@ -493,7 +581,9 @@ describe('Menu', () => {
     let onAction = jest.fn();
     let {getAllByRole} = render(
       <Menu aria-label="Test">
-        <MenuItem id="cat" onAction={onAction}>Cat</MenuItem>
+        <MenuItem id="cat" onAction={onAction}>
+          Cat
+        </MenuItem>
         <MenuItem id="dog">Dog</MenuItem>
         <MenuItem id="kangaroo">Kangaroo</MenuItem>
       </Menu>
@@ -508,7 +598,9 @@ describe('Menu', () => {
     let itemAction = jest.fn();
     let {getAllByRole} = render(
       <Menu aria-label="Test" onAction={onAction}>
-        <MenuItem id="cat" onAction={itemAction}>Cat</MenuItem>
+        <MenuItem id="cat" onAction={itemAction}>
+          Cat
+        </MenuItem>
         <MenuItem id="dog">Dog</MenuItem>
         <MenuItem id="kangaroo">Kangaroo</MenuItem>
       </Menu>
@@ -614,7 +706,9 @@ describe('Menu', () => {
         <Button aria-label="Menu">☰</Button>
         <Popover>
           <Menu>
-            <MenuItem id="open" shouldCloseOnSelect={false}>Open</MenuItem>
+            <MenuItem id="open" shouldCloseOnSelect={false}>
+              Open
+            </MenuItem>
             <MenuItem id="rename">Rename…</MenuItem>
             <MenuItem id="duplicate">Duplicate</MenuItem>
             <MenuItem id="share">Share…</MenuItem>
@@ -689,42 +783,49 @@ describe('Menu', () => {
   });
 
   describe('supports links', function () {
-    describe.each(['mouse', 'keyboard'])('%s', (type) => {
-      it.each(['none', 'single', 'multiple'] as unknown as SelectionMode[])('with selectionMode = %s', async function (selectionMode) {
-        let onAction = jest.fn();
-        let onSelectionChange = jest.fn();
-        let tree = render(
-          <Menu aria-label="menu" selectionMode={selectionMode} onSelectionChange={onSelectionChange} onAction={onAction}>
-            <MenuItem href="https://google.com">One</MenuItem>
-            <MenuItem href="https://adobe.com">Two</MenuItem>
-          </Menu>
-        );
+    describe.each(['mouse', 'keyboard'])('%s', type => {
+      it.each(['none', 'single', 'multiple'] as unknown as SelectionMode[])(
+        'with selectionMode = %s',
+        async function (selectionMode) {
+          let onAction = jest.fn();
+          let onSelectionChange = jest.fn();
+          let tree = render(
+            <Menu
+              aria-label="menu"
+              selectionMode={selectionMode}
+              onSelectionChange={onSelectionChange}
+              onAction={onAction}>
+              <MenuItem href="https://google.com">One</MenuItem>
+              <MenuItem href="https://adobe.com">Two</MenuItem>
+            </Menu>
+          );
 
-        let role = {
-          none: 'menuitem',
-          single: 'menuitemradio',
-          multiple: 'menuitemcheckbox'
-        }[selectionMode];
-        let items = tree.getAllByRole(role);
-        expect(items).toHaveLength(2);
-        expect(items[0].tagName).toBe('A');
-        expect(items[0]).toHaveAttribute('href', 'https://google.com');
-        expect(items[1].tagName).toBe('A');
-        expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
+          let role = {
+            none: 'menuitem',
+            single: 'menuitemradio',
+            multiple: 'menuitemcheckbox'
+          }[selectionMode];
+          let items = tree.getAllByRole(role);
+          expect(items).toHaveLength(2);
+          expect(items[0].tagName).toBe('A');
+          expect(items[0]).toHaveAttribute('href', 'https://google.com');
+          expect(items[1].tagName).toBe('A');
+          expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
 
-        let onClick = mockClickDefault({capture: true});
-        if (type === 'mouse') {
-          await user.click(items[1]);
-        } else {
-          fireEvent.keyDown(items[1], {key: 'Enter'});
-          fireEvent.click(items[1]);
-          fireEvent.keyUp(items[1], {key: 'Enter'});
+          let onClick = mockClickDefault({capture: true});
+          if (type === 'mouse') {
+            await user.click(items[1]);
+          } else {
+            fireEvent.keyDown(items[1], {key: 'Enter'});
+            fireEvent.click(items[1]);
+            fireEvent.keyUp(items[1], {key: 'Enter'});
+          }
+          expect(onAction).toHaveBeenCalledTimes(1);
+          expect(onSelectionChange).not.toHaveBeenCalled();
+          expect(onClick).toHaveBeenCalledTimes(1);
+          document.removeEventListener('click', onClick);
         }
-        expect(onAction).toHaveBeenCalledTimes(1);
-        expect(onSelectionChange).not.toHaveBeenCalled();
-        expect(onClick).toHaveBeenCalledTimes(1);
-        document.removeEventListener('click', onClick);
-      });
+      );
     });
   });
 
@@ -777,7 +878,9 @@ describe('Menu', () => {
 
       // Open the submenu
       await user.pointer({target: triggerItem});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(triggerItem).toHaveAttribute('data-hovered', 'true');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
       expect(triggerItem).toHaveAttribute('data-open', 'true');
@@ -850,7 +953,9 @@ describe('Menu', () => {
 
       // Open the submenu
       await user.pointer({target: triggerItem});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(triggerItem).toHaveAttribute('data-hovered', 'true');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
       expect(triggerItem).toHaveAttribute('data-open', 'true');
@@ -870,7 +975,9 @@ describe('Menu', () => {
 
       // Open the nested submenu
       await user.pointer({target: nestedTriggerItem});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(nestedTriggerItem).toHaveAttribute('data-hovered', 'true');
       expect(nestedTriggerItem).toHaveAttribute('aria-expanded', 'true');
       expect(nestedTriggerItem).toHaveAttribute('data-open', 'true');
@@ -943,7 +1050,9 @@ describe('Menu', () => {
 
       // Open the submenu
       await user.pointer({target: triggerItem});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(triggerItem).toHaveAttribute('data-hovered', 'true');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
       expect(triggerItem).toHaveAttribute('data-open', 'true');
@@ -963,7 +1072,9 @@ describe('Menu', () => {
 
       // Open the nested submenu
       await user.pointer({target: nestedTriggerItem});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(nestedTriggerItem).toHaveAttribute('data-hovered', 'true');
       expect(nestedTriggerItem).toHaveAttribute('aria-expanded', 'true');
       expect(nestedTriggerItem).toHaveAttribute('data-open', 'true');
@@ -1030,7 +1141,9 @@ describe('Menu', () => {
 
       // Open the submenu
       await user.pointer({target: triggerItem});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(triggerItem).toHaveAttribute('data-hovered', 'true');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
       expect(triggerItem).toHaveAttribute('data-open', 'true');
@@ -1041,11 +1154,15 @@ describe('Menu', () => {
       expect(submenuItems).toHaveLength(3);
 
       await user.pointer({target: submenuItems[0]});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(document.activeElement).toBe(submenuItems[0]);
 
       await user.keyboard('{Escape}');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       expect(submenu).not.toBeInTheDocument();
       expect(menu).toBeInTheDocument();
@@ -1085,7 +1202,10 @@ describe('Menu', () => {
         </MenuTrigger>
       );
 
-      let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button'), interactionType: 'keyboard'});
+      let menuTester = testUtilUser.createTester('Menu', {
+        root: getByRole('button'),
+        interactionType: 'keyboard'
+      });
 
       expect(menuTester.trigger).not.toHaveAttribute('data-pressed');
       await menuTester.open();
@@ -1108,7 +1228,9 @@ describe('Menu', () => {
       // Open the submenu
       await user.pointer({target: triggerItem});
       let submenuTester = await menuTester.openSubmenu({submenuTrigger: triggerItem});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(triggerItem).toHaveAttribute('data-hovered', 'true');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
       expect(triggerItem).toHaveAttribute('data-open', 'true');
@@ -1117,12 +1239,16 @@ describe('Menu', () => {
 
       // Open the nested submenu
       let nestedSubmenu = await submenuTester?.openSubmenu({submenuTrigger: 'Email…'});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(nestedSubmenu?.menu).toBeInTheDocument();
       expect(document.activeElement).toBe(nestedSubmenu?.options()[0]);
 
       await user.keyboard('{Escape}');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       expect(nestedSubmenu?.menu).not.toBeInTheDocument();
       expect(submenuTester?.menu).toBeInTheDocument();
@@ -1179,7 +1305,9 @@ describe('Menu', () => {
 
       // Open the submenu
       await user.pointer({target: triggerItem});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       let submenu = getAllByRole('menu')[1];
       expect(submenu).toBeInTheDocument();
 
@@ -1187,7 +1315,9 @@ describe('Menu', () => {
 
       // Click a nested submenu item trigger
       await user.click(nestedTriggerItem);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       let menus = getAllByRole('menu', {hidden: true});
       expect(menus).toHaveLength(3);
 
@@ -1255,10 +1385,14 @@ describe('Menu', () => {
       expect(groups[1]).toHaveClass('react-aria-MenuSection');
 
       expect(groups[0]).toHaveAttribute('aria-labelledby');
-      expect(document.getElementById(groups[0].getAttribute('aria-labelledby')!)).toHaveTextContent('Actions');
+      expect(document.getElementById(groups[0].getAttribute('aria-labelledby')!)).toHaveTextContent(
+        'Actions'
+      );
 
       expect(groups[1]).toHaveAttribute('aria-labelledby');
-      expect(document.getElementById(groups[1].getAttribute('aria-labelledby')!)).toHaveTextContent('Settings');
+      expect(document.getElementById(groups[1].getAttribute('aria-labelledby')!)).toHaveTextContent(
+        'Settings'
+      );
 
       let menu = menuTester.menu!;
       expect(getAllByRole('menuitem')).toHaveLength(7);
@@ -1284,13 +1418,19 @@ describe('Menu', () => {
       expect(groupsInSubmenu[1]).toHaveClass('react-aria-MenuSection');
 
       expect(groupsInSubmenu[0]).toHaveAttribute('aria-labelledby');
-      expect(document.getElementById(groupsInSubmenu[0].getAttribute('aria-labelledby')!)).toHaveTextContent('Work');
+      expect(
+        document.getElementById(groupsInSubmenu[0].getAttribute('aria-labelledby')!)
+      ).toHaveTextContent('Work');
 
       expect(groupsInSubmenu[1]).toHaveAttribute('aria-labelledby');
-      expect(document.getElementById(groupsInSubmenu[1].getAttribute('aria-labelledby')!)).toHaveTextContent('Personal');
+      expect(
+        document.getElementById(groupsInSubmenu[1].getAttribute('aria-labelledby')!)
+      ).toHaveTextContent('Personal');
 
       await user.click(submenuItems[0]);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onAction).toHaveBeenLastCalledWith('email-work');
@@ -1353,7 +1493,9 @@ describe('Menu', () => {
 
       // Open the subdialog
       await menuTester.openSubmenu({submenuTrigger: triggerItem});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(triggerItem).toHaveAttribute('data-hovered', 'true');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
       expect(triggerItem).toHaveAttribute('data-open', 'true');
@@ -1400,9 +1542,7 @@ describe('Menu', () => {
                             <Label>Contact number: </Label>
                             <Input />
                           </TextField>
-                          <Button>
-                            Submit
-                          </Button>
+                          <Button>Submit</Button>
                         </form>
                       </Popover>
                     </SubmenuTrigger>
@@ -1427,7 +1567,9 @@ describe('Menu', () => {
 
       // Open the subdialog
       let subDialogTester = await menuTester.openSubmenu({submenuTrigger: triggerItem});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(subDialogTester?.menu).toBeInTheDocument();
 
       let subDialogTriggerItem = subDialogTester?.submenuTriggers[0];
@@ -1436,18 +1578,24 @@ describe('Menu', () => {
 
       // Open the nested subdialog
       await subDialogTester?.openSubmenu({submenuTrigger: subDialogTriggerItem!});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       let subdialogs = getAllByRole('dialog');
       expect(subdialogs).toHaveLength(3);
 
       await user.keyboard('{Escape}');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       subdialogs = getAllByRole('dialog');
       expect(subdialogs).toHaveLength(2);
       expect(document.activeElement).toBe(subDialogTriggerItem);
 
       await user.keyboard('{Escape}');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       subdialogs = queryAllByRole('dialog');
       expect(subdialogs).toHaveLength(1);
       expect(document.activeElement).toBe(triggerItem);
@@ -1480,9 +1628,7 @@ describe('Menu', () => {
                             <Label>Contact number: </Label>
                             <Input />
                           </TextField>
-                          <Button>
-                            Submit
-                          </Button>
+                          <Button>Submit</Button>
                         </form>
                       </Popover>
                     </SubmenuTrigger>
@@ -1505,18 +1651,24 @@ describe('Menu', () => {
       let triggerItem = menuTester.submenuTriggers[0];
 
       let subDialogTester = await menuTester.openSubmenu({submenuTrigger: triggerItem});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(subDialogTester?.menu).toBeInTheDocument();
 
       // Open the nested subdialog
       let subDialogTriggerItem = subDialogTester?.submenuTriggers[0];
       await subDialogTester?.openSubmenu({submenuTrigger: subDialogTriggerItem!});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       let subdialogs = getAllByRole('dialog');
       expect(subdialogs).toHaveLength(3);
 
       await user.click(document.body);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       subdialogs = queryAllByRole('dialog');
       expect(subdialogs).toHaveLength(0);
       expect(menuTester.menu).not.toBeInTheDocument();
@@ -1554,14 +1706,14 @@ describe('Menu', () => {
     }
 
     it('should render the menu in the portal container', async () => {
-      let {getByRole, getByTestId} = render(
-        <App />
-      );
+      let {getByRole, getByTestId} = render(<App />);
 
       let button = getByRole('button');
       await user.click(button);
 
-      expect(getByRole('menu').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      expect(getByRole('menu').closest('[data-testid="custom-container"]')).toBe(
+        getByTestId('custom-container')
+      );
     });
   });
 
@@ -1609,14 +1761,20 @@ describe('Menu', () => {
     menuTester.setInteractionType('keyboard');
 
     await menuTester.open();
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let menu = menuTester.menu;
     let activeElement = document.activeElement;
 
     await user.tab();
-    act(() => {jest.runAllTimers();});
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(menu).toBeInTheDocument();
     expect(document.activeElement).toBe(activeElement);
   });
@@ -1632,7 +1790,9 @@ describe('Menu', () => {
       <MenuTrigger>
         <Button>Menu Button</Button>
         <Popover>
-          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, onClickCapture}} />
+          <TestMenu
+            itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, onClickCapture}}
+          />
         </Popover>
       </MenuTrigger>
     );
@@ -1659,7 +1819,9 @@ describe('Menu', () => {
       <MenuTrigger>
         <Button>Menu Button</Button>
         <Popover>
-          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, closeOnSelect: false}} />
+          <TestMenu
+            itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, closeOnSelect: false}}
+          />
         </Popover>
       </MenuTrigger>
     );
@@ -1692,7 +1854,10 @@ describe('Menu', () => {
 
     let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
     await user.pointer({target: menuTester.trigger, keys: '[MouseLeft>]'});
-    await user.pointer({target: menuTester.findOption({optionIndexOrText: 'Cat'}), keys: '[/MouseLeft]'});
+    await user.pointer({
+      target: menuTester.findOption({optionIndexOrText: 'Cat'}),
+      keys: '[/MouseLeft]'
+    });
 
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(onPressStart).not.toHaveBeenCalled();
@@ -1740,14 +1905,20 @@ describe('Menu', () => {
       <MenuTrigger>
         <Button>Menu Button</Button>
         <Popover>
-          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, closeOnSelect: false}} />
+          <TestMenu
+            itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, closeOnSelect: false}}
+          />
         </Popover>
       </MenuTrigger>
     );
 
     let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
     await menuTester.open();
-    await menuTester.selectOption({option: 'Cat', interactionType: 'keyboard', closesOnSelect: false});
+    await menuTester.selectOption({
+      option: 'Cat',
+      interactionType: 'keyboard',
+      closesOnSelect: false
+    });
 
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(onPressStart).toHaveBeenCalledTimes(1);
@@ -1779,13 +1950,17 @@ describe('Menu', () => {
       await findByRole('menu');
       let menuItems = getAllByRole('menuitem');
       await user.click(menuItems[0]);
-      expect(await findByText('Contact your administrator for permissions to delete.')).toBeInTheDocument();
+      expect(
+        await findByText('Contact your administrator for permissions to delete.')
+      ).toBeInTheDocument();
       expect(onAction).not.toHaveBeenCalled();
       let dialogs = getAllByRole('dialog');
       expect(dialogs).toHaveLength(2);
       expect(document.activeElement).toBe(menuItems[0]);
       await user.keyboard('{Escape}');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(document.activeElement).toBe(getByRole('button'));
     });
 
@@ -1807,17 +1982,24 @@ describe('Menu', () => {
         </MenuTrigger>
       );
 
-      let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button'), interactionType: 'keyboard'});
+      let menuTester = testUtilUser.createTester('Menu', {
+        root: getByRole('button'),
+        interactionType: 'keyboard'
+      });
       await menuTester.open();
       await findByRole('menu');
       await menuTester.selectOption({option: 0});
-      expect(await findByText('Contact your administrator for permissions to delete.')).toBeInTheDocument();
+      expect(
+        await findByText('Contact your administrator for permissions to delete.')
+      ).toBeInTheDocument();
       expect(onAction).not.toHaveBeenCalled();
       let dialogs = getAllByRole('dialog');
       expect(dialogs).toHaveLength(2);
       expect(document.activeElement).toBe(dialogs[1]);
       await user.keyboard('{Escape}');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(document.activeElement).toBe(menuTester.options()[0]);
     });
   });
@@ -1827,12 +2009,16 @@ describe('Menu', () => {
 // what about the button label?
 // where and how can i define the requirements/assumptions for setup for the test?
 let withSection = [
-  {id: 'heading 1', name: 'Heading 1', children: [
-    {id: 'foo', name: 'Foo'},
-    {id: 'bar', name: 'Bar'},
-    {id: 'baz', name: 'Baz'},
-    {id: 'fizz', name: 'Fizz'}
-  ]}
+  {
+    id: 'heading 1',
+    name: 'Heading 1',
+    children: [
+      {id: 'foo', name: 'Foo'},
+      {id: 'bar', name: 'Bar'},
+      {id: 'baz', name: 'Baz'},
+      {id: 'fizz', name: 'Fizz'}
+    ]
+  }
 ];
 
 function SelectionStatic(props) {
@@ -1873,14 +2059,14 @@ function SelectionDynamic(props) {
           selectionMode={selectionMode}
           selectedKeys={selected}
           onSelectionChange={setSelected}>
-          {(section) => (
+          {section => (
             <MenuSection>
               <Header>{section.name}</Header>
               <Collection items={section.children}>
                 {item => <MenuItem>{item.name}</MenuItem>}
               </Collection>
             </MenuSection>
-        )}
+          )}
         </Menu>
       </Popover>
     </MenuTrigger>
@@ -1890,48 +2076,12 @@ function SelectionDynamic(props) {
 AriaMenuTests({
   prefix: 'rac-static',
   renderers: {
-    standard: () => render(
-      <MenuTrigger>
-        <Button>Menu Button</Button>
-        <Popover>
-          <Menu aria-label="Test">
-            <MenuSection>
-              <Header>Heading 1</Header>
-              <MenuItem>Foo</MenuItem>
-              <MenuItem>Bar</MenuItem>
-              <MenuItem>Baz</MenuItem>
-            </MenuSection>
-          </Menu>
-        </Popover>
-      </MenuTrigger>
-    ),
-    disabledTrigger: () => render(
-      <MenuTrigger>
-        <Button isDisabled>Menu Button</Button>
-        <Popover>
-          <Menu aria-label="Test">
-            <MenuSection>
-              <Header>Heading 1</Header>
-              <MenuItem>Foo</MenuItem>
-              <MenuItem>Bar</MenuItem>
-              <MenuItem>Baz</MenuItem>
-            </MenuSection>
-          </Menu>
-        </Popover>
-      </MenuTrigger>
-    ),
-    singleSelection: () => render(
-      <SelectionStatic />
-    ),
-    multipleSelection: () => render(
-      <SelectionStatic selectionMode="multiple" />
-    ),
-    multipleMenus: () => render(
-      <>
+    standard: () =>
+      render(
         <MenuTrigger>
-          <Button>Menu Button1</Button>
+          <Button>Menu Button</Button>
           <Popover>
-            <Menu aria-label="Test1">
+            <Menu aria-label="Test">
               <MenuSection>
                 <Header>Heading 1</Header>
                 <MenuItem>Foo</MenuItem>
@@ -1941,10 +2091,13 @@ AriaMenuTests({
             </Menu>
           </Popover>
         </MenuTrigger>
+      ),
+    disabledTrigger: () =>
+      render(
         <MenuTrigger>
-          <Button>Menu Button2</Button>
+          <Button isDisabled>Menu Button</Button>
           <Popover>
-            <Menu aria-label="Test2">
+            <Menu aria-label="Test">
               <MenuSection>
                 <Header>Heading 1</Header>
                 <MenuItem>Foo</MenuItem>
@@ -1954,67 +2107,97 @@ AriaMenuTests({
             </Menu>
           </Popover>
         </MenuTrigger>
-      </>
-    ),
-    submenus: () => render(
-      <MenuTrigger>
-        <Button aria-label="Menu">☰</Button>
-        <Popover>
-          <Menu>
-            <MenuItem id="open">Open</MenuItem>
-            <MenuItem id="rename">Rename…</MenuItem>
-            <MenuItem id="duplicate">Duplicate</MenuItem>
-            <SubmenuTrigger>
-              <MenuItem id="share">Share…</MenuItem>
-              <Popover>
-                <Menu>
-                  <SubmenuTrigger>
-                    <MenuItem id="email">Email…</MenuItem>
-                    <Popover>
-                      <Menu>
-                        <MenuItem id="work">Work</MenuItem>
-                        <MenuItem id="personal">Personal</MenuItem>
-                      </Menu>
-                    </Popover>
-                  </SubmenuTrigger>
-                  <MenuItem id="sms">SMS</MenuItem>
-                  <MenuItem id="x">X</MenuItem>
-                </Menu>
-              </Popover>
-            </SubmenuTrigger>
-            <MenuItem id="delete">Delete…</MenuItem>
-          </Menu>
-        </Popover>
-      </MenuTrigger>
-    )
+      ),
+    singleSelection: () => render(<SelectionStatic />),
+    multipleSelection: () => render(<SelectionStatic selectionMode="multiple" />),
+    multipleMenus: () =>
+      render(
+        <>
+          <MenuTrigger>
+            <Button>Menu Button1</Button>
+            <Popover>
+              <Menu aria-label="Test1">
+                <MenuSection>
+                  <Header>Heading 1</Header>
+                  <MenuItem>Foo</MenuItem>
+                  <MenuItem>Bar</MenuItem>
+                  <MenuItem>Baz</MenuItem>
+                </MenuSection>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+          <MenuTrigger>
+            <Button>Menu Button2</Button>
+            <Popover>
+              <Menu aria-label="Test2">
+                <MenuSection>
+                  <Header>Heading 1</Header>
+                  <MenuItem>Foo</MenuItem>
+                  <MenuItem>Bar</MenuItem>
+                  <MenuItem>Baz</MenuItem>
+                </MenuSection>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+        </>
+      ),
+    submenus: () =>
+      render(
+        <MenuTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Popover>
+            <Menu>
+              <MenuItem id="open">Open</MenuItem>
+              <MenuItem id="rename">Rename…</MenuItem>
+              <MenuItem id="duplicate">Duplicate</MenuItem>
+              <SubmenuTrigger>
+                <MenuItem id="share">Share…</MenuItem>
+                <Popover>
+                  <Menu>
+                    <SubmenuTrigger>
+                      <MenuItem id="email">Email…</MenuItem>
+                      <Popover>
+                        <Menu>
+                          <MenuItem id="work">Work</MenuItem>
+                          <MenuItem id="personal">Personal</MenuItem>
+                        </Menu>
+                      </Popover>
+                    </SubmenuTrigger>
+                    <MenuItem id="sms">SMS</MenuItem>
+                    <MenuItem id="x">X</MenuItem>
+                  </Menu>
+                </Popover>
+              </SubmenuTrigger>
+              <MenuItem id="delete">Delete…</MenuItem>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      )
   }
 });
 
 AriaMenuTests({
   prefix: 'rac-dynamic',
   renderers: {
-    standard: () => render(
-      <MenuTrigger>
-        <Button>Menu Button</Button>
-        <Popover>
-          <Menu aria-label="Test" items={withSection}>
-            {(section) => (
-              <MenuSection>
-                <Header>{section.name}</Header>
-                <Collection items={section.children}>
-                  {item => <MenuItem>{item.name}</MenuItem>}
-                </Collection>
-              </MenuSection>
-            )}
-          </Menu>
-        </Popover>
-      </MenuTrigger>
-    ),
-    singleSelection: () => render(
-      <SelectionDynamic />
-    ),
-    multipleSelection: () => render(
-      <SelectionDynamic selectionMode="multiple" />
-    )
+    standard: () =>
+      render(
+        <MenuTrigger>
+          <Button>Menu Button</Button>
+          <Popover>
+            <Menu aria-label="Test" items={withSection}>
+              {section => (
+                <MenuSection>
+                  <Header>{section.name}</Header>
+                  <Collection items={section.children}>
+                    {item => <MenuItem>{item.name}</MenuItem>}
+                  </Collection>
+                </MenuSection>
+              )}
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      ),
+    singleSelection: () => render(<SelectionDynamic />),
+    multipleSelection: () => render(<SelectionDynamic selectionMode="multiple" />)
   }
 });

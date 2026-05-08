@@ -2,13 +2,14 @@
   "name": "@parcel/resolver-storybook",
   "version": "0.0.0",
   "private": true,
-  "main": "dist/StorybookResolver.js",
   "source": "StorybookResolver.ts",
+  "main": "dist/StorybookResolver.js",
   "publishConfig": {
     "access": "public"
   },
-  "engines": {
-    "parcel": "^2.8.0"
+  "scripts": {
+    "build": "rm -rf dist && swc . -d dist --config-file ../../.swcrc",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@parcel/core": "^2.16.3",
@@ -16,8 +17,7 @@
     "@parcel/plugin": "^2.16.3",
     "@parcel/utils": "^2.16.3"
   },
-  "scripts": {
-    "build": "rm -rf dist && swc . -d dist --config-file ../../.swcrc",
-    "clean": "rm -rf dist"
+  "engines": {
+    "parcel": "^2.8.0"
   }
 }

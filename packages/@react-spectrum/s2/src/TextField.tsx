@@ -10,18 +10,43 @@
  * governing permissions and limitations under the License.
  */
 
-import {TextArea as AriaTextArea, TextAreaContext as AriaTextAreaContext} from 'react-aria-components/TextArea';
+import {
+  TextArea as AriaTextArea,
+  TextAreaContext as AriaTextAreaContext
+} from 'react-aria-components/TextArea';
 import {TextContext as AriaTextContext} from 'react-aria-components/Text';
-import {TextField as AriaTextField, TextFieldProps as AriaTextFieldProps} from 'react-aria-components/TextField';
+import {
+  TextField as AriaTextField,
+  TextFieldProps as AriaTextFieldProps
+} from 'react-aria-components/TextField';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, fontRelative, style} from '../style' with {type: 'macro'};
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
-import {controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useRef} from 'react';
+import {
+  controlSize,
+  field,
+  getAllowedOverrides,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
+import {
+  createContext,
+  forwardRef,
+  ReactNode,
+  Ref,
+  useContext,
+  useImperativeHandle,
+  useRef
+} from 'react';
 import {createFocusableRef} from './useDOMRef';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {FocusableRefValue, GlobalDOMAttributes, HelpTextProps, RefObject, SpectrumLabelableProps} from '@react-types/shared';
+import {
+  FocusableRefValue,
+  GlobalDOMAttributes,
+  HelpTextProps,
+  RefObject,
+  SpectrumLabelableProps
+} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {IconContext} from './Icon';
 import {InputContext, InputProps} from 'react-aria-components/Input';
@@ -30,37 +55,50 @@ import {StyleString} from '../style/types';
 import {Text, TextContext} from './Content';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface TextFieldRef<T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends FocusableRefValue<T, HTMLDivElement> {
-  select(): void,
-  getInputElement(): T | null
+export interface TextFieldRef<
+  T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement
+> extends FocusableRefValue<T, HTMLDivElement> {
+  select(): void;
+  getInputElement(): T | null;
 }
 
-export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
+export interface TextFieldProps
+  extends
+    Omit<
+      AriaTextFieldProps,
+      'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes
+    >,
+    StyleProps,
+    SpectrumLabelableProps,
+    HelpTextProps,
+    Pick<InputProps, 'placeholder'> {
   /**
    * The size of the text field.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL';
   /**
    * The prefix to display in the text field. Either a string or workflow icon.
    */
-  prefix?: ReactNode
+  prefix?: ReactNode;
 }
 
-export const TextFieldContext = createContext<ContextValue<Partial<TextFieldProps>, TextFieldRef>>(null);
+export const TextFieldContext =
+  createContext<ContextValue<Partial<TextFieldProps>, TextFieldRef>>(null);
 
 /**
  * TextFields are text inputs that allow users to input custom text entries
  * with a keyboard. Various decorations can be displayed around the field to
  * communicate the entry requirements.
  */
-export const TextField = forwardRef(function TextField(props: TextFieldProps, ref: Ref<TextFieldRef>) {
+export const TextField = forwardRef(function TextField(
+  props: TextFieldProps,
+  ref: Ref<TextFieldRef>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, TextFieldContext);
   return (
-    <TextFieldBase
-      {...props}
-      ref={ref}>
+    <TextFieldBase {...props} ref={ref}>
       <Input />
     </TextFieldBase>
   );
@@ -68,14 +106,18 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
 
 export interface TextAreaProps extends Omit<TextFieldProps, 'type' | 'pattern'> {}
 
-export const TextAreaContext = createContext<ContextValue<Partial<TextAreaProps>, TextFieldRef<HTMLTextAreaElement>>>(null);
+export const TextAreaContext =
+  createContext<ContextValue<Partial<TextAreaProps>, TextFieldRef<HTMLTextAreaElement>>>(null);
 
 /**
  * TextAreas are multiline text inputs, useful for cases where users have
  * a sizable amount of text to enter. They allow for all customizations that
  * are available to text fields.
  */
-export const TextArea = forwardRef(function TextArea(props: TextAreaProps, ref: Ref<TextFieldRef<HTMLTextAreaElement>>) {
+export const TextArea = forwardRef(function TextArea(
+  props: TextAreaProps,
+  ref: Ref<TextFieldRef<HTMLTextAreaElement>>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, TextAreaContext);
   return (
     <TextFieldBase
@@ -90,7 +132,10 @@ export const TextArea = forwardRef(function TextArea(props: TextAreaProps, ref: 
   );
 });
 
-export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupCss?: StyleString}, ref: Ref<TextFieldRef<HTMLInputElement | HTMLTextAreaElement>>) {
+export const TextFieldBase = forwardRef(function TextFieldBase(
+  props: TextFieldProps & {children: ReactNode; fieldGroupCss?: StyleString},
+  ref: Ref<TextFieldRef<HTMLInputElement | HTMLTextAreaElement>>
+) {
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useRef<HTMLDivElement>(null);
   let formContext = useContext(FormContext);
@@ -126,70 +171,94 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldP
       {...textFieldProps}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + style(field(), getAllowedOverrides())({
-        size: props.size,
-        labelPosition,
-        isInForm: !!formContext
-      }, props.styles)}>
-      {composeRenderProps(props.children, (children, {isDisabled, isInvalid}) => (<>
-        <FieldLabel
-          isDisabled={isDisabled}
-          isRequired={props.isRequired}
-          size={props.size}
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          necessityIndicator={necessityIndicator}
-          contextualHelp={props.contextualHelp}>
-          {label}
-        </FieldLabel>
-        <FieldGroup size={props.size} styles={fieldGroupCss}>
-          <Provider values={[[TextContext, {}]]}>
-            {props.prefix ? (
-              <Provider 
-                values={[
-                  [IconContext, {
-                    render: centerBaseline({}),
-                    styles: style({
-                      size: fontRelative(20),
-                      '--iconPrimary': {
-                        type: 'fill',
-                        value: 'currentColor'
+      className={
+        UNSAFE_className +
+        style(field(), getAllowedOverrides())(
+          {
+            size: props.size,
+            labelPosition,
+            isInForm: !!formContext
+          },
+          props.styles
+        )
+      }>
+      {composeRenderProps(props.children, (children, {isDisabled, isInvalid}) => (
+        <>
+          <FieldLabel
+            isDisabled={isDisabled}
+            isRequired={props.isRequired}
+            size={props.size}
+            labelPosition={labelPosition}
+            labelAlign={labelAlign}
+            necessityIndicator={necessityIndicator}
+            contextualHelp={props.contextualHelp}>
+            {label}
+          </FieldLabel>
+          <FieldGroup size={props.size} styles={fieldGroupCss}>
+            <Provider values={[[TextContext, {}]]}>
+              {props.prefix ? (
+                <Provider
+                  values={[
+                    [
+                      IconContext,
+                      {
+                        render: centerBaseline({}),
+                        styles: style({
+                          size: fontRelative(20),
+                          '--iconPrimary': {
+                            type: 'fill',
+                            value: 'currentColor'
+                          }
+                        })
                       }
-                    })
-                  }],
-                  [AriaTextContext, {}],
-                  [TextContext, {
-                    slots: {
-                      [DEFAULT_SLOT]: {
-                        styles: style({minWidth: 20, display: 'flex', alignItems: 'center', justifyContent: 'center'})
+                    ],
+                    [AriaTextContext, {}],
+                    [
+                      TextContext,
+                      {
+                        slots: {
+                          [DEFAULT_SLOT]: {
+                            styles: style({
+                              minWidth: 20,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            })
+                          }
+                        }
                       }
-                    }
-                  }]
-                ]}>
-                <div className={style({color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
-                  {typeof props.prefix === 'string' ? <Text>{props.prefix}</Text> : props.prefix}
-                </div>
-              </Provider>
-              ) : null
-            }
-            <InputContext.Consumer>
-              {ctx => (
-                <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
-                  {children}
-                </InputContext.Provider>
-              )}
-            </InputContext.Consumer>
-            {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
-          </Provider>
-        </FieldGroup>
-        <HelpText
-          size={props.size}
-          isDisabled={isDisabled}
-          isInvalid={isInvalid}
-          description={description}>
-          {errorMessage}
-        </HelpText>
-      </>))}
+                    ]
+                  ]}>
+                  <div
+                    className={style({
+                      color: 'gray-600',
+                      flexShrink: 0,
+                      marginEnd: 'text-to-visual'
+                    })}>
+                    {typeof props.prefix === 'string' ? <Text>{props.prefix}</Text> : props.prefix}
+                  </div>
+                </Provider>
+              ) : null}
+              <InputContext.Consumer>
+                {ctx => (
+                  <InputContext.Provider
+                    value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
+                    {children}
+                  </InputContext.Provider>
+                )}
+              </InputContext.Consumer>
+              {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
+            </Provider>
+          </FieldGroup>
+          <HelpText
+            size={props.size}
+            isDisabled={isDisabled}
+            isInvalid={isInvalid}
+            description={description}>
+            {errorMessage}
+          </HelpText>
+        </>
+      ))}
     </AriaTextField>
   );
 });
@@ -248,6 +317,7 @@ function TextAreaInput() {
         borderStyle: 'none',
         resize: 'none',
         overflowX: 'hidden'
-      })} />
+      })}
+    />
   );
 }

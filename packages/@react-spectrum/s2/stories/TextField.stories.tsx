@@ -55,10 +55,12 @@ Example.args = {
 };
 
 export const Validation: StoryTextField = {
-  render: (args) => (
+  render: args => (
     <Form>
       <TextField {...args} />
-      <Button type="submit" variant="primary">Submit</Button>
+      <Button type="submit" variant="primary">
+        Submit
+      </Button>
     </Form>
   ),
   args: {
@@ -68,7 +70,7 @@ export const Validation: StoryTextField = {
 };
 
 export const ContextualHelpExample: StoryTextField = {
-  render: (args) => (
+  render: args => (
     <TextField
       {...args}
       contextualHelp={
@@ -76,18 +78,21 @@ export const ContextualHelpExample: StoryTextField = {
           <Heading>What is a segment?</Heading>
           <Content>
             <Text>
-              Segments identify who your visitors are, what devices and services they
-              use, where they navigated from, and much more.
+              Segments identify who your visitors are, what devices and services they use, where
+              they navigated from, and much more.
             </Text>
           </Content>
           <Footer>
             <Link
               isStandalone
               href="https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/personalization/campaign-segmentation"
-              target="_blank">Learn more about segments</Link>
+              target="_blank">
+              Learn more about segments
+            </Link>
           </Footer>
         </ContextualHelp>
-      } />
+      }
+    />
   ),
   args: {
     label: 'Segment',
@@ -96,7 +101,7 @@ export const ContextualHelpExample: StoryTextField = {
 };
 
 export const TextAreaExample: StoryTextArea = {
-  render: (args) => <TextArea {...args} />,
+  render: args => <TextArea {...args} />,
   args: {
     label: 'Comment',
     placeholder: 'Enter a comment'
@@ -104,7 +109,7 @@ export const TextAreaExample: StoryTextArea = {
 };
 
 export const CustomWidth: StoryTextField = {
-  render: (args) => <TextField {...args} styles={style({width: 384})} />,
+  render: args => <TextField {...args} styles={style({width: 384})} />,
   args: {
     label: 'Name'
   },
@@ -116,7 +121,7 @@ export const CustomWidth: StoryTextField = {
 };
 
 export const SmallWidth: StoryTextField = {
-  render: (args) => <TextField {...args} styles={style({width: 48})} />,
+  render: args => <TextField {...args} styles={style({width: 48})} />,
   args: {
     label: 'Name'
   },
@@ -128,7 +133,7 @@ export const SmallWidth: StoryTextField = {
 };
 
 export const UNSAFEWidth: StoryTextField = {
-  render: (args) => <TextField {...args} UNSAFE_style={{width: 384}} />,
+  render: args => <TextField {...args} UNSAFE_style={{width: 384}} />,
   args: {
     label: 'Name'
   },
@@ -140,10 +145,12 @@ export const UNSAFEWidth: StoryTextField = {
 };
 
 export const InForm: StoryTextField = {
-  render: (args) => (
+  render: args => (
     <Form>
       <TextField {...args} />
-      <Button type="submit" variant="primary">Submit</Button>
+      <Button type="submit" variant="primary">
+        Submit
+      </Button>
     </Form>
   ),
   args: {
@@ -158,10 +165,12 @@ export const InForm: StoryTextField = {
 };
 
 export const FormCustomWidth: StoryTextField = {
-  render: (args) => (
+  render: args => (
     <Form styles={style({width: 384})} labelPosition={args.labelPosition}>
       <TextField {...args} />
-      <Button type="submit" variant="primary">Submit</Button>
+      <Button type="submit" variant="primary">
+        Submit
+      </Button>
     </Form>
   ),
   args: {
@@ -176,12 +185,14 @@ export const FormCustomWidth: StoryTextField = {
 };
 
 export const TextFieldWithAddons: StoryTextField = {
-  render: (args) => (
+  render: args => (
     <Form>
       <TextField {...args} label="Phone Number" prefix="#" placeholder="(000) 000-0000" />
       <TextField {...args} label="URL" prefix="https://" placeholder="example.com" />
       <TextField {...args} label="Mention" prefix={<MentionIcon />} placeholder="username" />
-      <Button type="submit" variant="primary">Submit</Button>
+      <Button type="submit" variant="primary">
+        Submit
+      </Button>
     </Form>
   ),
   args: {
@@ -191,11 +202,13 @@ export const TextFieldWithAddons: StoryTextField = {
 };
 
 export const TextAreaWithAddons: StoryTextArea = {
-  render: (args) => (
+  render: args => (
     <Form>
       <TextArea {...args} label="Phone Number" prefix="#" placeholder="(000) 000-0000" />
       <TextArea {...args} label="Mention" prefix={<MentionIcon />} placeholder="username" />
-      <Button type="submit" variant="primary">Submit</Button>
+      <Button type="submit" variant="primary">
+        Submit
+      </Button>
     </Form>
   ),
   args: {

@@ -15,7 +15,10 @@ import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
-import {Separator as RACSeparator, SeparatorProps as RACSeparatorProps} from 'react-aria-components/Separator';
+import {
+  Separator as RACSeparator,
+  SeparatorProps as RACSeparatorProps
+} from 'react-aria-components/Separator';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -29,66 +32,76 @@ interface DividerSpectrumProps {
    * How thick the Divider should be.
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L',
+  size?: 'S' | 'M' | 'L';
   /**
    * The orientation of the Divider.
    * @default 'horizontal'
    */
-  orientation?: 'horizontal' | 'vertical',
+  orientation?: 'horizontal' | 'vertical';
   /** The static color style to apply. Useful when the Divider appears over a color background. */
-  staticColor?: 'white' | 'black' | 'auto'
+  staticColor?: 'white' | 'black' | 'auto';
 }
 
 // TODO: allow overriding height (only when orientation is vertical)??
-export interface DividerProps extends DividerSpectrumProps, Omit<RACSeparatorProps, 'className' | 'style' | 'render' | 'elementType' | keyof GlobalDOMAttributes>, StyleProps {}
+export interface DividerProps
+  extends
+    DividerSpectrumProps,
+    Omit<
+      RACSeparatorProps,
+      'className' | 'style' | 'render' | 'elementType' | keyof GlobalDOMAttributes
+    >,
+    StyleProps {}
 
 export const DividerContext = createContext<ContextValue<Partial<DividerProps>, DOMRefValue>>(null);
 
-export const divider = style<DividerSpectrumProps & {isStaticColor: boolean}>({
-  ...staticColor(),
-  alignSelf: 'stretch',
-  backgroundColor: {
-    default: 'gray-200',
-    size: {
-      L: 'gray-800'
-    },
-    isStaticColor: {
-      default: 'transparent-overlay-200',
+export const divider = style<DividerSpectrumProps & {isStaticColor: boolean}>(
+  {
+    ...staticColor(),
+    alignSelf: 'stretch',
+    backgroundColor: {
+      default: 'gray-200',
       size: {
-        L: 'transparent-overlay-800'
+        L: 'gray-800'
+      },
+      isStaticColor: {
+        default: 'transparent-overlay-200',
+        size: {
+          L: 'transparent-overlay-800'
+        }
+      },
+      forcedColors: 'ButtonBorder'
+    },
+    borderStyle: 'none',
+    borderRadius: 'full',
+    margin: 0,
+    flexGrow: 0,
+    flexShrink: 0,
+    height: {
+      orientation: {
+        horizontal: {
+          // These should be px not rems, because we're emulating a border.
+          default: '[2px]',
+          size: {
+            S: '[1px]',
+            L: '[4px]'
+          }
+        }
       }
     },
-    forcedColors: 'ButtonBorder'
-  },
-  borderStyle: 'none',
-  borderRadius: 'full',
-  margin: 0,
-  flexGrow: 0,
-  flexShrink: 0,
-  height: {
-    orientation: {
-      horizontal: {
-        // These should be px not rems, because we're emulating a border.
-        default: '[2px]',
-        size: {
-          S: '[1px]',
-          L: '[4px]'
+    width: {
+      orientation: {
+        vertical: {
+          default: '[2px]',
+          size: {
+            S: '[1px]',
+            L: '[4px]'
+          }
         }
       }
     }
   },
-  width: {
-    orientation: {
-      vertical: {
-        default: '[2px]',
-        size: {
-          S: '[1px]',
-          L: '[4px]'
-        }
-      }
-    }
-  }
-}, getAllowedOverrides());
+  getAllowedOverrides()
+);
 
 /**
  * Dividers bring clarity to a layout by grouping and dividing content in close proximity.
@@ -103,11 +116,18 @@ export const Divider = /*#__PURE__*/ forwardRef(function Divider(props: DividerP
       {...props}
       ref={domRef}
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + divider({
-        size: props.size || 'M',
-        orientation: props.orientation || 'horizontal',
-        staticColor: props.staticColor,
-        isStaticColor: !!props.staticColor
-      }, props.styles)} />
+      className={
+        (props.UNSAFE_className || '') +
+        divider(
+          {
+            size: props.size || 'M',
+            orientation: props.orientation || 'horizontal',
+            staticColor: props.staticColor,
+            isStaticColor: !!props.staticColor
+          },
+          props.styles
+        )
+      }
+    />
   );
 });
