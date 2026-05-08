@@ -532,9 +532,13 @@ export class TableTester {
   }
 
   /**
-   * Returns the rows within the table if any.
+   * Returns the rows within the table if any. Can be filtered to a specific row group if provided via `element`.
    */
-  getRows(): HTMLElement[] {
+  getRows(opts: {element?: HTMLElement} = {}): HTMLElement[] {
+    let {element} = opts;
+    if (element != null) {
+      return within(element).queryAllByRole('row');
+    }
     return this.getRowGroups()
       .slice(1)
       .flatMap(rowGroup => within(rowGroup).queryAllByRole('row'));
@@ -551,7 +555,11 @@ export class TableTester {
    * Returns the footer rows within the table if any.
    */
   getFooterRows(): HTMLElement[] {
-    let footerRowGroup = this.getRowGroups()[2];
+    let rowGroups = this.getRowGroups();
+    if (rowGroups.length < 3) {
+      return [];
+    }
+    let footerRowGroup = rowGroups.at(-1);
     return footerRowGroup ? within(footerRowGroup).queryAllByRole('row') : [];
   }
 

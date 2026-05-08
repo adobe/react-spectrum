@@ -49,7 +49,7 @@ export function getMetaKey(): 'MetaLeft' | 'ControlLeft' {
 
 export function formatTargetNode(value: number | string | HTMLElement): string {
   if (typeof HTMLElement !== 'undefined' && value instanceof HTMLElement) {
-    return value.outerHTML;
+    return (value.cloneNode(false) as HTMLElement).outerHTML;
   }
   return String(value);
 }

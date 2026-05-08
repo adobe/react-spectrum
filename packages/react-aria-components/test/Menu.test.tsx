@@ -2105,6 +2105,39 @@ AriaMenuTests({
           </Popover>
         </MenuTrigger>
       ),
+    singleSelection: () => render(<SelectionStatic />),
+    multipleSelection: () => render(<SelectionStatic selectionMode="multiple" />),
+    multipleMenus: () =>
+      render(
+        <>
+          <MenuTrigger>
+            <Button>Menu Button1</Button>
+            <Popover>
+              <Menu aria-label="Test1">
+                <MenuSection>
+                  <Header>Heading 1</Header>
+                  <MenuItem>Foo</MenuItem>
+                  <MenuItem>Bar</MenuItem>
+                  <MenuItem>Baz</MenuItem>
+                </MenuSection>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+          <MenuTrigger>
+            <Button>Menu Button2</Button>
+            <Popover>
+              <Menu aria-label="Test2">
+                <MenuSection>
+                  <Header>Heading 1</Header>
+                  <MenuItem>Foo</MenuItem>
+                  <MenuItem>Bar</MenuItem>
+                  <MenuItem>Baz</MenuItem>
+                </MenuSection>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+        </>
+      ),
     submenus: () =>
       render(
         <MenuTrigger>

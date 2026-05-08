@@ -3368,18 +3368,29 @@ describe('Table', () => {
             </Collection>
           </TableBody>
         ))}
+        <TableFooter>
+          <Row>
+            <Cell colSpan={2}>Total</Cell>
+            <Cell>Blah</Cell>
+          </Row>
+        </TableFooter>
       </Table>
     );
 
     let tableTester = testUtilUser.createTester('Table', {root});
 
     let groups = tableTester.getRowGroups();
-    expect(groups).toHaveLength(4);
+    expect(groups).toHaveLength(5);
     expect(groups[0].tagName).toBe('THEAD');
     expect(groups[1].tagName).toBe('TBODY');
     expect(groups[2].tagName).toBe('TBODY');
     expect(groups[3].tagName).toBe('TBODY');
-    expect(tableTester.getRows()).toHaveLength(10);
+    expect(tableTester.getRows()).toHaveLength(11);
+
+    expect(tableTester.getRows({element: 1})).toHaveLength(3);
+    expect(tableTester.getRows({element: groups[1]})).toHaveLength(3);
+    expect(tableTester.getRows({element: 2})).toHaveLength(3);
+    expect(tableTester.getRows({element: 3})).toHaveLength(4);
 
     await user.tab();
     for (let row of tableTester.getRows()) {
@@ -3391,6 +3402,9 @@ describe('Table', () => {
       await user.keyboard('{ArrowUp}');
       expect(document.activeElement).toBe(row);
     }
+
+    expect(tableTester.getFooterRows()).toHaveLength(1);
+    expect(tableTester.getFooterRows()).toHaveTextContent('Blah');
   });
 });
 
