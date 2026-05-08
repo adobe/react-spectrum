@@ -1606,11 +1606,11 @@ export interface RowRenderProps extends ItemRenderProps {
    * What level the row has within the table.
    * @selector [data-level]
    */
-  level: number,
+  level: number;
   /**
    * State of the table.
    */
-  state: TableState<unknown>
+  state: TableState<unknown>;
 }
 
 export interface RowProps<T>

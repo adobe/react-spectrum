@@ -130,7 +130,6 @@ export const Example: StoryObj<typeof StaticTable> = {
   }
 };
 
-
 const HighlightTable = (args: any) => (
   <TableView aria-label="Files" {...args} styles={style({width: 400, height: 260})}>
     <TableHeader>
@@ -180,7 +179,6 @@ const HighlightTable = (args: any) => (
   </TableView>
 );
 
-
 export const Highlight: StoryObj<typeof StaticTable> = {
   render: HighlightTable,
   args: {
@@ -192,7 +190,6 @@ export const Highlight: StoryObj<typeof StaticTable> = {
     onLoadMore: undefined
   }
 };
-
 
 export const DisabledRows: StoryObj<typeof StaticTable> = {
   ...Example,

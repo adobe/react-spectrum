@@ -31,7 +31,10 @@ export function useScale(): Scale {
   return 'medium';
 }
 
-export function isNextSelected(id: Key | undefined, state: ListState<unknown> | TableState<unknown> | TreeState<unknown>) {
+export function isNextSelected(
+  id: Key | undefined,
+  state: ListState<unknown> | TableState<unknown> | TreeState<unknown>
+) {
   if (id == null || !state) {
     return false;
   }
@@ -39,7 +42,10 @@ export function isNextSelected(id: Key | undefined, state: ListState<unknown> | 
   return keyAfter != null && state.selectionManager.isSelected(keyAfter);
 }
 
-export function isPrevSelected(id: Key | undefined, state:ListState<unknown> | TableState<unknown> | TreeState<unknown>) {
+export function isPrevSelected(
+  id: Key | undefined,
+  state: ListState<unknown> | TableState<unknown> | TreeState<unknown>
+) {
   if (id == null || !state) {
     return false;
   }
@@ -47,13 +53,19 @@ export function isPrevSelected(id: Key | undefined, state:ListState<unknown> | T
   return keyBefore != null && state.selectionManager.isSelected(keyBefore);
 }
 
-export function isFirstItem(id: Key | undefined, state: ListState<unknown> | TableState<unknown> | TreeState<unknown>) {
+export function isFirstItem(
+  id: Key | undefined,
+  state: ListState<unknown> | TableState<unknown> | TreeState<unknown>
+) {
   if (id == null || !state) {
     return false;
   }
   return state.collection.getFirstKey() === id;
 }
-export function isLastItem(id: Key | undefined, state: ListState<unknown> | TableState<unknown> | TreeState<unknown>) {
+export function isLastItem(
+  id: Key | undefined,
+  state: ListState<unknown> | TableState<unknown> | TreeState<unknown>
+) {
   if (id == null || !state) {
     return false;
   }
@@ -61,7 +73,7 @@ export function isLastItem(id: Key | undefined, state: ListState<unknown> | Tabl
   let key = state.collection.getLastKey();
   let node = key ? state.collection.getItem(key) : null;
 
-  // Sometimes the last key is a loader node, so we check the previous nodes 
+  // Sometimes the last key is a loader node, so we check the previous nodes
   while (node && node.type !== 'item') {
     let prevKey = node.prevKey;
     node = prevKey ? state.collection.getItem(prevKey) : null;
