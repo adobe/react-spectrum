@@ -117,6 +117,7 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
         aria-live="polite"
         aria-relevant="additions"
         keyboardNavigationBehavior="tab"
+        focusOnEntry="first"
         items={items}
         ref={domRef}
         className={style({

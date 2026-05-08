@@ -126,6 +126,11 @@ export interface AriaSelectableCollectionOptions {
    * @default 'action'
    */
   linkBehavior?: 'action' | 'selection' | 'override';
+  // TODO: for testing, but this makes it so we can force tab entry into a collection to the first or last item
+  // this is for the AI thread component since we want shift tab and tab to both go to the newest message
+  // debatable if we should also have this clear the "last focused key" behavior that collections has since I feel like users
+  // want to always to go the newest message from the input field
+  focusOnEntry?: 'first' | 'last';
 }
 
 export interface SelectableCollectionAria {
@@ -154,7 +159,8 @@ export function useSelectableCollection(
     allowsTabNavigation = false,
     // If no scrollRef is provided, assume the collection ref is the scrollable region
     scrollRef = ref,
-    linkBehavior = 'action'
+    linkBehavior = 'action',
+    focusOnEntry
   } = options;
   let {direction} = useLocale();
   let router = useRouter();
@@ -404,7 +410,6 @@ export function useSelectableCollection(
       if (!nodeContains(e.currentTarget, getEventTarget(e))) {
         manager.setFocused(false);
       }
-
       return;
     }
 
@@ -427,7 +432,12 @@ export function useSelectableCollection(
       // Attempt to detect whether the user is tabbing forward or backward into the collection
       // and either focus the first or last item accordingly.
       let relatedTarget = e.relatedTarget as Element;
-      if (
+      // TODO: weird bug where I have to delete the attachment in the prompt field otherwise shift tabbing causes the scroll to go to the very top?
+      if (focusOnEntry === 'first') {
+        navigateToKey(delegate.getFirstKey?.());
+      } else if (focusOnEntry === 'last') {
+        navigateToKey(delegate.getLastKey?.());
+      } else if (
         relatedTarget &&
         e.currentTarget.compareDocumentPosition(relatedTarget) & Node.DOCUMENT_POSITION_FOLLOWING
       ) {

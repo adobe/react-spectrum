@@ -204,6 +204,11 @@ export interface GridListProps<T>
    * @default 'vertical'
    */
   orientation?: Orientation;
+  // TODO: for testing, but this makes it so we can force tab entry into a collection to the first or last item
+  // this is for the AI thread component since we want shift tab and tab to both go to the newest message
+  // debatable if we should also have this clear the "last focused key" behavior that collections has since I feel like users
+  // want to always to go the newest message from the input field
+  focusOnEntry?: 'first' | 'last';
 }
 
 export const GridListContext =
@@ -236,7 +241,8 @@ interface GridListInnerProps<T> {
 function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
   [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {shouldUseVirtualFocus, filter, disallowTypeAhead, ...DOMCollectionProps} = props;
+  let {shouldUseVirtualFocus, filter, disallowTypeAhead, focusOnEntry, ...DOMCollectionProps} =
+    props;
   let {
     dragAndDropHooks,
     keyboardNavigationBehavior = 'arrow',
@@ -294,7 +300,8 @@ function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerPr
       keyboardNavigationBehavior: layout === 'grid' ? 'tab' : keyboardNavigationBehavior,
       isVirtualized,
       shouldSelectOnPressUp: props.shouldSelectOnPressUp,
-      disallowTypeAhead
+      disallowTypeAhead,
+      focusOnEntry
     },
     filteredState,
     ref
