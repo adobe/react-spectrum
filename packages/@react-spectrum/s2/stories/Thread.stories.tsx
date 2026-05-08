@@ -45,7 +45,7 @@ const meta: Meta<typeof Thread> = {
   title: 'Thread',
   decorators: [
     (Story) => (
-      <div style={{width: '600px', height: '700px'}}>
+      <div style={{width: '800px', height: '700px'}}>
         <Story />
       </div>
     )
@@ -56,6 +56,10 @@ export default meta;
 // type Story = StoryObj<typeof Thread>;
 
 export function StaticThread() {
+  // TODO: problem with this is that we are applying column reverse so tabbing into the collection brings you to the "bottom" item
+  // but in the static case we would need to flip the order of the static children as well. Maybe unrealistic for a static case to be
+  // used, but maybe people will do a .map?
+  // the dynamic case is fine cuz we can flip the order of the items inside Thread
   return (
     <div
       className={style({
@@ -67,41 +71,25 @@ export function StaticThread() {
         height: '100%'
       })}>
       <Thread>
-        <UserMessage>
-          <Card variant="quiet">
-            <CardPreview>
-              <Image src="https://react-spectrum.adobe.com/preview.c3b340d3.png" />
-            </CardPreview>
-            <Content>
-              <Text slot="title">Hilton commercial assets</Text>
-              <ActionMenu>
-                <MenuItem>Edit</MenuItem>
-                <MenuItem>Share</MenuItem>
-                <MenuItem>Delete</MenuItem>
-              </ActionMenu>
-              <Text slot="description">2026</Text>
-            </Content>
-          </Card>
-        </UserMessage >
-        <UserMessage>Can you help me create a 45-minute presentation, with animations, for an executive update?</UserMessage>
         <SystemMessage>
-          <AssetCard>
-            <CardPreview>
-              <Image src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
-            </CardPreview>
-            <Content>
-              <Text slot="title">Desert Sunset</Text>
-              <ActionMenu>
-                <MenuItem>Edit</MenuItem>
-                <MenuItem>Share</MenuItem>
-                <MenuItem>Delete</MenuItem>
-              </ActionMenu>
-              <Text slot="description">PNG • 2/3/2024</Text>
-            </Content>
-          </AssetCard>
+          <h3 className={style({font: 'title-lg'})}>What would you like to do next?</h3>
+          <div className={style({display: 'flex', flexWrap: 'wrap', gap: 8})}>
+            <Button variant="secondary">
+              <ChevronRight />
+              <Text>Create a year-over-year growth chart for the next decade</Text>
+            </Button>
+            <Button variant="secondary">
+              <ChevronRight />
+              <Text>Generate a congratulatory poster</Text>
+            </Button>
+            <Button variant="secondary">
+              <ChevronRight />
+              <Text>Summarize Development pipeline</Text>
+            </Button>
+          </div>
         </SystemMessage>
+        <ResponseStatus status="pending" />
         <UserMessage>Can you help me create a 45-minute presentation, with animations, for an executive update?</UserMessage>
-        <ResponseStatus status="complete" thinking="The user said make a presentation deck but didn’t specify duration of deck. Assumption is a brief presentation. I should check previous Hilton executive presentation decks and extract the structure." />
         <SystemMessage>
           <div role="document">
             <h3 className={style({font: 'heading-sm'})}>Big idea/core narrative: The warmth of welcome</h3>
@@ -125,25 +113,41 @@ export function StaticThread() {
             </SourceList>
           </Sources>
         </SystemMessage>
+        <ResponseStatus status="complete" thinking="The user said make a presentation deck but didn't specify duration of deck. Assumption is a brief presentation. I should check previous Hilton executive presentation decks and extract the structure." />
         <UserMessage>Can you help me create a 45-minute presentation, with animations, for an executive update?</UserMessage>
-        <ResponseStatus status="pending" />
         <SystemMessage>
-          <h3 className={style({font: 'title-lg'})}>What would you like to do next?</h3>
-          <div className={style({display: 'flex', flexWrap: 'wrap', gap: 8})}>
-            <Button variant="secondary">
-              <ChevronRight />
-              <Text>Create a year-over-year growth chart for the next decade</Text>
-            </Button>
-            <Button variant="secondary">
-              <ChevronRight />
-              <Text>Generate a congratulatory poster</Text>
-            </Button>
-            <Button variant="secondary">
-              <ChevronRight />
-              <Text>Summarize Development pipeline</Text>
-            </Button>
-          </div>
+          <AssetCard>
+            <CardPreview>
+              <Image src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+            </CardPreview>
+            <Content>
+              <Text slot="title">Desert Sunset</Text>
+              <ActionMenu>
+                <MenuItem>Edit</MenuItem>
+                <MenuItem>Share</MenuItem>
+                <MenuItem>Delete</MenuItem>
+              </ActionMenu>
+              <Text slot="description">PNG • 2/3/2024</Text>
+            </Content>
+          </AssetCard>
         </SystemMessage>
+        <UserMessage>Can you help me create a 45-minute presentation, with animations, for an executive update?</UserMessage>
+        <UserMessage>
+          <Card variant="quiet">
+            <CardPreview>
+              <Image src="https://react-spectrum.adobe.com/preview.c3b340d3.png" />
+            </CardPreview>
+            <Content>
+              <Text slot="title">Hilton commercial assets</Text>
+              <ActionMenu>
+                <MenuItem>Edit</MenuItem>
+                <MenuItem>Share</MenuItem>
+                <MenuItem>Delete</MenuItem>
+              </ActionMenu>
+              <Text slot="description">2026</Text>
+            </Content>
+          </Card>
+        </UserMessage>
       </Thread>
       <PromptField />
     </div>
@@ -194,7 +198,7 @@ export function DynamicThread() {
         gap: 32,
         height: '100%'
       })}>
-      <Thread items={messages}>
+      <Thread items={[...messages].reverse()}>
         {msg => {
           if (msg.type === 'user') {
             return <UserMessage textValue={msg.content}>{msg.content}</UserMessage>;

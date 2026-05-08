@@ -26,21 +26,23 @@ interface ThreadProps<T extends object> extends Pick<GridListProps<T>, 'items' |
 
 
 // TODO: things to figure out/try
-// scroll to bottom button
-// announcements for new messages
 // column reverse layout? is it a problem that the expectation becomes that the first item in the items
 // array is now the most recent item in the stream? Also shift tabbing will move to the top of the list since that is the item
 // closest to the prompt field (or actually might be because of useSelectableCollections tab handling)
 // will need to patch something to handle always moving to the newest item (aka the bottom) regarlsess if you are tabbing forward or
 // backwards into the thread
-
-// add to story some kind of mock streaming
-// fix the scroll to new content as it flows in, might be fixed by column reverse layout
+// additionally, arrow up and arrow down need to be flipped, other wise arrow down moves you upwards visually and vice versa
+// tabbing is a bit broken as well since we hit the child elements of the gridlist rows in opposite order...
+// also since we track the last focused key of the Gridlist, you get a experience where you might tab in, go to the input field to add some messages
+// and tab back to the Gridlist but get returned to your last focused key instead of to the newest message
+// maybe we could do something like force that the last item is the internal focusedKey, always updating this to the latest last child
+// whenever items update AND focus is not within the gridlist
 
 // TODO: things to handle later
 // virtualizer layout
 // weird behavior where the prompt field loses focus everytime you enter something
-
+// make prompt field accept enter to submit the prompt, and have Option + Enter make a new line instead,  mimics
+// other ai chat experiences
 
 export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thread<T extends object>(
   props: ThreadProps<T>,
@@ -55,10 +57,9 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
     if (!domRef.current) {
       return;
     }
-    let {scrollTop, scrollHeight, clientHeight} = domRef.current;
-    let distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-    // if not within 100 px of the bottom show the scroll to bottom button
-    let nearBottom = distanceFromBottom < 100;
+
+    // because column reversed scrollTop=0 is the bottom and the scrollTop goes negative as you move up
+    let nearBottom = domRef.current.scrollTop > -100;
     isNearBottomRef.current = nearBottom;
     setShowScrollButton(!nearBottom);
   }, [domRef]);
@@ -70,7 +71,7 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
     if (isNearBottomRef.current) {
       requestAnimationFrame(() => {
         if (domRef.current) {
-          domRef.current.scrollTop = domRef.current.scrollHeight;
+          domRef.current.scrollTop = 0;
         }
       });
     }
@@ -78,7 +79,7 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
 
   let scrollToBottom = useCallback(() => {
     if (domRef.current) {
-      domRef.current.scrollTo({top: domRef.current.scrollHeight, behavior: 'smooth'});
+      domRef.current.scrollTo({top: 0, behavior: 'smooth'});
     }
   }, [domRef]);
 
@@ -88,8 +89,14 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        flexGrow: 1
       })}>
+      {/*
+        TODO this is before the grid list so that a user tabbing in will hit this first
+        so they can then scroll to bottom. Wonder if there should also be one after the grid list
+        so that shift tabbing from the input keyboard works
+      */}
       {showScrollButton && (
         <div
           className={style({
@@ -114,7 +121,7 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
         ref={domRef}
         className={style({
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'column-reverse',
           rowGap: 16,
           alignItems: 'start',
           flexGrow: 1,
