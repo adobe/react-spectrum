@@ -12,8 +12,7 @@
 
 import {TextArea as AriaTextArea, TextAreaContext as AriaTextAreaContext} from 'react-aria-components/TextArea';
 import {TextField as AriaTextField, TextFieldProps as AriaTextFieldProps} from 'react-aria-components/TextField';
-import {CenterBaseline} from './CenterBaseline';
-import {centerPadding, fontRelative, style} from '../style' with {type: 'macro'};
+import {centerPadding, style} from '../style' with {type: 'macro'};
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -22,12 +21,10 @@ import {createFocusableRef} from './useDOMRef';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FocusableRefValue, GlobalDOMAttributes, HelpTextProps, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
-import {IconContext} from './Icon';
 import {InputContext, InputProps} from 'react-aria-components/Input';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import {StyleString} from '../style/types';
 import {TextContext} from './Content';
-import {useId} from 'react-aria/useId';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface TextFieldRef<T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends FocusableRefValue<T, HTMLDivElement> {
@@ -58,10 +55,8 @@ export const TextFieldContext = createContext<ContextValue<Partial<TextFieldProp
  */
 export const TextField = forwardRef(function TextField(props: TextFieldProps, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, TextFieldContext);
-  let prefixId = useId();
   return (
     <TextFieldBase
-      prefixId={prefixId}
       {...props}
       ref={ref}>
       <Input />
@@ -93,7 +88,7 @@ export const TextArea = forwardRef(function TextArea(props: TextAreaProps, ref: 
   );
 });
 
-export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupCss?: StyleString, prefixId?: string}, ref: Ref<TextFieldRef<HTMLInputElement | HTMLTextAreaElement>>) {
+export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupCss?: StyleString}, ref: Ref<TextFieldRef<HTMLInputElement | HTMLTextAreaElement>>) {
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useRef<HTMLDivElement>(null);
   let formContext = useContext(FormContext);
@@ -145,33 +140,13 @@ export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldP
           contextualHelp={props.contextualHelp}>
           {label}
         </FieldLabel>
-        <FieldGroup size={props.size} styles={fieldGroupCss}>
+        <FieldGroup prefix={props.prefix} size={props.size} styles={fieldGroupCss}>
           <Provider values={[[TextContext, {}]]}>
-            {props.prefix ? (
-              <Provider 
-                values={[
-                  [IconContext, {
-                    styles: style({
-                      size: fontRelative(20),
-                      '--iconPrimary': {
-                        type: 'fill',
-                        value: 'currentColor'
-                      }
-                    })
-                  }]
-                ]}>
-                <CenterBaseline id={props.prefixId} styles={style({minWidth: 20, color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
-                  {props.prefix}
-                </CenterBaseline>
-              </Provider>
-              ) : null
-            }
             <InputContext.Consumer>
               {ctx => (
                 <InputContext.Provider
                   value={{
-                    ...ctx, 
-                    'aria-labelledby': ctx?.['aria-labelledby'] ? `${ctx?.['aria-labelledby']} ${props.prefixId}` : props.prefixId,
+                    ...ctx,
                     ref: mergeRefs((ctx as any)?.ref, 
                   inputRef)}}>
                   {children}

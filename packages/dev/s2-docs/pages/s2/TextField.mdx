@@ -52,13 +52,14 @@ function Example() {
 
 ## Prefix
 
-Use the `prefix` prop to display a prefix in the text field. Either a string or workflow icon.
+Use the `prefix` prop to display an additional element before the input in the text field.
 
 ```tsx render
 "use client";
 import {TextField} from '@react-spectrum/s2/TextField';
 import MentionIcon from '@react-spectrum/s2/icons/Mention';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Avatar} from '@react-spectrum/s2/Avatar';
 
 function Example() {
   return (
@@ -66,10 +67,12 @@ function Example() {
       <TextField label="Phone Number" prefix="#" placeholder="(000) 000-0000" type="tel" />
       <TextField label="URL" prefix="https://" placeholder="example.com" />
       <TextField label="Mention" prefix={<MentionIcon />} placeholder="username" />
+      <TextField label="User Email" prefix={<Avatar size={20} src="https://i.imgur.com/xIe7Wlb.png" />} placeholder="contact@example.com" />
     </div>
   );
 }
 ```
+
 ## Forms
 
 Use the `name` prop to submit the text value to the server. Set the `isRequired`, `minLength`, `maxLength`, `pattern`, or `type` props to validate the value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.

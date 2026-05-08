@@ -13,9 +13,8 @@
 import Add from '../ui-icons/Add';
 import {ButtonProps as AriaButtonProps, ButtonContext, ButtonRenderProps} from 'react-aria-components/Button';
 import {NumberField as AriaNumberField, NumberFieldProps as AriaNumberFieldProps} from 'react-aria-components/NumberField';
-import {baseColor, fontRelative, space, style} from '../style' with {type: 'macro'};
-import {CenterBaseline} from './CenterBaseline';
-import {ContextValue, Provider, useContextProps} from 'react-aria-components/slots';
+import {baseColor, space, style} from '../style' with {type: 'macro'};
+import {ContextValue, useContextProps} from 'react-aria-components/slots';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useMemo, useRef} from 'react';
 import {createFocusableRef} from './useDOMRef';
@@ -24,7 +23,6 @@ import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext, useFormProps} from './Form';
 import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
-import {IconContext} from './Icon';
 import {InputContext, InputProps} from 'react-aria-components/Input';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
@@ -33,7 +31,6 @@ import {TextFieldRef} from './TextField';
 import {useButton} from 'react-aria/useButton';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
-import {useId} from 'react-aria/useId';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
@@ -180,7 +177,6 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
     }
   }));
 
-  let prefixId = useId();
   return (
     <AriaNumberField
       ref={domRef}
@@ -207,6 +203,7 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
                   {label}
                 </FieldLabel>
                 <FieldGroup
+                  prefix={props.prefix}
                   size={size}
                   styles={style({
                     ...fieldInput(),
@@ -216,19 +213,11 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
                       isStepperHidden: 'edge-to-text'
                     }
                   })({size, isStepperHidden: hideStepper})}>
-                  {props.prefix ? (
-                    <Provider values={[[IconContext, {styles: style({size: fontRelative(20), '--iconPrimary': {type: 'fill', value: 'currentColor'}})}]]}>
-                      <CenterBaseline id={prefixId} styles={style({minWidth: 20, color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
-                        {props.prefix}
-                      </CenterBaseline>
-                    </Provider>
-                  ) : null}
                   <InputContext.Consumer>
                     {ctx => (
                       <InputContext.Provider
                         value={{
-                          ...ctx, 
-                          'aria-labelledby': ctx?.['aria-labelledby'] ? `${ctx?.['aria-labelledby']} ${prefixId}` : prefixId,
+                          ...ctx,
                           ref: mergeRefs((ctx as any)?.ref, 
                         inputRef)}}>
                         <Input />

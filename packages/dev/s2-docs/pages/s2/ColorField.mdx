@@ -47,6 +47,32 @@ function Example() {
 }
 ```
 
+## Prefix
+
+Use the `prefix` prop to display an additional element before the input in the color field.
+
+```tsx render
+"use client";
+import {ColorField} from '@react-spectrum/s2/ColorField';
+import {ColorSwatch} from '@react-spectrum/s2/ColorSwatch';
+import {useState} from 'react';
+import {parseColor} from '@react-stately/color';
+
+function Example() {
+  let [color, setColor] = useState<Color | null>(parseColor('#e73623'));
+  return (
+    <ColorField
+      value={color}
+      onChange={setColor}
+      label="User Email"
+      /*- begin highlight -*/
+      prefix={<ColorSwatch size="XS" color={color ? color.toString('hex') : undefined} />}
+      /*- end highlight -*/
+      placeholder="######" />
+  );
+}
+```
+
 ## Channel
 
 By default, ColorField displays a hex value. Set the `colorSpace` and `channel` props to display a specific color channel.

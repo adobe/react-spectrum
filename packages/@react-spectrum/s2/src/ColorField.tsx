@@ -11,21 +11,17 @@
  */
 
 import {ColorField as AriaColorField, ColorFieldProps as AriaColorFieldProps} from 'react-aria-components/ColorField';
-
-import {CenterBaseline} from './CenterBaseline';
-import {ContextValue, Provider} from 'react-aria-components/slots';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from './useDOMRef';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {fontRelative, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
-import {IconContext} from './Icon';
 import {InputContext, InputProps} from 'react-aria-components/Input';
 import {mergeRefs} from 'react-aria/mergeRefs';
+import {style} from '../style' with {type: 'macro'};
 import {TextFieldRef} from './TextField';
-import {useId} from 'react-aria/useId';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
@@ -78,7 +74,6 @@ export const ColorField = forwardRef(function ColorField(props: ColorFieldProps,
     }
   }));
 
-  let prefixId = useId();
   return (
     <AriaColorField
       {...fieldProps}
@@ -100,20 +95,12 @@ export const ColorField = forwardRef(function ColorField(props: ColorFieldProps,
           contextualHelp={props.contextualHelp}>
           {label}
         </FieldLabel>
-        <FieldGroup size={props.size}>
-          {props.prefix ? (
-            <Provider values={[[IconContext, {styles: style({size: fontRelative(20), '--iconPrimary': {type: 'fill', value: 'currentColor'}})}]]}>
-              <CenterBaseline id={prefixId} styles={style({minWidth: 20, color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
-                {props.prefix}
-              </CenterBaseline>
-            </Provider>
-          ) : null}
+        <FieldGroup prefix={props.prefix} size={props.size}>
           <InputContext.Consumer>
             {ctx => (
               <InputContext.Provider
                 value={{
-                  ...ctx, 
-                  'aria-labelledby': ctx?.['aria-labelledby'] ? `${ctx?.['aria-labelledby']} ${prefixId}` : prefixId,
+                  ...ctx,
                   ref: mergeRefs((ctx as any)?.ref, 
                 inputRef)}}>
                 <Input />

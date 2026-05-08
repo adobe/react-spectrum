@@ -29,9 +29,9 @@ import {PopoverProps as AriaPopoverProps, Placement} from 'react-aria-components
 import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SingleSelection, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {BaseCollection, CollectionNode} from 'react-aria/private/collections/BaseCollection';
-import {baseColor, centerPadding, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
+import {baseColor, centerPadding, focusRing, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonRenderProps} from 'react-aria-components/Button';
-import {CenterBaseline, centerBaseline} from './CenterBaseline';
+import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
   description,
@@ -64,7 +64,6 @@ import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {TextFieldRef} from './TextField';
-import {useId} from 'react-aria/useId';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
 import {useSlotId} from 'react-aria/private/utils/useId';
@@ -586,7 +585,6 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
     );
   }
   let scale = useScale();
-  let prefixId = useId();
 
   return (
     <>
@@ -602,6 +600,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           {label}
         </FieldLabel>
         <FieldGroup
+          prefix={props.prefix}
           role="presentation"
           isDisabled={isDisabled}
           isInvalid={isInvalid}
@@ -613,19 +612,11 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
             // [9, 4], [12, 6], [15, 8], [18, 8]
             paddingEnd: 'calc(self(height, self(minHeight)) * 3 / 16 - self(borderEndWidth, 2px))'
           })({size})}>
-          {props.prefix ? (
-            <Provider values={[[IconContext, {styles: style({size: fontRelative(20), '--iconPrimary': {type: 'fill', value: 'currentColor'}})}]]}>
-              <CenterBaseline id={prefixId} styles={style({minWidth: 20, color: 'gray-600', flexShrink: 0, marginEnd: 'text-to-visual'})}>
-                {props.prefix}
-              </CenterBaseline>
-            </Provider>
-          ) : null}
           <InputContext.Consumer>
             {ctx => (
               <InputContext.Provider
                 value={{
-                  ...ctx, 
-                  'aria-labelledby': ctx?.['aria-labelledby'] ? `${ctx?.['aria-labelledby']} ${prefixId}` : prefixId,
+                  ...ctx,
                   ref: mergeRefs((ctx as any)?.ref, 
                 inputRef)}}>
                 <Input aria-describedby={spinnerId} />
