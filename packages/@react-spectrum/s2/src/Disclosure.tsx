@@ -23,6 +23,7 @@ import {
   baseColor,
   centerPadding,
   focusRing,
+  fontRelative,
   lightDark,
   space,
   style
@@ -174,9 +175,7 @@ const buttonStyles = style({
   },
   lineHeight: 'ui',
   display: 'grid',
-  gridTemplateAreas: [
-    'expand-button icon label'
-  ],
+  gridTemplateAreas: ['expand-button icon label'],
   gridTemplateColumns: ['auto', 'auto', 'minmax(0, 1fr)'],
   alignItems: 'baseline',
   '--spacingGap': {
@@ -311,17 +310,27 @@ export const DisclosureTitle = forwardRef(function DisclosureTitle(
       style={UNSAFE_style}
       className={(UNSAFE_className ?? '') + headingStyle}>
       <Button
-        className={(renderProps) => buttonStyles({...renderProps, size, density, isQuiet})}
+        className={renderProps => buttonStyles({...renderProps, size, density, isQuiet})}
         slot="trigger">
         <CenterBaseline styles={style({gridArea: 'expand-button', marginEnd: '--spacingGap'})}>
           <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
         </CenterBaseline>
         <Provider
           values={[
-            [IconContext, {
-              render: centerBaseline({slot: 'icon', styles: style({gridArea: 'icon', marginEnd: 'text-to-visual', '--iconPrimary': {type: 'fill', value: 'currentColor'}})}),
-              styles: style({size: fontRelative(16)})
-            }],
+            [
+              IconContext,
+              {
+                render: centerBaseline({
+                  slot: 'icon',
+                  styles: style({
+                    gridArea: 'icon',
+                    marginEnd: 'text-to-visual',
+                    '--iconPrimary': {type: 'fill', value: 'currentColor'}
+                  })
+                }),
+                styles: style({size: fontRelative(16)})
+              }
+            ],
             [TextContext, {styles: style({gridArea: 'label'})}]
           ]}>
           {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}

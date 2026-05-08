@@ -24,7 +24,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import People from '../s2wf-icons/S2_Icon_People_20_N.svg';
 import React from 'react';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Text} from '../src/Content';
 import {TextField} from '../src/TextField';
 
@@ -156,7 +156,7 @@ export const WithActionButton: Story = {
 };
 
 export const WithIcon: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <div className={style({minHeight: 240})}>
         <Accordion {...args}>
@@ -165,9 +165,7 @@ export const WithIcon: Story = {
               <File />
               <Text>Files</Text>
             </AccordionItemTitle>
-            <AccordionItemPanel>
-              Files content
-            </AccordionItemPanel>
+            <AccordionItemPanel>Files content</AccordionItemPanel>
           </AccordionItem>
           <AccordionItem id="people">
             <AccordionItemTitle>
@@ -175,7 +173,11 @@ export const WithIcon: Story = {
               <Text>People</Text>
             </AccordionItemTitle>
             <AccordionItemPanel>
-              <TextField label="Name" styles={style({maxWidth: 176})} placeholder="Enter your name" />
+              <TextField
+                label="Name"
+                styles={style({maxWidth: 176})}
+                placeholder="Enter your name"
+              />
             </AccordionItemPanel>
           </AccordionItem>
         </Accordion>

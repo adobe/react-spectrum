@@ -17,7 +17,7 @@ import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Text} from '../src/Content';
 
 const meta: Meta<typeof Disclosure> = {
@@ -81,7 +81,7 @@ export const WithActionButton: Story = {
 };
 
 export const WithIcon: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <div className={style({minHeight: 240})}>
         <Disclosure {...args}>
@@ -89,9 +89,7 @@ export const WithIcon: Story = {
             <File />
             <Text>Files</Text>
           </DisclosureTitle>
-          <DisclosurePanel>
-            Files content
-          </DisclosurePanel>
+          <DisclosurePanel>Files content</DisclosurePanel>
         </Disclosure>
       </div>
     );
