@@ -35,37 +35,37 @@ export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabeli
   /**
    * The name of the x channel input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
-  xName?: string,
+  xName?: string;
   /**
    * The name of the y channel input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
-  yName?: string,
+  yName?: string;
   /**
    * The `<form>` element to associate the ColorArea with.
    * The value of this attribute must be the id of a `<form>` in the same document.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#form).
    */
-  form?: string
+  form?: string;
 }
 
 export interface ColorAreaAria {
   /** Props for the color area container element. */
-  colorAreaProps: DOMAttributes,
+  colorAreaProps: DOMAttributes;
   /** Props for the thumb element. */
-  thumbProps: DOMAttributes,
+  thumbProps: DOMAttributes;
   /** Props for the visually hidden horizontal range input element. */
-  xInputProps: InputHTMLAttributes<HTMLInputElement>,
+  xInputProps: InputHTMLAttributes<HTMLInputElement>;
   /** Props for the visually hidden vertical range input element. */
-  yInputProps: InputHTMLAttributes<HTMLInputElement>
+  yInputProps: InputHTMLAttributes<HTMLInputElement>;
 }
 
 export interface AriaColorAreaOptions extends AriaColorAreaProps {
   /** A ref to the input that represents the x axis of the color area. */
-  inputXRef: RefObject<HTMLInputElement | null>,
+  inputXRef: RefObject<HTMLInputElement | null>;
   /** A ref to the input that represents the y axis of the color area. */
-  inputYRef: RefObject<HTMLInputElement | null>,
+  inputYRef: RefObject<HTMLInputElement | null>;
   /** A ref to the color area containing element. */
-  containerRef: RefObject<Element | null>
+  containerRef: RefObject<Element | null>;
 }
 
 /**
@@ -90,11 +90,14 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
   let {direction, locale} = useLocale();
 
   let [focusedInput, setFocusedInput] = useState<'x' | 'y' | null>(null);
-  let focusInput = useCallback((inputRef:RefObject<HTMLInputElement | null> = inputXRef) => {
-    if (inputRef.current) {
-      focusWithoutScrolling(inputRef.current);
-    }
-  }, [inputXRef]);
+  let focusInput = useCallback(
+    (inputRef: RefObject<HTMLInputElement | null> = inputXRef) => {
+      if (inputRef.current) {
+        focusWithoutScrolling(inputRef.current);
+      }
+    },
+    [inputXRef]
+  );
 
   useFormReset(inputXRef, state.defaultValue, state.setValue);
 
@@ -104,7 +107,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
   let xChannelStep = state.xChannelStep;
   let yChannelStep = state.yChannelStep;
 
-  let currentPosition = useRef<{x: number, y: number} | null>(null);
+  let currentPosition = useRef<{x: number; y: number} | null>(null);
 
   let {keyboardProps} = useKeyboard({
     onKeyDown(e) {
@@ -129,11 +132,15 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
           dir = 'y';
           break;
         case 'Home':
-          direction === 'rtl' ? state.incrementX(state.xChannelPageStep) : state.decrementX(state.xChannelPageStep);
+          direction === 'rtl'
+            ? state.incrementX(state.xChannelPageStep)
+            : state.decrementX(state.xChannelPageStep);
           dir = 'x';
           break;
         case 'End':
-          direction === 'rtl' ? state.decrementX(state.xChannelPageStep) : state.incrementX(state.xChannelPageStep);
+          direction === 'rtl'
+            ? state.decrementX(state.xChannelPageStep)
+            : state.incrementX(state.xChannelPageStep);
           dir = 'x';
           break;
       }
@@ -170,8 +177,10 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       let {width, height} = containerRef.current?.getBoundingClientRect() || {width: 0, height: 0};
       let valueChanged = deltaX !== 0 || deltaY !== 0;
       if (pointerType === 'keyboard') {
-        let deltaXValue = shiftKey && xChannelPageStep > xChannelStep ? xChannelPageStep : xChannelStep;
-        let deltaYValue = shiftKey && yChannelPageStep > yChannelStep ? yChannelPageStep : yChannelStep;
+        let deltaXValue =
+          shiftKey && xChannelPageStep > xChannelStep ? xChannelPageStep : xChannelStep;
+        let deltaYValue =
+          shiftKey && yChannelPageStep > yChannelStep ? yChannelPageStep : yChannelStep;
         if ((deltaX > 0 && direction === 'ltr') || (deltaX < 0 && direction === 'rtl')) {
           incrementX(deltaXValue);
         } else if ((deltaX < 0 && direction === 'ltr') || (deltaX > 0 && direction === 'rtl')) {
@@ -186,7 +195,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
         focusedInput = valueChanged && Math.abs(deltaY) > Math.abs(deltaX) ? 'y' : 'x';
         setFocusedInput(focusedInput);
       } else {
-        currentPosition.current.x += (direction === 'rtl' ? -1 : 1) * deltaX / width ;
+        currentPosition.current.x += ((direction === 'rtl' ? -1 : 1) * deltaX) / width;
         currentPosition.current.y += deltaY / height;
         setColorFromPoint(currentPosition.current.x, currentPosition.current.y);
       }
@@ -201,7 +210,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
   let {moveProps: movePropsThumb} = useMove(moveHandler);
 
   let {focusWithinProps} = useFocusWithin({
-    onFocusWithinChange: (focusWithin:boolean) => {
+    onFocusWithinChange: (focusWithin: boolean) => {
       if (!focusWithin) {
         setValueChangedViaKeyboard(false);
         setValueChangedViaInputChangeEvent(false);
@@ -244,7 +253,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     }
   };
 
-  let onThumbUp = (e) => {
+  let onThumbUp = e => {
     let id = e.pointerId ?? e.changedTouches?.[0].identifier;
     if (id === currentPointer.current) {
       setValueChangedViaKeyboard(false);
@@ -262,7 +271,12 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     }
   };
 
-  let onColorAreaDown = (colorArea: Element, id: number | null | undefined, clientX: number, clientY: number) => {
+  let onColorAreaDown = (
+    colorArea: Element,
+    id: number | null | undefined,
+    clientX: number,
+    clientY: number
+  ) => {
     let rect = colorArea.getBoundingClientRect();
     let {width, height} = rect;
     let x = (clientX - rect.x) / width;
@@ -270,7 +284,14 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     if (direction === 'rtl') {
       x = 1 - x;
     }
-    if (x >= 0 && x <= 1 && y >= 0 && y <= 1 && !state.isDragging && currentPointer.current === undefined) {
+    if (
+      x >= 0 &&
+      x <= 1 &&
+      y >= 0 &&
+      y <= 1 &&
+      !state.isDragging &&
+      currentPointer.current === undefined
+    ) {
       isOnColorArea.current = true;
       setValueChangedViaKeyboard(false);
       currentPointer.current = id;
@@ -288,7 +309,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     }
   };
 
-  let onColorAreaUp = (e) => {
+  let onColorAreaUp = e => {
     let id = e.pointerId ?? e.changedTouches?.[0].identifier;
     if (isOnColorArea.current && id === currentPointer.current) {
       isOnColorArea.current = false;
@@ -306,45 +327,74 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     }
   };
 
-  let colorAreaInteractions = isDisabled ? {} : mergeProps({
-    ...(typeof PointerEvent !== 'undefined' ? {
-      onPointerDown: (e: React.PointerEvent) => {
-        if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
-          return;
-        }
-        onColorAreaDown(e.currentTarget, e.pointerId, e.clientX, e.clientY);
-      }} : {
-        onMouseDown: (e: React.MouseEvent) => {
-          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-            return;
-          }
-          onColorAreaDown(e.currentTarget, undefined, e.clientX, e.clientY);
+  let colorAreaInteractions = isDisabled
+    ? {}
+    : mergeProps(
+        {
+          ...(typeof PointerEvent !== 'undefined'
+            ? {
+                onPointerDown: (e: React.PointerEvent) => {
+                  if (
+                    e.pointerType === 'mouse' &&
+                    (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)
+                  ) {
+                    return;
+                  }
+                  onColorAreaDown(e.currentTarget, e.pointerId, e.clientX, e.clientY);
+                }
+              }
+            : {
+                onMouseDown: (e: React.MouseEvent) => {
+                  if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+                    return;
+                  }
+                  onColorAreaDown(e.currentTarget, undefined, e.clientX, e.clientY);
+                },
+                onTouchStart: (e: React.TouchEvent) => {
+                  onColorAreaDown(
+                    e.currentTarget,
+                    e.changedTouches[0].identifier,
+                    e.changedTouches[0].clientX,
+                    e.changedTouches[0].clientY
+                  );
+                }
+              })
         },
-        onTouchStart: (e: React.TouchEvent) => {
-          onColorAreaDown(e.currentTarget, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-        }
-      })
-  }, movePropsContainer);
+        movePropsContainer
+      );
 
-  let thumbInteractions = isDisabled ? {} : mergeProps({
-    ...(typeof PointerEvent !== 'undefined' ? {
-      onPointerDown: (e: React.PointerEvent) => {
-        if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
-          return;
-        }
-        onThumbDown(e.pointerId);
-      }} : {
-        onMouseDown: (e: React.MouseEvent) => {
-          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-            return;
-          }
-          onThumbDown(undefined);
+  let thumbInteractions = isDisabled
+    ? {}
+    : mergeProps(
+        {
+          ...(typeof PointerEvent !== 'undefined'
+            ? {
+                onPointerDown: (e: React.PointerEvent) => {
+                  if (
+                    e.pointerType === 'mouse' &&
+                    (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)
+                  ) {
+                    return;
+                  }
+                  onThumbDown(e.pointerId);
+                }
+              }
+            : {
+                onMouseDown: (e: React.MouseEvent) => {
+                  if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+                    return;
+                  }
+                  onThumbDown(undefined);
+                },
+                onTouchStart: (e: React.TouchEvent) => {
+                  onThumbDown(e.changedTouches[0].identifier);
+                }
+              })
         },
-        onTouchStart: (e: React.TouchEvent) => {
-          onThumbDown(e.changedTouches[0].identifier);
-        }
-      })
-  }, focusWithinProps, keyboardProps, movePropsThumb);
+        focusWithinProps,
+        keyboardProps,
+        movePropsThumb
+      );
 
   let {focusProps: xInputFocusProps} = useFocus({
     onFocus: () => {
@@ -371,30 +421,63 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
   let isMobile = isIOS() || isAndroid();
 
   let value = state.getDisplayColor();
-  const getAriaValueTextForChannel = useCallback((channel:ColorChannel) => {
-    const isAfterInput = valueChangedViaInputChangeEvent || valueChangedViaKeyboard;
-    return `${
-      isAfterInput ?
-      stringFormatter.format('colorNameAndValue', {name: value.getChannelName(channel, locale), value: value.formatChannelValue(channel, locale)})
-      :
-      [
-        stringFormatter.format('colorNameAndValue', {name: value.getChannelName(channel, locale), value: value.formatChannelValue(channel, locale)}),
-        stringFormatter.format('colorNameAndValue', {name: value.getChannelName(channel === yChannel ? xChannel : yChannel, locale), value: value.formatChannelValue(channel === yChannel ? xChannel : yChannel, locale)}),
-        stringFormatter.format('colorNameAndValue', {name: value.getChannelName(zChannel, locale), value: value.formatChannelValue(zChannel, locale)})
-      ].join(', ')
-    }, ${value.getColorName(locale)}`;
-  }, [locale, value, stringFormatter, valueChangedViaInputChangeEvent, valueChangedViaKeyboard, xChannel, yChannel, zChannel]);
+  const getAriaValueTextForChannel = useCallback(
+    (channel: ColorChannel) => {
+      const isAfterInput = valueChangedViaInputChangeEvent || valueChangedViaKeyboard;
+      return `${
+        isAfterInput
+          ? stringFormatter.format('colorNameAndValue', {
+              name: value.getChannelName(channel, locale),
+              value: value.formatChannelValue(channel, locale)
+            })
+          : [
+              stringFormatter.format('colorNameAndValue', {
+                name: value.getChannelName(channel, locale),
+                value: value.formatChannelValue(channel, locale)
+              }),
+              stringFormatter.format('colorNameAndValue', {
+                name: value.getChannelName(channel === yChannel ? xChannel : yChannel, locale),
+                value: value.formatChannelValue(channel === yChannel ? xChannel : yChannel, locale)
+              }),
+              stringFormatter.format('colorNameAndValue', {
+                name: value.getChannelName(zChannel, locale),
+                value: value.formatChannelValue(zChannel, locale)
+              })
+            ].join(', ')
+      }, ${value.getColorName(locale)}`;
+    },
+    [
+      locale,
+      value,
+      stringFormatter,
+      valueChangedViaInputChangeEvent,
+      valueChangedViaKeyboard,
+      xChannel,
+      yChannel,
+      zChannel
+    ]
+  );
 
   let colorPickerLabel = stringFormatter.format('colorPicker');
 
   let xInputLabellingProps = useLabels({
     ...props,
-    'aria-label': ariaLabel ? stringFormatter.format('colorInputLabel', {label: ariaLabel, channelLabel: colorPickerLabel}) : colorPickerLabel
+    'aria-label': ariaLabel
+      ? stringFormatter.format('colorInputLabel', {
+          label: ariaLabel,
+          channelLabel: colorPickerLabel
+        })
+      : colorPickerLabel
   });
 
   let yInputLabellingProps = useLabels({
     ...props,
-    'aria-label': ariaLabel ? stringFormatter.format('colorInputLabel', {label: ariaLabel, channelLabel: colorPickerLabel}) : colorPickerLabel
+    'aria-label': ariaLabel
+      ? stringFormatter.format('colorInputLabel', {
+          label: ariaLabel,
+          channelLabel: colorPickerLabel
+        })
+      : colorPickerLabel
   });
 
   let colorAreaLabellingProps = useLabels(
@@ -407,17 +490,16 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
 
   let ariaRoleDescription = stringFormatter.format('twoDimensionalSlider');
 
-  let {visuallyHiddenProps} = useVisuallyHidden({style: {
-    opacity: '0.0001',
-    width: '100%',
-    height: '100%',
-    pointerEvents: 'none'
-  }});
+  let {visuallyHiddenProps} = useVisuallyHidden({
+    style: {
+      opacity: '0.0001',
+      width: '100%',
+      height: '100%',
+      pointerEvents: 'none'
+    }
+  });
 
-  let {
-    colorAreaStyleProps,
-    thumbStyleProps
-  } = useColorAreaGradient({
+  let {colorAreaStyleProps, thumbStyleProps} = useColorAreaGradient({
     direction,
     state,
     xChannel,
@@ -454,13 +536,16 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       value: state.value.getChannelValue(xChannel),
       name: xName,
       form,
-      tabIndex: (isMobile || !focusedInput || focusedInput === 'x' ? undefined : -1),
+      tabIndex: isMobile || !focusedInput || focusedInput === 'x' ? undefined : -1,
       /*
         So that only a single "2d slider" control shows up when listing form elements for screen readers,
         add aria-hidden="true" to the unfocused control when the value has not changed via the keyboard,
         but remove aria-hidden to reveal the input for each channel when the value has changed with the keyboard.
       */
-      'aria-hidden': (isMobile || !focusedInput || focusedInput === 'x' || valueChangedViaKeyboard ? undefined : 'true'),
+      'aria-hidden':
+        isMobile || !focusedInput || focusedInput === 'x' || valueChangedViaKeyboard
+          ? undefined
+          : 'true',
       onChange
     },
     yInputProps: {
@@ -480,13 +565,14 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       value: state.value.getChannelValue(yChannel),
       name: yName,
       form,
-      tabIndex: (isMobile || focusedInput === 'y' ? undefined : -1),
+      tabIndex: isMobile || focusedInput === 'y' ? undefined : -1,
       /*
         So that only a single "2d slider" control shows up when listing form elements for screen readers,
         add aria-hidden="true" to the unfocused input when the value has not changed via the keyboard,
         but remove aria-hidden to reveal the input for each channel when the value has changed with the keyboard.
       */
-      'aria-hidden': (isMobile || focusedInput === 'y' || valueChangedViaKeyboard ? undefined : 'true'),
+      'aria-hidden':
+        isMobile || focusedInput === 'y' || valueChangedViaKeyboard ? undefined : 'true',
       onChange
     }
   };

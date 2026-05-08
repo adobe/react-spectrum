@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  installPointerEvent,
+  pointerMap,
+  render,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
 import React, {useRef} from 'react';
 
@@ -40,7 +46,9 @@ function Example(options) {
           </Toast>
         )}
       </ToastRegion>
-      <Button onPress={() => queue.add({title: 'Toast', description: 'Description'}, options)}>Toast</Button>
+      <Button onPress={() => queue.add({title: 'Toast', description: 'Description'}, options)}>
+        Toast
+      </Button>
     </>
   );
 }
@@ -80,9 +88,13 @@ describe('Toast', () => {
     expect(toast).toBeVisible();
     expect(toast).toHaveAttribute('class', 'react-aria-Toast');
     expect(toast).toHaveAttribute('aria-labelledby');
-    expect(document.getElementById(toast.getAttribute('aria-labelledby'))).toHaveTextContent('Toast');
+    expect(document.getElementById(toast.getAttribute('aria-labelledby'))).toHaveTextContent(
+      'Toast'
+    );
     expect(toast).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(toast.getAttribute('aria-describedby'))).toHaveTextContent('Description');
+    expect(document.getElementById(toast.getAttribute('aria-describedby'))).toHaveTextContent(
+      'Description'
+    );
     expect(toast).toHaveAttribute('aria-modal', 'false');
 
     let alert = within(toast).getByRole('alert');

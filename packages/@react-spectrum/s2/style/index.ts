@@ -11,7 +11,13 @@
  */
 
 import type * as CSS from 'csstype';
-import {Inset, fontRelative as internalFontRelative, space as internalSpace, Spacing, style} from './spectrum-theme';
+import {
+  Inset,
+  fontRelative as internalFontRelative,
+  space as internalSpace,
+  Spacing,
+  style
+} from './spectrum-theme';
 import type {MacroContext} from '@parcel/macros';
 import {StyleString} from './types';
 
@@ -73,47 +79,75 @@ export function fontRelative(base: number, baseFontSize = 14): `[${string}]` {
  * });
  * ```
  */
-export const focusRing = () => ({
-  outlineStyle: {
-    default: 'none',
-    isFocusVisible: 'solid'
-  },
-  outlineColor: {
-    default: 'focus-ring',
-    forcedColors: 'Highlight'
-  },
-  outlineWidth: 2,
-  outlineOffset: 2
-} as const);
+export const focusRing = () =>
+  ({
+    outlineStyle: {
+      default: 'none',
+      isFocusVisible: 'solid'
+    },
+    outlineColor: {
+      default: 'focus-ring',
+      forcedColors: 'Highlight'
+    },
+    outlineWidth: 2,
+    outlineOffset: 2
+  }) as const;
 
 export interface IconStyle {
-  size?: 'XS' | 'S' | 'M' | 'L' |'XL',
-  color?: 'white' | 'black' | 'accent' | 'neutral' | 'negative' | 'informative' | 'positive' | 'notice' | 'gray' | 'red' | 'orange' | 'yellow' | 'chartreuse' | 'celery' | 'green' | 'seafoam' | 'cyan' | 'blue' | 'indigo' | 'purple' | 'fuchsia' | 'magenta' | 'pink' | 'turquoise' | 'cinnamon' | 'brown' | 'silver',
-  margin?: Spacing,
-  marginStart?: Spacing,
-  marginEnd?: Spacing,
-  marginTop?: Spacing,
-  marginBottom?: Spacing,
-  marginX?: Spacing,
-  marginY?: Spacing,
-  alignSelf?: 'auto' | 'start' | 'end' | 'center' | 'stretch' | 'baseline',
-  justifySelf?: 'auto' | 'start' | 'end' | 'center' | 'stretch',
-  order?: number,
-  gridArea?: CSS.Property.GridArea,
-  gridColumnStart?: CSS.Property.GridColumnStart,
-  gridColumnEnd?: CSS.Property.GridColumnEnd,
-  gridRowStart?: CSS.Property.GridRowStart,
-  gridRowEnd?: CSS.Property.GridRowStart,
-  position?: 'absolute' | 'fixed' | 'relative' | 'sticky' | 'static',
-  zIndex?: number,
-  top?: Inset,
-  bottom?: Inset,
-  inset?: Inset,
-  insetX?: Inset,
-  insetY?: Inset,
-  insetStart?: Inset,
-  insetEnd?: Inset,
-  rotate?: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`
+  size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
+  color?:
+    | 'white'
+    | 'black'
+    | 'accent'
+    | 'neutral'
+    | 'negative'
+    | 'informative'
+    | 'positive'
+    | 'notice'
+    | 'gray'
+    | 'red'
+    | 'orange'
+    | 'yellow'
+    | 'chartreuse'
+    | 'celery'
+    | 'green'
+    | 'seafoam'
+    | 'cyan'
+    | 'blue'
+    | 'indigo'
+    | 'purple'
+    | 'fuchsia'
+    | 'magenta'
+    | 'pink'
+    | 'turquoise'
+    | 'cinnamon'
+    | 'brown'
+    | 'silver';
+  margin?: Spacing;
+  marginStart?: Spacing;
+  marginEnd?: Spacing;
+  marginTop?: Spacing;
+  marginBottom?: Spacing;
+  marginX?: Spacing;
+  marginY?: Spacing;
+  alignSelf?: 'auto' | 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+  justifySelf?: 'auto' | 'start' | 'end' | 'center' | 'stretch';
+  order?: number;
+  gridArea?: CSS.Property.GridArea;
+  gridColumnStart?: CSS.Property.GridColumnStart;
+  gridColumnEnd?: CSS.Property.GridColumnEnd;
+  gridRowStart?: CSS.Property.GridRowStart;
+  gridRowEnd?: CSS.Property.GridRowStart;
+  position?: 'absolute' | 'fixed' | 'relative' | 'sticky' | 'static';
+  zIndex?: number;
+  top?: Inset;
+  bottom?: Inset;
+  inset?: Inset;
+  insetX?: Inset;
+  insetY?: Inset;
+  insetStart?: Inset;
+  insetEnd?: Inset;
+  rotate?: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`;
 }
 
 const iconSizes = {
@@ -139,7 +173,10 @@ const iconSizes = {
  * <Edit styles={iconStyle({size: 'XL', color: 'positive'})} />
  * ```
  */
-export function iconStyle(this: MacroContext | void, options: IconStyle): StyleString<Exclude<keyof IconStyle, 'color' | 'size'>> {
+export function iconStyle(
+  this: MacroContext | void,
+  options: IconStyle
+): StyleString<Exclude<keyof IconStyle, 'color' | 'size'>> {
   let {size = 'M', color, ...styles} = options;
 
   if (color) {

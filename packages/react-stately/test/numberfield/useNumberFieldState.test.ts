@@ -16,7 +16,11 @@ import {useNumberFieldState} from '../../src/numberfield/useNumberFieldState';
 describe('useNumberFieldState', () => {
   describe('formatOptions stability', () => {
     it('does not reset inputValue when re-rendered with same formatOptions content', () => {
-      let initialFormatOptions = {style: 'unit', unit: 'millisecond', useGrouping: false} as Intl.NumberFormatOptions;
+      let initialFormatOptions = {
+        style: 'unit',
+        unit: 'millisecond',
+        useGrouping: false
+      } as Intl.NumberFormatOptions;
       let {result, rerender} = renderHook(
         ({formatOptions}) => useNumberFieldState({defaultValue: 1, formatOptions, locale: 'en-US'}),
         {initialProps: {formatOptions: initialFormatOptions}}
@@ -29,7 +33,13 @@ describe('useNumberFieldState', () => {
       expect(result.current.inputValue).toBe('2');
 
       // Re-render with new-reference but same-content formatOptions (simulates inline object literal)
-      rerender({formatOptions: {style: 'unit', unit: 'millisecond', useGrouping: false} as Intl.NumberFormatOptions});
+      rerender({
+        formatOptions: {
+          style: 'unit',
+          unit: 'millisecond',
+          useGrouping: false
+        } as Intl.NumberFormatOptions
+      });
 
       // inputValue should NOT be reset to '1' (the formatted defaultValue)
       expect(result.current.inputValue).toBe('2');
@@ -37,8 +47,13 @@ describe('useNumberFieldState', () => {
 
     it('resets inputValue when formatOptions content actually changes', () => {
       let {result, rerender} = renderHook(
-        ({formatOptions}) => useNumberFieldState({defaultValue: 1024, formatOptions, locale: 'en-US'}),
-        {initialProps: {formatOptions: {style: 'currency', currency: 'EUR'} as Intl.NumberFormatOptions}}
+        ({formatOptions}) =>
+          useNumberFieldState({defaultValue: 1024, formatOptions, locale: 'en-US'}),
+        {
+          initialProps: {
+            formatOptions: {style: 'currency', currency: 'EUR'} as Intl.NumberFormatOptions
+          }
+        }
       );
 
       expect(result.current.inputValue).toBe('€1,024.00');

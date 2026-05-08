@@ -1,1 +1,5 @@
-export {useSelectableList, type AriaSelectableListOptions, type SelectableListAria} from '../../../src/selection/useSelectableList';
+export {
+  useSelectableList,
+  type AriaSelectableListOptions,
+  type SelectableListAria
+} from '../../../src/selection/useSelectableList';

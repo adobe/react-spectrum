@@ -1,4 +1,3 @@
-
 if (window.__macrosLoaded) {
   return;
 }
@@ -41,4 +40,3 @@ window.addEventListener('message', function (event) {
 
 // No longer need to listen for get-macro requests or manage cleanup
 // since macro data is stored directly in DevTools
-

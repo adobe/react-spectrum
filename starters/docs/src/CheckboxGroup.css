@@ -1,4 +1,4 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-CheckboxGroup {
   display: flex;
@@ -11,11 +11,11 @@
     flex-direction: column;
   }
 
-  &[data-orientation=vertical] .checkbox-items {
+  &[data-orientation='vertical'] .checkbox-items {
     flex-direction: column;
   }
 
-  &[data-orientation=horizontal] .checkbox-items {
+  &[data-orientation='horizontal'] .checkbox-items {
     flex-direction: row;
   }
 }

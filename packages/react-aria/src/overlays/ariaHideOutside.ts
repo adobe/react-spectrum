@@ -23,18 +23,18 @@ function isAlwaysVisibleNode(node: HTMLElement | SVGElement): boolean {
 }
 
 interface AriaHideOutsideOptions {
-  root?: Element,
-  shouldUseInert?: boolean
+  root?: Element;
+  shouldUseInert?: boolean;
 }
 
 // Keeps a ref count of all hidden elements. Added to when hiding an element, and
 // subtracted from when showing it again. When it reaches zero, aria-hidden is removed.
 let refCountMap = new WeakMap<Element, number>();
 interface ObserverWrapper {
-  visibleNodes: Set<Element>,
-  hiddenNodes: Set<Element>,
-  observe: () => void,
-  disconnect: () => void
+  visibleNodes: Set<Element>;
+  hiddenNodes: Set<Element>;
+  observe: () => void;
+  disconnect: () => void;
 }
 let observerStack: Array<ObserverWrapper> = [];
 
@@ -55,7 +55,9 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
   let hiddenNodes = new Set<Element>();
 
   let getHidden = (element: Element) => {
-    return shouldUseInert && element instanceof windowObj.HTMLElement ? element.inert : element.getAttribute('aria-hidden') === 'true';
+    return shouldUseInert && element instanceof windowObj.HTMLElement
+      ? element.inert
+      : element.getAttribute('aria-hidden') === 'true';
   };
 
   let setHidden = (element: Element, hidden: boolean) => {
@@ -91,7 +93,9 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
 
   let walk = (root: Element) => {
     // Keep live announcer and top layer elements (e.g. toasts) visible.
-    for (let element of root.querySelectorAll('[data-live-announcer], [data-react-aria-top-layer]')) {
+    for (let element of root.querySelectorAll(
+      '[data-live-announcer], [data-react-aria-top-layer]'
+    )) {
       visibleNodes.add(element);
     }
 
@@ -103,7 +107,9 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
       if (
         hiddenNodes.has(node) ||
         visibleNodes.has(node) ||
-        (node.parentElement && hiddenNodes.has(node.parentElement) && node.parentElement.getAttribute('role') !== 'row')
+        (node.parentElement &&
+          hiddenNodes.has(node.parentElement) &&
+          node.parentElement.getAttribute('role') !== 'row')
       ) {
         return NodeFilter.FILTER_REJECT;
       }
@@ -118,12 +124,9 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
       return NodeFilter.FILTER_ACCEPT;
     };
 
-    let walker = createShadowTreeWalker(
-      getOwnerDocument(root),
-      root,
-      NodeFilter.SHOW_ELEMENT,
-      {acceptNode}
-    );
+    let walker = createShadowTreeWalker(getOwnerDocument(root), root, NodeFilter.SHOW_ELEMENT, {
+      acceptNode
+    });
 
     // TreeWalker does not include the root.
     let acceptRoot = acceptNode(root);
@@ -175,9 +178,7 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
       // and not already inside a hidden node, hide all of the new children.
       if (
         change.target.isConnected &&
-        ![...visibleNodes, ...hiddenNodes].some((node) =>
-          nodeContains(node, change.target)
-        )
+        ![...visibleNodes, ...hiddenNodes].some(node => nodeContains(node, change.target))
       ) {
         for (let node of change.addedNodes) {
           if (
@@ -218,9 +219,7 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
           // and not already inside a hidden node, hide all of the new children.
           if (
             change.target.isConnected &&
-            ![...visibleNodes, ...hiddenNodes].some((node) =>
-              nodeContains(node, change.target)
-            )
+            ![...visibleNodes, ...hiddenNodes].some(node => nodeContains(node, change.target))
           ) {
             for (let node of change.addedNodes) {
               if (

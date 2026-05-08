@@ -19,7 +19,14 @@ import {chain} from '../utils/chain';
 
 import {createSyntheticEvent, preventFocus, setEventTarget} from './utils';
 import {disableTextSelection, restoreTextSelection} from './textSelection';
-import {DOMAttributes, FocusableElement, PressEvent as IPressEvent, PointerType, PressEvents, RefObject} from '@react-types/shared';
+import {
+  DOMAttributes,
+  FocusableElement,
+  PressEvent as IPressEvent,
+  PointerType,
+  PressEvents,
+  RefObject
+} from '@react-types/shared';
 import {flushSync} from 'react-dom';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
@@ -30,65 +37,74 @@ import {isVirtualClick, isVirtualPointerEvent} from '../utils/isVirtualEvent';
 import {mergeProps} from '../utils/mergeProps';
 import {openLink} from '../utils/openLink';
 import {PressResponderContext} from './context';
-import {MouseEvent as RMouseEvent, TouchEvent as RTouchEvent, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {
+  MouseEvent as RMouseEvent,
+  TouchEvent as RTouchEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import {useEffectEvent} from '../utils/useEffectEvent';
 import {useGlobalListeners} from '../utils/useGlobalListeners';
 import {useSyncRef} from '../utils/useSyncRef';
 
 export interface PressProps extends PressEvents {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
-  isPressed?: boolean,
+  isPressed?: boolean;
   /** Whether the press events should be disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** Whether the target should not receive focus on press. */
-  preventFocusOnPress?: boolean,
+  preventFocusOnPress?: boolean;
   /**
    * Whether press events should be canceled when the pointer leaves the target while pressed.
    * By default, this is `false`, which means if the pointer returns back over the target while
    * still pressed, onPressStart will be fired again. If set to `true`, the press is canceled
    * when the pointer leaves the target and onPressStart will not be fired if the pointer returns.
    */
-  shouldCancelOnPointerExit?: boolean,
+  shouldCancelOnPointerExit?: boolean;
   /** Whether text selection should be enabled on the pressable element. */
-  allowTextSelectionOnPress?: boolean
+  allowTextSelectionOnPress?: boolean;
 }
 
 export interface PressHookProps extends PressProps {
   /** A ref to the target element. */
-  ref?: RefObject<Element | null>
+  ref?: RefObject<Element | null>;
 }
 
 interface PressState {
-  isPressed: boolean,
-  ignoreEmulatedMouseEvents: boolean,
-  didFirePressStart: boolean,
-  isTriggeringEvent: boolean,
-  activePointerId: any,
-  target: FocusableElement | null,
-  isOverTarget: boolean,
-  pointerType: PointerType | null,
-  userSelect?: string,
-  metaKeyEvents?: Map<string, globalThis.KeyboardEvent>,
-  disposables: Array<() => void>
+  isPressed: boolean;
+  ignoreEmulatedMouseEvents: boolean;
+  didFirePressStart: boolean;
+  isTriggeringEvent: boolean;
+  activePointerId: any;
+  target: FocusableElement | null;
+  isOverTarget: boolean;
+  pointerType: PointerType | null;
+  userSelect?: string;
+  metaKeyEvents?: Map<string, globalThis.KeyboardEvent>;
+  disposables: Array<() => void>;
 }
 
 interface EventBase {
-  currentTarget: EventTarget | null,
-  shiftKey: boolean,
-  ctrlKey: boolean,
-  metaKey: boolean,
-  altKey: boolean,
-  clientX?: number,
-  clientY?: number,
-  targetTouches?: Array<{clientX?: number, clientY?: number}>,
-  key?: string
+  currentTarget: EventTarget | null;
+  shiftKey: boolean;
+  ctrlKey: boolean;
+  metaKey: boolean;
+  altKey: boolean;
+  clientX?: number;
+  clientY?: number;
+  targetTouches?: Array<{clientX?: number; clientY?: number}>;
+  key?: string;
 }
 
 export interface PressResult {
   /** Whether the target is currently pressed. */
-  isPressed: boolean,
+  isPressed: boolean;
   /** Props to spread on the target element. */
-  pressProps: DOMAttributes
+  pressProps: DOMAttributes;
 }
 
 function usePressResponderContext(props: PressHookProps): PressHookProps {
@@ -119,11 +135,18 @@ class PressEvent implements IPressEvent {
   key: string | undefined;
   #shouldStopPropagation = true;
 
-  constructor(type: IPressEvent['type'], pointerType: PointerType, originalEvent: EventBase, state?: PressState) {
+  constructor(
+    type: IPressEvent['type'],
+    pointerType: PointerType,
+    originalEvent: EventBase,
+    state?: PressState
+  ) {
     let currentTarget = state?.target ?? originalEvent.currentTarget;
     const rect: DOMRect | undefined = (currentTarget as Element)?.getBoundingClientRect();
-    let x, y = 0;
-    let clientX, clientY: number | null = null;
+    let x,
+      y = 0;
+    let clientX,
+      clientY: number | null = null;
     if (originalEvent.clientX != null && originalEvent.clientY != null) {
       clientX = originalEvent.clientX;
       clientY = originalEvent.clientY;
@@ -199,139 +222,163 @@ export function usePress(props: PressHookProps): PressResult {
 
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
-  let triggerPressStart = useCallback((originalEvent: EventBase, pointerType: PointerType) => {
-    let state = ref.current;
-    if (isDisabled || state.didFirePressStart) {
-      return false;
-    }
+  let triggerPressStart = useCallback(
+    (originalEvent: EventBase, pointerType: PointerType) => {
+      let state = ref.current;
+      if (isDisabled || state.didFirePressStart) {
+        return false;
+      }
 
-    let shouldStopPropagation = true;
-    state.isTriggeringEvent = true;
-    if (onPressStart) {
-      let event = new PressEvent('pressstart', pointerType, originalEvent);
-      onPressStart(event);
-      shouldStopPropagation = event.shouldStopPropagation;
-    }
+      let shouldStopPropagation = true;
+      state.isTriggeringEvent = true;
+      if (onPressStart) {
+        let event = new PressEvent('pressstart', pointerType, originalEvent);
+        onPressStart(event);
+        shouldStopPropagation = event.shouldStopPropagation;
+      }
 
-    if (onPressChange) {
-      onPressChange(true);
-    }
+      if (onPressChange) {
+        onPressChange(true);
+      }
 
-    state.isTriggeringEvent = false;
-    state.didFirePressStart = true;
-    setPressed(true);
-    return shouldStopPropagation;
-  }, [isDisabled, onPressStart, onPressChange]);
+      state.isTriggeringEvent = false;
+      state.didFirePressStart = true;
+      setPressed(true);
+      return shouldStopPropagation;
+    },
+    [isDisabled, onPressStart, onPressChange]
+  );
 
-  let triggerPressEnd = useCallback((originalEvent: EventBase, pointerType: PointerType, wasPressed = true) => {
-    let state = ref.current;
-    if (!state.didFirePressStart) {
-      return false;
-    }
+  let triggerPressEnd = useCallback(
+    (originalEvent: EventBase, pointerType: PointerType, wasPressed = true) => {
+      let state = ref.current;
+      if (!state.didFirePressStart) {
+        return false;
+      }
 
-    state.didFirePressStart = false;
-    state.isTriggeringEvent = true;
+      state.didFirePressStart = false;
+      state.isTriggeringEvent = true;
 
-    let shouldStopPropagation = true;
-    if (onPressEnd) {
-      let event = new PressEvent('pressend', pointerType, originalEvent);
-      onPressEnd(event);
-      shouldStopPropagation = event.shouldStopPropagation;
-    }
+      let shouldStopPropagation = true;
+      if (onPressEnd) {
+        let event = new PressEvent('pressend', pointerType, originalEvent);
+        onPressEnd(event);
+        shouldStopPropagation = event.shouldStopPropagation;
+      }
 
-    if (onPressChange) {
-      onPressChange(false);
-    }
+      if (onPressChange) {
+        onPressChange(false);
+      }
 
-    setPressed(false);
+      setPressed(false);
 
-    if (onPress && wasPressed && !isDisabled) {
-      let event = new PressEvent('press', pointerType, originalEvent);
-      onPress(event);
-      shouldStopPropagation &&= event.shouldStopPropagation;
-    }
+      if (onPress && wasPressed && !isDisabled) {
+        let event = new PressEvent('press', pointerType, originalEvent);
+        onPress(event);
+        shouldStopPropagation &&= event.shouldStopPropagation;
+      }
 
-    state.isTriggeringEvent = false;
-    return shouldStopPropagation;
-  }, [isDisabled, onPressEnd, onPressChange, onPress]);
+      state.isTriggeringEvent = false;
+      return shouldStopPropagation;
+    },
+    [isDisabled, onPressEnd, onPressChange, onPress]
+  );
   let triggerPressEndEvent = useEffectEvent(triggerPressEnd);
 
-  let triggerPressUp = useCallback((originalEvent: EventBase, pointerType: PointerType) => {
-    let state = ref.current;
-    if (isDisabled) {
-      return false;
-    }
+  let triggerPressUp = useCallback(
+    (originalEvent: EventBase, pointerType: PointerType) => {
+      let state = ref.current;
+      if (isDisabled) {
+        return false;
+      }
 
-    if (onPressUp) {
-      state.isTriggeringEvent = true;
-      let event = new PressEvent('pressup', pointerType, originalEvent);
-      onPressUp(event);
-      state.isTriggeringEvent = false;
-      return event.shouldStopPropagation;
-    }
+      if (onPressUp) {
+        state.isTriggeringEvent = true;
+        let event = new PressEvent('pressup', pointerType, originalEvent);
+        onPressUp(event);
+        state.isTriggeringEvent = false;
+        return event.shouldStopPropagation;
+      }
 
-    return true;
-  }, [isDisabled, onPressUp]);
+      return true;
+    },
+    [isDisabled, onPressUp]
+  );
   let triggerPressUpEvent = useEffectEvent(triggerPressUp);
 
-  let cancel = useCallback((e: EventBase) => {
-    let state = ref.current;
-    if (state.isPressed && state.target) {
-      if (state.didFirePressStart && state.pointerType != null) {
-        triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
+  let cancel = useCallback(
+    (e: EventBase) => {
+      let state = ref.current;
+      if (state.isPressed && state.target) {
+        if (state.didFirePressStart && state.pointerType != null) {
+          triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
+        }
+        state.isPressed = false;
+        state.isOverTarget = false;
+        state.activePointerId = null;
+        state.pointerType = null;
+        removeAllGlobalListeners();
+        if (!allowTextSelectionOnPress) {
+          restoreTextSelection(state.target);
+        }
+        for (let dispose of state.disposables) {
+          dispose();
+        }
+        state.disposables = [];
       }
-      state.isPressed = false;
-      state.isOverTarget = false;
-      state.activePointerId = null;
-      state.pointerType = null;
-      removeAllGlobalListeners();
-      if (!allowTextSelectionOnPress) {
-        restoreTextSelection(state.target);
-      }
-      for (let dispose of state.disposables) {
-        dispose();
-      }
-      state.disposables = [];
-    }
-  }, [allowTextSelectionOnPress, removeAllGlobalListeners, triggerPressEnd]);
+    },
+    [allowTextSelectionOnPress, removeAllGlobalListeners, triggerPressEnd]
+  );
   let cancelEvent = useEffectEvent(cancel);
 
-  let cancelOnPointerExit = useCallback((e: EventBase) => {
-    if (shouldCancelOnPointerExit) {
-      cancel(e);
-    }
-  }, [shouldCancelOnPointerExit, cancel]);
+  let cancelOnPointerExit = useCallback(
+    (e: EventBase) => {
+      if (shouldCancelOnPointerExit) {
+        cancel(e);
+      }
+    },
+    [shouldCancelOnPointerExit, cancel]
+  );
 
-  let triggerClick = useCallback((e: RMouseEvent<FocusableElement>) => {
-    if (isDisabled) {
-      return;
-    }
+  let triggerClick = useCallback(
+    (e: RMouseEvent<FocusableElement>) => {
+      if (isDisabled) {
+        return;
+      }
 
-    onClick?.(e);
-  }, [isDisabled, onClick]);
+      onClick?.(e);
+    },
+    [isDisabled, onClick]
+  );
 
-  let triggerSyntheticClick = useCallback((e: KeyboardEvent | TouchEvent, target: FocusableElement) => {
-    if (isDisabled) {
-      return;
-    }
+  let triggerSyntheticClick = useCallback(
+    (e: KeyboardEvent | TouchEvent, target: FocusableElement) => {
+      if (isDisabled) {
+        return;
+      }
 
-    // Some third-party libraries pass in onClick instead of onPress.
-    // Create a fake mouse event and trigger onClick as well.
-    // This matches the browser's native activation behavior for certain elements (e.g. button).
-    // https://html.spec.whatwg.org/#activation
-    // https://html.spec.whatwg.org/#fire-a-synthetic-pointer-event
-    if (onClick) {
-      let event = new MouseEvent('click', e);
-      setEventTarget(event, target);
-      onClick(createSyntheticEvent(event));
-    }
-  }, [isDisabled, onClick]);
+      // Some third-party libraries pass in onClick instead of onPress.
+      // Create a fake mouse event and trigger onClick as well.
+      // This matches the browser's native activation behavior for certain elements (e.g. button).
+      // https://html.spec.whatwg.org/#activation
+      // https://html.spec.whatwg.org/#fire-a-synthetic-pointer-event
+      if (onClick) {
+        let event = new MouseEvent('click', e);
+        setEventTarget(event, target);
+        onClick(createSyntheticEvent(event));
+      }
+    },
+    [isDisabled, onClick]
+  );
 
   let pressProps = useMemo(() => {
     let state = ref.current;
     let pressProps: DOMAttributes = {
       onKeyDown(e) {
-        if (isValidKeyboardEvent(e.nativeEvent, e.currentTarget as Element) && nodeContains(e.currentTarget as Element, getEventTarget(e) as Element)) {
+        if (
+          isValidKeyboardEvent(e.nativeEvent, e.currentTarget as Element) &&
+          nodeContains(e.currentTarget as Element, getEventTarget(e) as Element)
+        ) {
           if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e.key)) {
             e.preventDefault();
           }
@@ -351,14 +398,24 @@ export function usePress(props: PressHookProps): PressResult {
           // instead of the same element where the key down event occurred. Make it capturing so that it will trigger
           // before stopPropagation from useKeyboard on a child element may happen and thus we can still call triggerPress for the parent element.
           let originalTarget = e.currentTarget;
-          let pressUp = (e) => {
-            if (isValidKeyboardEvent(e, originalTarget) && !e.repeat && nodeContains(originalTarget, getEventTarget(e) as Element) && state.target) {
+          let pressUp = e => {
+            if (
+              isValidKeyboardEvent(e, originalTarget) &&
+              !e.repeat &&
+              nodeContains(originalTarget, getEventTarget(e) as Element) &&
+              state.target
+            ) {
               // eslint-disable-next-line react-hooks/rules-of-hooks
               triggerPressUpEvent(createEvent(state.target, e), 'keyboard');
             }
           };
 
-          addGlobalListener(getOwnerDocument(e.currentTarget), 'keyup', chain(pressUp, onKeyUp), true);
+          addGlobalListener(
+            getOwnerDocument(e.currentTarget),
+            'keyup',
+            chain(pressUp, onKeyUp),
+            true
+          );
 
           if (shouldStopPropagation) {
             e.stopPropagation();
@@ -391,7 +448,11 @@ export function usePress(props: PressHookProps): PressResult {
 
           // If triggered from a screen reader or by using element.click(),
           // trigger as if it were a keyboard click.
-          if (!state.ignoreEmulatedMouseEvents && !state.isPressed && (state.pointerType === 'virtual' || isVirtualClick(e.nativeEvent))) {
+          if (
+            !state.ignoreEmulatedMouseEvents &&
+            !state.isPressed &&
+            (state.pointerType === 'virtual' || isVirtualClick(e.nativeEvent))
+          ) {
             let stopPressStart = triggerPressStart(e, 'virtual');
             // eslint-disable-next-line react-hooks/rules-of-hooks
             let stopPressUp = triggerPressUpEvent(e, 'virtual');
@@ -400,11 +461,18 @@ export function usePress(props: PressHookProps): PressResult {
             triggerClick(e);
             shouldStopPropagation = stopPressStart && stopPressUp && stopPressEnd;
           } else if (state.isPressed && state.pointerType !== 'keyboard') {
-            let pointerType = state.pointerType || (e.nativeEvent as PointerEvent).pointerType as PointerType || 'virtual';
+            let pointerType =
+              state.pointerType ||
+              ((e.nativeEvent as PointerEvent).pointerType as PointerType) ||
+              'virtual';
             // eslint-disable-next-line react-hooks/rules-of-hooks
             let stopPressUp = triggerPressUpEvent(createEvent(e.currentTarget, e), pointerType);
             // eslint-disable-next-line react-hooks/rules-of-hooks
-            let stopPressEnd =  triggerPressEndEvent(createEvent(e.currentTarget, e), pointerType, true);
+            let stopPressEnd = triggerPressEndEvent(
+              createEvent(e.currentTarget, e),
+              pointerType,
+              true
+            );
             shouldStopPropagation = stopPressUp && stopPressEnd;
             state.isOverTarget = false;
             triggerClick(e);
@@ -438,7 +506,12 @@ export function usePress(props: PressHookProps): PressResult {
         // If a link was triggered with a key other than Enter, open the URL ourselves.
         // This means the link has a role override, and the default browser behavior
         // only applies when using the Enter key.
-        if (e.key !== 'Enter' && isHTMLAnchorLink(state.target) && nodeContains(state.target, target as Element) && !e[LINK_CLICKED]) {
+        if (
+          e.key !== 'Enter' &&
+          isHTMLAnchorLink(state.target) &&
+          nodeContains(state.target, target as Element) &&
+          !e[LINK_CLICKED]
+        ) {
           // Store a hidden property on the event so we only trigger link click once,
           // even if there are multiple usePress instances attached to the element.
           e[LINK_CLICKED] = true;
@@ -460,7 +533,7 @@ export function usePress(props: PressHookProps): PressResult {
     };
 
     if (typeof PointerEvent !== 'undefined') {
-      pressProps.onPointerDown = (e) => {
+      pressProps.onPointerDown = e => {
         // Only handle left clicks, and ignore events that bubbled through portals.
         if (e.button !== 0 || !nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
@@ -503,7 +576,12 @@ export function usePress(props: PressHookProps): PressResult {
             }
           }
           addGlobalListener(getOwnerDocument(e.currentTarget), 'pointerup', onPointerUp, false);
-          addGlobalListener(getOwnerDocument(e.currentTarget), 'pointercancel', onPointerCancel, false);
+          addGlobalListener(
+            getOwnerDocument(e.currentTarget),
+            'pointercancel',
+            onPointerCancel,
+            false
+          );
         }
 
         if (shouldStopPropagation) {
@@ -511,7 +589,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
       };
 
-      pressProps.onMouseDown = (e) => {
+      pressProps.onMouseDown = e => {
         if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
@@ -528,7 +606,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
       };
 
-      pressProps.onPointerUp = (e) => {
+      pressProps.onPointerUp = e => {
         // iOS fires pointerup with zero width and height, so check the pointerType recorded during pointerdown.
         if (!nodeContains(e.currentTarget, getEventTarget(e)) || state.pointerType === 'virtual') {
           return;
@@ -541,15 +619,25 @@ export function usePress(props: PressHookProps): PressResult {
         }
       };
 
-      pressProps.onPointerEnter = (e) => {
-        if (e.pointerId === state.activePointerId && state.target && !state.isOverTarget && state.pointerType != null) {
+      pressProps.onPointerEnter = e => {
+        if (
+          e.pointerId === state.activePointerId &&
+          state.target &&
+          !state.isOverTarget &&
+          state.pointerType != null
+        ) {
           state.isOverTarget = true;
           triggerPressStart(createEvent(state.target, e), state.pointerType);
         }
       };
 
-      pressProps.onPointerLeave = (e) => {
-        if (e.pointerId === state.activePointerId && state.target && state.isOverTarget && state.pointerType != null) {
+      pressProps.onPointerLeave = e => {
+        if (
+          e.pointerId === state.activePointerId &&
+          state.target &&
+          state.isOverTarget &&
+          state.pointerType != null
+        ) {
           state.isOverTarget = false;
           // eslint-disable-next-line react-hooks/rules-of-hooks
           triggerPressEndEvent(createEvent(state.target, e), state.pointerType, false);
@@ -558,8 +646,16 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       let onPointerUp = (e: PointerEvent) => {
-        if (e.pointerId === state.activePointerId && state.isPressed && e.button === 0 && state.target) {
-          if (nodeContains(state.target, getEventTarget(e) as Element) && state.pointerType != null) {
+        if (
+          e.pointerId === state.activePointerId &&
+          state.isPressed &&
+          e.button === 0 &&
+          state.target
+        ) {
+          if (
+            nodeContains(state.target, getEventTarget(e) as Element) &&
+            state.pointerType != null
+          ) {
             // Wait for onClick to fire onPress. This avoids browser issues when the DOM
             // is mutated between onPointerUp and onClick, and is more compatible with third party libraries.
             // https://github.com/adobe/react-spectrum/issues/1513
@@ -584,7 +680,7 @@ export function usePress(props: PressHookProps): PressResult {
             }, 80);
             // Use a capturing listener to track if a click occurred.
             // If stopPropagation is called it may never reach our handler.
-            addGlobalListener(e.currentTarget as Document, 'click', () => clicked = true, true);
+            addGlobalListener(e.currentTarget as Document, 'click', () => (clicked = true), true);
             state.disposables.push(() => clearTimeout(timeout));
           } else {
             // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -601,7 +697,7 @@ export function usePress(props: PressHookProps): PressResult {
         cancelEvent(e);
       };
 
-      pressProps.onDragStart = (e) => {
+      pressProps.onDragStart = e => {
         if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
@@ -614,7 +710,7 @@ export function usePress(props: PressHookProps): PressResult {
       // NOTE: this fallback branch is entirely used by unit tests.
       // All browsers now support pointer events, but JSDOM still does not.
 
-      pressProps.onMouseDown = (e) => {
+      pressProps.onMouseDown = e => {
         // Only handle left clicks
         if (e.button !== 0 || !nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
@@ -645,7 +741,7 @@ export function usePress(props: PressHookProps): PressResult {
         addGlobalListener(getOwnerDocument(e.currentTarget), 'mouseup', onMouseUp, false);
       };
 
-      pressProps.onMouseEnter = (e) => {
+      pressProps.onMouseEnter = e => {
         if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
@@ -661,7 +757,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
       };
 
-      pressProps.onMouseLeave = (e) => {
+      pressProps.onMouseLeave = e => {
         if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
@@ -679,7 +775,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
       };
 
-      pressProps.onMouseUp = (e) => {
+      pressProps.onMouseUp = e => {
         if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
@@ -701,7 +797,11 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        if (state.target && nodeContains(state.target, getEventTarget(e) as Element) && state.pointerType != null) {
+        if (
+          state.target &&
+          nodeContains(state.target, getEventTarget(e) as Element) &&
+          state.pointerType != null
+        ) {
           // Wait for onClick to fire onPress. This avoids browser issues when the DOM
           // is mutated between onMouseUp and onClick, and is more compatible with third party libraries.
         } else {
@@ -712,7 +812,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.isOverTarget = false;
       };
 
-      pressProps.onTouchStart = (e) => {
+      pressProps.onTouchStart = e => {
         if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
@@ -732,14 +832,17 @@ export function usePress(props: PressHookProps): PressResult {
           disableTextSelection(state.target);
         }
 
-        let shouldStopPropagation = triggerPressStart(createTouchEvent(state.target, e), state.pointerType);
+        let shouldStopPropagation = triggerPressStart(
+          createTouchEvent(state.target, e),
+          state.pointerType
+        );
         if (shouldStopPropagation) {
           e.stopPropagation();
         }
         addGlobalListener(getOwnerWindow(e.currentTarget), 'scroll', onScroll, true);
       };
 
-      pressProps.onTouchMove = (e) => {
+      pressProps.onTouchMove = e => {
         if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
@@ -754,12 +857,19 @@ export function usePress(props: PressHookProps): PressResult {
         if (touch && isOverTarget(touch, e.currentTarget)) {
           if (!state.isOverTarget && state.pointerType != null) {
             state.isOverTarget = true;
-            shouldStopPropagation = triggerPressStart(createTouchEvent(state.target!, e), state.pointerType);
+            shouldStopPropagation = triggerPressStart(
+              createTouchEvent(state.target!, e),
+              state.pointerType
+            );
           }
         } else if (state.isOverTarget && state.pointerType != null) {
           state.isOverTarget = false;
           // eslint-disable-next-line react-hooks/rules-of-hooks
-          shouldStopPropagation = triggerPressEndEvent(createTouchEvent(state.target!, e), state.pointerType, false);
+          shouldStopPropagation = triggerPressEndEvent(
+            createTouchEvent(state.target!, e),
+            state.pointerType,
+            false
+          );
           cancelOnPointerExit(createTouchEvent(state.target!, e));
         }
 
@@ -768,7 +878,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
       };
 
-      pressProps.onTouchEnd = (e) => {
+      pressProps.onTouchEnd = e => {
         if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
@@ -784,11 +894,18 @@ export function usePress(props: PressHookProps): PressResult {
           // eslint-disable-next-line react-hooks/rules-of-hooks
           triggerPressUpEvent(createTouchEvent(state.target!, e), state.pointerType);
           // eslint-disable-next-line react-hooks/rules-of-hooks
-          shouldStopPropagation = triggerPressEndEvent(createTouchEvent(state.target!, e), state.pointerType);
+          shouldStopPropagation = triggerPressEndEvent(
+            createTouchEvent(state.target!, e),
+            state.pointerType
+          );
           triggerSyntheticClick(e.nativeEvent, state.target!);
         } else if (state.isOverTarget && state.pointerType != null) {
           // eslint-disable-next-line react-hooks/rules-of-hooks
-          shouldStopPropagation = triggerPressEndEvent(createTouchEvent(state.target!, e), state.pointerType, false);
+          shouldStopPropagation = triggerPressEndEvent(
+            createTouchEvent(state.target!, e),
+            state.pointerType,
+            false
+          );
         }
 
         if (shouldStopPropagation) {
@@ -805,7 +922,7 @@ export function usePress(props: PressHookProps): PressResult {
         removeAllGlobalListeners();
       };
 
-      pressProps.onTouchCancel = (e) => {
+      pressProps.onTouchCancel = e => {
         if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
@@ -830,7 +947,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
       };
 
-      pressProps.onDragStart = (e) => {
+      pressProps.onDragStart = e => {
         if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return;
         }
@@ -907,7 +1024,10 @@ function isHTMLAnchorLink(target: Element): target is HTMLAnchorElement {
   return target.tagName === 'A' && target.hasAttribute('href');
 }
 
-function isValidKeyboardEvent(event: KeyboardEvent | globalThis.KeyboardEvent, currentTarget: Element): boolean {
+function isValidKeyboardEvent(
+  event: KeyboardEvent | globalThis.KeyboardEvent,
+  currentTarget: Element
+): boolean {
   const {key, code} = event;
   const element = currentTarget as HTMLElement;
   const role = element.getAttribute('role');
@@ -915,9 +1035,12 @@ function isValidKeyboardEvent(event: KeyboardEvent | globalThis.KeyboardEvent, c
   // "Spacebar" is for IE 11
   return (
     (key === 'Enter' || key === ' ' || key === 'Spacebar' || code === 'Space') &&
-    !((element instanceof getOwnerWindow(element).HTMLInputElement && !isValidInputKey(element, key)) ||
+    !(
+      (element instanceof getOwnerWindow(element).HTMLInputElement &&
+        !isValidInputKey(element, key)) ||
       element instanceof getOwnerWindow(element).HTMLTextAreaElement ||
-      element.isContentEditable) &&
+      element.isContentEditable
+    ) &&
     // Links should only trigger with Enter key
     !((role === 'link' || (!role && isHTMLAnchorLink(element))) && key !== 'Enter')
   );
@@ -931,10 +1054,7 @@ function getTouchFromEvent(event: TouchEvent): Touch | null {
   return null;
 }
 
-function getTouchById(
-  event: TouchEvent,
-  pointerId: null | number
-): null | Touch {
+function getTouchById(event: TouchEvent, pointerId: null | number): null | Touch {
   const changedTouches = event.changedTouches;
   for (let i = 0; i < changedTouches.length; i++) {
     const touch = changedTouches[i];
@@ -979,31 +1099,31 @@ function createEvent(target: FocusableElement, e: EventBase): EventBase {
 }
 
 interface Rect {
-  top: number,
-  right: number,
-  bottom: number,
-  left: number
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
 }
 
 interface EventPoint {
-  clientX: number,
-  clientY: number,
-  width?: number,
-  height?: number,
-  radiusX?: number,
-  radiusY?: number
+  clientX: number;
+  clientY: number;
+  width?: number;
+  height?: number;
+  radiusX?: number;
+  radiusY?: number;
 }
 
 function getPointClientRect(point: EventPoint): Rect {
   let offsetX = 0;
   let offsetY = 0;
   if (point.width !== undefined) {
-    offsetX = (point.width / 2);
+    offsetX = point.width / 2;
   } else if (point.radiusX !== undefined) {
     offsetX = point.radiusX;
   }
   if (point.height !== undefined) {
-    offsetY = (point.height / 2);
+    offsetY = point.height / 2;
   } else if (point.radiusY !== undefined) {
     offsetY = point.radiusY;
   }

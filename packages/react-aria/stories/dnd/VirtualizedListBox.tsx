@@ -16,7 +16,10 @@ import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import dndStyles from './dnd.css';
 import dropIndicatorStyles from '@adobe/spectrum-css-temp/components/dropindicator/vars.css';
 import {DroppableCollectionDropEvent} from '@react-types/shared';
-import {DroppableCollectionState, useDroppableCollectionState} from 'react-stately/useDroppableCollectionState';
+import {
+  DroppableCollectionState,
+  useDroppableCollectionState
+} from 'react-stately/useDroppableCollectionState';
 import {FocusRing} from '../../src/focus/FocusRing';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Item} from 'react-stately/Item';
@@ -35,9 +38,9 @@ import {useVisuallyHidden} from '../../src/visually-hidden/VisuallyHidden';
 import {Virtualizer} from '../../src/virtualizer/Virtualizer';
 
 interface ItemValue {
-  id: string,
-  type: string,
-  text: string
+  id: string;
+  type: string;
+  text: string;
 }
 
 export function VirtualizedListBoxExample(props: any): JSX.Element {
@@ -100,14 +103,17 @@ export function VirtualizedListBoxExample(props: any): JSX.Element {
   );
 }
 
-const Context = React.createContext<{state: ListState<object>, dropState: DroppableCollectionState} | null>(null);
+const Context = React.createContext<{
+  state: ListState<object>;
+  dropState: DroppableCollectionState;
+} | null>(null);
 const acceptedTypes = ['item', 'folder'];
 
-export const VirtualizedListBox:
-  React.ForwardRefExoticComponent<Omit<any, 'ref'> & React.RefAttributes<unknown>> =
-React.forwardRef(function (props: any, ref) {
+export const VirtualizedListBox: React.ForwardRefExoticComponent<
+  Omit<any, 'ref'> & React.RefAttributes<unknown>
+> = React.forwardRef(function (props: any, ref) {
   let domRef = React.useRef<HTMLDivElement>(null);
-  let onDrop = async (e) => {
+  let onDrop = async e => {
     action('onDrop')(e);
     props.onDrop?.(e);
   };
@@ -147,32 +153,46 @@ React.forwardRef(function (props: any, ref) {
     onDrop
   });
 
-  let layout = React.useMemo(() =>
-    new ListLayout<unknown>({
-      estimatedRowHeight: 32
-    })
-  , []);
+  let layout = React.useMemo(
+    () =>
+      new ListLayout<unknown>({
+        estimatedRowHeight: 32
+      }),
+    []
+  );
 
-  let {collectionProps} = useDroppableCollection({
-    keyboardDelegate: new ListKeyboardDelegate({
-      collection: state.collection,
-      ref: domRef,
-      layoutDelegate: layout
-    }),
-    dropTargetDelegate: layout,
-    onDropActivate: chain(action('onDropActivate'), console.log),
-    onDrop
-  }, dropState, domRef);
+  let {collectionProps} = useDroppableCollection(
+    {
+      keyboardDelegate: new ListKeyboardDelegate({
+        collection: state.collection,
+        ref: domRef,
+        layoutDelegate: layout
+      }),
+      dropTargetDelegate: layout,
+      onDropActivate: chain(action('onDropActivate'), console.log),
+      onDrop
+    },
+    dropState,
+    domRef
+  );
 
-  let {listBoxProps} = useListBox({
-    ...props,
-    'aria-label': 'List',
-    layoutDelegate: layout,
-    isVirtualized: true
-  }, state, domRef);
+  let {listBoxProps} = useListBox(
+    {
+      ...props,
+      'aria-label': 'List',
+      layoutDelegate: layout,
+      isVirtualized: true
+    },
+    state,
+    domRef
+  );
   let isDropTarget = dropState.isDropTarget({type: 'root'});
-  let focusedKey = dropState.target?.type === 'item' ? dropState.target.key : state.selectionManager.focusedKey;
-  let persistedKeys = useMemo(() => focusedKey != null ? new Set([focusedKey]) : null, [focusedKey]);
+  let focusedKey =
+    dropState.target?.type === 'item' ? dropState.target.key : state.selectionManager.focusedKey;
+  let persistedKeys = useMemo(
+    () => (focusedKey != null ? new Set([focusedKey]) : null),
+    [focusedKey]
+  );
 
   return (
     <Context.Provider value={{state, dropState}}>
@@ -180,27 +200,27 @@ React.forwardRef(function (props: any, ref) {
         {...mergeProps(collectionProps, listBoxProps)}
         onScroll={undefined}
         ref={domRef}
-        className={classNames(dndStyles, 'droppable-collection', 'is-virtualized', {'is-drop-target': isDropTarget})}
+        className={classNames(dndStyles, 'droppable-collection', 'is-virtualized', {
+          'is-drop-target': isDropTarget
+        })}
         scrollDirection="vertical"
         layout={layout}
         collection={state.collection}
         persistedKeys={persistedKeys}>
         {(type, item) => (
           <>
-            {state.collection.getKeyBefore(item.key) == null &&
-              <RootDropIndicator />
-            }
+            {state.collection.getKeyBefore(item.key) == null && <RootDropIndicator />}
             <InsertionIndicator
               key={item.key + '-before'}
-              target={{type: 'item', key: item.key, dropPosition: 'before'}} />
-            <CollectionItem
-              key={item.key}
-              item={item} />
-            {state.collection.getKeyAfter(item.key) == null &&
+              target={{type: 'item', key: item.key, dropPosition: 'before'}}
+            />
+            <CollectionItem key={item.key} item={item} />
+            {state.collection.getKeyAfter(item.key) == null && (
               <InsertionIndicator
                 key={item.key + '-after'}
-                target={{type: 'item', key: item.key, dropPosition: 'after'}} />
-            }
+                target={{type: 'item', key: item.key, dropPosition: 'after'}}
+              />
+            )}
           </>
         )}
       </Virtualizer>
@@ -211,15 +231,23 @@ React.forwardRef(function (props: any, ref) {
 function CollectionItem({item}) {
   let {state, dropState} = React.useContext(Context)!;
   let ref = React.useRef(null);
-  let {optionProps} = useOption({
-    key: item.key,
-    isSelected: state.selectionManager.isSelected(item.key),
-    isVirtualized: true
-  }, state, ref);
+  let {optionProps} = useOption(
+    {
+      key: item.key,
+      isSelected: state.selectionManager.isSelected(item.key),
+      isVirtualized: true
+    },
+    state,
+    ref
+  );
 
-  let {dropProps} = useDroppableItem({
-    target: {type: 'item', key: item.key, dropPosition: 'on'}
-  }, dropState, ref);
+  let {dropProps} = useDroppableItem(
+    {
+      target: {type: 'item', key: item.key, dropPosition: 'on'}
+    },
+    dropState,
+    ref
+  );
 
   return (
     <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
@@ -227,7 +255,11 @@ function CollectionItem({item}) {
         {...mergeProps(optionProps, dropProps)}
         ref={ref}
         className={classNames(dndStyles, 'droppable', {
-          'is-drop-target': dropState!.isDropTarget({type: 'item', key: item.key, dropPosition: 'on'}),
+          'is-drop-target': dropState!.isDropTarget({
+            type: 'item',
+            key: item.key,
+            dropPosition: 'on'
+          }),
           'is-selected': state!.selectionManager.isSelected(item.key)
         })}
         style={{margin: '4px 12px'}}>
@@ -255,9 +287,14 @@ function InsertionIndicator(props) {
       aria-selected="false"
       {...dropIndicatorProps}
       ref={ref}
-      className={dropState.isDropTarget(props.target)
-        ? classNames(dropIndicatorStyles, 'spectrum-DropIndicator', 'spectrum-DropIndicator--horizontal')
-        : undefined
+      className={
+        dropState.isDropTarget(props.target)
+          ? classNames(
+              dropIndicatorStyles,
+              'spectrum-DropIndicator',
+              'spectrum-DropIndicator--horizontal'
+            )
+          : undefined
       }
       style={{
         width: 'calc(100% - 24px)',
@@ -265,16 +302,21 @@ function InsertionIndicator(props) {
         height: 2,
         marginBottom: -2,
         outline: 'none'
-      }} />
+      }}
+    />
   );
 }
 
 function RootDropIndicator() {
   let {dropState} = React.useContext(Context)!;
   let dropRef = React.useRef(null);
-  let {dropIndicatorProps} = useDropIndicator({
-    target: {type: 'root'}
-  }, dropState, dropRef);
+  let {dropIndicatorProps} = useDropIndicator(
+    {
+      target: {type: 'root'}
+    },
+    dropState,
+    dropRef
+  );
 
   let {visuallyHiddenProps} = useVisuallyHidden();
   if (dropIndicatorProps['aria-hidden']) {
@@ -287,6 +329,7 @@ function RootDropIndicator() {
       aria-selected="false"
       {...visuallyHiddenProps}
       {...dropIndicatorProps}
-      ref={dropRef} />
+      ref={dropRef}
+    />
   );
 }

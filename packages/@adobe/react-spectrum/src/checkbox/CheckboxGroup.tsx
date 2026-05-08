@@ -14,7 +14,14 @@ import {AriaCheckboxGroupProps, useCheckboxGroup} from 'react-aria/useCheckboxGr
 
 import {CheckboxGroupContext} from './context';
 import {classNames} from '../utils/classNames';
-import {DOMRef, Orientation, SpectrumHelpTextProps, SpectrumLabelableProps, StyleProps, Validation} from '@react-types/shared';
+import {
+  DOMRef,
+  Orientation,
+  SpectrumHelpTextProps,
+  SpectrumLabelableProps,
+  StyleProps,
+  Validation
+} from '@react-types/shared';
 import {Field} from '../label/Field';
 import {Provider, useProviderProps} from '../provider/Provider';
 import React, {ReactElement} from 'react';
@@ -24,34 +31,39 @@ import {useCheckboxGroupState} from 'react-stately/useCheckboxGroupState';
 import {useDOMRef} from '../utils/useDOMRef';
 import {useFormProps} from '../form/Form';
 
-export interface SpectrumCheckboxGroupProps extends AriaCheckboxGroupProps, SpectrumLabelableProps, Validation<string[]>, StyleProps, SpectrumHelpTextProps {
+export interface SpectrumCheckboxGroupProps
+  extends
+    AriaCheckboxGroupProps,
+    SpectrumLabelableProps,
+    Validation<string[]>,
+    StyleProps,
+    SpectrumHelpTextProps {
   /**
    * The Checkboxes contained within the CheckboxGroup.
    */
-  children: ReactElement<SpectrumCheckboxProps> | ReactElement<SpectrumCheckboxProps>[],
+  children: ReactElement<SpectrumCheckboxProps> | ReactElement<SpectrumCheckboxProps>[];
   /**
    * The axis the checkboxes should align with.
    * @default 'vertical'
    */
-  orientation?: Orientation,
+  orientation?: Orientation;
   /**
    * By default, checkboxes are not emphasized (gray).
    * The emphasized (blue) version provides visual prominence.
    */
-  isEmphasized?: boolean
+  isEmphasized?: boolean;
 }
 
 /**
  * A CheckboxGroup allows users to select one or more items from a list of choices.
  */
-export const CheckboxGroup = React.forwardRef(function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
+export const CheckboxGroup = React.forwardRef(function CheckboxGroup(
+  props: SpectrumCheckboxGroupProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   props = useProviderProps(props);
   props = useFormProps(props);
-  let {
-    isEmphasized,
-    children,
-    orientation = 'vertical'
-  } = props;
+  let {isEmphasized, children, orientation = 'vertical'} = props;
   let domRef = useDOMRef(ref);
   let state = useCheckboxGroupState(props);
   let {groupProps, ...otherProps} = useCheckboxGroup(props, state);
@@ -66,19 +78,11 @@ export const CheckboxGroup = React.forwardRef(function CheckboxGroup(props: Spec
       includeNecessityIndicatorInAccessibilityName>
       <div
         {...groupProps}
-        className={
-          classNames(
-            styles,
-            'spectrum-FieldGroup-group',
-            {
-              'spectrum-FieldGroup-group--horizontal': orientation === 'horizontal'
-            }
-          )
-        }>
+        className={classNames(styles, 'spectrum-FieldGroup-group', {
+          'spectrum-FieldGroup-group--horizontal': orientation === 'horizontal'
+        })}>
         <Provider isEmphasized={isEmphasized}>
-          <CheckboxGroupContext.Provider value={state}>
-            {children}
-          </CheckboxGroupContext.Provider>
+          <CheckboxGroupContext.Provider value={state}>{children}</CheckboxGroupContext.Provider>
         </Provider>
       </div>
     </Field>

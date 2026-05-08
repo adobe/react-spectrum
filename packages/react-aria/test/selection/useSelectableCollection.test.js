@@ -10,12 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, installPointerEvent, pointerMap, render, simulateDesktop, simulateMobile, within} from '@react-spectrum/test-utils-internal';
+import {
+  fireEvent,
+  installPointerEvent,
+  pointerMap,
+  render,
+  simulateDesktop,
+  simulateMobile,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {Item} from 'react-stately/Item';
 import {List} from '../../stories/selection/List';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-
 
 describe('useSelectableCollection', () => {
   let user;
@@ -74,21 +81,15 @@ describe('useSelectableCollection', () => {
   });
 
   describe.each`
-    type                     | prepare               | actions
-    ${'VO Events'}           | ${installPointerEvent}| ${[
-      (el) => fireEvent.pointerDown(el, {button: 0, pointerType: 'virtual'}),
-      (el) => {
-        fireEvent.pointerUp(el, {button: 0, pointerType: 'virtual'});
-        fireEvent.click(el, {detail: 1});
-      }
-    ]}
-    ${'Touch Pointer Events'} | ${installPointerEvent}| ${[
-      (el) => fireEvent.pointerDown(el, {button: 0, pointerType: 'touch', pointerId: 1}),
-      (el) => {
-        fireEvent.pointerUp(el, {button: 0, pointerType: 'touch', pointerId: 1});
-        fireEvent.click(el, {detail: 1});
-      }
-    ]}
+    type | prepare | actions
+    ${'VO Events'} | ${installPointerEvent} | ${[el => fireEvent.pointerDown(el, {button: 0, pointerType: 'virtual'}), el => {
+    fireEvent.pointerUp(el, {button: 0, pointerType: 'virtual'});
+    fireEvent.click(el, {detail: 1});
+  }]}
+    ${'Touch Pointer Events'} | ${installPointerEvent} | ${[el => fireEvent.pointerDown(el, {button: 0, pointerType: 'touch', pointerId: 1}), el => {
+    fireEvent.pointerUp(el, {button: 0, pointerType: 'touch', pointerId: 1});
+    fireEvent.click(el, {detail: 1});
+  }]}
   `('always uses toggle for $type', ({prepare, actions: [start, end]}) => {
     prepare();
     it('uses toggle mode when the interaction is touch', () => {
@@ -143,10 +144,14 @@ describe('useSelectableCollection', () => {
       let [firstList, secondList] = getAllByRole('listbox');
       await user.click(getByText('focus stop'));
       await user.tab();
-      expect(document.activeElement).toBe(within(secondList).getByRole('option', {name: 'Vicente Amigo'}));
+      expect(document.activeElement).toBe(
+        within(secondList).getByRole('option', {name: 'Vicente Amigo'})
+      );
       await user.click(getByText('focus stop'));
       await user.tab({shift: true});
-      expect(document.activeElement).toBe(within(firstList).getByRole('option', {name: 'Gerardo Nunez'}));
+      expect(document.activeElement).toBe(
+        within(firstList).getByRole('option', {name: 'Gerardo Nunez'})
+      );
 
       expect(onSelectionChange1).not.toHaveBeenCalled();
       expect(onSelectionChange2).not.toHaveBeenCalled();

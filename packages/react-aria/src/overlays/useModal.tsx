@@ -11,20 +11,28 @@
  */
 
 import {DOMAttributes} from '@react-types/shared';
-import React, {AriaAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
+import React, {
+  AriaAttributes,
+  JSX,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from '../ssr/SSRProvider';
 import {useUNSAFE_PortalContext} from './PortalProvider';
 
 export interface ModalProviderProps extends DOMAttributes {
-  children: ReactNode
+  children: ReactNode;
 }
 
 interface ModalContext {
-  parent: ModalContext | null,
-  modalCount: number,
-  addModal: () => void,
-  removeModal: () => void
+  parent: ModalContext | null;
+  modalCount: number;
+  addModal: () => void;
+  removeModal: () => void;
 }
 
 const Context = React.createContext<ModalContext | null>(null);
@@ -41,35 +49,34 @@ export function ModalProvider(props: ModalProviderProps): JSX.Element {
   let {children} = props;
   let parent = useContext(Context);
   let [modalCount, setModalCount] = useState(0);
-  let context = useMemo(() => ({
-    parent,
-    modalCount,
-    addModal() {
-      setModalCount(count => count + 1);
-      if (parent) {
-        parent.addModal();
+  let context = useMemo(
+    () => ({
+      parent,
+      modalCount,
+      addModal() {
+        setModalCount(count => count + 1);
+        if (parent) {
+          parent.addModal();
+        }
+      },
+      removeModal() {
+        setModalCount(count => count - 1);
+        if (parent) {
+          parent.removeModal();
+        }
       }
-    },
-    removeModal() {
-      setModalCount(count => count - 1);
-      if (parent) {
-        parent.removeModal();
-      }
-    }
-  }), [parent, modalCount]);
-
-  return (
-    <Context.Provider value={context}>
-      {children}
-    </Context.Provider>
+    }),
+    [parent, modalCount]
   );
+
+  return <Context.Provider value={context}>{children}</Context.Provider>;
 }
 
 export interface ModalProviderAria {
   /**
    * Props to be spread on the container element.
    */
-  modalProviderProps: AriaAttributes
+  modalProviderProps: AriaAttributes;
 }
 
 /**
@@ -115,7 +122,7 @@ export interface OverlayContainerProps extends ModalProviderProps {
    * @default document.body
    * @deprecated - Use a parent UNSAFE_PortalProvider to set your portal container instead.
    */
-  portalContainer?: Element
+  portalContainer?: Element;
 }
 
 /**
@@ -135,7 +142,9 @@ export function OverlayContainer(props: OverlayContainerProps): React.ReactPorta
 
   React.useEffect(() => {
     if (portalContainer?.closest('[data-overlay-container]')) {
-      throw new Error('An OverlayContainer must not be inside another container. Please change the portalContainer prop.');
+      throw new Error(
+        'An OverlayContainer must not be inside another container. Please change the portalContainer prop.'
+      );
     }
   }, [portalContainer]);
 
@@ -149,16 +158,16 @@ export function OverlayContainer(props: OverlayContainerProps): React.ReactPorta
 
 interface ModalAriaProps extends DOMAttributes {
   /** Data attribute marks the dom node as a modal for the aria-modal-polyfill. */
-  'data-ismodal': boolean
+  'data-ismodal': boolean;
 }
 
 export interface AriaModalOptions {
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 export interface ModalAria {
   /** Props for the modal content element. */
-  modalProps: ModalAriaProps
+  modalProps: ModalAriaProps;
 }
 
 /**

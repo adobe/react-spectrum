@@ -26,26 +26,48 @@ import {
   ListStateContext
 } from 'react-aria-components/ListBox';
 import {PopoverProps as AriaPopoverProps, Placement} from 'react-aria-components/Popover';
-import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SingleSelection, SpectrumLabelableProps} from '@react-types/shared';
+import {
+  AsyncLoadable,
+  GlobalDOMAttributes,
+  HelpTextProps,
+  LoadingState,
+  SingleSelection,
+  SpectrumLabelableProps
+} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {BaseCollection, CollectionNode} from 'react-aria/private/collections/BaseCollection';
 import {baseColor, centerPadding, focusRing, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonRenderProps} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
-import {
-  checkmark,
-  description,
-  icon,
-  iconCenterWrapper,
-  label,
-  sectionHeading
-} from './Menu';
+import {checkmark, description, icon, iconCenterWrapper, label, sectionHeading} from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {Collection} from 'react-aria/Collection';
 import {ContextValue, Provider} from 'react-aria-components/slots';
-import {control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
+import {
+  control,
+  controlBorderRadius,
+  controlFont,
+  controlSize,
+  field,
+  fieldInput,
+  getAllowedOverrides,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
+import {
+  createContext,
+  CSSProperties,
+  ForwardedRef,
+  forwardRef,
+  ReactNode,
+  Ref,
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import {createFocusableRef} from './useDOMRef';
 import {createLeafComponent} from 'react-aria/CollectionBuilder';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
@@ -76,42 +98,60 @@ export interface ComboboxStyleProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL';
 }
-export interface ComboBoxProps<T extends object> extends
-  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'render' | 'defaultFilter' | 'allowsEmptyCollection' | 'selectionMode' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange' | 'value' | 'defaultValue' | 'onChange' | keyof GlobalDOMAttributes>,
-  Omit<SingleSelection, 'disallowEmptySelection'>,
-  ComboboxStyleProps,
-  StyleProps,
-  SpectrumLabelableProps,
-  HelpTextProps,
-  Pick<ListBoxProps<T>, 'items' | 'dependencies'>,
-  Pick<AriaPopoverProps, 'shouldFlip'>,
-  Pick<AsyncLoadable, 'onLoadMore'>,
-  Pick<InputProps, 'placeholder'>  {
-    /** The contents of the collection. */
-    children: ReactNode | ((item: T) => ReactNode),
-    /**
-     * Direction the menu will render relative to the ComboBox.
-     *
-     * @default 'bottom'
-     */
-    direction?: 'bottom' | 'top',
-    /**
-     * Alignment of the menu relative to the input target.
-     *
-     * @default 'start'
-     */
-    align?: 'start' | 'end',
-    /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
-    menuWidth?: number,
-    /** The current loading state of the ComboBox. Determines whether or not the progress circle should be shown. */
-    loadingState?: LoadingState
+export interface ComboBoxProps<T extends object>
+  extends
+    Omit<
+      AriaComboBoxProps<T>,
+      | 'children'
+      | 'style'
+      | 'className'
+      | 'render'
+      | 'defaultFilter'
+      | 'allowsEmptyCollection'
+      | 'selectionMode'
+      | 'selectedKey'
+      | 'defaultSelectedKey'
+      | 'onSelectionChange'
+      | 'value'
+      | 'defaultValue'
+      | 'onChange'
+      | keyof GlobalDOMAttributes
+    >,
+    Omit<SingleSelection, 'disallowEmptySelection'>,
+    ComboboxStyleProps,
+    StyleProps,
+    SpectrumLabelableProps,
+    HelpTextProps,
+    Pick<ListBoxProps<T>, 'items' | 'dependencies'>,
+    Pick<AriaPopoverProps, 'shouldFlip'>,
+    Pick<AsyncLoadable, 'onLoadMore'>,
+    Pick<InputProps, 'placeholder'> {
+  /** The contents of the collection. */
+  children: ReactNode | ((item: T) => ReactNode);
+  /**
+   * Direction the menu will render relative to the ComboBox.
+   *
+   * @default 'bottom'
+   */
+  direction?: 'bottom' | 'top';
+  /**
+   * Alignment of the menu relative to the input target.
+   *
+   * @default 'start'
+   */
+  align?: 'start' | 'end';
+  /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
+  menuWidth?: number;
+  /** The current loading state of the ComboBox. Determines whether or not the progress circle should be shown. */
+  loadingState?: LoadingState;
 }
 
-export const ComboBoxContext = createContext<ContextValue<Partial<ComboBoxProps<any>>, TextFieldRef>>(null);
+export const ComboBoxContext =
+  createContext<ContextValue<Partial<ComboBoxProps<any>>, TextFieldRef>>(null);
 
-const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
+const inputButton = style<ButtonRenderProps & {isOpen: boolean; size: 'S' | 'M' | 'L' | 'XL'}>({
   ...controlBorderRadius('sm'),
   display: 'flex',
   outlineStyle: 'none',
@@ -218,57 +258,57 @@ export let listbox = style<{size: 'S' | 'M' | 'L' | 'XL'}>({
   outlineStyle: 'none'
 });
 
-export let listboxItem = style({
-  ...focusRing(),
-  ...control({shape: 'default', wrap: true, icon: true}),
-  columnGap: 0,
-  paddingX: 0,
-  paddingBottom: '--labelPadding',
-  backgroundColor: {
-    default: 'transparent',
-    isFocused: baseColor('gray-100').isFocusVisible
+export let listboxItem = style(
+  {
+    ...focusRing(),
+    ...control({shape: 'default', wrap: true, icon: true}),
+    columnGap: 0,
+    paddingX: 0,
+    paddingBottom: '--labelPadding',
+    backgroundColor: {
+      default: 'transparent',
+      isFocused: baseColor('gray-100').isFocusVisible
+    },
+    color: {
+      default: baseColor('neutral'),
+      isDisabled: {
+        default: 'disabled',
+        forcedColors: 'GrayText'
+      }
+    },
+    position: 'relative',
+    gridColumnStart: 1,
+    gridColumnEnd: -1,
+    display: 'grid',
+    gridTemplateAreas: ['. checkmark icon label       .', '. .         .    description .'],
+    gridTemplateColumns: {
+      size: {
+        S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(24)],
+        M: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(32)],
+        L: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(40)],
+        XL: [edgeToText(48), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(48)]
+      }
+    },
+    gridTemplateRows: {
+      // min-content prevents second row from 'auto'ing to a size larger then 0 when empty
+      default: 'auto minmax(0, min-content)',
+      ':has([slot=description])': 'auto auto'
+    },
+    rowGap: {
+      ':has([slot=description])': space(1)
+    },
+    alignItems: 'baseline',
+    minHeight: controlSize(),
+    height: 'min',
+    textDecoration: 'none',
+    cursor: {
+      default: 'default',
+      isLink: 'pointer'
+    },
+    transition: 'transform'
   },
-  color: {
-    default: baseColor('neutral'),
-    isDisabled: {
-      default: 'disabled',
-      forcedColors: 'GrayText'
-    }
-  },
-  position: 'relative',
-  gridColumnStart: 1,
-  gridColumnEnd: -1,
-  display: 'grid',
-  gridTemplateAreas: [
-    '. checkmark icon label       .',
-    '. .         .    description .'
-  ],
-  gridTemplateColumns: {
-    size: {
-      S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(24)],
-      M: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(32)],
-      L: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(40)],
-      XL: [edgeToText(48), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(48)]
-    }
-  },
-  gridTemplateRows: {
-    // min-content prevents second row from 'auto'ing to a size larger then 0 when empty
-    default: 'auto minmax(0, min-content)',
-    ':has([slot=description])': 'auto auto'
-  },
-  rowGap: {
-    ':has([slot=description])': space(1)
-  },
-  alignItems: 'baseline',
-  minHeight: controlSize(),
-  height: 'min',
-  textDecoration: 'none',
-  cursor: {
-    default: 'default',
-    isLink: 'pointer'
-  },
-  transition: 'transform'
-}, getAllowedOverrides());
+  getAllowedOverrides()
+);
 
 export let listboxHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
   color: 'neutral',
@@ -339,7 +379,9 @@ let InternalComboboxContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({siz
 /**
  * ComboBox allow users to choose a single option from a collapsible list of options when space is limited.
  */
-export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: Ref<TextFieldRef>) {
+export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<
+  T extends object
+>(props: ComboBoxProps<T>, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, ComboBoxContext);
 
   let formContext = useContext(FormContext);
@@ -357,20 +399,46 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
       {...comboBoxProps}
       allowsEmptyCollection
       style={UNSAFE_style}
-      className={UNSAFE_className + style(field(), getAllowedOverrides())({
-        isInForm: !!formContext,
-        labelPosition,
-        size
-      }, props.styles)}>
+      className={
+        UNSAFE_className +
+        style(field(), getAllowedOverrides())(
+          {
+            isInForm: !!formContext,
+            labelPosition,
+            size
+          },
+          props.styles
+        )
+      }>
       {({isDisabled, isOpen, isRequired, isInvalid}) => (
-        <ComboboxInner {...props} isDisabled={isDisabled} isOpen={isOpen} isRequired={isRequired} isInvalid={isInvalid} ref={ref} />
+        <ComboboxInner
+          {...props}
+          isDisabled={isDisabled}
+          isOpen={isOpen}
+          isRequired={isRequired}
+          isInvalid={isInvalid}
+          ref={ref}
+        />
       )}
     </AriaComboBox>
   );
 });
 
-export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'render' | 'onClick' | 'onKeyDown' | 'onKeyUp' | keyof GlobalDOMAttributes>, StyleProps {
-  children: ReactNode
+export interface ComboBoxItemProps
+  extends
+    Omit<
+      ListBoxItemProps,
+      | 'children'
+      | 'style'
+      | 'className'
+      | 'render'
+      | 'onClick'
+      | 'onKeyDown'
+      | 'onKeyUp'
+      | keyof GlobalDOMAttributes
+    >,
+    StyleProps {
+  children: ReactNode;
 }
 
 const avatarSize = {
@@ -395,33 +463,55 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
     <ListBoxItem
       {...props}
       ref={ref}
-      textValue={props.textValue || (typeof props.children === 'string' ? props.children as string : undefined)}
+      textValue={
+        props.textValue ||
+        (typeof props.children === 'string' ? (props.children as string) : undefined)
+      }
       style={pressScale(ref, props.UNSAFE_style)}
-      className={renderProps => (props.UNSAFE_className || '') + listboxItem({...renderProps, size, isLink}, props.styles)}>
-      {(renderProps) => {
+      className={renderProps =>
+        (props.UNSAFE_className || '') + listboxItem({...renderProps, size, isLink}, props.styles)
+      }>
+      {renderProps => {
         let {children} = props;
         return (
           <>
             <Provider
               values={[
-                [IconContext, {
-                  slots: {
-                    icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
+                [
+                  IconContext,
+                  {
+                    slots: {
+                      icon: {
+                        render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
+                        styles: icon
+                      }
+                    }
                   }
-                }],
-                [AvatarContext, {
-                  slots: {
-                    avatar: {size: avatarSize[size], styles: avatar}
+                ],
+                [
+                  AvatarContext,
+                  {
+                    slots: {
+                      avatar: {size: avatarSize[size], styles: avatar}
+                    }
                   }
-                }],
-                [TextContext, {
-                  slots: {
-                    label: {styles: label({size})},
-                    description: {styles: description({...renderProps, size})}
+                ],
+                [
+                  TextContext,
+                  {
+                    slots: {
+                      label: {styles: label({size})},
+                      description: {styles: description({...renderProps, size})}
+                    }
                   }
-                }]
+                ]
               ]}>
-              {!isLink && !props.onAction && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
+              {!isLink && !props.onAction && (
+                <CheckmarkIcon
+                  size={checkmarkIconSize[size]}
+                  className={checkmark({...renderProps, size})}
+                />
+              )}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
             </Provider>
           </>
@@ -431,21 +521,24 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   );
 }
 
-export interface ComboBoxSectionProps<T extends object> extends Omit<ListBoxSectionProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes> {}
+export interface ComboBoxSectionProps<T extends object> extends Omit<
+  ListBoxSectionProps<T>,
+  'style' | 'className' | 'render' | keyof GlobalDOMAttributes
+> {}
 export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>): ReactNode {
   let {size} = useContext(InternalComboboxContext);
   return (
     <>
-      <AriaListBoxSection
-        {...props}>
-        {props.children}
-      </AriaListBoxSection>
+      <AriaListBoxSection {...props}>{props.children}</AriaListBoxSection>
       <Divider size={size} />
     </>
   );
 }
 
-const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any> & {isOpen: boolean}, ref: ForwardedRef<TextFieldRef | null>) {
+const ComboboxInner = forwardRef(function ComboboxInner(
+  props: ComboBoxProps<any> & {isOpen: boolean},
+  ref: ForwardedRef<TextFieldRef | null>
+) {
   let {
     direction = 'bottom',
     align = 'start',
@@ -503,8 +596,13 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
   let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let [showLoading, setShowLoading] = useState(false);
   let isLoadingOrFiltering = loadingState === 'loading' || loadingState === 'filtering';
-  {/* Logic copied from S1 */}
-  let showFieldSpinner = useMemo(() => showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading'), [showLoading, isOpen, menuTrigger, loadingState]);
+  {
+    /* Logic copied from S1 */
+  }
+  let showFieldSpinner = useMemo(
+    () => showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading'),
+    [showLoading, isOpen, menuTrigger, loadingState]
+  );
   let spinnerId = useSlotId([showFieldSpinner]);
 
   let inputValue = state?.inputValue;
@@ -557,7 +655,8 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
         size="S"
         styles={progressCircleStyles({size})}
         // Same loading string as table
-        aria-label={stringFormatter.format('table.loadingMore')} />
+        aria-label={stringFormatter.format('table.loadingMore')}
+      />
     </ListBoxLoadMoreItem>
   );
 
@@ -621,7 +720,8 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
               isIndeterminate
               size="S"
               styles={progressCircleStyles({size, isInput: true})}
-              aria-label={stringFormatter.format('table.loading')} />
+              aria-label={stringFormatter.format('table.loading')}
+            />
           )}
           <Button
             ref={buttonRef}
@@ -629,14 +729,14 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
             // @ts-ignore
             isPressed={false}
             style={renderProps => pressScale(buttonRef)(renderProps)}
-            className={renderProps => inputButton({
-              ...renderProps,
-              size,
-              isOpen
-            })}>
-            <ChevronIcon
-              size={size}
-              className={iconStyles} />
+            className={renderProps =>
+              inputButton({
+                ...renderProps,
+                size,
+                isOpen
+              })
+            }>
+            <ChevronIcon size={size} className={iconStyles} />
           </Button>
         </FieldGroup>
         <HelpText
@@ -651,9 +751,11 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           offset={menuOffset}
           placement={`${direction} ${align}` as Placement}
           shouldFlip={shouldFlip}
-          UNSAFE_style={{
-            '--trigger-width': (menuWidth ? menuWidth + 'px' : undefined)
-          } as CSSProperties}
+          UNSAFE_style={
+            {
+              '--trigger-width': menuWidth ? menuWidth + 'px' : undefined
+            } as CSSProperties
+          }
           padding="none"
           styles={style({
             minWidth: '--trigger-width',
@@ -667,16 +769,24 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
             <Provider
               values={[
                 [HeaderContext, {styles: listboxHeader({size})}],
-                [HeadingContext, {
-                  // @ts-ignore
-                  role: 'presentation',
-                  styles: sectionHeading
-                }],
-                [TextContext, {
-                  slots: {
-                    'description': {styles: description({size, isFocused: false, isDisabled: false})}
+                [
+                  HeadingContext,
+                  {
+                    // @ts-ignore
+                    role: 'presentation',
+                    styles: sectionHeading
                   }
-                }]
+                ],
+                [
+                  TextContext,
+                  {
+                    slots: {
+                      description: {
+                        styles: description({size, isFocused: false, isDisabled: false})
+                      }
+                    }
+                  }
+                ]
               ]}>
               <Virtualizer
                 layout={ListLayout}
@@ -690,7 +800,9 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
                   dependencies={props.dependencies}
                   renderEmptyState={() => (
                     <span className={emptyStateText({size})}>
-                      {loadingState === 'loading' ? stringFormatter.format('table.loading') : stringFormatter.format('combobox.noResults')}
+                      {loadingState === 'loading'
+                        ? stringFormatter.format('table.loading')
+                        : stringFormatter.format('combobox.noResults')}
                     </span>
                   )}
                   items={items}
@@ -709,7 +821,10 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
 class SeparatorNode extends CollectionNode<any> {
   static readonly type = 'separator';
 
-  filter(collection: BaseCollection<any>, newCollection: BaseCollection<any>): CollectionNode<any> | null {
+  filter(
+    collection: BaseCollection<any>,
+    newCollection: BaseCollection<any>
+  ): CollectionNode<any> | null {
     let prevItem = newCollection.getItem(this.prevKey!);
     if (prevItem && prevItem.type !== 'separator') {
       let clone = this.clone();
@@ -721,17 +836,29 @@ class SeparatorNode extends CollectionNode<any> {
   }
 }
 
-export const Divider = /*#__PURE__*/ createLeafComponent(SeparatorNode, function Divider({size}: {size?: 'S' | 'M' | 'L' | 'XL'}, ref: ForwardedRef<HTMLDivElement>, node: Node<unknown>) {
-  let listState = useContext(ListStateContext)!;
+export const Divider = /*#__PURE__*/ createLeafComponent(
+  SeparatorNode,
+  function Divider(
+    {size}: {size?: 'S' | 'M' | 'L' | 'XL'},
+    ref: ForwardedRef<HTMLDivElement>,
+    node: Node<unknown>
+  ) {
+    let listState = useContext(ListStateContext)!;
 
-  let nextNode = node.nextKey != null && listState.collection.getItem(node.nextKey);
-  if (node.prevKey == null || !nextNode || nextNode.type === 'separator' || (nextNode.type === 'loader' && nextNode.nextKey == null)) {
-    return null;
+    let nextNode = node.nextKey != null && listState.collection.getItem(node.nextKey);
+    if (
+      node.prevKey == null ||
+      !nextNode ||
+      nextNode.type === 'separator' ||
+      (nextNode.type === 'loader' && nextNode.nextKey == null)
+    ) {
+      return null;
+    }
+
+    return (
+      <div className={separatorWrapper({size})}>
+        <div ref={ref} className={dividerStyle} />
+      </div>
+    );
   }
-
-  return (
-    <div className={separatorWrapper({size})}>
-      <div ref={ref} className={dividerStyle} />
-    </div>
-  );
-});
+);

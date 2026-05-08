@@ -10,17 +10,35 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusEvents, HelpTextProps, InputBase, InputDOMProps, LabelableProps, Orientation, Validation, ValidationState, ValueBase} from '@react-types/shared';
+import {
+  FocusEvents,
+  HelpTextProps,
+  InputBase,
+  InputDOMProps,
+  LabelableProps,
+  Orientation,
+  Validation,
+  ValidationState,
+  ValueBase
+} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
 import {useControlledState} from '../utils/useControlledState';
 import {useMemo, useState} from 'react';
 
-export interface RadioGroupProps extends ValueBase<string|null, string>, InputBase, Pick<InputDOMProps, 'name'>, Validation<string>, LabelableProps, HelpTextProps, FocusEvents {
+export interface RadioGroupProps
+  extends
+    ValueBase<string | null, string>,
+    InputBase,
+    Pick<InputDOMProps, 'name'>,
+    Validation<string>,
+    LabelableProps,
+    HelpTextProps,
+    FocusEvents {
   /**
    * The axis the Radio Button(s) should align with.
    * @default 'vertical'
    */
-  orientation?: Orientation
+  orientation?: Orientation;
 }
 
 export interface RadioGroupState extends FormValidationState {
@@ -29,40 +47,40 @@ export interface RadioGroupState extends FormValidationState {
    * @deprecated
    * @private
    */
-  readonly name: string,
+  readonly name: string;
 
   /** Whether the radio group is disabled. */
-  readonly isDisabled: boolean,
+  readonly isDisabled: boolean;
 
   /** Whether the radio group is read only. */
-  readonly isReadOnly: boolean,
+  readonly isReadOnly: boolean;
 
   /** Whether the radio group is required. */
-  readonly isRequired: boolean,
+  readonly isRequired: boolean;
 
   /**
    * Whether the radio group is valid or invalid.
    * @deprecated Use `isInvalid` instead.
    */
-  readonly validationState: ValidationState | null,
+  readonly validationState: ValidationState | null;
 
   /** Whether the radio group is invalid. */
-  readonly isInvalid: boolean,
+  readonly isInvalid: boolean;
 
   /** The currently selected value. */
-  readonly selectedValue: string | null,
+  readonly selectedValue: string | null;
 
   /** The default selected value. */
-  readonly defaultSelectedValue: string | null,
+  readonly defaultSelectedValue: string | null;
 
   /** Sets the selected value. */
-  setSelectedValue(value: string | null): void,
+  setSelectedValue(value: string | null): void;
 
   /** The value of the last focused radio. */
-  readonly lastFocusedValue: string | null,
+  readonly lastFocusedValue: string | null;
 
   /** Sets the last focused value. */
-  setLastFocusedValue(value: string | null): void
+  setLastFocusedValue(value: string | null): void;
 }
 
 let instance = Math.round(Math.random() * 10000000000);
@@ -72,10 +90,14 @@ let i = 0;
  * Provides state management for a radio group component. Provides a name for the group,
  * and manages selection and focus state.
  */
-export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
+export function useRadioGroupState(props: RadioGroupProps): RadioGroupState {
   // Preserved here for backward compatibility. React Aria now generates the name instead of stately.
   let name = useMemo(() => props.name || `radio-group-${instance}-${++i}`, [props.name]);
-  let [selectedValue, setSelected] = useControlledState(props.value, props.defaultValue ?? null, props.onChange);
+  let [selectedValue, setSelected] = useControlledState(
+    props.value,
+    props.defaultValue ?? null,
+    props.onChange
+  );
   let [initialValue] = useState(selectedValue);
   let [lastFocusedValue, setLastFocusedValue] = useState<string | null>(null);
 
@@ -84,7 +106,7 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
     value: selectedValue
   });
 
-  let setSelectedValue = (value) => {
+  let setSelectedValue = value => {
     if (!props.isReadOnly && !props.isDisabled) {
       setSelected(value);
       validation.commitValidation();
@@ -97,7 +119,7 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
     ...validation,
     name,
     selectedValue: selectedValue,
-    defaultSelectedValue: props.value !== undefined ? initialValue : props.defaultValue ?? null,
+    defaultSelectedValue: props.value !== undefined ? initialValue : (props.defaultValue ?? null),
     setSelectedValue,
     lastFocusedValue,
     setLastFocusedValue,

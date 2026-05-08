@@ -24,9 +24,11 @@ import {useDrag} from 'react-aria/useDrag';
 function Draggable({type}: {type: string}) {
   let {dragProps} = useDrag({
     getItems() {
-      return [{
-        [type]: 'hello world'
-      }];
+      return [
+        {
+          [type]: 'hello world'
+        }
+      ];
     }
   });
 
@@ -53,15 +55,10 @@ describe('DropZone browser interactions', () => {
           onDrop={onDrop}>
           <IllustratedMessage>
             <CloudUpload />
-            <Heading>
-              Drag and drop your file
-            </Heading>
-            <Content>
-              Or, select a file from your computer
-            </Content>
+            <Heading>Drag and drop your file</Heading>
+            <Content>Or, select a file from your computer</Content>
             <ButtonGroup>
-              <FileTrigger
-                acceptedFileTypes={['text/plain']}>
+              <FileTrigger acceptedFileTypes={['text/plain']}>
                 <Button variant="accent">Browse files</Button>
               </FileTrigger>
             </ButtonGroup>
@@ -95,15 +92,10 @@ describe('DropZone browser interactions', () => {
           onDrop={onDrop}>
           <IllustratedMessage>
             <CloudUpload />
-            <Heading>
-              Drag and drop your file
-            </Heading>
-            <Content>
-              Or, select a file from your computer
-            </Content>
+            <Heading>Drag and drop your file</Heading>
+            <Content>Or, select a file from your computer</Content>
             <ButtonGroup>
-              <FileTrigger
-                acceptedFileTypes={['text/plain']}>
+              <FileTrigger acceptedFileTypes={['text/plain']}>
                 <Button variant="accent">Browse files</Button>
               </FileTrigger>
             </ButtonGroup>

@@ -38,16 +38,13 @@ import {useLocale} from 'react-aria/I18nProvider';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 interface ListViewItemProps<T> {
-  item: Node<T>,
-  isEmphasized: boolean,
-  hasActions: boolean
+  item: Node<T>;
+  isEmphasized: boolean;
+  hasActions: boolean;
 }
 
 export function ListViewItem<T>(props: ListViewItemProps<T>): JSX.Element {
-  let {
-    item,
-    isEmphasized
-  } = props;
+  let {item, isEmphasized} = props;
   let {
     state,
     dragState,
@@ -61,10 +58,9 @@ export function ListViewItem<T>(props: ListViewItemProps<T>): JSX.Element {
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement | null>(null);
   let checkboxWrapperRef = useRef<HTMLDivElement | null>(null);
-  let {
-    isFocusVisible: isFocusVisibleWithin,
-    focusProps: focusWithinProps
-  } = useFocusRing({within: true});
+  let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
+    within: true
+  });
   let {isFocusVisible, focusProps} = useFocusRing();
   let {
     rowProps,
@@ -75,20 +71,29 @@ export function ListViewItem<T>(props: ListViewItemProps<T>): JSX.Element {
     isDisabled,
     allowsSelection,
     hasAction
-  } = useGridListItem({
-    node: item,
-    isVirtualized: true,
-    shouldSelectOnPressUp: isListDraggable
-  }, state, rowRef);
+  } = useGridListItem(
+    {
+      node: item,
+      isVirtualized: true,
+      shouldSelectOnPressUp: isListDraggable
+    },
+    state,
+    rowRef
+  );
   let {hoverProps, isHovered} = useHover({isDisabled: !allowsSelection && !hasAction});
 
   let {checkboxProps} = useGridListSelectionCheckbox({key: item.key}, state);
-  let hasDescription = useHasChild(`.${listStyles['react-spectrum-ListViewItem-description']}`, rowRef);
+  let hasDescription = useHasChild(
+    `.${listStyles['react-spectrum-ListViewItem-description']}`,
+    rowRef
+  );
 
   let draggableItem: DraggableItemResult | null = null;
   if (isListDraggable && dragAndDropHooks && dragState) {
-
-    draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key, hasDragButton: true}, dragState);
+    draggableItem = dragAndDropHooks.useDraggableItem!(
+      {key: item.key, hasDragButton: true},
+      dragState
+    );
     if (isDisabled) {
       draggableItem = null;
     }
@@ -104,42 +109,36 @@ export function ListViewItem<T>(props: ListViewItemProps<T>): JSX.Element {
   }
 
   let dragButtonRef = React.useRef<HTMLDivElement | null>(null);
-  let {buttonProps} = useButton({
-    ...draggableItem?.dragButtonProps,
-    elementType: 'div'
-  }, dragButtonRef);
+  let {buttonProps} = useButton(
+    {
+      ...draggableItem?.dragButtonProps,
+      elementType: 'div'
+    },
+    dragButtonRef
+  );
 
-  let chevron = direction === 'ltr'
-    ? (
+  let chevron =
+    direction === 'ltr' ? (
       <ChevronRightMedium
         aria-hidden="true"
-        UNSAFE_className={
-          classNames(
-            listStyles,
-            'react-spectrum-ListViewItem-parentIndicator',
-            {
-              'react-spectrum-ListViewItem-parentIndicator--hasChildItems': item.props.hasChildItems,
-              'is-disabled': !hasAction
-            }
-          )
-        } />
-    )
-    : (
+        UNSAFE_className={classNames(listStyles, 'react-spectrum-ListViewItem-parentIndicator', {
+          'react-spectrum-ListViewItem-parentIndicator--hasChildItems': item.props.hasChildItems,
+          'is-disabled': !hasAction
+        })}
+      />
+    ) : (
       <ChevronLeftMedium
         aria-hidden="true"
-        UNSAFE_className={
-          classNames(
-            listStyles,
-            'react-spectrum-ListViewItem-parentIndicator',
-            {
-              'react-spectrum-ListViewItem-parentIndicator--hasChildItems': item.props.hasChildItems,
-              'is-disabled': !hasAction
-            }
-          )
-        } />
+        UNSAFE_className={classNames(listStyles, 'react-spectrum-ListViewItem-parentIndicator', {
+          'react-spectrum-ListViewItem-parentIndicator--hasChildItems': item.props.hasChildItems,
+          'is-disabled': !hasAction
+        })}
+      />
     );
 
-  let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
+  let showCheckbox =
+    state.selectionManager.selectionMode !== 'none' &&
+    state.selectionManager.selectionBehavior === 'toggle';
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   const mergedProps = mergeProps(
@@ -169,10 +168,14 @@ export function ListViewItem<T>(props: ListViewItemProps<T>): JSX.Element {
   }
   // previous item isn't selected
   // and the previous item isn't focused or, if it is focused, then if focus globally isn't visible or just focus isn't in the listview
-  let roundTops = (!(item.prevKey != null && state.selectionManager.isSelected(item.prevKey))
-    && (state.selectionManager.focusedKey !== item.prevKey || !(isGlobalFocusVisible() && state.selectionManager.isFocused)));
-  let roundBottoms = (!(item.nextKey != null && state.selectionManager.isSelected(item.nextKey))
-    && (state.selectionManager.focusedKey !== item.nextKey || !(isGlobalFocusVisible() && state.selectionManager.isFocused)));
+  let roundTops =
+    !(item.prevKey != null && state.selectionManager.isSelected(item.prevKey)) &&
+    (state.selectionManager.focusedKey !== item.prevKey ||
+      !(isGlobalFocusVisible() && state.selectionManager.isFocused));
+  let roundBottoms =
+    !(item.nextKey != null && state.selectionManager.isSelected(item.nextKey)) &&
+    (state.selectionManager.focusedKey !== item.nextKey ||
+      !(isGlobalFocusVisible() && state.selectionManager.isFocused));
 
   let content = typeof item.rendered === 'string' ? <Text>{item.rendered}</Text> : item.rendered;
   if (isDisabled) {
@@ -182,70 +185,67 @@ export function ListViewItem<T>(props: ListViewItemProps<T>): JSX.Element {
   return (
     <div
       {...mergedProps}
-      className={
-        classNames(
-          listStyles,
-          'react-spectrum-ListView-row',
-          {
-            'focus-ring': isFocusVisible,
-            'round-tops':
-              roundTops || (isHovered && !isSelected && state.selectionManager.focusedKey !== item.key),
-            'round-bottoms':
-              roundBottoms || (isHovered && !isSelected && state.selectionManager.focusedKey !== item.key)
-          }
-        )
-      }
+      className={classNames(listStyles, 'react-spectrum-ListView-row', {
+        'focus-ring': isFocusVisible,
+        'round-tops':
+          roundTops || (isHovered && !isSelected && state.selectionManager.focusedKey !== item.key),
+        'round-bottoms':
+          roundBottoms ||
+          (isHovered && !isSelected && state.selectionManager.focusedKey !== item.key)
+      })}
       ref={rowRef}>
       <div
         // TODO: refactor the css here now that we are focusing the row?
-        className={
-          classNames(
-            listStyles,
-            'react-spectrum-ListViewItem',
-            {
-              'is-active': isPressed,
-              'is-focused': isFocusVisibleWithin,
-              'focus-ring': isFocusVisible,
-              'is-hovered': isHovered,
-              'is-selected': isSelected,
-              'is-disabled': isDisabled,
-              'is-prev-selected': item.prevKey != null && state.selectionManager.isSelected(item.prevKey),
-              'is-next-selected': item.nextKey != null && state.selectionManager.isSelected(item.nextKey),
-              'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || (item.nextKey != null && state.selectionManager.isSelected(item.nextKey))),
-              'react-spectrum-ListViewItem--dropTarget': !!isDropTarget,
-              'react-spectrum-ListViewItem--firstRow': isFirstRow,
-              'react-spectrum-ListViewItem--lastRow': isLastRow,
-              'react-spectrum-ListViewItem--isFlushBottom': isFlushWithContainerBottom,
-              'react-spectrum-ListViewItem--hasDescription': hasDescription
-            }
-          )
-        }
+        className={classNames(listStyles, 'react-spectrum-ListViewItem', {
+          'is-active': isPressed,
+          'is-focused': isFocusVisibleWithin,
+          'focus-ring': isFocusVisible,
+          'is-hovered': isHovered,
+          'is-selected': isSelected,
+          'is-disabled': isDisabled,
+          'is-prev-selected':
+            item.prevKey != null && state.selectionManager.isSelected(item.prevKey),
+          'is-next-selected':
+            item.nextKey != null && state.selectionManager.isSelected(item.nextKey),
+          'react-spectrum-ListViewItem--highlightSelection':
+            state.selectionManager.selectionBehavior === 'replace' &&
+            (isSelected ||
+              (item.nextKey != null && state.selectionManager.isSelected(item.nextKey))),
+          'react-spectrum-ListViewItem--dropTarget': !!isDropTarget,
+          'react-spectrum-ListViewItem--firstRow': isFirstRow,
+          'react-spectrum-ListViewItem--lastRow': isLastRow,
+          'react-spectrum-ListViewItem--isFlushBottom': isFlushWithContainerBottom,
+          'react-spectrum-ListViewItem--hasDescription': hasDescription
+        })}
         {...gridCellProps}>
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
-          {isListDraggable &&
+          {isListDraggable && (
             <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
-              {!isDisabled &&
+              {!isDisabled && (
                 <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
                   <div
-                    {...buttonProps as React.HTMLAttributes<HTMLElement>}
-                    className={
-                      classNames(
-                        listStyles,
-                        'react-spectrum-ListViewItem-draghandle-button'
-                      )
-                    }
+                    {...(buttonProps as React.HTMLAttributes<HTMLElement>)}
+                    className={classNames(
+                      listStyles,
+                      'react-spectrum-ListViewItem-draghandle-button'
+                    )}
                     style={!isFocusVisibleWithin ? {...visuallyHiddenProps.style} : {}}
                     ref={dragButtonRef}
                     draggable="true">
                     <ListGripper />
                   </div>
                 </FocusRing>
-              }
+              )}
             </div>
-          }
-          {isListDroppable && !dropIndicator?.isHidden &&
-            <div role="button" {...visuallyHiddenProps} {...dropIndicator?.dropIndicatorProps} ref={dropIndicatorRef} />
-          }
+          )}
+          {isListDroppable && !dropIndicator?.isHidden && (
+            <div
+              role="button"
+              {...visuallyHiddenProps}
+              {...dropIndicator?.dropIndicatorProps}
+              ref={dropIndicatorRef}
+            />
+          )}
           <CSSTransition
             in={showCheckbox}
             unmountOnExit
@@ -256,32 +256,42 @@ export function ListViewItem<T>(props: ListViewItemProps<T>): JSX.Element {
               exitActive: listStyles['react-spectrum-ListViewItem-checkbox--exitActive']
             }}
             timeout={160}
-            nodeRef={checkboxWrapperRef} >
-            <div ref={checkboxWrapperRef} className={listStyles['react-spectrum-ListViewItem-checkboxWrapper']}>
+            nodeRef={checkboxWrapperRef}>
+            <div
+              ref={checkboxWrapperRef}
+              className={listStyles['react-spectrum-ListViewItem-checkboxWrapper']}>
               <Checkbox
                 {...checkboxProps}
                 UNSAFE_className={listStyles['react-spectrum-ListViewItem-checkbox']}
-                isEmphasized={isEmphasized} />
+                isEmphasized={isEmphasized}
+              />
             </div>
           </CSSTransition>
           <SlotProvider
             slots={{
               text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
-              description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description'], ...descriptionProps},
+              description: {
+                UNSAFE_className: listStyles['react-spectrum-ListViewItem-description'],
+                ...descriptionProps
+              },
               illustration: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-thumbnail']},
               image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-thumbnail']},
-              actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
+              actionButton: {
+                UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],
+                isQuiet: true
+              },
               actionGroup: {
                 UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],
                 isQuiet: true,
                 density: 'compact'
               },
-              actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
+              actionMenu: {
+                UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'],
+                isQuiet: true
+              }
             }}>
             {content}
-            <ClearSlots>
-              {chevron}
-            </ClearSlots>
+            <ClearSlots>{chevron}</ClearSlots>
           </SlotProvider>
         </Grid>
       </div>

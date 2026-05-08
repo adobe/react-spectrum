@@ -11,6 +11,6 @@
  */
 
 export interface AriaBaseTestProps {
-  setup?: () => void,
-  prefix?: string
+  setup?: () => void;
+  prefix?: string;
 }

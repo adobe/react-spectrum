@@ -3,11 +3,11 @@ import React from 'react';
 import {
   TextField as AriaTextField,
   type TextFieldProps as AriaTextFieldProps,
-  type ValidationResult,
+  type ValidationResult
 } from 'react-aria-components/TextField';
-import { tv } from 'tailwind-variants';
-import { Description, FieldError, Input, Label, fieldBorderStyles } from './Field';
-import { composeTailwindRenderProps, focusRing } from './utils';
+import {tv} from 'tailwind-variants';
+import {Description, FieldError, Input, Label, fieldBorderStyles} from './Field';
+import {composeTailwindRenderProps, focusRing} from './utils';
 
 const inputStyles = tv({
   extend: focusRing,
@@ -26,11 +26,11 @@ export interface TextFieldProps extends AriaTextFieldProps {
   errorMessage?: string | ((validation: ValidationResult) => string);
 }
 
-export function TextField(
-  { label, description, errorMessage, ...props }: TextFieldProps
-) {
+export function TextField({label, description, errorMessage, ...props}: TextFieldProps) {
   return (
-    <AriaTextField {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-1 font-sans')}>
+    <AriaTextField
+      {...props}
+      className={composeTailwindRenderProps(props.className, 'flex flex-col gap-1 font-sans')}>
       {label && <Label>{label}</Label>}
       <Input className={inputStyles} />
       {description && <Description>{description}</Description>}

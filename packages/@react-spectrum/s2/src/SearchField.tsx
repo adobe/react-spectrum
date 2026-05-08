@@ -10,7 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {SearchField as AriaSearchField, SearchFieldProps as AriaSearchFieldProps} from 'react-aria-components/SearchField';
+import {
+  SearchField as AriaSearchField,
+  SearchFieldProps as AriaSearchFieldProps
+} from 'react-aria-components/SearchField';
 
 import {baseColor, fontRelative, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
@@ -29,21 +32,34 @@ import SearchIcon from '../s2wf-icons/S2_Icon_Search_20_N.svg';
 import {TextFieldRef} from './TextField';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
+export interface SearchFieldProps
+  extends
+    Omit<
+      AriaSearchFieldProps,
+      'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes
+    >,
+    StyleProps,
+    SpectrumLabelableProps,
+    HelpTextProps,
+    Pick<InputProps, 'placeholder'> {
   /**
    * The size of the SearchField.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL';
 }
 
-export const SearchFieldContext = createContext<ContextValue<Partial<SearchFieldProps>, TextFieldRef>>(null);
+export const SearchFieldContext =
+  createContext<ContextValue<Partial<SearchFieldProps>, TextFieldRef>>(null);
 
 /**
  * A SearchField is a text field designed for searches.
  */
-export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
+export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(
+  props: SearchFieldProps,
+  ref: Ref<TextFieldRef>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, SearchFieldContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
@@ -80,76 +96,95 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
       {...searchFieldProps}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + style({
-        ...field(),
-        '--iconMargin': {
-          type: 'marginTop',
-          value: fontRelative(-2)
-        },
-        color: {
-          default: baseColor('neutral'),
-          isDisabled: {
-            default: 'disabled',
-            forcedColors: 'GrayText'
-          }
-        }
-      }, getAllowedOverrides())({
-        size: props.size,
-        labelPosition,
-        isInForm: !!formContext
-      }, props.styles)}>
-      {({isDisabled, isInvalid, isEmpty}) => (<>
-        {label && <FieldLabel
-          isDisabled={isDisabled}
-          isRequired={props.isRequired}
-          size={props.size}
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          necessityIndicator={necessityIndicator}
-          contextualHelp={props.contextualHelp}>
-          {label}
-        </FieldLabel>}
-        <FieldGroup
-          isDisabled={isDisabled}
-          size={props.size}
-          styles={style({
-            borderRadius: 'full',
-            paddingStart: 'pill',
-            paddingEnd: 0
-          })}>
-          <Provider
-            values={[
-              [IconContext, {
-                render: centerBaseline({
-                  slot: 'icon',
-                  styles: style({
-                    flexShrink: 0,
-                    marginEnd: 'text-to-visual',
-                    '--iconPrimary': {
-                      type: 'fill',
-                      value: 'currentColor'
-                    }
-                  })
-                }),
-                styles: style({
-                  size: fontRelative(20),
-                  marginStart: '--iconMargin'
-                })
-              }]
-            ]}>
-            <SearchIcon />
-          </Provider>
-          <Input ref={inputRef} UNSAFE_className={css('&::-webkit-search-cancel-button { display: none }')} />
-          {!isEmpty && !searchFieldProps.isReadOnly && <ClearButton size={props.size} />}
-        </FieldGroup>
-        <HelpText
-          size={props.size}
-          isDisabled={isDisabled}
-          isInvalid={isInvalid}
-          description={description}>
-          {errorMessage}
-        </HelpText>
-      </>)}
+      className={
+        UNSAFE_className +
+        style(
+          {
+            ...field(),
+            '--iconMargin': {
+              type: 'marginTop',
+              value: fontRelative(-2)
+            },
+            color: {
+              default: baseColor('neutral'),
+              isDisabled: {
+                default: 'disabled',
+                forcedColors: 'GrayText'
+              }
+            }
+          },
+          getAllowedOverrides()
+        )(
+          {
+            size: props.size,
+            labelPosition,
+            isInForm: !!formContext
+          },
+          props.styles
+        )
+      }>
+      {({isDisabled, isInvalid, isEmpty}) => (
+        <>
+          {label && (
+            <FieldLabel
+              isDisabled={isDisabled}
+              isRequired={props.isRequired}
+              size={props.size}
+              labelPosition={labelPosition}
+              labelAlign={labelAlign}
+              necessityIndicator={necessityIndicator}
+              contextualHelp={props.contextualHelp}>
+              {label}
+            </FieldLabel>
+          )}
+          <FieldGroup
+            isDisabled={isDisabled}
+            size={props.size}
+            styles={style({
+              borderRadius: 'full',
+              paddingStart: 'pill',
+              paddingEnd: 0
+            })}>
+            <Provider
+              values={[
+                [
+                  IconContext,
+                  {
+                    render: centerBaseline({
+                      slot: 'icon',
+                      styles: style({
+                        flexShrink: 0,
+                        marginEnd: 'text-to-visual',
+                        '--iconPrimary': {
+                          type: 'fill',
+                          value: 'currentColor'
+                        }
+                      })
+                    }),
+                    styles: style({
+                      size: fontRelative(20),
+                      marginStart: '--iconMargin'
+                    })
+                  }
+                ]
+              ]}>
+              <SearchIcon />
+            </Provider>
+            <Input
+              ref={inputRef}
+              UNSAFE_className={css('&::-webkit-search-cancel-button { display: none }')}
+            />
+            {!isEmpty && !searchFieldProps.isReadOnly && <ClearButton size={props.size} />}
+          </FieldGroup>
+          <HelpText
+            size={props.size}
+            isDisabled={isDisabled}
+            isInvalid={isInvalid}
+            description={description}>
+            {errorMessage}
+          </HelpText>
+        </>
+      )}
     </AriaSearchField>
   );
 });

@@ -22,7 +22,6 @@ governing permissions and limitations under the License.
   border-radius: var(--spectrum-coachmark-border-radius);
   border-width: var(--spectrum-coachmark-border-size);
   border-style: solid;
-
 }
 .spectrum-CoachMarkPopover-image {
   border-radius: var(--spectrum-coachmark-border-radius) var(--spectrum-coachmark-border-radius) 0 0;
@@ -91,11 +90,17 @@ governing permissions and limitations under the License.
   border-radius: 50%;
 
   &:nth-child(2) {
-    animation-delay: calc(var(--spectrum-coachmark-animation-indicator-ring-duration) * var(--spectrum-coachmark-animation-inticator-ring-center-delay-multiple));
+    animation-delay: calc(
+      var(--spectrum-coachmark-animation-indicator-ring-duration) *
+        var(--spectrum-coachmark-animation-inticator-ring-center-delay-multiple)
+    );
   }
 
   &:nth-child(3) {
-    animation-delay: calc(var(--spectrum-coachmark-animation-indicator-ring-duration) * var(--spectrum-coachmark-animation-inticator-ring-outer-delay-multiple))
+    animation-delay: calc(
+      var(--spectrum-coachmark-animation-indicator-ring-duration) *
+        var(--spectrum-coachmark-animation-inticator-ring-outer-delay-multiple)
+    );
   }
 }
 
@@ -113,7 +118,10 @@ governing permissions and limitations under the License.
   animation: pulse var(--spectrum-coachmark-animation-indicator-ring-duration) linear infinite;
 
   &:nth-child(1) {
-    animation-delay: calc(var(--spectrum-coachmark-animation-indicator-ring-duration) * var(--spectrum-coachmark-animation-inticator-ring-inner-delay-multiple));
+    animation-delay: calc(
+      var(--spectrum-coachmark-animation-indicator-ring-duration) *
+        var(--spectrum-coachmark-animation-inticator-ring-inner-delay-multiple)
+    );
   }
 }
 
@@ -127,10 +135,14 @@ governing permissions and limitations under the License.
 
     width: var(--spectrum-coachmark-quiet-indicator-ring-diameter);
     height: var(--spectrum-coachmark-quiet-indicator-ring-diameter);
-    animation: pulse--quiet var(--spectrum-coachmark-animation-indicator-ring-duration) linear infinite;
+    animation: pulse--quiet var(--spectrum-coachmark-animation-indicator-ring-duration) linear
+      infinite;
 
     &:nth-child(1) {
-      animation-delay: calc(var(--spectrum-coachmark-animation-indicator-ring-duration) * var(--spectrum-coachmark-quiet-animation-inticator-ring-inner-delay-multiple));
+      animation-delay: calc(
+        var(--spectrum-coachmark-animation-indicator-ring-duration) *
+          var(--spectrum-coachmark-quiet-animation-inticator-ring-inner-delay-multiple)
+      );
     }
   }
 }

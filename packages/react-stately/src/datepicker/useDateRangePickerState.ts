@@ -10,71 +10,86 @@
  * governing permissions and limitations under the License.
  */
 
-
 import {DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
-import {DateRange, DateRangePickerProps, DateValue, Granularity, MappedDateValue, TimeValue} from './types';
-import {FieldOptions, FormatterOptions, getFormatOptions, getPlaceholderTime, getRangeValidationResult, useDefaultProps} from './utils';
+import {
+  DateRange,
+  DateRangePickerProps,
+  DateValue,
+  Granularity,
+  MappedDateValue,
+  TimeValue
+} from './types';
+import {
+  FieldOptions,
+  FormatterOptions,
+  getFormatOptions,
+  getPlaceholderTime,
+  getRangeValidationResult,
+  useDefaultProps
+} from './utils';
 import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
 import {OverlayTriggerState, useOverlayTriggerState} from '../overlays/useOverlayTriggerState';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '../utils/useControlledState';
 import {useMemo, useState} from 'react';
 
-export interface DateRangePickerStateOptions<T extends DateValue = DateValue> extends DateRangePickerProps<T> {
+export interface DateRangePickerStateOptions<
+  T extends DateValue = DateValue
+> extends DateRangePickerProps<T> {
   /**
    * Determines whether the date picker popover should close automatically when a date is selected.
    * @default true
    */
-  shouldCloseOnSelect?: boolean | (() => boolean)
+  shouldCloseOnSelect?: boolean | (() => boolean);
 }
 
 type TimeRange = RangeValue<TimeValue>;
 export interface DateRangePickerState extends OverlayTriggerState, FormValidationState {
   /** The currently selected date range. */
-  value: RangeValue<DateValue | null>,
+  value: RangeValue<DateValue | null>;
   /** The default selected date range. */
-  defaultValue: DateRange | null,
+  defaultValue: DateRange | null;
   /** Sets the selected date range. */
-  setValue(value: DateRange | null): void,
+  setValue(value: DateRange | null): void;
   /**
    * The date portion of the selected range. This may be set prior to `value` if the user has
    * selected a date range but has not yet selected a time range.
    */
-  dateRange: RangeValue<DateValue | null> | null,
+  dateRange: RangeValue<DateValue | null> | null;
   /** Sets the date portion of the selected range. */
-  setDateRange(value: DateRange): void,
+  setDateRange(value: DateRange): void;
   /**
    * The time portion of the selected range. This may be set prior to `value` if the user has
    * selected a time range but has not yet selected a date range.
    */
-  timeRange: RangeValue<TimeValue | null> | null,
+  timeRange: RangeValue<TimeValue | null> | null;
   /** Sets the time portion of the selected range. */
-  setTimeRange(value: TimeRange): void,
+  setTimeRange(value: TimeRange): void;
   /** Sets the date portion of either the start or end of the selected range. */
-  setDate(part: 'start' | 'end', value: DateValue | null): void,
+  setDate(part: 'start' | 'end', value: DateValue | null): void;
   /** Sets the time portion of either the start or end of the selected range. */
-  setTime(part: 'start' | 'end', value: TimeValue | null): void,
+  setTime(part: 'start' | 'end', value: TimeValue | null): void;
   /** Sets the date and time of either the start or end of the selected range. */
-  setDateTime(part: 'start' | 'end', value: DateValue | null): void,
+  setDateTime(part: 'start' | 'end', value: DateValue | null): void;
   /** The granularity for the field, based on the `granularity` prop and current value. */
-  granularity: Granularity,
+  granularity: Granularity;
   /** Whether the date range picker supports selecting times, according to the `granularity` prop and current value. */
-  hasTime: boolean,
+  hasTime: boolean;
   /** Whether the calendar popover is currently open. */
-  isOpen: boolean,
+  isOpen: boolean;
   /** Sets whether the calendar popover is open. */
-  setOpen(isOpen: boolean): void,
+  setOpen(isOpen: boolean): void;
   /**
    * The current validation state of the date range picker, based on the `validationState`, `minValue`, and `maxValue` props.
    * @deprecated Use `isInvalid` instead.
    */
-  validationState: ValidationState | null,
+  validationState: ValidationState | null;
   /** Whether the date range picker is invalid, based on the `isInvalid`, `minValue`, and `maxValue` props. */
-  isInvalid: boolean,
+  isInvalid: boolean;
   /** Formats the selected range using the given options. */
-  formatValue(locale: string, fieldOptions: FieldOptions): {start: string, end: string} | null,
+  formatValue(locale: string, fieldOptions: FieldOptions): {start: string; end: string} | null;
   /** Gets a formatter based on state's props. */
-  getDateFormatter(locale: string, formatOptions: FormatterOptions): DateFormatter
+  getDateFormatter(locale: string, formatOptions: FormatterOptions): DateFormatter;
 }
 
 /**
@@ -82,11 +97,18 @@ export interface DateRangePickerState extends OverlayTriggerState, FormValidatio
  * A date range picker combines two DateFields and a RangeCalendar popover to allow
  * users to enter or select a date and time range.
  */
-export function useDateRangePickerState<T extends DateValue = DateValue>(props: DateRangePickerStateOptions<T>): DateRangePickerState {
+export function useDateRangePickerState<T extends DateValue = DateValue>(
+  props: DateRangePickerStateOptions<T>
+): DateRangePickerState {
   let overlayState = useOverlayTriggerState(props);
-  let [controlledValue, setControlledValue] = useControlledState<DateRange | null, RangeValue<MappedDateValue<T>> | null>(props.value, props.defaultValue || null, props.onChange);
+  let [controlledValue, setControlledValue] = useControlledState<
+    DateRange | null,
+    RangeValue<MappedDateValue<T>> | null
+  >(props.value, props.defaultValue || null, props.onChange);
   let [initialValue] = useState(controlledValue);
-  let [placeholderValue, setPlaceholderValue] = useState<RangeValue<DateValue | null>>(() => controlledValue || {start: null, end: null});
+  let [placeholderValue, setPlaceholderValue] = useState<RangeValue<DateValue | null>>(
+    () => controlledValue || {start: null, end: null}
+  );
 
   // Reset the placeholder if the value prop is set to null.
   if (controlledValue == null && placeholderValue.start && placeholderValue.end) {
@@ -106,7 +128,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
     }
   };
 
-  let v = (value?.start || value?.end || props.placeholderValue || null);
+  let v = value?.start || value?.end || props.placeholderValue || null;
   let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second';
   let shouldCloseOnSelect = props.shouldCloseOnSelect ?? true;
@@ -123,8 +145,14 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
 
   let commitValue = (dateRange: DateRange, timeRange: TimeRange) => {
     setValue({
-      start: 'timeZone' in timeRange.start ? timeRange.start.set(toCalendarDate(dateRange.start)) : toCalendarDateTime(dateRange.start, timeRange.start),
-      end: 'timeZone' in timeRange.end ? timeRange.end.set(toCalendarDate(dateRange.end)) : toCalendarDateTime(dateRange.end, timeRange.end)
+      start:
+        'timeZone' in timeRange.start
+          ? timeRange.start.set(toCalendarDate(dateRange.start))
+          : toCalendarDateTime(dateRange.start, timeRange.start),
+      end:
+        'timeZone' in timeRange.end
+          ? timeRange.end.set(toCalendarDate(dateRange.end))
+          : toCalendarDateTime(dateRange.end, timeRange.end)
     });
     setSelectedDateRange(null);
     setSelectedTimeRange(null);
@@ -133,7 +161,8 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
   let setDateRange = (range: RangeValue<DateValue | null>) => {
-    let shouldClose = typeof shouldCloseOnSelect === 'function' ? shouldCloseOnSelect() : shouldCloseOnSelect;
+    let shouldClose =
+      typeof shouldCloseOnSelect === 'function' ? shouldCloseOnSelect() : shouldCloseOnSelect;
     if (hasTime) {
       // Set a placeholder time if the popover is closing so we don't leave the field in an incomplete state.
       if (isCompleteRange(range) && (shouldClose || (timeRange?.start && timeRange?.end))) {
@@ -164,34 +193,54 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
     }
   };
 
-  let showEra = (value?.start?.calendar.identifier === 'gregory' && value.start.era === 'BC') || (value?.end?.calendar.identifier === 'gregory' && value.end.era === 'BC');
-  let formatOpts = useMemo(() => ({
-    granularity,
-    timeZone: defaultTimeZone,
-    hideTimeZone: props.hideTimeZone,
-    hourCycle: props.hourCycle,
-    shouldForceLeadingZeros: props.shouldForceLeadingZeros,
-    showEra
-  }), [granularity, props.hourCycle, props.shouldForceLeadingZeros, defaultTimeZone, props.hideTimeZone, showEra]);
+  let showEra =
+    (value?.start?.calendar.identifier === 'gregory' && value.start.era === 'BC') ||
+    (value?.end?.calendar.identifier === 'gregory' && value.end.era === 'BC');
+  let formatOpts = useMemo(
+    () => ({
+      granularity,
+      timeZone: defaultTimeZone,
+      hideTimeZone: props.hideTimeZone,
+      hourCycle: props.hourCycle,
+      shouldForceLeadingZeros: props.shouldForceLeadingZeros,
+      showEra
+    }),
+    [
+      granularity,
+      props.hourCycle,
+      props.shouldForceLeadingZeros,
+      defaultTimeZone,
+      props.hideTimeZone,
+      showEra
+    ]
+  );
 
   let {minValue, maxValue, isDateUnavailable} = props;
-  let builtinValidation = useMemo(() => getRangeValidationResult(
-    value,
-    minValue,
-    maxValue,
-    isDateUnavailable ? (date => isDateUnavailable(date, null)) : undefined,
-    formatOpts
-  ), [value, minValue, maxValue, isDateUnavailable, formatOpts]);
+  let builtinValidation = useMemo(
+    () =>
+      getRangeValidationResult(
+        value,
+        minValue,
+        maxValue,
+        isDateUnavailable ? date => isDateUnavailable(date, null) : undefined,
+        formatOpts
+      ),
+    [value, minValue, maxValue, isDateUnavailable, formatOpts]
+  );
 
   let validation = useFormValidationState({
     ...props,
     value: controlledValue as RangeValue<MappedDateValue<T>> | null,
-    name: useMemo(() => [props.startName, props.endName].filter(n => n != null), [props.startName, props.endName]),
+    name: useMemo(
+      () => [props.startName, props.endName].filter(n => n != null),
+      [props.startName, props.endName]
+    ),
     builtinValidation
   });
 
   let isValueInvalid = validation.displayValidation.isInvalid;
-  let validationState: ValidationState | null = props.validationState || (isValueInvalid ? 'invalid' : null);
+  let validationState: ValidationState | null =
+    props.validationState || (isValueInvalid ? 'invalid' : null);
 
   return {
     ...validation,
@@ -247,16 +296,19 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
       }
 
       let startTimeZone = 'timeZone' in value.start ? value.start.timeZone : undefined;
-      let startGranularity = props.granularity || (value.start && 'minute' in value.start ? 'minute' : 'day');
+      let startGranularity =
+        props.granularity || (value.start && 'minute' in value.start ? 'minute' : 'day');
       let endTimeZone = 'timeZone' in value.end ? value.end.timeZone : undefined;
-      let endGranularity = props.granularity || (value.end && 'minute' in value.end ? 'minute' : 'day');
+      let endGranularity =
+        props.granularity || (value.end && 'minute' in value.end ? 'minute' : 'day');
 
       let startOptions = getFormatOptions(fieldOptions, {
         granularity: startGranularity,
         timeZone: startTimeZone,
         hideTimeZone: props.hideTimeZone,
         hourCycle: props.hourCycle,
-        showEra: (value.start.calendar.identifier === 'gregory' && value.start.era === 'BC') ||
+        showEra:
+          (value.start.calendar.identifier === 'gregory' && value.start.era === 'BC') ||
           (value.end.calendar.identifier === 'gregory' && value.end.era === 'BC')
       });
 
@@ -265,7 +317,11 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
 
       let startFormatter = new DateFormatter(locale, startOptions);
       let endFormatter: Intl.DateTimeFormat;
-      if (startTimeZone === endTimeZone && startGranularity === endGranularity && value.start.compare(value.end) !== 0) {
+      if (
+        startTimeZone === endTimeZone &&
+        startGranularity === endGranularity &&
+        value.start.compare(value.end) !== 0
+      ) {
         // Use formatRange, as it results in shorter output when some of the fields
         // are shared between the start and end dates (e.g. the same month).
         // Formatting will fail if the end date is before the start date. Fall back below when that happens.

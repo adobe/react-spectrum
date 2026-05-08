@@ -20,23 +20,23 @@ interface ComboBoxOpenOpts {
    * Whether the combobox opens on focus or needs to be manually opened via user action.
    * @default 'manual'
    */
-  triggerBehavior?: 'focus' | 'manual',
+  triggerBehavior?: 'focus' | 'manual';
   /**
    * What interaction type to use when opening the combobox. Defaults to the interaction type set on the tester.
    */
-  interactionType?: UserOpts['interactionType']
+  interactionType?: UserOpts['interactionType'];
 }
 
 interface ComboBoxSelectOpts extends ComboBoxOpenOpts {
   /**
    * The index, text, or node of the option to select. Option nodes can be sourced via `options()`.
    */
-  option: number | string | HTMLElement,
+  option: number | string | HTMLElement;
   /**
    * Whether or not the combobox closes on selection. Defaults to `true` for single select comboboxes
    * and `false` for multi-select comboboxes.
    */
-  closesOnSelect?: boolean
+  closesOnSelect?: boolean;
 }
 
 export class ComboBoxTester {
@@ -132,9 +132,7 @@ export class ComboBoxTester {
    * Returns an option matching the specified index or text content.
    */
   findOption(opts: {indexOrText: number | string}): HTMLElement {
-    let {
-      indexOrText
-    } = opts;
+    let {indexOrText} = opts;
 
     let option;
     let options = this.options();
@@ -143,7 +141,7 @@ export class ComboBoxTester {
     if (typeof indexOrText === 'number') {
       option = options[indexOrText];
     } else if (typeof indexOrText === 'string' && listbox != null) {
-      option = (within(listbox!).getByText(indexOrText).closest('[role=option]'))! as HTMLElement;
+      option = within(listbox!).getByText(indexOrText).closest('[role=option]')! as HTMLElement;
     }
 
     return option;
@@ -153,7 +151,7 @@ export class ComboBoxTester {
     let {option} = opts;
     let combobox = this.combobox();
     let options = this.options();
-    let targetIndex = options.findIndex(opt => (opt === option) || opt.contains(option));
+    let targetIndex = options.findIndex(opt => opt === option || opt.contains(option));
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the combobox listbox.');
     }
@@ -193,7 +191,7 @@ export class ComboBoxTester {
 
     let listbox = this.listbox();
     if (!listbox) {
-      throw new Error('Combobox\'s listbox not found.');
+      throw new Error("Combobox's listbox not found.");
     }
 
     if (typeof option === 'string' || typeof option === 'number') {
@@ -219,7 +217,9 @@ export class ComboBoxTester {
     if (closesOnSelect && option.getAttribute('href') == null) {
       await waitFor(() => {
         if (document.contains(listbox)) {
-          throw new Error('Expected listbox element to not be in the document after selecting an option');
+          throw new Error(
+            'Expected listbox element to not be in the document after selecting an option'
+          );
         } else {
           return true;
         }
@@ -238,7 +238,9 @@ export class ComboBoxTester {
 
       await waitFor(() => {
         if (document.contains(listbox)) {
-          throw new Error('Expected listbox element to not be in the document after selecting an option');
+          throw new Error(
+            'Expected listbox element to not be in the document after selecting an option'
+          );
         } else {
           return true;
         }

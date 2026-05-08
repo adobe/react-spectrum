@@ -10,7 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSliderProps, AriaSliderThumbProps, useSlider, useSliderThumb} from 'react-aria/useSlider';
+import {
+  AriaSliderProps,
+  AriaSliderThumbProps,
+  useSlider,
+  useSliderThumb
+} from 'react-aria/useSlider';
 
 import {
   ClassNameOrFunction,
@@ -29,64 +34,78 @@ import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/share
 import {HoverEvents, Orientation} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, OutputHTMLAttributes, useContext, useRef} from 'react';
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  HTMLAttributes,
+  OutputHTMLAttributes,
+  useContext,
+  useRef
+} from 'react';
 import {SliderState, useSliderState} from 'react-stately/useSliderState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useNumberFormatter} from 'react-aria/useNumberFormatter';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
-export interface SliderProps<T = number | number[]> extends Omit<AriaSliderProps<T>, 'label'>, RenderProps<SliderRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface SliderProps<T = number | number[]>
+  extends
+    Omit<AriaSliderProps<T>, 'label'>,
+    RenderProps<SliderRenderProps>,
+    SlotProps,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Slider'
    */
-  className?: ClassNameOrFunction<SliderRenderProps>,
+  className?: ClassNameOrFunction<SliderRenderProps>;
   /**
    * The display format of the value label.
    */
-  formatOptions?: Intl.NumberFormatOptions
+  formatOptions?: Intl.NumberFormatOptions;
 }
 
 export const SliderContext = createContext<ContextValue<SliderProps, HTMLDivElement>>(null);
 export const SliderStateContext = createContext<SliderState | null>(null);
-export const SliderTrackContext = createContext<ContextValue<SliderTrackContextValue, HTMLDivElement>>(null);
-export const SliderOutputContext = createContext<ContextValue<SliderOutputContextValue, HTMLOutputElement>>(null);
+export const SliderTrackContext =
+  createContext<ContextValue<SliderTrackContextValue, HTMLDivElement>>(null);
+export const SliderOutputContext =
+  createContext<ContextValue<SliderOutputContextValue, HTMLOutputElement>>(null);
 
 export interface SliderRenderProps {
   /**
    * The orientation of the slider.
    * @selector [data-orientation="horizontal | vertical"]
    */
-  orientation: Orientation,
+  orientation: Orientation;
   /**
    * Whether the slider is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * State of the slider.
    */
-  state: SliderState
+  state: SliderState;
 }
 
 /**
  * A slider allows a user to select one or more values within a range.
  */
-export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slider<T extends number | number[]>(props: SliderProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slider<
+  T extends number | number[]
+>(props: SliderProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SliderContext);
   let trackRef = useRef<HTMLDivElement>(null);
   let numberFormatter = useNumberFormatter(props.formatOptions);
   let state = useSliderState({...props, numberFormatter});
-  let [labelRef, label] = useSlot(
-    !props['aria-label'] && !props['aria-labelledby']
+  let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
+  let {groupProps, trackProps, labelProps, outputProps} = useSlider(
+    {...props, label},
+    state,
+    trackRef
   );
-  let {
-    groupProps,
-    trackProps,
-    labelProps,
-    outputProps
-  } = useSlider({...props, label}, state, trackRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -114,24 +133,32 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
         ref={ref}
         slot={props.slot || undefined}
         data-orientation={state.orientation}
-        data-disabled={state.isDisabled || undefined} />
+        data-disabled={state.isDisabled || undefined}
+      />
     </Provider>
   );
 });
 
-export interface SliderOutputProps extends RenderProps<SliderRenderProps, 'output'>, GlobalDOMAttributes<HTMLOutputElement> {
+export interface SliderOutputProps
+  extends RenderProps<SliderRenderProps, 'output'>, GlobalDOMAttributes<HTMLOutputElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-SliderOutput'
    */
-  className?: ClassNameOrFunction<SliderRenderProps>
+  className?: ClassNameOrFunction<SliderRenderProps>;
 }
-interface SliderOutputContextValue extends Omit<OutputHTMLAttributes<HTMLOutputElement>, 'children' | 'className' | 'style'>, SliderOutputProps {}
+interface SliderOutputContextValue
+  extends
+    Omit<OutputHTMLAttributes<HTMLOutputElement>, 'children' | 'className' | 'style'>,
+    SliderOutputProps {}
 
 /**
  * A slider output displays the current value of a slider as text.
  */
-export const SliderOutput = /*#__PURE__*/ (forwardRef as forwardRefType)(function SliderOutput(props: SliderOutputProps, ref: ForwardedRef<HTMLOutputElement>) {
+export const SliderOutput = /*#__PURE__*/ (forwardRef as forwardRefType)(function SliderOutput(
+  props: SliderOutputProps,
+  ref: ForwardedRef<HTMLOutputElement>
+) {
   [props, ref] = useContextProps(props, ref, SliderOutputContext);
   let {children, style, className, render, ...otherProps} = props;
   let state = useContext(SliderStateContext)!;
@@ -155,7 +182,8 @@ export const SliderOutput = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
       {...renderProps}
       ref={ref}
       data-orientation={state.orientation || undefined}
-      data-disabled={state.isDisabled || undefined} />
+      data-disabled={state.isDisabled || undefined}
+    />
   );
 });
 
@@ -164,22 +192,29 @@ export interface SliderTrackRenderProps extends SliderRenderProps {
    * Whether the slider track is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean
+  isHovered: boolean;
 }
 
-export interface SliderTrackProps extends HoverEvents, RenderProps<SliderTrackRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+export interface SliderTrackProps
+  extends HoverEvents, RenderProps<SliderTrackRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-SliderTrack'
    */
-  className?: ClassNameOrFunction<SliderTrackRenderProps>
+  className?: ClassNameOrFunction<SliderTrackRenderProps>;
 }
-interface SliderTrackContextValue extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'className' | 'style'>, SliderTrackProps {}
+interface SliderTrackContextValue
+  extends
+    Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'className' | 'style'>,
+    SliderTrackProps {}
 
 /**
  * A slider track is a container for one or more slider thumbs.
  */
-export const SliderTrack = /*#__PURE__*/ (forwardRef as forwardRefType)(function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>) {
+export const SliderTrack = /*#__PURE__*/ (forwardRef as forwardRefType)(function SliderTrack(
+  props: SliderTrackProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, SliderTrackContext);
   let state = useContext(SliderStateContext)!;
   let {onHoverStart, onHoverEnd, onHoverChange, ...otherProps} = props;
@@ -202,7 +237,8 @@ export const SliderTrack = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       ref={ref}
       data-hovered={isHovered || undefined}
       data-orientation={state.orientation || undefined}
-      data-disabled={state.isDisabled || undefined} />
+      data-disabled={state.isDisabled || undefined}
+    />
   );
 });
 
@@ -210,68 +246,75 @@ export interface SliderThumbRenderProps {
   /**
    * State of the slider.
    */
-  state: SliderState,
+  state: SliderState;
   /**
    * Whether this thumb is currently being dragged.
    * @selector [data-dragging]
    */
-  isDragging: boolean,
+  isDragging: boolean;
   /**
    * Whether the thumb is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean,
+  isHovered: boolean;
   /**
    * Whether the thumb is currently focused.
    * @selector [data-focused]
    */
-  isFocused: boolean,
+  isFocused: boolean;
   /**
    * Whether the thumb is keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean,
+  isFocusVisible: boolean;
   /**
    * Whether the thumb is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean
+  isDisabled: boolean;
 }
 
-export interface SliderThumbProps extends Omit<AriaSliderThumbProps, 'label' | 'validationState'>, HoverEvents, RenderProps<SliderThumbRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+export interface SliderThumbProps
+  extends
+    Omit<AriaSliderThumbProps, 'label' | 'validationState'>,
+    HoverEvents,
+    RenderProps<SliderThumbRenderProps>,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-SliderThumb'
    */
-  className?: ClassNameOrFunction<SliderThumbRenderProps>,
+  className?: ClassNameOrFunction<SliderThumbRenderProps>;
   /**
    * A ref for the HTML input element.
    */
-  inputRef?: RefObject<HTMLInputElement | null>
+  inputRef?: RefObject<HTMLInputElement | null>;
 }
 
 /**
  * A slider thumb represents an individual value that the user can adjust within a slider track.
  */
-export const SliderThumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {
-    inputRef: userInputRef = null
-  } = props;
+export const SliderThumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function SliderThumb(
+  props: SliderThumbProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  let {inputRef: userInputRef = null} = props;
   let state = useContext(SliderStateContext)!;
   let {ref: trackRef} = useSlottedContext(SliderTrackContext)!;
   let {index = 0} = props;
   let defaultInputRef = useRef<HTMLInputElement>(null);
   let inputRef = userInputRef || defaultInputRef;
-  let [labelRef, label] = useSlot(
-    !props['aria-label'] && !props['aria-labelledby']
+  let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
+  let {thumbProps, inputProps, labelProps, isDragging, isFocused, isDisabled} = useSliderThumb(
+    {
+      ...props,
+      index,
+      trackRef: trackRef as RefObject<HTMLDivElement | null>,
+      inputRef,
+      label
+    },
+    state
   );
-  let {thumbProps, inputProps, labelProps, isDragging, isFocused, isDisabled} = useSliderThumb({
-    ...props,
-    index,
-    trackRef: trackRef as RefObject<HTMLDivElement | null>,
-    inputRef,
-    label
-  }, state);
 
   let {focusProps, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover(props);
@@ -306,10 +349,7 @@ export const SliderThumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       <VisuallyHidden>
         <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
       </VisuallyHidden>
-      <Provider
-        values={[
-          [LabelContext, {...labelProps, ref: labelRef}]
-        ]}>
+      <Provider values={[[LabelContext, {...labelProps, ref: labelRef}]]}>
         {renderProps.children}
       </Provider>
     </dom.div>

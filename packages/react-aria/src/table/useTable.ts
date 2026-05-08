@@ -31,23 +31,23 @@ import {useUpdateEffect} from '../utils/useUpdateEffect';
 
 export interface AriaTableProps extends GridProps {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */
-  layoutDelegate?: LayoutDelegate,
+  layoutDelegate?: LayoutDelegate;
   /** @deprecated - Use layoutDelegate instead. */
-  layout?: DeprecatedLayout
+  layout?: DeprecatedLayout;
 }
 
 interface DeprecatedLayout {
-  getLayoutInfo(key: Key): DeprecatedLayoutInfo,
-  getContentSize(): Size,
-  virtualizer: DeprecatedVirtualizer
+  getLayoutInfo(key: Key): DeprecatedLayoutInfo;
+  getContentSize(): Size;
+  virtualizer: DeprecatedVirtualizer;
 }
 
 interface DeprecatedLayoutInfo {
-  rect: Rect
+  rect: Rect;
 }
 
 interface DeprecatedVirtualizer {
-  visibleRect: Rect
+  visibleRect: Rect;
 }
 
 /**
@@ -58,37 +58,55 @@ interface DeprecatedVirtualizer {
  * @param state - State for the table, as returned by `useTableState`.
  * @param ref - The ref attached to the table element.
  */
-export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGridState<T>, ref: RefObject<HTMLElement | null>): GridAria {
-  let {
-    keyboardDelegate,
-    isVirtualized,
-    layoutDelegate,
-    layout
-  } = props;
+export function useTable<T>(
+  props: AriaTableProps,
+  state: TableState<T> | TreeGridState<T>,
+  ref: RefObject<HTMLElement | null>
+): GridAria {
+  let {keyboardDelegate, isVirtualized, layoutDelegate, layout} = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {direction} = useLocale();
   let disabledBehavior = state.selectionManager.disabledBehavior;
-  let delegate = useMemo(() => keyboardDelegate || new TableKeyboardDelegate({
-    collection: state.collection,
-    disabledKeys: state.disabledKeys,
-    disabledBehavior,
-    ref,
-    direction,
-    collator,
-    layoutDelegate,
-    layout
-  }), [keyboardDelegate, state.collection, state.disabledKeys, disabledBehavior, ref, direction, collator, layoutDelegate, layout]);
+  let delegate = useMemo(
+    () =>
+      keyboardDelegate ||
+      new TableKeyboardDelegate({
+        collection: state.collection,
+        disabledKeys: state.disabledKeys,
+        disabledBehavior,
+        ref,
+        direction,
+        collator,
+        layoutDelegate,
+        layout
+      }),
+    [
+      keyboardDelegate,
+      state.collection,
+      state.disabledKeys,
+      disabledBehavior,
+      ref,
+      direction,
+      collator,
+      layoutDelegate,
+      layout
+    ]
+  );
   let id = useId(props.id);
   gridIds.set(state as TableState<T>, id);
 
-  let {gridProps} = useGrid({
-    ...props,
-    id,
-    keyboardDelegate: delegate
-  }, state, ref);
+  let {gridProps} = useGrid(
+    {
+      ...props,
+      id,
+      keyboardDelegate: delegate
+    },
+    state,
+    ref
+  );
 
   // Override to include header rows
   if (isVirtualized) {
@@ -103,8 +121,10 @@ export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGr
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
   let sortDescription = useMemo(() => {
     let columnName = state.collection.columns.find(c => c.key === column)?.textValue ?? '';
-    return sortDirection && column ? stringFormatter.format(`${sortDirection}Sort`, {columnName}) : undefined;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return sortDirection && column
+      ? stringFormatter.format(`${sortDirection}Sort`, {columnName})
+      : undefined;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortDirection, column, state.collection.columns]);
 
   let descriptionProps = useDescription(sortDescription);
@@ -117,13 +137,11 @@ export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGr
   }, [sortDescription]);
 
   return {
-    gridProps: mergeProps(
-      gridProps,
-      descriptionProps,
-      {
-        // merge sort description with long press information
-        'aria-describedby': [descriptionProps['aria-describedby'], gridProps['aria-describedby']].filter(Boolean).join(' ')
-      }
-    )
+    gridProps: mergeProps(gridProps, descriptionProps, {
+      // merge sort description with long press information
+      'aria-describedby': [descriptionProps['aria-describedby'], gridProps['aria-describedby']]
+        .filter(Boolean)
+        .join(' ')
+    })
   };
 }

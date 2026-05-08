@@ -34,25 +34,16 @@ import {useObjectRef} from 'react-aria/useObjectRef';
 import {useSlotId} from 'react-aria/private/utils/useId';
 
 interface MenuItemProps<T> {
-  item: Node<T>,
-  state: TreeState<T>,
-  isVirtualized?: boolean
+  item: Node<T>;
+  state: TreeState<T>;
+  isVirtualized?: boolean;
 }
 
 /** @private */
 export function MenuItem<T>(props: MenuItemProps<T>): JSX.Element {
-  let {
-    item,
-    state,
-    isVirtualized
-  } = props;
-  let {
-    closeOnSelect
-  } = useMenuContext();
-  let {
-    rendered,
-    key
-  } = item;
+  let {item, state, isVirtualized} = props;
+  let {closeOnSelect} = useMenuContext();
+  let {rendered, key} = item;
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/menu');
   let {direction} = useLocale();
@@ -69,19 +60,13 @@ export function MenuItem<T>(props: MenuItemProps<T>): JSX.Element {
 
   let isDisabled = state.disabledKeys.has(key);
   let isContextualHelpTrigger = isSubmenuTrigger && isUnavailable !== undefined;
-  let isSelectable = (
+  let isSelectable =
     (isContextualHelpTrigger ? !isUnavailable : !isSubmenuTrigger) &&
-    state.selectionManager.selectionMode !== 'none'
-  );
+    state.selectionManager.selectionMode !== 'none';
   let isSelected = isSelectable && state.selectionManager.isSelected(key);
   let itemref = useRef<any>(null);
   let ref = useObjectRef(useMemo(() => mergeRefs(itemref, triggerRef), [itemref, triggerRef]));
-  let {
-    menuItemProps,
-    labelProps,
-    descriptionProps,
-    keyboardShortcutProps
-  } = useMenuItem(
+  let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps} = useMenuItem(
     {
       isSelected,
       isDisabled,
@@ -98,62 +83,63 @@ export function MenuItem<T>(props: MenuItemProps<T>): JSX.Element {
   let endProps: DOMAttributes = {};
   if (endId) {
     endProps.id = endId;
-    menuItemProps['aria-describedby'] = [menuItemProps['aria-describedby'], endId].filter(Boolean).join(' ');
+    menuItemProps['aria-describedby'] = [menuItemProps['aria-describedby'], endId]
+      .filter(Boolean)
+      .join(' ');
   }
 
-  let contents = typeof rendered === 'string'
-    ? <Text>{rendered}</Text>
-    : rendered;
+  let contents = typeof rendered === 'string' ? <Text>{rendered}</Text> : rendered;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <ElementType
         {...menuItemProps}
         ref={ref}
-        className={classNames(
-          styles,
-          'spectrum-Menu-item',
-          {
-            'is-disabled': isDisabled,
-            'is-selected': isSelected,
-            'is-selectable': isSelectable,
-            'is-open': submenuTriggerProps.isOpen
-          }
-        )}>
-        <Grid
-          UNSAFE_className={
-            classNames(
-              styles,
-              'spectrum-Menu-itemGrid'
-            )
-          }>
+        className={classNames(styles, 'spectrum-Menu-item', {
+          'is-disabled': isDisabled,
+          'is-selected': isSelected,
+          'is-selectable': isSelectable,
+          'is-open': submenuTriggerProps.isOpen
+        })}>
+        <Grid UNSAFE_className={classNames(styles, 'spectrum-Menu-itemGrid')}>
           <ClearSlots>
             <SlotProvider
               slots={{
                 text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
                 end: {UNSAFE_className: styles['spectrum-Menu-end'], ...endProps},
                 icon: {UNSAFE_className: styles['spectrum-Menu-icon'], size: 'S'},
-                description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps},
-                keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard'], ...keyboardShortcutProps},
+                description: {
+                  UNSAFE_className: styles['spectrum-Menu-description'],
+                  ...descriptionProps
+                },
+                keyboard: {
+                  UNSAFE_className: styles['spectrum-Menu-keyboard'],
+                  ...keyboardShortcutProps
+                },
                 chevron: {UNSAFE_className: styles['spectrum-Menu-chevron'], size: 'S'}
               }}>
               {contents}
-              {isSelected &&
+              {isSelected && (
                 <CheckmarkMedium
                   slot="checkmark"
-                  UNSAFE_className={
-                    classNames(
-                      styles,
-                      'spectrum-Menu-checkmark'
-                    )
-                  } />
-              }
-              {
-                isUnavailable && <InfoOutline slot="end" size="XS" alignSelf="center" aria-label={stringFormatter.format('unavailable')} />
-              }
-              {
-                isUnavailable == null && isSubmenuTrigger && (direction === 'rtl' ? <ChevronLeft slot="chevron" /> : <ChevronRight slot="chevron" />)
-              }
+                  UNSAFE_className={classNames(styles, 'spectrum-Menu-checkmark')}
+                />
+              )}
+              {isUnavailable && (
+                <InfoOutline
+                  slot="end"
+                  size="XS"
+                  alignSelf="center"
+                  aria-label={stringFormatter.format('unavailable')}
+                />
+              )}
+              {isUnavailable == null &&
+                isSubmenuTrigger &&
+                (direction === 'rtl' ? (
+                  <ChevronLeft slot="chevron" />
+                ) : (
+                  <ChevronRight slot="chevron" />
+                ))}
             </SlotProvider>
           </ClearSlots>
         </Grid>

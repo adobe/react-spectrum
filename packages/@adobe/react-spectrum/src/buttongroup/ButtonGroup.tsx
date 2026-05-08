@@ -25,37 +25,34 @@ import {useValueEffect} from 'react-aria/private/utils/useValueEffect';
 
 export interface SpectrumButtonGroupProps extends DOMProps, StyleProps {
   /** Whether the Buttons in the ButtonGroup are all disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /**
    * The axis the ButtonGroup should align with. Setting this to 'vertical' will prevent
    * any switching behaviors between 'vertical' and 'horizontal'.
    * @default 'horizontal'
    */
-  orientation?: Orientation,
+  orientation?: Orientation;
   /** The Buttons contained within the ButtonGroup. */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * The alignment of the buttons within the ButtonGroup.
    * @default 'start'
    */
-  align?: Alignment | 'center'
+  align?: Alignment | 'center';
 }
 
 /**
  * ButtonGroup handles overflow for a grouping of buttons whose actions are related to each other.
  */
-export const ButtonGroup = React.forwardRef(function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
+export const ButtonGroup = React.forwardRef(function ButtonGroup(
+  props: SpectrumButtonGroupProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {scale} = useProvider();
   props = useProviderProps(props);
   props = useSlotProps(props, 'buttonGroup');
 
-  let {
-    children,
-    orientation = 'horizontal',
-    isDisabled,
-    align = 'start',
-    ...otherProps
-  } = props;
+  let {children, orientation = 'horizontal', isDisabled, align = 'start', ...otherProps} = props;
 
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
@@ -68,7 +65,11 @@ export const ButtonGroup = React.forwardRef(function ButtonGroup(props: Spectrum
         let maxX = domRef.current.offsetWidth + 1; // + 1 to account for rounding errors
         // If any buttons have negative X positions (align="end") or extend beyond
         // the width of the button group (align="start"), then switch to vertical.
-        if (buttonGroupChildren.some(child => child.offsetLeft < 0 || child.offsetLeft + child.offsetWidth > maxX)) {
+        if (
+          buttonGroupChildren.some(
+            child => child.offsetLeft < 0 || child.offsetLeft + child.offsetWidth > maxX
+          )
+        ) {
           return true;
         }
         return false;
@@ -83,7 +84,7 @@ export const ButtonGroup = React.forwardRef(function ButtonGroup(props: Spectrum
         yield computeHasOverflow();
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [domRef, orientation, scale, setHasOverflow, children]);
 
   // There are two main reasons we need to remeasure:
@@ -98,7 +99,7 @@ export const ButtonGroup = React.forwardRef(function ButtonGroup(props: Spectrum
     if (domRef.current) {
       parent.current = domRef.current.parentElement as HTMLElement;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [domRef.current]);
   useResizeObserver({ref: parent, onResize: checkForOverflow});
 
@@ -107,27 +108,23 @@ export const ButtonGroup = React.forwardRef(function ButtonGroup(props: Spectrum
       {...filterDOMProps(otherProps)}
       {...styleProps}
       ref={domRef}
-      className={
-        classNames(
-          styles,
-          'spectrum-ButtonGroup',
-          {
-            'spectrum-ButtonGroup--vertical': orientation === 'vertical' || hasOverflow,
-            'spectrum-ButtonGroup--alignEnd': align === 'end',
-            'spectrum-ButtonGroup--alignCenter': align === 'center'
-          },
-          styleProps.className
-        )
-      }>
+      className={classNames(
+        styles,
+        'spectrum-ButtonGroup',
+        {
+          'spectrum-ButtonGroup--vertical': orientation === 'vertical' || hasOverflow,
+          'spectrum-ButtonGroup--alignEnd': align === 'end',
+          'spectrum-ButtonGroup--alignCenter': align === 'center'
+        },
+        styleProps.className
+      )}>
       <SlotProvider
         slots={{
           button: {
             UNSAFE_className: classNames(styles, 'spectrum-ButtonGroup-Button')
           }
         }}>
-        <Provider isDisabled={isDisabled}>
-          {children}
-        </Provider>
+        <Provider isDisabled={isDisabled}>{children}</Provider>
       </SlotProvider>
     </div>
   );

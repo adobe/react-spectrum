@@ -16,23 +16,32 @@ import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
 export interface ColorSwatchRenderProps {
   /** The color of the swatch. */
-  color: Color
+  color: Color;
 }
 
-export interface ColorSwatchProps extends AriaColorSwatchProps, StyleRenderProps<ColorSwatchRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ColorSwatchProps
+  extends
+    AriaColorSwatchProps,
+    StyleRenderProps<ColorSwatchRenderProps>,
+    SlotProps,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ColorSwatch'
    */
-  className?: ClassNameOrFunction<ColorSwatchRenderProps>
+  className?: ClassNameOrFunction<ColorSwatchRenderProps>;
 }
 
-export const ColorSwatchContext = createContext<ContextValue<ColorSwatchProps, HTMLDivElement>>(null);
+export const ColorSwatchContext =
+  createContext<ContextValue<ColorSwatchProps, HTMLDivElement>>(null);
 
 /**
  * A ColorSwatch displays a preview of a selected color.
  */
-export const ColorSwatch = forwardRef(function ColorSwatch(props: ColorSwatchProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ColorSwatch = forwardRef(function ColorSwatch(
+  props: ColorSwatchProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, ColorSwatchContext);
   let {colorSwatchProps, color} = useColorSwatch(props);
   let renderProps = useRenderProps({
@@ -45,11 +54,12 @@ export const ColorSwatch = forwardRef(function ColorSwatch(props: ColorSwatchPro
   });
 
   let DOMProps = filterDOMProps(props, {global: true});
-  
+
   return (
     <dom.div
       {...mergeProps(DOMProps, colorSwatchProps, renderProps)}
       slot={props.slot || undefined}
-      ref={ref} />
+      ref={ref}
+    />
   );
 });

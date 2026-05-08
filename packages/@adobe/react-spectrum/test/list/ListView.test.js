@@ -10,10 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-
 jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 jest.mock('react-aria/src/utils/scrollIntoView');
-import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, triggerTouch, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  installPointerEvent,
+  mockClickDefault,
+  pointerMap,
+  render as renderComponent,
+  triggerTouch,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '../../src/button/ActionButton';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {FocusExample} from '../../stories/list/ListViewActions.stories';
@@ -30,15 +38,19 @@ import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {
   let evt = new Event(type, {bubbles: true, cancelable: true});
-  Object.assign(evt, {
-    ctrlKey: false,
-    metaKey: false,
-    shiftKey: false,
-    altKey: false,
-    button: opts.button || 0,
-    width: 1,
-    height: 1
-  }, opts);
+  Object.assign(
+    evt,
+    {
+      ctrlKey: false,
+      metaKey: false,
+      shiftKey: false,
+      altKey: false,
+      button: opts.button || 0,
+      width: 1,
+      height: 1
+    },
+    opts
+  );
   return evt;
 }
 
@@ -70,16 +82,24 @@ describe('ListView', function () {
     innerWidth = window.innerWidth;
     Object.defineProperty(window, 'innerHeight', {value: 1000, configurable: true, writable: true});
     Object.defineProperty(window, 'innerWidth', {value: 1000, configurable: true, writable: true});
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
-    scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 40);
+    offsetWidth = jest
+      .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+      .mockImplementation(() => 1000);
+    offsetHeight = jest
+      .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+      .mockImplementation(() => 1000);
+    scrollHeight = jest
+      .spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
+      .mockImplementation(() => 40);
     jest.useFakeTimers();
   });
 
   afterEach(function () {
     fireEvent.keyDown(document.activeElement, {key: 'Escape'});
     fireEvent.keyUp(document.activeElement, {key: 'Escape'});
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     jest.clearAllMocks();
   });
 
@@ -98,23 +118,17 @@ describe('ListView', function () {
       </Provider>
     );
     // Allow for Virtualizer layout to update
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     return tree;
   };
 
   let renderList = (props = {}) => {
-    let {
-      locale,
-      scale,
-      ...otherProps
-    } = props;
+    let {locale, scale, ...otherProps} = props;
     return render(
       <ListView items={items} aria-label="List" {...otherProps}>
-        {item => (
-          <Item textValue={item.label}>
-            {item.label}
-          </Item>
-        )}
+        {item => <Item textValue={item.label}>{item.label}</Item>}
       </ListView>,
       locale,
       scale
@@ -122,11 +136,7 @@ describe('ListView', function () {
   };
 
   let renderListWithFocusables = (props = {}) => {
-    let {
-      locale,
-      scale,
-      ...otherProps
-    } = props;
+    let {locale, scale, ...otherProps} = props;
     return render(
       <ListView items={items} aria-label="List" {...otherProps}>
         {item => (
@@ -197,9 +207,7 @@ describe('ListView', function () {
     ];
     let {getByRole, getAllByRole} = render(
       <ListView items={items} aria-label="List">
-        {item =>
-          <Item textValue={item.key}>{item.label}</Item>
-        }
+        {item => <Item textValue={item.key}>{item.label}</Item>}
       </ListView>
     );
 
@@ -228,9 +236,7 @@ describe('ListView', function () {
     ];
     let {getByRole, getAllByRole} = render(
       <ListView items={items} aria-label="List">
-        {item =>
-          <Item textValue={item.label}>{item.label}</Item>
-        }
+        {item => <Item textValue={item.label}>{item.label}</Item>}
       </ListView>
     );
 
@@ -300,7 +306,11 @@ describe('ListView', function () {
   });
 
   it('should disable nested elements with disabledBehavior="selection"', function () {
-    let tree = renderListWithFocusables({disabledKeys: ['foo'], disabledBehavior: 'selection', selectionMode: 'multiple'});
+    let tree = renderListWithFocusables({
+      disabledKeys: ['foo'],
+      disabledBehavior: 'selection',
+      selectionMode: 'multiple'
+    });
     let row = getRow(tree, 'Foo');
     expect(row).not.toHaveAttribute('aria-disabled');
     expect(row).not.toHaveAttribute('aria-selected');
@@ -434,7 +444,11 @@ describe('ListView', function () {
       });
 
       it('should allow focus on disabled rows with disabledBehavior="selection"', async function () {
-        let tree = renderListWithFocusables({disabledKeys: ['foo'], disabledBehavior: 'selection', selectionMode: 'single'});
+        let tree = renderListWithFocusables({
+          disabledKeys: ['foo'],
+          disabledBehavior: 'selection',
+          selectionMode: 'single'
+        });
         let start = getRow(tree, 'Bar');
         let end = getRow(tree, 'Foo');
         await user.click(start);
@@ -471,7 +485,11 @@ describe('ListView', function () {
       });
 
       it('should allow focus on disabled rows with disabledBehavior="selection"', async function () {
-        let tree = renderListWithFocusables({disabledKeys: ['bar'], disabledBehavior: 'selection', selectionMode: 'single'});
+        let tree = renderListWithFocusables({
+          disabledKeys: ['bar'],
+          disabledBehavior: 'selection',
+          selectionMode: 'single'
+        });
         let start = getRow(tree, 'Foo');
         let end = getRow(tree, 'Bar');
         await user.click(start);
@@ -625,7 +643,11 @@ describe('ListView', function () {
   });
 
   it('should display loading affordance with proper height (isLoading)', function () {
-    let {getAllByRole} = render(<ListView aria-label="List" loadingState="loading">{[]}</ListView>);
+    let {getAllByRole} = render(
+      <ListView aria-label="List" loadingState="loading">
+        {[]}
+      </ListView>
+    );
     let row = getAllByRole('row')[0];
     expect(row.parentNode.style.height).toBe('1000px');
     let progressbar = within(row).getByRole('progressbar');
@@ -633,7 +655,11 @@ describe('ListView', function () {
   });
 
   it('should allow you to tab to ListView body if loading (no tabbable children)', async function () {
-    let {getByRole} = render(<ListView aria-label="List" loadingState="loading">{[]}</ListView>);
+    let {getByRole} = render(
+      <ListView aria-label="List" loadingState="loading">
+        {[]}
+      </ListView>
+    );
     let grid = getByRole('grid');
     await user.tab();
     expect(document.activeElement).toBe(grid);
@@ -647,9 +673,7 @@ describe('ListView', function () {
     ];
     let {getByRole} = render(
       <ListView items={items} aria-label="List" loadingState="loadingMore">
-        {item =>
-          <Item textValue={item.key}>{item.label}</Item>
-        }
+        {item => <Item textValue={item.key}>{item.label}</Item>}
       </ListView>
     );
     let progressbar = getByRole('progressbar');
@@ -667,7 +691,9 @@ describe('ListView', function () {
     let {getByRole} = render(
       <>
         <ActionButton>Toggle</ActionButton>
-        <ListView aria-label="List" renderEmptyState={renderEmptyState}>{[]}</ListView>
+        <ListView aria-label="List" renderEmptyState={renderEmptyState}>
+          {[]}
+        </ListView>
       </>
     );
     await act(() => Promise.resolve());
@@ -712,15 +738,16 @@ describe('ListView', function () {
       {key: 'bar', label: 'Bar'},
       {key: 'baz', label: 'Baz'}
     ];
-    let renderSelectionList = (props) => render(
-      <ListView items={items} aria-label="List" {...props}>
-        {item => (
-          <Item key={item.key} textValue={item.label}>
-            {item.label}
-          </Item>
-        )}
-      </ListView>
-    );
+    let renderSelectionList = props =>
+      render(
+        <ListView items={items} aria-label="List" {...props}>
+          {item => (
+            <Item key={item.key} textValue={item.label}>
+              {item.label}
+            </Item>
+          )}
+        </ListView>
+      );
 
     it('should announce the selected or deselected row', async function () {
       let onSelectionChange = jest.fn();
@@ -822,7 +849,11 @@ describe('ListView', function () {
     });
 
     it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async function () {
-      let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', escapeKeyBehavior: 'none'});
+      let tree = renderSelectionList({
+        onSelectionChange,
+        selectionMode: 'multiple',
+        escapeKeyBehavior: 'none'
+      });
 
       let rows = tree.getAllByRole('row');
       await user.click(within(rows[1]).getByRole('checkbox'));
@@ -993,7 +1024,12 @@ describe('ListView', function () {
       it('should not trigger action when deselecting with mouse', async function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction, defaultSelectedKeys: ['foo']});
+        let tree = renderSelectionList({
+          onSelectionChange,
+          selectionMode: 'multiple',
+          onAction,
+          defaultSelectedKeys: ['foo']
+        });
         let rows = tree.getAllByRole('row');
 
         await user.click(rows[0]);
@@ -1004,7 +1040,12 @@ describe('ListView', function () {
       it('should not trigger action when deselecting with keyboard', async function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
-        renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction, defaultSelectedKeys: ['foo']});
+        renderSelectionList({
+          onSelectionChange,
+          selectionMode: 'multiple',
+          onAction,
+          defaultSelectedKeys: ['foo']
+        });
 
         await user.tab();
         await user.keyboard(' ');
@@ -1016,7 +1057,12 @@ describe('ListView', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         onSelectionChange.mockReset();
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction, defaultSelectedKeys: ['foo']});
+        let tree = renderSelectionList({
+          onSelectionChange,
+          selectionMode: 'multiple',
+          onAction,
+          defaultSelectedKeys: ['foo']
+        });
         tree.getAllByRole('row');
 
         await user.tab();
@@ -1039,7 +1085,11 @@ describe('ListView', function () {
 
       it('should trigger actions when a disabledBehavior="selection"', async function () {
         let onAction = jest.fn();
-        let tree = renderSelectionList({onAction, disabledKeys: ['foo'], disabledBehavior: 'selection'});
+        let tree = renderSelectionList({
+          onAction,
+          disabledKeys: ['foo'],
+          disabledBehavior: 'selection'
+        });
         let rows = tree.getAllByRole('row');
 
         await user.click(rows[0]);
@@ -1051,7 +1101,11 @@ describe('ListView', function () {
       installPointerEvent();
       it('should toggle items in selection highlight with meta-click on Mac', async function () {
         let uaMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Mac');
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
+        let tree = renderSelectionList({
+          onSelectionChange,
+          selectionMode: 'multiple',
+          selectionStyle: 'highlight'
+        });
 
         let rows = tree.getAllByRole('row');
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
@@ -1090,7 +1144,11 @@ describe('ListView', function () {
 
       it('should allow multiple items to be selected in selection highlight with ctrl-click on Windows', async function () {
         let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Windows');
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
+        let tree = renderSelectionList({
+          onSelectionChange,
+          selectionMode: 'multiple',
+          selectionStyle: 'highlight'
+        });
 
         let rows = tree.getAllByRole('row');
         expect(rows[0]).toHaveAttribute('aria-selected', 'false');
@@ -1121,7 +1179,11 @@ describe('ListView', function () {
 
       it('should toggle items in selection highlight with ctrl-click on Windows', async function () {
         let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Windows');
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
+        let tree = renderSelectionList({
+          onSelectionChange,
+          selectionMode: 'multiple',
+          selectionStyle: 'highlight'
+        });
 
         let rows = tree.getAllByRole('row');
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
@@ -1158,16 +1220,22 @@ describe('ListView', function () {
         uaMock.mockRestore();
       });
 
-      it('should support single tap to perform row selection with screen reader if onAction isn\'t provided', async function () {
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
+      it("should support single tap to perform row selection with screen reader if onAction isn't provided", async function () {
+        let tree = renderSelectionList({
+          onSelectionChange,
+          selectionMode: 'multiple',
+          selectionStyle: 'highlight'
+        });
 
         let rows = tree.getAllByRole('row');
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
 
-        await user.click(within(rows[1]).getByText('Bar'), {pointerType: 'touch', width: 0, height: 0});
-        checkSelection(onSelectionChange, [
-          'bar'
-        ]);
+        await user.click(within(rows[1]).getByText('Bar'), {
+          pointerType: 'touch',
+          width: 0,
+          height: 0
+        });
+        checkSelection(onSelectionChange, ['bar']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
         expect(announce).toHaveBeenLastCalledWith('Bar selected.');
         expect(announce).toHaveBeenCalledTimes(1);
@@ -1177,13 +1245,31 @@ describe('ListView', function () {
         expect(rows[2]).toHaveAttribute('aria-selected', 'false');
         act(() => {
           let el = within(rows[2]).getByText('Baz');
-          fireEvent(el, pointerEvent('pointerdown', {pointerType: 'mouse', pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-          fireEvent(el, pointerEvent('pointerup', {pointerType: 'mouse', pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+          fireEvent(
+            el,
+            pointerEvent('pointerdown', {
+              pointerType: 'mouse',
+              pointerId: 1,
+              width: 1,
+              height: 1,
+              pressure: 0,
+              detail: 0
+            })
+          );
+          fireEvent(
+            el,
+            pointerEvent('pointerup', {
+              pointerType: 'mouse',
+              pointerId: 1,
+              width: 1,
+              height: 1,
+              pressure: 0,
+              detail: 0
+            })
+          );
           fireEvent.click(el, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
         });
-        checkSelection(onSelectionChange, [
-          'bar', 'baz'
-        ]);
+        checkSelection(onSelectionChange, ['bar', 'baz']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
         expect(rows[2]).toHaveAttribute('aria-selected', 'true');
         expect(announce).toHaveBeenLastCalledWith('Baz selected. 2 items selected.');
@@ -1191,7 +1277,12 @@ describe('ListView', function () {
       });
 
       it('should support single tap to perform onAction with screen reader', async function () {
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight', onAction});
+        let tree = renderSelectionList({
+          onSelectionChange,
+          selectionMode: 'multiple',
+          selectionStyle: 'highlight',
+          onAction
+        });
 
         let rows = tree.getAllByRole('row');
         let cell = within(rows[1]).getByText('Bar');
@@ -1207,8 +1298,28 @@ describe('ListView', function () {
         // Android TalkBack double tap test, pointer event sets pointerType and onClick handles the rest
         act(() => {
           let el = within(rows[2]).getByText('Baz');
-          fireEvent(el, pointerEvent('pointerdown', {pointerType: 'mouse', pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-          fireEvent(el, pointerEvent('pointerup', {pointerType: 'mouse', pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+          fireEvent(
+            el,
+            pointerEvent('pointerdown', {
+              pointerType: 'mouse',
+              pointerId: 1,
+              width: 1,
+              height: 1,
+              pressure: 0,
+              detail: 0
+            })
+          );
+          fireEvent(
+            el,
+            pointerEvent('pointerup', {
+              pointerType: 'mouse',
+              pointerId: 1,
+              width: 1,
+              height: 1,
+              pressure: 0,
+              detail: 0
+            })
+          );
           fireEvent.click(el, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
         });
         expect(onSelectionChange).not.toHaveBeenCalled();
@@ -1218,12 +1329,21 @@ describe('ListView', function () {
       });
 
       it('should not call onSelectionChange when hitting Space/Enter on the currently selected row', async function () {
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight', onAction});
+        let tree = renderSelectionList({
+          onSelectionChange,
+          selectionMode: 'multiple',
+          selectionStyle: 'highlight',
+          onAction
+        });
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
         await user.keyboard('[ControlLeft>]');
-        await user.pointer({target: getRow(tree, 'Bar'), keys: '[MouseLeft]', coords: {pressure: 0.5}});
+        await user.pointer({
+          target: getRow(tree, 'Bar'),
+          keys: '[MouseLeft]',
+          coords: {pressure: 0.5}
+        });
         await user.keyboard('[/ControlLeft]');
 
         checkSelection(onSelectionChange, ['bar']);
@@ -1245,7 +1365,12 @@ describe('ListView', function () {
       });
 
       it('should perform onAction on single click with selectionMode: none', async function () {
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'none', selectionStyle: 'highlight', onAction});
+        let tree = renderSelectionList({
+          onSelectionChange,
+          selectionMode: 'none',
+          selectionStyle: 'highlight',
+          onAction
+        });
 
         let rows = tree.getAllByRole('row');
         await user.click(rows[0]);
@@ -1256,7 +1381,11 @@ describe('ListView', function () {
       });
 
       it('should move selection when using the arrow keys', async function () {
-        let tree = renderSelectionList({onSelectionChange, selectionStyle: 'highlight', selectionMode: 'multiple'});
+        let tree = renderSelectionList({
+          onSelectionChange,
+          selectionStyle: 'highlight',
+          selectionMode: 'multiple'
+        });
 
         let rows = tree.getAllByRole('row');
         await user.click(rows[0]);
@@ -1284,7 +1413,11 @@ describe('ListView', function () {
       });
 
       it('should announce the new row when moving with the keyboard after multi select', async function () {
-        let tree = renderSelectionList({onSelectionChange, selectionStyle: 'highlight', selectionMode: 'multiple'});
+        let tree = renderSelectionList({
+          onSelectionChange,
+          selectionStyle: 'highlight',
+          selectionMode: 'multiple'
+        });
 
         let rows = tree.getAllByRole('row');
         await user.click(rows[0]);
@@ -1305,7 +1438,11 @@ describe('ListView', function () {
       });
 
       it('should support non-contiguous selection with the keyboard', async function () {
-        let tree = renderSelectionList({onSelectionChange, selectionStyle: 'highlight', selectionMode: 'multiple'});
+        let tree = renderSelectionList({
+          onSelectionChange,
+          selectionStyle: 'highlight',
+          selectionMode: 'multiple'
+        });
 
         let rows = tree.getAllByRole('row');
         await user.click(rows[0]);
@@ -1337,7 +1474,12 @@ describe('ListView', function () {
       });
 
       it('should announce the current selection when moving from all to one item', async function () {
-        let tree = renderSelectionList({onSelectionChange, selectionStyle: 'highlight', onAction, selectionMode: 'multiple'});
+        let tree = renderSelectionList({
+          onSelectionChange,
+          selectionStyle: 'highlight',
+          onAction,
+          selectionMode: 'multiple'
+        });
 
         let rows = tree.getAllByRole('row');
         await user.pointer({target: rows[0], keys: '[MouseLeft]', coords: {pressure: 0.5}});
@@ -1371,13 +1513,21 @@ describe('ListView', function () {
 
       it('should support long press to enter selection mode on touch', async function () {
         window.ontouchstart = jest.fn();
-        let tree = renderSelectionList({onSelectionChange, selectionStyle: 'highlight', onAction, selectionMode: 'multiple'});
+        let tree = renderSelectionList({
+          onSelectionChange,
+          selectionStyle: 'highlight',
+          onAction,
+          selectionMode: 'multiple'
+        });
         let rows = tree.getAllByRole('row');
         await user.click(document.body);
 
         fireEvent.pointerDown(rows[0], {pointerType: 'touch'});
         let description = tree.getByText('Long press to enter selection mode.');
-        expect(tree.getByRole('grid')).toHaveAttribute('aria-describedby', expect.stringContaining(description.id));
+        expect(tree.getByRole('grid')).toHaveAttribute(
+          'aria-describedby',
+          expect.stringContaining(description.id)
+        );
         expect(announce).not.toHaveBeenCalled();
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).not.toHaveBeenCalled();
@@ -1551,7 +1701,9 @@ describe('ListView', function () {
 
       expect(document.activeElement).toBe(row);
       // item isn't reused by virutalizer
-      expect(tree.queryByText('Item 0')).toBe(row.firstElementChild.firstElementChild.firstElementChild);
+      expect(tree.queryByText('Item 0')).toBe(
+        row.firstElementChild.firstElementChild.firstElementChild
+      );
 
       // Moving focus should scroll the new focused item into view
       moveFocus('ArrowDown');
@@ -1562,7 +1714,7 @@ describe('ListView', function () {
   });
 
   describe('links', function () {
-    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+    describe.each(['mouse', 'keyboard'])('%s', type => {
       let trigger = async (item, key = 'Enter') => {
         if (type === 'mouse') {
           await user.click(item);
@@ -1598,92 +1750,103 @@ describe('ListView', function () {
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
       });
 
-      it.each(['single', 'multiple'])('should support links with selectionStyle="checkbox" selectionMode="%s"', async function (selectionMode) {
-        let {getAllByRole} = render(
-          <Provider theme={theme}>
-            <ListView aria-label="listview" selectionMode={selectionMode}>
-              <Item href="https://google.com">One</Item>
-              <Item href="https://adobe.com">Two</Item>
-            </ListView>
-          </Provider>
-        );
+      it.each(['single', 'multiple'])(
+        'should support links with selectionStyle="checkbox" selectionMode="%s"',
+        async function (selectionMode) {
+          let {getAllByRole} = render(
+            <Provider theme={theme}>
+              <ListView aria-label="listview" selectionMode={selectionMode}>
+                <Item href="https://google.com">One</Item>
+                <Item href="https://adobe.com">Two</Item>
+              </ListView>
+            </Provider>
+          );
 
-        let items = getAllByRole('row');
-        for (let item of items) {
-          expect(item.tagName).not.toBe('A');
-          expect(item).toHaveAttribute('data-href');
-        }
+          let items = getAllByRole('row');
+          for (let item of items) {
+            expect(item.tagName).not.toBe('A');
+            expect(item).toHaveAttribute('data-href');
+          }
 
-        let onClick = mockClickDefault();
-        if (type === 'keyboard') {
-          await user.tab();
-        }
-        await trigger(items[0]);
-        expect(onClick).toHaveBeenCalledTimes(1);
-        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
-        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
-
-        await user.click(within(items[0]).getByRole('checkbox'));
-        expect(items[0]).toHaveAttribute('aria-selected', 'true');
-
-        if (type === 'keyboard') {
-          await user.keyboard('{ArrowDown}');
-        }
-        await trigger(items[1], ' ');
-        expect(onClick).toHaveBeenCalledTimes(1);
-        expect(items[1]).toHaveAttribute('aria-selected', 'true');
-        window.removeEventListener('click', onClick);
-      });
-
-      it.each(['single', 'multiple'])('should support links with selectionStyle="highlight" selectionMode="%s"', async function (selectionMode) {
-        let {getAllByRole} = render(
-          <Provider theme={theme}>
-            <ListView aria-label="listview" selectionMode={selectionMode} selectionStyle="highlight">
-              <Item href="https://google.com">One</Item>
-              <Item href="https://adobe.com">Two</Item>
-            </ListView>
-          </Provider>
-        );
-
-        let items = getAllByRole('row');
-        for (let item of items) {
-          expect(item.tagName).not.toBe('A');
-          expect(item).toHaveAttribute('data-href');
-        }
-
-        let onClick = mockClickDefault();
-        if (type === 'mouse') {
-          await user.click(items[0]);
-        } else {
+          let onClick = mockClickDefault();
           if (type === 'keyboard') {
             await user.tab();
-            await user.keyboard(' ');
-            if (selectionMode === 'single') {
-              // single selection with replace will follow focus
+          }
+          await trigger(items[0]);
+          expect(onClick).toHaveBeenCalledTimes(1);
+          expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+          expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+
+          await user.click(within(items[0]).getByRole('checkbox'));
+          expect(items[0]).toHaveAttribute('aria-selected', 'true');
+
+          if (type === 'keyboard') {
+            await user.keyboard('{ArrowDown}');
+          }
+          await trigger(items[1], ' ');
+          expect(onClick).toHaveBeenCalledTimes(1);
+          expect(items[1]).toHaveAttribute('aria-selected', 'true');
+          window.removeEventListener('click', onClick);
+        }
+      );
+
+      it.each(['single', 'multiple'])(
+        'should support links with selectionStyle="highlight" selectionMode="%s"',
+        async function (selectionMode) {
+          let {getAllByRole} = render(
+            <Provider theme={theme}>
+              <ListView
+                aria-label="listview"
+                selectionMode={selectionMode}
+                selectionStyle="highlight">
+                <Item href="https://google.com">One</Item>
+                <Item href="https://adobe.com">Two</Item>
+              </ListView>
+            </Provider>
+          );
+
+          let items = getAllByRole('row');
+          for (let item of items) {
+            expect(item.tagName).not.toBe('A');
+            expect(item).toHaveAttribute('data-href');
+          }
+
+          let onClick = mockClickDefault();
+          if (type === 'mouse') {
+            await user.click(items[0]);
+          } else {
+            if (type === 'keyboard') {
+              await user.tab();
               await user.keyboard(' ');
+              if (selectionMode === 'single') {
+                // single selection with replace will follow focus
+                await user.keyboard(' ');
+              }
             }
           }
-        }
-        expect(onClick).not.toHaveBeenCalled();
-        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+          expect(onClick).not.toHaveBeenCalled();
+          expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        if (type === 'mouse') {
-          await user.dblClick(items[0], {pointerType: 'mouse'});
-        } else {
-          fireEvent.keyDown(items[0], {key: 'Enter'});
-          fireEvent.keyUp(items[0], {key: 'Enter'});
+          if (type === 'mouse') {
+            await user.dblClick(items[0], {pointerType: 'mouse'});
+          } else {
+            fireEvent.keyDown(items[0], {key: 'Enter'});
+            fireEvent.keyUp(items[0], {key: 'Enter'});
+          }
+          expect(onClick).toHaveBeenCalledTimes(1);
+          expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+          expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
         }
-        expect(onClick).toHaveBeenCalledTimes(1);
-        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
-        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
-      });
+      );
 
       it('works with RouterProvider', async () => {
         let navigate = jest.fn();
         let {getAllByRole} = render(
           <Provider theme={theme} router={{navigate}}>
             <ListView aria-label="listview">
-              <Item href="/one" routerOptions={{foo: 'bar'}}>One</Item>
+              <Item href="/one" routerOptions={{foo: 'bar'}}>
+                One
+              </Item>
               <Item href="https://adobe.com">Two</Item>
             </ListView>
           </Provider>
@@ -1711,11 +1874,16 @@ describe('ListView', function () {
   });
 
   describe('height 0', () => {
-
     it('should render and not infinite loop', function () {
-      offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 0);
-      offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 0);
-      scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 0);
+      offsetWidth = jest
+        .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+        .mockImplementation(() => 0);
+      offsetHeight = jest
+        .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+        .mockImplementation(() => 0);
+      scrollHeight = jest
+        .spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
+        .mockImplementation(() => 0);
       let tree = render(
         <ListView
           width="250px"

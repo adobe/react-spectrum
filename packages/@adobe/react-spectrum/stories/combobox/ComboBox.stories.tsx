@@ -47,16 +47,24 @@ let items = [
 ];
 
 let withSection = [
-  {name: 'Animals', id: 's1', children: [
-    {name: 'Aardvark', id: '1'},
-    {name: 'Kangaroo', id: '2'},
-    {name: 'Snake', id: '3'}
-  ]},
-  {name: 'People', id: 's2', children: [
-    {name: 'Danni', id: '4'},
-    {name: 'Devon', id: '5'},
-    {name: 'Ross', id: '6'}
-  ]}
+  {
+    name: 'Animals',
+    id: 's1',
+    children: [
+      {name: 'Aardvark', id: '1'},
+      {name: 'Kangaroo', id: '2'},
+      {name: 'Snake', id: '3'}
+    ]
+  },
+  {
+    name: 'People',
+    id: 's2',
+    children: [
+      {name: 'Danni', id: '4'},
+      {name: 'Devon', id: '5'},
+      {name: 'Ross', id: '6'}
+    ]
+  }
 ];
 
 let lotsOfSections: any[] = [];
@@ -217,17 +225,13 @@ export default {
 } as Meta<typeof ComboBox>;
 
 export const Default: ComboBoxStory = {
-  render: (args) => render(args),
+  render: args => render(args),
   name: 'static items'
 };
 
 export const Dynamic: ComboBoxStory = {
   args: {defaultItems: items},
-  render: (args) => (
-    <ComboBox {...args}>
-      {(item: any) => <Item>{item.name}</Item>}
-    </ComboBox>
-  ),
+  render: args => <ComboBox {...args}>{(item: any) => <Item>{item.name}</Item>}</ComboBox>,
   name: 'dynamic items'
 };
 
@@ -239,13 +243,13 @@ export const NoItems: ComboBoxStory = {
 
 export const MappedItems: ComboBoxStory = {
   args: {defaultSelectedKey: '2'},
-  render: (args) => <ComboBoxWithMap {...args} />,
+  render: args => <ComboBoxWithMap {...args} />,
   name: 'with mapped items (defaultItem and items undef)'
 };
 
 export const Sections: ComboBoxStory = {
   args: {defaultItems: withSection},
-  render: (args) => (
+  render: args => (
     <ComboBox {...args}>
       {(item: any) => (
         <Section key={item.name} items={item.children} title={item.name}>
@@ -265,7 +269,7 @@ export const ManySections: ComboBoxStory = {
 
 export const ComplexItems: ComboBoxStory = {
   args: {label: 'Select action'},
-  render: (args) => (
+  render: args => (
     <ComboBox {...args}>
       <Item textValue="Add to queue">
         <Add />
@@ -281,8 +285,7 @@ export const ComplexItems: ComboBoxStory = {
         <Bell />
         <Text>Subscribe to series</Text>
         <Text slot="description">
-          Add series to your subscription list and be notified when a new episode
-          airs.
+          Add series to your subscription list and be notified when a new episode airs.
         </Text>
       </Item>
       <Item textValue="Report">
@@ -296,7 +299,7 @@ export const ComplexItems: ComboBoxStory = {
 
 export const WithAvatars: ComboBoxStory = {
   args: {label: 'Select a user'},
-  render: (args) => (
+  render: args => (
     <ComboBox {...args}>
       <Item textValue="User 1">
         <Avatar src="https://i.imgur.com/kJOwAdv.png" />
@@ -320,10 +323,12 @@ export const WithAvatars: ComboBoxStory = {
 
 export const UserProvidedLabel: ComboBoxStory = {
   args: {label: 'Select action'},
-  render: (args) => (
+  render: args => (
     <Flex direction="column" width="size-3000">
-      <label id="test-label" htmlFor="test-id">Combobox</label>
-      <ComboBox  {...args} id="test-id" aria-labelledby="test-label">
+      <label id="test-label" htmlFor="test-id">
+        Combobox
+      </label>
+      <ComboBox {...args} id="test-id" aria-labelledby="test-label">
         <Item key="one">Item One</Item>
         <Item key="two" textValue="Item Two">
           <Copy size="S" />
@@ -337,7 +342,7 @@ export const UserProvidedLabel: ComboBoxStory = {
 
 export const DisabledKeys: ComboBoxStory = {
   args: {defaultItems: withSection, label: 'Combobox', disabledKeys: ['Snake', 'Ross']},
-  render: (args) => (
+  render: args => (
     <ComboBox {...args}>
       {(item: any) => (
         <Section key={item.name} items={item.children} title={item.name}>
@@ -355,7 +360,10 @@ export const ContextualHelpStory: ComboBoxStory = {
     contextualHelp: (
       <ContextualHelp>
         <Heading>What is a segment?</Heading>
-        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
       </ContextualHelp>
     )
   },
@@ -363,21 +371,17 @@ export const ContextualHelpStory: ComboBoxStory = {
 };
 
 export const Resize: ComboBoxStory = {
-  render: (args) => <ResizeCombobox {...args} />
+  render: args => <ResizeCombobox {...args} />
 };
 
 export const SmallDiv: ComboBoxStory = {
-  render: (args) => (
-    <Flex width="size-500">
-      {render(args)}
-    </Flex>
-  ),
+  render: args => <Flex width="size-500">{render(args)}</Flex>,
   name: 'in small div'
 };
 
 export const ControlledInputValueStory: ComboBoxStory = {
   args: {inputValue: 'Snake', disabledKeys: ['2', '6']},
-  render: (args) => <ControlledValueComboBox {...args} />,
+  render: args => <ControlledValueComboBox {...args} />,
   name: 'inputValue (controlled)'
 };
 
@@ -389,7 +393,7 @@ export const DefaultInputValue: ComboBoxStory = {
 
 export const ControlledSelectedKey: ComboBoxStory = {
   args: {selectedKey: '4', disabledKeys: ['2', '6']},
-  render: (args) => <ControlledKeyComboBox {...args} />,
+  render: args => <ControlledKeyComboBox {...args} />,
   name: 'selectedKey (controlled)'
 };
 
@@ -401,7 +405,7 @@ export const DefaultSelectedKey: ComboBoxStory = {
 
 export const AllControlled: ComboBoxStory = {
   args: {selectedKey: '2', inputValue: 'Kangaroo', disabledKeys: ['2', '6']},
-  render: (args) => <AllControlledComboBox {...args} />,
+  render: args => <AllControlledComboBox {...args} />,
   name: 'inputValue and selectedKey (controlled)'
 };
 
@@ -424,42 +428,49 @@ export const ControlledInputValue: ComboBoxStory = {
 };
 
 export const CustomFilter: ComboBoxStory = {
-  render: (args) => <CustomFilterComboBox {...args} />
+  render: args => <CustomFilterComboBox {...args} />
 };
 
 export const LoadingState: ComboBoxStory = {
-  render: (args) => <LoadingExamples {...args} />
+  render: args => <LoadingExamples {...args} />
 };
 
 export const FilteringListData: ComboBoxStory = {
-  render: (args) => <ListDataExample {...args} />,
+  render: args => <ListDataExample {...args} />,
   name: 'filtering with useListData'
 };
 
 export const SeverSideFiltering: ComboBoxStory = {
-  render: (args) => <AsyncLoadingExample {...args} />,
+  render: args => <AsyncLoadingExample {...args} />,
   name: 'server side filtering with useAsyncList'
 };
 
 export const SeverSideFilteringControlled: ComboBoxStory = {
-  render: (args) => <AsyncLoadingExampleControlledKey {...args} />,
+  render: args => <AsyncLoadingExampleControlledKey {...args} />,
   name: 'server side filtering with useAsyncList (controlled key)'
 };
 
 export const SeverSideFilteringControlledReset: ComboBoxStory = {
-  render: (args) => <AsyncLoadingExampleControlledKeyWithReset {...args} />,
+  render: args => <AsyncLoadingExampleControlledKeyWithReset {...args} />,
   name: 'server side filtering with controlled key and inputValue reset if not focused'
 };
 
 export const InDialog: ComboBoxStory = {
-  render: (args) => <ComboBoxWithinDialog {...args} />,
+  render: args => <ComboBoxWithinDialog {...args} />,
   name: 'within a dialog'
 };
 
 export const WHCM: ComboBoxStory = {
   render: () => (
     <Flex direction="column" gap="size-200">
-      <Flex gap="size-200">Shows the different states from <Link><a href="https://spectrum.adobe.com/static/Windows-High-Contrast-Kits/Combobox-WindowsHighContrast.xd">spectrum</a></Link></Flex>
+      <Flex gap="size-200">
+        Shows the different states from{' '}
+        <Link>
+          <a href="https://spectrum.adobe.com/static/Windows-High-Contrast-Kits/Combobox-WindowsHighContrast.xd">
+            spectrum
+          </a>
+        </Link>
+      </Flex>
       {renderRow({placeholder: 'Type here...'})}
       {renderRow()}
       {renderRow({labelPosition: 'side'})}
@@ -474,7 +485,7 @@ export const WHCM: ComboBoxStory = {
 };
 
 export const Links: ComboBoxStory = {
-  render: (args) => (
+  render: args => (
     <ComboBox {...args}>
       <Item key="foo">Foo</Item>
       <Item key="bar">Bar</Item>
@@ -485,17 +496,30 @@ export const Links: ComboBoxStory = {
 
 function LoadingExamples(props) {
   return (
-    <Flex gap="size-300" direction="column" >
-      <ComboBox {...props} label="Combobox (loading)" loadingState="loading" defaultItems={items} >
+    <Flex gap="size-300" direction="column">
+      <ComboBox {...props} label="Combobox (loading)" loadingState="loading" defaultItems={items}>
         {(item: any) => <Item>{item.name}</Item>}
       </ComboBox>
-      <ComboBox {...props} label="Combobox (filtering)" loadingState="filtering" defaultItems={items}>
+      <ComboBox
+        {...props}
+        label="Combobox (filtering)"
+        loadingState="filtering"
+        defaultItems={items}>
         {(item: any) => <Item>{item.name}</Item>}
       </ComboBox>
-      <ComboBox {...props} label="Combobox (loading + menuTrigger manual)" loadingState="loading" menuTrigger="manual" defaultItems={items} >
+      <ComboBox
+        {...props}
+        label="Combobox (loading + menuTrigger manual)"
+        loadingState="loading"
+        menuTrigger="manual"
+        defaultItems={items}>
         {(item: any) => <Item>{item.name}</Item>}
       </ComboBox>
-      <ComboBox {...props} label="Combobox (loading more)" loadingState="loadingMore" defaultItems={items}>
+      <ComboBox
+        {...props}
+        label="Combobox (loading more)"
+        loadingState="loadingMore"
+        defaultItems={items}>
         {(item: any) => <Item>{item.name}</Item>}
       </ComboBox>
     </Flex>
@@ -515,7 +539,7 @@ function ListDataExample(props) {
   let [showAll, setShowAll] = useState(false);
 
   return (
-    <Flex gap="size-300" direction="column" >
+    <Flex gap="size-300" direction="column">
       <ComboBox
         {...props}
         onOpenChange={(open, reason) => {
@@ -526,7 +550,7 @@ function ListDataExample(props) {
         label="ComboBox (show all on open)"
         items={showAll ? items : list.items}
         inputValue={list.filterText}
-        onInputChange={(value) => {
+        onInputChange={value => {
           setShowAll(false);
           list.setFilterText(value);
         }}>
@@ -546,8 +570,8 @@ function ListDataExample(props) {
 
 function AsyncLoadingExample(props) {
   interface StarWarsChar {
-    name: string,
-    url: string
+    name: string;
+    url: string;
   }
 
   let list = useAsyncList<StarWarsChar>({
@@ -558,7 +582,9 @@ function AsyncLoadingExample(props) {
 
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, 1500));
-      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {
+        signal
+      });
       let json = await res.json();
 
       return {
@@ -584,8 +610,8 @@ function AsyncLoadingExample(props) {
 
 function AsyncLoadingExampleControlledKey(props) {
   interface StarWarsChar {
-    name: string,
-    url: string
+    name: string;
+    url: string;
   }
 
   let list = useAsyncList<StarWarsChar>({
@@ -597,7 +623,9 @@ function AsyncLoadingExampleControlledKey(props) {
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, 1500));
 
-      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {
+        signal
+      });
       let json = await res.json();
 
       return {
@@ -606,16 +634,16 @@ function AsyncLoadingExampleControlledKey(props) {
       };
     },
     initialSelectedKeys: ['Luke Skywalker'],
-    getKey: (item) => item.name
+    getKey: item => item.name
   });
 
-  let onSelectionChange = (key) => {
+  let onSelectionChange = key => {
     let itemText = list.getItem(key)?.name;
     list.setSelectedKeys(new Set([key]));
     list.setFilterText(itemText ?? '');
   };
 
-  let onInputChange = (value) => {
+  let onInputChange = value => {
     if (value === '') {
       list.setSelectedKeys(new Set<Key>());
     }
@@ -641,8 +669,8 @@ function AsyncLoadingExampleControlledKey(props) {
 
 function AsyncLoadingExampleControlledKeyWithReset(props) {
   interface StarWarsChar {
-    name: string,
-    url: string
+    name: string;
+    url: string;
   }
   let isFocused = useRef(false);
   let list = useAsyncList<StarWarsChar>({
@@ -654,7 +682,9 @@ function AsyncLoadingExampleControlledKeyWithReset(props) {
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, 1500));
 
-      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {
+        signal
+      });
       let json = await res.json();
 
       let selectedText;
@@ -674,16 +704,16 @@ function AsyncLoadingExampleControlledKeyWithReset(props) {
       };
     },
     initialSelectedKeys: ['Luke Skywalker'],
-    getKey: (item) => item.name
+    getKey: item => item.name
   });
 
-  let onSelectionChange = (key) => {
+  let onSelectionChange = key => {
     let itemText = list.getItem(key)?.name;
     list.setSelectedKeys(new Set([key]));
     list.setFilterText(itemText ?? '');
   };
 
-  let onInputChange = (value) => {
+  let onInputChange = value => {
     if (value === '') {
       list.setSelectedKeys(new Set<Key>());
     }
@@ -695,7 +725,7 @@ function AsyncLoadingExampleControlledKeyWithReset(props) {
     <ComboBox
       label="Star Wars Character Lookup"
       {...props}
-      onFocusChange={(focus) => isFocused.current = focus}
+      onFocusChange={focus => (isFocused.current = focus)}
       selectedKey={selectedKey}
       onSelectionChange={onSelectionChange}
       items={list.items}
@@ -714,11 +744,14 @@ let customFilterItems = [
   {name: 'The third item', id: '3'}
 ];
 
-let CustomFilterComboBox = (props) => {
+let CustomFilterComboBox = props => {
   let {startsWith} = useFilter({sensitivity: 'base'});
   let [filterValue, setFilterValue] = React.useState('');
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  let filteredItems = React.useMemo(() => customFilterItems.filter(item => startsWith(item.name, filterValue)), [props.items, filterValue, startsWith]);
+  let filteredItems = React.useMemo(
+    () => customFilterItems.filter(item => startsWith(item.name, filterValue)),
+    [props.items, filterValue, startsWith]
+  );
 
   return (
     <ComboBox
@@ -744,7 +777,8 @@ function AllControlledComboBox(props) {
 
   let onSelectionChange = (key: Key) => {
     setFieldState(prevState => ({
-      inputValue: list.getItem(key)?.value.name ?? (props.allowsCustomValue ? prevState.inputValue : ''),
+      inputValue:
+        list.getItem(key)?.value.name ?? (props.allowsCustomValue ? prevState.inputValue : ''),
       selectedKey: key
     }));
   };
@@ -783,7 +817,14 @@ function AllControlledComboBox(props) {
           <Text>Clear key</Text>
         </Button>
       </ButtonGroup>
-      <ComboBox label="Combobox" {...props} selectedKey={fieldState.selectedKey} inputValue={fieldState.inputValue} defaultItems={list.items} onInputChange={onInputChange} onSelectionChange={onSelectionChange}>
+      <ComboBox
+        label="Combobox"
+        {...props}
+        selectedKey={fieldState.selectedKey}
+        inputValue={fieldState.inputValue}
+        defaultItems={list.items}
+        onInputChange={onInputChange}
+        onSelectionChange={onSelectionChange}>
         {(item: any) => (
           <Section items={item.children} title={item.value.name}>
             {(item: any) => <Item>{item.value.name}</Item>}
@@ -794,10 +835,10 @@ function AllControlledComboBox(props) {
   );
 }
 
-let ControlledKeyComboBox = (props) => {
+let ControlledKeyComboBox = props => {
   let [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
 
-  let onSelectionChange = (key) => {
+  let onSelectionChange = key => {
     setSelectedKey(key);
   };
 
@@ -823,7 +864,12 @@ let ControlledKeyComboBox = (props) => {
           <Text>Clear key</Text>
         </Button>
       </ButtonGroup>
-      <ComboBox label="Combobox" {...props} selectedKey={selectedKey} defaultItems={withSection} onSelectionChange={onSelectionChange}>
+      <ComboBox
+        label="Combobox"
+        {...props}
+        selectedKey={selectedKey}
+        defaultItems={withSection}
+        onSelectionChange={onSelectionChange}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
@@ -834,10 +880,10 @@ let ControlledKeyComboBox = (props) => {
   );
 };
 
-let ControlledValueComboBox = (props) => {
+let ControlledValueComboBox = props => {
   let [value, setValue] = React.useState(props.inputValue);
 
-  let onValueChange = (value) => {
+  let onValueChange = value => {
     setValue(value);
   };
 
@@ -855,7 +901,12 @@ let ControlledValueComboBox = (props) => {
           <Text>Clear field</Text>
         </Button>
       </ButtonGroup>
-      <ComboBox label="Combobox" {...props} inputValue={value} defaultItems={withSection} onInputChange={onValueChange}>
+      <ComboBox
+        label="Combobox"
+        {...props}
+        inputValue={value}
+        defaultItems={withSection}
+        onInputChange={onValueChange}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
@@ -941,10 +992,8 @@ function ComboBoxWithMap(props) {
     <Flex direction="column">
       <button onClick={onClick}>Press to change items</button>
       <ComboBox label="Combobox" {...props}>
-        {items.map((item) => (
-          <Item key={item.id}>
-            {item.name}
-          </Item>
+        {items.map(item => (
+          <Item key={item.id}>{item.name}</Item>
         ))}
       </ComboBox>
     </Flex>
@@ -954,22 +1003,30 @@ function ComboBoxWithMap(props) {
 function ComboBoxWithinDialog(props) {
   let {allowsCustomValue} = props;
   let items = [
-    {name: 'Animals', id: 's1', children: [
-      {name: 'Aardvark', id: '1'},
-      {name: 'Kangaroo', id: '2'},
-      {name: 'Snake', id: '3'}
-    ]},
-    {name: 'People', id: 's2', children: [
-      {name: 'Danni', id: '4'},
-      {name: 'Devon', id: '5'},
-      {name: 'Ross', id: '6'}
-    ]}
+    {
+      name: 'Animals',
+      id: 's1',
+      children: [
+        {name: 'Aardvark', id: '1'},
+        {name: 'Kangaroo', id: '2'},
+        {name: 'Snake', id: '3'}
+      ]
+    },
+    {
+      name: 'People',
+      id: 's2',
+      children: [
+        {name: 'Danni', id: '4'},
+        {name: 'Devon', id: '5'},
+        {name: 'Ross', id: '6'}
+      ]
+    }
   ];
   let [selectedKey, setSelectedKey] = useState(null);
   return (
     <DialogTrigger>
       <ActionButton>Show ComboBox</ActionButton>
-      {(close) => (
+      {close => (
         <Dialog>
           <Content>
             <ComboBox
@@ -981,20 +1038,16 @@ function ComboBoxWithinDialog(props) {
               allowsCustomValue={allowsCustomValue}
               selectedKey={selectedKey}
               onSelectionChange={setSelectedKey}
-              onKeyDown={
-                e => {
-                  if (
-                    e.key === 'Escape' &&
-                    (
-                      selectedKey !== null ||
-                      (e.target as HTMLInputElement).value === '' ||
-                      allowsCustomValue
-                    )
-                  ) {
-                    e.continuePropagation();
-                  }
+              onKeyDown={e => {
+                if (
+                  e.key === 'Escape' &&
+                  (selectedKey !== null ||
+                    (e.target as HTMLInputElement).value === '' ||
+                    allowsCustomValue)
+                ) {
+                  e.continuePropagation();
                 }
-              }>
+              }}>
               {(item: any) => (
                 <Section key={item.name} items={item.children} title={item.name}>
                   {(item: any) => <Item key={item.name}>{item.name}</Item>}

@@ -18,11 +18,20 @@ governing permissions and limitations under the License.
   --spectrum-combobox-quiet-fieldbutton-padding-right: 0;
   --spectrum-combobox-quiet-fieldbutton-padding-left: var(--spectrum-global-dimension-size-130);
   --spectrum-combobox-validation-icon-right: var(--spectrum-global-dimension-size-100);
-  --spectrum-datepicker-input-width: calc(var(--spectrum-global-dimension-size-1600) -  2 * var(--spectrum-padding));
-  --spectrum-datepicker-datetime-input-width: calc(var(--spectrum-datepicker-input-width) + var(--spectrum-global-dimension-size-700) - var(--spectrum-global-dimension-static-font-size-100) / 2);
-  --spectrum-datepicker-range-dash-margin-left: calc(-0.5 * var(--spectrum-global-dimension-static-font-size-100));
+  --spectrum-datepicker-input-width: calc(
+    var(--spectrum-global-dimension-size-1600) - 2 * var(--spectrum-padding)
+  );
+  --spectrum-datepicker-datetime-input-width: calc(
+    var(--spectrum-datepicker-input-width) + var(--spectrum-global-dimension-size-700) -
+      var(--spectrum-global-dimension-static-font-size-100) / 2
+  );
+  --spectrum-datepicker-range-dash-margin-left: calc(
+    -0.5 * var(--spectrum-global-dimension-static-font-size-100)
+  );
   --spectrum-datepicker-range-dash-padding-top: 0;
-  --spectrum-datepicker-range-dash-line-height: calc(var(--spectrum-textfield-height) - var(--spectrum-global-dimension-size-100));
+  --spectrum-datepicker-range-dash-line-height: calc(
+    var(--spectrum-textfield-height) - var(--spectrum-global-dimension-size-100)
+  );
 
   --spectrum-combobox-button-width: var(--spectrum-global-dimension-size-400);
 }
@@ -160,7 +169,9 @@ governing permissions and limitations under the License.
 
 .spectrum-InputGroup-popover--quiet {
   /* Define this var so it can be read from JS */
-  --spectrum-dropdown-quiet-offset: calc(var(--spectrum-dropdown-quiet-popover-offset-x) + var(--spectrum-popover-border-size));
+  --spectrum-dropdown-quiet-offset: calc(
+    var(--spectrum-dropdown-quiet-popover-offset-x) + var(--spectrum-popover-border-size)
+  );
   margin-inline-start: calc(var(--spectrum-dropdown-quiet-offset) * -1);
 }
 

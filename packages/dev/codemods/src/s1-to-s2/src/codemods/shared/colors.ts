@@ -238,7 +238,11 @@ const borderColors = {
   informative: 'informative-800'
 };
 
-export function convertColor(property: string, value: string, colorVersion: number | null): string | {default: string, dark: string} | null {
+export function convertColor(
+  property: string,
+  value: string,
+  colorVersion: number | null
+): string | {default: string; dark: string} | null {
   switch (property) {
     case 'background':
     case 'backgroundColor': {
@@ -299,7 +303,10 @@ export function convertColor(property: string, value: string, colorVersion: numb
   return null;
 }
 
-export function convertUnsafeStyleColor(property: string, value: string): string | {default: string, dark: string} | null {
+export function convertUnsafeStyleColor(
+  property: string,
+  value: string
+): string | {default: string; dark: string} | null {
   let m = value.match(/^var\(--spectrum-global-color-(.+)\)$/);
   if (m) {
     return convertColor(property, m[1], 5);

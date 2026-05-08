@@ -49,11 +49,13 @@ function ControlledMultiSelectBox() {
   );
 }
 
-function UncontrolledSelectBox({selectionMode = 'single'}: {selectionMode?: 'single' | 'multiple'}) {
+function UncontrolledSelectBox({
+  selectionMode = 'single'
+}: {
+  selectionMode?: 'single' | 'multiple';
+}) {
   return (
-    <SelectBoxGroup
-      aria-label="Uncontrolled selection test"
-      selectionMode={selectionMode}>
+    <SelectBoxGroup aria-label="Uncontrolled selection test" selectionMode={selectionMode}>
       <SelectBox id="option1" textValue="Option 1">
         <Text slot="label">Option 1</Text>
       </SelectBox>
@@ -193,7 +195,7 @@ describe('SelectBoxGroup', () => {
           <SelectBoxGroup
             aria-label="Selection change test"
             selectionMode="single"
-            onSelectionChange={(keys) => {
+            onSelectionChange={keys => {
               setSelectedKeys(keys);
               onSelectionChange(keys);
             }}
@@ -225,7 +227,7 @@ describe('SelectBoxGroup', () => {
           <SelectBoxGroup
             aria-label="Multiple selection change test"
             selectionMode="multiple"
-            onSelectionChange={(keys) => {
+            onSelectionChange={keys => {
               setSelectedKeys(keys);
               onSelectionChange(keys);
             }}
@@ -290,10 +292,7 @@ describe('SelectBoxGroup', () => {
 
     it('prevents uncontrolled interaction when group is disabled', async () => {
       render(
-        <SelectBoxGroup
-          aria-label="Uncontrolled disabled test"
-          selectionMode="single"
-          isDisabled>
+        <SelectBoxGroup aria-label="Uncontrolled disabled test" selectionMode="single" isDisabled>
           <SelectBox id="option1" textValue="Option 1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
@@ -616,9 +615,7 @@ describe('SelectBoxGroup', () => {
 
         return (
           <div>
-            <button onClick={() => setSelectedKeys(new Set(['option2']))}>
-              Select Option 2
-            </button>
+            <button onClick={() => setSelectedKeys(new Set(['option2']))}>Select Option 2</button>
             <SelectBoxGroup
               aria-label="Controlled test"
               selectionMode="single"
@@ -887,9 +884,7 @@ describe('SelectBoxGroup', () => {
 
     it('prevents uncontrolled interaction with individually disabled items', async () => {
       render(
-        <SelectBoxGroup
-          aria-label="Uncontrolled disabled interaction test"
-          selectionMode="single">
+        <SelectBoxGroup aria-label="Uncontrolled disabled interaction test" selectionMode="single">
           <SelectBox id="option1" textValue="Option 1" isDisabled>
             <Text slot="label">Option 1</Text>
           </SelectBox>

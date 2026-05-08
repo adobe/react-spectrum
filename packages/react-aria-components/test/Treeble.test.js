@@ -25,12 +25,12 @@ import {useTreeData} from 'react-stately/useTreeData';
 export function Cell(props) {
   return (
     <AriaCell {...props}>
-      {composeRenderProps(props.children, (children, {hasChildItems, isTreeColumn}) => (<>
-        {isTreeColumn && hasChildItems &&
-          <Button slot="chevron">&gt;</Button>
-        }
-        {children}
-      </>))}
+      {composeRenderProps(props.children, (children, {hasChildItems, isTreeColumn}) => (
+        <>
+          {isTreeColumn && hasChildItems && <Button slot="chevron">&gt;</Button>}
+          {children}
+        </>
+      ))}
     </AriaCell>
   );
 }
@@ -39,7 +39,9 @@ function Example(props) {
   return (
     <Table data-testid="treeble" aria-label="Files" treeColumn="name" {...props}>
       <TableHeader>
-        <Column id="name" isRowHeader>Name</Column>
+        <Column id="name" isRowHeader>
+          Name
+        </Column>
         <Column id="type">Type</Column>
         <Column id="date">Date Modified</Column>
       </TableHeader>
@@ -102,16 +104,34 @@ function Example(props) {
 function ReorderableTreeble(props) {
   let tree = useTreeData({
     initialItems: [
-      {id: '1', title: 'Documents', type: 'Directory', date: '10/20/2025', children: [
-        {id: '2', title: 'Project', type: 'Directory', date: '8/2/2025', children: [
-          {id: '3', title: 'Weekly Report', type: 'File', date: '7/10/2025', children: []},
-          {id: '4', title: 'Budget', type: 'File', date: '8/20/2025', children: []}
-        ]}
-      ]},
-      {id: '5', title: 'Photos', type: 'Directory', date: '2/3/2026', children: [
-        {id: '6', title: 'Image 1', type: 'File', date: '1/23/2026', children: []},
-        {id: '7', title: 'Image 2', type: 'File', date: '2/3/2026', children: []}
-      ]}
+      {
+        id: '1',
+        title: 'Documents',
+        type: 'Directory',
+        date: '10/20/2025',
+        children: [
+          {
+            id: '2',
+            title: 'Project',
+            type: 'Directory',
+            date: '8/2/2025',
+            children: [
+              {id: '3', title: 'Weekly Report', type: 'File', date: '7/10/2025', children: []},
+              {id: '4', title: 'Budget', type: 'File', date: '8/20/2025', children: []}
+            ]
+          }
+        ]
+      },
+      {
+        id: '5',
+        title: 'Photos',
+        type: 'Directory',
+        date: '2/3/2026',
+        children: [
+          {id: '6', title: 'Image 1', type: 'File', date: '1/23/2026', children: []},
+          {id: '7', title: 'Image 2', type: 'File', date: '2/3/2026', children: []}
+        ]
+      }
     ]
   });
 
@@ -146,7 +166,9 @@ function ReorderableTreeble(props) {
       {...props}>
       <TableHeader>
         <Column />
-        <Column id="name" isRowHeader>Name</Column>
+        <Column id="name" isRowHeader>
+          Name
+        </Column>
         <Column id="type">Type</Column>
         <Column id="date">Date Modified</Column>
       </TableHeader>
@@ -154,13 +176,13 @@ function ReorderableTreeble(props) {
         {function renderItem(item) {
           return (
             <Row id={item.key} textValue={item.value.title}>
-              <Cell><Button slot="drag" /></Cell>
+              <Cell>
+                <Button slot="drag" />
+              </Cell>
               <Cell>{item.value.title}</Cell>
               <Cell>{item.value.type}</Cell>
               <Cell>{item.value.date}</Cell>
-              {item.children && <Collection items={item.children}>
-                {renderItem}
-              </Collection>}
+              {item.children && <Collection items={item.children}>{renderItem}</Collection>}
             </Row>
           );
         }}
@@ -248,74 +270,79 @@ describe('Treeble', () => {
     ${'mouse'}      | ${'ar-AE'} | ${'rtl'}
     ${'touch'}      | ${'ar-AE'} | ${'rtl'}
     ${'keyboard'}   | ${'ar-AE'} | ${'rtl'}
-  `('should expand a row with $interactionType ($direction)', async ({interactionType, locale, direction}) => {
-    let tree = render(
-      <I18nProvider locale={locale}>
-        <Example />
-      </I18nProvider>
-    );
-    let tester = utils.createTester('Table', {root: tree.getByTestId('treeble'), direction});
+  `(
+    'should expand a row with $interactionType ($direction)',
+    async ({interactionType, locale, direction}) => {
+      let tree = render(
+        <I18nProvider locale={locale}>
+          <Example />
+        </I18nProvider>
+      );
+      let tester = utils.createTester('Table', {root: tree.getByTestId('treeble'), direction});
 
-    await tester.toggleRowExpansion({row: 0, interactionType});
+      await tester.toggleRowExpansion({row: 0, interactionType});
 
-    expect(tester.rows()).toHaveLength(7);
-    expect(tester.rows()[0]).toHaveAttribute('aria-expanded', 'true');
-    expect(tester.rows()[0]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows()[0]).toHaveAttribute('aria-posinset', '1');
-    expect(tester.rows()[0]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rows()[0]).toHaveAttribute('data-expanded', 'true');
-    expect(tester.rows()[0]).toHaveAttribute('data-has-child-items', 'true');
-    expect(tester.rows()[0]).toHaveAttribute('data-level', '1');
-    expect(tester.rows()[0]).toHaveAttribute('style', '--table-row-level: 1;');
-    expect(tester.rowHeaders()[0]).toHaveTextContent('Games');
-    for (let cell of tester.cells({element: tester.rows()[0]})) {
-      expect(cell).toHaveAttribute('data-expanded');
-      expect(cell).toHaveAttribute('data-has-child-items', 'true');
-      expect(cell).toHaveAttribute('data-level', '1');
+      expect(tester.rows()).toHaveLength(7);
+      expect(tester.rows()[0]).toHaveAttribute('aria-expanded', 'true');
+      expect(tester.rows()[0]).toHaveAttribute('aria-level', '1');
+      expect(tester.rows()[0]).toHaveAttribute('aria-posinset', '1');
+      expect(tester.rows()[0]).toHaveAttribute('aria-setsize', '4');
+      expect(tester.rows()[0]).toHaveAttribute('data-expanded', 'true');
+      expect(tester.rows()[0]).toHaveAttribute('data-has-child-items', 'true');
+      expect(tester.rows()[0]).toHaveAttribute('data-level', '1');
+      expect(tester.rows()[0]).toHaveAttribute('style', '--table-row-level: 1;');
+      expect(tester.rowHeaders()[0]).toHaveTextContent('Games');
+      for (let cell of tester.cells({element: tester.rows()[0]})) {
+        expect(cell).toHaveAttribute('data-expanded');
+        expect(cell).toHaveAttribute('data-has-child-items', 'true');
+        expect(cell).toHaveAttribute('data-level', '1');
+      }
+
+      expect(tester.rows()[1]).not.toHaveAttribute('aria-expanded');
+      expect(tester.rows()[1]).toHaveAttribute('aria-level', '2');
+      expect(tester.rows()[1]).toHaveAttribute('aria-posinset', '1');
+      expect(tester.rows()[1]).toHaveAttribute('aria-setsize', '3');
+      expect(tester.rows()[1]).toHaveAttribute('style', '--table-row-level: 2;');
+      expect(tester.rowHeaders()[1]).toHaveTextContent('Mario Kart');
+
+      expect(tester.rows()[2]).not.toHaveAttribute('aria-expanded');
+      expect(tester.rows()[2]).toHaveAttribute('aria-level', '2');
+      expect(tester.rows()[2]).toHaveAttribute('aria-posinset', '2');
+      expect(tester.rows()[2]).toHaveAttribute('aria-setsize', '3');
+      expect(tester.rows()[2]).toHaveAttribute('style', '--table-row-level: 2;');
+      expect(tester.rowHeaders()[2]).toHaveTextContent('Tetris');
+
+      expect(tester.rows()[3]).not.toHaveAttribute('aria-expanded');
+      expect(tester.rows()[3]).toHaveAttribute('aria-level', '2');
+      expect(tester.rows()[3]).toHaveAttribute('aria-posinset', '3');
+      expect(tester.rows()[3]).toHaveAttribute('aria-setsize', '3');
+      expect(tester.rows()[3]).toHaveAttribute('style', '--table-row-level: 2;');
+      expect(tester.rowHeaders()[3]).toHaveTextContent('Pac-Man');
+
+      expect(tester.rows()[4]).toHaveAttribute('aria-expanded', 'false');
+      expect(tester.rows()[4]).toHaveAttribute('aria-level', '1');
+      expect(tester.rows()[4]).toHaveAttribute('aria-posinset', '2');
+      expect(tester.rows()[4]).toHaveAttribute('aria-setsize', '4');
+      expect(tester.rows()[4]).toHaveAttribute('style', '--table-row-level: 1;');
+      expect(tester.rowHeaders()[4]).toHaveTextContent('Applications');
+
+      expect(tester.rows()[5]).not.toHaveAttribute('aria-expanded');
+      expect(tester.rows()[5]).toHaveAttribute('aria-level', '1');
+      expect(tester.rows()[5]).toHaveAttribute('aria-posinset', '3');
+      expect(tester.rows()[5]).toHaveAttribute('aria-setsize', '4');
+      expect(tester.rows()[5]).toHaveAttribute('style', '--table-row-level: 1;');
+      expect(tester.rowHeaders()[5]).toHaveTextContent('2024 Financial Report');
+
+      await tester.toggleRowExpansion({row: 0, interactionType});
+      expect(tester.rows()).toHaveLength(4);
     }
-
-    expect(tester.rows()[1]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows()[1]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows()[1]).toHaveAttribute('aria-posinset', '1');
-    expect(tester.rows()[1]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rows()[1]).toHaveAttribute('style', '--table-row-level: 2;');
-    expect(tester.rowHeaders()[1]).toHaveTextContent('Mario Kart');
-
-    expect(tester.rows()[2]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows()[2]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows()[2]).toHaveAttribute('aria-posinset', '2');
-    expect(tester.rows()[2]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rows()[2]).toHaveAttribute('style', '--table-row-level: 2;');
-    expect(tester.rowHeaders()[2]).toHaveTextContent('Tetris');
-
-    expect(tester.rows()[3]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows()[3]).toHaveAttribute('aria-level', '2');
-    expect(tester.rows()[3]).toHaveAttribute('aria-posinset', '3');
-    expect(tester.rows()[3]).toHaveAttribute('aria-setsize', '3');
-    expect(tester.rows()[3]).toHaveAttribute('style', '--table-row-level: 2;');
-    expect(tester.rowHeaders()[3]).toHaveTextContent('Pac-Man');
-
-    expect(tester.rows()[4]).toHaveAttribute('aria-expanded', 'false');
-    expect(tester.rows()[4]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows()[4]).toHaveAttribute('aria-posinset', '2');
-    expect(tester.rows()[4]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rows()[4]).toHaveAttribute('style', '--table-row-level: 1;');
-    expect(tester.rowHeaders()[4]).toHaveTextContent('Applications');
-
-    expect(tester.rows()[5]).not.toHaveAttribute('aria-expanded');
-    expect(tester.rows()[5]).toHaveAttribute('aria-level', '1');
-    expect(tester.rows()[5]).toHaveAttribute('aria-posinset', '3');
-    expect(tester.rows()[5]).toHaveAttribute('aria-setsize', '4');
-    expect(tester.rows()[5]).toHaveAttribute('style', '--table-row-level: 1;');
-    expect(tester.rowHeaders()[5]).toHaveTextContent('2024 Financial Report');
-
-    await tester.toggleRowExpansion({row: 0, interactionType});
-    expect(tester.rows()).toHaveLength(4);
-  });
+  );
 
   it('should support defaultExpandedKeys', async () => {
     let onExpandedChange = jest.fn();
-    let tree = render(<Example defaultExpandedKeys={['games']} onExpandedChange={onExpandedChange} />);
+    let tree = render(
+      <Example defaultExpandedKeys={['games']} onExpandedChange={onExpandedChange} />
+    );
     let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
 
     expect(tester.rows()).toHaveLength(7);
@@ -530,7 +557,13 @@ describe('Treeble', () => {
 
   it('supports selection', async () => {
     let onSelectionChange = jest.fn();
-    let tree = render(<Example defaultExpandedKeys={['games']} selectionMode="multiple" onSelectionChange={k => onSelectionChange(new Set(k))} />);
+    let tree = render(
+      <Example
+        defaultExpandedKeys={['games']}
+        selectionMode="multiple"
+        onSelectionChange={k => onSelectionChange(new Set(k))}
+      />
+    );
     let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
 
     await tester.toggleRowSelection({row: 0});
@@ -621,7 +654,10 @@ describe('Treeble', () => {
 
     await user.keyboard('{ArrowDown}');
     act(() => jest.runAllTimers());
-    expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Documents and Photos');
+    expect(document.activeElement).toHaveAttribute(
+      'aria-label',
+      'Insert between Documents and Photos'
+    );
 
     await user.keyboard('{ArrowDown}');
     act(() => jest.runAllTimers());
@@ -629,7 +665,10 @@ describe('Treeble', () => {
 
     await user.keyboard('{ArrowUp}');
     act(() => jest.runAllTimers());
-    expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Documents and Photos');
+    expect(document.activeElement).toHaveAttribute(
+      'aria-label',
+      'Insert between Documents and Photos'
+    );
 
     await user.keyboard('{ArrowUp}');
     act(() => jest.runAllTimers());
@@ -641,7 +680,10 @@ describe('Treeble', () => {
 
     await user.keyboard('{ArrowUp}');
     act(() => jest.runAllTimers());
-    expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Weekly Report and Budget');
+    expect(document.activeElement).toHaveAttribute(
+      'aria-label',
+      'Insert between Weekly Report and Budget'
+    );
 
     await user.keyboard('{ArrowUp}');
     act(() => jest.runAllTimers());

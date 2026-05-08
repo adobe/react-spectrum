@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import "@react-spectrum/s2/page.css";
+import React, {useState} from 'react';
+import '@react-spectrum/s2/page.css';
 import {
   Accordion,
   ActionButton,
@@ -77,18 +77,18 @@ import {
   TextField,
   TimeField,
   Tooltip,
-  TooltipTrigger,
-} from "@react-spectrum/s2";
+  TooltipTrigger
+} from '@react-spectrum/s2';
 import Checkmark from '@react-spectrum/s2/illustrations/gradient/generic1/Checkmark';
-import Cloud from "@react-spectrum/s2/illustrations/linear/Cloud";
-import DropToUpload from "@react-spectrum/s2/illustrations/linear/DropToUpload";
-import Server from "@react-spectrum/s2/illustrations/linear/Server";
-import AlertNotice from "@react-spectrum/s2/illustrations/linear/AlertNotice";
-import PaperAirplane from "@react-spectrum/s2/illustrations/linear/Paperairplane";
-import StarFilled1 from "@react-spectrum/s2/illustrations/linear/Star";
-import Edit from "@react-spectrum/s2/icons/Edit";
-import Section from "./components/Section";
-import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+import Cloud from '@react-spectrum/s2/illustrations/linear/Cloud';
+import DropToUpload from '@react-spectrum/s2/illustrations/linear/DropToUpload';
+import Server from '@react-spectrum/s2/illustrations/linear/Server';
+import AlertNotice from '@react-spectrum/s2/illustrations/linear/AlertNotice';
+import PaperAirplane from '@react-spectrum/s2/illustrations/linear/Paperairplane';
+import StarFilled1 from '@react-spectrum/s2/illustrations/linear/Star';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import Section from './components/Section';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 export default function Lazy() {
   let [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -131,9 +131,8 @@ export default function Lazy() {
       <Section title="Forms">
         <Form
           styles={style({
-            maxWidth: 288,
-          })}
-        >
+            maxWidth: 288
+          })}>
           <CheckboxGroup label="Favorite sports">
             <Checkbox value="soccer">Soccer</Checkbox>
             <Checkbox value="baseball">Baseball</Checkbox>
@@ -173,27 +172,23 @@ export default function Lazy() {
       </Section>
 
       <Section title="Navigation">
-        <div className={style({ minHeight: 176 })}>
+        <div className={style({minHeight: 176})}>
           <Accordion>
             <Disclosure id="files">
               <DisclosureHeader>
-                <DisclosureTitle>
-                  Files
-                </DisclosureTitle>
-                <ActionButton><Edit aria-label="Edit" /></ActionButton>
+                <DisclosureTitle>Files</DisclosureTitle>
+                <ActionButton>
+                  <Edit aria-label="Edit" />
+                </ActionButton>
               </DisclosureHeader>
-              <DisclosurePanel>
-                Files content
-              </DisclosurePanel>
+              <DisclosurePanel>Files content</DisclosurePanel>
             </Disclosure>
             <Disclosure id="people">
               <DisclosureHeader>
-                <DisclosureTitle>
-                  People
-                </DisclosureTitle>
+                <DisclosureTitle>People</DisclosureTitle>
               </DisclosureHeader>
               <DisclosurePanel>
-                <TextField label="Name" styles={style({ maxWidth: 176 })} />
+                <TextField label="Name" styles={style({maxWidth: 176})} />
               </DisclosurePanel>
             </Disclosure>
           </Accordion>
@@ -203,11 +198,7 @@ export default function Lazy() {
           <Breadcrumb id="trendy">Trendy</Breadcrumb>
           <Breadcrumb id="march 2020 assets">March 2020 Assets</Breadcrumb>
         </Breadcrumbs>
-        <Link
-          href="https://www.imdb.com/title/tt6348138/"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <Link href="https://www.imdb.com/title/tt6348138/" target="_blank" rel="noreferrer">
           The missing link.
         </Link>
         <Link href="/foo">Foo</Link>
@@ -223,9 +214,7 @@ export default function Lazy() {
             <Tab id="MaR">Monarchy and Republic</Tab>
             <Tab id="Emp">Empire</Tab>
           </TabList>
-          <TabPanel id="FoR">
-            Arma virumque cano, Troiae qui primus ab oris.
-          </TabPanel>
+          <TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel>
           <TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel>
           <TabPanel id="Emp">Alea jacta est.</TabPanel>
         </Tabs>
@@ -234,13 +223,8 @@ export default function Lazy() {
       <Section title="Overlays">
         <DialogTrigger>
           <ActionButton>Save</ActionButton>
-          <AlertDialog
-            title="Low Disk Space"
-            variant="warning"
-            primaryActionLabel="Confirm"
-          >
-            You are running low on disk space. Delete unnecessary files to
-            free up space.
+          <AlertDialog title="Low Disk Space" variant="warning" primaryActionLabel="Confirm">
+            You are running low on disk space. Delete unnecessary files to free up space.
           </AlertDialog>
         </DialogTrigger>
 
@@ -248,22 +232,16 @@ export default function Lazy() {
           <Heading>Need help?</Heading>
           <Content>
             <Text>
-              If you are having issues accessing your account, contact our
-              customer support team for help.
+              If you are having issues accessing your account, contact our customer support team for
+              help.
             </Text>
           </Content>
         </ContextualHelp>
 
-        <ActionButton onPress={() => setIsDialogOpen(true)}>
-          Show Dialog
-        </ActionButton>
+        <ActionButton onPress={() => setIsDialogOpen(true)}>Show Dialog</ActionButton>
         <DialogContainer onDismiss={() => setIsDialogOpen(false)}>
           {isDialogOpen && (
-            <AlertDialog
-              title="Delete"
-              variant="destructive"
-              primaryActionLabel="Delete"
-            >
+            <AlertDialog title="Delete" variant="destructive" primaryActionLabel="Delete">
               Are you sure you want to delete this item?
             </AlertDialog>
           )}
@@ -296,10 +274,23 @@ export default function Lazy() {
         <DialogTrigger>
           <ActionButton>Illustration</ActionButton>
           <CustomDialog size="M">
-            <div className={style({display: 'flex', flexDirection: 'column', rowGap: 8, alignItems: 'center'})}>
+            <div
+              className={style({
+                display: 'flex',
+                flexDirection: 'column',
+                rowGap: 8,
+                alignItems: 'center'
+              })}>
               <Checkmark />
-              <Heading slot="title" styles={style({font: 'heading-lg', textAlign: 'center', marginY: 0})}>Thank you!</Heading>
-              <p className={style({font: 'body', textAlign: 'center', marginY: 0})}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+              <Heading
+                slot="title"
+                styles={style({font: 'heading-lg', textAlign: 'center', marginY: 0})}>
+                Thank you!
+              </Heading>
+              <p className={style({font: 'body', textAlign: 'center', marginY: 0})}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                incididunt ut labore et dolore magna aliqua.
+              </p>
               <CloseButton styles={style({position: 'absolute', top: 12, insetEnd: 12})} />
             </div>
           </CustomDialog>
@@ -308,7 +299,9 @@ export default function Lazy() {
         <DialogTrigger>
           <ActionButton>Disk Status</ActionButton>
           <Popover>
-            <Heading styles={style({font: 'heading', marginTop: 0, marginBottom: 20})}>C://</Heading>
+            <Heading styles={style({font: 'heading', marginTop: 0, marginBottom: 20})}>
+              C://
+            </Heading>
 
             <Content styles={style({font: 'ui'})}>
               <Text>50% disk space remaining.</Text>
@@ -319,20 +312,35 @@ export default function Lazy() {
         <DialogTrigger>
           <Button variant="primary">Fullscreen</Button>
           <FullscreenDialog>
-            {({close}) => <>
+            {({close}) => (
+              <>
                 <Heading slot="title">Dialog title</Heading>
                 <Header>Header</Header>
                 <Content>
-                  {[...Array(5)].map((_, i) => <p key={i} style={{
-                    marginTop: i === 0 ? 0 : undefined,
-                    marginBottom: i === 4 ? 0 : undefined
-                  }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>)}
+                  {[...Array(5)].map((_, i) => (
+                    <p
+                      key={i}
+                      style={{
+                        marginTop: i === 0 ? 0 : undefined,
+                        marginBottom: i === 4 ? 0 : undefined
+                      }}>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                      incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                      nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                      Duis aute irure dolor in
+                    </p>
+                  ))}
                 </Content>
                 <ButtonGroup>
-                  <Button onPress={close} variant="secondary">Cancel</Button>
-                  <Button onPress={close} variant="accent">Save</Button>
+                  <Button onPress={close} variant="secondary">
+                    Cancel
+                  </Button>
+                  <Button onPress={close} variant="accent">
+                    Save
+                  </Button>
                 </ButtonGroup>
-              </>}
+              </>
+            )}
           </FullscreenDialog>
         </DialogTrigger>
 
@@ -362,7 +370,7 @@ export default function Lazy() {
       </Section>
 
       <Section title="Sliders">
-        <RangeSlider label="Range" defaultValue={{ start: 12, end: 36 }} />
+        <RangeSlider label="Range" defaultValue={{start: 12, end: 36}} />
 
         <Slider label="Cookies to buy" defaultValue={12} />
       </Section>
@@ -391,35 +399,20 @@ export default function Lazy() {
         <InlineAlert>
           <Heading>Payment Information</Heading>
           <Content>
-            Enter your billing address, shipping address, and payment method
-            to complete your purchase.
+            Enter your billing address, shipping address, and payment method to complete your
+            purchase.
           </Content>
         </InlineAlert>
       </Section>
 
       <Section title="Content">
-        <Avatar
-          src="https://i.imgur.com/kJOwAdv.png"
-          alt="default Adobe avatar"
-        />
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
 
         <AvatarGroup aria-label="Users">
-          <Avatar
-            src="https://i.imgur.com/kJOwAdv.png"
-            alt="default Adobe avatar"
-          />
-          <Avatar
-            src="https://i.imgur.com/kJOwAdv.png"
-            alt="default Adobe avatar"
-          />
-          <Avatar
-            src="https://i.imgur.com/kJOwAdv.png"
-            alt="default Adobe avatar"
-          />
-          <Avatar
-            src="https://i.imgur.com/kJOwAdv.png"
-            alt="default Adobe avatar"
-          />
+          <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+          <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+          <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+          <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
         </AvatarGroup>
 
         <Content>Content is king</Content>

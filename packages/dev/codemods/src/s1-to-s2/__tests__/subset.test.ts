@@ -6,7 +6,9 @@ const testSubset = (name: string, input: string, components: string) => {
   defineSnapshotTest(transform, {components}, input, name);
 };
 
-testSubset('Should update multiple components provided to --components option', `
+testSubset(
+  'Should update multiple components provided to --components option',
+  `
 import {Button, TextArea} from '@adobe/react-spectrum';
 
 <div>
@@ -14,9 +16,13 @@ import {Button, TextArea} from '@adobe/react-spectrum';
   <Button variant="overBackground">Test</Button>
   <TextArea isQuiet />
 </div>
-`, 'Button,TextArea');
+`,
+  'Button,TextArea'
+);
 
-testSubset('Should only update components provided to --components option', `
+testSubset(
+  'Should only update components provided to --components option',
+  `
 import {Button, TextArea} from '@adobe/react-spectrum';
 
 <div>
@@ -24,9 +30,13 @@ import {Button, TextArea} from '@adobe/react-spectrum';
   <Button variant="overBackground">Test</Button>
   <TextArea isQuiet />
 </div>
-`, 'Button');
+`,
+  'Button'
+);
 
-testSubset('Should not update components that are not provided to --components option', `
+testSubset(
+  'Should not update components that are not provided to --components option',
+  `
 import {Button, TextArea} from '@adobe/react-spectrum';
 
 <div>
@@ -34,9 +44,13 @@ import {Button, TextArea} from '@adobe/react-spectrum';
   <Button variant="overBackground">Test</Button>
   <TextArea isQuiet />
 </div>
-`, 'TableView');
+`,
+  'TableView'
+);
 
-testSubset('Should update related TableView components provided to --components option', `
+testSubset(
+  'Should update related TableView components provided to --components option',
+  `
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@adobe/react-spectrum';
 
 <TableView>
@@ -55,9 +69,13 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@adobe/react
     </Row>
   </TableBody>
 </TableView>
-`, 'TableView');
+`,
+  'TableView'
+);
 
-testSubset('Should only update ComboBox related shared components provided to --components option', `
+testSubset(
+  'Should only update ComboBox related shared components provided to --components option',
+  `
 import {ComboBox, Menu, MenuTrigger, Button, Section, Item} from '@adobe/react-spectrum';
 
 <>
@@ -76,9 +94,13 @@ import {ComboBox, Menu, MenuTrigger, Button, Section, Item} from '@adobe/react-s
     </Menu>
   </MenuTrigger>
 </>
-`, 'ComboBox');
+`,
+  'ComboBox'
+);
 
-testSubset('Should update Menu related components provided to --components option', `
+testSubset(
+  'Should update Menu related components provided to --components option',
+  `
 import {Breadcrumbs, Menu, MenuTrigger, SubmenuTrigger, ContextualHelpTrigger, Item, Section, Button, Dialog, Heading, Content} from '@adobe/react-spectrum';
 
 <>
@@ -107,9 +129,13 @@ import {Breadcrumbs, Menu, MenuTrigger, SubmenuTrigger, ContextualHelpTrigger, I
     <Item key="home">Home</Item>
   </Breadcrumbs>
 </>
-`, 'Menu');
+`,
+  'Menu'
+);
 
-testSubset('Should update Tabs related components provided to --components option', `
+testSubset(
+  'Should update Tabs related components provided to --components option',
+  `
 import {Tabs, TabList, TabPanels, Item} from '@adobe/react-spectrum';
 
 <Tabs aria-label="History of Ancient Rome">
@@ -122,9 +148,13 @@ import {Tabs, TabList, TabPanels, Item} from '@adobe/react-spectrum';
     <Item key="MaR">Senatus Populusque Romanus.</Item>
   </TabPanels>
 </Tabs>
-`, 'Tabs');
+`,
+  'Tabs'
+);
 
-testSubset('Should update DialogTrigger related components provided to --components option', `
+testSubset(
+  'Should update DialogTrigger related components provided to --components option',
+  `
 import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
 
 <DialogTrigger>
@@ -135,18 +165,26 @@ import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/r
     <Content>Content</Content>
   </Dialog>
 </DialogTrigger>
-`, 'DialogTrigger');
+`,
+  'DialogTrigger'
+);
 
-testSubset('Should update TooltipTrigger related components provided to --components option', `
+testSubset(
+  'Should update TooltipTrigger related components provided to --components option',
+  `
 import {ActionButton, TooltipTrigger, Tooltip} from '@adobe/react-spectrum';
 
 <TooltipTrigger>
   <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
   <Tooltip placement="bottom left" showIcon>Change Name</Tooltip>
 </TooltipTrigger>
-`, 'TooltipTrigger');
+`,
+  'TooltipTrigger'
+);
 
-testSubset('Should update ActionGroup related components provided to --components option', `
+testSubset(
+  'Should update ActionGroup related components provided to --components option',
+  `
 import {ActionGroup, Item} from '@adobe/react-spectrum';
 
 <ActionGroup onAction={onAction}>
@@ -154,4 +192,6 @@ import {ActionGroup, Item} from '@adobe/react-spectrum';
   <Item key="delete">Delete</Item>
   <Item key="edit">Edit</Item>
 </ActionGroup>
-`, 'ActionGroup');
+`,
+  'ActionGroup'
+);

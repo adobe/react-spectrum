@@ -1,7 +1,4 @@
-import {
-  ColorSwatchPicker,
-  ColorSwatchPickerItem
-} from '../src/ColorSwatchPicker';
+import {ColorSwatchPicker, ColorSwatchPickerItem} from '../src/ColorSwatchPicker';
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ColorSwatchPicker> = {
@@ -15,7 +12,7 @@ const meta: Meta<typeof ColorSwatchPicker> = {
 export default meta;
 type Story = StoryFn<typeof ColorSwatchPicker>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <ColorSwatchPicker {...args}>
     <ColorSwatchPickerItem color="#A00" />
     <ColorSwatchPickerItem color="#f80" />

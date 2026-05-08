@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, DOMProps, InputDOMProps, RefObject} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMAttributes,
+  DOMProps,
+  InputDOMProps,
+  RefObject
+} from '@react-types/shared';
 import {ColorSliderProps, ColorSliderState} from 'react-stately/useColorSliderState';
 import {InputHTMLAttributes} from 'react';
 import {mergeProps} from '../utils/mergeProps';
@@ -19,33 +25,37 @@ import {useSlider} from '../slider/useSlider';
 import {useSliderThumb} from '../slider/useSliderThumb';
 import {useVisuallyHidden} from '../visually-hidden/VisuallyHidden';
 
-export interface AriaColorSliderProps extends ColorSliderProps, InputDOMProps, DOMProps, AriaLabelingProps {}
+export interface AriaColorSliderProps
+  extends ColorSliderProps, InputDOMProps, DOMProps, AriaLabelingProps {}
 
 export interface AriaColorSliderOptions extends AriaColorSliderProps {
   /** A ref for the track element. */
-  trackRef: RefObject<Element | null>,
+  trackRef: RefObject<Element | null>;
   /** A ref for the input element. */
-  inputRef: RefObject<HTMLInputElement | null>
+  inputRef: RefObject<HTMLInputElement | null>;
 }
 
 export interface ColorSliderAria {
   /** Props for the label element. */
-  labelProps: DOMAttributes,
+  labelProps: DOMAttributes;
   /** Props for the track element. */
-  trackProps: DOMAttributes,
+  trackProps: DOMAttributes;
   /** Props for the thumb element. */
-  thumbProps: DOMAttributes,
+  thumbProps: DOMAttributes;
   /** Props for the visually hidden range input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>;
   /** Props for the output element, displaying the value of the color slider. */
-  outputProps: DOMAttributes
+  outputProps: DOMAttributes;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a color slider component.
  * Color sliders allow users to adjust an individual channel of a color value.
  */
-export function useColorSlider(props: AriaColorSliderOptions, state: ColorSliderState): ColorSliderAria {
+export function useColorSlider(
+  props: AriaColorSliderOptions,
+  state: ColorSliderState
+): ColorSliderAria {
   let {trackRef, inputRef, orientation, channel, 'aria-label': ariaLabel, name, form} = props;
 
   let {locale, direction} = useLocale();
@@ -55,17 +65,24 @@ export function useColorSlider(props: AriaColorSliderOptions, state: ColorSlider
     ariaLabel = state.value.getChannelName(channel, locale);
   }
 
-  // @ts-ignore - ignore unused incompatible props
-  let {groupProps, trackProps, labelProps, outputProps} = useSlider({...props, 'aria-label': ariaLabel}, state, trackRef);
-  let {inputProps, thumbProps} = useSliderThumb({
-    index: 0,
-    orientation,
-    isDisabled: props.isDisabled,
-    name,
-    form,
-    trackRef,
-    inputRef
-  }, state);
+  let {groupProps, trackProps, labelProps, outputProps} = useSlider(
+    // @ts-ignore - ignore unused incompatible props
+    {...props, 'aria-label': ariaLabel},
+    state,
+    trackRef
+  );
+  let {inputProps, thumbProps} = useSliderThumb(
+    {
+      index: 0,
+      orientation,
+      isDisabled: props.isDisabled,
+      name,
+      form,
+      trackRef,
+      inputRef
+    },
+    state
+  );
 
   let value = state.getDisplayColor();
   let generateBackground = () => {
@@ -79,7 +96,9 @@ export function useColorSlider(props: AriaColorSliderOptions, state: ColorSlider
     }
     switch (channel) {
       case 'hue': {
-        let stops = [0, 60, 120, 180, 240, 300, 360].map(hue => value.withChannelValue('hue', hue).toString('css')).join(', ');
+        let stops = [0, 60, 120, 180, 240, 300, 360]
+          .map(hue => value.withChannelValue('hue', hue).toString('css'))
+          .join(', ');
         return `linear-gradient(to ${to}, ${stops})`;
       }
       case 'lightness': {

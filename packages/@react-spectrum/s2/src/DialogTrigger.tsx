@@ -29,9 +29,7 @@ export function DialogTrigger(props: DialogTriggerProps): ReactNode {
     <AriaDialogTrigger {...props}>
       {/* RAC sets isPressed via PressResponder when the dialog is open.
           We don't want press scaling to appear to get "stuck", so override this. */}
-      <PressResponder isPressed={false}>
-        {props.children}
-      </PressResponder>
+      <PressResponder isPressed={false}>{props.children}</PressResponder>
     </AriaDialogTrigger>
   );
 }

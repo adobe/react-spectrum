@@ -10,9 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
+import {
+  CalendarDate,
+  DateFormatter,
+  toCalendarDate,
+  toCalendarDateTime
+} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, MappedDateValue, TimeValue} from './types';
-import {FieldOptions, FormatterOptions, getFormatOptions, getPlaceholderTime, getValidationResult, useDefaultProps} from './utils';
+import {
+  FieldOptions,
+  FormatterOptions,
+  getFormatOptions,
+  getPlaceholderTime,
+  getValidationResult,
+  useDefaultProps
+} from './utils';
 import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
 import {OverlayTriggerState, useOverlayTriggerState} from '../overlays/useOverlayTriggerState';
 import {useControlledState} from '../utils/useControlledState';
@@ -24,61 +36,67 @@ export interface DatePickerStateOptions<T extends DateValue> extends DatePickerP
    * Determines whether the date picker popover should close automatically when a date is selected.
    * @default true
    */
-  shouldCloseOnSelect?: boolean | (() => boolean)
+  shouldCloseOnSelect?: boolean | (() => boolean);
 }
 
 export interface DatePickerState extends OverlayTriggerState, FormValidationState {
   /** The currently selected date. */
-  value: DateValue | null,
+  value: DateValue | null;
   /** The default date. */
-  defaultValue: DateValue | null,
+  defaultValue: DateValue | null;
   /** Sets the selected date. */
-  setValue(value: DateValue | null): void,
+  setValue(value: DateValue | null): void;
   /**
    * The date portion of the value. This may be set prior to `value` if the user has
    * selected a date but has not yet selected a time.
    */
-  dateValue: DateValue | null,
+  dateValue: DateValue | null;
   /** Sets the date portion of the value. */
-  setDateValue(value: DateValue): void,
+  setDateValue(value: DateValue): void;
   /**
    * The time portion of the value. This may be set prior to `value` if the user has
    * selected a time but has not yet selected a date.
    */
-  timeValue: TimeValue | null,
+  timeValue: TimeValue | null;
   /** Sets the time portion of the value. */
-  setTimeValue(value: TimeValue): void,
+  setTimeValue(value: TimeValue): void;
   /** The granularity for the field, based on the `granularity` prop and current value. */
-  granularity: Granularity,
+  granularity: Granularity;
   /** Whether the date picker supports selecting a time, according to the `granularity` prop and current value. */
-  hasTime: boolean,
+  hasTime: boolean;
   /** Whether the calendar popover is currently open. */
-  isOpen: boolean,
+  isOpen: boolean;
   /** Sets whether the calendar popover is open. */
-  setOpen(isOpen: boolean): void,
+  setOpen(isOpen: boolean): void;
   /**
    * The current validation state of the date picker, based on the `validationState`, `minValue`, and `maxValue` props.
    * @deprecated Use `isInvalid` instead.
    */
-  validationState: ValidationState | null,
+  validationState: ValidationState | null;
   /** Whether the date picker is invalid, based on the `isInvalid`, `minValue`, and `maxValue` props. */
-  isInvalid: boolean,
+  isInvalid: boolean;
   /** Formats the selected value using the given options. */
-  formatValue(locale: string, fieldOptions: FieldOptions): string,
+  formatValue(locale: string, fieldOptions: FieldOptions): string;
   /** Gets a formatter based on state's props. */
-  getDateFormatter(locale: string, formatOptions: FormatterOptions): DateFormatter
+  getDateFormatter(locale: string, formatOptions: FormatterOptions): DateFormatter;
 }
 
 /**
  * Provides state management for a date picker component.
  * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
  */
-export function useDatePickerState<T extends DateValue = DateValue>(props: DatePickerStateOptions<T>): DatePickerState {
+export function useDatePickerState<T extends DateValue = DateValue>(
+  props: DatePickerStateOptions<T>
+): DatePickerState {
   let overlayState = useOverlayTriggerState(props);
-  let [value, setValue] = useControlledState<DateValue | null, MappedDateValue<T> | null>(props.value, props.defaultValue || null, props.onChange);
+  let [value, setValue] = useControlledState<DateValue | null, MappedDateValue<T> | null>(
+    props.value,
+    props.defaultValue || null,
+    props.onChange
+  );
   let [initialValue] = useState(value);
 
-  let v = (value || props.placeholderValue || null);
+  let v = value || props.placeholderValue || null;
   let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let dateValue = value != null ? value.toDate(defaultTimeZone ?? 'UTC') : null;
   let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second';
@@ -100,23 +118,30 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
   }
 
   let showEra = value?.calendar.identifier === 'gregory' && value.era === 'BC';
-  let formatOpts = useMemo(() => ({
-    granularity,
-    timeZone: defaultTimeZone,
-    hideTimeZone: props.hideTimeZone,
-    hourCycle: props.hourCycle,
-    shouldForceLeadingZeros: props.shouldForceLeadingZeros,
-    showEra
-  }), [granularity, props.hourCycle, props.shouldForceLeadingZeros, defaultTimeZone, props.hideTimeZone, showEra]);
+  let formatOpts = useMemo(
+    () => ({
+      granularity,
+      timeZone: defaultTimeZone,
+      hideTimeZone: props.hideTimeZone,
+      hourCycle: props.hourCycle,
+      shouldForceLeadingZeros: props.shouldForceLeadingZeros,
+      showEra
+    }),
+    [
+      granularity,
+      props.hourCycle,
+      props.shouldForceLeadingZeros,
+      defaultTimeZone,
+      props.hideTimeZone,
+      showEra
+    ]
+  );
 
   let {minValue, maxValue, isDateUnavailable} = props;
-  let builtinValidation = useMemo(() => getValidationResult(
-    value,
-    minValue,
-    maxValue,
-    isDateUnavailable,
-    formatOpts
-  ), [value, minValue, maxValue, isDateUnavailable, formatOpts]);
+  let builtinValidation = useMemo(
+    () => getValidationResult(value, minValue, maxValue, isDateUnavailable, formatOpts),
+    [value, minValue, maxValue, isDateUnavailable, formatOpts]
+  );
 
   let validation = useFormValidationState({
     ...props,
@@ -125,7 +150,8 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
   });
 
   let isValueInvalid = validation.displayValidation.isInvalid;
-  let validationState: ValidationState | null = props.validationState || (isValueInvalid ? 'invalid' : null);
+  let validationState: ValidationState | null =
+    props.validationState || (isValueInvalid ? 'invalid' : null);
 
   let commitValue = (date: DateValue, time: TimeValue) => {
     setValue('timeZone' in time ? time.set(toCalendarDate(date)) : toCalendarDateTime(date, time));
@@ -136,10 +162,14 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
   let selectDate = (newValue: CalendarDate) => {
-    let shouldClose = typeof shouldCloseOnSelect === 'function' ? shouldCloseOnSelect() : shouldCloseOnSelect;
+    let shouldClose =
+      typeof shouldCloseOnSelect === 'function' ? shouldCloseOnSelect() : shouldCloseOnSelect;
     if (hasTime) {
       if (selectedTime || shouldClose) {
-        commitValue(newValue, selectedTime || getPlaceholderTime(props.defaultValue || props.placeholderValue));
+        commitValue(
+          newValue,
+          selectedTime || getPlaceholderTime(props.defaultValue || props.placeholderValue)
+        );
       } else {
         setSelectedDate(newValue);
       }
@@ -178,7 +208,10 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
       // If only the time was set and not the date, don't commit. The state will be preserved until
       // the user opens the popover again.
       if (!isOpen && !value && selectedDate && hasTime) {
-        commitValue(selectedDate, selectedTime || getPlaceholderTime(props.defaultValue || props.placeholderValue));
+        commitValue(
+          selectedDate,
+          selectedTime || getPlaceholderTime(props.defaultValue || props.placeholderValue)
+        );
       }
 
       overlayState.setOpen(isOpen);

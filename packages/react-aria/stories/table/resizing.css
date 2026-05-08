@@ -34,7 +34,7 @@
     display: flex;
   }
   .aria-table-headerRow {
-    [role="columnheader"] {
+    [role='columnheader'] {
       border-bottom: 2px solid gray;
     }
   }

@@ -3,7 +3,6 @@
 // non-standard keyboard characters such as the French group separator, narrow non-breaking whitespace.
 // This way we can special case to be more permissive in NumberParser.
 
-
 const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec', 'deva', 'beng'];
 let locales = [
   {label: 'French (France)', value: 'fr-FR'},
@@ -50,7 +49,7 @@ for (let nums of NUMBERING_SYSTEMS) {
     let parts = formatter.formatToParts(10000000000);
     let separator = parts.find(p => p.type === 'group')?.value;
     if (separators.has(separator)) {
-      separators.set(separator, [...separators.get(separator), locale.value + '-u-nu-' + nums])
+      separators.set(separator, [...separators.get(separator), locale.value + '-u-nu-' + nums]);
     } else {
       separators.set(separator, [separator.charCodeAt(0), locale.value + '-u-nu-' + nums]);
     }
@@ -61,11 +60,13 @@ console.log(separators);
 let decimals = new Map();
 for (let nums of NUMBERING_SYSTEMS) {
   for (let locale of locales) {
-    let formatter = new Intl.NumberFormat(locale.value + '-u-nu-' + nums, {minimumFractionDigits: 2});
+    let formatter = new Intl.NumberFormat(locale.value + '-u-nu-' + nums, {
+      minimumFractionDigits: 2
+    });
     let parts = formatter.formatToParts(10000.0000001);
     let decimal = parts.find(p => p.type === 'decimal')?.value;
     if (decimals.has(decimal)) {
-      decimals.set(decimal, [...decimals.get(decimal), locale.value + '-u-nu-' + nums])
+      decimals.set(decimal, [...decimals.get(decimal), locale.value + '-u-nu-' + nums]);
     } else {
       decimals.set(decimal, [decimal.charCodeAt(0), locale.value + '-u-nu-' + nums]);
     }

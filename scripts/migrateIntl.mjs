@@ -1,13 +1,13 @@
 import fs from 'fs';
 import glob from 'fast-glob';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import {fileURLToPath} from 'url';
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
 
 let mapToNewKeys = {
-  'inlinealert.info': 'inlinealert.informative',
+  'inlinealert.info': 'inlinealert.informative'
 };
 
 let stringsToAllow = new Set([
@@ -81,13 +81,17 @@ function readJsonSync(filePath) {
 }
 
 let rspIntlPackages = glob.sync('../packages/**/intl/en-US.json', {cwd: __dirname, absolute: true});
-let dest = path.join(__dirname, '../packages/@react-spectrum/s2/intl')
+let dest = path.join(__dirname, '../packages/@react-spectrum/s2/intl');
 if (!fs.existsSync(dest)) {
   fs.mkdirSync(dest, {recursive: true});
 }
 let packs = new Map();
 for (let intlPkg of rspIntlPackages) {
-  if (intlPkg.includes('react-aria-components') || intlPkg.includes('react-stately') || intlPkg.includes('react-aria')) {
+  if (
+    intlPkg.includes('react-aria-components') ||
+    intlPkg.includes('react-stately') ||
+    intlPkg.includes('react-aria')
+  ) {
     continue;
   }
   let matches = intlPkg.match(/packages\/(.*)\/intl\/en-US.json/);
@@ -109,7 +113,9 @@ for (let intlPkg of rspIntlPackages) {
       for (let [key, value] of Object.entries(existing)) {
         if (duplicates.has(key)) {
           if (value !== duplicates.get(key).value) {
-            console.log(`Key collision: ${key} - ${duplicates.get(key).value} - ${value}\nfrom ${duplicates.get(key).locale} - ${locale}`);
+            console.log(
+              `Key collision: ${key} - ${duplicates.get(key).value} - ${value}\nfrom ${duplicates.get(key).locale} - ${locale}`
+            );
           }
         }
       }
@@ -124,7 +130,7 @@ for (let intlPkg of rspIntlPackages) {
 
   // fs.cpSync(path.dirname(intlPkg), dest);
 }
-console.log(packs)
+console.log(packs);
 
 for (let [key, value] of packs) {
   let dest = path.join(__dirname, '../packages/@react-spectrum/s2/intl', `${key}.json`);

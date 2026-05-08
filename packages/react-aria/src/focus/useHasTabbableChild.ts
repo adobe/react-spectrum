@@ -16,7 +16,7 @@ import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useState} from 'react';
 
 interface AriaHasTabbableChildOptions {
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 // This was created for a special empty case of a component that can have child or
@@ -28,7 +28,10 @@ interface AriaHasTabbableChildOptions {
  * Returns whether an element has a tabbable child, and updates as children change.
  * @private
  */
-export function useHasTabbableChild(ref: RefObject<Element | null>, options?: AriaHasTabbableChildOptions): boolean {
+export function useHasTabbableChild(
+  ref: RefObject<Element | null>,
+  options?: AriaHasTabbableChildOptions
+): boolean {
   let isDisabled = options?.isDisabled;
   let [hasTabbableChild, setHasTabbableChild] = useState(false);
 

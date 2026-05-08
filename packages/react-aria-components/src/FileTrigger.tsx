@@ -23,34 +23,45 @@ export interface FileTriggerProps extends GlobalDOMAttributes<HTMLInputElement> 
   /**
    * Specifies what mime type of files are allowed.
    */
-  acceptedFileTypes?: ReadonlyArray<string>,
+  acceptedFileTypes?: ReadonlyArray<string>;
   /**
    * Whether multiple files can be selected.
    */
-  allowsMultiple?: boolean,
+  allowsMultiple?: boolean;
   /**
    * Specifies the use of a media capture mechanism to capture the media on the spot.
    */
-  defaultCamera?: 'user' | 'environment',
+  defaultCamera?: 'user' | 'environment';
   /**
    * Handler when a user selects a file.
    */
-  onSelect?: (files: FileList | null) => void,
+  onSelect?: (files: FileList | null) => void;
   /**
    * The children of the component.
    */
-  children?: ReactNode,
+  children?: ReactNode;
   /**
    * Enables the selection of directories instead of individual files.
    */
-  acceptDirectory?: boolean
+  acceptDirectory?: boolean;
 }
 
 /**
  * A FileTrigger allows a user to access the file system with any pressable React Aria or React Spectrum component, or custom components built with usePress.
  */
-export const FileTrigger = forwardRef(function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement>) {
-  let {onSelect, acceptedFileTypes, allowsMultiple, defaultCamera, children, acceptDirectory, ...rest} = props;
+export const FileTrigger = forwardRef(function FileTrigger(
+  props: FileTriggerProps,
+  ref: ForwardedRef<HTMLInputElement>
+) {
+  let {
+    onSelect,
+    acceptedFileTypes,
+    allowsMultiple,
+    defaultCamera,
+    children,
+    acceptDirectory,
+    ...rest
+  } = props;
   let inputRef = useObjectRef(ref);
   let domProps = filterDOMProps(rest, {global: true});
 
@@ -72,11 +83,12 @@ export const FileTrigger = forwardRef(function FileTrigger(props: FileTriggerPro
         ref={inputRef}
         style={{display: 'none'}}
         accept={acceptedFileTypes?.toString()}
-        onChange={(e) => onSelect?.(getEventTarget(e).files)}
+        onChange={e => onSelect?.(getEventTarget(e).files)}
         capture={defaultCamera}
         multiple={allowsMultiple}
         // @ts-expect-error
-        webkitdirectory={acceptDirectory ? '' : undefined} />
+        webkitdirectory={acceptDirectory ? '' : undefined}
+      />
     </>
   );
 });

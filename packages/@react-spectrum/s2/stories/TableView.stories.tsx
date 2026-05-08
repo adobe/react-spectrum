@@ -161,14 +161,16 @@ let items = [
 const DynamicTable = (args: TableViewProps): ReactElement => (
   <TableView aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>
     <TableHeader columns={columns}>
-      {(column) => (
-        <Column width={150} minWidth={150} isRowHeader={column.isRowHeader}>{column.name}</Column>
+      {column => (
+        <Column width={150} minWidth={150} isRowHeader={column.isRowHeader}>
+          {column.name}
+        </Column>
       )}
     </TableHeader>
     <TableBody items={items}>
       {item => (
         <Row id={item.id} columns={columns}>
-          {(column) => {
+          {column => {
             return <Cell>{item[column.id]}</Cell>;
           }}
         </Row>
@@ -182,17 +184,26 @@ export const DynamicColumns: StoryObj<typeof DynamicTable> = {
     let [cols, setColumns] = useState(columns);
     return (
       <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
-        <ActionButton onPress={() => setColumns((prev) => prev.length > 3 ? [columns[0]].concat(columns.slice(2, 4)) : columns)}>Toggle columns</ActionButton>
+        <ActionButton
+          onPress={() =>
+            setColumns(prev =>
+              prev.length > 3 ? [columns[0]].concat(columns.slice(2, 4)) : columns
+            )
+          }>
+          Toggle columns
+        </ActionButton>
         <TableView aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>
           <TableHeader columns={cols}>
-            {(column) => (
-              <Column width={150} minWidth={150} isRowHeader={column.isRowHeader}>{column.name}</Column>
+            {column => (
+              <Column width={150} minWidth={150} isRowHeader={column.isRowHeader}>
+                {column.name}
+              </Column>
             )}
           </TableHeader>
           <TableBody items={items} dependencies={[cols]}>
             {item => (
               <Row id={item.id} columns={cols}>
-                {(col) => {
+                {col => {
                   return <Cell>{item[col.id]}</Cell>;
                 }}
               </Row>
@@ -213,7 +224,7 @@ export const DynamicColumns: StoryObj<typeof DynamicTable> = {
 const DynamicTableWithCustomMenus = (args: TableViewProps): ReactElement => (
   <TableView aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>
     <TableHeader columns={columns}>
-      {(column) => (
+      {column => (
         <Column
           width={150}
           minWidth={150}
@@ -221,20 +232,29 @@ const DynamicTableWithCustomMenus = (args: TableViewProps): ReactElement => (
           menuItems={
             <>
               <MenuSection>
-                <MenuItem onAction={action('filter')}><Filter /><Text slot="label">Filter</Text></MenuItem>
+                <MenuItem onAction={action('filter')}>
+                  <Filter />
+                  <Text slot="label">Filter</Text>
+                </MenuItem>
               </MenuSection>
               <MenuSection>
-                <MenuItem onAction={action('hide column')}><Text slot="label">Hide column</Text></MenuItem>
-                <MenuItem onAction={action('manage columns')}><Text slot="label">Manage columns</Text></MenuItem>
+                <MenuItem onAction={action('hide column')}>
+                  <Text slot="label">Hide column</Text>
+                </MenuItem>
+                <MenuItem onAction={action('manage columns')}>
+                  <Text slot="label">Manage columns</Text>
+                </MenuItem>
               </MenuSection>
             </>
-          }>{column.name}</Column>
+          }>
+          {column.name}
+        </Column>
       )}
     </TableHeader>
     <TableBody items={items}>
       {item => (
         <Row id={item.id} columns={columns}>
-          {(column) => {
+          {column => {
             return <Cell>{item[column.id]}</Cell>;
           }}
         </Row>
@@ -263,9 +283,14 @@ const DynamicSortableTableWithCustomMenus = (args: TableViewProps): ReactElement
   };
 
   return (
-    <TableView aria-label="Dynamic table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({width: 320, height: 208})}>
+    <TableView
+      aria-label="Dynamic table"
+      {...args}
+      sortDescriptor={sortDescriptor}
+      onSortChange={onSortChange}
+      styles={style({width: 320, height: 208})}>
       <TableHeader columns={columns}>
-        {(column) => (
+        {column => (
           <Column
             allowsSorting
             width={150}
@@ -274,20 +299,29 @@ const DynamicSortableTableWithCustomMenus = (args: TableViewProps): ReactElement
             menuItems={
               <>
                 <MenuSection>
-                  <MenuItem onAction={action('filter')}><Filter /><Text slot="label">Filter</Text></MenuItem>
+                  <MenuItem onAction={action('filter')}>
+                    <Filter />
+                    <Text slot="label">Filter</Text>
+                  </MenuItem>
                 </MenuSection>
                 <MenuSection>
-                  <MenuItem onAction={action('hide column')}><Text slot="label">Hide column</Text></MenuItem>
-                  <MenuItem onAction={action('manage columns')}><Text slot="label">Manage columns</Text></MenuItem>
+                  <MenuItem onAction={action('hide column')}>
+                    <Text slot="label">Hide column</Text>
+                  </MenuItem>
+                  <MenuItem onAction={action('manage columns')}>
+                    <Text slot="label">Manage columns</Text>
+                  </MenuItem>
                 </MenuSection>
               </>
-            }>{column.name}</Column>
+            }>
+            {column.name}
+          </Column>
         )}
       </TableHeader>
       <TableBody items={items}>
         {item => (
           <Row id={item.id} columns={columns}>
-            {(column) => {
+            {column => {
               return <Cell>{item[column.id]}</Cell>;
             }}
           </Row>
@@ -325,11 +359,15 @@ function renderEmptyState() {
   return (
     <IllustratedMessage>
       <FolderOpen />
-      <Heading>
-        No results
-      </Heading>
+      <Heading>No results</Heading>
       <Content>
-        <Content>No results found, press <Link href="https://adobe.com" onPress={action('linkPress')}>here</Link> for more info.</Content>
+        <Content>
+          No results found, press{' '}
+          <Link href="https://adobe.com" onPress={action('linkPress')}>
+            here
+          </Link>{' '}
+          for more info.
+        </Content>
       </Content>
     </IllustratedMessage>
   );
@@ -338,8 +376,10 @@ function renderEmptyState() {
 const EmptyStateTable = (args: TableViewProps): ReactElement => (
   <TableView aria-label="Empty state" {...args} styles={style({height: 320, width: 320})}>
     <TableHeader columns={columns}>
-      {(column) => (
-        <Column minWidth={200} width={200} isRowHeader={column.isRowHeader}>{column.name}</Column>
+      {column => (
+        <Column minWidth={200} width={200} isRowHeader={column.isRowHeader}>
+          {column.name}
+        </Column>
       )}
     </TableHeader>
     <TableBody items={[]} renderEmptyState={renderEmptyState}>
@@ -408,14 +448,16 @@ const ShowDividers = (args: TableViewProps): ReactElement => {
   return (
     <TableView aria-label="Show Dividers table" {...args} styles={style({width: 320, height: 208})}>
       <TableHeader columns={dividerColumns}>
-        {(column) => (
-          <Column width={150} minWidth={150} isRowHeader={column.isRowHeader}>{column.name}</Column>
+        {column => (
+          <Column width={150} minWidth={150} isRowHeader={column.isRowHeader}>
+            {column.name}
+          </Column>
         )}
       </TableHeader>
       <TableBody items={items}>
         {item => (
           <Row id={item.id} columns={dividerColumns}>
-            {(column) => {
+            {column => {
               return <Cell showDivider={column.showDivider}>{item[column.id]}</Cell>;
             }}
           </Row>
@@ -459,17 +501,33 @@ const TextAlign = (args: TableViewProps): ReactElement => {
   };
 
   return (
-    <TableView aria-label="Show Dividers table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({width: 320, height: 208})}>
+    <TableView
+      aria-label="Show Dividers table"
+      {...args}
+      sortDescriptor={sortDescriptor}
+      onSortChange={onSortChange}
+      styles={style({width: 320, height: 208})}>
       <TableHeader columns={alignColumns}>
-        {(column) => (
-          <Column allowsSorting width={150} minWidth={150} isRowHeader={column.isRowHeader} align={column?.align as 'start' | 'center' | 'end'}>{column.name}</Column>
+        {column => (
+          <Column
+            allowsSorting
+            width={150}
+            minWidth={150}
+            isRowHeader={column.isRowHeader}
+            align={column?.align as 'start' | 'center' | 'end'}>
+            {column.name}
+          </Column>
         )}
       </TableHeader>
       <TableBody items={items}>
         {item => (
           <Row id={item.id} columns={alignColumns}>
-            {(column) => {
-              return <Cell showDivider align={column?.align as 'start' | 'center' | 'end'}>{item[column.id]}</Cell>;
+            {column => {
+              return (
+                <Cell showDivider align={column?.align as 'start' | 'center' | 'end'}>
+                  {item[column.id]}
+                </Cell>
+              );
             }}
           </Row>
         )}
@@ -487,10 +545,10 @@ export const TextAlignStory: StoryObj<typeof TextAlign> = {
 };
 
 interface Character {
-  name: string,
-  height: number,
-  mass: number,
-  birth_year: number
+  name: string;
+  height: number;
+  mass: number;
+  birth_year: number;
 }
 
 const OnLoadMoreTable = (args: TableViewProps & {delay: number}): ReactElement => {
@@ -512,16 +570,22 @@ const OnLoadMoreTable = (args: TableViewProps & {delay: number}): ReactElement =
   });
 
   return (
-    <TableView {...args} aria-label="Load more table" loadingState={list.loadingState} onLoadMore={list.loadMore} styles={style({width: 320, height: 320})}>
+    <TableView
+      {...args}
+      aria-label="Load more table"
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}
+      styles={style({width: 320, height: 320})}>
       <TableHeader>
-        <Column id="name" isRowHeader>Name</Column>
+        <Column id="name" isRowHeader>
+          Name
+        </Column>
         <Column id="height">Height</Column>
         <Column id="mass">Mass</Column>
         <Column id="birth_year">Birth Year</Column>
       </TableHeader>
-      <TableBody
-        items={list.items}>
-        {(item) => (
+      <TableBody items={list.items}>
+        {item => (
           <Row id={item.name}>
             <Cell>{item.name}</Cell>
             <Cell>{item.height}</Cell>
@@ -591,16 +655,23 @@ const SortableTable = (args: TableViewProps): ReactElement => {
   };
 
   return (
-    <TableView aria-label="sortable table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({height: 320})}>
+    <TableView
+      aria-label="sortable table"
+      {...args}
+      sortDescriptor={sortDescriptor}
+      onSortChange={onSortChange}
+      styles={style({height: 320})}>
       <TableHeader columns={sortcolumns}>
-        {(column) => (
-          <Column isRowHeader={column.isRowHeader} allowsSorting>{column.name}</Column>
+        {column => (
+          <Column isRowHeader={column.isRowHeader} allowsSorting>
+            {column.name}
+          </Column>
         )}
       </TableHeader>
       <TableBody items={items}>
         {item => (
           <Row id={item.id} columns={sortcolumns}>
-            {(column) => {
+            {column => {
               return <Cell>{item[column.id]}</Cell>;
             }}
           </Row>
@@ -617,28 +688,44 @@ export const Sorting: StoryObj<typeof SortableTable> = {
 };
 
 type ResizeColumn = Array<{
-  name: string,
-  id: string,
-  isRowHeader?: boolean,
-  allowsResizing?: boolean,
-  showDivider: boolean,
-  align: 'start' | 'center' | 'end',
-  allowsSorting?: boolean
+  name: string;
+  id: string;
+  isRowHeader?: boolean;
+  allowsResizing?: boolean;
+  showDivider: boolean;
+  align: 'start' | 'center' | 'end';
+  allowsSorting?: boolean;
 }>;
 
 let resizeColumn = [
-  {name: 'Name', id: 'name', isRowHeader: true, allowsResizing: true, showDivider: true, align: 'end'},
+  {
+    name: 'Name',
+    id: 'name',
+    isRowHeader: true,
+    allowsResizing: true,
+    showDivider: true,
+    align: 'end'
+  },
   {name: 'Height', id: 'height', align: 'center'},
   {name: 'Weight', id: 'weight', allowsResizing: true, align: 'center'}
 ] as ResizeColumn;
 
 let sortResizeColumns = [
-  {name: 'Name', id: 'name', isRowHeader: true, allowsResizing: true, showDivider: true, allowsSorting: true},
+  {
+    name: 'Name',
+    id: 'name',
+    isRowHeader: true,
+    allowsResizing: true,
+    showDivider: true,
+    allowsSorting: true
+  },
   {name: 'Height', id: 'height', allowsSorting: true},
   {name: 'Weight', id: 'weight', allowsResizing: true, allowsSorting: true}
 ] as ResizeColumn;
 
-const SortableResizableTable = (args: TableViewProps & {isSortable: boolean, columns: ResizeColumn}): ReactElement => {
+const SortableResizableTable = (
+  args: TableViewProps & {isSortable: boolean; columns: ResizeColumn}
+): ReactElement => {
   let {isSortable} = args;
   let [items, setItems] = useState(sortitems);
   let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor | undefined>(undefined);
@@ -658,17 +745,24 @@ const SortableResizableTable = (args: TableViewProps & {isSortable: boolean, col
   };
 
   return (
-    <TableView aria-label="sortable table" {...args} sortDescriptor={isSortable ? sortDescriptor : undefined} onSortChange={isSortable ? onSortChange : undefined} styles={style({width: 384, height: 320})}>
+    <TableView
+      aria-label="sortable table"
+      {...args}
+      sortDescriptor={isSortable ? sortDescriptor : undefined}
+      onSortChange={isSortable ? onSortChange : undefined}
+      styles={style({width: 384, height: 320})}>
       <TableHeader columns={args.columns}>
-        {(column: any) => (
-          <Column {...column}>{column.name}</Column>
-        )}
+        {(column: any) => <Column {...column}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={items}>
         {item => (
           <Row id={item.id} columns={args.columns}>
             {(column: any) => {
-              return <Cell showDivider={column.showDivider} align={column.align}>{item[column.id]}</Cell>;
+              return (
+                <Cell showDivider={column.showDivider} align={column.align}>
+                  {item[column.id]}
+                </Cell>
+              );
             }}
           </Row>
         )}
@@ -702,21 +796,27 @@ export const ResizingSortableTable: StoryObj<typeof SortableResizableTable> = {
 function AsyncLoadingExample(props: TableViewProps): ReactElement {
   interface Item {
     data: {
-      id: string,
-      url: string,
-      title: string
-    }
+      id: string;
+      url: string;
+      title: string;
+    };
   }
 
   let columns = [
     {name: 'Score', id: 'score', defaultWidth: 100, allowsResizing: true, allowsSorting: true},
     {name: 'Title', id: 'title', allowsResizing: true, allowsSorting: true, isRowHeader: true},
     {name: 'Author', id: 'author', defaultWidth: 200, allowsResizing: true, allowsSorting: true},
-    {name: 'Comments', id: 'num_comments', defaultWidth: 100, allowsResizing: true, allowsSorting: true}
+    {
+      name: 'Comments',
+      id: 'num_comments',
+      defaultWidth: 100,
+      allowsResizing: true,
+      allowsSorting: true
+    }
   ];
 
   let list = useAsyncList<Item>({
-    getKey: (item) => item.data.id,
+    getKey: item => item.data.id,
     async load({signal, cursor}) {
       let url = new URL('https://www.reddit.com/r/upliftingnews.json');
       if (cursor) {
@@ -728,42 +828,60 @@ function AsyncLoadingExample(props: TableViewProps): ReactElement {
     },
     sort({items, sortDescriptor}) {
       return {
-        items: items.length > 0 ? items.slice().sort((a, b) => {
-          if (sortDescriptor.column != null) {
-            let cmp = a.data[sortDescriptor.column] < b.data[sortDescriptor.column] ? -1 : 1;
-            if (sortDescriptor.direction === 'descending') {
-              cmp *= -1;
-            }
-            return cmp;
-          } else {
-            return 1;
-          }
-        }) : []
+        items:
+          items.length > 0
+            ? items.slice().sort((a, b) => {
+                if (sortDescriptor.column != null) {
+                  let cmp = a.data[sortDescriptor.column] < b.data[sortDescriptor.column] ? -1 : 1;
+                  if (sortDescriptor.direction === 'descending') {
+                    cmp *= -1;
+                  }
+                  return cmp;
+                } else {
+                  return 1;
+                }
+              })
+            : []
       };
     }
   });
 
   return (
     <div>
-      <ActionButton styles={style({marginBottom: 8})} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
-      <TableView {...props} aria-label="Reddit table" sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} loadingState={list.loadingState} onLoadMore={list.loadMore} styles={style({width: 1000, height: 400})}>
+      <ActionButton
+        styles={style({marginBottom: 8})}
+        onPress={() => list.remove(list.items[0].data.id)}>
+        Remove first item
+      </ActionButton>
+      <TableView
+        {...props}
+        aria-label="Reddit table"
+        sortDescriptor={list.sortDescriptor}
+        onSortChange={list.sort}
+        selectedKeys={list.selectedKeys}
+        onSelectionChange={list.setSelectedKeys}
+        loadingState={list.loadingState}
+        onLoadMore={list.loadMore}
+        styles={style({width: 1000, height: 400})}>
         <TableHeader columns={columns}>
-          {(column) => (
-            <Column {...column}>
-              {column.name}
-            </Column>
-          )}
+          {column => <Column {...column}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={list.items}>
-          {item =>
-            (<Row id={item.data.id} columns={columns}>
-              {(column) => {
-                return column.id === 'title'
-                  ? <Cell textValue={item.data.title}><Link href={item.data.url} target="_blank" isQuiet>{item.data.title}</Link></Cell>
-                  : <Cell>{item.data[column.id]}</Cell>;
+          {item => (
+            <Row id={item.data.id} columns={columns}>
+              {column => {
+                return column.id === 'title' ? (
+                  <Cell textValue={item.data.title}>
+                    <Link href={item.data.url} target="_blank" isQuiet>
+                      {item.data.title}
+                    </Link>
+                  </Cell>
+                ) : (
+                  <Cell>{item.data[column.id]}</Cell>
+                );
               }}
-            </Row>)
-          }
+            </Row>
+          )}
         </TableBody>
       </TableView>
     </div>
@@ -771,7 +889,7 @@ function AsyncLoadingExample(props: TableViewProps): ReactElement {
 }
 
 export const ResizingUncontrolledSortableColumns: StoryObj<typeof AsyncLoadingExample> = {
-  render: (args) => <AsyncLoadingExample {...args} />,
+  render: args => <AsyncLoadingExample {...args} />,
   args: {
     ...Example.args,
     onResizeStart: action('onResizeStart'),
@@ -785,7 +903,7 @@ export const ResizingUncontrolledSortableColumns: StoryObj<typeof AsyncLoadingEx
   }
 };
 
-let manyColumns = [] as {name: string, id: string}[];
+let manyColumns = [] as {name: string; id: string}[];
 for (let i = 0; i < 100; i++) {
   manyColumns.push({name: 'Column ' + i, id: 'C' + i});
 }
@@ -804,25 +922,27 @@ function ManyItemsTable(args) {
   return (
     <TableView aria-label="Many items table" {...args}>
       <TableHeader columns={manyColumns}>
-        {(column) => (
-          <Column width={100} minWidth={100} isRowHeader={column.name === 'Column 1'}>{column.name}</Column>
+        {column => (
+          <Column width={100} minWidth={100} isRowHeader={column.name === 'Column 1'}>
+            {column.name}
+          </Column>
         )}
       </TableHeader>
       <TableBody items={manyRows}>
         {item => (
           <Row id={item.id} columns={manyColumns}>
-            {(column) => {
+            {column => {
               return <Cell>{item[column.id]}</Cell>;
             }}
           </Row>
         )}
       </TableBody>
     </TableView>
-  ); 
+  );
 }
 
 export const ManyItems: StoryObj<typeof TableView> = {
-  render: (args) => <ManyItemsTable {...args} styles={style({width: 800, height: 400})} />,
+  render: args => <ManyItemsTable {...args} styles={style({width: 800, height: 400})} />,
   args: {
     ...Example.args
   },
@@ -835,7 +955,7 @@ export const ManyItems: StoryObj<typeof TableView> = {
 };
 
 export const ViewportScrolling: StoryObj<typeof TableView> = {
-  render: (args) => (
+  render: args => (
     <>
       <ManyItemsTable {...args} styles={style({width: 800})} />
       <div style={{height: 900}} />
@@ -853,7 +973,7 @@ export const ViewportScrolling: StoryObj<typeof TableView> = {
 };
 
 export const ScrollableContainer: StoryObj<typeof TableView> = {
-  render: (args) => (
+  render: args => (
     <div style={{width: 800, height: 500, overflow: 'auto'}}>
       <ManyItemsTable {...args} styles={style({width: 'full'})} />
     </div>
@@ -870,19 +990,28 @@ export const ScrollableContainer: StoryObj<typeof TableView> = {
 };
 
 export const FlexHeight: StoryObj<typeof TableView> = {
-  render: (args) => (
-    <div className={style({display: 'flex', width: 400, height: 400, alignItems: 'stretch', flexDirection: 'column'})}>
+  render: args => (
+    <div
+      className={style({
+        display: 'flex',
+        width: 400,
+        height: 400,
+        alignItems: 'stretch',
+        flexDirection: 'column'
+      })}>
       <div className={style({backgroundColor: 'blue-200'})}>Flex child 1</div>
       <TableView aria-label="Many items table" {...args}>
         <TableHeader columns={manyColumns}>
-          {(column) => (
-            <Column width={100} minWidth={100} isRowHeader={column.name === 'Column 1'}>{column.name}</Column>
+          {column => (
+            <Column width={100} minWidth={100} isRowHeader={column.name === 'Column 1'}>
+              {column.name}
+            </Column>
           )}
         </TableHeader>
         <TableBody items={manyRows}>
           {item => (
             <Row id={item.id} columns={manyColumns}>
-              {(column) => {
+              {column => {
                 return <Cell>{item[column.id]}</Cell>;
               }}
             </Row>
@@ -903,21 +1032,22 @@ export const FlexHeight: StoryObj<typeof TableView> = {
   name: 'flex calculated height, flex direction column'
 };
 
-
 export const FlexWidth: StoryObj<typeof TableView> = {
-  render: (args) => (
+  render: args => (
     <div className={style({display: 'flex', width: 400, height: 400, alignItems: 'stretch'})}>
       <div className={style({backgroundColor: 'blue-200'})}>Flex child 1</div>
       <TableView aria-label="Many items table" {...args}>
         <TableHeader columns={manyColumns}>
-          {(column) => (
-            <Column width={100} minWidth={100} isRowHeader={column.name === 'Column 1'}>{column.name}</Column>
+          {column => (
+            <Column width={100} minWidth={100} isRowHeader={column.name === 'Column 1'}>
+              {column.name}
+            </Column>
           )}
         </TableHeader>
         <TableBody items={manyRows}>
           {item => (
             <Row id={item.id} columns={manyColumns}>
-              {(column) => {
+              {column => {
                 return <Cell>{item[column.id]}</Cell>;
               }}
             </Row>
@@ -937,7 +1067,6 @@ export const FlexWidth: StoryObj<typeof TableView> = {
   },
   name: 'flex calculated height, flex direction row'
 };
-
 
 function ColSpanExample(args: TableViewProps): ReactElement {
   let [hide, setHide] = useState(false);
@@ -979,11 +1108,8 @@ function ColSpanExample(args: TableViewProps): ReactElement {
   );
 }
 
-
 export const ColSpan: StoryObj<typeof ColSpanExample> = {
-  render: (args) => (
-    <ColSpanExample {...args} />
-  ),
+  render: args => <ColSpanExample {...args} />,
   parameters: {
     docs: {
       disable: true
@@ -1455,53 +1581,93 @@ const ResizableTable = () => {
 };
 
 let defaultItems = [
-  {id: 1,
-    fruits: 'Apples', task: 'Collect', status: 'Pending', farmer: 'Eva',
+  {
+    id: 1,
+    fruits: 'Apples',
+    task: 'Collect',
+    status: 'Pending',
+    farmer: 'Eva',
     isSaving: {},
     intermediateValue: {}
   },
-  {id: 2,
-    fruits: 'Oranges', task: 'Collect', status: 'Pending', farmer: 'Steven',
+  {
+    id: 2,
+    fruits: 'Oranges',
+    task: 'Collect',
+    status: 'Pending',
+    farmer: 'Steven',
     isSaving: {},
     intermediateValue: {}
   },
-  {id: 3,
-    fruits: 'Pears', task: 'Collect', status: 'Pending', farmer: 'Michael',
+  {
+    id: 3,
+    fruits: 'Pears',
+    task: 'Collect',
+    status: 'Pending',
+    farmer: 'Michael',
     isSaving: {},
     intermediateValue: {}
   },
-  {id: 4,
-    fruits: 'Cherries', task: 'Collect', status: 'Pending', farmer: 'Sara',
+  {
+    id: 4,
+    fruits: 'Cherries',
+    task: 'Collect',
+    status: 'Pending',
+    farmer: 'Sara',
     isSaving: {},
     intermediateValue: {}
   },
-  {id: 5,
-    fruits: 'Dates', task: 'Collect', status: 'Pending', farmer: 'Karina',
+  {
+    id: 5,
+    fruits: 'Dates',
+    task: 'Collect',
+    status: 'Pending',
+    farmer: 'Karina',
     isSaving: {},
     intermediateValue: {}
   },
-  {id: 6,
-    fruits: 'Bananas', task: 'Collect', status: 'Pending', farmer: 'Otto',
+  {
+    id: 6,
+    fruits: 'Bananas',
+    task: 'Collect',
+    status: 'Pending',
+    farmer: 'Otto',
     isSaving: {},
     intermediateValue: {}
   },
-  {id: 7,
-    fruits: 'Melons', task: 'Collect', status: 'Pending', farmer: 'Matt',
+  {
+    id: 7,
+    fruits: 'Melons',
+    task: 'Collect',
+    status: 'Pending',
+    farmer: 'Matt',
     isSaving: {},
     intermediateValue: {}
   },
-  {id: 8,
-    fruits: 'Figs', task: 'Collect', status: 'Pending', farmer: 'Emily',
+  {
+    id: 8,
+    fruits: 'Figs',
+    task: 'Collect',
+    status: 'Pending',
+    farmer: 'Emily',
     isSaving: {},
     intermediateValue: {}
   },
-  {id: 9,
-    fruits: 'Blueberries', task: 'Collect', status: 'Pending', farmer: 'Amelia',
+  {
+    id: 9,
+    fruits: 'Blueberries',
+    task: 'Collect',
+    status: 'Pending',
+    farmer: 'Amelia',
     isSaving: {},
     intermediateValue: {}
   },
-  {id: 10,
-    fruits: 'Blackberries', task: 'Collect', status: 'Pending', farmer: 'Isla',
+  {
+    id: 10,
+    fruits: 'Blackberries',
+    task: 'Collect',
+    status: 'Pending',
+    farmer: 'Isla',
     isSaving: {},
     intermediateValue: {}
   }
@@ -1521,33 +1687,37 @@ export const EditableTable: StoryObj<EditableTableProps> = {
     let columns = editableColumns;
     let data = useListData({initialItems: defaultItems});
 
-    let onChange = useCallback((id: Key, columnId: Key, values: any) => {
-      let value = values[columnId];
-      if (value === null) {
-        return;
-      }
-      data.update(id, (prevItem) => ({...prevItem, [columnId]: value}));
-    }, [data]);
+    let onChange = useCallback(
+      (id: Key, columnId: Key, values: any) => {
+        let value = values[columnId];
+        if (value === null) {
+          return;
+        }
+        data.update(id, prevItem => ({...prevItem, [columnId]: value}));
+      },
+      [data]
+    );
 
     return (
       <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
-        <TableView aria-label="Dynamic table" {...props} styles={style({width: 800, maxWidth: 'calc(100vw - 2rem)', height: 208})}>
+        <TableView
+          aria-label="Dynamic table"
+          {...props}
+          styles={style({width: 800, maxWidth: 'calc(100vw - 2rem)', height: 208})}>
           <TableHeader columns={columns}>
-            {(column) => (
-              <Column {...column}>{column.name}</Column>
-            )}
+            {column => <Column {...column}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={data.items}>
             {item => (
               <Row id={item.id} columns={columns}>
-                {(column) => {
+                {column => {
                   if (column.id === 'fruits') {
                     return (
                       <EditableCell
                         aria-label={`Edit ${item[column.id]} in ${column.name}`}
                         align={column.align}
                         showDivider={column.showDivider}
-                        onSubmit={(e) => {
+                        onSubmit={e => {
                           e.preventDefault();
                           let formData = new FormData(e.target as HTMLFormElement);
                           let values = Object.fromEntries(formData.entries());
@@ -1559,15 +1729,23 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                             name={column.id! as string}
                             aria-label="Fruit name edit field"
                             autoFocus
-                            validate={value => value.length > 0 ? null : 'Fruit name is required'}
+                            validate={value => (value.length > 0 ? null : 'Fruit name is required')}
                             styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
-                            defaultValue={item[column.id!]} />
+                            defaultValue={item[column.id!]}
+                          />
                         )}>
-                        <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>
+                        <div
+                          className={style({
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
+                            justifyContent: 'space-between'
+                          })}>
                           {item[column.id]}
                           <ActionButton slot="edit" aria-label="Edit fruit">
                             <Edit />
-                          </ActionButton></div>
+                          </ActionButton>
+                        </div>
                       </EditableCell>
                     );
                   }
@@ -1576,7 +1754,7 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                       <EditableCell
                         align={column.align}
                         showDivider={column.showDivider}
-                        onSubmit={(e) => {
+                        onSubmit={e => {
                           e.preventDefault();
                           let formData = new FormData(e.target as HTMLFormElement);
                           let values = Object.fromEntries(formData.entries());
@@ -1590,19 +1768,60 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                             styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
                             defaultValue={item[column.id!]}
                             name={column.id! as string}>
-                            <PickerItem textValue="Eva" id="Eva"><User /><Text>Eva</Text></PickerItem>
-                            <PickerItem textValue="Steven" id="Steven"><User /><Text>Steven</Text></PickerItem>
-                            <PickerItem textValue="Michael" id="Michael"><User /><Text>Michael</Text></PickerItem>
-                            <PickerItem textValue="Sara" id="Sara"><User /><Text>Sara</Text></PickerItem>
-                            <PickerItem textValue="Karina" id="Karina"><User /><Text>Karina</Text></PickerItem>
-                            <PickerItem textValue="Otto" id="Otto"><User /><Text>Otto</Text></PickerItem>
-                            <PickerItem textValue="Matt" id="Matt"><User /><Text>Matt</Text></PickerItem>
-                            <PickerItem textValue="Emily" id="Emily"><User /><Text>Emily</Text></PickerItem>
-                            <PickerItem textValue="Amelia" id="Amelia"><User /><Text>Amelia</Text></PickerItem>
-                            <PickerItem textValue="Isla" id="Isla"><User /><Text>Isla</Text></PickerItem>
+                            <PickerItem textValue="Eva" id="Eva">
+                              <User />
+                              <Text>Eva</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Steven" id="Steven">
+                              <User />
+                              <Text>Steven</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Michael" id="Michael">
+                              <User />
+                              <Text>Michael</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Sara" id="Sara">
+                              <User />
+                              <Text>Sara</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Karina" id="Karina">
+                              <User />
+                              <Text>Karina</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Otto" id="Otto">
+                              <User />
+                              <Text>Otto</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Matt" id="Matt">
+                              <User />
+                              <Text>Matt</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Emily" id="Emily">
+                              <User />
+                              <Text>Emily</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Amelia" id="Amelia">
+                              <User />
+                              <Text>Amelia</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Isla" id="Isla">
+                              <User />
+                              <Text>Isla</Text>
+                            </PickerItem>
                           </Picker>
                         )}>
-                        <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>{item[column.id]}<ActionButton slot="edit" aria-label="Edit fruit"><Edit /></ActionButton></div>
+                        <div
+                          className={style({
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
+                            justifyContent: 'space-between'
+                          })}>
+                          {item[column.id]}
+                          <ActionButton slot="edit" aria-label="Edit fruit">
+                            <Edit />
+                          </ActionButton>
+                        </div>
                       </EditableCell>
                     );
                   }
@@ -1613,7 +1832,11 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                       </Cell>
                     );
                   }
-                  return <Cell align={column.align} showDivider={column.showDivider}>{item[column.id!]}</Cell>;
+                  return (
+                    <Cell align={column.align} showDivider={column.showDivider}>
+                      {item[column.id!]}
+                    </Cell>
+                  );
                 }}
               </Row>
             )}
@@ -1636,20 +1859,27 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
       currentRequests.current.delete(id);
     });
     let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>}>>(new Map());
-    let onChange = useCallback((id: Key, columnId: Key, values: any) => {
-      let value = values[columnId];
-      if (value === null) {
-        return;
-      }
-      let alreadySaving = currentRequests.current.get(id);
-      if (alreadySaving) {
-        // remove and cancel the previous request
-        currentRequests.current.delete(id);
-        clearTimeout(alreadySaving.request);
-      }
-      let prevItem = data.getItem(id)!;
-      data.update(id, {...prevItem, [columnId]: value, isSaving: {...prevItem.isSaving, [columnId]: true}});
-    }, [data]);
+    let onChange = useCallback(
+      (id: Key, columnId: Key, values: any) => {
+        let value = values[columnId];
+        if (value === null) {
+          return;
+        }
+        let alreadySaving = currentRequests.current.get(id);
+        if (alreadySaving) {
+          // remove and cancel the previous request
+          currentRequests.current.delete(id);
+          clearTimeout(alreadySaving.request);
+        }
+        let prevItem = data.getItem(id)!;
+        data.update(id, {
+          ...prevItem,
+          [columnId]: value,
+          isSaving: {...prevItem.isSaving, [columnId]: true}
+        });
+      },
+      [data]
+    );
 
     useEffect(() => {
       // if any item is saving and we don't have a request for it, start a timer to commit it
@@ -1669,21 +1899,19 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
       <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
         <TableView aria-label="Dynamic table" {...props} styles={style({width: 800, height: 208})}>
           <TableHeader columns={columns}>
-            {(column) => (
-              <Column {...column}>{column.name}</Column>
-            )}
+            {column => <Column {...column}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={data.items}>
             {item => (
               <Row id={item.id} columns={columns}>
-                {(column) => {
+                {column => {
                   if (column.id === 'fruits') {
                     return (
                       <EditableCell
                         aria-label={`Edit ${item[column.id]} in ${column.name}`}
                         align={column.align}
                         showDivider={column.showDivider}
-                        onSubmit={(e) => {
+                        onSubmit={e => {
                           e.preventDefault();
                           let formData = new FormData(e.target as HTMLFormElement);
                           let values = Object.fromEntries(formData.entries());
@@ -1694,12 +1922,24 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
                           <TextField
                             aria-label="Edit fruit"
                             autoFocus
-                            validate={value => value.length > 0 ? null : 'Fruit name is required'}
+                            validate={value => (value.length > 0 ? null : 'Fruit name is required')}
                             styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
                             defaultValue={item[column.id!]}
-                            name={column.id! as string} />
+                            name={column.id! as string}
+                          />
                         )}>
-                        <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>{item[column.id]}<ActionButton slot="edit" aria-label="Edit fruit"><Edit /></ActionButton></div>
+                        <div
+                          className={style({
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
+                            justifyContent: 'space-between'
+                          })}>
+                          {item[column.id]}
+                          <ActionButton slot="edit" aria-label="Edit fruit">
+                            <Edit />
+                          </ActionButton>
+                        </div>
                       </EditableCell>
                     );
                   }
@@ -1708,7 +1948,7 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
                       <EditableCell
                         align={column.align}
                         showDivider={column.showDivider}
-                        onSubmit={(e) => {
+                        onSubmit={e => {
                           e.preventDefault();
                           let formData = new FormData(e.target as HTMLFormElement);
                           let values = Object.fromEntries(formData.entries());
@@ -1722,19 +1962,60 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
                             styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
                             defaultValue={item[column.id!]}
                             name={column.id! as string}>
-                            <PickerItem textValue="Eva" id="Eva"><User /><Text>Eva</Text></PickerItem>
-                            <PickerItem textValue="Steven" id="Steven"><User /><Text>Steven</Text></PickerItem>
-                            <PickerItem textValue="Michael" id="Michael"><User /><Text>Michael</Text></PickerItem>
-                            <PickerItem textValue="Sara" id="Sara"><User /><Text>Sara</Text></PickerItem>
-                            <PickerItem textValue="Karina" id="Karina"><User /><Text>Karina</Text></PickerItem>
-                            <PickerItem textValue="Otto" id="Otto"><User /><Text>Otto</Text></PickerItem>
-                            <PickerItem textValue="Matt" id="Matt"><User /><Text>Matt</Text></PickerItem>
-                            <PickerItem textValue="Emily" id="Emily"><User /><Text>Emily</Text></PickerItem>
-                            <PickerItem textValue="Amelia" id="Amelia"><User /><Text>Amelia</Text></PickerItem>
-                            <PickerItem textValue="Isla" id="Isla"><User /><Text>Isla</Text></PickerItem>
+                            <PickerItem textValue="Eva" id="Eva">
+                              <User />
+                              <Text>Eva</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Steven" id="Steven">
+                              <User />
+                              <Text>Steven</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Michael" id="Michael">
+                              <User />
+                              <Text>Michael</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Sara" id="Sara">
+                              <User />
+                              <Text>Sara</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Karina" id="Karina">
+                              <User />
+                              <Text>Karina</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Otto" id="Otto">
+                              <User />
+                              <Text>Otto</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Matt" id="Matt">
+                              <User />
+                              <Text>Matt</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Emily" id="Emily">
+                              <User />
+                              <Text>Emily</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Amelia" id="Amelia">
+                              <User />
+                              <Text>Amelia</Text>
+                            </PickerItem>
+                            <PickerItem textValue="Isla" id="Isla">
+                              <User />
+                              <Text>Isla</Text>
+                            </PickerItem>
                           </Picker>
                         )}>
-                        <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>{item[column.id]}<ActionButton slot="edit" aria-label="Edit fruit"><Edit /></ActionButton></div>
+                        <div
+                          className={style({
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
+                            justifyContent: 'space-between'
+                          })}>
+                          {item[column.id]}
+                          <ActionButton slot="edit" aria-label="Edit fruit">
+                            <Edit />
+                          </ActionButton>
+                        </div>
                       </EditableCell>
                     );
                   }
@@ -1745,7 +2026,11 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
                       </Cell>
                     );
                   }
-                  return <Cell align={column.align} showDivider={column.showDivider}>{item[column.id!]}</Cell>;
+                  return (
+                    <Cell align={column.align} showDivider={column.showDivider}>
+                      {item[column.id!]}
+                    </Cell>
+                  );
                 }}
               </Row>
             )}
@@ -1757,10 +2042,16 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
 };
 
 export const TableWithNestedRows: StoryObj<typeof TableView> = {
-  render: (args) => (
-    <TableView aria-label="Files" treeColumn="name" {...args} styles={style({width: 700, height: 320})}>
+  render: args => (
+    <TableView
+      aria-label="Files"
+      treeColumn="name"
+      {...args}
+      styles={style({width: 700, height: 320})}>
       <TableHeader>
-        <Column id="name" isRowHeader>Name</Column>
+        <Column id="name" isRowHeader>
+          Name
+        </Column>
         <Column id="type">Type</Column>
         <Column id="date">Date Modified</Column>
       </TableHeader>
@@ -1823,23 +2114,47 @@ export const TableWithNestedRows: StoryObj<typeof TableView> = {
 function NestedInlineEditExample(args) {
   let tree = useTreeData({
     initialItems: [
-      {id: '1', title: 'Documents', type: 'Directory', date: '10/20/2025', children: [
-        {id: '2', title: 'Project', type: 'Directory', date: '8/2/2025', children: [
-          {id: '3', title: 'Weekly Report', type: 'File', date: '7/10/2025', children: []},
-          {id: '4', title: 'Budget', type: 'File', date: '8/20/2025', children: []}
-        ]}
-      ]},
-      {id: '5', title: 'Photos', type: 'Directory', date: '2/3/2026', children: [
-        {id: '6', title: 'Image 1', type: 'File', date: '1/23/2026', children: []},
-        {id: '7', title: 'Image 2', type: 'File', date: '2/3/2026', children: []}
-      ]}
+      {
+        id: '1',
+        title: 'Documents',
+        type: 'Directory',
+        date: '10/20/2025',
+        children: [
+          {
+            id: '2',
+            title: 'Project',
+            type: 'Directory',
+            date: '8/2/2025',
+            children: [
+              {id: '3', title: 'Weekly Report', type: 'File', date: '7/10/2025', children: []},
+              {id: '4', title: 'Budget', type: 'File', date: '8/20/2025', children: []}
+            ]
+          }
+        ]
+      },
+      {
+        id: '5',
+        title: 'Photos',
+        type: 'Directory',
+        date: '2/3/2026',
+        children: [
+          {id: '6', title: 'Image 1', type: 'File', date: '1/23/2026', children: []},
+          {id: '7', title: 'Image 2', type: 'File', date: '2/3/2026', children: []}
+        ]
+      }
     ]
   });
 
   return (
-    <TableView aria-label="Files" treeColumn="name" {...args} styles={style({width: 700, height: 320})}>
+    <TableView
+      aria-label="Files"
+      treeColumn="name"
+      {...args}
+      styles={style({width: 700, height: 320})}>
       <TableHeader>
-        <Column id="name" isRowHeader>Name</Column>
+        <Column id="name" isRowHeader>
+          Name
+        </Column>
         <Column id="type">Type</Column>
         <Column id="date">Date Modified</Column>
       </TableHeader>
@@ -1849,7 +2164,7 @@ function NestedInlineEditExample(args) {
             <Row id={item.key}>
               <EditableCell
                 aria-label={`Edit ${item.value.title}`}
-                onSubmit={(e) => {
+                onSubmit={e => {
                   e.preventDefault();
                   let formData = new FormData(e.target as HTMLFormElement);
                   let title = formData.get('name') as string;
@@ -1865,18 +2180,25 @@ function NestedInlineEditExample(args) {
                     autoFocus
                     isRequired
                     styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
-                    defaultValue={item.value.title} />
+                    defaultValue={item.value.title}
+                  />
                 )}>
-                <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>
+                <div
+                  className={style({
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    justifyContent: 'space-between'
+                  })}>
                   {item.value.title}
-                  <ActionButton slot="edit" aria-label="Edit fruit"><Edit /></ActionButton>
+                  <ActionButton slot="edit" aria-label="Edit fruit">
+                    <Edit />
+                  </ActionButton>
                 </div>
               </EditableCell>
               <Cell>{item.value.type}</Cell>
               <Cell>{item.value.date}</Cell>
-              <Collection items={item.children || []}>
-                {renderItem}
-              </Collection>
+              <Collection items={item.children || []}>{renderItem}</Collection>
             </Row>
           );
         }}
@@ -1886,7 +2208,7 @@ function NestedInlineEditExample(args) {
 }
 
 export const TableWithNestedRowsAndInlineEditing: StoryObj<typeof TableView> = {
-  render: (args) => <NestedInlineEditExample {...args} />
+  render: args => <NestedInlineEditExample {...args} />
 };
 
 const invoices = [
@@ -1900,11 +2222,13 @@ const invoices = [
 ];
 
 export const TableFooterExample: StoryObj<typeof TableView> = {
-  render: (args) => {
+  render: args => {
     return (
-      <TableView aria-label="Files" selectionMode="multiple"  styles={style({width: 700})} {...args}>
+      <TableView aria-label="Files" selectionMode="multiple" styles={style({width: 700})} {...args}>
         <TableHeader>
-          <Column isRowHeader allowsResizing>Title</Column>
+          <Column isRowHeader allowsResizing>
+            Title
+          </Column>
           <Column allowsResizing>Status</Column>
           <Column allowsResizing>Payment Method</Column>
           <Column>Price</Column>
@@ -1921,8 +2245,18 @@ export const TableFooterExample: StoryObj<typeof TableView> = {
         </TableBody>
         <TableFooter>
           <Row>
-            <Cell colSpan={3} align="end">Total:</Cell>
-            <Cell>{invoices.reduce((p, item) => p + Number(item.price.replace(/[$,]/g, '')), 0).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})}</Cell>
+            <Cell colSpan={3} align="end">
+              Total:
+            </Cell>
+            <Cell>
+              {invoices
+                .reduce((p, item) => p + Number(item.price.replace(/[$,]/g, '')), 0)
+                .toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                  maximumFractionDigits: 0
+                })}
+            </Cell>
           </Row>
         </TableFooter>
       </TableView>

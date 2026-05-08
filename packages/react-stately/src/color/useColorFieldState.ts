@@ -11,16 +11,32 @@
  */
 
 import {Color} from './types';
-import {FocusableProps, HelpTextProps, InputBase, LabelableProps, TextInputBase, Validation, ValueBase} from '@react-types/shared';
+import {
+  FocusableProps,
+  HelpTextProps,
+  InputBase,
+  LabelableProps,
+  TextInputBase,
+  Validation,
+  ValueBase
+} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
 import {parseColor} from './Color';
 import {useColor} from './useColor';
 import {useControlledState} from '../utils/useControlledState';
 import {useMemo, useState} from 'react';
 
-export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation<Color | null>, FocusableProps, TextInputBase, LabelableProps, HelpTextProps {
+export interface ColorFieldProps
+  extends
+    Omit<ValueBase<string | Color | null>, 'onChange'>,
+    InputBase,
+    Validation<Color | null>,
+    FocusableProps,
+    TextInputBase,
+    LabelableProps,
+    HelpTextProps {
   /** Handler that is called when the value changes. */
-  onChange?: (color: Color | null) => void
+  onChange?: (color: Color | null) => void;
 }
 
 export interface ColorFieldState extends FormValidationState {
@@ -28,37 +44,37 @@ export interface ColorFieldState extends FormValidationState {
    * The current text value of the input. Updated as the user types,
    * and formatted according to `formatOptions` on blur.
    */
-  readonly inputValue: string,
+  readonly inputValue: string;
   /**
    * The currently parsed color value, or null if the field is empty.
    * Updated based on the `inputValue` as the user types.
    */
-  readonly colorValue: Color | null,
+  readonly colorValue: Color | null;
   /** The default value of the color field. */
-  readonly defaultColorValue: Color | null,
+  readonly defaultColorValue: Color | null;
   /** Sets the color value of the field. */
-  setColorValue(value: Color | null): void,
+  setColorValue(value: Color | null): void;
   /** Sets the current text value of the input. */
-  setInputValue(value: string): void,
+  setInputValue(value: string): void;
   /**
    * Updates the input value based on the currently parsed color value.
    * Typically this is called when the field is blurred.
    */
-  commit(): void,
+  commit(): void;
   /** Increments the current input value to the next step boundary, and fires `onChange`. */
-  increment(): void,
+  increment(): void;
   /** Decrements the current input value to the next step boundary, and fires `onChange`. */
-  decrement(): void,
+  decrement(): void;
   /** Sets the current value to the maximum color value, and fires `onChange`. */
-  incrementToMax(): void,
+  incrementToMax(): void;
   /** Sets the current value to the minimum color value, and fires `onChange`. */
-  decrementToMin(): void,
+  decrementToMin(): void;
   /**
    * Validates a user input string.
    * Values can be partially entered, and may be valid even if they cannot currently be parsed to a color.
    * Can be used to implement validation as a user types.
    */
-  validate(value: string): boolean
+  validate(value: string): boolean;
 }
 
 const MIN_COLOR = parseColor('#000000');
@@ -70,20 +86,20 @@ const MAX_COLOR_INT = MAX_COLOR.toHexInt();
  * Provides state management for a color field component. Color fields allow
  * users to enter and adjust a hex color value.
  */
-export function useColorFieldState(
-  props: ColorFieldProps
-): ColorFieldState {
-  let {
-    value,
-    defaultValue,
-    onChange
-  } = props;
+export function useColorFieldState(props: ColorFieldProps): ColorFieldState {
+  let {value, defaultValue, onChange} = props;
   let {step} = MIN_COLOR.getChannelRange('red');
 
   let initialDefaultValue = useColor(defaultValue);
-  let [colorValue, setColorValue] = useControlledState<Color | null>(useColor(value), initialDefaultValue!, onChange);
+  let [colorValue, setColorValue] = useControlledState<Color | null>(
+    useColor(value),
+    initialDefaultValue!,
+    onChange
+  );
   let [initialValue] = useState(colorValue);
-  let [inputValue, setInputValue] = useState(() => (value || defaultValue) && colorValue ? colorValue.toString('hex') : '');
+  let [inputValue, setInputValue] = useState(() =>
+    (value || defaultValue) && colorValue ? colorValue.toString('hex') : ''
+  );
 
   let validation = useFormValidationState({
     ...props,

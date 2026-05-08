@@ -34,13 +34,15 @@ describe('ToggleButton', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole} =  render(<ToggleButton data-foo="bar">Test</ToggleButton>);
+    let {getByRole} = render(<ToggleButton data-foo="bar">Test</ToggleButton>);
     let button = getByRole('button');
     expect(button).toHaveAttribute('data-foo', 'bar');
   });
 
   it('should support render props', async () => {
-    let {getByRole} =  render(<ToggleButton>{({isSelected}) => isSelected ? 'On' : 'Off'}</ToggleButton>);
+    let {getByRole} = render(
+      <ToggleButton>{({isSelected}) => (isSelected ? 'On' : 'Off')}</ToggleButton>
+    );
     let button = getByRole('button');
     expect(button).toHaveTextContent('Off');
 
@@ -49,7 +51,9 @@ describe('ToggleButton', () => {
   });
 
   it('should support custom render function', () => {
-    let {getByRole} = render(<ToggleButton render={props => <button {...props} data-custom="bar" />}>Test</ToggleButton>);
+    let {getByRole} = render(
+      <ToggleButton render={props => <button {...props} data-custom="bar" />}>Test</ToggleButton>
+    );
     let button = getByRole('button');
     expect(button).toHaveAttribute('data-custom', 'bar');
   });
@@ -67,7 +71,9 @@ describe('ToggleButton', () => {
   });
 
   it('should support hover', async () => {
-    let {getByRole} = render(<ToggleButton className={({isHovered}) => isHovered ? 'hover' : ''}>Test</ToggleButton>);
+    let {getByRole} = render(
+      <ToggleButton className={({isHovered}) => (isHovered ? 'hover' : '')}>Test</ToggleButton>
+    );
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-hovered');
@@ -83,7 +89,11 @@ describe('ToggleButton', () => {
   });
 
   it('should support focus ring', async () => {
-    let {getByRole} = render(<ToggleButton className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</ToggleButton>);
+    let {getByRole} = render(
+      <ToggleButton className={({isFocusVisible}) => (isFocusVisible ? 'focus' : '')}>
+        Test
+      </ToggleButton>
+    );
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-focus-visible');
@@ -103,7 +113,15 @@ describe('ToggleButton', () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
     let onClickCapture = jest.fn();
-    let {getByRole} = render(<ToggleButton className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</ToggleButton>);
+    let {getByRole} = render(
+      <ToggleButton
+        className={({isPressed}) => (isPressed ? 'pressed' : '')}
+        onPress={onPress}
+        onClick={onClick}
+        onClickCapture={onClickCapture}>
+        Test
+      </ToggleButton>
+    );
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-pressed');
@@ -123,7 +141,11 @@ describe('ToggleButton', () => {
   });
 
   it('should support disabled state', () => {
-    let {getByRole} = render(<ToggleButton isDisabled className={({isDisabled}) => isDisabled ? 'disabled' : ''}>Test</ToggleButton>);
+    let {getByRole} = render(
+      <ToggleButton isDisabled className={({isDisabled}) => (isDisabled ? 'disabled' : '')}>
+        Test
+      </ToggleButton>
+    );
     let button = getByRole('button');
 
     expect(button).toBeDisabled();
@@ -132,7 +154,13 @@ describe('ToggleButton', () => {
 
   it('should support selected state', async () => {
     let onChange = jest.fn();
-    let {getByRole} = render(<ToggleButton onChange={onChange} className={({isSelected}) => isSelected ? 'selected' : ''}>Test</ToggleButton>);
+    let {getByRole} = render(
+      <ToggleButton
+        onChange={onChange}
+        className={({isSelected}) => (isSelected ? 'selected' : '')}>
+        Test
+      </ToggleButton>
+    );
     let button = getByRole('button');
 
     expect(button).toHaveAttribute('aria-pressed', 'false');

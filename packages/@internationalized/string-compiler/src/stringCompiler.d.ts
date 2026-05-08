@@ -15,7 +15,7 @@ interface Options {
    * Output module format.
    * @default 'cjs'
    */
-  format?: 'cjs' | 'esm'
+  format?: 'cjs' | 'esm';
 }
 
 /** Compiles an object containing ICU message strings to a JavaScript module. */

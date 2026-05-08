@@ -15,13 +15,14 @@ import {LabelAria, LabelAriaProps, useLabel} from './useLabel';
 import {mergeProps} from '../utils/mergeProps';
 import {useSlotId} from '../utils/useId';
 
-export interface AriaFieldProps extends LabelAriaProps, HelpTextProps, Omit<Validation<any>, 'isRequired'> {}
+export interface AriaFieldProps
+  extends LabelAriaProps, HelpTextProps, Omit<Validation<any>, 'isRequired'> {}
 
 export interface FieldAria extends LabelAria {
   /** Props for the description element, if any. */
-  descriptionProps: DOMAttributes,
+  descriptionProps: DOMAttributes;
   /** Props for the error message element, if any. */
-  errorMessageProps: DOMAttributes
+  errorMessageProps: DOMAttributes;
 }
 
 /**
@@ -33,16 +34,29 @@ export function useField(props: AriaFieldProps): FieldAria {
   let {description, errorMessage, isInvalid, validationState} = props;
   let {labelProps, fieldProps} = useLabel(props);
 
-  let descriptionId = useSlotId([Boolean(description), Boolean(errorMessage), isInvalid, validationState]);
-  let errorMessageId = useSlotId([Boolean(description), Boolean(errorMessage), isInvalid, validationState]);
+  let descriptionId = useSlotId([
+    Boolean(description),
+    Boolean(errorMessage),
+    isInvalid,
+    validationState
+  ]);
+  let errorMessageId = useSlotId([
+    Boolean(description),
+    Boolean(errorMessage),
+    isInvalid,
+    validationState
+  ]);
 
   fieldProps = mergeProps(fieldProps, {
-    'aria-describedby': [
-      descriptionId,
-      // Use aria-describedby for error message because aria-errormessage is unsupported using VoiceOver or NVDA. See https://github.com/adobe/react-spectrum/issues/1346#issuecomment-740136268
-      errorMessageId,
-      props['aria-describedby']
-    ].filter(Boolean).join(' ') || undefined
+    'aria-describedby':
+      [
+        descriptionId,
+        // Use aria-describedby for error message because aria-errormessage is unsupported using VoiceOver or NVDA. See https://github.com/adobe/react-spectrum/issues/1346#issuecomment-740136268
+        errorMessageId,
+        props['aria-describedby']
+      ]
+        .filter(Boolean)
+        .join(' ') || undefined
   });
 
   return {

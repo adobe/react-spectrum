@@ -6,7 +6,7 @@ const StrictModeToolBar = ({api}) => {
   let strictParam = api.getQueryParam('strict');
   let [isStrict, setStrict] = useState(strictParam !== 'false');
   let onChange = () => {
-    setStrict((old) => {
+    setStrict(old => {
       channel.emit('strict/updated', !old);
       return !old;
     });
@@ -14,15 +14,22 @@ const StrictModeToolBar = ({api}) => {
 
   useEffect(() => {
     api.setQueryParams({
-      'strict': isStrict
+      strict: isStrict
     });
   });
 
   return (
     <div style={{display: 'flex', alignItems: 'center', fontSize: '12px'}}>
       <div style={{marginRight: '10px'}}>
-        <label htmlFor="strictmode">StrictMode:
-          <input type="checkbox" id="strictmode" name="strictmode" checked={isStrict} onChange={onChange} />
+        <label htmlFor="strictmode">
+          StrictMode:
+          <input
+            type="checkbox"
+            id="strictmode"
+            name="strictmode"
+            checked={isStrict}
+            onChange={onChange}
+          />
         </label>
       </div>
     </div>
@@ -30,12 +37,12 @@ const StrictModeToolBar = ({api}) => {
 };
 
 if (process.env.NODE_ENV !== 'production') {
-  addons.register('StrictModeSwitcher', (api) => {
+  addons.register('StrictModeSwitcher', api => {
     addons.add('StrictModeSwitcher', {
       title: 'Strict mode switcher',
       type: types.TOOL,
       //👇 Shows the Toolbar UI element if either the Canvas or Docs tab is active
-      match: ({ viewMode }) => !!(viewMode && viewMode.match(/^(story|docs)$/)),
+      match: ({viewMode}) => !!(viewMode && viewMode.match(/^(story|docs)$/)),
       render: () => <StrictModeToolBar api={api} />
     });
   });

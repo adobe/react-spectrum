@@ -64,7 +64,7 @@ export const Default: FormStory = {
 };
 
 export const LabelPositionSide: FormStory = {
-  render: (args) => <Render {...args} />,
+  render: args => <Render {...args} />,
   args: {
     labelPosition: 'side'
   },
@@ -72,7 +72,7 @@ export const LabelPositionSide: FormStory = {
 };
 
 export const CustomWidth: FormStory = {
-  render: (args) => <Render {...args} />,
+  render: args => <Render {...args} />,
   args: {
     width: 400
   },
@@ -80,7 +80,7 @@ export const CustomWidth: FormStory = {
 };
 
 export const CustomWidthLabelPositionSide: FormStory = {
-  render: (args) => <Render {...args} />,
+  render: args => <Render {...args} />,
   args: {
     width: 400,
     labelPosition: 'side'
@@ -89,7 +89,7 @@ export const CustomWidthLabelPositionSide: FormStory = {
 };
 
 export const LabelAlignEnd: FormStory = {
-  render: (args) => <Render {...args} />,
+  render: args => <Render {...args} />,
   args: {
     width: 400,
     labelAlign: 'end'
@@ -98,7 +98,7 @@ export const LabelAlignEnd: FormStory = {
 };
 
 export const LabelPositionSideLabelAlignEnd: FormStory = {
-  render: (args) => <Render {...args} />,
+  render: args => <Render {...args} />,
   args: {
     width: 400,
     labelPosition: 'side',
@@ -108,14 +108,15 @@ export const LabelPositionSideLabelAlignEnd: FormStory = {
 };
 
 export const FieldsNextToEachOther: FormStory = {
-  render: (args) => (
+  render: args => (
     <Form {...args}>
       <Flex>
         <TextField
           label="First Name"
           marginEnd="size-100"
           flex={1}
-          description="Please enter your first name." />
+          description="Please enter your first name."
+        />
         <TextField label="Last Name" flex={1} description="Please enter your last name." />
       </Flex>
       <TextField label="Street Address" description="Please include apartment or suite number." />
@@ -124,9 +125,10 @@ export const FieldsNextToEachOther: FormStory = {
           label="City"
           marginEnd="size-100"
           flex={1}
-          description="Please enter the city you live in." />
+          description="Please enter the city you live in."
+        />
         <Picker label="State" items={states} marginEnd="size-100" flex={1}>
-          {(item) => <Item key={item.abbr}>{item.name}</Item>}
+          {item => <Item key={item.abbr}>{item.name}</Item>}
         </Picker>
         <TextField label="Zip code" flex={1} description="Please enter a five-digit zip code." />
       </Flex>
@@ -150,13 +152,15 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
             isRequired
             label="First Name"
             marginEnd="size-100"
-            flex={1} />
+            flex={1}
+          />
           <TextField
             autoComplete="billing family-name"
             name="lastName"
             isRequired
             label="Last Name"
-            flex={1} />
+            flex={1}
+          />
         </Flex>
         <Flex>
           <TextArea
@@ -164,7 +168,8 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
             name="streetAddress"
             isRequired
             label="Street Address"
-            flex={1} />
+            flex={1}
+          />
         </Flex>
         <Flex>
           <TextField
@@ -173,7 +178,8 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
             isRequired
             label="City"
             marginEnd="size-100"
-            flex={1} />
+            flex={1}
+          />
           <Picker
             autoComplete="billing address-level1"
             name="state"
@@ -182,14 +188,15 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
             items={states}
             marginEnd="size-100"
             flex={1}>
-            {(item) => <Item key={item.abbr}>{item.name}</Item>}
+            {item => <Item key={item.abbr}>{item.name}</Item>}
           </Picker>
           <TextField
             autoComplete="billing postal-code"
             name="zip"
             isRequired
             label="Zip code"
-            flex={1} />
+            flex={1}
+          />
         </Flex>
         <Flex>
           <Picker
@@ -200,7 +207,7 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
             items={countries}
             marginEnd="size-100"
             flex={1}>
-            {(item) => <Item key={item.code}>{item.name}</Item>}
+            {item => <Item key={item.code}>{item.name}</Item>}
           </Picker>
         </Flex>
         <Flex>
@@ -210,7 +217,8 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
             name="phone"
             label="Phone number"
             marginEnd="size-100"
-            flex={1} />
+            flex={1}
+          />
           <TextField
             autoComplete="billing email"
             type="email"
@@ -218,7 +226,8 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
             isRequired
             label="Email address"
             marginEnd="size-100"
-            flex={1} />
+            flex={1}
+          />
         </Flex>
       </Well>
       <Well role="group" aria-labelledby="shipping-legend">
@@ -237,13 +246,15 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
                 isRequired
                 label="First Name"
                 marginEnd="size-100"
-                flex={1} />
+                flex={1}
+              />
               <TextField
                 autoComplete="shipping family-name"
                 name="shippingLastName"
                 isRequired
                 label="Last Name"
-                flex={1} />
+                flex={1}
+              />
             </Flex>
             <Flex>
               <TextArea
@@ -251,7 +262,8 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
                 name="shippingStreetAddress"
                 isRequired
                 label="Street Address"
-                flex={1} />
+                flex={1}
+              />
             </Flex>
             <Flex>
               <TextField
@@ -260,7 +272,8 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
                 isRequired
                 label="City"
                 marginEnd="size-100"
-                flex={1} />
+                flex={1}
+              />
               <Picker
                 autoComplete="shipping address-level1"
                 name="shippingState"
@@ -269,14 +282,15 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
                 items={states}
                 marginEnd="size-100"
                 flex={1}>
-                {(item) => <Item key={item.abbr}>{item.name}</Item>}
+                {item => <Item key={item.abbr}>{item.name}</Item>}
               </Picker>
               <TextField
                 autoComplete="shipping postal-code"
                 name="shippingZip"
                 isRequired
                 label="Zip code"
-                flex={1} />
+                flex={1}
+              />
             </Flex>
             <Flex>
               <Picker
@@ -287,7 +301,7 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
                 items={countries}
                 marginEnd="size-100"
                 flex={1}>
-                {(item) => <Item key={item.code}>{item.name}</Item>}
+                {item => <Item key={item.code}>{item.name}</Item>}
               </Picker>
             </Flex>
             <Flex>
@@ -297,7 +311,8 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
                 name="shippingPhone"
                 label="Phone number"
                 marginEnd="size-100"
-                flex={1} />
+                flex={1}
+              />
               <TextField
                 autoComplete="shipping email"
                 type="email"
@@ -305,7 +320,8 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
                 isRequired
                 label="Email address"
                 marginEnd="size-100"
-                flex={1} />
+                flex={1}
+              />
             </Flex>
           </>
         )}
@@ -314,12 +330,12 @@ const FieldsWithAutoCompletePropertyRender = (props: SpectrumFormProps) => {
   );
 };
 export const FieldsWithAutoCompleteProperty: FormStory = {
-  render: (args) => <FieldsWithAutoCompletePropertyRender {...args} />,
+  render: args => <FieldsWithAutoCompletePropertyRender {...args} />,
   name: 'fields with autoComplete property'
 };
 
 export const IsRequiredTrue: FormStory = {
-  render: (args) => <Render {...args} />,
+  render: args => <Render {...args} />,
   args: {
     isRequired: true
   },
@@ -327,7 +343,7 @@ export const IsRequiredTrue: FormStory = {
 };
 
 export const IsRequiredTrueNecessityIndicatorLabel: FormStory = {
-  render: (args) => <Render {...args} />,
+  render: args => <Render {...args} />,
   args: {
     isRequired: true,
     necessityIndicator: 'label'
@@ -336,7 +352,7 @@ export const IsRequiredTrueNecessityIndicatorLabel: FormStory = {
 };
 
 export const IsRequiredFalseNecessityIndicatorLabel: FormStory = {
-  render: (args) => <Render {...args} />,
+  render: args => <Render {...args} />,
   args: {
     isRequired: false,
     necessityIndicator: 'label'
@@ -345,7 +361,7 @@ export const IsRequiredFalseNecessityIndicatorLabel: FormStory = {
 };
 
 export const IsDisabled: FormStory = {
-  render: (args) => <Render {...args} />,
+  render: args => <Render {...args} />,
   args: {
     isDisabled: true
   },
@@ -353,7 +369,7 @@ export const IsDisabled: FormStory = {
 };
 
 export const IsQuiet: FormStory = {
-  render: (args) => <Render {...args} />,
+  render: args => <Render {...args} />,
   args: {
     isQuiet: true
   },
@@ -361,7 +377,7 @@ export const IsQuiet: FormStory = {
 };
 
 export const IsQuietLabelPositionSide: FormStory = {
-  render: (args) => <Render {...args} />,
+  render: args => <Render {...args} />,
   args: {
     isQuiet: true,
     labelPosition: 'side'
@@ -370,7 +386,7 @@ export const IsQuietLabelPositionSide: FormStory = {
 };
 
 export const IsEmphasized: FormStory = {
-  render: (args) => <Render {...args} />,
+  render: args => <Render {...args} />,
   args: {
     isEmphasized: true
   },
@@ -378,7 +394,7 @@ export const IsEmphasized: FormStory = {
 };
 
 export const ValidationStateInvalid: FormStory = {
-  render: (args) => <Render {...args} />,
+  render: args => <Render {...args} />,
   args: {
     validationState: 'invalid'
   },
@@ -386,7 +402,7 @@ export const ValidationStateInvalid: FormStory = {
 };
 
 export const ValidationStateValid: FormStory = {
-  render: (args) => <Render {...args} />,
+  render: args => <Render {...args} />,
   args: {
     validationState: 'valid'
   },
@@ -394,7 +410,7 @@ export const ValidationStateValid: FormStory = {
 };
 
 export const ValidationStateInvalidIsQuietTrue: FormStory = {
-  render: (args) => <Render {...args} />,
+  render: args => <Render {...args} />,
   args: {
     validationState: 'invalid',
     isQuiet: true
@@ -403,7 +419,7 @@ export const ValidationStateInvalidIsQuietTrue: FormStory = {
 };
 
 export const ValidationStateValidIsQuietTrue: FormStory = {
-  render: (args) => <Render {...args} />,
+  render: args => <Render {...args} />,
   args: {
     validationState: 'valid',
     isQuiet: true
@@ -443,14 +459,22 @@ export const FormWithNumberfieldAndLocaleArAe: FormStory = {
 export const WithTranslations: FormStory = {
   render: () => <TranslateForm />,
   name: 'with translations',
-  parameters: {description: {data: 'Translations included for: Arabic, English, Hebrew, Japanese, Korean, Simplified Chinese, and Traditional Chinese.'}}
+  parameters: {
+    description: {
+      data: 'Translations included for: Arabic, English, Hebrew, Japanese, Korean, Simplified Chinese, and Traditional Chinese.'
+    }
+  }
 };
 
 function Render(props: any = {}) {
   let formData = props.formData || new FormData();
   return (
     <Form {...props}>
-      <CheckboxGroup label="Pets" name="pets" validate={v => v.includes('dogs') ? 'No dogs' : null} defaultValue={formData.getAll('pets')}>
+      <CheckboxGroup
+        label="Pets"
+        name="pets"
+        validate={v => (v.includes('dogs') ? 'No dogs' : null)}
+        defaultValue={formData.getAll('pets')}>
         <Checkbox value="dogs">Dogs</Checkbox>
         <Checkbox value="cats">Cats</Checkbox>
         <Checkbox value="dragons">Dragons</Checkbox>
@@ -461,20 +485,36 @@ function Render(props: any = {}) {
         <Item key="kangaroo">Kangaroo</Item>
         <Item key="snake">Snake</Item>
       </ComboBox>
-      <SearchAutocomplete label="Search Animals" name="searchAutocomplete" defaultInputValue={formData.get('searchAutocomplete')}>
+      <SearchAutocomplete
+        label="Search Animals"
+        name="searchAutocomplete"
+        defaultInputValue={formData.get('searchAutocomplete')}>
         <Item key="red panda">Red Panda</Item>
         <Item key="aardvark">Aardvark</Item>
         <Item key="kangaroo">Kangaroo</Item>
         <Item key="snake">Snake</Item>
       </SearchAutocomplete>
-      <NumberField label="Years lived there" name="years" defaultValue={formData.get('years') ? Number(formData.get('years')) : undefined} />
+      <NumberField
+        label="Years lived there"
+        name="years"
+        defaultValue={formData.get('years') ? Number(formData.get('years')) : undefined}
+      />
       <Picker label="State" items={states} name="state" defaultSelectedKey={formData.get('state')}>
         {item => <Item key={item.abbr}>{item.name}</Item>}
       </Picker>
-      <Picker label="Country" items={countries} name="country" defaultSelectedKey={formData.get('country')}>
+      <Picker
+        label="Country"
+        items={countries}
+        name="country"
+        defaultSelectedKey={formData.get('country')}>
         {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
-      <Picker label="Favorite color" name="color" description="Select any color you like." errorMessage="Please select a nicer color." defaultSelectedKey={formData.get('color')}>
+      <Picker
+        label="Favorite color"
+        name="color"
+        description="Select any color you like."
+        errorMessage="Please select a nicer color."
+        defaultSelectedKey={formData.get('color')}>
         <Item>Red</Item>
         <Item>Orange</Item>
         <Item>Yellow</Item>
@@ -482,26 +522,50 @@ function Render(props: any = {}) {
         <Item>Blue</Item>
         <Item>Purple</Item>
       </Picker>
-      <RadioGroup label="Favorite pet" name="favorite-pet-group" defaultValue={formData.get('favorite-pet-group')}>
+      <RadioGroup
+        label="Favorite pet"
+        name="favorite-pet-group"
+        defaultValue={formData.get('favorite-pet-group')}>
         <Radio value="dogs">Dogs</Radio>
         <Radio value="cats">Cats</Radio>
         <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
       <SearchField label="Search" name="search" defaultValue={formData.get('search')} />
-      <Switch name="switch" defaultSelected={formData.get('switch') === 'on'}>Low power mode</Switch>
-      <TextArea name="comments" label="Comments" description="Express yourself!" errorMessage="No wrong answers, except for this one." defaultValue={formData.get('comments')} />
+      <Switch name="switch" defaultSelected={formData.get('switch') === 'on'}>
+        Low power mode
+      </Switch>
+      <TextArea
+        name="comments"
+        label="Comments"
+        description="Express yourself!"
+        errorMessage="No wrong answers, except for this one."
+        defaultValue={formData.get('comments')}
+      />
       <TextField
         label="City"
         name="city"
         defaultValue={formData.get('city')}
-        contextualHelp={(
+        contextualHelp={
           <ContextualHelp>
             <Heading>What is a segment?</Heading>
-            <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+            <Content>
+              Segments identify who your visitors are, what devices and services they use, where
+              they navigated from, and much more.
+            </Content>
           </ContextualHelp>
-        )} />
-      <TextField label="Zip code" description="Please enter a five-digit zip code." pattern="[0-9]{5}" name="zip" defaultValue={formData.get('zip')} />
-      <TagGroup label="Favorite tags" description="Select your favorite tags." errorMessage="Incorrect combination of tags.">
+        }
+      />
+      <TextField
+        label="Zip code"
+        description="Please enter a five-digit zip code."
+        pattern="[0-9]{5}"
+        name="zip"
+        defaultValue={formData.get('zip')}
+      />
+      <TagGroup
+        label="Favorite tags"
+        description="Select your favorite tags."
+        errorMessage="Incorrect combination of tags.">
         <Item key="1">Cool Tag 1</Item>
         <Item key="2">Cool Tag 2</Item>
         <Item key="3">Cool Tag 3</Item>
@@ -510,15 +574,41 @@ function Render(props: any = {}) {
         <Item key="6">Cool Tag 6</Item>
       </TagGroup>
       <ColorField label="Color" name="color" defaultValue={formData.get('color')} />
-      <DateField label="Date" granularity="minute" name="date" defaultValue={formData.get('date') ? parseDateTime(formData.get('date')) : null} />
-      <TimeField label="Time" name="time" defaultValue={formData.get('time') ? parseTime(formData.get('time')) : null} />
-      <DatePicker label="Date picker" name="datePicker" defaultValue={formData.get('datePicker') ? parseDate(formData.get('datePicker')) : null} />
-      <DateRangePicker label="Date range" startName="startDate" endName="endDate" defaultValue={formData.get('startDate') && formData.get('endDate') ? {start: parseDate(formData.get('startDate')), end: parseDate(formData.get('endDate'))} : null} />
+      <DateField
+        label="Date"
+        granularity="minute"
+        name="date"
+        defaultValue={formData.get('date') ? parseDateTime(formData.get('date')) : null}
+      />
+      <TimeField
+        label="Time"
+        name="time"
+        defaultValue={formData.get('time') ? parseTime(formData.get('time')) : null}
+      />
+      <DatePicker
+        label="Date picker"
+        name="datePicker"
+        defaultValue={formData.get('datePicker') ? parseDate(formData.get('datePicker')) : null}
+      />
+      <DateRangePicker
+        label="Date range"
+        startName="startDate"
+        endName="endDate"
+        defaultValue={
+          formData.get('startDate') && formData.get('endDate')
+            ? {start: parseDate(formData.get('startDate')), end: parseDate(formData.get('endDate'))}
+            : null
+        }
+      />
       <TextField type="email" label="Email" name="email" defaultValue={formData.get('email')} />
       {props.showSubmit && (
         <ButtonGroup>
-          <Button variant="primary" type="submit">Submit</Button>
-          <Button variant="secondary" type="reset">Reset</Button>
+          <Button variant="primary" type="submit">
+            Submit
+          </Button>
+          <Button variant="secondary" type="reset">
+            Reset
+          </Button>
         </ButtonGroup>
       )}
     </Form>
@@ -542,15 +632,30 @@ function FormWithControls(props: any = {}) {
         e.preventDefault();
       }}
       {...props}>
-      <TextField name="first-name" label="First Name (controlled)" value={firstName} onChange={setFirstName} />
+      <TextField
+        name="first-name"
+        label="First Name (controlled)"
+        value={firstName}
+        onChange={setFirstName}
+      />
       <TextField name="last-name" label="Last Name (uncontrolled)" defaultValue="world" />
       <TextField name="street-address" label="Street Address (uncontrolled)" />
       <Picker name="country" label="Country (uncontrolled)" items={countries}>
         {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
       <NumberField name="age" label="Age (uncontrolled)" />
-      <NumberField name="money" label="Money (controlled)" formatOptions={{style: 'currency', currency: 'USD'}} value={money} onChange={setMoney} />
-      <Picker name="favorite-color" label="Favorite color (controlled)" selectedKey={favoriteColor} onSelectionChange={setFavoriteColor}>
+      <NumberField
+        name="money"
+        label="Money (controlled)"
+        formatOptions={{style: 'currency', currency: 'USD'}}
+        value={money}
+        onChange={setMoney}
+      />
+      <Picker
+        name="favorite-color"
+        label="Favorite color (controlled)"
+        selectedKey={favoriteColor}
+        onSelectionChange={setFavoriteColor}>
         <Item key="red">Red</Item>
         <Item key="orange">Orange</Item>
         <Item key="yellow">Yellow</Item>
@@ -558,21 +663,39 @@ function FormWithControls(props: any = {}) {
         <Item key="blue">Blue</Item>
         <Item key="purple">Purple</Item>
       </Picker>
-      <Checkbox name="is-hunter" isSelected={isHunter} onChange={setIsHunter}>I am a hunter! (controlled)</Checkbox>
-      <Checkbox name="is-wizard" defaultSelected>I am a wizard! (uncontrolled)</Checkbox>
+      <Checkbox name="is-hunter" isSelected={isHunter} onChange={setIsHunter}>
+        I am a hunter! (controlled)
+      </Checkbox>
+      <Checkbox name="is-wizard" defaultSelected>
+        I am a wizard! (uncontrolled)
+      </Checkbox>
       <Switch name="airplane-mode">Airplane mode (uncontrolled)</Switch>
-      <Switch name="super-speed" isSelected={superSpeed} onChange={setSuperSpeed}>Super speed (controlled)</Switch>
-      <RadioGroup label="Favorite pet (controlled)" name="favorite-pet-group" value={favoritePet} onChange={setFavoritePet}>
+      <Switch name="super-speed" isSelected={superSpeed} onChange={setSuperSpeed}>
+        Super speed (controlled)
+      </Switch>
+      <RadioGroup
+        label="Favorite pet (controlled)"
+        name="favorite-pet-group"
+        value={favoritePet}
+        onChange={setFavoritePet}>
         <Radio value="dogs">Dogs</Radio>
         <Radio value="cats">Cats</Radio>
         <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
-      <RadioGroup label="Favorite pet (uncontrolled)" name="favorite-pet-group2" defaultValue="cats">
+      <RadioGroup
+        label="Favorite pet (uncontrolled)"
+        name="favorite-pet-group2"
+        defaultValue="cats">
         <Radio value="dogs">Dogs</Radio>
         <Radio value="cats">Cats</Radio>
         <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
-      <TextArea name="comments-controlled" label="Comments (controlled)" value={howIFeel} onChange={setHowIFeel} />
+      <TextArea
+        name="comments-controlled"
+        label="Comments (controlled)"
+        value={howIFeel}
+        onChange={setHowIFeel}
+      />
       <TextArea name="comments-uncontrolled" label="Comments (uncontrolled)" defaultValue="hello" />
       <ComboBox label="Favorite Animal (uncontrolled)" name="favorite-animal" formValue="key">
         <Item key="red panda">Red Panda</Item>
@@ -581,12 +704,25 @@ function FormWithControls(props: any = {}) {
         <Item key="snake">Snake</Item>
       </ComboBox>
       <DateField name="date-uncontrolled" label="Birth date (uncontrolled)" />
-      <DateField name="date-controlled" label="Birth date (controlled)" value={birthday} onChange={setBirthday} />
-      <DateRangePicker startName="trip-start" endName="trip-end" label="Trip dates (uncontrolled)" />
+      <DateField
+        name="date-controlled"
+        label="Birth date (controlled)"
+        value={birthday}
+        onChange={setBirthday}
+      />
+      <DateRangePicker
+        startName="trip-start"
+        endName="trip-end"
+        label="Trip dates (uncontrolled)"
+      />
       <Slider name="cookies" label="Cookies (uncontrolled)" defaultValue={50} />
       <ButtonGroup>
-        <Button variant="primary" type="submit">Submit</Button>
-        <Button variant="secondary" type="reset">Reset</Button>
+        <Button variant="primary" type="submit">
+          Submit
+        </Button>
+        <Button variant="secondary" type="reset">
+          Reset
+        </Button>
       </ButtonGroup>
     </Form>
   );
@@ -602,7 +738,9 @@ function FormWithSubmit() {
   let [email, setEmail] = useState('');
   let [emailDirty, setEmailDirty] = useState(false);
 
-  let [formStatus, setFormStatus] = useState<'progress' | 'invalid' | 'valid' | 'fixing'>('progress');
+  let [formStatus, setFormStatus] = useState<'progress' | 'invalid' | 'valid' | 'fixing'>(
+    'progress'
+  );
   let [isSubmitted, setSubmitted] = useState(false); // TODO: really should be isSectionInvalid / 'fixing' for each form field. once form is submitted with mistakes, unchecking an unrelated, previously valid field should not make it look invalid.
 
   let getValidationState = (isValid: boolean): ValidationState | undefined =>
@@ -649,7 +787,7 @@ function FormWithSubmit() {
     );
   };
 
-  let handleSubmit: React.FormEventHandler<Element> = (e) => {
+  let handleSubmit: React.FormEventHandler<Element> = e => {
     e.preventDefault();
     setPoliciesDirty(false);
     setTruthDirty(false);
@@ -675,12 +813,16 @@ function FormWithSubmit() {
   return (
     <Form onSubmit={handleSubmit} isReadOnly={formStatus === 'valid'}>
       <>
-        {(formStatus === 'invalid' || formStatus === 'valid') &&
+        {(formStatus === 'invalid' || formStatus === 'valid') && (
           <InlineAlert variant={formStatus === 'invalid' ? 'negative' : 'positive'}>
             <Header>{formStatus === 'invalid' ? 'Error' : 'Success'}</Header>
-            <Content>{formStatus === 'invalid' ? 'There was an error with the form.' : 'Form was successfully completed.'}</Content>
+            <Content>
+              {formStatus === 'invalid'
+                ? 'There was an error with the form.'
+                : 'Form was successfully completed.'}
+            </Content>
           </InlineAlert>
-        }
+        )}
       </>
       <TextField
         label="Email address"
@@ -688,7 +830,8 @@ function FormWithSubmit() {
         value={email}
         onChange={chain(() => setEmailDirty(true), setEmail)}
         validationState={getValidationState(email.includes('@'))}
-        errorMessage="Email address must contain @" />
+        errorMessage="Email address must contain @"
+      />
       <CheckboxGroup
         label="Agree to the following"
         isRequired
@@ -718,7 +861,7 @@ function FormWithSubmit() {
         isRequired
         value="truth"
         isSelected={truth}
-        onChange={(chain(() => setTruthDirty(true), setTruth))}
+        onChange={chain(() => setTruthDirty(true), setTruth)}
         isInvalid={getValidationState(truth) === 'invalid'}>
         I am telling the truth
       </Checkbox>
@@ -729,15 +872,9 @@ function FormWithSubmit() {
         value={pet}
         onChange={chain(() => setPetDirty(true), setPet)}
         isInvalid={getValidationState(Boolean(pet)) === 'invalid'}>
-        <Radio value="dogs">
-          Dogs
-        </Radio>
-        <Radio value="cats">
-          Cats
-        </Radio>
-        <Radio value="dragons">
-          Dragons
-        </Radio>
+        <Radio value="dogs">Dogs</Radio>
+        <Radio value="cats">Cats</Radio>
+        <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
 
       <TagGroup label="Favorite tags">
@@ -749,31 +886,39 @@ function FormWithSubmit() {
         <Item key="6">Cool Tag 6</Item>
       </TagGroup>
 
-      <Button variant="cta" type="submit" isDisabled={formStatus === 'valid'}>Submit</Button>
-      <Button variant="secondary" type="reset" onPress={reset}>Reset</Button>
+      <Button variant="cta" type="submit" isDisabled={formStatus === 'valid'}>
+        Submit
+      </Button>
+      <Button variant="secondary" type="reset" onPress={reset}>
+        Reset
+      </Button>
       <Status formStatus={formStatus} />
     </Form>
   );
 }
 
 export const NativeValidation: FormStory = {
-  render: (args) => <Render {...args} />,
+  render: args => <Render {...args} />,
   args: {
     isRequired: true,
     validationBehavior: 'native',
     // @ts-ignore
     showSubmit: true,
-    onSubmit: (e) => {
+    onSubmit: e => {
       e.preventDefault();
       action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
     }
   },
-  parameters: {description: {data: 'This story is to test that client validation occurs on form submit and updates when the user commits changes to a field value (e.g. on blur).'}}
+  parameters: {
+    description: {
+      data: 'This story is to test that client validation occurs on form submit and updates when the user commits changes to a field value (e.g. on blur).'
+    }
+  }
 };
 
 const ServerValidationRender = () => {
   let [serverErrors, setServerErrors] = useState<any>({});
-  let onSubmit = async (e) => {
+  let onSubmit = async e => {
     e.preventDefault();
     let errors = {};
     for (let el of e.target.elements) {
@@ -788,20 +933,25 @@ const ServerValidationRender = () => {
       onSubmit={onSubmit}
       validationErrors={serverErrors}
       // @ts-ignore
-      showSubmit />
+      showSubmit
+    />
   );
 };
 
 export const ServerValidation: FormStory = {
   render: () => <ServerValidationRender />,
-  parameters: {description: {data: 'This story is to test that server errors appear after submission, and are cleared when a field is modified.'}}
+  parameters: {
+    description: {
+      data: 'This story is to test that server errors appear after submission, and are cleared when a field is modified.'
+    }
+  }
 };
 
 export const NumberFieldFormSubmit: FormStory = {
   render: () => {
     return (
       <Form
-        onSubmit={(e) => {
+        onSubmit={e => {
           e.preventDefault();
           action('submitted the form')();
         }}>
@@ -809,12 +959,16 @@ export const NumberFieldFormSubmit: FormStory = {
       </Form>
     );
   },
-  parameters: {description: {data: 'Try using "Enter" to submit the form from the NumberField. It should call an action in the actions panel.'}}
+  parameters: {
+    description: {
+      data: 'Try using "Enter" to submit the form from the NumberField. It should call an action in the actions panel.'
+    }
+  }
 };
 
 interface State {
-  formData: FormData,
-  errors: Record<string, string>
+  formData: FormData;
+  errors: Record<string, string>;
 }
 
 function FormActionExample() {
@@ -833,14 +987,8 @@ function FormActionExample() {
     errors: {},
     formData: new FormData()
   });
-  
-  return (
-    <Render
-      action={formAction}
-      validationErrors={errors}
-      showSubmit
-      formData={formData} />
-  );
+
+  return <Render action={formAction} validationErrors={errors} showSubmit formData={formData} />;
 }
 
 export const FormAction: FormStory = {

@@ -61,7 +61,11 @@ export function formatTargetNode(value: number | string | HTMLElement): string {
  * @param opts.advanceTimer - Function that when called advances the timers in your test suite by a specific amount of time(ms).
  * @param opts.pointeropts - Options to pass to the simulated event. Defaults to mouse. See https://testing-library.com/docs/dom-testing-library/api-events/#fireevent for more info.
  */
-export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer: (time: number) => unknown | Promise<unknown>, pointerOpts?: Record<string, any>}): Promise<void> {
+export async function triggerLongPress(opts: {
+  element: HTMLElement;
+  advanceTimer: (time: number) => unknown | Promise<unknown>;
+  pointerOpts?: Record<string, any>;
+}): Promise<void> {
   let {element, advanceTimer, pointerOpts = {}} = opts;
   let pointerType = pointerOpts.pointerType ?? 'mouse';
   let shouldFireCompatibilityEvents = false;
@@ -72,7 +76,15 @@ export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer
   if (shouldFireCompatibilityEvents) {
     if (pointerType === 'touch') {
       act(() => {
-        shouldFocus = shouldFireCompatibilityEvents = fireEvent.touchStart(element, {targetTouches: [{identifier: pointerOpts.pointerId, clientX: pointerOpts.clientX, clientY: pointerOpts.clientY}]});
+        shouldFocus = shouldFireCompatibilityEvents = fireEvent.touchStart(element, {
+          targetTouches: [
+            {
+              identifier: pointerOpts.pointerId,
+              clientX: pointerOpts.clientX,
+              clientY: pointerOpts.clientY
+            }
+          ]
+        });
       });
     } else if (pointerType === 'mouse') {
       act(() => {
@@ -90,7 +102,15 @@ export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer
   if (shouldFireCompatibilityEvents) {
     if (pointerType === 'touch') {
       act(() => {
-        shouldFocus = fireEvent.touchEnd(element, {targetTouches: [{identifier: pointerOpts.pointerId, clientX: pointerOpts.clientX, clientY: pointerOpts.clientY}]});
+        shouldFocus = fireEvent.touchEnd(element, {
+          targetTouches: [
+            {
+              identifier: pointerOpts.pointerId,
+              clientX: pointerOpts.clientX,
+              clientY: pointerOpts.clientY
+            }
+          ]
+        });
         shouldFocus = fireEvent.mouseDown(element, pointerOpts);
       });
       if (shouldFocus) {
@@ -111,10 +131,18 @@ export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer
 }
 
 // Docs cannot handle the types that userEvent actually declares, so hopefully this sub set is okay
-export async function pressElement(user: {click: (element: Element) => Promise<void>, keyboard: (keys: string) => Promise<void>, pointer: (opts: {target: Element, keys: string, coords?: any}) => Promise<void>}, element: HTMLElement, interactionType: UserOpts['interactionType']): Promise<void> {
+export async function pressElement(
+  user: {
+    click: (element: Element) => Promise<void>;
+    keyboard: (keys: string) => Promise<void>;
+    pointer: (opts: {target: Element; keys: string; coords?: any}) => Promise<void>;
+  },
+  element: HTMLElement,
+  interactionType: UserOpts['interactionType']
+): Promise<void> {
   if (interactionType === 'mouse') {
     // Add coords with pressure so this isn't detected as a virtual click
-    await user.pointer({target: element, keys: '[MouseLeft]', coords: {pressure: .5}});
+    await user.pointer({target: element, keys: '[MouseLeft]', coords: {pressure: 0.5}});
   } else if (interactionType === 'keyboard') {
     act(() => element.focus());
     await user.keyboard('[Space]');

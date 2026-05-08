@@ -43,31 +43,31 @@ const pagesDir = path.resolve(__dirname, '../pages');
 const KNOWN_FALSE_POSITIVES = {
   // ListBox: WAI-ARIA 1.2 supports groups in listbox, but axe-core hasn't caught up
   // https://github.com/dequelabs/axe-core/issues/3152
-  'ListBox': ['aria-required-children', 'aria-required-parent'],
+  ListBox: ['aria-required-children', 'aria-required-parent'],
 
   // Picker: HiddenSelect with aria-hidden contains focusable element that auto-shifts focus
   // Elements are labeled with data-a11y-ignore="aria-hidden-focus"
-  'Picker': ['aria-hidden-focus'],
-  'Select': ['aria-hidden-focus'],
+  Picker: ['aria-hidden-focus'],
+  Select: ['aria-hidden-focus'],
 
   // Menu/ActionMenu/Overlays: aria-hidden applied to elements outside overlay
   // https://github.com/adobe/react-spectrum/blob/main/packages/@react-aria/overlays/src/ariaHideOutside.ts
-  'Menu': ['aria-hidden-focus'],
-  'ActionMenu': ['aria-hidden-focus'],
-  'Popover': ['aria-hidden-focus'],
-  'Dialog': ['aria-hidden-focus'],
-  'Modal': ['aria-hidden-focus'],
-  'ComboBox': ['aria-hidden-focus'],
+  Menu: ['aria-hidden-focus'],
+  ActionMenu: ['aria-hidden-focus'],
+  Popover: ['aria-hidden-focus'],
+  Dialog: ['aria-hidden-focus'],
+  Modal: ['aria-hidden-focus'],
+  ComboBox: ['aria-hidden-focus'],
 
   // TableView: body div has tabIndex={-1} for Firefox, triggers false positive
   // Also: scrollable region is inside table, focus moves appropriately on interaction
   // https://github.com/adobe/react-spectrum/pull/3520
-  'TableView': ['aria-required-children', 'scrollable-region-focusable'],
-  'Table': ['aria-required-children', 'scrollable-region-focusable'],
+  TableView: ['aria-required-children', 'scrollable-region-focusable'],
+  Table: ['aria-required-children', 'scrollable-region-focusable'],
 
   // Meter: axe-core bug with aria-value* attributes
   // https://github.com/dequelabs/axe-core/issues/3768
-  'Meter': ['aria-allowed-attr']
+  Meter: ['aria-allowed-attr']
 };
 
 /**
@@ -415,7 +415,6 @@ async function testAccessibility() {
 
     // Exit with appropriate code
     return pagesWithViolations > 0 || errorPages.length > 0 ? 1 : 0;
-
   } catch (error) {
     console.error('\n❌ Fatal error during testing:', error);
     return 1;
