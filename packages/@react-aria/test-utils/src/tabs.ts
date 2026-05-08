@@ -63,7 +63,7 @@ export class TabsTester {
     let {indexOrText} = opts;
 
     let tab;
-    let tabs = this.tabs();
+    let tabs = this.getTabs();
     if (typeof indexOrText === 'number') {
       tab = tabs[indexOrText];
     } else if (typeof indexOrText === 'string') {
@@ -75,7 +75,7 @@ export class TabsTester {
 
   private async keyboardNavigateToTab(opts: {tab: HTMLElement; orientation?: Orientation}) {
     let {tab, orientation = 'vertical'} = opts;
-    let tabs = this.tabs();
+    let tabs = this.getTabs();
     tabs = tabs.filter(
       tab => !(tab.hasAttribute('disabled') || tab.getAttribute('aria-disabled') === 'true')
     );
@@ -91,7 +91,7 @@ export class TabsTester {
     }
 
     if (!this._tablist.contains(document.activeElement)) {
-      let selectedTab = this.selectedTab();
+      let selectedTab = this.getSelectedTab();
       if (selectedTab != null) {
         act(() => selectedTab.focus());
       } else {
@@ -159,16 +159,16 @@ export class TabsTester {
   /**
    * Returns the tablist.
    */
-  tablist(): HTMLElement {
+  getTablist(): HTMLElement {
     return this._tablist;
   }
 
   /**
    * Returns the tabpanels.
    */
-  tabpanels(): HTMLElement[] {
+  getTabpanels(): HTMLElement[] {
     let tabpanels = [] as HTMLElement[];
-    for (let tab of this.tabs()) {
+    for (let tab of this.getTabs()) {
       let controlId = tab.getAttribute('aria-controls');
       let panel = controlId != null ? document.getElementById(controlId) : null;
       if (panel != null) {
@@ -182,22 +182,22 @@ export class TabsTester {
   /**
    * Returns the tabs in the tablist.
    */
-  tabs(): HTMLElement[] {
-    return within(this.tablist()).queryAllByRole('tab');
+  getTabs(): HTMLElement[] {
+    return within(this.getTablist()).queryAllByRole('tab');
   }
 
   /**
    * Returns the currently selected tab in the tablist if any.
    */
-  selectedTab(): HTMLElement | null {
-    return this.tabs().find(tab => tab.getAttribute('aria-selected') === 'true') || null;
+  getSelectedTab(): HTMLElement | null {
+    return this.getTabs().find(tab => tab.getAttribute('aria-selected') === 'true') || null;
   }
 
   /**
    * Returns the currently active tabpanel if any.
    */
-  activeTabpanel(): HTMLElement | null {
-    let activeTabpanelId = this.selectedTab()?.getAttribute('aria-controls');
+  getActiveTabpanel(): HTMLElement | null {
+    let activeTabpanelId = this.getSelectedTab()?.getAttribute('aria-controls');
     return activeTabpanelId ? document.getElementById(activeTabpanelId) : null;
   }
 }

@@ -44,7 +44,7 @@ it.each`
     root: container.querySelector('[role=radiogroup]') as HTMLElement,
     interactionType
   });
-  let radios = tester.radios();
+  let radios = tester.getRadios();
   await tester.triggerRadio({radio: radios[1]});
-  expect(tester.selectedRadio()).toBe(radios[1]);
+  expect(tester.getSelectedRadio()).toBe(radios[1]);
 });

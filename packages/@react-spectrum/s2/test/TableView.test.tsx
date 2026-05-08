@@ -271,16 +271,16 @@ describe('TableView', () => {
 
     let tableTester = testUtilUser.createTester('Table', {root});
 
-    let groups = tableTester.rowGroups();
+    let groups = tableTester.getRowGroups();
     expect(groups).toHaveLength(3);
 
     await user.tab();
-    for (let row of tableTester.rows()) {
+    for (let row of tableTester.getRows()) {
       expect(document.activeElement).toBe(row);
       await user.keyboard('{ArrowDown}');
     }
 
-    for (let row of tableTester.rows().toReversed().slice(1)) {
+    for (let row of tableTester.getRows().toReversed().slice(1)) {
       await user.keyboard('{ArrowUp}');
       expect(document.activeElement).toBe(row);
     }
@@ -289,7 +289,7 @@ describe('TableView', () => {
     await user.click(footerRows[0]);
     expect(onSelectionChange).not.toHaveBeenCalled();
 
-    await user.click(tableTester.rows()[0]);
+    await user.click(tableTester.getRows()[0]);
     expect(onSelectionChange).toHaveBeenCalled();
   });
 });

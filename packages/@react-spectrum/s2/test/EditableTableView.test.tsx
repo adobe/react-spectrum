@@ -292,7 +292,7 @@ describe('TableView', () => {
         overlayType: 'modal'
       });
       await dialogTester.open();
-      let dialog = dialogTester.dialog();
+      let dialog = dialogTester.getDialog();
       expect(dialog).toBeVisible();
 
       let input = within(dialog!).getByRole('textbox');
@@ -320,12 +320,12 @@ describe('TableView', () => {
         overlayType: 'modal'
       });
       await dialogTester.open();
-      dialog = dialogTester.dialog();
+      dialog = dialogTester.getDialog();
       // TODO: also weird that it is dialog.dialog?
       expect(dialog).toBeVisible();
 
       let selectTester = testUtilUser.createTester('Select', {root: dialog!});
-      expect(selectTester.trigger()).toHaveFocus();
+      expect(selectTester.getTrigger()).toHaveFocus();
       await selectTester.toggleOptionSelection({option: 'Steven'});
       act(() => {
         jest.runAllTimers();
@@ -737,7 +737,7 @@ describe('TableView', () => {
             overlayType: 'modal'
           });
           await dialogTester.open();
-          let dialog = dialogTester.dialog();
+          let dialog = dialogTester.getDialog();
           expect(dialog).toBeVisible();
 
           let input = within(dialog!).getByRole('textbox');
@@ -765,12 +765,12 @@ describe('TableView', () => {
             overlayType: 'modal'
           });
           await dialogTester.open();
-          dialog = dialogTester.dialog();
+          dialog = dialogTester.getDialog();
           // TODO: also weird that it is dialog.dialog?
           expect(dialog).toBeVisible();
 
           let selectTester = testUtilUser.createTester('Select', {root: dialog!});
-          expect(selectTester.trigger()).toHaveFocus();
+          expect(selectTester.getTrigger()).toHaveFocus();
           await selectTester.toggleOptionSelection({option: 'Steven'});
           act(() => {
             jest.runAllTimers();

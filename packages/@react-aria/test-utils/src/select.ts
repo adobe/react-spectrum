@@ -24,7 +24,7 @@ interface SelectOpenOpts {
 
 interface SelectTriggerOptionOpts extends SelectOpenOpts {
   /**
-   * The index, text, or node of the option to select. Option nodes can be sourced via `options()`.
+   * The index, text, or node of the option to select. Option nodes can be sourced via `getOptions()`.
    */
   option: number | string | HTMLElement;
   /**
@@ -68,7 +68,7 @@ export class SelectTester {
    */
   async open(opts: SelectOpenOpts = {}): Promise<void> {
     let {interactionType = this._interactionType} = opts;
-    let trigger = this.trigger();
+    let trigger = this.getTrigger();
     let isDisabled = trigger.hasAttribute('disabled');
 
     if (interactionType === 'mouse') {
@@ -101,7 +101,7 @@ export class SelectTester {
    * Closes the select.
    */
   async close(): Promise<void> {
-    let listbox = this.listbox();
+    let listbox = this.getListbox();
     if (listbox) {
       act(() => listbox.focus());
       await this.user.keyboard('[Escape]');
@@ -131,8 +131,8 @@ export class SelectTester {
     let {indexOrText} = opts;
 
     let option;
-    let options = this.options();
-    let listbox = this.listbox();
+    let options = this.getOptions();
+    let listbox = this.getListbox();
 
     if (typeof indexOrText === 'number') {
       option = options[indexOrText];
@@ -145,12 +145,12 @@ export class SelectTester {
 
   private async keyboardNavigateToOption(opts: {option: HTMLElement}) {
     let {option} = opts;
-    let options = this.options();
+    let options = this.getOptions();
     let targetIndex = options.indexOf(option);
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the listbox');
     }
-    if (document.activeElement === this.listbox()) {
+    if (document.activeElement === this.getListbox()) {
       await this.user.keyboard('[ArrowDown]');
     }
     let currIndex = options.indexOf(document.activeElement as HTMLElement);
@@ -170,11 +170,11 @@ export class SelectTester {
    */
   async toggleOptionSelection(opts: SelectTriggerOptionOpts): Promise<void> {
     let {option, closesOnSelect, interactionType = this._interactionType} = opts || {};
-    let trigger = this.trigger();
+    let trigger = this.getTrigger();
     if (!trigger.getAttribute('aria-controls')) {
       await this.open();
     }
-    let listbox = this.listbox();
+    let listbox = this.getListbox();
     if (!listbox) {
       throw new Error("Select's listbox not found.");
     }
@@ -231,8 +231,8 @@ export class SelectTester {
   /**
    * Returns the select's options if present. Can be filtered to a subsection of the listbox if provided via `element`.
    */
-  options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
-    let {element = this.listbox()} = opts;
+  getOptions(opts: {element?: HTMLElement} = {}): HTMLElement[] {
+    let {element = this.getListbox()} = opts;
     let options = [];
     if (element) {
       options = within(element).queryAllByRole('option');
@@ -244,23 +244,23 @@ export class SelectTester {
   /**
    * Returns the select's trigger.
    */
-  trigger(): HTMLElement {
+  getTrigger(): HTMLElement {
     return this._trigger;
   }
 
   /**
    * Returns the select's listbox if present.
    */
-  listbox(): HTMLElement | null {
-    let listBoxId = this.trigger().getAttribute('aria-controls');
+  getListbox(): HTMLElement | null {
+    let listBoxId = this.getTrigger().getAttribute('aria-controls');
     return listBoxId ? document.getElementById(listBoxId) : null;
   }
 
   /**
    * Returns the select's sections if present.
    */
-  sections(): HTMLElement[] {
-    let listbox = this.listbox();
+  getSections(): HTMLElement[] {
+    let listbox = this.getListbox();
     return listbox ? within(listbox).queryAllByRole('group') : [];
   }
 }

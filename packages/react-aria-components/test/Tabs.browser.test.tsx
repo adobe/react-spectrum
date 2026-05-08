@@ -43,7 +43,7 @@ it.each`
     root: container.querySelector('[role=tablist]') as HTMLElement,
     interactionType
   });
-  let tabs = tester.tabs();
+  let tabs = tester.getTabs();
   await tester.triggerTab({tab: tabs[1]});
-  expect(tester.selectedTab()).toBe(tabs[1]);
+  expect(tester.getSelectedTab()).toBe(tabs[1]);
 });

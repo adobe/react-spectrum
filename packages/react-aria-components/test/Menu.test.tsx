@@ -1207,18 +1207,18 @@ describe('Menu', () => {
         interactionType: 'keyboard'
       });
 
-      expect(menuTester.trigger()).not.toHaveAttribute('data-pressed');
+      expect(menuTester.getTrigger()).not.toHaveAttribute('data-pressed');
       await menuTester.open();
-      expect(menuTester.trigger()).toHaveAttribute('data-pressed');
+      expect(menuTester.getTrigger()).toHaveAttribute('data-pressed');
 
-      expect(menuTester.options()).toHaveLength(5);
-      expect(menuTester.menu()).toBeInTheDocument();
+      expect(menuTester.getOptions()).toHaveLength(5);
+      expect(menuTester.getMenu()).toBeInTheDocument();
 
-      let popover = menuTester.menu()?.closest('.react-aria-Popover');
+      let popover = menuTester.getMenu()?.closest('.react-aria-Popover');
       expect(popover).toBeInTheDocument();
       expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
 
-      let triggerItem = menuTester.submenuTriggers()[0];
+      let triggerItem = menuTester.getSubmenuTriggers()[0];
       expect(triggerItem).toHaveTextContent('Share…');
       expect(triggerItem).toHaveAttribute('aria-haspopup', 'menu');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'false');
@@ -1234,26 +1234,26 @@ describe('Menu', () => {
       expect(triggerItem).toHaveAttribute('data-hovered', 'true');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
       expect(triggerItem).toHaveAttribute('data-open', 'true');
-      expect(submenuTester?.menu()).toBeInTheDocument();
-      expect(submenuTester?.options()).toHaveLength(3);
+      expect(submenuTester?.getMenu()).toBeInTheDocument();
+      expect(submenuTester?.getOptions()).toHaveLength(3);
 
       // Open the nested submenu
       let nestedSubmenu = await submenuTester?.openSubmenu({submenuTrigger: 'Email…'});
       act(() => {
         jest.runAllTimers();
       });
-      expect(nestedSubmenu?.menu()).toBeInTheDocument();
-      expect(document.activeElement).toBe(nestedSubmenu?.options()[0]);
+      expect(nestedSubmenu?.getMenu()).toBeInTheDocument();
+      expect(document.activeElement).toBe(nestedSubmenu?.getOptions()[0]);
 
       await user.keyboard('{Escape}');
       act(() => {
         jest.runAllTimers();
       });
 
-      expect(nestedSubmenu?.menu()).not.toBeInTheDocument();
-      expect(submenuTester?.menu()).toBeInTheDocument();
-      expect(menuTester.menu()).toBeInTheDocument();
-      expect(document.activeElement).toBe(nestedSubmenu?.trigger());
+      expect(nestedSubmenu?.getMenu()).not.toBeInTheDocument();
+      expect(submenuTester?.getMenu()).toBeInTheDocument();
+      expect(menuTester.getMenu()).toBeInTheDocument();
+      expect(document.activeElement).toBe(nestedSubmenu?.getTrigger());
     });
     it('should not close the menu when clicking on a element within the submenu tree', async () => {
       let onAction = jest.fn();
@@ -1378,7 +1378,7 @@ describe('Menu', () => {
       await menuTester.open();
       expect(button).toHaveAttribute('data-pressed');
 
-      let groups = menuTester.sections();
+      let groups = menuTester.getSections();
       expect(groups).toHaveLength(2);
 
       expect(groups[0]).toHaveClass('react-aria-MenuSection');
@@ -1394,24 +1394,24 @@ describe('Menu', () => {
         'Settings'
       );
 
-      let menu = menuTester.menu()!;
+      let menu = menuTester.getMenu()!;
       expect(getAllByRole('menuitem')).toHaveLength(7);
 
       let popover = menu.closest('.react-aria-Popover');
       expect(popover).toBeInTheDocument();
       expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
-      let submenuTriggers = menuTester.submenuTriggers();
+      let submenuTriggers = menuTester.getSubmenuTriggers();
       expect(submenuTriggers).toHaveLength(1);
 
       // Open the submenu
       let submenuUtil = (await menuTester.openSubmenu({submenuTrigger: 'Share…'}))!;
-      let submenu = submenuUtil.menu();
+      let submenu = submenuUtil.getMenu();
       expect(submenu).toBeInTheDocument();
 
-      let submenuItems = submenuUtil.options();
+      let submenuItems = submenuUtil.getOptions();
       expect(submenuItems).toHaveLength(6);
 
-      let groupsInSubmenu = submenuUtil.sections();
+      let groupsInSubmenu = submenuUtil.getSections();
       expect(groupsInSubmenu).toHaveLength(2);
 
       expect(groupsInSubmenu[0]).toHaveClass('react-aria-MenuSection');
@@ -1474,17 +1474,17 @@ describe('Menu', () => {
       );
 
       let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
-      expect(menuTester.trigger()).not.toHaveAttribute('data-pressed');
+      expect(menuTester.getTrigger()).not.toHaveAttribute('data-pressed');
 
       await menuTester.open();
-      expect(menuTester.trigger()).toHaveAttribute('data-pressed');
-      expect(menuTester.options()).toHaveLength(5);
+      expect(menuTester.getTrigger()).toHaveAttribute('data-pressed');
+      expect(menuTester.getOptions()).toHaveLength(5);
 
-      let popover = menuTester.menu()?.closest('.react-aria-Popover');
+      let popover = menuTester.getMenu()?.closest('.react-aria-Popover');
       expect(popover).toBeInTheDocument();
       expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
 
-      let triggerItem = menuTester.submenuTriggers()[0];
+      let triggerItem = menuTester.getSubmenuTriggers()[0];
       expect(triggerItem).toHaveTextContent('Share…');
       expect(triggerItem).toHaveAttribute('aria-haspopup', 'menu');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'false');
@@ -1561,7 +1561,7 @@ describe('Menu', () => {
       let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
       await menuTester.open();
 
-      let triggerItem = menuTester.submenuTriggers()[0];
+      let triggerItem = menuTester.getSubmenuTriggers()[0];
       expect(triggerItem).toHaveTextContent('Share…');
       expect(triggerItem).toHaveAttribute('aria-haspopup', 'menu');
 
@@ -1570,9 +1570,9 @@ describe('Menu', () => {
       act(() => {
         jest.runAllTimers();
       });
-      expect(subDialogTester?.menu()).toBeInTheDocument();
+      expect(subDialogTester?.getMenu()).toBeInTheDocument();
 
-      let subDialogTriggerItem = subDialogTester?.submenuTriggers()[0];
+      let subDialogTriggerItem = subDialogTester?.getSubmenuTriggers()[0];
       expect(subDialogTriggerItem).toHaveTextContent('Nested Subdialog');
       expect(subDialogTriggerItem).toHaveAttribute('aria-haspopup', 'menu');
 
@@ -1648,16 +1648,16 @@ describe('Menu', () => {
       await menuTester.open();
 
       // Open the subdialog
-      let triggerItem = menuTester.submenuTriggers()[0];
+      let triggerItem = menuTester.getSubmenuTriggers()[0];
 
       let subDialogTester = await menuTester.openSubmenu({submenuTrigger: triggerItem});
       act(() => {
         jest.runAllTimers();
       });
-      expect(subDialogTester?.menu()).toBeInTheDocument();
+      expect(subDialogTester?.getMenu()).toBeInTheDocument();
 
       // Open the nested subdialog
-      let subDialogTriggerItem = subDialogTester?.submenuTriggers()[0];
+      let subDialogTriggerItem = subDialogTester?.getSubmenuTriggers()[0];
       await subDialogTester?.openSubmenu({submenuTrigger: subDialogTriggerItem!});
       act(() => {
         jest.runAllTimers();
@@ -1671,7 +1671,7 @@ describe('Menu', () => {
       });
       subdialogs = queryAllByRole('dialog');
       expect(subdialogs).toHaveLength(0);
-      expect(menuTester.menu()).not.toBeInTheDocument();
+      expect(menuTester.getMenu()).not.toBeInTheDocument();
     });
 
     // TODO: add test where clicking in a parent subdialog should close the nested subdialog when we fix that use case
@@ -1765,7 +1765,7 @@ describe('Menu', () => {
       jest.runAllTimers();
     });
 
-    let menu = menuTester.menu();
+    let menu = menuTester.getMenu();
     let activeElement = document.activeElement;
 
     await user.tab();
@@ -1853,7 +1853,7 @@ describe('Menu', () => {
     );
 
     let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
-    await user.pointer({target: menuTester.trigger(), keys: '[MouseLeft>]'});
+    await user.pointer({target: menuTester.getTrigger(), keys: '[MouseLeft>]'});
     await user.pointer({target: menuTester.findOption({indexOrText: 'Cat'}), keys: '[/MouseLeft]'});
 
     expect(onAction).toHaveBeenCalledTimes(1);
@@ -1997,7 +1997,7 @@ describe('Menu', () => {
       act(() => {
         jest.runAllTimers();
       });
-      expect(document.activeElement).toBe(menuTester.options()[0]);
+      expect(document.activeElement).toBe(menuTester.getOptions()[0]);
     });
   });
 });

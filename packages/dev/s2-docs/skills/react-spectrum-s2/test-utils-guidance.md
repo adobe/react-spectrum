@@ -30,10 +30,10 @@ it('my test case', async function () {
   let {getByTestId} = render();
   // Initialize the table tester via providing the 'Table' pattern name and the root element of said table
   let tableTester = testUtilUser.createTester('Table', {root: getByTestId('test_table')});
-  expect(tableTester.selectedRows()).toHaveLength(0);
+  expect(tableTester.getSelectedRows()).toHaveLength(0);
 
   await tableTester.toggleSelectAll();
-  expect(tableTester.selectedRows()).toHaveLength(10);
+  expect(tableTester.getSelectedRows()).toHaveLength(10);
   ...
 });
 ```
@@ -54,7 +54,7 @@ afterEach(() => {
 - Mouse drag interactions and other mock reliant interactions are not available in these test utils since they depended heavily on how the user mocked various things in their test. These must still be simulated manually by the user.
 - Some testers may support the notion of "long press" for certain interactions (e.g. long pressing a button to trigger its menu). To simulate this, you will need to mock PointerEvent globally (see the `installPointerEvent` util) and provide a way to advance timers to the User via `advanceTimer`.
 - These test utils are compatible with not only JSDOM unit tests but browser tests as well (e.g. vitest-browser-react).
-- Methods that accept a target (`option`, `row`, `column`, `checkbox`, `radio`, `tab`) take a `number` (index), `string` (text content), or `HTMLElement`. Use the tester's own query methods (e.g. `rows()`, `options()`) to obtain an `HTMLElement` when you need one.
+- Methods that accept a target (`option`, `row`, `column`, `checkbox`, `radio`, `tab`) take a `number` (index), `string` (text content), or `HTMLElement`. Use the tester's own query methods (e.g. `getRows()`, `getOptions()`) to obtain an `HTMLElement` when you need one.
 - Link navigation assertions must be simulated manually. The testers do not assert navigation side effects.
 
 ### When not to use the testers
@@ -65,7 +65,7 @@ Skip the testers and write manual interactions for the following cases:
 - tests that verify exact focus order, arrow key cycling, or specific modifier key behavior. Use `fireEvent.keyDown` or `userEvent.keyboard` directly so the test is actually testing the desired keyboard flow.
 - when `isOpen` or `defaultOpen` is set, `open()` will no-op but the tester's `root` must still resolve to the trigger element. Use `getByLabelText` or `getByTestId` rather than `getByRole('button')` to avoid ambiguity when multiple buttons are in the DOM.
 - testing `isDismissible`, `isKeyboardDismissDisabled`, or outside-click behavior. Use `userEvent.click(document.body)` or `user.keyboard('[Escape]')` directly and assert the expected state afterwards.
-- when a Dialog closes via an action button (not the explicit close/dismiss button) you should instead click that button manually, then use `dialogTester.dialog()` to assert whether the dialog is still present.
+- when a Dialog closes via an action button (not the explicit close/dismiss button) you should instead click that button manually, then use `dialogTester.getDialog()` to assert whether the dialog is still present.
 
 ### Draggable handle components
 
@@ -88,16 +88,16 @@ The pattern name passed to `createTester` is the ARIA pattern name — not the S
 
 | Pattern name | S2 component | Key methods |
 |---|---|---|
-| `'CheckboxGroup'` | CheckboxGroup | `checkboxGroup()`, `checkboxes()`, `selectedCheckboxes()`, `toggleCheckbox({checkbox})` |
-| `'ComboBox'` | ComboBox | `combobox()`, `listbox()`, `options()`, `open()`, `toggleOptionSelection({option})` |
-| `'Dialog'` | Dialog | `trigger()`, `dialog()`, `open()`, `close()` — pass `overlayType: 'modal'` or `'popover'` to `createTester` |
-| `'GridList'` | ListView | `gridlist()`, `rows()`, `selectedRows()`, `toggleRowSelection({row})`, `triggerRowAction({row})` |
-| `'Menu'` | Menu | `trigger()`, `menu()`, `options()`, `open()`, `toggleOptionSelection({option})`, `openSubmenu({submenuTrigger})`, `close()` |
-| `'RadioGroup'` | RadioGroup | `radiogroup()`, `radios()`, `selectedRadio()`, `triggerRadio({radio})` |
-| `'Select'` | Picker | `trigger()`, `listbox()`, `options()`, `toggleOptionSelection({option})` |
-| `'Table'` | TableView | `table()`, `rows()`, `footerRows()`, `columns()`, `selectedRows()`, `toggleRowSelection({row})`, `toggleSort({column})`, `triggerRowAction({row})` |
-| `'Tabs'` | Tabs | `tablist()`, `tabs()`, `tabpanels()`, `selectedTab()`, `triggerTab({tab})` |
-| `'Tree'` | TreeView | `tree()`, `rows()`, `selectedRows()`, `toggleRowSelection({row})`, `toggleRowExpansion({row})`, `triggerRowAction({row})` |
+| `'CheckboxGroup'` | CheckboxGroup | `getCheckboxGroup()`, `getCheckboxes()`, `getSelectedCheckboxes()`, `toggleCheckbox({checkbox})` |
+| `'ComboBox'` | ComboBox | `getCombobox()`, `getListbox()`, `getOptions()`, `open()`, `toggleOptionSelection({option})` |
+| `'Dialog'` | Dialog | `getTrigger()`, `getDialog()`, `open()`, `close()` — pass `overlayType: 'modal'` or `'popover'` to `createTester` |
+| `'GridList'` | ListView | `getGridlist()`, `getRows()`, `getSelectedRows()`, `toggleRowSelection({row})`, `triggerRowAction({row})` |
+| `'Menu'` | Menu | `getTrigger()`, `getMenu()`, `getOptions()`, `open()`, `toggleOptionSelection({option})`, `openSubmenu({submenuTrigger})`, `close()` |
+| `'RadioGroup'` | RadioGroup | `getRadioGroup()`, `getRadios()`, `getSelectedRadio()`, `triggerRadio({radio})` |
+| `'Select'` | Picker | `getTrigger()`, `getListbox()`, `getOptions()`, `toggleOptionSelection({option})` |
+| `'Table'` | TableView | `getTable()`, `getRows()`, `getFooterRows()`, `getColumns()`, `getSelectedRows()`, `toggleRowSelection({row})`, `toggleSort({column})`, `triggerRowAction({row})` |
+| `'Tabs'` | Tabs | `getTablist()`, `getTabs()`, `getTabpanels()`, `getSelectedTab()`, `triggerTab({tab})` |
+| `'Tree'` | TreeView | `getTree()`, `getRows()`, `getSelectedRows()`, `toggleRowSelection({row})`, `toggleRowExpansion({row})`, `triggerRowAction({row})` |
 
 #### Dialog `overlayType` reference
 
@@ -113,7 +113,7 @@ Pass `overlayType` to `createTester` so the tester knows how the overlay is moun
 ```ts
 let dialogTester = testUtilUser.createTester('Dialog', {root: tree.getByRole('button'), overlayType: 'modal'});
 await dialogTester.open();
-expect(dialogTester.dialog()).toBeVisible();
+expect(dialogTester.getDialog()).toBeVisible();
 ```
 
 ### Per-component reference

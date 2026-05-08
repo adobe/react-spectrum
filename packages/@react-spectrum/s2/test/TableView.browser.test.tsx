@@ -61,5 +61,5 @@ it.each`
     interactionType
   });
   await tester.toggleRowSelection({row: 2});
-  expect(tester.rows()[2].getAttribute('aria-selected')).toBe('true');
+  expect(tester.getRows()[2].getAttribute('aria-selected')).toBe('true');
 });

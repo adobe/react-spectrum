@@ -51,7 +51,7 @@ it.each`
     interactionType
   });
 
-  let rows = tester.rows();
+  let rows = tester.getRows();
   await tester.toggleRowSelection({row: rows[5]});
   expect(rows[5].getAttribute('aria-selected')).toBe('true');
   expect(document.activeElement).toBe(rows[5]);

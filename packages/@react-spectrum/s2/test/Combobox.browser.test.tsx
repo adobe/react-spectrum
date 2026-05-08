@@ -50,5 +50,5 @@ it.each`
 
   let tester = testUtilUser.createTester('ComboBox', {root: container, interactionType});
   await tester.toggleOptionSelection({option: 2});
-  expect(tester.combobox()).toHaveValue('Dog');
+  expect(tester.getCombobox()).toHaveValue('Dog');
 });

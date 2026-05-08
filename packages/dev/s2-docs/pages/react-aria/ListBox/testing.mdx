@@ -53,7 +53,7 @@ it('ListBox can select an option via keyboard', async function () {
   let listboxTester = testUtilUser.createTester('ListBox', {root: getByTestId('test-listbox'), interactionType: 'keyboard'});
 
   await listboxTester.toggleOptionSelection({option: 4});
-  expect(listboxTester.options()[4]).toHaveAttribute('aria-selected', 'true');
+  expect(listboxTester.getOptions()[4]).toHaveAttribute('aria-selected', 'true');
 });
 ```
 

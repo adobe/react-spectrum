@@ -90,12 +90,12 @@ export class ListBoxTester {
     let {indexOrText} = opts;
 
     let option;
-    let options = this.options();
+    let options = this.getOptions();
 
     if (typeof indexOrText === 'number') {
       option = options[indexOrText];
     } else if (typeof indexOrText === 'string') {
-      option = within(this.listbox()!)
+      option = within(this.getListbox()!)
         .getByText(indexOrText)
         .closest('[role=option]')! as HTMLElement;
     }
@@ -109,7 +109,7 @@ export class ListBoxTester {
   }) {
     let {option, selectionOnNav = 'default'} = opts;
     let altKey = getAltKey();
-    let options = this.options();
+    let options = this.getOptions();
     let targetIndex = options.indexOf(option);
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the listbox');
@@ -138,7 +138,7 @@ export class ListBoxTester {
         let curr = (document.activeElement as HTMLElement).getBoundingClientRect();
         let target = option.getBoundingClientRect();
         let key: string;
-        // basically compare current position with desired position to determine if we need to go up/down/left/right
+        // compare current position with desired position to determine if we need to go up/down/left/right
         // use 1 in the comparison here for subpixels since getBoundingClientRect returns subpixels precision
         if (Math.abs(curr.top - target.top) > 1) {
           key = curr.top < target.top ? 'ArrowDown' : 'ArrowUp';
@@ -253,14 +253,14 @@ export class ListBoxTester {
   /**
    * Returns the listbox.
    */
-  listbox(): HTMLElement {
+  getListbox(): HTMLElement {
     return this._listbox;
   }
 
   /**
    * Returns the listbox options. Can be filtered to a subsection of the listbox if provided via `element`.
    */
-  options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
+  getOptions(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this._listbox} = opts;
     let options = [];
     if (element) {
@@ -273,14 +273,14 @@ export class ListBoxTester {
   /**
    * Returns the listbox's selected options if any.
    */
-  selectedOptions(): HTMLElement[] {
-    return this.options().filter(row => row.getAttribute('aria-selected') === 'true');
+  getSelectedOptions(): HTMLElement[] {
+    return this.getOptions().filter(row => row.getAttribute('aria-selected') === 'true');
   }
 
   /**
    * Returns the listbox's sections if any.
    */
-  sections(): HTMLElement[] {
+  getSections(): HTMLElement[] {
     return within(this._listbox).queryAllByRole('group');
   }
 }

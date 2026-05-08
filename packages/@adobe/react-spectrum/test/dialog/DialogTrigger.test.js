@@ -89,7 +89,7 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'modal'});
     await dialogTester.open();
-    let dialog = dialogTester.dialog();
+    let dialog = dialogTester.getDialog();
     expect(dialog).toBeVisible();
 
     let modal = getByTestId('modal');
@@ -137,7 +137,7 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'popover'});
     await dialogTester.open();
-    let dialog = dialogTester.dialog();
+    let dialog = dialogTester.getDialog();
     expect(dialog).toBeVisible();
 
     let popover = getByTestId('popover');
@@ -290,7 +290,7 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'modal'});
     await dialogTester.open();
-    let dialog = dialogTester.dialog();
+    let dialog = dialogTester.getDialog();
     expect(document.activeElement).toBe(dialog);
     await dialogTester.close();
     // now that it's been unmounted, run the raf callback

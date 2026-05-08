@@ -187,13 +187,13 @@ describe('ListView', function () {
     expect(grid).toHaveAttribute('aria-rowcount', '3');
     expect(grid).toHaveAttribute('aria-colcount', '1');
 
-    let rows = gridListTester.rows();
+    let rows = gridListTester.getRows();
     expect(rows).toHaveLength(3);
     expect(rows[0]).toHaveAttribute('aria-rowindex', '1');
     expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
     expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
 
-    let gridCells = gridListTester.cells({element: rows[0]});
+    let gridCells = gridListTester.getCells({element: rows[0]});
     expect(gridCells).toHaveLength(1);
     expect(gridCells[0]).toHaveTextContent('Foo');
     expect(gridCells[0]).toHaveAttribute('aria-colindex', '1');
@@ -897,14 +897,14 @@ describe('ListView', function () {
       let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
       let grid = tree.getByRole('grid');
       let gridListTester = testUtilUser.createTester('GridList', {root: grid});
-      let rows = gridListTester.rows();
+      let rows = gridListTester.getRows();
 
       await gridListTester.toggleRowSelection({row: 0});
       checkSelection(onSelectionChange, ['foo']);
       onSelectionChange.mockClear();
       expect(announce).toHaveBeenLastCalledWith('Foo selected.');
       expect(announce).toHaveBeenCalledTimes(1);
-      expect(gridListTester.selectedRows()).toHaveLength(1);
+      expect(gridListTester.getSelectedRows()).toHaveLength(1);
 
       await user.keyboard('{Control>}a{/Control}');
       act(() => jest.runAllTimers());
@@ -912,7 +912,7 @@ describe('ListView', function () {
       onSelectionChange.mockClear();
       expect(announce).toHaveBeenLastCalledWith('All items selected.');
       expect(announce).toHaveBeenCalledTimes(2);
-      expect(gridListTester.selectedRows()).toHaveLength(3);
+      expect(gridListTester.getSelectedRows()).toHaveLength(3);
 
       fireEvent.keyDown(rows[0], {key: 'Escape'});
       fireEvent.keyUp(rows[0], {key: 'Escape'});
@@ -920,7 +920,7 @@ describe('ListView', function () {
       onSelectionChange.mockClear();
       expect(announce).toHaveBeenLastCalledWith('No items selected.');
       expect(announce).toHaveBeenCalledTimes(3);
-      expect(gridListTester.selectedRows()).toHaveLength(0);
+      expect(gridListTester.getSelectedRows()).toHaveLength(0);
     });
 
     describe('onAction', function () {

@@ -59,7 +59,7 @@ export class DialogTester {
    */
   async open(opts: DialogOpenOpts = {}): Promise<void> {
     let {interactionType = this._interactionType} = opts;
-    let trigger = this.trigger();
+    let trigger = this.getTrigger();
     if (!trigger.hasAttribute('disabled')) {
       if (interactionType === 'mouse') {
         await this.user.click(trigger);
@@ -137,7 +137,7 @@ export class DialogTester {
   /**
    * Returns the dialog's trigger.
    */
-  trigger(): HTMLElement {
+  getTrigger(): HTMLElement {
     if (!this._trigger) {
       throw new Error('No trigger element found for dialog.');
     }
@@ -148,7 +148,7 @@ export class DialogTester {
   /**
    * Returns the dialog if present.
    */
-  dialog(): HTMLElement | null {
+  getDialog(): HTMLElement | null {
     return this._dialog && document.contains(this._dialog) ? this._dialog : null;
   }
 }

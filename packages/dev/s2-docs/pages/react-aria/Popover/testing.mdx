@@ -52,7 +52,7 @@ it('Popover can be opened and closed', async function () {
   let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'popover'});
 
   await dialogTester.open();
-  let dialog = dialogTester.dialog();
+  let dialog = dialogTester.getDialog();
   expect(dialog).toBeVisible();
 
   await dialogTester.close();

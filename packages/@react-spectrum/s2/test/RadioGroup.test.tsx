@@ -54,8 +54,8 @@ describe('RadioGroup', () => {
         root: getByRole('radiogroup'),
         direction
       });
-      expect(radioGroupTester.radiogroup()).toHaveAttribute('aria-orientation', props.orientation);
-      let radios = radioGroupTester.radios();
+      expect(radioGroupTester.getRadioGroup()).toHaveAttribute('aria-orientation', props.orientation);
+      let radios = radioGroupTester.getRadios();
       await radioGroupTester.triggerRadio({radio: radios[0]});
       expect(radios[0]).toBeChecked();
 
@@ -79,9 +79,9 @@ describe('RadioGroup', () => {
       // instead of using ArrowLeft/ArrowRight
       await user.keyboard('[ArrowLeft]');
       if (props.locale === 'ar-AE' && props.orientation === 'horizontal') {
-        expect(radioGroupTester.selectedRadio()).toBe(radios[0]);
+        expect(radioGroupTester.getSelectedRadio()).toBe(radios[0]);
       } else {
-        expect(radioGroupTester.selectedRadio()).toBe(radios[3]);
+        expect(radioGroupTester.getSelectedRadio()).toBe(radios[3]);
       }
     }
   );

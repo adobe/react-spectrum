@@ -29,7 +29,7 @@ interface ComboBoxOpenOpts {
 
 interface ComboBoxSelectOpts extends ComboBoxOpenOpts {
   /**
-   * The index, text, or node of the option to select. Option nodes can be sourced via `options()`.
+   * The index, text, or node of the option to select. Option nodes can be sourced via `getOptions()`.
    */
   option: number | string | HTMLElement;
   /**
@@ -88,8 +88,8 @@ export class ComboBoxTester {
    */
   async open(opts: ComboBoxOpenOpts = {}): Promise<void> {
     let {triggerBehavior = 'manual', interactionType = this._interactionType} = opts;
-    let trigger = this.trigger();
-    let combobox = this.combobox();
+    let trigger = this.getTrigger();
+    let combobox = this.getCombobox();
     let isDisabled = trigger!.hasAttribute('disabled');
 
     if (interactionType === 'mouse') {
@@ -135,8 +135,8 @@ export class ComboBoxTester {
     let {indexOrText} = opts;
 
     let option;
-    let options = this.options();
-    let listbox = this.listbox();
+    let options = this.getOptions();
+    let listbox = this.getListbox();
 
     if (typeof indexOrText === 'number') {
       option = options[indexOrText];
@@ -149,8 +149,8 @@ export class ComboBoxTester {
 
   private async keyboardNavigateToOption(opts: {option: HTMLElement}) {
     let {option} = opts;
-    let combobox = this.combobox();
-    let options = this.options();
+    let combobox = this.getCombobox();
+    let options = this.getOptions();
     let targetIndex = options.findIndex(opt => opt === option || opt.contains(option));
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the combobox listbox.');
@@ -185,11 +185,11 @@ export class ComboBoxTester {
    */
   async toggleOptionSelection(opts: ComboBoxSelectOpts): Promise<void> {
     let {option, triggerBehavior, interactionType = this._interactionType, closesOnSelect} = opts;
-    if (!this.combobox().getAttribute('aria-controls')) {
+    if (!this.getCombobox().getAttribute('aria-controls')) {
       await this.open({triggerBehavior});
     }
 
-    let listbox = this.listbox();
+    let listbox = this.getListbox();
     if (!listbox) {
       throw new Error("Combobox's listbox not found.");
     }
@@ -231,9 +231,9 @@ export class ComboBoxTester {
    * Closes the combobox dropdown.
    */
   async close(): Promise<void> {
-    let listbox = this.listbox();
+    let listbox = this.getListbox();
     if (listbox) {
-      act(() => this.combobox().focus());
+      act(() => this.getCombobox().focus());
       await this.user.keyboard('[Escape]');
 
       await waitFor(() => {
@@ -251,38 +251,38 @@ export class ComboBoxTester {
   /**
    * Returns the combobox.
    */
-  combobox(): HTMLElement {
+  getCombobox(): HTMLElement {
     return this._combobox;
   }
 
   /**
    * Returns the combobox trigger button.
    */
-  trigger(): HTMLElement {
+  getTrigger(): HTMLElement {
     return this._trigger;
   }
 
   /**
    * Returns the combobox's listbox if present.
    */
-  listbox(): HTMLElement | null {
-    let listBoxId = this.combobox().getAttribute('aria-controls');
+  getListbox(): HTMLElement | null {
+    let listBoxId = this.getCombobox().getAttribute('aria-controls');
     return listBoxId ? document.getElementById(listBoxId) || null : null;
   }
 
   /**
    * Returns the combobox's sections if present.
    */
-  sections(): HTMLElement[] {
-    let listbox = this.listbox();
+  getSections(): HTMLElement[] {
+    let listbox = this.getListbox();
     return listbox ? within(listbox).queryAllByRole('group') : [];
   }
 
   /**
    * Returns the combobox's options if present. Can be filtered to a subsection of the listbox if provided via `element`.
    */
-  options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
-    let {element = this.listbox()} = opts;
+  getOptions(opts: {element?: HTMLElement} = {}): HTMLElement[] {
+    let {element = this.getListbox()} = opts;
     let options = [];
     if (element) {
       options = within(element).queryAllByRole('option');
@@ -294,8 +294,8 @@ export class ComboBoxTester {
   /**
    * Returns the currently focused option in the combobox's dropdown if any.
    */
-  focusedOption(): HTMLElement | null {
-    let focusedOptionId = this.combobox().getAttribute('aria-activedescendant');
+  getFocusedOption(): HTMLElement | null {
+    let focusedOptionId = this.getCombobox().getAttribute('aria-activedescendant');
     return focusedOptionId ? document.getElementById(focusedOptionId) : null;
   }
 }

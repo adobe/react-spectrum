@@ -46,5 +46,5 @@ it.each`
 
   let tester = testUtilUser.createTester('Select', {root: container, interactionType});
   await tester.toggleOptionSelection({option: 2});
-  expect(tester.trigger()).toHaveTextContent('Dog');
+  expect(tester.getTrigger()).toHaveTextContent('Dog');
 });

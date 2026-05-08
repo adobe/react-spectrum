@@ -58,9 +58,9 @@ export class CheckboxGroupTester {
 
     let checkbox;
     if (typeof indexOrText === 'number') {
-      checkbox = this.checkboxes()[indexOrText];
+      checkbox = this.getCheckboxes()[indexOrText];
     } else if (typeof indexOrText === 'string') {
-      let label = within(this.checkboxgroup()).getByText(indexOrText);
+      let label = within(this.getCheckboxGroup()).getByText(indexOrText);
 
       // Label may wrap the checkbox, or the actual label may be a sibling span, or the checkbox div could have the label within it
       if (label) {
@@ -81,7 +81,7 @@ export class CheckboxGroupTester {
 
   private async keyboardNavigateToCheckbox(opts: {checkbox: HTMLElement}) {
     let {checkbox} = opts;
-    let checkboxes = this.checkboxes();
+    let checkboxes = this.getCheckboxes();
     checkboxes = checkboxes.filter(
       checkbox =>
         !(checkbox.hasAttribute('disabled') || checkbox.getAttribute('aria-disabled') === 'true')
@@ -97,7 +97,7 @@ export class CheckboxGroupTester {
       throw new Error('Checkbox provided is not in the checkbox group.');
     }
 
-    if (!this.checkboxgroup().contains(document.activeElement)) {
+    if (!this.getCheckboxGroup().contains(document.activeElement)) {
       act(() => checkboxes[0].focus());
     }
 
@@ -140,22 +140,22 @@ export class CheckboxGroupTester {
   /**
    * Returns the checkboxgroup.
    */
-  checkboxgroup(): HTMLElement {
+  getCheckboxGroup(): HTMLElement {
     return this._checkboxgroup;
   }
 
   /**
    * Returns the checkboxes.
    */
-  checkboxes(): HTMLElement[] {
-    return within(this.checkboxgroup()).queryAllByRole('checkbox');
+  getCheckboxes(): HTMLElement[] {
+    return within(this.getCheckboxGroup()).queryAllByRole('checkbox');
   }
 
   /**
    * Returns the currently selected checkboxes in the checkboxgroup if any.
    */
-  selectedCheckboxes(): HTMLElement[] {
-    return this.checkboxes().filter(
+  getSelectedCheckboxes(): HTMLElement[] {
+    return this.getCheckboxes().filter(
       checkbox =>
         (checkbox as HTMLInputElement).checked || checkbox.getAttribute('aria-checked') === 'true'
     );

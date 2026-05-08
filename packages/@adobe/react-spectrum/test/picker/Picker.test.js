@@ -108,17 +108,17 @@ describe('Picker', function () {
       let selectTester = testUtilUser.createTester('Select', {root: getByRole('button')});
       expect(queryByRole('listbox')).toBeNull();
 
-      let picker = selectTester.trigger();
+      let picker = selectTester.getTrigger();
       await selectTester.open();
 
-      let listbox = selectTester.listbox();
+      let listbox = selectTester.getListbox();
       expect(listbox).toBeVisible();
       expect(onOpenChange).toBeCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledWith(true);
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
 
-      let items = selectTester.options();
+      let items = selectTester.getOptions();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
@@ -218,18 +218,18 @@ describe('Picker', function () {
       expect(queryByRole('listbox')).toBeNull();
       let selectTester = testUtilUser.createTester('Select', {root: getByRole('button')});
       selectTester.setInteractionType('keyboard');
-      let picker = selectTester.trigger();
+      let picker = selectTester.getTrigger();
 
       await selectTester.open();
 
-      let listbox = selectTester.listbox();
+      let listbox = selectTester.getListbox();
       expect(listbox).toBeVisible();
       expect(onOpenChange).toBeCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledWith(true);
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
 
-      let items = selectTester.options();
+      let items = selectTester.getOptions();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
@@ -252,7 +252,7 @@ describe('Picker', function () {
 
       expect(queryByRole('listbox')).toBeNull();
       let selectTester = testUtilUser.createTester('Select', {root: getByRole('button')});
-      let picker = selectTester.trigger();
+      let picker = selectTester.getTrigger();
       // TODO: for these keyboard event, IMO we don't have to include in the test utils since the user can pretty
       // easily define what specific keyboard interactions they want to do. We can handle firing the various intermediate interactions
       // for basic flows (aka we will handle firing Enter in selectTester.open())
@@ -260,14 +260,14 @@ describe('Picker', function () {
       fireEvent.keyUp(picker, {key: 'ArrowDown'});
       act(() => jest.runAllTimers());
 
-      let listbox = selectTester.listbox();
+      let listbox = selectTester.getListbox();
       expect(listbox).toBeVisible();
       expect(onOpenChange).toBeCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledWith(true);
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
 
-      let items = selectTester.options();
+      let items = selectTester.getOptions();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
@@ -541,10 +541,10 @@ describe('Picker', function () {
 
       expect(queryByRole('listbox')).toBeNull();
       let selectTester = testUtilUser.createTester('Select', {root: getByRole('button')});
-      let picker = selectTester.trigger();
+      let picker = selectTester.getTrigger();
       await selectTester.open();
 
-      let listbox = selectTester.listbox();
+      let listbox = selectTester.getListbox();
       expect(listbox).toBeVisible();
       expect(onOpenChange).toBeCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledWith(true);
@@ -963,12 +963,12 @@ describe('Picker', function () {
         </Provider>
       );
       let selectTester = testUtilUser.createTester('Select', {root: getByRole('button')});
-      let picker = selectTester.trigger();
+      let picker = selectTester.getTrigger();
       expect(picker).toHaveTextContent('Select…');
       await selectTester.open();
 
-      let listbox = selectTester.listbox();
-      let items = selectTester.options();
+      let listbox = selectTester.getListbox();
+      let items = selectTester.getOptions();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
@@ -995,12 +995,12 @@ describe('Picker', function () {
         </Provider>
       );
       let selectTester = testUtilUser.createTester('Select', {root: getByRole('button')});
-      let picker = selectTester.trigger();
+      let picker = selectTester.getTrigger();
       expect(picker).toHaveTextContent('Select…');
       await selectTester.open();
 
-      let listbox = selectTester.listbox();
-      let items = selectTester.options();
+      let listbox = selectTester.getListbox();
+      let items = selectTester.getOptions();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('Empty');
       expect(items[1]).toHaveTextContent('Zero');
@@ -1085,12 +1085,12 @@ describe('Picker', function () {
       );
       let selectTester = testUtilUser.createTester('Select', {root: getByRole('button')});
       selectTester.setInteractionType('keyboard');
-      let picker = selectTester.trigger();
+      let picker = selectTester.getTrigger();
 
       expect(picker).toHaveTextContent('Select…');
       await selectTester.open();
 
-      let items = selectTester.options();
+      let items = selectTester.getOptions();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
@@ -1161,18 +1161,18 @@ describe('Picker', function () {
         </Provider>
       );
       let selectTester = testUtilUser.createTester('Select', {root: getByRole('button')});
-      let picker = selectTester.trigger();
+      let picker = selectTester.getTrigger();
       expect(picker).toHaveTextContent('Select…');
       expect(onOpenChangeSpy).toHaveBeenCalledTimes(0);
       await selectTester.open();
       expect(onOpenChangeSpy).toHaveBeenCalledTimes(1);
 
-      let listbox = selectTester.listbox();
+      let listbox = selectTester.getListbox();
       let label = getAllByText('Test')[0];
       expect(listbox).toBeVisible();
       expect(listbox).toHaveAttribute('aria-labelledby', label.id);
 
-      let items = selectTester.options();
+      let items = selectTester.getOptions();
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
       expect(items[2]).toHaveTextContent('Three');
@@ -1365,15 +1365,15 @@ describe('Picker', function () {
         </Provider>
       );
       let selectTester = testUtilUser.createTester('Select', {root: getByRole('button')});
-      let picker = selectTester.trigger();
+      let picker = selectTester.getTrigger();
       expect(picker).toHaveTextContent('Select…');
       await selectTester.open();
 
-      let listbox = selectTester.listbox();
-      let items = selectTester.options();
+      let listbox = selectTester.getListbox();
+      let items = selectTester.getOptions();
       expect(items.length).toBe(6);
 
-      let groups = selectTester.sections();
+      let groups = selectTester.getSections();
       expect(groups).toHaveLength(2);
       expect(groups[0]).toHaveAttribute('aria-labelledby', getByText('Section 1').id);
 
@@ -1427,8 +1427,8 @@ describe('Picker', function () {
       // Open again
       await selectTester.open();
 
-      listbox = selectTester.listbox();
-      items = selectTester.options();
+      listbox = selectTester.getListbox();
+      items = selectTester.getOptions();
       expect(items.length).toBe(6);
 
       expect(document.activeElement).toBe(items[1]);
@@ -1535,11 +1535,11 @@ describe('Picker', function () {
         </Provider>
       );
       let selectTester = testUtilUser.createTester('Select', {root: getByRole('button')});
-      let picker = selectTester.trigger();
+      let picker = selectTester.getTrigger();
       expect(picker).toHaveTextContent('Two');
       await selectTester.open();
 
-      let items = selectTester.options();
+      let items = selectTester.getOptions();
       expect(document.activeElement).toBe(items[1]);
 
       await selectTester.toggleOptionSelection({option: 'Two'});
@@ -2138,7 +2138,7 @@ describe('Picker', function () {
             </Provider>
           );
           let selectTester = testUtilUser.createTester('Select', {root: getByRole('button')});
-          let picker = selectTester.trigger();
+          let picker = selectTester.getTrigger();
           let input = document.querySelector('[name=picker]');
           expect(input).toHaveAttribute('required');
           expect(picker).not.toHaveAttribute('aria-describedby');
@@ -2177,7 +2177,7 @@ describe('Picker', function () {
             </Provider>
           );
           let selectTester = testUtilUser.createTester('Select', {root: getByRole('button')});
-          let picker = selectTester.trigger();
+          let picker = selectTester.getTrigger();
           let input = document.querySelector('[name=picker]');
           expect(picker).not.toHaveAttribute('aria-describedby');
           expect(input.validity.valid).toBe(false);
@@ -2228,7 +2228,7 @@ describe('Picker', function () {
 
           let {getByTestId} = render(<Test />);
           let selectTester = testUtilUser.createTester('Select', {root: getByTestId('picker')});
-          let picker = selectTester.trigger();
+          let picker = selectTester.getTrigger();
           let input = document.querySelector('[name=picker]');
           expect(picker).not.toHaveAttribute('aria-describedby');
 
@@ -2299,7 +2299,7 @@ describe('Picker', function () {
             </Provider>
           );
           let selectTester = testUtilUser.createTester('Select', {root: getByTestId('picker')});
-          let picker = selectTester.trigger();
+          let picker = selectTester.getTrigger();
           let input = document.querySelector('[name=picker]');
           expect(input).toHaveAttribute('required');
           expect(picker).not.toHaveAttribute('aria-describedby');
@@ -2341,7 +2341,7 @@ describe('Picker', function () {
             </Provider>
           );
           let selectTester = testUtilUser.createTester('Select', {root: getByTestId('picker')});
-          let picker = selectTester.trigger();
+          let picker = selectTester.getTrigger();
           let input = document.querySelector('[name=picker]');
           expect(picker).toHaveAttribute('aria-describedby');
           expect(
@@ -2366,7 +2366,7 @@ describe('Picker', function () {
             </Provider>
           );
           let selectTester = testUtilUser.createTester('Select', {root: getByTestId('picker')});
-          let picker = selectTester.trigger();
+          let picker = selectTester.getTrigger();
           expect(picker).toHaveAttribute('aria-describedby');
           expect(
             document.getElementById(picker.getAttribute('aria-describedby'))

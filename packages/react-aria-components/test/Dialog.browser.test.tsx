@@ -49,9 +49,9 @@ it.each`
   });
 
   await tester.open();
-  expect(tester.dialog()).not.toBeNull();
-  expect(tester.dialog()!.contains(document.activeElement)).toBe(true);
+  expect(tester.getDialog()).not.toBeNull();
+  expect(tester.getDialog()!.contains(document.activeElement)).toBe(true);
 
   await tester.close();
-  expect(tester.dialog()).toBeNull();
+  expect(tester.getDialog()).toBeNull();
 });

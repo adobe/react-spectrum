@@ -53,7 +53,7 @@ it.each`
       interactionType
     });
 
-    let options = tester.options();
+    let options = tester.getOptions();
     await tester.toggleOptionSelection({option: options[5]});
     expect(options[5].getAttribute('aria-selected')).toBe('true');
     expect(document.activeElement).toBe(options[5]);

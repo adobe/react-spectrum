@@ -45,7 +45,7 @@ it.each`
     root: container.querySelector('[role=group]') as HTMLElement,
     interactionType
   });
-  let checkboxes = tester.checkboxes();
+  let checkboxes = tester.getCheckboxes();
   await tester.toggleCheckbox({checkbox: checkboxes[2]});
-  expect(tester.selectedCheckboxes()).toContain(checkboxes[2]);
+  expect(tester.getSelectedCheckboxes()).toContain(checkboxes[2]);
 });

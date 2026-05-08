@@ -1152,7 +1152,7 @@ describe('Radios', function () {
           root: getByRole('radiogroup'),
           direction
         });
-        let radios = radioGroupTester.radios();
+        let radios = radioGroupTester.getRadios();
         await radioGroupTester.triggerRadio({radio: radios[0]});
         expect(radios[0]).toBeChecked();
 
