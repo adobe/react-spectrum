@@ -164,7 +164,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           return;
         } else if (
           !state.expandedKeys.has(node.key) &&
-          node.parentKey
+          node.parentKey &&
+          state.collection.getItem(node.parentKey)?.type === 'item'
         ) {
           // Item is a leaf or already collapsed, move focus to parent
           state.selectionManager.setFocusedKey(node.parentKey);

@@ -47,7 +47,10 @@ export const SwitchContext = createContext<ContextValue<Partial<SwitchProps>, Fo
 
 const field = style({
   display: 'grid',
-  gridTemplateColumns: ['max-content', '1fr'],
+  gridTemplateColumns: {
+    default: ['max-content', '1fr'],
+    isNoVisibleLabel: ['max-content']
+  },
   columnGap: 'text-to-control',
   width: 'fit',
   font: controlFont(),
@@ -183,7 +186,7 @@ export const Switch = /*#__PURE__*/ forwardRef(function Switch(props: SwitchProp
       ref={domRef}
       inputRef={inputRef}
       style={UNSAFE_style}
-      className={renderProps => UNSAFE_className + field({...renderProps, isInForm, size: props.size || 'M'}, props.styles)}>
+      className={renderProps => UNSAFE_className + field({...renderProps, isInForm, size: props.size || 'M', isNoVisibleLabel: !children}, props.styles)}>
       {({isDisabled, isInvalid}) => (<>
         <SwitchButton className={renderProps => wrapper({...renderProps, isInForm, size: props.size || 'M'})}>
           {renderProps => (

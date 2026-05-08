@@ -33,14 +33,14 @@ import {createHideableComponent} from 'react-aria/private/collections/Hidden';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
-import {forwardRefType, GlobalDOMAttributes, Key, RefObject} from '@react-types/shared';
+import {GlobalDOMAttributes, Key, RefObject} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, HTMLAttributes, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
 import {useFilter} from 'react-aria/useFilter';
 import {useListFormatter} from 'react-aria/useListFormatter';
@@ -100,7 +100,7 @@ export const ComboBoxStateContext = createContext<ComboBoxState<any, SelectionMo
 /**
  * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
  */
-export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T extends object, M extends SelectionMode = 'single'>(props: ComboBoxProps<T, M>, ref: ForwardedRef<HTMLDivElement>) {
+export const ComboBox = /*#__PURE__*/ createHideableComponent(function ComboBox<T extends object, M extends SelectionMode = 'single'>(props: ComboBoxProps<T, M>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
   let {children, isDisabled = false, isInvalid = false, isRequired = false, isReadOnly = false} = props;
   let content = useMemo(() => (

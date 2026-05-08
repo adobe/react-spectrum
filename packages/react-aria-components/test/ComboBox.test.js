@@ -798,6 +798,30 @@ describe('ComboBox', () => {
     expect(comboboxTester.combobox).toHaveValue('Test');
   });
 
+  it.each(['{Escape}', '{Enter}', '{Tab}'])('should preserve multi-select value with custom input on %s', async (key) => {
+    let {container, queryByRole} = render(
+      <TestComboBox
+        selectionMode="multiple"
+        allowsCustomValue
+        defaultValue={['1', '2']}
+        defaultInputValue="" />
+    );
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    let value = container.querySelector('.react-aria-ComboBoxValue');
+
+    expect(value).toHaveTextContent('Cat and Dog');
+
+    await user.tab();
+    await user.keyboard('Den');
+    expect(comboboxTester.combobox).toHaveValue('Den');
+
+    await user.keyboard(key);
+
+    expect(queryByRole('listbox')).toBeNull();
+    expect(comboboxTester.combobox).toHaveValue('Den');
+    expect(value).toHaveTextContent('Cat and Dog');
+  });
+
   it('should allow the user to deselect items with keyboard when multiselect (uncontrolled)', async () => {
     let onChange = jest.fn();
     let {container} = render(<TestComboBox defaultValue={['1', '2']} selectionMode="multiple" onChange={onChange} />);

@@ -83,6 +83,8 @@ const controlsStyle = style({
 });
 
 export interface VisualExampleProps {
+  /** The name of the component. */
+  name?: string,
   /** The component to render. */
   component: any,
   /** The TS docs for this component. */
@@ -120,7 +122,7 @@ export interface PropControl extends Omit<TProperty, 'description'> {
 /**
  * Displays a component example with controls for changing the props.
  */
-export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, downloadFiles, code, wide, slots, align, acceptOrientation, type, propsObject, showCoachMark, hideShadcn}: VisualExampleProps) {
+export function VisualExample({name, component, docs, links, importSource, props, initialProps, controlOptions, files, downloadFiles, code, wide, slots, align, acceptOrientation, type, propsObject, showCoachMark, hideShadcn}: VisualExampleProps) {
   let componentProps = docs.type === 'interface' ? docs : docs.props;
   if (componentProps?.type !== 'interface') {
     return null;
@@ -187,7 +189,7 @@ export function VisualExample({component, docs, links, importSource, props, init
 
   // Render the corresponding client component to make the controls interactive.
   return (
-    <VisualExampleClient component={component} name={docs.name} importSource={importSource} controls={controls} initialProps={initialProps} propsObject={propsObject}>
+    <VisualExampleClient component={component} name={name ?? docs.name} importSource={importSource} controls={controls} initialProps={initialProps} propsObject={propsObject}>
       <FileProvider value={downloadFiles}>
         <ShadcnProvider value={!type || type === 's2' || docs.type !== 'component' || hideShadcn ? null : {type, component: docs.name}}>
           <div role="group" aria-label="Example" className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
