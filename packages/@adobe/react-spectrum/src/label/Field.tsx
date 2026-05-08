@@ -15,7 +15,14 @@ import {classNames} from '../utils/classNames';
 import {Flex} from '../layout/Flex';
 import {HelpText} from './HelpText';
 import {Label, SpectrumLabelPropsBase} from './Label';
-import {LabelPosition, RefObject, SpectrumFieldValidation, SpectrumHelpTextProps, Validation, ValidationResult} from '@react-types/shared';
+import {
+  LabelPosition,
+  RefObject,
+  SpectrumFieldValidation,
+  SpectrumHelpTextProps,
+  Validation,
+  ValidationResult
+} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from 'react-aria/mergeProps';
 import React, {HTMLAttributes, LabelHTMLAttributes, ReactElement, ReactNode, Ref} from 'react';
@@ -24,18 +31,27 @@ import {useFormProps} from '../form/Form';
 import {useId} from 'react-aria/useId';
 import {useStyleProps} from '../utils/styleProps';
 
-export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelpTextProps, Omit<Validation<any>, 'validationState'>, SpectrumFieldValidation<any>, Partial<ValidationResult> {
-  children: ReactElement,
-  label?: ReactNode,
-  contextualHelp?: ReactNode,
-  labelProps?: LabelHTMLAttributes<HTMLLabelElement>,
-  descriptionProps?: HTMLAttributes<HTMLElement>,
-  errorMessageProps?: HTMLAttributes<HTMLElement>,
-  wrapperClassName?: string,
-  wrapperProps?: HTMLAttributes<HTMLElement>
+export interface SpectrumFieldProps
+  extends
+    SpectrumLabelPropsBase,
+    SpectrumHelpTextProps,
+    Omit<Validation<any>, 'validationState'>,
+    SpectrumFieldValidation<any>,
+    Partial<ValidationResult> {
+  children: ReactElement;
+  label?: ReactNode;
+  contextualHelp?: ReactNode;
+  labelProps?: LabelHTMLAttributes<HTMLLabelElement>;
+  descriptionProps?: HTMLAttributes<HTMLElement>;
+  errorMessageProps?: HTMLAttributes<HTMLElement>;
+  wrapperClassName?: string;
+  wrapperProps?: HTMLAttributes<HTMLElement>;
 }
 
-export const Field = React.forwardRef(function Field(props: SpectrumFieldProps, ref: Ref<HTMLElement>) {
+export const Field = React.forwardRef(function Field(
+  props: SpectrumFieldProps,
+  ref: Ref<HTMLElement>
+) {
   let formProps = useFormProps(props);
   let isInForm = formProps !== props;
   props = formProps;
@@ -68,17 +84,19 @@ export const Field = React.forwardRef(function Field(props: SpectrumFieldProps, 
   let {styleProps} = useStyleProps(otherProps);
   let errorMessageString: ReactNode = null;
   if (typeof errorMessage === 'function') {
-    errorMessageString = isInvalid != null && validationErrors != null && validationDetails != null
-      ? errorMessage({
-        isInvalid,
-        validationErrors,
-        validationDetails
-      })
-      : null;
+    errorMessageString =
+      isInvalid != null && validationErrors != null && validationDetails != null
+        ? errorMessage({
+            isInvalid,
+            validationErrors,
+            validationDetails
+          })
+        : null;
   } else {
     errorMessageString = errorMessage;
   }
-  let hasHelpText = !!description || errorMessageString && (isInvalid || validationState === 'invalid');
+  let hasHelpText =
+    !!description || (errorMessageString && (isInvalid || validationState === 'invalid'));
   let contextualHelpId = useId();
 
   let fallbackLabelPropsId = useId();
@@ -87,24 +105,24 @@ export const Field = React.forwardRef(function Field(props: SpectrumFieldProps, 
   }
 
   let labelWrapperClass = classNames(
-      labelStyles,
-      'spectrum-Field',
+    labelStyles,
+    'spectrum-Field',
     {
       'spectrum-Field--positionTop': labelPosition === 'top',
       'spectrum-Field--positionSide': labelPosition === 'side',
       'spectrum-Field--alignEnd': labelAlign === 'end',
       'spectrum-Field--hasContextualHelp': !!props.contextualHelp
     },
-      styleProps.className,
-      wrapperClassName
-    );
+    styleProps.className,
+    wrapperClassName
+  );
 
-  children = React.cloneElement(children, mergeProps(children.props as any, {
-    className: classNames(
-        labelStyles,
-        'spectrum-Field-field'
-      )
-  }));
+  children = React.cloneElement(
+    children,
+    mergeProps(children.props as any, {
+      className: classNames(labelStyles, 'spectrum-Field-field')
+    })
+  );
 
   let renderHelpText = () => (
     <HelpText
@@ -116,13 +134,16 @@ export const Field = React.forwardRef(function Field(props: SpectrumFieldProps, 
       isInvalid={isInvalid}
       isDisabled={isDisabled}
       showErrorIcon={showErrorIcon}
-      gridArea={labelStyles.helpText} />
-    );
+      gridArea={labelStyles.helpText}
+    />
+  );
 
   let renderChildren = () => {
     if (labelPosition === 'side') {
       return (
-        <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
+        <Flex
+          direction="column"
+          UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
           {children}
           {hasHelpText && renderHelpText()}
         </Flex>
@@ -146,12 +167,14 @@ export const Field = React.forwardRef(function Field(props: SpectrumFieldProps, 
           labelAlign={labelAlign}
           isRequired={isRequired}
           necessityIndicator={necessityIndicator}
-          includeNecessityIndicatorInAccessibilityName={includeNecessityIndicatorInAccessibilityName}
+          includeNecessityIndicatorInAccessibilityName={
+            includeNecessityIndicatorInAccessibilityName
+          }
           elementType={elementType}>
           {label}
         </Label>
       )}
-      {label && contextualHelp &&
+      {label && contextualHelp && (
         <SlotProvider
           slots={{
             actionButton: {
@@ -162,12 +185,12 @@ export const Field = React.forwardRef(function Field(props: SpectrumFieldProps, 
           }}>
           {contextualHelp}
         </SlotProvider>
-      }
+      )}
     </>
-    );
+  );
 
-    // Need to add an extra wrapper for the label and contextual help if labelPosition is side,
-    // so that the table layout works inside forms.
+  // Need to add an extra wrapper for the label and contextual help if labelPosition is side,
+  // so that the table layout works inside forms.
   if (isInForm && labelPosition === 'side' && label && contextualHelp) {
     labelAndContextualHelp = (
       <div className={classNames(labelStyles, 'spectrum-Field-labelCell')}>
@@ -179,13 +202,13 @@ export const Field = React.forwardRef(function Field(props: SpectrumFieldProps, 
   }
 
   return (
-    (<div
+    <div
       {...styleProps}
       {...wrapperProps}
       ref={ref as RefObject<HTMLDivElement | null>}
       className={labelWrapperClass}>
       {labelAndContextualHelp}
       {renderChildren()}
-    </div>)
+    </div>
   );
 });

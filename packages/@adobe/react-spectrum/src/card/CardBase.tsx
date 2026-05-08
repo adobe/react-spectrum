@@ -35,14 +35,17 @@ import {useSlotId} from 'react-aria/private/utils/useId';
 import {useStyleProps} from '../utils/styleProps';
 
 interface CardBaseProps<T> extends SpectrumCardProps {
-  articleProps?: HTMLAttributes<HTMLElement>,
-  item?: Node<T>
+  articleProps?: HTMLAttributes<HTMLElement>;
+  item?: Node<T>;
 }
 
 /**
  * TODO: Add description of component here.
  */
-export const CardBase = React.forwardRef(function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const CardBase = React.forwardRef(function CardBase<T extends object>(
+  props: CardBaseProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
   props = useProviderProps(props);
   let context = useCardViewContext() || {}; // we can call again here, won't change from Card.tsx
   let {state} = context;
@@ -68,7 +71,9 @@ export const CardBase = React.forwardRef(function CardBase<T extends object>(pro
   let checkboxRef = useRef(null);
 
   // cards are only interactive if there is a selection manager and it allows selection
-  let {hoverProps, isHovered} = useHover({isDisabled: manager === undefined || manager?.selectionMode === 'none' || isDisabled});
+  let {hoverProps, isHovered} = useHover({
+    isDisabled: manager === undefined || manager?.selectionMode === 'none' || isDisabled
+  });
   let [isFocused, setIsFocused] = useState(false);
   let {focusWithinProps} = useFocusWithin({
     onFocusWithinChange: setIsFocused,
@@ -100,23 +105,42 @@ export const CardBase = React.forwardRef(function CardBase<T extends object>(pro
     };
   }
 
-  let slots = useMemo(() => ({
-    image: {UNSAFE_className: classNames(styles, 'spectrum-Card-image'), objectFit: orientation === 'horizontal' ? 'cover' : 'contain', alt: '', ...aspectRatioEnforce},
-    illustration: {UNSAFE_className: classNames(styles, 'spectrum-Card-illustration'), ...aspectRatioEnforce},
-    avatar: {UNSAFE_className: classNames(styles, 'spectrum-Card-avatar'), size: 'avatar-size-400'},
-    heading: {UNSAFE_className: classNames(styles, 'spectrum-Card-heading'), ...titleProps},
-    content: {UNSAFE_className: classNames(styles, 'spectrum-Card-content'), ...contentProps},
-    detail: {UNSAFE_className: classNames(styles, 'spectrum-Card-detail')}
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [titleProps, contentProps, height, isQuiet, orientation]);
+  let slots = useMemo(
+    () => ({
+      image: {
+        UNSAFE_className: classNames(styles, 'spectrum-Card-image'),
+        objectFit: orientation === 'horizontal' ? 'cover' : 'contain',
+        alt: '',
+        ...aspectRatioEnforce
+      },
+      illustration: {
+        UNSAFE_className: classNames(styles, 'spectrum-Card-illustration'),
+        ...aspectRatioEnforce
+      },
+      avatar: {
+        UNSAFE_className: classNames(styles, 'spectrum-Card-avatar'),
+        size: 'avatar-size-400'
+      },
+      heading: {UNSAFE_className: classNames(styles, 'spectrum-Card-heading'), ...titleProps},
+      content: {UNSAFE_className: classNames(styles, 'spectrum-Card-content'), ...contentProps},
+      detail: {UNSAFE_className: classNames(styles, 'spectrum-Card-detail')}
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }),
+    [titleProps, contentProps, height, isQuiet, orientation]
+  );
 
   useLayoutEffect(() => {
     if (gridRef?.current) {
       let walker = getFocusableTreeWalker(gridRef.current);
       let nextNode = walker.nextNode();
       while (nextNode != null) {
-        if (checkboxRef.current && !nodeContains(checkboxRef.current.UNSAFE_getDOMNode(), nextNode)) {
-          console.warn('Card does not support focusable elements, please contact the team regarding your use case.');
+        if (
+          checkboxRef.current &&
+          !nodeContains(checkboxRef.current.UNSAFE_getDOMNode(), nextNode)
+        ) {
+          console.warn(
+            'Card does not support focusable elements, please contact the team regarding your use case.'
+          );
           break;
         }
         nextNode = walker.nextNode();
@@ -128,21 +152,33 @@ export const CardBase = React.forwardRef(function CardBase<T extends object>(pro
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
         {...styleProps}
-        {...mergeProps(cardProps, focusWithinProps, hoverProps, filterDOMProps(props), articleProps)}
+        {...mergeProps(
+          cardProps,
+          focusWithinProps,
+          hoverProps,
+          filterDOMProps(props),
+          articleProps
+        )}
         ref={domRef}
-        className={classNames(styles, 'spectrum-Card', {
-          'spectrum-Card--default': !isQuiet && orientation !== 'horizontal',
-          'spectrum-Card--isQuiet': isQuiet && orientation !== 'horizontal',
-          'spectrum-Card--horizontal': orientation === 'horizontal',
-          'spectrum-Card--noPreview': !hasPreview,
-          'is-hovered': isHovered,
-          'is-focused': isFocused,
-          'is-selected': isSelected,
-          'spectrum-Card--waterfall': layout === 'waterfall',
-          'spectrum-Card--gallery': layout === 'gallery',
-          'spectrum-Card--grid': layout === 'grid',
-          'spectrum-Card--noLayout': layout !== 'waterfall' && layout !== 'gallery' && layout !== 'grid'
-        }, styleProps.className)}>
+        className={classNames(
+          styles,
+          'spectrum-Card',
+          {
+            'spectrum-Card--default': !isQuiet && orientation !== 'horizontal',
+            'spectrum-Card--isQuiet': isQuiet && orientation !== 'horizontal',
+            'spectrum-Card--horizontal': orientation === 'horizontal',
+            'spectrum-Card--noPreview': !hasPreview,
+            'is-hovered': isHovered,
+            'is-focused': isFocused,
+            'is-selected': isSelected,
+            'spectrum-Card--waterfall': layout === 'waterfall',
+            'spectrum-Card--gallery': layout === 'gallery',
+            'spectrum-Card--grid': layout === 'grid',
+            'spectrum-Card--noLayout':
+              layout !== 'waterfall' && layout !== 'gallery' && layout !== 'grid'
+          },
+          styleProps.className
+        )}>
         <div ref={gridRef} className={classNames(styles, 'spectrum-Card-grid')}>
           {manager && manager.selectionMode !== 'none' && (
             <div className={classNames(styles, 'spectrum-Card-checkboxWrapper')}>
@@ -154,12 +190,11 @@ export const CardBase = React.forwardRef(function CardBase<T extends object>(pro
                 onChange={onChange}
                 UNSAFE_className={classNames(styles, 'spectrum-Card-checkbox')}
                 isEmphasized
-                aria-label="select" />
+                aria-label="select"
+              />
             </div>
           )}
-          <SlotProvider slots={slots}>
-            {children}
-          </SlotProvider>
+          <SlotProvider slots={slots}>{children}</SlotProvider>
           <div className={classNames(styles, 'spectrum-Card-decoration')} />
         </div>
       </div>
@@ -167,24 +202,29 @@ export const CardBase = React.forwardRef(function CardBase<T extends object>(pro
   );
 });
 
-interface AriaCardOptions extends AriaCardProps {
-}
+interface AriaCardOptions extends AriaCardProps {}
 
 interface CardAria {
-  cardProps: HTMLAttributes<HTMLDivElement>,
-  titleProps: HTMLAttributes<HTMLDivElement>,
-  contentProps: HTMLAttributes<HTMLDivElement>
+  cardProps: HTMLAttributes<HTMLDivElement>;
+  titleProps: HTMLAttributes<HTMLDivElement>;
+  contentProps: HTMLAttributes<HTMLDivElement>;
 }
 
 function useCard(props: AriaCardOptions): CardAria {
   let titleId = useSlotId();
   let descriptionId = useSlotId();
-  let titleProps = useMemo(() => ({
-    id: titleId
-  }), [titleId]);
-  let contentProps = useMemo(() => ({
-    id: descriptionId
-  }), [descriptionId]);
+  let titleProps = useMemo(
+    () => ({
+      id: titleId
+    }),
+    [titleId]
+  );
+  let contentProps = useMemo(
+    () => ({
+      id: descriptionId
+    }),
+    [descriptionId]
+  );
 
   return {
     cardProps: {

@@ -27,20 +27,20 @@ export interface SpectrumTooltipProps extends AriaTooltipProps, StyleProps {
   /**
    * The [visual style](https://spectrum.adobe.com/page/tooltip/#Semantic-variants) of the Tooltip.
    */
-  variant?: 'neutral' | 'positive' | 'negative' | 'info',
+  variant?: 'neutral' | 'positive' | 'negative' | 'info';
 
   /**
    * The placement of the element with respect to its anchor element.
    * @default 'top'
    */
-  placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom',
+  placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom';
 
   /**
    * Whether the element is rendered.
    */
-  showIcon?: boolean,
+  showIcon?: boolean;
 
-  children: ReactNode
+  children: ReactNode;
 }
 
 let iconMap = {
@@ -53,18 +53,18 @@ let iconMap = {
  * Display container for Tooltip content. Has a directional arrow dependent on its placement.
  */
 export const Tooltip = React.forwardRef(function Tooltip(props: SpectrumTooltipProps, ref: DOMRef) {
-  let {ref: overlayRef, arrowProps, state, arrowRef, ...tooltipProviderProps} = useContext(TooltipContext);
+  let {
+    ref: overlayRef,
+    arrowProps,
+    state,
+    arrowRef,
+    ...tooltipProviderProps
+  } = useContext(TooltipContext);
   let defaultRef = useRef(null);
   overlayRef = overlayRef || defaultRef;
   let backupPlacement = props.placement;
   props = mergeProps(props, tooltipProviderProps);
-  let {
-    variant = 'neutral',
-    placement,
-    isOpen,
-    showIcon,
-    ...otherProps
-  } = props;
+  let {variant = 'neutral', placement, isOpen, showIcon, ...otherProps} = props;
   if (placement == null) {
     placement = backupPlacement ?? 'top';
   }
@@ -92,11 +92,11 @@ export const Tooltip = React.forwardRef(function Tooltip(props: SpectrumTooltipP
         styleProps.className
       )}
       ref={overlayRef}>
-      {showIcon && variant !== 'neutral' && <Icon UNSAFE_className={classNames(styles, 'spectrum-Tooltip-typeIcon')} aria-hidden />}
+      {showIcon && variant !== 'neutral' && (
+        <Icon UNSAFE_className={classNames(styles, 'spectrum-Tooltip-typeIcon')} aria-hidden />
+      )}
       {props.children && (
-        <span className={classNames(styles, 'spectrum-Tooltip-label')}>
-          {props.children}
-        </span>
+        <span className={classNames(styles, 'spectrum-Tooltip-label')}>{props.children}</span>
       )}
       <span {...arrowProps} ref={arrowRef} className={classNames(styles, 'spectrum-Tooltip-tip')} />
     </div>

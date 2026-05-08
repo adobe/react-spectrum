@@ -20,20 +20,24 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useMemo} from 'react';
 
 export interface HighlightSelectionDescriptionProps {
-  selectionManager: MultipleSelectionManager,
-  hasItemActions?: boolean
+  selectionManager: MultipleSelectionManager;
+  hasItemActions?: boolean;
 }
 
 /**
  * Computes the description for a grid selectable collection.
  * @param props
  */
-export function useHighlightSelectionDescription(props: HighlightSelectionDescriptionProps): AriaLabelingProps {
+export function useHighlightSelectionDescription(
+  props: HighlightSelectionDescriptionProps
+): AriaLabelingProps {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/grid');
   let modality = useInteractionModality();
   // null is the default if the user hasn't interacted with the table at all yet or the rest of the page
-  let shouldLongPress = (modality === 'pointer' || modality === 'virtual' || modality == null)
-    && typeof window !== 'undefined' && 'ontouchstart' in window;
+  let shouldLongPress =
+    (modality === 'pointer' || modality === 'virtual' || modality == null) &&
+    typeof window !== 'undefined' &&
+    'ontouchstart' in window;
 
   let interactionDescription = useMemo(() => {
     let selectionMode = props.selectionManager.selectionMode;
@@ -44,8 +48,16 @@ export function useHighlightSelectionDescription(props: HighlightSelectionDescri
       message = stringFormatter.format('longPressToSelect');
     }
 
-    return selectionBehavior === 'replace' && selectionMode !== 'none' && props.hasItemActions ? message : undefined;
-  }, [props.selectionManager.selectionMode, props.selectionManager.selectionBehavior, props.hasItemActions, stringFormatter, shouldLongPress]);
+    return selectionBehavior === 'replace' && selectionMode !== 'none' && props.hasItemActions
+      ? message
+      : undefined;
+  }, [
+    props.selectionManager.selectionMode,
+    props.selectionManager.selectionBehavior,
+    props.hasItemActions,
+    stringFormatter,
+    shouldLongPress
+  ]);
 
   let descriptionProps = useDescription(interactionDescription);
   return descriptionProps;

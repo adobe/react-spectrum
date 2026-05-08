@@ -17,20 +17,20 @@ import {Key} from '@react-types/shared';
 export interface ITableCollection<T> extends IGridCollection<T> {
   // TODO perhaps elaborate on this? maybe not clear enough, essentially returns the table header rows (e.g. in a tiered headers table, will return the nodes containing the top tier column, next tier, etc)
   /** A list of header row nodes in the table. */
-  headerRows: GridNode<T>[],
+  headerRows: GridNode<T>[];
   /** A list of column nodes in the table. */
-  columns: GridNode<T>[],
+  columns: GridNode<T>[];
   /** A set of column keys that serve as the [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader). */
-  rowHeaderColumnKeys: Set<Key>,
+  rowHeaderColumnKeys: Set<Key>;
   /** The node that makes up the header of the table. */
-  head?: GridNode<T>,
+  head?: GridNode<T>;
   /** The node that makes up the body of the table. */
-  body: GridNode<T>
+  body: GridNode<T>;
 }
 
 interface GridCollectionOptions {
-  showSelectionCheckboxes?: boolean,
-  showDragButtons?: boolean
+  showSelectionCheckboxes?: boolean;
+  showDragButtons?: boolean;
 }
 
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
@@ -40,7 +40,10 @@ while (ROW_HEADER_COLUMN_KEY === ROW_HEADER_COLUMN_KEY_DRAG) {
 }
 
 /** @private */
-export function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode<T>[]): GridNode<T>[] {
+export function buildHeaderRows<T>(
+  keyMap: Map<Key, GridNode<T>>,
+  columnNodes: GridNode<T>[]
+): GridNode<T>[] {
   if (columnNodes.length === 0) {
     return [];
   }
@@ -97,7 +100,9 @@ export function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: G
   }
 
   let maxLength = Math.max(...columns.map(c => c.length));
-  let headerRows: GridNode<T>[][] = Array(maxLength).fill(0).map(() => []);
+  let headerRows: GridNode<T>[][] = Array(maxLength)
+    .fill(0)
+    .map(() => []);
 
   // Convert columns into rows.
   let colIndex = 0;
@@ -198,7 +203,11 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
   body: GridNode<T>;
   _size: number = 0;
 
-  constructor(nodes: Iterable<GridNode<T>>, prev?: ITableCollection<T> | null, opts?: GridCollectionOptions) {
+  constructor(
+    nodes: Iterable<GridNode<T>>,
+    prev?: ITableCollection<T> | null,
+    opts?: GridCollectionOptions
+  ) {
     let rowHeaderColumnKeys: Set<Key> = new Set();
     let body: GridNode<T> | null = null;
     let columns: GridNode<T>[] = [];
@@ -291,7 +300,9 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
 
     // Default row header column to the first one.
     if (this.rowHeaderColumnKeys.size === 0) {
-      let col = this.columns.find(column => !column.props?.isDragButtonCell && !column.props?.isSelectionCell);
+      let col = this.columns.find(
+        column => !column.props?.isDragButtonCell && !column.props?.isSelectionCell
+      );
       if (col) {
         this.rowHeaderColumnKeys.add(col.key);
       }

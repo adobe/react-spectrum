@@ -32,11 +32,11 @@ async function collectBuildFiles(dir) {
 
 async function checkFile(filePath) {
   const content = await readFile(filePath, 'utf-8');
-  
+
   // Count occurrences of the pattern
   const matches = content.match(new RegExp(PATTERN.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'));
   const count = matches ? matches.length : 0;
-  
+
   return {
     filePath,
     count,
@@ -46,7 +46,7 @@ async function checkFile(filePath) {
 
 async function main() {
   const targetDir = process.argv[2] || join(__dirname, '..', 'dist');
-  
+
   console.log('\nValidating s2-docs build output...');
   console.log(`Directory: ${targetDir}\n`);
 
@@ -83,21 +83,23 @@ async function main() {
   }
 
   console.log(`Found ${htmlFiles.length} HTML files to check.\n`);
-  
+
   const results = await Promise.all(htmlFiles.map(checkFile));
   const duplicates = results.filter(r => r.hasDuplicate);
-  
+
   if (duplicates.length === 0) {
-    console.log('✅ All HTML validated for duplicate \'</script></body></html>\' occurrences.');
+    console.log("✅ All HTML validated for duplicate '</script></body></html>' occurrences.");
   } else {
-    console.log(`❌ Found ${duplicates.length} file(s) with duplicate '</script></body></html>' occurrences:\n`);
-    
+    console.log(
+      `❌ Found ${duplicates.length} file(s) with duplicate '</script></body></html>' occurrences:\n`
+    );
+
     for (const {filePath, count} of duplicates) {
       const relativePath = filePath.replace(targetDir, '').replace(/^\//, '');
       console.log(`   📄 ${relativePath}`);
       console.log(`      Pattern appears ${count} times (expected: 1)\n`);
     }
-    
+
     process.exit(1);
   }
 }

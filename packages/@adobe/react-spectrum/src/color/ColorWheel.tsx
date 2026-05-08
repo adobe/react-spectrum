@@ -27,9 +27,10 @@ import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useProviderProps} from '../provider/Provider';
 import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 
-export interface SpectrumColorWheelProps extends AriaColorWheelProps, Omit<StyleProps, 'width' | 'height'> {
+export interface SpectrumColorWheelProps
+  extends AriaColorWheelProps, Omit<StyleProps, 'width' | 'height'> {
   /** The outer diameter of the ColorWheel. */
-  size?: DimensionValue
+  size?: DimensionValue;
 }
 
 const WHEEL_THICKNESS = 24;
@@ -37,7 +38,10 @@ const WHEEL_THICKNESS = 24;
 /**
  * ColorWheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
-export const ColorWheel = React.forwardRef(function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivElement>) {
+export const ColorWheel = React.forwardRef(function ColorWheel(
+  props: SpectrumColorWheelProps,
+  ref: FocusableRef<HTMLDivElement>
+) {
   props = useProviderProps(props);
   let inputRef = useRef(null);
   let containerRef = useFocusableRef(ref, inputRef);
@@ -47,14 +51,14 @@ export const ColorWheel = React.forwardRef(function ColorWheel(props: SpectrumCo
   let size = props.size && dimensionValue(props.size);
   let {styleProps} = useStyleProps(props);
 
-
   let [wheelRadius, setWheelRadius] = useState<number>(0);
   let [wheelThickness, setWheelThickness] = useState(WHEEL_THICKNESS);
 
   let resizeHandler = useCallback(() => {
     if (containerRef.current) {
       setWheelRadius(containerRef.current.offsetWidth / 2);
-      let thickness = window.getComputedStyle(containerRef.current)
+      let thickness = window
+        .getComputedStyle(containerRef.current)
         .getPropertyValue('--spectrum-colorwheel-track-thickness');
       if (thickness) {
         setWheelThickness(parseInt(thickness, 10));
@@ -76,32 +80,34 @@ export const ColorWheel = React.forwardRef(function ColorWheel(props: SpectrumCo
 
   let state = useColorWheelState(props);
 
-  let {trackProps, inputProps, thumbProps} = useColorWheel({
-    ...props,
-    innerRadius: wheelRadius - wheelThickness,
-    outerRadius: wheelRadius
-  }, state, inputRef);
+  let {trackProps, inputProps, thumbProps} = useColorWheel(
+    {
+      ...props,
+      innerRadius: wheelRadius - wheelThickness,
+      outerRadius: wheelRadius
+    },
+    state,
+    inputRef
+  );
 
   let {focusProps, isFocusVisible} = useFocusRing();
 
   return (
     <div
-      className={
-        classNames(
-          styles,
-          'spectrum-ColorWheel',
-          {
-            'is-disabled': isDisabled
-          },
-          styleProps.className
-        )
-      }
+      className={classNames(
+        styles,
+        'spectrum-ColorWheel',
+        {
+          'is-disabled': isDisabled
+        },
+        styleProps.className
+      )}
       ref={containerRef}
       style={{
         ...styleProps.style,
         // Workaround around https://github.com/adobe/spectrum-css/issues/1032
-        'width': size,
-        'height': size
+        width: size,
+        height: size
       }}>
       <div {...trackProps} className={classNames(styles, 'spectrum-ColorWheel-gradient')} />
       <ColorThumb
@@ -112,7 +118,12 @@ export const ColorWheel = React.forwardRef(function ColorWheel(props: SpectrumCo
         containerRef={containerRef}
         className={classNames(styles, 'spectrum-ColorWheel-handle')}
         {...thumbProps}>
-        <input {...focusProps} className={classNames(styles, 'spectrum-ColorWheel-slider')} {...inputProps} ref={inputRef} />
+        <input
+          {...focusProps}
+          className={classNames(styles, 'spectrum-ColorWheel-slider')}
+          {...inputProps}
+          ref={inputRef}
+        />
       </ColorThumb>
     </div>
   );

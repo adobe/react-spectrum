@@ -10,7 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AriaValidationProps, DOMAttributes, DOMProps, FocusEvents, InputDOMProps, ValidationResult} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  AriaValidationProps,
+  DOMAttributes,
+  DOMProps,
+  FocusEvents,
+  InputDOMProps,
+  ValidationResult
+} from '@react-types/shared';
 import {checkboxGroupData} from './utils';
 import {CheckboxGroupProps, CheckboxGroupState} from 'react-stately/useCheckboxGroupState';
 import {filterDOMProps} from '../utils/filterDOMProps';
@@ -18,17 +26,24 @@ import {mergeProps} from '../utils/mergeProps';
 import {useField} from '../label/useField';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 
-export interface AriaCheckboxGroupProps extends CheckboxGroupProps, InputDOMProps, DOMProps, AriaLabelingProps, AriaValidationProps, FocusEvents {}
+export interface AriaCheckboxGroupProps
+  extends
+    CheckboxGroupProps,
+    InputDOMProps,
+    DOMProps,
+    AriaLabelingProps,
+    AriaValidationProps,
+    FocusEvents {}
 
 export interface CheckboxGroupAria extends ValidationResult {
   /** Props for the checkbox group wrapper element. */
-  groupProps: DOMAttributes,
+  groupProps: DOMAttributes;
   /** Props for the checkbox group's visible label (if any). */
-  labelProps: DOMAttributes,
+  labelProps: DOMAttributes;
   /** Props for the checkbox group description element, if any. */
-  descriptionProps: DOMAttributes,
+  descriptionProps: DOMAttributes;
   /** Props for the checkbox group error message element, if any. */
-  errorMessageProps: DOMAttributes
+  errorMessageProps: DOMAttributes;
 }
 
 /**
@@ -37,7 +52,10 @@ export interface CheckboxGroupAria extends ValidationResult {
  * @param props - Props for the checkbox group.
  * @param state - State for the checkbox group, as returned by `useCheckboxGroupState`.
  */
-export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxGroupState): CheckboxGroupAria {
+export function useCheckboxGroup(
+  props: AriaCheckboxGroupProps,
+  state: CheckboxGroupState
+): CheckboxGroupAria {
   let {isDisabled, name, form, validationBehavior = 'aria'} = props;
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
 

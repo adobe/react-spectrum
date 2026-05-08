@@ -24,21 +24,25 @@ export interface RowProps<T> extends LinkDOMProps {
    * @version alpha
    * @private
    */
-  UNSTABLE_childItems?: Iterable<T>,
+  UNSTABLE_childItems?: Iterable<T>;
   // TODO: update when async loading is supported for expandable rows
   // /** Whether this row has children, even if not loaded yet. */
   // hasChildItems?: boolean,
   /** Rendered contents of the row or row child items. */
-  children: CellElement | CellElement[] | CellRenderer,
+  children: CellElement | CellElement[] | CellRenderer;
   /** A string representation of the row's contents, used for features like typeahead. */
-  textValue?: string // ???
+  textValue?: string; // ???
 }
 
-function Row<T>(props: RowProps<T>): ReactElement | null { // eslint-disable-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function Row<T>(props: RowProps<T>): ReactElement | null {
   return null;
 }
 
-Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>> {
+Row.getCollectionNode = function* getCollectionNode<T>(
+  props: RowProps<T>,
+  context: CollectionBuilderContext<T>
+): Generator<PartialNode<T>> {
   let {children, textValue, UNSTABLE_childItems} = props;
 
   yield {
@@ -95,7 +99,9 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
         React.Children.forEach(children, node => {
           if (node.type === Row) {
             if (cells.length < context.columns.length) {
-              throw new Error('All of a Row\'s child Cells must be positioned before any child Rows.');
+              throw new Error(
+                "All of a Row's child Cells must be positioned before any child Rows."
+              );
             }
 
             childRows.push({
@@ -112,7 +118,9 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
         });
 
         if (columnCount !== context.columns.length) {
-          throw new Error(`Cell count must match column count. Found ${columnCount} cells and ${context.columns.length} columns.`);
+          throw new Error(
+            `Cell count must match column count. Found ${columnCount} cells and ${context.columns.length} columns.`
+          );
         }
 
         yield* cells;
@@ -121,11 +129,13 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
     },
     shouldInvalidate(newContext: CollectionBuilderContext<T>) {
       // Invalidate all rows if the columns changed.
-      return newContext.columns.length !== context.columns.length ||
+      return (
+        newContext.columns.length !== context.columns.length ||
         newContext.columns.some((c, i) => c.key !== context.columns[i].key) ||
         newContext.showSelectionCheckboxes !== context.showSelectionCheckboxes ||
         newContext.showDragButtons !== context.showDragButtons ||
-        newContext.selectionMode !== context.selectionMode;
+        newContext.selectionMode !== context.selectionMode
+      );
     }
   };
 };

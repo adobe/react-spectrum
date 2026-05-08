@@ -21,7 +21,7 @@ export interface UserOpts {
    * at the aria pattern tester level if needed.
    * @default mouse
    */
-  interactionType?: 'mouse' | 'touch' | 'keyboard',
+  interactionType?: 'mouse' | 'touch' | 'keyboard';
   // If using fake timers user should provide something like (time) => jest.advanceTimersByTime(time))}.
   // A real timer user would pass (waitTime) => new Promise((resolve) => setTimeout(resolve, waitTime))
   // Time is in ms.
@@ -29,14 +29,14 @@ export interface UserOpts {
    * A function used by the test utils to advance timers during interactions. Required for certain aria patterns (e.g. table). This can be overridden
    * at the aria pattern tester level if needed.
    */
-  advanceTimer?: (time: number) => unknown | Promise<unknown>
+  advanceTimer?: (time: number) => unknown | Promise<unknown>;
 }
 
 export interface BaseTesterOpts extends UserOpts {
   /** @private */
-  user?: any,
+  user?: any;
   /** The base element for the given tester (e.g. the table, menu trigger button, etc). */
-  root: HTMLElement
+  root: HTMLElement;
 }
 
 export interface CheckboxGroupTesterOpts extends BaseTesterOpts {}
@@ -46,23 +46,23 @@ export interface ComboBoxTesterOpts extends BaseTesterOpts {
    * The base element for the combobox. If provided the wrapping element around the target combobox (as is the the case with a ref provided to RSP ComboBox),
    * will automatically search for the combobox element within.
    */
-  root: HTMLElement,
+  root: HTMLElement;
   /**
    * The node of the combobox trigger button if any. If not provided, we will try to automatically use any button
    * within the `root` provided or that the `root` serves as the trigger.
    */
-  trigger?: HTMLElement
+  trigger?: HTMLElement;
 }
 
 export interface DialogTesterOpts extends BaseTesterOpts {
   /**
    * The trigger element for the dialog.
    */
-  root: HTMLElement,
+  root: HTMLElement;
   /**
    * The overlay type of the dialog. Used to inform the tester how to find the dialog.
    */
-  overlayType?: 'modal' | 'popover'
+  overlayType?: 'modal' | 'popover';
 }
 
 export interface GridListTesterOpts extends BaseTesterOpts {}
@@ -71,22 +71,22 @@ export interface ListBoxTesterOpts extends BaseTesterOpts {
   /**
    * A function used by the test utils to advance timers during interactions.
    */
-  advanceTimer?: UserOpts['advanceTimer']
+  advanceTimer?: UserOpts['advanceTimer'];
 }
 
 export interface MenuTesterOpts extends BaseTesterOpts {
   /**
    * The trigger element for the menu.
    */
-  root: HTMLElement,
+  root: HTMLElement;
   /**
    * Whether the current menu is a submenu.
    */
-  isSubmenu?: boolean,
+  isSubmenu?: boolean;
   /**
    * The root menu of the menu tree. Only available if the menu is a submenu.
    */
-  rootMenu?: HTMLElement
+  rootMenu?: HTMLElement;
 }
 
 export interface RadioGroupTesterOpts extends BaseTesterOpts {
@@ -94,7 +94,7 @@ export interface RadioGroupTesterOpts extends BaseTesterOpts {
    * The horizontal layout direction, typically affected by locale.
    * @default 'ltr'
    */
-  direction?: Direction
+  direction?: Direction;
 }
 
 export interface SelectTesterOpts extends BaseTesterOpts {
@@ -102,14 +102,14 @@ export interface SelectTesterOpts extends BaseTesterOpts {
    * The trigger element for the select. If provided the wrapping element around the target select (as is the case with a ref provided to RSP Select),
    * will automatically search for the select's trigger element within.
    */
-  root: HTMLElement
+  root: HTMLElement;
 }
 
 export interface TableTesterOpts extends BaseTesterOpts {
   /**
    * A function used by the test utils to advance timers during interactions.
    */
-  advanceTimer?: UserOpts['advanceTimer']
+  advanceTimer?: UserOpts['advanceTimer'];
 }
 
 export interface TabsTesterOpts extends BaseTesterOpts {
@@ -117,37 +117,37 @@ export interface TabsTesterOpts extends BaseTesterOpts {
    * The horizontal layout direction, typically affected by locale.
    * @default 'ltr'
    */
-  direction?: Direction
+  direction?: Direction;
 }
 
 export interface TreeTesterOpts extends BaseTesterOpts {
   /**
    * A function used by the test utils to advance timers during interactions.
    */
-  advanceTimer?: UserOpts['advanceTimer']
+  advanceTimer?: UserOpts['advanceTimer'];
 }
 
 export interface BaseGridRowInteractionOpts {
   /**
    * The index, text, or node of the row to target.
    */
-  row: number | string | HTMLElement,
+  row: number | string | HTMLElement;
   /**
    * What interaction type to use when interacting with the row. Defaults to the interaction type set on the tester.
    */
-  interactionType?: UserOpts['interactionType']
+  interactionType?: UserOpts['interactionType'];
 }
 
 export interface ToggleGridRowOpts extends BaseGridRowInteractionOpts {
   /**
    * Whether the row needs to be long pressed to be selected. Depends on the components implementation.
    */
-  needsLongPress?: boolean,
+  needsLongPress?: boolean;
   /**
    * Whether the checkbox should be used to select the row. If false, will attempt to select the row via press.
    * @default 'true'
    */
-  checkboxSelection?: boolean,
+  checkboxSelection?: boolean;
   // TODO: this api feels a bit confusing tbh...
   /**
    * Whether the grid has a selectionBehavior of "toggle" or "replace" (aka highlight selection). This affects the user operations
@@ -157,12 +157,12 @@ export interface ToggleGridRowOpts extends BaseGridRowInteractionOpts {
    *
    * @default 'toggle'
    */
-  selectionBehavior?: 'toggle' | 'replace'
+  selectionBehavior?: 'toggle' | 'replace';
 }
 
 export interface GridRowActionOpts extends BaseGridRowInteractionOpts {
   /**
    * Whether or not the row needs a double click to trigger the row action. Depends on the components implementation.
    */
-  needsDoubleClick?: boolean
+  needsDoubleClick?: boolean;
 }

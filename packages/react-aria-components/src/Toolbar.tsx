@@ -31,15 +31,20 @@ export interface ToolbarRenderProps {
    * The current orientation of the toolbar.
    * @selector [data-orientation]
    */
-  orientation: Orientation
+  orientation: Orientation;
 }
 
-export interface ToolbarProps extends AriaToolbarProps, SlotProps, RenderProps<ToolbarRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+export interface ToolbarProps
+  extends
+    AriaToolbarProps,
+    SlotProps,
+    RenderProps<ToolbarRenderProps>,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Toolbar'
    */
-  className?: ClassNameOrFunction<ToolbarRenderProps>
+  className?: ClassNameOrFunction<ToolbarRenderProps>;
 }
 
 export const ToolbarContext = createContext<ContextValue<ToolbarProps, HTMLDivElement>>({});
@@ -48,7 +53,10 @@ export const ToolbarContext = createContext<ContextValue<ToolbarProps, HTMLDivEl
  * A toolbar is a container for a set of interactive controls, such as buttons, dropdown menus, or checkboxes,
  * with arrow key navigation.
  */
-export const Toolbar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toolbar(props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) {
+export const Toolbar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toolbar(
+  props: ToolbarProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, ToolbarContext);
   let {toolbarProps} = useToolbar(props, ref);
   let renderProps = useRenderProps({

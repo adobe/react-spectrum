@@ -10,8 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-
-import {CalendarDate, CalendarDateTime, parseDate, parseDateTime, toCalendarDate, toCalendarDateTime, toLocalTimeZone} from '@internationalized/date';
+import {
+  CalendarDate,
+  CalendarDateTime,
+  parseDate,
+  parseDateTime,
+  toCalendarDate,
+  toCalendarDateTime,
+  toLocalTimeZone
+} from '@internationalized/date';
 import {DateFieldState, DateSegmentType} from 'react-stately/useDateFieldState';
 import {DatePickerState} from 'react-stately/useDatePickerState';
 import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
@@ -22,36 +29,35 @@ interface AriaHiddenDateInputProps {
   /**
    * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
-  autoComplete?: string,
+  autoComplete?: string;
   /** HTML form input name. */
-  name?: string,
+  name?: string;
   /** Sets the disabled state of the input. */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 interface HiddenDateInputProps extends AriaHiddenDateInputProps {
   /**
    * State for the input.
    */
-  state: DateFieldState | DatePickerState
+  state: DateFieldState | DatePickerState;
 }
 
 export interface HiddenDateAria {
   /** Props for the container element. */
-  containerProps: React.HTMLAttributes<HTMLDivElement>,
+  containerProps: React.HTMLAttributes<HTMLDivElement>;
   /** Props for the hidden input element. */
-  inputProps: React.InputHTMLAttributes<HTMLInputElement>
+  inputProps: React.InputHTMLAttributes<HTMLInputElement>;
 }
 
 const dateSegments = ['day', 'month', 'year'];
-const granularityMap = {'hour': 1, 'minute': 2, 'second': 3};
+const granularityMap = {hour: 1, minute: 2, second: 3};
 
-export function useHiddenDateInput(props: HiddenDateInputProps, state: DateFieldState | DatePickerState) : HiddenDateAria {
-  let {
-    autoComplete,
-    isDisabled,
-    name
-  } = props;
+export function useHiddenDateInput(
+  props: HiddenDateInputProps,
+  state: DateFieldState | DatePickerState
+): HiddenDateAria {
+  let {autoComplete, isDisabled, name} = props;
   let {visuallyHiddenProps} = useVisuallyHidden({
     style: {
       // Prevent page scrolling.
@@ -67,13 +73,15 @@ export function useHiddenDateInput(props: HiddenDateInputProps, state: DateField
   } else if (state.granularity === 'hour') {
     inputStep = 3600;
   }
-  
+
   let dateValue = '';
   if (state.value) {
     if (state.granularity === 'day') {
       dateValue = toCalendarDate(state.value).toString();
     } else {
-      dateValue = toCalendarDateTime('timeZone' in state.value ? toLocalTimeZone(state.value) : state.value).toString();
+      dateValue = toCalendarDateTime(
+        'timeZone' in state.value ? toLocalTimeZone(state.value) : state.value
+      ).toString();
     }
   }
 
@@ -106,7 +114,7 @@ export function useHiddenDateInput(props: HiddenDateInputProps, state: DateField
       name,
       step: inputStep,
       value: dateValue,
-      onChange: (e) => {
+      onChange: e => {
         let targetString = getEventTarget(e).value.toString();
         if (targetString) {
           try {

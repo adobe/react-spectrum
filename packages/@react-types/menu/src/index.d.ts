@@ -12,4 +12,8 @@
 
 export {MenuTriggerType, MenuTriggerProps} from '@react-stately/menu';
 export {MenuProps, AriaMenuProps} from '@react-aria/menu';
-export {SpectrumMenuTriggerProps, SpectrumMenuProps, SpectrumActionMenuProps} from '@react-spectrum/menu';
+export {
+  SpectrumMenuTriggerProps,
+  SpectrumMenuProps,
+  SpectrumActionMenuProps
+} from '@react-spectrum/menu';

@@ -93,7 +93,8 @@ module.exports = {
   moduleNameMapper: {
     '^bundle-text:.*\\.svg$': '<rootDir>/__mocks__/fileMock.js',
     '\\.svg$': '<rootDir>/__mocks__/svg.js',
-    '\\.(jpg|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/__mocks__/fileMock.js',
+    '\\.(jpg|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
+      '<rootDir>/__mocks__/fileMock.js',
     '\\.(css|styl)$': 'identity-obj-proxy'
   },
 
@@ -115,9 +116,12 @@ module.exports = {
   // Use this configuration option to add custom reporters to Jest
   reporters: [
     'default',
-    ['jest-junit', {
-      addFileAttribute: true
-    }]
+    [
+      'jest-junit',
+      {
+        addFileAttribute: true
+      }
+    ]
   ],
 
   // Automatically reset mock state between every test
@@ -136,9 +140,7 @@ module.exports = {
   // rootDir: null,
 
   // A list of paths to directories that Jest should use to search for files in
-  roots: [
-    'packages/'
-  ],
+  roots: ['packages/'],
 
   // Allows you to use a custom runner instead of Jest's default test runner
   // runner: "jest-runner",
@@ -165,9 +167,7 @@ module.exports = {
 
   // The glob patterns Jest uses to detect test files
   // see issue https://github.com/facebook/jest/issues/7108
-  testMatch: [
-    '**/packages/**/*.test.[tj]s?(x)'
-  ],
+  testMatch: ['**/packages/**/*.test.[tj]s?(x)'],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   testPathIgnorePatterns: [
@@ -217,10 +217,7 @@ module.exports = {
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation.
   // Storybook 10 ships pure ESM in `storybook` and `@storybook/*`, so we need to let
   // @swc/jest transform them instead of the default behavior of skipping all node_modules.
-  transformIgnorePatterns: [
-    '/node_modules/(?!(?:storybook|@storybook)/)',
-    '\\.pnp\\.[^\\/]+$'
-  ],
+  transformIgnorePatterns: ['/node_modules/(?!(?:storybook|@storybook)/)', '\\.pnp\\.[^\\/]+$'],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
   // unmockedModulePathPatterns: undefined,

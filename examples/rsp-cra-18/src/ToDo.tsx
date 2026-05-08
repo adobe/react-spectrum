@@ -1,6 +1,6 @@
-interface ToDo{
-    id: number,
-    task: string
+interface ToDo {
+  id: number;
+  task: string;
 }
 
-export default ToDo
+export default ToDo;

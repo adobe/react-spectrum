@@ -18,54 +18,54 @@ import {ValueBase} from '@react-types/shared';
 
 export interface ColorWheelProps extends Omit<ValueBase<string | Color>, 'onChange'> {
   /** Whether the ColorWheel is disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** Handler that is called when the value changes, as the user drags. */
-  onChange?: (value: Color) => void,
+  onChange?: (value: Color) => void;
   /** Handler that is called when the user stops dragging. */
-  onChangeEnd?: (value: Color) => void,
+  onChangeEnd?: (value: Color) => void;
   /**
    * The default value (uncontrolled).
    * @default 'hsl(0, 100%, 50%)'
    */
-  defaultValue?: string | Color
+  defaultValue?: string | Color;
 }
 
 export interface ColorWheelState {
   /** The current color value represented by the color wheel. */
-  readonly value: Color,
+  readonly value: Color;
   /** The default color value. */
-  readonly defaultValue: Color,
+  readonly defaultValue: Color;
   /** Sets the color value represented by the color wheel, and triggers `onChange`. */
-  setValue(value: string | Color): void,
+  setValue(value: string | Color): void;
 
   /** The current value of the hue channel displayed by the color wheel. */
-  readonly hue: number,
+  readonly hue: number;
   /** Sets the hue channel of the current color value and triggers `onChange`. */
-  setHue(value: number): void,
+  setHue(value: number): void;
 
   /** Sets the hue channel of the current color value based on the given coordinates and radius of the color wheel, and triggers `onChange`. */
-  setHueFromPoint(x: number, y: number, radius: number): void,
+  setHueFromPoint(x: number, y: number, radius: number): void;
   /** Returns the coordinates of the thumb relative to the center point of the color wheel. */
-  getThumbPosition(radius: number): {x: number, y: number},
+  getThumbPosition(radius: number): {x: number; y: number};
 
   /** Increments the hue by the given amount (defaults to 1). */
-  increment(stepSize?: number): void,
+  increment(stepSize?: number): void;
   /** Decrements the hue by the given amount (defaults to 1). */
-  decrement(stepSize?: number): void,
+  decrement(stepSize?: number): void;
 
   /** Whether the color wheel is currently being dragged. */
-  readonly isDragging: boolean,
+  readonly isDragging: boolean;
   /** Sets whether the color wheel is being dragged. */
-  setDragging(value: boolean): void,
+  setDragging(value: boolean): void;
   /** Returns the color that should be displayed in the color wheel instead of `value`. */
-  getDisplayColor(): Color,
+  getDisplayColor(): Color;
   /** The step value of the hue channel, used when incrementing and decrementing. */
-  step: number,
+  step: number;
   /** The page step value of the hue channel, used when incrementing and decrementing. */
-  pageStep: number,
+  pageStep: number;
 
   /** Whether the color wheel is disabled. */
-  readonly isDisabled: boolean
+  readonly isDisabled: boolean;
 }
 
 const DEFAULT_COLOR = parseColor('hsl(0, 100%, 50%)');
@@ -88,18 +88,18 @@ function roundDown(v: number) {
 }
 
 function degToRad(deg: number) {
-  return deg * Math.PI / 180;
+  return (deg * Math.PI) / 180;
 }
 
 function radToDeg(rad: number) {
-  return rad * 180 / Math.PI;
+  return (rad * 180) / Math.PI;
 }
 
 // 0deg = 3 o'clock. increases clockwise
-function angleToCartesian(angle: number, radius: number): {x: number, y: number} {
+function angleToCartesian(angle: number, radius: number): {x: number; y: number} {
   let rad = degToRad(360 - angle + 90);
-  let x = Math.sin(rad) * (radius);
-  let y = Math.cos(rad) * (radius);
+  let x = Math.sin(rad) * radius;
+  let y = Math.cos(rad) * radius;
   return {x, y};
 }
 
@@ -126,7 +126,11 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
   }
 
   // safe to cast value and defaultValue to Color, one of them will always be defined because if neither are, we assign a default
-  let [stateValue, setValueState] = useControlledState<Color>(propsValue as Color, defaultValue as Color, onChange);
+  let [stateValue, setValueState] = useControlledState<Color>(
+    propsValue as Color,
+    defaultValue as Color,
+    onChange
+  );
   let [initialValue] = useState(stateValue);
   let value = useMemo(() => {
     let colorSpace = stateValue.getColorSpace();
@@ -158,7 +162,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
 
   return {
     value,
-    defaultValue: propsValue !== undefined ? initialValue : defaultValue as Color,
+    defaultValue: propsValue !== undefined ? initialValue : (defaultValue as Color),
     step,
     pageStep,
     setValue(v) {
@@ -204,7 +208,11 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     },
     isDragging,
     getDisplayColor() {
-      return value.toFormat('hsl').withChannelValue('saturation', 100).withChannelValue('lightness', 50).withChannelValue('alpha', 1);
+      return value
+        .toFormat('hsl')
+        .withChannelValue('saturation', 100)
+        .withChannelValue('lightness', 50)
+        .withChannelValue('alpha', 1);
     },
     isDisabled: props.isDisabled || false
   };

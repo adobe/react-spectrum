@@ -17,7 +17,14 @@ import {
 import {CheckboxContext} from './Checkbox';
 import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {DOMRef, DOMRefValue, GlobalDOMAttributes, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
+import {
+  DOMRef,
+  DOMRefValue,
+  GlobalDOMAttributes,
+  HelpTextProps,
+  Orientation,
+  SpectrumLabelableProps
+} from '@react-types/shared';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
@@ -25,36 +32,48 @@ import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps {
+export interface CheckboxGroupProps
+  extends
+    Omit<
+      AriaCheckboxGroupProps,
+      'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes
+    >,
+    StyleProps,
+    SpectrumLabelableProps,
+    HelpTextProps {
   /**
    * The size of the Checkboxes in the CheckboxGroup.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL';
   /**
    * The axis the checkboxes should align with.
    *
    * @default 'vertical'
    */
-  orientation?: Orientation,
+  orientation?: Orientation;
   /**
    * The Checkboxes contained within the CheckboxGroup.
    */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * By default, checkboxes are not emphasized (gray).
    * The emphasized (blue) version provides visual prominence.
    */
-  isEmphasized?: boolean
+  isEmphasized?: boolean;
 }
 
-export const CheckboxGroupContext = createContext<ContextValue<Partial<CheckboxGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const CheckboxGroupContext =
+  createContext<ContextValue<Partial<CheckboxGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * A CheckboxGroup allows users to select one or more items from a list of choices.
  */
-export const CheckboxGroup = forwardRef(function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
+export const CheckboxGroup = forwardRef(function CheckboxGroup(
+  props: CheckboxGroupProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, CheckboxGroupContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
@@ -80,67 +99,76 @@ export const CheckboxGroup = forwardRef(function CheckboxGroup(props: CheckboxGr
       {...groupProps}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + style({
-        ...field(),
-        // Double the usual gap because of the internal padding within checkbox that spectrum has.
-        '--field-gap': {
-          type: 'rowGap',
-          value: 'calc(var(--field-height) - 1lh)'
-        }
-      }, getAllowedOverrides())({
-        size: props.size,
-        labelPosition,
-        isInForm: !!formContext
-      }, props.styles)}>
-      {({isDisabled, isInvalid}) => (<>
-        <FieldLabel
-          includeNecessityIndicatorInAccessibilityName
-          isDisabled={isDisabled}
-          isRequired={props.isRequired}
-          size={size}
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          isQuiet // Make the label affect the width of the group
-          necessityIndicator={necessityIndicator}
-          contextualHelp={props.contextualHelp}>
-          {label}
-        </FieldLabel>
-        <div
-          className={style({
-            gridArea: 'input',
-            display: 'flex',
-            flexDirection: {
-              orientation: {
-                vertical: 'column',
-                horizontal: 'row'
-              }
-            },
-            lineHeight: 'ui',
-            rowGap: '--field-gap',
-            // Spectrum uses a fixed spacing value for horizontal,
-            // but the gap changes depending on t-shirt size in vertical.
-            columnGap: 16,
-            flexWrap: {
-              orientation: {
-                horizontal: 'wrap'
-              }
+      className={
+        UNSAFE_className +
+        style(
+          {
+            ...field(),
+            // Double the usual gap because of the internal padding within checkbox that spectrum has.
+            '--field-gap': {
+              type: 'rowGap',
+              value: 'calc(var(--field-height) - 1lh)'
             }
-          })({orientation})}>
-          <FormContext.Provider value={{...formContext, size, isRequired: undefined}}>
-            <CheckboxContext.Provider value={{isEmphasized}}>
-              {children}
-            </CheckboxContext.Provider>
-          </FormContext.Provider>
-        </div>
-        <HelpText
-          size={size}
-          isDisabled={isDisabled}
-          isInvalid={isInvalid}
-          description={description}
-          showErrorIcon>
-          {errorMessage}
-        </HelpText>
-      </>)}
+          },
+          getAllowedOverrides()
+        )(
+          {
+            size: props.size,
+            labelPosition,
+            isInForm: !!formContext
+          },
+          props.styles
+        )
+      }>
+      {({isDisabled, isInvalid}) => (
+        <>
+          <FieldLabel
+            includeNecessityIndicatorInAccessibilityName
+            isDisabled={isDisabled}
+            isRequired={props.isRequired}
+            size={size}
+            labelPosition={labelPosition}
+            labelAlign={labelAlign}
+            isQuiet // Make the label affect the width of the group
+            necessityIndicator={necessityIndicator}
+            contextualHelp={props.contextualHelp}>
+            {label}
+          </FieldLabel>
+          <div
+            className={style({
+              gridArea: 'input',
+              display: 'flex',
+              flexDirection: {
+                orientation: {
+                  vertical: 'column',
+                  horizontal: 'row'
+                }
+              },
+              lineHeight: 'ui',
+              rowGap: '--field-gap',
+              // Spectrum uses a fixed spacing value for horizontal,
+              // but the gap changes depending on t-shirt size in vertical.
+              columnGap: 16,
+              flexWrap: {
+                orientation: {
+                  horizontal: 'wrap'
+                }
+              }
+            })({orientation})}>
+            <FormContext.Provider value={{...formContext, size, isRequired: undefined}}>
+              <CheckboxContext.Provider value={{isEmphasized}}>{children}</CheckboxContext.Provider>
+            </FormContext.Provider>
+          </div>
+          <HelpText
+            size={size}
+            isDisabled={isDisabled}
+            isInvalid={isInvalid}
+            description={description}
+            showErrorIcon>
+            {errorMessage}
+          </HelpText>
+        </>
+      )}
     </AriaCheckboxGroup>
   );
 });

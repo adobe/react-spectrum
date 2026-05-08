@@ -30,7 +30,15 @@ import More from '@spectrum-icons/workflow/More';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 // @ts-ignore
 import {Provider, useProviderProps} from '../provider/Provider';
-import React, {forwardRef, ReactElement, ReactNode, useCallback, useMemo, useRef, useState} from 'react';
+import React, {
+  forwardRef,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
 import {Text} from '../text/Text';
 import {Tooltip} from '../tooltip/Tooltip';
@@ -47,25 +55,25 @@ import {useValueEffect} from 'react-aria/private/utils/useValueEffect';
 
 export interface SpectrumActionGroupProps<T> extends AriaActionGroupProps<T>, StyleProps {
   /** Whether the ActionButtons should be displayed with a [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
-  isEmphasized?: boolean,
+  isEmphasized?: boolean;
   /**
    * Sets the amount of space between buttons.
    * @default 'regular'
    */
-  density?: 'compact' | 'regular',
+  density?: 'compact' | 'regular';
   /** Whether the ActionButtons should be justified in their container. */
-  isJustified?: boolean,
+  isJustified?: boolean;
   /** Whether ActionButtons should use the [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
-  isQuiet?: boolean,
+  isQuiet?: boolean;
   /** The static color style to apply. Useful when the ActionGroup appears over a color background. */
-  staticColor?: 'white' | 'black',
+  staticColor?: 'white' | 'black';
   /**
    * Defines the behavior of the ActionGroup when the buttons do not fit in the available space.
    * When set to 'wrap', the items wrap to form a new line. When set to 'collapse', the items that
    * do not fit are collapsed into a dropdown menu.
    * @default 'wrap'
    */
-  overflowMode?: 'wrap' | 'collapse',
+  overflowMode?: 'wrap' | 'collapse';
   /**
    * Defines when the text within the buttons should be hidden and only the icon should be shown.
    * When set to 'hide', the text is always shown in a tooltip. When set to 'collapse', the text is visible
@@ -73,15 +81,18 @@ export interface SpectrumActionGroupProps<T> extends AriaActionGroupProps<T>, St
    * is collapsed into a menu.
    * @default 'show'
    */
-  buttonLabelBehavior?: 'show' | 'collapse' | 'hide',
+  buttonLabelBehavior?: 'show' | 'collapse' | 'hide';
   /** The icon displayed in the dropdown menu button when a selectable ActionGroup is collapsed. */
-  summaryIcon?: ReactElement
+  summaryIcon?: ReactElement;
 }
 
 /**
  * An ActionGroup is a grouping of ActionButtons that are related to one another.
  */
-export const ActionGroup = forwardRef(function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const ActionGroup = forwardRef(function ActionGroup<T extends object>(
+  props: SpectrumActionGroupProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'actionGroup');
 
@@ -109,7 +120,10 @@ export const ActionGroup = forwardRef(function ActionGroup<T extends object>(pro
   let {styleProps} = useStyleProps(props);
 
   // Only hide button text if every item contains more than just plain text (we assume an icon).
-  let isIconCollapsible = useMemo(() => [...state.collection].every(item => typeof item.rendered !== 'string'), [state.collection]);
+  let isIconCollapsible = useMemo(
+    () => [...state.collection].every(item => typeof item.rendered !== 'string'),
+    [state.collection]
+  );
   let [{visibleItems, hideButtonText, isMeasuring}, setVisibleItems] = useValueEffect({
     visibleItems: state.collection.size,
     hideButtonText: buttonLabelBehavior === 'hide' && isIconCollapsible,
@@ -130,7 +144,10 @@ export const ActionGroup = forwardRef(function ActionGroup<T extends object>(pro
     let computeVisibleItems = (visibleItems: number) => {
       if (domRef.current && wrapperRef.current) {
         let listItems = Array.from(domRef.current.children) as HTMLLIElement[];
-        let containerSize = orientation === 'horizontal' ? wrapperRef.current.getBoundingClientRect().width : wrapperRef.current.getBoundingClientRect().height;
+        let containerSize =
+          orientation === 'horizontal'
+            ? wrapperRef.current.getBoundingClientRect().width
+            : wrapperRef.current.getBoundingClientRect().height;
 
         let isShowingMenu = visibleItems < state.collection.size;
         let calculatedSize = 0;
@@ -139,16 +156,18 @@ export const ActionGroup = forwardRef(function ActionGroup<T extends object>(pro
         if (isShowingMenu) {
           let item = listItems.pop();
           if (item) {
-            calculatedSize += orientation === 'horizontal'
-              ? outerWidth(item, false, true)
-              : outerHeight(item, false, true);
+            calculatedSize +=
+              orientation === 'horizontal'
+                ? outerWidth(item, false, true)
+                : outerHeight(item, false, true);
           }
         }
 
         for (let [i, item] of listItems.entries()) {
-          calculatedSize += orientation === 'horizontal'
-            ? outerWidth(item, i === 0, i === listItems.length - 1)
-            : outerHeight(item, i === 0, i === listItems.length - 1);
+          calculatedSize +=
+            orientation === 'horizontal'
+              ? outerWidth(item, i === 0, i === listItems.length - 1)
+              : outerHeight(item, i === 0, i === listItems.length - 1);
           if (Math.round(calculatedSize) <= Math.round(containerSize)) {
             newVisibleItems++;
           } else {
@@ -167,7 +186,7 @@ export const ActionGroup = forwardRef(function ActionGroup<T extends object>(pro
       return visibleItems;
     };
 
-    setVisibleItems(function *() {
+    setVisibleItems(function* () {
       let hideButtonText = buttonLabelBehavior === 'hide' && isIconCollapsible;
 
       // Update to show all items.
@@ -183,7 +202,11 @@ export const ActionGroup = forwardRef(function ActionGroup<T extends object>(pro
 
       // If not all of the buttons fit, and buttonLabelBehavior is 'collapse', then first try hiding
       // the button text and only showing icons. Only if that still doesn't fit collapse into a menu.
-      if (newVisibleItems < state.collection.size && buttonLabelBehavior === 'collapse' && isIconCollapsible) {
+      if (
+        newVisibleItems < state.collection.size &&
+        buttonLabelBehavior === 'collapse' &&
+        isIconCollapsible
+      ) {
         yield {
           visibleItems: state.collection.size,
           hideButtonText: true,
@@ -211,16 +234,31 @@ export const ActionGroup = forwardRef(function ActionGroup<T extends object>(pro
         };
       }
     });
-  }, [domRef, state.collection, setVisibleItems, overflowMode, selectionMode, buttonLabelBehavior, isIconCollapsible, orientation]);
+  }, [
+    domRef,
+    state.collection,
+    setVisibleItems,
+    overflowMode,
+    selectionMode,
+    buttonLabelBehavior,
+    isIconCollapsible,
+    orientation
+  ]);
 
   // Watch the parent element for size changes. Watching only the action group itself may not work
   // in all scenarios because it may not shrink when available space is reduced.
-  let parentRef = useMemo(() => ({
-    get current() {
-      return wrapperRef.current?.parentElement;
-    }
-  }), [wrapperRef]);
-  useResizeObserver({ref: overflowMode !== 'wrap' ? parentRef : undefined, onResize: updateOverflow});
+  let parentRef = useMemo(
+    () => ({
+      get current() {
+        return wrapperRef.current?.parentElement;
+      }
+    }),
+    [wrapperRef]
+  );
+  useResizeObserver({
+    ref: overflowMode !== 'wrap' ? parentRef : undefined,
+    onResize: updateOverflow
+  });
   useLayoutEffect(updateOverflow, [updateOverflow, state.collection]);
 
   let children = [...state.collection];
@@ -249,7 +287,8 @@ export const ActionGroup = forwardRef(function ActionGroup<T extends object>(pro
         summaryIcon={summaryIcon}
         hideButtonText={hideButtonText}
         isOnlyItem={visibleItems === 0}
-        orientation={orientation} />
+        orientation={orientation}
+      />
     );
   }
 
@@ -261,27 +300,29 @@ export const ActionGroup = forwardRef(function ActionGroup<T extends object>(pro
 
   return (
     <FocusScope>
-      <div {...styleProps} style={style} className={classNames(styles, 'flex-container', styleProps.className)} ref={wrapperRef}>
+      <div
+        {...styleProps}
+        style={style}
+        className={classNames(styles, 'flex-container', styleProps.className)}
+        ref={wrapperRef}>
         <div
           {...actionGroupProps}
           ref={domRef}
-          className={
-            classNames(
-              styles,
-              'flex-gap',
-              'spectrum-ActionGroup',
-              {
-                'spectrum-ActionGroup--quiet': isQuiet,
-                'spectrum-ActionGroup--vertical': isVertical,
-                'spectrum-ActionGroup--compact': density === 'compact',
-                'spectrum-ActionGroup--justified': isJustified && !isMeasuring,
-                'spectrum-ActionGroup--overflowCollapse': overflowMode === 'collapse'
-              },
-              otherProps.UNSAFE_className
-            )
-          }>
+          className={classNames(
+            styles,
+            'flex-gap',
+            'spectrum-ActionGroup',
+            {
+              'spectrum-ActionGroup--quiet': isQuiet,
+              'spectrum-ActionGroup--vertical': isVertical,
+              'spectrum-ActionGroup--compact': density === 'compact',
+              'spectrum-ActionGroup--justified': isJustified && !isMeasuring,
+              'spectrum-ActionGroup--overflowCollapse': overflowMode === 'collapse'
+            },
+            otherProps.UNSAFE_className
+          )}>
           <Provider {...providerProps}>
-            {children.map((item) => (
+            {children.map(item => (
               <ActionGroupItem
                 key={item.key}
                 onAction={onAction}
@@ -291,7 +332,8 @@ export const ActionGroup = forwardRef(function ActionGroup<T extends object>(pro
                 item={item}
                 state={state}
                 hideButtonText={hideButtonText}
-                orientation={orientation} />
+                orientation={orientation}
+              />
             ))}
             {menuItem}
           </Provider>
@@ -302,17 +344,26 @@ export const ActionGroup = forwardRef(function ActionGroup<T extends object>(pro
 }) as <T>(props: SpectrumActionGroupProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
 interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
-  item: Node<T>,
-  state: ListState<T>,
-  isDisabled?: boolean,
-  isEmphasized?: boolean,
-  staticColor?: 'white' | 'black',
-  hideButtonText?: boolean,
-  orientation?: 'horizontal' | 'vertical',
-  onAction?: (key: Key) => void
+  item: Node<T>;
+  state: ListState<T>;
+  isDisabled?: boolean;
+  isEmphasized?: boolean;
+  staticColor?: 'white' | 'black';
+  hideButtonText?: boolean;
+  orientation?: 'horizontal' | 'vertical';
+  onAction?: (key: Key) => void;
 }
 
-function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor, onAction, hideButtonText, orientation}: ActionGroupItemProps<T>) {
+function ActionGroupItem<T>({
+  item,
+  state,
+  isDisabled,
+  isEmphasized,
+  staticColor,
+  onAction,
+  hideButtonText,
+  orientation
+}: ActionGroupItemProps<T>) {
   let ref = useRef(null);
   let {buttonProps} = useActionGroupItem({key: item.key}, state);
   isDisabled = isDisabled || state.disabledKeys.has(item.key);
@@ -339,7 +390,7 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
   let button = (
     // Use a PressResponder to send DOM props through.
     // ActionButton doesn't allow overriding the role by default.
-    (<PressResponder {...mergeProps(buttonProps, hoverProps, domProps)}>
+    <PressResponder {...mergeProps(buttonProps, hoverProps, domProps)}>
       <ClearSlots>
         <SlotProvider
           slots={{
@@ -352,25 +403,20 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
             ref={ref}
             // @ts-ignore (private)
             hideButtonText={hideButtonText}
-            UNSAFE_className={
-              classNames(
-                styles,
-                'spectrum-ActionGroup-item',
-                {
-                  'is-selected': isSelected,
-                  'is-hovered': isHovered,
-                  'spectrum-ActionGroup-item--iconOnly': hideButtonText,
-                  'spectrum-ActionGroup-item--isDisabled': isDisabled
-                },
-                classNames(
-                  buttonStyles,
-                  {
-                    'spectrum-ActionButton--emphasized': isEmphasized,
-                    'is-selected': isSelected
-                  }
-                )
-              )
-            }
+            UNSAFE_className={classNames(
+              styles,
+              'spectrum-ActionGroup-item',
+              {
+                'is-selected': isSelected,
+                'is-hovered': isHovered,
+                'spectrum-ActionGroup-item--iconOnly': hideButtonText,
+                'spectrum-ActionGroup-item--isDisabled': isDisabled
+              },
+              classNames(buttonStyles, {
+                'spectrum-ActionButton--emphasized': isEmphasized,
+                'is-selected': isSelected
+              })
+            )}
             isDisabled={isDisabled}
             staticColor={staticColor}
             aria-label={item['aria-label']}
@@ -379,7 +425,7 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
           </ActionButton>
         </SlotProvider>
       </ClearSlots>
-    </PressResponder>)
+    </PressResponder>
   );
 
   if (hideButtonText && textContent) {
@@ -399,19 +445,31 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
 }
 
 interface ActionGroupMenuProps<T> extends AriaLabelingProps {
-  state: ListState<T>,
-  isDisabled?: boolean,
-  isEmphasized?: boolean,
-  staticColor?: 'white' | 'black',
-  items: Node<T>[],
-  hideButtonText?: boolean,
-  summaryIcon?: ReactNode,
-  isOnlyItem?: boolean,
-  orientation?: 'horizontal' | 'vertical',
-  onAction?: (key: Key) => void
+  state: ListState<T>;
+  isDisabled?: boolean;
+  isEmphasized?: boolean;
+  staticColor?: 'white' | 'black';
+  items: Node<T>[];
+  hideButtonText?: boolean;
+  summaryIcon?: ReactNode;
+  isOnlyItem?: boolean;
+  orientation?: 'horizontal' | 'vertical';
+  onAction?: (key: Key) => void;
 }
 
-function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items, onAction, summaryIcon, hideButtonText, isOnlyItem, orientation, ...otherProps}: ActionGroupMenuProps<T>) {
+function ActionGroupMenu<T>({
+  state,
+  isDisabled,
+  isEmphasized,
+  staticColor,
+  items,
+  onAction,
+  summaryIcon,
+  hideButtonText,
+  isOnlyItem,
+  orientation,
+  ...otherProps
+}: ActionGroupMenuProps<T>) {
   // Use the key of the first item within the menu as the key of the button.
   // The key must actually exist in the collection for focus to work correctly.
   let key = items[0].key;
@@ -426,7 +484,9 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
   let {hoverProps, isHovered} = useHover({isDisabled});
 
   // If no aria-label or aria-labelledby is given, provide a default one.
-  let ariaLabel = otherProps['aria-label'] || (otherProps['aria-labelledby'] ? undefined : stringFormatter.format('more'));
+  let ariaLabel =
+    otherProps['aria-label'] ||
+    (otherProps['aria-labelledby'] ? undefined : stringFormatter.format('more'));
   let ariaLabelledby = otherProps['aria-labelledby'];
   let textId = useId();
   let id = useId();
@@ -439,10 +499,16 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
   let iconOnly = false;
 
   // If there is a selection, show the selected state on the menu button.
-  let isSelected = state.selectionManager.selectionMode !== 'none' && !state.selectionManager.isEmpty;
+  let isSelected =
+    state.selectionManager.selectionMode !== 'none' && !state.selectionManager.isEmpty;
 
   // If single selection and empty selection is not allowed, swap the contents of the button to the selected item (like a Picker).
-  if (!summaryIcon && state.selectionManager.selectionMode === 'single' && state.selectionManager.disallowEmptySelection && state.selectionManager.firstSelectedKey != null) {
+  if (
+    !summaryIcon &&
+    state.selectionManager.selectionMode === 'single' &&
+    state.selectionManager.disallowEmptySelection &&
+    state.selectionManager.firstSelectedKey != null
+  ) {
     let selectedItem = state.collection.getItem(state.selectionManager.firstSelectedKey);
     if (selectedItem) {
       summaryIcon = selectedItem.rendered;
@@ -458,8 +524,13 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
     // If there's a custom summary icon, also add a chevron.
     summaryIcon = (
       <>
-        <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-ActionGroup-menu-chevron')} />
-        <span className={classNames(styles, 'spectrum-ActionGroup-menu-contents', {'spectrum-ActionGroup-item--iconOnly': iconOnly})}>
+        <ChevronDownMedium
+          UNSAFE_className={classNames(styles, 'spectrum-ActionGroup-menu-chevron')}
+        />
+        <span
+          className={classNames(styles, 'spectrum-ActionGroup-menu-contents', {
+            'spectrum-ActionGroup-item--iconOnly': iconOnly
+          })}>
           {summaryIcon}
         </span>
       </>
@@ -468,7 +539,9 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
 
   return (
     // Use a PressResponder to send DOM props through.
-    (<MenuTrigger align={isOnlyItem ? 'start' : 'end'} direction={orientation === 'vertical' ? 'end' : 'bottom'}>
+    <MenuTrigger
+      align={isOnlyItem ? 'start' : 'end'}
+      direction={orientation === 'vertical' ? 'end' : 'bottom'}>
       <SlotProvider
         slots={{
           text: {
@@ -483,24 +556,19 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
             id={id}
             aria-label={ariaLabel}
             aria-labelledby={ariaLabelledby}
-            UNSAFE_className={
-              classNames(
-                styles,
-                'spectrum-ActionGroup-item',
-                'spectrum-ActionGroup-menu',
-                {
-                  'is-hovered': isHovered,
-                  'is-selected': isSelected
-                },
-                classNames(
-                  buttonStyles,
-                  {
-                    'is-selected': isSelected,
-                    'spectrum-ActionButton--emphasized': isEmphasized
-                  }
-                )
-              )
-            }
+            UNSAFE_className={classNames(
+              styles,
+              'spectrum-ActionGroup-item',
+              'spectrum-ActionGroup-menu',
+              {
+                'is-hovered': isHovered,
+                'is-selected': isSelected
+              },
+              classNames(buttonStyles, {
+                'is-selected': isSelected,
+                'spectrum-ActionButton--emphasized': isEmphasized
+              })
+            )}
             isDisabled={isDisabled}
             staticColor={staticColor}>
             {summaryIcon || <More />}
@@ -513,23 +581,34 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
         selectionMode={state.selectionManager.selectionMode}
         selectedKeys={state.selectionManager.selectedKeys}
         disallowEmptySelection={state.selectionManager.disallowEmptySelection}
-        onSelectionChange={(keys) => state.selectionManager.setSelectedKeys(keys)}
+        onSelectionChange={keys => state.selectionManager.setSelectedKeys(keys)}
         onAction={onAction}>
-        {node => <Item textValue={node.textValue} {...filterDOMProps(node.props)}>{node.rendered}</Item>}
+        {node => (
+          <Item textValue={node.textValue} {...filterDOMProps(node.props)}>
+            {node.rendered}
+          </Item>
+        )}
       </Menu>
-    </MenuTrigger>)
+    </MenuTrigger>
   );
 }
 
 function outerWidth(element: HTMLElement, ignoreLeftMargin: boolean, ignoreRightMargin: boolean) {
   let style = window.getComputedStyle(element);
-  return element.getBoundingClientRect().width + (ignoreLeftMargin ? 0 : toNumber(style.marginLeft)) + (ignoreRightMargin ? 0 : toNumber(style.marginRight));
+  return (
+    element.getBoundingClientRect().width +
+    (ignoreLeftMargin ? 0 : toNumber(style.marginLeft)) +
+    (ignoreRightMargin ? 0 : toNumber(style.marginRight))
+  );
 }
-
 
 function outerHeight(element: HTMLElement, ignoreTopMargin: boolean, ignoreBottomMargin: boolean) {
   let style = window.getComputedStyle(element);
-  return element.getBoundingClientRect().height + (ignoreTopMargin ? 0 : toNumber(style.marginTop)) + (ignoreBottomMargin ? 0 : toNumber(style.marginBottom));
+  return (
+    element.getBoundingClientRect().height +
+    (ignoreTopMargin ? 0 : toNumber(style.marginTop)) +
+    (ignoreBottomMargin ? 0 : toNumber(style.marginBottom))
+  );
 }
 
 function toNumber(value: string) {

@@ -12,11 +12,15 @@
 
 type Method = [any, string];
 type Access = [any, string, 'get' | 'set'];
-type SpyTarget = Method | Access
-type MockCalls = Array<() => any>
+type SpyTarget = Method | Access;
+type MockCalls = Array<() => any>;
 
 // Util for mockImplementation that automatically handles extra calls needed for strict mode
-export function mockImplementation(spyTarget: SpyTarget, mockCalls: MockCalls, retainLastMock = true): jest.SpyInstance<any, []> {
+export function mockImplementation(
+  spyTarget: SpyTarget,
+  mockCalls: MockCalls,
+  retainLastMock = true
+): jest.SpyInstance<any, []> {
   if (mockCalls.length === 0) {
     throw new Error('MockCalls must have at least one mock implementation provided');
   }
@@ -41,7 +45,11 @@ export function mockImplementation(spyTarget: SpyTarget, mockCalls: MockCalls, r
 }
 
 // Same as above but accepts an pre-existing spy instead of creating a new one
-export function mockImplementationAdditional(spy: jest.SpyInstance<any, []>, mockCalls: MockCalls, retainLastMock = true): jest.SpyInstance<any, []> {
+export function mockImplementationAdditional(
+  spy: jest.SpyInstance<any, []>,
+  mockCalls: MockCalls,
+  retainLastMock = true
+): jest.SpyInstance<any, []> {
   if (mockCalls.length === 0) {
     throw new Error('MockCalls must have at least one mock implementation provided');
   }

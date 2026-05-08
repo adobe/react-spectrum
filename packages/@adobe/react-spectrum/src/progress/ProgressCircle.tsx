@@ -24,21 +24,21 @@ export interface ProgressCircleProps {
    * The current value (controlled).
    * @default 0
    */
-  value?: number,
+  value?: number;
   /**
    * The smallest value allowed for the input.
    * @default 0
    */
-  minValue?: number,
+  minValue?: number;
   /**
    * The largest value allowed for the input.
    * @default 100
    */
-  maxValue?: number,
+  maxValue?: number;
   /**
    * Whether presentation is indeterminate when progress isn't known.
    */
-  isIndeterminate?: boolean
+  isIndeterminate?: boolean;
 }
 
 export interface AriaProgressCircleProps extends ProgressCircleProps, DOMProps, AriaLabelingProps {}
@@ -47,22 +47,25 @@ export interface SpectrumProgressCircleProps extends AriaProgressCircleProps, St
    * What the ProgressCircle's diameter should be.
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L',
+  size?: 'S' | 'M' | 'L';
   /** The static color style to apply. Useful when the button appears over a color background. */
-  staticColor?: 'white' | 'black',
+  staticColor?: 'white' | 'black';
   /**
    * The [visual style](https://spectrum.adobe.com/page/progress-circle/#Over-background-variant) of the ProgressCircle.
    *
    * @deprecated - use staticColor instead.
    */
-  variant?: 'overBackground'
+  variant?: 'overBackground';
 }
 
 /**
  * ProgressCircles show the progression of a system operation such as downloading, uploading, or processing, in a visual way.
  * They can represent determinate or indeterminate progress.
  */
-export const ProgressCircle = React.forwardRef(function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
+export const ProgressCircle = React.forwardRef(function ProgressCircle(
+  props: SpectrumProgressCircleProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {
     value = 0,
     minValue = 0,
@@ -84,21 +87,23 @@ export const ProgressCircle = React.forwardRef(function ProgressCircle(props: Sp
   let subMask1Style: CSSProperties = {};
   let subMask2Style: CSSProperties = {};
   if (!isIndeterminate) {
-    let percentage = (value - minValue) / (maxValue - minValue) * 100;
+    let percentage = ((value - minValue) / (maxValue - minValue)) * 100;
     let angle;
     if (percentage > 0 && percentage <= 50) {
-      angle = -180 + (percentage / 50 * 180);
+      angle = -180 + (percentage / 50) * 180;
       subMask1Style.transform = `rotate(${angle}deg)`;
       subMask2Style.transform = 'rotate(-180deg)';
     } else if (percentage > 50) {
-      angle = -180 + (percentage - 50) / 50 * 180;
+      angle = -180 + ((percentage - 50) / 50) * 180;
       subMask1Style.transform = 'rotate(0deg)';
       subMask2Style.transform = `rotate(${angle}deg)`;
     }
   }
 
   if (!ariaLabel && !ariaLabelledby && process.env.NODE_ENV !== 'production') {
-    console.warn('ProgressCircle requires an aria-label or aria-labelledby attribute for accessibility');
+    console.warn(
+      'ProgressCircle requires an aria-label or aria-labelledby attribute for accessibility'
+    );
   }
 
   return (
@@ -106,24 +111,22 @@ export const ProgressCircle = React.forwardRef(function ProgressCircle(props: Sp
       {...styleProps}
       {...progressBarProps}
       ref={domRef}
-      className={
-        classNames(
-          styles,
-          'spectrum-CircleLoader',
-          {
-            'spectrum-CircleLoader--indeterminate': isIndeterminate,
-            'spectrum-CircleLoader--small': size === 'S',
-            'spectrum-CircleLoader--large': size === 'L',
-            'spectrum-CircleLoader--overBackground': variant === 'overBackground',
-            'spectrum-CircleLoader--staticWhite': staticColor === 'white',
-            'spectrum-CircleLoader--staticBlack': staticColor === 'black'
-          },
-          styleProps.className
-        )
-      }>
+      className={classNames(
+        styles,
+        'spectrum-CircleLoader',
+        {
+          'spectrum-CircleLoader--indeterminate': isIndeterminate,
+          'spectrum-CircleLoader--small': size === 'S',
+          'spectrum-CircleLoader--large': size === 'L',
+          'spectrum-CircleLoader--overBackground': variant === 'overBackground',
+          'spectrum-CircleLoader--staticWhite': staticColor === 'white',
+          'spectrum-CircleLoader--staticBlack': staticColor === 'black'
+        },
+        styleProps.className
+      )}>
       <div className={classNames(styles, 'spectrum-CircleLoader-track')} />
-      <div className={classNames(styles, 'spectrum-CircleLoader-fills')} >
-        <div className={classNames(styles, 'spectrum-CircleLoader-fillMask1')} >
+      <div className={classNames(styles, 'spectrum-CircleLoader-fills')}>
+        <div className={classNames(styles, 'spectrum-CircleLoader-fillMask1')}>
           <div
             className={classNames(styles, 'spectrum-CircleLoader-fillSubMask1')}
             data-testid="fillSubMask1"
@@ -131,11 +134,11 @@ export const ProgressCircle = React.forwardRef(function ProgressCircle(props: Sp
             <div className={classNames(styles, 'spectrum-CircleLoader-fill')} />
           </div>
         </div>
-        <div className={classNames(styles, 'spectrum-CircleLoader-fillMask2')} >
+        <div className={classNames(styles, 'spectrum-CircleLoader-fillMask2')}>
           <div
             className={classNames(styles, 'spectrum-CircleLoader-fillSubMask2')}
             data-testid="fillSubMask2"
-            style={subMask2Style} >
+            style={subMask2Style}>
             <div className={classNames(styles, 'spectrum-CircleLoader-fill')} />
           </div>
         </div>

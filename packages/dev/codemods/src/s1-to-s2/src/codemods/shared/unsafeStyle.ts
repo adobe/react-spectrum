@@ -16,14 +16,20 @@ export default function transformUnsafeStyle(
 
   for (let property of value.properties) {
     if (property.type === 'ObjectProperty' && property.key.type === 'Identifier') {
-      let prop = propertyMapping[property.key.name as keyof typeof propertyMapping] || property.key.name;
+      let prop =
+        propertyMapping[property.key.name as keyof typeof propertyMapping] || property.key.name;
       if (property.value.type === 'ConditionalExpression') {
         let consequent = handleProperty(element, property.key.name, property.value.consequent);
         let alternate = handleProperty(element, property.key.name, property.value.alternate);
         if (consequent && alternate) {
           let test = property.value.test;
           // eslint-disable-next-line max-depth
-          if (test.type === 'BinaryExpression' && test.operator === '===' && test.left.type === 'Identifier' && test.right.type === 'StringLiteral') {
+          if (
+            test.type === 'BinaryExpression' &&
+            test.operator === '===' &&
+            test.left.type === 'Identifier' &&
+            test.right.type === 'StringLiteral'
+          ) {
             res.macroValues.push({
               key: prop,
               value: {default: alternate, [test.left.name]: {[test.right.value]: consequent}}
@@ -103,7 +109,10 @@ function handleProperty(element: string, property: string, value: t.ObjectProper
     case 'outlineColor':
     case 'fill':
     case 'stroke': {
-      if ((element === 'View' || element === 'Flex' || element === 'Grid') && value.type === 'StringLiteral') {
+      if (
+        (element === 'View' || element === 'Flex' || element === 'Grid') &&
+        value.type === 'StringLiteral'
+      ) {
         return convertUnsafeStyleColor(property, value.value);
       }
       break;
@@ -142,12 +151,18 @@ function handleProperty(element: string, property: string, value: t.ObjectProper
         }
         if (value.type === 'NumericLiteral') {
           switch (value.value) {
-            case 0: return 'none';
-            case 2: return 'sm';
-            case 4: return 'default';
-            case 8: return 'lg';
-            case 16: return 'xl';
-            default: return `[${value.value}px]`;
+            case 0:
+              return 'none';
+            case 2:
+              return 'sm';
+            case 4:
+              return 'default';
+            case 8:
+              return 'lg';
+            case 16:
+              return 'xl';
+            default:
+              return `[${value.value}px]`;
           }
         } else if (value.type === 'StringLiteral') {
           let m = value.value.match(/^var\(--spectrum-alias-border-radius-(.+)\)$/);
@@ -215,36 +230,61 @@ function handleProperty(element: string, property: string, value: t.ObjectProper
         }
         if (value.type === 'NumericLiteral') {
           switch (value.value) {
-            case 11: return 'ui-xs';
-            case 12: return 'ui-sm';
-            case 14: return 'ui';
-            case 16: return 'ui-lg';
-            case 18: return 'ui-xl';
-            case 20: return 'ui-2xl';
-            case 22: return 'ui-3xl';
-            default: return `[${value.value / 16}rem]`;
+            case 11:
+              return 'ui-xs';
+            case 12:
+              return 'ui-sm';
+            case 14:
+              return 'ui';
+            case 16:
+              return 'ui-lg';
+            case 18:
+              return 'ui-xl';
+            case 20:
+              return 'ui-2xl';
+            case 22:
+              return 'ui-3xl';
+            default:
+              return `[${value.value / 16}rem]`;
           }
         } else if (value.type === 'StringLiteral') {
           let m = value.value.match(/^var\(--spectrum-global-dimension-font-size-(.+)\)$/);
           if (m) {
             switch (m[1]) {
-              case '25': return `[${10 / 16}rem]`;
-              case '50': return 'xs';
-              case '75': return 'ui-sm';
-              case '100': return 'ui';
-              case '150': return `[${15 / 16}rem]`;
-              case '200': return 'ui-lg';
-              case '300': return 'ui-xl';
-              case '400': return 'body-xl';
-              case '500': return 'body-2xl';
-              case '600': return 'body-3xl';
-              case '700': return 'heading-lg';
-              case '800': return `[${32 / 16}rem]`;
-              case '900': return 'heading-xl';
-              case '1000': return `[${40 / 16}rem]`;
-              case '1100': return 'heading-2xl';
-              case '1200': return `[${50 / 16}rem]`;
-              case '1300': return 'heading-3xl';
+              case '25':
+                return `[${10 / 16}rem]`;
+              case '50':
+                return 'xs';
+              case '75':
+                return 'ui-sm';
+              case '100':
+                return 'ui';
+              case '150':
+                return `[${15 / 16}rem]`;
+              case '200':
+                return 'ui-lg';
+              case '300':
+                return 'ui-xl';
+              case '400':
+                return 'body-xl';
+              case '500':
+                return 'body-2xl';
+              case '600':
+                return 'body-3xl';
+              case '700':
+                return 'heading-lg';
+              case '800':
+                return `[${32 / 16}rem]`;
+              case '900':
+                return 'heading-xl';
+              case '1000':
+                return `[${40 / 16}rem]`;
+              case '1100':
+                return 'heading-2xl';
+              case '1200':
+                return `[${50 / 16}rem]`;
+              case '1300':
+                return 'heading-3xl';
             }
           }
         }
@@ -288,7 +328,10 @@ function handleProperty(element: string, property: string, value: t.ObjectProper
     case 'gridRow':
     case 'gridRowEnd':
     case 'gridRowStart': {
-      if ((value.type === 'StringLiteral' && !/^(var|calc)\(/.test(value.value)) || value.type === 'NumericLiteral') {
+      if (
+        (value.type === 'StringLiteral' && !/^(var|calc)\(/.test(value.value)) ||
+        value.type === 'NumericLiteral'
+      ) {
         return value.value;
       }
       break;
@@ -385,7 +428,10 @@ function handleProperty(element: string, property: string, value: t.ObjectProper
     case 'transitionTimingFunction':
     case 'transitionDelay': {
       if (element === 'Flex' || element === 'Grid' || element === 'View') {
-        if ((value.type === 'StringLiteral' && !/^(var|calc)\(/.test(value.value)) || value.type === 'NumericLiteral') {
+        if (
+          (value.type === 'StringLiteral' && !/^(var|calc)\(/.test(value.value)) ||
+          value.type === 'NumericLiteral'
+        ) {
           return value.value;
         }
       }
@@ -398,19 +444,32 @@ function handleProperty(element: string, property: string, value: t.ObjectProper
           let m = value.value.match(/^var\(--spectrum-global-animation-duration-(.+)\)$/);
           if (m) {
             switch (m[1]) {
-              case '0': return 0;
-              case '100': return 130;
-              case '200': return 160;
-              case '300': return 190;
-              case '400': return 220;
-              case '500': return 250;
-              case '600': return 300;
-              case '700': return 350;
-              case '800': return 400;
-              case '900': return 450;
-              case '1000': return 500;
-              case '2000': return 1000;
-              case '4000': return 2000;
+              case '0':
+                return 0;
+              case '100':
+                return 130;
+              case '200':
+                return 160;
+              case '300':
+                return 190;
+              case '400':
+                return 220;
+              case '500':
+                return 250;
+              case '600':
+                return 300;
+              case '700':
+                return 350;
+              case '800':
+                return 400;
+              case '900':
+                return 450;
+              case '1000':
+                return 500;
+              case '2000':
+                return 1000;
+              case '4000':
+                return 2000;
             }
           } else if (/^\d+(s|ms)$/.test(value.value)) {
             return value.value;

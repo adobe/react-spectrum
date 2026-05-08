@@ -132,14 +132,20 @@ describe('Focusable', function () {
 
   it('should warn if child is not focusable', async function () {
     let spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    let Component = React.forwardRef((_, ref) => <span role="button" ref={ref}>Hi</span>);
+    let Component = React.forwardRef((_, ref) => (
+      <span role="button" ref={ref}>
+        Hi
+      </span>
+    ));
     render(
       <Focusable>
         <Component>Button</Component>
       </Focusable>
     );
 
-    expect(spy).toHaveBeenCalledWith('<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.');
+    expect(spy).toHaveBeenCalledWith(
+      '<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.'
+    );
   });
 
   it('should warn if child does not have a role', async function () {
@@ -161,6 +167,8 @@ describe('Focusable', function () {
       </Focusable>
     );
 
-    expect(spy).toHaveBeenCalledWith('<Focusable> child must have an interactive ARIA role. Got "presentation".');
+    expect(spy).toHaveBeenCalledWith(
+      '<Focusable> child must have an interactive ARIA role. Got "presentation".'
+    );
   });
 });

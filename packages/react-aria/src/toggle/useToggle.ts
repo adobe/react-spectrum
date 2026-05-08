@@ -10,12 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AriaValidationProps, DOMAttributesWithRef, FocusableDOMProps, InputDOMProps, PressEvents, RefObject, ValidationResult} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  AriaValidationProps,
+  DOMAttributesWithRef,
+  FocusableDOMProps,
+  InputDOMProps,
+  PressEvents,
+  RefObject,
+  ValidationResult
+} from '@react-types/shared';
 import {ChangeEventHandler, InputHTMLAttributes, LabelHTMLAttributes, useState} from 'react';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {mergeProps} from '../utils/mergeProps';
-import {privateValidationStateProp, useFormValidationState} from 'react-stately/private/form/useFormValidationState';
+import {
+  privateValidationStateProp,
+  useFormValidationState
+} from 'react-stately/private/form/useFormValidationState';
 import {ToggleProps, ToggleState} from 'react-stately/useToggleState';
 import {useFocusable} from '../interactions/useFocusable';
 import {useFormReset} from '../utils/useFormReset';
@@ -23,38 +35,49 @@ import {useFormValidation} from '../form/useFormValidation';
 import {usePress} from '../interactions/usePress';
 import {useSlotId2} from '../utils/useSlot';
 
-export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLabelingProps, AriaValidationProps, InputDOMProps, PressEvents {
+export interface AriaToggleProps
+  extends
+    ToggleProps,
+    FocusableDOMProps,
+    AriaLabelingProps,
+    AriaValidationProps,
+    InputDOMProps,
+    PressEvents {
   /**
    * Identifies the element (or elements) whose contents or presence are controlled by the current element.
    */
-  'aria-controls'?: string
+  'aria-controls'?: string;
 }
 
 export interface ToggleAria extends ValidationResult {
   /** Props to be spread on the label element. */
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>;
   /** Props to be spread on the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>;
   /** Props for the checkbox description element, if any. */
-  descriptionProps: DOMAttributesWithRef<HTMLElement>,
+  descriptionProps: DOMAttributesWithRef<HTMLElement>;
   /** Props for the checkbox error message element, if any. */
-  errorMessageProps: DOMAttributesWithRef<HTMLElement>,
+  errorMessageProps: DOMAttributesWithRef<HTMLElement>;
   /** Whether the toggle is selected. */
-  isSelected: boolean,
+  isSelected: boolean;
   /** Whether the toggle is in a pressed state. */
-  isPressed: boolean,
+  isPressed: boolean;
   /** Whether the toggle is disabled. */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /** Whether the toggle is read only. */
-  isReadOnly: boolean,
+  isReadOnly: boolean;
   /** Whether the toggle is invalid. */
-  isInvalid: boolean
+  isInvalid: boolean;
 }
 
 /**
  * Handles interactions for toggle elements, e.g. Checkboxes and Switches.
  */
-export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefObject<HTMLInputElement | null>): ToggleAria {
+export function useToggle(
+  props: AriaToggleProps,
+  state: ToggleState,
+  ref: RefObject<HTMLInputElement | null>
+): ToggleAria {
   let {
     isDisabled = false,
     isReadOnly = false,
@@ -81,7 +104,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
 
   useFormValidation(props, validationState, ref);
 
-  let onChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+  let onChange: ChangeEventHandler<HTMLInputElement> = e => {
     // since we spread props on label, onChange will end up there as well as in here.
     // so we have to stop propagation at the lowest level that we care about
     e.stopPropagation();
@@ -91,7 +114,9 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
   let hasChildren = children != null;
   let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
   if (!hasChildren && !hasAriaLabel && process.env.NODE_ENV !== 'production') {
-    console.warn('If you do not provide children, you must specify an aria-label for accessibility');
+    console.warn(
+      'If you do not provide children, you must specify an aria-label for accessibility'
+    );
   }
 
   // Handle press state for keyboard interactions and cases where labelProps is not used.
@@ -152,9 +177,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
       // @ts-expect-error
       let {[privateValidationStateProp]: groupValidationState} = props;
 
-      let {commitValidation} = groupValidationState
-      ? groupValidationState
-      : validationState;
+      let {commitValidation} = groupValidationState ? groupValidationState : validationState;
 
       commitValidation();
     },
@@ -181,11 +204,9 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
       'aria-errormessage': props['aria-errormessage'],
       'aria-controls': props['aria-controls'],
       'aria-readonly': isReadOnly || undefined,
-      'aria-describedby': [
-        descriptionProps.id,
-        errorMessageProps.id,
-        ariaDescribedby
-      ].filter(Boolean).join(' ') || undefined,
+      'aria-describedby':
+        [descriptionProps.id, errorMessageProps.id, ariaDescribedby].filter(Boolean).join(' ') ||
+        undefined,
       onChange,
       disabled: isDisabled,
       ...(value == null ? {} : {value}),

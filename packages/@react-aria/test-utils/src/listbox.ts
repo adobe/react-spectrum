@@ -18,20 +18,20 @@ interface ListBoxToggleOptionOpts {
   /**
    * What interaction type to use when toggling selection for an option. Defaults to the interaction type set on the tester.
    */
-  interactionType?: UserOpts['interactionType'],
+  interactionType?: UserOpts['interactionType'];
   /**
    * The index, text, or node of the option to toggle selection for.
    */
-  option: number | string | HTMLElement,
+  option: number | string | HTMLElement;
   /**
    * Whether the option should be triggered by Space or Enter in keyboard modality.
    * @default 'Enter'
    */
-  keyboardActivation?: 'Space' | 'Enter',
+  keyboardActivation?: 'Space' | 'Enter';
   /**
    * Whether the option needs to be long pressed to be selected. Depends on the listbox's implementation.
    */
-  needsLongPress?: boolean,
+  needsLongPress?: boolean;
   /**
    * Whether the listbox has a selectionBehavior of "toggle" or "replace" (aka highlight selection). This affects the user operations
    * required to toggle option selection by adding modifier keys during user actions, useful when performing multi-option selection in a "selectionBehavior: 'replace'" listbox.
@@ -40,14 +40,17 @@ interface ListBoxToggleOptionOpts {
    *
    * @default 'toggle'
    */
-    selectionBehavior?: 'toggle' | 'replace'
+  selectionBehavior?: 'toggle' | 'replace';
 }
 
-interface ListBoxOptionActionOpts extends Omit<ListBoxToggleOptionOpts, 'keyboardActivation' | 'needsLongPress'> {
+interface ListBoxOptionActionOpts extends Omit<
+  ListBoxToggleOptionOpts,
+  'keyboardActivation' | 'needsLongPress'
+> {
   /**
    * Whether or not the option needs a double click to trigger the option action. Depends on the listbox's implementation.
    */
-  needsDoubleClick?: boolean
+  needsDoubleClick?: boolean;
 }
 
 export class ListBoxTester {
@@ -76,9 +79,7 @@ export class ListBoxTester {
    * Returns a option matching the specified index or text content.
    */
   findOption(opts: {optionIndexOrText: number | string}): HTMLElement {
-    let {
-      optionIndexOrText
-    } = opts;
+    let {optionIndexOrText} = opts;
 
     let option;
     let options = this.options();
@@ -86,7 +87,9 @@ export class ListBoxTester {
     if (typeof optionIndexOrText === 'number') {
       option = options[optionIndexOrText];
     } else if (typeof optionIndexOrText === 'string') {
-      option = (within(this.listbox!).getByText(optionIndexOrText).closest('[role=option]'))! as HTMLElement;
+      option = within(this.listbox!)
+        .getByText(optionIndexOrText)
+        .closest('[role=option]')! as HTMLElement;
     }
 
     return option;
@@ -94,7 +97,10 @@ export class ListBoxTester {
 
   // TODO: this is basically the same as menu except for the error message, refactor later so that they share
   // TODO: this also doesn't support grid layout yet
-  private async keyboardNavigateToOption(opts: {option: HTMLElement, selectionOnNav?: 'default' | 'none'}) {
+  private async keyboardNavigateToOption(opts: {
+    option: HTMLElement;
+    selectionOnNav?: 'default' | 'none';
+  }) {
     let {option, selectionOnNav = 'default'} = opts;
     let altKey = getAltKey();
     let options = this.options();
@@ -103,9 +109,14 @@ export class ListBoxTester {
       throw new Error('Option provided is not in the listbox');
     }
 
-    if (document.activeElement !== this._listbox && !this._listbox.contains(document.activeElement)) {
+    if (
+      document.activeElement !== this._listbox &&
+      !this._listbox.contains(document.activeElement)
+    ) {
       act(() => this._listbox.focus());
-      await this.user.keyboard(`${selectionOnNav === 'none' ? `[${altKey}>]` : ''}[ArrowDown]${selectionOnNav === 'none' ? `[/${altKey}]` : ''}`);
+      await this.user.keyboard(
+        `${selectionOnNav === 'none' ? `[${altKey}>]` : ''}[ArrowDown]${selectionOnNav === 'none' ? `[/${altKey}]` : ''}`
+      );
     }
 
     let currIndex = options.indexOf(document.activeElement as HTMLElement);
@@ -123,7 +134,7 @@ export class ListBoxTester {
     if (selectionOnNav === 'none') {
       await this.user.keyboard(`[/${altKey}]`);
     }
-  };
+  }
 
   /**
    * Toggles the selection for the specified listbox option. Defaults to using the interaction type set on the listbox tester.
@@ -153,7 +164,10 @@ export class ListBoxTester {
         return;
       }
 
-      await this.keyboardNavigateToOption({option, selectionOnNav: selectionBehavior === 'replace' ? 'none' : 'default'});
+      await this.keyboardNavigateToOption({
+        option,
+        selectionOnNav: selectionBehavior === 'replace' ? 'none' : 'default'
+      });
       if (selectionBehavior === 'replace') {
         await this.user.keyboard(`[${altKey}>]`);
       }
@@ -167,7 +181,11 @@ export class ListBoxTester {
           throw new Error('No advanceTimers provided for long press.');
         }
 
-        await triggerLongPress({element: option, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
+        await triggerLongPress({
+          element: option,
+          advanceTimer: this._advanceTimer,
+          pointerOpts: {pointerType: 'touch'}
+        });
       } else {
         if (selectionBehavior === 'replace' && interactionType !== 'touch') {
           await this.user.keyboard(`[${metaKey}>]`);
@@ -184,11 +202,7 @@ export class ListBoxTester {
    * Triggers the action for the specified listbox option. Defaults to using the interaction type set on the listbox tester.
    */
   async triggerOptionAction(opts: ListBoxOptionActionOpts): Promise<void> {
-    let {
-      option,
-      needsDoubleClick,
-      interactionType = this._interactionType
-    } = opts;
+    let {option, needsDoubleClick, interactionType = this._interactionType} = opts;
 
     if (typeof option === 'string' || typeof option === 'number') {
       option = this.findOption({optionIndexOrText: option});

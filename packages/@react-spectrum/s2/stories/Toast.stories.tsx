@@ -45,44 +45,78 @@ const meta: Meta<ToastStoryProps> = {
 export default meta;
 
 interface ToastStoryProps extends ToastOptions {
-  placement?: ToastPlacement,
-  actionLabel: string
+  placement?: ToastPlacement;
+  actionLabel: string;
 }
 
 type Story = StoryObj<ToastStoryProps>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <>
       <ToastContainer placement={args.placement} />
       <ButtonGroup>
         <Button
-          onPress={() => ToastQueue.neutral('Toast available', {...args, onAction: action('onAction'), onClose: action('onClose')})}
+          onPress={() =>
+            ToastQueue.neutral('Toast available', {
+              ...args,
+              onAction: action('onAction'),
+              onClose: action('onClose')
+            })
+          }
           variant="secondary">
           Show Neutral Toast
         </Button>
         <Button
-          onPress={() => ToastQueue.positive('Toast is done!', {...args, onAction: action('onAction'), onClose: action('onClose')})}
+          onPress={() =>
+            ToastQueue.positive('Toast is done!', {
+              ...args,
+              onAction: action('onAction'),
+              onClose: action('onClose')
+            })
+          }
           variant="primary">
           Show Positive Toast
         </Button>
         <Button
-          onPress={() => ToastQueue.negative('Toast is burned!', {...args, onAction: action('onAction'), onClose: action('onClose')})}
+          onPress={() =>
+            ToastQueue.negative('Toast is burned!', {
+              ...args,
+              onAction: action('onAction'),
+              onClose: action('onClose')
+            })
+          }
           variant="negative">
           Show Negative Toast
         </Button>
         <Button
-          onPress={() => ToastQueue.info('Toasting…', {...args, onAction: action('onAction'), onClose: action('onClose')})}
+          onPress={() =>
+            ToastQueue.info('Toasting…', {
+              ...args,
+              onAction: action('onAction'),
+              onClose: action('onClose')
+            })
+          }
           variant="accent">
           Show Info Toast
         </Button>
         <Button
-          onPress={() => ToastQueue.info('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', {...args, onClose: action('onClose')})}
+          onPress={() =>
+            ToastQueue.info(
+              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+              {...args, onClose: action('onClose')}
+            )
+          }
           variant="accent">
           Show Long Toast
         </Button>
         <Button
-          onPress={() => ToastQueue.info('LoremipsumdolorsitametconsecteturadipiscingelitseddoeiusmodtemporincididuntutlaboreetdoloremagnaaliquaUtenimaminimveniamquisnostrudexercitationullamcolaborisnisiutaliquipeacommodoconsequat.', {...args, onClose: action('onClose')})}
+          onPress={() =>
+            ToastQueue.info(
+              'LoremipsumdolorsitametconsecteturadipiscingelitseddoeiusmodtemporincididuntutlaboreetdoloremagnaaliquaUtenimaminimveniamquisnostrudexercitationullamcolaborisnisiutaliquipeacommodoconsequat.',
+              {...args, onClose: action('onClose')}
+            )
+          }
           variant="accent">
           Show Long Word Toast
         </Button>
@@ -99,7 +133,8 @@ export const Toast: StoryObj<SpectrumToastValue> = {
           toast={{
             key: 'x',
             content: args
-          }} />
+          }}
+        />
       </UNSTABLE_ToastStateContext.Provider>
     );
   },

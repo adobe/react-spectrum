@@ -20,7 +20,7 @@ import {useDragModality} from './utils';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
 interface VirtualDropResult {
-  dropProps: AriaButtonProps & DOMAttributes<HTMLDivElement>
+  dropProps: AriaButtonProps & DOMAttributes<HTMLDivElement>;
 }
 
 const MESSAGES = {
@@ -33,7 +33,9 @@ export function useVirtualDrop(): VirtualDropResult {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
   let modality = useDragModality();
   let dragSession = DragManager.useDragSession();
-  let descriptionProps = useDescription(dragSession ? stringFormatter.format(MESSAGES[modality]) : '');
+  let descriptionProps = useDescription(
+    dragSession ? stringFormatter.format(MESSAGES[modality]) : ''
+  );
 
   return {
     dropProps: {

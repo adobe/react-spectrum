@@ -15,7 +15,14 @@ import {AriaButtonProps} from 'react-aria/useButton';
 import {AriaNumberFieldProps, useNumberField} from 'react-aria/useNumberField';
 import {classNames} from '../utils/classNames';
 import {Field} from '../label/Field';
-import {FocusableRef, InputDOMProps, RefObject, SpectrumFieldValidation, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
+import {
+  FocusableRef,
+  InputDOMProps,
+  RefObject,
+  SpectrumFieldValidation,
+  SpectrumLabelableProps,
+  StyleProps
+} from '@react-types/shared';
 import {FocusRing} from 'react-aria/FocusRing';
 import {mergeProps} from 'react-aria/mergeProps';
 import {NumberFieldState, useNumberFieldState} from 'react-stately/useNumberFieldState';
@@ -30,29 +37,33 @@ import {useLocale} from 'react-aria/I18nProvider';
 import {useProvider, useProviderProps} from '../provider/Provider';
 import {useStyleProps} from '../utils/styleProps';
 
-export interface SpectrumNumberFieldProps extends Omit<AriaNumberFieldProps, 'placeholder' | 'isInvalid' | 'validationState'>, SpectrumFieldValidation<number>, InputDOMProps, StyleProps, SpectrumLabelableProps {
+export interface SpectrumNumberFieldProps
+  extends
+    Omit<AriaNumberFieldProps, 'placeholder' | 'isInvalid' | 'validationState'>,
+    SpectrumFieldValidation<number>,
+    InputDOMProps,
+    StyleProps,
+    SpectrumLabelableProps {
   /** Whether the numberfield should be displayed with a quiet style. */
-  isQuiet?: boolean,
+  isQuiet?: boolean;
   /**
    * Whether to hide the increment and decrement buttons.
    * @default false
    */
-  hideStepper?: boolean
+  hideStepper?: boolean;
 }
 
 /**
  * NumberFields allow users to enter a number, and increment or decrement the value using stepper buttons.
  */
-export const NumberField = React.forwardRef(function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
+export const NumberField = React.forwardRef(function NumberField(
+  props: SpectrumNumberFieldProps,
+  ref: FocusableRef<HTMLElement>
+) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let provider = useProvider();
-  let {
-    isQuiet,
-    isReadOnly,
-    isDisabled,
-    hideStepper
-  } = props;
+  let {isQuiet, isReadOnly, isDisabled, hideStepper} = props;
 
   let {styleProps: style} = useStyleProps(props);
 
@@ -78,26 +89,25 @@ export const NumberField = React.forwardRef(function NumberField(props: Spectrum
   let {isHovered, hoverProps} = useHover({isDisabled});
 
   let validationState = props.validationState || (isInvalid ? 'invalid' : undefined);
-  let className =
-    classNames(
-      stepperStyle,
-      'spectrum-Stepper',
-      // because FocusRing won't pass along the className from Field, we have to handle that ourselves
-      !props.label && style.className ? style.className : '',
-      {
-        'spectrum-Stepper--isQuiet': isQuiet,
-        'is-disabled': isDisabled,
-        'spectrum-Stepper--readonly': isReadOnly,
-        'is-invalid': validationState === 'invalid' && !isDisabled,
-        'spectrum-Stepper--showStepper': showStepper,
-        'spectrum-Stepper--isMobile': isMobile,
-        'is-hovered': isHovered
-      }
-    );
+  let className = classNames(
+    stepperStyle,
+    'spectrum-Stepper',
+    // because FocusRing won't pass along the className from Field, we have to handle that ourselves
+    !props.label && style.className ? style.className : '',
+    {
+      'spectrum-Stepper--isQuiet': isQuiet,
+      'is-disabled': isDisabled,
+      'spectrum-Stepper--readonly': isReadOnly,
+      'is-invalid': validationState === 'invalid' && !isDisabled,
+      'spectrum-Stepper--showStepper': showStepper,
+      'spectrum-Stepper--isMobile': isMobile,
+      'is-hovered': isHovered
+    }
+  );
 
   return (
     <Field
-      {...props as Omit<SpectrumNumberFieldProps, 'onChange'>}
+      {...(props as Omit<SpectrumNumberFieldProps, 'onChange'>)}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
       isInvalid={isInvalid}
@@ -105,13 +115,9 @@ export const NumberField = React.forwardRef(function NumberField(props: Spectrum
       validationDetails={validationDetails}
       labelProps={labelProps}
       ref={domRef}
-      wrapperClassName={classNames(
-        stepperStyle,
-        'spectrum-Stepper-container',
-        {
-          'spectrum-Stepper-container--isMobile': isMobile
-        }
-      )}>
+      wrapperClassName={classNames(stepperStyle, 'spectrum-Stepper-container', {
+        'spectrum-Stepper-container--isMobile': isMobile
+      })}>
       <NumberFieldInput
         {...props}
         groupProps={mergeProps(groupProps, hoverProps)}
@@ -122,24 +128,27 @@ export const NumberField = React.forwardRef(function NumberField(props: Spectrum
         className={className}
         style={style}
         state={state}
-        validationState={validationState} />
+        validationState={validationState}
+      />
     </Field>
   );
 });
 
-
 interface NumberFieldInputProps extends SpectrumNumberFieldProps {
-  groupProps: HTMLAttributes<HTMLDivElement>,
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement | null>,
-  incrementProps: AriaButtonProps,
-  decrementProps: AriaButtonProps,
-  className?: string,
-  style?: React.CSSProperties,
-  state: NumberFieldState
+  groupProps: HTMLAttributes<HTMLDivElement>;
+  inputProps: InputHTMLAttributes<HTMLInputElement>;
+  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement | null>;
+  incrementProps: AriaButtonProps;
+  decrementProps: AriaButtonProps;
+  className?: string;
+  style?: React.CSSProperties;
+  state: NumberFieldState;
 }
 
-const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: NumberFieldInputProps, ref: Ref<HTMLDivElement>) {
+const NumberFieldInput = React.forwardRef(function NumberFieldInput(
+  props: NumberFieldInputProps,
+  ref: Ref<HTMLDivElement>
+) {
   let {
     groupProps,
     inputProps,
@@ -165,43 +174,32 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
       focusClass={classNames(stepperStyle, 'is-focused')}
       focusRingClass={classNames(stepperStyle, 'focus-ring')}
       autoFocus={autoFocus}>
-      <div
-        {...groupProps}
-        ref={ref}
-        style={style}
-        className={className}>
+      <div {...groupProps} ref={ref} style={style} className={className}>
         <TextFieldBase
-          UNSAFE_className={
-            classNames(
-              stepperStyle,
-              'spectrum-Stepper-field'
-            )
-          }
-          inputClassName={
-            classNames(
-              stepperStyle,
-              'spectrum-Stepper-input'
-            )
-          }
-          validationIconClassName={
-            classNames(
-              stepperStyle,
-              'spectrum-Stepper-icon'
-            )
-          }
+          UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-field')}
+          inputClassName={classNames(stepperStyle, 'spectrum-Stepper-input')}
+          validationIconClassName={classNames(stepperStyle, 'spectrum-Stepper-icon')}
           isQuiet={isQuiet}
           inputRef={inputRef}
           validationState={validationState}
           inputProps={inputProps}
           isDisabled={isDisabled}
-          disableFocusRing />
-        {showStepper &&
-        <>
-          <StepButton direction="up" isQuiet={isQuiet} {...incrementProps} />
-          <StepButton direction="down" isQuiet={isQuiet} {...decrementProps} />
-        </>
-        }
-        {name && <input type="hidden" name={name} form={props.form} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
+          disableFocusRing
+        />
+        {showStepper && (
+          <>
+            <StepButton direction="up" isQuiet={isQuiet} {...incrementProps} />
+            <StepButton direction="down" isQuiet={isQuiet} {...decrementProps} />
+          </>
+        )}
+        {name && (
+          <input
+            type="hidden"
+            name={name}
+            form={props.form}
+            value={isNaN(state.numberValue) ? '' : state.numberValue}
+          />
+        )}
       </div>
     </FocusRing>
   );

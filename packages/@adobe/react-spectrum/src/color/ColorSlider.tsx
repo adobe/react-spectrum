@@ -31,29 +31,25 @@ import {useStyleProps} from '../utils/styleProps';
 
 export interface SpectrumColorSliderProps extends AriaColorSliderProps, StyleProps {
   /** Whether the value label is displayed. True by default if there is a label, false by default if not. */
-  showValueLabel?: boolean,
+  showValueLabel?: boolean;
   /** A ContextualHelp element to place next to the label. */
-  contextualHelp?: ReactNode
+  contextualHelp?: ReactNode;
 }
 
 /**
  * ColorSliders allow users to adjust an individual channel of a color value.
  */
-export const ColorSlider = React.forwardRef(function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivElement>) {
+export const ColorSlider = React.forwardRef(function ColorSlider(
+  props: SpectrumColorSliderProps,
+  ref: FocusableRef<HTMLDivElement>
+) {
   props = useProviderProps(props);
   let inputRef = useRef(null);
   let trackRef = useRef(null);
   let domRef = useFocusableRef(ref, inputRef);
   [props, domRef] = useContextProps(props, domRef, ColorSliderContext);
 
-  let {
-    isDisabled,
-    channel,
-    orientation,
-    label,
-    showValueLabel,
-    'aria-label': ariaLabel
-  } = props;
+  let {isDisabled, channel, orientation, label, showValueLabel, 'aria-label': ariaLabel} = props;
   let vertical = orientation === 'vertical';
 
   let {styleProps} = useStyleProps(props);
@@ -80,13 +76,16 @@ export const ColorSlider = React.forwardRef(function ColorSlider(props: Spectrum
     showValueLabel = !!label;
   }
 
-  let {inputProps, thumbProps, trackProps, labelProps, outputProps} = useColorSlider({
-    ...props,
-    label,
-    'aria-label': ariaLabel,
-    trackRef,
-    inputRef
-  }, state);
+  let {inputProps, thumbProps, trackProps, labelProps, outputProps} = useColorSlider(
+    {
+      ...props,
+      label,
+      'aria-label': ariaLabel,
+      trackRef,
+      inputRef
+    },
+    state
+  );
 
   let {isFocusVisible} = useFocusVisible();
   let [isFocused, setIsFocused] = useState(false);
@@ -107,10 +106,10 @@ export const ColorSlider = React.forwardRef(function ColorSlider(props: Spectrum
         },
         styleProps.className
       )}>
-      {label &&
+      {label && (
         <div className={classNames(styles, 'spectrum-ColorSlider-labelContainer')}>
           <Label {...labelProps}>{label}</Label>
-          {props.contextualHelp &&
+          {props.contextualHelp && (
             <SlotProvider
               slots={{
                 actionButton: {
@@ -119,25 +118,23 @@ export const ColorSlider = React.forwardRef(function ColorSlider(props: Spectrum
               }}>
               {props.contextualHelp}
             </SlotProvider>
-          }
+          )}
           {showValueLabel && (
-            <Label elementType="span" UNSAFE_className={classNames(styles, 'spectrum-ColorSlider-valueLabel')}>
+            <Label
+              elementType="span"
+              UNSAFE_className={classNames(styles, 'spectrum-ColorSlider-valueLabel')}>
               <output {...outputProps}>{state.value.formatChannelValue(channel, locale)}</output>
             </Label>
           )}
         </div>
-      }
+      )}
       <div
         {...trackProps}
         ref={trackRef}
-        className={classNames(
-          styles,
-          'spectrum-ColorSlider', {
-            'is-disabled': isDisabled,
-            'spectrum-ColorSlider--vertical': vertical
-          }
-        )
-      }>
+        className={classNames(styles, 'spectrum-ColorSlider', {
+          'is-disabled': isDisabled,
+          'spectrum-ColorSlider--vertical': vertical
+        })}>
         <ColorThumb
           value={state.getDisplayColor()}
           isFocused={isFocused && isFocusVisible}
@@ -146,7 +143,12 @@ export const ColorSlider = React.forwardRef(function ColorSlider(props: Spectrum
           containerRef={trackRef}
           className={classNames(styles, 'spectrum-ColorSlider-handle')}
           {...thumbProps}>
-          <input {...inputProps} {...focusProps} ref={inputRef} className={classNames(styles, 'spectrum-ColorSlider-slider')} />
+          <input
+            {...inputProps}
+            {...focusProps}
+            ref={inputRef}
+            className={classNames(styles, 'spectrum-ColorSlider-slider')}
+          />
         </ColorThumb>
       </div>
     </div>

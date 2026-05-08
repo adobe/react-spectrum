@@ -32,16 +32,12 @@ export default meta;
 type Story = StoryObj<typeof Disclosure>;
 
 export const Example: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <div className={style({minHeight: 240})}>
         <Disclosure {...args}>
-          <DisclosureTitle>
-            Files
-          </DisclosureTitle>
-          <DisclosurePanel>
-            Files content
-          </DisclosurePanel>
+          <DisclosureTitle>Files</DisclosureTitle>
+          <DisclosurePanel>Files content</DisclosurePanel>
         </Disclosure>
       </div>
     );
@@ -49,16 +45,12 @@ export const Example: Story = {
 };
 
 export const WithLongTitle: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <div className={style({minHeight: 240})}>
-        <Disclosure styles={style({maxWidth: 224})}  {...args}>
-          <DisclosureTitle>
-            Very very very very very long title that wraps
-          </DisclosureTitle>
-          <DisclosurePanel>
-            Content
-          </DisclosurePanel>
+        <Disclosure styles={style({maxWidth: 224})} {...args}>
+          <DisclosureTitle>Very very very very very long title that wraps</DisclosureTitle>
+          <DisclosurePanel>Content</DisclosurePanel>
         </Disclosure>
       </div>
     );
@@ -71,19 +63,17 @@ export const WithLongTitle: Story = {
 };
 
 export const WithActionButton: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <div className={style({minHeight: 240})}>
         <Disclosure {...args}>
           <DisclosureHeader>
-            <DisclosureTitle>
-              Files
-            </DisclosureTitle>
-            <ActionButton><NewIcon aria-label="new icon " /></ActionButton>
+            <DisclosureTitle>Files</DisclosureTitle>
+            <ActionButton>
+              <NewIcon aria-label="new icon " />
+            </ActionButton>
           </DisclosureHeader>
-          <DisclosurePanel>
-            Files content
-          </DisclosurePanel>
+          <DisclosurePanel>Files content</DisclosurePanel>
         </Disclosure>
       </div>
     );

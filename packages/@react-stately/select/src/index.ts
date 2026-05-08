@@ -12,4 +12,11 @@
 
 export {useSelectState} from 'react-stately/useSelectState';
 
-export type {SelectProps, SelectState, SelectStateOptions, SelectionMode, ValueType, ChangeValueType} from 'react-stately/useSelectState';
+export type {
+  SelectProps,
+  SelectState,
+  SelectStateOptions,
+  SelectionMode,
+  ValueType,
+  ChangeValueType
+} from 'react-stately/useSelectState';

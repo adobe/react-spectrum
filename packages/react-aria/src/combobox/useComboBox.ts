@@ -14,12 +14,33 @@ import {announce} from '../live-announcer/LiveAnnouncer';
 
 import {AriaButtonProps} from '../button/useButton';
 import {ariaHideOutside} from '../overlays/ariaHideOutside';
-import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, InputDOMProps, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  BaseEvent,
+  DOMAttributes,
+  DOMProps,
+  InputDOMProps,
+  KeyboardDelegate,
+  LayoutDelegate,
+  PressEvent,
+  RefObject,
+  RouterOptions,
+  ValidationResult
+} from '@react-types/shared';
 import {AriaListBoxOptions} from '../listbox/useListBox';
 import {chain} from '../utils/chain';
 import {ComboBoxProps, ComboBoxState, SelectionMode} from 'react-stately/useComboBoxState';
 import {dispatchVirtualFocus} from '../focus/virtualFocus';
-import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef, useState} from 'react';
+import {
+  FocusEvent,
+  InputHTMLAttributes,
+  KeyboardEvent,
+  TouchEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getChildNodes} from 'react-stately/private/collections/getChildNodes';
 import {getItemCount} from 'react-stately/private/collections/getItemCount';
@@ -42,45 +63,49 @@ import {useSelectableCollection} from '../selection/useSelectableCollection';
 import {useTextField} from '../textfield/useTextField';
 import {useUpdateEffect} from '../utils/useUpdateEffect';
 
-export interface AriaComboBoxProps<T, M extends SelectionMode = 'single'> extends ComboBoxProps<T, M>, DOMProps, InputDOMProps, AriaLabelingProps {
+export interface AriaComboBoxProps<T, M extends SelectionMode = 'single'>
+  extends ComboBoxProps<T, M>, DOMProps, InputDOMProps, AriaLabelingProps {
   /** Whether keyboard navigation is circular. */
-  shouldFocusWrap?: boolean
+  shouldFocusWrap?: boolean;
 }
 
-export interface AriaComboBoxOptions<T, M extends SelectionMode = 'single'> extends Omit<AriaComboBoxProps<T, M>, 'children'> {
+export interface AriaComboBoxOptions<T, M extends SelectionMode = 'single'> extends Omit<
+  AriaComboBoxProps<T, M>,
+  'children'
+> {
   /** The ref for the input element. */
-  inputRef: RefObject<HTMLInputElement | null>,
+  inputRef: RefObject<HTMLInputElement | null>;
   /** The ref for the list box popover. */
-  popoverRef: RefObject<Element | null>,
+  popoverRef: RefObject<Element | null>;
   /** The ref for the list box. */
-  listBoxRef: RefObject<HTMLElement | null>,
+  listBoxRef: RefObject<HTMLElement | null>;
   /** The ref for the optional list box popup trigger button.  */
-  buttonRef?: RefObject<Element | null>,
+  buttonRef?: RefObject<Element | null>;
   /** An optional keyboard delegate implementation, to override the default. */
-  keyboardDelegate?: KeyboardDelegate,
+  keyboardDelegate?: KeyboardDelegate;
   /**
    * A delegate object that provides layout information for items in the collection.
    * By default this uses the DOM, but this can be overridden to implement things like
    * virtualized scrolling.
    */
-  layoutDelegate?: LayoutDelegate
+  layoutDelegate?: LayoutDelegate;
 }
 
 export interface ComboBoxAria<T> extends ValidationResult {
   /** Props for the label element. */
-  labelProps: DOMAttributes,
+  labelProps: DOMAttributes;
   /** Props for the combo box input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>;
   /** Props for the list box, to be passed to `useListBox`. */
-  listBoxProps: AriaListBoxOptions<T>,
+  listBoxProps: AriaListBoxOptions<T>;
   /** Props for the optional trigger button, to be passed to `useButton`. */
-  buttonProps: AriaButtonProps,
+  buttonProps: AriaButtonProps;
   /** Props for the element representing the selected value. */
-  valueProps: DOMAttributes,
+  valueProps: DOMAttributes;
   /** Props for the combo box description element, if any. */
-  descriptionProps: DOMAttributes,
+  descriptionProps: DOMAttributes;
   /** Props for the combo box error message element, if any. */
-  errorMessageProps: DOMAttributes
+  errorMessageProps: DOMAttributes;
 }
 
 /**
@@ -89,7 +114,10 @@ export interface ComboBoxAria<T> extends ValidationResult {
  * @param props - Props for the combo box.
  * @param state - State for the select, as returned by `useComboBoxState`.
  */
-export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaComboBoxOptions<T, M>, state: ComboBoxState<T, M>): ComboBoxAria<T> {
+export function useComboBox<T, M extends SelectionMode = 'single'>(
+  props: AriaComboBoxOptions<T, M>,
+  state: ComboBoxState<T, M>
+): ComboBoxAria<T> {
   let {
     buttonRef,
     popoverRef,
@@ -122,14 +150,17 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
   // When virtualized, the layout object will be passed in as a prop and override this.
   let {collection} = state;
   let {disabledKeys} = state.selectionManager;
-  let delegate = useMemo(() => (
-    keyboardDelegate || new ListKeyboardDelegate({
-      collection,
-      disabledKeys,
-      ref: listBoxRef,
-      layoutDelegate
-    })
-  ), [keyboardDelegate, layoutDelegate, collection, disabledKeys, listBoxRef]);
+  let delegate = useMemo(
+    () =>
+      keyboardDelegate ||
+      new ListKeyboardDelegate({
+        collection,
+        disabledKeys,
+        ref: listBoxRef,
+        layoutDelegate
+      }),
+    [keyboardDelegate, layoutDelegate, collection, disabledKeys, listBoxRef]
+  );
 
   // Use useSelectableCollection to get the keyboard handlers to apply to the textfield
   let {collectionProps} = useSelectableCollection({
@@ -162,9 +193,16 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
         if (state.isOpen && listBoxRef.current && state.selectionManager.focusedKey != null) {
           let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
           if (collectionItem?.props.href) {
-            let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
+            let item = listBoxRef.current.querySelector(
+              `[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`
+            );
             if (e.key === 'Enter' && item instanceof HTMLAnchorElement) {
-              router.open(item, e, collectionItem.props.href, collectionItem.props.routerOptions as RouterOptions);
+              router.open(
+                item,
+                e,
+                collectionItem.props.href,
+                collectionItem.props.routerOptions as RouterOptions
+              );
             }
             state.close();
             break;
@@ -179,11 +217,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
         }
         break;
       case 'Escape':
-        if (
-          !state.selectionManager.isEmpty ||
-          state.inputValue === '' ||
-          props.allowsCustomValue
-        ) {
+        if (!state.selectionManager.isEmpty || state.inputValue === '' || props.allowsCustomValue) {
           e.continuePropagation();
         }
         state.revert();
@@ -228,23 +262,35 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
     state.setFocused(true);
   };
 
-  let valueId = useValueId([state.selectionManager.selectedKeys, state.selectionManager.selectionMode]);
+  let valueId = useValueId([
+    state.selectionManager.selectedKeys,
+    state.selectionManager.selectionMode
+  ]);
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
-  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
-    ...props,
-    // In multi-select mode, only set required if the selection is empty.
-    isRequired: props.selectionMode === 'multiple' ? props.isRequired && state.selectionManager.isEmpty : props.isRequired,
-    onChange: state.setInputValue,
-    onKeyDown: !isReadOnly ? chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown) : props.onKeyDown,
-    onBlur,
-    value: state.inputValue,
-    defaultValue: state.defaultInputValue,
-    onFocus,
-    autoComplete: 'off',
-    validate: undefined,
-    [privateValidationStateProp]: state,
-    'aria-describedby': [valueId, props['aria-describedby']].filter(Boolean).join(' ') || undefined
-  }, inputRef);
+  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField(
+    {
+      ...props,
+      // In multi-select mode, only set required if the selection is empty.
+      isRequired:
+        props.selectionMode === 'multiple'
+          ? props.isRequired && state.selectionManager.isEmpty
+          : props.isRequired,
+      onChange: state.setInputValue,
+      onKeyDown: !isReadOnly
+        ? chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown)
+        : props.onKeyDown,
+      onBlur,
+      value: state.inputValue,
+      defaultValue: state.defaultInputValue,
+      onFocus,
+      autoComplete: 'off',
+      validate: undefined,
+      [privateValidationStateProp]: state,
+      'aria-describedby':
+        [valueId, props['aria-describedby']].filter(Boolean).join(' ') || undefined
+    },
+    inputRef
+  );
 
   useFormReset(inputRef, state.defaultValue, state.setValue);
 
@@ -260,7 +306,10 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
   let onPressStart = (e: PressEvent) => {
     if (e.pointerType !== 'touch') {
       inputRef.current?.focus();
-      state.toggle((e.pointerType === 'keyboard' || e.pointerType === 'virtual') ? 'first' : null, 'manual');
+      state.toggle(
+        e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null,
+        'manual'
+      );
     }
   };
 
@@ -293,8 +342,8 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
     let rect = (getEventTarget(e) as Element).getBoundingClientRect();
     let touch = e.changedTouches[0];
 
-    let centerX = Math.ceil(rect.left + .5 * rect.width);
-    let centerY = Math.ceil(rect.top + .5 * rect.height);
+    let centerX = Math.ceil(rect.left + 0.5 * rect.width);
+    let centerY = Math.ceil(rect.top + 0.5 * rect.height);
 
     if (touch.clientX === centerX && touch.clientY === centerY) {
       e.preventDefault();
@@ -308,9 +357,10 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
   // VoiceOver has issues with announcing aria-activedescendant properly on change
   // (especially on iOS). We use a live region announcer to announce focus changes
   // manually. In addition, section titles are announced when navigating into a new section.
-  let focusedItem = state.selectionManager.focusedKey != null && state.isOpen
-    ? state.collection.getItem(state.selectionManager.focusedKey)
-    : undefined;
+  let focusedItem =
+    state.selectionManager.focusedKey != null && state.isOpen
+      ? state.collection.getItem(state.selectionManager.focusedKey)
+      : undefined;
   let sectionKey = focusedItem?.parentKey ?? null;
   let itemKey = state.selectionManager.focusedKey ?? null;
   let lastSection = useRef(sectionKey);
@@ -319,7 +369,10 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
     if (isAppleDevice() && focusedItem != null && itemKey != null && itemKey !== lastItem.current) {
       let isSelected = state.selectionManager.isSelected(itemKey);
       let section = sectionKey != null ? state.collection.getItem(sectionKey) : null;
-      let sectionTitle = section?.['aria-label'] || (typeof section?.rendered === 'string' ? section.rendered : '') || '';
+      let sectionTitle =
+        section?.['aria-label'] ||
+        (typeof section?.rendered === 'string' ? section.rendered : '') ||
+        '';
 
       let announcement = stringFormatter.format('focusAnnouncement', {
         isGroupChange: (section && sectionKey !== lastSection.current) ?? false,
@@ -361,7 +414,12 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
   // TODO: do we need to do this for multi-select?
   let lastSelectedKey = useRef(state.selectedKey);
   useEffect(() => {
-    if (isAppleDevice() && state.isFocused && state.selectedItem && state.selectedKey !== lastSelectedKey.current) {
+    if (
+      isAppleDevice() &&
+      state.isFocused &&
+      state.selectedItem &&
+      state.selectedKey !== lastSelectedKey.current
+    ) {
       let optionText = state.selectedItem['aria-label'] || state.selectedItem.textValue || '';
       let announcement = stringFormatter.format('selectedAnnouncement', {optionText});
       announce(announcement);
@@ -372,20 +430,32 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
 
   useEffect(() => {
     if (state.isOpen) {
-      return ariaHideOutside([inputRef.current, popoverRef.current].filter(element => element != null));
+      return ariaHideOutside(
+        [inputRef.current, popoverRef.current].filter(element => element != null)
+      );
     }
   }, [state.isOpen, inputRef, popoverRef]);
 
   useUpdateEffect(() => {
     // Re-show focus ring when there is no virtually focused item.
-    if (!focusedItem && inputRef.current && getActiveElement(getOwnerDocument(inputRef.current)) === inputRef.current) {
+    if (
+      !focusedItem &&
+      inputRef.current &&
+      getActiveElement(getOwnerDocument(inputRef.current)) === inputRef.current
+    ) {
       dispatchVirtualFocus(inputRef.current, null);
     }
   }, [focusedItem]);
 
-  useEvent(listBoxRef, 'react-aria-item-action', state.isOpen ? () => {
-    state.close();
-  } : undefined);
+  useEvent(
+    listBoxRef,
+    'react-aria-item-action',
+    state.isOpen
+      ? () => {
+          state.close();
+        }
+      : undefined
+  );
 
   return {
     labelProps,

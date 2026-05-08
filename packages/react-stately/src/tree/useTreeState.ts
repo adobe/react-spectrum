@@ -26,31 +26,28 @@ import {useCollection} from '../collections/useCollection';
 import {useControlledState} from '../utils/useControlledState';
 import {useMultipleSelectionState} from '../selection/useMultipleSelectionState';
 
-export interface TreeProps<T>
-  extends CollectionStateBase<T>,
-    Expandable,
-    MultipleSelection {
+export interface TreeProps<T> extends CollectionStateBase<T>, Expandable, MultipleSelection {
   /** Whether `disabledKeys` applies to all interactions, or only selection. */
-  disabledBehavior?: DisabledBehavior
+  disabledBehavior?: DisabledBehavior;
 }
 export interface TreeState<T> {
   /** A collection of items in the tree. */
-  readonly collection: Collection<Node<T>>,
+  readonly collection: Collection<Node<T>>;
 
   /** A set of keys for items that are disabled. */
-  readonly disabledKeys: Set<Key>,
+  readonly disabledKeys: Set<Key>;
 
   /** A set of keys for items that are expanded. */
-  readonly expandedKeys: Set<Key>,
+  readonly expandedKeys: Set<Key>;
 
   /** Toggles the expanded state for an item by its key. */
-  toggleKey(key: Key): void,
+  toggleKey(key: Key): void;
 
   /** Replaces the set of expanded keys. */
-  setExpandedKeys(keys: Set<Key>): void,
+  setExpandedKeys(keys: Set<Key>): void;
 
   /** A selection manager to read and update multiple selection state. */
-  readonly selectionManager: SelectionManager
+  readonly selectionManager: SelectionManager;
 }
 
 /**
@@ -58,9 +55,7 @@ export interface TreeState<T> {
  * of items from props, item expanded state, and manages multiple selection state.
  */
 export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T> {
-  let {
-    onExpandedChange
-  } = props;
+  let {onExpandedChange} = props;
 
   let [expandedKeys, setExpandedKeys] = useControlledState(
     props.expandedKeys ? new Set(props.expandedKeys) : undefined,
@@ -69,18 +64,23 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
   );
 
   let selectionState = useMultipleSelectionState(props);
-  let disabledKeys = useMemo(() =>
-    props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
-  , [props.disabledKeys]);
+  let disabledKeys = useMemo(
+    () => (props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()),
+    [props.disabledKeys]
+  );
 
-  let tree = useCollection(props, useCallback(nodes => new TreeCollection(nodes, {expandedKeys}), [expandedKeys]), null);
+  let tree = useCollection(
+    props,
+    useCallback(nodes => new TreeCollection(nodes, {expandedKeys}), [expandedKeys]),
+    null
+  );
 
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {
     if (selectionState.focusedKey != null && !tree.getItem(selectionState.focusedKey)) {
       selectionState.setFocusedKey(null);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tree, selectionState.focusedKey]);
 
   let onToggle = (key: Key) => {

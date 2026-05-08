@@ -3,7 +3,9 @@ const glob = require('glob').sync;
 const path = require('path');
 const fs = require('fs');
 
-for (let pkg of glob('packages/{react-aria-components,react-aria,react-stately,@adobe/react-spectrum,{@react-aria,@react-spectrum,@react-stately,@react-types,@internationalized}/*}/package.json')) {
+for (let pkg of glob(
+  'packages/{react-aria-components,react-aria,react-stately,@adobe/react-spectrum,{@react-aria,@react-spectrum,@react-stately,@react-types,@internationalized}/*}/package.json'
+)) {
   let json = JSON.parse(fs.readFileSync(pkg, 'utf8'));
   if (json.name === '@internationalized/string-compiler') {
     // This is a CommonJS package, so we can't analyze it.
@@ -20,12 +22,28 @@ for (let pkg of glob('packages/{react-aria-components,react-aria,react-stately,@
       allowReturnOutsideFunction: true,
       strictMode: false,
       sourceType: 'module',
-      plugins: ['classProperties', 'exportDefaultFrom', 'exportNamespaceFrom', 'dynamicImport', 'typescript', 'jsx', 'classPrivateProperties', 'classPrivateMethods', 'importAttributes']
+      plugins: [
+        'classProperties',
+        'exportDefaultFrom',
+        'exportNamespaceFrom',
+        'dynamicImport',
+        'typescript',
+        'jsx',
+        'classPrivateProperties',
+        'classPrivateMethods',
+        'importAttributes'
+      ]
     });
 
     for (let node of ast.program.body) {
-      if (node.type === 'ImportDeclaration' || ((node.type === 'ExportAllDeclaration' || node.type === 'ExportNamedDeclaration') && node.source)) {
-        let pkg = node.source.value.startsWith('@') ? node.source.value.split('/').slice(0, 2).join('/') : node.source.value.split('/')[0];
+      if (
+        node.type === 'ImportDeclaration' ||
+        ((node.type === 'ExportAllDeclaration' || node.type === 'ExportNamedDeclaration') &&
+          node.source)
+      ) {
+        let pkg = node.source.value.startsWith('@')
+          ? node.source.value.split('/').slice(0, 2).join('/')
+          : node.source.value.split('/')[0];
         seenDeps.add(pkg);
       }
     }

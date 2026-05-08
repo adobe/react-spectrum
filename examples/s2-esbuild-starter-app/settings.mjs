@@ -9,7 +9,7 @@ export function createBuildSettings(options) {
       macros.esbuild(),
       esbuildPluginTsc({
         force: true
-      }),
+      })
     ],
     ...options
   };

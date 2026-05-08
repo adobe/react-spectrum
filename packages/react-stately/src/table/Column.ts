@@ -30,38 +30,43 @@ export type ColumnElement<T> = ReactElement<ColumnProps<T>>;
 export type ColumnRenderer<T> = (item: T) => ColumnElement<T>;
 export interface ColumnProps<T> {
   /** Rendered contents of the column if `children` contains child columns. */
-  title?: ReactNode,
+  title?: ReactNode;
   /** Static child columns or content to render as the column header. */
-  children: ReactNode | ColumnElement<T> | ColumnElement<T>[],
+  children: ReactNode | ColumnElement<T> | ColumnElement<T>[];
   /** A list of child columns used when dynamically rendering nested child columns. */
-  childColumns?: T[],
+  childColumns?: T[];
   /** The width of the column. */
-  width?: ColumnSize | null,
+  width?: ColumnSize | null;
   /** The minimum width of the column. */
-  minWidth?: ColumnStaticSize | null,
+  minWidth?: ColumnStaticSize | null;
   /** The maximum width of the column. */
-  maxWidth?: ColumnStaticSize | null,
+  maxWidth?: ColumnStaticSize | null;
   /** The default width of the column. */
-  defaultWidth?: ColumnSize | null,
+  defaultWidth?: ColumnSize | null;
   /** Whether the column allows resizing. */
-  allowsResizing?: boolean,
+  allowsResizing?: boolean;
   /** Whether the column allows sorting. */
-  allowsSorting?: boolean,
+  allowsSorting?: boolean;
   /** Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation. */
-  isRowHeader?: boolean,
+  isRowHeader?: boolean;
   /** A string representation of the column's contents, used for accessibility announcements. */
-  textValue?: string
+  textValue?: string;
 }
 
-function Column<T>(props: ColumnProps<T>): ReactElement | null { // eslint-disable-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function Column<T>(props: ColumnProps<T>): ReactElement | null {
   return null;
 }
 
-Column.getCollectionNode = function* getCollectionNode<T>(props: ColumnProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>, void, GridNode<T>[]> {
+Column.getCollectionNode = function* getCollectionNode<T>(
+  props: ColumnProps<T>,
+  context: CollectionBuilderContext<T>
+): Generator<PartialNode<T>, void, GridNode<T>[]> {
   let {title, children, childColumns} = props;
 
   let rendered = title || children;
-  let textValue = props.textValue || (typeof rendered === 'string' ? rendered : '') || props['aria-label'];
+  let textValue =
+    props.textValue || (typeof rendered === 'string' ? rendered : '') || props['aria-label'];
 
   let fullNodes = yield {
     type: 'column',

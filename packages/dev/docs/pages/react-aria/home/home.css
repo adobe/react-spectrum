@@ -21,16 +21,16 @@
 }
 
 .home .header-background {
-  --pink: light-dark(oklch(from #DA8DE9 calc(l * 1.25) c h), oklch(from #BF67D0 calc(l * 0.9) c h));
-  --orange: light-dark(#FACA85, oklch(from #EDB35F calc(l * 0.82) c h));
-  --purple: light-dark(#EDE8FF, #6D33F7);
+  --pink: light-dark(oklch(from #da8de9 calc(l * 1.25) c h), oklch(from #bf67d0 calc(l * 0.9) c h));
+  --orange: light-dark(#faca85, oklch(from #edb35f calc(l * 0.82) c h));
+  --purple: light-dark(#ede8ff, #6d33f7);
 
   background:
     linear-gradient(to bottom, transparent 0% 80%, var(--page-bg)),
     radial-gradient(50% 22% at 25% 72%, var(--pink), transparent),
     radial-gradient(50% 22% at 62% 75%, var(--orange), transparent),
     radial-gradient(150% 30% at 50% 70%, var(--purple), transparent),
-    linear-gradient(to bottom, transparent, light-dark(#EDE8FF, transparent) 60%, transparent);
+    linear-gradient(to bottom, transparent, light-dark(#ede8ff, transparent) 60%, transparent);
 
   @media (width < 768px) {
     background:
@@ -38,7 +38,7 @@
       radial-gradient(100% 10% at 45% 71%, var(--pink), transparent),
       radial-gradient(100% 10% at 55% 84%, var(--orange), transparent),
       radial-gradient(150% 30% at 50% 70%, var(--purple), transparent),
-      linear-gradient(to bottom, transparent, light-dark(#EDE8FF, transparent) 60%, transparent);
+      linear-gradient(to bottom, transparent, light-dark(#ede8ff, transparent) 60%, transparent);
   }
 }
 
@@ -75,7 +75,7 @@
   --hljs-function-color: theme(colors.blue.600);
   --hljs-variable-color: theme(colors.purple.700);
   --hljs-title-color: theme(colors.indigo.700);
-  --hljs-comment-color:  theme(colors.gray.700);
+  --hljs-comment-color: theme(colors.gray.700);
   --mark-background: theme(colors.blue.400/10%);
   --mark-border: theme(colors.blue.500);
 }
@@ -92,7 +92,7 @@
     --hljs-function-color: theme(colors.blue.400);
     --hljs-variable-color: theme(colors.purple.400);
     --hljs-title-color: theme(colors.indigo.400);
-    --hljs-comment-color:  theme(colors.gray.400);
+    --hljs-comment-color: theme(colors.gray.400);
     --mark-border: theme(colors.blue.400);
   }
 }
@@ -114,17 +114,23 @@
 }
 
 .home pre.small {
-  @apply sm:hidden
+  @apply sm:hidden;
 }
 
 .home .card-shadow {
-  box-shadow: 0 0 2px rgb(0 0 0 / 12%), 0 3px 6px rgb(0 0 0 / 4%), 0 4px 8px 0 rgba(0 0 0 / 8%);
+  box-shadow:
+    0 0 2px rgb(0 0 0 / 12%),
+    0 3px 6px rgb(0 0 0 / 4%),
+    0 4px 8px 0 rgba(0 0 0 / 8%);
   outline: 1px solid transparent; /* WHCM */
   @apply dark:border dark:border-zinc-200/10 dark:bg-clip-padding;
 }
 
 .home .card-shadow-hover:hover {
-  box-shadow: 0 0 2px rgb(0 0 0 / 18%), 0 3px 8px rgb(0 0 0 / 6%), 0 4px 16px 0 rgba(0 0 0 / 10%);
+  box-shadow:
+    0 0 2px rgb(0 0 0 / 18%),
+    0 3px 8px rgb(0 0 0 / 6%),
+    0 4px 16px 0 rgba(0 0 0 / 10%);
 }
 
 .home .card-shadow-hover:focus-visible {
@@ -141,22 +147,26 @@
     transform: translate(10px, 135px);
   }
 
-  15%, 16% {
+  15%,
+  16% {
     opacity: var(--hover-opacity);
     transform: translate(7px, 0);
   }
 
-  17.2%, 19% {
+  17.2%,
+  19% {
     opacity: var(--pressed-opacity);
     transform: translate(7px, 0);
   }
 
-  25%, 27% {
+  25%,
+  27% {
     opacity: var(--pressed-opacity);
     transform: translate(7px, 48px);
   }
 
-  35%, 36% {
+  35%,
+  36% {
     opacity: var(--pressed-opacity);
     transform: translate(7px, 7px);
   }
@@ -166,27 +176,32 @@
     transform: translate(7px, 7px);
   }
 
-  50%, 55% {
+  50%,
+  55% {
     opacity: var(--hover-opacity);
     transform: translate(4px, 52px);
   }
 
-  65%, 66% {
+  65%,
+  66% {
     opacity: var(--hover-opacity);
     transform: translate(7px, 0);
   }
 
-  67.2%, 69% {
+  67.2%,
+  69% {
     opacity: var(--pressed-opacity);
     transform: translate(7px, 0);
   }
 
-  75%, 77% {
+  75%,
+  77% {
     opacity: var(--pressed-opacity);
     transform: translate(7px, 48px);
   }
 
-  85%, 86% {
+  85%,
+  86% {
     opacity: var(--pressed-opacity);
     transform: translate(7px, 7px);
   }
@@ -203,62 +218,74 @@
 }
 
 @keyframes switch-animation {
-  0%, 16% {
+  0%,
+  16% {
     margin-left: --spacing(6);
     width: --spacing(8);
   }
 
-  18.5%, 22% {
+  18.5%,
+  22% {
     margin-left: --spacing(4);
     width: --spacing(10);
   }
 
-  25%, 30% {
+  25%,
+  30% {
     margin-left: --spacing(6);
     width: --spacing(8);
   }
 
-  33%, 36.5% {
+  33%,
+  36.5% {
     margin-left: --spacing(4);
     width: --spacing(10);
   }
 
-  38.5%, 66% {
+  38.5%,
+  66% {
     margin-left: 0;
     width: --spacing(8);
   }
 
-  68.5%, 72% {
+  68.5%,
+  72% {
     margin-left: 0;
     width: --spacing(10);
   }
 
-  75%, 80% {
+  75%,
+  80% {
     margin-left: 0;
     width: --spacing(8);
   }
 
-  83%, 86.5% {
+  83%,
+  86.5% {
     margin-left: 0;
     width: --spacing(10);
   }
 
-  88.5%, 100% {
+  88.5%,
+  100% {
     margin-left: --spacing(6);
     width: --spacing(8);
   }
 }
 
 @keyframes switch-background-animation {
-  0%, 36.5% {
+  0%,
+  36.5% {
     background: var(--bg-selected);
   }
 
-  38.5%, 86.5% {
+  38.5%,
+  86.5% {
     background: var(--bg);
   }
 
-  88.5%, 100% {
+  88.5%,
+  100% {
     background: var(--bg-selected);
   }
 }
@@ -275,11 +302,13 @@
 }
 
 @keyframes cross-fade {
-  0%, 40% {
+  0%,
+  40% {
     opacity: var(--fade-from, 0);
   }
 
-  50%, 90% {
+  50%,
+  90% {
     opacity: var(--fade-to, 1);
   }
 
@@ -289,7 +318,8 @@
 }
 
 @keyframes highlight {
-  0%, 30% {
+  0%,
+  30% {
     opacity: 0;
   }
 
@@ -297,7 +327,8 @@
     opacity: 1;
   }
 
-  70%, 100% {
+  70%,
+  100% {
     opacity: 0;
   }
 }
@@ -309,7 +340,7 @@
 
 .home .highlight-tags {
   .tag:nth-child(1 of .tag),
-  .tag:nth-child(n+4 of .tag):nth-child(-n+8 of .tag),
+  .tag:nth-child(n + 4 of .tag):nth-child(-n + 8 of .tag),
   .tag:nth-last-child(1 of .tag) {
     position: relative;
     &::after {
@@ -336,7 +367,8 @@
   --b-shape: ellipse 30% 30% at 71% 42%;
   --c: oklch(96% 0.06 218);
   --c-shape: ellipse 40% 25% at 50% 72%;
-  background: radial-gradient(var(--a-shape), var(--a), transparent),
+  background:
+    radial-gradient(var(--a-shape), var(--a), transparent),
     radial-gradient(var(--b-shape), var(--b), transparent),
     radial-gradient(var(--c-shape), var(--c), transparent);
 }
@@ -361,7 +393,8 @@
   --a: oklch(94% 0.08 250);
   --b: oklch(94% 0.12 275);
   --c: oklch(91% 0.15 290);
-  background: radial-gradient(circle farthest-side at 28% 54%, var(--a), transparent 36%),
+  background:
+    radial-gradient(circle farthest-side at 28% 54%, var(--a), transparent 36%),
     radial-gradient(circle farthest-side at 65% 45%, var(--b), transparent 50%),
     radial-gradient(circle farthest-side at 60% 65%, var(--c), transparent 50%);
 }
@@ -399,7 +432,8 @@
   --b-shape: ellipse 35% 30% at 66% 50%;
   --c: oklch(96% 0.15 20);
   --c-shape: ellipse 40% 25% at 50% 70%;
-  background: radial-gradient(var(--a-shape), var(--a), transparent),
+  background:
+    radial-gradient(var(--a-shape), var(--a), transparent),
     radial-gradient(var(--b-shape), var(--b), transparent),
     radial-gradient(var(--c-shape), var(--c), transparent);
 }
@@ -427,7 +461,8 @@
   --b-shape: ellipse 35% 30% at 66% 47%;
   --c: oklch(96% 0.14 340);
   --c-shape: ellipse 40% 25% at 50% 70%;
-  background: radial-gradient(var(--a-shape), var(--a), transparent),
+  background:
+    radial-gradient(var(--a-shape), var(--a), transparent),
     radial-gradient(var(--b-shape), var(--b), transparent),
     radial-gradient(var(--c-shape), var(--c), transparent);
 }
@@ -448,7 +483,6 @@
   }
 }
 
-
 .home .green-gradient-background {
   --a: oklch(96% 0.1 120);
   --a-shape: ellipse 30% 30% at 29% 54%;
@@ -456,7 +490,8 @@
   --b-shape: ellipse 35% 30% at 66% 41%;
   --c: oklch(94% 0.06 150);
   --c-shape: ellipse 40% 25% at 50% 74%;
-  background: radial-gradient(var(--a-shape), var(--a), transparent),
+  background:
+    radial-gradient(var(--a-shape), var(--a), transparent),
     radial-gradient(var(--b-shape), var(--b), transparent),
     radial-gradient(var(--c-shape), var(--c), transparent);
 }

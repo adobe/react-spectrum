@@ -23,7 +23,9 @@ describe('PressResponder', function () {
     let {getByRole} = render(
       <PressResponder onPress={onPress}>
         <div>
-          <Pressable><button>Button</button></Pressable>
+          <Pressable>
+            <button>Button</button>
+          </Pressable>
         </div>
       </PressResponder>
     );
@@ -39,7 +41,9 @@ describe('PressResponder', function () {
     let {getByRole} = render(
       <PressResponder ref={ref}>
         <div>
-          <Pressable><button>Button</button></Pressable>
+          <Pressable>
+            <button>Button</button>
+          </Pressable>
         </div>
       </PressResponder>
     );
@@ -67,7 +71,9 @@ describe('PressResponder', function () {
     render(
       <PressResponder>
         <div>
-          <Pressable><button>Button</button></Pressable>
+          <Pressable>
+            <button>Button</button>
+          </Pressable>
         </div>
       </PressResponder>
     );

@@ -15,7 +15,7 @@ import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Slider} from '../src/Slider';
-import {style} from '../style' with { type: 'macro' };
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof Slider> = {
   component: Slider,
@@ -36,7 +36,7 @@ export default meta;
 type Story = StoryObj<typeof Slider>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
       <Slider {...args} />
     </div>
@@ -48,7 +48,7 @@ export const Example: Story = {
 };
 
 export const FillOffset: Story = {
-  render: (args) => (
+  render: args => (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
       <Slider {...args} />
     </div>
@@ -65,7 +65,7 @@ export const FillOffset: Story = {
 };
 
 export const FormatOptions: Story = {
-  render: (args) => (
+  render: args => (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
       <Slider {...args} styles={style({width: 300})} />
     </div>
@@ -79,7 +79,7 @@ export const FormatOptions: Story = {
 };
 
 export const ContextualHelpExample: Story = {
-  render: (args) => (
+  render: args => (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
       <Slider
         {...args}
@@ -88,19 +88,19 @@ export const ContextualHelpExample: Story = {
             <Heading>What is a ice cream?</Heading>
             <Content>
               <Text>
-                A combination of sugar, eggs, milk, and cream is cooked to make
-                a custard base. Then, flavorings are added, and this flavored
-                mixture is carefully churned and frozen to make ice cream.
+                A combination of sugar, eggs, milk, and cream is cooked to make a custard base.
+                Then, flavorings are added, and this flavored mixture is carefully churned and
+                frozen to make ice cream.
               </Text>
             </Content>
             <Footer>
-              <Link
-                isStandalone
-                href="https://en.wikipedia.org/wiki/Ice_cream"
-                target="_blank">Learn more about ice cream</Link>
+              <Link isStandalone href="https://en.wikipedia.org/wiki/Ice_cream" target="_blank">
+                Learn more about ice cream
+              </Link>
             </Footer>
           </ContextualHelp>
-        } />
+        }
+      />
     </div>
   ),
   args: {

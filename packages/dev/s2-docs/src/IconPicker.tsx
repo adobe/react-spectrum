@@ -1,7 +1,18 @@
 'use client';
 
 import {ActionButton, Popover, pressScale, SearchField} from '@react-spectrum/s2';
-import {Autocomplete, GridLayout, Label, ListBox, ListBoxItem, Select, SelectValue, Size, useFilter, Virtualizer} from 'react-aria-components';
+import {
+  Autocomplete,
+  GridLayout,
+  Label,
+  ListBox,
+  ListBoxItem,
+  Select,
+  SelectValue,
+  Size,
+  useFilter,
+  Virtualizer
+} from 'react-aria-components';
 import {createElement, ReactNode, useRef, useState} from 'react';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 // eslint-disable-next-line
@@ -9,7 +20,10 @@ import icons from '/packages/@react-spectrum/s2/s2wf-icons/*.svg';
 import {PressResponder} from '@react-aria/interactions';
 import {useGlobalListeners} from '@react-aria/utils';
 
-const iconList = Object.keys(icons).map(name => ({id: name.replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1'), icon: icons[name].default}));
+const iconList = Object.keys(icons).map(name => ({
+  id: name.replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1'),
+  icon: icons[name].default
+}));
 const iconMap = Object.fromEntries(iconList.map(item => [item.id, item.icon]));
 export const Icon = ({icon}) => createElement(iconMap[icon]);
 
@@ -34,12 +48,12 @@ const itemStyle = style({
   justifyContent: 'center'
 });
 
-type IconValue = string | {text?: string, icon?: string | null} | null;
+type IconValue = string | {text?: string; icon?: string | null} | null;
 interface IconPickerProps {
-  value: IconValue,
-  onChange: (value: IconValue) => void,
-  label?: string,
-  contextualHelp?: ReactNode
+  value: IconValue;
+  onChange: (value: IconValue) => void;
+  label?: string;
+  contextualHelp?: ReactNode;
 }
 
 export function IconPicker({value, onChange, label, contextualHelp}: IconPickerProps) {
@@ -50,14 +64,19 @@ export function IconPicker({value, onChange, label, contextualHelp}: IconPickerP
   // to occur. We override this by listening for pointerup on the document ourselves.
   let [isPressed, setPressed] = useState(false);
   let {addGlobalListener} = useGlobalListeners();
-  let onPressStart = (e) => {
+  let onPressStart = e => {
     if (e.pointerType !== 'mouse') {
       return;
     }
     setPressed(true);
-    addGlobalListener(document, 'pointerup', () => {
-      setPressed(false);
-    }, {once: true, capture: true});
+    addGlobalListener(
+      document,
+      'pointerup',
+      () => {
+        setPressed(false);
+      },
+      {once: true, capture: true}
+    );
   };
 
   let valueObject: IconValue = typeof value === 'string' ? {text: value} : value;
@@ -74,22 +93,28 @@ export function IconPicker({value, onChange, label, contextualHelp}: IconPickerP
         }
       }}
       className={style({display: 'flex', flexDirection: 'column', gap: 2, width: 'fit'})}>
-      {label && <div>
-        <Label className={style({font: 'ui', color: 'neutral-subdued'})}>
-          {label}
-        </Label>
-        {contextualHelp && <>&nbsp;<div style={{display: 'inline-flex'}}>{contextualHelp}</div></>}
-      </div>}
+      {label && (
+        <div>
+          <Label className={style({font: 'ui', color: 'neutral-subdued'})}>{label}</Label>
+          {contextualHelp && (
+            <>
+              &nbsp;<div style={{display: 'inline-flex'}}>{contextualHelp}</div>
+            </>
+          )}
+        </div>
+      )}
       <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
         <ActionButton
           // @ts-ignore
           isPressed={false}>
-          <SelectValue<typeof iconList[0]> className={style({display: 'contents'})}>
-            {({isPlaceholder, selectedItem}) => (
-              isPlaceholder ? 'No icon' : (<>
-                {createElement(selectedItem?.icon, {'aria-label': selectedItem?.id})}
-              </>)
-            )}
+          <SelectValue<(typeof iconList)[0]> className={style({display: 'contents'})}>
+            {({isPlaceholder, selectedItem}) =>
+              isPlaceholder ? (
+                'No icon'
+              ) : (
+                <>{createElement(selectedItem?.icon, {'aria-label': selectedItem?.id})}</>
+              )
+            }
           </SelectValue>
         </ActionButton>
       </PressResponder>
@@ -97,8 +122,24 @@ export function IconPicker({value, onChange, label, contextualHelp}: IconPickerP
         <Autocomplete filter={contains}>
           <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
             <SearchField autoFocus />
-            <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(32, 32), maxItemSize: new Size(32, 32), minSpace: new Size(4, 4), preserveAspectRatio: true}}>
-              <ListBox items={iconList} layout="grid" className={style({height: 300, width: 300, maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}>
+            <Virtualizer
+              layout={GridLayout}
+              layoutOptions={{
+                minItemSize: new Size(32, 32),
+                maxItemSize: new Size(32, 32),
+                minSpace: new Size(4, 4),
+                preserveAspectRatio: true
+              }}>
+              <ListBox
+                items={iconList}
+                layout="grid"
+                className={style({
+                  height: 300,
+                  width: 300,
+                  maxHeight: '100%',
+                  overflow: 'auto',
+                  scrollPaddingY: 4
+                })}>
                 {item => <IconItem item={item} />}
               </ListBox>
             </Virtualizer>
@@ -113,7 +154,13 @@ function IconItem({item}) {
   let Icon = item.icon;
   let ref = useRef(null);
   return (
-    <ListBoxItem id={item.id} value={item} textValue={item.id} className={itemStyle} ref={ref} style={pressScale(ref)}>
+    <ListBoxItem
+      id={item.id}
+      value={item}
+      textValue={item.id}
+      className={itemStyle}
+      ref={ref}
+      style={pressScale(ref)}>
       <Icon />
     </ListBoxItem>
   );

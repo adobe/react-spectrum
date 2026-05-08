@@ -15,41 +15,41 @@ import {useState} from 'react';
 
 export interface TreeOptions<T extends object> {
   /** Initial root items in the tree. */
-  initialItems?: T[],
+  initialItems?: T[];
   /** The keys for the initially selected items. */
-  initialSelectedKeys?: Iterable<Key>,
+  initialSelectedKeys?: Iterable<Key>;
   /** A function that returns a unique key for an item object. */
-  getKey?: (item: T) => Key,
+  getKey?: (item: T) => Key;
   /** A function that returns the children for an item object. */
-  getChildren?: (item: T) => T[]
+  getChildren?: (item: T) => T[];
 }
 
 interface TreeNode<T extends object> {
   /** A unique key for the tree node. */
-  key: Key,
+  key: Key;
   /** The key of the parent node. */
-  parentKey?: Key | null,
+  parentKey?: Key | null;
   /** The value object for the tree node. */
-  value: T,
+  value: T;
   /** Children of the tree node. */
-  children: TreeNode<T>[] | null
+  children: TreeNode<T>[] | null;
 }
 
 export interface TreeData<T extends object> {
   /** The root nodes in the tree. */
-  items: TreeNode<T>[],
+  items: TreeNode<T>[];
 
   /** The keys of the currently selected items in the tree. */
-  selectedKeys: Set<Key>,
+  selectedKeys: Set<Key>;
 
   /** Sets the selected keys. */
-  setSelectedKeys(keys: Set<Key>): void,
+  setSelectedKeys(keys: Set<Key>): void;
 
   /**
    * Gets a node from the tree by key.
    * @param key - The key of the item to retrieve.
    */
-  getItem(key: Key): TreeNode<T> | undefined,
+  getItem(key: Key): TreeNode<T> | undefined;
 
   /**
    * Inserts an item into a parent node as a child.
@@ -57,47 +57,47 @@ export interface TreeData<T extends object> {
    * @param index - The index within the parent to insert into.
    * @param value - The value to insert.
    */
-  insert(parentKey: Key | null, index: number, ...values: T[]): void,
+  insert(parentKey: Key | null, index: number, ...values: T[]): void;
 
   /**
    * Inserts items into the list before the item at the given key.
    * @param key - The key of the item to insert before.
    * @param values - The values to insert.
    */
-  insertBefore(key: Key, ...values: T[]): void,
+  insertBefore(key: Key, ...values: T[]): void;
 
   /**
    * Inserts items into the list after the item at the given key.
    * @param key - The key of the item to insert after.
    * @param values - The values to insert.
    */
-  insertAfter(key: Key, ...values: T[]): void,
+  insertAfter(key: Key, ...values: T[]): void;
 
   /**
    * Appends an item into a parent node as a child.
    * @param parentKey - The key of the parent item to insert into. `null` for the root.
    * @param value - The value to insert.
    */
-  append(parentKey: Key | null, ...values: T[]): void,
+  append(parentKey: Key | null, ...values: T[]): void;
 
   /**
    * Prepends an item into a parent node as a child.
    * @param parentKey - The key of the parent item to insert into. `null` for the root.
    * @param value - The value to insert.
    */
-  prepend(parentKey: Key | null, ...value: T[]): void,
+  prepend(parentKey: Key | null, ...value: T[]): void;
 
   /**
    * Removes an item from the tree by its key.
    * @param key - The key of the item to remove.
    */
-  remove(...keys: Key[]): void,
+  remove(...keys: Key[]): void;
 
   /**
    * Removes all items from the tree that are currently
    * in the set of selected items.
    */
-  removeSelectedItems(): void,
+  removeSelectedItems(): void;
 
   /**
    * Moves an item within the tree.
@@ -105,33 +105,33 @@ export interface TreeData<T extends object> {
    * @param toParentKey - The key of the new parent to insert into. `null` for the root.
    * @param index - The index within the new parent to insert at.
    */
-  move(key: Key, toParentKey: Key | null, index: number): void,
+  move(key: Key, toParentKey: Key | null, index: number): void;
 
   /**
    * Moves one or more items before a given key.
    * @param key - The key of the item to move the items before.
    * @param keys - The keys of the items to move.
    */
-  moveBefore(key: Key, keys: Iterable<Key>): void,
+  moveBefore(key: Key, keys: Iterable<Key>): void;
 
   /**
    * Moves one or more items after a given key.
    * @param key - The key of the item to move the items after.
    * @param keys - The keys of the items to move.
    */
-  moveAfter(key: Key, keys: Iterable<Key>): void,
+  moveAfter(key: Key, keys: Iterable<Key>): void;
 
   /**
    * Updates an item in the tree.
    * @param key - The key of the item to update.
    * @param newValue - The new value for the item.
    */
-  update(key: Key, newValue: T): void
+  update(key: Key, newValue: T): void;
 }
 
 interface TreeDataState<T extends object> {
-    items: TreeNode<T>[],
-    nodeMap: Map<Key, TreeNode<T>>
+  items: TreeNode<T>[];
+  nodeMap: Map<Key, TreeNode<T>>;
 }
 
 /**
@@ -152,7 +152,11 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
 
   let [selectedKeys, setSelectedKeys] = useState(new Set<Key>(initialSelectedKeys || []));
 
-  function buildTree(initialItems: T[] | null = [], map: Map<Key, TreeNode<T>>, parentKey?: Key | null) {
+  function buildTree(
+    initialItems: T[] | null = [],
+    map: Map<Key, TreeNode<T>>,
+    parentKey?: Key | null
+  ) {
     if (initialItems == null) {
       initialItems = [];
     }
@@ -173,7 +177,12 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     };
   }
 
-  function updateTree(items: TreeNode<T>[], key: Key | null, update: (node: TreeNode<T>) => TreeNode<T> | null, originalMap: Map<Key, TreeNode<T>>) {
+  function updateTree(
+    items: TreeNode<T>[],
+    key: Key | null,
+    update: (node: TreeNode<T>) => TreeNode<T> | null,
+    originalMap: Map<Key, TreeNode<T>>
+  ) {
     let node = key == null ? null : originalMap.get(key);
     if (node == null) {
       return {items, nodeMap: originalMap};
@@ -203,14 +212,15 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
         children = children.filter(c => c !== node);
       }
 
-      copy.children = children?.map(child => {
-        if (child === node) {
-          // newNode cannot be null here due to the above filter.
-          return newNode!;
-        }
+      copy.children =
+        children?.map(child => {
+          if (child === node) {
+            // newNode cannot be null here due to the above filter.
+            return newNode!;
+          }
 
-        return child;
-      }) ?? null;
+          return child;
+        }) ?? null;
 
       map.set(copy.key, copy);
 
@@ -266,26 +276,27 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
         // If parentKey is null, insert into the root.
         if (parentKey == null) {
           return {
-            items: [
-              ...items.slice(0, index),
-              ...newNodes,
-              ...items.slice(index)
-            ],
+            items: [...items.slice(0, index), ...newNodes, ...items.slice(index)],
             nodeMap: newMap
           };
         }
 
         // Otherwise, update the parent node and its ancestors.
-        return updateTree(items, parentKey, parentNode => ({
-          key: parentNode.key,
-          parentKey: parentNode.parentKey,
-          value: parentNode.value,
-          children: [
-            ...parentNode.children!.slice(0, index),
-            ...newNodes,
-            ...parentNode.children!.slice(index)
-          ]
-        }), newMap);
+        return updateTree(
+          items,
+          parentKey,
+          parentNode => ({
+            key: parentNode.key,
+            parentKey: parentNode.parentKey,
+            value: parentNode.value,
+            children: [
+              ...parentNode.children!.slice(0, index),
+              ...newNodes,
+              ...parentNode.children!.slice(index)
+            ]
+          }),
+          newMap
+        );
       });
     },
     insertBefore(key: Key, ...values: T[]): void {
@@ -362,7 +373,6 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
 
         let {items: newItems, nodeMap: newMap} = updateTree(items, key, () => null, originalMap);
 
-
         const movedNode = {
           ...node,
           parentKey: toParentKey
@@ -371,28 +381,32 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
         // If parentKey is null, insert into the root.
         if (toParentKey == null) {
           addNode(movedNode, newMap);
-          return {items: [
-            ...newItems.slice(0, index),
-            movedNode,
-            ...newItems.slice(index)
-          ], nodeMap: newMap};
+          return {
+            items: [...newItems.slice(0, index), movedNode, ...newItems.slice(index)],
+            nodeMap: newMap
+          };
         }
 
         // Otherwise, update the parent node and its ancestors.
-        return updateTree(newItems, toParentKey, parentNode => ({
-          key: parentNode.key,
-          parentKey: parentNode.parentKey,
-          value: parentNode.value,
-          children: [
-            ...parentNode.children!.slice(0, index),
-            movedNode,
-            ...parentNode.children!.slice(index)
-          ]
-        }), newMap);
+        return updateTree(
+          newItems,
+          toParentKey,
+          parentNode => ({
+            key: parentNode.key,
+            parentKey: parentNode.parentKey,
+            value: parentNode.value,
+            children: [
+              ...parentNode.children!.slice(0, index),
+              movedNode,
+              ...parentNode.children!.slice(index)
+            ]
+          }),
+          newMap
+        );
       });
     },
     moveBefore(key: Key, keys: Iterable<Key>) {
-      setItems((prevState) => {
+      setItems(prevState => {
         let {items, nodeMap} = prevState;
         let node = nodeMap.get(key);
         if (!node) {
@@ -408,7 +422,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       });
     },
     moveAfter(key: Key, keys: Iterable<Key>) {
-      setItems((prevState) => {
+      setItems(prevState => {
         let {items, nodeMap} = prevState;
         let node = nodeMap.get(key);
         if (!node) {
@@ -425,18 +439,25 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       });
     },
     update(oldKey: Key, newValue: T) {
-      setItems(({items, nodeMap: originalMap}) => updateTree(items, oldKey, oldNode => {
-        let node: TreeNode<T> = {
-          key: oldNode.key,
-          parentKey: oldNode.parentKey,
-          value: newValue,
-          children: null
-        };
+      setItems(({items, nodeMap: originalMap}) =>
+        updateTree(
+          items,
+          oldKey,
+          oldNode => {
+            let node: TreeNode<T> = {
+              key: oldNode.key,
+              parentKey: oldNode.parentKey,
+              value: newValue,
+              children: null
+            };
 
-        let tree = buildTree(getChildren(newValue), originalMap, node.key);
-        node.children = tree.items;
-        return node;
-      }, originalMap));
+            let tree = buildTree(getChildren(newValue), originalMap, node.key);
+            node.children = tree.items;
+            return node;
+          },
+          originalMap
+        )
+      );
     }
   };
 }
@@ -497,44 +518,57 @@ function moveItems<T extends object>(
     // we don't copy child node references from parents inadvertently
     if (keyArray.includes(child.key)) {
       removedItems.push({...newMap.get(child.key)!, parentKey: toParent?.key ?? null});
-      let {items: nextItems, nodeMap: nextMap} = updateTree(newItems, child.key, () => null, newMap);
+      let {items: nextItems, nodeMap: nextMap} = updateTree(
+        newItems,
+        child.key,
+        () => null,
+        newMap
+      );
       newItems = nextItems;
       newMap = nextMap;
     }
     // decrement the index if the child being removed is in the target parent and before the target index
     // the root node is special, it is null, and will not have a key, however, a parentKey can still point to it
-    if ((child.parentKey === toParent
-      || child.parentKey === toParent?.key)
-      && keyArray.includes(child.key)
-      && (toParent?.children ? toParent.children.indexOf(child) : items.indexOf(child)) < originalToIndex) {
+    if (
+      (child.parentKey === toParent || child.parentKey === toParent?.key) &&
+      keyArray.includes(child.key) &&
+      (toParent?.children ? toParent.children.indexOf(child) : items.indexOf(child)) <
+        originalToIndex
+    ) {
       toIndex--;
     }
   }
 
   traversal({children: items}, {inorder, postorder});
 
-  let inOrderItems = removedItems.sort((a, b) => inOrderKeys.get(a.key)! > inOrderKeys.get(b.key)! ? 1 : -1);
+  let inOrderItems = removedItems.sort((a, b) =>
+    inOrderKeys.get(a.key)! > inOrderKeys.get(b.key)! ? 1 : -1
+  );
   // If parentKey is null, insert into the root.
   if (!toParent || toParent.key == null) {
     inOrderItems.forEach(movedNode => {
-      addNode(movedNode, newMap); 
+      addNode(movedNode, newMap);
     });
-    return {items: [
-      ...newItems.slice(0, toIndex),
-      ...inOrderItems,
-      ...newItems.slice(toIndex)
-    ], nodeMap: newMap};
+    return {
+      items: [...newItems.slice(0, toIndex), ...inOrderItems, ...newItems.slice(toIndex)],
+      nodeMap: newMap
+    };
   }
 
   // Otherwise, update the parent node and its ancestors.
-  return updateTree(newItems, toParent.key, parentNode => ({
-    key: parentNode.key,
-    parentKey: parentNode.parentKey,
-    value: parentNode.value,
-    children: [
-      ...parentNode.children!.slice(0, toIndex),
-      ...inOrderItems,
-      ...parentNode.children!.slice(toIndex)
-    ]
-  }), newMap);
+  return updateTree(
+    newItems,
+    toParent.key,
+    parentNode => ({
+      key: parentNode.key,
+      parentKey: parentNode.parentKey,
+      value: parentNode.value,
+      children: [
+        ...parentNode.children!.slice(0, toIndex),
+        ...inOrderItems,
+        ...parentNode.children!.slice(toIndex)
+      ]
+    }),
+    newMap
+  );
 }

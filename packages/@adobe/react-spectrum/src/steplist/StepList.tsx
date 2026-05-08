@@ -28,20 +28,23 @@ export interface SpectrumStepListProps<T> extends AriaStepListProps<T>, StylePro
    * Whether the step list should be displayed with a emphasized style.
    * @default false
    */
-  isEmphasized?: boolean,
+  isEmphasized?: boolean;
   /**
    * The orientation of the step list.
    * @default 'horizontal'
    */
-  orientation?: Orientation,
+  orientation?: Orientation;
   /**
    * The size of the step list.
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL';
 }
 
-export const StepList = React.forwardRef(function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef<HTMLOListElement>) {
+export const StepList = React.forwardRef(function StepList<T extends object>(
+  props: SpectrumStepListProps<T>,
+  ref: DOMRef<HTMLOListElement>
+) {
   const {size = 'M', orientation = 'horizontal'} = props;
   props = useProviderProps(props);
   const {isDisabled, isEmphasized} = props;
@@ -50,7 +53,6 @@ export const StepList = React.forwardRef(function StepList<T extends object>(pro
 
   let state = useStepListState(props);
   let {listProps} = useStepList(props, state, domRef);
-
 
   return (
     <ol
@@ -67,13 +69,9 @@ export const StepList = React.forwardRef(function StepList<T extends object>(pro
         'spectrum-Steplist--vertical': orientation === 'vertical'
       })}>
       <StepListContext.Provider value={state}>
-        {[...state.collection].map((item) => (
-          <StepListItem
-            key={item.key}
-            isDisabled={isDisabled}
-            item={item} />
-          )
-        )}
+        {[...state.collection].map(item => (
+          <StepListItem key={item.key} isDisabled={isDisabled} item={item} />
+        ))}
       </StepListContext.Provider>
     </ol>
   );

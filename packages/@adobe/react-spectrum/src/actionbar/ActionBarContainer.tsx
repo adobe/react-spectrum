@@ -22,16 +22,20 @@ import {useStyleProps} from '../utils/styleProps';
 
 interface ActionBarContainerProps {
   /** The contents of the ActionBarContainer. Should include a ActionBar and the renderable content it is associated with. */
-  children: ReactNode
+  children: ReactNode;
 }
 
-export interface SpectrumActionBarContainerProps extends ActionBarContainerProps, DOMProps, StyleProps {}
+export interface SpectrumActionBarContainerProps
+  extends ActionBarContainerProps, DOMProps, StyleProps {}
 
 /**
  * ActionBarContainer wraps around an ActionBar and a component that supports selection. It handles
  * the ActionBar's position with respect to its linked component.
  */
-export const ActionBarContainer = React.forwardRef(function ActionBarContainer(props: SpectrumActionBarContainerProps, ref: DOMRef<HTMLDivElement>) {
+export const ActionBarContainer = React.forwardRef(function ActionBarContainer(
+  props: SpectrumActionBarContainerProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   // Grabs specific props from the closest Provider (see https://react-spectrum.adobe.com/react-spectrum/Provider.html#property-groups). Remove if your component doesn't support any of the listed props.
   props = useProviderProps(props);
 

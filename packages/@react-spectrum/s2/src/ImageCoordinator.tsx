@@ -1,27 +1,36 @@
-import {Context, createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useReducer} from 'react';
+import {
+  Context,
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer
+} from 'react';
 
 export interface ImageCoordinatorProps {
   /** Children within the ImageCoordinator. */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * Time in milliseconds after which images are always displayed, even if all images are not yet loaded.
    * @default 5000
    */
-  timeout?: number,
+  timeout?: number;
   /**
    * A group of images to coordinate between, matching the group passed to the `<Image>` component.
    * If not provided, the default image group is used.
    */
-  group?: ImageGroup
+  group?: ImageGroup;
 }
 
 export type ImageGroup = Context<ImageGroupValue>;
 
 interface ImageGroupValue {
-  revealAll: boolean,
-  register(url: string): void,
-  unregister(url: string): void,
-  load(url: string): void
+  revealAll: boolean;
+  register(url: string): void;
+  unregister(url: string): void;
+  load(url: string): void;
 }
 
 const defaultContext: ImageGroupValue = {
@@ -38,16 +47,16 @@ export function createImageGroup(): ImageGroup {
 }
 
 interface State {
-  loadedAll: boolean,
-  timedOut: boolean,
-  loadStartTime: number,
-  loaded: Map<string, boolean>
+  loadedAll: boolean;
+  timedOut: boolean;
+  loadStartTime: number;
+  loaded: Map<string, boolean>;
 }
 
 type Action =
-  | {type: 'register', url: string}
-  | {type: 'unregister', url: string}
-  | {type: 'load', url: string}
+  | {type: 'register'; url: string}
+  | {type: 'unregister'; url: string}
+  | {type: 'load'; url: string}
   | {type: 'timeout'};
 
 function reducer(state: State, action: Action): State {
@@ -146,18 +155,22 @@ function ImageCoordinatorRoot(props: ImageCoordinatorProps) {
 
   useEffect(() => {
     if (!loadedAll) {
-      let timeoutId = setTimeout(() => {
-        dispatch({type: 'timeout'});
-      }, loadStartTime + timeout - Date.now());
+      let timeoutId = setTimeout(
+        () => {
+          dispatch({type: 'timeout'});
+        },
+        loadStartTime + timeout - Date.now()
+      );
 
       return () => clearTimeout(timeoutId);
     }
   }, [loadStartTime, loadedAll, timeout]);
 
   let revealAll = loadedAll || timedOut;
-  return useMemo(() => (
-    <group.Provider value={{revealAll, register, unregister, load}}>
-      {children}
-    </group.Provider>
-  ), [group, children, revealAll, register, unregister, load]);
+  return useMemo(
+    () => (
+      <group.Provider value={{revealAll, register, unregister, load}}>{children}</group.Provider>
+    ),
+    [group, children, revealAll, register, unregister, load]
+  );
 }

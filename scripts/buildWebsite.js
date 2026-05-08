@@ -44,8 +44,8 @@ async function build() {
     ],
     packageManager: 'yarn@4.2.2',
     devDependencies: Object.fromEntries(
-      Object.entries(packageJSON.devDependencies)
-        .filter(([name]) =>
+      Object.entries(packageJSON.devDependencies).filter(
+        ([name]) =>
           name.startsWith('@parcel') ||
           name === 'parcel' ||
           name === 'patch-package' ||
@@ -64,7 +64,7 @@ async function build() {
           name === 'react-dom' ||
           name === 'typescript' ||
           name === 'xml'
-        )
+      )
     ),
     dependencies: {
       '@adobe/react-spectrum': 'latest',
@@ -90,11 +90,12 @@ async function build() {
     }
   };
 
-
   // Add dependencies on each published package to the package.json, and
   // copy the docs from the current package into the temp dir.
   let packagesDir = path.join(__dirname, '..', 'packages');
-  let packages = glob.sync('*/*/package.json', {cwd: packagesDir}).concat('react-aria-components/package.json');
+  let packages = glob
+    .sync('*/*/package.json', {cwd: packagesDir})
+    .concat('react-aria-components/package.json');
   for (let p of packages) {
     let json = JSON.parse(fs.readFileSync(path.join(packagesDir, p), 'utf8'));
     if (!json.private && json.name !== '@adobe/react-spectrum') {
@@ -130,24 +131,49 @@ async function build() {
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(pkg, false, 2));
 
   // Copy necessary code and configuration over
-  fs.cpSync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'), {recursive: true});
-  fs.cpSync(path.join(__dirname, '..', 'packages', '@internationalized', 'string-compiler'), path.join(dir, 'packages', '@internationalized', 'string-compiler'), {recursive: true});
-  fs.cpSync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'), {recursive: true});
-  fs.cpSync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'), {
+    recursive: true
+  });
+  fs.cpSync(
+    path.join(__dirname, '..', 'packages', '@internationalized', 'string-compiler'),
+    path.join(dir, 'packages', '@internationalized', 'string-compiler'),
+    {recursive: true}
+  );
+  fs.cpSync(
+    path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'),
+    path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'),
+    {recursive: true}
+  );
+  fs.cpSync(
+    path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-builder-temp'),
+    path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'),
+    {recursive: true}
+  );
   fs.cpSync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
   fs.cpSync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
   fs.cpSync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'), {recursive: true});
   fs.cpSync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
   fs.cpSync(path.join(__dirname, '..', '.browserslistrc'), path.join(dir, '.browserslistrc'));
   fs.cpSync(path.join(__dirname, '..', 'starters'), path.join(dir, 'starters'), {recursive: true});
-  fs.cpSync(path.join(__dirname, '..', '.yarn', 'releases'), path.join(dir, '.yarn', 'releases'), {recursive: true});
-  fs.cpSync(path.join(__dirname, '..', '.yarn', 'plugins'), path.join(dir, '.yarn', 'plugins'), {recursive: true});
-  fs.cpSync(path.join(__dirname, '..', '.yarn', 'patches'), path.join(dir, '.yarn', 'patches'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', '.yarn', 'releases'), path.join(dir, '.yarn', 'releases'), {
+    recursive: true
+  });
+  fs.cpSync(path.join(__dirname, '..', '.yarn', 'plugins'), path.join(dir, '.yarn', 'plugins'), {
+    recursive: true
+  });
+  fs.cpSync(path.join(__dirname, '..', '.yarn', 'patches'), path.join(dir, '.yarn', 'patches'), {
+    recursive: true
+  });
   fs.cpSync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
-  fs.cpSync(path.join(__dirname, '..', 'scripts', 'createFeed.mjs'), path.join(dir, 'scripts', 'createFeed.mjs'));
+  fs.cpSync(
+    path.join(__dirname, '..', 'scripts', 'createFeed.mjs'),
+    path.join(dir, 'scripts', 'createFeed.mjs')
+  );
 
   // Delete mdx files from dev/docs that shouldn't go out yet.
-  let devPkg = JSON.parse(fs.readFileSync(path.join(dir, 'packages/dev/docs/package.json'), 'utf8'));
+  let devPkg = JSON.parse(
+    fs.readFileSync(path.join(dir, 'packages/dev/docs/package.json'), 'utf8')
+  );
   for (let file of glob.sync('packages/dev/docs/pages/**/*.mdx', {cwd: dir})) {
     let contents = fs.readFileSync(path.join(dir, file), 'utf8');
     let m = contents.match(/after_version:\s*(.*)/);
@@ -157,9 +183,15 @@ async function build() {
   }
 
   // Only copy babel and parcel patches over
-  let patches = fs.readdirSync(path.join(__dirname, '..', 'patches')).filter(name => name.startsWith('@babel') || name.startsWith('@parcel') || name.startsWith('postcss'));
+  let patches = fs
+    .readdirSync(path.join(__dirname, '..', 'patches'))
+    .filter(
+      name => name.startsWith('@babel') || name.startsWith('@parcel') || name.startsWith('postcss')
+    );
   for (let patch of patches) {
-    fs.cpSync(path.join(__dirname, '..', 'patches', patch), path.join(dir, 'patches', patch), {recursive: true});
+    fs.cpSync(path.join(__dirname, '..', 'patches', patch), path.join(dir, 'patches', patch), {
+      recursive: true
+    });
   }
 
   // Install dependencies from npm
@@ -173,9 +205,17 @@ async function build() {
   await run('yarn', ['createRssFeed', 'blog'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
-  fs.cpSync(path.join(dir, 'dist'), path.join(__dirname, '..', 'dist', 'production', 'docs'), {recursive: true});
-  fs.cpSync(path.join(dir, 'scripts', 'releases-feed.rss'), path.join(__dirname, '..', 'dist', 'production', 'docs', 'releases', 'releases-feed.rss'));
-  fs.cpSync(path.join(dir, 'scripts', 'blog-feed.rss'), path.join(__dirname, '..', 'dist', 'production', 'docs', 'blog', 'blog-feed.rss'));
+  fs.cpSync(path.join(dir, 'dist'), path.join(__dirname, '..', 'dist', 'production', 'docs'), {
+    recursive: true
+  });
+  fs.cpSync(
+    path.join(dir, 'scripts', 'releases-feed.rss'),
+    path.join(__dirname, '..', 'dist', 'production', 'docs', 'releases', 'releases-feed.rss')
+  );
+  fs.cpSync(
+    path.join(dir, 'scripts', 'blog-feed.rss'),
+    path.join(__dirname, '..', 'dist', 'production', 'docs', 'blog', 'blog-feed.rss')
+  );
   fs.rmSync(dir, {recursive: true, force: true});
 }
 

@@ -30,34 +30,37 @@ export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
   /**
    * The contents of the MenuTrigger - a trigger and a Menu.
    */
-  children: ReactElement[],
+  children: ReactElement[];
   /**
    * Alignment of the menu relative to the trigger.
    * @default 'start'
    */
-  align?: Alignment,
+  align?: Alignment;
   /**
    * Where the Menu opens relative to its trigger.
    * @default 'bottom'
    */
-  direction?: 'bottom' | 'top' | 'left' | 'right' | 'start' | 'end',
+  direction?: 'bottom' | 'top' | 'left' | 'right' | 'start' | 'end';
   /**
    * Whether the menu should automatically flip direction when space is limited.
    * @default true
    */
-  shouldFlip?: boolean,
+  shouldFlip?: boolean;
   /**
    * Whether the Menu closes when a selection is made.
    * @default true
    */
-  closeOnSelect?: boolean
+  closeOnSelect?: boolean;
 }
 
 /**
  * The MenuTrigger serves as a wrapper around a Menu and its associated trigger,
  * linking the Menu's open state with the trigger's press state.
  */
-export const MenuTrigger = forwardRef(function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) {
+export const MenuTrigger = forwardRef(function MenuTrigger(
+  props: SpectrumMenuTriggerProps,
+  ref: DOMRef<HTMLElement>
+) {
   let triggerRef = useRef<HTMLElement>(null);
   let domRef = useDOMRef(ref);
   let menuTriggerRef = domRef || triggerRef;
@@ -97,10 +100,12 @@ export const MenuTrigger = forwardRef(function MenuTrigger(props: SpectrumMenuTr
     onClose: state.close,
     closeOnSelect,
     autoFocus: state.focusStrategy || true,
-    UNSAFE_style: isMobile ? {
-      width: '100%',
-      maxHeight: 'inherit'
-    } : undefined,
+    UNSAFE_style: isMobile
+      ? {
+          width: '100%',
+          maxHeight: 'inherit'
+        }
+      : undefined,
     UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
     state
   };
@@ -148,9 +153,7 @@ export const MenuTrigger = forwardRef(function MenuTrigger(props: SpectrumMenuTr
           {menuTrigger}
         </PressResponder>
       </SlotProvider>
-      <MenuContext.Provider value={menuContext}>
-        {overlay}
-      </MenuContext.Provider>
+      <MenuContext.Provider value={menuContext}>{overlay}</MenuContext.Provider>
     </Fragment>
   );
 });

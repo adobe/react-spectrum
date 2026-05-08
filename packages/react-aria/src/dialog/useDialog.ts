@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, DOMProps, FocusableElement, RefObject} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMAttributes,
+  DOMProps,
+  FocusableElement,
+  RefObject
+} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {focusSafely} from '../interactions/focusSafely';
 import {getActiveElement, isFocusWithin} from '../utils/shadowdom/DOMFunctions';
@@ -23,25 +29,26 @@ export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
    * The accessibility role for the dialog.
    * @default 'dialog'
    */
-  role?: 'dialog' | 'alertdialog'
+  role?: 'dialog' | 'alertdialog';
 }
 
 export interface DialogAria {
   /** Props for the dialog container element. */
-  dialogProps: DOMAttributes,
+  dialogProps: DOMAttributes;
 
   /** Props for the dialog title element. */
-  titleProps: DOMAttributes
+  titleProps: DOMAttributes;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a dialog component.
  * A dialog is an overlay shown above other content in an application.
  */
-export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElement | null>): DialogAria {
-  let {
-    role = 'dialog'
-  } = props;
+export function useDialog(
+  props: AriaDialogProps,
+  ref: RefObject<FocusableElement | null>
+): DialogAria {
+  let {role = 'dialog'} = props;
   let titleId: string | undefined = useSlotId();
   titleId = props['aria-label'] ? undefined : titleId;
 
@@ -90,7 +97,7 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
       if (!hasAriaLabel && !hasAriaLabelledby) {
         console.warn(
           'A dialog must have a title for accessibility. ' +
-          'Either provide an aria-label or aria-labelledby prop, or render a heading element inside the dialog.'
+            'Either provide an aria-label or aria-labelledby prop, or render a heading element inside the dialog.'
         );
         hasWarned.current = true;
       }

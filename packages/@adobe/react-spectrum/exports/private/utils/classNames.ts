@@ -1,1 +1,5 @@
-export {classNames, shouldKeepSpectrumClassNames, keepSpectrumClassNames} from '../../../src/utils/classNames';
+export {
+  classNames,
+  shouldKeepSpectrumClassNames,
+  keepSpectrumClassNames
+} from '../../../src/utils/classNames';

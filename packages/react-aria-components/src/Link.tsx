@@ -30,12 +30,20 @@ import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 
-export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, HoverEvents, Omit<RenderProps<LinkRenderProps>, 'render'>, PossibleLinkDOMRenderProps<'span', LinkRenderProps>, SlotProps, DOMProps, Omit<GlobalDOMAttributes<HTMLAnchorElement>, 'onClick'> {
- /**
-  * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
-  * @default 'react-aria-Link'
-  */
- className?: ClassNameOrFunction<LinkRenderProps>
+export interface LinkProps
+  extends
+    Omit<AriaLinkOptions, 'elementType'>,
+    HoverEvents,
+    Omit<RenderProps<LinkRenderProps>, 'render'>,
+    PossibleLinkDOMRenderProps<'span', LinkRenderProps>,
+    SlotProps,
+    DOMProps,
+    Omit<GlobalDOMAttributes<HTMLAnchorElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Link'
+   */
+  className?: ClassNameOrFunction<LinkRenderProps>;
 }
 
 export interface LinkRenderProps {
@@ -43,32 +51,32 @@ export interface LinkRenderProps {
    * Whether the link is the current item within a list.
    * @selector [data-current]
    */
-  isCurrent: boolean,
+  isCurrent: boolean;
   /**
    * Whether the link is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean,
+  isHovered: boolean;
   /**
    * Whether the link is currently in a pressed state.
    * @selector [data-pressed]
    */
-  isPressed: boolean,
+  isPressed: boolean;
   /**
    * Whether the link is focused, either via a mouse or keyboard.
    * @selector [data-focused]
    */
-  isFocused: boolean,
+  isFocused: boolean;
   /**
    * Whether the link is keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean,
+  isFocusVisible: boolean;
   /**
    * Whether the link is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean
+  isDisabled: boolean;
 }
 
 export const LinkContext = createContext<ContextValue<LinkProps, HTMLAnchorElement>>(null);
@@ -77,7 +85,10 @@ export const LinkContext = createContext<ContextValue<LinkProps, HTMLAnchorEleme
  * A link allows a user to navigate to another page or resource within a web page
  * or application.
  */
-export const Link = /*#__PURE__*/ (forwardRef as forwardRefType)(function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
+export const Link = /*#__PURE__*/ (forwardRef as forwardRefType)(function Link(
+  props: LinkProps,
+  ref: ForwardedRef<HTMLAnchorElement>
+) {
   [props, ref] = useContextProps(props, ref, LinkContext);
 
   let elementType = props.href && !props.isDisabled ? 'a' : 'span';
@@ -113,7 +124,7 @@ export const Link = /*#__PURE__*/ (forwardRef as forwardRefType)(function Link(p
       data-pressed={isPressed || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-current={!!props['aria-current'] || undefined}
-      data-disabled={props.isDisabled  || undefined}>
+      data-disabled={props.isDisabled || undefined}>
       {renderProps.children}
     </ElementType>
   );

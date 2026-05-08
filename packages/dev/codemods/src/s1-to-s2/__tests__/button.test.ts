@@ -6,43 +6,57 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Renames variants', `
+test(
+  'Renames variants',
+  `
 import {Button} from '@adobe/react-spectrum';
 
 <div>
   <Button variant="cta">Test</Button>
   <Button variant="overBackground">Test</Button>
 </div>
-`);
+`
+);
 
-test('Renames variants with aliased import', `
+test(
+  'Renames variants with aliased import',
+  `
 import {Button as RSPButton} from '@adobe/react-spectrum';
 
 <div>
   <RSPButton variant="cta">Test</RSPButton>
   <RSPButton variant="overBackground">Test</RSPButton>
 </div>
-`);
+`
+);
 
-test('Keeps isPending', `
+test(
+  'Keeps isPending',
+  `
 import {Button} from '@adobe/react-spectrum';
 
 <div>
   <Button isPending>Test</Button>
   <Button isPending={true}>Test</Button>
 </div>
-`);
+`
+);
 
-test('Converts Button to LinkButton if it has href prop', `
+test(
+  'Converts Button to LinkButton if it has href prop',
+  `
 import {Button} from '@adobe/react-spectrum';
 
 <div>
   <Button>Test</Button>
   <Button href="/">Test</Button>
 </div>
-`);
+`
+);
 
-test('Does not change nested components with same prop name', `
+test(
+  'Does not change nested components with same prop name',
+  `
 import {Button} from '@adobe/react-spectrum';
 import {FakeComponent} from 'fake-package';
 
@@ -56,4 +70,5 @@ import {FakeComponent} from 'fake-package';
     <FakeComponent variant="overBackground">Test</FakeComponent>
   </Button>
 </div>
-`);
+`
+);

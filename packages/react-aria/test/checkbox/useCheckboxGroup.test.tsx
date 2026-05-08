@@ -10,7 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaCheckboxGroupItemProps, useCheckboxGroupItem} from '../../src/checkbox/useCheckboxGroupItem';
+import {
+  AriaCheckboxGroupItemProps,
+  useCheckboxGroupItem
+} from '../../src/checkbox/useCheckboxGroupItem';
 
 import {AriaCheckboxGroupProps, useCheckboxGroup} from '../../src/checkbox/useCheckboxGroup';
 import {CheckboxGroupState, useCheckboxGroupState} from 'react-stately/useCheckboxGroupState';
@@ -18,17 +21,35 @@ import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useRef} from 'react';
 import userEvent from '@testing-library/user-event';
 
-function Checkbox({checkboxGroupState, ...props}: AriaCheckboxGroupItemProps & { checkboxGroupState: CheckboxGroupState }) {
+function Checkbox({
+  checkboxGroupState,
+  ...props
+}: AriaCheckboxGroupItemProps & {checkboxGroupState: CheckboxGroupState}) {
   const ref = useRef<HTMLInputElement>(null);
   const {children} = props;
   props.validationBehavior ??= 'native';
   const {inputProps, labelProps} = useCheckboxGroupItem(props, checkboxGroupState, ref);
-  return <label {...labelProps}><input ref={ref} {...inputProps} />{children}</label>;
+  return (
+    <label {...labelProps}>
+      <input ref={ref} {...inputProps} />
+      {children}
+    </label>
+  );
 }
 
-function CheckboxGroup({groupProps, checkboxProps}: {groupProps: AriaCheckboxGroupProps, checkboxProps: AriaCheckboxGroupItemProps[]}) {
+function CheckboxGroup({
+  groupProps,
+  checkboxProps
+}: {
+  groupProps: AriaCheckboxGroupProps;
+  checkboxProps: AriaCheckboxGroupItemProps[];
+}) {
   const state = useCheckboxGroupState(groupProps);
-  const {groupProps: checkboxGroupProps, labelProps, isInvalid} = useCheckboxGroup(groupProps, state);
+  const {
+    groupProps: checkboxGroupProps,
+    labelProps,
+    isInvalid
+  } = useCheckboxGroup(groupProps, state);
   return (
     <div {...checkboxGroupProps} data-invalid={isInvalid || undefined}>
       {groupProps.label && <span {...labelProps}>{groupProps.label}</span>}
@@ -54,7 +75,8 @@ describe('useCheckboxGroup', () => {
           {value: 'dogs', children: 'Dogs'},
           {value: 'cats', children: 'Cats'},
           {value: 'dragons', children: 'Dragons'}
-        ]} />
+        ]}
+      />
     );
 
     let checkboxGroup = getByRole('group');
@@ -92,7 +114,8 @@ describe('useCheckboxGroup', () => {
           {value: 'dogs', children: 'Dogs'},
           {value: 'cats', children: 'Cats'},
           {value: 'dragons', children: 'Dragons'}
-        ]} />
+        ]}
+      />
     );
 
     expect((getByLabelText('Cats') as HTMLInputElement).checked).toBe(true);
@@ -106,7 +129,8 @@ describe('useCheckboxGroup', () => {
           {value: 'dogs', children: 'Dogs'},
           {value: 'cats', children: 'Cats'},
           {value: 'dragons', children: 'Dragons'}
-        ]} />
+        ]}
+      />
     );
 
     let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
@@ -124,7 +148,8 @@ describe('useCheckboxGroup', () => {
           {value: 'dogs', children: 'Dogs'},
           {value: 'cats', children: 'Cats'},
           {value: 'dragons', children: 'Dragons'}
-        ]} />
+        ]}
+      />
     );
     let checkboxGroup = getByRole('group');
 
@@ -142,7 +167,8 @@ describe('useCheckboxGroup', () => {
           {value: 'dogs', children: 'Dogs'},
           {value: 'cats', children: 'Cats'},
           {value: 'dragons', children: 'Dragons'}
-        ]} />
+        ]}
+      />
     );
     let checkboxGroup = getByRole('group');
 
@@ -158,7 +184,8 @@ describe('useCheckboxGroup', () => {
           {value: 'dogs', children: 'Dogs'},
           {value: 'cats', children: 'Cats'},
           {value: 'dragons', children: 'Dragons'}
-        ]} />
+        ]}
+      />
     );
     let checkboxGroup = getByRole('group');
 
@@ -175,7 +202,8 @@ describe('useCheckboxGroup', () => {
           {value: 'dogs', children: 'Dogs'},
           {value: 'cats', children: 'Cats'},
           {value: 'dragons', children: 'Dragons', onChange: checkboxOnChangeSpy}
-        ]} />
+        ]}
+      />
     );
 
     let checkboxGroup = getByRole('group');
@@ -194,7 +222,7 @@ describe('useCheckboxGroup', () => {
     expect(checkboxes[2].checked).toBeFalsy();
   });
 
-  it('doesn\'t set aria-disabled or make checkboxes disabled by default', () => {
+  it("doesn't set aria-disabled or make checkboxes disabled by default", () => {
     let {getAllByRole, getByRole} = render(
       <CheckboxGroup
         groupProps={{label: 'Favorite Pet'}}
@@ -202,7 +230,8 @@ describe('useCheckboxGroup', () => {
           {value: 'dogs', children: 'Dogs'},
           {value: 'cats', children: 'Cats'},
           {value: 'dragons', children: 'Dragons'}
-        ]} />
+        ]}
+      />
     );
 
     let checkboxGroup = getByRole('group');
@@ -214,7 +243,7 @@ describe('useCheckboxGroup', () => {
     expect(checkboxes[2]).not.toHaveAttribute('disabled');
   });
 
-  it('doesn\'t set aria-disabled or make checkboxes disabled when isDisabled is false', () => {
+  it("doesn't set aria-disabled or make checkboxes disabled when isDisabled is false", () => {
     let {getAllByRole, getByRole} = render(
       <CheckboxGroup
         groupProps={{label: 'Favorite Pet', isDisabled: false}}
@@ -222,7 +251,8 @@ describe('useCheckboxGroup', () => {
           {value: 'dogs', children: 'Dogs'},
           {value: 'cats', children: 'Cats'},
           {value: 'dragons', children: 'Dragons'}
-        ]} />
+        ]}
+      />
     );
 
     let checkboxGroup = getByRole('group');
@@ -244,7 +274,8 @@ describe('useCheckboxGroup', () => {
           {value: 'dogs', children: 'Dogs'},
           {value: 'cats', children: 'Cats'},
           {value: 'dragons', children: 'Dragons', onChange: checkboxOnChangeSpy}
-        ]} />
+        ]}
+      />
     );
 
     let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
@@ -271,7 +302,8 @@ describe('useCheckboxGroup', () => {
           {value: 'dogs', children: 'Dogs'},
           {value: 'cats', children: 'Cats'},
           {value: 'dragons', children: 'Dragons', isReadOnly: true, onChange: checkboxOnChangeSpy}
-        ]} />
+        ]}
+      />
     );
 
     let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
@@ -292,7 +324,8 @@ describe('useCheckboxGroup', () => {
           {value: 'dogs', children: 'Dogs'},
           {value: 'cats', children: 'Cats'},
           {value: 'dragons', children: 'Dragons'}
-        ]} />
+        ]}
+      />
     );
 
     let checkboxGroup = getByRole('group');

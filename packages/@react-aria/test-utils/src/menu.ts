@@ -18,44 +18,44 @@ interface MenuOpenOpts {
   /**
    * Whether the menu needs to be long pressed to open.
    */
-  needsLongPress?: boolean,
+  needsLongPress?: boolean;
   /**
    * What interaction type to use when opening the menu. Defaults to the interaction type set on the tester.
    */
-  interactionType?: UserOpts['interactionType'],
+  interactionType?: UserOpts['interactionType'];
   /**
    * Whether to open the menu via ArrowUp or ArrowDown if in keyboard modality.
    */
-  direction?: 'up' | 'down'
+  direction?: 'up' | 'down';
 }
 
 interface MenuSelectOpts extends MenuOpenOpts {
   /**
    * The index, text, or node of the option to select. Option nodes can be sourced via `options()`.
    */
-  option: number | string | HTMLElement,
+  option: number | string | HTMLElement;
   /**
    * The menu's selection mode. Will affect whether or not the menu is expected to be closed upon option selection.
    * @default 'single'
    */
-  menuSelectionMode?: 'single' | 'multiple',
+  menuSelectionMode?: 'single' | 'multiple';
   /**
    * Whether or not the menu closes on select. Depends on menu implementation and configuration.
    * @default true
    */
-  closesOnSelect?: boolean,
+  closesOnSelect?: boolean;
   /**
    * Whether the option should be triggered by Space or Enter in keyboard modality.
    * @default 'Enter'
    */
-  keyboardActivation?: 'Space' | 'Enter'
+  keyboardActivation?: 'Space' | 'Enter';
 }
 
 interface MenuOpenSubmenuOpts extends MenuOpenOpts {
   /**
    * The text or node of the submenu trigger to open. Available submenu trigger nodes can be sourced via `submenuTriggers`.
    */
-  submenuTrigger: string | HTMLElement
+  submenuTrigger: string | HTMLElement;
 }
 
 export class MenuTester {
@@ -102,11 +102,7 @@ export class MenuTester {
    * Opens the menu. Defaults to using the interaction type set on the menu tester.
    */
   async open(opts: MenuOpenOpts = {}): Promise<void> {
-    let {
-      needsLongPress,
-      interactionType = this._interactionType,
-      direction
-    } = opts;
+    let {needsLongPress, interactionType = this._interactionType, direction} = opts;
     let trigger = this.trigger;
     let isDisabled = trigger.hasAttribute('disabled');
     if (interactionType === 'mouse' || interactionType === 'touch') {
@@ -115,7 +111,11 @@ export class MenuTester {
           throw new Error('No advanceTimers provided for long press.');
         }
         let pointerType = interactionType === 'mouse' ? 'mouse' : 'touch';
-        await triggerLongPress({element: trigger, advanceTimer: this._advanceTimer, pointerOpts: {pointerType}});
+        await triggerLongPress({
+          element: trigger,
+          advanceTimer: this._advanceTimer,
+          pointerOpts: {pointerType}
+        });
       } else if (interactionType === 'mouse') {
         await this.user.click(trigger);
       } else {
@@ -157,9 +157,7 @@ export class MenuTester {
    * Returns a option matching the specified index or text content.
    */
   findOption(opts: {optionIndexOrText: number | string}): HTMLElement {
-    let {
-      optionIndexOrText
-    } = opts;
+    let {optionIndexOrText} = opts;
 
     let option;
     let options = this.options();
@@ -168,7 +166,9 @@ export class MenuTester {
     if (typeof optionIndexOrText === 'number') {
       option = options[optionIndexOrText];
     } else if (typeof optionIndexOrText === 'string' && menu != null) {
-      option = (within(menu!).getByText(optionIndexOrText).closest('[role=menuitem], [role=menuitemradio], [role=menuitemcheckbox]'))! as HTMLElement;
+      option = within(menu!)
+        .getByText(optionIndexOrText)
+        .closest('[role=menuitem], [role=menuitemradio], [role=menuitemcheckbox]')! as HTMLElement;
     }
 
     return option;
@@ -233,14 +233,19 @@ export class MenuTester {
       // the menu option select may trigger.
       if (
         !(menuSelectionMode === 'single' && !closesOnSelect) &&
-        !(menuSelectionMode === 'multiple' && (keyboardActivation === 'Space' || interactionType === 'mouse'))
+        !(
+          menuSelectionMode === 'multiple' &&
+          (keyboardActivation === 'Space' || interactionType === 'mouse')
+        )
       ) {
         // For RSP, clicking on a submenu option seems to briefly lose focus to the body before moving to the clicked option in the test so we need to wait
         // for focus to be coerced to somewhere else in place of running all timers.
         if (this._isSubmenu) {
           await waitFor(() => {
             if (document.activeElement === document.body) {
-              throw new Error('Expected focus to move to somewhere other than the body after selecting a submenu option.');
+              throw new Error(
+                'Expected focus to move to somewhere other than the body after selecting a submenu option.'
+              );
             } else {
               return true;
             }
@@ -252,7 +257,9 @@ export class MenuTester {
         // but we can't really know where so just make sure it doesn't get lost to the body.
         await waitFor(() => {
           if (document.activeElement === option) {
-            throw new Error('Expected focus after selecting an option to move away from the option.');
+            throw new Error(
+              'Expected focus after selecting an option to move away from the option.'
+            );
           } else {
             return true;
           }
@@ -262,8 +269,13 @@ export class MenuTester {
         // close. In React 16, focus actually makes it all the way to the root menu's submenu trigger so we need check the root menu
         if (this._isSubmenu) {
           await waitFor(() => {
-            if (document.activeElement === this.trigger || this._rootMenu?.contains(document.activeElement)) {
-              throw new Error('Expected focus after selecting an submenu option to move away from the original submenu trigger.');
+            if (
+              document.activeElement === this.trigger ||
+              this._rootMenu?.contains(document.activeElement)
+            ) {
+              throw new Error(
+                'Expected focus after selecting an submenu option to move away from the original submenu trigger.'
+              );
             } else {
               return true;
             }
@@ -273,7 +285,9 @@ export class MenuTester {
         // Finally wait for focus to be coerced somewhere final when the menu tree is removed from the DOM
         await waitFor(() => {
           if (document.activeElement === document.body) {
-            throw new Error('Expected focus to move to somewhere other than the body after selecting a menu option.');
+            throw new Error(
+              'Expected focus to move to somewhere other than the body after selecting a menu option.'
+            );
           } else {
             return true;
           }
@@ -289,11 +303,7 @@ export class MenuTester {
    * Opens the submenu. Defaults to using the interaction type set on the menu tester. The submenu trigger can be targeted via the trigger's node or the trigger's text.
    */
   async openSubmenu(opts: MenuOpenSubmenuOpts): Promise<MenuTester | null> {
-    let {
-      submenuTrigger,
-      needsLongPress,
-      interactionType = this._interactionType
-    } = opts;
+    let {submenuTrigger, needsLongPress, interactionType = this._interactionType} = opts;
 
     let trigger = this.trigger;
     let isDisabled = trigger.hasAttribute('disabled');
@@ -304,7 +314,9 @@ export class MenuTester {
       let menu = this.menu;
       if (menu) {
         if (typeof submenuTrigger === 'string') {
-          submenuTrigger = (within(menu!).getByText(submenuTrigger).closest('[role=menuitem]'))! as HTMLElement;
+          submenuTrigger = within(menu!)
+            .getByText(submenuTrigger)
+            .closest('[role=menuitem]')! as HTMLElement;
         }
 
         let submenuTriggerTester = new MenuTester({
@@ -326,7 +338,9 @@ export class MenuTester {
 
         await waitFor(() => {
           if (submenuTriggerTester._trigger?.getAttribute('aria-expanded') !== 'true') {
-            throw new Error('aria-expanded for the submenu trigger wasn\'t changed to "true", unable to confirm the existance of the submenu');
+            throw new Error(
+              'aria-expanded for the submenu trigger wasn\'t changed to "true", unable to confirm the existance of the submenu'
+            );
           } else {
             return true;
           }
@@ -342,7 +356,7 @@ export class MenuTester {
   private async keyboardNavigateToOption(opts: {option: HTMLElement}) {
     let {option} = opts;
     let options = this.options();
-    let targetIndex = options.findIndex(opt => (opt === option) || opt.contains(option));
+    let targetIndex = options.findIndex(opt => opt === option || opt.contains(option));
 
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the menu');
@@ -359,7 +373,7 @@ export class MenuTester {
     for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
       await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
     }
-  };
+  }
 
   /**
    * Closes the menu.
@@ -372,7 +386,9 @@ export class MenuTester {
 
       await waitFor(() => {
         if (document.activeElement !== this.trigger) {
-          throw new Error(`Expected the document.activeElement after closing the menu to be the menu trigger but got ${document.activeElement}`);
+          throw new Error(
+            `Expected the document.activeElement after closing the menu to be the menu trigger but got ${document.activeElement}`
+          );
         } else {
           return true;
         }

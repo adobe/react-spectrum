@@ -52,7 +52,6 @@ export function isVirtualPointerEvent(event: PointerEvent): boolean {
       event.height === 1 &&
       event.pressure === 0 &&
       event.detail === 0 &&
-      event.pointerType === 'mouse'
-    )
+      event.pointerType === 'mouse')
   );
 }

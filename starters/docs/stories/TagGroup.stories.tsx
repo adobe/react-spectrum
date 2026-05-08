@@ -13,7 +13,7 @@ export default meta;
 
 type Story = StoryFn<typeof TagGroup>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <TagGroup {...args}>
     <Tag>Chocolate</Tag>
     <Tag>Mint</Tag>

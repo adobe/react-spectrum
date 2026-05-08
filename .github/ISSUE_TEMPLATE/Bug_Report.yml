@@ -3,10 +3,10 @@ description: File a bug report
 body:
   - type: markdown
     attributes:
-      value: "### Thanks for filing an issue! Before you submit, search open/closed issues before submitting since someone might have asked the same thing before!"
+      value: '### Thanks for filing an issue! Before you submit, search open/closed issues before submitting since someone might have asked the same thing before!'
   - type: markdown
     attributes:
-      value: "# 🐛 Bug Report "
+      value: '# 🐛 Bug Report '
   - type: textarea
     id: general-summary
     attributes:
@@ -61,7 +61,7 @@ body:
       required: true
   - type: markdown
     attributes:
-      value: "## 🌍 Your Environment"
+      value: '## 🌍 Your Environment'
   - type: input
     id: version
     attributes:
@@ -94,7 +94,7 @@ body:
       required: true
   - type: markdown
     attributes:
-      value: "## 🦄 Other"
+      value: '## 🦄 Other'
   - type: input
     id: company-team
     attributes:

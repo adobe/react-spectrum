@@ -38,7 +38,7 @@ export default {
 export const Horizontal: CardStory = {
   ...Default,
   decorators: [
-    (Story) => (
+    Story => (
       <div style={{height: '90px'}}>
         <Story />
       </div>
