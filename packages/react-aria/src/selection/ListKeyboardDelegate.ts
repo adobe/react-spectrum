@@ -23,6 +23,7 @@ import {
   RefObject
 } from '@react-types/shared';
 import {DOMLayoutDelegate} from './DOMLayoutDelegate';
+import {getItemElement} from './utils';
 import {isScrollable} from '../utils/isScrollable';
 
 interface ListKeyboardDelegateOptions<T> {
@@ -165,9 +166,38 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return prevRect.x === itemRect.x || prevRect.y !== itemRect.y;
   }
 
+  // TODO: still need to see how this works with virtualizer once there is handling for the reverse layout
+  // also need to double check why page up/down doesnt work well, maybe the column reverse?
+  // this felt like a simpler approach then changing getKeyAbove/Below to be purely spatial calculations (aka going through the collection
+  // and finding the item that is closest spatially above/below)
+  private isReversed(key: Key): boolean {
+    let nextKey = this.getNextKey(key);
+    let currentEl = getItemElement(this.ref, key);
+    if (nextKey != null) {
+      let nextEl = getItemElement(this.ref, nextKey);
+      if (!currentEl || !nextEl) {
+        return false;
+      }
+      return currentEl.getBoundingClientRect().top > nextEl.getBoundingClientRect().top;
+    }
+    let prevKey = this.getPreviousKey(key);
+    if (prevKey != null) {
+      let prevEl = getItemElement(this.ref, prevKey);
+      if (!currentEl || !prevEl) {
+        return false;
+      }
+      return prevEl.getBoundingClientRect().top > currentEl.getBoundingClientRect().top;
+    }
+    return false;
+  }
+
   getKeyBelow(key: Key, options?: {includeDisabled?: boolean}): Key | null {
     if (this.layout === 'grid' && this.orientation === 'vertical') {
       return this.findKey(key, key => this.getNextKey(key, options), this.isSameRow);
+    } else if (this.orientation === 'vertical') {
+      return this.isReversed(key)
+        ? this.getPreviousKey(key, options)
+        : this.getNextKey(key, options);
     } else {
       return this.getNextKey(key, options);
     }
@@ -176,6 +206,10 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   getKeyAbove(key: Key, options?: {includeDisabled?: boolean}): Key | null {
     if (this.layout === 'grid' && this.orientation === 'vertical') {
       return this.findKey(key, key => this.getPreviousKey(key, options), this.isSameRow);
+    } else if (this.orientation === 'vertical') {
+      return this.isReversed(key)
+        ? this.getNextKey(key, options)
+        : this.getPreviousKey(key, options);
     } else {
       return this.getPreviousKey(key, options);
     }
@@ -260,6 +294,8 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       return null;
     }
 
+    let reversed = this.isReversed(key);
+
     if (menu && !isScrollable(menu)) {
       return this.getFirstKey();
     }
@@ -276,10 +312,12 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
         itemRect = nextKey == null ? null : this.layoutDelegate.getItemRect(nextKey);
       }
     } else {
-      let pageY = Math.max(
-        0,
-        itemRect.y + itemRect.height - this.layoutDelegate.getVisibleRect().height
-      );
+      let visibleRect = this.layoutDelegate.getVisibleRect();
+      // TODO: column reverse makes y negative for items so we need to instead do current pos - height instead
+      // will need to revist for virtualized reverse layouts?
+      let pageY = reversed
+        ? itemRect.y - visibleRect.height
+        : Math.max(0, itemRect.y + itemRect.height - visibleRect.height);
 
       while (itemRect && itemRect.y > pageY && nextKey != null) {
         nextKey = this.getKeyAbove(nextKey);
@@ -287,7 +325,8 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       }
     }
 
-    return nextKey ?? this.getFirstKey();
+    // TODO: in column reverse, the top most key is the last key
+    return nextKey ?? (reversed ? this.getLastKey() : this.getFirstKey());
   }
 
   getKeyPageBelow(key: Key): Key | null {
@@ -297,8 +336,11 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       return null;
     }
 
+    let reversed = this.isReversed(key);
+
     if (menu && !isScrollable(menu)) {
       return this.getLastKey();
+      // return reversed ? this.getFirstKey() : this.getLastKey();
     }
 
     let nextKey: Key | null = key;
@@ -324,7 +366,8 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       }
     }
 
-    return nextKey ?? this.getLastKey();
+    // TODO: in column reverse, the bottom most key is the first key
+    return nextKey ?? (reversed ? this.getFirstKey() : this.getLastKey());
   }
 
   getKeyForSearch(search: string, fromKey?: Key): Key | null {
