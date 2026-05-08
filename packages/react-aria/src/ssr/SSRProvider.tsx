@@ -22,8 +22,8 @@ import React, {JSX, ReactNode, useContext, useLayoutEffect, useMemo, useRef, use
 // and resets the current id counter. This ensures that async loaded components have
 // consistent ids regardless of the loading order.
 interface SSRContextValue {
-  prefix: string,
-  current: number
+  prefix: string;
+  current: number;
 }
 
 // Default context value to use in case there is no SSRProvider. This is fine for
@@ -41,7 +41,7 @@ const IsSSRContext = React.createContext(false);
 
 export interface SSRProviderProps {
   /** Your application here. */
-  children: ReactNode
+  children: ReactNode;
 }
 
 // This is only used in React < 18.
@@ -49,12 +49,15 @@ function LegacySSRProvider(props: SSRProviderProps): JSX.Element {
   let cur = useContext(SSRContext);
   let counter = useCounter(cur === defaultContext);
   let [isSSR, setIsSSR] = useState(true);
-  let value: SSRContextValue = useMemo(() => ({
-    // If this is the first SSRProvider, start with an empty string prefix, otherwise
-    // append and increment the counter.
-    prefix: cur === defaultContext ? '' : `${cur.prefix}-${counter}`,
-    current: 0
-  }), [cur, counter]);
+  let value: SSRContextValue = useMemo(
+    () => ({
+      // If this is the first SSRProvider, start with an empty string prefix, otherwise
+      // append and increment the counter.
+      prefix: cur === defaultContext ? '' : `${cur.prefix}-${counter}`,
+      current: 0
+    }),
+    [cur, counter]
+  );
 
   // If on the client, and the component was initially server rendered,
   // then schedule a layout effect to update the component after hydration.
@@ -69,9 +72,7 @@ function LegacySSRProvider(props: SSRProviderProps): JSX.Element {
 
   return (
     <SSRContext.Provider value={value}>
-      <IsSSRContext.Provider value={isSSR}>
-        {props.children}
-      </IsSSRContext.Provider>
+      <IsSSRContext.Provider value={isSSR}>{props.children}</IsSSRContext.Provider>
     </SSRContext.Provider>
   );
 }
@@ -84,8 +85,14 @@ let warnedAboutSSRProvider = false;
  */
 export function SSRProvider(props: SSRProviderProps): JSX.Element {
   if (typeof React['useId'] === 'function') {
-    if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'production' && !warnedAboutSSRProvider) {
-      console.warn('In React 18, SSRProvider is not necessary and is a noop. You can remove it from your app.');
+    if (
+      process.env.NODE_ENV !== 'test' &&
+      process.env.NODE_ENV !== 'production' &&
+      !warnedAboutSSRProvider
+    ) {
+      console.warn(
+        'In React 18, SSRProvider is not necessary and is a noop. You can remove it from your app.'
+      );
       warnedAboutSSRProvider = true;
     }
     return <>{props.children}</>;
@@ -94,9 +101,7 @@ export function SSRProvider(props: SSRProviderProps): JSX.Element {
 }
 
 let canUseDOM = Boolean(
-  typeof window !== 'undefined' &&
-  window.document &&
-  window.document.createElement
+  typeof window !== 'undefined' && window.document && window.document.createElement
 );
 
 let componentIds = new WeakMap();
@@ -115,8 +120,9 @@ function useCounter(isDisabled = false) {
     // To ensure that we only increment the global counter once, we store the starting id for this component in
     // a weak map associated with the Fiber. On the second render, we reset the global counter to this value.
     // Since React runs the second render immediately after the first, this is safe.
-    // @ts-ignore
-    let currentOwner = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentOwner?.current;
+    let currentOwner =
+      // @ts-ignore
+      React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentOwner?.current;
     if (currentOwner) {
       let prevComponentValue = componentIds.get(currentOwner);
       if (prevComponentValue == null) {
@@ -148,24 +154,31 @@ function useLegacySSRSafeId(defaultId?: string): string {
   // If we are rendering in a non-DOM environment, and there's no SSRProvider,
   // provide a warning to hint to the developer to add one.
   if (ctx === defaultContext && !canUseDOM && process.env.NODE_ENV !== 'production') {
-    console.warn('When server rendering, you must wrap your application in an <SSRProvider> to ensure consistent ids are generated between the client and server.');
+    console.warn(
+      'When server rendering, you must wrap your application in an <SSRProvider> to ensure consistent ids are generated between the client and server.'
+    );
   }
 
   let counter = useCounter(!!defaultId);
-  let prefix = ctx === defaultContext && process.env.NODE_ENV === 'test' ? 'react-aria' : `react-aria${ctx.prefix}`;
+  let prefix =
+    ctx === defaultContext && process.env.NODE_ENV === 'test'
+      ? 'react-aria'
+      : `react-aria${ctx.prefix}`;
   return defaultId || `${prefix}-${counter}`;
 }
 
 function useModernSSRSafeId(defaultId?: string): string {
   let id = React.useId();
   let [didSSR] = useState(useIsSSR());
-  let prefix = didSSR || process.env.NODE_ENV === 'test' ? 'react-aria' : `react-aria${defaultContext.prefix}`;
+  let prefix =
+    didSSR || process.env.NODE_ENV === 'test' ? 'react-aria' : `react-aria${defaultContext.prefix}`;
   return defaultId || `${prefix}-${id}`;
 }
 
 // Use React.useId in React 18 if available, otherwise fall back to our old implementation.
 /** @private */
-export const useSSRSafeId: typeof useModernSSRSafeId | typeof useLegacySSRSafeId = typeof React['useId'] === 'function' ? useModernSSRSafeId : useLegacySSRSafeId;
+export const useSSRSafeId: typeof useModernSSRSafeId | typeof useLegacySSRSafeId =
+  typeof React['useId'] === 'function' ? useModernSSRSafeId : useLegacySSRSafeId;
 
 function getSnapshot() {
   return false;

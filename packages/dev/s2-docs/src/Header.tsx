@@ -1,6 +1,6 @@
 'use client';
 
-import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button, Link} from 'react-aria-components';
 import Contrast from '@react-spectrum/s2/icons/Contrast';
 import {Divider, pressScale} from '@react-spectrum/s2';
@@ -26,7 +26,7 @@ function getButtonIcon(currentPage) {
 
 const libraryStyles = style({
   ...focusRing(),
-  paddingX: 12, 
+  paddingX: 12,
   display: 'flex',
   alignItems: 'center',
   columnGap: {
@@ -95,7 +95,8 @@ function ColorSchemeToggle() {
             opacity: isDark ? 0 : 1,
             transform: isDark ? 'rotate(-90deg) scale(0.5)' : 'rotate(0deg) scale(1)',
             transition: 'opacity 200ms ease-out, transform 200ms ease-out'
-          }} />
+          }}
+        />
         <Lighten
           UNSAFE_style={{
             position: 'absolute',
@@ -103,7 +104,8 @@ function ColorSchemeToggle() {
             opacity: isDark ? 1 : 0,
             transform: isDark ? 'rotate(0deg) scale(1)' : 'rotate(90deg) scale(0.5)',
             transition: 'opacity 200ms ease-out, transform 200ms ease-out'
-          }} />
+          }}
+        />
       </span>
     </Button>
   );
@@ -121,7 +123,7 @@ export default function Header() {
 
   let openSearchMenu = async () => {
     if (!document.startViewTransition) {
-      setSearchOpen((prev) => !prev);
+      setSearchOpen(prev => !prev);
       return;
     }
 
@@ -140,7 +142,7 @@ export default function Header() {
         labelRef.current!.style.viewTransitionName = '';
         searchRef.current!.style.viewTransitionName = '';
         renderCallback.current = resolve;
-        setSearchOpen((prev) => !prev);
+        setSearchOpen(prev => !prev);
       });
     });
 
@@ -195,10 +197,15 @@ export default function Header() {
 
   return (
     <>
-      <header className={style({width: 'full', display: {default: 'none', lg: 'flex'}, justifyContent: 'center'})}>
+      <header
+        className={style({
+          width: 'full',
+          display: {default: 'none', lg: 'flex'},
+          justifyContent: 'center'
+        })}>
         <div
           className={style({
-            width: 'full', 
+            width: 'full',
             display: 'grid',
             // @eslint-disable-next-line
             gridTemplateColumns: '1fr auto 1fr',
@@ -210,10 +217,10 @@ export default function Header() {
               ref={ref}
               style={pressScale(ref, {visibility: searchOpen ? 'hidden' : 'visible'})}
               className={renderProps => libraryStyles({...renderProps})}>
-              <div ref={iconRef}>
-                {getButtonIcon(currentPage)}
-              </div>
-              <span className={style({font: 'heading-sm', fontWeight: 'extra-bold'})} ref={labelRef}>
+              <div ref={iconRef}>{getButtonIcon(currentPage)}</div>
+              <span
+                className={style({font: 'heading-sm', fontWeight: 'extra-bold'})}
+                ref={labelRef}>
                 {getButtonText(currentPage)}
               </span>
             </Link>
@@ -223,14 +230,33 @@ export default function Header() {
               onOpen={openSearchMenu}
               onClose={closeSearchMenu}
               isSearchOpen={searchOpen}
-              overlayId={searchMenuId} />
+              overlayId={searchMenuId}
+            />
           </div>
-          <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
+          <div
+            className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
             <HeaderLink href={docs}>Docs</HeaderLink>
             <HeaderLink href={release}>Releases</HeaderLink>
-            <HeaderLink href={blog} target={subdirectory === 's2' ? '_blank' : ''} rel="noopener noreferrer">Blog</HeaderLink>
-            <HeaderLink aria-label="GitHub" href="https://github.com/adobe/react-spectrum" target="_blank" rel="noopener noreferrer" ><GithubLogo /></HeaderLink>
-            <HeaderLink aria-label="npm" href={`https://npmjs.com/${npm}`} target="_blank" rel="noopener noreferrer"><NpmLogo /></HeaderLink>
+            <HeaderLink
+              href={blog}
+              target={subdirectory === 's2' ? '_blank' : ''}
+              rel="noopener noreferrer">
+              Blog
+            </HeaderLink>
+            <HeaderLink
+              aria-label="GitHub"
+              href="https://github.com/adobe/react-spectrum"
+              target="_blank"
+              rel="noopener noreferrer">
+              <GithubLogo />
+            </HeaderLink>
+            <HeaderLink
+              aria-label="npm"
+              href={`https://npmjs.com/${npm}`}
+              target="_blank"
+              rel="noopener noreferrer">
+              <NpmLogo />
+            </HeaderLink>
             {library !== 'react-aria' && (
               <>
                 <Divider orientation="vertical" UNSAFE_style={{marginBlock: 4}} />

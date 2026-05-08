@@ -33,7 +33,9 @@ export default {
   decorators: [
     (story, {parameters, args}) => (
       <>
-        {!parameters.disableToastContainer && <ToastContainer placement={(args as any).placement} />}
+        {!parameters.disableToastContainer && (
+          <ToastContainer placement={(args as any).placement} />
+        )}
         <MainLandmark>{story()}</MainLandmark>
       </>
     )
@@ -57,7 +59,7 @@ export default {
 
 export type ToastStory = StoryFn<typeof RenderProvider>;
 
-export const Default: ToastStory = (args) => <RenderProvider {...args} />;
+export const Default: ToastStory = args => <RenderProvider {...args} />;
 Default.story = {
   parameters: {
     a11y: {
@@ -74,8 +76,7 @@ Default.story = {
   }
 };
 
-
-export const WithAction: ToastStory = (args) => (
+export const WithAction: ToastStory = args => (
   <RenderProvider {...args} actionLabel="Action" onAction={action('onAction')} />
 );
 
@@ -94,9 +95,13 @@ WithAction.story = {
   }
 };
 
-
-export const WithTestId: ToastStory = (args) => (
-  <RenderProvider {...args} actionLabel="Action" onAction={action('onAction')} data-testid="hello i am a test id" />
+export const WithTestId: ToastStory = args => (
+  <RenderProvider
+    {...args}
+    actionLabel="Action"
+    onAction={action('onAction')}
+    data-testid="hello i am a test id"
+  />
 );
 
 WithTestId.story = {
@@ -114,7 +119,7 @@ WithTestId.story = {
   }
 };
 
-export const WithDialog: ToastStory = (args) => (
+export const WithDialog: ToastStory = args => (
   <DialogTrigger isDismissable>
     <Button variant="accent">Open dialog</Button>
     <Dialog>
@@ -141,7 +146,7 @@ WithDialog.story = {
   }
 };
 
-export const MultipleToastContainers: StoryFn<typeof Multiple> = (args) => <Multiple {...args} />;
+export const MultipleToastContainers: StoryFn<typeof Multiple> = args => <Multiple {...args} />;
 
 MultipleToastContainers.story = {
   name: 'multiple ToastContainers',
@@ -159,7 +164,7 @@ MultipleToastContainers.story = {
   }
 };
 
-export const ProgrammaticallyClosing: ToastStory = (args) => <ToastToggle {...args} />;
+export const ProgrammaticallyClosing: ToastStory = args => <ToastToggle {...args} />;
 
 ProgrammaticallyClosing.story = {
   name: 'programmatically closing',
@@ -198,17 +203,23 @@ function RenderProvider(options: SpectrumToastOptions): JSX.Element {
   return (
     <ButtonGroup>
       <Button
-        onPress={() => ToastQueue.neutral('Toast available', {...options, onClose: action('onClose')})}
+        onPress={() =>
+          ToastQueue.neutral('Toast available', {...options, onClose: action('onClose')})
+        }
         variant="secondary">
         Show Neutral Toast
       </Button>
       <Button
-        onPress={() => ToastQueue.positive('Toast is done!', {...options, onClose: action('onClose')})}
+        onPress={() =>
+          ToastQueue.positive('Toast is done!', {...options, onClose: action('onClose')})
+        }
         variant="primary">
         Show Positive Toast
       </Button>
       <Button
-        onPress={() => ToastQueue.negative('Toast is burned!', {...options, onClose: action('onClose')})}
+        onPress={() =>
+          ToastQueue.negative('Toast is burned!', {...options, onClose: action('onClose')})
+        }
         variant="negative">
         Show Negative Toast
       </Button>
@@ -229,7 +240,10 @@ function ToastToggle(options: SpectrumToastOptions) {
     <Button
       onPress={() => {
         if (!close) {
-          let close = ToastQueue.negative('Unable to save', {...options, onClose: () => setClose(null)});
+          let close = ToastQueue.negative('Unable to save', {
+            ...options,
+            onClose: () => setClose(null)
+          });
           setClose(() => close);
         } else {
           close();
@@ -246,7 +260,9 @@ function Multiple(options: SpectrumToastOptions & {placement: ToastPlacement}): 
 
   return (
     <Flex direction="column">
-      <Checkbox isSelected={isMounted1} onChange={setMounted1}>First mounted</Checkbox>
+      <Checkbox isSelected={isMounted1} onChange={setMounted1}>
+        First mounted
+      </Checkbox>
       {isMounted1 && <ToastContainer placement={options.placement} />}
       <MultipleInner />
       <RenderProvider {...options} />
@@ -259,7 +275,9 @@ function MultipleInner() {
 
   return (
     <>
-      <Checkbox isSelected={isMounted2} onChange={setMounted2}>Second mounted</Checkbox>
+      <Checkbox isSelected={isMounted2} onChange={setMounted2}>
+        Second mounted
+      </Checkbox>
       {isMounted2 && <ToastContainer />}
     </>
   );
@@ -274,14 +292,14 @@ function IframeExample() {
     let document = window.document;
 
     // Catch toasts inside the iframe and redirect them outside.
-    window.addEventListener('react-spectrum-toast', (e) => {
+    window.addEventListener('react-spectrum-toast', e => {
       let evt = e as CustomEvent;
       evt.preventDefault();
       ToastQueue[evt.detail.variant](evt.detail.children, evt.detail.options);
     });
 
     let prevFocusedElement: HTMLElement | null = null;
-    window.addEventListener('react-aria-landmark-navigation', (e) => {
+    window.addEventListener('react-aria-landmark-navigation', e => {
       let evt = e as CustomEvent;
       evt.preventDefault();
       let el = document.activeElement;
@@ -314,7 +332,13 @@ function IframeExample() {
     window.addEventListener('message', e => {
       if (e.data.type === 'landmark-navigation') {
         // (Can't use LandmarkController in this example because we need the controller instance inside the iframe)
-        document.body.dispatchEvent(new KeyboardEvent('keydown', {key: 'F6', shiftKey: e.data.direction === 'backward', bubbles: true}));
+        document.body.dispatchEvent(
+          new KeyboardEvent('keydown', {
+            key: 'F6',
+            shiftKey: e.data.direction === 'backward',
+            bubbles: true
+          })
+        );
       }
     });
   };
@@ -336,16 +360,19 @@ function IframeExample() {
   }, [controller]);
 
   let ref = useRef<HTMLIFrameElement | null>(null);
-  let {landmarkProps} = useLandmark({
-    role: 'main',
-    focus(direction) {
-      // when iframe landmark receives focus via landmark navigation, go to first/last landmark inside iframe.
-      ref.current!.contentWindow!.postMessage({
-        type: 'landmark-navigation',
-        direction
-      });
-    }
-  }, ref);
+  let {landmarkProps} = useLandmark(
+    {
+      role: 'main',
+      focus(direction) {
+        // when iframe landmark receives focus via landmark navigation, go to first/last landmark inside iframe.
+        ref.current!.contentWindow!.postMessage({
+          type: 'landmark-navigation',
+          direction
+        });
+      }
+    },
+    ref
+  );
 
   return (
     <iframe
@@ -356,18 +383,28 @@ function IframeExample() {
       height="500"
       src="iframe.html?providerSwitcher-express=false&providerSwitcher-toastPosition=bottom&viewMode=story&id=toast--with-dialog"
       onLoad={onLoad}
-      tabIndex={-1} />
+      tabIndex={-1}
+    />
   );
 }
 
 function MainLandmark(props) {
   let ref = useRef<HTMLElement | null>(null);
   let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
-  return <main aria-label="Danni's unicorn corral" ref={ref} {...props} {...landmarkProps} style={{padding: 40, background: 'white'}}>{props.children}</main>;
+  return (
+    <main
+      aria-label="Danni's unicorn corral"
+      ref={ref}
+      {...props}
+      {...landmarkProps}
+      style={{padding: 40, background: 'white'}}>
+      {props.children}
+    </main>
+  );
 }
 
 export const withFullscreen: StoryObj<typeof FullscreenApp> = {
-  render: (args) => <FullscreenApp {...args} />,
+  render: args => <FullscreenApp {...args} />,
   parameters: {
     disableToastContainer: true
   }
@@ -389,7 +426,16 @@ function FullscreenApp(props: SpectrumToastOptions & {placement: ToastPlacement}
     return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
   }, []);
   return (
-    <div ref={ref} style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'white'}}>
+    <div
+      ref={ref}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: 'white'
+      }}>
       <UNSAFE_PortalProvider getContainer={() => ref.current}>
         <RenderProvider {...props} />
         <ActionButton onPress={fullscreenPress}>Enter fullscreen</ActionButton>

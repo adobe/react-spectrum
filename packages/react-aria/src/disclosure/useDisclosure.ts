@@ -22,20 +22,20 @@ import {useLayoutEffect} from '../utils/useLayoutEffect';
 
 export interface AriaDisclosureProps {
   /** Whether the disclosure is disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** Handler that is called when the disclosure's expanded state changes. */
-  onExpandedChange?: (isExpanded: boolean) => void,
+  onExpandedChange?: (isExpanded: boolean) => void;
   /** Whether the disclosure is expanded (controlled). */
-  isExpanded?: boolean,
+  isExpanded?: boolean;
   /** Whether the disclosure is expanded by default (uncontrolled). */
-  defaultExpanded?: boolean
+  defaultExpanded?: boolean;
 }
 
 export interface DisclosureAria {
   /** Props for the disclosure button. */
-  buttonProps: AriaButtonProps,
+  buttonProps: AriaButtonProps;
   /** Props for the disclosure panel. */
-  panelProps: HTMLAttributes<HTMLElement>
+  panelProps: HTMLAttributes<HTMLElement>;
 }
 
 /**
@@ -44,10 +44,12 @@ export interface DisclosureAria {
  * @param state - State for the disclosure, as returned by `useDisclosureState`.
  * @param ref - A ref for the disclosure panel.
  */
-export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState, ref: RefObject<HTMLElement | null>): DisclosureAria {
-  let {
-    isDisabled
-  } = props;
+export function useDisclosure(
+  props: AriaDisclosureProps,
+  state: DisclosureState,
+  ref: RefObject<HTMLElement | null>
+): DisclosureAria {
+  let {isDisabled} = props;
   let triggerId = useId();
   let panelId = useId();
   let isSSR = useIsSSR();
@@ -140,7 +142,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
       id: triggerId,
       'aria-expanded': state.isExpanded,
       'aria-controls': panelId,
-      onPress: (e) => {
+      onPress: e => {
         if (!isDisabled && e.pointerType !== 'keyboard') {
           state.toggle();
         }

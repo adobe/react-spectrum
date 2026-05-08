@@ -30,18 +30,19 @@ export interface AvatarProps {
    *
    * @default null
    */
-  alt?: string,
+  alt?: string;
   /**
    * The image URL for the avatar.
    */
-  src: string
+  src: string;
 }
 
-export interface SpectrumAvatarProps extends AvatarProps, DOMProps, Omit<StyleProps, 'width' | 'height'> {
+export interface SpectrumAvatarProps
+  extends AvatarProps, DOMProps, Omit<StyleProps, 'width' | 'height'> {
   /**
    * Whether the avatar is disabled.
    */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /**
    * Size of the avatar. Affects both height and width.
    *
@@ -60,21 +61,18 @@ export interface SpectrumAvatarProps extends AvatarProps, DOMProps, Omit<StylePr
     // This allows autocomplete to work properly and not collapse the above options into just `string`.
     // See https://github.com/microsoft/TypeScript/issues/29729.
     | (string & {})
-    | number
+    | number;
 }
 
 /**
  * An avatar is a thumbnail representation of an entity, such as a user or an organization.
  */
-export const Avatar = forwardRef(function Avatar(props: SpectrumAvatarProps, ref: DOMRef<HTMLImageElement>) {
+export const Avatar = forwardRef(function Avatar(
+  props: SpectrumAvatarProps,
+  ref: DOMRef<HTMLImageElement>
+) {
   props = useSlotProps(props, 'avatar');
-  const {
-    alt = '',
-    isDisabled,
-    size = DEFAULT_SIZE,
-    src,
-    ...otherProps
-  } = useProviderProps(props);
+  const {alt = '', isDisabled, size = DEFAULT_SIZE, src, ...otherProps} = useProviderProps(props);
 
   const {styleProps} = useStyleProps(otherProps);
   const domRef = useDOMRef(ref);
@@ -83,9 +81,10 @@ export const Avatar = forwardRef(function Avatar(props: SpectrumAvatarProps, ref
 
   // Casting `size` as `any` since `isNaN` expects a `number`, but we want it
   // to handle `string` numbers; e.g. '300' as opposed to 300
-  const sizeValue = typeof size !== 'number' && (SIZE_RE.test(size) || !isNaN(size as any))
-    ? dimensionValue(DEFAULT_SIZE) // override disallowed size values
-    : dimensionValue(size || DEFAULT_SIZE);
+  const sizeValue =
+    typeof size !== 'number' && (SIZE_RE.test(size) || !isNaN(size as any))
+      ? dimensionValue(DEFAULT_SIZE) // override disallowed size values
+      : dimensionValue(size || DEFAULT_SIZE);
 
   return (
     <img
@@ -98,12 +97,14 @@ export const Avatar = forwardRef(function Avatar(props: SpectrumAvatarProps, ref
         {
           'is-disabled': isDisabled
         },
-        styleProps.className)}
+        styleProps.className
+      )}
       ref={domRef}
       src={src}
       style={{
         ...styleProps.style,
         ...(sizeValue && {height: sizeValue, width: sizeValue})
-      }} />
+      }}
+    />
   );
 });

@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {DisabledBehavior, FocusStrategy, Key, MultipleSelection, SelectionBehavior, SelectionMode} from '@react-types/shared';
+import {
+  DisabledBehavior,
+  FocusStrategy,
+  Key,
+  MultipleSelection,
+  SelectionBehavior,
+  SelectionMode
+} from '@react-types/shared';
 import {MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 import {useControlledState} from '../utils/useControlledState';
@@ -35,20 +42,22 @@ export interface MultipleSelectionStateProps extends MultipleSelection {
    * How multiple selection should behave in the collection.
    * @default 'toggle'
    */
-  selectionBehavior?: SelectionBehavior,
+  selectionBehavior?: SelectionBehavior;
   /** Whether onSelectionChange should fire even if the new set of keys is the same as the last. */
-  allowDuplicateSelectionEvents?: boolean,
+  allowDuplicateSelectionEvents?: boolean;
   /**
    * Whether `disabledKeys` applies to all interactions, or only selection.
    * @default 'all'
    */
-  disabledBehavior?: DisabledBehavior
+  disabledBehavior?: DisabledBehavior;
 }
 
 /**
  * Manages state for multiple selection and focus in a collection.
  */
-export function useMultipleSelectionState(props: MultipleSelectionStateProps): MultipleSelectionState {
+export function useMultipleSelectionState(
+  props: MultipleSelectionStateProps
+): MultipleSelectionState {
   let {
     selectionMode = 'none' as SelectionMode,
     disallowEmptySelection = false,
@@ -65,20 +74,29 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
   let childFocusStrategyRef = useRef<FocusStrategy | null>(null);
   let [, setFocusedKey] = useState<Key | null>(null);
   let selectedKeysProp = useMemo(() => convertSelection(props.selectedKeys), [props.selectedKeys]);
-  let defaultSelectedKeys = useMemo(() => convertSelection(props.defaultSelectedKeys, new Selection()), [props.defaultSelectedKeys]);
+  let defaultSelectedKeys = useMemo(
+    () => convertSelection(props.defaultSelectedKeys, new Selection()),
+    [props.defaultSelectedKeys]
+  );
   let [selectedKeys, setSelectedKeys] = useControlledState(
     selectedKeysProp,
     defaultSelectedKeys!,
     props.onSelectionChange
   );
-  let disabledKeysProp = useMemo(() =>
-    props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
-  , [props.disabledKeys]);
+  let disabledKeysProp = useMemo(
+    () => (props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()),
+    [props.disabledKeys]
+  );
   let [selectionBehavior, setSelectionBehavior] = useState(selectionBehaviorProp);
 
   // If the selectionBehavior prop is set to replace, but the current state is toggle (e.g. due to long press
   // to enter selection mode on touch), and the selection becomes empty, reset the selection behavior.
-  if (selectionBehaviorProp === 'replace' && selectionBehavior === 'toggle' && typeof selectedKeys === 'object' && selectedKeys.size === 0) {
+  if (
+    selectionBehaviorProp === 'replace' &&
+    selectionBehavior === 'toggle' &&
+    typeof selectedKeys === 'object' &&
+    selectedKeys.size === 0
+  ) {
     setSelectionBehavior('replace');
   }
 
@@ -125,12 +143,13 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
   };
 }
 
-function convertSelection(selection: 'all' | Iterable<Key> | null | undefined, defaultValue?: Selection): 'all' | Set<Key> | undefined {
+function convertSelection(
+  selection: 'all' | Iterable<Key> | null | undefined,
+  defaultValue?: Selection
+): 'all' | Set<Key> | undefined {
   if (!selection) {
     return defaultValue;
   }
 
-  return selection === 'all'
-    ? 'all'
-    : new Selection(selection);
+  return selection === 'all' ? 'all' : new Selection(selection);
 }

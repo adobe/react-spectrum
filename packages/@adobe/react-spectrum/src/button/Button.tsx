@@ -35,22 +35,23 @@ import {useStyleProps} from '../utils/styleProps';
 
 /** @deprecated */
 type LegacyButtonVariant = 'cta' | 'overBackground';
-export interface SpectrumButtonProps<T extends ElementType = 'button'> extends Omit<AriaButtonProps<T>, 'onClick'>, StyleProps {
+export interface SpectrumButtonProps<T extends ElementType = 'button'>
+  extends Omit<AriaButtonProps<T>, 'onClick'>, StyleProps {
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
-  variant: 'accent' | 'primary' | 'secondary' | 'negative' | LegacyButtonVariant,
+  variant: 'accent' | 'primary' | 'secondary' | 'negative' | LegacyButtonVariant;
   /** The background style of the button. */
-  style?: 'fill' | 'outline',
+  style?: 'fill' | 'outline';
   /** The static color style to apply. Useful when the button appears over a color background. */
-  staticColor?: 'white' | 'black',
+  staticColor?: 'white' | 'black';
   /**
    * Whether to disable events immediately and display a loading spinner after a 1 second delay.
    */
-  isPending?: boolean,
+  isPending?: boolean;
   /**
    * Whether the button should be displayed with a quiet style.
    * @deprecated
    */
-  isQuiet?: boolean
+  isQuiet?: boolean;
 }
 
 function disablePendingProps(props) {
@@ -74,7 +75,10 @@ function disablePendingProps(props) {
  * They have multiple styles for various needs, and are ideal for calling attention to
  * where a user needs to do something in order to move forward in a flow.
  */
-export const Button = React.forwardRef(function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>, ref: FocusableRef<HTMLElement>) {
+export const Button = React.forwardRef(function Button<T extends ElementType = 'button'>(
+  props: SpectrumButtonProps<T>,
+  ref: FocusableRef<HTMLElement>
+) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'button');
   props = disablePendingProps(props);
@@ -132,25 +136,30 @@ export const Button = React.forwardRef(function Button<T extends ElementType = '
     staticColor = 'white';
   }
 
-  const isPendingAriaLiveLabel = `${hasAriaLabel ? buttonProps['aria-label'] : ''} ${stringFormatter.format('pending')}`.trim();
-  const isPendingAriaLiveLabelledby = hasAriaLabel ? (buttonProps['aria-labelledby']?.replace(buttonId, spinnerId) ?? spinnerId) : `${hasIcon ? iconId : ''} ${hasLabel ? textId : ''} ${spinnerId}`.trim();
+  const isPendingAriaLiveLabel =
+    `${hasAriaLabel ? buttonProps['aria-label'] : ''} ${stringFormatter.format('pending')}`.trim();
+  const isPendingAriaLiveLabelledby = hasAriaLabel
+    ? (buttonProps['aria-labelledby']?.replace(buttonId, spinnerId) ?? spinnerId)
+    : `${hasIcon ? iconId : ''} ${hasLabel ? textId : ''} ${spinnerId}`.trim();
 
   let ariaLive: 'off' | 'polite' | 'assertive' = 'polite';
   if (isAppleDevice() && (!hasAriaLabel || isFirefox())) {
     ariaLive = 'off';
   }
 
-  let isPendingProps = isPending ? {
-    onClick: (e) => {
-      if (e.currentTarget instanceof HTMLButtonElement) {
-        e.preventDefault();
+  let isPendingProps = isPending
+    ? {
+        onClick: e => {
+          if (e.currentTarget instanceof HTMLButtonElement) {
+            e.preventDefault();
+          }
+        }
       }
-    }
-  } : {
-    // no-op. 
-    // Not sure why, but TypeScript wouldn't allow to have an empty object `{}`.
-    onClick: () => {}
-  };
+    : {
+        // no-op.
+        // Not sure why, but TypeScript wouldn't allow to have an empty object `{}`.
+        onClick: () => {}
+      };
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
@@ -165,20 +174,18 @@ export const Button = React.forwardRef(function Button<T extends ElementType = '
         aria-disabled={isPending ? 'true' : undefined}
         aria-label={isPending ? isPendingAriaLiveLabel : buttonProps['aria-label']}
         aria-labelledby={isPending ? isPendingAriaLiveLabelledby : buttonProps['aria-labelledby']}
-        className={
-          classNames(
-            styles,
-            'spectrum-Button',
-            {
-              'spectrum-Button--iconOnly': hasIcon && !hasLabel,
-              'is-disabled': isDisabled || isProgressVisible,
-              'is-active': isPressed,
-              'is-hovered': isHovered,
-              'spectrum-Button--pending': isProgressVisible
-            },
-            styleProps.className
-          )
-        }>
+        className={classNames(
+          styles,
+          'spectrum-Button',
+          {
+            'spectrum-Button--iconOnly': hasIcon && !hasLabel,
+            'is-disabled': isDisabled || isProgressVisible,
+            'is-active': isPressed,
+            'is-hovered': isHovered,
+            'spectrum-Button--pending': isProgressVisible
+          },
+          styleProps.className
+        )}>
         <SlotProvider
           slots={{
             icon: {
@@ -191,9 +198,7 @@ export const Button = React.forwardRef(function Button<T extends ElementType = '
               UNSAFE_className: classNames(styles, 'spectrum-Button-label')
             }
           }}>
-          {typeof children === 'string'
-            ? <Text>{children}</Text>
-            : children}
+          {typeof children === 'string' ? <Text>{children}</Text> : children}
           {isPending && (
             <div
               aria-hidden="true"
@@ -203,15 +208,16 @@ export const Button = React.forwardRef(function Button<T extends ElementType = '
                 aria-label={isPendingAriaLiveLabel}
                 isIndeterminate
                 size="S"
-                staticColor={staticColor} />
+                staticColor={staticColor}
+              />
             </div>
           )}
-          {isPending &&
+          {isPending && (
             <>
               <div aria-live={isFocused ? ariaLive : 'off'}>
-                {isProgressVisible &&
+                {isProgressVisible && (
                   <div role="img" aria-labelledby={isPendingAriaLiveLabelledby} />
-                }
+                )}
               </div>
               {/* Adding the element here with the same labels as the button itself causes aria-live to pick up the change in Safari.
               Safari with VO unfortunately doesn't announce changes to *all* of its labels specifically for button
@@ -219,9 +225,11 @@ export const Button = React.forwardRef(function Button<T extends ElementType = '
               The aria-live may cause extra announcements in other browsers. */}
               <div id={spinnerId} role="img" aria-label={isPendingAriaLiveLabel} />
             </>
-          }
+          )}
         </SlotProvider>
       </Element>
     </FocusRing>
   );
-}) as <T extends ElementType = 'button'>(props: SpectrumButtonProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+}) as <T extends ElementType = 'button'>(
+  props: SpectrumButtonProps<T> & {ref?: FocusableRef<HTMLElement>}
+) => ReactElement;

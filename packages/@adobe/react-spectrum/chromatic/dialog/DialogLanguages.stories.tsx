@@ -45,13 +45,15 @@ export default {
 
 export type DialogLanguagesStory = StoryFn<typeof Dialog>;
 
-export let TranslateDialogRender = (dialogProps: Omit<SpectrumDialogTriggerProps, 'children'>): JSX.Element => {
+export let TranslateDialogRender = (
+  dialogProps: Omit<SpectrumDialogTriggerProps, 'children'>
+): JSX.Element => {
   let strings = useLocalizedStringFormatter(intlMessages);
 
   return (
     <DialogTrigger {...dialogProps}>
       <ActionButton>{strings.format('koji')}</ActionButton>
-      {(close) => (
+      {close => (
         <Dialog>
           <Heading>{strings.format('kojiFoods')}</Heading>
           <Header>{strings.format('foodsMakeWithKoji')}</Header>
@@ -96,8 +98,12 @@ export let TranslateDialogRender = (dialogProps: Omit<SpectrumDialogTriggerProps
             </TableView>
           </Content>
           <ButtonGroup>
-            <Button variant="secondary" onPress={close}>{strings.format('cancel')}</Button>
-            <Button variant="cta" onPress={close}>{strings.format('confirm')}</Button>
+            <Button variant="secondary" onPress={close}>
+              {strings.format('cancel')}
+            </Button>
+            <Button variant="cta" onPress={close}>
+              {strings.format('confirm')}
+            </Button>
           </ButtonGroup>
         </Dialog>
       )}
@@ -105,7 +111,7 @@ export let TranslateDialogRender = (dialogProps: Omit<SpectrumDialogTriggerProps
   );
 };
 
-export let TranslateDialog: DialogLanguagesStory = (args) => <TranslateDialogRender {...args} />;
+export let TranslateDialog: DialogLanguagesStory = args => <TranslateDialogRender {...args} />;
 
 export const ArabicComplex: DialogLanguagesStory = () => (
   <Provider locale="ar-AE">

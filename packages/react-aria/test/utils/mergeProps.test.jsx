@@ -11,17 +11,17 @@
  */
 
 import clsx from 'clsx';
-import { mergeIds, useId } from '../../src/utils/useId';
-import { mergeProps } from '../../src/utils/mergeProps';
-import { render } from '@react-spectrum/test-utils-internal';
-import { createRef } from 'react';
+import {mergeIds, useId} from '../../src/utils/useId';
+import {mergeProps} from '../../src/utils/mergeProps';
+import {render} from '@react-spectrum/test-utils-internal';
+import {createRef} from 'react';
 
 describe('mergeProps', function () {
   it('handles one argument', function () {
-    let onClick = () => { };
+    let onClick = () => {};
     let className = 'primary';
     let id = 'test_id';
-    let mergedProps = mergeProps({ onClick, className, id });
+    let mergedProps = mergeProps({onClick, className, id});
     expect(mergedProps.onClick).toBe(onClick);
     expect(mergedProps.className).toBe(className);
     expect(mergedProps.id).toBe(id);
@@ -33,9 +33,9 @@ describe('mergeProps', function () {
     let message2 = 'click2';
     let message3 = 'click3';
     let mergedProps = mergeProps(
-      { onClick: () => mockFn(message1) },
-      { onClick: () => mockFn(message2) },
-      { onClick: () => mockFn(message3) }
+      {onClick: () => mockFn(message1)},
+      {onClick: () => mockFn(message2)},
+      {onClick: () => mockFn(message3)}
     );
     mergedProps.onClick();
     expect(mockFn).toHaveBeenNthCalledWith(1, message1);
@@ -52,9 +52,9 @@ describe('mergeProps', function () {
     let focus = 'focus';
     let margin = 2;
     const mergedProps = mergeProps(
-      { onClick: () => mockFn(click1) },
-      { onHover: () => mockFn(hover), styles: { margin } },
-      { onClick: () => mockFn(click2), onFocus: () => mockFn(focus) }
+      {onClick: () => mockFn(click1)},
+      {onHover: () => mockFn(hover), styles: {margin}},
+      {onClick: () => mockFn(click2), onFocus: () => mockFn(focus)}
     );
     mergedProps.onClick();
     let callOrder = mockFn.mock.invocationCallOrder;
@@ -73,7 +73,11 @@ describe('mergeProps', function () {
     let className1 = 'primary';
     let className2 = 'hover';
     let className3 = 'focus';
-    let mergedProps = mergeProps({ className: className1 }, { className: className2 }, { className: className3 });
+    let mergedProps = mergeProps(
+      {className: className1},
+      {className: className2},
+      {className: className3}
+    );
     let mergedClassNames = clsx(className1, className2, className3);
     expect(mergedProps.className).toBe(mergedClassNames);
   });
@@ -82,28 +86,28 @@ describe('mergeProps', function () {
     let id1 = 'id1';
     let id2 = 'id2';
     let id3 = 'id3';
-    let mergedProps = mergeProps({ id: id1 }, { id: id2 }, { id: id3 });
+    let mergedProps = mergeProps({id: id1}, {id: id2}, {id: id3});
     let mergedIds = mergeIds(mergeIds(id1, id2), id3);
     expect(mergedProps.id).toBe(mergedIds);
   });
 
   it('combines ids with aria ids', function () {
-    let Spy = jest.fn((props) => <div {...props} />);
+    let Spy = jest.fn(props => <div {...props} />);
 
     const Component = () => {
       let id1 = 'id1';
       let id2 = useId('id2');
 
-      mergeProps({ id: id1 }, { id: id2 });
+      mergeProps({id: id1}, {id: id2});
 
-      return <Spy id={id2} />
+      return <Spy id={id2} />;
     };
 
     render(<Component />);
 
     // We use stringMatching to support optional refs in React 19.
-    expect(Spy).toHaveBeenCalledWith({ id: 'id2' }, expect.not.stringMatching(/\A(?!x)x/));
-    expect(Spy).toHaveBeenLastCalledWith({ id: 'id1' }, expect.not.stringMatching(/\A(?!x)x/));
+    expect(Spy).toHaveBeenCalledWith({id: 'id2'}, expect.not.stringMatching(/\A(?!x)x/));
+    expect(Spy).toHaveBeenLastCalledWith({id: 'id1'}, expect.not.stringMatching(/\A(?!x)x/));
   });
 
   it('combines reoccuring ids', function () {
@@ -111,7 +115,7 @@ describe('mergeProps', function () {
       let id1 = useId('id1');
       let id2 = useId('id2');
 
-      return <div {...mergeProps({ id: id1 }, { id: id2 }, { id: id1 })} />;
+      return <div {...mergeProps({id: id1}, {id: id2}, {id: id1})} />;
     };
 
     expect(() => render(<Component />)).not.toThrow();
@@ -120,7 +124,7 @@ describe('mergeProps', function () {
   it('overrides other props', function () {
     let id1 = 'id1';
     let id2 = 'id2';
-    let mergedProps = mergeProps({ data: id1 }, { data: id2 });
+    let mergedProps = mergeProps({data: id1}, {data: id2});
     expect(mergedProps.data).toBe(id2);
   });
 

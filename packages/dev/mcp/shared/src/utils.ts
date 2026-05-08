@@ -2,7 +2,12 @@ export function errorToString(err: unknown): string {
   if (err && typeof err === 'object' && 'stack' in err && typeof (err as any).stack === 'string') {
     return (err as any).stack as string;
   }
-  if (err && typeof err === 'object' && 'message' in err && typeof (err as any).message === 'string') {
+  if (
+    err &&
+    typeof err === 'object' &&
+    'message' in err &&
+    typeof (err as any).message === 'string'
+  ) {
     return (err as any).message as string;
   }
   try {

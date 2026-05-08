@@ -33,27 +33,33 @@ const propertyMappings = {
 };
 
 interface MacroValue {
-  key: string,
-  value: object | string | number | boolean
+  key: string;
+  value: object | string | number | boolean;
 }
 
 interface DynamicValue {
-  key: string,
-  value: t.ObjectProperty['value']
+  key: string;
+  value: t.ObjectProperty['value'];
 }
 
 interface Condition {
-  key: string,
-  value: t.ObjectProperty['value']
+  key: string;
+  value: t.ObjectProperty['value'];
 }
 
 export interface StylePropValue {
-  macroValues: MacroValue[],
-  dynamicValues?: DynamicValue[],
-  conditions?: Condition[]
+  macroValues: MacroValue[];
+  dynamicValues?: DynamicValue[];
+  conditions?: Condition[];
 }
 
-function getStylePropValue(prop: string, value: t.ObjectProperty['value'], element: string, colorVersion: number | null, condition = ''): StylePropValue | null | undefined {
+function getStylePropValue(
+  prop: string,
+  value: t.ObjectProperty['value'],
+  element: string,
+  colorVersion: number | null,
+  condition = ''
+): StylePropValue | null | undefined {
   let mappedProp: string = propertyMappings[prop as keyof typeof propertyMappings] || prop;
   // let customProp = `--${mappedProp}${condition ? '-' + condition : ''}`;
   switch (prop) {
@@ -141,7 +147,11 @@ function getStylePropValue(prop: string, value: t.ObjectProperty['value'], eleme
       // return [mappedProp, customProp, [[customProp, value]]];
       return null;
     case 'flex':
-      if (value.type === 'BooleanLiteral' || value.type === 'StringLiteral' || value.type === 'NumericLiteral') {
+      if (
+        value.type === 'BooleanLiteral' ||
+        value.type === 'StringLiteral' ||
+        value.type === 'NumericLiteral'
+      ) {
         let val: any = value.value;
         if (val === true) {
           val = 1;
@@ -213,7 +223,7 @@ function getStylePropValue(prop: string, value: t.ObjectProperty['value'], eleme
       if (element === 'Flex' && value.type === 'BooleanLiteral') {
         value = {type: 'StringLiteral', value: 'wrap'};
       }
-      // fallthrough
+    // fallthrough
     case 'direction':
       if (element === 'Flex') {
         if (value.type === 'StringLiteral') {
@@ -232,22 +242,32 @@ function getStylePropValue(prop: string, value: t.ObjectProperty['value'], eleme
       break;
     case 'areas':
       if (element === 'Grid') {
-        if (value.type === 'ArrayExpression' && value.elements.every(e => e?.type === 'StringLiteral')) {
+        if (
+          value.type === 'ArrayExpression' &&
+          value.elements.every(e => e?.type === 'StringLiteral')
+        ) {
           return {
-            macroValues: [{key: mappedProp, value: value.elements.map(e => e?.type === 'StringLiteral' && e.value)}]
+            macroValues: [
+              {
+                key: mappedProp,
+                value: value.elements.map(e => e?.type === 'StringLiteral' && e.value)
+              }
+            ]
           };
         } else if (value.type === 'ObjectExpression') {
           return getResponsiveValue(prop, value, element, colorVersion);
         } else {
           let val = t.callExpression(
             t.memberExpression(
-              t.callExpression(
-                t.memberExpression(value as any, t.identifier('map')),
-                [t.arrowFunctionExpression(
+              t.callExpression(t.memberExpression(value as any, t.identifier('map')), [
+                t.arrowFunctionExpression(
                   [t.identifier('v')],
-                  t.templateLiteral([t.templateElement({raw: '"'}, false), t.templateElement({raw: '"'}, true)], [t.identifier('v')])
-                )]
-              ),
+                  t.templateLiteral(
+                    [t.templateElement({raw: '"'}, false), t.templateElement({raw: '"'}, true)],
+                    [t.identifier('v')]
+                  )
+                )
+              ]),
               t.identifier('join')
             ),
             [t.stringLiteral('')]
@@ -277,8 +297,10 @@ function getStylePropValue(prop: string, value: t.ObjectProperty['value'], eleme
                 element.callee.type === 'Identifier' &&
                 element.callee.name === 'minmax' &&
                 element.arguments.length === 2 &&
-                (element.arguments[0].type === 'StringLiteral' || element.arguments[0].type === 'NumericLiteral') &&
-                (element.arguments[1].type === 'StringLiteral' || element.arguments[1].type === 'NumericLiteral')
+                (element.arguments[0].type === 'StringLiteral' ||
+                  element.arguments[0].type === 'NumericLiteral') &&
+                (element.arguments[1].type === 'StringLiteral' ||
+                  element.arguments[1].type === 'NumericLiteral')
               ) {
                 // TODO: use theme value somehow?
                 let min = convertGridTrack(element.arguments[0].value, true);
@@ -456,16 +478,26 @@ const breakpoints = {
   L: 'lg'
 };
 
-function getResponsiveValue(prop: string, value: t.ObjectExpression, element: string, colorVersion: number | null): StylePropValue | null | undefined {
+function getResponsiveValue(
+  prop: string,
+  value: t.ObjectExpression,
+  element: string,
+  colorVersion: number | null
+): StylePropValue | null | undefined {
   let res: Record<string, any> = {};
   let custom: any[] = [];
   for (let property of value.properties) {
-    if (property.type === 'ObjectProperty' && property.key.type === 'Identifier' && property.key.name in breakpoints) {
+    if (
+      property.type === 'ObjectProperty' &&
+      property.key.type === 'Identifier' &&
+      property.key.name in breakpoints
+    ) {
       let propertyValue = getPropValue(property.value);
       if (propertyValue && propertyValue.type !== 'ObjectExpression') {
         let val = getStylePropValue(prop, propertyValue, element, colorVersion, property.key.name);
         if (val && val.macroValues) {
-          res[breakpoints[property.key.name as keyof typeof breakpoints]] = val.macroValues[0].value;
+          res[breakpoints[property.key.name as keyof typeof breakpoints]] =
+            val.macroValues[0].value;
         }
 
         if (val && val.dynamicValues) {
@@ -481,19 +513,17 @@ function getResponsiveValue(prop: string, value: t.ObjectExpression, element: st
   }
 
   return {
-    macroValues: [{
-      key: prop,
-      value: res
-    }],
+    macroValues: [
+      {
+        key: prop,
+        value: res
+      }
+    ],
     dynamicValues: custom
   };
 }
 
-function handleProp(
-  path: NodePath<t.JSXAttribute>,
-  element: string,
-  colorVersion: number | null
-) {
+function handleProp(path: NodePath<t.JSXAttribute>, element: string, colorVersion: number | null) {
   let node = path.node;
   if (node.name.type !== 'JSXIdentifier') {
     return;
@@ -591,12 +621,16 @@ function expandSpaceShorthand(
   }
 }
 
-export default function transformStyleProps(path: NodePath<t.JSXElement>, element: string): {hasMacros: boolean, usedLightDark: boolean} {
-  let macroValues = new Map<string, object | string | number | boolean>;
-  let dynamicValues = new Map<string, t.ObjectProperty['value']>;
-  let conditions = new Map<string, t.ObjectProperty['value']>;
+export default function transformStyleProps(
+  path: NodePath<t.JSXElement>,
+  element: string
+): {hasMacros: boolean; usedLightDark: boolean} {
+  let macroValues = new Map<string, object | string | number | boolean>();
+  let dynamicValues = new Map<string, t.ObjectProperty['value']>();
+  let conditions = new Map<string, t.ObjectProperty['value']>();
 
-  let isDOMElement = element === 'Flex' || element === 'Grid' || element === 'View' || element === 'Well';
+  let isDOMElement =
+    element === 'Flex' || element === 'Grid' || element === 'View' || element === 'Well';
   if (element === 'Flex') {
     macroValues.set('display', 'flex');
   } else if (element === 'Grid') {
@@ -675,7 +709,9 @@ export default function transformStyleProps(path: NodePath<t.JSXElement>, elemen
     hasMacros = true;
     let classNameAttribute;
     if (isDOMElement) {
-      let index = path.node.openingElement.attributes?.findIndex(a => a.type === 'JSXAttribute' && a.name.name === 'className');
+      let index = path.node.openingElement.attributes?.findIndex(
+        a => a.type === 'JSXAttribute' && a.name.name === 'className'
+      );
       if (index != null && index >= 0) {
         classNameAttribute = path.get('openingElement').get('attributes')[index];
       }
@@ -685,11 +721,21 @@ export default function transformStyleProps(path: NodePath<t.JSXElement>, elemen
       if (Array.isArray(v)) {
         return t.arrayExpression(v.map(v => valueToAST(v)));
       } else if (typeof v === 'object') {
-        if ('default' in v && typeof v.default === 'string' && 'dark' in v && typeof v.dark === 'string') {
+        if (
+          'default' in v &&
+          typeof v.default === 'string' &&
+          'dark' in v &&
+          typeof v.dark === 'string'
+        ) {
           usedLightDark = true;
-          return t.callExpression(t.identifier('lightDark'), [t.stringLiteral(v.default), t.stringLiteral(v.dark)]);
+          return t.callExpression(t.identifier('lightDark'), [
+            t.stringLiteral(v.default),
+            t.stringLiteral(v.dark)
+          ]);
         }
-        return t.objectExpression(Object.entries(v).map(([k, v]) => t.objectProperty(t.identifier(k), valueToAST(v))));
+        return t.objectExpression(
+          Object.entries(v).map(([k, v]) => t.objectProperty(t.identifier(k), valueToAST(v)))
+        );
       } else {
         switch (typeof v) {
           case 'string':
@@ -703,57 +749,64 @@ export default function transformStyleProps(path: NodePath<t.JSXElement>, elemen
     };
 
     // Generate macro call.
-    let macroCall = t.callExpression(
-      t.identifier('style'),
-      [
-        t.objectExpression(
-          [...macroValues].map(([k, v]) => {
-            return t.objectProperty(t.identifier(k), valueToAST(v));
-          })
-        )
-      ]
-    );
+    let macroCall = t.callExpression(t.identifier('style'), [
+      t.objectExpression(
+        [...macroValues].map(([k, v]) => {
+          return t.objectProperty(t.identifier(k), valueToAST(v));
+        })
+      )
+    ]);
 
     if (conditions.size) {
-      macroCall = t.callExpression(
-        macroCall,
-        [t.objectExpression(
-          [...conditions].map(([k, v]) => t.objectProperty(t.identifier(k), v, false, v.type === 'Identifier' && v.name === k))
-        )]
-      );
+      macroCall = t.callExpression(macroCall, [
+        t.objectExpression(
+          [...conditions].map(([k, v]) =>
+            t.objectProperty(t.identifier(k), v, false, v.type === 'Identifier' && v.name === k)
+          )
+        )
+      ]);
     }
 
     if (classNameAttribute?.isJSXAttribute()) {
-      classNameAttribute.get('value').replaceWith(
-        t.jsxExpressionContainer(
-          t.binaryExpression('+', getPropValue(classNameAttribute.node.value)!, macroCall)
-        )
-      );
+      classNameAttribute
+        .get('value')
+        .replaceWith(
+          t.jsxExpressionContainer(
+            t.binaryExpression('+', getPropValue(classNameAttribute.node.value)!, macroCall)
+          )
+        );
     } else {
-      path.get('openingElement').pushContainer(
-        'attributes',
-        t.jsxAttribute(
-          t.jsxIdentifier(isDOMElement ? 'className' : 'styles'),
-          t.jsxExpressionContainer(macroCall)
-        )
-      );
+      path
+        .get('openingElement')
+        .pushContainer(
+          'attributes',
+          t.jsxAttribute(
+            t.jsxIdentifier(isDOMElement ? 'className' : 'styles'),
+            t.jsxExpressionContainer(macroCall)
+          )
+        );
     }
   }
 
   if (dynamicValues.size) {
-    path.get('openingElement').pushContainer(
-      'attributes',
-      t.jsxAttribute(
-        t.jsxIdentifier('style'),
-        t.jsxExpressionContainer(
-          t.objectExpression(
-            [...dynamicValues].map(([key, value]) =>
-              t.objectProperty(key.startsWith('--') ? t.stringLiteral(key) : t.identifier(key), value)
+    path
+      .get('openingElement')
+      .pushContainer(
+        'attributes',
+        t.jsxAttribute(
+          t.jsxIdentifier('style'),
+          t.jsxExpressionContainer(
+            t.objectExpression(
+              [...dynamicValues].map(([key, value]) =>
+                t.objectProperty(
+                  key.startsWith('--') ? t.stringLiteral(key) : t.identifier(key),
+                  value
+                )
+              )
             )
           )
         )
-      )
-    );
+      );
   }
 
   return {hasMacros, usedLightDark};

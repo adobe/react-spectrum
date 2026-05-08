@@ -15,6 +15,9 @@
       "require": "./*.js"
     }
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build-cjs": "cross-env BUILD_ENV=production babel --root-mode upward src -d . --extensions '.ts,.tsx'",
     "build-esm": "cross-env BUILD_ENV=production babel src -d . --extensions '.ts,.tsx' --out-file-extension '.module.mjs' --config-file '../../../babel-esm.config.json'",
@@ -36,8 +39,5 @@
     "@adobe/react-spectrum": "^3.47.0",
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
     "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

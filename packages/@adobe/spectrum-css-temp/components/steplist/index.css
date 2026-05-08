@@ -21,7 +21,9 @@ governing permissions and limitations under the License.
 
   /* The width of the border */
   --spectrum-steplist-marker-border-width: 2px;
-  --spectrum-steplist-marker-total-border-width: calc(var(--spectrum-steplist-marker-border-width) * 4);
+  --spectrum-steplist-marker-total-border-width: calc(
+    var(--spectrum-steplist-marker-border-width) * 4
+  );
 
   /* The height of the line */
   --spectrum-steplist-segment-height: 2px;
@@ -40,7 +42,6 @@ governing permissions and limitations under the License.
 
   /* The distance between steps in vertical  */
   --spectrum-steplist-vertical-separation: 32px;
-
 }
 
 .spectrum-Steplist {
@@ -106,9 +107,9 @@ governing permissions and limitations under the License.
 
   /* Selected state */
   &.is-selected {
-   .spectrum-Steplist-marker {
-     border-style: none;
-     border-width: 0;
+    .spectrum-Steplist-marker {
+      border-style: none;
+      border-width: 0;
     }
   }
 
@@ -216,9 +217,11 @@ governing permissions and limitations under the License.
     display: flex;
     align-items: center;
 
-    padding-inline-start: calc(var(--spectrum-steplist-chevron-gap) - var(--spectrum-steplist-marker-label-gap));
+    padding-inline-start: calc(
+      var(--spectrum-steplist-chevron-gap) - var(--spectrum-steplist-marker-label-gap)
+    );
     &::before {
-      content: "*";
+      content: '*';
       width: 0;
       visibility: hidden;
     }
@@ -239,7 +242,7 @@ governing permissions and limitations under the License.
     display: flex;
     align-items: center;
     &::before {
-      content: "*";
+      content: '*';
       width: 0;
       visibility: hidden;
     }
@@ -249,7 +252,6 @@ governing permissions and limitations under the License.
     display: none;
   }
 }
-
 
 /* vertical version */
 .spectrum-Steplist--vertical {
@@ -263,8 +265,9 @@ governing permissions and limitations under the License.
   }
   .spectrum-Steplist-link {
     display: grid;
-    grid-template-areas: "marker label"
-                         "line   label";
+    grid-template-areas:
+      'marker label'
+      'line   label';
     grid-template-columns: minmax(0, min-content) 1fr;
     grid-template-rows: minmax(16px, min-content) 1fr;
     justify-items: start;
@@ -281,7 +284,7 @@ governing permissions and limitations under the License.
     display: flex;
     align-items: center;
     &::before {
-      content: "*";
+      content: '*';
       width: 0;
       visibility: hidden;
     }
@@ -326,7 +329,7 @@ governing permissions and limitations under the License.
   /* Last step overrides */
   .spectrum-Steplist-item:last-child {
     .spectrum-Steplist-link {
-      grid-template-areas: "marker label";
+      grid-template-areas: 'marker label';
       grid-template-rows: minmax(16px, min-content);
     }
   }

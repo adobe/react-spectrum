@@ -10,20 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, FocusStrategy, HoverEvents, KeyboardEvents, PressEvents, RefObject} from '@react-types/shared';
+import {
+  DOMProps,
+  FocusStrategy,
+  HoverEvents,
+  KeyboardEvents,
+  PressEvents,
+  RefObject
+} from '@react-types/shared';
 import React, {HTMLAttributes, useContext} from 'react';
 import {RootMenuTriggerState} from 'react-stately/useMenuTriggerState';
 import {TreeState} from 'react-stately/useTreeState';
 
-export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'autoFocus' | 'onKeyDown'>, Pick<KeyboardEvents, 'onKeyDown'> {
-  onClose?: () => void,
-  closeOnSelect?: boolean,
-  shouldFocusWrap?: boolean,
-  autoFocus?: boolean | FocusStrategy,
-  ref?: RefObject<HTMLDivElement | null>,
-  state?: RootMenuTriggerState,
-  onBackButtonPress?: () => void,
-  submenuLevel?: number
+export interface MenuContextValue
+  extends
+    Omit<HTMLAttributes<HTMLElement>, 'autoFocus' | 'onKeyDown'>,
+    Pick<KeyboardEvents, 'onKeyDown'> {
+  onClose?: () => void;
+  closeOnSelect?: boolean;
+  shouldFocusWrap?: boolean;
+  autoFocus?: boolean | FocusStrategy;
+  ref?: RefObject<HTMLDivElement | null>;
+  state?: RootMenuTriggerState;
+  onBackButtonPress?: () => void;
+  submenuLevel?: number;
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});
@@ -32,31 +42,40 @@ export function useMenuContext(): MenuContextValue {
   return useContext(MenuContext);
 }
 
-export interface SubmenuTriggerContextValue extends DOMProps, Pick<PressEvents, 'onPressStart' | 'onPress'>, Pick<HoverEvents, 'onHoverChange'>, Pick<KeyboardEvents, 'onKeyDown'> {
-  isUnavailable?: boolean,
-  triggerRef?: RefObject<HTMLElement | null>,
-  'aria-expanded'?: boolean | 'true' | 'false',
-  'aria-controls'?: string,
-  'aria-haspopup'?: 'dialog' | 'menu',
-  isOpen?: boolean
+export interface SubmenuTriggerContextValue
+  extends
+    DOMProps,
+    Pick<PressEvents, 'onPressStart' | 'onPress'>,
+    Pick<HoverEvents, 'onHoverChange'>,
+    Pick<KeyboardEvents, 'onKeyDown'> {
+  isUnavailable?: boolean;
+  triggerRef?: RefObject<HTMLElement | null>;
+  'aria-expanded'?: boolean | 'true' | 'false';
+  'aria-controls'?: string;
+  'aria-haspopup'?: 'dialog' | 'menu';
+  isOpen?: boolean;
 }
 
-export const SubmenuTriggerContext = React.createContext<SubmenuTriggerContextValue | undefined>(undefined);
+export const SubmenuTriggerContext = React.createContext<SubmenuTriggerContextValue | undefined>(
+  undefined
+);
 
 export function useSubmenuTriggerContext(): SubmenuTriggerContextValue | undefined {
   return useContext(SubmenuTriggerContext);
 }
 
 export interface MenuStateContextValue<T> {
-  state: TreeState<T>,
-  popoverContainer: HTMLElement | null,
-  trayContainerRef: RefObject<HTMLElement | null>,
-  menu: RefObject<HTMLDivElement | null>,
-  submenu: RefObject<HTMLDivElement | null>,
-  rootMenuTriggerState?: RootMenuTriggerState
+  state: TreeState<T>;
+  popoverContainer: HTMLElement | null;
+  trayContainerRef: RefObject<HTMLElement | null>;
+  menu: RefObject<HTMLDivElement | null>;
+  submenu: RefObject<HTMLDivElement | null>;
+  rootMenuTriggerState?: RootMenuTriggerState;
 }
 
-export const MenuStateContext = React.createContext<MenuStateContextValue<any> | undefined>(undefined);
+export const MenuStateContext = React.createContext<MenuStateContextValue<any> | undefined>(
+  undefined
+);
 
 export function useMenuStateContext(): MenuStateContextValue<any> | undefined {
   return useContext(MenuStateContext);

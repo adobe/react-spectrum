@@ -10,51 +10,72 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSwatch as AriaColorSwatch, ColorSwatchProps as AriaColorSwatchProps, Color, parseColor} from 'react-aria-components/ColorSwatch';
+import {
+  ColorSwatch as AriaColorSwatch,
+  ColorSwatchProps as AriaColorSwatchProps,
+  Color,
+  parseColor
+} from 'react-aria-components/ColorSwatch';
 import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, JSX, ReactElement, useContext, useMemo} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
-import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {
+  getAllowedOverrides,
+  StylesPropWithHeight,
+  UnsafeStyles
+} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ColorSwatchProps extends Omit<AriaColorSwatchProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, UnsafeStyles {
+export interface ColorSwatchProps
+  extends
+    Omit<AriaColorSwatchProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
+    UnsafeStyles {
   /**
    * The size of the ColorSwatch.
    * @default 'M'
    */
-  size?: 'XS' | 'S' | 'M' | 'L',
+  size?: 'XS' | 'S' | 'M' | 'L';
   /**
    * The corner rounding of the ColorSwatch.
    * @default 'default'
    */
-  rounding?: 'default' | 'none' | 'full',
+  rounding?: 'default' | 'none' | 'full';
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithHeight
+  styles?: StylesPropWithHeight;
 }
 
 interface SpectrumColorSwatchContextValue extends Pick<ColorSwatchProps, 'size' | 'rounding'> {
-  useWrapper: (swatch: ReactElement, color: Color, rounding: ColorSwatchProps['rounding']) => JSX.Element
+  useWrapper: (
+    swatch: ReactElement,
+    color: Color,
+    rounding: ColorSwatchProps['rounding']
+  ) => JSX.Element;
 }
 
-export const ColorSwatchContext = createContext<ContextValue<Partial<ColorSwatchProps>, DOMRefValue<HTMLDivElement>>>(null);
-export const InternalColorSwatchContext = createContext<SpectrumColorSwatchContextValue | null>(null);
+export const ColorSwatchContext =
+  createContext<ContextValue<Partial<ColorSwatchProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const InternalColorSwatchContext = createContext<SpectrumColorSwatchContextValue | null>(
+  null
+);
 
 /**
  * A ColorSwatch displays a preview of a selected color.
  */
-export const ColorSwatch = forwardRef(function ColorSwatch(props: ColorSwatchProps, ref: DOMRef<HTMLDivElement>): JSX.Element {
+export const ColorSwatch = forwardRef(function ColorSwatch(
+  props: ColorSwatchProps,
+  ref: DOMRef<HTMLDivElement>
+): JSX.Element {
   [props, ref] = useSpectrumContextProps(props, ref, ColorSwatchContext);
   let domRef = useDOMRef(ref);
   let ctx = useContext(InternalColorSwatchContext);
-  let {
-    size = ctx?.size || 'M',
-    rounding = ctx?.rounding || 'default',
-    color
-  } = props;
+  let {size = ctx?.size || 'M', rounding = ctx?.rounding || 'default', color} = props;
   let nonNullValue = color || '#fff0';
-  color = useMemo(() => typeof nonNullValue === 'string' ? parseColor(nonNullValue) : nonNullValue, [nonNullValue]);
+  color = useMemo(
+    () => (typeof nonNullValue === 'string' ? parseColor(nonNullValue) : nonNullValue),
+    [nonNullValue]
+  );
 
   let swatch = (
     <AriaColorSwatch
@@ -63,37 +84,42 @@ export const ColorSwatch = forwardRef(function ColorSwatch(props: ColorSwatchPro
       ref={domRef}
       style={({color}) => ({
         // TODO: should there be a distinction between transparent and no value (e.g. null)?
-        background: color.getChannelValue('alpha') > 0
-          ? `linear-gradient(${color}, ${color}), repeating-conic-gradient(#e6e6e6 0% 25%, white 0% 50%) 0% 50% / 16px 16px`
-          // Red slash to indicate there is no selected color.
-          : 'linear-gradient(to bottom right, transparent calc(50% - 2px), var(--slash-color) calc(50% - 2px) calc(50% + 2px), transparent calc(50% + 2px)) no-repeat'
+        background:
+          color.getChannelValue('alpha') > 0
+            ? `linear-gradient(${color}, ${color}), repeating-conic-gradient(#e6e6e6 0% 25%, white 0% 50%) 0% 50% / 16px 16px`
+            : // Red slash to indicate there is no selected color.
+              'linear-gradient(to bottom right, transparent calc(50% - 2px), var(--slash-color) calc(50% - 2px) calc(50% + 2px), transparent calc(50% + 2px)) no-repeat'
       })}
-      className={style({
-        size: {
+      className={style(
+        {
           size: {
-            XS: 16,
-            S: 24,
-            M: 32,
-            L: 40
+            size: {
+              XS: 16,
+              S: 24,
+              M: 32,
+              L: 40
+            }
+          },
+          borderRadius: {
+            rounding: {
+              default: 'sm',
+              none: 'none',
+              full: 'full'
+            }
+          },
+          borderColor: 'gray-1000/42',
+          borderWidth: 1,
+          borderStyle: 'solid',
+          boxSizing: 'border-box',
+          forcedColorAdjust: 'none',
+          '--slash-color': {
+            type: 'color',
+            value: 'red-900'
           }
         },
-        borderRadius: {
-          rounding: {
-            default: 'sm',
-            none: 'none',
-            full: 'full'
-          }
-        },
-        borderColor: 'gray-1000/42',
-        borderWidth: 1,
-        borderStyle: 'solid',
-        boxSizing: 'border-box',
-        forcedColorAdjust: 'none',
-        '--slash-color': {
-          type: 'color',
-          value: 'red-900'
-        }
-      }, getAllowedOverrides({height: true}))({size, rounding}, props.styles)} />
+        getAllowedOverrides({height: true})
+      )({size, rounding}, props.styles)}
+    />
   );
 
   // ColorSwatchPicker needs to wrap the swatch in a ListBoxItem.

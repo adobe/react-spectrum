@@ -13,12 +13,16 @@ import React, {createContext, ForwardedRef, forwardRef, TextareaHTMLAttributes} 
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 
-export interface TextAreaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'className' | 'style'>, HoverEvents, StyleRenderProps<InputRenderProps, 'textarea'> {
+export interface TextAreaProps
+  extends
+    Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'className' | 'style'>,
+    HoverEvents,
+    StyleRenderProps<InputRenderProps, 'textarea'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-TextArea'
    */
-  className?: ClassNameOrFunction<InputRenderProps>
+  className?: ClassNameOrFunction<InputRenderProps>;
 }
 
 export const TextAreaContext = createContext<ContextValue<TextAreaProps, HTMLTextAreaElement>>({});
@@ -32,7 +36,10 @@ let filterHoverProps = (props: TextAreaProps): TextAreaProps => {
 /**
  * A textarea allows a user to input mult-line text.
  */
-export const TextArea = forwardRef(function TextArea(props: TextAreaProps, ref: ForwardedRef<HTMLTextAreaElement>) {
+export const TextArea = forwardRef(function TextArea(
+  props: TextAreaProps,
+  ref: ForwardedRef<HTMLTextAreaElement>
+) {
   [props, ref] = useContextProps(props, ref, TextAreaContext);
 
   let {hoverProps, isHovered} = useHover(props);
@@ -63,6 +70,7 @@ export const TextArea = forwardRef(function TextArea(props: TextAreaProps, ref: 
       data-disabled={props.disabled || undefined}
       data-hovered={isHovered || undefined}
       data-focus-visible={isFocusVisible || undefined}
-      data-invalid={isInvalid || undefined} />
+      data-invalid={isInvalid || undefined}
+    />
   );
 });

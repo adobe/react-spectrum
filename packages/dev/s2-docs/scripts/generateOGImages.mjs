@@ -53,8 +53,12 @@ async function loadFont(url) {
 }
 
 const [adobeCleanRegular, adobeCleanBold] = await Promise.all([
-  loadFont('https://use.typekit.net/af/cb695f/000000000000000000017701/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3'),
-  loadFont('https://use.typekit.net/af/eaf09c/000000000000000000017703/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3')
+  loadFont(
+    'https://use.typekit.net/af/cb695f/000000000000000000017701/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3'
+  ),
+  loadFont(
+    'https://use.typekit.net/af/eaf09c/000000000000000000017703/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3'
+  )
 ]);
 
 function getLibraryLogo(subtitle) {
@@ -98,7 +102,8 @@ function getLibraryLogo(subtitle) {
           props: {
             fill: '#eb1000',
             strokeWidth: 0,
-            points: '297.58 444.05 261.13 342.65 169.67 342.65 246.54 149.12 363.19 444.05 501.71 444.05 316.8 0 186.23 0 0 444.05 297.58 444.05 297.58 444.05'
+            points:
+              '297.58 444.05 261.13 342.65 169.67 342.65 246.54 149.12 363.19 444.05 501.71 444.05 316.8 0 186.23 0 0 444.05 297.58 444.05 297.58 444.05'
           }
         }
       }
@@ -265,27 +270,24 @@ for await (let file of fs.glob('pages/*/**/*.mdx')) {
     };
   }
 
-  let svg = await satori(
-    layout,
-    {
-      width: 1200,
-      height: 630,
-      fonts: [
-        {
-          name: 'adobe-clean',
-          data: adobeCleanRegular,
-          weight: 400,
-          style: 'normal'
-        },
-        {
-          name: 'adobe-clean',
-          data: adobeCleanBold,
-          weight: 700,
-          style: 'normal'
-        }
-      ]
-    }
-  );
+  let svg = await satori(layout, {
+    width: 1200,
+    height: 630,
+    fonts: [
+      {
+        name: 'adobe-clean',
+        data: adobeCleanRegular,
+        weight: 400,
+        style: 'normal'
+      },
+      {
+        name: 'adobe-clean',
+        data: adobeCleanBold,
+        weight: 700,
+        style: 'normal'
+      }
+    ]
+  });
 
   // Convert SVG -> PNG
   let pngBuffer = await sharp(Buffer.from(svg)).png().toBuffer();

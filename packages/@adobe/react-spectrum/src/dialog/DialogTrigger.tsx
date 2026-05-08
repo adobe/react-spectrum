@@ -12,7 +12,11 @@
 
 import {DialogContext} from './context';
 import {Modal} from '../overlays/Modal';
-import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
+import {
+  OverlayTriggerProps,
+  OverlayTriggerState,
+  useOverlayTriggerState
+} from 'react-stately/useOverlayTriggerState';
 import {Popover} from '../overlays/Popover';
 import {PositionProps} from 'react-aria/useOverlayPosition';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
@@ -26,24 +30,24 @@ export type SpectrumDialogClose = (close: () => void) => ReactElement;
 
 export interface SpectrumDialogTriggerProps extends OverlayTriggerProps, PositionProps {
   /** The Dialog and its trigger element. See the DialogTrigger [Content section](#content) for more information on what to provide as children. */
-  children: [ReactElement, SpectrumDialogClose | ReactElement],
+  children: [ReactElement, SpectrumDialogClose | ReactElement];
   /**
    * The type of Dialog that should be rendered. See the DialogTrigger [types section](#dialog-types) for an explanation on each.
    * @default 'modal'
    */
-  type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
+  type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover';
   /** The type of Dialog that should be rendered when on a mobile device. See DialogTrigger [types section](#dialog-types) for an explanation on each. */
-  mobileType?: 'modal' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
+  mobileType?: 'modal' | 'tray' | 'fullscreen' | 'fullscreenTakeover';
   /**
    * Whether a popover type Dialog's arrow should be hidden.
    */
-  hideArrow?: boolean,
+  hideArrow?: boolean;
   /** The ref of the element the Dialog should visually attach itself to. Defaults to the trigger button if not defined. */
-  targetRef?: RefObject<HTMLElement | null>,
+  targetRef?: RefObject<HTMLElement | null>;
   /** Whether a modal type Dialog should be dismissable. */
-  isDismissable?: boolean,
+  isDismissable?: boolean;
   /** Whether pressing the escape key to close the dialog should be disabled. */
-  isKeyboardDismissDisabled?: boolean
+  isKeyboardDismissDisabled?: boolean;
 }
 
 function DialogTrigger(props: SpectrumDialogTriggerProps) {
@@ -81,17 +85,23 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
   }, [state.isOpen]);
 
   let isExiting = useRef(false);
-  let onExiting = () => isExiting.current = true;
-  let onExited = () => isExiting.current = false;
+  let onExiting = () => (isExiting.current = true);
+  let onExited = () => (isExiting.current = false);
 
-   
   useEffect(() => {
     return () => {
-      if ((wasOpen.current || isExiting.current) && type !== 'popover' && type !== 'tray' && process.env.NODE_ENV !== 'production') {
-        console.warn('A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.');
+      if (
+        (wasOpen.current || isExiting.current) &&
+        type !== 'popover' &&
+        type !== 'tray' &&
+        process.env.NODE_ENV !== 'production'
+      ) {
+        console.warn(
+          'A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.'
+        );
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (type === 'popover') {
@@ -103,7 +113,8 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
         trigger={trigger}
         content={content}
         isKeyboardDismissDisabled={isKeyboardDismissDisabled}
-        hideArrow={hideArrow} />
+        hideArrow={hideArrow}
+      />
     );
   }
 
@@ -125,9 +136,7 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
         );
       case 'tray':
         return (
-          <Tray
-            state={state}
-            isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
+          <Tray state={state} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
             {typeof content === 'function' ? content(state.close) : content}
           </Tray>
         );
@@ -140,7 +149,8 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
       state={state}
       isDismissable={isDismissable}
       trigger={trigger}
-      overlay={renderOverlay()} />
+      overlay={renderOverlay()}
+    />
   );
 }
 
@@ -151,7 +161,7 @@ DialogTrigger.getCollectionNode = function* (props: SpectrumDialogTriggerProps) 
   let [, content] = props.children as [ReactElement, SpectrumDialogClose];
   yield {
     element: trigger,
-    wrapper: (element) => (
+    wrapper: element => (
       <DialogTrigger key={element.key} {...props}>
         {element}
         {content}
@@ -180,11 +190,7 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props
   };
 
   let overlay = (
-    <Popover
-      {...props}
-      hideArrow={hideArrow}
-      triggerRef={targetRef || triggerRef}
-      state={state}>
+    <Popover {...props} hideArrow={hideArrow} triggerRef={targetRef || triggerRef} state={state}>
       {typeof content === 'function' ? content(state.close) : content}
     </Popover>
   );
@@ -196,21 +202,30 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props
       triggerProps={triggerPropsWithRef}
       dialogProps={overlayProps}
       trigger={trigger}
-      overlay={overlay} />
+      overlay={overlay}
+    />
   );
 }
 
 interface SpectrumDialogTriggerBase {
-  type: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
-  state: OverlayTriggerState,
-  isDismissable?: boolean,
-  dialogProps?: SpectrumDialogProps | {},
-  triggerProps?: any,
-  overlay?: ReactElement,
-  trigger: ReactElement
+  type: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover';
+  state: OverlayTriggerState;
+  isDismissable?: boolean;
+  dialogProps?: SpectrumDialogProps | {};
+  triggerProps?: any;
+  overlay?: ReactElement;
+  trigger: ReactElement;
 }
 
-function DialogTriggerBase({type, state, isDismissable, dialogProps = {}, triggerProps = {}, overlay, trigger}: SpectrumDialogTriggerBase) {
+function DialogTriggerBase({
+  type,
+  state,
+  isDismissable,
+  dialogProps = {},
+  triggerProps = {},
+  overlay,
+  trigger
+}: SpectrumDialogTriggerBase) {
   let context = {
     type,
     onClose: state.close,
@@ -223,12 +238,12 @@ function DialogTriggerBase({type, state, isDismissable, dialogProps = {}, trigge
       <PressResponder
         {...triggerProps}
         onPress={state.toggle}
-        isPressed={state.isOpen && type !== 'modal' && type !== 'fullscreen' && type !== 'fullscreenTakeover'}>
+        isPressed={
+          state.isOpen && type !== 'modal' && type !== 'fullscreen' && type !== 'fullscreenTakeover'
+        }>
         {trigger}
       </PressResponder>
-      <DialogContext.Provider value={context}>
-        {overlay}
-      </DialogContext.Provider>
+      <DialogContext.Provider value={context}>{overlay}</DialogContext.Provider>
     </Fragment>
   );
 }

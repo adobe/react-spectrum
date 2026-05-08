@@ -11,7 +11,15 @@
  */
 
 jest.mock('react-aria/src/utils/scrollIntoView');
-import {act, fireEvent, mockClickDefault, pointerMap, render, simulateDesktop, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  mockClickDefault,
+  pointerMap,
+  render,
+  simulateDesktop,
+  within
+} from '@react-spectrum/test-utils-internal';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
@@ -40,9 +48,15 @@ describe('Picker', function () {
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
-    scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
+    offsetWidth = jest
+      .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+      .mockImplementation(() => 1000);
+    offsetHeight = jest
+      .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+      .mockImplementation(() => 1000);
+    scrollHeight = jest
+      .spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
+      .mockImplementation(() => 50);
     simulateDesktop();
     jest.useFakeTimers();
   });
@@ -572,7 +586,9 @@ describe('Picker', function () {
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
 
-      act(() => {document.activeElement.blur();});
+      act(() => {
+        document.activeElement.blur();
+      });
       act(() => jest.runAllTimers());
       act(() => jest.runAllTimers());
 
@@ -858,7 +874,11 @@ describe('Picker', function () {
       it('supports labeling with a visible label that includes the necessity indicator', async function () {
         let {getByText, getByRole} = render(
           <Provider theme={theme}>
-            <Picker label="Test 2" isRequired necessityIndicator="label" onSelectionChange={onSelectionChange}>
+            <Picker
+              label="Test 2"
+              isRequired
+              necessityIndicator="label"
+              onSelectionChange={onSelectionChange}>
               <Item>One</Item>
               <Item>Two</Item>
               <Item>Three</Item>
@@ -868,7 +888,6 @@ describe('Picker', function () {
 
         let picker = getByRole('button');
         expect(picker).toHaveAttribute('aria-haspopup', 'listbox');
-
 
         let span = getByText('(required)');
         expect(span).not.toHaveAttribute('aria-hidden');
@@ -892,7 +911,10 @@ describe('Picker', function () {
       it('supports description', function () {
         let {getByText, getByRole} = render(
           <Provider theme={theme}>
-            <Picker label="Test" description="Please select an item." onSelectionChange={onSelectionChange}>
+            <Picker
+              label="Test"
+              description="Please select an item."
+              onSelectionChange={onSelectionChange}>
               <Item>One</Item>
               <Item>Two</Item>
               <Item>Three</Item>
@@ -909,7 +931,11 @@ describe('Picker', function () {
       it('supports error message', function () {
         let {getByText, getByRole} = render(
           <Provider theme={theme}>
-            <Picker label="Test" errorMessage="Please select a valid item." isInvalid onSelectionChange={onSelectionChange}>
+            <Picker
+              label="Test"
+              errorMessage="Please select a valid item."
+              isInvalid
+              onSelectionChange={onSelectionChange}>
               <Item>One</Item>
               <Item>Two</Item>
               <Item>Three</Item>
@@ -999,7 +1025,6 @@ describe('Picker', function () {
       expect(onSelectionChange).toHaveBeenLastCalledWith('false');
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('False');
-
     });
 
     it('can select items with the Space key', async function () {
@@ -1359,9 +1384,15 @@ describe('Picker', function () {
       expect(items[2]).toHaveAttribute('aria-labelledby', within(items[2]).getByText('Paste').id);
       expect(groups[0]).toContainElement(items[2]);
       expect(items[3]).toHaveAttribute('aria-labelledby', within(items[3]).getByText('Puppy').id);
-      expect(items[3]).toHaveAttribute('aria-describedby', within(items[3]).getByText('Puppy description super long as well geez').id);
+      expect(items[3]).toHaveAttribute(
+        'aria-describedby',
+        within(items[3]).getByText('Puppy description super long as well geez').id
+      );
       expect(groups[1]).toContainElement(items[3]);
-      expect(items[4]).toHaveAttribute('aria-labelledby', within(items[4]).getByText('Doggo with really really really long long long text').id);
+      expect(items[4]).toHaveAttribute(
+        'aria-labelledby',
+        within(items[4]).getByText('Doggo with really really really long long long text').id
+      );
       expect(groups[1]).toContainElement(items[4]);
       expect(items[5]).toHaveAttribute('aria-labelledby', within(items[5]).getByText('Floof').id);
       expect(groups[1]).toContainElement(items[5]);
@@ -1440,7 +1471,9 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      act(() => {picker.focus();});
+      act(() => {
+        picker.focus();
+      });
       expect(picker).toHaveTextContent('Select…');
       fireEvent.keyDown(picker, {key: 'ArrowDown'});
       act(() => jest.runAllTimers());
@@ -1574,7 +1607,9 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      act(() => {picker.focus();});
+      act(() => {
+        picker.focus();
+      });
       expect(picker).toHaveTextContent('Select…');
 
       fireEvent.keyDown(picker, {key: 't'});
@@ -1602,7 +1637,9 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      act(() => {picker.focus();});
+      act(() => {
+        picker.focus();
+      });
       expect(picker).toHaveTextContent('Select…');
 
       fireEvent.keyDown(picker, {key: 't'});
@@ -1611,7 +1648,9 @@ describe('Picker', function () {
       expect(onSelectionChange).toHaveBeenLastCalledWith('two');
       expect(picker).toHaveTextContent('Two');
 
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       fireEvent.keyDown(picker, {key: 'h'});
       fireEvent.keyUp(picker, {key: 'h'});
@@ -1631,7 +1670,9 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      act(() => {picker.focus();});
+      act(() => {
+        picker.focus();
+      });
       expect(picker).toHaveTextContent('Select…');
 
       fireEvent.keyDown(picker, {key: 't'});
@@ -1640,7 +1681,9 @@ describe('Picker', function () {
       expect(onSelectionChange).toHaveBeenLastCalledWith('two');
       expect(picker).toHaveTextContent('Two');
 
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       fireEvent.keyDown(picker, {key: 'o'});
       fireEvent.keyUp(picker, {key: 'o'});
@@ -1653,7 +1696,11 @@ describe('Picker', function () {
     it('should have a hidden select element for form autocomplete', function () {
       let {getByText, getByRole} = render(
         <Provider theme={theme}>
-          <Picker label="Test" autoComplete="address-level1" items={states} onSelectionChange={onSelectionChange}>
+          <Picker
+            label="Test"
+            autoComplete="address-level1"
+            items={states}
+            onSelectionChange={onSelectionChange}>
             {item => <Item key={item.abbr}>{item.name}</Item>}
           </Picker>
         </Provider>
@@ -1673,7 +1720,9 @@ describe('Picker', function () {
 
       let options = within(hiddenSelect).getAllByRole('option', {hidden: true});
       expect(options.length).toBe(60);
-      options.forEach((option, index) => index > 0 && expect(option).toHaveTextContent(states[index - 1].name));
+      options.forEach(
+        (option, index) => index > 0 && expect(option).toHaveTextContent(states[index - 1].name)
+      );
 
       fireEvent.input(hiddenSelect, {target: {value: 'CA'}});
       fireEvent.change(hiddenSelect, {target: {value: 'CA'}});
@@ -1987,7 +2036,12 @@ describe('Picker', function () {
         return (
           <Provider theme={theme}>
             <form>
-              <Picker name="picker" data-testid="picker" label="Test" selectedKey={value} onSelectionChange={setValue}>
+              <Picker
+                name="picker"
+                data-testid="picker"
+                label="Test"
+                selectedKey={value}
+                onSelectionChange={setValue}>
                 <Item key="one">One</Item>
                 <Item key="two">Two</Item>
                 <Item key="three">Three</Item>
@@ -2017,7 +2071,6 @@ describe('Picker', function () {
       expect(input).toHaveValue('one');
     });
 
-
     it('should support form prop', () => {
       render(
         <Provider theme={theme}>
@@ -2035,9 +2088,9 @@ describe('Picker', function () {
 
     if (parseInt(React.version, 10) >= 19) {
       it('resets to defaultSelectedKey when submitting form action', async () => {
-        function Test() {        
+        function Test() {
           const [value, formAction] = React.useActionState(() => 'two', 'one');
-          
+
           return (
             <Provider theme={theme}>
               <form action={formAction}>
@@ -2051,13 +2104,13 @@ describe('Picker', function () {
             </Provider>
           );
         }
-  
+
         let {getByTestId} = render(<Test />);
         let picker = getByTestId('picker');
         let input = document.querySelector('[name=picker]');
         expect(picker).toHaveTextContent('One');
         expect(input).toHaveValue('one');
-  
+
         let button = getByTestId('submit');
         await user.click(button);
         expect(picker).toHaveTextContent('Two');
@@ -2071,7 +2124,12 @@ describe('Picker', function () {
           let {getByTestId, getByRole} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <Picker name="picker" data-testid="picker" label="Test" isRequired validationBehavior="native">
+                <Picker
+                  name="picker"
+                  data-testid="picker"
+                  label="Test"
+                  isRequired
+                  validationBehavior="native">
                   <Item key="one">One</Item>
                   <Item key="two">Two</Item>
                   <Item key="three">Three</Item>
@@ -2086,10 +2144,14 @@ describe('Picker', function () {
           expect(picker).not.toHaveAttribute('aria-describedby');
           expect(input.validity.valid).toBe(false);
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
 
           expect(picker).toHaveAttribute('aria-describedby');
-          expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+          expect(
+            document.getElementById(picker.getAttribute('aria-describedby'))
+          ).toHaveTextContent('Constraints not satisfied');
           expect(document.activeElement).toBe(picker);
 
           await selectTester.selectOption({option: 'One'});
@@ -2100,7 +2162,13 @@ describe('Picker', function () {
           let {getByTestId, getByRole} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <Picker name="picker" data-testid="picker" label="Test" defaultSelectedKey="two" validationBehavior="native" validate={v => v === 'two' ? 'Invalid value' : null}>
+                <Picker
+                  name="picker"
+                  data-testid="picker"
+                  label="Test"
+                  defaultSelectedKey="two"
+                  validationBehavior="native"
+                  validate={v => (v === 'two' ? 'Invalid value' : null)}>
                   <Item key="one">One</Item>
                   <Item key="two">Two</Item>
                   <Item key="three">Three</Item>
@@ -2114,10 +2182,14 @@ describe('Picker', function () {
           expect(picker).not.toHaveAttribute('aria-describedby');
           expect(input.validity.valid).toBe(false);
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
 
           expect(picker).toHaveAttribute('aria-describedby');
-          expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+          expect(
+            document.getElementById(picker.getAttribute('aria-describedby'))
+          ).toHaveTextContent('Invalid value');
           expect(document.activeElement).toBe(picker);
 
           await selectTester.selectOption({option: 'One'});
@@ -2137,12 +2209,18 @@ describe('Picker', function () {
             return (
               <Provider theme={theme}>
                 <Form onSubmit={onSubmit} validationErrors={serverErrors}>
-                  <Picker name="picker" data-testid="picker" label="Test" validationBehavior="native" >
+                  <Picker
+                    name="picker"
+                    data-testid="picker"
+                    label="Test"
+                    validationBehavior="native">
                     <Item key="one">One</Item>
                     <Item key="two">Two</Item>
                     <Item key="three">Three</Item>
                   </Picker>
-                  <Button type="submit" data-testid="submit">Submit</Button>
+                  <Button type="submit" data-testid="submit">
+                    Submit
+                  </Button>
                 </Form>
               </Provider>
             );
@@ -2157,7 +2235,9 @@ describe('Picker', function () {
           await user.click(getByTestId('submit'));
 
           expect(picker).toHaveAttribute('aria-describedby');
-          expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value.');
+          expect(
+            document.getElementById(picker.getAttribute('aria-describedby'))
+          ).toHaveTextContent('Invalid value.');
           expect(input.validity.valid).toBe(false);
 
           await selectTester.selectOption({option: 'One'});
@@ -2169,7 +2249,15 @@ describe('Picker', function () {
           let {getByTestId} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <Picker name="picker" data-testid="picker" label="Test" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null}>
+                <Picker
+                  name="picker"
+                  data-testid="picker"
+                  label="Test"
+                  isRequired
+                  validationBehavior="native"
+                  errorMessage={e =>
+                    e.validationDetails.valueMissing ? 'Please enter a value' : null
+                  }>
                   <Item key="one">One</Item>
                   <Item key="two">Two</Item>
                   <Item key="three">Three</Item>
@@ -2181,21 +2269,32 @@ describe('Picker', function () {
           let picker = getByTestId('picker');
           expect(picker).not.toHaveAttribute('aria-describedby');
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
           expect(picker).toHaveAttribute('aria-describedby');
-          expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
+          expect(
+            document.getElementById(picker.getAttribute('aria-describedby'))
+          ).toHaveTextContent('Please enter a value');
         });
 
         it('clears validation on reset', async () => {
           let {getByTestId} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <Picker name="picker" data-testid="picker" label="Test" isRequired validationBehavior="native">
+                <Picker
+                  name="picker"
+                  data-testid="picker"
+                  label="Test"
+                  isRequired
+                  validationBehavior="native">
                   <Item key="one">One</Item>
                   <Item key="two">Two</Item>
                   <Item key="three">Three</Item>
                 </Picker>
-                <Button data-testid="reset" type="reset">Reset</Button>
+                <Button data-testid="reset" type="reset">
+                  Reset
+                </Button>
               </Form>
             </Provider>
           );
@@ -2206,10 +2305,14 @@ describe('Picker', function () {
           expect(picker).not.toHaveAttribute('aria-describedby');
           expect(input.validity.valid).toBe(false);
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
 
           expect(picker).toHaveAttribute('aria-describedby');
-          expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+          expect(
+            document.getElementById(picker.getAttribute('aria-describedby'))
+          ).toHaveTextContent('Constraints not satisfied');
 
           await selectTester.selectOption({option: 'One'});
           expect(picker).not.toHaveAttribute('aria-describedby');
@@ -2224,7 +2327,12 @@ describe('Picker', function () {
           let {getByTestId} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <Picker name="picker" data-testid="picker" label="Test" defaultSelectedKey="two" validate={v => v === 'two' ? 'Invalid value' : null}>
+                <Picker
+                  name="picker"
+                  data-testid="picker"
+                  label="Test"
+                  defaultSelectedKey="two"
+                  validate={v => (v === 'two' ? 'Invalid value' : null)}>
                   <Item key="one">One</Item>
                   <Item key="two">Two</Item>
                   <Item key="three">Three</Item>
@@ -2236,7 +2344,9 @@ describe('Picker', function () {
           let picker = selectTester.trigger;
           let input = document.querySelector('[name=picker]');
           expect(picker).toHaveAttribute('aria-describedby');
-          expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+          expect(
+            document.getElementById(picker.getAttribute('aria-describedby'))
+          ).toHaveTextContent('Invalid value');
           expect(input.validity.valid).toBe(true);
 
           await selectTester.selectOption({option: 'One'});
@@ -2258,7 +2368,9 @@ describe('Picker', function () {
           let selectTester = testUtilUser.createTester('Select', {root: getByTestId('picker')});
           let picker = selectTester.trigger;
           expect(picker).toHaveAttribute('aria-describedby');
-          expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+          expect(
+            document.getElementById(picker.getAttribute('aria-describedby'))
+          ).toHaveTextContent('Invalid value');
 
           await selectTester.selectOption({option: 'One'});
           expect(picker).not.toHaveAttribute('aria-describedby');
@@ -2268,7 +2380,7 @@ describe('Picker', function () {
   });
 
   describe('links', () => {
-    it.each(['mouse', 'keyboard'])('supports links on items with %s', async (type) => {
+    it.each(['mouse', 'keyboard'])('supports links on items with %s', async type => {
       let tree = render(
         <Provider theme={theme}>
           <Picker label="Picker with links">
@@ -2317,7 +2429,9 @@ describe('Picker', function () {
       let tree = render(
         <Provider theme={theme} router={{navigate, useHref}}>
           <Picker label="Picker with links">
-            <Item href="/one" routerOptions={{foo: 'bar'}}>One</Item>
+            <Item href="/one" routerOptions={{foo: 'bar'}}>
+              One
+            </Item>
             <Item href="https://adobe.com">Two</Item>
           </Picker>
         </Provider>

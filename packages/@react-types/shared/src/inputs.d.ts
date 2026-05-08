@@ -20,60 +20,63 @@ export type ValidationFunction<T> = (value: T) => ValidationError | true | null 
 
 export interface Validation<T = unknown> {
   /** Whether user input is required on the input before form submission. */
-  isRequired?: boolean,
+  isRequired?: boolean;
   /** Whether the input value is invalid. */
-  isInvalid?: boolean,
+  isInvalid?: boolean;
   /** @deprecated Use `isInvalid` instead. */
-  validationState?: ValidationState,
+  validationState?: ValidationState;
   /**
    * Whether to use native HTML form validation to prevent form submission
    * when the value is missing or invalid, or mark the field as required
    * or invalid via ARIA.
    * @default 'aria'
    */
-  validationBehavior?: 'aria' | 'native',
+  validationBehavior?: 'aria' | 'native';
   /**
    * A function that returns an error message if a given value is invalid.
    * Validation errors are displayed to the user when the form is submitted
    * if `validationBehavior="native"`. For realtime validation, use the `isInvalid`
    * prop instead.
    */
-  validate?: (value: T) => ValidationError | true | null | undefined
+  validate?: (value: T) => ValidationError | true | null | undefined;
 }
 
 export interface ValidationResult {
   /** Whether the input value is invalid. */
-  isInvalid: boolean,
+  isInvalid: boolean;
   /** The current error messages for the input if it is invalid, otherwise an empty array. */
-  validationErrors: string[],
+  validationErrors: string[];
   /** The native validation details for the input. */
-  validationDetails: ValidityState
+  validationDetails: ValidityState;
 }
 
-export interface SpectrumFieldValidation<T> extends Omit<Validation<T>, 'isInvalid' | 'validationState'> {
+export interface SpectrumFieldValidation<T> extends Omit<
+  Validation<T>,
+  'isInvalid' | 'validationState'
+> {
   /** Whether the input should display its "valid" or "invalid" visual styling. */
-  validationState?: ValidationState
+  validationState?: ValidationState;
 }
 
 export interface InputBase {
   /** Whether the input is disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** Whether the input can be selected but not changed by the user. */
-  isReadOnly?: boolean
+  isReadOnly?: boolean;
 }
 
 export interface ValueBase<T, C = T> {
   /** The current value (controlled). */
-  value?: T,
+  value?: T;
   /** The default value (uncontrolled). */
-  defaultValue?: T,
+  defaultValue?: T;
   /** Handler that is called when the value changes. */
-  onChange?: (value: C) => void
+  onChange?: (value: C) => void;
 }
 
 export interface TextInputBase {
   /** Temporary text that occupies the text input when it is empty. */
-  placeholder?: string
+  placeholder?: string;
 }
 
 export interface SpectrumTextInputBase {
@@ -82,36 +85,36 @@ export interface SpectrumTextInputBase {
    * Please use help text instead.
    * @deprecated
    **/
-  placeholder?: string
+  placeholder?: string;
 }
 
 export interface RangeValue<T> {
   /** The start value of the range. */
-  start: T,
+  start: T;
   /** The end value of the range. */
-  end: T
+  end: T;
 }
 
 export interface RangeInputBase<T> {
   /** The smallest value allowed for the input. */
-  minValue?: T,
+  minValue?: T;
   /** The largest value allowed for the input. */
-  maxValue?: T,
+  maxValue?: T;
   /** The amount that the input value changes with each increment or decrement "tick". */
-  step?: T // ??
+  step?: T; // ??
 }
 
 export interface HelpTextProps {
   /** A description for the field. Provides a hint such as specific requirements for what to choose. */
-  description?: ReactNode,
+  description?: ReactNode;
   /** An error message for the field. */
-  errorMessage?: ReactNode | ((v: ValidationResult) => ReactNode)
+  errorMessage?: ReactNode | ((v: ValidationResult) => ReactNode);
 }
 
 // Spectrum specific types. Extends `Validation` so that the `validationState` prop is available.
 export interface SpectrumHelpTextProps extends HelpTextProps {
   /** Whether the description is displayed with lighter text. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** Whether an error icon is rendered. */
-  showErrorIcon?: boolean
+  showErrorIcon?: boolean;
 }

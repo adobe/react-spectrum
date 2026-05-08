@@ -21,28 +21,26 @@ import {useEffectEvent} from '../utils/useEffectEvent';
 import {useGlobalListeners} from '../utils/useGlobalListeners';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
-
 const noop = () => {};
 
-export interface SpinButtonProps extends InputBase, Validation<number>, ValueBase<number>, RangeInputBase<number> {
-  textValue?: string,
-  onIncrement?: () => void,
-  onIncrementPage?: () => void,
-  onDecrement?: () => void,
-  onDecrementPage?: () => void,
-  onDecrementToMin?: () => void,
-  onIncrementToMax?: () => void
+export interface SpinButtonProps
+  extends InputBase, Validation<number>, ValueBase<number>, RangeInputBase<number> {
+  textValue?: string;
+  onIncrement?: () => void;
+  onIncrementPage?: () => void;
+  onDecrement?: () => void;
+  onDecrementPage?: () => void;
+  onDecrementToMin?: () => void;
+  onIncrementToMax?: () => void;
 }
 
 export interface SpinbuttonAria {
-  spinButtonProps: DOMAttributes,
-  incrementButtonProps: AriaButtonProps,
-  decrementButtonProps: AriaButtonProps
+  spinButtonProps: DOMAttributes;
+  incrementButtonProps: AriaButtonProps;
+  decrementButtonProps: AriaButtonProps;
 }
 
-export function useSpinButton(
-  props: SpinButtonProps
-): SpinbuttonAria {
+export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
   const _async = useRef<number>(undefined);
   let {
     value,
@@ -74,8 +72,15 @@ export function useSpinButton(
     return () => clearAsyncEvent();
   }, []);
 
-  let onKeyDown = (e) => {
-    if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || isReadOnly || e.nativeEvent.isComposing) {
+  let onKeyDown = e => {
+    if (
+      e.ctrlKey ||
+      e.metaKey ||
+      e.shiftKey ||
+      e.altKey ||
+      isReadOnly ||
+      e.nativeEvent.isComposing
+    ) {
       return;
     }
 
@@ -136,7 +141,10 @@ export function useSpinButton(
   // This ensures that macOS VoiceOver announces it as "minus" even with other characters between the minus sign
   // and the number (e.g. currency symbol). Otherwise it announces nothing because it assumes the character is a hyphen.
   // In addition, replace the empty string with the word "Empty" so that iOS VoiceOver does not read "50%" for an empty field.
-  let ariaTextValue = textValue === '' ? stringFormatter.format('Empty') : (textValue || `${value}`).replace('-', '\u2212');
+  let ariaTextValue =
+    textValue === ''
+      ? stringFormatter.format('Empty')
+      : (textValue || `${value}`).replace('-', '\u2212');
 
   useEffect(() => {
     if (isFocused.current) {
@@ -154,7 +162,13 @@ export function useSpinButton(
   const onDecrementEvent = useEffectEvent(onDecrement ?? noop);
 
   const stepUpEvent = useEffectEvent(() => {
-    if (maxValue === undefined || isNaN(maxValue) || value === undefined || isNaN(value) || value < maxValue) {
+    if (
+      maxValue === undefined ||
+      isNaN(maxValue) ||
+      value === undefined ||
+      isNaN(value) ||
+      value < maxValue
+    ) {
       onIncrementEvent();
       onIncrementPressStartEvent(60);
     }
@@ -168,7 +182,13 @@ export function useSpinButton(
   });
 
   const stepDownEvent = useEffectEvent(() => {
-    if (minValue === undefined || isNaN(minValue) || value === undefined || isNaN(value) || value > minValue) {
+    if (
+      minValue === undefined ||
+      isNaN(minValue) ||
+      value === undefined ||
+      isNaN(value) ||
+      value > minValue
+    ) {
       onDecrementEvent();
       onDecrementPressStartEvent(60);
     }
@@ -181,7 +201,7 @@ export function useSpinButton(
     _async.current = window.setTimeout(stepDownEvent, initialStepDelay);
   });
 
-  let cancelContextMenu = (e) => {
+  let cancelContextMenu = e => {
     e.preventDefault();
   };
 
@@ -226,7 +246,7 @@ export function useSpinButton(
       onBlur
     },
     incrementButtonProps: {
-      onPressStart: (e) => {
+      onPressStart: e => {
         clearAsync();
         if (e.pointerType !== 'touch') {
           onIncrement?.();
@@ -240,7 +260,7 @@ export function useSpinButton(
         }
         addGlobalListener(window, 'contextmenu', cancelContextMenu);
       },
-      onPressUp: (e) => {
+      onPressUp: e => {
         clearAsync();
         if (e.pointerType === 'touch') {
           isUp.current = true;
@@ -248,7 +268,7 @@ export function useSpinButton(
         removeAllGlobalListeners();
         setIsIncrementPressed(null);
       },
-      onPressEnd: (e) => {
+      onPressEnd: e => {
         clearAsync();
         if (e.pointerType === 'touch') {
           if (!isSpinning.current && isUp.current) {
@@ -262,7 +282,7 @@ export function useSpinButton(
       onBlur
     },
     decrementButtonProps: {
-      onPressStart: (e) => {
+      onPressStart: e => {
         clearAsync();
         if (e.pointerType !== 'touch') {
           onDecrement?.();
@@ -275,7 +295,7 @@ export function useSpinButton(
           setIsDecrementPressed('touch');
         }
       },
-      onPressUp: (e) => {
+      onPressUp: e => {
         clearAsync();
         if (e.pointerType === 'touch') {
           isUp.current = true;
@@ -283,7 +303,7 @@ export function useSpinButton(
         removeAllGlobalListeners();
         setIsDecrementPressed(null);
       },
-      onPressEnd: (e) => {
+      onPressEnd: e => {
         clearAsync();
         if (e.pointerType === 'touch') {
           if (!isSpinning.current && isUp.current) {

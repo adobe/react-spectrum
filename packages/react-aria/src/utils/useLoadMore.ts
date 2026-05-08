@@ -17,9 +17,9 @@ import {useLayoutEffect} from './useLayoutEffect';
 
 export interface LoadMoreProps {
   /** Whether data is currently being loaded. */
-  isLoading?: boolean,
+  isLoading?: boolean;
   /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom.  */
-  onLoadMore?: () => void,
+  onLoadMore?: () => void;
   /**
    * The amount of offset from the bottom of your scrollable region that should trigger load more.
    * Uses a percentage value relative to the scroll body's client height. Load more is then triggered
@@ -27,9 +27,9 @@ export interface LoadMoreProps {
    * or equal to the provided value. (e.g. 1 = 100% of the scroll region's height).
    * @default 1
    */
-  scrollOffset?: number,
+  scrollOffset?: number;
   /** The data currently loaded. */
-  items?: any
+  items?: any;
 }
 
 export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | null>): void {
@@ -40,7 +40,9 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
   let prevProps = useRef(props);
   let onScroll = useCallback(() => {
     if (ref.current && !isLoadingRef.current && onLoadMore) {
-      let shouldLoadMore = ref.current.scrollHeight - ref.current.scrollTop - ref.current.clientHeight < ref.current.clientHeight * scrollOffset;
+      let shouldLoadMore =
+        ref.current.scrollHeight - ref.current.scrollTop - ref.current.clientHeight <
+        ref.current.clientHeight * scrollOffset;
 
       if (shouldLoadMore) {
         isLoadingRef.current = true;
@@ -61,11 +63,12 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
     // TODO: Eventually this hook will move back into RAC during which we will accept the collection as a option to this hook.
     // We will only load more if the collection has changed after the last load to prevent multiple onLoadMore from being called
     // while the data from the last onLoadMore is being processed by RAC collection.
-    let shouldLoadMore = ref?.current
-      && !isLoadingRef.current
-      && onLoadMore
-      && (!items || items !== lastItems.current)
-      && ref.current.clientHeight === ref.current.scrollHeight;
+    let shouldLoadMore =
+      ref?.current &&
+      !isLoadingRef.current &&
+      onLoadMore &&
+      (!items || items !== lastItems.current) &&
+      ref.current.clientHeight === ref.current.scrollHeight;
 
     if (shouldLoadMore) {
       isLoadingRef.current = true;

@@ -18,10 +18,24 @@ import {Checkbox} from '../checkbox/Checkbox';
 
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {DOMRef, Expandable, Key, SelectionBehavior, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {
+  DOMRef,
+  Expandable,
+  Key,
+  SelectionBehavior,
+  SpectrumSelectionProps,
+  StyleProps
+} from '@react-types/shared';
 import {focusRing, style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {isAndroid} from 'react-aria/private/utils/platform';
-import React, {createContext, JSX, JSXElementConstructor, ReactElement, ReactNode, useRef} from 'react';
+import React, {
+  createContext,
+  JSX,
+  JSXElementConstructor,
+  ReactElement,
+  ReactNode,
+  useRef
+} from 'react';
 import {SlotProvider} from '../utils/Slots';
 import {
   Tree,
@@ -39,27 +53,42 @@ import {useDOMRef} from '../utils/useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useStyleProps} from '../utils/styleProps';
 
-export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeProps<T>, 'children' | 'render'>, StyleProps, SpectrumSelectionProps, Expandable {
+export interface SpectrumTreeViewProps<T>
+  extends
+    Omit<AriaTreeProps<T>, 'children' | 'render'>,
+    StyleProps,
+    SpectrumSelectionProps,
+    Expandable {
   /** Provides content to display when there are no items in the tree. */
-  renderEmptyState?: () => JSX.Element,
+  renderEmptyState?: () => JSX.Element;
   /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionStyle` prop and the interaction modality.
    */
-  onAction?: (key: Key) => void,
+  onAction?: (key: Key) => void;
   /**
    * The contents of the tree.
    */
-  children?: ReactNode | ((item: T) => ReactNode)
+  children?: ReactNode | ((item: T) => ReactNode);
 }
 
-export interface SpectrumTreeViewItemProps extends Omit<TreeItemProps, 'className' | 'style' | 'render' | 'value' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick'> {
+export interface SpectrumTreeViewItemProps extends Omit<
+  TreeItemProps,
+  | 'className'
+  | 'style'
+  | 'render'
+  | 'value'
+  | 'onHoverStart'
+  | 'onHoverEnd'
+  | 'onHoverChange'
+  | 'onClick'
+> {
   /** Rendered contents of the tree item or child items. */
-  children: ReactNode
+  children: ReactNode;
 }
 
 interface TreeRendererContextValue {
-  renderer?: (item) => ReactElement<any, string | JSXElementConstructor<any>>
+  renderer?: (item) => ReactElement<any, string | JSXElementConstructor<any>>;
 }
 const TreeRendererContext = createContext<TreeRendererContextValue>({});
 
@@ -96,7 +125,10 @@ const tree = style<Pick<TreeRenderProps, 'isEmpty'>>({
 /**
  * A tree view provides users with a way to navigate nested hierarchical information.
  */
-export const TreeView = React.forwardRef(function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const TreeView = React.forwardRef(function TreeView<T extends object>(
+  props: SpectrumTreeViewProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {children, selectionStyle, UNSAFE_className} = props;
 
   let renderer;
@@ -110,7 +142,12 @@ export const TreeView = React.forwardRef(function TreeView<T extends object>(pro
 
   return (
     <TreeRendererContext.Provider value={{renderer}}>
-      <Tree {...props} {...styleProps} className={renderProps => (UNSAFE_className ?? '') + tree(renderProps)} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
+      <Tree
+        {...props}
+        {...styleProps}
+        className={renderProps => (UNSAFE_className ?? '') + tree(renderProps)}
+        selectionBehavior={selectionBehavior as SelectionBehavior}
+        ref={domRef}>
         {props.children}
       </Tree>
     </TreeRendererContext.Provider>
@@ -118,7 +155,7 @@ export const TreeView = React.forwardRef(function TreeView<T extends object>(pro
 }) as <T>(props: SpectrumTreeViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
 interface TreeRowRenderProps extends TreeItemRenderProps {
-  isLink?: boolean
+  isLink?: boolean;
 }
 
 const treeRow = style<TreeRowRenderProps>({
@@ -149,7 +186,16 @@ const treeCellGrid = style({
   display: 'grid',
   width: 'full',
   alignItems: 'center',
-  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 10, 'minmax(0, auto)', '1fr', 'minmax(0, auto)', 'auto'],
+  gridTemplateColumns: [
+    'minmax(0, auto)',
+    'minmax(0, auto)',
+    'minmax(0, auto)',
+    10,
+    'minmax(0, auto)',
+    '1fr',
+    'minmax(0, auto)',
+    'auto'
+  ],
   gridTemplateRows: '1fr',
   gridTemplateAreas: [
     'drag-handle checkbox level-padding expand-button icon content actions actionmenu'
@@ -187,7 +233,7 @@ const treeActions = style({
   flexGrow: 0,
   flexShrink: 0,
   /* TODO: I made this one up, confirm desired behavior. These paddings are to make sure the action group has enough padding for the focus ring */
-  marginStart: .5,
+  marginStart: 0.5,
   marginEnd: 1
 });
 
@@ -216,69 +262,92 @@ const treeRowOutline = style({
   forcedColorAdjust: 'none',
 
   boxShadow: {
-    isFocusVisible: '[inset 2px 0 0 0 var(--spectrum-alias-focus-color), inset -2px 0 0 0 var(--spectrum-alias-focus-color), inset 0 -2px 0 0 var(--spectrum-alias-focus-color), inset 0 2px 0 0 var(--spectrum-alias-focus-color)]',
+    isFocusVisible:
+      '[inset 2px 0 0 0 var(--spectrum-alias-focus-color), inset -2px 0 0 0 var(--spectrum-alias-focus-color), inset 0 -2px 0 0 var(--spectrum-alias-focus-color), inset 0 2px 0 0 var(--spectrum-alias-focus-color)]',
     isSelected: {
-      default: '[inset 1px 0 0 0 var(--spectrum-alias-focus-color), inset -1px 0 0 0 var(--spectrum-alias-focus-color), inset 0 -1px 0 0 var(--spectrum-alias-focus-color), inset 0 1px 0 0 var(--spectrum-alias-focus-color)]',
-      isFocusVisible: '[inset 2px 0 0 0 var(--spectrum-alias-focus-color), inset -2px 0 0 0 var(--spectrum-alias-focus-color), inset 0 -2px 0 0 var(--spectrum-alias-focus-color), inset 0 2px 0 0 var(--spectrum-alias-focus-color)]'
+      default:
+        '[inset 1px 0 0 0 var(--spectrum-alias-focus-color), inset -1px 0 0 0 var(--spectrum-alias-focus-color), inset 0 -1px 0 0 var(--spectrum-alias-focus-color), inset 0 1px 0 0 var(--spectrum-alias-focus-color)]',
+      isFocusVisible:
+        '[inset 2px 0 0 0 var(--spectrum-alias-focus-color), inset -2px 0 0 0 var(--spectrum-alias-focus-color), inset 0 -2px 0 0 var(--spectrum-alias-focus-color), inset 0 2px 0 0 var(--spectrum-alias-focus-color)]'
     },
     forcedColors: {
-      isFocusVisible: '[inset 2px 0 0 0 Highlight, inset -2px 0 0 0 Highlight, inset 0 -2px 0 0 Highlight, inset 0 2px 0 0 Highlight]',
+      isFocusVisible:
+        '[inset 2px 0 0 0 Highlight, inset -2px 0 0 0 Highlight, inset 0 -2px 0 0 Highlight, inset 0 2px 0 0 Highlight]',
       isSelected: {
-        default: '[inset 1px 0 0 0 Highlight, inset -1px 0 0 0 Highlight, inset 0 -1px 0 0 Highlight, inset 0 1px 0 0 Highlight]',
-        isFocusVisible: '[inset 2px 0 0 0 Highlight, inset -2px 0 0 0 Highlight, inset 0 -2px 0 0 Highlight, inset 0 2px 0 0 Highlight]'
+        default:
+          '[inset 1px 0 0 0 Highlight, inset -1px 0 0 0 Highlight, inset 0 -1px 0 0 Highlight, inset 0 1px 0 0 Highlight]',
+        isFocusVisible:
+          '[inset 2px 0 0 0 Highlight, inset -2px 0 0 0 Highlight, inset 0 -2px 0 0 Highlight, inset 0 2px 0 0 Highlight]'
       }
     }
   }
 });
 
 export const TreeViewItem = (props: SpectrumTreeViewItemProps): ReactNode => {
-  let {
-    href
-  } = props;
+  let {href} = props;
 
   return (
     <TreeItem
       {...props}
-      className={renderProps => treeRow({
-        ...renderProps,
-        isLink: !!href
-      })} />
+      className={renderProps =>
+        treeRow({
+          ...renderProps,
+          isLink: !!href
+        })
+      }
+    />
   );
 };
 
 export interface SpectrumTreeViewItemContentProps extends Omit<TreeItemContentProps, 'children'> {
   /** Rendered contents of the tree item or child items. */
-  children: ReactNode
+  children: ReactNode;
 }
 
-
 export const TreeViewItemContent = (props: SpectrumTreeViewItemContentProps): ReactNode => {
-  let {
-    children
-  } = props;
+  let {children} = props;
 
   return (
-    (<TreeItemContent>
-      {({isExpanded, hasChildItems, level, selectionMode, selectionBehavior, isDisabled, isSelected, isFocusVisible, state, id}) => {
+    <TreeItemContent>
+      {({
+        isExpanded,
+        hasChildItems,
+        level,
+        selectionMode,
+        selectionBehavior,
+        isDisabled,
+        isSelected,
+        isFocusVisible,
+        state,
+        id
+      }) => {
         let isFirst = state.collection.getFirstKey() === id;
         return (
-          (<div className={treeCellGrid({isDisabled})}>
+          <div className={treeCellGrid({isDisabled})}>
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               // TODO: add transition?
-              (<Checkbox
+              <Checkbox
                 isEmphasized
                 UNSAFE_className={treeCheckbox()}
                 UNSAFE_style={{paddingInlineEnd: '0px'}}
-                slot="selection" />)
-              )}
-            <div style={{gridArea: 'level-padding', marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`}} />
+                slot="selection"
+              />
+            )}
+            <div
+              style={{
+                gridArea: 'level-padding',
+                marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`
+              }}
+            />
             {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
-            {hasChildItems && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />}
+            {hasChildItems && (
+              <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />
+            )}
             <SlotProvider
               slots={{
                 text: {UNSAFE_className: treeContent({isDisabled})},
-                  // Note there is also an issue here where these icon props are making into the action menu's icon. Resolved by 8ab0ffb276ff437a65b365c9a3be0323a1b24656
-                  // but could crop up later for other components
+                // Note there is also an issue here where these icon props are making into the action menu's icon. Resolved by 8ab0ffb276ff437a65b365c9a3be0323a1b24656
+                // but could crop up later for other components
                 icon: {UNSAFE_className: treeIcon(), size: 'S'},
                 actionButton: {UNSAFE_className: treeActions(), isQuiet: true},
                 actionGroup: {
@@ -289,22 +358,26 @@ export const TreeViewItemContent = (props: SpectrumTreeViewItemContentProps): Re
                   isDisabled,
                   overflowMode: 'collapse'
                 },
-                actionMenu: {UNSAFE_className: treeActionMenu(), UNSAFE_style: {marginInlineEnd: '.5rem'}, isQuiet: true}
+                actionMenu: {
+                  UNSAFE_className: treeActionMenu(),
+                  UNSAFE_style: {marginInlineEnd: '.5rem'},
+                  isQuiet: true
+                }
               }}>
               {children}
             </SlotProvider>
             <div className={treeRowOutline({isFocusVisible, isSelected, isFirst})} />
-          </div>)
+          </div>
         );
       }}
-    </TreeItemContent>)
+    </TreeItemContent>
   );
 };
 
 interface ExpandableRowChevronProps {
-  isExpanded?: boolean,
-  isDisabled?: boolean,
-  isRTL?: boolean
+  isExpanded?: boolean;
+  isDisabled?: boolean;
+  isRTL?: boolean;
 }
 
 const expandButton = style<ExpandableRowChevronProps>({
@@ -327,15 +400,22 @@ const expandButton = style<ExpandableRowChevronProps>({
 
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
   let expandButtonRef = useRef(null);
-  let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
+  let [fullProps, ref] = useContextProps(
+    {...props, slot: 'chevron'},
+    expandButtonRef,
+    ButtonContext
+  );
   let {isExpanded, isDisabled} = fullProps;
   let {direction} = useLocale();
 
   // Will need to keep the chevron as a button for iOS VO at all times since VO doesn't focus the cell. Also keep as button if cellAction is defined by the user in the future
-  let {buttonProps} = useButton({
-    ...fullProps,
-    elementType: 'span'
-  }, ref);
+  let {buttonProps} = useButton(
+    {
+      ...fullProps,
+      elementType: 'span'
+    },
+    ref
+  );
 
   return (
     <span

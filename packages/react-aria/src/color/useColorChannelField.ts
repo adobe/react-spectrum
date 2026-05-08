@@ -22,15 +22,27 @@ export interface ColorChannelFieldAria extends NumberFieldAria {}
  * Provides the behavior and accessibility implementation for a color channel field, allowing users to edit the
  * value of an individual color channel.
  */
-export function useColorChannelField(props: AriaColorChannelFieldProps, state: ColorChannelFieldState, inputRef: RefObject<HTMLInputElement | null>): ColorChannelFieldAria {
+export function useColorChannelField(
+  props: AriaColorChannelFieldProps,
+  state: ColorChannelFieldState,
+  inputRef: RefObject<HTMLInputElement | null>
+): ColorChannelFieldAria {
   let {locale} = useLocale();
-  return useNumberField({
-    ...props,
-    value: undefined,
-    defaultValue: undefined,
-    onChange: undefined,
-    validate: undefined,
-    // Provide a default aria-label if no other label is provided.
-    'aria-label': props['aria-label'] || (props.label || props['aria-labelledby'] ? undefined : state.colorValue.getChannelName(props.channel, locale))
-  }, state, inputRef);
+  return useNumberField(
+    {
+      ...props,
+      value: undefined,
+      defaultValue: undefined,
+      onChange: undefined,
+      validate: undefined,
+      // Provide a default aria-label if no other label is provided.
+      'aria-label':
+        props['aria-label'] ||
+        (props.label || props['aria-labelledby']
+          ? undefined
+          : state.colorValue.getChannelName(props.channel, locale))
+    },
+    state,
+    inputRef
+  );
 }

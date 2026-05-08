@@ -20,16 +20,17 @@ describe('useDisclosureGroupState', () => {
   });
 
   it('should initialize with defaultExpandedKeys when provided', () => {
-    const {result} = renderHook(() =>
-      useDisclosureGroupState({defaultExpandedKeys: ['item1']})
-    );
+    const {result} = renderHook(() => useDisclosureGroupState({defaultExpandedKeys: ['item1']}));
     expect(result.current.expandedKeys.has('item1')).toBe(true);
     expect(result.current.expandedKeys.has('item2')).toBe(false);
   });
 
   it('should initialize with multiple defaultExpandedKeys when provided, and if allowsMultipleExpanded is true', () => {
     const {result} = renderHook(() =>
-      useDisclosureGroupState({defaultExpandedKeys: ['item1', 'item2'], allowsMultipleExpanded: true})
+      useDisclosureGroupState({
+        defaultExpandedKeys: ['item1', 'item2'],
+        allowsMultipleExpanded: true
+      })
     );
     expect(result.current.expandedKeys.has('item1')).toBe(true);
     expect(result.current.expandedKeys.has('item2')).toBe(true);
@@ -62,9 +63,7 @@ describe('useDisclosureGroupState', () => {
   });
 
   it('should toggle key correctly when allowsMultipleExpanded is true', () => {
-    const {result} = renderHook(() =>
-      useDisclosureGroupState({allowsMultipleExpanded: true})
-    );
+    const {result} = renderHook(() => useDisclosureGroupState({allowsMultipleExpanded: true}));
     act(() => {
       result.current.toggleKey('item1');
     });
@@ -79,9 +78,7 @@ describe('useDisclosureGroupState', () => {
 
   it('should call onExpandedChange when expanded keys change', () => {
     const onExpandedChange = jest.fn();
-    const {result} = renderHook(() =>
-      useDisclosureGroupState({onExpandedChange})
-    );
+    const {result} = renderHook(() => useDisclosureGroupState({onExpandedChange}));
 
     act(() => {
       result.current.toggleKey('item1');

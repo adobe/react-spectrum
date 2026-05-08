@@ -17,18 +17,18 @@ import {useSlotId} from '../utils/useId';
 
 export interface AriaGridListSectionProps {
   /** An accessibility label for the section. Required if `heading` is not present. */
-  'aria-label'?: string
+  'aria-label'?: string;
 }
 
 export interface GridListSectionAria {
   /** Props for the wrapper list item. */
-  rowProps: DOMAttributes,
+  rowProps: DOMAttributes;
 
   /** Props for the heading element, if any. */
-  rowHeaderProps: DOMAttributes,
+  rowHeaderProps: DOMAttributes;
 
   /** Props for the grid's row group element. */
-  rowGroupProps: DOMAttributes
+  rowGroupProps: DOMAttributes;
 }
 
 /**
@@ -36,8 +36,13 @@ export interface GridListSectionAria {
  * See `useGridList` for more details about grid list.
  * @param props - Props for the section.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useGridListSection<T>(props: AriaGridListSectionProps, state: ListState<T>, ref: RefObject<HTMLElement | null>): GridListSectionAria {
+export function useGridListSection<T>(
+  props: AriaGridListSectionProps,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  state: ListState<T>,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ref: RefObject<HTMLElement | null>
+): GridListSectionAria {
   let {'aria-label': ariaLabel} = props;
   let headingId = useSlotId();
   let labelProps = useLabels({

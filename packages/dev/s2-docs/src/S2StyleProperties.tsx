@@ -19,7 +19,9 @@ export function S2StyleProperties({properties}: {properties: string[]}) {
         }
       })}>
       {properties.map(property => (
-        <li key={property}><Code>{property}</Code></li>
+        <li key={property}>
+          <Code>{property}</Code>
+        </li>
       ))}
     </ul>
   );

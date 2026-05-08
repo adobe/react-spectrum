@@ -17,68 +17,83 @@ import {useCallback, useMemo, useState} from 'react';
 
 export interface SubmenuTriggerProps {
   /** Key of the trigger item. */
-  triggerKey: Key
+  triggerKey: Key;
 }
 
 export interface SubmenuTriggerState extends OverlayTriggerState {
   /** Whether the submenu is currently open. */
-  isOpen: boolean,
+  isOpen: boolean;
   /** Controls which item will be auto focused when the submenu opens. */
-  focusStrategy: FocusStrategy | null,
+  focusStrategy: FocusStrategy | null;
   /** Opens the submenu. */
-  open: (focusStrategy?: FocusStrategy | null) => void,
+  open: (focusStrategy?: FocusStrategy | null) => void;
   /** Closes the submenu. */
-  close: () => void,
+  close: () => void;
   /** Closes all menus and submenus in the menu tree. */
-  closeAll: () => void,
+  closeAll: () => void;
   /** The level of the submenu. */
-  submenuLevel: number,
+  submenuLevel: number;
   /** Toggles the submenu. */
-  toggle: (focusStrategy?: FocusStrategy | null) => void,
+  toggle: (focusStrategy?: FocusStrategy | null) => void;
   /** @private */
-  setOpen: () => void
+  setOpen: () => void;
 }
 
 /**
  * Manages state for a submenu trigger. Tracks whether the submenu is currently open, the level of the submenu, and
  * controls which item will receive focus when it opens.
  */
-export function useSubmenuTriggerState(props: SubmenuTriggerProps, state: RootMenuTriggerState): SubmenuTriggerState  {
+export function useSubmenuTriggerState(
+  props: SubmenuTriggerProps,
+  state: RootMenuTriggerState
+): SubmenuTriggerState {
   let {triggerKey} = props;
   let {expandedKeysStack, openSubmenu, closeSubmenu, close: closeAll} = state;
   let [submenuLevel] = useState(expandedKeysStack?.length);
-  let isOpen = useMemo(() => expandedKeysStack[submenuLevel] === triggerKey, [expandedKeysStack, triggerKey, submenuLevel]);
+  let isOpen = useMemo(
+    () => expandedKeysStack[submenuLevel] === triggerKey,
+    [expandedKeysStack, triggerKey, submenuLevel]
+  );
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
 
-  let open = useCallback((focusStrategy?: FocusStrategy | null) => {
-    setFocusStrategy(focusStrategy ?? null);
-    openSubmenu(triggerKey, submenuLevel);
-  }, [openSubmenu, submenuLevel, triggerKey]);
+  let open = useCallback(
+    (focusStrategy?: FocusStrategy | null) => {
+      setFocusStrategy(focusStrategy ?? null);
+      openSubmenu(triggerKey, submenuLevel);
+    },
+    [openSubmenu, submenuLevel, triggerKey]
+  );
 
   let close = useCallback(() => {
     setFocusStrategy(null);
     closeSubmenu(triggerKey, submenuLevel);
   }, [closeSubmenu, submenuLevel, triggerKey]);
 
-  let toggle = useCallback((focusStrategy?: FocusStrategy | null) => {
-    setFocusStrategy(focusStrategy ?? null);
-    if (isOpen) {
-      close();
-    } else {
-      open(focusStrategy);
-    }
-  }, [close, open, isOpen]);
+  let toggle = useCallback(
+    (focusStrategy?: FocusStrategy | null) => {
+      setFocusStrategy(focusStrategy ?? null);
+      if (isOpen) {
+        close();
+      } else {
+        open(focusStrategy);
+      }
+    },
+    [close, open, isOpen]
+  );
 
-  return useMemo(() => ({
-    focusStrategy,
-    isOpen,
-    open,
-    close,
-    closeAll,
-    submenuLevel,
-    // TODO: Placeholders that aren't used but give us parity with OverlayTriggerState so we can use this in Popover. Refactor if we update Popover via
-    // https://github.com/adobe/react-spectrum/pull/4976#discussion_r1336472863
-    setOpen: () => {},
-    toggle
-  }), [isOpen, open, close, closeAll, focusStrategy, toggle, submenuLevel]);
+  return useMemo(
+    () => ({
+      focusStrategy,
+      isOpen,
+      open,
+      close,
+      closeAll,
+      submenuLevel,
+      // TODO: Placeholders that aren't used but give us parity with OverlayTriggerState so we can use this in Popover. Refactor if we update Popover via
+      // https://github.com/adobe/react-spectrum/pull/4976#discussion_r1336472863
+      setOpen: () => {},
+      toggle
+    }),
+    [isOpen, open, close, closeAll, focusStrategy, toggle, submenuLevel]
+  );
 }

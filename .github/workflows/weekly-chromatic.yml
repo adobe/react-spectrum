@@ -1,0 +1,112 @@
+name: Weekly Chromatic
+
+on:
+  schedule:
+    - cron: '0 17 * * 1' # Monday 9am PST / 10am PDT (GH Actions cron is UTC)
+  workflow_dispatch: # manual trigger for testing
+
+jobs:
+  chromatic:
+    runs-on: ubuntu-latest
+    outputs:
+      build_url: ${{ steps.chromatic.outputs.buildUrl }}
+      code: ${{ steps.chromatic.outputs.code }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # chromatic needs full history for baseline comparison
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'yarn'
+      - run: yarn --immutable
+      - name: Run Chromatic
+        id: chromatic
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          buildScriptName: build:chromatic
+          exitZeroOnChanges: true
+        env:
+          NODE_ENV: production
+          CHROMATIC: '1'
+
+  chromatic-fc:
+    runs-on: ubuntu-latest
+    outputs:
+      build_url: ${{ steps.chromatic.outputs.buildUrl }}
+      code: ${{ steps.chromatic.outputs.code }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # chromatic needs full history for baseline comparison
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'yarn'
+      - run: yarn --immutable
+      - name: Run Chromatic FC
+        id: chromatic
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_FC_PROJECT_TOKEN }}
+          buildScriptName: build:chromatic-fc
+          exitZeroOnChanges: true
+        env:
+          NODE_ENV: production
+          CHROMATIC: '1'
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [chromatic, chromatic-fc]
+    if: always()
+    env:
+      SLACK_TSDIFF_CHROMATIC_BOT_TOKEN: ${{ secrets.SLACK_TSDIFF_CHROMATIC_BOT_TOKEN }}
+      SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+      CHROMATIC_URL: ${{ needs.chromatic.outputs.build_url }}
+      CHROMATIC_CODE: ${{ needs.chromatic.outputs.code }}
+      CHROMATIC_FC_URL: ${{ needs.chromatic-fc.outputs.build_url }}
+      CHROMATIC_FC_CODE: ${{ needs.chromatic-fc.outputs.code }}
+    steps:
+      - name: Post to Slack
+        run: |
+          python3 << 'PYEOF'
+          import json, os, urllib.request
+          from datetime import date
+
+          required = ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN', 'SLACK_CHANNEL_ID']
+          missing = [k for k in required if not os.environ.get(k)]
+          if missing:
+            raise SystemExit(f"Missing required environment variables: {', '.join(missing)}")
+
+          today = date.today().isoformat()
+          channel = os.environ['SLACK_CHANNEL_ID']
+          slack_token = os.environ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN']
+
+          def fmt(code, url):
+              if not url:
+                  return "❌ failed"
+              if code == 'BUILD_PASSED':
+                  return f"✅ | {url}"
+              return f"⚠️ changes pending review | {url}"
+
+          message = "\n".join([
+              f"📸 Weekly Chromatic — {today}",
+              "",
+              f"Chromatic: {fmt(os.environ['CHROMATIC_CODE'], os.environ['CHROMATIC_URL'])}",
+              f"Forced Colors: {fmt(os.environ['CHROMATIC_FC_CODE'], os.environ['CHROMATIC_FC_URL'])}",
+          ])
+
+          req = urllib.request.Request(
+              'https://slack.com/api/chat.postMessage',
+              data=json.dumps({"channel": channel, "text": message}).encode(),
+              headers={
+                  'Authorization': f'Bearer {slack_token}',
+                  'Content-Type': 'application/json'
+              }
+          )
+          resp = json.loads(urllib.request.urlopen(req).read())
+          print("Slack response:", resp.get('ok'), resp.get('error', ''))
+          if not resp.get('ok'):
+              raise SystemExit(f"Slack error: {resp.get('error')}")
+          PYEOF

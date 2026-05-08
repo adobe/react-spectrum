@@ -27,35 +27,38 @@ export interface SpectrumBarSliderBase<T> extends AriaSliderProps<T>, ValueBase<
   /**
    * The display format of the value label.
    */
-  formatOptions?: Intl.NumberFormatOptions,
+  formatOptions?: Intl.NumberFormatOptions;
   /**
    * The label's overall position relative to the element it is labeling.
    * @default 'top'
    */
-  labelPosition?: LabelPosition,
+  labelPosition?: LabelPosition;
   /** Whether the value's label is displayed. True by default if there's a `label`, false by default if not. */
-  showValueLabel?: boolean,
+  showValueLabel?: boolean;
   /** A function that returns the content to display as the value's label. Overrides default formatted number. */
-  getValueLabel?: (value: T) => string,
+  getValueLabel?: (value: T) => string;
   /**
    * A ContextualHelp element to place next to the label.
    */
-  contextualHelp?: ReactNode
+  contextualHelp?: ReactNode;
 }
 
 export interface SliderBaseChildArguments {
-  inputRef: RefObject<HTMLInputElement | null>,
-  trackRef: RefObject<HTMLElement | null>,
-  state: SliderState
+  inputRef: RefObject<HTMLInputElement | null>;
+  trackRef: RefObject<HTMLElement | null>;
+  state: SliderState;
 }
 
 export interface SliderBaseProps<T = number[]> extends SpectrumBarSliderBase<T> {
-  children: (opts: SliderBaseChildArguments) => ReactNode,
-  classes?: string[] | Object,
-  style?: CSSProperties
+  children: (opts: SliderBaseChildArguments) => ReactNode;
+  classes?: string[] | Object;
+  style?: CSSProperties;
 }
 
-export const SliderBase = React.forwardRef(function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
+export const SliderBase = React.forwardRef(function SliderBase(
+  props: SliderBaseProps,
+  ref: FocusableRef<HTMLDivElement>
+) {
   props = useProviderProps(props);
   let {
     isDisabled,
@@ -96,12 +99,7 @@ export const SliderBase = React.forwardRef(function SliderBase(props: SliderBase
     maxValue
   });
   let trackRef = useRef<HTMLDivElement | null>(null);
-  let {
-    groupProps,
-    trackProps,
-    labelProps,
-    outputProps
-  } = useSlider(props, state, trackRef);
+  let {groupProps, trackProps, labelProps, outputProps} = useSlider(props, state, trackRef);
 
   let inputRef = useRef<HTMLInputElement | null>(null);
   let domRef = useFocusableRef(ref, inputRef);
@@ -131,7 +129,10 @@ export const SliderBase = React.forwardRef(function SliderBase(props: SliderBase
         throw new Error('Only sliders with 1 or 2 handles are supported!');
     }
   } else {
-    maxLabelLength = Math.max([...formatter.format(minValue)].length, [...formatter.format(maxValue)].length);
+    maxLabelLength = Math.max(
+      [...formatter.format(minValue)].length,
+      [...formatter.format(maxValue)].length
+    );
     switch (state.values.length) {
       case 1:
         displayValue = state.getThumbValueLabel(0);
@@ -141,10 +142,14 @@ export const SliderBase = React.forwardRef(function SliderBase(props: SliderBase
         // https://github.com/tc39/ecma402/issues/393
         // https://github.com/tc39/proposal-intl-numberformat-v3#formatrange-ecma-402-393
         displayValue = `${state.getThumbValueLabel(0)} – ${state.getThumbValueLabel(1)}`;
-        maxLabelLength = 3 + 2 * Math.max(
-          maxLabelLength,
-          [...formatter.format(minValue)].length, [...formatter.format(maxValue)].length
-        );
+        maxLabelLength =
+          3 +
+          2 *
+            Math.max(
+              maxLabelLength,
+              [...formatter.format(minValue)].length,
+              [...formatter.format(maxValue)].length
+            );
         break;
       default:
         throw new Error('Only sliders with 1 or 2 handles are supported!');
@@ -152,9 +157,7 @@ export const SliderBase = React.forwardRef(function SliderBase(props: SliderBase
   }
 
   let labelNode = (
-    <label
-      className={classNames(styles, 'spectrum-Slider-label')}
-      {...labelProps}>
+    <label className={classNames(styles, 'spectrum-Slider-label')} {...labelProps}>
       {props.label}
     </label>
   );
@@ -163,7 +166,11 @@ export const SliderBase = React.forwardRef(function SliderBase(props: SliderBase
     <output
       {...outputProps}
       className={classNames(styles, 'spectrum-Slider-value')}
-      style={maxLabelLength != null ? {width: `${maxLabelLength}ch`, minWidth: `${maxLabelLength}ch`} : undefined}>
+      style={
+        maxLabelLength != null
+          ? {width: `${maxLabelLength}ch`, minWidth: `${maxLabelLength}ch`}
+          : undefined
+      }>
       {displayValue}
     </output>
   );
@@ -171,7 +178,8 @@ export const SliderBase = React.forwardRef(function SliderBase(props: SliderBase
   return (
     <div
       ref={domRef}
-      className={classNames(styles,
+      className={classNames(
+        styles,
         'spectrum-Slider',
         {
           'spectrum-Slider--positionTop': labelPosition === 'top',
@@ -179,16 +187,17 @@ export const SliderBase = React.forwardRef(function SliderBase(props: SliderBase
           'is-disabled': isDisabled
         },
         classes,
-        styleProps.className)}
+        styleProps.className
+      )}
       style={{
         ...style,
         ...styleProps.style
       }}
       {...groupProps}>
-      {(props.label) &&
+      {props.label && (
         <div className={classNames(styles, 'spectrum-Slider-labelContainer')} role="presentation">
           {props.label && labelNode}
-          {props.contextualHelp &&
+          {props.contextualHelp && (
             <SlotProvider
               slots={{
                 actionButton: {
@@ -197,22 +206,28 @@ export const SliderBase = React.forwardRef(function SliderBase(props: SliderBase
               }}>
               {props.contextualHelp}
             </SlotProvider>
-          }
+          )}
           {labelPosition === 'top' && showValueLabel && valueNode}
         </div>
-      }
-      <div className={classNames(styles, 'spectrum-Slider-controls')} ref={trackRef} {...trackProps} role="presentation">
+      )}
+      <div
+        className={classNames(styles, 'spectrum-Slider-controls')}
+        ref={trackRef}
+        {...trackProps}
+        role="presentation">
         {children({
           trackRef,
           inputRef,
           state
         })}
       </div>
-      {labelPosition === 'side' &&
-        <div className={classNames(styles, 'spectrum-Slider-valueLabelContainer')} role="presentation">
+      {labelPosition === 'side' && (
+        <div
+          className={classNames(styles, 'spectrum-Slider-valueLabelContainer')}
+          role="presentation">
           {showValueLabel && valueNode}
         </div>
-      }
+      )}
     </div>
   );
 });

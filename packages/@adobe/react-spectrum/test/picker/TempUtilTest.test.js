@@ -10,7 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render, screen, simulateDesktop, simulateMobile, waitFor, waitForElementToBeRemoved, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  pointerMap,
+  render,
+  screen,
+  simulateDesktop,
+  simulateMobile,
+  waitFor,
+  waitForElementToBeRemoved,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {Button} from 'react-aria-components/Button';
 import {Item} from 'react-stately/Item';
 import {Label} from 'react-aria-components/Label';
@@ -55,7 +65,11 @@ describe('Picker/Select ', function () {
     it('basic flow without test util helpers', async function () {
       let {getAllByText, getByText, getByRole, findByRole, queryByRole} = render(
         <Provider theme={theme}>
-          <Picker label="Test" data-testid="test" onSelectionChange={onSelectionChange} onOpenChange={onOpenChange}>
+          <Picker
+            label="Test"
+            data-testid="test"
+            onSelectionChange={onSelectionChange}
+            onOpenChange={onOpenChange}>
             <Item key="one">One</Item>
             <Item key="two">Two</Item>
             <Item key="three">Three</Item>
@@ -93,9 +107,12 @@ describe('Picker/Select ', function () {
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('three');
       await waitForElementToBeRemoved(() => queryByRole('listbox'));
-      await waitFor(() => {
-        expect(document.activeElement).toBe(picker);
-      }, {interval: 10});
+      await waitFor(
+        () => {
+          expect(document.activeElement).toBe(picker);
+        },
+        {interval: 10}
+      );
 
       expect(picker).toHaveTextContent('Three');
     });
@@ -104,7 +121,11 @@ describe('Picker/Select ', function () {
       render(
         <Provider theme={theme}>
           <div role="listbox">blah</div>
-          <Picker label="Test" data-testid="test" onSelectionChange={onSelectionChange} onOpenChange={onOpenChange}>
+          <Picker
+            label="Test"
+            data-testid="test"
+            onSelectionChange={onSelectionChange}
+            onOpenChange={onOpenChange}>
             <Item key="one">One</Item>
             <Item key="two">Two</Item>
             <Item key="three">Three</Item>
@@ -159,7 +180,11 @@ describe('Picker/Select ', function () {
     it('basic flow without test util helpers', async function () {
       let {getAllByText, getByText, getByRole} = render(
         <Provider theme={theme}>
-          <Picker label="Test" data-testid="test" onSelectionChange={onSelectionChange} onOpenChange={onOpenChange}>
+          <Picker
+            label="Test"
+            data-testid="test"
+            onSelectionChange={onSelectionChange}
+            onOpenChange={onOpenChange}>
             <Item key="one">One</Item>
             <Item key="two">Two</Item>
             <Item key="three">Three</Item>
@@ -209,7 +234,11 @@ describe('Picker/Select ', function () {
     it('basic flow with test util user', async function () {
       render(
         <Provider theme={theme}>
-          <Picker label="Test" data-testid="test" onSelectionChange={onSelectionChange} onOpenChange={onOpenChange}>
+          <Picker
+            label="Test"
+            data-testid="test"
+            onSelectionChange={onSelectionChange}
+            onOpenChange={onOpenChange}>
             <Item key="one">One</Item>
             <Item key="two">Two</Item>
             <Item key="three">Three</Item>
@@ -243,7 +272,9 @@ describe('Picker/Select ', function () {
         </Select>
       );
 
-      let selectTester = testUtilUser.createTester('Select', {root: screen.getAllByTestId('test')[0]});
+      let selectTester = testUtilUser.createTester('Select', {
+        root: screen.getAllByTestId('test')[0]
+      });
       await selectTester.selectOption({option: 'Cat'});
       expect(selectTester.trigger).toHaveTextContent('Cat');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -261,7 +292,11 @@ describe('Picker/Select ', function () {
       render(
         <Provider theme={theme}>
           <div role="listbox">blah</div>
-          <Picker label="Test" data-testid="test" onSelectionChange={onSelectionChange} onOpenChange={onOpenChange}>
+          <Picker
+            label="Test"
+            data-testid="test"
+            onSelectionChange={onSelectionChange}
+            onOpenChange={onOpenChange}>
             <Item key="one">One</Item>
             <Item key="two">Two</Item>
             <Item key="three">Three</Item>

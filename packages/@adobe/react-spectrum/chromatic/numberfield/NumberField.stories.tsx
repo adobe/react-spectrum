@@ -28,26 +28,28 @@ let states = [
   {isReadOnly: true},
   {hideStepper: true},
   {validationState: ['valid', 'invalid']},
-  {contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a segment?</Heading>
-      <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-    </ContextualHelp>
-  )}
+  {
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
+      </ContextualHelp>
+    )
+  }
 ];
 
 let noLabelStates = [
-  {UNSAFE_className: classNames(
-    {},
-      classNames(stepperStyles, 'focus-ring')
-    )},
-  {UNSAFE_className: classNames(
-      {},
-      classNames(stepperStyles, 'is-focused')
-    )}
+  {UNSAFE_className: classNames({}, classNames(stepperStyles, 'focus-ring'))},
+  {UNSAFE_className: classNames({}, classNames(stepperStyles, 'is-focused'))}
 ];
 
-let combinations = generatePowerset(states, v => v.contextualHelp && (v.validationState || v.hideStepper || v.isReadOnly));
+let combinations = generatePowerset(
+  states,
+  v => v.contextualHelp && (v.validationState || v.hideStepper || v.isReadOnly)
+);
 
 let combinationsStyles: any[] = [...combinations];
 for (let i = 0; i < noLabelStates.length; i++) {
@@ -59,24 +61,17 @@ for (let i = 0; i < noLabelStates.length; i++) {
   }
 }
 // doing this line inside the loop caused focus-ring to never be added
-combinationsStyles = combinationsStyles.filter(
-  combo => {
-    // we only care about combos with class name state, the rest are covered in other stories
-    let hasClassName = combo.UNSAFE_className;
-    let invalidFocusState = (
-      combo.UNSAFE_className
-        && combo.UNSAFE_className.includes('focus-ring')
-        && !combo.UNSAFE_className.includes('is-focused')
-    );
-    let invalidDisabledState = (
-      combo.isDisabled
-        && combo.UNSAFE_className
-        && combo.UNSAFE_className.includes('is-focused')
-    );
-    return hasClassName && !invalidFocusState && !invalidDisabledState;
-  }
-);
-
+combinationsStyles = combinationsStyles.filter(combo => {
+  // we only care about combos with class name state, the rest are covered in other stories
+  let hasClassName = combo.UNSAFE_className;
+  let invalidFocusState =
+    combo.UNSAFE_className &&
+    combo.UNSAFE_className.includes('focus-ring') &&
+    !combo.UNSAFE_className.includes('is-focused');
+  let invalidDisabledState =
+    combo.isDisabled && combo.UNSAFE_className && combo.UNSAFE_className.includes('is-focused');
+  return hasClassName && !invalidFocusState && !invalidDisabledState;
+});
 
 function shortName(key, value) {
   let returnVal = '';
@@ -112,11 +107,15 @@ export default meta;
 const Template = (args: SpectrumNumberFieldProps): JSX.Element => (
   <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
     {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c)
+        .map(k => shortName(k, c[k]))
+        .join(' ');
       if (!key) {
         key = 'empty';
       }
-      return <NumberField key={key} {...args} {...c} label={args['aria-label'] ? undefined : key} />;
+      return (
+        <NumberField key={key} {...args} {...c} label={args['aria-label'] ? undefined : key} />
+      );
     })}
   </Grid>
 );
@@ -124,11 +123,15 @@ const Template = (args: SpectrumNumberFieldProps): JSX.Element => (
 const TemplateVertical = (args: SpectrumNumberFieldProps): JSX.Element => (
   <Grid autoFlow="row" gap="size-300">
     {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c)
+        .map(k => shortName(k, c[k]))
+        .join(' ');
       if (!key) {
         key = 'empty';
       }
-      return <NumberField key={key} {...args} {...c} label={args['aria-label'] ? undefined : key} />;
+      return (
+        <NumberField key={key} {...args} {...c} label={args['aria-label'] ? undefined : key} />
+      );
     })}
   </Grid>
 );
@@ -136,11 +139,15 @@ const TemplateVertical = (args: SpectrumNumberFieldProps): JSX.Element => (
 const TemplateSmall = (args: SpectrumNumberFieldProps): JSX.Element => (
   <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c)
+        .map(k => shortName(k, c[k]))
+        .join(' ');
       if (!key) {
         key = 'empty';
       }
-      return <NumberField key={key} {...args} {...c} label={args['aria-label'] ? undefined : key} />;
+      return (
+        <NumberField key={key} {...args} {...c} label={args['aria-label'] ? undefined : key} />
+      );
     })}
   </Grid>
 );
@@ -148,8 +155,15 @@ const TemplateSmall = (args: SpectrumNumberFieldProps): JSX.Element => (
 const TemplateWithForcedStyles = (args: SpectrumNumberFieldProps): JSX.Element => (
   <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
     {combinationsStyles.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
-      return <div key={key}><div>{key}</div><NumberField {...args} {...c} /></div>;
+      let key = Object.keys(c)
+        .map(k => shortName(k, c[k]))
+        .join(' ');
+      return (
+        <div key={key}>
+          <div>{key}</div>
+          <NumberField {...args} {...c} />
+        </div>
+      );
     })}
   </Grid>
 );
@@ -157,25 +171,25 @@ const TemplateWithForcedStyles = (args: SpectrumNumberFieldProps): JSX.Element =
 export type NumberFieldStory = StoryObj<SpectrumNumberFieldProps>;
 
 export const PropDefaults: NumberFieldStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'default',
   args: {}
 };
 
 export const PropDefaultValue: NumberFieldStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'default value',
   args: {...PropDefaults.args, defaultValue: 10}
 };
 
 export const PropValue: NumberFieldStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'value',
   args: {...PropDefaults.args, value: 10}
 };
 
 export const PropValueMobileViewport: NumberFieldStory = {
-  render: (args) => <TemplateVertical {...args} />,
+  render: args => <TemplateVertical {...args} />,
   name: 'value, mobile viewport',
   args: {...PropDefaults.args, value: 10},
 
@@ -191,49 +205,49 @@ export const PropValueMobileViewport: NumberFieldStory = {
 };
 
 export const PropAriaLabelled: NumberFieldStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'aria-label',
   args: {'aria-label': 'Label'}
 };
 
 export const PropLabelEnd: NumberFieldStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'label end',
   args: {...PropDefaults.args, labelAlign: 'end', defaultValue: 10}
 };
 
 export const PropMinValue: NumberFieldStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'min value',
   args: {...PropDefaults.args, minValue: 10, defaultValue: 10}
 };
 
 export const PropMaxValue: NumberFieldStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'max value',
   args: {...PropDefaults.args, maxValue: 10, defaultValue: 10}
 };
 
 export const PropLabelSide: NumberFieldStory = {
-  render: (args) => <TemplateSmall {...args} />,
+  render: args => <TemplateSmall {...args} />,
   name: 'label side',
   args: {...PropDefaults.args, labelPosition: 'side', defaultValue: 10}
 };
 
 export const PropCustomWidth: NumberFieldStory = {
-  render: (args) => <TemplateSmall {...args} />,
+  render: args => <TemplateSmall {...args} />,
   name: 'custom width',
   args: {...PropDefaults.args, width: 'size-3000'}
 };
 
 export const PropInteractionStyles: NumberFieldStory = {
-  render: (args) => <TemplateWithForcedStyles {...args} />,
+  render: args => <TemplateWithForcedStyles {...args} />,
   name: 'interaction styles',
   args: {...PropAriaLabelled.args}
 };
 
 export const PropInteractionStylesMinValue: NumberFieldStory = {
-  render: (args) => <TemplateWithForcedStyles {...args} />,
+  render: args => <TemplateWithForcedStyles {...args} />,
   name: 'interaction styles min value',
   args: {...PropAriaLabelled.args, minValue: 10, defaultValue: 10}
 };

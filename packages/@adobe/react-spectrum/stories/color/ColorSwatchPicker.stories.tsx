@@ -39,7 +39,7 @@ export default {
 
 export type ColorSwatchPickerStory = StoryFn<typeof ColorSwatchPicker>;
 
-export const Default: ColorSwatchPickerStory = (args) => (
+export const Default: ColorSwatchPickerStory = args => (
   <ColorSwatchPicker defaultValue="#f00" {...args}>
     <ColorSwatch color="#f00" />
     <ColorSwatch color="#0f0" />
@@ -49,11 +49,13 @@ export const Default: ColorSwatchPickerStory = (args) => (
 );
 
 let randomColors = Array.from(Array(24)).map(() => {
-  return `#${Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')}`;
+  return `#${Math.floor(Math.random() * 0xffffff)
+    .toString(16)
+    .padStart(6, '0')}`;
 });
-export const ManySwatches: ColorSwatchPickerStory = (args) => (
+export const ManySwatches: ColorSwatchPickerStory = args => (
   <ColorSwatchPicker {...args} maxWidth="size-3000">
-    {randomColors.map((color) => {
+    {randomColors.map(color => {
       return <ColorSwatch key={color} color={color} />;
     })}
   </ColorSwatchPicker>

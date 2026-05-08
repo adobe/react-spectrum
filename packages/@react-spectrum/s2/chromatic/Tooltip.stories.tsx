@@ -18,7 +18,12 @@ import {userEvent, within} from 'storybook/test';
 const meta: Meta<typeof Tooltip> = {
   component: Tooltip,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    }
   },
   tags: ['autodocs'],
   title: 'S2 Chromatic/Tooltip'
