@@ -27,6 +27,7 @@ Use the `value` or `defaultValue` prop to set the color value, and `onChange` to
 ```tsx render
 "use client";
 import {ColorField, type Color} from '@react-spectrum/s2/ColorField';
+import {ColorSwatch} from '@react-spectrum/s2/ColorSwatch';
 import {useState} from 'react';
 import {parseColor} from '@react-stately/color';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -35,41 +36,12 @@ function Example() {
   let [value, setValue] = useState<Color | null>(parseColor('#e73623'));
 
   return (
-    <div>
-      <ColorField
-        label="Primary color"
-        placeholder="Enter a color"
-        value={value}
-        onChange={setValue} />
-      <pre className={style({font: 'body'})}>Current value: {value?.toString('hex')}</pre>
-    </div>
-  );
-}
-```
-
-## Prefix
-
-Use the `prefix` prop to display an additional element before the input in the color field.
-
-```tsx render
-"use client";
-import {ColorField} from '@react-spectrum/s2/ColorField';
-import {ColorSwatch} from '@react-spectrum/s2/ColorSwatch';
-import {useState} from 'react';
-import {parseColor} from '@react-stately/color';
-import {Color} from '@react-stately/color';
-
-function Example() {
-  let [color, setColor] = useState<Color | null>(parseColor('#e73623'));
-  return (
     <ColorField
-      value={color}
-      onChange={setColor}
-      label="User Email"
-      /*- begin highlight -*/
-      prefix={<ColorSwatch size="XS" color={color ? color.toString('hex') : undefined} />}
-      /*- end highlight -*/
-      placeholder="######" />
+      label="Primary color"
+      placeholder="Enter a color"
+      value={value}
+      onChange={setValue}
+      prefix={<ColorSwatch size="XS" color={color ? color.toString('hex') : undefined} />} />
   );
 }
 ```
